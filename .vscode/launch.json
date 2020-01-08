@@ -1,0 +1,66 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Local Index File",
+            "url": "file:///${workspaceFolder}/index.html",
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "create index.html"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Local Incremental File",
+            "url": "file:///${workspaceFolder}/index_incremental.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch localhost HTTPS incremental",
+            "url": "https://localhost:4443/index_incremental.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch voluntary.app",
+            "url": "https://voluntary.app",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch http://127.0.0.1:8080/index_incremental.html",
+            "url": "http://127.0.0.1:8080/index_incremental.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch voluntary.app incremental",
+            "url": "https://voluntary.app/index_incremental.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+        /*
+        // not supported
+        {
+            "type": "safari",
+            "request": "launch",
+            "name": "Safari Launch Local Index File",
+            "url": "file:///${workspaceFolder}/index.html",
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "create index.html"
+        },
+        */
+    ]
+}
