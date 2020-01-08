@@ -1,0 +1,90 @@
+
+html, body {
+    position: absolute;
+    overflow: hidden;
+    
+    overscroll-behavior-x: none;
+    overscroll-behavior-y: none;
+    
+	top: 0px;
+	left: 0px;
+	
+    height: 100%;
+    width: 100%;
+	
+	padding: 0px;
+	margin: 0px;
+    border: 0px;
+    
+	background-color: black;
+    zoom: 100%;
+
+    font-family: AppRegular, sans-serif; /* for font fallback while loading */    
+    font-size: 13px;
+    text-size-adjust: 100%; 
+
+    /*
+    text-size-adjust: none; 
+    -ms-text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+    */
+
+    /* text-size-adjust fixes issue with contenteditable fonts being tiny */
+    /*
+    text-size-adjust: 100%; 
+    -ms-text-size-adjust: 100%; 
+    -moz-text-size-adjust: 100%; 
+    -webkit-text-size-adjust: 100%;
+    */
+
+    touch-action: none; /* disable pinch-zoom browser action, but still available to JS */
+    -ms-scroll-chaining: none; /* disable left-right paging on windows surface */
+
+}
+
+/* an attempt to deal with tiny fonts on mobile */
+html * { 
+    min-height: 1px; 
+    max-height: 999999px; 
+    zoom: 100%;
+    box-sizing: border-box;
+}
+
+/* to avoid slow/choppy handling of touchmove events */
+
+html * { 
+    touch-action: pan-y; 
+}
+
+/* use border-box to make sure padding is included in dom width calculations */
+
+html * { 
+    box-sizing: border-box;
+}
+
+/* avoid outlines */
+
+html * { 
+    outline: none; 
+    outline-style: none; 
+    -moz-outline-style: none; 
+}
+
+html * :focus { 
+    outline: none; 
+    outline-style: none; 
+    -moz-outline-style: none; 
+}
+
+html * :active { 
+    outline: none; 
+    outline-style: none; 
+    -moz-outline-style: none; 
+}
+    
+/*
+:root {
+    font-size: calc(1vw + 1vh + .5vmin);
+}
+*/

@@ -1,0 +1,265 @@
+
+IDEAS
+
+ClassManager
+    - use with class browser
+    - support weak link instance browser?
+    
+unifying fields with normal browsing:
+always present a node field set in the browser but collapse it be default and select it's default subnodes pointer field
+
+applets:
+use javascript with()+proxies to implement sandboxes
+
+messages:
+unify forum messages, posts and direct messages with optional target field (needed for forums anyways)
+
+move css files to json
+    - allow control-click on DivStyleViews to modify attributes?
+    - would this allow move to import()? Issues: namespaces?
+    - ability to intropect CSS, auto convert to JS?
+
+documentation:
+    - build editable documentation into app
+    - support user created docs, shared via network
+    
+
+
+----------------------------
+
+have browserview use defaultRowStyles
+defaultColumnStyles
+
+- set svg color to match textColor of row?
+
+- add multi marker support?
+- need delete button for user (in shelf?)
+- verify panel
+- select last selected node on shelf on appDidInit
+
+- integrate shelf with columns?
+    - separate column didClickRow(aRow) and addColumnForNode(aNode)
+    - add BrowserExpandableRow
+    - add way for node to request top toolbar color
+        - use white versions of tool icons if background is dark
+            - write a CSSColor class to calc brightness
+
+- select new user profile after creating it (animate it?)
+- always use column titles if only one column is displayed (which may not be in single column mode)
+
+- badges for shelf icons! A feature of imageView?
+
+- add user button
+- pinned compose button that applies to currently open lid, pinned settings gear?
+
+- adjust zoom to match normal Twitter client on desktop but be larger on mobile if possible
+- add settings gear shelf item, link to about
+
+- find a way to switch between shelf/non-shelf modes
+- add an "expires in X days" to post row view? Don't expire if liked/reposted/replied?
+
+- logic for reply, repost, like
+- reverse feed/posts ordering and insert new items at 0
+- add a group shelf item for contacts
+- set default path for shelf
+- add notifications folder (add replies, reposts here when adding to feed?)
+- add icons to chat bubbles, chat thread titles
+- search folder
+
+- send a post - draft creates post, sends it, adds it to myposts, deletes draft
+- handle a post - place in feed
+
+- change selection color for drafts?
+- delete button for post drafts
+- delete button for my posts
+- LikePostMessage 
+- replyTo:hash and repostOf:msgObj attributes for PostMessage
+
+- search?
+
+Avoid full path reselect if possible with Browser.selectNode()
+
+
+Rendezvous server
+	- flooding of addresses among everyone
+	- only share an address you've verified
+
+Public and direct messages
+	- flooding of messages between sender and sender's followers
+
+Not hidden:
+	- my IP
+	- my pubkey identities
+	- my following pubkeys list
+	- public feed posts
+	- public "find me at these rendezvous server" messages
+	
+hidden:
+	- content and recipient (recipient among mutual following) is hidden to all but sender and receiver 
+	- sender, size of content and timestamp is visible to friends
+	- packet sizes, bandwidth between friends visible to 
+	
+	
+
+visibly only to sender and receiver:
+	content of direct messages
+	recipient of direct messages
+	
+visible to friend network:
+	sender X sent message with encrypted content of size Y at time T (recipient unknown)
+	
+exchange of messages between peers is encrypted so only receiver can receive it
+pubkey receiving the connection sends an sync encryption key encrypted so only other pubkey can read it
+other pubkey must send messages on this connection using that key
+
+visible to passive network observer:
+	list of public rendezvous servers
+	
+-----------
+
+    store <- node -> view
+    
+    node scheduleSyncToStore    store <- node
+    node scheduleSyncToView     node -> view (just requests that view sync from it)
+    view scheduleSyncFromNode   node -> view
+    view scheduleSyncToNode     node <- view
+    
+    - model to store (any storable set slot outside of loading)
+    - model to view (any viewable set slot)
+    - view to model (any modelled set slot during user input? timers?)
+
+
+--------
+
+ChatMsg
+    -> ObjMsgRecord 
+        -> ObjMsg
+   
+DB LOST IDS:     
+    - can produce by throwing exception in PrivateMessage setObjMsg (which is raised when loading first time)
+    - can produce sometimes with error on imports 
+
+    
+- ImageWellView
+    - insert dropped image between images at drop point instead of appending to end
+    
+TODO: add way to access style sheet attribute of a given css class e.g. BrowserFooter height
+
+- put column header actions in separate view so they can be synced separately 
+
+- ChatThread - only select from valid remoteIdentities? Color/Mark invalid RemoteIdentities
+
+on setting a stored slot, check subnodes and replace old slot value with new one if found
+
+- eliminate BMNavNode? still need title matching?
+
+- make sure direct setting of _slot = value also call slotUpdate
+- check for not calling setParentNode on subnode that already has a parent???
+
+GENERAL 
+    - add navigator.onLine check?
+    https://blog.superhuman.com/building-reliable-apps-on-unreliable-networks-3f75743fc457
+
+
+FIELDS
+    - select field on edit
+    - edit on hitting return on selected/focused field 
+    
+MESSAGING:
+	- cleanup message dict format
+		- add time/date field
+	
+	EMAIL:
+	    - way to show pubkey when no contact available?
+	    - fix from address on emails 
+	
+		- move sent to separate instance made on send, not when seen in msg queue
+
+	CHAT:
+	    - chat threads
+
+	CONTACTS:
+    	- move contacts under identity
+
+
+
+++ replace updateViews with a better name?
+	++ it means "syncInternalToVisibleStateOfView"?
+
+    
+- fix: WARNING: not using empty peerjs connection config
+
+BROWSER:
+	COLORS: 
+		- support for browser header bar colors
+		- move color themes to json file
+		- make themes a preference?
+		
+    TITLE:
+        - if single column mode, use a single default column bgColor
+        - add a nodeColumnTitle method which defaults to title for single column mode
+    PATH:
+        - fix hash path to remove first component (the app name)
+
+    ROWS:
+        - double tap to edit row titles? or hold tap?
+
+        - row delete button not stopping event propagation to select row?
+        - use double tap to edit editable text field row title?
+        - don't adjust visible column set if a new row selection doesn't require more room 
+    		- (let user use back arrow if they want that)
+        - have BrowserView observe node titles to update window hash path?
+
+        - FEATURE: support for reording rows (nodeRowsUserOrderable) like Clear
+        - FEATURE: support for white rows with shadow selection (use z-index?)
+
+        - nodeMaxWidth?
+
+	BROWSER fitColumns cleanup?
+	    activeEndColumnsThatFitBrowserWidth
+	    inactiveEndColumns
+	    setInactiveEndColumnCount()
+	    startColumnsToCollapse
+
+DATASTORE:
+    - cleanup: avoid writing over (or at least ever storing) existing object instances on read from store?
+        - looks like they get stored the first pass and the ones from last time are deleted on next sweep
+
+PANEL:
+    - add verify delete panel
+
+FIELDS:
+    - add right arrow on note of link field 
+    - make tab go to next field?
+    FIELD ACTION BUTTONS:
+        - move actions to fields with attributes like "isEnabled" and enabledMethod
+
+
+IMAGES:
+    - image resizing (adjust jpg compression until <= size target)
+
+CLEANUP:
+    -- use View postfix consistently
+
+
+NICE:
+    - add ID by left arrow?
+    - support a ID specific theme? colors? fonts?
+
+--- DOC NOTES ---------
+
+SYNCING
+
+DB -> MODEL -> VIEW (db loads on start or model access, view loads on access)
+DB <- MODEL -> VIEW (model code auto detects changes and calls sync to view and DB)
+DB    MODEL <- VIEW (event code explicitly calls sync)
+
+--- FEEDS ---
+
+BMTweet - BMObjectMessage
+BMTweetRowView (non fixed height)
+peer id: pubkey-bloomFilterOfSubscriptions-syncEstimate
+
+
+
+

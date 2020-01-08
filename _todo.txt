@@ -1,0 +1,1016 @@
+
+TODO:
+
+	- support accepts subnode drop onto link node
+	
+	Notes: 
+	Underlying datastructure for Hypercard and spreadsheets, are tables.
+	Hypercard has customized row editors and is focused on search, 
+	while spreadsheets are focused on calculation. 
+	
+	
+	tap-tap-hold drag to copy vs 
+	tap-hold drag to move
+	 
+	Self?
+
+	Way to drag selection for copy (vs move)
+	
+	Prototypes
+		- Primitives
+		- 3rd Party
+		- Custom
+		
+	Have CreatorNode add prototypes to list?
+	
+	Have row.desiredWidth include subtitle?
+	add inspector to choose how row desiredWidth calculated - use elipsis if title/subtitle cut off 
+	
+	DateNode needs inspector & fix weird subnodes - are they being stored?
+		- set year range
+		- option to display age?
+		- options on subtitle stuff
+	
+	replace node label slots with title overrides?
+
+	have reorder cause parent nodes to re-render
+	
+	PointerField vs LinkNode?
+	
+	Row delete X in wrong position?
+	
+	Prototypes node
+
+	disable row view gestures while any Text is being edited
+
+	unify node->view sync and node->store sync?
+	
+	ActorNode?
+
+	work on shouldStoreSubnodes - need to override this on a per class (or per instance) basis for
+	nodes like BMDateField
+	
+	simplify getter/setter hooks?
+
+	If a lazy ref can be on a network store, should we move to supporting
+	fully async local store too?
+		- we have finalize and loadFinalize, but we'll need more ways of 
+		making upper level looks into lower level async?
+	Better to make remote store fully synchronous for now.
+	
+
+	get drag in/out of browser copy working again
+	
+	unify willGetSlotName by moving it into Slot? remove from ProtoClass
+
+	//add name caching for willGetSlot, didGetSlotName
+	make sure all _privateName = are preceeded by instance init that calls defineSlot
+	
+	move detect (and other map ops) to use undefined where more appropriate than null
+
+	Update Volunutary site to say project is on hold.
+	Move Notepad repo.
+	Come up with Notepad/Sketchpad name
+     
+	have SlotGroup which manages privateName, getter, and setter?
+	move Slot/slots into base Object? How to ensure init is called? Do we want it called on all Arrays, etc?
+	
+	
+	
+	add shouldSelfTest to Object prototype to support runnign all tests?
+	
+	FINALIZATION
+
+		// called on all objects
+		- scheduleFinalize // Object just calls finalize(), BMNode schedules finalize
+		- finalize
+
+		- didLoadFromStore
+
+		- scheduleLoadFinalize
+		- loadFinalize
+		
+		
+	CONSIDER
+	support unloading lazy references? Subnodes array should only ever be 
+	referenced by owner node, so it's always safe to unload it
+	how to remove from activeObjects unless we can be sure no references are held?
+	Store.activeObjectsReferencingObject(anObject), using refPids
+	BMNode.unloadSubnodesIfPossible
+	
+	
+	TIMESTAMPS
+	every record has write ts/timeStamp? Should ts be stored in object or is it store dependent?
+	Hold ts only in record. Ask store for *it's* ts for a record.
+
+	change semantics of willGetSlot etc to pass slot instead of slot name
+	
+	RANDOM proxy rebroadcaster? posts any message sent to it (supports list of valid messages?)
+
+ cleanup prepare for first access
+	
+	OPTIMIZATION
+	- move creation of unhooked_ slots to Array 
+	- and implement it's methods using unhooked methods with calls to will+didMutate?
+	- implement a doMutation(aClosure) that pauses mutation callbacks and calls will/didMutate?
+
+	ELEGANCE
+	- cleaner way to handle lazySubnodesCount?
+		- have storeRef able to access Record properties?
+		- Array.lengthForRecord(this.slotNamed("subnodes").storeRef().record())?
+		
+	FEATURES
+	Slot type checking setTypeCheck(aClassName)
+	- copy slots?
+	
+	
+	- remove old BMNode sorting code
+	- with BMNode subnode observer, no longer need didChangeSubnodeList calls?
+	
+	- merge BMFieldSetNode with BMNode?
+	
+	- find how Theme and other stuff is getting into Storage
+
+	- work on didUpdateNode notifications - coalesce?
+
+	- asReadOnly method on array with returns ReadOnlyArray Copy
+	bug: row title / subtitle are sometimes clipped
+	
+	take a close look at .overrideSlot() calls
+	replace "delete a[i]" with a.removeAt(i)
+	replace "a[i] = v" with atPut(i, v)
+
+	- replace old subnode hooks? 
+		- have subnodes array notify node of mutation?
+		- needed to notify views?
+			
+	- fix reordering via drag and drop
+			
+	- review this.overrideSlot("title"...
+
+	- have auto getter/setters check and call super?
+
+	change use of "slot" to mean Slot object and replace other uses (e.g. newSlots) with "property"
+	
+	need to add stored field in initPrototype and then instantiate it in init?
+
+	
+	Field issues:
+	
+		- initPrototype
+			- add slot
+				- set to shouldStore
+				- set initInstance // fields aren't an initInstance - the value is stored in the slot, field is a subnode
+					- init and setup Field
+		- init
+			- Slot.onInstanceInitSlot
+				- init new instance of field
+				- add new instance as subnode ???
+		
+	
+
+	Change Observation target to sender
+	
+	mode onDidEditNode and other parent messages to have parents listen to subnodes
+	
+	ConstructorA
+		.prototype -> PrototypeA
+						constructor -> ConstructorA
+						__proto__ -> Object?
+						slots =
+						
+	
+	
+	- add store check to make sure only one commit is done per event loop?
+				
+	cleanup shared to use typeClass
+	
+	NodeStore:
+		Remove global _ roots and replace with a single root Node.
+	
+	BMNode
+		- need to support array and dict values on slots which can reference nodes
+		  so we can implement Store.pidRefsFromNodeDict
+		
+		- differences between copy and store?
+
+	- fix for BooleanFieldView tab action
+	
+	dragging
+		issues:
+			- interfering with gestures
+		solution:
+			- require special key (C?) to turn on BrowserRow drag out of browser? 
+				- turn on listen to keyboard
+					- on_C_KeyDown, turn on register for dragging
+					- on_C_KeyUp, turn off dragging
+		
+	
+	copying
+	- would be nice to unify store, copy, drag-to-json
+		issues:
+		- what about auto scheduling sync to NodeStore (only do this on StorableNode?)
+	
+
+	BrowserColumn.onDragDestinationDropped
+	- change to insert dropped node and sync instead of inserting view and syncing to node? 
+
+	add canCopy option?
+
+	support copy and link drag
+	
+	long press + option = two finger long press?
+	- mapping of certain keys to more fingers?
+	
+	copying an object
+	
+	StorableNode -> SummaryNode -> MenuNode
+                                   OptionsNode
+								   
+								   
+	- way to present errors in summary (set a message on top node that's presented if any lower nodes have error)
+	- way to clear values in all lower nodes
+	- top node default message for all lower nodes cleared?
+	
+	
+	Prototypes
+	- way to link a top node to it's prototype
+	- special stored property BMStorableNode.viewPrototype
+								  	
+	
+	
+	should text fields be html?
+	
+	
+	- Inspector 
+		- have view inform node when it can stop caching inspector node?
+		- some form of retain/release?
+		- ask NotificationCenter if anyone is watching?
+		- have NotificationCenter send message when watch count goes to zero?
+		
+	- ComputedValueNode
+		- can type equation that can access sibiling or parent slots for variables
+		
+	- OptionNode
+		- if single selection jump back on activing
+	- TextNode store isSelectable
+		- MenuNode store wantsRestOfWidth or wantsFillWidth?
+
+	- bug: undefined showing up for notes in Peer app
+	- bug row content view 1px less height than row?
+	
+	- how to use nodes for viewStyles? Color?
+		- ISSUE: both nodes and views need view styles
+		- ISSUE: loop: viewStyle node needs a viewStyle
+		- SOLUTION: like Nodes can have inspectors - create on access?
+		- NOTE: have viewStyles which can point to others for inheritance?
+		
+	- separate views from rows and drop them into row contentView?
+	
+	
+	- other types: 
+		Name (first middle last)
+		Address
+		Phone Numbers
+		Email Address
+		FB, Twitter,etc ID
+		Map	
+		Credit Card
+		Age
+		Gender
+		Flight Number
+		License
+		Insurance
+		Emergency Contacts
+		
+
+		
+		Price (choice of currency, limit precision)
+		UnitsOfMeasure (Length, Area, Volume, Weight, Mass, Energy)
+		Photo (Full View) fit to view, stretch to fit
+		Link
+		
+	    Forum, Thread, Message
+		WebLink, AppLink
+		
+		Audio, Video
+	
+		Number min, max, isInteger
+		ColorPicker, 
+		Continents, Countries, Cities, 
+		Lat/Long GPS Position
+		
+		Seat (area, row, seat number)
+		Ticket (event, seat, price, name, confirmation #), Flight, Ride, Conference, Event, Dinning
+		Receipt?
+		Person, Employee, Contractor
+		Building, Home, Apartment, Vehicle, Pet, Furniture
+		Dwelling, car Rental
+		Contract, Commitment, Signature, CryptographicSignature
+		Photobook
+
+	- big: setNodeCanEditColumnWidth(true) not working on TextNode
+	- bug: TextAreaFieldRow breaks when dragging in column, or swipe deleting
+	- Browser option to hide column headers?
+	- rename Shelf to LeftShelf?
+	
+	- make inspector for view styles
+	- store/load view styles?
+	- support margin, padding, outline, border for view styles?
+
+	- clean up nodeSubtitleIsChildrenSummary etc storage settings
+	
+	- add options inspector to time and date nodes for formatting
+	
+	Design Nodes & Views
+	
+		Header level?
+		Subtitle
+		Content
+		Footer
+		
+		- support inlining so levels work?
+	
+	
+	Menu
+		
+		- vetically center note
+		- images in summaries? html?
+		
+		
+		
+	DateMenu
+		Year list -> Month list -> Day list -> jump back
+		
+
+	Price -> Amount []
+	         Currency -> USD
+			 			 ...
+						 
+
+    OptionsMenu?
+	
+	- option with count instead of just check
+	- Menu view inlining option?
+	
+	- support for single selection options
+	
+	make sure options work with keyboard
+	- need to tap or hit enter
+	
+	rename scheduleSyncToView to scheduleSyncToViews
+	rename syncToView to syncToViews
+	
+	replace didUpdateView(aView) on BMField with notification system?
+
+	remove use of &gt;, replace with SVG 
+
+    SYNCHRONIZATION OVERVIEW
+    
+	
+    VIEW
+	
+		PUSH to node
+	        UI event (will pass through EventSetListener.onBeforeEvent)
+	        DomView.didEdit (called by view's event handling methods)
+	            tellParents("onDidEdit") - propogate up parentView chain until implemented and returns true
+	        DomView.onDidEdit
+	            <updateSubviews?>
+	            NodeView.scheduleSyncToNode (check to make sure EventSetListener isHandling an Event?)
+	        event returns (through EventSetListener)
+	            EventSetListener.onAfterEvent calls SyncScheduler.fullSyncNow()
+				
+		PULL from node
+			(watches for didUpdateNode notification on it's node)
+			NodeView.didUpdateNode
+			NodeView.scheduleSyncFromNode
+			NodeView.syncFromNode 
+	            < call node setters >
+			
+ 
+    
+    NODE 
+		
+		TO VIEWS
+		
+		TO STORE
+	        didUpdateSlot
+	            (special subnode rule)
+	            scheduleSyncToStore
+	            NodeStore addDirtyObject(this)
+        FROM STORE
+			Type unserializes json from NodeStore record on awake and calls finalize, serializes self to json for
+			when NodeStore loads an object 
+		
+        
+    STORE
+        scheduleStore
+        storeDirtyObjects
+        
+    
+
+    View <- pull from node, push to node -> Node <- pull from storage, push to storage -> Storage
+    pull: View listens to post from Node, schedulesSyncFromNode when heard
+    push: scheduleSyncToNode
+    
+    Drag/Drop Protocol
+
+        TODO
+            - automate Node scheduleSyncToStore instead of making views responsible?
+            - look into "selectThisColumn WARNING: this.browser() === null"
+            - don't allow views to change node?
+            
+        BUG
+        
+            - do we need to syncFromNode for all tellParentViews("didEditNode")?
+                - was this from before didUpdateNode notifications?
+                - probably can stop at first level responsible for syncing with node?
+            
+        - navigate left when holding over left side?
+
+        - finish dragging operation type support (link, copy, move)
+        - finish protocol to accept type of view/node and type of operation
+          - acceptsDropFrom(dragView) // check type and action?
+          - acceptsDropLinkOfNode
+          - acceptsDropCopyOfNode
+          - acceptsD
+                
+        Node: 
+        - acceptsSubnodesOfTypes()
+        - canAddSubnode(aSubnode)
+            
+   Drop Protocol
+   
+            
+            DragView
+                item  // view being dragged
+                source // view from which the drag item is coming (implements dragging source protocol)
+                destinationView (set before completion)
+                
+            - have dragging view set a sourceView on DraggingView (usually it's parent)
+            - send different messages to sourceView than other hoverViews
+            
+            
+            Responsibilities:
+            
+                item:
+                    - get long press that starts drag
+                    - setup DraggingView with item, sourceView
+                    - pass initial event to setup DraggingView pan
+                
+                DragView:
+                    - send all protocol messages to item, source, destination
+                    - animate move to final position or slideback
+                    
+                sourceView:
+                    - open place holder
+                    - hide item?
+                    
+                destination/hover Views
+                
+                    if it just needs to react to hover (e.g. row):
+                        - selects self
+                    
+                    if it accepts drop (e.g. column): 
+                        - open place holder on enter 
+                        - move placeholder on hover
+                        - remove placeholder on exit
+                        - replace placeholder with view on complete
+                    
+            Sent to Source 
+            
+            - onDragSourceBegin
+            - onDragSourceEnter
+            - onDragSourceHover
+            
+            - onDragSourceComplete
+                Replace with:
+                    - onDragSourceDropped
+                    - onDragSourceEnd // sent after drop or cancelled
+                    
+            
+            - onDragSourceExit
+            - onDragSourceCancelled // dropped on a view that doesn't accept it
+            
+            
+            
+            // using these messages avoids a bunch of conditions in the receiver 
+            // the source is repsonsible for completing the drag operation
+            // the destination gets 
+            
+            - onDragSourceMoveToDestination
+            - onDragSourceCopyToDestination
+            - onDragSourceLinkToDestination
+            
+            - onDragSourceMoveToSelf // no onDrop sent?
+            - onDragSourceCopyToSelf
+            - onDragSourceLinkToSelf
+            
+            Sent to Item 
+
+            - onDragItemBegin
+            - onDragItemCancelled
+            - onDragItemComplete
+            
+            Sent to Destination or Hover target 
+            
+            - onDragDestinationEnter
+            - onDragDestinationHover
+            - onDragDestinationExit
+            - onDragDestinationComplete
+            - acceptsDragDestinationComplete
+            
+            - onDragDestinationDrop
+            
+            
+            ------------------
+            
+            start:
+                on source:
+                    - hide dragging view, replace with PlaceHolder
+            hover:
+                - move placeholder
+            exit:
+                on source:
+                    - keep dragging view hidden
+                    - keep placeholder
+                    
+            complete:
+                - if destination is source:
+                    - replace PlaceHolder with dragging view
+                - else
+                    - remove PlaceHolder and dragging view from source
+                    - replace PlaHolder with dragging view in destination
+                        - move node into destination node
+        
+            ------------------
+    
+        Sent from DragView to item:
+
+            - onDragBegin // ask source to prepare, placeholder, etc
+            - onDragCancelled
+            - onDragComplete // sent before dropHoverComplete
+
+
+        Sent from DragView to views it's dragged over:
+
+            - acceptsDropHover // ignored? 
+            - onDropHoverEnter
+            - onDropHoverMove
+            - onDropHoverExit
+            - acceptsDropHoverComplete // sent on drag release over a view, if returns true, will call onDropHoverComplete
+            - onDropHoverComplete // will get item from dragView and deal with transfer
+         
+            - onDropHoverEnd // sent after all animations complete?
+            
+            
+            
+            
+
+    - add type checking
+        - acceptedDropClassNames
+        
+    
+
+
+- demo for making diagrams
+    DiagramView
+    
+    
+- add 
+    - a just text area row
+    - title row?
+
+- replace Win/Window point APIs with Viewport? Move all to Document points?
+    - have EventPoint use document(?) coordinates and implement asViewPortPoint, asDocumentPoint, asPointInView(aView)
+
+Bugs:
+    - source row reappears in source when dragged over not drop area
+    
+    - row moving during placeholder index change isn't covering row width
+    - long-click drag is causing text selections
+        - google it - how to override click drag? stop propogation of click?
+        - keep selection of until tap?
+
+
+        
+        
+BrowserRow hover
+    - nice animations
+        - animate placeholder creation if the column isn't the drag source
+        - shrink placeholder to zero if drag is over middle third of a row (that we can drop on?)
+        - animate close of source placeholder after drop
+        - animate return of dragView to original column on drop cancel?
+    
+    - how to deal with multiple hover targets that accept drag
+    - detect if drag view is on far left/right of browser columns with more columns and back/forward if held there
+    
+    
+Browser
+    - support multi-touch, shift-click, and shift-click-drag multi-selection
+        - prevent selection nav when doing multi-selection
+    - apply long press to whole multi-selection
+        - special dragView for multi-selection
+    - advanced: support pinch on multi-selection to auto create menu and move selection into it
+
+
+
+Inspector
+    - test out inspectors on other elements - fields like "shows title"
+
+- make CloseButton a subclass of ButtonView
+
+- cleanup uses of onTapComplete? support onOneFingerTap, onOneFingerDoubleTap, etc?
+
+- event propogation for gestures - separate onTap from onAlternateTap?
+
+ImageWellFieldRowView
+    key
+    vale -> ImageWellView 
+                subviews -> ImageView 
+                            subviews -> ImageViewImageContainer
+
+column/row features:
+
+- use tab to go to next row
+
+multiple selection?
+select all (command-a?, control-a?)
+copy and paste selected rows?
+
+styles:
+
+    rowItems:
+      title
+      subtitle
+      field key
+      field value 
+      
+        states:
+          unselected 
+          selected
+          disabled
+
+             attributes:
+               font
+               size
+               color
+               background-color
+               opacity
+               border-left, etc
+               border-radius
+               padding?
+               margins?
+      
+
+--------------
+
+need a way to set icon forground colors
+
+turn off arrow key handling by column while editing text field
+
+issue with tap - what if a parent and child view both get a tap?
+- how do we implement an event propogation system like click uses?
+- option: have request activation check to see if the currently activated view is under the requesting on,
+  if so, override it?
+
+BrowserRow title - TextField option for double tap to edit?
+
+
+--------------
+
+Docs.class("name").setDescription = ""
+
+FunctionProto.addDoc("methodName", "")
+
+
+MIRROR
+Do we need inheritance?
+
+View
+
+- nodeMirror() { 
+    const node = this._node
+    if (node && node.nodeMirror) {
+        return node.nodeMirror()
+    }
+    return node
+}
+    
+
+nodeMirror()
+
+- select BMFieldViewRow when clicking on it
+
+- make BrowserRow note view vertically centered
+
+nodeRowLink -> nodeRowLinkMethods?
+defaultNodeRowLinkMethod?
+notification didUpdateDodeRowLinkMethods
+
+OPTION 0
+Keep columns unaware that a node was skipped?
+
+
+OPTION 1
+Let the node manage what the column sees?
+Row (for NodeA) -> select -> Column (for NodeA)
+Row (for NodeA) -> select -> Column (for NodeA.visibleNode())
+
+OPTION 2
+Let the column manage what the column sees?
+Row (for NodeA) -> select -> Column (for NodeA)
+Row (for NodeA) -> select -> Column (for NodeA.visibleNodesOrder()[index])
+
+OPTION 3
+Use compacted column to jump?
+Node 
+- columnCompactsByDefault()
+- compactedColumnDefaultSelectedSubnode()
+
+NodeA.defaultColumnNode() (this or some subnode?)
+
+1. advantages - keeps logic on view side
+                expand animatations 
+                have special button or gesture on row to "uncompact" subnodes
+                keeps paths consistent
+                
+2. disadvantages - need to make Columns navigation aware when it should skip the compacted columns
+
+Will most nodes be "compacted"?
+Can we skip creating that view entirely? If so, just special case paths?
+
+
+Node
+    attributeSlots
+    subnodes
+    
+Node
+    subnodes attributes
+             someList
+             anotherList
+    
+node
+    subnodes
+    inspectorNode FieldSetNode
+    node can return 
+
+
+
+Node -> NodeView
+
+A Field is a Node that represents a Slot.
+A Slot has key, value, and other properties (canEdit, valid values, validator, etc)
+
+Field 
+    key / isVisible / isEditable / error
+    value / isVisible / isEditable / error
+    isValid
+    target
+    valueSetter
+    valueGetter
+
+A Field is a Row that is a container for a 
+
+
+Move from .node() to nodeMirror() ?
+
+
+NODES -> RowViews
+
+Action 
+Boolean
+Date
+Image
+Menu (title, subtitle)
+Number (range, format, useSlider?) 
+Options 
+Pointer
+TextField
+TextArea
+Color
+
+-----------
+
+**Fields**
+- make statefull and have them sync with parent nodes if they have targetGetter/setters (Done?)
+BMOptionRow - sends this.parentNode().selectOption(this) when clicked
+
+- a row duplicate feature? (command D? command copy/paste? three finger long press?)
+
+- mode for non white background on fields - persist styles?
+
+- add a default user image, so formatting of messages isn't weird 
+
+- use onShiftClick and two finger long press to inspect a node?
+
+---------------
+
+use control-edge drag or double finger drag to apply to prototype?
+store width hint on parent node's field?
+
+abstract edge drag to resize?
+
+gesture to add subtitle?
+
+
+should we abstract style so we can:
+- unify style and computed style
+- simplify storing and copying style
+- separate style specific helpers (e.g. PX stuff) from DomView 
+
+need generic way to open an inspector for currently focused item?
+e.g. inspect TextField currently editing to change font size
+- multi-finger long tap on touch? function-click with mouse?
+
+protocol to check editability of and store adjusted row size, font size, etc?
+option +, option - to adjust font size of text field being edited
+change font color, bg color, column color settings
+column orientation
+
+copy/paste style
+store/edit style at row prototype level
+
+dynamically add field rows?
+- option-long-click / double-long-press to inspect element to choose field type?
+
+    Node
+        - fields
+        - subnodes (short cuts to an array field
+        
+    A field is a type of node used to represent a property of a node.
+    
+    Field types:
+        Creator     BMCreatorField
+        Button      BMActionNode
+        Boolean     BMBooleanField  
+        Date        BMDateField
+        Text 
+        TextArea    BMTextAreaField
+        Identity    BMIdentityField
+        Number      BMNumberField
+        Time
+        Options (can point to node containing list of options, or it's own local set?)
+        Pointer
+        Array
+        Method?
+        
+        
+prevent onClick when finishing row reording
+
+fix row background /transparent issues
+
+Transitions abstraction work
+
+
+Column darkenUnselectedMode?
+
+--------------------------------------------------
+
+- copy/paste identity private key
+
+-- test gestures on surface pro
+  -- make diagraming app
+  -- test rotation / orientation
+
+-- support for adding/removing field set items, storing result
+-- top shelf
+
+-- double tap to edit BrowserTitledRow title?
+	- method to add double tap gesture on TextArea/Textfield?
+
+-- ability to switch themes
+-- dark theme for BMFieldRow when not in FieldSet?
+
+-- Dragging from anywhere in window
+	- standard long press with 2-3 fingers to drag?
+	- ask if target allows drag
+	- determine type of drag (move/copy) using modifier keys and or finger count?
+	- determine how to display drag view - some common standard of icon + label?
+	- create drag view and add to DocumentBody(?)
+	- add PanGesture to drag view, start panBegin
+	- onPanMove calcs new location using PanGesture downPositionInTarget (add helper method for calc?)
+	
+	Drop areas
+	- default to highlight drop area if allowed but can override 
+
+	ColumnBrowser onDrop
+	- check if allows drop and specific drop type
+	- create empty browser row 
+	- pause syncing from model
+
+- support multi BrowserRow selection
+
+-------------------------
+
+select all text on double touch tap
+
+copy / paste /duplicate rows?
+
+------------------------
+
+BrowserColumn -> *Row
+Node          -> subitems 
+         node.subitems -> BMField
+
+Network Node.subitems = [BMBooleanField
+
+
+
+BrowserColumn? / BrowserInspector? / BrowserColumn?
+
+BrowserInspector subclass of BrowserColumn that rev
+
+
+
+----------------
+
+NEW VIEWS
+
+    Grid View?
+        Top Shelf
+        TableView Browser Column
+        Horizontal Browser Column
+
+    Hierarchical Column view
+
+
+    Grid Browser Column
+
+-------------------------------------
+
+-- support for adding/removing field set items, storing result
+
+-- double tap to edit BrowserTitledRow title?
+	- method to add double tap gesture on TextArea/Textfield?
+
+-- dark theme for BMFieldRow when not in FieldSet?
+
+-- Dragging from anywhere in window
+	- standard long press with 2-3 fingers to drag?
+	- ask if target allows drag
+	- determine type of drag (move/copy) using modifier keys and or finger count?
+	- determine how to display drag view - some common standard of icon + label?
+	- create drag view and add to DocumentBody(?)
+	- add PanGesture to drag view, start panBegin
+	- onPanMove calcs new location using PanGesture downPositionInTarget (add helper method for calc?)
+	
+	Drop areas
+	- default to highlight drop area if allowed but can override 
+
+	ColumnBrowser onDrop
+	- check if allows drop and specific drop type
+	- create empty browser row 
+	- pause syncing from model
+
+    - support multi BrowserRow selection 
+        - UI interaction?
+            - mouse: hold command or shift and click
+            - touch: hold one item and tap on or slide across others?
+
+    -- ability to switch dark/light theme
+
+-----------------------------------------------------------------------------------
+
+    Browser features:  
+        - copy/paste on rows?
+        - double tap to inline edit row text?
+        - pinch apart to add row?
+        - tap on column to add row?
+        - stretch to add row?
+
+    How to expand/compact Node to edit properties?
+      - icons at top? gesture? 
+         - hold click on top? 
+         - hold click on column divider?
+         - horizontal pinch apart columns - pinch together to compact?  
+         - how to visually display option to edit?
+
+    TopShelf vs LeftShelf? TopDragShelf?
+    - compact/expand top shelf?
+
+    Small fixes:
+    - figure out when to use white/dark theme on rows consistently
+    - use dark for non property navigation?
+
+    Editing a Node:
+    - when adding row, insert a special place-holder row and navigate into it
+      next column shows options for which type of row to add, navigate to choice
+      further options and "ok" displayed to complete action?
+    - how to edit an existing row? special click to navigate to it's options?
+
+    - some way to collapse/expand Node to show all properties or treat some default as it's subnodes? 
+
+    Questions:
+    - How to distinguish meta edit operations? 
+    - When is it normal or meta?
+
+--------------------
+
+Simple -> Start the app and commicate (on all devices)
+Minimum features -> Feed, Chat, Groups, Events, Friends
+Fast -> No one will use a slow App
+Ownership -> All self-owned data can be removed from everywhere
+Decentralized -> And no one else can remove your data
+Privacy -> With simple sharing control
+
