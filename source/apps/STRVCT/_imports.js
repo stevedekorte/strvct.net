@@ -1,9 +1,9 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
-    "Notepad.js",
+    "STRVCT.js",
 ])
 
 ResourceLoader.pushDoneCallback( () => {
-    Notepad.shared().run()
+    STRVCT.shared().run()
 })

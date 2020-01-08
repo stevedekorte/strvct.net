@@ -2,12 +2,12 @@
 
 /*
     
-    Notepad
+    STRVCT
 
 
 */
 
-window.Notepad = class Notepad extends App {
+window.STRVCT = class STRVCT extends App {
     
     initPrototype () {
         // model
@@ -21,7 +21,7 @@ window.Notepad = class Notepad extends App {
 
     init () {
         super.init()
-        this.setName("Notepad")
+        this.setName("STRVCT")
         this.setVersion([0, 0, 0, 0])
         return this
     } 
@@ -48,7 +48,7 @@ window.Notepad = class Notepad extends App {
         //root.removeAllSubnodes()
 
         const myLists = this.defaultStore().rootInstanceWithPidForProto("Notepad", BMMenuNode);
-        myLists.setTitle("Notepad")
+        myLists.setTitle(this.name())
         this.addLinkSubnode(myLists)
 
 
