@@ -339,6 +339,16 @@ window.BMNode = class BMNode extends ProtoClass {
         // for subclasses to override
     }
 
+    rootNode () {
+        const pn = this.parentNode()
+        if (pn) {
+            return pn.rootNode()
+        }
+        return this
+    }
+
+    // subnodes
+
     subnodeCount () {
         return this._subnodes.length
     }

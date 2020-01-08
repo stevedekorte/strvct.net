@@ -20,7 +20,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)
-        this.setupSubnodes()
+        this.scheduleSelfFor("setupSubnodes", 0)
         this.setCanDelete(true)
     }
 
@@ -59,18 +59,25 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         ]
     }
 
+    visibleNameForTypeName (name) {
+        name = name.sansPrefix("BM")
+        name = name.sansSuffix("Field")
+        name = name.sansSuffix("Node")
+        return name
+    }
+
     primitiveSubnodes () {
         const primitiveNodes = this.thisClass().fieldTypes().map((typeName) => {
-            let name = typeName
-            name = name.sansPrefix("BM")
-            name = name.sansSuffix("Field")
-            name = name.sansSuffix("Node")
+            const name = this.visibleNameForTypeName(typeName)
             //const newNode = BMActionNode.clone()
-            //newNode.setTitle(name).setTarget(this).setMethodName("didChoose").setInfo(typeName)
+            const newNode = BMActionNode.clone()
+            newNode.setTitle(name).setTarget(this).setMethodName("didChoose").setInfo(typeName)
 
+            /*
             const newNode = BMNode.clone()
             newNode.setTitle(name) //.setActionTarget(this).setAction("didChoose")
             newNode._createTypeName = typeName
+            */
             return newNode
         })
 
@@ -79,9 +86,20 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
 
     setupSubnodes () {
         this.addSubnodes(this.primitiveSubnodes())
+        
+        const app = this.rootNode()
+        const protos = app.firstSubnodeWithTitle("Prototypes")
+        const newSubnodes = protos.subnodes().map((sn) => {
+            const newNode = BMActionNode.clone()
+            newNode.setTitle(sn.title()).setTarget(this).setMethodName("didChooseSubnode").setInfo(sn)
+            return newNode
+        })
+        this.addSubnodes(newSubnodes)
+
         return this
     }
 
+    /*
     onRequestSelectionOfDecendantNode (aNode) {
         const typeName = aNode._createTypeName
         if (typeName) {
@@ -89,6 +107,14 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         }
         return true
     }
+    */
+
+   didChooseSubnode (actionNode) {
+        const proto = actionNode.info()
+        const newNode = proto.duplicate()
+        this.parentNode().replaceSubnodeWith(this, newNode)
+        return this
+   }
 
     didChoose (actionNode) {
         const typeName = actionNode.info()
@@ -112,7 +138,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         newNode.setCanDelete(true)
         newNode.setNodeCanInspect(true)
         newNode.setNodeCanEditTitle(true)
-        //this.column().selectThisColumn()
 
         this.parentNode().replaceSubnodeWith(this, newNode)
 

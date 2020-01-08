@@ -3,6 +3,11 @@
 Type.typedArrayTypeNames().forEach((name) => {
     const aClass = window[name]
 
+    if (Type.isUndefined(aClass)) {
+        console.warn("TypeArray-store error: missing type " + name)
+        return
+    }
+
     Object.defineSlots(aClass, {
         instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store
             const obj = new this.thisClass()(aRecord.length)

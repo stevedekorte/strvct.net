@@ -20,7 +20,8 @@ html, body {
     zoom: 100%;
 
     font-family: AppRegular, sans-serif; /* for font fallback while loading */    
-    font-size: 13px;
+    /*font-size: 13px;*/
+    font-size: 15px;
     text-size-adjust: 100%; 
 
     /*
