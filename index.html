@@ -20,20 +20,35 @@
 
 	        html, body {
 	        	height: 100%;
-	        	width: auto;
+				width: auto;
 	        }
 
 	        html {
 	        	color: #f4f4ec;
 	        	font-family:  "DefaultFont", "Helvetica", sans-serif;
-				font-size: 20ex;
+				font-size: 8em;
 	        	-webkit-font-smoothing: antialiased;
 	        }
 
 	        body {
 	        	background: #191919;
-	        	margin: 0;
+				margin: 0;
+				overflow: hidden;
 	        }
+
+			@keyframes fadeInOpacity {
+				0% { opacity: 0.1; };
+				100% { opacity: 1; };
+			} 
+
+			@keyframes fadeInBorder {
+				0% { 
+					border-color: #222; 
+				};
+				100% { 
+					border-color: #444; 
+				};
+			} 
 
 			.container { 
 				height: 100%;
@@ -51,26 +66,6 @@
 				transform: translateY(-50%);
 			}
 
-			.inside {
-				text-shadow: 0px 0px 30px #fff;
-			}
-
-			.outside {
-				text-shadow: 0px 0px 2px #fff;
-
-			}
-			.box {
-				border: 4px solid #555;
-				height: 170px;
-				padding-left: 50px;
-				padding-right: 50px;
-				padding-top: 50px;
-				padding-bottom: 50px;
-
-				width: 600px;
-				margin: 0 auto;
-
-			}
 
 			.boxTop {
 				border-left: 4px solid;
@@ -78,35 +73,103 @@
 				border-top: 0px;
 				border-bottom: 0px;
 
-				padding-left: 50px;
-				padding-right: 50px;
 
-
-				width: 600px;
-				height: 130px;
+				width: 708px;
+				height: 60px;
 				margin: 0 auto;
 
-				border-image: linear-gradient(to top, #333, rgba(0,0,0,0));
+				border-image: linear-gradient(to top, #555, rgba(0,0,0,0));
 				border-image-slice: 10;
+
+				animation-name: fadeInOpacity;
+				animation-duration: 3s;
+				animation-fill-mode: both;
+				animation-timing-function: ease-in-out;
 			}
 
 			.boxBottom {
+				display: inline-block;
 				border-left: 4px solid;
 				border-right: 4px solid;
 				border-top: 0px;
 				border-bottom: 0px;
 
-				padding-left: 50px;
-				padding-right: 50px;
+				width: 708px;
+				height: 60px;
 
-				width: 600px;
-				height: 130px;
-				margin: 0 auto;
-
-				border-image: linear-gradient(to bottom, #333, rgba(0,0,0,0));
+				border-image: linear-gradient(to bottom, #555, rgba(0,0,0,0));
 				border-image-slice: 10;
+				margin: 0px;
+
+				animation-name: fadeInOpacity;
+				animation-duration: 3s;
+				animation-fill-mode: both;
+				animation-timing-function: ease-in-out;
+			}
+
+
+			.box {
+				display: inline-block;
+				border: 4px solid #555;
+				text-align: center;
+
+				line-height: 278px;;
+				width: 708px;
+				height: 278px;
+				animation-name: fadeInBorder;
+				animation-duration: 3s;
+				animation-fill-mode: both;
+				animation-timing-function: ease-in-out;
+			}
+
+			.boxLeft {
+				display: inline-block;
+				border-left: 0px;
+				border-right: 0px;
+				border-top: 4px solid;
+				border-bottom: 4px solid;
+
+				line-height: 278px;;
+				width: 60px;
+				height: 278px;
+
+				border-image: linear-gradient(to left, #555, rgba(0,0,0,0));
+				border-image-slice: 10;
+
+				animation-name: fadeInOpacity;
+				animation-duration: 3s;
+				animation-fill-mode: both;
+				animation-timing-function: ease-in-out;
+			}
+
+			.boxRight {
+				display: inline-block;
+				border-left: 0px;
+				border-right: 0px;
+				border-top: 4px solid;
+				border-bottom: 4px solid;
+
+				line-height: 278px;;
+				width: 60px;
+				height: 278px;
+
+				border-image: linear-gradient(to right, #555, rgba(0,0,0,0));
+				border-image-slice: 10;
+
+				animation-name: fadeInOpacity;
+				animation-duration: 3s;
+				animation-fill-mode: both;
+				animation-timing-function: ease-in-out;
 			}
 		
+			.text {
+				/*
+				animation-name: fadeInOpacity;
+				animation-duration: 0.3s;
+				animation-fill-mode: both;
+				animation-timing-function: ease-in-out;
+				*/
+			}
 		</style>
 	</head>
 	<body>
@@ -114,8 +177,8 @@
 		<div class="container">
 		  <div class="vertical-center">
 			  <div class=boxTop></div>
-			  <div class="box">STRVCT</div>
-			  <div class=boxBottom></div>
+			  <div style="width:100%; border: 0px dashed red;  padding: 0px; margin: 0px;"><div class="boxLeft">&nbsp;</div><div class="box"><span class="text">STRVCT</span></div><div class="boxRight">&nbsp;</div></div>
+			  <div style="height:30px; width:100%; text-align:center;"><div class=boxBottom>&nbsp;</div></div>
 		  </div>
 		</div>
 		
