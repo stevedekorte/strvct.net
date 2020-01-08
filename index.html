@@ -60,16 +60,51 @@
 
 			}
 			.box {
-				width: fit-content;
-				height: fit-content;
-				border: 4px solid  #555;
+				border: 4px solid #555;
+				height: 170px;
 				padding-left: 50px;
 				padding-right: 50px;
 				padding-top: 50px;
 				padding-bottom: 50px;
 
-				width: 50%;
-  margin: 0 auto;
+				width: 600px;
+				margin: 0 auto;
+
+			}
+
+			.boxTop {
+				border-left: 4px solid;
+				border-right: 4px solid;
+				border-top: 0px;
+				border-bottom: 0px;
+
+				padding-left: 50px;
+				padding-right: 50px;
+
+
+				width: 600px;
+				height: 130px;
+				margin: 0 auto;
+
+				border-image: linear-gradient(to top, #333, rgba(0,0,0,0));
+				border-image-slice: 10;
+			}
+
+			.boxBottom {
+				border-left: 4px solid;
+				border-right: 4px solid;
+				border-top: 0px;
+				border-bottom: 0px;
+
+				padding-left: 50px;
+				padding-right: 50px;
+
+				width: 600px;
+				height: 130px;
+				margin: 0 auto;
+
+				border-image: linear-gradient(to bottom, #333, rgba(0,0,0,0));
+				border-image-slice: 10;
 			}
 		
 		</style>
@@ -78,9 +113,9 @@
 
 		<div class="container">
 		  <div class="vertical-center">
-			  <div class="box">
-				STRVCT
-			</div>
+			  <div class=boxTop></div>
+			  <div class="box">STRVCT</div>
+			  <div class=boxBottom></div>
 		  </div>
 		</div>
 		
