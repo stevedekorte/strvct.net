@@ -102,7 +102,8 @@
     border-radius: 7px;
 	background-color: red;
 	color: white;
-	font-size: 10px;
+	/*font-size: 10px;*/
+	font-size: 70%;
 	font-family: AppSemiBold;
 	padding-left: 4px;
 	padding-right: 4px;

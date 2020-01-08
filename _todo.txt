@@ -1,21 +1,17 @@
 
 TODO:
 
+	- Slot properties: 
+		- isInspectable
+		- something like rootInstanceWithPidForProto
+
 	- support accepts subnode drop onto link node
 	
 	Notes: 
 	Underlying datastructure for Hypercard and spreadsheets, are tables.
 	Hypercard has customized row editors and is focused on search, 
 	while spreadsheets are focused on calculation. 
-	
-	
-	tap-tap-hold drag to copy vs 
-	tap-hold drag to move
-	 
-	Self?
-
-	Way to drag selection for copy (vs move)
-	
+		
 	Prototypes
 		- Primitives
 		- 3rd Party

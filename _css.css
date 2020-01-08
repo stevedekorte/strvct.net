@@ -21,7 +21,7 @@ html, body {
 
     font-family: AppRegular, sans-serif; /* for font fallback while loading */    
     /*font-size: 13px;*/
-    font-size: 15px;
+    font-size: 17px;
     text-size-adjust: 100%; 
 
     /*
@@ -84,8 +84,10 @@ html * :active {
     -moz-outline-style: none; 
 }
     
+
 /*
 :root {
-    font-size: calc(1vw + 1vh + .5vmin);
+    font-size: calc(1vw + 1vh + 2.5vmin);
 }
 */
+

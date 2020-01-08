@@ -251,7 +251,8 @@
 	width: auto;
 	text-transform: uppercase;
 	text-align: left;
-	font-size: 12px;
+	/*font-size: 12px;*/
+	font-size: 85%;
 }
 
 .BMImageWellFieldValueView {

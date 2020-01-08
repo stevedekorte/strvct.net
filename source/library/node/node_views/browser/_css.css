@@ -280,9 +280,10 @@
     /*
     max-height: 17px;
     color: rgba(255, 255, 255, 0.5);
-  */
-    
+        
     font-size: 11px;
+    */
+    font-size: 80%;
     font-weight: normal;
 
     text-align: left;
@@ -305,7 +306,8 @@
     position: absolute;
     right: 20px;
     top: 24px;
-    font-size: 11px;
+    /*font-size: 11px;*/
+    font-size: 80%;
     font-weight: normal;
     white-space: nowrap;
     text-align: right;
@@ -340,6 +342,7 @@
     max-height: 20px;
     
     font-size: 24px;
+    /*font-size: 200%;*/
     line-height: 20px;
     font-weight: normal;
     white-space: nowrap;

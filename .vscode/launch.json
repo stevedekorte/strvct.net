@@ -7,7 +7,7 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Local Index File",
+            "name": "Launch FILE index",
             "url": "file:///${workspaceFolder}/index.html",
             "webRoot": "${workspaceFolder}",
             "preLaunchTask": "create index.html"
@@ -15,8 +15,18 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Local Incremental File",
+            "name": "Launch FILE incremental",
             "url": "file:///${workspaceFolder}/index_incremental.html",
+            "webRoot": "${workspaceFolder}"
+        },
+
+
+        
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch localhost HTTP incremental",
+            "url": "http://127.0.0.1:8080/index_incremental.html",
             "webRoot": "${workspaceFolder}"
         },
 
@@ -28,26 +38,21 @@
             "webRoot": "${workspaceFolder}"
         },
 
+
+
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch voluntary.app",
-            "url": "https://voluntary.app",
-            "webRoot": "${workspaceFolder}"
-        },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Launch http://127.0.0.1:8080/index_incremental.html",
-            "url": "http://127.0.0.1:8080/index_incremental.html",
+            "name": "Launch site HTTPS",
+            "url": "https://strvct.net",
             "webRoot": "${workspaceFolder}"
         },
 
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch voluntary.app incremental",
-            "url": "https://voluntary.app/index_incremental.html",
+            "name": "Launch site HTTPS incremental",
+            "url": "https://strvct.net/index_incremental.html",
             "webRoot": "${workspaceFolder}"
         },
 

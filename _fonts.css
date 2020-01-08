@@ -30,6 +30,12 @@
     src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf");
 }
 
+@font-face {
+	font-family: "AppMono";
+    src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf");
+    font-display: auto;
+}
+
 /*
 @font-face {
     font-family: "AppLight";
@@ -93,8 +99,10 @@
 }
 */
 
+/*
 @font-face {
 	font-family: "AppMono";
     src: url("resources/fonts/Courier Prime/Courier Prime Code.ttf");
     font-display: auto;
 }
+*/
