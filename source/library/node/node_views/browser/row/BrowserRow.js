@@ -544,7 +544,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
             cb.setMinAndMaxWidthAndHeight(size)
             cb.verticallyAlignAbsoluteNow()
             cb.setRight(size * 2)
-            //cb.setTop(size * 2)
             cb.setZIndex(0)
             this.setDragDeleteButtonView(cb)
         }
@@ -821,17 +820,16 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setVisibility("visible")
     }
 
+    /*
     onDragItemBegin (aDragView) {
-        //this.column().onSubviewDragBegin(aDragView)
     }
 
     onDragItemCancelled (aDragView) {
-        //this.column().onSubviewDragCancelled(aDragView)
     }
 
     onDragItemDropped (aDragView) {
-        //this.column().onSubviewDragComplete(aDragView)
     }
+    */
 
     onDragRequestRemove () {
         //assert(this.hasParentView()) //
@@ -849,8 +847,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     // --- dropping destination protocol implemented to handle selecting/expanding row ---
 
-    acceptsDropHover () {
-        return this.canDropSelect()
+    acceptsDropHover (dragView) {
+        return this.canDropSelect() || this.acceptsDropHoverComplete(dragView)
     }
 
     onDragDestinationEnter (dragView) {
@@ -860,10 +858,36 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     onDragDestinationHover (dragView) {
+        console.log(this.typeId() + " onDragDestinationHover")
     }
 
     onDragDestinationExit (dragView) {
         this.cancelDropHoverTimeout()
+    }
+
+    // --- dropping on row - usefull for LinkNode? ---
+
+    acceptsDropHoverComplete (dragView) {
+        const node = this.node()
+        if (node && node.nodeAcceptsDrop) {
+            return node.nodeAcceptsDrop(dragView.item().node())
+        }
+    }
+
+
+    onDragDestinationDropped (dragView) {
+        console.log(this.typeId() + " onDragDestinationDropped")
+
+        const itemNode = dragView.item().node()
+
+        const node = this.node()
+        if (itemNode && node && node.nodeDropped) {
+            return node.nodeDropped(itemNode)
+        }
+    }
+
+    dropCompleteDocumentFrame () {
+        return this.frameInDocument()
     }
 
     // ----
@@ -873,11 +897,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     canDropSelect () {
-        if (this.node().title() === "Prototypes") {
+        if (this.node().title() === "Prototypes") { 
             console.log("---")
         }
         return this.node().hasSubnodes() || this.node().nodeCanReorderSubnodes()
     }
+
+    // -----------------
 
     setupDropHoverTimeout () {
         const seconds = this.dropHoverDidTimeoutSeconds()

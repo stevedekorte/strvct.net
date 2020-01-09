@@ -12,7 +12,10 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
     
     initPrototype () {
         this.overrideSlot("title", null).setShouldStoreSlot(true)
-        this.newSlot("linkedNode", null).setShouldStoreSlot(true)
+        this.newSlot("linkedNode", null).setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        
+        const dupSlot = this.newSlot("willDuplicateLinkedObject", false).setShouldStoreSlot(true)
+        dupSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Will duplicate linked object")
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
@@ -30,9 +33,39 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
         super.init()
     }
 
+    nodeAcceptsDrop (aNode) {
+        return true
+    }
+
+    nodeDropped (aNode) {
+        this.setLinkedNode(aNode)
+    }
+
+    duplicate () {
+        const obj = super.duplicate()
+        if (this.willDuplicateLinkedObject()) {
+            const ln = this.linkedNode()
+            if (ln) {
+                obj.setLinkedNode(ln.duplicate())
+            }
+        }
+        return obj
+    }
+
     title () {
         const ln = this.linkedNode()
-        return ln ? ln.title() : null
+        if (ln) {
+            return ln.title()
+        }
+        return "Unlinked"
+    }
+
+    subtitle () {
+        const ln = this.linkedNode()
+        if (ln) {
+            return ln.subtitle()
+        }
+        return "drop row to link"    
     }
 
     /*

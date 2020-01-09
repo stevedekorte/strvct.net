@@ -1,6 +1,17 @@
 
 TODO:
 
+	- need a type of NodeLink that links to a proto and when duplicated, 
+	  duplicates that proto instead of just linking to it
+	  
+	  NodeLink
+	  - willDuplicateLinkedObject slot
+	  
+	  - need a gesture for dragging a link
+		  - hold-drag = move
+		  - tap-hold-drag = copy
+		  - tap-tap-hold-drag = link
+	  
 
 	- move allSlots to allSlotEntries so we can keep them ordered
 	
@@ -38,9 +49,7 @@ TODO:
 	
 	Row delete X in wrong position?
 	
-	Prototypes node
-
-	disable row view gestures while any Text is being edited
+	disable row view gestures while Text is being edited
 
 	unify node->view sync and node->store sync?
 	

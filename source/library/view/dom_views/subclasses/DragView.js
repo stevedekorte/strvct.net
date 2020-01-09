@@ -26,7 +26,7 @@
             // the source is repsonsible for completing the drag operation
             // the DragView will set it's destination slot before calling these
             
-            - onDragSourceMoveToDestination
+            - onDragSourceMoveToDestination 
             - onDragSourceCopyToDestination
             - onDragSourceLinkToDestination
             

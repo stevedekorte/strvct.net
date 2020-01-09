@@ -94,6 +94,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
             newNode.setTitle(sn.title()).setTarget(this).setMethodName("didChooseSubnode").setInfo(sn)
             return newNode
         })
+
+        newSubnodes.push(BMLinkNode.clone())
         this.addSubnodes(newSubnodes)
 
         return this
@@ -146,6 +148,10 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
 
     note () {
         return "&gt;"
+    }
+
+    nodeSummary () {
+        return ""
     }
     
 }.initThisClass()

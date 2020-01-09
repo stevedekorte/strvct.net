@@ -12,11 +12,7 @@ ResourceLoader.pushRelativePaths([
     
     "BrowserFooter.js",
     
-    "BrowserRow.js",
-    "BrowserTitledRow.js",
-    "BrowserRowNote.js",
-    "BrowserRowSubtitle.js",
-    "BrowserRowTitle.js",
-    "BrowserFieldRow.js",
+
+    "row/_imports.js",
     "shelf/_imports.js",
 ])

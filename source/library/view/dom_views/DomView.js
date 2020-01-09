@@ -1917,7 +1917,7 @@ window.DomView = class DomView extends ProtoClass {
                 Error.showCurrentStack()
             }
         } else {
-            console.warn("WARNING: " + this.type() + " removeSubview " + aSubview.type() + " parent element is missing this child element")
+            //console.warn("WARNING: " + this.type() + " removeSubview " + aSubview.type() + " parent element is missing this child element")
         }
  
 

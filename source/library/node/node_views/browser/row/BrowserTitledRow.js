@@ -144,12 +144,21 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     
     makeNoteRightArrow () {
         const nv = this.noteView()
+        
         nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"))        
         nv.setBackgroundSizeWH(10, 10)
+        
         nv.setMinAndMaxWidth(10)
         nv.setMinAndMaxHeight(10)
-        //nv.setOpacity(0.5)
+
+        /*
+        const icon = this.noteSvgIconForName("right-gray")
+        nv.setInnerHTML("")
+        nv.removeAllSubviews()
+        nv.addSubview(icon)
+        */
         return this		
     }
+
     
 }.initThisClass()
