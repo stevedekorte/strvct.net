@@ -1,6 +1,9 @@
 
 TODO:
 
+
+	- move allSlots to allSlotEntries so we can keep them ordered
+	
 	- Slot properties: 
 		- isInspectable
 		- something like rootInstanceWithPidForProto

@@ -22,8 +22,12 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         this.protoAddStoredSlot("backgroundColor")
         */
        
-        this.newSlot("fontSize", null).setShouldStoreSlot(true)
-        this.newSlot("color", null).setShouldStoreSlot(true)
+        const fontSizeSlot = this.newSlot("fontSize", null).setShouldStoreSlot(true)
+        fontSizeSlot.setCanInspect(true).setSlotType("Number").setLabel("Font size")
+
+        const colorSlot = this.newSlot("color", null).setShouldStoreSlot(true)
+        fontSizeSlot.setCanInspect(true).setSlotType("String").setLabel("Color")
+
         this.newSlot("backgroundColor", null).setShouldStoreSlot(true)
 
         this.setShouldStore(true)

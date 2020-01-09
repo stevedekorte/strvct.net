@@ -9,7 +9,7 @@
 window.BMOptionsNode = class BMOptionsNode extends BMField {
     
     initPrototype () {
-        this.newSlot("allowsMultiplePicks", false)
+        this.newSlot("allowsMultiplePicks", false).setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
 
         this.setShouldStore(true)
         this.protoAddStoredSlot("key")
@@ -37,12 +37,6 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         this.setSubnodeProto(BMOptionNode)
     }
 
-    initNodeInspector () {
-        super.initNodeInspector()
-        this.addInspectorField(BMBooleanField.clone().setKey("Multiple picks").setValueMethod("allowsMultiplePicks").setValueIsEditable(true).setTarget(this))
-        return this
-    }
-
     /*
     setValue (v) {
         super.setValue(v)
@@ -50,9 +44,13 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
     }
     */
     
-
-    key () {
-        return this.title()
+    title () {
+        return this.key()
+    }
+    
+    setTitle (s) {
+        this.setKey(s)
+        return this
     }
     
     /*
@@ -119,13 +117,14 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         return "&gt;"
     }
 
-    /*
     setValidValues (values) {        
-        const options = values.map(v => BMOptionNode.clone().setValue(v))
-        this.copySubnodes(options)
+        const options = values.map(v => BMOptionNode.clone().setTitle(v).setValue(v))
+        this.addSubnodes(options)
+        //this.copySubnodes(options)
         return this
     }
 	
+    /*
     validValues () {
         return this.subnodes().map(sn => sn.value())
     }

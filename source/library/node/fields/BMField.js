@@ -48,13 +48,6 @@ window.BMField = class BMField extends BMSummaryNode {
         return this
     }
 
-    initNodeInspector () {
-        super.initNodeInspector()
-        //this.addInspectorField(BMBooleanField.clone().setKey("Summary shows key").setValueMethod("nodeSummaryShowsKey").setValueIsEditable(true).setTarget(this))
-        //this.addInspectorField(BMBooleanField.clone().setKey("Summary shows value").setValueMethod("nodeSummaryShowsValue").setValueIsEditable(true).setTarget(this))
-        return this
-    }
-
     /*
     target () {
         assert(!Type.isNull(this._target)) 

@@ -132,7 +132,7 @@ window.BMNode = class BMNode extends ProtoClass {
         return this.puuid()
     }
 
-    nodeInspector (aField) {
+    nodeInspector () {
         if (!this._nodeInspector) {
             this._nodeInspector = BMNode.clone().setNodeMinWidth(500)
             this.initNodeInspector()
@@ -141,7 +141,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     initNodeInspector () {
-        //this.addInspectorField(aField) // example
+        this.setupInspectorFromSlots()
         return this
     }
 
@@ -149,6 +149,20 @@ window.BMNode = class BMNode extends ProtoClass {
         this.nodeInspector().addSubnode(aField)
         return this
     }
+
+    setupInspectorFromSlots () {
+        const slots = this.thisPrototype().allSlots()
+        const fields = []
+        slots.ownForEachKV((name, slot) => {
+            const field = slot.newInspectorField()
+            if (field) {
+                field.setTarget(this)
+                fields.push(field)
+            }
+        })
+        this.nodeInspector().addSubnodes(fields)
+        return this
+    }    
 
     customizeNodeRowStyles () {
         if (!this.hasOwnProperty("_nodeRowStyles")) {

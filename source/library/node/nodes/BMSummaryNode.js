@@ -15,10 +15,16 @@
 window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
     
     initPrototype () {
-        this.newSlot("nodeSummaryJoiner", " ").setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        this.newSlot("nodeSubtitleIsChildrenSummary", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        this.newSlot("summaryFormat", "value").setShouldStoreSlot(true).setDuplicateOp("copyValue")
-    
+        const joinerSlot = this.newSlot("nodeSummaryJoiner", " ").setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        joinerSlot.setCanInspect(true).setSlotType("String").setLabel("Summary joiner")
+
+        const childSummarySlot = this.newSlot("nodeSubtitleIsChildrenSummary", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        childSummarySlot.setCanInspect(true).setSlotType("Boolean").setLabel("Subtitle is children summary")
+
+        const formatSlot = this.newSlot("summaryFormat", "value").setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        formatSlot.setCanInspect(true).setSlotType("String").setLabel("Summary format")
+        formatSlot.setValidValues(["none", "key", "value", "key value", "value key"])
+
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 
@@ -30,18 +36,11 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         super.init()
     }
 
-    initNodeInspector () {
-        super.initNodeInspector()
-        this.addInspectorField(BMStringField.clone().setKey("Summary joiner").setValueMethod("nodeSummaryJoiner").setValueIsEditable(true).setTarget(this))
-        this.addInspectorField(BMBooleanField.clone().setKey("Subtitle is children summary").setValueMethod("nodeSubtitleIsChildrenSummary").setValueIsEditable(true).setTarget(this))
-        this.addInspectorField(this.summaryFormatOptionsNode())
-        return this
-    }
-
     didUpdateSlotSummaryFormat () {
         this.didUpdateNode()
     }
 
+    /*
     summaryFormatOptionsNode () {
         const sm = BMOptionsNode.clone().setKey("Summary format").setValueMethod("summaryFormat").setValueIsEditable(true).setTarget(this)
         sm.setTitle("Summary format *")
@@ -52,7 +51,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             sm.addSubnode(BMOptionNode.clone().setTitle(format))
         })
         return sm
-    }
+    }*/
 
     summaryKey () {
         return this.title()

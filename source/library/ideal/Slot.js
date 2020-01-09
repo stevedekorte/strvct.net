@@ -103,6 +103,38 @@ window.ideal.Slot = class Slot {
         this.simpleNewSlot("validDuplicateOps", new Set(["nop", "copyValue", "duplicate"])) 
         this.simpleNewSlot("comment", null)
         this.simpleNewSlot("isPrivate", false)
+
+         // a string value, eg: "Boolean", "String", "Number" - can be used to create inspector
+         this.simpleNewSlot("slotType", null)
+         this.simpleNewSlot("canInspect", false)
+         this.simpleNewSlot("label", null) // visible label on inspector
+         this.simpleNewSlot("validValues", null) // used for options field and validation
+         this.simpleNewSlot("allowsMultiplePicks", false)
+    }
+
+    newInspectorField () {
+        const slotType = this.slotType() 
+        if (slotType && this.canInspect()) {
+            let fieldName = "BM" + slotType + "Field"
+            if (this.validValues()) {
+                fieldName = "BMOptionsNode"
+            }
+            const proto = window[fieldName]
+            if (proto) {
+                const field = proto.clone().setKey(this.name()).setValueMethod(this.name()).setValueIsEditable(true)
+                
+                if (this.label()) {
+                    field.setKey(this.label())
+                }
+
+                if (this.validValues()) {
+                    field.setValidValues(this.validValues())
+                    field.setAllowsMultiplePicks(this.allowsMultiplePicks())
+                }
+                return field
+            }
+        }
+        return null
     }
 
     init () {

@@ -38,13 +38,6 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     }
 
     /*
-    initNodeInspector () {
-        super.initNodeInspector()
-        return this
-    }
-    */
-
-    /*
     didLoadFromStore () {
         super.didLoadFromStore()
         return this

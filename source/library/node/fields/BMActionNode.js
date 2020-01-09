@@ -12,7 +12,7 @@
 window.BMActionNode = class BMActionNode extends BMStorableNode {
     
     initPrototype () {
-        this.overrideSlot("title", null).setShouldStoreSlot(true)
+        this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String")
         this.newSlot("methodName", null).setShouldStoreSlot(true)
         this.newSlot("info", null).setShouldStoreSlot(true)
         this.newSlot("isEnabled", true).setShouldStoreSlot(true)
@@ -29,16 +29,6 @@ window.BMActionNode = class BMActionNode extends BMStorableNode {
     setTitle (s) {
         super.setTitle(s)
         return this
-    }
-
-    initNodeInspector () {
-        super.initNodeInspector()
-
-        const titleField = BMField.clone().setKey("title").setValueMethod("title").setValueIsEditable(true).setTarget(this)
-        this.nodeInspector().addSubnode(titleField)
-
-        // enabled
-        // shows title
     }
 
     canDoAction () {
