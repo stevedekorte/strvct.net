@@ -4,15 +4,8 @@ ResourceLoader.pushRelativePaths([
     "_css.css",
     "HashCommand.js",
     "BrowserView.js",
-    "BrowserColumn.js",
-    "BrowserColumnGroup.js",
     
-    "BrowserHeader.js",
-    "BrowserHeaderAction.js",
-    
-    "BrowserFooter.js",
-    
-
+    "column/_imports.js",
     "row/_imports.js",
     "shelf/_imports.js",
 ])
