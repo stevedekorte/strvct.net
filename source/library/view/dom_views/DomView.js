@@ -3249,7 +3249,7 @@ window.DomView = class DomView extends ProtoClass {
         const pv = this.parentView()
         if (pv) {
             this.setPosition("absolute")
-            const parentHeight = pv.calcHeight() // computedHeight?
+            const parentHeight = pv.computedHeight() //pv.calcHeight() // computedHeight?
             const height = this.computedHeight()
 
             //console.log("parentHeight: ", parentHeight)

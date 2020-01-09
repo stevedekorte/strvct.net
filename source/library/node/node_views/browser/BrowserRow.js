@@ -544,6 +544,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             cb.setMinAndMaxWidthAndHeight(size)
             cb.verticallyAlignAbsoluteNow()
             cb.setRight(size * 2)
+            //cb.setTop(size * 2)
             cb.setZIndex(0)
             this.setDragDeleteButtonView(cb)
         }
