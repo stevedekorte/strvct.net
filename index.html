@@ -1,186 +1,211 @@
 <!doctype html>
 <html>
-	<head>
 
-		<meta charset="utf-8">
-		<title></title>
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
-		
-		<style>
+<head>
 
-			@font-face {
-            	font-family: "DefaultFont";
-            	src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf") 
-        	}
+	<meta charset="utf-8">
+	<title></title>
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
 
-			@font-face {
-            	font-family: "DefaultFontThin";
-            	src: url("resources/fonts/Blender Pro/Blender Pro Thin.ttf") 
-        	}
+	<style>
+		@font-face {
+			font-family: "DefaultFont";
+			src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf")
+		}
 
-	        html, body {
-	        	height: 100%;
-				width: auto;
-	        }
+		@font-face {
+			font-family: "DefaultFontThin";
+			src: url("resources/fonts/Blender Pro/Blender Pro Thin.ttf")
+		}
 
-	        html {
-	        	color: #f4f4ec;
-	        	font-family:  "DefaultFont", "Helvetica", sans-serif;
-				font-size: 8em;
-	        	-webkit-font-smoothing: antialiased;
-	        }
+		html,
+		body {
+			height: 100%;
+			width: auto;
+		}
 
-	        body {
-	        	background: #191919;
-				margin: 0;
-				overflow: hidden;
-	        }
+		html {
+			color: #f4f4ec;
+			font-family: "DefaultFont", "Helvetica", sans-serif;
+			font-size: 10vw;
+			-webkit-font-smoothing: antialiased;
+		}
 
-			@keyframes fadeInOpacity {
-				0% { opacity: 0.1; };
-				100% { opacity: 1; };
-			} 
+		body {
+			background: #191919;
+			margin: 0;
+			overflow: hidden;
+		}
 
-			@keyframes fadeInBorder {
-				0% { 
-					border-color: #222; 
-				};
-				100% { 
-					border-color: #444; 
-				};
-			} 
-
-			.container { 
-				height: 100%;
-				width: 100%;
-				position: relative;
+		@keyframes fadeInOpacity {
+			0% {
+				opacity: 0.1;
 			}
 
-			.vertical-center {
-				width: 100%;
-				text-align: center;
-				margin: 0;
-				position: absolute;
-				top: 50%;
-				-ms-transform: translateY(-50%);
-				transform: translateY(-50%);
+			;
+
+			100% {
+				opacity: 1;
 			}
 
+			;
+		}
 
-			.boxTop {
-				border-left: 4px solid;
-				border-right: 4px solid;
-				border-top: 0px;
-				border-bottom: 0px;
-
-
-				width: 708px;
-				height: 60px;
-				margin: 0 auto;
-
-				border-image: linear-gradient(to top, #555, rgba(0,0,0,0));
-				border-image-slice: 10;
-
-				animation-name: fadeInOpacity;
-				animation-duration: 3s;
-				animation-fill-mode: both;
-				animation-timing-function: ease-in-out;
+		@keyframes fadeInBorder {
+			0% {
+				border-color: #222;
 			}
 
-			.boxBottom {
-				display: inline-block;
-				border-left: 4px solid;
-				border-right: 4px solid;
-				border-top: 0px;
-				border-bottom: 0px;
+			;
 
-				width: 708px;
-				height: 60px;
-
-				border-image: linear-gradient(to bottom, #555, rgba(0,0,0,0));
-				border-image-slice: 10;
-				margin: 0px;
-
-				animation-name: fadeInOpacity;
-				animation-duration: 3s;
-				animation-fill-mode: both;
-				animation-timing-function: ease-in-out;
+			100% {
+				border-color: #444;
 			}
 
+			;
+		}
 
-			.box {
-				display: inline-block;
-				border: 4px solid #555;
-				text-align: center;
+		.container {
+			height: 100%;
+			width: 100%;
+			position: relative;
+		}
 
-				line-height: 278px;;
-				width: 708px;
-				height: 278px;
-				animation-name: fadeInBorder;
-				animation-duration: 3s;
-				animation-fill-mode: both;
-				animation-timing-function: ease-in-out;
-			}
+		.vertical-center {
+			width: 100%;
+			text-align: center;
+			margin: 0;
+			position: absolute;
+			top: 50%;
+			-ms-transform: translateY(-50%);
+			transform: translateY(-50%);
+		}
 
-			.boxLeft {
-				display: inline-block;
-				border-left: 0px;
-				border-right: 0px;
-				border-top: 4px solid;
-				border-bottom: 4px solid;
 
-				line-height: 278px;;
-				width: 60px;
-				height: 278px;
+		.boxTop {
+			border-left: 4px solid;
+			border-right: 4px solid;
+			border-top: 0px;
+			border-bottom: 0px;
 
-				border-image: linear-gradient(to left, #555, rgba(0,0,0,0));
-				border-image-slice: 10;
 
-				animation-name: fadeInOpacity;
-				animation-duration: 3s;
-				animation-fill-mode: both;
-				animation-timing-function: ease-in-out;
-			}
+			width: auto;
+			height: 60px;
 
-			.boxRight {
-				display: inline-block;
-				border-left: 0px;
-				border-right: 0px;
-				border-top: 4px solid;
-				border-bottom: 4px solid;
+			border-image: linear-gradient(to top, #555, rgba(0, 0, 0, 0));
+			border-image-slice: 10;
 
-				line-height: 278px;;
-				width: 60px;
-				height: 278px;
+			animation-name: fadeInOpacity;
+			animation-duration: 3s;
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
 
-				border-image: linear-gradient(to right, #555, rgba(0,0,0,0));
-				border-image-slice: 10;
+		.boxBottom {
+			border-left: 4px solid;
+			border-right: 4px solid;
+			border-top: 0px;
+			border-bottom: 0px;
 
-				animation-name: fadeInOpacity;
-				animation-duration: 3s;
-				animation-fill-mode: both;
-				animation-timing-function: ease-in-out;
-			}
-		
+			width: auto;
+			height: 60px;
+
+			border-image: linear-gradient(to bottom, #555, rgba(0, 0, 0, 0));
+			border-image-slice: 10;
+			margin: 0px;
+
+			animation-name: fadeInOpacity;
+			animation-duration: 3s;
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
+
+		.box {
+			border: 4px solid #555;
+			text-align: center;
+
+			padding: 50px;
+			animation-name: fadeInBorder;
+			animation-duration: 3s;
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
+
+		.boxLeft {
+			border-left: 0px;
+			border-right: 0px;
+			border-top: 4px solid;
+			border-bottom: 4px solid;
+
+			width: 60px;
+			height: auto;
+
+			border-image: linear-gradient(to left, #555, rgba(0, 0, 0, 0));
+			border-image-slice: 10;
+
+			animation-name: fadeInOpacity;
+			animation-duration: 3s;
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
+
+		.boxRight {
+			border-left: 0px;
+			border-right: 0px;
+			border-top: 4px solid;
+			border-bottom: 4px solid;
+
+			width: 60px;
+			height: auto;
+
+			border-image: linear-gradient(to right, #555, rgba(0, 0, 0, 0));
+			border-image-slice: 10;
+
+			animation-name: fadeInOpacity;
+			animation-duration: 3s;
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
+
+		/*
 			.text {
-				/*
 				animation-name: fadeInOpacity;
 				animation-duration: 0.3s;
 				animation-fill-mode: both;
 				animation-timing-function: ease-in-out;
-				*/
 			}
-		</style>
-	</head>
-	<body>
+				*/
+	</style>
+</head>
 
-		<div class="container">
-		  <div class="vertical-center">
-			  <div class=boxTop></div>
-			  <div style="width:100%; border: 0px dashed red;  padding: 0px; margin: 0px;"><div class="boxLeft">&nbsp;</div><div class="box"><span class="text">STRVCT</span></div><div class="boxRight">&nbsp;</div></div>
-			  <div style="height:30px; width:100%; text-align:center;"><div class=boxBottom>&nbsp;</div></div>
-		  </div>
+<body>
+
+	<div class="container">
+		<div class="vertical-center">
+
+			<center>
+				<table style="border-spacing: 0px;">
+					<tr>
+						<td></td>
+						<td class=boxTop></td>
+						<td></td>
+					</tr>
+					<tr>
+						<td class=boxLeft></td>
+						<td class=box>STRVCT</td>
+						<td class=boxRight></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class=boxBottom></td>
+						<td></td>
+					</tr>
+				</table>
+			</center>
 		</div>
-		
-	</body>
+	</div>
+
+</body>
+
 </html>
