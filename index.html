@@ -14,11 +14,6 @@
 			src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf")
 		}
 
-		@font-face {
-			font-family: "DefaultFontThin";
-			src: url("resources/fonts/Blender Pro/Blender Pro Thin.ttf")
-		}
-
 		html,
 		body {
 			height: 100%;
@@ -84,8 +79,8 @@
 
 
 		.boxTop {
-			border-left: 4px solid;
-			border-right: 4px solid;
+			border-left: 0.3vw solid;
+			border-right: 0.3vw  solid;
 			border-top: 0px;
 			border-bottom: 0px;
 
@@ -103,8 +98,8 @@
 		}
 
 		.boxBottom {
-			border-left: 4px solid;
-			border-right: 4px solid;
+			border-left: 0.3vw solid;
+			border-right: 0.3vw solid;
 			border-top: 0px;
 			border-bottom: 0px;
 
@@ -122,10 +117,13 @@
 		}
 
 		.box {
-			border: 4px solid #555;
+			border: 0.3vw solid #555;
 			text-align: center;
 
-			padding: 50px;
+			padding-top: 4vw;
+			padding-bottom: 4vw;
+			padding-left: 8vw;
+			padding-right: 8vw;
 			animation-name: fadeInBorder;
 			animation-duration: 3s;
 			animation-fill-mode: both;
@@ -135,8 +133,8 @@
 		.boxLeft {
 			border-left: 0px;
 			border-right: 0px;
-			border-top: 4px solid;
-			border-bottom: 4px solid;
+			border-top: 0.3vw solid;
+			border-bottom: 0.3vw solid;
 
 			width: 60px;
 			height: auto;
@@ -153,8 +151,8 @@
 		.boxRight {
 			border-left: 0px;
 			border-right: 0px;
-			border-top: 4px solid;
-			border-bottom: 4px solid;
+			border-top: 0.3vw solid;
+			border-bottom: 0.3vw solid;
 
 			width: 60px;
 			height: auto;
@@ -169,13 +167,14 @@
 		}
 
 		/*
-			.text {
-				animation-name: fadeInOpacity;
-				animation-duration: 0.3s;
-				animation-fill-mode: both;
-				animation-timing-function: ease-in-out;
-			}
-				*/
+		.text {
+			animation-name: fadeInOpacity;
+			animation-duration: 0.3s;
+			animation-fill-mode: both;
+			animation-timing-function: ease-in-out;
+		}
+		*/
+		
 	</style>
 </head>
 
