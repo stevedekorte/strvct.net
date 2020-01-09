@@ -20,7 +20,7 @@ window.BMApplet = class BMApplet extends BMStorableNode {
     } 
 
     sharedStoredInstance () {
-        return this.defaultStore().rootInstanceWithPidForProto(this.type(), this)
+        return this.defaultStore().rootSubnodeWithTitleForProto(this.type(), this)
     }
 
     handleAppMsg (aMessage) {

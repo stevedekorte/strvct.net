@@ -6,7 +6,7 @@ TODO:
 	
 	- Slot properties: 
 		- isInspectable
-		- something like rootInstanceWithPidForProto
+		- something like rootSubnodeWithTitleForProto
 
 	- support accepts subnode drop onto link node
 	

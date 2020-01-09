@@ -23,7 +23,7 @@ window.BMConnection = class BMConnection extends BMNode {
         this.setTitle("Connection")
         this.setNodeMinWidth(200)
 
-        //this.setServers(this.defaultStore().rootInstanceWithPidForProto("_servers", BMRServers))
+        //this.setServers(this.defaultStore().rootSubnodeWithTitleForProto("_servers", BMRServers))
         //this.addSubnode(this.servers())
         
         const con = navigator.connection || navigator.mozConnection || navigator.webkitConnection

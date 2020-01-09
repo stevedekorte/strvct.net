@@ -28,7 +28,8 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         const colorSlot = this.newSlot("color", null).setShouldStoreSlot(true)
         fontSizeSlot.setCanInspect(true).setSlotType("String").setLabel("Color")
 
-        this.newSlot("backgroundColor", null).setShouldStoreSlot(true)
+        const bgColorSlot = this.newSlot("backgroundColor", null).setShouldStoreSlot(true)
+        bgColorSlot.setCanInspect(true).setSlotType("String").setLabel("Background color")
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
@@ -54,14 +55,6 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         this.setNodeColumnStyles(BMViewStyles.clone())
         //this.setNodeRowStyles(BMViewStyles.clone())
         this.customizeNodeRowStyles().setToBlackOnWhite().selected().setBackgroundColor("red")
-    }
-
-    initNodeInspector () {
-        super.initNodeInspector()
-        this.addInspectorField(BMNumberField.clone().setKey("Font size").setValueMethod("fontSize").setValueIsEditable(true).setTarget(this))
-        this.addInspectorField(BMStringField.clone().setKey("color").setValueMethod("color").setValueIsEditable(true).setTarget(this))
-        this.addInspectorField(BMStringField.clone().setKey("Background color").setValueMethod("backgroundColor").setValueIsEditable(true).setTarget(this))
-        return this
     }
 
     /*

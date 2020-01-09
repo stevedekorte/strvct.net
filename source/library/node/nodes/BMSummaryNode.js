@@ -21,6 +21,9 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         const childSummarySlot = this.newSlot("nodeSubtitleIsChildrenSummary", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
         childSummarySlot.setCanInspect(true).setSlotType("Boolean").setLabel("Subtitle is children summary")
 
+        const newLineSlot = this.newSlot("hasNewlineAferSummary", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        newLineSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Has new line after summary")
+
         const formatSlot = this.newSlot("summaryFormat", "value").setShouldStoreSlot(true).setDuplicateOp("copyValue")
         formatSlot.setCanInspect(true).setSlotType("String").setLabel("Summary format")
         formatSlot.setValidValues(["none", "key", "value", "key value", "value key"])
@@ -76,25 +79,30 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         let v = this.summaryValue()
         const f = this.summaryFormat()
         const j = this.nodeSummaryJoinerOut()
+        let end = ""
+        
+        if (this.hasNewlineAferSummary()) {
+            end = "<br>"
+        }
 
         if (Type.isNull(v)) {
             v = ""
         }
 
         if (f === "key") { 
-            return k
+            return k + end
         }
     
         if (f === "value") { 
-            return v
+            return v + end
         }
 
         if (f === "key value") { 
-            return k + j + v
+            return k + j + v + end
         }
 
         if (f === "value key") { 
-            return v + j + k
+            return v + j + k + end
         }
 
         return ""

@@ -43,16 +43,14 @@ window.STRVCT = class STRVCT extends App {
     // --- setup model ---
 
     setupModel () {     
-        let root = this.defaultStore().rootObject()
+        const root = this.defaultStore().rootObject()
         console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
         //root.removeAllSubnodes()
 
-        const myLists = this.defaultStore().rootInstanceWithPidForProto("Notepad", BMMenuNode);
-        myLists.setTitle(this.name())
+        const myLists = this.defaultStore().rootSubnodeWithTitleForProto(this.name(), BMMenuNode);
         this.addLinkSubnode(myLists)
 
-
-        const prototypes = this.defaultStore().rootInstanceWithPidForProto("Prototypes", BMMenuNode);
+        const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMMenuNode);
         prototypes.setTitle("Prototypes")
         prototypes.setNodeCanReorderSubnodes(true)
         this.addLinkSubnode(prototypes)

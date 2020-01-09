@@ -665,7 +665,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
 
     // ---------------------------
 
-    rootInstanceWithPidForProto (aTitle, aProto) {
+    rootSubnodeWithTitleForProto (aTitle, aProto) {
         return this.rootObject().subnodeWithTitleIfAbsentInsertClosure(aTitle, () => aProto.clone())
     }
 

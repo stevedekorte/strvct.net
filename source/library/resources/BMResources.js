@@ -29,7 +29,7 @@ window.BMResources = class BMResources extends BMStorableNode {
 
     setupSubnodes () {
 
-        //this.setThemes(this.defaultStore().rootInstanceWithPidForProto("_themes", BMThemeResources))
+        //this.setThemes(this.defaultStore().rootSubnodeWithTitleForProto("_themes", BMThemeResources))
         this.setThemes(BMThemeResources.shared())
         this.addSubnode(this.themes())
 
