@@ -231,9 +231,9 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
     hasAcceptableKeyboardState () {
         if (!this.allowsKeyboardKeys()) {
-            if (Keyboard.shared().hasKeysDown()) {
+            if (BMKeyboard.shared().hasKeysDown()) {
                 // make exception for shift key since we use it to emulate multi-touch
-                if(Keyboard.shared().shiftKey().isOnlyKeyDown()) {
+                if(BMKeyboard.shared().shiftKey().isOnlyKeyDown()) {
                     return true
                 }
                 return false

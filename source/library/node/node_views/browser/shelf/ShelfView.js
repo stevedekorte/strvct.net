@@ -29,8 +29,8 @@ window.ShelfView = class ShelfView extends NodeView {
     }
         
     appDidInit () {    
-        this._idsObservation = NotificationCenter.shared().newObservation().setName("didChangeIdentities").setObserver(this).watch()
-        this._idObservation = NotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
+        this._idsObservation = BMNotificationCenter.shared().newObservation().setName("didChangeIdentities").setObserver(this).watch()
+        this._idObservation = BMNotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
         
         const lids = PeerApp.shared().localIdentities()
         this.setNode(lids)

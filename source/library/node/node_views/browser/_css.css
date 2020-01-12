@@ -265,6 +265,8 @@
     white-space: nowrap;
     overflow: hidden;
     word-wrap: normal;
+    line-height: 16px;
+    padding-bottom: 2px;
 
     /*border: dashed 1px yellow;*/
 }
@@ -312,6 +314,12 @@
     white-space: nowrap;
     text-align: right;
     text-overflow: ellipsis;
+}
+
+.SvgIconView {
+    position: absolute;
+    right: 20px;
+    top: 24px;
 }
 
 .BrowserRowCloseButtonTopRight {

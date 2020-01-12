@@ -7,12 +7,12 @@
 */
 
 window.BMServerMessage = class BMServerMessage extends ProtoClass {
-    
-    static initThisClass () {
-        this.prototype.initPrototype.apply(this.prototype)
-        Object.defineSlot(this, "_instanceCount", 0)
-        Object.defineSlot(this, "incrementInstanceCount", function () { return this._instanceCount ++ })
-        return this
+
+    static incrementInstanceCount () {
+        if (Type.isUndefined(this._instanceCount)) {
+            Object.defineSlot(this, "_instanceCount", 0)
+        }
+        return this._instanceCount ++
     }
 
     initPrototype () {

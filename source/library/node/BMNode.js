@@ -42,6 +42,7 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("title", null).setDuplicateOp("copyValue")
         this.newSlot("subtitle", null).setDuplicateOp("copyValue")
         this.newSlot("note", null).setDuplicateOp("copyValue")
+        this.newSlot("noteIconName", null).setDuplicateOp("copyValue")
 
         // parent node, subnodes
 
@@ -109,8 +110,8 @@ window.BMNode = class BMNode extends ProtoClass {
     init () {
         super.init()
 
-        this.setDidUpdateNodeNote(NotificationCenter.shared().newNote().setSender(this).setName("didUpdateNode"))
-        this.setShouldFocusSubnodeNote(NotificationCenter.shared().newNote().setSender(this).setName("shouldFocusSubnode"))
+        this.setDidUpdateNodeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didUpdateNode"))
+        this.setShouldFocusSubnodeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("shouldFocusSubnode"))
         this._nodeMinWidth = 180
         
         //this.setNodeColumnStyles(this.sharedNodeColumnStyles())
@@ -289,6 +290,14 @@ window.BMNode = class BMNode extends ProtoClass {
         }
         
         return this._note
+    }
+
+    noteIconName () {
+        if (this.note() === "&gt;") {
+            return "single right caret"
+        }
+
+        this._noteIconName
     }
 
     nodeHeaderTitle () {
@@ -894,7 +903,7 @@ window.BMNode = class BMNode extends ProtoClass {
     // --- notification helpers --- 
 
     watchOnceForNote (aNoteName) {
-        const obs = NotificationCenter.shared().newObservation()
+        const obs = BMNotificationCenter.shared().newObservation()
         obs.setName(aNoteName)
         obs.setObserver(this)
         obs.setIsOneShot(true)
@@ -904,7 +913,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     postNoteNamed (aNoteName) {
-        const note = window.NotificationCenter.shared().newNote()
+        const note = window.BMNotificationCenter.shared().newNote()
         note.setSender(this)
         note.setName(aNoteName)
         note.post()
@@ -936,7 +945,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     onStopObserving () {
-        const isStillObserved = NotificationCenter.shared().hasObservationsForTargetId(this.typeId())
+        const isStillObserved = BMNotificationCenter.shared().hasObservationsForTargetId(this.typeId())
         if (!isStillObserved) {
             this.onNoMoreObservers()
         }

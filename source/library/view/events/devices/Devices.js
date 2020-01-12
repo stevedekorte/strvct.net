@@ -34,7 +34,7 @@ window.Devices = class Devices extends ProtoClass {
     setupIfNeeded () {
         if (!this.isSetup()) {
             Mouse.shared()
-            Keyboard.shared()
+            BMKeyboard.shared()
             TouchScreen.shared()
             //GamePadManager.shared()
             this.setIsSetup(true)

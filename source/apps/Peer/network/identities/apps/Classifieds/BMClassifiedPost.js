@@ -52,8 +52,8 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
         
         this.setObjMsg(BMObjectMessage.clone())
 
-        this._powDoneObs   = NotificationCenter.shared().newObservation().setName("powDone").setObserver(this)
-        this._powUpdateObs = NotificationCenter.shared().newObservation().setName("powUpdate").setObserver(this)
+        this._powDoneObs   = BMNotificationCenter.shared().newObservation().setName("powDone").setObserver(this)
+        this._powUpdateObs = BMNotificationCenter.shared().newObservation().setName("powUpdate").setObserver(this)
 
         this.setActions(["send"])
         this.setCanDelete(true)

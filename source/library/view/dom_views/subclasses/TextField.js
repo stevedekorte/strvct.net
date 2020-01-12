@@ -46,8 +46,8 @@ window.TextField = class TextField extends DomStyledView {
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
         this.formatValue()
 
-        //this.setDidTextInputNote(NotificationCenter.shared().newNote().setSender(this).setName("didTextInput"))
-        //this.setDidTextEditNote(NotificationCenter.shared().newNote().setSender(this).setName("didTextEdit"))
+        //this.setDidTextInputNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextInput"))
+        //this.setDidTextEditNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextEdit"))
 
         return this
     }
@@ -198,7 +198,7 @@ window.TextField = class TextField extends DomStyledView {
     // ------------------
 
     adjustFontSizeWithKeyboard () {
-        const kb = Keyboard.shared()
+        const kb = BMKeyboard.shared()
         const controlDown   = kb.controlKey().isDown()
         const equalSignDown = kb.equalsSignKey().isDown()
         const minusDown     = kb.minusKey().isDown()

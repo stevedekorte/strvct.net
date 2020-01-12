@@ -18,7 +18,7 @@
 */
 
 
-window.Keyboard = class Keyboard extends Device {
+window.BMKeyboard = class BMKeyboard extends Device {
     initPrototype () {
         this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
         this.newSlot("keyboardListener", null)
@@ -326,7 +326,7 @@ window.Keyboard = class Keyboard extends Device {
                 this.debugLog(".onKeyDownCapture " + key.name())
             }
         } else {
-            console.warn("Keyboard.shared() no key found for event ", event)
+            console.warn("BMKeyboard.shared() no key found for event ", event)
         }
             
         return shouldPropogate
@@ -466,7 +466,7 @@ window.Keyboard = class Keyboard extends Device {
     }
 
     downKeyNames () {
-        return Keyboard.shared().currentlyDownKeys().map(k => k.name())
+        return BMKeyboard.shared().currentlyDownKeys().map(k => k.name())
     }
 
     show () {
@@ -512,13 +512,14 @@ window.Keyboard = class Keyboard extends Device {
     }
 
     showEvent (event) {
+        const kb = BMKeyboard.shared()
         console.log("---")
-        console.log("Keyboard.showEvent():")
+        console.log("BMKeyboard.showEvent():")
         console.log("  code: ", event.keyCode)
-        console.log("  name: ", Keyboard.shared().nameForKeyCode(event.keyCode))
-        console.log("  is modifier: ", Keyboard.shared().eventIsJustModifierKey(event))
-        console.log("  modifierNames: ", Keyboard.shared().modifierNamesForEvent(event))
-        console.log("  modsAndKeyName: ", Keyboard.shared().modsAndKeyNameForEvent(event))
+        console.log("  name: ", kb.nameForKeyCode(event.keyCode))
+        console.log("  is modifier: ", kb.eventIsJustModifierKey(event))
+        console.log("  modifierNames: ", kb.modifierNamesForEvent(event))
+        console.log("  modsAndKeyName: ", kb.modsAndKeyNameForEvent(event))
         console.log("---")
     }
     

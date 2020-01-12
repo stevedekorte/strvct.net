@@ -234,7 +234,7 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
                 /*
                 this.(() => " --- processSets # " + count + " --- ")
                 this.debugLog(() => this.description())
-                this.debugLog(() => window.NotificationCenter.shared().notesDescription())
+                this.debugLog(() => window.BMNotificationCenter.shared().notesDescription())
                 this.debugLog(" --- ")
                 */
                 this.processSets()

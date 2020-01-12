@@ -236,7 +236,7 @@ window.DragView = class DragView extends DomStyledView {
     }
 
     currentOperation () {
-        const keyboard = Keyboard.shared()
+        const keyboard = BMKeyboard.shared()
 
         if (keyboard.alternateKey().isDown()) {
             return "copy"

@@ -1,6 +1,8 @@
 
 TODO:
 
+	move BMNode.note to visibleNote so noteIsSubnodeCount() etc is separated from stored value
+
 	- need a type of NodeLink that links to a proto and when duplicated, 
 	  duplicates that proto instead of just linking to it
 	  

@@ -22,7 +22,7 @@ window.BMLocalIdentities = class BMLocalIdentities extends BMStorableNode {
         this.setSubnodeProto(BMLocalIdentity)
         this.setNoteIsSubnodeCount(true)
         
-        this._didChangeIdentitiesNote = NotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentities")
+        this._didChangeIdentitiesNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentities")
         this.setNodeMinWidth(240)
         this.setNodeCanReorderSubnodes(true)
     }

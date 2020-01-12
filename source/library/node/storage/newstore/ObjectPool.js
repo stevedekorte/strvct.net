@@ -92,7 +92,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         this.setLoadingPids(new Set())
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
-        this.setNodeStoreDidOpenNote(window.NotificationCenter.shared().newNote().setSender(this).setName("nodeStoreDidOpen"))
+        this.setNodeStoreDidOpenNote(window.BMNotificationCenter.shared().newNote().setSender(this).setName("nodeStoreDidOpen"))
         this.setIsDebugging(false)
         return this
     }

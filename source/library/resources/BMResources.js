@@ -13,6 +13,7 @@ window.BMResources = class BMResources extends BMStorableNode {
         this.newSlot("fonts", null)
         this.newSlot("sounds", null)
         this.newSlot("images", null)
+        this.newSlot("icons", null)
     }
 
     init () {
@@ -41,6 +42,9 @@ window.BMResources = class BMResources extends BMStorableNode {
 
         this.setImages(BMImageResources.shared())
         this.addSubnode(this.images())
+
+        this.setIcons(BMIconResources.shared())
+        this.addSubnode(this.icons())
 
         return this
     }

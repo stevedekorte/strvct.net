@@ -2,11 +2,11 @@
 
 /*
 
-    Notification
+    BMNotification
 
 */
 
-window.Notification = class Notification extends ProtoClass {
+window.BMNotification = class BMNotification extends ProtoClass {
     initPrototype () {
         this.newSlot("name", null)
         this.newSlot("sender", null)

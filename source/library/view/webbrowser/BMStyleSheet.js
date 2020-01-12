@@ -2,13 +2,13 @@
 
 /*
 
-    StyleSheet
+    BMStyleSheet
 
     const sheet = DocumentBody.shared().styleSheets().first()
     sheet.setSelectorProperty("body", "color", "red")
 */
 
-window.StyleSheet = class StyleSheet extends ProtoClass {
+window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
     
     initPrototype () {
         this.newSlot("sheetElement", null)

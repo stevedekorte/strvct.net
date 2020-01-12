@@ -21,11 +21,6 @@
 
 window.HookedArray = class HookedArray extends Array {
 
-    static initThisClass () {
-        this.prototype.initPrototype.apply(this.prototype)
-        return this
-    }
-
     initPrototype () {
         this.setupMutatorHooks()
     }

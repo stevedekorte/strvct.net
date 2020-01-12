@@ -56,7 +56,7 @@ window.BMNetwork = class BMNetwork extends BMFieldSetNode {
 
     watchIdentities () {
         if (!this._idsObservation) {
-	        this._idsObservation = NotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
+	        this._idsObservation = BMNotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
         }
     }
 
@@ -250,7 +250,7 @@ window.BMNetwork = class BMNetwork extends BMFieldSetNode {
 	
     didChangeIdsBloom () {
         //this.debugLog(".didChangeIdsBloom()")
-        //this._didChangeIdsBloomeNote = NotificationCenter.shared().newNote().setSender(this.typeId()).setName("didChangeIdsBloom")
+        //this._didChangeIdsBloomeNote = BMNotificationCenter.shared().newNote().setSender(this.typeId()).setName("didChangeIdsBloom")
         this.servers().subnodes().forEach((server) => {
             server.reRequestPeerId() 
         })

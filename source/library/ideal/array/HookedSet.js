@@ -13,11 +13,6 @@
 
 window.HookedSet = class HookedSet extends Set {
 
-    static initThisClass () {
-        this.prototype.initPrototype.apply(this.prototype)
-        return this
-    }
-
     initPrototype () {
         this.setupMutatorHooks()
     }

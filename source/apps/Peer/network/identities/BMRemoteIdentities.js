@@ -23,7 +23,7 @@ window.BMRemoteIdentities = class BMRemoteIdentities extends BMStorableNode {
 
         this.setNoteIsSubnodeCount(true)
         //this.setShouldStoreSubnodes(false)
-        this._didChangeIdentitiesNote = NotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentities")
+        this._didChangeIdentitiesNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentities")
         this.watchIdentity()
         this.setNodeMinWidth(240)
     }
@@ -36,7 +36,7 @@ window.BMRemoteIdentities = class BMRemoteIdentities extends BMStorableNode {
 
     watchIdentity () {
         if (!this._idObs) {
-	        this._idObs = NotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
+	        this._idObs = BMNotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
         }
     }
 	

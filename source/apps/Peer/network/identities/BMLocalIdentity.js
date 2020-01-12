@@ -44,7 +44,7 @@ window.BMLocalIdentity = class BMLocalIdentity extends BMKeyPair {
         //console.log("is editable = ", this.profile().fieldNamed("publicKeyString").valueIsEditable())
         this.generatePrivateKey()
         this.setCanDelete(true)
-        this.setDidChangeIdentityNote(NotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentity"))
+        this.setDidChangeIdentityNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentity"))
 
         this.setNodeCanEditTitle(true)
     }

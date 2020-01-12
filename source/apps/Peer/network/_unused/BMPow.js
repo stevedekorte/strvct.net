@@ -50,8 +50,8 @@ window.BMPow = class BMPow extends ProtoClass {
         super.init()
         this.setTargetDifficulty(BMMessages.globalMinDifficulty())
         this.pickRandomPow()
-        this._updateNote = NotificationCenter.shared().newNote().setSender(this).setName("powUpdate")
-        this._doneNote = NotificationCenter.shared().newNote().setSender(this).setName("powDone")
+        this._updateNote = BMNotificationCenter.shared().newNote().setSender(this).setName("powUpdate")
+        this._doneNote = BMNotificationCenter.shared().newNote().setSender(this).setName("powDone")
     }
         
     pickRandomPow () {

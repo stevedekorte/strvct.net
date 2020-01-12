@@ -19,8 +19,8 @@ window.NodeView = class NodeView extends DomStyledView {
     init () {
         super.init()
         //this.superProxy().init()
-        //this.setNodeObservation(NotificationCenter.shared().newObservation().setName("didUpdateNode").setObserver(this))
-        this.setNodeObservation(NotificationCenter.shared().newObservation().setObserver(this)) // observe all
+        //this.setNodeObservation(BMNotificationCenter.shared().newObservation().setName("didUpdateNode").setObserver(this))
+        this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this)) // observe all
         //this.setStyles(BMViewStyles.clone())
         this.updateSubnodeToSubviewMap()
         return this
@@ -56,7 +56,7 @@ window.NodeView = class NodeView extends DomStyledView {
  
     startWatchingNode () {
         if (this.node()) {
-            //console.log("startWatchingNode " + this.node() + " observation count = " + NotificationCenter.shared().observations().length)
+            //console.log("startWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
             this.nodeObservation().setTarget(this.node()).watch()
             //this.node().onStartObserving()
         }
@@ -65,7 +65,7 @@ window.NodeView = class NodeView extends DomStyledView {
        
     stopWatchingNode () {
         if (this.node()) {
-            //console.log("stopWatchingNode " + this.node() + " observation count = " + NotificationCenter.shared().observations().length)
+            //console.log("stopWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
             this.nodeObservation().stopWatching()
             //this.node().onStopObserving()
         }

@@ -12,6 +12,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         this.newSlot("titleView", null)
         this.newSlot("subtitleView", null)
         this.newSlot("noteView", null)
+        this.newSlot("noteIconView", null) // created lazily
         this.newSlot("thumbnailView", null)
     }
 
@@ -19,10 +20,19 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         super.init()
 
         this.setTitleView(this.contentView().addSubview(BrowserRowTitle.clone()))
+        this.titleView().setUsesDoubleTapToEdit(true)
+
         this.setSubtitleView(this.contentView().addSubview(BrowserRowSubtitle.clone()))
         this.setNoteView(this.contentView().addSubview(BrowserRowNote.clone()))
+
+        const icon = SvgIconView.clone()
+        icon.setMinAndMaxWidth(12)
+        icon.setMinAndMaxHeight(15)
+        icon.setFillColor("white")
+        icon.setStrokeColor("white")
+        icon.setOpacity(0.2)
+        this.setNoteIconView(this.contentView().addSubview(icon))
         
-        this.titleView().setUsesDoubleTapToEdit(true)
 
         this.updateSubviews()
         this.setIsSelectable(true)
@@ -73,6 +83,10 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         this.subtitleView().setIsEditable(node ? node.nodeCanEditSubtitle() : false)
         
         if (node) {
+            if (node.title() === "Prototypes") {
+                console.log("---")
+            }
+
             const b = this.isSelected()
             this.titleView().setIsSelected(b)
             this.subtitleView().setIsSelected(b)
@@ -87,16 +101,41 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
                 }
             } 
 
-            if (this.node().note() === "&gt;") {
-                this.noteView().setInnerHTML("")
-                this.makeNoteRightArrow()
+            if (node.noteIconName()) {
+                this.hideNoteView()
+                this.showNoteIconView()
             } else {
-                this.noteView().setString(node.note())
+                this.showNoteView()
+                this.hideNoteIconView()
             }
         }
 
         return this
     }
+
+    // noteView
+
+    showNoteView () {
+        this.noteView().setDisplay("block")     
+        this.noteView().setInnerHTML(this.node().note())
+    }
+
+    hideNoteView () {
+        this.noteView().setDisplay("none")     
+    }
+
+    // noteIconView
+
+    showNoteIconView () {
+        this.noteIconView().setDisplay("block")     
+        this.noteIconView().setIconName(this.node().noteIconName()).setOpacity(0.2)
+    }
+
+    hideNoteIconView () {
+        this.noteIconView().setDisplay("none")     
+    }
+
+    // ---
 
     desiredWidth () {
         const w = this.titleView().calcCssWidth()

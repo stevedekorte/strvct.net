@@ -61,12 +61,22 @@ window.ProtoClass = class ProtoClass extends Object {
     
     static initThisClass () {
         if (this.prototype.hasOwnProperty("initPrototype")) {
+            // each class inits it's own prototype, so make sure we only call our own initPrototype()
             this.prototype.initPrototype.apply(this.prototype)
+        }
+
+        if(Type.isUndefined(window[this.type()])) {
+            window[this.type()] = this
+            //console.log(this.type() + ".initThisClass()")
+        } else {
+            const msg = ">>>>>>>>>> Attempt to redefine window['" + this.type() + "']"
+            console.warn(msg)
+            throw new Error(msg)
         }
 
         /*
         //console.log("initThisClass: ", this)
-        if (window.ProtoClass.allClasses().contains(this)) {
+        if (ProtoClass.allClasses().contains(this)) {
             throw new Error("attempt to call initThisClass twice on the same class")
         }
 
@@ -450,9 +460,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
-}
-
-window.ProtoClass.initThisClass() // needed as initThisClass looks at window.ProtoClass
+}.initThisClass() 
 
 
 

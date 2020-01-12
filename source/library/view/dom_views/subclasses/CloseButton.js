@@ -24,6 +24,10 @@ window.CloseButton = class CloseButton extends DomView {
         const iv = SvgIconView.clone().setIconName("close")
         //iv.setDisplay("table-cell") // to center svg
         //iv.setVerticalAlign("middle") // to center svg
+        iv.setTop(0)
+        iv.setLeft(0)
+        iv.setMinAndMaxWidth(10)
+        iv.setMinAndMaxHeight(14)
         iv.setHeight("100%").setWidth("100%")
         iv.setStrokeColor("white")
         iv.setFillColor("white")

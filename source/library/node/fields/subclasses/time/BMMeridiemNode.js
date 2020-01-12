@@ -2,16 +2,17 @@
 
 /*
 
-    BMMonthNode 
+    BMMeridiemNode 
     
 */
 
-window.BMMonthNode = class BMMonthNode extends BMNode {
+window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("month value starts with 1")
     }
 
+    /*
     init () {
         super.init()
 
@@ -88,5 +89,6 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
             }
         }
     }
+    */
     
 }.initThisClass()

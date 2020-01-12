@@ -6,6 +6,6 @@ ResourceLoader.pushRelativePaths([
     "WebBrowserNotifications.js",
     "WebBrowserNotification.js",
     "WebDocument.js",
-    "StyleSheet.js",
+    "BMStyleSheet.js",
 ])
 

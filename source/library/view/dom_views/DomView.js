@@ -1982,13 +1982,6 @@ window.DomView = class DomView extends ProtoClass {
             return this
         }
 
-        /*
-        if (this.type() === "BrowserRowNote") {
-        //if (v !== "&gt;" && v !== "") {
-            this.debugLog(" changing innerHTML from '" + oldValue + "' to '" + v + "'")
-        }
-        */
-
         const isFocused = this.isActiveElementAndEditable()
 
         if (isFocused) {
@@ -2647,9 +2640,9 @@ window.DomView = class DomView extends ProtoClass {
 
     onKeyDown (event) {
         //this.debugLog(" onKeyDown ", event._id)
-        //Keyboard.shared().showEvent(event)
+        //BMKeyboard.shared().showEvent(event)
 
-        const methodName = Keyboard.shared().downMethodNameForEvent(event)
+        const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
         //console.log("onKeyDown methodName: ", methodName)
         this.invokeMethodNameForEvent(methodName, event)
 
@@ -2680,7 +2673,7 @@ window.DomView = class DomView extends ProtoClass {
         let shouldPropogate = true
         //this.debugLog(" onKeyUp ", event._id)
 
-        const methodName = Keyboard.shared().upMethodNameForEvent(event)
+        const methodName = BMKeyboard.shared().upMethodNameForEvent(event)
         //console.log("methodName: ", methodName)
         this.invokeMethodNameForEvent(methodName, event)
 

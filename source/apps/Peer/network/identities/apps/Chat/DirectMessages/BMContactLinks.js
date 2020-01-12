@@ -44,12 +44,12 @@ window.BMContactLinks = class BMContactLinks extends BMStorableNode {
 
     watchIdentities () {
         if (!this._idsObservation) {
-            this._idsObservation = NotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
+            this._idsObservation = BMNotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
         }
     }
 
     unwatchIdentities () {
-        NotificationCenter.shared().removeObserver(this)
+        BMNotificationCenter.shared().removeObserver(this)
         this._idsObservation = null
     }
 

@@ -88,7 +88,11 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
             return this.linkedNode().note()
         }
 
-        return this.nodeRowLink() ? "&gt;" : null
+        return null
+    }
+
+    noteIconName () {
+        return this.nodeRowLink() ? "double right caret" : null
     }
 
     nodeRowLink () {

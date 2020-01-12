@@ -462,7 +462,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     onTapComplete (aGesture) {
         this.setLastTapDate(new Date())
         //this.debugLog(".onTapComplete()")
-        const keyModifiers = Keyboard.shared().modifierNamesForEvent(aGesture.upEvent());
+        const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
         const hasThreeFingersDown = aGesture.numberOfFingersDown() === 3;
         const isAltTap = keyModifiers.contains("Alternate");
     

@@ -529,7 +529,7 @@ window.ideal.Slot = class Slot {
             const oldValue = this[privateName]
             if (oldValue !== newValue) {
                 this[privateName] = newValue
-                const didUpdateSlotNote = NotificationCenter.shared().newNote().setSender(this).setName(noteName)
+                const didUpdateSlotNote = BMNotificationCenter.shared().newNote().setSender(this).setName(noteName)
                 didUpdateSlotNote.post()
             }
             return this

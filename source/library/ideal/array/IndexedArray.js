@@ -35,13 +35,6 @@
 
 window.IndexedArray = class IndexedArray extends HookedArray {
 
-    static initThisClass () {
-        if (this.prototype.hasOwnProperty("initPrototype")) {
-            this.prototype.initPrototype.apply(this.prototype)
-        }
-        return this
-    }
-
     initPrototype () {
     }
 

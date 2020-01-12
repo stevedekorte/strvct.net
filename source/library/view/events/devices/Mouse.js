@@ -121,12 +121,12 @@ window.Mouse = class Mouse extends Device {
     // full event name
 
     downMethodNameForEvent (event) {
-        const s = Keyboard.shared().modsAndKeyNameForEvent(event)
+        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event)
         return "on" + s + "MouseDown"
     }
 
     upMethodNameForEvent (event) {
-        const s = Keyboard.shared().modsAndKeyNameForEvent(event)
+        const s = BMKeyboard.shared().modsAndKeyNameForEvent(event)
         return "on" + s + "MouseUp"
     }
     

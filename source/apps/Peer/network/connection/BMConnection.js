@@ -90,7 +90,7 @@ window.BMConnection = class BMConnection extends BMNode {
     onNetworkInformationChange () {
         //this.debugLog("Connection type changed from " + this.lastConnectionType() + " to " +  this.connectionType(), this.connection());	  
 
-        NotificationCenter.shared().newNote().setSender(this).setName("onNetworkInformationChange").post()
+        BMNotificationCenter.shared().newNote().setSender(this).setName("onNetworkInformationChange").post()
         
         this.updateLastState()            
         this.didUpdateNode()
@@ -105,11 +105,11 @@ window.BMConnection = class BMConnection extends BMNode {
     }
 	
     onNetworkOnline () {
-        NotificationCenter.shared().newNote().setSender(this).setName("onNetworkOnline").post()
+        BMNotificationCenter.shared().newNote().setSender(this).setName("onNetworkOnline").post()
     }
     
     onNetworkOffline () {
-        NotificationCenter.shared().newNote().setSender(this).setName("onNetworkOffline").post()
+        BMNotificationCenter.shared().newNote().setSender(this).setName("onNetworkOffline").post()
     }
 	
     isOnline () {

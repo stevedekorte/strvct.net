@@ -13,11 +13,6 @@
 
 window.HookedMap = class HookedMap extends Map {
 
-    static initThisClass () {
-        this.prototype.initPrototype.apply(this.prototype)
-        return this
-    }
-
     initPrototype () {
         this.setupMutatorHooks()
     }

@@ -2,7 +2,7 @@
 
 /* 
 
-    NotificationCenter
+    BMNotificationCenter
     
     A notification system that queues notifications and waits for the 
     app to return to the event loop (using a timeout) to post them. 
@@ -21,8 +21,8 @@
     
         Instead of passing an object reference for: 
         
-            Observation.setTargetId() and 
-            Notification.setSender()
+            BMObservation.setTargetId() and 
+            BMNotification.setSender()
         
         you can pass a typeId string/number for the object. e.g. the ideal.js 
         assigns each instance a unique typeId.
@@ -35,19 +35,19 @@
     Example use:
  
         // start watching for "changed" message from target object
-        this._obs = NotificationCenter.shared().newObservation().setName("changed").setObserver(this).setTarget(target).watch()
+        this._obs = BMNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setTarget(target).watch()
     
         // start watching for "changedStoredSlot" message from any target object
-        this._obs = NotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).watch()
+        this._obs = BMNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).watch()
 
         // stop watching this observation
         this._obs.stopWatching()
         
         // stop watching all
-        NotificationCenter.shared().removeObserver(this)
+        BMNotificationCenter.shared().removeObserver(this)
         
         // post a notification
-        const note = NotificationCenter.shared().newNote().setSender(this).setName("hello").post()
+        const note = BMNotificationCenter.shared().newNote().setSender(this).setName("hello").post()
 
         // repost same notification
         note.post()
@@ -59,11 +59,11 @@
         until the event loop to end. These will pass the target itself instead of a Notification object.
 
         // call's changedStoredSlot(target) on all listeners for "changedStoredSlot"
-        NotificationCenter.shared().broadcastTargetAndName(this, "changedStoredSlot")
+        BMNotificationCenter.shared().broadcastTargetAndName(this, "changedStoredSlot")
 
 */
 
-window.NotificationCenter = class NotificationCenter extends ProtoClass {
+window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
     initPrototype () {
         this.newSlot("observations", null) // array 
         this.newSlot("notifications", null) // array 
@@ -95,7 +95,7 @@ window.NotificationCenter = class NotificationCenter extends ProtoClass {
     }
 
     newObservation () {
-        return window.Observation.clone().setCenter(this);
+        return BMObservation.clone().setCenter(this);
     }
 
     hasObservationsForTargetId (targetId) {
@@ -188,7 +188,7 @@ window.NotificationCenter = class NotificationCenter extends ProtoClass {
     }
 
     newNote () {
-        return window.Notification.clone().setCenter(this)
+        return BMNotification.clone().setCenter(this)
     }
     
     // --- timeout & posting ---
@@ -296,7 +296,7 @@ window.NotificationCenter = class NotificationCenter extends ProtoClass {
     
     showCurrentNoteStack () {
         if (this.currentNote() === null) {
-            //console.log("NotificationCenter.showCurrentNoteStack() warning - no current post")
+            //console.log("BMNotificationCenter.showCurrentNoteStack() warning - no current post")
         } else {
             console.log("current post sender stack: ", this.currentNote().senderStack())
         }

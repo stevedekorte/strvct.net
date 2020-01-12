@@ -63,7 +63,7 @@ window.GamePad = class GamePad extends Device {
     }
 
     changedButtonIndexTo (index, isDown) {
-        const note = NotificationCenter.shared().newNote().setSender(this)
+        const note = BMNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadButton" + index + (isDown ? "Down" : "Up")) // TODO: optimize
         note.setInfo(isDown)
         note.post()
@@ -95,7 +95,7 @@ window.GamePad = class GamePad extends Device {
     }
 
     changedAxesIndexTo (index, value) {
-        const note = NotificationCenter.shared().newNote().setSender(this)
+        const note = BMNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadAxis" + index + "Changed") // TODO: optimize?
         note.setInfo(value)
         note.post()
@@ -106,7 +106,7 @@ window.GamePad = class GamePad extends Device {
 
     onConnected () {
         this.setIsConnected(true)
-        const note = NotificationCenter.shared().newNote().setSender(this)
+        const note = BMNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadConnected")
         note.post()
         return this
@@ -114,7 +114,7 @@ window.GamePad = class GamePad extends Device {
 
     onDisconnected () {
         this.setIsConnected(false)
-        const note = NotificationCenter.shared().newNote().setSender(this)
+        const note = BMNotificationCenter.shared().newNote().setSender(this)
         note.setName("onGamePadDisconnected")
         note.post()
         return this

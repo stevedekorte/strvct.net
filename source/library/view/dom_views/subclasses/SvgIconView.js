@@ -19,7 +19,7 @@
 */
 
 
-window.SvgIconView = class SvgIconView extends DomStyledView {
+window.SvgIconView = class SvgIconView extends DomView {
     
     initPrototype () {
         this.newSlot("doesMatchParentColor", false)
@@ -32,28 +32,30 @@ window.SvgIconView = class SvgIconView extends DomStyledView {
 
     init () {
         super.init()
+        this.setDivClassName("SvgIconView")
         this.turnOffUserSelect()
         this.setOverflow("hidden")
 
         this.setPosition("absolute")
-        this.setTop(0)
-        this.setLeft(0)
+        //this.setTop(0)
+        //this.setLeft(0)
 
         this.setPadding(0)
         this.setMargin(0)
         
         this.setOverflow("hidden")
         this.setTransition("all 0.2s")
-        this.setIconName("add")
         
         return this
     }
 
     setIconName (name) {
-        const svg = this.svgDict()[name]
+        //const svg = this.svgDict()[name]
+        const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)
 
-        if (svg) {
-            this.setSvgString(svg)
+        console.log(this.type() + ".setIconName('" + name + "')")
+        if (iconNode) {
+            this.setSvgString(iconNode.svgString())
         } else {
             throw new Error("can't find icon '" + name + "'") 
         }
@@ -65,10 +67,18 @@ window.SvgIconView = class SvgIconView extends DomStyledView {
         this._svgString = s
         this.setInnerHTML(s)
         this.updateAppearance()
+        /*
         const style = this.svgElement().style
-        style.position = "absolute"
-        style.top = "0px"
-        style.left = "0px"
+        //this.svgElement().setAttribute("preserveAspectRatio", "xMidYMin slice")
+
+        if (Type.isUndefined(style)) {
+            console.warn("missing style on svgElement")
+        } else {
+            style.position = "absolute"
+            //style.top = "0px"
+            //style.left = "0px"
+        }
+        */
         return this
     }
 
@@ -146,10 +156,11 @@ window.SvgIconView = class SvgIconView extends DomStyledView {
     // svgDict is a hack to work around the (very frustrating) cross site restriction on 
     // loading files 
 
+    /*
     svgDict () {
         const dict = {}
     
-        dict.add = `<svg width="100%" height="100%" viewBox="0 0 401.994 401.994"><path d="M394,154.175c-5.331-5.33-11.806-7.994-19.417-7.994H255.811V27.406c0-7.611-2.666-14.084-7.994-19.414
+        dict["add"] = `<svg width="100%" height="100%" viewBox="0 0 401.994 401.994"><path d="M394,154.175c-5.331-5.33-11.806-7.994-19.417-7.994H255.811V27.406c0-7.611-2.666-14.084-7.994-19.414
         C242.488,2.666,236.02,0,228.398,0h-54.812c-7.612,0-14.084,2.663-19.414,7.993c-5.33,5.33-7.994,11.803-7.994,19.414v118.775
         H27.407c-7.611,0-14.084,2.664-19.414,7.994S0,165.973,0,173.589v54.819c0,7.618,2.662,14.086,7.992,19.411
         c5.33,5.332,11.803,7.994,19.414,7.994h118.771V374.59c0,7.611,2.664,14.089,7.994,19.417c5.33,5.325,11.802,7.987,19.414,7.987
@@ -158,7 +169,7 @@ window.SvgIconView = class SvgIconView extends DomStyledView {
         /></svg>
         `
 
-        dict.close = `<svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 174.239 174.239" style="enable-background:new 0 0 174.239 174.239;" xml:space="preserve">
+        dict["close"] = `<svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 174.239 174.239" style="enable-background:new 0 0 174.239 174.239;" xml:space="preserve">
         <path d="M146.537,1.047c-1.396-1.396-3.681-1.396-5.077,0L89.658,52.849c-1.396,1.396-3.681,1.396-5.077,0L32.78,1.047
        c-1.396-1.396-3.681-1.396-5.077,0L1.047,27.702c-1.396,1.396-1.396,3.681,0,5.077l51.802,51.802c1.396,1.396,1.396,3.681,0,5.077
        L1.047,141.46c-1.396,1.396-1.396,3.681,0,5.077l26.655,26.655c1.396,1.396,3.681,1.396,5.077,0l51.802-51.802
@@ -167,29 +178,19 @@ window.SvgIconView = class SvgIconView extends DomStyledView {
        </svg>
         `
 
-        dict.left = `<svg width="100%" height="100%" viewBox="0 0 512 512">
+        dict["left"] = `<svg width="100%" height="100%" viewBox="0 0 512 512">
         <path d="M 416.00,416.00l-96.00,96.00L 64.00,256.00L 320.00,0.00l 96.00,96.00L 
         256.00,256.00L 416.00,416.00z" ></path>
         </svg>
         `
 
-        /*
-        dict["close-white"] = `<svg x="0px" y="0px" width="100%" height="100%" viewBox="0 0 174.239 174.239">
-        <path d="M146.537,1.047c-1.396-1.396-3.681-1.396-5.077,0L89.658,52.849c-1.396,1.396-3.681,1.396-5.077,0L32.78,1.047
-        c-1.396-1.396-3.681-1.396-5.077,0L1.047,27.702c-1.396,1.396-1.396,3.681,0,5.077l51.802,51.802c1.396,1.396,1.396,3.681,0,5.077
-        L1.047,141.46c-1.396,1.396-1.396,3.681,0,5.077l26.655,26.655c1.396,1.396,3.681,1.396,5.077,0l51.802-51.802
-        c1.396-1.396,3.681-1.396,5.077,0l51.801,51.801c1.396,1.396,3.681,1.396,5.077,0l26.655-26.655c1.396-1.396,1.396-3.681,0-5.077
-        l-51.801-51.801c-1.396-1.396-1.396-3.681,0-5.077l51.801-51.801c1.396-1.396,1.396-3.681,0-5.077L146.537,1.047z" fill="#FFFFFF"/>
-        </svg>
-        `
-        */
 
         dict["right-gray"] = `<svg width="100%" height="100%" viewBox="0 0 306 306">
         <polygon points="94.35,0 58.65,35.7 175.95,153 58.65,270.3 94.35,306 247.35,153" fill="#888"/>
         </svg>
         `
 
-        dict.repost = `<svg width="100%" height="100%" viewBox="0 0 100 100">
+        dict["repost"] = `<svg width="100%" height="100%" viewBox="0 0 100 100">
         <path style="fill:#030104;" d="M24.9,66V39.9H35L17.5,20L0,39.9h10.1V70c0,5.523,4.476,10,10,10H65L52.195,66H24.9z M89.9,60.1V30
         c0-5.523-4.477-10-10-10H35l12.804,14h27.295v26.1H65L82.5,80L100,60.1H89.9z"/>
         </svg>   
@@ -214,5 +215,6 @@ window.SvgIconView = class SvgIconView extends DomStyledView {
         
         return dict
     }
+    */
 
 }.initThisClass()

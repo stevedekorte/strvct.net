@@ -29,12 +29,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     }
 
     /*
-    note () {
-        return "&gt;"
-    }
-    */
-
-    /*
     acceptsSubnodesOfTypes () {
         return this.fieldTypes()
     }
@@ -146,8 +140,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return this
     }
 
-    note () {
-        return "&gt;"
+    noteIconName () {
+        return "single right caret"
     }
 
     nodeSummary () {

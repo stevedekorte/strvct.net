@@ -2,7 +2,7 @@
 
 /*
 
-    Observation
+    BMObservation
 
     An abstraction for a NotificationCenter observation. 
     Holds references to which notification message a given observer is wants
@@ -10,7 +10,7 @@
 
 */
 
-window.Observation = class Observation extends ProtoClass {
+window.BMObservation = class BMObservation extends ProtoClass {
     initPrototype () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("targetId", null) // uniqueId string for target

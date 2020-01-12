@@ -39,7 +39,7 @@ window.BMRemoteIdentity = class BMRemoteIdentity extends BMStorableNode {
         this.profile().fieldNamed("publicKeyString").setValueIsEditable(true)
 		
         this.setCanDelete(true)
-        this._didChangeIdentityNote = NotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentity").setInfo(this)
+        this._didChangeIdentityNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentity").setInfo(this)
     }
     
     nodeThumbnailUrl () {

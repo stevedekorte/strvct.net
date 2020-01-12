@@ -19,13 +19,14 @@ window.BrowserRowTitle = class BrowserRowTitle extends TextField {
 
     init () {
         super.init()
-        //this.setMinAndMaxHeight(17)
         return this
     }
 
+    /*
     row () {
         return this.parentView().parentView()
     }
+    */
 
     selectNextKeyView () {
         /*

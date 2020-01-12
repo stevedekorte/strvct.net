@@ -24,7 +24,7 @@ window.App = class App extends BMNode {
         //Documentation.shared().show()
         //console.log(ProtoClass.subclassesDescription())
 
-        this.setNodeStoreDidOpenObs(window.NotificationCenter.shared().newObservation())
+        this.setNodeStoreDidOpenObs(window.BMNotificationCenter.shared().newObservation())
         this.nodeStoreDidOpenObs().setName("nodeStoreDidOpen").setObserver(this).setTarget(this.defaultStore())
         this.setIsDebugging(true)
     }
@@ -78,7 +78,7 @@ window.App = class App extends BMNode {
         this.showVersion()
 
         //this.postNoteNamed("appDidInit")
-        const note = NotificationCenter.shared().newNote().setSender(this).setName("appDidInit")
+        const note = BMNotificationCenter.shared().newNote().setSender(this).setName("appDidInit")
         note.post()
 
         if (this.runTests) {
