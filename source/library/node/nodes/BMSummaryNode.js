@@ -28,6 +28,12 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         formatSlot.setCanInspect(true).setSlotType("String").setLabel("Summary format")
         formatSlot.setValidValues(["none", "key", "value", "key value", "value key"])
 
+        const subCount = this.overrideSlot("subtitleIsSubnodeCount", false).setDuplicateOp("copyValue").setShouldStoreSlot(true)
+        subCount.setCanInspect(true).setSlotType("Boolean").setLabel("Subtitle is subnode count")
+
+        const noteCount = this.overrideSlot("noteIsSubnodeCount", false).setDuplicateOp("copyValue").setShouldStoreSlot(true)
+        noteCount.setCanInspect(true).setSlotType("Boolean").setLabel("Note is subnode count")
+
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 

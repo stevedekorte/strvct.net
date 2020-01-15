@@ -50,14 +50,14 @@ window.Type = {
 
     allTypeNames: function() {
         return [
-            "Undefined",
+            "Array",
+            "Boolean",
+            "Map",
             "Null",
+            "Number",
+            "Set",
             "String",
             "Symbol",
-            "Number",
-            "Map",
-            "Set",
-            "Array",
             "Int8Array",
             "Uint8Array",
             "Uint8ClampedArray",
@@ -70,6 +70,7 @@ window.Type = {
             "BigInt64Array",
             "BigUint64Array",
             //"TypedArray",
+            "Undefined",
             "Object", // put object last so other types have preference
         ]
     },
@@ -225,6 +226,10 @@ window.Type = {
     // type name
 
     typeName: function(value) {
+        if (value === null) {
+            return "Null"
+        }
+
         if (Type.isObject(value)) {
             //return value.type()
             return value.constructor.name

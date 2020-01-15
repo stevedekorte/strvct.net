@@ -1,6 +1,25 @@
 
 TODO:
 
+	add slot setter checks for SlotType and validValues
+
+	when adding a Boolean, String, Number, Date, Null to JsonArray, turn off show key
+	
+	
+	
+	BMMenuNode option to allow subtitle to be edited
+	
+	ImageWell forgetting image
+
+	tap-tap-hold for link
+	
+	JsonNode that can create JSON structures and import/export
+	
+	ArrayNode (ordered subnodes)
+	DictionaryNode (requires unique subnode titles)
+	
+	Number, String, Null
+
 	move BMNode.note to visibleNote so noteIsSubnodeCount() etc is separated from stored value
 
 	- need a type of NodeLink that links to a proto and when duplicated, 
@@ -14,6 +33,7 @@ TODO:
 		  - tap-hold-drag = copy
 		  - tap-tap-hold-drag = link
 	  
+	  - some way to create a set of menu nodes with a range of names
 
 	- move allSlots to allSlotEntries so we can keep them ordered
 	

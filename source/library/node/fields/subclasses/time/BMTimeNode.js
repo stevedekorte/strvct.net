@@ -33,8 +33,7 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
 
     init () {
         super.init()
-
-
+        this.setNoteIconName("right arrow")
         this.setFormatter(TimeFormatter.clone())
         return this
     }
@@ -62,10 +61,6 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
         }
 
         return "No time selected"
-    }
-
-    note () {
-        return "&gt;"
     }
 
     prepareToSyncToView () {

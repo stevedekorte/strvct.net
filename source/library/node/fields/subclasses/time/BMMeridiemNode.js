@@ -15,6 +15,7 @@ window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     /*
     init () {
         super.init()
+        this.setNoteIconName("right arrow")
 
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
@@ -69,10 +70,6 @@ window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     subtitle () {
         //return this.zeroPaddedMonthNumber()
         return null
-    }
-
-    note () {
-        return "&gt;"
     }
     
     nodeRowLink () {

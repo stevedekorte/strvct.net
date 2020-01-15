@@ -42,7 +42,9 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("title", null).setDuplicateOp("copyValue")
         this.newSlot("subtitle", null).setDuplicateOp("copyValue")
         this.newSlot("note", null).setDuplicateOp("copyValue")
-        this.newSlot("noteIconName", null).setDuplicateOp("copyValue")
+        const nin = this.newSlot("noteIconName", null).setDuplicateOp("copyValue")
+        nin.setCanInspect(true).setLabel("Note icon name").setSlotType("String")
+        nin.setValidValuesClosure(() => BMIconResources.shared().iconNames())
 
         // parent node, subnodes
 
@@ -285,19 +287,12 @@ window.BMNode = class BMNode extends ProtoClass {
     }
     
     note () {
+        //console.log(this.title() + " noteIsSubnodeCount: " + this.noteIsSubnodeCount())
         if (this.noteIsSubnodeCount() && this.subnodesCount()) {
             return this.subnodesCount()
         }
         
         return this._note
-    }
-
-    noteIconName () {
-        if (this.note() === "&gt;") {
-            return "single right caret"
-        }
-
-        this._noteIconName
     }
 
     nodeHeaderTitle () {
@@ -835,6 +830,9 @@ window.BMNode = class BMNode extends ProtoClass {
 
     didUpdateSlotSubnodes (oldValue, newValue) {
         this._subnodes.addMutationObserver(this)
+        if (this._subnodes.contains(null)) {
+            this.setSubnodes(this._subnodes.filter(sn => !(sn === null) ))
+        }
         this._subnodes.forEach(subnode => subnode.setParentNode(this))
         this.didChangeSubnodeList()
         return this

@@ -163,8 +163,8 @@ Object.defineSlots(String.prototype, {
     },
 
     base64Decoded: function () {
-        return new Buffer(String(this), "base64").toString("utf8");
-        //return atob(this);
+        //return new Buffer(String(this), "base64").toString("utf8");
+        return atob(this);
     },
 
     base64UrlDecoded: function () {

@@ -15,7 +15,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
 
     init () {
         super.init()
-        this.setIsRegisteredForDrop(true)
+        this.setIsRegisteredForBrowserDrop(true)
         this.dragUnhighlight()
         this.turnOffUserSelect()
         this.setTransition("all 0.3s")
@@ -125,7 +125,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
         return null
     }
     
-    onDropImageDataUrl (dataURL) {
+    onBrowserDropImageDataUrl (dataURL) {
         this.setImageDataURL(dataURL)
         this.scheduleSyncToNode() //this.syncToNode()
         return this        

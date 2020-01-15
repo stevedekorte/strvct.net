@@ -29,6 +29,7 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
         //this.setNodeUsesColumnBackgroundColor(false)
 
         this.setNodeCanInspect(true) 
+        this.setNoteIconName("right arrow")
     }
 
     init () {
@@ -113,9 +114,7 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     }
     */
     
-    note () {
-        return "&gt;"
-    }
+
 
     didChangeParentNode () {
         this.scheduleSyncToView()

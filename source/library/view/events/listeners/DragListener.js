@@ -20,9 +20,9 @@ window.DragListener = class DragListener extends EventSetListener {
 
     setupEventsDict () {
         // fired on draggable element
-        this.addEventNameAndMethodName("dragstart", "onDragStart");
-        this.addEventNameAndMethodName("drag",      "onDrag");
-        this.addEventNameAndMethodName("dragend",   "onDragEnd");
+        this.addEventNameAndMethodName("dragstart", "onBrowserDragStart");
+        this.addEventNameAndMethodName("drag",      "onBrowserDrag");
+        this.addEventNameAndMethodName("dragend",   "onBrowserDragEnd");
         return this
     }
 

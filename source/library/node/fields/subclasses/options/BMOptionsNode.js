@@ -35,6 +35,7 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         this.addAction("add")
         this.setSummaryFormat("value")
         this.setSubnodeProto(BMOptionNode)
+        this.setNoteIconName("right arrow")
     }
 
     /*
@@ -111,10 +112,6 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
 
     acceptedSubnodeTypes () {
         return [BMOptionNode.type()]
-    }
-    
-    note () {
-        return "&gt;"
     }
 
     setValidValues (values) {        

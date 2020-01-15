@@ -196,7 +196,6 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     updateSingleColumnMode () {
-        //console.log("---")
         //const size = DocumentBody.zoomAdjustedSize()
         //const w = WebBrowserScreen.shared().orientedWidth()
         //const h = WebBrowserScreen.shared().orientedHeight()
@@ -229,7 +228,6 @@ window.BrowserView = class BrowserView extends NodeView {
         // for debugging window resizing
         //WebBrowserWindow.shared().setTitle(size.width + " x " + size.height + " " + (isSingle ? "single" : "multi"))
 
-        //console.log("---")
         return this
     }
 
@@ -363,7 +361,6 @@ window.BrowserView = class BrowserView extends NodeView {
                 theCg.syncFromNode() // causes loop as the last column will clear columns after it 
             }
         }
-        //console.log("---")
 
         return this
     }

@@ -20,10 +20,10 @@ window.DropListener = class DropListener extends EventSetListener {
 
     setupEventsDict () {
         // fired on drop target
-        this.addEventNameAndMethodName("dragover",  "onDragOver"); // must prevent default
-        this.addEventNameAndMethodName("dragenter", "onDragEnter"); // must prevent default
-        this.addEventNameAndMethodName("drop",      "onDrop");
-        this.addEventNameAndMethodName("dragleave", "onDragLeave");
+        this.addEventNameAndMethodName("dragover",  "onBrowserDragOver"); // must prevent default
+        this.addEventNameAndMethodName("dragenter", "onBrowserDragEnter"); // must prevent default
+        this.addEventNameAndMethodName("drop",      "onBrowserDrop");
+        this.addEventNameAndMethodName("dragleave", "onBrowserDragLeave");
         return this
     }
 

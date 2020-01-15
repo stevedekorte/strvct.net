@@ -17,10 +17,6 @@ window.SvgIconNode = class SvgIconNode extends BMNode {
       const icon = SvgIconView.clone().setSvgString(this.svgString())
       return icons
     }
-    
-    note () {
-      return "&gt;"
-    }
 
     noteIconName () {
       return this.title()

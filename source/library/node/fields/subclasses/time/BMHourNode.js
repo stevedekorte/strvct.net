@@ -21,6 +21,8 @@ window.BMHourNode = class BMHourNode extends BMNode {
 
         this.setNodeCanEditTitle(false)
         this.setNodeCanReorderSubnodes(false)
+
+        this.setNoteIconName("right arrow")
     }
 
     setValue (v) {
@@ -48,10 +50,6 @@ window.BMHourNode = class BMHourNode extends BMNode {
 
     subtitle () {
         return null
-    }
-    
-    note () {
-        return "&gt;"
     }
     
     /*

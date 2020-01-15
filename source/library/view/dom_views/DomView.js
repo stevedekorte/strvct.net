@@ -51,7 +51,7 @@ window.DomView = class DomView extends ProtoClass {
         this.setSubviews([])
         this.setupElement()
         this.setEventListenersDict({})
-        //this.setIsRegisteredForDrop(false)
+        //this.setIsRegisteredForBrowserDrop(false)
         //this.setBoxSizing("border-box")
         return this
     }
@@ -2161,11 +2161,11 @@ window.DomView = class DomView extends ProtoClass {
 
     // -- browser dropping ---
 
-    isRegisteredForDrop () {
+    isRegisteredForBrowserDrop () {
         return this.dropListener().isListening()
     }
 
-    setIsRegisteredForDrop (aBool) {
+    setIsRegisteredForBrowserDrop (aBool) {
         this.dropListener().setIsListening(aBool)
         return this
     }
@@ -2176,13 +2176,13 @@ window.DomView = class DomView extends ProtoClass {
 
     // ---------------------
 
-    onDragEnter (event) {
+    onBrowserDragEnter (event) {
         // triggered on drop target
-        console.log("onDragEnter acceptsDrop: ", this.acceptsDrop());
+        console.log("onBrowserDragEnter acceptsDrop: ", this.acceptsDrop());
         //event.preventDefault() // needed?
 
         if (this.acceptsDrop()) {
-            this.onDragOverAccept(event)
+            this.onBrowserDragOverAccept(event)
             event.preventDefault()
             return true
         }
@@ -2191,14 +2191,14 @@ window.DomView = class DomView extends ProtoClass {
         return false;
     }
 
-    onDragOver (event) {
+    onBrowserDragOver (event) {
         // triggered on drop target
-        //console.log("onDragOver acceptsDrop: ", this.acceptsDrop(), " event:", event);
+        //console.log("onBrowserDragOver acceptsDrop: ", this.acceptsDrop(), " event:", event);
         //event.preventDefault() // needed?
         //event.dataTransfer.dropEffect = 'copy';
 
         if (this.acceptsDrop()) {
-            this.onDragOverAccept(event)
+            this.onBrowserDragOverAccept(event)
             event.preventDefault()
             return true
         }
@@ -2207,14 +2207,14 @@ window.DomView = class DomView extends ProtoClass {
         return false;
     }
 
-    onDragOverAccept (event) {
-        //console.log("onDragOverAccept ");
+    onBrowserDragOverAccept (event) {
+        //console.log("onBrowserDragOverAccept ");
         this.dragHighlight()
     }
 
-    onDragLeave (event) {
+    onBrowserDragLeave (event) {
         // triggered on drop target
-        //console.log("onDragLeave ", this.acceptsDrop());
+        //console.log("onBrowserDragLeave ", this.acceptsDrop());
         this.dragUnhighlight()
         return this.acceptsDrop();
     }
@@ -2227,22 +2227,20 @@ window.DomView = class DomView extends ProtoClass {
 
     }
 
-    onDrop (event) {
-        // triggered on drop target
+    onBrowserDrop (event) {
         if (this.acceptsDrop()) {
             //const file = event.dataTransfer.files[0];
             //console.log('onDrop ' + file.path);
-            this.onDataTransfer(event.dataTransfer)
+            this.onBrowserDataTransfer(event.dataTransfer)
             this.dragUnhighlight()
             event.preventDefault();
             return true;
         }
         event.preventDefault();
-
         return false
     }
 
-    onDataTransfer (dataTransfer) {
+    onBrowserDataTransfer (dataTransfer) {
         //console.log('onDataTransfer ', dataTransfer);
 
         if (dataTransfer.files.length) {
@@ -2251,23 +2249,37 @@ window.DomView = class DomView extends ProtoClass {
                 const file = dataTransfer.files[i]
                 //console.log("file: ", file)
 
-                if (!file.type.match("image.*")) {
-                    continue;
+                let onReadMethodName = null
+
+                if (file.type === "text/plain") {
+                    onReadMethodName = "onBrowserDropText"
                 }
 
-                const reader = new FileReader();
-                reader.onload = ((event) => {
-                    this.onDropImageDataUrl(event.target.result)
-                })
-                reader.readAsDataURL(file);
+                if (file.type === "application/json") {
+                    onReadMethodName = "onBrowserDropJson"
+                }
 
+                if (file.type.indexOf("image.") === 0) {
+                    onReadMethodName = "onBrowserDropImageDataUrl"
+                }
+
+                if (onReadMethodName) {
+                    const reader = new FileReader();
+                    reader.onload = ((event) => {
+                        const result = event.target.result
+                        const method = this[onReadMethodName]
+                        if (method) {
+                            method.apply(this, [result])
+                        }
+                    })
+                    reader.readAsDataURL(file);
+                }
             }
         }
-
     }
 
-    onDropImageDataUrl (dataUrl) {
-        console.log("onDropImageDataUrl: ", dataUrl);
+    onBrowserDropImageDataUrl (dataUrl) {
+        console.log("onBrowserDropImageDataUrl: ", dataUrl);
     }
 
     onDropFiles (filePaths) {
@@ -2292,7 +2304,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    onDragStart (event) {
+    onBrowserDragStart (event) {
         // triggered in element being dragged
         // DownloadURL only works in Chrome?
         
@@ -2332,7 +2344,7 @@ window.DomView = class DomView extends ProtoClass {
         return false;
     }
 
-    onDragEnd (event) {
+    onBrowserDragEnd (event) {
         // triggered in element being dragged
         this.dragUnhighlight();
         //console.log("onDragEnd");
@@ -2701,7 +2713,6 @@ window.DomView = class DomView extends ProtoClass {
             //event.stopImmediatePropagation() // prevent other listeners from getting this event
             //console.log("stopImmediatePropagation ")
         }
-        console.log("---")
         return false
     }
 

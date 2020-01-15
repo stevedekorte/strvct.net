@@ -25,10 +25,10 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         this.setSubtitleView(this.contentView().addSubview(BrowserRowSubtitle.clone()))
         this.setNoteView(this.contentView().addSubview(BrowserRowNote.clone()))
 
-        const icon = SvgIconView.clone()
+        const icon = SvgIconView.clone().setDivClassName("NoteIconView")
         icon.setMinAndMaxWidth(12)
         icon.setMinAndMaxHeight(15)
-        icon.setFillColor("white")
+        //icon.setFillColor("white")
         icon.setStrokeColor("white")
         icon.setOpacity(0.2)
         this.setNoteIconView(this.contentView().addSubview(icon))
@@ -83,9 +83,6 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         this.subtitleView().setIsEditable(node ? node.nodeCanEditSubtitle() : false)
         
         if (node) {
-            if (node.title() === "Prototypes") {
-                console.log("---")
-            }
 
             const b = this.isSelected()
             this.titleView().setIsSelected(b)
@@ -108,6 +105,8 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
                 this.showNoteView()
                 this.hideNoteIconView()
             }
+
+
         }
 
         return this
@@ -127,8 +126,19 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     // noteIconView
 
     showNoteIconView () {
-        this.noteIconView().setDisplay("block")     
-        this.noteIconView().setIconName(this.node().noteIconName()).setOpacity(0.2)
+        const v = this.noteIconView()
+        if (v.iconName() != this.node().noteIconName()) {
+            v.setDisplay("block")     
+            v.setIconName(this.node().noteIconName())
+            //v.setDoesMatchParentColor(true)
+
+        }
+        const color = this.currentColor()
+        v.setColor(color)
+        v.setFillColor(color)
+        v.setOpacity(0.95)
+        //console.log( this.node().title() + " - " + color)
+        v.updateAppearance()
     }
 
     hideNoteIconView () {

@@ -19,7 +19,7 @@ window.ImageView = class ImageView extends NodeView {
     init () {
         super.init()
         
-        this.setIsRegisteredForDrop(false)
+        this.setIsRegisteredForBrowserDrop(false)
         
         this.setImageContainer(DomView.clone().setDivClassName("ImageViewImageContainer"))
         this.setWidthPercentage(100)

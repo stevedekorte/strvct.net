@@ -35,7 +35,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.setRowStyles(BMViewStyles.clone().setToWhiteOnBlack())
         //this.rowStyles().selected().setBackgroundColor("red")
 
-        this.setIsRegisteredForDrop(true)
+        this.setIsRegisteredForBrowserDrop(true)
 
         return this
     }
@@ -400,11 +400,11 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         super.syncFromNode()
         
         if (this.node() === null) {
-            this.setIsRegisteredForDrop(false)
+            this.setIsRegisteredForBrowserDrop(false)
             return this
         }
         
-        //this.setIsRegisteredForDrop(this.node().acceptsFileDrop())
+        //this.setIsRegisteredForBrowserDrop(this.node().acceptsFileDrop())
 
         if (selectedIndex === -1) {
             this.browser().clearColumnsGroupsAfter(this.columnGroup()) // TODO: fragile: careful that this doesn't cause a loop...
@@ -1281,31 +1281,43 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return true
     }
 
-    onDrop (event) {
+    onBrowserDropJson (data) {
+        const header = "data:application/json;base64,"
+        assert(data.indexOf(header) === 0)
+        data = data.after(header)
+        data = data.base64Decoded()
+
+        console.log("data = '" + data + "'")
+        let json = null
+
+        try {
+            json = JSON.parse(data)
+        } catch (error) {
+
+        }
+        console.log("drop json = " + JSON.stringify(json, 2, 2) + "")
+
+        //if (this.node().dropJson) {
+            const aNode = BMJsonCreatorNode.nodeForJson(json)
+            this.node().addSubnode(aNode)
+        //}
+    }
+
+    /*
+    onBrowserDrop (event) {
         // triggered on drop target
         if (this.acceptsDrop()) {
-            //const file = event.dataTransfer.files[0];
-            //console.log('onDrop ' + file.path);
-            //this.onDataTransfer(event.dataTransfer)
             this.debugLog(" got drop")
-            const data = event.dataTransfer.getData("text");
-            console.log("drop text = ", data)
-            let json = null
-            try {
-                json = JSON.parse(data)
-                
-            } catch (error) {
-
-            }
-            
+            this.onBrowserDataTransfer(event.dataTransfer)
             this.dragUnhighlight()
             event.preventDefault();
             return true;
         }
-        event.preventDefault();
 
+        event.preventDefault();
         return false
     }
+    */
     
 }.initThisClass()
 

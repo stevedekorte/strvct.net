@@ -16,6 +16,7 @@ window.BMIconResources = class BMIconResources extends BMNode {
 	init () {
 		super.init()
 		this.setTitle("Icons")
+		this.addIcon("empty", null)
 		return this
 	}
 
@@ -31,6 +32,10 @@ window.BMIconResources = class BMIconResources extends BMNode {
 			return node.svgIconView()
 		}
 		return null
+	}
+
+	iconNames () {
+		return this.subnodes().map(sn => sn.title())
 	}
 
 }.initThisClass()

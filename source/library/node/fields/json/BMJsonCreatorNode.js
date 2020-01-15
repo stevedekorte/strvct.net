@@ -2,13 +2,12 @@
 
 /*
 
-    BMCreatorNode
+    BMJsonCreatorNode
     
-    A stand-in node that let's the user select field to replace it with.
 
 */
         
-window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
+window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
@@ -26,33 +25,18 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     }
 
     title () {
-        return "Choose type"
+        return "Choose JSON type"
     }
 
-    /*
-    acceptsSubnodesOfTypes () {
-        return this.fieldTypes()
-    }
-    */
 
     static fieldTypes () {
         return [
-            "BMActionNode", 
             "BMBooleanField", 
-            //"BMDateField", 
-            "BMDateNode",
-            //"BMIdentityField", 
-            "BMImageWellField", 
-            "BMJsonDictionaryNode",
-            "BMJsonArrayNode",
-            "BMMenuNode", 
+            "BMDateNode", // BMDateAndTimeNode?
+            "BMJsonArrayNode", // creator node is BMJsonCreatorNode "Choose Json type"
+            "BMJsonDictionaryNode", 
             "BMNumberField", 
-            "BMOptionsNode",
             "BMStringField",
-            "BMTextAreaField",
-            "BMTextNode",
-            "BMTimeNode",
-            "BMLinkNode",
         ]
     }
 
@@ -83,16 +67,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
 
     setupSubnodes () {
         this.addSubnodes(this.primitiveSubnodes())
-        
-        const app = this.rootNode()
-        const protos = app.firstSubnodeWithTitle("Prototypes")
-        const newSubnodes = protos.subnodes().map((sn) => {
-            const newNode = BMActionNode.clone()
-            newNode.setTitle(sn.title()).setTarget(this).setMethodName("didChooseSubnode").setInfo(sn)
-            return newNode
-        })
-
-        this.addSubnodes(newSubnodes)
 
         return this
     }
@@ -145,5 +119,36 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     nodeSummary () {
         return ""
     }
+
+    static jsonToProtoNameDict () {
+        return {
+            "null" : "BMJsonNullField",
+            "String" : "BMStringField",
+            "Number" : "BMNumberField",
+            //"Date" : "BMDateField",
+            "Boolean" : "BMBooleanField",
+            "Array" : "BMJsonArrayNode",
+            "Object" : "BMJsonDictionaryNode"
+        }
+    }
+
+    static acceptedDropTypes () {
+        return Object.values(this.jsonToProtoNameDict())
+    }
+
+    static nodeForJson(json) {
+        const t = Type.typeName(json)
+        const protoName = this.jsonToProtoNameDict()[t]  
+        if (protoName) {
+            const proto = window[protoName]
+            if (proto) {
+                const instance = proto.clone().setJson(json)
+                return instance
+            }
+        }
+
+        return null
+    }
+
     
 }.initThisClass()

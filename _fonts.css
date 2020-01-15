@@ -10,6 +10,7 @@
         Oher interesting fonts: Blender, Montserrat, MateriaPro, Univ 
 */
 
+/*
 @font-face {
     font-family: "AppLight";
     src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf");
@@ -35,8 +36,9 @@
     src: url("resources/fonts/Blender Pro/Blender Pro Book.ttf");
     font-display: auto;
 }
+*/
 
-/*
+
 @font-face {
     font-family: "AppLight";
     src: url("resources/fonts/PublicSans/PublicSans Light.woff2");
@@ -60,7 +62,13 @@
     src: url("resources/fonts/PublicSans/PublicSans Extra Bold.woff2");
     font-display: auto;
 }
-*/
+
+@font-face {
+	font-family: "AppMono";
+    src: url("resources/fonts/PublicSans/PublicSans Regular.woff2");
+    font-display: auto;
+}
+
 
 /*
 @font-face {

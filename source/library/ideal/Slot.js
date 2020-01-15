@@ -109,6 +109,7 @@ window.ideal.Slot = class Slot {
          this.simpleNewSlot("canInspect", false)
          this.simpleNewSlot("label", null) // visible label on inspector
          this.simpleNewSlot("validValues", null) // used for options field and validation
+         this.simpleNewSlot("validValuesClosure", null) 
          this.simpleNewSlot("allowsMultiplePicks", false)
     }
 
@@ -116,7 +117,7 @@ window.ideal.Slot = class Slot {
         const slotType = this.slotType() 
         if (slotType && this.canInspect()) {
             let fieldName = "BM" + slotType + "Field"
-            if (this.validValues()) {
+            if (this.validValues() || this.validValuesClosure()) {
                 fieldName = "BMOptionsNode"
             }
             const proto = window[fieldName]
@@ -129,6 +130,10 @@ window.ideal.Slot = class Slot {
 
                 if (this.validValues()) {
                     field.setValidValues(this.validValues())
+                    field.setAllowsMultiplePicks(this.allowsMultiplePicks())
+                } else if (this.validValuesClosure()) {
+                    const vv = this.validValuesClosure()()
+                    field.setValidValues(vv)
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks())
                 }
                 return field
@@ -223,9 +228,6 @@ window.ideal.Slot = class Slot {
     }
 
     setShouldStoreSlot (aBool) {
-        if (this.name() === "subnodeProto") {
-            console.log("---")
-        }
         if (this._shouldStoreSlot !== aBool) {
             this._shouldStoreSlot = aBool
             if (aBool) {

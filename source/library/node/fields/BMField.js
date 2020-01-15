@@ -195,5 +195,14 @@ window.BMField = class BMField extends BMSummaryNode {
 
     setNodeSummaryShowsValue () {
     }
+
+    jsonArchive() {
+        return this.value()
+    }
+
+    setJson (json) {
+        this.setValue(json) 
+        return this
+    }
     
 }.initThisClass()

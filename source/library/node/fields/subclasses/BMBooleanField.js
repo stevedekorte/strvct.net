@@ -48,4 +48,14 @@ window.BMBooleanField = class BMBooleanField extends BMField {
         return super.didUpdateNode()
     }
 
+    jsonArchive () {
+        return this.value() ? true : false
+    }
+
+    setJson (json) {
+        assert(Type.isBoolean(json))
+        this.setValue(json) 
+        return this
+    }
+
 }.initThisClass()

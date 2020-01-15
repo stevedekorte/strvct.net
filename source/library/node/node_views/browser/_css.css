@@ -316,10 +316,10 @@
     text-overflow: ellipsis;
 }
 
-.SvgIconView {
+.NoteIconView {
     position: absolute;
     right: 20px;
-    top: 24px;
+    top: 23px;
 }
 
 .BrowserRowCloseButtonTopRight {

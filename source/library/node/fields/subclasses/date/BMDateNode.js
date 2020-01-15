@@ -29,6 +29,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
 
     init () {
         super.init()
+        this.setNoteIconName("right arrow")
     }
 
     hasDate () {
@@ -57,10 +58,6 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         return "No date selected"
     }
 
-    note () {
-        return "&gt;"
-    }
-
     prepareToSyncToView () {
         // called after DateNode is selected
         if (!this.hasSubnodes()) {
@@ -85,6 +82,11 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
             this.parentNode().postShouldFocusSubnode(this)
         }
         return true
+    }
+
+    jsonArchive () {
+        const d = this.jsDate()
+        return d ? d.toString() : null
     }
 
 }.initThisClass()

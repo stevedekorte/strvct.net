@@ -6,5 +6,6 @@ ResourceLoader.pushRelativePaths([
     "DomView.js",
     "DomStyledView.js",
     "subclasses/_imports.js",
+    "BrowserDragAndDrop/_imports.js"
 ])
 

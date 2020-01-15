@@ -14,6 +14,7 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
 
     init () {
         super.init()
+        this.setNoteIconName("right arrow")
 
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
@@ -68,10 +69,6 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
     subtitle () {
         //return this.zeroPaddedMonthNumber()
         return null
-    }
-
-    note () {
-        return "&gt;"
     }
     
     nodeRowLink () {
