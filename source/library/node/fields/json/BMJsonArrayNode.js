@@ -42,6 +42,10 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
         return super.replaceSubnodeWith(oldNode, newNode)
     }
 
+    addSubnode (newNode) {
+        return super.addSubnode(this.prepareSubnode(newNode))
+    }
+
     prepareSubnode (aSubnode) {
         aSubnode.setCanDelete(true)
 
@@ -58,11 +62,7 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
 
     // -------
 
-    copyArchiveDict () {
-        return this.jsonArchive()
-    }
-
-    jsonArchive() {
+    jsonArchive () {
         return this.subnodes().map(sn => sn.jsonArchive())
     }
 
@@ -77,5 +77,14 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
         return this
     }
 
+    getBrowserDragData () {
+        //const json = this.node().copyArchiveDict() 
+        const json = this.jsonArchive() 
+        const bdd = BrowserDragData.clone()
+        bdd.setMimeType("application/json")
+        bdd.setFileName(this.title() + ".json")
+        bdd.setPayload(JSON.stringify(json, null, 4))
+        return bdd
+    }
     
 }.initThisClass()

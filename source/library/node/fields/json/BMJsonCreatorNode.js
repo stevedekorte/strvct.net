@@ -122,7 +122,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
 
     static jsonToProtoNameDict () {
         return {
-            "null" : "BMJsonNullField",
+            "Null" : "BMJsonNullField",
             "String" : "BMStringField",
             "Number" : "BMNumberField",
             //"Date" : "BMDateField",

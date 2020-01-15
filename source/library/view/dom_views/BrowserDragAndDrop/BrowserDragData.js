@@ -18,10 +18,12 @@ window.BrowserDragData = class BrowserDragData extends ProtoClass {
         this.newSlot("payload", "") // non-base64 version
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
     validMimeTypeSet () {
         return new Set([
@@ -43,5 +45,15 @@ window.BrowserDragData = class BrowserDragData extends ProtoClass {
         const td = header + content
         return td
     }
+
+    /*
+    setupForJson (json) {
+        //const bdd = BrowserDragData.clone()
+        this.setMimeType("application/json")
+        //bdd.setFileName(this.title() + ".json")
+        this.setPayload(JSON.stringify(json, null, 4))
+        return this
+    }
+    */
 
 }.initThisClass()

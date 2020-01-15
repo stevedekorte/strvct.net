@@ -44,19 +44,6 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
         // --------------
 
 
-    copyArchiveDict () {
-        return this.jsonArchive()
-    }
-
-    jsonArchive() {
-        const dict = {}
-        this.subnodes().forEach((sn) => {
-            const key = sn.key ? sn.key() : sn.title()
-            const value = sn.jsonArchive()
-            dict[key] = value
-        })
-        return dict
-    }
 
     acceptsAddingSubnode (aSubnode) {
         return BMJsonCreatorNode.acceptedDropTypes().contains(aSubnode.type())
@@ -104,6 +91,27 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
 
         aSubnode.setNodeCanEditTitle(true)
         return aSubnode
+    }
+
+    // ------------
+
+    jsonArchive () {
+        const dict = {}
+        this.subnodes().forEach((sn) => {
+            const key = sn.key ? sn.key() : sn.title()
+            const value = sn.jsonArchive()
+            dict[key] = value
+        })
+        return dict
+    }
+
+    getBrowserDragData () {
+        const json = this.jsonArchive() 
+        const bdd = BrowserDragData.clone()
+        bdd.setMimeType("application/json")
+        bdd.setFileName(this.title() + ".json")
+        bdd.setPayload(JSON.stringify(json, null, 4))
+        return bdd
     }
     
 }.initThisClass()

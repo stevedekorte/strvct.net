@@ -1096,6 +1096,11 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             assert(dragView.item())
 
             let dropNode = dragView.item().node()
+
+            if (dropNode == this.node()) {
+                return false
+            }
+            
             let acceptsNode = node.acceptsAddingSubnode(dropNode)
             let canReorder = this.canReorderRows()
             //console.log(node.title() + " acceptsNode " + dropNode.title() + " " + acceptsNode)

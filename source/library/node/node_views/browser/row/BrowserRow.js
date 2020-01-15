@@ -921,20 +921,17 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     // Browser style drag
 
-    onBrowserDragStart (event) {
-        // triggered in element being dragged
-        // DownloadURL only works in Chrome?
-       
-        //const json = this.node().copyArchiveDict() 
-        const json = this.node().jsonArchive() 
-        const bdd = BrowserDragData.clone()
-        bdd.setMimeType("application/json")
-        bdd.setFileName(this.node().title() + ".json")
-        bdd.setPayload(JSON.stringify(json, null, 4))
-        event.dataTransfer.setData(bdd.transferMimeType(), bdd.transferData())
+    onBrowserDragStart (event) {               
+        const node = this.node()
+        if (node && node.getBrowserDragData) {
+            const bdd = node.getBrowserDragData()
+            if (bdd) {
+                event.dataTransfer.setData(bdd.transferMimeType(), bdd.transferData())
+                return true;
+            }
+        }
 
-
-        return true;
+        return false;
     }
 
 }.initThisClass()

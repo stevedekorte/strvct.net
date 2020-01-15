@@ -22,14 +22,11 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
         this.setCanDelete(true)
         //this.setNoteIconName("right arrow")
 
-        this.setTitle("Null")
-    }
-    
-    copyArchiveDict () {
-        return this.jsonArchive()
+        this.setValue("null")
+        this.setValueIsEditable(false)
     }
 
-    jsonArchive() {
+    jsonArchive () {
         return null
     }
 
