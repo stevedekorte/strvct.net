@@ -450,6 +450,14 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this	    
     }
 
+    // -----------------
+
+    onShiftPlusKeyUp () {
+        this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
+        this.node().add()
+        return false // stop propogation
+    }
+
     //onMetaLeft_d_KeyUp (event) {
     onAlternate_d_KeyUp (event) {
         //this.debugLog(" onMetaLeft_d_KeyUp")

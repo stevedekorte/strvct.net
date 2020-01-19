@@ -372,6 +372,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
+
     setMargin (s) {
         if (Type.isNumber(s)) {
             this.setPxCssAttribute("margin", s)
@@ -386,6 +387,22 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("margin")
     }
 
+    // ----
+
+    setMarginTop (m) {
+        if (Type.isNumber(m)) {
+            this.setPxCssAttribute("margin-top", m)
+        } else {
+            this.setCssAttribute("margin-top", m)
+        }
+        return this
+    }
+
+    setMarginBottom (aNumber) {
+        this.setPxCssAttribute("margin-bottom", aNumber)
+        return this
+    }
+
     setMarginLeft (aNumber) {
         this.setPxCssAttribute("margin-left", aNumber)
         return this
@@ -396,15 +413,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setMarginTop (aNumber) {
-        this.setPxCssAttribute("margin-top", aNumber)
-        return this
-    }
 
-    setMarginBottom (aNumber) {
-        this.setPxCssAttribute("margin-bottom", aNumber)
-        return this
-    }
 
     // padding left
 
@@ -1402,6 +1411,9 @@ window.DomView = class DomView extends ProtoClass {
     pxStringToNumber (s) {
         assert(Type.isString(s))
         if (s === "") {
+            return 0
+        }
+        if (s === "auto") {
             return 0
         }
         assert(s.endsWith("px"))
@@ -3248,6 +3260,10 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     // --------------
+
+    cancelVerticallyAlignAbsolute () {
+        this.setPosition("relative")
+    }
 
     verticallyAlignAbsoluteNow () {
         const pv = this.parentView()

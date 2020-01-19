@@ -34,6 +34,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         super.init()
         this.setupCodeToKeys()
         this.startListening()
+        this.setIsDebugging(true)
         return this
     }
 
@@ -323,7 +324,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
             key.onKeyDown(event)
 
             if (this.isDebugging()) {
-                this.debugLog(".onKeyDownCapture " + key.name())
+                this.debugLog(".onKeyDownCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event))
             }
         } else {
             console.warn("BMKeyboard.shared() no key found for event ", event)
@@ -338,7 +339,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         key.onKeyUp(event)
 
         if (this.isDebugging()) {
-            this.debugLog(".onKeyUp " + key.name())
+            this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event))
         }
 
         return shouldPropogate

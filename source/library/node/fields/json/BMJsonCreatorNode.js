@@ -32,9 +32,10 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     static fieldTypes () {
         return [
             "BMBooleanField", 
-            "BMDateNode", // BMDateAndTimeNode?
+            //"BMDateNode", // BMDateAndTimeNode?
             "BMJsonArrayNode", // creator node is BMJsonCreatorNode "Choose Json type"
             "BMJsonDictionaryNode", 
+            "BMJsonNullField",
             "BMNumberField", 
             "BMStringField",
         ]
@@ -44,6 +45,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         name = name.sansPrefix("BM")
         name = name.sansSuffix("Field")
         name = name.sansSuffix("Node")
+        name = name.sansPrefix("Json")
         return name
     }
 
@@ -100,7 +102,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
 
         if (newNode.setKeyIsEditable) {
             newNode.setKeyIsEditable(true)
-            newNode.setValueIsEditable(true)
+            //newNode.setValueIsEditable(true)
         }
 
         if (newNode.setIsEditable) {

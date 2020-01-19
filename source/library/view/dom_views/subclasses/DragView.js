@@ -100,7 +100,7 @@ window.DragView = class DragView extends DomStyledView {
         this.setWidth("fit-content")
         this.setMinHeight("fit-content")
 
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
 
         return this
     }

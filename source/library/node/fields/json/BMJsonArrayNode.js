@@ -53,7 +53,11 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
             aSubnode.setKey("")
             aSubnode.setKeyIsVisible(false)
             aSubnode.setKeyIsEditable(false)
-        }
+            const editableValueTypes = ["BMStringField", "BMNumberField", "BMBooleanField"]
+            if (editableValueTypes.contains(aSubnode.type())) {
+                aSubnode.setValueIsEditable(true)
+            }
+         }
 
         //aSubnode.setTitle(null)
         aSubnode.setNodeCanEditTitle(false)

@@ -20,7 +20,7 @@ window.BMNumberField = class BMNumberField extends BMField {
         this.setViewClassName("BMFieldRowView")
         this.setKey("Number title")
         this.setKeyIsEditable(false)
-        this.setValueIsEditable(false)
+        this.setValueIsEditable(true)
         this.setValue(0)
     }
 

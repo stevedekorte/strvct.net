@@ -17,14 +17,23 @@ window.BMField = class BMField extends BMSummaryNode {
         this.newSlot("isEnabled", true)
 
         // key
-        this.newSlot("key", "key").setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        this.newSlot("keyIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        this.newSlot("keyIsEditable", false).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        const keySlot = this.newSlot("key", "key").setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        keySlot.setCanInspect(true).setSlotType("String").setLabel("key")
+
+        const keyIsVisibleSlot = this.newSlot("keyIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        keyIsVisibleSlot.setCanInspect(true).setSlotType("String").setLabel("Key is visible")
+
+        const keyIsEditable = this.newSlot("keyIsEditable", false).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        keyIsEditable.setCanInspect(true).setSlotType("String").setLabel("Key is editable")
 
         // value
         this.newSlot("value", null).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        this.newSlot("valueIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        this.newSlot("valueIsEditable", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+
+        const vivSlot = this.newSlot("valueIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        vivSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Value is visible")
+
+        const vieSlot = this.newSlot("valueIsEditable", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        vieSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Value is editable")
 
         this.newSlot("link", null)
         this.newSlot("ownsLink", null)

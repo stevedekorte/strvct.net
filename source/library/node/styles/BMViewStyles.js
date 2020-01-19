@@ -86,6 +86,13 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
         this.selected().setColor("black")
         this.selected().setBackgroundColor("#eee")
         this.selected().setBorderBottom("1px solid #ddd") // "1px solid #ddd"
+
+        /*
+        this.disabled().setColor("black")
+        this.disabled().setBackgroundColor("#eee")
+        this.disabled().setBorderColor("transparent")
+        */
+
         return this
     }
 
@@ -98,6 +105,12 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
         this.selected().setColor("white")
         this.selected().setBackgroundColor("#444") // change for column?
         this.selected().setBorderBottom("none")
+
+        /*
+        this.disabled().setColor("#aaa")
+        this.disabled().setBackgroundColor("black")
+        this.disabled().setBorderColor("transparent")
+        */
         return this
     }
     

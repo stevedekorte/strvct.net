@@ -22,7 +22,8 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
         this.setCanDelete(true)
         //this.setNoteIconName("right arrow")
 
-        this.setValue("null")
+        this.setKeyIsVisible(false)
+        this.setValue("NULL")
         this.setValueIsEditable(false)
     }
 
@@ -33,5 +34,14 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
     setJson (json) {
         return this
     }
+
+    /*
+    setValueIsEditable (aBool) {
+        if (aBool) {
+            console.log(this.type() + " setValueIsEditable true")
+        }
+        return super.setValueIsEditable(aBool)
+    }
+    */
     
 }.initThisClass()

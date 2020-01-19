@@ -1,9 +1,24 @@
 
 TODO:
 
+	tap-delete-key once to open delete menu (as if by gesture) and then return to complete or any other key to cancel
+
+	JsonDictionary - auto unique name new items?
+	- add error to item if key isn't unique
+	
+	properly hide key in Field (so JSON values look better)
+	- better JSON view for Booleans and Null?
+	
+	fix ImageWell drop
+
 	add slot setter checks for SlotType and validValues
 
 	when adding a Boolean, String, Number, Date, Null to JsonArray, turn off show key
+	
+	Inpector on JsonArray, JsonDict that supports transformations
+	- auto detect which classes can read the json type, present as options?
+	- ability to map field names for classes that can read json?
+	- select class -> show class field names -> select field name -> show available json field names and self?
 	
 	
 	
@@ -13,13 +28,6 @@ TODO:
 
 	tap-tap-hold for link
 	
-	JsonNode that can create JSON structures and import/export
-	
-	ArrayNode (ordered subnodes)
-	DictionaryNode (requires unique subnode titles)
-	
-	Number, String, Null
-
 	move BMNode.note to visibleNote so noteIsSubnodeCount() etc is separated from stored value
 
 	- need a type of NodeLink that links to a proto and when duplicated, 

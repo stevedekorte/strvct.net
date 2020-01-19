@@ -486,8 +486,23 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return this
     }
 
-    // --- dragging key ---
+    // --- delete key ---
 
+    /*
+    onShiftPlusKeyUp () {
+        this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
+        this.column().add()
+        return false // stop propogation
+    }
+    */
+
+    onShiftBackspaceKeyUp (event) {
+        this.debugLog(this.type() + " for " + this.node().title() + " onBackspaceKeyUp")
+        this.delete()
+        return false // stop propogation
+    }
+
+    // --- dragging key ---
 
     on_d_KeyDown (event) {
         //this.debugLog(" on_d_KeyDown ", event._id)
@@ -858,7 +873,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     onDragDestinationHover (dragView) {
-        console.log(this.typeId() + " onDragDestinationHover")
+        //console.log(this.typeId() + " onDragDestinationHover")
     }
 
     onDragDestinationExit (dragView) {

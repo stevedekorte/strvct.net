@@ -237,7 +237,7 @@
 }
 
 .BrowserRowContentView {
-    padding-top: 8px;
+    padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 18px;
     padding-right: 18px;
@@ -249,7 +249,8 @@
     display: block;
     position: relative;
 
-    /*margin-top: 15px;*/
+    margin-top: 4px;
+
     margin-left: 0px;
 
     max-width: calc(100% - 55px);
