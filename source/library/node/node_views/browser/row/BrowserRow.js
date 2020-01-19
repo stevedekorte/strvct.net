@@ -414,9 +414,19 @@ window.BrowserRow = class BrowserRow extends NodeView {
         }
     }
     
+    passFirstResponderToColumn () {
+        if (this.isFirstResponder()) {
+            if (this.column()) {
+                this.column().becomeFirstResponder()
+            }
+        }
+        return this
+    }
+
     delete () {
         //console.log("delete")
         if (this.canDelete()) {
+            this.passFirstResponderToColumn()
             this.setOpacity(0)
             //this.setRight(-this.clientWidth())
             this.setMinAndMaxHeight(0)

@@ -450,7 +450,16 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this	    
     }
 
+
     // -----------------
+
+    onShiftBackspaceKeyUp (event) {
+        this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
+        if (this.selectedRow()) { 
+            this.selectedRow().delete()
+        }
+        return false // stop propogation
+    }
 
     onShiftPlusKeyUp () {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")

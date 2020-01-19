@@ -2663,10 +2663,10 @@ window.DomView = class DomView extends ProtoClass {
     */
 
     onKeyDown (event) {
-        //this.debugLog(" onKeyDown ", event._id)
         //BMKeyboard.shared().showEvent(event)
 
         const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
+        this.debugLog(" onKeyDown ", methodName)
         //console.log("onKeyDown methodName: ", methodName)
         this.invokeMethodNameForEvent(methodName, event)
 
@@ -2783,6 +2783,10 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     // firstResponder
+
+    isFirstResponder () {
+        return document.activeElement === this.element()
+    }
 
     willBecomeFirstResponder () {
         // called if becomeFirstResponder accepts
