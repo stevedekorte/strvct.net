@@ -23,13 +23,13 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         */
        
         const fontSizeSlot = this.newSlot("fontSize", null).setShouldStoreSlot(true)
-        fontSizeSlot.setCanInspect(true).setSlotType("Number").setLabel("Font size")
+        fontSizeSlot.setCanInspect(true).setSlotType("Number").setLabel("Font size").setSyncsToView(true)
 
         const colorSlot = this.newSlot("color", null).setShouldStoreSlot(true)
-        fontSizeSlot.setCanInspect(true).setSlotType("String").setLabel("Color")
+        colorSlot.setCanInspect(true).setSlotType("String").setLabel("Color").setSyncsToView(true)
 
         const bgColorSlot = this.newSlot("backgroundColor", null).setShouldStoreSlot(true)
-        bgColorSlot.setCanInspect(true).setSlotType("String").setLabel("Background color")
+        bgColorSlot.setCanInspect(true).setSlotType("String").setLabel("Background color").setSyncsToView(true)
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
@@ -39,11 +39,9 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
 
         this.setTitle("title")
         this.setNodeCanEditTitle(true)
-
         
         this.setNodeCanReorderSubnodes(true)
   
-
         this.setNodeCanEditRowHeight(true)
         this.setNodeCanEditColumnWidth(true)
     }
@@ -54,28 +52,33 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         this.setSubnodeProto(BMCreatorNode)
         this.setNodeColumnStyles(BMViewStyles.clone())
         //this.setNodeRowStyles(BMViewStyles.clone())
-        this.customizeNodeRowStyles().setToBlackOnWhite().selected().setBackgroundColor("red")
+        this.customizeNodeRowStyles().setToWhiteOnBlack() //.selected().setBackgroundColor("red")
+        //this.customizeNodeRowStyles().setToBlackOnWhite() //.selected().setBackgroundColor("red")
     }
-
-    /*
-    didLoadFromStore () {
-        super.didLoadFromStore()
-        this.subnodes().forEach( (subnode) => { subnode.setCanDelete(true) });
-        this.subnodes().forEach( (subnode) => { subnode.setNodeCanInspect(true) });
-        return this
-    }
-    */
 
     acceptedSubnodeTypes () {
         return BMCreatorNode.fieldTypes()
     }
 
-    onDidEdit (aView) {
-        this.setFontSize(this.titleView().computedFontSize())
-        this.setColor(this.titleView().computedColor())
-        this.setBackgroundColor(this.titleView().computedBackgroundColor())
-        return true
+    didUpdateSlotColor (oldValue, newValue) {
+        //this.scheduleSyncToView()
+        this.nodeRowStyles().selected().setColor(newValue)
+        this.nodeRowStyles().unselected().setColor(newValue)
     }
+
+    didUpdateSlotBackgroundColor (oldValue, newValue) {
+        //this.scheduleSyncToView()
+        this.nodeRowStyles().selected().setBackgroundColor(newValue)
+        this.nodeRowStyles().unselected().setBackgroundColor(newValue)
+    }
+    
+    /*
+    didUpdateSlot (aSlot, oldValue, newValue) {
+        super.didUpdateSlot(aSlot, oldValue, newValue)
+
+        console.log(this.type() + "didUpdateSlot " + aSlot.name() )
+    }
+    */
 
 }.initThisClass()
 

@@ -94,8 +94,10 @@ window.STRVCT = class STRVCT extends App {
         this.browser().setNode(this)
                 
         this.rootView().addSubview(this.browser())
-        this.browser().scheduleSyncFromNode()
-        this.browser().scheduleMethod("syncFromHashPath", 10)
+        //this.browser().scheduleSyncFromNode()
+        this.browser().syncFromNode()
+        this.browser().syncFromHashPath()
+        //this.browser().scheduleMethod("syncFromHashPath", 10)
         //window.SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
         return this
     }

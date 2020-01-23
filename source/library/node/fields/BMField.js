@@ -21,7 +21,7 @@ window.BMField = class BMField extends BMSummaryNode {
         keySlot.setCanInspect(true).setSlotType("String").setLabel("key")
 
         const keyIsVisibleSlot = this.newSlot("keyIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        keyIsVisibleSlot.setCanInspect(true).setSlotType("String").setLabel("Key is visible")
+        keyIsVisibleSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Key is visible")
 
         const keyIsEditable = this.newSlot("keyIsEditable", false).setShouldStoreSlot(true).setDuplicateOp("duplicate")
         keyIsEditable.setCanInspect(true).setSlotType("String").setLabel("Key is editable")

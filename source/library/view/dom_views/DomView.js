@@ -89,19 +89,12 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     setupDivClassName () {
-        const ancestorNames = this.ancestors().map((obj) => {
-            if (obj.type().contains(".")) {
-                return ""
-            }
-            return obj.type()
-        })
+        const ancestorNames = this.classAncestors().map(obj => obj.type())
+        ancestorNames.atInsert(0, this.type())
 
-        // small hack to remove duplicate first name (as instance and first proto names are the same)
-        if (ancestorNames.length > 1 && ancestorNames[0] == ancestorNames[1]) {
-            ancestorNames.removeFirst()
-        }
-
-        this.setDivClassName(ancestorNames.join(" ").strip())
+        const divName = ancestorNames.join(" ").strip()
+        //console.log("divName = " + divName)
+        this.setDivClassName(divName)
         return this
     }
 
@@ -1410,12 +1403,19 @@ window.DomView = class DomView extends ProtoClass {
 
     pxStringToNumber (s) {
         assert(Type.isString(s))
+        
         if (s === "") {
             return 0
         }
+        
         if (s === "auto") {
             return 0
         }
+
+        if (s.contains("%")) {
+            return 0
+        }
+
         assert(s.endsWith("px"))
         return Number(s.replace("px", ""))
     }
@@ -2924,7 +2924,6 @@ window.DomView = class DomView extends ProtoClass {
                 range.deleteContents();
                 range.insertNode(document.createTextNode(replacementText));
             }
-
 
             console.log("inserted node")
         } else if (document.selection && document.selection.createRange) {

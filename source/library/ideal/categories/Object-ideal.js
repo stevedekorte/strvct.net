@@ -124,12 +124,6 @@ const classSlots = {
         */
         return this
     },
-
-    /*
-    shallowCopy: function (obj) {
-        return Object.assign({}, obj);
-    },
-    */
     
     eachSlot: function (obj, fn) {
         Object.keys(obj).forEach(k => fn(k, obj[k]) )

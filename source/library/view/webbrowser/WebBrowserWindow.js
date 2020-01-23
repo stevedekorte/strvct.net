@@ -146,6 +146,7 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
     setUrlHash (aString) {
         if (this.urlHash() !== aString) {
             window.location.hash = encodeURI(aString)
+            console.log("window.location.hash = [" + window.location.hash + "]")
         }
         return this
     }

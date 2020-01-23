@@ -20,6 +20,7 @@ window.BMThemeResources = class BMThemeResources extends BMNode {
         this.setNodeMinWidth(270)
         this.addAction("add")
         this.setSubnodeProto(BMTheme)
+        //this.setCanReorderSubnodes(true)
     }
     
 }.initThisClass()

@@ -17,10 +17,6 @@ window.BMThemeStyleSheet = class BMThemeStyleSheet extends ProtoClass {
         return this
     }
 
-    shared () {
-        return this.sharedInstanceForClass(BMThemeStyleSheet)
-    }
-
     sheet () {
         if (!this._sheet) {
             const sheetName = "ThemeStyleSheet"

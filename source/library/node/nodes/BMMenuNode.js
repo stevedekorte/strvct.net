@@ -12,6 +12,9 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     
     initPrototype () {
         this.newSlot("label", "").setShouldStoreSlot(true)
+        this.newSlot("target", null)
+        this.newSlot("methodName", null)
+        this.newSlot("info", null)
 
         this.setCanDelete(true)
         this.setNodeCanInspect(true)
@@ -114,6 +117,16 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     }
     */
     
+   onRequestSelectionOfNode (aNodeView) {
+       const t = this.target()
+       const m = this.methodName()
+
+       if (t && m && t[m]) {
+           t[m].apply(t, [this])
+       }
+
+       return this
+   }
 
 
     didChangeParentNode () {

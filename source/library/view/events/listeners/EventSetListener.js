@@ -138,11 +138,11 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
             const fullMethodName = this.fullMethodNameFor(dict.methodName)
             dict.handlerFunc = (event) => { 
 
-                
+                /*
                 if (!event._id) {
                     event._id = Math.floor(Math.random()*100000) // TODO: remove when not debugging
                 }
-                
+                */
 
                 const delegate = this.delegate()
                 const method = delegate[fullMethodName]

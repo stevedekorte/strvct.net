@@ -49,28 +49,6 @@ window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
 	
     // --- fields ---
 
-    /*
-    protoAddStoredField (aField) { 
-        assert(this.isPrototype())
-
-        const slot = this.slotNamed(aField.valueMethod())
-        const name = slot.name()
-
-        // set store to should store, hooks setter
-        this.protoAddStoredSlot(name)
-
-        // add a slot
-        if (!this[name]) {
-            this.newSlot(name, null)
-        }
-
-        // add field to subnodes and setTarget(this)
-        this.addField(aField)
-        return aField
-    }
-
-    */
-
     addField (aField) {
         aField.setTarget(this) 
         aField.getValueFromTarget()

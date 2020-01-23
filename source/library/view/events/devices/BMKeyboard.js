@@ -24,12 +24,6 @@ window.BMKeyboard = class BMKeyboard extends Device {
         this.newSlot("keyboardListener", null)
     }
 
-    /*
-    shared() {   
-        return this.sharedInstanceForClass(Keyboard)
-    }
-    */
-
     init () {
         super.init()
         this.setupCodeToKeys()

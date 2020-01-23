@@ -168,7 +168,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }    
 
     customizeNodeRowStyles () {
-        if (!this.hasOwnProperty("_nodeRowStyles")) {
+        if (!this.getOwnProperty("_nodeRowStyles")) {
             //const styles = BMViewStyles.shared().sharedWhiteOnBlackStyle().setIsMutable(false)
             // NOTE: We can't use the shared style because column bg colors change
 
@@ -450,7 +450,7 @@ window.BMNode = class BMNode extends ProtoClass {
         }
         */
         //const type = aSunode.type()
-        const ancestors = aSubnode.ancestorTypes()
+        const ancestors = aSubnode.ancestorClassesTypes()
         const match = this.acceptedSubnodeTypes().detect(type => ancestors.contains(type))
         return !Type.isNullOrUndefined(match)
     }
@@ -548,6 +548,14 @@ window.BMNode = class BMNode extends ProtoClass {
         }
     }
 
+    didUpdateSlot (aSlot, oldValue, newValue) {
+        super.didUpdateSlot(aSlot, oldValue, newValue)
+
+        if (aSlot.syncsToView()) { 
+            this.scheduleSyncToView()
+        }
+    }
+
     indexOfSubnode (aSubnode) {
         return this.subnodes().indexOf(aSubnode);
     }
@@ -624,10 +632,27 @@ window.BMNode = class BMNode extends ProtoClass {
         }
         return [this]
     }
+
+    nodePathArrayForPathComponents (pathComponents, results = []) {
+        results.push(this)
+
+        const link = this.nodeRowLink()
+        if (link && link !== this) {
+            return link.nodePathArrayForPathComponents(pathComponents) 
+        }
+
+        const pathComponent = pathComponents.first()
+        if (pathComponent) {
+            const nextNode = this.firstSubnodeWithTitle(pathComponent)
+            if (nextNode) {
+                return nextNode.nodePathArrayForPathComponents(pathComponents.rest())
+            }
+        }
+        return results
+    }
     
     nodePathString () {
-        return this.nodePath().map(function (node) { return node.title() }).join("/")
-        //return this.nodePath().map(function (node) { return node.type() }).join("/")
+        return this.nodePath().map(node => node.title()).join("/")
     }
     
     nodeAtSubpathString (pathString) {
@@ -635,10 +660,10 @@ window.BMNode = class BMNode extends ProtoClass {
     }
     
     nodeAtSubpath (subpathArray) {
-        if (subpathArray.length > 0) {
-            const subnode = this.firstSubnodeWithTitle(subpathArray[0])
+        if (subpathArray.length) {
+            const subnode = this.firstSubnodeWithTitle(subpathArray.first())
             if (subnode) {
-                return subnode.nodeAtSubpath(subpathArray.slice(1))
+                return subnode.nodeAtSubpath(subpathArray.rest())
             }
             return null
         }        

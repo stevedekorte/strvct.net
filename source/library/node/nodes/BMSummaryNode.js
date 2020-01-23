@@ -49,19 +49,6 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         this.didUpdateNode()
     }
 
-    /*
-    summaryFormatOptionsNode () {
-        const sm = BMOptionsNode.clone().setKey("Summary format").setValueMethod("summaryFormat").setValueIsEditable(true).setTarget(this)
-        sm.setTitle("Summary format *")
-        
-        const formats = ["none", "key", "value", "key value", "value key"]
-
-        formats.forEach((format) => {
-            sm.addSubnode(BMOptionNode.clone().setTitle(format))
-        })
-        return sm
-    }*/
-
     summaryKey () {
         return this.title()
     }

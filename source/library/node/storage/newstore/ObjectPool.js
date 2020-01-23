@@ -160,7 +160,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootKey())
-            //root.instanceSlotNamed("subnodes").setupInOwner()
+            //root.thisPrototype().slotNamed("subnodes").setupInOwner()
             //root.subnodes()
             this._rootObject = root
             //this.setRootObject()

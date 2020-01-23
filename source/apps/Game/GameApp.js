@@ -101,7 +101,7 @@ window.GameApp = class GameApp extends App {
                 
         this.rootView().addSubview(this.browser())
         this.browser().scheduleSyncFromNode()
-        this.browser().scheduleSelfFor("syncFromHashPath", 10)
+        this.browser().scheduleSelfFor("syncFromHashPath", 100)
         //window.SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
         return this
     }

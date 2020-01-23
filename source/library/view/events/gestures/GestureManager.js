@@ -21,12 +21,6 @@ window.GestureManager = class GestureManager extends ProtoClass {
         return this
     }
 
-    /*
-    static shared () {   
-        return this.sharedInstanceForClass(GestureManager)
-    }
-    */
-
     hasActiveGesture () {
         return this.activeGesture() && this.activeGesture().isActive()
     }

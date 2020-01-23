@@ -463,7 +463,11 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     onShiftPlusKeyUp () {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
-        this.node().add()
+        const node = this.node()
+        const canAdd = node.canSelfAddSubnode() 
+        if (canAdd) {
+            node.add()
+        }
         return false // stop propogation
     }
 

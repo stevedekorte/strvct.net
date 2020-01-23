@@ -2,16 +2,24 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    //
+    // #%7B%22path%22:%5Bnull,%22STRVCT%22%5D%7D
+
     "version": "0.2.0",
     "configurations": [
+
+
+        
+
+
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch FILE index",
-            "url": "file:///${workspaceFolder}/index.html",
-            "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "create index.html"
+            "name": "Launch FILE incremental hash",
+            "url": "file:///${workspaceFolder}/index_incremental.html#%7B%22path%22:%5B%22STRVCT%22,%22Prototypes%22%5D%7D",
+            "webRoot": "${workspaceFolder}"
         },
+
         {
             "type": "chrome",
             "request": "launch",
@@ -21,7 +29,6 @@
         },
 
 
-        
         {
             "type": "chrome",
             "request": "launch",

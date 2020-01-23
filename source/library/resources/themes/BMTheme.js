@@ -37,7 +37,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
     setupSubnodes () {
         // setup with all view classes
         
-        let viewClasses = DomView.allDescendantProtos()
+        let viewClasses = DomView.descendantClasses()
 
         viewClasses = viewClasses.select((viewClass) => {
             return viewClass.hasOwnProperty("styles")

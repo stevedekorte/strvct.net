@@ -51,20 +51,11 @@ window.ProtoClass = class ProtoClass extends Object {
         return this.getClassVariable("_shared")
     }
 
-    static sharedInstanceForClass(aClass) {
-        aClass.shared()
-    }
-
     static allClasses () {
-        return this.getClassVariable("_allClasses", [])
+        return this.getClassVariable("_allClasses", [Object])
     }
     
-    static initThisClass () {
-        if (this.prototype.hasOwnProperty("initPrototype")) {
-            // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            this.prototype.initPrototype.apply(this.prototype)
-        }
-
+    static defineClassGlobally () {
         if(Type.isUndefined(window[this.type()])) {
             window[this.type()] = this
             //console.log(this.type() + ".initThisClass()")
@@ -73,17 +64,64 @@ window.ProtoClass = class ProtoClass extends Object {
             console.warn(msg)
             throw new Error(msg)
         }
+    }
 
-        /*
-        //console.log("initThisClass: ", this)
-        if (ProtoClass.allClasses().contains(this)) {
-            throw new Error("attempt to call initThisClass twice on the same class")
+    static initThisClass () {
+        
+        if (this.prototype.hasOwnProperty("initPrototype")) {
+            // each class inits it's own prototype, so make sure we only call our own initPrototype()
+            //this.prototype.initPrototype.apply(this.prototype)
+            this.prototype.initPrototype()
         }
 
-        ProtoClass.allClasses().push(this)
-        */
+        this.defineClassGlobally()
+        this.addToAllClasses()
 
         return this
+    }
+
+    static addToAllClasses () {
+        const allClasses = ProtoClass.allClasses()
+        if (allClasses.contains(this)) {
+            throw new Error("attempt to call initThisClass twice on the same class")
+        }
+        allClasses.push(this)
+
+    }
+
+    static parentClass () {
+        const p = this.__proto__
+
+        if (p && p.type) {
+            return p
+        }
+
+        return null
+    }
+
+    static ancestorClasses (results = []) {
+        const parent = this.parentClass()
+        if (parent && parent.ancestorClasses) {
+            //assert(!results.contains(parent))
+            results.push(parent)
+            parent.ancestorClasses(results)
+        }
+        return results
+    }
+
+    static childClasses () {
+        // TODO: have each class cache a list of childClasses
+        // and initClass will tell parent about new child class
+        return ProtoClass.allClasses().filter(aClass => aClass && aClass.parentClass && aClass.parentClass() === this)
+    }
+
+    static descendantClasses (results = []) {
+        const children = this.childClasses()
+        children.forEach(child => {
+            results.push(child)
+            child.descendantClasses(results)
+        })
+        return results
     }
 
     static superClass () {
@@ -96,10 +134,6 @@ window.ProtoClass = class ProtoClass extends Object {
 
     superPrototype () {
         return this.superClass().prototype
-    }
-
-    static type() {
-        return this.name
     }
 
     static clone () {
@@ -174,35 +208,36 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // --- slots ---
 
-    instanceSlotNamed (slotName) {
+    slotNamed (slotName) {
+        assert(this.isPrototype())
+
         const slots = this.slots()
         if (slots.hasOwnProperty(slotName)) {
             return slots[slotName]
         }
         
-        if (this.__proto__ && this.__proto__.slotNamed) {
-            return this.__proto__.slotNamed(slotName)
-        } else {
-            //console.log("is this possible?")
+        const p = this.__proto__
+        if (p && p.slotNamed) {
+            return p.slotNamed(slotName)
         }
 
         return null
     }
 
-    slotNamed (slotName) {
-        assert(this.isPrototype())
-        return this.instanceSlotNamed(slotName)
-    }
-
     // slot objects
+
+    slots () {
+        if (!this.hasOwnProperty("_slots")) {
+            Object.defineSlot(this, "_slots", {})
+        }
+        return this._slots
+    }
 
     allSlots (allSlots = {}) {
         //assert(this.isPrototype())
 
-        if (this.__proto__ && this.__proto__.slotNamed) {
+        if (this.__proto__ && this.__proto__.allSlots) {
             this.__proto__.allSlots(allSlots)
-        } else {
-            //console.log("is this possible?")
         }
 
         Object.assign(allSlots, this.slots()); // do this last so we override ancestor slots
@@ -237,13 +272,6 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     // -------------------------------------
-
-    slots () {
-        if (!this.hasOwnProperty("_slots")) {
-            Object.defineSlot(this, "_slots", {})
-        }
-        return this._slots
-    }
 
     newSlot (slotName, initialValue = null) {
         if(!Type.isUndefined(this.allSlots()[slotName])) {
@@ -342,13 +370,6 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
-    /*
-    childProtos () {
-        const result = ProtoClass.allClasses().select(proto => proto._parentProto === this )
-        return result
-    }
-    */
-
     init () { 
         super.init()
         // subclasses should override to do initialization
@@ -407,21 +428,8 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // --- ancestors ---
 
-    ancestors () { // TODO: test this for ES6 classes
-        const results = []
-        let obj = this;
-        while (obj.__proto__ && obj.type) {
-            results.push(obj)
-            if (results.length > 100) {
-                throw new Error("proto loop detected?")
-            }
-            obj = obj.__proto__
-        }
-        return results
-    }
-
-    ancestorTypes () {
-        return this.ancestors().map(obj => obj.type())
+    classAncestors () {
+        return this.thisClass().ancestorClasses()
     }
 
     firstAncestorWithMatchingPostfixClass (aPostfix) {
@@ -429,7 +437,7 @@ window.ProtoClass = class ProtoClass extends Object {
         // existing class with the same name as the ancestor + the given postfix
         // useful for things like type + "View" or type + "RowView", etc
         //this.debugLog(" firstAncestorWithMatchingPostfixClass(" + aPostfix + ")")
-        const match = this.ancestors().detect((obj) => {
+        const match = this.classAncestors().detect((obj) => {
             const name = obj.type() + aPostfix
             const proto = window[name]
             return proto

@@ -1,6 +1,41 @@
 
 TODO:
 
+	* Browser can't use nodePath anymore because of links!!!
+	
+	Browser navigation not always collapsing left columns as needed when navigating far right
+	- seems to happen only on menu nodes - are they capturing some event or not sending a change note?
+	
+	Slot
+	- on get slot attribute, if value is InheritedValue, lookup in superPrototype's slot
+	- all overridden slot attributes are set to InheritedValue
+	
+
+	ShelfNode for left column
+	- makes all dropped items into links
+	- when dragging links, it maps the drag operation as if it had been done directly
+
+	SliderField - present if Slot is Number and isInteger
+	
+	Slot isInteger validRange=[start, end]
+	
+	compact top header when not needed
+	
+	
+	TopShelfView
+	TopShelfNode
+	Grid of short row size spots
+	
+	OptionsNode -> validValuesPrototypeName
+	
+	OptionsPicker that uses a link (a path?) to a prototype to find it's validValues
+	
+	Text -> inspector -> themes options -> themes prototype  
+
+	ColorField
+		
+	ColorFieldView
+	
 	tap-delete-key once to open delete menu (as if by gesture) and then return to complete or any other key to cancel
 
 	JsonDictionary - auto unique name new items?

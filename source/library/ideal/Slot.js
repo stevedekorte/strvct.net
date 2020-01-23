@@ -111,6 +111,16 @@ window.ideal.Slot = class Slot {
          this.simpleNewSlot("validValues", null) // used for options field and validation
          this.simpleNewSlot("validValuesClosure", null) 
          this.simpleNewSlot("allowsMultiplePicks", false)
+
+         this.simpleNewSlot("syncsToView", false)
+    }
+
+    setSyncsToView (aBool) {
+        this._syncsToView = aBool
+        if (aBool) {
+            this.setDoesHookSetter(true)
+        }
+        return this
     }
 
     newInspectorField () {
@@ -122,8 +132,14 @@ window.ideal.Slot = class Slot {
             }
             const proto = window[fieldName]
             if (proto) {
-                const field = proto.clone().setKey(this.name()).setValueMethod(this.name()).setValueIsEditable(true)
-                
+                const field = proto.clone()
+
+                field.setKey(this.name())
+                field.setKeyIsEditable(false)
+                field.setValueMethod(this.name())
+                field.setValueIsEditable(true)
+                field.setCanDelete(false)
+
                 if (this.label()) {
                     field.setKey(this.label())
                 }
@@ -454,22 +470,8 @@ window.ideal.Slot = class Slot {
         const privateName = this.privateName()
         const slot = this
         const setterName = this.setterName()
-        //const superProto = this.owner().superPrototype()
         const func = function (newValue) {
-            /*
-            // this is dangerous - we don't always want this behavior
-            if (superProto && superProto[setterName]) {
-                superProto[setterName].apply(this, [newValue])
-            }
-            */
-
             this[privateName] = newValue
-
-            /*
-            if (this[privateName] !== newValue) {
-                this[privateName] = newValue
-            }
-            */
             return this
         }
         //func.setSlot(this)

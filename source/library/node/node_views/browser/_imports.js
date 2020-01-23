@@ -8,4 +8,5 @@ ResourceLoader.pushRelativePaths([
     "column/_imports.js",
     "row/_imports.js",
     "shelf/_imports.js",
+    //"top_shelf/_imports.js",
 ])

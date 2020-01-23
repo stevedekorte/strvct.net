@@ -66,7 +66,6 @@ window.HashCommand = class HashCommand extends ProtoClass {
     }
 
     send () {
-        /*
         let t = this.target()
         let m = this.method()
 
@@ -75,7 +74,7 @@ window.HashCommand = class HashCommand extends ProtoClass {
                 t[m].apply(this.arguments())
             }
         }
-        */
+
     }
     
 }.initThisClass()

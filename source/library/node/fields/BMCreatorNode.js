@@ -67,7 +67,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         const primitiveNodes = this.thisClass().fieldTypes().map((typeName) => {
             const name = this.visibleNameForTypeName(typeName)
             //const newNode = BMActionNode.clone()
-            const newNode = BMActionNode.clone()
+            const newNode = BMMenuNode.clone()
             newNode.setTitle(name).setTarget(this).setMethodName("didChoose").setInfo(typeName)
 
             /*

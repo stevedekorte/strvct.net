@@ -27,10 +27,6 @@ window.DocumentBody = class DocumentBody extends DomView {
         Devices.shared().setupIfNeeded()
         return this
     }
-
-    shared () {   
-        return this.sharedInstanceForClass(DocumentBody)
-    }
     
     setupElement () {
         document.body._domView = this

@@ -509,10 +509,8 @@ window.BrowserView = class BrowserView extends NodeView {
 
     syncFromNode () {
         //this.log("syncFromNode")
-        const columnGroups = this.columnGroups()
-
-        //columnGroups.first().setNode(this.node())
         this.setColumnGroupAtIndexToNode(0, this.node())
+        const columnGroups = this.columnGroups()
 
         //console.log(this.type() + ".syncFromNode()")
 
@@ -748,7 +746,7 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     nodePathArray () {
-        return this.activeColumnGroups().map((cg) => { return cg.node() })
+        return this.activeColumnGroups().map(cg => cg.node())
     }
 
     lastNode () {
@@ -764,6 +762,7 @@ window.BrowserView = class BrowserView extends NodeView {
         if (lastNode) {
             return lastNode.nodePath();
         }
+        
         return [];
     }
 
@@ -777,10 +776,16 @@ window.BrowserView = class BrowserView extends NodeView {
 
     setNodePathComponents (nodePath) {
         this.setWatchForNodeUpdates(true);
+
+        const nodePathArray = this.node().nodePathArrayForPathComponents(nodePath.slice(1))
+        this.selectNodePath(nodePathArray)
+
+        /*
         const lastNode = this.node().nodeAtSubpath(nodePath.slice(1));
         if (lastNode) {
             this.selectNode(lastNode);
         }
+        */
         return this;
     }
 
@@ -792,8 +797,8 @@ window.BrowserView = class BrowserView extends NodeView {
 
     performHashCommandIfPresent () {
         const hash = WebBrowserWindow.shared().urlHash()
-        const commandString = hash.after(";")
-        const command = HashCommand.clone().parseCommandString(commandString)
+        //const commandString = hash.after(";")
+        const command = HashCommand.clone().parseCommandString(hash)
         const node = this.lastNode()
         command.setTarget(node).send()
         return this
@@ -801,6 +806,7 @@ window.BrowserView = class BrowserView extends NodeView {
 
     syncFromHashPath () {
         const hash = WebBrowserWindow.shared().urlHash()
+        console.log("syncFromHashPath [" + hash + "]")
         let j = ""
 
         if (hash === "") {
@@ -834,11 +840,12 @@ window.BrowserView = class BrowserView extends NodeView {
         this.setNodePathString(hash)
         this.performHashCommandIfPresent()
         */
+        
         return this
     }
 
     syncToHashPath () {
-        const hash = JSON.stringify({ path: this.nodePath().map(n => n.title()) });
+        const hash = JSON.stringify({ path: this.nodePathArray().map(n => n.title()) });
         WebBrowserWindow.shared().setUrlHash(hash)
         return this
     }
