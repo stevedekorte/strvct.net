@@ -52,15 +52,10 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     primitiveSubnodes () {
         const primitiveNodes = this.thisClass().fieldTypes().map((typeName) => {
             const name = this.visibleNameForTypeName(typeName)
-            //const newNode = BMActionNode.clone()
-            const newNode = BMActionNode.clone()
+
+            const newNode = BMMenuNode.clone()
             newNode.setTitle(name).setTarget(this).setMethodName("didChoose").setInfo(typeName)
 
-            /*
-            const newNode = BMNode.clone()
-            newNode.setTitle(name) //.setActionTarget(this).setAction("didChoose")
-            newNode._createTypeName = typeName
-            */
             return newNode
         })
 
@@ -73,17 +68,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         return this
     }
 
-    /*
-    onRequestSelectionOfDecendantNode (aNode) {
-        const typeName = aNode._createTypeName
-        if (typeName) {
-            this.createType(typeName)
-        }
-        return true
-    }
-    */
-
-   didChooseSubnode (actionNode) {
+   didChoosePrototype (actionNode) {
         const proto = actionNode.info()
         const newNode = proto.duplicate()
         this.parentNode().replaceSubnodeWith(this, newNode)

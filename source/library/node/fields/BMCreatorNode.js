@@ -66,15 +66,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     primitiveSubnodes () {
         const primitiveNodes = this.thisClass().fieldTypes().map((typeName) => {
             const name = this.visibleNameForTypeName(typeName)
-            //const newNode = BMActionNode.clone()
             const newNode = BMMenuNode.clone()
-            newNode.setTitle(name).setTarget(this).setMethodName("didChoose").setInfo(typeName)
-
-            /*
-            const newNode = BMNode.clone()
-            newNode.setTitle(name) //.setActionTarget(this).setAction("didChoose")
-            newNode._createTypeName = typeName
-            */
+            newNode.setTitle(name).setTarget(this).setMethodName("didChoosePrimitive").setInfo(typeName)
             return newNode
         })
 
@@ -88,12 +81,11 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         const protos = app.firstSubnodeWithTitle("Prototypes")
         const newSubnodes = protos.subnodes().map((sn) => {
             const newNode = BMActionNode.clone()
-            newNode.setTitle(sn.title()).setTarget(this).setMethodName("didChooseSubnode").setInfo(sn)
+            newNode.setTitle(sn.title()).setTarget(this).setMethodName("didChoosePrototype").setInfo(sn)
             return newNode
         })
 
         this.addSubnodes(newSubnodes)
-
         return this
     }
 
@@ -107,14 +99,14 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     }
     */
 
-   didChooseSubnode (actionNode) {
+   didChoosePrototype (actionNode) {
         const proto = actionNode.info()
         const newNode = proto.duplicate()
         this.parentNode().replaceSubnodeWith(this, newNode)
         return this
    }
 
-    didChoose (actionNode) {
+    didChoosePrimitive (actionNode) {
         const typeName = actionNode.info()
         this.createType(typeName)
         return this
