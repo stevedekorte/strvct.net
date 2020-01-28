@@ -11,6 +11,8 @@
 window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
     
     initPrototype () {
+        this.overrideSlot("subnodes").setShouldStoreSlot(false)
+
         this.newSlot("hour", null)
         this.newSlot("minute", null)
         this.newSlot("timezone", null)

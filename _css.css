@@ -23,6 +23,8 @@ html, body {
     /*font-size: 13px;*/
     font-size: 13px;
     text-size-adjust: 100%; 
+    
+    -webkit-font-smoothing: antialiased;
 
     /*
     text-size-adjust: none; 

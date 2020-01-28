@@ -38,6 +38,46 @@
 }
 */
 
+/*
+@font-face {
+    font-family: "AppLight";
+    src: url("resources/fonts/VectorBattle/VectorBattle.ttf");
+    font-display: auto;
+}
+
+@font-face {
+    font-family: "AppRegular";
+    src: url("resources/fonts/VectorBattle/VectorBattle.ttf");
+    font-display: auto;
+}
+
+@font-face {
+    font-family: "AppSemiBold";
+    src: url("resources/fonts/VectorBattle/VectorBattle.ttf");
+    font-display: auto;
+}
+*/
+
+/*
+@font-face {
+    font-family: "AppLight";
+    src: url("resources/fonts/Hyperspace/HyperspaceBold.ttf");
+    font-display: auto;
+}
+
+@font-face {
+    font-family: "AppRegular";
+    src: url("resources/fonts/Hyperspace/HyperspaceBold.ttf");
+    font-display: auto;
+}
+
+@font-face {
+    font-family: "AppSemiBold";
+    src: url("resources/fonts/Hyperspace/HyperspaceBold.ttf");
+    font-display: auto;
+}
+*/
+
 
 @font-face {
     font-family: "AppLight";

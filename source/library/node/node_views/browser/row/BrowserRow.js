@@ -506,6 +506,12 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
     */
 
+   onEnterKeyUp () {
+        this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
+        this.justTap()
+        return false // stop propogation
+    }
+
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onBackspaceKeyUp")
         this.delete()
