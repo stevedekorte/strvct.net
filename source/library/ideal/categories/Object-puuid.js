@@ -56,4 +56,17 @@ Object.defineSlots(Object.prototype, {
         return this.typePuuid()
     },
 
+    debugTypeId: function() {
+        const puuid = this.puuid().substr(0,3)
+
+        if (Type.isFunction(this.type)) {
+            return this.type() + "_" + puuid
+        }
+        return Type.typeName(this) + "_" + puuid
+    },
+
+    debugTypeIdSpacer: function() {
+        return " -> "
+    },
+
 })

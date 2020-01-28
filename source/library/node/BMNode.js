@@ -388,7 +388,7 @@ window.BMNode = class BMNode extends ProtoClass {
     addSubnodeAt (aSubnode, anIndex) {
         assert(anIndex >= 0)
         this.justAddSubnodeAt(aSubnode, anIndex)
-        this.didChangeSubnodeList()
+        //this.didChangeSubnodeList() // happens automatically from hooked array
         return aSubnode
     }
 
@@ -405,9 +405,11 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     addLinkSubnode (aNode) {
+        /*
         if(aNode.parentNode()) {
             console.warn("adding a link subnode to a node with no parent (yet)")
         }
+        */
         const link = BMLinkNode.clone().setLinkedNode(aNode)
         this.addSubnode(link)
         return link
@@ -492,7 +494,7 @@ window.BMNode = class BMNode extends ProtoClass {
     
     removeSubnode (aSubnode) {
         this.justRemoveSubnode(aSubnode)
-        this.didChangeSubnodeList()
+        //this.didChangeSubnodeList() handled by hooked array
         return aSubnode
     }
     
@@ -502,7 +504,7 @@ window.BMNode = class BMNode extends ProtoClass {
     			this.justRemoveSubnode(subnode)
     		})
     		
-            this.didChangeSubnodeList()
+            //this.didChangeSubnodeList() handled by hooked array but this could be more efficient
         }
         return this
     }
@@ -537,15 +539,27 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     didUpdateNode () {
+        if (!this.isFinalized()) {
+            return
+        }
+
         const note = this.didUpdateNodeNote()
+
         if (note) {
+            //console.log("Node '" + this.title() + "' POST didUpdateNode")
+            if (this.title() === "STRVCTapp") {
+                console.log("Node STRVCTapp didUpdateNode")
+            }
             note.post()
         }
 
+        
+        /*
         if (this.parentNode()) {
             assert(this.parentNode() !== this)
             this.parentNode().didUpdateNode()
         }
+        */
     }
 
     didUpdateSlot (aSlot, oldValue, newValue) {
@@ -859,7 +873,7 @@ window.BMNode = class BMNode extends ProtoClass {
             this.setSubnodes(this._subnodes.filter(sn => !(sn === null) ))
         }
         this._subnodes.forEach(subnode => subnode.setParentNode(this))
-        this.didChangeSubnodeList()
+        this.didChangeSubnodeList() // not handles automatically
         return this
     }   
     
@@ -981,6 +995,10 @@ window.BMNode = class BMNode extends ProtoClass {
 
     summary () {
         return this.title() + " " + this.subtitle()
+    }
+
+    debugTypeId () {
+        return super.debugTypeId() + " '" + this.title() + "'"
     }
 
 }.initThisClass()

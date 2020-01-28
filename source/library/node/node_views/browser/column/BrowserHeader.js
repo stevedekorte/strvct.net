@@ -97,7 +97,7 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
                 const button = BrowserHeaderAction.clone()
                 button.setTarget(node).setAction(action)
                 button.setCanClick(this.nodeHasAction(action))
-                this.addSubview(button).syncFromNode()
+                this.addSubview(button).syncFromNodeNow()
             }
         })
 

@@ -56,7 +56,7 @@
 window.SyncScheduler = class SyncScheduler extends ProtoClass {
     initPrototype () {
         this.newSlot("actions", ideal.Dictionary.clone())
-        this.newSlot("syncSets", ideal.Dictionary.clone())
+        //this.newSlot("syncSets", ideal.Dictionary.clone())
         this.newSlot("hasTimeout", false)
         this.newSlot("isProcessing", false)
         this.newSlot("currentAction", null)
@@ -65,7 +65,8 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
     init () {
         super.init()
     }
-	
+    
+    /*
     syncSet (syncMethod) {
         const sets = this.syncSets()
 
@@ -75,6 +76,7 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
         
         return sets.at(syncMethod)
     }
+    */
 
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
@@ -164,19 +166,28 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
             return this
         }
         assert(!this.isProcessing())
+
+        //console.log(" --- SyncScheduler BEGIN ---")
+        //this.show()
+
         this.setIsProcessing(true)
-        const useTry = false
         let error = null
 
-        if (useTry) {
-            try {
-                this.justProcessSetsPRIVATE()
-            } catch (e) {
-                error = e
-            } 
-        } else {
-            this.justProcessSetsPRIVATE()
-        }
+        //this.debugLog(this.description())
+        this.debugLog("Sync")
+        
+        const actions = this.orderedActions()
+        this.clearActions()
+ 
+        actions.forEach((action) => {
+            this.setCurrentAction(action)
+            //const actionError = action.tryToSend()
+            const actionError = action.send()
+            if (actionError) {
+                error = actionError
+            }
+            this.setCurrentAction(null)
+        })
         
         this.setCurrentAction(null)
         this.setIsProcessing(false)
@@ -184,35 +195,10 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
         if (error) {
             throw error
         }
-        
+
+        //console.log(" --- SyncScheduler END ---")
+
         return this
-    }
-
-    justProcessSetsPRIVATE() {
-        //this.debugLog(this.description())
-        this.debugLog("Sync")
-        
-        const actions = this.orderedActions()
-        this.clearActions()
-        /*
-        if (actions.length) {
-            console.log("syncing " + actions.length + " actions")
-        }
-        */
-        //this.debugLog(() => "actions = ", actions.map(a => a.method()).join(","))
-        //this.debugLog("--- sending ----")
-        actions.forEach((action) => {
-            this.setCurrentAction(action)
-            //action.trySend()
-            action.send()
-            this.setCurrentAction(null)
-        })
-        //this.debugLog("--- done sending ----")
-    }
-
-    description () {
-        const actionsString = this.orderedActions().map(action => "    " + action.description() ).join("\n")
-        return this.type() + ":\n" + actionsString
     }
 
     actionCount () {
@@ -250,6 +236,16 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
 
         return this
     }
+
+    actionsDescription () {
+        return this.orderedActions().map(action => "    " + action.description() ).join("\n")
+    }
+
+    show () {
+        console.log(this.type() + ":")
+        console.log(this.actionsDescription())
+    }
+
 }.initThisClass()
 
 Object.defineSlots(ProtoClass.prototype, {

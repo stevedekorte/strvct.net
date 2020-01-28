@@ -10,7 +10,6 @@ window.NodeView = class NodeView extends DomStyledView {
     
     initPrototype () {
         this.newSlot("node", null) //.setDuplicateOp("duplicate")
-        //this.newSlot("ownsView", true)
         this.newSlot("overrideSubviewProto", null)
         this.newSlot("nodeObservation", null)
         this.newSlot("isInspecting", false)
@@ -18,19 +17,15 @@ window.NodeView = class NodeView extends DomStyledView {
 
     init () {
         super.init()
-        //this.superProxy().init()
         //this.setNodeObservation(BMNotificationCenter.shared().newObservation().setName("didUpdateNode").setObserver(this))
-        this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this)) // observe all
-        //this.setStyles(BMViewStyles.clone())
+        this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this)) // observe all posts from node
         this.updateSubnodeToSubviewMap()
         return this
     } //.setDocs("init", "initializes the object", "returns this"),
 	
 	
     setNode (aNode) {
-
         if (this._node !== aNode) {
-
             this.stopWatchingNode()
             this._node = aNode
             this.startWatchingNode()
@@ -67,6 +62,7 @@ window.NodeView = class NodeView extends DomStyledView {
         if (this.node()) {
             //console.log("stopWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
             this.nodeObservation().stopWatching()
+            //this.nodeObservation().setTarget(null)
             //this.node().onStopObserving()
         }
         return this
@@ -190,7 +186,7 @@ window.NodeView = class NodeView extends DomStyledView {
             // subviews no longer referenced in subviews list will be collected
         }
 
-        this.managedSubviews().forEach(subview => subview.syncFromNode())
+        this.managedSubviews().forEach(subview => subview.syncFromNodeNow())
 
         return this
     }
@@ -213,18 +209,10 @@ window.NodeView = class NodeView extends DomStyledView {
         if (this.hasScheduleSyncFromNode()) {
             this.hasScheduleSyncFromNode()
             console.log("SKIPPING scheduleSyncToNode because hasScheduleSyncFromNode")
-            window.SyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode")
+            this.unscheduleSyncFromNode()
             return this
         }
-        /*
-        if (this.hasScheduleSyncFromNode()) {
-            // wait for view to sync with node first
-            this.unscheduleTargetAndMethod(this, "syncFromNode")
-            return this
-        }
-        */
         
-        //NodeViewSynchronizer.addToNode(this)  
         window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 0)
         return this
     }
@@ -233,24 +221,23 @@ window.NodeView = class NodeView extends DomStyledView {
         return window.SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode")
     }
 
+    hasScheduleSyncFromNode () {
+        return window.SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
+    }
+
     scheduleSyncFromNode () {
         assert(!this.hasScheduleSyncToNode())
-        /*
-        if (this.hasScheduleSyncToNode()) {
-            // wait for view to sync with node first
-            assert(!this.hasScheduleSyncToNode())
-            return this
-        }
-        */
-
-        //NodeViewSynchronizer.addFromNode(this)    
-        //this.debugLog(" scheduleSyncFromNode")
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode")
+        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2) // let posts happen first
         return this
     }
 
-    hasScheduleSyncFromNode () {
-        return window.SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
+    unscheduleSyncFromNode () {
+        SyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode")
+    }
+
+    syncFromNodeNow () { // unschedule syncFromNode if scheduled, and call syncFromNode now
+        this.unscheduleSyncFromNode()
+        this.syncFromNode()
     }
 
     // logging 

@@ -44,7 +44,7 @@ window.ShelfItemView = class ShelfItemView extends NodeView {
     
     didUpdateNode () {
         super.didUpdateNode()
-        this.syncFromNode()
+        this.syncFromNodeNow()
     }
 
     setupBadgeView () {	

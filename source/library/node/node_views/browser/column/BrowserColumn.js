@@ -265,7 +265,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 	
     selectRowWithNode (aNode) {
-        const selectedRow = this.rows().detect(row => row.node() === aNode)
+        console.log(">>> column " + this.node().title() + " select row " + aNode.title())
+        const selectedRow = this.rows().detect(row => row.node().nodeRowLink() === aNode)
 		
         if (selectedRow) {
             selectedRow.setIsSelected(true)
@@ -316,7 +317,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 	    let subview = this.subviewForNode(subnode)
 	    
         if (!subview) {
-            this.syncFromNode()
+            this.syncFromNodeNow()
 	        subview = this.subviewForNode(subnode)
         } 
 
@@ -367,20 +368,36 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
     
-    /*
+    
     scheduleSyncFromNode () {
+        //console.log(this.type() + " " + this.node().title() + " .scheduleSyncFromNode()")
         if (this.browser() === null || this.node() === null) {
             console.warn("WARNING: skipping BrowserColumn.scheduleSyncFromNode")
             console.warn("  this.browser() = " , this.browser())
             console.warn("  this.node() = " , this.node())
             return this
-        }	    
-	    super.scheduleSyncFromNode()
+        }	 
+        
+        const node = this.node()
+        if (node && node.title() === "STRVCTapp") {
+            console.log(this.typeId() + " STRVCTapp scheduleSyncFromNode")
+        }
+ 	    super.scheduleSyncFromNode()
 	    return this
     }
-    */
 	
     syncFromNode () {
+        //console.log(this.type() + " " + (this.node() ? this.node().title() : "null") + " .syncFromNode()")
+
+        /*
+        if (true) {
+            const node = this.node()
+            if (node && node.title() === "STRVCTapp") {
+                console.log(this.debugTypeId() + " syncFromNode")
+            }
+        }
+        */
+
         if (this.hasPausedSync()) {
             return this
         }
@@ -391,7 +408,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             //console.warn("this.node().title() = " , this.node().title())
             return
         }
-        
         
         // remember the selection before sync
         let selectedIndex = this.selectedRowIndex()
@@ -407,7 +423,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         //this.setIsRegisteredForBrowserDrop(this.node().acceptsFileDrop())
 
         if (selectedIndex === -1) {
-            this.browser().clearColumnsGroupsAfter(this.columnGroup()) // TODO: fragile: careful that this doesn't cause a loop...
+            //this.browser().clearColumnsGroupsAfter(this.columnGroup()) // TODO: fragile: careful that this doesn't cause a loop...
         } else {
             // select the row matching the last selected node
 
@@ -945,7 +961,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             this._temporaryPinchSubnode = newSubnode
 
             // sync with node to add row view for it
-            this.syncFromNode()
+            this.syncFromNodeNow()
 
             // find new row and prepare it
             const newRow = this.subviewForNode(newSubnode)
@@ -1204,7 +1220,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         }
 
         this.setHasPausedSync(false)
-        this.syncFromNode()
+        this.syncFromNodeNow()
         //this.endDropMode() // we already unstacked the rows
     }
 
@@ -1344,6 +1360,18 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return false
     }
     */
+
+    nodeDescription () {
+        const node = this.node()
+        if (node) {
+            return node.debugTypeId()
+        }
+        return null
+    }
+
+    debugTypeId () {
+       return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription()
+    }
     
 }.initThisClass()
 

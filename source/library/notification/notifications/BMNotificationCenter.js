@@ -181,8 +181,11 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
     
     addNotification (note) {
         if (!this.hasNotification(note)) {
+            if (note.sender().title && note.sender().title === "STRVCTapp") {
+                console.log("NotificationCenter '" + note.sender().title() + "' " + note.name())
+            }
             this.notifications().push(note)
-		     window.SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue") //, -1)
+		    window.SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1)
         }
         return this
     }
@@ -194,32 +197,51 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
     // --- timeout & posting ---
     
     processPostQueue () {
+        // TODO: for performance, we could make an observationName->observations dictionary
+        // but only worthwhile if observation list is sufficiently large
+
         // keep local ref of notifications and set 
         // notifications to empty array in case any are
         // added while we process them
+
+        /*
+        console.log(" --- " + this.type() + " processPostQueue BEGIN ---")
+        this.show()
+        console.log(" ")
+        */
         this.setCurrentNote(null)
 
         if (!this.isProcessing()) {
             this.setIsProcessing(true)
             //console.log("processPostQueue " + this.notifications().length)
-        
             const notes = this.notifications()
             this.setNotifications([])
-            notes.forEach( (note) => {
-                //try { 
-                this.postNotificationNow(note)
-                //this.debugLog("   <- posting " + note.description() )
-
-                //} catch (error) {
-                //}
-            })
+            notes.forEach(note => this.postNotificationNow(note))
+            //notes.forEach(note => this.tryToPostNotificationNow(note))
             this.setIsProcessing(false)
         } else {
             Error.showCurrentStack()
             console.warn("WARNING: attempt to call processPostQueue recursively while on note: ", this._currentNote)
         }
-        
+
+        //console.log(" --- " + this.type() + " processPostQueue END ---")
+
         return this
+    }
+
+    tryToPostNotificationNow (note) {
+        try { 
+            this.postNotificationNow(note)
+            //this.debugLog("   <- posting " + note.description() )
+        } catch (error) {
+            console.log(this.type() + " caught exception while posting: " + note.description())
+            return error
+        }
+        return null
+    }
+
+    shouldDebugNote (note) {
+        return this.isDebugging() === true && (this.debugNoteName() === null || this.debugNoteName() === note.name());
     }
     
     postNotificationNow (note) {
@@ -230,7 +252,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
 
         this.setCurrentNote(note)
         
-        const showDebug = this.isDebugging() === true && (this.debugNoteName() === null || this.debugNoteName() === note.name());
+        const showDebug = this.shouldDebugNote(note)
 
         if (showDebug) {
             this.debugLog(" senderId " + note.senderId() + " posting " + note.name())
@@ -246,22 +268,8 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
                     this.debugLog(" sending ", note.name() + " to obs " + obs.type())
                 }
             
-                obs.sendNotification(note)       
-                /*
-                try {
-                    obs.sendNotification(note)       
-                } catch(error) {
-                    console.log("NOTIFICATION EXCEPTION: '" + error.message + "'");
-                    console.log("  OBSERVER (" + obs.observer() + ") STACK: ", error.stack)
-                    if (note.senderStack()) {
-                        console.log("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack())
-                    }
-
-                    // how to we propogate the exception so we can inspect it in the debugger
-                    // without causing an inconsistent state by not completing the other notifications?
-                    throw error
-                }
-                */
+                obs.sendNotification(note)    
+                //obs.tryToSendNotification(note)   
             }
         })        
         
@@ -269,29 +277,19 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
     }
 
     show () {
-        this.debugLog(":")
-        this.showObservers()
-        this.showNotes()
-    }
-
-    showNotes () {
+        console.log(this.type() + ":")
+        console.log("  posting notes:")
         console.log(this.notesDescription())
+        console.log("  observations:")
+        console.log(this.observersDescription())
     }
 
     notesDescription() {
-        const notes = this.notifications()
-        return "NotificationCenter: \n" + notes.map(note => "    " + note.description()).join("\n")
+        return this.notifications().map(note => "    " + note.description()).join("\n")
     }
 
     observersDescription() {
-        const observations = this.observations() 
-        return "observations:\n" + observations.map((obs) => { 
-            return "    " + obs.observer().type() + " listening to " + obs.targetId() + " " + obs.name()
-        }).join("\n") 
-    }
-    
-    showObservers () {
-        console.log(this.observersDescription())
+        return this.observations() .map(obs => "    " + obs.description()).join("\n") 
     }
     
     showCurrentNoteStack () {

@@ -31,17 +31,39 @@ window.BMObservation = class BMObservation extends ProtoClass {
     }
 
     setTarget (obj) {
-        this.setTargetId(obj.typeId())
+        this.setTargetId(obj ? obj.typeId() : null)
         return this
     }
 
-    matchesNotification(note) {
-        const matchesTarget = (note.senderId() === this.targetId()) || (this.targetId() === null)
-        const matchesName = (note.name() === this.name()) || (this.name() === null)
-        return matchesTarget && matchesName
+    matchesNotification (note) {
+        const tid = this.targetId()
+        const matchesTarget = (tid === null) || (note.senderId() === tid) 
+        if (matchesTarget) {
+            const name = this.name()
+            const matchesName = (note.name() === name) || (name === null)
+            return matchesName
+        }
+        return false
     }
 
-    sendNotification(note) {
+    tryToSendNotification (note) {
+        try {
+            this.sendNotification(note)       
+        } catch(error) {
+            console.log("NOTIFICATION EXCEPTION: '" + error.message + "'");
+            console.log("  OBSERVER (" + this.observer() + ") STACK: ", error.stack)
+            if (note.senderStack()) {
+                console.log("  SENDER (" + note.senderId() + ") STACK: ", note.senderStack())
+            }
+
+            // how to we propogate the exception so we can inspect it in the debugger
+            // without causing an inconsistent state by not completing the other notifications?
+            throw error
+        }
+        return null
+    }
+
+    sendNotification (note) {
         if (this.center().isDebugging()) {
             //console.log(this._observer + " received note " + note.name() + " from " + note.sender() )
         }
@@ -60,20 +82,27 @@ window.BMObservation = class BMObservation extends ProtoClass {
         }
     }
 
-    isEqual(obs) {
+    isEqual (obs) {
         const sameName = this.name() === obs.name()
         const sameObserver = this.observer() === obs.observer()
         const sameTargetId = this.targetId() === obs.targetId()
         return sameName && sameObserver && sameTargetId
     }
 
-    watch() {
+    watch () {
         this.center().addObservation(this)
+        //this.target().onStartObserving()
         return this
     }
 
-    stopWatching() {
+    stopWatching () {
         this.center().removeObservation(this)
+        //this.target().onStopObserving()
         return this
     }
+
+    description () {
+        return this.observer().typeId() + " listening to " + this.targetId() + " " + this.name()
+    }
+
 }.initThisClass()

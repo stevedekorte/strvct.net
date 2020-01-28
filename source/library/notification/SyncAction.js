@@ -11,6 +11,10 @@
 
 window.SyncAction = class SyncAction extends ProtoClass {
 
+    static ActionKeyForTargetAndMethod (target, method) {
+        return target.typeId() + "." + method
+    }
+
     initPrototype () {
         this.newSlot("target", null)
         this.newSlot("method", null)
@@ -23,23 +27,24 @@ window.SyncAction = class SyncAction extends ProtoClass {
         this.setIsDebugging(false)
     }
 	
-    trySend () {
-        this.send()
-        /*
+    tryToSend () {
         try {
             this.send()
         } catch(error) {
-            console.warn(this.typeId() + ".trySend(" + this.description() + ") caught exception: ")
+            console.warn(this.typeId() + ".tryToSend(" + this.description() + ") caught exception: ")
             error.show()
-            return false
+            return error
         }
-        */
-        return true
+        return null
     }
 	
     send () {
         //this.debugLog("   <- sending " + this.description())
-        this.target()[this.method()].apply(this.target(), this.args() ? this.args() : [])
+        const t = this.target()
+        const m = this.method()
+        const a = this.args()
+        t[m].apply(t, a ? a : [])
+        return null
     }
 	
     actionsKey () {
@@ -47,7 +52,7 @@ window.SyncAction = class SyncAction extends ProtoClass {
     }
 	
     equals (anAction) {
-        return   anAction !== null && 
+        return anAction !== null && 
                (this.target() === anAction.target()) && 
                (this.method() === anAction.method())
     }
@@ -57,9 +62,6 @@ window.SyncAction = class SyncAction extends ProtoClass {
         const o = this.order() === 0 ? "" : " order:" + this.order()
         return t + " " + this.method() + "" + o
     }
-	
-    static ActionKeyForTargetAndMethod (target, method) {
-        return target.typeId() + "." + method
-    }
+
 }.initThisClass()
 

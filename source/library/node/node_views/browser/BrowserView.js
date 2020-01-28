@@ -353,12 +353,11 @@ window.BrowserView = class BrowserView extends NodeView {
         const cgs = this.columnGroups()
         for (let i = index + 1; i < cgs.length; i++) {
             const cg = cgs.at(i)
-            //cg.setNode(null).syncFromNode()
             //this.useNewColumnGroupToReplaceColumnGroupAtIndex(i)
             if (!Type.isNull(cg.node())) {
                 //console.log("clearing column group ", i)
                 const theCg = this.setColumnGroupAtIndexToNode(i, null)
-                theCg.syncFromNode() // causes loop as the last column will clear columns after it 
+                theCg.syncFromNodeNow() // causes loop as the last column will clear columns after it?
             }
         }
 
@@ -368,6 +367,12 @@ window.BrowserView = class BrowserView extends NodeView {
     clearColumnsGroupsAfter (selectedCg) {
         const cgs = this.columnGroups()
         const index = cgs.indexOf(selectedCg)
+        if(index === -1) {
+            console.warn(this.type() + " WARNING attempt to clearColumnsGroupsAfter " + selectedCg.debugTypeId() + " not in browser")
+            this.show()
+            return
+        }
+        
         this.clearColumnsGroupsAfterIndex(index)
     }
 
@@ -416,9 +421,15 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     setColumnGroupAtIndexToNode (cgIndex, cgNode) {
+        if (cgIndex === 0 && cgNode === null) {
+            console.log("setColumnGroupAtIndexToNode to null?")
+        }
+
         const oldCg = this.columnGroups()[cgIndex]
 
         if (oldCg.node() !== cgNode) {
+            console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
+
             if (cgNode) {
                 const cachedCg = this.getCachedColumnGroupForNode(cgNode)
                 if (cachedCg && oldCg != cachedCg) {
@@ -429,7 +440,9 @@ window.BrowserView = class BrowserView extends NodeView {
                 }  
             }
             
-            const newCg = this.newBrowserColumnGroup().setNode(cgNode)
+            const newCg = this.newBrowserColumnGroup()
+            assert(newCg.browser())
+            newCg.setNode(cgNode)
             this.replaceSubviewWith(oldCg, newCg)
             newCg.copySetupFrom(oldCg)
             return newCg
@@ -515,7 +528,7 @@ window.BrowserView = class BrowserView extends NodeView {
         //console.log(this.type() + ".syncFromNode()")
 
         columnGroups.forEach((cg) => {
-            cg.syncFromNode()
+            cg.syncFromNodeNow()
         })
 
         this.setupColumnGroupColors()
@@ -739,7 +752,6 @@ window.BrowserView = class BrowserView extends NodeView {
             }
         })
 
-        //this.syncFromNode()
     }
 
     nodeStringPath () {
@@ -854,6 +866,19 @@ window.BrowserView = class BrowserView extends NodeView {
         if (this.watchForNodeUpdates()) {
             this.syncToHashPath();
         }
+    }
+
+    show () {
+        console.log(this.type() + ":")
+        const lines = this.columnGroups().map((cg => {
+            return "    " + cg.debugTypeId() 
+        }))
+        console.log(lines.join("\n"))
+    }
+
+    debugTypeId () {
+        const nodeName = cg.node() ? cg.node().debugTypeId() : "null"
+        return this.typeId() + " for " +  nodeName
     }
     
 }.initThisClass()

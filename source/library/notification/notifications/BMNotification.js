@@ -35,11 +35,18 @@ window.BMNotification = class BMNotification extends ProtoClass {
             return true 
         }
         
+        /*
         const sameName = this.name() === obs.name() 
         const sameSenderId = this.senderId() === obs.senderId() 
         // TODO: testing equivalence of info?
-        
         return sameName && sameSenderId
+        */
+        // not sure if compiler is smart enough to skip 2nd part
+        return this.name() === obs.name()  && this.senderId() === obs.senderId() 
+    }
+
+    isPosted () {
+        return this.center().hasNotification(this)
     }
     
     post () {

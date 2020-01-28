@@ -120,7 +120,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
     
     didChangeIsSelected () {
         super.didChangeIsSelected()
-        this.syncFromNode() // need this to update selection color on fields?
+        this.syncFromNodeNow() // need this to update selection color on fields?
         return this
     }
 

@@ -1,7 +1,11 @@
 
 TODO:
 
-	* Browser can't use nodePath anymore because of links!!!
+	Boolean and ImageWell fields are appearing as String fields
+	
+	Too many syncFromNode's being sent to views
+	- example: Browser sync tells ColumnGroup and Column to sync, but also set's their node, 
+	- setting the node itself schedules syncFromNode 
 	
 	Browser navigation not always collapsing left columns as needed when navigating far right
 	- seems to happen only on menu nodes - are they capturing some event or not sending a change note?

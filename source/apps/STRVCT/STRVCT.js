@@ -21,21 +21,15 @@ window.STRVCT = class STRVCT extends App {
 
     init () {
         super.init()
-        this.setName("STRVCT")
+        this.setName("STRVCTapp")
         this.setVersion([0, 0, 0, 0])
         return this
     } 
 
     setup () {
         super.setup()        
-
-        if (false) {
-            this.setupAtom()
-        } else {
-            this.setupModel()
-            this.setupViews()
-        }
-
+        this.setupModel()
+        this.setupViews()
         this.appDidInit()
         return this
     }
@@ -44,10 +38,10 @@ window.STRVCT = class STRVCT extends App {
 
     setupModel () {     
         const root = this.defaultStore().rootObject()
-        console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
+        //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
         //root.removeAllSubnodes()
 
-        const myLists = this.defaultStore().rootSubnodeWithTitleForProto(this.name(), BMMenuNode);
+        const myLists = this.defaultStore().rootSubnodeWithTitleForProto("Notes", BMMenuNode);
         this.addLinkSubnode(myLists)
 
         const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMMenuNode);
@@ -94,11 +88,9 @@ window.STRVCT = class STRVCT extends App {
         this.browser().setNode(this)
                 
         this.rootView().addSubview(this.browser())
-        //this.browser().scheduleSyncFromNode()
-        this.browser().syncFromNode()
+        this.browser().syncFromNodeNow()
         this.browser().syncFromHashPath()
         //this.browser().scheduleMethod("syncFromHashPath", 10)
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
         return this
     }
 

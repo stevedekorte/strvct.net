@@ -65,12 +65,11 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
 
     // caching - used to hold onto view state during drag between columns
     
-    
+    /*
     browser () {
         return this.parentView()
     }
-    
-    
+    */
 
     cache () {
         this._browser.cacheColumnGroup(this)
@@ -292,7 +291,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 */
     
-    setColumnClass (columnClass) {
+    setColumnClass (columnClass) { // no longer used, but might use someday
         if (this.column().type() !== columnClass.type()) {
             const view = columnClass.clone().setNode(this.node())
             this.scrollView().removeSubview(this.column())
@@ -338,7 +337,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 
     fitToTargetWidth () {
-        this.setMinAndMaxWidth(this.targetWidth()+50)
+        this.setMinAndMaxWidth(this.targetWidth() + 50)
         return this
     }
 
@@ -362,15 +361,16 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         super.setNode(aNode)
 
         this.setColumnClass(BrowserColumn)
-        //this.matchNodeMinWidth()
         
         if (aNode) {
             // obey node's width preferences
             // use custom class for column if node wants it
+            /*
             const customViewClass = aNode.viewClass()
             if (customViewClass) {
                 this.setColumnClass(customViewClass)
             }
+            */
             
             this.setHasFooter(aNode.nodeHasFooter())
         }
@@ -380,33 +380,33 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         this.footer().setNode(aNode)
         return this
     }
-    
 
     /*
-    NOT USED - VIEWS DON'T IMPLEMENT didUpdate now - they use didUpdateNode
-    the syncFromNode overide in this class handles the subviews
-    
-    didUpdateNode () {
-        dfdffdfdf()
-        this.log("didUpdateNode")
-        this.header().didUpdateNode()
-        this.column().didUpdateNode()
-        return this        
-    }
-    */
-
     didUpdateNode () {
         super.didUpdateNode()
-        
     }
+    */
 
     // just using this to make debugging easier
 
     syncFromNode () {        
         //console.log("BrowserColumnGroup syncFromNode "  + this.node().type())
-        this.header().syncFromNode()
-        this.column().syncFromNode()
+        this.header().syncFromNodeNow()
+        this.column().syncFromNodeNow()
         //this.updateEmptyLabel()
         return this
     }
+
+    debugTypeId () {
+        return super.debugTypeId() + this.debugTypeIdSpacer() + this.column().debugTypeId()
+    }
+
+    /*
+    scheduleSyncFromNode () {
+        console.log(this.debugTypeId() + " scheduleSyncFromNode")
+        super.scheduleSyncFromNode()
+        return this
+    }
+    */
+
 }.initThisClass()
