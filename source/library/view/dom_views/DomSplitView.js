@@ -37,6 +37,8 @@ window.DomView = class DomSplitView extends DomView {
 
         this.setBottomView(DomView.clone())
         this.addSubview(this.bottomView())
+
+        this.debugSplitViews()
         return this
     }
 
@@ -48,7 +50,17 @@ window.DomView = class DomSplitView extends DomView {
         
         this.setRightView(DomView.clone())
         this.addSubview(this.rightView())
+
+        this.debugSplitViews()
         return this
+    }
+
+    debugSplitViews () {
+        this.splitViews().forEach(sv => sv.setBorder("1px solid yellow"))
+    }
+
+    splitViews () {
+        return [this.leftView(), this.rightView(), this.topView(), this.bottomView()].select(v => !Type.isNull(v))
     }
 
     isSplitLeftRight () {
@@ -59,7 +71,7 @@ window.DomView = class DomSplitView extends DomView {
         return !Type.isNull(this.topView())
     }
 
-    
+
     
 
 }.initThisClass()

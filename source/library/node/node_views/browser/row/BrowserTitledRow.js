@@ -19,6 +19,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     init () {
         super.init()
 
+
         this.setTitleView(this.contentView().addSubview(BrowserRowTitle.clone()))
         this.titleView().setUsesDoubleTapToEdit(true)
 
