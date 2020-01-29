@@ -167,7 +167,6 @@ window.BrowserView = class BrowserView extends NodeView {
 
     // -------------------
 
-
     setupDefaultStyles () {
         this.setDefaultColumnStyles(BMViewStyles.clone())
         this.defaultColumnStyles().unselected().setBackgroundColor("white")
@@ -271,6 +270,7 @@ window.BrowserView = class BrowserView extends NodeView {
             if (cg.column().type() === "BrowserColumn") { // TODO: don't depend on type
                 let bgColor = this.bgColorForIndex(i)
 
+                /*
                 if (cg.node()) {
                     let color = cg.node().nodeColumnBackgroundColor()
                     if (color) {
@@ -280,6 +280,7 @@ window.BrowserView = class BrowserView extends NodeView {
                         //console.log("no nodeColumnBackgroundColor for ", cg.node().typeId() + " " + cg.node().title())
                     }
                 }
+                */
 
                 //cg.styles().selected().setBackgroundColor(bgColor)
                 //cg.styles().unselected().setBackgroundColor(bgColor)

@@ -26,8 +26,32 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.setMaxHeight("none")
         this.setHeight("auto")
 
+        const cv = this.contentView()
+
+        cv.setMinHeight("5em")
+        cv.flexSplitIntoRows(4)
+        cv.setJustifyContent("center") // alignment perpendicutal to flex
+
+
+        const tv = cv.subviews().at(0)
+        const bv = cv.subviews().at(1)
+        const nv = cv.subviews().at(2)
+        const ev = cv.subviews().at(3)
+
+        cv.subviews().forEach(sv => sv.setPaddingLeft("1.5em").setPaddingRight("1em"))
+        
+        /*
+        cv.setMinHeight("5em")
+
+        cv.setPaddingTop("0.7em")
+        cv.setPaddingBottom("1em")
+
+        cv.setPaddingLeft("1.5em")
+        cv.setPaddingRight("1em")
+        */
+
         this.setKeyView(TextField.clone().setDivClassName("BMFieldKeyView"))
-        this.addContentSubview(this.keyView())     
+        tv.addSubview(this.keyView())     
    		this.keyView().turnOffUserSelect().setSpellCheck(false)   
         //this.keyView().setMarginLeft(18)
 
@@ -37,7 +61,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         //this.contentView().setPaddingLeftPx(20)
         this.setValueView(this.createValueView())
-        this.addContentSubview(this.valueView())  
+        bv.addSubview(this.valueView())  
         //this.valueSectionView().addSubview(this.valueView())  
       
         this.valueView().setUserSelect("text")   // should the value view handle this?
@@ -45,11 +69,11 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         //this.valueView().setWidthPercentage(100) 
 
         this.setNoteView(DomView.clone().setDivClassName("BMFieldRowViewNoteView"))
-        this.addContentSubview(this.noteView())
+        nv.addSubview(this.noteView())
         this.noteView().setUserSelect("text")
 
         this.setErrorView(DomView.clone().setDivClassName("BMFieldRowViewErrorView"))
-        this.addContentSubview(this.errorView())
+        ev.addSubview(this.errorView())
         this.errorView().setUserSelect("text").setSpellCheck(false)
         //this.errorView().setInnerHTML("error")
         this.errorView().setColor("red")
@@ -58,9 +82,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
     }
 
     createValueView () {
-        const tf = TextField.clone().setDivClassName("BMFieldValueView")
+        const v = TextField.clone().setDivClassName("BMFieldValueView")
+
         //tf.setSelectAllOnDoubleClick(true)
-        return tf
+        return v
     }
 
 
@@ -135,6 +160,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
     */
 
 
+    /*
    contentHeight () {
         const displayedViews = this.contentView().subviews().filter((sv) => sv.getComputedCssAttribute("display") !== "none")
         const stackedViews = displayedViews.filter(sv => sv.getComputedCssAttribute("position") !== "absolute")
@@ -155,7 +181,9 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         return h
     }
+    */
 
+    /*
     verticallyCenterContent () {
         const h = this.contentHeight()
         let minH = this.getComputedPxCssAttribute("min-height")
@@ -165,6 +193,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         }
         return this
     }
+    */
 
     /*
     veritcallyCenteredValueTopMargin () {
@@ -248,7 +277,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         }
 		
 
-        this.verticallyCenterContent()
+        //this.verticallyCenterContent()
 
         // editable
         keyView.setIsEditable(node.keyIsEditable())
@@ -276,7 +305,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             //valueView.setToolTip(node.valueError())
             errorView.setColor(this.errorColor())
             errorView.setInnerHTML(node.valueError())
-            errorView.fadeInHeightToDisplayBlock(15)
+            //errorView.fadeInHeightToDisplayBlock(15)
 
         } else {
             //valueView.setBackgroundColor("transparent")
@@ -334,7 +363,8 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
     updateSubviews () {
         super.updateSubviews()
-		
+        
+        /*
         const node = this.node()
 
         if (node && node.nodeMinRowHeight()) {
@@ -346,6 +376,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
                 this.setHeight(this.pxNumberToString(node.nodeMinRowHeight()))
             }
         }
+        */
         
         return this
     }

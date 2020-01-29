@@ -400,9 +400,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
             cb.setMinAndMaxWidthAndHeight(8)
             cb.setAction("delete")
             cb.setOpacity(0).setTransition(this.transitionStyle())
+            /*
             if (this.shouldCenterCloseButton()) {
-                b.verticallyAlignAbsoluteNow()
+               // b.verticallyAlignAbsoluteNow()
             }
+            */
         }
         return this
     }
@@ -573,7 +575,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
             const size = 10
             cb.setMinAndMaxWidthAndHeight(size)
-            cb.verticallyAlignAbsoluteNow()
+            //cb.verticallyAlignAbsoluteNow() // TODO: use flex box instead
             cb.setRight(size * 2)
             cb.setZIndex(0)
             this.setDragDeleteButtonView(cb)

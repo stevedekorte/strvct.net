@@ -19,12 +19,13 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     init () {
         super.init()
 
-        this.contentView().setMinHeight("5.5em")
-        this.contentView().splitLeftRight()
-        let lv = this.contentView().leftView()
+        this.contentView().setMinHeight("5em")
+        this.contentView().flexSplitIntoColumns(2)
+        let lv = this.contentView().subviews().at(0)
 
-        lv.setPaddingTop("1.4em")
-        lv.setPaddingBottom("1em")
+        lv.setPaddingTop("0.7em")
+        lv.setPaddingBottom("0.7em")
+
         lv.setPaddingLeft("1.5em")
         lv.setPaddingRight("1em")
 
@@ -38,7 +39,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         this.titleView().setUsesDoubleTapToEdit(true).setOverflow("visible")
         this.setSubtitleView(lv.addSubview(BrowserRowSubtitle.clone()))
 
-        let rv = this.contentView().rightView()
+        let rv = this.contentView().subviews().at(1)
         rv.setDisplay("flex")
         rv.setAlignItems("center")
         this.setNoteView(rv.addSubview(BrowserRowNote.clone()))
@@ -51,7 +52,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         //icon.setFillColor("white")
         icon.setStrokeColor("white")
         icon.setOpacity(0.2)
-        this.setNoteIconView(this.contentView().rightView().addSubview(icon))
+        this.setNoteIconView(rv.addSubview(icon))
         
         this.updateSubviews()
         this.setIsSelectable(true)
@@ -59,10 +60,16 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     }
 
     hasSubtitle () {
-        return this.subtitleView().innerHTML().length > 0
+        return this.node() && this.node().subtitle() !== null
+        //return this.subtitleView().innerHTML().length > 0
     }
 
     setHasSubtitle (aBool) { 
+        if (aBool) {
+            this.subtitleView().setDisplay("block")
+        } else {
+            this.subtitleView().setDisplay("none")    // 13   
+        }
         /*       
         if (aBool) {
             this.titleView().setMarginTop(6)
@@ -114,7 +121,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
                 const imageUrl = node.nodeThumbnailUrl()
                 if (imageUrl) {
                     this.setupThumbnailViewIfAbsent()
-                    this.thumbnailView().verticallyAlignAbsoluteNow() // TODO: optimize this
+                    //this.thumbnailView().verticallyAlignAbsoluteNow() // TODO: optimize this
                     this.thumbnailView().setBackgroundImageUrlPath(imageUrl)
                 }
             } 

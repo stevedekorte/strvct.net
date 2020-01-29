@@ -1067,6 +1067,17 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("flex")
     }
 
+    // flex order
+
+    setOrder (v) {
+        this.setCssAttribute("order", v)
+        return this
+    }
+
+    order () {
+        return this.getCssAttribute("order")
+    }
+
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     setAlignItems (v) {
@@ -1089,7 +1100,7 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("justify-content")
     }
 
-    // flex direction
+    // flex direction - (row, column)
 
     setFlexDirection (v) {
         this.setCssAttribute("flex-direction", v)

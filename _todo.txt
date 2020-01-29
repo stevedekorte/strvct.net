@@ -1,6 +1,13 @@
 
 TODO:
 
+	For TextView
+		white-space: pre
+	    word-wrap: wrap;
+	SplitView
+	- flexSplitIntoRows(2)
+	- flexSplitIntoColumns(2)
+	
 	DomView.splitLeftRight()
 	- create leftView and rightView
 	- isVerticallySplit
