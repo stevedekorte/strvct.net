@@ -104,7 +104,7 @@ window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
         tv.setPosition("relative")
         tv.setMarginRight(0)
         tv.setMarginLeft(0)
-        this.setPaddingBottom(0)
+        this.setPaddingBottomPx(0)
         tv.setWhiteSpace("normal")
         //tv.setFontFamily("AppRegular, Sans-Serif")       
         tv.setTransition("all 0s")

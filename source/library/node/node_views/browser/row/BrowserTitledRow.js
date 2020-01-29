@@ -19,12 +19,31 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     init () {
         super.init()
 
+        this.contentView().setMinHeight("5.5em")
+        this.contentView().splitLeftRight()
+        let lv = this.contentView().leftView()
 
-        this.setTitleView(this.contentView().addSubview(BrowserRowTitle.clone()))
-        this.titleView().setUsesDoubleTapToEdit(true)
+        lv.setPaddingTop("1.4em")
+        lv.setPaddingBottom("1em")
+        lv.setPaddingLeft("1.5em")
+        lv.setPaddingRight("1em")
 
-        this.setSubtitleView(this.contentView().addSubview(BrowserRowSubtitle.clone()))
-        this.setNoteView(this.contentView().addSubview(BrowserRowNote.clone()))
+        lv.setDisplay("flex")
+        lv.setFlex("10")
+        lv.setAlignItems("flex-start") // alignment in direction of flex
+        lv.setJustifyContent("center") // alignment perpendicutal to flex
+        lv.setFlexDirection("column")
+
+        this.setTitleView(lv.addSubview(BrowserRowTitle.clone()))
+        this.titleView().setUsesDoubleTapToEdit(true).setOverflow("visible")
+        this.setSubtitleView(lv.addSubview(BrowserRowSubtitle.clone()))
+
+        let rv = this.contentView().rightView()
+        rv.setDisplay("flex")
+        rv.setAlignItems("center")
+        this.setNoteView(rv.addSubview(BrowserRowNote.clone()))
+        rv.setMinWidth("2em")
+        rv.setJustifyContent("center")
 
         const icon = SvgIconView.clone().setDivClassName("NoteIconView")
         icon.setMinAndMaxWidth(12)
@@ -32,9 +51,8 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         //icon.setFillColor("white")
         icon.setStrokeColor("white")
         icon.setOpacity(0.2)
-        this.setNoteIconView(this.contentView().addSubview(icon))
+        this.setNoteIconView(this.contentView().rightView().addSubview(icon))
         
-
         this.updateSubviews()
         this.setIsSelectable(true)
         return this
@@ -44,12 +62,14 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         return this.subtitleView().innerHTML().length > 0
     }
 
-    setHasSubtitle (aBool) {        
+    setHasSubtitle (aBool) { 
+        /*       
         if (aBool) {
             this.titleView().setMarginTop(6)
         } else {
             this.titleView().setMarginTop(13)    // 13   
         }
+        */
 
         return this
     }

@@ -23,7 +23,7 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         this.keyView().setMarginLeft(6)
 
         //this.keyView().setMarginTop(-1)
-        this.keyView().setPaddingBottom(1)
+        this.keyView().setPaddingBottomPx(1)
         //this.valueView().setMarginTop(15)
 
         this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())

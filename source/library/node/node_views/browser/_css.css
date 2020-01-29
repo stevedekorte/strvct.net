@@ -213,7 +213,7 @@
     display: block;
     position: relative;
     width: 100%;
-    min-height: 60px;
+    /*min-height: 60px;*/
     height: auto;
     /*max-height: 60px;*/
 
@@ -237,10 +237,12 @@
 }
 
 .BrowserRowContentView {
+    /*
     padding-top: 4px;
     padding-bottom: 4px;
     padding-left: 18px;
     padding-right: 18px;
+    */
     height: auto;
     min-height: 60px;
 }
@@ -249,25 +251,22 @@
     display: block;
     position: relative;
 
-    margin-top: 4px;
-
+    margin-top: 0px;
     margin-left: 0px;
-
-    max-width: calc(100% - 55px);
+    /*max-width: calc(100% - 55px);*/
     min-width: 20px;
+    /*max-height: 17px;*/
 
-    max-height: 17px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 
     text-align: left;
     /*text-overflow: clip;*/
 
-    font-weight: normal;
-
     white-space: nowrap;
     overflow: hidden;
     word-wrap: normal;
-    line-height: 16px;
-    padding-bottom: 2px;
+    /*line-height: 1em;*/
 
     /*border: dashed 1px yellow;*/
 }
@@ -306,9 +305,11 @@
 }
 
 .BrowserRowNote {
+    /*
     position: absolute;
     right: 20px;
     top: 24px;
+    */
     /*font-size: 11px;*/
     font-size: 80%;
     font-weight: normal;
@@ -317,11 +318,13 @@
     text-overflow: ellipsis;
 }
 
+/*
 .NoteIconView {
     position: absolute;
     right: 20px;
     top: 23px;
 }
+*/
 
 .BrowserRowCloseButtonTopRight {
     display: inline-block;

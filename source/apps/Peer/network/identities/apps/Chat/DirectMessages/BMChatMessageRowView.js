@@ -23,8 +23,8 @@ window.BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRo
         this.setMaxHeightPx(1000)
         this.setHeight("auto")
 		
-        this.setPaddingTop(10)
-        this.setMarginBottom(10)
+        this.setPaddingTopPx(10)
+        this.setMarginBottomPx(10)
 		
         this.setupTitleView()
     }

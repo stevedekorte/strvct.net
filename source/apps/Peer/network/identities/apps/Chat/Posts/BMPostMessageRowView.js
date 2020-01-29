@@ -146,8 +146,8 @@ window.BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
         //tv.setPosition("relative")
         tv.setMarginRight(0)
         tv.setMarginLeft(0)
-        tv.setPaddingTop(0)
-        tv.setPaddingBottom(4)
+        tv.setPaddingTopPx(0)
+        tv.setPaddingBottomPx(4)
         tv.setWhiteSpace("normal")
         //tv.setFontFamily("AppRegular, Sans-Serif")
     }

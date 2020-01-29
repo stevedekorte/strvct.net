@@ -44,19 +44,32 @@ window.DomView = class DomSplitView extends DomView {
 
     splitLeftRight () {
         assert(this.canSplit())
+        this.setDisplay("flex")
 
-        this.setLeftView(DomView.clone())
-        this.addSubview(this.leftView())
-        
-        this.setRightView(DomView.clone())
-        this.addSubview(this.rightView())
+        let lv = DomView.clone()
+        this.setLeftView(lv)
+        this.addSubview(lv)
+        //lv.setFloat("left")
+        //lv.setWidthPercentage(50)
+        //lv.setWidth("max-content")
+        //lv.setHeightPercentage(100)
+        //lv.setMinHeight("100%")
 
-        this.debugSplitViews()
+        let rv = DomView.clone()
+        this.setRightView(rv)
+        this.addSubview(rv)
+        //rv.setFloat("right")
+        //rv.setWidthPercentage(50)
+        //rv.setWidth("max-content")
+        //rv.setHeightPercentage(100)
+        //rv.setMinHeight("100%")
+
+        //this.debugSplitViews()
         return this
     }
 
     debugSplitViews () {
-        this.splitViews().forEach(sv => sv.setBorder("1px solid yellow"))
+        this.splitViews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
 
     splitViews () {
@@ -70,8 +83,5 @@ window.DomView = class DomSplitView extends DomView {
     isSplitTopBottom () {
         return !Type.isNull(this.topView())
     }
-
-
-    
 
 }.initThisClass()

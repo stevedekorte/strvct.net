@@ -455,46 +455,107 @@ window.DomView = class DomView extends ProtoClass {
 
 
 
-    // padding left
+    // padding string
 
-    setPadding (aNumber) {
+    setPadding (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("padding", s)
+        return this
+    }
+
+    setPaddingTop (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("padding-top", s)
+        return this
+    }
+
+    setPaddingBottom (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("padding-bottom", s)
+        return this
+    }
+
+    setPaddingLeft (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("padding-left", s)
+        return this
+    }
+    
+    setPaddingRight (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("padding-right", s)
+        return this
+    }
+
+    // get padding
+
+    padding () {
+        return this.getCssAttribute("padding")
+    }
+
+    paddingTop () {
+        return this.getCssAttribute("padding-top")
+    }
+
+    paddingBottom () {
+        return this.getCssAttribute("padding-bottom")
+    }
+
+    paddingLeft () {
+        return this.getCssAttribute("padding-left")
+    }
+
+    paddingRight () {
+        return this.getCssAttribute("padding-right")
+    }
+
+    // padding px
+
+    setPaddingPx (aNumber) {
         this.setPxCssAttribute("padding", aNumber)
         return this
     }
 
-    setPaddingRight (aNumber) {
+    setPaddingRightPx (aNumber) {
         this.setPxCssAttribute("padding-right", aNumber)
         return this
     }
 
-    setPaddingLeft (aNumber) {
+    setPaddingLeftPx (aNumber) {
         this.setPxCssAttribute("padding-left", aNumber)
         return this
     }
 
-    setPaddingTop (aNumber) {
+    setPaddingTopPx (aNumber) {
         this.setPxCssAttribute("padding-top", aNumber)
         return this
     }
 
-    setPaddingBottom (aNumber) {
+    setPaddingBottomPx (aNumber) {
         this.setPxCssAttribute("padding-bottom", aNumber)
         return this
     }
 
-    paddingLeft () {
-        return this.psStringToNumber(this.getCssAttribute("padding-left"))
+    // get padding px
+
+    paddingPx () {
+        return this.getPxCssAttribute("padding")
     }
 
-    // padding right
-
-    setPaddingRight (aNumber) {
-        this.setPxCssAttribute("padding-right", aNumber)
-        return this
+    paddingTopPx () {
+        return this.getPxCssAttribute("padding-top")
     }
 
-    paddingRight () {
-        return this.psStringToNumber(this.getCssAttribute("padding-right"))
+    paddingBottomPx () {
+        return this.getPxCssAttribute("padding-bottom")
+    }
+
+    paddingLeftPx () {
+        return this.getPxCssAttribute("padding-left")
+    }
+
+    paddingRightPx () {
+        return this.getPxCssAttribute("padding-right")
     }
 
     // text align
@@ -995,6 +1056,38 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("clear")
     }
 
+    // flex 
+
+    setFlex (v) {
+        this.setCssAttribute("flex", v)
+        return this
+    }
+
+    flex () {
+        return this.getCssAttribute("flex")
+    }
+
+    // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
+
+    setAlignItems (v) {
+        this.setCssAttribute("align-items", v)
+        return this
+    }
+
+    alignItems () {
+        return this.getCssAttribute("align-items")
+    }
+
+    // flex justify-content (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
+    
+    setJustifyContent (v) {
+        this.setCssAttribute("justify-content", v)
+        return this
+    }
+
+    justifyContent () {
+        return this.getCssAttribute("justify-content")
+    }
 
     // flex direction
 

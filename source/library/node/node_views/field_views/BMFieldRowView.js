@@ -35,7 +35,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         //this.addContentSubview(this.valueSectionView())  
 
 
-        //this.contentView().setPaddingLeft(20)
+        //this.contentView().setPaddingLeftPx(20)
         this.setValueView(this.createValueView())
         this.addContentSubview(this.valueView())  
         //this.valueSectionView().addSubview(this.valueView())  
@@ -161,7 +161,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         let minH = this.getComputedPxCssAttribute("min-height")
         if (minH && minH > h) {
             const p = Math.round((minH - h)/2)
-            this.contentView().setPaddingTop(p)
+            this.contentView().setPaddingTopPx(p)
         }
         return this
     }

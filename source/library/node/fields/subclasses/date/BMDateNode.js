@@ -52,7 +52,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         if (this.hasDate()) {
             const d = this.jsDate()
             const s = d.monthName() + " " + d.dateNumberName() + ", " + d.getFullYear()
-            const s2 = [this.year(), this.month(), this.day()].join(", ")
+            const s2 = [this.year(), this.month(), this.day()].join("-")
             return s2 //+ " - " + s
             return s
         }
