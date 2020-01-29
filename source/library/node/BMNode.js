@@ -452,7 +452,7 @@ window.BMNode = class BMNode extends ProtoClass {
         }
         */
         //const type = aSunode.type()
-        const ancestors = aSubnode.ancestorClassesTypes()
+        const ancestors = aSubnode.thisClass().ancestorClassesTypesIncludingSelf()
         const match = this.acceptedSubnodeTypes().detect(type => ancestors.contains(type))
         return !Type.isNullOrUndefined(match)
     }

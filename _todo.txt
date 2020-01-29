@@ -1,6 +1,23 @@
 
 TODO:
 
+	DomView.splitLeftRight()
+	- create leftView and rightView
+	- isVerticallySplit
+	- setSplitRatio(left/right) // set left 
+	- fixLeftWidth() // fix and set right to 100% - leftWidth
+	DomView.splitTopAndBottom()
+	
+	
+
+	Split BrowserRow into 2 vertical parts
+	
+	LEFT  		       RIGHT
+	ICON  TITLE			ICON / NOTE
+	      SUBTITLE
+	
+	Option to have Row widths fit max of title and subtitle?
+
 	Boolean and ImageWell fields are appearing as String fields
 	
 	Too many syncFromNode's being sent to views

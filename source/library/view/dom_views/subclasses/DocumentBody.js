@@ -15,16 +15,11 @@ window.DocumentBody = class DocumentBody extends DomView {
     init () {
         super.init()
 
-        /*
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "autoAdjustZoomForMobile")
-
-        setTimeout(() => {
-            this.setIsRegisteredForDocumentResize(true)
-        })
-        */
-
         // setup shared devices for later use
         Devices.shared().setupIfNeeded()
+        
+        //this.documentListener().setIsListening(true)
+
         return this
     }
     
@@ -78,27 +73,8 @@ window.DocumentBody = class DocumentBody extends DomView {
     }
 
     /*
-    onDocumentResize () {
-	     window.SyncScheduler.shared().scheduleTargetAndMethod(this, "autoAdjustZoomForMobile")
-        //this.autoAdjustZoomForMobile()
-    }
-    
-    autoAdjustZoomForMobile () {
-        const w = WebBrowserScreen.shared().width();
-        const h = WebBrowserScreen.shared().height();
-        
-        console.log("screen " + w + "x" + h)
-
-        let z = "100%"
-        
-        if (w < 800) {
-            z = "300%"
-        }
-        
-        this.setZoom(z)
-        
-        //console.log("DocumentBody windowWidth: " + WebBrowserWindow.shared().width() + " zoom: " + this.zoom() )
-        return this
+    onDocumentResize (event) {
+        super.onDocumentResize(event)
     }
     */
    

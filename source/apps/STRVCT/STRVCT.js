@@ -28,6 +28,7 @@ window.STRVCT = class STRVCT extends App {
 
     setup () {
         super.setup()        
+        this.setupTheme()
         this.setupModel()
         this.setupViews()
         this.appDidInit()
@@ -90,7 +91,6 @@ window.STRVCT = class STRVCT extends App {
         this.rootView().addSubview(this.browser())
         this.browser().syncFromNodeNow()
         this.browser().syncFromHashPath()
-        //this.browser().scheduleMethod("syncFromHashPath", 10)
         return this
     }
 
@@ -102,6 +102,43 @@ window.STRVCT = class STRVCT extends App {
 
         window.ResourceLoaderPanel.stop() 
     }
+
+    // themes
+
+    setupTheme () {
+        this.setupVectorTheme()
+    }
+
+    setupNormalTheme () {
+        const doc = DocumentBody.shared()
+        doc.setFontFamily("Sans-Serif")
+        //doc.setFontFamily("PublicSans Light")
+        //doc.setFontFamily("OpenSans Regular")
+        doc.setFontSizeAndLineHeight("13px")
+    }
+
+    setupVectorTheme () {
+        const doc = DocumentBody.shared()
+        doc.setFontFamily("Hyperspace")
+        doc.setFontSizeAndLineHeight("1.1em")
+        doc.setLetterSpacing("0.1em")
+        doc.setTextShadow("0px 0px 1px rgba(255,255,255,1)")
+        doc.setFontWeight(900)
+    }
+
+    setupBlenderProTheme () {
+        const doc = DocumentBody.shared()
+        doc.setFontFamily("Blender Pro Book")
+        doc.setFontSizeAndLineHeight("1.35em")
+    }
+
+    setupLatoTheme () {
+        const doc = DocumentBody.shared()
+        doc.setFontFamily("Lato Light")
+        doc.setFontSizeAndLineHeight("1.1em")
+        doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
+    }
+
 }.initThisClass()
 
 

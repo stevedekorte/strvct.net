@@ -36,12 +36,26 @@
     
 */
 
-if (!String.prototype.capitalized) {
-    String.prototype.capitalized = function () {
-        return this.replace(/\b[a-z]/g, function (match) {
-            return match.toUpperCase();
-        });
+Object.defineSlot = function(obj, slotName, slotValue) {
+    //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
+    const descriptor = {
+        configurable: true,
+        enumerable: false,
+        value: slotValue,
+        writable: true,
     }
+    Object.defineProperty(obj, slotName, descriptor)
+    //}
+}
+
+if (!String.prototype.capitalized) {
+    Object.defineSlot(String.prototype, "capitalized", 
+        function () {
+            return this.replace(/\b[a-z]/g, function (match) {
+                return match.toUpperCase();
+            });
+        }
+    )
 }
 
 class ResourceLoaderBase {

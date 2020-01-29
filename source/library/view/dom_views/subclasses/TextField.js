@@ -139,8 +139,8 @@ window.TextField = class TextField extends DomStyledView {
         }
     }
 
-    setFontSize (aNumber) {
-        super.setFontSize(aNumber)
+    setPxFontSize (aNumber) {
+        super.setPxFontSize(aNumber)
         this.setMinAndMaxHeight(aNumber + 2) // make sure TextfField can fit font size
         this.didEdit()
         return this
@@ -208,10 +208,10 @@ window.TextField = class TextField extends DomStyledView {
             const fontSize = this.computedFontSize()
 
             if (equalSignDown) {
-                this.setFontSize(fontSize + 1)
+                this.setPxFontSize(fontSize + 1)
             } else if (minusDown) {
                 if (fontSize > 1) { 
-                    this.setFontSize(fontSize - 1)
+                    this.setPxFontSize(fontSize - 1)
                 }
             }
         }

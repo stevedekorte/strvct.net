@@ -76,6 +76,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
    }
 
     didChoose (actionNode) {
+        assert(this.parentNode())
         const typeName = actionNode.info()
         this.createType(typeName)
         return this

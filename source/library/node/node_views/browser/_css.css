@@ -1,7 +1,7 @@
 
 .NodeView {
 	/*font-size-adjust: 0.5;*/
-    font-family: AppRegular;
+    /*font-family: AppRegular;*/
     text-transform: none;
 }
 
@@ -209,7 +209,7 @@
 /* --- Browser Row --- */
 
 .BrowserRow {
-	font-family: AppLight;
+	/*font-family: AppLight;*/
     display: block;
     position: relative;
     width: 100%;
@@ -278,7 +278,7 @@
     margin-left: 0px;
     margin-bottom: 3px;
     
-    width: calc(100% - 55px);
+    /*width: calc(100% - 55px);*/
     
     /*
     max-height: 17px;

@@ -26,7 +26,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     initPrototype () {
         this.newSlot("isSelectable", true) //.setDuplicateOp("copyValue")
         this.newSlot("closeButtonView", null)
-        this.newSlot("defaultHeight", 60)
+        this.newSlot("defaultHeight", 30)
         this.newSlot("restCloseButtonOpacity", 0.4)
         this.newSlot("transitionStyle", "all 0.2s ease, width 0s, max-width 0s, min-width 0s")
         this.newSlot("selectedFlashColor", "#ccc")
@@ -130,7 +130,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         //cv.autoFitParentWidth().autoFitParentHeight() // can't do this since we need to float left for sliding
 
         cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s")
-        cv.setMinHeightPx(60)
+        //cv.setMinHeightPx(60)
         cv.setZIndex(2) // so it will be above other views like the slide delete button 
         this.setZIndex(1)
         this.setContentView(cv)
@@ -507,7 +507,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     */
 
    onEnterKeyUp () {
-        this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
+        //this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
         this.justTap()
         return false // stop propogation
     }
@@ -904,7 +904,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
             return node.nodeAcceptsDrop(dragView.item().node())
         }
     }
-
 
     onDragDestinationDropped (dragView) {
         console.log(this.typeId() + " onDragDestinationDropped")

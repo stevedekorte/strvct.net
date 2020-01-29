@@ -149,7 +149,7 @@ window.BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
         tv.setPaddingTop(0)
         tv.setPaddingBottom(4)
         tv.setWhiteSpace("normal")
-        tv.setFontFamily("AppRegular, Sans-Serif")
+        //tv.setFontFamily("AppRegular, Sans-Serif")
     }
 
     showButtonNamed (name) {

@@ -99,6 +99,26 @@ window.ProtoClass = class ProtoClass extends Object {
         return null
     }
 
+    static ancestorClassesTypesIncludingSelf () {
+        return this.ancestorClassesIncludingSelf().map(c => c.type())
+
+    }
+
+    static ancestorClassesTypes () {
+        return this.ancestorClasses().map(c => c.type())
+    }
+
+    static ancestorClassesIncludingSelf (results = []) {
+        results.push(this)
+
+        const parent = this.parentClass()
+        if (parent && parent.ancestorClasses) {
+            //assert(!results.contains(parent))
+            parent.ancestorClasses(results)
+        }
+        return results
+    }
+
     static ancestorClasses (results = []) {
         const parent = this.parentClass()
         if (parent && parent.ancestorClasses) {

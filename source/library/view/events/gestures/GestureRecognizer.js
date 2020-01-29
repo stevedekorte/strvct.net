@@ -699,7 +699,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         v.setTextAlign("center")
         v.setZIndex(10000)
         v.setInnerHTML(this.type())
-        v.setFontSize(10)
+        v.setPxFontSize(10)
         v.setColor("white")
         return v
     }

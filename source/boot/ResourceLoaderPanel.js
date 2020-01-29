@@ -45,31 +45,31 @@ class ResourceLoaderPanelClass {
     // --- elements ------------------------------------------------
 
     mainElement () {
-        return document.getElementById("SpinnerMain")
+        return document.getElementById("ProgressMain")
     }
 
     iconElement () {
-        return document.getElementById("SpinnerIcon")
+        return document.getElementById("ProgressIcon")
     }
 
     middleElement () {
-        return document.getElementById("SpinnerMiddle")
+        return document.getElementById("ProgressMiddle")
     }
 
     titleElement () {
-        return document.getElementById("SpinnerTitle")
+        return document.getElementById("ProgressTitle")
     }
 
     barElement () {
-        return document.getElementById("SpinnerBar")
+        return document.getElementById("ProgressBar")
     }
 
     itemElement () {
-        return document.getElementById("SpinnerItem")
+        return document.getElementById("ProgressItem")
     }
 
     errorElement () {
-        return document.getElementById("SpinnerError")
+        return document.getElementById("ProgressError")
     }
 
     // --- start ------------------------------------------------
@@ -105,16 +105,16 @@ class ResourceLoaderPanelClass {
 
     setupHtml () {
         //console.log("ResourceLoaderPanel.setupHtml()")
-        document.body.innerHTML = "<div id='SpinnerMain' style='position: absolute; width:100%; height: 100%; background-color: black; z-index: 100000; font-family: AppRegular, Sans-Serif; letter-spacing: 3px; font-size:13px;'> \
-<div id='SpinnerMiddle' \
+        document.body.innerHTML = "<div id='ProgressMain' style='position: absolute; width:100%; height: 100%; background-color: black; z-index: 100000; font-family: AppRegular, Sans-Serif; letter-spacing: 3px; font-size:13px;'> \
+<div id='ProgressMiddle' \
 style='position: relative; top: 50%; transform: translateY(-50%); height: auto; width: 100%; text-align: center;'> \
 <div>\
-<div id='SpinnerIcon' style='opacity: 0.7; border: 0px dashed yellow; transition: all .6s ease-out; background-image:url(\"resources/icons/appicon.svg\"); background-position: center; background-repeat: no-repeat; height: 60px; width: 100%; background-size: contain;'></div><br> \
+<div id='ProgressIcon' style='opacity: 0.7; border: 0px dashed yellow; transition: all .6s ease-out; background-position: center; background-repeat: no-repeat; height: 60px; width: 100%; background-size: contain;'></div><br> \
 </div>\
-<div id='SpinnerTitle' style='margin-top: 12px; transition: all .6s ease-out;'></div><br> \
-<center><div style='margin-top: 12px; width:170px; height: 4px; border-radius:2px; background-color: #444; text-align: left;'><div id='SpinnerBar' style='height:4px; border-radius:2px; background-color:#bbb; transition: all 0s ease-out; letter-spacing: -2.5px;'></div><div></center><br> \
-<div id='SpinnerItem' style='color: transparent; transition: all 0.3s ease-out;'></div><br> \
-<div id='SpinnerError' style='color: red; transition: all .6s ease-out; text-align: center; width: 100%;'></div> \
+<div id='ProgressTitle' style='margin-top: 12px; transition: all .6s ease-out;'></div><br> \
+<center><div style='margin-top: 12px; width:170px; height: 4px; border-radius:2px; background-color: #444; text-align: left;'><div id='ProgressBar' style='height:4px; border-radius:2px; background-color:#bbb; transition: all 0s ease-out; letter-spacing: -2.5px;'></div><div></center><br> \
+<div id='ProgressItem'  style='color: transparent; transition: all 0.3s ease-out;'></div><br> \
+<div id='ProgressError' style='color: red; transition: all .6s ease-out; text-align: center; width: 100%; line-height: 1.7em;'></div> \
 </div> \
 </div>"
         return this
@@ -123,7 +123,12 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
     initTitle () {
         const title = this.titleElement()
         title.style.color = "#aaa"
-        //title.innerHTML = "LOADING"
+        
+        if (false) {
+            this.iconElement().style.backgroundImage = "url('resources/icons/appicon.svg')";
+        } else {
+            title.innerHTML = "LOADING"
+        }
 
         if (window.ResourceLoaderIsEmbedded) {
             this.hide()

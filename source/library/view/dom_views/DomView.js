@@ -345,17 +345,64 @@ window.DomView = class DomView extends ProtoClass {
 
     // font size
 
-    setFontSize (s) {
+    setPxFontSize (s) {
         this.setPxCssAttribute("font-size", s)
         return this
     }
 
-    fontSize () {
+    pxFontSize () {
         return this.getPxCssAttribute("font-size")
     }
 
-    computedFontSize () {
+    computedPxFontSize () {
         return this.getComputedPxCssAttribute("font-size")
+    }
+
+    // text-shadow
+
+    setTextShadow (s) {
+        this.setCssAttribute("text-shadow", s)
+        return this
+    }
+
+    textShadow () {
+        return this.getCssAttribute("text-shadow")
+    }
+
+    // ---
+
+    setFontSizeAndLineHeight (s) {
+        this.setFontSize(s)
+        this.setLineHeight(s)
+        return this
+    }
+
+    setFontSize (s) {
+        this.setCssAttribute("font-size", s)
+        return this
+    }
+
+    fontSize () {
+        return this.getCssAttribute("font-size")
+    }
+
+    computedFontSize () {
+        return this.getComputedCssAttribute("font-size")
+    }
+
+    // letter spacing
+
+    setLetterSpacing (s) {
+        this.setCssAttribute("letter-spacing", s)
+        return this
+    }
+
+    letterSpacing () {
+        return this.getCssAttribute("letter-spacing")
+    }
+
+    computedLetterSpacing () {
+        return this.getComputedCssAttribute("letter-spacing")
     }
 
     // margin
@@ -901,16 +948,28 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("outline")
     }
 
+    // px line height
+
+    setPxLineHeight (aNumber) {
+        this.setPxCssAttribute("line-height", aNumber)
+        assert(this.lineHeight() === aNumber)
+        return this
+    }
+
+    pxLineHeight () {
+        return this.getPxCssAttribute("line-height")
+    }
+
     // line height
 
-    setLineHeight (aNumber) {
-        this.setPxCssAttribute("line-height", aNumber)
-        assert(this.lineHeight() == aNumber)
+    setLineHeight (aString) {
+        assert(Type.isString(aString))
+        this.setCssAttribute("line-height", aString)
         return this
     }
 
     lineHeight () {
-        return this.getPxCssAttribute("line-height")
+        return this.getCssAttribute("line-height")
     }
 
     // alignment
