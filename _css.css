@@ -52,6 +52,7 @@ html * {
     max-height: 999999px; 
     zoom: 100%;
     box-sizing: border-box;
+    text-transform: uppercase;
 }
 
 /* to avoid slow/choppy handling of touchmove events */

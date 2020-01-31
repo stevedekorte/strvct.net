@@ -25,7 +25,6 @@ window.BMMailMessage = class BMMailMessage extends BMAppMessage {
         this.setCanDelete(true)
 
         this.setNodeMinWidth(600)
-        this.setNodeColumnBackgroundColor("white")
     }
 
     // sync

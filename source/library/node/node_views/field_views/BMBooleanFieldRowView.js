@@ -26,7 +26,12 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         this.keyView().setPaddingBottomPx(1)
         //this.valueView().setMarginTop(15)
 
-        this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())
+        this.contentView().debugBorders()
+        //this.contentView().setFlexDirection("column")
+        this.titlesSection().setFlexDirection("row").makeSubviewsReverseOrdered()
+        //this.titlesSection().subviews().forEach(sv => sv.setAlignItems("center"))
+        this.titlesSection().subviews().forEach(sv => sv.centerContent())
+        //this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())
         return this
     }
 

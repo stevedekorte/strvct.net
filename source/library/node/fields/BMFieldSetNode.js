@@ -40,7 +40,6 @@ window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
         super.init()
         this.setNodeMinWidth(500)
         this.setShouldStoreSubnodes(false)
-        //this.setNodeColumnBackgroundColor("white")
     }
     
     didUpdateField (aField) {

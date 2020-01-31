@@ -85,7 +85,7 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
 
         this.selected().setColor("black")
         this.selected().setBackgroundColor("#eee")
-        this.selected().setBorderBottom("1px solid #ddd") // "1px solid #ddd"
+        this.selected().setBorderBottom("1px solid rgba(255, 255, 255, 0.1)") // "1px solid #ddd"
 
         /*
         this.disabled().setColor("black")

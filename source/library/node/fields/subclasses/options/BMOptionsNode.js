@@ -9,25 +9,24 @@
 window.BMOptionsNode = class BMOptionsNode extends BMField {
     
     initPrototype () {
-        this.newSlot("allowsMultiplePicks", false).setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
+        const picksSlot = this.newSlot("allowsMultiplePicks", false)
+        picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
+        picksSlot.setShouldStoreSlot(true)
+
+        this.overrideSlot("key", "").setShouldStoreSlot(true)
 
         this.setShouldStore(true)
-        this.protoAddStoredSlot("key")
         this.setShouldStoreSubnodes(true)
+
         this.setCanDelete(true)
         this.setNodeCanInspect(true)
         this.setNodeMinWidth(300)
 
-        this.setTitle("Options title")
+        this.setKey("Options")
         this.setKeyIsVisible(true)
         this.setNodeCanEditTitle(true)
 
         this.setNodeCanReorderSubnodes(true)
-        this.protoAddStoredSlot("allowsMultiplePicks")
-        //this.setSubnodeProto(BMMenuNode)
-        //this.setViewClassName("BMOptionsNodeView")
-        // shallowCopySlotnames "allowsMultiplePicks", 
-
     }
 
     init () {
@@ -53,16 +52,6 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         this.setKey(s)
         return this
     }
-    
-    /*
-    summary () {
-        let s = ""
-        if (this.nodeSummaryShowsKey()) {
-            s += this.title() + ": "
-        }
-        return s + this.childrenSummary()
-    }
-    */
 
     childrenSummary () {
         const picked = this.pickedSubnodes()

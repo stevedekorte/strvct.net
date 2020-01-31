@@ -31,7 +31,7 @@
 */
 
 
-window.DomStyledView = class DomStyledView extends DomSplitView {
+window.DomStyledView = class DomStyledView extends DomFlexView {
     
     initPrototype () {
         this.newSlot("styles", null)

@@ -24,7 +24,6 @@ window.BMMessage = class BMMessage extends BMFieldSetNode {
         super.init()
         this.setShouldStore(true)
         this.setNodeMinWidth(650)
-        this.setNodeColumnBackgroundColor("white")
         //this.setViewClassName("BMMessageView")
     }
 

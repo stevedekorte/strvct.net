@@ -423,7 +423,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         //this.setIsRegisteredForBrowserDrop(this.node().acceptsFileDrop())
 
         if (selectedIndex === -1) {
-            //this.browser().clearColumnsGroupsAfter(this.columnGroup()) // TODO: fragile: careful that this doesn't cause a loop...
+            // seem to need this when deleting a row
+            this.browser().clearColumnsGroupsAfter(this.columnGroup()) // TODO: fragile: careful that this doesn't cause a loop...
         } else {
             // select the row matching the last selected node
 

@@ -18,7 +18,6 @@ window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
     init () {
         super.init()
         this.setCanDelete(false) // too dangerous
-        this.setNodeColumnBackgroundColor("white")
         this.setNodeMinWidth(600)
     }
 

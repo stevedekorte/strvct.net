@@ -34,7 +34,6 @@ window.BMRemoteIdentity = class BMRemoteIdentity extends BMStorableNode {
 		
         //	this.messages().setTitle("messages")
 
-        //this.setNodeColumnBackgroundColor("white")
 
         this.profile().fieldNamed("publicKeyString").setValueIsEditable(true)
 		

@@ -554,12 +554,14 @@ window.BMNode = class BMNode extends ProtoClass {
         }
 
         
+        // TODO: make this more efficient as we don't always need it
         /*
         if (this.parentNode()) {
             assert(this.parentNode() !== this)
             this.parentNode().didUpdateNode()
         }
         */
+        
     }
 
     didUpdateSlot (aSlot, oldValue, newValue) {

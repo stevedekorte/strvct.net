@@ -1,9 +1,9 @@
 
+/*
 .NodeView {
-	/*font-size-adjust: 0.5;*/
-    /*font-family: AppRegular;*/
-    text-transform: none;
+
 }
+*/
 
 .BrowserView {
     display: flex;
@@ -34,6 +34,7 @@
     width: 100%;
     background-color: #dbdbdb;
     text-align: right;
+    font-style: bold;
 	z-index: 1;
 }
 
@@ -149,9 +150,6 @@
 
 .BackArrow {
 	display: block;
-    position: absolute;
-	margin-top: 14px;
-	margin-left: 15px;
     width: 14px;
     height: 14px;
 
@@ -176,17 +174,18 @@
 
 .BrowserHeaderTitleView {
     display: block;
-    position: absolute;
+    /*
     margin-top: 10px;
     margin-left: 35px;
     width: calc(100% - 70px);   
     height: 20px;
+    */
     
     color: rgba(0,0,0,0.5);
     text-align: center;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	padding: 0px;
+	padding: 1px;
 	
 	overflow: hidden;
     /*border: 1px dashed yellow;*/
@@ -293,7 +292,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     */
-    overflow: hidden;
+    overflow: visible;
 	word-wrap: break-word;
 	
 	/*
@@ -306,7 +305,6 @@
 
 .BrowserRowNote {
     /*
-    position: absolute;
     right: 20px;
     top: 24px;
     */
@@ -318,17 +316,9 @@
     text-overflow: ellipsis;
 }
 
-/*
-.NoteIconView {
-    position: absolute;
-    right: 20px;
-    top: 23px;
-}
-*/
 
 .BrowserRowCloseButtonTopRight {
     display: inline-block;
-    position: absolute;
     top: 0px;
     right: 13px;
     color: #aaa;
@@ -344,7 +334,6 @@
 
 .BrowserRowCloseButton {
     display: block;
-    position: absolute;
     right: 20px;
     top: 16px;
     
@@ -371,7 +360,6 @@
 
 .BrowserRowThumbnailView {
     display: block;
-    position: absolute;
     left: 10px;
     top: 5px;
     min-height: 40px;

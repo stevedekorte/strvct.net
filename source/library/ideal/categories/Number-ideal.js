@@ -64,6 +64,20 @@ Object.defineSlots(Number.prototype, {
         return this;
     },
 
+    forEach (func) {
+        assert(Number.isInteger(this))
+        for (let i = 0; i < this; i++) {
+            func(i)
+        }
+    },
+
+    reverseForEach (func) {
+        assert(Number.isInteger(this))
+        for (let i = this - 1; i >= 0; i++) {
+            func(i)
+        }
+    },
+
     map: function () {
         const a = [];
         for (let i = 0; i < this; i++) {

@@ -30,7 +30,6 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
 		
         if (this.node().isMono()) {
             this.valueView().setDivClassName("BMMonoTextAreaFieldValueView NodeView DomView")
-            this.valueView().set
         } else {
             this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
         }
@@ -46,7 +45,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
             this.setBorderBottom("0px")
         } else {
             this.setFlexGrow(1)
-            this.setBorderBottom("1px solid #aaa")
+            this.setBorderBottom("1px solid rgba(125, 125, 125, 0.5)")
         }
         return this
     }

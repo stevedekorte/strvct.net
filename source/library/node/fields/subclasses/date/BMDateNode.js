@@ -15,9 +15,9 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
-        this.newSlot("year", null).setShouldStoreSlot(true)
-        this.newSlot("month", null).setShouldStoreSlot(true)
-        this.newSlot("day", null).setShouldStoreSlot(true)
+        this.newSlot("year", null).setShouldStoreSlot(true).setDoesHookSetter(true)
+        this.newSlot("month", null).setShouldStoreSlot(true).setDoesHookSetter(true)
+        this.newSlot("day", null).setShouldStoreSlot(true).setDoesHookSetter(true)
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)

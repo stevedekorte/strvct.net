@@ -55,13 +55,10 @@
     border-width: 1px;
     border-color:#888;
     
-	/*font-family: AppSemiBold;*/
-
     text-align: center;
     vertical-align: center;
     /*line-height: 42px;*/
     /*overflow: hidden;*/
-    /*text-transform: uppercase;*/
     transition: all 0.1 ease;
 }
 
@@ -117,7 +114,6 @@
 	overflow: hidden;
 
     white-space: nowrap;
-    text-transform: none;	
 
     /*
     color: #000;
@@ -161,7 +157,6 @@
 	padding: 0;
 	
     /*border-bottom: 1px solid #ddd;*/
-    background-color: #fff;
     transition: background-color .3s ease-out;
 
 	overflow-x: hidden;
@@ -182,9 +177,7 @@
    	unicode-bidi: embed;
     white-space: pre-wrap;
 
-    color: black;
     font-weight: normal;
-    text-transform: none;
     text-align: left;
 
     /*font-family: AppMono, monospace;*/
@@ -209,7 +202,6 @@
 
     color: black;
     font-weight: normal;
-    text-transform: none;
     text-align: left;
 
 	/*border: 1px red dashed;*/
@@ -251,7 +243,6 @@
 	margin-top: 15px;
 	margin-bottom: 15px;
 	width: auto;
-	text-transform: uppercase;
 	text-align: left;
 	/*font-size: 12px;*/
 	font-size: 85%;
@@ -271,7 +262,6 @@
     top: 0px;
     left: 0px;
     font-weight: normal;
-    text-transform: none;
 }
 
 /* --------------------------- Multi --------------------------- */
@@ -320,7 +310,6 @@
     color: #000;
 
     font-weight: normal;
-    text-transform: none;
 
 	padding: 3px;
 	margin: 0px;
@@ -363,7 +352,6 @@
 	width: 100%;
 	
     font-weight: normal;
-    text-transform: none;
 
 	color: #aaa;
 	

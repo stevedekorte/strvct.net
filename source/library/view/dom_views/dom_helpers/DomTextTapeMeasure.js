@@ -89,6 +89,7 @@ window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
     clean () {
         const e = this.testElement()
         e.innerHTML = ""
+        e.className = ""
         this.stylesToCopy().forEach(styleName => delete e.style[styleName] )
         return this	
     }

@@ -41,6 +41,9 @@ window.TextField = class TextField extends DomStyledView {
         this.setTextOverflow("clip")
         this.setSpellCheck(false)
         this.setMinWidth(10)
+        this.setPaddingLeftPx(1)
+        this.setPaddingTopPx(1)
+        this.setPaddingBottomPx(1)
 		
         //this.setUnfocusOnEnterKey(true)
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()

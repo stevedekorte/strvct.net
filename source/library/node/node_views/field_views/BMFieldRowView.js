@@ -15,6 +15,8 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.newSlot("valueView", null)
         this.newSlot("errorView", null)
         this.newSlot("noteView", null)
+        this.newSlot("titlesSection", null)
+
         this.newSlot("editableColor", "#aaa")
         this.newSlot("uneditableColor", "#888")
         this.newSlot("errorColor", "red")
@@ -30,13 +32,17 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         cv.setMinHeight("5em")
         cv.flexSplitIntoRows(4)
-        cv.setJustifyContent("center") // alignment perpendicutal to flex
+        cv.setJustifyContent("center") // alignment perpendicular to flex
 
+        const titlesSection = cv.subviews().at(0)
+        this.setTitlesSection(titlesSection)
+        titlesSection.flexSplitIntoRows(2)
 
-        const tv = cv.subviews().at(0)
-        const bv = cv.subviews().at(1)
-        const nv = cv.subviews().at(2)
-        const ev = cv.subviews().at(3)
+        const tv = titlesSection.subviews().at(0)
+        const sv = titlesSection.subviews().at(1)
+
+        const nv = cv.subviews().at(1)
+        const ev = cv.subviews().at(2)
 
         cv.subviews().forEach(sv => sv.setPaddingLeft("1.5em").setPaddingRight("1em"))
         
@@ -61,7 +67,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         //this.contentView().setPaddingLeftPx(20)
         this.setValueView(this.createValueView())
-        bv.addSubview(this.valueView())  
+        sv.addSubview(this.valueView())  
         //this.valueSectionView().addSubview(this.valueView())  
       
         this.valueView().setUserSelect("text")   // should the value view handle this?
@@ -289,7 +295,8 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             //valueView.setColor(this.uneditableColor())
             valueView.setColor(this.styles().disabled().color())
-            valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
+            //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
+            valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
         } else {
             //valueView.setColor(this.editableColor())
             valueView.setColor(this.currentStyle().color())

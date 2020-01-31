@@ -89,7 +89,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     setupDivClassName () {
-        const ancestorNames = this.classAncestors().map(obj => obj.type())
+        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
         ancestorNames.atInsert(0, this.type())
 
         const divName = ancestorNames.join(" ").strip()

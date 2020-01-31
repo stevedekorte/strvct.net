@@ -119,11 +119,12 @@ window.STRVCT = class STRVCT extends App {
 
     setupVectorTheme () {
         const doc = DocumentBody.shared()
-        doc.setFontFamily("Hyperspace")
-        doc.setFontSizeAndLineHeight("1.1em")
+        doc.setFontFamily("Hyperspace Bold")
+        //doc.setFontSizeAndLineHeight("1.1em")
         doc.setLetterSpacing("0.1em")
         doc.setTextShadow("0px 0px 1px rgba(255,255,255,1)")
         doc.setFontWeight(900)
+        //DocumentBody.shared().setTextTransform("uppercase")
     }
 
     setupBlenderProTheme () {
@@ -136,6 +137,7 @@ window.STRVCT = class STRVCT extends App {
         const doc = DocumentBody.shared()
         doc.setFontFamily("Lato Light")
         doc.setFontSizeAndLineHeight("1.1em")
+        doc.setLetterSpacing("0.05em")
         doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
     }
 

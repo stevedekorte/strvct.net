@@ -40,12 +40,16 @@ window.BooleanView = class BooleanView extends DomStyledView {
         this.setOverflow("hidden")
 
         const inner = SvgIconView.clone().setIconName("inner-checkbox")
+        inner.setPosition("absolute")
+        inner.setTop("0px").setLeft("0px")
         inner.setMinAndMaxWidthAndHeight(size)
         inner.setStrokeColor("transparent")
         this.setInnerCheckView(inner)
         this.addSubview(inner)
 
         const outer = SvgIconView.clone().setIconName("outer-checkbox")
+        outer.setPosition("absolute")
+        outer.setTop("0px").setLeft("0px")
         outer.setMinAndMaxWidthAndHeight(size)
         outer.setFillColor("transparent")
         this.setOuterCheckView(outer)

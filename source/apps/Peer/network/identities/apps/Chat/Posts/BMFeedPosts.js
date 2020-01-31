@@ -22,7 +22,6 @@ window.BMFeedPosts = class BMFeedPosts extends BMStorableNode {
         this.setShouldStore(true)
         this.setNodeMinWidth(450)
         this.setSubnodeProto(BMPostMessage)
-        this.setNodeColumnBackgroundColor("white")
         this.setNoteIsSubnodeCount(true)
 		
         this.setSubnodeSortFunc(function (postMsg1, postMsg2) {

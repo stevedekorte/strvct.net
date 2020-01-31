@@ -388,6 +388,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             //const c = CenteredDomView.clone()
 
             const cb = DomView.clone().setDivClassName("BrowserRowCloseButton")
+            cb.setPosition("absolute")
             //this.setCloseButtonView(NodeView.clone().setDivClassName("BrowserRowCloseButton"))
             this.setCloseButtonView(cb)
             this.contentView().addSubview(cb) 
@@ -570,12 +571,12 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
             // need to do this because we re-route setBackgroundColor
             this.element().style.backgroundColor = this.underContentViewColor()
-            const cb = CloseButton.clone().setOpacity(0).setTransition("opacity 0.1s")
+            const cb = CloseButton.clone().setOpacity(0).setTransition("opacity 0.1s").setPosition("absolute")
             this.addSubview(cb)
 
             const size = 10
             cb.setMinAndMaxWidthAndHeight(size)
-            //cb.verticallyAlignAbsoluteNow() // TODO: use flex box instead
+            cb.verticallyAlignAbsoluteNow()
             cb.setRight(size * 2)
             cb.setZIndex(0)
             this.setDragDeleteButtonView(cb)

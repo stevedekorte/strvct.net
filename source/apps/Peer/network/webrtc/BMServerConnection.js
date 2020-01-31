@@ -63,7 +63,6 @@ window.BMServerConnection = class BMServerConnection extends BMNode {
 	        //statusNode.makeNoteRightArrow()
 	    }
 	    
-        //const entry = BMDataStoreRecord.clone().setNodeColumnBackgroundColor("white").setNodeMinWidth(300)
         statusNode.addField(BMTextAreaField.clone().setKey("dict").setValueMethod("error").setValueIsEditable(false).setIsMono(true))
         //entry.setTitle(s)
         //entry.setSubtitle(new Date().toString())

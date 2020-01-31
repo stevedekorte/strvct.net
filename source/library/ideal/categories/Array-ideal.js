@@ -48,9 +48,27 @@ Object.defineSlots(Array.prototype, {
         anArray.forEach(v => this.push(v))
         return this
     },
-    
+
     // --- read operations ---
 
+    // foreach key value (key being the index)
+
+    forEachKV: function(func) {
+        let i = 0
+        this.forEach((v) => {
+            func(i, v)
+            i ++
+        })
+    },
+
+    reverseForEachKV: function(func) {
+        let i = 0
+        this.forEach((v) => {
+            func(i, v)
+            i ++
+        })
+    },
+        
     isEmpty: function () {
         return this.length === 0;
     },

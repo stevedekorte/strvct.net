@@ -21,7 +21,6 @@ window.BMPostDrafts = class BMPostDrafts extends BMStorableNode {
         this.setSubnodeProto(BMPostDraft)
         this.addActions(["add"])
 
-        this.setNodeColumnBackgroundColor("white")
         this.setNoteIsSubnodeCount(true)
         this.setTitle("my drafts")
     }

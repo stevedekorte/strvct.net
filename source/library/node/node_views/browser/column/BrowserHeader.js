@@ -21,20 +21,38 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
         super.init()
         this.setActionButtons([])
 
+        this.flexSplitIntoColumns(3)
+
+        const lv = this.subviews().at(0).centerContent().setFlexGrow(1)
+        const mv = this.subviews().at(1).centerContent().setFlexGrow(10)
+        const rv = this.subviews().at(2).centerContent().setFlexGrow(1)
+
+        const backArrowView = this.newBackArrow()
+        this.setBackArrowView(backArrowView)
+        lv.addSubview(backArrowView)
+		
+        const titleView = this.newTitleView()
+        this.setTitleView(titleView)
+        mv.addSubview(titleView)
+		
+        this.setRightActionsView(DomView.clone().setDivClassName("BrowserFooterRightActionsView"))
+        rv.addSubview(this.rightActionsView())
+		
+        this.setZIndex(2)
+        return this
+    }
+
+    newTitleView () {
+        const titleView = DomView.clone().setDivClassName("BrowserHeaderTitleView NodeView DomView").setInnerHTML("").setUserSelect("none")
+        return titleView
+    }
+
+    newBackArrow () {
         const backArrowView = ButtonView.clone().setDivClassName("BackArrow").setTarget(this).setAction("didHitBackArrow")
         backArrowView.setBackgroundImageUrlPath(this.pathForIconName("left"))        
         backArrowView.setBackgroundSizeWH(10, 10)
         backArrowView.setOpacity(0.6)
-        this.setBackArrowView(backArrowView)
-		
-        const titleView = DomView.clone().setDivClassName("BrowserHeaderTitleView NodeView DomView").setInnerHTML("").setUserSelect("none")
-        this.setTitleView(titleView)
-		
-        this.setRightActionsView(DomView.clone().setDivClassName("BrowserFooterRightActionsView"))
-        this.addSubview(this.rightActionsView())
-		
-        this.setZIndex(2)
-        return this
+        return backArrowView
     }
 
     columnGroup () {
@@ -64,21 +82,23 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
 
     syncFromNode () {
         const node = this.node()
-
-        this.removeAllSubviews()
         
         if (node && this.browser()) {
             if (this.shouldShowTitle()) {
     		    this.titleView().setInnerHTML(node.nodeHeaderTitle())
-    		    this.addSubviewIfAbsent(this.titleView())
+    		    //this.addSubviewIfAbsent(this.titleView())
+                this.titleView().setDisplay("flex")
 	        } else {
-                this.removeSubviewIfPresent(this.titleView())
+                //this.removeSubviewIfPresent(this.titleView())
+                this.titleView().setDisplay("none")
             }
 
             if (this.doesShowBackArrow()) {
-                this.addSubviewIfAbsent(this.backArrowView())
+                this.backArrowView().setDisplay("flex")
+                //this.addSubviewIfAbsent(this.backArrowView())
             } else {
-                this.removeSubviewIfPresent(this.backArrowView())
+                this.backArrowView().setDisplay("none")
+                //this.removeSubviewIfPresent(this.backArrowView())
             }
 
             //this.syncActionButtons()

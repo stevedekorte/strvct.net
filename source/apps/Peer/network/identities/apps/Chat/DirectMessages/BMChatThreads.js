@@ -15,7 +15,6 @@ window.BMChatThreads = class BMChatThreads extends BMContactLinks {
     init () {
         super.init()
         this.setLinkProto(BMChatThread)
-        //this.setNodeColumnBackgroundColor("white")
     }
 
     finalize () {

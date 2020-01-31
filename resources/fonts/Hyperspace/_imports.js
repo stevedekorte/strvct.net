@@ -1,7 +1,7 @@
 
 ResourceLoader.pushRelativePaths([
     "Hyperspace.ttf",
-    "HyperspaceBold.ttf",
-    "HyperspaceBoldItalic.ttf",
-    "HyperspaceItalic.ttf"
+    "Hyperspace Bold.ttf",
+    "Hyperspace Bold Italic.ttf",
+    "Hyperspace Italic.ttf"
 ]);
