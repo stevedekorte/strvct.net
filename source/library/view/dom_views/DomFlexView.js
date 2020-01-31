@@ -13,7 +13,13 @@ window.DomView = class DomFlexView extends DomView {
 
     init () {
         super.init()
+        return this
+    }
+
+    makeFlexAndCenterContent () {
         this.setDisplay("flex")
+        this.setAlignItems("center")
+        this.setJustifyContent("center")
         return this
     }
 
@@ -30,6 +36,7 @@ window.DomView = class DomFlexView extends DomView {
 
     newFlexSubview () {
         let v = DomFlexView.clone()
+        v.setDisplay("flex")
         v.setMinHeight("0px")
         v.setMinWidth("0px")
         const order = this.subviews().length
@@ -76,7 +83,7 @@ window.DomView = class DomFlexView extends DomView {
     }
 
     debugBorders () {
-        this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
+        //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
 
 }.initThisClass()

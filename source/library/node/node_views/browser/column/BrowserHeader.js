@@ -19,6 +19,8 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
 
     init () {
         super.init()
+        this.setDisplay("flex")
+        
         this.setActionButtons([])
 
         this.flexSplitIntoColumns(3)

@@ -18,17 +18,20 @@ window.CloseButton = class CloseButton extends DomView {
 
     init () {
         super.init()
+        this.makeFlexAndCenterContent()
+        this.setPadding("0px")
         this.turnOffUserSelect()
         //this.setDisplay("table") // to center svg
 
         const iv = SvgIconView.clone().setIconName("close")
-        //iv.setDisplay("table-cell") // to center svg
-        //iv.setVerticalAlign("middle") // to center svg
-        iv.setTop(0)
-        iv.setLeft(0)
-        iv.setMinAndMaxWidth(10)
-        iv.setMinAndMaxHeight(14)
-        iv.setHeight("100%").setWidth("100%")
+        iv.makeFlexAndCenterContent()
+        //iv.setTop(0)
+        //iv.setLeft(0)
+        
+        //iv.setMarginBottom("1px") // TODO: fix the SVG for this icon so this isn't needed?
+        
+        iv.setWidth("fit-content")
+        iv.setHeight("fit-content")
         iv.setStrokeColor("white")
         iv.setFillColor("white")
         this.setIconView(iv)
@@ -57,7 +60,7 @@ window.CloseButton = class CloseButton extends DomView {
 
     syncEnabled () {
         if (this._isEnabled) {
-            this.setDisplay("block")
+            this.setDisplay("flex")
         } else {
             this.setDisplay("none")
         }

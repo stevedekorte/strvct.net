@@ -42,6 +42,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     init () {
         super.init()
+        this.setPosition("relative") // so absolute position on close button works
         this.turnOffUserSelect()
         this.setAcceptsFirstResponder(false)
         
@@ -122,6 +123,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     setupRowContentView () {
         const cv = DomView.clone().setDivClassName("BrowserRowContentView")
+        cv.setDisplay("block")
+
         cv.setWidthPercentage(100)
         cv.setHeightPercentage(100) 
         cv.setPosition("relative")
@@ -573,6 +576,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             this.element().style.backgroundColor = this.underContentViewColor()
             const cb = CloseButton.clone().setOpacity(0).setTransition("opacity 0.1s").setPosition("absolute")
             this.addSubview(cb)
+            //cb.setBorder("1px dashed white")
 
             const size = 10
             cb.setMinAndMaxWidthAndHeight(size)
