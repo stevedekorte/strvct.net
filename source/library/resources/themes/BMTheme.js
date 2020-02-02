@@ -26,8 +26,8 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         }, 1000)
     }
 
-    loadFinalize () {
-        super.loadFinalize()
+    didLoadFromStore () {
+        super.didLoadFromStore()
         // called after all objects loaded within this event cycle
         this.setupSubnodes()
     }

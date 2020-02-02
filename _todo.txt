@@ -1,6 +1,10 @@
 
 TODO:
 
+	rename finalize to something better - like didCompleteInit
+	
+	add Object.prepareToRetire // remove from watching for notifications, events, etc - remove subviews? from from parent view?
+	
 	bug: rows disappearing after a reorder in a column
 
 	bug: some divClassNames seem to contain two of the same class names
@@ -144,7 +148,7 @@ TODO:
 
 	If a lazy ref can be on a network store, should we move to supporting
 	fully async local store too?
-		- we have finalize and loadFinalize, but we'll need more ways of 
+		- we have finalize and didLoadFromStore, but we'll need more ways of 
 		making upper level looks into lower level async?
 	Better to make remote store fully synchronous for now.
 	
@@ -178,7 +182,7 @@ TODO:
 		- didLoadFromStore
 
 		- scheduleLoadFinalize
-		- loadFinalize
+		- didLoadFromStore
 		
 		
 	CONSIDER

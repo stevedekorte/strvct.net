@@ -372,11 +372,11 @@ const prototypeSlots = {
     },
 
     scheduleLoadFinalize: function() {
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "loadFinalize")
-        this.loadFinalize()
+        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
+        this.didLoadFromStore()
     },
 
-    loadFinalize: function() {
+    didLoadFromStore: function() {
         // for subclasses to override
     },
 

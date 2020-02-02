@@ -425,12 +425,6 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         obj.setPuuid(aRecord.id)
         this.addActiveObject(obj)
         obj.loadFromRecord(aRecord, this)
-        
-        /*
-        if (obj.didLoadFromStore) {
-            obj.didLoadFromStore()
-        }
-        */
 
         return obj
     }
@@ -471,8 +465,8 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
 
             lastSet.forEach((loadedPid) => {
                 const obj = this.activeObjectForPid(loadedPid)
-                if (obj.loadFinalize) {
-                    obj.loadFinalize()
+                if (obj.didLoadFromStore) {
+                    obj.didLoadFromStore()
                 }
             })
         }

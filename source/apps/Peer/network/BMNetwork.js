@@ -49,8 +49,8 @@ window.BMNetwork = class BMNetwork extends BMFieldSetNode {
         this.watchIdentities()
     }
 
-    loadFinalize () {
-        super.loadFinalize()
+    didLoadFromStore () {
+        super.didLoadFromStore()
         //this.updateIdsBloomFilter()
     }
 

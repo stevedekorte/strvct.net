@@ -60,10 +60,8 @@ Object.defineSlots(Object.prototype, {
         this.didMutate()
     },
 
-    loadFinalize: function()   {
-        if (this.didLoadFromStore) {
-            this.didLoadFromStore()
-        }
-    },
+    didLoadFromStore: function () {
+
+    }
 
 })

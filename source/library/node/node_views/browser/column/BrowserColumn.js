@@ -414,18 +414,17 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     syncFromNode () {
         if (!this.isInBrowser()) {
             console.log("WARNING - attempt to sync BrowserColumn not in it's Browser")
+            if (!Type.isNull(this.node())) {
+                let isCached = this.browser().hasCachedColumnGroup(this.columnGroup())
+                if (!isCached) {
+                    throw new Error("this schouldn't happen")
+                }
+
+            }
             return 
         }
         //console.log(this.type() + " " + (this.node() ? this.node().title() : "null") + " .syncFromNode()")
 
-        /*
-        if (true) {
-            const node = this.node()
-            if (node && node.title() === "STRVCTapp") {
-                console.log(this.debugTypeId() + " syncFromNode")
-            }
-        }
-        */
 
         if (this.hasPausedSync()) {
             return this

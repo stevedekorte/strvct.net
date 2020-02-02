@@ -40,8 +40,8 @@ window.BMMessages = class BMMessages extends BMStorableNode {
         return BMObjectMessage
     }
 
-    loadFinalize () {	    
-        super.loadFinalize()
+    didLoadFromStore () {	    
+        super.didLoadFromStore()
         this.removeMessagesNotMatchingIdentities()
         this.handleAllMessages()
         return this

@@ -89,12 +89,12 @@ Object.defineSlots(BMNode.prototype, {
     },
 
     scheduleLoadFinalize: function() {
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "loadFinalize")
+        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
     },
 
     /*
-    loadFinalize: function() {
-        // Object.loadFinalize handles this
+    didLoadFromStore: function() {
+        // Object.didLoadFromStore handles this
     },
     */
 
