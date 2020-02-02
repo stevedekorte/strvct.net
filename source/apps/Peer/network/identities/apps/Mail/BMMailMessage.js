@@ -51,8 +51,8 @@ window.BMMailMessage = class BMMailMessage extends BMAppMessage {
         }		
     }
 	
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.setupInputsFromPubkeys()
     }
 	

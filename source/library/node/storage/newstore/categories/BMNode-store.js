@@ -82,13 +82,13 @@ Object.defineSlots(BMNode.prototype, {
         return this
     },
 
-    scheduleFinalize: function () {
-        // Object scheduleFinalize just calls this.finalize()
+    scheduleDidInit: function () {
+        // Object scheduleDidInit just calls this.didInit()
         assert(!this.isFinalized())
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "finalize")
+        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
     },
 
-    scheduleLoadFinalize: function() {
+    scheduleDidLoadFromStore: function() {
         window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
     },
 

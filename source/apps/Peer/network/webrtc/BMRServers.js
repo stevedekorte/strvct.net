@@ -22,8 +22,8 @@ window.BMRServers = class BMRServers extends BMStorableNode {
         this.addAction("add")
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.bootstrap()
     }
 

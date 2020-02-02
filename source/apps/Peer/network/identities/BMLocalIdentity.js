@@ -59,9 +59,9 @@ window.BMLocalIdentity = class BMLocalIdentity extends BMKeyPair {
         return this
     }
 
-    finalize () {
-        super.finalize()
-        //this.debugLog(".finalize()")
+    didInit () {
+        super.didInit()
+        //this.debugLog(".didInit()")
         this.postDidChangeIdentity()
     }
 	

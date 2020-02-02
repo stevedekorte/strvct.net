@@ -28,8 +28,8 @@ window.BMContactLinks = class BMContactLinks extends BMStorableNode {
         }
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
 
         if (this.parentNode()) {
             this.updatedContacts()

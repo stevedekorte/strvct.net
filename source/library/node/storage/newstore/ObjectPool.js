@@ -442,7 +442,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         }
 
         if (!this.isFinalizing() && this.loadingPids().size === 0) {
-            window.SyncScheduler.shared().scheduleTargetAndMethod(this, "finalizeLoadingPids")
+            window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids")
         }
 
         this.loadingPids().add(puuid)
@@ -450,14 +450,14 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         const aRecord = this.recordForPid(puuid)
         const loadedObj = this.objectForRecord(aRecord)
         if (loadedObj) {
-            loadedObj.scheduleLoadFinalize()
+            loadedObj.scheduleDidLoadFromStore()
         }
 
 
         return loadedObj
     }
 
-    finalizeLoadingPids () {
+    didInitLoadingPids () {
         this.setIsFinalizing(true)
         while (!this.loadingPids().isEmpty()) {
             const lastSet = this.loadingPids()

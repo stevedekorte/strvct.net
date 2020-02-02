@@ -29,8 +29,8 @@ window.BMFeedPosts = class BMFeedPosts extends BMStorableNode {
         })
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.setTitle("feed")
     }
 	

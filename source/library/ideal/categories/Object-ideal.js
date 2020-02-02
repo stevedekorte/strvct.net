@@ -183,7 +183,7 @@ const prototypeSlots = {
     },
 
     init: function() {
-        this.scheduleFinalize()
+        this.scheduleDidInit()
     },
 
     isPrototype: function() {
@@ -340,12 +340,12 @@ const prototypeSlots = {
         return this.thisClass().isKindOf(aClass)
     },
 
-    // --- finalize ---
+    // --- didInit ---
     //
     //  we don't want to scheduleSyncToStore while the object is initializing
     // (e.g. while it's being unserialized from a store)
     // so only scheduleSyncToStore if isFinalized is true, and set it to true
-    // when finalize is called by the ObjectStore after 
+    // when didInit is called by the ObjectStore after 
 
 
     isFinalized: function() {
@@ -357,7 +357,7 @@ const prototypeSlots = {
         return this
     },
 
-    finalize: function() {
+    didInit: function() {
         assert(!this.isFinalized())
         // for subclasses to override if needed
         this.setIsFinalized(true)
@@ -366,12 +366,12 @@ const prototypeSlots = {
     didLoadFromStore: function() {
     },
 
-    scheduleFinalize: function () {
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "finalize")
-        this.finalize()
+    scheduleDidInit: function () {
+        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
+        this.didInit()
     },
 
-    scheduleLoadFinalize: function() {
+    scheduleDidLoadFromStore: function() {
         //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
         this.didLoadFromStore()
     },

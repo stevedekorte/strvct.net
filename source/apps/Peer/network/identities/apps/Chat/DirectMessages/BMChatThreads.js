@@ -17,8 +17,8 @@ window.BMChatThreads = class BMChatThreads extends BMContactLinks {
         this.setLinkProto(BMChatThread)
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.setTitle("direct messages")
     }
 	

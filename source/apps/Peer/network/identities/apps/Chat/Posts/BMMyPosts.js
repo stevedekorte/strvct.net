@@ -27,8 +27,8 @@ window.BMMyPosts = class BMMyPosts extends BMStorableNode {
         })
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.setTitle("my posts")
     }
 	

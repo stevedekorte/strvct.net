@@ -25,8 +25,8 @@ window.BMPostDrafts = class BMPostDrafts extends BMStorableNode {
         this.setTitle("my drafts")
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.setTitle("my drafts")
     }
 

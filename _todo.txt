@@ -1,7 +1,7 @@
 
 TODO:
 
-	rename finalize to something better - like didCompleteInit
+	rename didInit to something better - like didCompleteInit
 	
 	add Object.prepareToRetire // remove from watching for notifications, events, etc - remove subviews? from from parent view?
 	
@@ -148,7 +148,7 @@ TODO:
 
 	If a lazy ref can be on a network store, should we move to supporting
 	fully async local store too?
-		- we have finalize and didLoadFromStore, but we'll need more ways of 
+		- we have didInit and didLoadFromStore, but we'll need more ways of 
 		making upper level looks into lower level async?
 	Better to make remote store fully synchronous for now.
 	
@@ -176,12 +176,12 @@ TODO:
 	FINALIZATION
 
 		// called on all objects
-		- scheduleFinalize // Object just calls finalize(), BMNode schedules finalize
-		- finalize
+		- scheduleDidInit // Object just calls didInit(), BMNode schedules didInit
+		- didInit
 
 		- didLoadFromStore
 
-		- scheduleLoadFinalize
+		- scheduleDidLoadFromStore
 		- didLoadFromStore
 		
 		
@@ -493,7 +493,7 @@ TODO:
 	            scheduleSyncToStore
 	            NodeStore addDirtyObject(this)
         FROM STORE
-			Type unserializes json from NodeStore record on awake and calls finalize, serializes self to json for
+			Type unserializes json from NodeStore record on awake and calls didInit, serializes self to json for
 			when NodeStore loads an object 
 		
         

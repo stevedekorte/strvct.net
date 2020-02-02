@@ -24,8 +24,8 @@ window.BMStunServers = class BMStunServers extends BMStorableNode {
         this.setNodeCanReorderSubnodes(true)
     }
 
-    finalize () {
-        super.finalize()
+    didInit () {
+        super.didInit()
         this.bootstrap()
     }
 
