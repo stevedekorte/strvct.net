@@ -114,7 +114,7 @@ window.ProtoClass = class ProtoClass extends Object {
         const parent = this.parentClass()
         if (parent && parent.ancestorClasses) {
             //assert(!results.contains(parent))
-            parent.ancestorClasses(results)
+            parent.ancestorClassesIncludingSelf(results)
         }
         return results
     }

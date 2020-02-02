@@ -71,6 +71,11 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
     */
 
+
+    isInBrowser () {
+        return this.browser().columnGroups().contains(this)
+    }
+
     cache () {
         this._browser.cacheColumnGroup(this)
         //this.browser().cacheColumnGroup(this)

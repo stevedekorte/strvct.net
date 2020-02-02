@@ -129,7 +129,9 @@ window.BrowserView = class BrowserView extends NodeView {
         assert(cg.type() === "BrowserColumnGroup")
         const k = cg.node().typeId()
         this.columnGroupCache().removeAt(k)
-        cg.setNode(null)
+        if (!cg.isInBrowser()) {
+            cg.setNode(null)
+        }
         //console.log("uncacheColumnGroup ", cg.node().title())
         //this.scheduleSyncFromNode() // needed?
         return this
@@ -246,7 +248,7 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     columns () {
-        return this.columnGroups().map((cg) => { return cg.column() })
+        return this.columnGroups().map(cg => cg.column())
     }
 
     // --- column background colors ----------------------------
@@ -427,30 +429,38 @@ window.BrowserView = class BrowserView extends NodeView {
             console.log("setColumnGroupAtIndexToNode to null?")
         }
 
+        // if the existing columnGroup is for the same node, use it
         const oldCg = this.columnGroups()[cgIndex]
 
-        if (oldCg.node() !== cgNode) {
-            console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
-
-            if (cgNode) {
-                const cachedCg = this.getCachedColumnGroupForNode(cgNode)
-                if (cachedCg && oldCg != cachedCg) {
-                    assert(cachedCg.type() === "BrowserColumnGroup") // sanity check
-                    this.replaceSubviewWith(oldCg, cachedCg)
-                    cachedCg.copySetupFrom(oldCg)
-                    return cachedCg
-                }  
-            }
-            
-            const newCg = this.newBrowserColumnGroup()
-            assert(newCg.browser())
-            newCg.setNode(cgNode)
-            this.replaceSubviewWith(oldCg, newCg)
-            newCg.copySetupFrom(oldCg)
-            return newCg
+        if (oldCg.node() === cgNode) {
+            return oldCg
         }
 
-        return oldCg
+        // otherwise, turn off old columnGroup if it's not in cache
+        // so it stops watching any nodes
+        if (!this.hasCachedColumnGroup(oldCg)) {
+            oldCg.setNode(null)
+        }
+
+        console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
+
+        // otherwise, see if there's a cached column for this node
+        if (cgNode) {
+            const cachedCg = this.getCachedColumnGroupForNode(cgNode)
+            if (cachedCg && oldCg !== cachedCg) {
+                this.replaceSubviewWith(oldCg, cachedCg)
+                cachedCg.copySetupFrom(oldCg)
+                return cachedCg
+            }  
+        }
+        
+        const newCg = this.newBrowserColumnGroup()
+        newCg.setNode(cgNode)
+        this.replaceSubviewWith(oldCg, newCg)
+        newCg.copySetupFrom(oldCg)
+
+
+        return newCg
     }
 
     selectColumn (selectedColumn) {

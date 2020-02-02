@@ -17,6 +17,7 @@ window.PanelView = class PanelView extends DomView {
 
     init () {
         super.init()
+        this.setPosition("absolute")
         this.setTitleView(TextField.clone().setDivClassName("PanelTitleView"))
         this.addSubview(this.titleView())
         this.titleView().setTextAlign("center")

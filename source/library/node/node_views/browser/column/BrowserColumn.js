@@ -302,9 +302,18 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
 
+    isInBrowser () {
+        return this.browser().columns().contains(this)
+    }
+
     shouldFocusAndExpandSubnode (aNote) { // focus & expand row
+        if (!this.isInBrowser()) {
+            return this
+        }
+
 	    const subnode = aNote.info()
 
+        console.log(this.debugTypeId() + " shouldFocusAndExpandSubnode " + subnode.debugTypeId())
 	    let subview = this.subviewForNode(subnode)
 	    
         if (!subview) {
@@ -383,15 +392,16 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
     
-    
     scheduleSyncFromNode () {
+        //assert(this.browser().columns().contains(this))
+
         //console.log(this.type() + " " + this.node().title() + " .scheduleSyncFromNode()")
         if (this.browser() === null || this.node() === null) {
             console.warn("WARNING: skipping BrowserColumn.scheduleSyncFromNode")
             console.warn("  this.browser() = " , this.browser())
             console.warn("  this.node() = " , this.node())
             return this
-        }	 
+        }
         
         const node = this.node()
         if (node && node.title() === "STRVCTapp") {
@@ -402,6 +412,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 	
     syncFromNode () {
+        if (!this.isInBrowser()) {
+            console.log("WARNING - attempt to sync BrowserColumn not in it's Browser")
+            return 
+        }
         //console.log(this.type() + " " + (this.node() ? this.node().title() : "null") + " .syncFromNode()")
 
         /*
@@ -831,6 +845,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     // reordering support
 
+    /*
     absolutePositionRows () {
         const ys = []
         this.rows().forEach((row) => {
@@ -854,6 +869,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         
         return this
     }
+    */
 
 
     /*
@@ -874,7 +890,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     // -- stacking rows ---
 
     stackRows () {
-        // we don't need to order rows not for 1st call of stackRows, 
+        // we don't need to order rows for 1st call of stackRows, 
         // but we do when calling stackRows while moving a drop view around,
         // so just always do it as top is null, and rows are already ordered the 1st time
 
@@ -1150,8 +1166,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     acceptsDropHover (dragView) {
         let node = this.node()
         if (node) {
-            assert(dragView.item())
-
             let dropNode = dragView.item().node()
 
             if (dropNode == this.node()) {
@@ -1163,11 +1177,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             //console.log(node.title() + " acceptsNode " + dropNode.title() + " " + acceptsNode)
             //console.log("parentNode " + node.parentNode().title())
             let result = acceptsNode && canReorder
-            /*
-            if (result === false) {
-                console.log("false")
-            }
-            */
             return result
         }
         return false

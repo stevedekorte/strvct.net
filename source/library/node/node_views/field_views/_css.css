@@ -100,31 +100,24 @@
 /* --------------------------- Value --------------------------- */
 
 .BMFieldValueView {
-	display: block;
-    /*position: relative;*/
+	display: flex;
+    position: relative;
 
-    width: calc(100%);
+    width: 100%;
 
-    margin-top: 3px;
+    margin-top: 0.1em;
     margin-left: 0px;
     margin-right: 0px;
-    margin-bottom: 4px;
+    margin-bottom: 0.1em;
 
     text-align: left;
 	overflow: hidden;
 
     white-space: nowrap;
 
-    /*
-    color: #000;
-    */
     font-weight: normal;
 
-	/* 
-	border-radius: 5px;
-	background-color: #aaa;
-	margin-left: 40px;
-	*/
+
 	padding-left: 7px;
 	padding-right: 4px;
 	padding-top: 5px;

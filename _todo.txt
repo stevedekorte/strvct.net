@@ -1,35 +1,18 @@
 
 TODO:
 
-	looks like old columns, header, footer, etc are still listening for node posts
-	justTap and willAcceptFirstResponder both call requestSelection which calls onRequestSelection 
-	Selecting JSONCreator option is causing selection of selected view 2 columns back
+	bug: rows disappearing after a reorder in a column
 
-	BMDateNode not working again
+	bug: some divClassNames seem to contain two of the same class names
+	
+
+	justTap and willAcceptFirstResponder both call requestSelection which calls onRequestSelection 
+	- we probably don't want to get this message twice
 
 	For TextView
 		white-space: pre
 	    word-wrap: wrap;
-	SplitView
-	- flexSplitIntoRows(2)
-	- flexSplitIntoColumns(2)
 	
-	DomView.splitLeftRight()
-	- create leftView and rightView
-	- isVerticallySplit
-	- setSplitRatio(left/right) // set left 
-	- fixLeftWidth() // fix and set right to 100% - leftWidth
-	DomView.splitTopAndBottom()
-	
-	
-
-	Split BrowserRow into 2 vertical parts
-	
-	LEFT  		       RIGHT
-	ICON  TITLE			ICON / NOTE
-	      SUBTITLE
-	
-	Option to have Row widths fit max of title and subtitle?
 
 	Boolean and ImageWell fields are appearing as String fields
 	

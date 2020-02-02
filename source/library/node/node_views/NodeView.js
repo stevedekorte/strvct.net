@@ -128,6 +128,8 @@ window.NodeView = class NodeView extends DomStyledView {
         if (!aSubnode) {
             throw new Error("null aSubnode")
         }
+
+        console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
         
         const proto = this.subviewProtoForSubnode(aSubnode)
 		

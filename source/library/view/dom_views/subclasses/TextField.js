@@ -34,7 +34,6 @@ window.TextField = class TextField extends DomStyledView {
 
     init () {
         super.init()
-        //this.setDisplay("inline-block") // if we do it here, we can override it with css classes. Should we eliminate CSS?
         this.setDisplay("flex")
         this.setJustifyContent("start")
         this.setAlignItems("start")
@@ -44,9 +43,9 @@ window.TextField = class TextField extends DomStyledView {
         this.setTextOverflow("clip")
         this.setSpellCheck(false)
         this.setMinWidth(10)
-        this.setPaddingLeftPx(1)
-        this.setPaddingTopPx(1)
-        this.setPaddingBottomPx(1)
+        this.setPaddingLeft("0.5em")
+        this.setPaddingTop("0.1em")
+        this.setPaddingBottom("0.1em")
 		
         //this.setUnfocusOnEnterKey(true)
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
