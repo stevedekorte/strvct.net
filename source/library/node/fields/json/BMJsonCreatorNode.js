@@ -19,15 +19,14 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)
-        this.scheduleSelfFor("setupSubnodes", 0)
         this.setCanDelete(true)
         this.setNoteIconName("right arrow")
+        this.setTitle("Choose JSON type")
     }
 
-    title () {
-        return "Choose JSON type"
+    prepareForFirstAccess () {
+        this.setupSubnodes()
     }
-
 
     static fieldTypes () {
         return [
@@ -52,10 +51,8 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     primitiveSubnodes () {
         const primitiveNodes = this.thisClass().fieldTypes().map((typeName) => {
             const name = this.visibleNameForTypeName(typeName)
-
             const newNode = BMMenuNode.clone()
             newNode.setTitle(name).setTarget(this).setMethodName("didChoose").setInfo(typeName)
-
             return newNode
         })
 
@@ -64,14 +61,13 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
 
     setupSubnodes () {
         this.addSubnodes(this.primitiveSubnodes())
-
         return this
     }
 
    didChoosePrototype (actionNode) {
         const proto = actionNode.info()
         const newNode = proto.duplicate()
-        this.parentNode().replaceSubnodeWith(this, newNode)
+        this.replaceNodeWith(newNode)
         return this
    }
 
@@ -80,6 +76,12 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         const typeName = actionNode.info()
         this.createType(typeName)
         return this
+    }
+
+    replaceNodeWith (newNode) {
+        const parentNode = this.parentNode()
+        this.parentNode().replaceSubnodeWith(this, newNode)
+        parentNode.postShouldFocusAndExpandSubnode(newNode) 
     }
 
     createType (typeName) {
@@ -98,8 +100,8 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         newNode.setCanDelete(true)
         newNode.setNodeCanInspect(true)
         newNode.setNodeCanEditTitle(true)
-
-        this.parentNode().replaceSubnodeWith(this, newNode)
+ 
+        this.replaceNodeWith(newNode)
 
         return this
     }

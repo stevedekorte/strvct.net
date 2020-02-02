@@ -20,14 +20,14 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
     init () {
         super.init()
         this.setDisplay("flex")
-        
+
         this.setActionButtons([])
 
         this.flexSplitIntoColumns(3)
 
-        const lv = this.subviews().at(0).centerContent().setFlexGrow(1)
-        const mv = this.subviews().at(1).centerContent().setFlexGrow(10)
-        const rv = this.subviews().at(2).centerContent().setFlexGrow(1)
+        const lv = this.subviews().at(0).flexCenterContent().setFlexGrow(1)
+        const mv = this.subviews().at(1).flexCenterContent().setFlexGrow(10)
+        const rv = this.subviews().at(2).flexCenterContent().setFlexGrow(1)
 
         const backArrowView = this.newBackArrow()
         this.setBackArrowView(backArrowView)

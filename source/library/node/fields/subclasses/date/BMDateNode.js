@@ -72,7 +72,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         }
     }
 
-    onRequestSelectionOfDecendantNode (aNode) {
+    onTapOfDecendantNode (aNode) {
         if (aNode.type() === "BMDayNode") {
             const dayNode = aNode
             const monthNode = dayNode.parentNode()

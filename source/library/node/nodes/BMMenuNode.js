@@ -41,6 +41,16 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
         this.setSubnodeProto(BMCreatorNode)
     }
 
+    setParentNode (aNode) {
+        if (Type.isNull(aNode)) {
+            console.log(">>>>>>>>>>>>>>> " + this.debugTypeId() + ".setParentNode(null)")
+        } else {
+    //        console.log(">>>>>>>>>>>>>>> " + this.debugTypeId() + ".setParentNode(" + aNode.debugTypeId() + ")")
+        }
+        return super.setParentNode(aNode)
+    }
+    
+
     /*
     didLoadFromStore () {
         super.didLoadFromStore()
@@ -116,18 +126,21 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
         return this._nodeRowStyles
     }
     */
-    
-   onRequestSelectionOfNode (aNodeView) {
+
+    sendMenuAction () {
        const t = this.target()
        const m = this.methodName()
 
        if (t && m && t[m]) {
            t[m].apply(t, [this])
        }
+    }
 
-       return this
-   }
-
+    onTapOfNode (aNode) {
+        super.onTapOfNode()
+        this.sendMenuAction()
+        return this
+    }
 
     didChangeParentNode () {
         this.scheduleSyncToView()

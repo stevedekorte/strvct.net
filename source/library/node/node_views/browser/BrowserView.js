@@ -128,7 +128,8 @@ window.BrowserView = class BrowserView extends NodeView {
     uncacheColumnGroup (cg) {
         assert(cg.type() === "BrowserColumnGroup")
         const k = cg.node().typeId()
-        this.columnGroupCache().removeAt(k) 
+        this.columnGroupCache().removeAt(k)
+        cg.setNode(null)
         //console.log("uncacheColumnGroup ", cg.node().title())
         //this.scheduleSyncFromNode() // needed?
         return this
@@ -356,7 +357,7 @@ window.BrowserView = class BrowserView extends NodeView {
             const cg = cgs.at(i)
             //this.useNewColumnGroupToReplaceColumnGroupAtIndex(i)
             if (!Type.isNull(cg.node())) {
-                //console.log("clearing column group ", i)
+                console.log("BrowserView clearing column group ", i)
                 const theCg = this.setColumnGroupAtIndexToNode(i, null)
                 theCg.syncFromNodeNow() // causes loop as the last column will clear columns after it?
             }
@@ -746,7 +747,6 @@ window.BrowserView = class BrowserView extends NodeView {
 
                 //column.didClickRowWithNode(node)
 
-                //column.clickRowWithNode(node)
                 //column.selectNextColumn()
                 this.selectColumn(column)
                 column = column.nextColumn()
@@ -878,7 +878,7 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     debugTypeId () {
-        const nodeName = cg.node() ? cg.node().debugTypeId() : "null"
+        const nodeName = this.node() ? this.node().debugTypeId() : "null"
         return this.typeId() + " for " +  nodeName
     }
     

@@ -468,6 +468,12 @@ window.BrowserRow = class BrowserRow extends NodeView {
         if (this.isSelectable()) {
             //this.debugLog(".requestSelection()")
             this.requestSelection()
+
+            const node = this.node()
+            if (node) {
+                node.onTapOfNode()
+            }
+            
         }
     }
 
@@ -783,23 +789,18 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     // --- selecting ---
     
-    /*
-    requestSelectionOfRow () {
-        this.tellParentViews("requestSelectionOfRow", this)
-    }
-    */
-    
     requestSelection () {
+        //if (!this.isSelected()) {
         this.select()
         //this.debugLog(" tellParentViews didClickRow")
         //this.tellParentViews("didClickRow", this)
-        this.tellParentViews("requestSelectionOfRow", this)
+        this.tellParentViews("onRequestSelectionOfRow", this)
 
         const node = this.node()
-        if (node && node.onRequestSelectionOfNode) {
+        if (node) {
             node.onRequestSelectionOfNode(this)
         }
-        
+
         return this      
     }
 	

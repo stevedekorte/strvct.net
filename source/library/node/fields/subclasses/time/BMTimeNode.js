@@ -75,7 +75,7 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
         }
     }
 
-    onRequestSelectionOfDecendantNode (aNode) {
+    onTapOfDecendantNode (aNode) {
         if (aNode.type() === "BMMinuteNode") {
             const minuteNode = aNode
             const hourNode = minuteNode.parentNode()
@@ -85,6 +85,11 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
             this.parentNode().postShouldFocusSubnode(this)
         }
         return true
+    }
+
+    jsonArchive () {
+        const d = this.jsDate()
+        return d ? d.toString() : null
     }
 
 }.initThisClass()

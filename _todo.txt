@@ -1,6 +1,12 @@
 
 TODO:
 
+	looks like old columns, header, footer, etc are still listening for node posts
+	justTap and willAcceptFirstResponder both call requestSelection which calls onRequestSelection 
+	Selecting JSONCreator option is causing selection of selected view 2 columns back
+
+	BMDateNode not working again
+
 	For TextView
 		white-space: pre
 	    word-wrap: wrap;

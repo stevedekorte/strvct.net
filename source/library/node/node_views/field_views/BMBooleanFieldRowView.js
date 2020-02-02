@@ -30,7 +30,7 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         //this.contentView().setFlexDirection("column")
         this.titlesSection().setFlexDirection("row").makeSubviewsReverseOrdered()
         //this.titlesSection().subviews().forEach(sv => sv.setAlignItems("center"))
-        this.titlesSection().subviews().forEach(sv => sv.centerContent())
+        this.titlesSection().subviews().forEach(sv => sv.flexCenterContent())
         //this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())
         return this
     }

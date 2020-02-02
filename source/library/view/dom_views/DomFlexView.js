@@ -76,7 +76,7 @@ window.DomView = class DomFlexView extends DomView {
         return this
     }
 
-    centerContent () {
+    flexCenterContent () {
         this.setJustifyContent("center")
         this.setAlignItems("center")
         return this

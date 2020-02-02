@@ -50,7 +50,7 @@ window.BMNotification = class BMNotification extends ProtoClass {
     }
     
     post () {
-        if (this.center().isDebugging()) {
+        if (true || this.center().isDebugging()) {
             //console.log(typeof(this.senderId()) + "." + this.senderId() + " posting note " + this.name() + " and recording stack for debug")
             const e = new Error()
             e.name = "" //"Notification Post Stack"

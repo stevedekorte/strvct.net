@@ -58,6 +58,7 @@ window.BMNode = class BMNode extends ProtoClass {
 
         this.newSlot("didUpdateNodeNote", null) // private
         this.newSlot("shouldFocusSubnodeNote", null) // private
+        this.newSlot("shouldFocusAndExpandSubnodeNote", null) // private
 
         // view related, but computed on node
 
@@ -114,6 +115,8 @@ window.BMNode = class BMNode extends ProtoClass {
 
         this.setDidUpdateNodeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didUpdateNode"))
         this.setShouldFocusSubnodeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("shouldFocusSubnode"))
+        this.setShouldFocusAndExpandSubnodeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("shouldFocusAndExpandSubnode"))
+
         this._nodeMinWidth = 180
         
         //this.setNodeColumnStyles(this.sharedNodeColumnStyles())
@@ -380,8 +383,8 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 	
     justAddSubnodeAt (aSubnode, anIndex) {
-        this.subnodes().atInsert(anIndex, aSubnode)
         aSubnode.setParentNode(this)
+        this.subnodes().atInsert(anIndex, aSubnode)
         return aSubnode        
     }
 
@@ -510,6 +513,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     didChangeSubnodeList () {
+        this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)) // TODO: remove after debugging
         //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
         this.didUpdateNode()
         return this
@@ -732,6 +736,11 @@ window.BMNode = class BMNode extends ProtoClass {
         this.shouldFocusSubnodeNote().setInfo(aSubnode).post()
         return this
     }
+
+    postShouldFocusAndExpandSubnode (aSubnode) {
+        this.shouldFocusAndExpandSubnodeNote().setInfo(aSubnode).post()
+        return this
+    }
     
     justAddAt (anIndex) {  
         const newSubnode = this.subnodeProto().clone()
@@ -746,7 +755,7 @@ window.BMNode = class BMNode extends ProtoClass {
     addAt (anIndex) {
         const newSubnode = this.justAddAt(anIndex)
         this.didUpdateNode()
-        this.postShouldFocusSubnode(newSubnode)
+        this.postShouldFocusAndExpandSubnode(newSubnode)
         return newSubnode
     }
 
@@ -966,12 +975,17 @@ window.BMNode = class BMNode extends ProtoClass {
 
     // -- selection requests ---
 
-    onRequestSelectionOfDecendantNode (aNode) {
+    onRequestSelectionOfDecendantNode () {
         return false // allow propogation up the parentNode line
     }
 
-    onRequestSelectionOfNode (aView) {
+    onRequestSelectionOfNode () {
         this.tellParentNodes("onRequestSelectionOfDecendantNode", this)
+        return this
+    }
+
+    onTapOfNode () {
+        this.tellParentNodes("onTapOfDecendantNode", this)
         return this
     }
 

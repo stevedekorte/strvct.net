@@ -20,13 +20,13 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)
-        this.scheduleSelfFor("setupSubnodes", 0)
         this.setCanDelete(true)
         this.setNoteIconName("right arrow")
+        this.setTitle("Chose type")
     }
 
-    title () {
-        return "Choose type"
+    prepareForFirstAccess () {
+        this.setupSubnodes()
     }
 
     /*
@@ -74,6 +74,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return primitiveNodes
     }
 
+
+
     setupSubnodes () {
         this.addSubnodes(this.primitiveSubnodes())
         
@@ -90,7 +92,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     }
 
     /*
-    onRequestSelectionOfDecendantNode (aNode) {
+    onTapOfNode (aNode) {
         const typeName = aNode._createTypeName
         if (typeName) {
             this.createType(typeName)
@@ -102,7 +104,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
    didChoosePrototype (actionNode) {
         const proto = actionNode.info()
         const newNode = proto.duplicate()
-        this.parentNode().replaceSubnodeWith(this, newNode)
+        this.replaceNodeWith(newNode)
         return this
    }
 
@@ -112,7 +114,24 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return this
     }
 
+    setParentNode (aNode) {
+        if (Type.isNull(aNode)) {
+            console.log(">>>>>>>>>>>>>>> " + this.debugTypeId() + ".setParentNode(null)")
+        } else {
+            console.log(">>>>>>>>>>>>>>> " + this.debugTypeId() + ".setParentNode(" + aNode.debugTypeId() + ")")
+        }
+        return super.setParentNode(aNode)
+    }
+
     createType (typeName) {
+        if (this._didCreate) {
+            throw new Error("attempt to call create twice!")
+            return 
+        } else {
+            this._didCreate = true
+        }
+
+        assert(!Type.isNull(this.parentNode()))
         const proto = window[typeName]
         const newNode = proto.clone()
 
@@ -129,9 +148,15 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         newNode.setNodeCanInspect(true)
         newNode.setNodeCanEditTitle(true)
 
-        this.parentNode().replaceSubnodeWith(this, newNode)
+        this.replaceNodeWith(newNode)
 
         return this
+    }
+
+    replaceNodeWith (newNode) {
+        const parentNode = this.parentNode()
+        this.parentNode().replaceSubnodeWith(this, newNode)
+        parentNode.postShouldFocusAndExpandSubnode(newNode) 
     }
 
     nodeSummary () {

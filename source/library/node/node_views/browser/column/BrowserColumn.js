@@ -167,7 +167,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
     
-    requestSelectionOfRow (aRow) {
+    onRequestSelectionOfRow (aRow) {
         this.didClickRow(aRow)
         return true
     }
@@ -250,14 +250,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     indexOfRowWithNode (aNode) {
         return this.rows().detectIndex(row => row.node() === aNode)
     }
-    
-    clickRowWithNode (aNode) {
-        const index = this.indexOfRowWithNode(aNode);
-        if (index !== null) {
-            this.setSelectedRowIndex(index)
-        }
-        return this
-    }
 
     unselectAllRows () {
         this.rows().forEach(row => { if (row.unselect) { row.unselect()} })
@@ -309,10 +301,9 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         }
         return this
     }
-	
-    shouldFocusSubnode (aNote) {
+
+    shouldFocusAndExpandSubnode (aNote) { // focus & expand row
 	    const subnode = aNote.info()
-	    this.clickRowWithNode(subnode)
 
 	    let subview = this.subviewForNode(subnode)
 	    
@@ -323,12 +314,36 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         if (subview) {
             this.selectRowWithNode(subnode)
-            //this.clickRowWithNode(subnode)
-            //subview.requestSelection()
             subview.scrollIntoView()
+            subview.requestSelection()
+            //this.selectThisColumn()
+		    //subview.dynamicScrollIntoView()
+        } else {
+            console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())
+	    }
+
+	    return this 
+    }
+
+    shouldFocusSubnode (aNote) { //  focus but don't expand row
+	    const subnode = aNote.info()
+
+	    let subview = this.subviewForNode(subnode)
+	    
+        if (!subview) {
+            this.syncFromNodeNow()
+	        subview = this.subviewForNode(subnode)
+        } 
+
+        if (subview) {
+            this.selectRowWithNode(subnode)
+            subview.scrollIntoView()
+
+            // just focus the row without expanding it
             if (this.previousColumn()) {
                 this.previousColumn().selectThisColumn()
             }
+
             //this.selectThisColumn()
 		    //subview.dynamicScrollIntoView()
         } else {
@@ -667,7 +682,11 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             //this.debugLog(".onTapComplete() ", aGesture.upEvent())
             if (p.event().target === this.element()) {
                 if (this.node().canSelfAddSubnode()) {
-                    this.node().add()
+                    const newNode = this.node().add()
+                    this.syncFromNode()
+                    const newSubview = this.subviewForNode(newNode)
+                    newSubview.requestSelection()
+                    assert(newNode.parentNode())
                 }
             }
         }

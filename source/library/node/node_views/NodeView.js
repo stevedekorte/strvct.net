@@ -202,6 +202,9 @@ window.NodeView = class NodeView extends DomStyledView {
 
     didUpdateNode () {
         //this.debugLog(" didUpdateNode " + this.node().type())
+        if (this.node().type() === "BMDateNode") {
+            console.log(this.debugTypeId() + " date update")
+        }
         this.scheduleSyncFromNode()
     }
     

@@ -14,12 +14,13 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
 
     init () {
         super.init()
-		
-        this.styles().unselected().setColor("#888")
-        this.styles().unselected().setBackgroundColor("white")
 
-        this.styles().selected().setColor("#888")
-        this.styles().selected().setBackgroundColor("#eee")
+        this.contentView().setPaddingTop("0.75em")
+        this.contentView().setPaddingBottom("0.75em")
+        this.contentView().setPaddingLeft("1em")
+        this.contentView().setPaddingRight("1em")
+        
+
 		
         this.setButtonView(ButtonView.clone().setDivClassName("BMActionNodeView"))
 	    this.buttonView().setTarget(this).setAction("didClickButton")
