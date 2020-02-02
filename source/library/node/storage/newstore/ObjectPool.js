@@ -289,7 +289,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     }
 
     onDidMutateObject (anObject) {
-        if (anObject.isFinalized() && this.hasActiveObject(anObject)) {
+        if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
             this.addDirtyObject(anObject)
         }
     }
@@ -452,7 +452,6 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         if (loadedObj) {
             loadedObj.scheduleDidLoadFromStore()
         }
-
 
         return loadedObj
     }

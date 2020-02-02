@@ -167,7 +167,8 @@ Object.defineSlots(Object, classSlots)
 const prototypeSlots = {
 
     initPrototype: function() {
-        Object.defineSlot(this, "_isFinalized", false) 
+        Object.defineSlot(this, "_hasDoneInit", false) 
+        //Object.defineSlot(this, "_hasRetired", false) 
         Object.defineSlot(this, "_mutationObservers", null) 
         Object.defineSlot(this, "_shouldStore", true)
     },
@@ -344,23 +345,23 @@ const prototypeSlots = {
     //
     //  we don't want to scheduleSyncToStore while the object is initializing
     // (e.g. while it's being unserialized from a store)
-    // so only scheduleSyncToStore if isFinalized is true, and set it to true
+    // so only scheduleSyncToStore if hasDoneInit is true, and set it to true
     // when didInit is called by the ObjectStore after 
 
 
-    isFinalized: function() {
-        return this.getOwnProperty("_isFinalized") === true
+    hasDoneInit: function() {
+        return this.getOwnProperty("_hasDoneInit") === true
     },
 
-    setIsFinalized: function(aBool) {
-        Object.defineSlot(this, "_isFinalized", aBool)
+    setFasDoneInit: function(aBool) {
+        Object.defineSlot(this, "_hasDoneInit", aBool)
         return this
     },
 
     didInit: function() {
-        assert(!this.isFinalized())
+        assert(!this.hasDoneInit())
         // for subclasses to override if needed
-        this.setIsFinalized(true)
+        this.setFasDoneInit(true)
     },
 
     didLoadFromStore: function() {

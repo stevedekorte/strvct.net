@@ -130,7 +130,9 @@ window.BMNode = class BMNode extends ProtoClass {
 
     duplicate () {
         const dup = super.duplicate()
-        dup.setSubnodes(this.subnodes().map(sn => sn.duplicate()))
+        if (!this.shouldStore() || this.shouldStoreSubnodes()) {
+            dup.setSubnodes(this.subnodes().map(sn => sn.duplicate()))
+        }
         return dup
     }
 
@@ -543,7 +545,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     didUpdateNode () {
-        if (!this.isFinalized()) {
+        if (!this.hasDoneInit()) {
             return
         }
 

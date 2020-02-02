@@ -84,7 +84,7 @@ Object.defineSlots(BMNode.prototype, {
 
     scheduleDidInit: function () {
         // Object scheduleDidInit just calls this.didInit()
-        assert(!this.isFinalized())
+        assert(!this.hasDoneInit())
         window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
     },
 
