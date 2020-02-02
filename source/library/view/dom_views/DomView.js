@@ -51,9 +51,38 @@ window.DomView = class DomView extends ProtoClass {
         this.setSubviews([])
         this.setupElement()
         this.setEventListenersDict({})
-        //this.setIsRegisteredForBrowserDrop(false)
-        //this.setBoxSizing("border-box")
         return this
+    }
+
+    removeAllListeners () {
+        this.eventListenersDict().ownForEachKV( (k, v) => { v.setIsListening(false) } )
+        this.setEventListenersDict({})
+        return this
+    }
+
+    prepareToRetire () {
+        super.prepareToRetire()
+        
+        this.removeAllGestureRecognizers()
+        this.removeAllListeners()
+
+        this.setIsRegisteredForVisibility(false) // this one isn't a listener
+        
+        const e = this.element()
+        if (e) {
+            e._domView = null
+        }
+
+        this.retireSubviewTree()
+        
+        return this
+    }
+
+    retireSubviewTree () {
+        this.subviews().forEach(sv => {
+            sv.prepareToRetire()
+            sv.retireSubviewTree()
+        })
     }
 
     gestureRecognizers () {
@@ -2297,11 +2326,7 @@ window.DomView = class DomView extends ProtoClass {
 
     setAction (anActionString) {
         this._action = anActionString
-        //this.setIsRegisteredForClicks(this.hasTargetAndAction())
-        if (anActionString && Type.isNullOrUndefined(this.onTapComplete)) { 
-            // remove this later if we don't find anything using it
-            console.warn(this.typeId() + " may have depended on setIsRegisteredForClicks")
-        }
+        this.setIsRegisteredForClicks(this.hasTargetAndAction())
         return this
     }
 
@@ -2664,6 +2689,11 @@ window.DomView = class DomView extends ProtoClass {
         if (this.gestureRecognizers()) {
             this.gestureRecognizers().select(gr => gr.type() == typeName).forEach(gr => this.removeGestureRecognizer(gr))
         }
+        return this
+    }
+
+    removeAllGestureRecognizers () {
+        this.gestureRecognizers().forEach(gr => this.removeGestureRecognizer(gr))
         return this
     }
 
@@ -3476,6 +3506,18 @@ window.DomView = class DomView extends ProtoClass {
         //this.debugLog(".onVisibility()")
         this.unregisterForVisibility()
         return true
+    }
+
+    setIsRegisteredForVisibility (aBool) {
+        if (aBool !== this.isRegisteredForVisibility()) {
+            if (aBool) {
+                this.registerForVisibility()
+            } else {
+                this.unregisterForVisibility()
+            }
+            this._isRegisteredForVisibility = aBool
+        }
+        return this
     }
 
     unregisterForVisibility () {

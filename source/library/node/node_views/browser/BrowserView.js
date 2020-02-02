@@ -440,6 +440,7 @@ window.BrowserView = class BrowserView extends NodeView {
         // so it stops watching any nodes
         if (!this.hasCachedColumnGroup(oldCg)) {
             oldCg.setNode(null)
+            oldCg.prepareToRetire()
         }
 
         console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
@@ -458,7 +459,6 @@ window.BrowserView = class BrowserView extends NodeView {
         newCg.setNode(cgNode)
         this.replaceSubviewWith(oldCg, newCg)
         newCg.copySetupFrom(oldCg)
-
 
         return newCg
     }

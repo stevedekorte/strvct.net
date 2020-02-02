@@ -1,6 +1,9 @@
 
 TODO:
 
+	if slots are set in initPrototype, they can get overwritten during init via the slots initSlot
+	- check to make sure classes aren't setting values in initPrototype
+	
 	rename didInit to something better - like didCompleteInit
 	
 	add Object.prepareToRetire // remove from watching for notifications, events, etc - remove subviews? from from parent view?

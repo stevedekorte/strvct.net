@@ -388,7 +388,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
     
     addCloseButton () {
         if (this.closeButtonView() === null) {
-            //const c = CenteredDomView.clone()
 
             const cb = DomView.clone().setDivClassName("BrowserRowCloseButton")
             cb.setPosition("absolute")

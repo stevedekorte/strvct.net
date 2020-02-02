@@ -381,6 +381,25 @@ const prototypeSlots = {
         // for subclasses to override
     },
 
+    prepareToRetire: function() {
+        // called by user code when it expect object to stop being used
+        // provides opportunity to remove notification observers, event listeners, etc
+        this.removeAllNotificationObservations()
+        this.removeScheduledActions()
+    },
+
+    removeAllNotificationObservations: function() {
+        if (window["BMNotificationCenter"]) {
+            BMNotificationCenter.shared().removeObserver(this)
+        }
+    },
+
+    removeScheduledActions: function () {
+        if (window["SyncScheduler"]) {
+            SyncScheduler.shared().unscheduleTarget(this)
+        }
+    },
+    
     // --- shouldStore ---
 
     setShouldStore: function(aBool) {

@@ -134,6 +134,17 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
         return false
     }
     
+    actionsForTarget (target) {
+        return this.actions().values().select(action => action.target() === target)
+    }
+
+    unscheduleTarget (target) {
+        this.actionsForTarget(target).forEach(action => {
+            this.actions().removeKey(action.actionsKey())
+        })
+        return this
+    }
+
     unscheduleTargetAndMethod (target, syncMethod) {
         this.actions().removeKey(this.newActionForTargetAndMethod(target, syncMethod).actionsKey())
         return this

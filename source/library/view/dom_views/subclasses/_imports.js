@@ -3,7 +3,6 @@
 ResourceLoader.pushRelativePaths([
     "BooleanView.js",
     "ButtonView.js",
-    "CenteredDomView.js",
     "CloseButton.js",
     "DocumentBody.js",
     "DragBarView.js",

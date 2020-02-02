@@ -128,6 +128,11 @@ window.BMNode = class BMNode extends ProtoClass {
         return this
     }
 
+    prepareToRetire () {
+        super.prepareToRetire() // will remove notification observations
+        
+    }
+
     duplicate () {
         const dup = super.duplicate()
         if (!this.shouldStore() || this.shouldStoreSubnodes()) {
