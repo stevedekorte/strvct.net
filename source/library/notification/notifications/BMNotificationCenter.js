@@ -78,7 +78,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
         this.setObservations([]);
         this.setNotifications([]);
         this.setNameIndex({});
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
     }
 
     // --- observations ----
