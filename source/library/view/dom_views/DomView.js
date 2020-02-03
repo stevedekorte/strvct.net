@@ -63,6 +63,7 @@ window.DomView = class DomView extends ProtoClass {
     prepareToRetire () {
         super.prepareToRetire()
         
+        this.blur()
         this.removeAllGestureRecognizers()
         this.removeAllListeners()
 
@@ -83,6 +84,7 @@ window.DomView = class DomView extends ProtoClass {
             sv.prepareToRetire()
             sv.retireSubviewTree()
         })
+        //this.removeAllSubviews()
     }
 
     gestureRecognizers () {
@@ -3000,7 +3002,10 @@ window.DomView = class DomView extends ProtoClass {
         // answer true for the acceptsFirstResponder message
         //this.debugLog(".releaseFirstResponder()")
 
-        this.blur()
+        if (this.isFocused()) { 
+            this.blur()
+        }
+
         if (this.parentView()) {
             this.parentView().becomeFirstResponder()
         }
@@ -3515,7 +3520,6 @@ window.DomView = class DomView extends ProtoClass {
             } else {
                 this.unregisterForVisibility()
             }
-            this._isRegisteredForVisibility = aBool
         }
         return this
     }
@@ -3525,7 +3529,7 @@ window.DomView = class DomView extends ProtoClass {
         if (obs) {
             obs.disconnect()
             this.setIntersectionObserver(null);
-            this.setIsRegisteredForVisibility(false)
+            this._isRegisteredForVisibility = false
         }
         return this
     }
@@ -3567,7 +3571,7 @@ window.DomView = class DomView extends ProtoClass {
         this.setIntersectionObserver(obs);
         obs.observe(this.element());
 
-        this.setIsRegisteredForVisibility(true)
+        this._isRegisteredForVisibility = true
         return this
     }
 

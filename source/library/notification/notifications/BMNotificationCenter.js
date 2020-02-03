@@ -78,7 +78,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
         this.setObservations([]);
         this.setNotifications([]);
         this.setNameIndex({});
-        //this.setIsDebugging(true)
+        this.setIsDebugging(true)
     }
 
     // --- observations ----
@@ -256,7 +256,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
 
         if (showDebug) {
             this.debugLog(" senderId " + note.senderId() + " posting " + note.name())
-            this.showObservers()
+            //this.showObservers()
         }
         
         const observations = this.observations().shallowCopy()  

@@ -665,13 +665,18 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     */
 
     onDeleteKeyUp (event) {
-        if (!this.canNavigate()) { return }
+        if (!this.canNavigate()) { 
+            return 
+        }
+        
         //this.deleteSelectedRow()
         return false
     }
 	
     onPlusKeyUp (event) {
-        if (!this.canNavigate()) { return }		
+        if (!this.canNavigate()) { 
+            return 
+        }		
 
         const sNode = this.selectedNode()
         if (sNode && sNode.hasAction("add")) { 

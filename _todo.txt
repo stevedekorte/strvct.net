@@ -6,7 +6,8 @@ TODO:
 	
 	rename didInit to something better - like didCompleteInit
 	
-	add Object.prepareToRetire // remove from watching for notifications, events, etc - remove subviews? from from parent view?
+	add Object.prepareToRetire 
+	- remove from watching for notifications, events, etc - remove subviews? from from parent view?
 	
 	bug: rows disappearing after a reorder in a column
 

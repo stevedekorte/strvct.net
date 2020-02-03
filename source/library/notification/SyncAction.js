@@ -24,7 +24,7 @@ window.SyncAction = class SyncAction extends ProtoClass {
 
     init() {
         super.init()
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
     }
 	
     tryToSend () {
@@ -39,7 +39,7 @@ window.SyncAction = class SyncAction extends ProtoClass {
     }
 	
     send () {
-        //this.debugLog("   <- sending " + this.description())
+        this.debugLog("   <- sending " + this.description())
         const t = this.target()
         const m = this.method()
         const a = this.args()
