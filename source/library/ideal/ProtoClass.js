@@ -60,7 +60,7 @@ window.ProtoClass = class ProtoClass extends Object {
             window[this.type()] = this
             //console.log(this.type() + ".initThisClass()")
         } else {
-            const msg = ">>>>>>>>>> Attempt to redefine window['" + this.type() + "']"
+            const msg = "WARNING: Attempt to redefine window['" + this.type() + "']"
             console.warn(msg)
             throw new Error(msg)
         }

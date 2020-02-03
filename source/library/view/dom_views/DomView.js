@@ -54,11 +54,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    removeAllListeners () {
-        this.eventListenersDict().ownForEachKV( (k, v) => { v.setIsListening(false) } )
-        this.setEventListenersDict({})
-        return this
-    }
+    // retiring
 
     prepareToRetire () {
         super.prepareToRetire()
@@ -66,6 +62,7 @@ window.DomView = class DomView extends ProtoClass {
         this.blur()
         this.removeAllGestureRecognizers()
         this.removeAllListeners()
+        this.cancelAllTimeouts()
 
         this.setIsRegisteredForVisibility(false) // this one isn't a listener
         
@@ -79,6 +76,12 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
+    removeAllListeners () {
+        this.eventListenersDict().ownForEachKV( (k, v) => { v.setIsListening(false) } )
+        this.setEventListenersDict({})
+        return this
+    }
+
     retireSubviewTree () {
         this.subviews().forEach(sv => {
             sv.prepareToRetire()
@@ -87,12 +90,45 @@ window.DomView = class DomView extends ProtoClass {
         //this.removeAllSubviews()
     }
 
+    // timeouts 
+
+    activeTimeoutIdSet () {
+        if (!this._activeTimeoutIdSet) {
+            this.defineSlot(this, "_activeTimeoutIdSet", new Set())
+        }
+        return this._activeTimeoutIdSet
+    }
+
+    addTimeout (aFunc, msDelay) {
+        const tid = setTimeout(() => { aFunc() }, msDelay)
+        this.activeTimeoutIdSet().add(tid)
+        return tid
+    }
+
+    cancelTimeoutId (tid) {
+        const tids = this.activeTimeoutIdSet()
+        tids.delete(tid)
+        clearTimeout(tid)
+        return this
+    }
+
+    cancelAllTimeouts () {
+        const tids = this.activeTimeoutIdSet()
+        tids.forEach(tid => clearTimeout(tid))
+        tids.clear()
+        return this
+    }
+
+    // gestures
+
     gestureRecognizers () {
         if (this._gestureRecognizers == null) {
             this._gestureRecognizers = []
         }
         return this._gestureRecognizers
     }
+
+    // element
 
     setDivId (aString) {
         this.element().id = aString
@@ -101,6 +137,9 @@ window.DomView = class DomView extends ProtoClass {
 
     setElement (e) {
         this._element = e
+        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "registerForFocus")
+        // can't use scheduler as we have to make sure this happens *after* this event loop,
+        // but scheduler runs while still in (but at the end of) the current event
         setTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
         e._domView = this // try to avoid depending on this as much as possible - keep refs to divViews, not elements
         return this

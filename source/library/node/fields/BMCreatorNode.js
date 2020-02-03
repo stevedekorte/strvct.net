@@ -114,15 +114,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return this
     }
 
-    setParentNode (aNode) {
-        if (Type.isNull(aNode)) {
-            console.log(">>>>>>>>>>>>>>> " + this.debugTypeId() + ".setParentNode(null)")
-        } else {
-            console.log(">>>>>>>>>>>>>>> " + this.debugTypeId() + ".setParentNode(" + aNode.debugTypeId() + ")")
-        }
-        return super.setParentNode(aNode)
-    }
-
     createType (typeName) {
         if (this._didCreate) {
             throw new Error("attempt to call create twice!")

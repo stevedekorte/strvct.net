@@ -257,7 +257,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 	
     selectRowWithNode (aNode) {
-        console.log(">>> column " + this.node().title() + " select row " + aNode.title())
+        //console.log(">>> column " + this.node().title() + " select row " + aNode.title())
         const selectedRow = this.rows().detect(row => row.node().nodeRowLink() === aNode)
 		
         if (selectedRow) {
@@ -313,7 +313,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
 	    const subnode = aNote.info()
 
-        console.log(this.debugTypeId() + " shouldFocusAndExpandSubnode " + subnode.debugTypeId())
+        //console.log(this.debugTypeId() + " shouldFocusAndExpandSubnode " + subnode.debugTypeId())
 	    let subview = this.subviewForNode(subnode)
 	    
         if (!subview) {
@@ -403,18 +403,15 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             return this
         }
         
-        const node = this.node()
-        if (node && node.title() === "STRVCTapp") {
-            console.log(this.typeId() + " STRVCTapp scheduleSyncFromNode")
-        }
  	    super.scheduleSyncFromNode()
 	    return this
     }
 	
     syncFromNode () {
         if (!this.isInBrowser()) {
-            console.log("WARNING - attempt to sync BrowserColumn not in it's Browser")
-            if (!Type.isNull(this.node())) {
+            if (Type.isNull(this.node())) {
+                console.log("WARNING - attempt to sync BrowserColumn not in browser and with null node")
+            } else {
                 let isCached = this.browser().hasCachedColumnGroup(this.columnGroup())
                 if (!isCached) {
                     throw new Error("this schouldn't happen")
@@ -668,7 +665,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         if (!this.canNavigate()) { 
             return 
         }
-        
+
         //this.deleteSelectedRow()
         return false
     }

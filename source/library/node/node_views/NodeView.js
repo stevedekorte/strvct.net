@@ -22,7 +22,12 @@ window.NodeView = class NodeView extends DomStyledView {
         this.updateSubnodeToSubviewMap()
         return this
     } //.setDocs("init", "initializes the object", "returns this"),
-	
+    
+    
+    prepareToRetire () {
+        this.setNode(null)
+        super.prepareToRetire()
+    }
 	
     setNode (aNode) {
         if (this._node !== aNode) {
@@ -129,7 +134,7 @@ window.NodeView = class NodeView extends DomStyledView {
             throw new Error("null aSubnode")
         }
 
-        console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
+        //console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
         
         const proto = this.subviewProtoForSubnode(aSubnode)
 		
@@ -204,9 +209,6 @@ window.NodeView = class NodeView extends DomStyledView {
 
     didUpdateNode () {
         //this.debugLog(" didUpdateNode " + this.node().type())
-        if (this.node().type() === "BMDateNode") {
-            console.log(this.debugTypeId() + " date update")
-        }
         this.scheduleSyncFromNode()
     }
     

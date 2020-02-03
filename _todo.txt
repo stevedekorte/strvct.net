@@ -1,6 +1,18 @@
 
 TODO:
 
+	Progress
+
+	Allow Option nodes to (optionally) have subnodes?
+	- example:
+		Date -> Format -> Specific Years [ ] -> Start Year, End Year
+                       -> Current Year Range [ ] -> plus range, minus range
+
+	RangeNode 
+	- has two subnodes of the same type
+	- enforces 1st value <= 2nd value 
+	- need a value node protocol with methods like (compare(other), increment, decrement)
+
 	if slots are set in initPrototype, they can get overwritten during init via the slots initSlot
 	- check to make sure classes aren't setting values in initPrototype
 	
@@ -9,8 +21,6 @@ TODO:
 	add Object.prepareToRetire 
 	- remove from watching for notifications, events, etc - remove subviews? from from parent view?
 	
-	bug: rows disappearing after a reorder in a column
-
 	bug: some divClassNames seem to contain two of the same class names
 	
 

@@ -19,7 +19,11 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         this.newSlot("month", null).setShouldStoreSlot(true).setDoesHookSetter(true)
         this.newSlot("day", null).setShouldStoreSlot(true).setDoesHookSetter(true)
 
-     
+        const startYearSlot = this.newSlot("startYear", 2000).setShouldStoreSlot(true).setDoesHookSetter(true)
+        startYearSlot.setCanInspect(true).setSlotType("Number").setLabel("Start year")
+
+        const yearRangeSlot =  this.newSlot("yearRange", 20).setShouldStoreSlot(true).setDoesHookSetter(true)
+        yearRangeSlot.setCanInspect(true).setSlotType("Number").setLabel("Year range")
     }
 
     init () {
@@ -35,6 +39,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         this.setTitle("Date")
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
+        this.setNodeCanInspect(true)
     }
 
     hasDate () {
@@ -66,12 +71,19 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
     prepareToSyncToView () {
         // called after DateNode is selected
         if (!this.hasSubnodes()) {
-            const startYear = 2019
-            const yearRange = 3
-            for (let i = startYear; i < startYear + yearRange; i++) {
-                const year = BMYearNode.clone().setValue(i)
-                this.addSubnode(year)
-            }
+            this.setupSubnodes()
+        }
+    }
+
+    setupSubnodes () {
+        this.removeAllSubnodes()
+
+        const startYear = this.startYear()
+        const endYear = this.endYear()
+
+        for (let i = startYear; i <= endYear; i++) {
+            const year = BMYearNode.clone().setValue(i)
+            this.addSubnode(year)
         }
     }
 
@@ -87,6 +99,32 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
             this.parentNode().postShouldFocusSubnode(this)
         }
         return true
+    }
+
+    yearRangeOk () {
+        return this.startYear() <= this.endYear()
+    }
+
+    didUpdateSlotStartYear () {
+        if (!this.hasDoneInit()) {
+            return
+        }
+
+        if (!this.yearRangeOk()) {
+            this.setEndYear(this.startYear())
+        }
+        this.setupSubnodes()
+    }
+
+    didUpdateSlotEndYear () {
+        if (!this.hasDoneInit()) {
+            return
+        }
+
+        if (!this.yearRangeOk()) {
+            this.setStartYear(this.endYear())
+        }
+        this.setupSubnodes()
     }
 
     jsonArchive () {

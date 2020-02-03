@@ -440,10 +440,10 @@ window.BrowserView = class BrowserView extends NodeView {
         // so it stops watching any nodes
         if (!this.hasCachedColumnGroup(oldCg)) {
             oldCg.setNode(null)
-            //oldCg.prepareToRetire()
+            oldCg.prepareToRetire()
         }
 
-        console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
+        //console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
 
         // otherwise, see if there's a cached column for this node
         if (cgNode) {
@@ -829,7 +829,7 @@ window.BrowserView = class BrowserView extends NodeView {
 
     syncFromHashPath () {
         const hash = WebBrowserWindow.shared().urlHash()
-        console.log("syncFromHashPath [" + hash + "]")
+        console.log(this.type() + ".syncFromHashPath() --- [" + hash + "]")
         let j = ""
 
         if (hash === "") {
