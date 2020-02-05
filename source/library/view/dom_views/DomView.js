@@ -43,6 +43,7 @@ window.DomView = class DomView extends ProtoClass {
         this.newSlot("acceptsFirstResponder", false)
         this.newSlot("gestureRecognizers", null)
         this.newSlot("eventListenersDict", null)
+        //this.newSlot("activeTimeoutIdSet", null)
         this.newSlot("defaultTapGesture", null)
     }
 
@@ -72,6 +73,9 @@ window.DomView = class DomView extends ProtoClass {
         }
 
         this.retireSubviewTree()
+        if (this.parentView()) {
+            this.removeFromParentView()
+        }
         
         return this
     }
@@ -90,17 +94,31 @@ window.DomView = class DomView extends ProtoClass {
         //this.removeAllSubviews()
     }
 
-    // timeouts 
+    /*
+        timeouts 
+        
+        Sometimes we can't use the SyncScheduler as we have to make sure 
+        something happens *after* the current event loop ends (and control is returned to the browser),
+        but scheduler runs while still in (but at the end of) the current event.
+        Also, we sometimes need timeout delays.
+
+    */
 
     activeTimeoutIdSet () {
-        if (!this._activeTimeoutIdSet) {
-            this.defineSlot(this, "_activeTimeoutIdSet", new Set())
+        if (Type.isNullOrUndefined(this._activeTimeoutIdSet)) {
+            Object.defineSlot(this, "_activeTimeoutIdSet", new Set())
         }
         return this._activeTimeoutIdSet
     }
 
     addTimeout (aFunc, msDelay) {
-        const tid = setTimeout(() => { aFunc() }, msDelay)
+        const tids = this.activeTimeoutIdSet()
+        const tidInfo = {}
+        const tid = setTimeout(() => { 
+            tids.delete(tidInfo.tid) 
+            aFunc() 
+        }, msDelay)
+        tidInfo.tid = tid
         this.activeTimeoutIdSet().add(tid)
         return tid
     }
@@ -137,10 +155,7 @@ window.DomView = class DomView extends ProtoClass {
 
     setElement (e) {
         this._element = e
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "registerForFocus")
-        // can't use scheduler as we have to make sure this happens *after* this event loop,
-        // but scheduler runs while still in (but at the end of) the current event
-        setTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
+        this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
         e._domView = this // try to avoid depending on this as much as possible - keep refs to divViews, not elements
         return this
     }
@@ -860,19 +875,15 @@ window.DomView = class DomView extends ProtoClass {
 
     focus () {
         if (!this.isActiveElement()) {
-
             //this.debugLog(".focus() " + document.activeElement._domView)
+            this.addTimeout(() => { this.element().focus() }, 0)
 
-            setTimeout(() => {
-                this.element().focus()
-                //this.debugLog(" did refocus after 0 timeout? " + this.isActiveElement())
-            }, 0)
         }
         return this
     }
 
     focusAfterDelay (seconds) {
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.element().focus()
         }, seconds * 1000)
         return this
@@ -1982,14 +1993,14 @@ window.DomView = class DomView extends ProtoClass {
     animateToDocumentFrame (destinationFrame, seconds, completionCallback) {
         this.setTransition("all " + seconds + "s")
         assert(this.position() === "absolute")
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setTop(destinationFrame.origin().y())
             this.setLeft(destinationFrame.origin().x())
             this.setMinAndMaxWidth(destinationFrame.size().width())
             this.setMinAndMaxHeight(destinationFrame.size().height())
         }, 0)
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             completionCallback()
         }, seconds * 1000)
         return this
@@ -1998,12 +2009,12 @@ window.DomView = class DomView extends ProtoClass {
     animateToDocumentPoint (destinationPoint, seconds, completionCallback) {
         this.setTransition("all " + seconds + "s")
         assert(this.position() === "absolute")
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setTop(destinationPoint.y())
             this.setLeft(destinationPoint.x())
         }, 0)
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             completionCallback()
         }, seconds * 1000)
         return this
@@ -2012,7 +2023,7 @@ window.DomView = class DomView extends ProtoClass {
     hideAndFadeIn () {
         this.setOpacity(0)
         this.setTransition("all 0.5s")
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setOpacity(1)
         }, 0)
     }
@@ -2021,7 +2032,7 @@ window.DomView = class DomView extends ProtoClass {
         this.transitions().at("opacity").updateDuration("0.3s")
         this.setDisplay("inline-block")
         this.setOpacity(0)
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setOpacity(1)
         }, 0)
         return this
@@ -2030,7 +2041,7 @@ window.DomView = class DomView extends ProtoClass {
     fadeOutToDisplayNone () {
         this.transitions().at("opacity").updateDuration("0.3s")
         this.setOpacity(0)
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setDisplay("none")
         }, 200)
         return this
@@ -2052,7 +2063,7 @@ window.DomView = class DomView extends ProtoClass {
         this.setOpacity(0)
         this.setMinAndMaxHeight(0)
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setOpacity(1)
             this.setMinAndMaxHeight(targetHeight)
         }, 0)
@@ -2065,13 +2076,13 @@ window.DomView = class DomView extends ProtoClass {
         this.transitions().at("min-height").updateDuration("0.3s")
         this.transitions().at("max-height").updateDuration("0.3s")
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setOpacity(0)
             this.setMinAndMaxHeight(0)
         }, 1)
 
         /*
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setDisplay("none")
         }, 300)
         */
@@ -2090,11 +2101,11 @@ window.DomView = class DomView extends ProtoClass {
         // use justRemoteSubview for internal changes
 
         this.setTransition("all " + delayInSeconds + "s")
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.setOpacity(0)
         }, 0)
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.parentView().removeSubview(this)
         }, delayInSeconds * 1000)
 
@@ -3358,7 +3369,7 @@ window.DomView = class DomView extends ProtoClass {
                 focusedView.focusAfterDelay(0.2)
             }
         }
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.element().scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth", })
         }, 0)
 
@@ -3517,7 +3528,7 @@ window.DomView = class DomView extends ProtoClass {
 
             this.setTop((parentHeight / 2) - (height / 2))
             /*
-            setTimeout(() => {
+            this.addTimeout(() => {
                 //this.setTop(pv.clientHeight() / 2 - this.clientHeight() / 2)
                 this.setTop(pv.calcHeight() / 2 - this.calcHeight() / 2)
             }, 0)
@@ -3532,7 +3543,7 @@ window.DomView = class DomView extends ProtoClass {
         const pv = this.parentView()
         if (pv) {
             this.setPosition("absolute")
-            setTimeout(() => {
+            this.addTimeout(() => {
                 this.setRight(pv.clientWidth() / 2 - this.clientWidth() / 2)
             }, 0)
         }
@@ -3645,7 +3656,7 @@ window.DomView = class DomView extends ProtoClass {
 
         // timeout used to make sure div is placed and laid out first
         // TODO: consider ordering issue
-        setTimeout(() => { 
+        this.addTimeout(() => { 
             let sh = this.parentView().clientHeight()
             let h = this.clientHeight()
             this.setTop(sh/2 - h/2)
@@ -3665,7 +3676,7 @@ window.DomView = class DomView extends ProtoClass {
 
         // timeout used to make sure div is placed and laid out first
         // TODO: consider ordering issue
-        setTimeout(() => { 
+        this.addTimeout(() => { 
             let sw = this.parentView().clientWidth()
             let w = this.clientWidth()
             this.setTop(sw/2 - w/2)
@@ -3683,7 +3694,7 @@ window.DomView = class DomView extends ProtoClass {
         this.setPointerEvents("none")
         this.debugLog(" disabling pointer events")
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.debugLog(" enabling pointer events")
             this.setPointerEvents("inherit")
         }, ms)

@@ -14,7 +14,6 @@ window.BMStringField = class BMStringField extends BMField {
 
     init () {
         super.init()
-        this.setViewClassName("BMFieldRowView")
         this.setKey("String title")
 
         this.setKeyIsVisible(true)

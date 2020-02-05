@@ -42,6 +42,15 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
 
         return this
     }
+    
+    /*
+    setParentView (aView) {
+        if (aView === null && this.setParentView() !== null) {
+            console.log(this.type() + " setting null parent view")
+        }
+        return super.setParentView(aView)
+    }
+    */
 
     copySizeFrom (bcg) {
         this.setMinAndMaxWidth(bcg.minWidth())

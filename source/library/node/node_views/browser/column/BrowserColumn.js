@@ -414,7 +414,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             } else {
                 let isCached = this.browser().hasCachedColumnGroup(this.columnGroup())
                 if (!isCached) {
-                    throw new Error("this schouldn't happen")
+                    throw new Error("this shouldn't happen")
                 }
 
             }

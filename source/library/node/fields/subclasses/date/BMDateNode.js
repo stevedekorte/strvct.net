@@ -79,9 +79,9 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         this.removeAllSubnodes()
 
         const startYear = this.startYear()
-        const endYear = this.endYear()
+        const range = this.yearRange()
 
-        for (let i = startYear; i <= endYear; i++) {
+        for (let i = startYear; i < startYear + range; i++) {
             const year = BMYearNode.clone().setValue(i)
             this.addSubnode(year)
         }

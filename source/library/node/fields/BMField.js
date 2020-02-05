@@ -43,8 +43,8 @@ window.BMField = class BMField extends BMSummaryNode {
 
         this.newSlot("valueMethod", null).setDuplicateOp("duplicate")
         this.newSlot("noteMethod", null)  // fetches note from a parent node method
-        this.newSlot("keyError", null)
-        this.newSlot("valueError", null)
+        this.newSlot("keyError", null).setSyncsToView(true)
+        this.newSlot("valueError", null).setSyncsToView(true)
         this.newSlot("target", null)
     }
 
@@ -79,7 +79,10 @@ window.BMField = class BMField extends BMSummaryNode {
     didUpdateSlotValue (oldValue, newValue) {  // setValue() is called by View on edit
         if (this.target() && this.valueMethod()) {
             this.setValueOnTarget(newValue)
+        } else {
+            this.validate()
         }
+
         this.didUpdateNode()
     }
 

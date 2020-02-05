@@ -130,7 +130,7 @@ window.BMNode = class BMNode extends ProtoClass {
 
     prepareToRetire () {
         super.prepareToRetire() // will remove notification observations
-        
+        this._subnodes.removeMutationObserver(this)
     }
 
     duplicate () {
@@ -558,21 +558,17 @@ window.BMNode = class BMNode extends ProtoClass {
 
         if (note) {
             //console.log("Node '" + this.title() + "' POST didUpdateNode")
-            if (this.title() === "STRVCTapp") {
-                console.log("Node STRVCTapp didUpdateNode")
-            }
             note.post()
         }
 
         
-        // TODO: make this more efficient as we don't always need it
-        /*
+        // TODO: make this more efficient, as we don't always need it
+        
         if (this.parentNode()) {
             assert(this.parentNode() !== this)
             this.parentNode().didUpdateNode()
         }
-        */
-        
+         
     }
 
     didUpdateSlot (aSlot, oldValue, newValue) {

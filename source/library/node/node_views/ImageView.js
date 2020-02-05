@@ -109,7 +109,7 @@ window.ImageView = class ImageView extends NodeView {
 		
         this.collapse()
         
-        setTimeout( () => { 
+        this.addTimeout( () => { 
             this.removeCloseButton()
             const parentView = this.parentView()
             this.removeFromParentView()

@@ -14,7 +14,6 @@ window.BMStampField = class BMStampField extends BMField {
 
     init () {
         super.init()
-        this.setViewClassName("BMFieldRowView")
         //this.setKeyIsVisible(false)
         //this.setKey("drop images here")
         this.setKeyIsEditable(false)

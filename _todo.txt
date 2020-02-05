@@ -1,7 +1,17 @@
 
 TODO:
 
-	Progress
+	way on keyboard to add to column even if it's empty
+	NumberField validation not working?
+
+
+	Redo themes themeName -> sectionName -> default, selected, activated, error
+
+	use from View:
+		bg = currentTheme().section("fieldValue").backgroundColor()
+		(section() returns default section if not found)
+	
+	ProgressView?
 
 	Allow Option nodes to (optionally) have subnodes?
 	- example:

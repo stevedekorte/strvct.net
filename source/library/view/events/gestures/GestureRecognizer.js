@@ -322,8 +322,9 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         if (this.isDebugging()) {
             console.log(this.shortTypeId() + " sending " + methodName + " to " + vt.typeId())
         }
+
         //try {
-        if(true) {
+        if (vt) {
             if (vt[methodName]) {
                 result = vt[methodName].apply(vt, [this])
             } else {

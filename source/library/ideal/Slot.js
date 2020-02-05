@@ -517,6 +517,10 @@ window.ideal.Slot = class Slot {
                     this[didUpdateSlotMethodName].apply(this, [oldValue, newValue])
                 }
 
+                if (slot.syncsToView() && this.scheduleSyncToView) {
+                    this.scheduleSyncToView()
+                }
+
             }
             return this
         }

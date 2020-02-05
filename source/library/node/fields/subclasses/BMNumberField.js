@@ -17,7 +17,6 @@ window.BMNumberField = class BMNumberField extends BMField {
 
     init () {
         super.init()
-        this.setViewClassName("BMFieldRowView")
         this.setKey("Number title")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(true)

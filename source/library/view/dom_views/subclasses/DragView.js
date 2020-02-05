@@ -200,7 +200,7 @@ window.DragView = class DragView extends DomStyledView {
 
         // animate the start of the drag
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.addPanStyle()
         })
 
@@ -216,7 +216,7 @@ window.DragView = class DragView extends DomStyledView {
     onPanMove (aGesture) {
         this.updatePosition()
         
-        setTimeout(() => { 
+        this.addTimeout(() => { 
             this.hoverOverViews()
         })
     }

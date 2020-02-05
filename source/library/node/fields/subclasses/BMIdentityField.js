@@ -14,7 +14,6 @@ window.BMIdentityField = class BMIdentityField extends BMField {
 
     init () {
         super.init()
-        //this.setViewClassName("BMFieldRowView")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
     }

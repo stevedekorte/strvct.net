@@ -15,7 +15,6 @@ window.BMBooleanField = class BMBooleanField extends BMField {
 
     init () {
         super.init()
-        this.setViewClassName("BMFieldRowView")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
         //this.setValue(false)

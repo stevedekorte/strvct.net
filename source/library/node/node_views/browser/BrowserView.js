@@ -436,12 +436,6 @@ window.BrowserView = class BrowserView extends NodeView {
             return oldCg
         }
 
-        // otherwise, turn off old columnGroup if it's not in cache
-        // so it stops watching any nodes
-        if (!this.hasCachedColumnGroup(oldCg)) {
-            oldCg.setNode(null)
-            oldCg.prepareToRetire()
-        }
 
         //console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
 
@@ -449,18 +443,33 @@ window.BrowserView = class BrowserView extends NodeView {
         if (cgNode) {
             const cachedCg = this.getCachedColumnGroupForNode(cgNode)
             if (cachedCg && oldCg !== cachedCg) {
-                this.replaceSubviewWith(oldCg, cachedCg)
-                cachedCg.copySetupFrom(oldCg)
+                this.replaceColumnGroup(oldCg, necachedCgwCg)
+                //this.replaceSubviewWith(oldCg, cachedCg)
+                //cachedCg.copySetupFrom(oldCg)
                 return cachedCg
             }  
         }
         
         const newCg = this.newBrowserColumnGroup()
         newCg.setNode(cgNode)
+        this.replaceColumnGroup(oldCg, newCg)
+        //this.replaceSubviewWith(oldCg, newCg)
+        //newCg.copySetupFrom(oldCg)
+        return newCg
+    }
+
+    replaceColumnGroup (oldCg, newCg) {
         this.replaceSubviewWith(oldCg, newCg)
         newCg.copySetupFrom(oldCg)
 
-        return newCg
+        // If we won't use it again (if it's not in cache), 
+        // retire old columnGroup so it stops watching any nodes, etc
+        if (!this.hasCachedColumnGroup(oldCg)) {
+            oldCg.setNode(null)
+            oldCg.prepareToRetire()
+        }
+
+        return this
     }
 
     selectColumn (selectedColumn) {
