@@ -28,7 +28,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         super.init()
         this.setupCodeToKeys()
         this.startListening()
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

@@ -32,6 +32,9 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
         const backArrowView = this.newBackArrow()
         this.setBackArrowView(backArrowView)
         lv.addSubview(backArrowView)
+        lv.setFlexDirection("row")
+        lv.setJustifyContent("flex-start")
+        lv.setAlignItems("center")
 		
         const titleView = this.newTitleView()
         this.setTitleView(titleView)
@@ -50,10 +53,18 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
     }
 
     newBackArrow () {
-        const backArrowView = ButtonView.clone().setDivClassName("BackArrow").setTarget(this).setAction("didHitBackArrow")
-        backArrowView.setBackgroundImageUrlPath(this.pathForIconName("left"))        
+        const backArrowView = ButtonView.clone() //.setDivClassName("BackArrow")
+        backArrowView.setTarget(this).setAction("didHitBackArrow")
+        backArrowView.setTitleIsVisible(false)
+        backArrowView.setIconName("left")
+        backArrowView.iconView().setStrokeColor("rgba(0, 0, 0, 0.5)") 
+        backArrowView.iconView().setFillColor("rgba(0, 0, 0, 0.5)") 
         backArrowView.setBackgroundSizeWH(10, 10)
         backArrowView.setOpacity(0.6)
+        backArrowView.setWidth("fit-content")
+        backArrowView.setPaddingTop("0em")
+        backArrowView.setPaddingBottom("0em")
+        backArrowView.setBoxShadow(null)
         return backArrowView
     }
 

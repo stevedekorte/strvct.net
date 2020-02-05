@@ -1162,6 +1162,7 @@ window.DomView = class DomView extends ProtoClass {
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     setAlignItems (v) {
+        assert([null, "flex-start", "center", "flex-end"].contains(v))
         this.setCssAttribute("align-items", v)
         return this
     }
@@ -1173,6 +1174,7 @@ window.DomView = class DomView extends ProtoClass {
     // flex justify-content (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
     
     setJustifyContent (v) {
+        assert([null, "flex-start", "center", "flex-end"].contains(v))
         this.setCssAttribute("justify-content", v)
         return this
     }

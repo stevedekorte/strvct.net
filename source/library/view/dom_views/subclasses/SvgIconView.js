@@ -51,13 +51,20 @@ window.SvgIconView = class SvgIconView extends DomView {
     }
 
     setIconName (name) {
-        const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)
 
-        if (iconNode) {
-            this.setSvgString(iconNode.svgString())
+        if (name) {
+            const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)
+
+            if (iconNode) {
+                this.setSvgString(iconNode.svgString())
+                this.setDisplay("flex")
+            } else {
+                this.setSvgString(null)
+                //throw new Error("can't find icon '" + name + "'") 
+            }
         } else {
             this.setSvgString(null)
-            //throw new Error("can't find icon '" + name + "'") 
+            this.setDisplay("none")
         }
 
         return this

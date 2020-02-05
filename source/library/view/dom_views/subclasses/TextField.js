@@ -35,8 +35,8 @@ window.TextField = class TextField extends DomStyledView {
     init () {
         super.init()
         this.setDisplay("flex")
-        this.setJustifyContent("start")
-        this.setAlignItems("start")
+        this.setJustifyContent("flex-start")
+        this.setAlignItems("flex-start")
         this.turnOffUserSelect()
         this.setWhiteSpace("nowrap")
         this.setOverflow("hidden")

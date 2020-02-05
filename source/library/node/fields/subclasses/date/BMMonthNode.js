@@ -81,7 +81,9 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
         if (!this.subnodeCount()) {
 
             for (let i = 1; i < this.daysThisMonth() + 1; i++) {
-                this.addSubnode(BMDayNode.clone().setValue(i))
+                const day = BMDayNode.clone().setValue(i)
+                day.setCanDelete(false)
+                this.addSubnode(day)
             }
         }
     }

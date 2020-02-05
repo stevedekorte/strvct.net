@@ -40,6 +40,7 @@ window.ButtonView = class ButtonView extends DomView {
     initPrototype () {
         this.newSlot("titleView", null)
         this.newSlot("isEnabled", true)
+        this.newSlot("iconView", null)
     }
 
     init () {
@@ -69,24 +70,22 @@ window.ButtonView = class ButtonView extends DomView {
         
         this.setTitle("")
 
-        /*
-        this.styles().unselected().setColor("#888")
-        this.styles().unselected().setBackgroundColor("white")
-
-        this.styles().selected().setColor("#888")
-        this.styles().selected().setBackgroundColor("#eee")
-        */
-
-        /*
-        this.setIconName("close")
-        this.setBackgroundSizeWH(10, 10) // use "contain" instead?
-        this.setBackgroundPosition("center")
-        this.makeBackgroundNoRepeat()
-        this.setAction("close") //.setInnerHTML("&#10799;")
-        */
+        const icon = SvgIconView.clone() //.setDivClassName("RightActionView")
+        icon.setMinAndMaxWidth(12)
+        icon.setMinAndMaxHeight(15)
+        icon.setFillColor("white")
+        icon.setStrokeColor("white")
+        icon.setOpacity(1)
+        icon.setDisplay("none")
+        this.setIconView(this.addSubview(icon))
 
         this.addDefaultTapGesture()
 
+        return this
+    }
+
+    setIconName (aName) {
+        this.iconView().setIconName(aName)
         return this
     }
 
@@ -97,6 +96,15 @@ window.ButtonView = class ButtonView extends DomView {
 
     title () {
         return this.titleView().value()
+    }
+
+    setTitleIsVisible (aBool) {
+        if (aBool) {
+            this.titleView().setDisplay("flex")
+        } else {
+            this.titleView().setDisplay("none")
+        }
+        return this
     }
 
     /*

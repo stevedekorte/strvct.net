@@ -52,7 +52,8 @@ window.BMYearNode = class BMYearNode extends BMNode {
         // called after Node is selected
         if (!this.subnodeCount()) {
             for (let i = 1; i < 12 + 1; i++) {
-                this.addSubnode(BMMonthNode.clone().setValue(i))
+                const month = this.addSubnode(BMMonthNode.clone().setValue(i))
+                month.setCanDelete(false)
             }
         }
     }
