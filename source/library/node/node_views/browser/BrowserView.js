@@ -244,7 +244,9 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     removeColumnGroup (v) {
-        return this.removeSubview(v)
+        this.removeSubview(v)
+        v.prepareToRetire()
+        return this
     }
 
     columns () {

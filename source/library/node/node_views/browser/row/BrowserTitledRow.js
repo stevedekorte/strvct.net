@@ -176,7 +176,12 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     // ---
 
     desiredWidth () {
-        const w = this.titleView().calcCssWidth()
+        const tw = this.titleView().calcCssWidth()
+        const sw = this.subtitleView().calcCssWidth()
+        let w = tw
+        if (sw > w) {
+            w = sw
+        }
         //console.log("calcCssWidth of row title '" + this.node().title() + "' = " + w)
         return w + 50
         //return this.titleView().calcWidth()

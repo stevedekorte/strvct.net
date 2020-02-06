@@ -98,7 +98,7 @@ window.PeerApp = class PeerApp extends App {
         this.browser().hideAndFadeIn()
         this.browser().setNode(this)
                 
-        this.rootView().addSubview(this.browser())
+        this.documentBodyView().addSubview(this.browser())
         this.browser().scheduleSyncFromNode()
         window.SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
         return this
@@ -106,7 +106,7 @@ window.PeerApp = class PeerApp extends App {
 
     setupShelf () {
         this.setShelf(ShelfView.clone())
-        this.rootView().addSubview(this.shelf())
+        this.documentBodyView().addSubview(this.shelf())
 
         window.SyncScheduler.shared().scheduleTargetAndMethod(this.shelf(), "appDidInit", 10)
 

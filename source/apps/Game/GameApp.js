@@ -47,7 +47,7 @@ window.GameApp = class GameApp extends App {
         this.setAtomNode(AtomNode.clone())
         this.setAtomNodeView(AtomNodeView.clone().setNode(this.atomNode()))
         this.atomNodeView().setIsVertical(true).syncLayout()
-        this.rootView().addSubview(this.atomNodeView())
+        this.documentBodyView().addSubview(this.atomNodeView())
     }
 
     // --- setup model ---
@@ -99,7 +99,7 @@ window.GameApp = class GameApp extends App {
         this.browser().hideAndFadeIn()
         this.browser().setNode(this)
                 
-        this.rootView().addSubview(this.browser())
+        this.documentBodyView().addSubview(this.browser())
         this.browser().scheduleSyncFromNode()
         this.browser().scheduleSelfFor("syncFromHashPath", 100)
         //window.SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
@@ -108,7 +108,7 @@ window.GameApp = class GameApp extends App {
 
     setupShelf () {
         this.setShelf(ShelfView.clone())
-        this.rootView().addSubview(this.shelf())
+        this.documentBodyView().addSubview(this.shelf())
 
         //this.shelf().scheduleSelfFor("appDidInit", 10)
         window.SyncScheduler.shared().scheduleTargetAndMethod(this.shelf(), "appDidInit", 10)

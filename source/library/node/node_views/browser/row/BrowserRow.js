@@ -123,7 +123,10 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     setupRowContentView () {
         const cv = DomView.clone().setDivClassName("BrowserRowContentView")
-        cv.setDisplay("block")
+        //cv.setDisplay("block")
+
+        cv.setDisplay("flex")
+        //cv.flexCenterContent()
 
         cv.setWidthPercentage(100)
         cv.setHeightPercentage(100) 
@@ -549,7 +552,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.debugLog(".justInspect()")
         if (this.node().nodeCanInspect()) { 
             this.setIsInspecting(true)
-            this.scheduleSyncToNode()
+            //this.scheduleSyncToNode()
             //this.select()
             this.justTap()
         }

@@ -15,10 +15,12 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
     init () {
         super.init()
 
-        this.contentView().setPaddingTop("0.75em")
-        this.contentView().setPaddingBottom("0.75em")
-        this.contentView().setPaddingLeft("1em")
-        this.contentView().setPaddingRight("1em")
+        const cv = this.contentView()
+
+        cv.setPaddingTop("0.5em")
+        cv.setPaddingBottom("0.5em")
+        cv.setPaddingLeft("0.5em")
+        cv.setPaddingRight("0.5em")
         
 
 		

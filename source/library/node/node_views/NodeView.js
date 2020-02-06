@@ -43,8 +43,8 @@ window.NodeView = class NodeView extends DomStyledView {
     }
 
     updateElementIdLabel () {
-        const nodeId = this.node() ? this.node().typeId() : "null"
-        this.element().id = this.typeId() + " for node " + nodeId
+        const nodeId = this.node() ? this.node().debugTypeId() : "null"
+        this.element().id = this.debugTypeId() + " for node " + nodeId
     }
     
     didChangeNode () {

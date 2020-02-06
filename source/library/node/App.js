@@ -55,7 +55,7 @@ window.App = class App extends BMNode {
     showBrowserCompatibilityPanel () {
         console.log("showing panel")
         const panel = window.PanelView.clone()
-        this.rootView().addSubview(panel)
+        this.documentBodyView().addSubview(panel)
         panel.setTitle("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
         panel.orderFront()
         panel.setZIndex(100)
@@ -90,9 +90,9 @@ window.App = class App extends BMNode {
         //this.registerServiceWorker() // not working yet
     }
 	
-    rootView () {
-        return DomView.rootView()
-        //return  WebBrowserWindow.shared().documentBody()
+    documentBodyView () {
+        //return DomView.documentBodyView()
+        return WebBrowserWindow.shared().documentBody()
     }
 
     mainWindow () {

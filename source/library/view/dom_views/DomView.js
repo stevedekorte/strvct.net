@@ -3688,8 +3688,20 @@ window.DomView = class DomView extends ProtoClass {
     }
     */
 
-    static rootView () {
-        return WebBrowserWindow.shared().documentBody()
+    static documentBodyView () {
+        return DocumentBody.shared()
+    }
+
+    rootView () {
+        const pv = this.parentView()
+        if (pv) {
+            return pv.rootView()
+        }
+        return this
+    }
+
+    isInDocument () {
+        return this.rootView() === DocumentBody.shared()
     }
 
     disablePointerEventsUntilTimeout (ms) {

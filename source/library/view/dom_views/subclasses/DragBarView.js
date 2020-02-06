@@ -153,14 +153,14 @@ window.DragBarView = class DragBarView extends DomView {
     }
 
     addParentTracking () {
-        const r = this.rootView()
+        const r = this.documentBodyView()
         r.element().removeEventListener("mousemove", this._mouseMoveTrackerFunc, false);
         r.element().removeEventListener("mouseup", this._mouseUpTrackerFunc, false);
         return this
     }
 
     removeParentTracking () {
-        const r = this.rootView()
+        const r = this.documentBodyView()
         r.element().addEventListener("mousemove", this._mouseMoveTrackerFunc, false);
         r.element().addEventListener("mouseup", this._mouseUpTrackerFunc, false);
         return this

@@ -226,13 +226,13 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     // collapsing
 	
     setIsCollapsed (aBool) {
-        if (this._isCollapsed !== aBool) {		
+        //if (this._isCollapsed !== aBool) {		
             if (aBool) {
                 this.collapse()
             } else {
                 this.uncollapse()
             }
-        }
+        //}
         return this
     }
 	
@@ -334,12 +334,14 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
                 return 0
             }
 
+            
             let rw = this.column().maxRowWidth()
             //console.log("column " + this.node().title() + " maxRowWidth:" + rw)
             this.column().maxRowWidth()
             if (rw > w) {
                 w = rw
             }
+            
 
             if (this.browser() && this.browser().isSingleColumn()) {
                 w = this.browser().browserWidth()

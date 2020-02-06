@@ -36,7 +36,7 @@ window.AtomApp = class AtomApp extends App {
         this.setAtomNode(AtomNode.clone())
         this.setAtomNodeView(AtomNodeView.clone().setNode(this.atomNode()))
         this.atomNodeView().setIsVertical(true).syncLayout()
-        this.rootView().addSubview(this.atomNodeView())
+        this.documentBodyView().addSubview(this.atomNodeView())
     }
 
     

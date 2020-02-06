@@ -408,7 +408,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 	
     syncFromNode () {
-        if (!this.isInBrowser()) {
+        if (!this.isInDocument()) {
             if (Type.isNull(this.node())) {
                 console.log("WARNING - attempt to sync BrowserColumn not in browser and with null node")
             } else {

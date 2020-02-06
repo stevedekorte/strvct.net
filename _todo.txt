@@ -1,11 +1,27 @@
 
 TODO:
 
+	When Browser in single column mode, can get stuck in showing empty columns
+	- after it stops showing back arrow?
+	
+	UnitsNode - OptionsNode with 
+	
+	Summary inspector not working on Options
+
+	Have NumberField support units and unit abbrieviations? Conversions?
+	
+	Un
+	
+	Row gets stuck in browser drag mode after dragging out of browser 
+	
 	way on keyboard to add to column even if it's empty
 	NumberField validation not working?
 
 
-	Redo themes themeName -> sectionName -> default, selected, activated, error
+	Redo themes themeName -> sectionName -> 
+		default, selected, activated, error
+		row padding, padding between row components
+		
 
 	use from View:
 		bg = currentTheme().section("fieldValue").backgroundColor()
@@ -36,6 +52,9 @@ TODO:
 
 	justTap and willAcceptFirstResponder both call requestSelection which calls onRequestSelection 
 	- we probably don't want to get this message twice
+
+
+	Have Number field deal with commas and european points
 
 	For TextView
 		white-space: pre

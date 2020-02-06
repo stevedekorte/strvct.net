@@ -20,6 +20,7 @@ window.BMActionNode = class BMActionNode extends BMStorableNode {
         this.newSlot("target", null)
         this.setShouldStore(true)
         this.setNodeRowIsSelectable(true)
+        this.setNodeCanInspect(true)
     }
 
     init () {

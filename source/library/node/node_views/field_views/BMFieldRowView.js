@@ -31,6 +31,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         const cv = this.contentView()
 
         cv.setMinHeight("5em")
+        cv.setPaddingTop("0.5em").setPaddingBottom("0.5em")
         cv.flexSplitIntoRows(4)
         cv.setJustifyContent("center") // alignment perpendicular to flex
 
@@ -56,9 +57,12 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         cv.setPaddingRight("1em")
         */
 
+        const vPadding = "0.6em"
+
         this.setKeyView(TextField.clone().setDivClassName("BMFieldKeyView"))
         tv.addSubview(this.keyView())     
-   		this.keyView().turnOffUserSelect().setSpellCheck(false)   
+        this.keyView().turnOffUserSelect().setSpellCheck(false)
+        this.keyView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
         //this.keyView().setMarginLeft(18)
 
         //this.setValueSectionView(DomView.clone().setDivClassName("BMFieldValueSectionView"))
@@ -67,6 +71,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         //this.contentView().setPaddingLeftPx(20)
         this.setValueView(this.createValueView())
+        this.valueView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
         sv.addSubview(this.valueView())  
         //this.valueSectionView().addSubview(this.valueView())  
       
@@ -89,7 +94,6 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
     createValueView () {
         const v = TextField.clone().setDivClassName("BMFieldValueView")
-
         //tf.setSelectAllOnDoubleClick(true)
         return v
     }
@@ -282,7 +286,6 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             keyView.setDisplay("none")
         }
 		
-
         //this.verticallyCenterContent()
 
         // editable
@@ -310,9 +313,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         if (node.valueError()) {
             //valueView.setColor(this.errorColor())
             //valueView.setToolTip(node.valueError())
+            valueView.setColor(this.errorColor())
             errorView.setColor(this.errorColor())
             errorView.setInnerHTML(node.valueError())
-            //errorView.fadeInHeightToDisplayBlock(15)
+            errorView.fadeInHeightToDisplayBlock(15)
 
         } else {
             //valueView.setBackgroundColor("transparent")

@@ -6,9 +6,7 @@
 	height: auto;
 	min-height: fit-content;
     max-height: fit-content;
-    
-	margin: 0px;
-	padding: 0px;
+
     overflow: hidden;
 	border-bottom: 1px solid #ddd;
 }
@@ -59,9 +57,7 @@
     
     min-height: 100%;
     width: calc(100% - 108px);
-    
-    border: 0px dashed blue;
-    margin: 0px;
+
     background-color: transparent;
 }
 

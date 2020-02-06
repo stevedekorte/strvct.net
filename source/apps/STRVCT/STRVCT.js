@@ -88,7 +88,7 @@ window.STRVCT = class STRVCT extends App {
         this.browser().hideAndFadeIn()
         this.browser().setNode(this)
                 
-        this.rootView().addSubview(this.browser())
+        this.documentBodyView().addSubview(this.browser())
         this.browser().syncFromNodeNow()
         this.browser().syncFromHashPath()
         return this
@@ -111,32 +111,36 @@ window.STRVCT = class STRVCT extends App {
 
     setupNormalTheme () {
         const doc = DocumentBody.shared()
-        doc.setFontFamily("Sans-Serif")
+        //doc.setFontFamily("Sans-Serif")
+        //doc.setFontFamily("Helvetica Neue")
+        doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")
-        doc.setFontSizeAndLineHeight("13px")
+        doc.setFontSizeAndLineHeight("15px")
     }
 
     setupVectorTheme () {
         const doc = DocumentBody.shared()
         doc.setFontFamily("Hyperspace Bold")
+        doc.setFontSize("12px")
         //doc.setFontSizeAndLineHeight("1.1em")
         doc.setLetterSpacing("0.1em")
         doc.setTextShadow("0px 0px 1px rgba(255,255,255,1)")
         doc.setFontWeight(900)
+        doc.setTextTransform("uppercase")
         //DocumentBody.shared().setTextTransform("uppercase")
     }
 
     setupBlenderProTheme () {
         const doc = DocumentBody.shared()
         doc.setFontFamily("Blender Pro Book")
-        doc.setFontSizeAndLineHeight("1.35em")
+        doc.setFontSizeAndLineHeight("18px")
     }
 
     setupLatoTheme () {
         const doc = DocumentBody.shared()
         doc.setFontFamily("Lato Light")
-        doc.setFontSizeAndLineHeight("1.1em")
+        doc.setFontSizeAndLineHeight("16px")
         doc.setLetterSpacing("0.05em")
         doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
     }
