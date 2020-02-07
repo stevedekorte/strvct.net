@@ -392,20 +392,22 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
     
+    /*
     scheduleSyncFromNode () {
         //assert(this.browser().columns().contains(this))
 
         //console.log(this.type() + " " + this.node().title() + " .scheduleSyncFromNode()")
-        if (this.browser() === null || this.node() === null) {
+        if (this.node() === null || !this.isInBrowser()) {
             console.warn("WARNING: skipping BrowserColumn.scheduleSyncFromNode")
-            console.warn("  this.browser() = " , this.browser())
-            console.warn("  this.node() = " , this.node())
+            console.warn("  this.isInBrowser() = " , this.isInBrowser())
+            console.warn("  this.node() = " , this.node().debugTypeId())
             return this
         }
         
  	    super.scheduleSyncFromNode()
 	    return this
     }
+    */
 	
     syncFromNode () {
         if (!this.isInDocument()) {
@@ -413,6 +415,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                 console.log("WARNING - attempt to sync BrowserColumn not in browser and with null node")
             } else {
                 let isCached = this.browser().hasCachedColumnGroup(this.columnGroup())
+                console.log("attempt to sync " + this.debugTypeId() + " but it's not in the browser")
                 if (!isCached) {
                     throw new Error("this shouldn't happen")
                 }

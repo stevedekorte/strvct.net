@@ -40,15 +40,26 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
 
+        //console.log(this.typeId() +  "created " + new Error().stack)
+
         return this
     }
     
+    
     /*
     setParentView (aView) {
-        if (aView === null && this.setParentView() !== null) {
-            console.log(this.type() + " setting null parent view")
-        }
+        console.log(this.typeId() + " setParentView(" + ( aView === null ? null : aView.typeId() ) + ")")
+
+        //if (aView === null && this.setParentView() !== null && this.node()) {
+        //    console.log(this.typeId() + " setting null parent view")
+        //} 
+        
         return super.setParentView(aView)
+    }
+
+    prepareToRetire () {
+        console.log(this.typeId() + " prepareToRetire")
+        super.prepareToRetire()
     }
     */
 

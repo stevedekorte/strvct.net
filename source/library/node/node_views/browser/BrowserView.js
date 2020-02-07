@@ -244,10 +244,12 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     removeColumnGroup (cg) {
-        console.log(this.type() + " removeColumnGroup " + cg.debugTypeId())
-        this.removeSubview(cg)
+        //console.log(this.type() + " removeColumnGroup " + cg.typeId())
         if (!cg.isCached()) {
             cg.prepareToRetire()
+        }
+        if (this.hasSubview(cg)) {
+            this.removeSubview(cg)
         }
         return this
     }
@@ -308,7 +310,9 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     newBrowserColumnGroup () {
-        return BrowserColumnGroup.clone().setBrowser(this).colapse()
+        const cg = BrowserColumnGroup.clone().setBrowser(this).colapse()
+        cg._cloneStack = new Error().stack
+        return cg
     }
 
     setColumnGroupCount (count) {
@@ -329,7 +333,7 @@ window.BrowserView = class BrowserView extends NodeView {
         */
 
         // remove any excess columns
-        while (this.columnGroups().length > count) {
+        while (this.columnGroups().length > count + 1) {
             this.removeColumnGroup(this.columnGroups().last())
         }
 
@@ -364,7 +368,7 @@ window.BrowserView = class BrowserView extends NodeView {
             const cg = cgs.at(i)
             //this.useNewColumnGroupToReplaceColumnGroupAtIndex(i)
             if (!Type.isNull(cg.node())) {
-                console.log("BrowserView clearing column group ", i)
+                //console.log("BrowserView clearing column group ", i)
                 const theCg = this.setColumnGroupAtIndexToNode(i, null)
                 theCg.syncFromNodeNow() // causes loop as the last column will clear columns after it?
             }
@@ -441,6 +445,11 @@ window.BrowserView = class BrowserView extends NodeView {
             return oldCg
         }
 
+        if (cgNode && oldCg.node() === null) {
+            oldCg.setNode(cgNode)
+            return oldCg
+        }
+
 
         //console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
 
@@ -448,18 +457,14 @@ window.BrowserView = class BrowserView extends NodeView {
         if (cgNode) {
             const cachedCg = this.getCachedColumnGroupForNode(cgNode)
             if (cachedCg && oldCg !== cachedCg) {
-                this.replaceColumnGroup(oldCg, necachedCgwCg)
-                //this.replaceSubviewWith(oldCg, cachedCg)
-                //cachedCg.copySetupFrom(oldCg)
+                this.replaceColumnGroup(oldCg, cachedCg)
                 return cachedCg
             }  
         }
         
         const newCg = this.newBrowserColumnGroup()
-        newCg.setNode(cgNode)
         this.replaceColumnGroup(oldCg, newCg)
-        //this.replaceSubviewWith(oldCg, newCg)
-        //newCg.copySetupFrom(oldCg)
+        newCg.setNode(cgNode)
         return newCg
     }
 

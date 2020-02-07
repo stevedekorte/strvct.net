@@ -25,7 +25,6 @@ window.NodeView = class NodeView extends DomStyledView {
     
     
     prepareToRetire () {
-        console.log(this.debugTypeId() + " prepareToRetire")
         this.setNode(null)
         super.prepareToRetire()
     }
