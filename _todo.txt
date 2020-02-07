@@ -1,7 +1,6 @@
 
 TODO:
 
-
 	don't limit expand on hover to droppable items in case decendants can accept it
 	
 	
