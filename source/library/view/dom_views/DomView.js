@@ -1521,12 +1521,12 @@ window.DomView = class DomView extends ProtoClass {
 
     // width
 
-    minWidth () {
+    minWidthPx () {
         const s = this.getCssAttribute("min-width")
         return this.pxStringToNumber(s)
     }
 
-    maxWidth () {
+    maxWidthPx () {
         const w = this.getCssAttribute("max-width")
         if (w === "") {
             return null
@@ -1539,20 +1539,10 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     setMinWidth (v) {
-        const type = typeof (v)
-        let newValue = null
-        if (v == null) {
-            newValue = null
-        } else if (type === "string") {
-            newValue = v
-        } else if (type === "number") {
-            newValue = this.pxNumberToString(v)
-        } else {
-            throw new Error(type + " is invalid argument type")
+        if (Type.isNumber(v)) {
+            v = this.pxNumberToString(v)
         }
-
-        this.setCssAttribute("min-width", newValue, () => { this.didChangeWidth() })
-
+        this.setCssAttribute("min-width", v, () => { this.didChangeWidth() })
         return this
     }
 
@@ -1583,46 +1573,34 @@ window.DomView = class DomView extends ProtoClass {
     // ----
 
     setMaxWidth (v) {
-        /*
-        if (v === this._maxWidth) {
-            return this
+        if (Type.isNumber(v)) {
+            v = this.pxNumberToString(v)
         }
-        */
+        this.setCssAttribute("max-width", v, () => { this.didChangeWidth() })
+        return this
+    }
 
-        const type = typeof (v)
-        let newValue = null
-        if (v == null) {
-            newValue = null
-        } else if (type === "string") {
-            newValue = v
-        } else if (type === "number") {
-            newValue = this.pxNumberToString(v)
-        } else {
-            throw new Error(type + " is invalid argument type")
+    setMinAndMaxWidth (v) {
+        if (Type.isNumber(v)) {
+            v = this.pxNumberToString(v)
         }
-        //this._maxWidth = newValue
-
-        this.setCssAttribute("max-width", newValue, () => { this.didChangeWidth() })
+        this.setCssAttribute("max-width", v, () => { this.didChangeWidth() })
+        this.setCssAttribute("min-width", v, () => { this.didChangeWidth() })
         return this
     }
 
-    setMinAndMaxWidth (aNumber) {
-        const newValue = this.pxNumberToString(aNumber)
-        this.setCssAttribute("max-width", newValue, () => { this.didChangeWidth() })
-        this.setCssAttribute("min-width", newValue, () => { this.didChangeWidth() })
+    setMinAndMaxHeight (v) {
+        if (Type.isNumber(v)) {
+            v = this.pxNumberToString(v)
+        }
+        this.setCssAttribute("min-height", v, () => { this.didChangeHeight() })
+        this.setCssAttribute("max-height", v, () => { this.didChangeHeight() })
         return this
     }
 
-    setMinAndMaxHeight (aNumber) {
-        const newValue = this.pxNumberToString(aNumber)
-        this.setCssAttribute("min-height", newValue, () => { this.didChangeHeight() })
-        this.setCssAttribute("max-height", newValue, () => { this.didChangeHeight() })
-        return this
-    }
-
-    setMinAndMaxWidthAndHeight (aNumber) {
-        this.setMinAndMaxWidth(aNumber)
-        this.setMinAndMaxHeight(aNumber)
+    setMinAndMaxWidthAndHeight (v) {
+        this.setMinAndMaxWidth(v)
+        this.setMinAndMaxHeight(v)
         return this
     }
 

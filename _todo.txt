@@ -1,32 +1,48 @@
 
 TODO:
 
+
+	If subnodeProto is array instance, create a chooser for it on add action
+	
+	Rename allSlots to allSlotsDict
+	
 	When Browser in single column mode, can get stuck in showing empty columns
 	- after it stops showing back arrow?
 	
 	UnitsNode - OptionsNode with 
 	
-	Summary inspector not working on Options
-
 	Have NumberField support units and unit abbrieviations? Conversions?
-	
-	Un
-	
-	Row gets stuck in browser drag mode after dragging out of browser 
-	
+		
 	way on keyboard to add to column even if it's empty
 	NumberField validation not working?
 
+	Inspector menus
+	- support inspectorPath attribute on Slot
 
-	Redo themes themeName -> sectionName -> 
-		default, selected, activated, error
-		row padding, padding between row components
+	Themes
+
+		Redo themes themeName -> sectionName -> 
+			default, selected, activated, error
+			row padding, padding between row components
 		
 
-	use from View:
-		bg = currentTheme().section("fieldValue").backgroundColor()
-		(section() returns default section if not found)
+		use from View:
+			bg = currentTheme().section("field").section("value").section("border").attribute("backgroundColor")
+			bg = currentTheme().section("field").section("value").backgroundColor()
+			bg = currentTheme().valueForPath("field/key/backgroundColor")
+			bg = currentTheme().valueForPath("field/value/backgroundColor")
+			bg = currentTheme().valueForPath("field/topBottomPadding")
+			(section() returns default section if not found)
 	
+			if field/value/backgroundColor not found, defaults to
+			field/backgroundColor, which if not found defaults to
+			backgroundColor
+			
+			sections are create-path-on-attribute-write
+			- change path sections from shouldStore false to true on attribute write
+			Section - tellParents("didWriteAttribute")
+			
+			
 	ProgressView?
 
 	Allow Option nodes to (optionally) have subnodes?

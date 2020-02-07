@@ -81,9 +81,11 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         
         const app = this.rootNode()
         const protos = app.firstSubnodeWithTitle("Prototypes")
-        const newSubnodes = protos.subnodes().map((sn) => {
-            const newNode = BMActionNode.clone()
-            newNode.setTitle(sn.title()).setTarget(this).setMethodName("didChoosePrototype").setInfo(sn)
+        const newSubnodes = protos.subnodes().map((proto) => {
+            const newNode = BMMenuNode.clone()
+            newNode.setTitle(proto.title()).setSubtitle(proto.subtitle())
+            newNode.setTarget(this).setMethodName("didChoosePrototype").setInfo(proto)
+            newNode.setNoteIconName("inner-checkbox")
             return newNode
         })
 

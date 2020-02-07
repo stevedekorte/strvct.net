@@ -26,7 +26,7 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
         this.newSlot("borderBottom", null)
         this.newSlot("borderWidth", null)
         this.newSlot("borderColor", null)
-        this.newSlot("borderRadius", null)
+        this.newSlot("borderRadius", null) 
 
         this.newSlot("styleNames", [
             "color", 

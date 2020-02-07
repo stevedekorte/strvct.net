@@ -165,12 +165,31 @@ window.ideal.Slot = class Slot {
     validDuplicateOps () {
         return new Set(["nop", "copyValue", "duplicate"])
     }
-
+    
     setDuplicateOp (aString) {
         assert(this.validDuplicateOps().has(aString))
         this._duplicateOp = aString
         return this
     }
+
+    /*
+    onInstanceGetDuplicateValue (anInstance) {
+        const v = this.onInstanceGetValue(anInstance)
+        const dop = this.duplicateOp()
+
+        if (v === null) {
+            return null
+        } else if (dop === "nop") {
+            return v
+        } else if (dop === "copyValue") {
+            return v
+        } else if (dop === "duplicate" && v && v.duplicate) {
+            return v.duplicate()
+        }
+
+        throw new Error("unable to duplicate")
+    }
+    */
 
     setName (aName) {
         this._name = aName

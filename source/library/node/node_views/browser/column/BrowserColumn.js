@@ -937,7 +937,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             row.setRight(null)
             row.setBottom(null)
 
-            //row.unlockSize()
             row.setMinAndMaxWidth(null).setMinAndMaxHeight(null)                
 
         })

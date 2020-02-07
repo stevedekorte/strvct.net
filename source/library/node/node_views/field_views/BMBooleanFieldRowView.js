@@ -18,15 +18,11 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         this.turnOffUserSelect()
         this.keyView().setTransition("color 0.3s")
 
-        this.keyView().setDisplay("inline-block")
-        this.valueView().setDisplay("inline-block")
-        this.keyView().setMarginLeft(6)
-
-        //this.keyView().setMarginTop(-1)
-        this.keyView().setPaddingBottomPx(1)
-        //this.valueView().setMarginTop(15)
+       this.valueView().parentView().flexCenterContent()
+       this.valueView().setPaddingBottom("0em")
 
         this.contentView().debugBorders()
+        this.titlesSection().subviews().at(1).flexCenterContent()
         //this.contentView().setFlexDirection("column")
         this.titlesSection().setFlexDirection("row").makeSubviewsReverseOrdered()
         //this.titlesSection().subviews().forEach(sv => sv.setAlignItems("center"))
@@ -36,7 +32,9 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
     }
 
     createValueView () {
-        return BooleanView.clone()
+        const bv = BooleanView.clone()
+
+        return bv
     }
 	
     booleanView () {

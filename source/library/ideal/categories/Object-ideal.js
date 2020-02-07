@@ -445,7 +445,16 @@ const prototypeSlots = {
 
     duplicate: function() {
         assert(this.isInstance())
-        return this.thisClass().clone().copyFrom(this)
+        const instance = this.thisClass().clone().copyFrom(this)
+        instance.duplicateSlotValuesFrom(this)
+        /*
+        const storeSlots = Object.values(this.allSlots()).filter(slot => slot.shouldStoreSlot())
+        storeSlots.forEach((slot) => {
+            const v = slot.onInstanceGetValue(this)
+            slot.onInstanceSetValue(instance, v)
+        })
+        */
+        return instance
     },
 
     copy: function() {

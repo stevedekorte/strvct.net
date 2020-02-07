@@ -28,18 +28,36 @@ window.BooleanView = class BooleanView extends DomStyledView {
 
     init () {
         super.init()
-        //this.setDisplay("inline-block")
+        this.setDisplay("flex")
+        this.setPosition("relative")
+        this.setFilter("blur(0.2px)")
+        this.flexCenterContent()
+        //this.setBorder("1px dashed red")
+       
         this.turnOffUserSelect()
-        this.setWhiteSpace("nowrap")
+        //this.setWhiteSpace("nowrap")
         this.setSpellCheck(false)
         this.setContentEditable(false)
 
-        const size = this.checkboxSize() // size
+        const size = this.checkboxSize()
         this.setMinAndMaxWidthAndHeight(size)
+        //this.setMinAndMaxWidthAndHeight("fit-content")
 
         this.setOverflow("hidden")
 
+        /*
+        const iconSetView = DomView.clone().setDivClassName("IconSetView")
+        //this.setBorder("1px dashed white")
+        iconSetView.setDisplay("flex")
+        iconSetView.setPosition("relative")
+        //iconSetView.setWidth("fit-content").setHeight("fit-content")
+        iconSetView.setMinAndMaxWidthAndHeight(size)
+        this.addSubview(iconSetView)
+        */
+
         const inner = SvgIconView.clone().setIconName("inner-checkbox")
+        //inner.setBorder("1px dashed blue")
+        inner.setDisplay("flex")
         inner.setPosition("absolute")
         inner.setTop("0px").setLeft("0px")
         inner.setMinAndMaxWidthAndHeight(size)
@@ -48,6 +66,8 @@ window.BooleanView = class BooleanView extends DomStyledView {
         this.addSubview(inner)
 
         const outer = SvgIconView.clone().setIconName("outer-checkbox")
+        //outer.setBorder("1px dashed green")
+        outer.setDisplay("flex")
         outer.setPosition("absolute")
         outer.setTop("0px").setLeft("0px")
         outer.setMinAndMaxWidthAndHeight(size)
@@ -62,7 +82,7 @@ window.BooleanView = class BooleanView extends DomStyledView {
     }
 
     checkboxSize () {
-        return 16
+        return "1em"
     }
 
     // editable

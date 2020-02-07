@@ -33,6 +33,8 @@ window.SvgIconView = class SvgIconView extends DomView {
 
     init () {
         super.init()
+        this.setDisplay("flex")
+        this.setPosition("relative")
         this.setDivClassName("SvgIconView")
         this.turnOffUserSelect()
         this.setOverflow("hidden")
@@ -46,11 +48,15 @@ window.SvgIconView = class SvgIconView extends DomView {
         
         this.setOverflow("hidden")
         this.setTransition("all 0.2s")
-        
         return this
     }
 
+    debugTypeId () {
+        super.debugTypeId() + "'" + this.iconName() 
+    }
+
     setIconName (name) {
+        this._iconName = name
 
         if (name) {
             const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)

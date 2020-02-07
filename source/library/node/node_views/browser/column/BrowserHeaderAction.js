@@ -36,16 +36,6 @@ window.BrowserHeaderAction = class BrowserHeaderAction extends NodeView {
     
     updateTooltip () {
         this.setToolTip(this.action())
-
-        /*
-		if (this.target() && this.target().subnodeProto() && this.target().subnodeProto().nodeVisibleClassName()) {
-			const noun = this.target().subnodeProto().nodeVisibleClassName().toLowerCase()
-			const beginsWithVowel = ["a", "e", "i", "o", "u"].contains(noun[0])
-			const article = beginsWithVowel ? "an" : "a";
-			this.setToolTip(this.action() + " " + article + " " + noun)
-		}
-		*/
-		
         return this
     }
 	

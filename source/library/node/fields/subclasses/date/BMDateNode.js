@@ -15,9 +15,9 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
-        this.newSlot("year", null).setShouldStoreSlot(true).setDoesHookSetter(true)
-        this.newSlot("month", null).setShouldStoreSlot(true).setDoesHookSetter(true)
-        this.newSlot("day", null).setShouldStoreSlot(true).setDoesHookSetter(true)
+        this.newSlot("year", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")
+        this.newSlot("month", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")
+        this.newSlot("day", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")
 
         const startYearSlot = this.newSlot("startYear", 2000).setShouldStoreSlot(true).setDoesHookSetter(true)
         startYearSlot.setCanInspect(true).setSlotType("Number").setLabel("Start year")

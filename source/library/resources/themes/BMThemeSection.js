@@ -2,11 +2,11 @@
 
 /*
 
-    BMTheme
+    BMThemeSection
 
 */
 
-window.BMTheme = class BMTheme extends BMStorableNode {
+window.BMThemeSection = class BMThemeSection extends BMStorableNode {
     
     initPrototype () {
 
@@ -16,7 +16,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         super.init()
         this.setShouldStore(true)
         this.setNodeCanEditTitle(true)
-        this.setTitle("Untitled Theme")
+        this.setTitle("Untitled theme section")
         this.setNodeMinWidth(270)
         this.setupSubnodes()
         this.setCanDelete(true)

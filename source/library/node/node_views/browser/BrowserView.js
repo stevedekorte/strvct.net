@@ -243,9 +243,12 @@ window.BrowserView = class BrowserView extends NodeView {
         return this.addSubview(v)
     }
 
-    removeColumnGroup (v) {
-        this.removeSubview(v)
-        v.prepareToRetire()
+    removeColumnGroup (cg) {
+        console.log(this.type() + " removeColumnGroup " + cg.debugTypeId())
+        this.removeSubview(cg)
+        if (!cg.isCached()) {
+            cg.prepareToRetire()
+        }
         return this
     }
 
@@ -466,7 +469,7 @@ window.BrowserView = class BrowserView extends NodeView {
 
         // If we won't use it again (if it's not in cache), 
         // retire old columnGroup so it stops watching any nodes, etc
-        if (!this.hasCachedColumnGroup(oldCg)) {
+        if (!oldCg.isCached()) {
             oldCg.setNode(null)
             oldCg.prepareToRetire()
         }
@@ -568,7 +571,7 @@ window.BrowserView = class BrowserView extends NodeView {
     // --- width --------------------------
 
     widthOfColumnGroups () {
-        return this.columnGroups().sum(cg => cg.minWidth())
+        return this.columnGroups().sum(cg => cg.minWidthPx())
     }
 
     // --- collapsing column groups -----
@@ -632,7 +635,7 @@ window.BrowserView = class BrowserView extends NodeView {
         this.updateBackArrow()
         //console.log("fitForSingleColumn")
         this.setShouldShowTitles(true)
-        //console.log("lastActiveCg.node().title() = ", lastActiveCg.node().title(), " width ", lastActiveCg.minWidth(), " ", lastActiveCg.maxWidth())
+        //console.log("lastActiveCg.node().title() = ", lastActiveCg.node().title(), " width ", lastActiveCg.minWidthPx(), " ", lastActiveCg.maxWidthPx())
 
         return this
     }

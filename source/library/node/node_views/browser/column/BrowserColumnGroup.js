@@ -53,7 +53,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     */
 
     copySizeFrom (bcg) {
-        this.setMinAndMaxWidth(bcg.minWidth())
+        this.setMinAndMaxWidth(bcg.minWidthPx())
         this.setFlexGrow(bcg.flexGrow())
         return this
     }
@@ -90,6 +90,10 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         //this.browser().cacheColumnGroup(this)
         //this.debugLog(".cache()")
         return this
+    }
+
+    isCached () {
+        return this.browser().hasCachedColumnGroup(this)
     }
     
     uncache () {
@@ -366,7 +370,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
     
     setNode (aNode) {
-        if (Type.isNull(aNode) && this.browser() && this.browser().hasCachedColumnGroup(this)) {
+        if (Type.isNull(aNode) && this.browser() && this.isCached()) {
             this.debugLog(" setNode(null)")
         }
 

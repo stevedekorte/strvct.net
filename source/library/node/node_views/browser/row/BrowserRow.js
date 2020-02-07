@@ -171,20 +171,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return this.contentView().removeSubview(aView)
     }
 
-    /*
-    lockSize () {
-        super.lockSize()
-        this.contentView().lockSize()
-        return this
-    }
-
-    unlockSize () {
-        super.unlockSize()
-        this.contentView().unlockSize()
-        return this
-    }
-    */
-
     // ----
 
     setBackgroundColor (s) {
