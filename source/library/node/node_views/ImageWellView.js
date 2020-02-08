@@ -27,7 +27,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
     }
 
     syncToNode () {
-        super.suncToNode()
+        super.syncToNode()
         this.tellParentViews("didUpdateImageWellView", this)
         return this
     }

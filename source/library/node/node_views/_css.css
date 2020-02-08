@@ -1,6 +1,6 @@
 
 .ImageWellView {
-	display: block;
+	display: flex;
 	position: relative;
 	min-height: 100px;
 	min-width: 100px;

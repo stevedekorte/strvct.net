@@ -29,15 +29,37 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     }
 
     static fieldTypes () {
-        return [
-            "BMBooleanField", 
-            //"BMDateNode", // BMDateAndTimeNode?
-            "BMJsonArrayNode", // creator node is BMJsonCreatorNode "Choose Json type"
-            "BMJsonDictionaryNode", 
-            "BMJsonNullField",
-            "BMNumberField", 
-            "BMStringField",
-        ]
+        return Object.values(this.jsonToProtoNameDict() ) 
+    }
+
+
+    static jsonToProtoNameDict () {
+        return {
+            "Array"   : "BMJsonArrayNode",
+            "Boolean" : "BMBooleanField",
+            "Null"    : "BMJsonNullField",
+            "Number"  : "BMNumberField",
+            "Object"  : "BMJsonDictionaryNode",
+            "String"  : "BMStringField",
+        }
+    }
+
+    static acceptedDropTypes () {
+        return Object.values(this.jsonToProtoNameDict())
+    }
+
+    static nodeForJson(json) {
+        const t = Type.typeName(json)
+        const protoName = this.jsonToProtoNameDict()[t]  
+        if (protoName) {
+            const proto = window[protoName]
+            if (proto) {
+                const instance = proto.clone().setJson(json)
+                return instance
+            }
+        }
+
+        return null
     }
 
     visibleNameForTypeName (name) {
@@ -67,7 +89,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
    didChoosePrototype (actionNode) {
         const proto = actionNode.info()
         const newNode = proto.duplicate()
-        this.replaceNodeWith(newNode)
+        this.replaceSelfWithNode(newNode)
         return this
    }
 
@@ -78,7 +100,7 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         return this
     }
 
-    replaceNodeWith (newNode) {
+    replaceSelfWithNode (newNode) {
         const parentNode = this.parentNode()
         this.parentNode().replaceSubnodeWith(this, newNode)
         parentNode.postShouldFocusAndExpandSubnode(newNode) 
@@ -101,43 +123,13 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         newNode.setNodeCanInspect(true)
         newNode.setNodeCanEditTitle(true)
  
-        this.replaceNodeWith(newNode)
+        this.replaceSelfWithNode(newNode)
 
         return this
     }
 
     nodeSummary () {
         return ""
-    }
-
-    static jsonToProtoNameDict () {
-        return {
-            "Null" : "BMJsonNullField",
-            "String" : "BMStringField",
-            "Number" : "BMNumberField",
-            //"Date" : "BMDateField",
-            "Boolean" : "BMBooleanField",
-            "Array" : "BMJsonArrayNode",
-            "Object" : "BMJsonDictionaryNode"
-        }
-    }
-
-    static acceptedDropTypes () {
-        return Object.values(this.jsonToProtoNameDict())
-    }
-
-    static nodeForJson(json) {
-        const t = Type.typeName(json)
-        const protoName = this.jsonToProtoNameDict()[t]  
-        if (protoName) {
-            const proto = window[protoName]
-            if (proto) {
-                const instance = proto.clone().setJson(json)
-                return instance
-            }
-        }
-
-        return null
     }
 
     

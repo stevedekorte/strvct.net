@@ -26,7 +26,6 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
         this.setTitle("JSON")
     }
 
-
     subtitle () {
         return "Array"
     }

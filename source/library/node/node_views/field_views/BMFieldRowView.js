@@ -20,6 +20,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.newSlot("editableColor", "#aaa")
         this.newSlot("uneditableColor", "#888")
         this.newSlot("errorColor", "red")
+    
+        this.newSlot("keyViewContainer", null)
+        this.newSlot("valueViewContainer", null)
+
     }
 
     init () {
@@ -40,7 +44,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         titlesSection.flexSplitIntoRows(2)
 
         const tv = titlesSection.subviews().at(0)
+        this.setKeyViewContainer(tv)
+
         const sv = titlesSection.subviews().at(1)
+        this.setValueViewContainer(sv)
 
         const nv = cv.subviews().at(1)
         const ev = cv.subviews().at(2)

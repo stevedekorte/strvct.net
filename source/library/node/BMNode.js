@@ -35,6 +35,22 @@
 
 window.BMNode = class BMNode extends ProtoClass {
     
+    // --- for CreatorNode Prototypes ---
+
+    static visibleClassName () {
+        let name = this.type()
+        name = name.sansPrefix("BM")
+        name = name.sansSuffix("Field")
+        name = name.sansSuffix("Node")
+        return name
+    }
+
+    static availableAsProtoNode () {
+        return true
+    }
+
+    // ----
+
     initPrototype () {
         
         // row view summary

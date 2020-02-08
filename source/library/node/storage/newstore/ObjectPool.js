@@ -659,6 +659,18 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     // ---------------------------
 
     rootSubnodeWithTitleForProto (aTitle, aProto) {
+        const obj = this.rootObject().firstSubnodeWithTitle(aTitle)
+
+        if (obj) {
+            if (obj.type() !== aProto.type()) {
+                const newObj = aProto.clone()
+                newObj.copyFrom(obj)
+                // TODO: Do we need to replace all references in pool and reload?
+                this.rootObject().replaceSubnodeWith(obj, newObj)
+                return newObj
+            }
+        } 
+
         return this.rootObject().subnodeWithTitleIfAbsentInsertClosure(aTitle, () => aProto.clone())
     }
 

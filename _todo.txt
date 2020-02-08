@@ -1,6 +1,10 @@
 
 TODO:
 
+	shift/command? up/down arrow to jump to top/bottom of navigation rows
+	- shift back arrow to return to root
+	
+	After moving a field in a  JsonArray to a JsonDict, it doesn't make the keys visible
 	don't limit expand on hover to droppable items in case decendants can accept it
 	
 	
@@ -199,12 +203,7 @@ TODO:
 	disable row view gestures while Text is being edited
 
 	unify node->view sync and node->store sync?
-	
-	ActorNode?
-
-	work on shouldStoreSubnodes - need to override this on a per class (or per instance) basis for
-	nodes like BMDateField
-	
+		
 	simplify getter/setter hooks?
 
 	If a lazy ref can be on a network store, should we move to supporting
@@ -999,7 +998,7 @@ dynamically add field rows?
         Creator     BMCreatorField
         Button      BMActionNode
         Boolean     BMBooleanField  
-        Date        BMDateField
+        Date        BMDateNode
         Text 
         TextArea    BMTextAreaField
         Identity    BMIdentityField

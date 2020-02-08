@@ -2491,7 +2491,7 @@ window.DomView = class DomView extends ProtoClass {
                     onReadMethodName = "onBrowserDropJson"
                 }
 
-                if (file.type.indexOf("image.") === 0) {
+                if (file.type.indexOf("image/") === 0) {
                     onReadMethodName = "onBrowserDropImageDataUrl"
                 }
 
@@ -2890,12 +2890,35 @@ window.DomView = class DomView extends ProtoClass {
     onKeyDown (event) {
         //BMKeyboard.shared().showEvent(event)
 
-        const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
-        this.debugLog(" onKeyDown ", methodName)
+        let methodName = BMKeyboard.shared().downMethodNameForEvent(event)
+
+        //console.log("event.repeat = ", event.repeat)
+
+        //console.log(" onKeyDown ", methodName)
+        //this.debugLog(" onKeyDown ", methodName)
         //console.log("onKeyDown methodName: ", methodName)
         this.invokeMethodNameForEvent(methodName, event)
 
+        
+        if (event.repeat) {
+            const upMethodName = BMKeyboard.shared().upMethodNameForEvent(event)
+            this.invokeMethodNameForEvent(upMethodName, event)
+            //this.forceRedisplay()
+        }
+        
+
         return true
+    }
+
+    forceRedisplay() {
+        // NOTE: not sure this works
+        const p = this.parentView()
+        if (p) {
+            const d = p.display()
+            p.setDisplay("none")
+            p.setDisplay(d)  
+        }
+        return this
     }
 
     invokeMethodNameForEvent (methodName, event) {

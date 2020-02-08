@@ -28,7 +28,7 @@ window.DragListener = class DragListener extends EventSetListener {
 
     start () {
         super.start()
-        this.listenTarget().ondragstart = (e) => { console.log("--- ondragstart ---"); } // TODO: still needed?
+        //this.listenTarget().ondragstart = (e) => { console.log("--- ondragstart ---"); } // TODO: still needed?
         return this
     }
     

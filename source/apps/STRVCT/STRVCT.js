@@ -45,7 +45,8 @@ window.STRVCT = class STRVCT extends App {
         const myLists = this.defaultStore().rootSubnodeWithTitleForProto("Notes", BMMenuNode);
         this.addLinkSubnode(myLists)
 
-        const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMMenuNode);
+        //const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMMenuNode);
+        const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMPrototypesNode);
         prototypes.setTitle("Prototypes")
         prototypes.setNodeCanReorderSubnodes(true)
         this.addLinkSubnode(prototypes)

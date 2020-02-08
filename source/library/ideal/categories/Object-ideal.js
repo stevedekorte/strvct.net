@@ -135,6 +135,12 @@ const classSlots = {
         return values;
     },
 
+    asValueKeyDict (obj) {
+        const dict = {}
+        obj.ownForEachKV((k, v) => dict[v] = k)
+        return dict
+    },
+
     isKindOf: function(aClass) {
         //assert(this.isClass())
         //assert(aClass.isClass())

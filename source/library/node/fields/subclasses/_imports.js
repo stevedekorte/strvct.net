@@ -2,7 +2,6 @@
 
 ResourceLoader.pushRelativePaths([
     "BMBooleanField.js",
-    "BMDateField.js",
     "BMIdentityField.js",
     "BMImageWellField.js",
     "BMNumberField.js",

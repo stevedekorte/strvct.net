@@ -14,6 +14,8 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
 
     init () {
         super.init()
+        this.valueViewContainer().flexCenterContent()
+
         //this.keyView().setDivClassName("BMImageWellKeyField") //.setDisplay("none")
         //this.valueView().setIsEditable(false)
         this.turnOffUserSelect()
@@ -22,7 +24,9 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     }
 
     createValueView () {
-        return ImageWellView.clone()
+        const imageWellView = ImageWellView.clone()
+        imageWellView.setWidth("100%").setHeight("fit-content")
+        return imageWellView
     }
 	
     imageWellView () {

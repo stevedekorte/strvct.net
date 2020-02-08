@@ -41,10 +41,6 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
 
     // ------------------------------
 
-        // --------------
-
-
-
     acceptsAddingSubnode (aSubnode) {
         return BMJsonCreatorNode.acceptedDropTypes().contains(aSubnode.type())
     }
@@ -66,8 +62,6 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
         })
         return this
     }
-
-
 
     // ----------
 

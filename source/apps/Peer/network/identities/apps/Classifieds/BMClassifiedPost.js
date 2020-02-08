@@ -38,7 +38,7 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
         this.addField(BMField.clone().setKey("title").setValueMethod("title")).setValueIsEditable(true)
  		this.addField(BMNumberField.clone().setKey("price").setValueMethod("price")).setValueIsEditable(true).setUnsetVisibleValue(0)
  		this.addField(BMOptionsNode.clone().setKey("currency").setValueMethod("currency")).setValueIsEditable(true).setValidValuesMethod("currencySymbols").setNoteMethod("currencyName")
- 		this.addField(BMDateField.clone().setKey("sent date").setValueMethod("postDate")).setValueIsEditable(false).setUnsetVisibleValue("(not sent yet)")
+ 		this.addField(BMDateNode.clone().setKey("sent date").setValueMethod("postDate")).setValueIsEditable(false).setUnsetVisibleValue("(not sent yet)")
         this.addField(BMTextAreaField.clone().setKey("description").setValueMethod("description")).setValueIsEditable(true)
         this.addField(BMImageWellField.clone().setKey("drop images here").setValueMethod("imageDataURLs")).setValueIsEditable(true)
 

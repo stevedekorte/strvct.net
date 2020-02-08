@@ -197,7 +197,7 @@ window.BrowserView = class BrowserView extends NodeView {
         return this
     }
 
-    updateSingleColumnMode () {
+    forceSingleColumnIfNarrow () {
         //const size = DocumentBody.zoomAdjustedSize()
         //const w = WebBrowserScreen.shared().orientedWidth()
         //const h = WebBrowserScreen.shared().orientedHeight()
@@ -218,7 +218,6 @@ window.BrowserView = class BrowserView extends NodeView {
             r = 3
         }
         //console.log("r = " + r)
-
 
         //console.log("lesserOrientedSize: " + w + "x" + h + " setZoomRatio(" + r + ")") 
         //DocumentBody.setZoomRatio(r) // turning this off to see if it fixes mobile tiny fonts
@@ -370,7 +369,7 @@ window.BrowserView = class BrowserView extends NodeView {
             if (!Type.isNull(cg.node())) {
                 //console.log("BrowserView clearing column group ", i)
                 const theCg = this.setColumnGroupAtIndexToNode(i, null)
-                theCg.syncFromNodeNow() // causes loop as the last column will clear columns after it?
+                //theCg.syncFromNodeNow() // causes loop as the last column will clear columns after it?
             }
         }
 
@@ -441,8 +440,13 @@ window.BrowserView = class BrowserView extends NodeView {
         // if the existing columnGroup is for the same node, use it
         const oldCg = this.columnGroups()[cgIndex]
 
-        if (oldCg.node() === cgNode) {
+        if (oldCg && oldCg.node() === cgNode) {
             return oldCg
+        }
+
+        if (oldCg && cgNode === null) {
+            oldCg.prepareToRetire()
+            return null
         }
 
         if (cgNode && oldCg.node() === null) {
@@ -521,16 +525,16 @@ window.BrowserView = class BrowserView extends NodeView {
                     
                     if (nextCg.node() !== nextNode) { // need a way to use columnGroupCache
                         nextCg = this.setColumnGroupAtIndexToNode(nextCg.index(), nextNode)
-                    }
-                    
-                    nextCg.setNode(nextNode)
-                    //nextCg.scheduleSyncFromNode()
-                    
+                        nextCg.setNode(nextNode)
+                    } 
+                                        
                     this.clearColumnsGroupsAfter(nextCg)
 
+                    /*
                     if ((nextNode.viewClassName() !== "BrowserColumnGroup") || nextNode.isKindOf(BMFieldSetNode)) { // TODO: use a better rule here
                         this.setColumnGroupCount(index + 2)
                     }
+                    */
                     
                 }
                 else {
@@ -582,14 +586,14 @@ window.BrowserView = class BrowserView extends NodeView {
     // --- collapsing column groups -----
 
     lastActiveColumnGroup () {
-        return this.columnGroups().reversed().detect(cg => cg.column().node() != null)
+        return this.columnGroups().reversed().detect(cg => cg.column().node() !== null)
     }
 
     // --- fitting columns in browser ---------------------------------------------
 
     fitColumns () {
         //this.debugLog(".fitColumns()")
-        this.updateSingleColumnMode()
+        this.forceSingleColumnIfNarrow()
 
         const lastActiveCg = this.lastActiveColumnGroup()
 
@@ -650,14 +654,16 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     widthOfUncollapsedColumns () {
-        return this.uncollapsedColumns().sum(cg => cg.targetWidth())
+        //return this.uncollapsedColumns().sum(cg => cg.targetWidth())
+        return this.uncollapsedColumns().sum(cg => cg.desiredWidth())
     }
 
     widthOfUncollapsedColumnsSansLastActive () {
         const lastActiveCg = this.lastActiveColumnGroup()
         const cgs = this.uncollapsedColumns()
         cgs.remove(lastActiveCg)
-        return cgs.sum(cg => cg.targetWidth())
+        //return cgs.sum(cg => cg.targetWidth())
+        return cgs.sum(cg => cg.desiredWidth())
     }
 
     setShouldShowTitles (aBool) {

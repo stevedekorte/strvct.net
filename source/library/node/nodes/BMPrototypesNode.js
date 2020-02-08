@@ -8,15 +8,14 @@
 
 */
 
-window.BMPrototypesNode = class BMPrototypesNodeode extends ProtoClass {
+window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
     
     initPrototype () {
-        //this.newSlot(...)
     }
 
     init () {
         super.init()
-        //this.setupSubnodes()
+        this.setupSubnodes()
         return this
     }
 
@@ -24,7 +23,6 @@ window.BMPrototypesNode = class BMPrototypesNodeode extends ProtoClass {
         return [
             "BMActionNode", 
             "BMBooleanField", 
-            //"BMDateField", 
             "BMDateNode",
             //"BMIdentityField", 
             "BMImageWellField", 
