@@ -20,6 +20,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         //this.valueView().setIsEditable(false)
         this.turnOffUserSelect()
         this.keyView().setTransition("all 0.3s")
+        //this.valueViewContainer().setPadding("0px")
         return this
     }
 
@@ -38,22 +39,6 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
 
         const field = this.node()
         this.setMaxWidth("100em") // get this from node instead?
-
-        /*
-        const field = this.node()
-
-        if (this.imageWellView()) {
-            //console.log("field = ", field.type())
-            // sync key view
-            this.keyView().setInnerHTML(field.key())
-            this.keyView().setIsEditable(field.keyIsEditable())
-		    this.updateKeyView()
-
-            this.imageWellView().setImageDataUrl(field.value())
-            this.imageWellView().setIsEditable(field.valueIsEditable())
-
-        }
-        */
         
         this.applyStyles() // normally this would happen in updateSubviews
         this.imageWellView().setImageDataUrl(field.value())
@@ -64,8 +49,10 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     syncToNode () {
         const field = this.node()
 				
-        this.updateKeyView()
-		
+        //this.updateKeyView()
+        
+        field.setKey(this.keyView().value())
+        
         if (field.valueIsEditable()) {
             const data = this.imageWellView().imageDataUrl()
             //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"))
@@ -83,7 +70,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     isEmpty () {
         return Type.isNull(this.dataUrl())
     }
-    
+    /*
     updateKeyView () {
         let opacity = 1
         
@@ -95,6 +82,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
 	    
         return this
     }
+    */
     
     didUpdateImageWellView (anImageWell) {
         //this.debugLog(".didUpdateImageWellView()")

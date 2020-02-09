@@ -43,10 +43,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.setTitlesSection(titlesSection)
         titlesSection.flexSplitIntoRows(2)
 
-        const tv = titlesSection.subviews().at(0)
+        const tv = titlesSection.subviews().at(0).setDivClassName("KeyViewContainer")
         this.setKeyViewContainer(tv)
 
-        const sv = titlesSection.subviews().at(1)
+        const sv = titlesSection.subviews().at(1).setDivClassName("ValueViewContainer")
         this.setValueViewContainer(sv)
 
         const nv = cv.subviews().at(1)

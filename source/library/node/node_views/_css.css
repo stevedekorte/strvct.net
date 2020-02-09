@@ -35,16 +35,24 @@
 	overflow: hidden;
 }
 
-.ImageViewImageObject {
+/*
+.RawImageView {
 	display: flex;
 	position: relative;
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
 }
+*/
 
 .ImageCloseButton {
-    position: absolute;
+	display: flex;
+	position: absolute;
+	
+	color: rgba(128, 128, 128, 0.5);
+	align-items: center;
+	justify-content: center;
+
 	top: 0px;
 	right: 0px;
 	margin: 0px;
@@ -56,9 +64,10 @@
 	min-height: 30px;
 	max-height: 30px;
 
-	text-align: center;
 	opacity: 0.3;
 	z-index: 2;
+	border: none;
+	box-shadow: none;
 }
 
 .ImageCloseButton:hover {

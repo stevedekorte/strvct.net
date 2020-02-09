@@ -22,6 +22,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.autoFitParentWidth()
         this.autoFitChildHeight()
         this.setMinHeightPx(100)
+        this.setPadding("0px")
         return this
     }
 
@@ -124,7 +125,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
             iv.autoFitChildHeight()
             iv.autoFitParentWidth()
         }
-        
+
         return this
     }
     

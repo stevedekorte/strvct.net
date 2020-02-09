@@ -144,7 +144,11 @@ window.ImageView = class ImageView extends NodeView {
         const image = new Image();
         image.src = dataURL;
 
-        this.setRawImageView(DomView.clone().setElement(image).setDivClassName("ImageViewImageObject"))
+        const ivi = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
+        ivi.makeStandardFlexView()
+        
+        this.setRawImageView(ivi)
+
         this.imageContainer().addSubview(this.rawImageView())
 	
         return this

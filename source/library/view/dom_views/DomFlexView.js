@@ -82,6 +82,14 @@ window.DomView = class DomFlexView extends DomView {
         return this
     }
 
+    makeStandardFlexView () {
+        this.setDisplay("flex")
+        this.setPosition("relative")
+        this.flexCenterContent()
+        this.setOverflow("hidden")
+        return this
+    }
+
     debugBorders () {
         //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
