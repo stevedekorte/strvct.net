@@ -155,12 +155,18 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
 
                 this.onBeforeEvent(fullMethodName, event)
 
+
+                if (!method && fullMethodName.beginsWith("onBrowser")) {
+                    console.log("(" + delegate.typeId() + ") " + fullMethodName + " => [no method]")
+                }
+
+
                 //try {
                 let result = true
                 if (method) {
                     result = method.apply(delegate, [event]); 
 
-                    if (delegate.type() === "ImageWellView" && fullMethodName.beginsWith("onBrowser")) {
+                    if (fullMethodName.beginsWith("onBrowser")) {
                         console.log("(" + delegate.typeId() + ") " + fullMethodName + " => " + result)
                     }
 

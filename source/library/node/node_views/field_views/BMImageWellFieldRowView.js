@@ -15,6 +15,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     init () {
         super.init()
         this.valueViewContainer().flexCenterContent()
+        this.valueViewContainer().setPadding("0px")
 
         //this.keyView().setDivClassName("BMImageWellKeyField") //.setDisplay("none")
         //this.valueView().setIsEditable(false)
@@ -52,7 +53,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         //this.updateKeyView()
         
         field.setKey(this.keyView().value())
-        
+
         if (field.valueIsEditable()) {
             const data = this.imageWellView().imageDataUrl()
             //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"))

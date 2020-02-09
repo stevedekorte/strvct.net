@@ -45,6 +45,10 @@ window.DomView = class DomView extends ProtoClass {
         this.newSlot("eventListenersDict", null)
         //this.newSlot("activeTimeoutIdSet", null)
         this.newSlot("defaultTapGesture", null)
+
+        // extras
+    
+        this.newSlot("hiddenDisplayValue", null)
     }
 
     init () {
@@ -1276,6 +1280,38 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("display")
     }
 
+    // helper for hide/show display
+
+    setDisplayIsHidden (aBool) {
+        if (aBool) {
+            this.hideDisplay()
+        } else {
+            this.unhideDisplay()
+        }
+        return this
+    }
+
+    hideDisplay () {
+        if (this.display() !== "none") {
+            this.setHiddenDisplayValue(this.display())
+            this.setDisplay("none")
+        }
+        return this
+    }
+
+    unhideDisplay () {
+        if (this.display() === "none") {
+            if (this._hiddenDisplayValue) {
+                this.setDisplay(this.hiddenDisplayValue())
+                this.setHiddenDisplayValue(null)
+            } else {
+                // we don't now what value to set display to, so we have to raise an exception
+                throw new Error(this.type() + " attempt to unhide display value that was not hidden")
+            }
+        }
+        return this
+    }
+
     // visibility
 
     setVisibility (s) {
@@ -1778,6 +1814,15 @@ window.DomView = class DomView extends ProtoClass {
 
     didChangeParentView () {
         return this
+    }
+
+    parentViewChain (chain = []) {
+        chain.push(this)
+        const pv = this.parentView()
+        if (pv) {
+            pv.parentViewChain(chain)
+        }
+        return chain
     }
 
     // --- subviews ---
@@ -2423,12 +2468,13 @@ window.DomView = class DomView extends ProtoClass {
 
     onBrowserDragOver (event) {
         // triggered on drop target
-        //console.log("onBrowserDragOver acceptsDrop: ", this.acceptsDrop(), " event:", event);
+        //console.log("onBrowserDragOver acceptsDrop: ", this.acceptsDrop(event), " event:", event);
 
         event.preventDefault()
 
         if (this.acceptsDrop(event)) {
             event.dataTransfer.dropEffect = "copy";
+            event.dataTransfer.effectAllowed = "copy";
             this.onBrowserDragOverAccept(event)
             return true
         }
@@ -2443,9 +2489,9 @@ window.DomView = class DomView extends ProtoClass {
 
     onBrowserDragLeave (event) {
         // triggered on drop target
-        //console.log("onBrowserDragLeave ", this.acceptsDrop());
+        //console.log("onBrowserDragLeave ", this.acceptsDrop(event));
         this.dragUnhighlight()
-        return this.acceptsDrop();
+        return this.acceptsDrop(event);
     }
 
     dragHighlight () {
@@ -2457,7 +2503,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBrowserDrop (event) {
-        if (this.acceptsDrop()) {
+        if (this.acceptsDrop(event)) {
             //const file = event.dataTransfer.files[0];
             //console.log('onDrop ' + file.path);
             this.onBrowserDataTransfer(event.dataTransfer)
@@ -3759,7 +3805,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     autoFitChildWidth () {
-        assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
+        //assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
         this.setDisplay("inline-block")
         this.setWidth("auto")
         this.setOverflow("auto")
@@ -3775,7 +3821,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     autoFitChildHeight () {
-        assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
+        //assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
 
         this.setPosition("relative") // or static? but can't be absolute
         this.setHeight("fit-content")

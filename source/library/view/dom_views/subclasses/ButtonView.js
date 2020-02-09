@@ -58,7 +58,6 @@ window.ButtonView = class ButtonView extends DomView {
         this.setPaddingRight("1em")
 
         this.turnOffUserSelect()
-        this.setBoxShadow("0px 0px 1px 1px rgba(255, 255, 255, 0.2)")
         this.setBorderRadius("1px")
         
         this.setTitleView(TextField.clone())
@@ -91,6 +90,7 @@ window.ButtonView = class ButtonView extends DomView {
 
     setTitle (s) {
         this.titleView().setValue(s)
+        //this.titleView().setDisplayIsHidden(!s)
         return this
     }
 
@@ -98,21 +98,19 @@ window.ButtonView = class ButtonView extends DomView {
         return this.titleView().value()
     }
 
-    setTitleIsVisible (aBool) {
+    setHasOutline (aBool) {
         if (aBool) {
-            this.titleView().setDisplay("flex")
+            this.setBoxShadow("0px 0px 1px 1px rgba(255, 255, 255, 0.2)")
         } else {
-            this.titleView().setDisplay("none")
+            this.setBoxShadow("none")
         }
         return this
     }
 
-    /*
-    setIconName (aString) {
-        this.setBackgroundImageUrlPath(this.pathForIconName(aString))
+    setTitleIsVisible (aBool) {
+        this.titleView().setDisplayIsHidden(!aBool)
         return this
     }
-    */
 
     setIsEditable (aBool) {
         this.titleView().setIsEditable(aBool)

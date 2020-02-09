@@ -12,9 +12,6 @@
 window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
     
     initPrototype () {
-
-
-        WebBrowserWindow.shared().setup()
     }
     
     init () {
@@ -26,10 +23,6 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
     documentBody () {
         return DocumentBody.shared()
     }
-
-    setup () {
-        this.preventDrop()
-    }
     
     /*  
     electronWindow () {
@@ -40,28 +33,6 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
         return this._electronWindow
     }
     */
-
-    // prevent window level drop and only allow drop on elements that can handle it
-
-    dropCheck (event) {
-        const element = event.target
-        const elementMayWantDrop = element.ondrop
-        const view = element._domView
-        const viewMayWantDrop = view && view.dropListener().isListening()
-
-        if (!elementMayWantDrop && !viewMayWantDrop) {
-            event.preventDefault();
-            event.dataTransfer.effectAllowed = "none";
-            event.dataTransfer.dropEffect = "none";	
-        }
-    }
-
-    preventDrop () {
-        window.addEventListener("dragenter", (e) => { this.dropCheck(e) }, false);
-        window.addEventListener("dragover", (e) => { this.dropCheck(e) }, false);
-        window.addEventListener("drop",     (e) => { this.dropCheck(e) }, false);
-        return this
-    }
 	
     // attributes
     
@@ -89,6 +60,12 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
     
     show () {
         console.log("Window size " + this.width() + "x" + this.height())
+    }
+
+    showAgent () {
+        console.log("navigator.userAgent = ", navigator.userAgent);
+        console.log("agentIsSafari() = ", this.agentIsSafari())
+        console.log("agentIsChrome() = ", this.agentIsChrome())
     }
     
     mobileNames () {
@@ -189,10 +166,4 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
 
 }.initThisClass()
 
-/*
-console.log("navigator.userAgent = ", navigator.userAgent);
-console.log("window.WebBrowserWindow.agentIsSafari() = ", window.WebBrowserWindow.agentIsSafari())
-console.log("window.WebBrowserWindow.agentIsChrome() = ", window.WebBrowserWindow.agentIsChrome())
-*/
 
-//WebBrowserWindow.shared().setup()

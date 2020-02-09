@@ -19,8 +19,14 @@ window.DocumentBody = class DocumentBody extends DomView {
         Devices.shared().setupIfNeeded()
         
         //this.documentListener().setIsListening(true)
+        this.setIsRegisteredForBrowserDrop(true) // to avoid dropping on window
 
         return this
+    }
+
+    acceptsDrop (event) { // to avoid dropping on window
+        event.preventDefault();
+        return false
     }
     
     setupElement () {

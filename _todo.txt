@@ -1,6 +1,8 @@
 
 TODO:
 
+	use hide/unhide Display throughout code
+
 	delete gesture doesn't work on rows in single column mode
 
 	shift/command? up/down arrow to jump to top/bottom of navigation rows

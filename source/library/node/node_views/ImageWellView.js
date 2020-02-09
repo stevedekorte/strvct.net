@@ -15,6 +15,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
 
     init () {
         super.init()
+        this.setDisplay("flex")
         this.setIsRegisteredForBrowserDrop(true)
         this.dragUnhighlight()
         this.turnOffUserSelect()
@@ -71,7 +72,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
        //const accepts = (!this.isFull()) && (this.isEditable() !== false)
        const accepts = this.isEditable()
        /*
-        this.debugLog(".acceptsDrop():")
+        this.debugLog(".acceptsDrop(event):")
         console.log("    isEditable: " + this.isEditable())
         console.log("        isFull: " + this.isFull())
         console.log("       accepts: " + accepts)
@@ -101,22 +102,15 @@ window.ImageWellView = class ImageWellView extends NodeView {
     }
     
     setImageDataUrl (dataURL) {
-        if (Type.isArray(dataURL)) {
-            dataURL = dataURL[0]
-        }
+        assert(!Type.isArray(dataURL)) 
 
         if (dataURL === this.imageDataUrl()) {
             return this
         }
-
-        if (Type.isNull(dataURL) || Type.isUndefined(dataURL)) {
-            dataURL = ""
-        }
         
-        //this.debugLog(".setImageDataUrl = ", dataURL)
         this.removeAllSubviews()
 
-        if (dataURL) {
+        if (!Type.isNullOrUndefined(dataURL)) {
             this.setImageView(ImageView.clone())
             this.addSubview(this.imageView())
 

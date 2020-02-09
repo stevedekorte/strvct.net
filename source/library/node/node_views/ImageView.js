@@ -9,22 +9,35 @@
 window.ImageView = class ImageView extends NodeView {
     
     initPrototype () {
+        this.newSlot("imageContainer", null)
+        this.newSlot("rawImageView", null)
         this.newSlot("closeButtonView", null)
         this.newSlot("dataURL", null)
         this.newSlot("isEditable", false)
-        this.newSlot("imageContainer", null)
-        this.newSlot("rawImageView", null)
     }
 
     init () {
         super.init()
         
-        this.setIsRegisteredForBrowserDrop(false)
-        
-        this.setImageContainer(DomView.clone().setDivClassName("ImageViewImageContainer"))
+        //this.setIsRegisteredForBrowserDrop(false)
         this.setWidthPercentage(100)
         this.setHeightPercentage(100)
-        this.addSubview(this.imageContainer())
+
+        // image container
+        const ic = DomFlexView.clone().setDivClassName("ImageViewImageContainer")
+        this.setImageContainer(ic)
+        this.addSubview(ic)
+
+        // close button
+        const cb = ButtonView.clone().setDivClassName("ImageCloseButton")
+        cb.setDisplay("flex")
+        cb.setPosition("absolute")
+        cb.setTitleIsVisible(false)
+        cb.setTop("0px").setRight("0px")
+        cb.setTarget(this).setAction("close")
+        cb.setIconName("close")
+        this.setCloseButtonView(cb)
+        this.addSubview(cb)
 
         this.setIsEditable(false)
         this.dragUnhighlight()
@@ -33,14 +46,15 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
 
+    setIsRegisteredForBrowserDrop(aBool) {
+        throw new Error("shouldn't be called")
+    }
+
+
     // --- editable ---
     
     setIsEditable (aBool) {
-        if (aBool) {
-            this.addCloseButton()
-        } else {
-            this.removeCloseButton()
-        }
+        this.closeButtonView().setDisplayIsHidden(!aBool)
         return this
     }
 
@@ -49,29 +63,11 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
     
+    acceptsDrop () {
+        return false
+    }
+
     // --- close button ---
-
-    addCloseButton () {
-        if (this.closeButtonView() === null) {
-            const cb = ButtonView.clone().setDivClassName("ImageCloseButton")
-            this.setCloseButtonView(cb)
-            this.addSubview(cb) 
-            cb.setTarget(this).setAction("close") //.setInnerHTML("&#10799;")
-
-	        cb.setBackgroundImageUrlPath(this.pathForIconName("close"))
-            cb.setBackgroundSizeWH(10, 10) // use "contain" instead?
-            cb.setBackgroundPosition("center")
-            cb.makeBackgroundNoRepeat()
-        }
-        return this        
-    }
-    
-    removeCloseButton () {
-        if (this.closeButtonView() !== null) {
-            this.removeSubview(this.closeButtonView()) 
-            this.setCloseButtonView(null)
-        }
-    }
 
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null)
@@ -92,7 +88,7 @@ window.ImageView = class ImageView extends NodeView {
         this.collapse()
         
         this.addTimeout( () => { 
-            this.removeCloseButton()
+            this.closeButtonView().hideDisplay()
             const parentView = this.parentView()
             this.removeFromParentView()
             /*
@@ -144,12 +140,10 @@ window.ImageView = class ImageView extends NodeView {
         const image = new Image();
         image.src = dataURL;
 
-        const ivi = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
-        ivi.makeStandardFlexView()
-        
-        this.setRawImageView(ivi)
-
-        this.imageContainer().addSubview(this.rawImageView())
+        const riv = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
+        riv.makeStandardFlexView()
+        this.setRawImageView(riv)
+        this.imageContainer().addSubview(riv)
 	
         return this
     }
