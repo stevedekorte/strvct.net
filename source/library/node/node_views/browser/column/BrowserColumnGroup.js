@@ -349,13 +349,14 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
                 return 0
             }
 
-            
+            /*
             let rw = this.column().maxRowWidth()
             //console.log("column " + this.node().title() + " maxRowWidth:" + rw)
             this.column().maxRowWidth()
             if (rw > w) {
                 w = rw
             }
+            */
             
 
             if (this.browser() && this.browser().isSingleColumn()) {

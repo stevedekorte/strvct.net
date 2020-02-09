@@ -660,16 +660,14 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     widthOfUncollapsedColumns () {
-        //return this.uncollapsedColumns().sum(cg => cg.targetWidth())
-        return this.uncollapsedColumns().sum(cg => cg.desiredWidth())
+        return this.uncollapsedColumns().sum(cg => cg.targetWidth())
     }
 
     widthOfUncollapsedColumnsSansLastActive () {
         const lastActiveCg = this.lastActiveColumnGroup()
         const cgs = this.uncollapsedColumns()
         cgs.remove(lastActiveCg)
-        //return cgs.sum(cg => cg.targetWidth())
-        return cgs.sum(cg => cg.desiredWidth())
+        return cgs.sum(cg => cg.targetWidth())
     }
 
     setShouldShowTitles (aBool) {

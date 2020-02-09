@@ -26,28 +26,24 @@
 const classesToFix =[Array, Set, Map]
 classesToFix.forEach(aClass => aClass.__proto__ = Object)
 
-/*
-Object.hasOwnSlot = function(obj, slotName, slotValue) {
+
+Object.hasOwnSlot = function(obj, slotName) {
     const descriptor = Object.getOwnPropertyDescriptor(slotName)
-    if (descriptor) {
-        if (Type.isUndefined(slotValue) || this[slotName] === slotValue) {
-            return true
-        }
-    }
-    return false
+    return !Type.isUndefined(descriptor)
 }
-*/
 
 Object.defineSlot = function(obj, slotName, slotValue) {
-    //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
-    const descriptor = {
-        configurable: true,
-        enumerable: false,
-        value: slotValue,
-        writable: true,
+    if (Object.hasOwnSlot(obj, slotName, slotValue)) {
+        this[slotName] = slotValue
+    } else {
+        const descriptor = {
+            configurable: true,
+            enumerable: false,
+            value: slotValue,
+            writable: true,
+        }
+        Object.defineProperty(obj, slotName, descriptor)
     }
-    Object.defineProperty(obj, slotName, descriptor)
-    //}
 }
 
 /*
@@ -359,7 +355,7 @@ const prototypeSlots = {
         return this.getOwnProperty("_hasDoneInit") === true
     },
 
-    setFasDoneInit: function(aBool) {
+    setHasDoneInit: function(aBool) {
         Object.defineSlot(this, "_hasDoneInit", aBool)
         return this
     },
@@ -367,7 +363,7 @@ const prototypeSlots = {
     didInit: function() {
         assert(!this.hasDoneInit())
         // for subclasses to override if needed
-        this.setFasDoneInit(true)
+        this.setHasDoneInit(true)
     },
 
     didLoadFromStore: function() {

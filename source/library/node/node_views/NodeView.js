@@ -128,7 +128,6 @@ window.NodeView = class NodeView extends DomStyledView {
         return proto      
     }
 
-    
     newSubviewForSubnode (aSubnode) {
         if (!aSubnode) {
             throw new Error("null aSubnode")
@@ -161,6 +160,8 @@ window.NodeView = class NodeView extends DomStyledView {
             this.removeAllSubviews();
             return
         }
+
+        //console.log("> " + this.debugTypeId() + " syncFromNode")
         
         this.node().prepareToSyncToView()
         this.updateSubnodeToSubviewMap() // not ideal - move this to update on subview add/remove

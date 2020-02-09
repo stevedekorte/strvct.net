@@ -147,28 +147,12 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
                 const delegate = this.delegate()
                 const method = delegate[fullMethodName]
 
-                /*
-                if (fullMethodName.beginsWith("onBrowser")) {
-                    console.log("(" + delegate.debugTypeId() + ") " + fullMethodName)
-                }
-                */
-
                 this.onBeforeEvent(fullMethodName, event)
-
-
-                if (!method && fullMethodName.beginsWith("onBrowser")) {
-                    console.log("(" + delegate.typeId() + ") " + fullMethodName + " => [no method]")
-                }
-
 
                 //try {
                 let result = true
                 if (method) {
                     result = method.apply(delegate, [event]); 
-
-                    if (fullMethodName.beginsWith("onBrowser")) {
-                        console.log("(" + delegate.typeId() + ") " + fullMethodName + " => " + result)
-                    }
 
                     if (this.isDebugging()) {
                         console.log("sent: " + delegate.type() + "." + fullMethodName, "(" + event.type + ") and returned " + result)

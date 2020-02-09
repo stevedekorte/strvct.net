@@ -1,6 +1,16 @@
 
 TODO:
 
+	IMPORTANT:
+	UI is getting slow - problem with tellParents rendering?
+	- IDEAS:
+		- separate didChangeNode from didChangeSubnodes - only update ColumnView on the later?
+
+	support for NodeView that register to handle drop mime types
+	- e.g. ColumnView onBrowserDrop of image might create a ImageWellFieldRowView
+	- Class canOpenMimeType (s) 
+	- NodeView allSubclasses ().decect(aClass => aClass.canOpenMimeType(mimeType))
+	
 	use hide/unhide Display throughout code
 
 	delete gesture doesn't work on rows in single column mode
