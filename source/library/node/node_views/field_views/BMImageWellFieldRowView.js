@@ -37,6 +37,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         super.syncFromNode()
 
         const field = this.node()
+        this.setMaxWidth("100em") // get this from node instead?
 
         /*
         const field = this.node()
@@ -48,14 +49,14 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
             this.keyView().setIsEditable(field.keyIsEditable())
 		    this.updateKeyView()
 
-            this.imageWellView().setImageDataURL(field.value())
+            this.imageWellView().setImageDataUrl(field.value())
             this.imageWellView().setIsEditable(field.valueIsEditable())
 
         }
         */
         
         this.applyStyles() // normally this would happen in updateSubviews
-        this.imageWellView().setImageDataURL(field.value())
+        this.imageWellView().setImageDataUrl(field.value())
 
         return this
     }
@@ -66,7 +67,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         this.updateKeyView()
 		
         if (field.valueIsEditable()) {
-            const data = this.imageWellView().imageDataURL()
+            const data = this.imageWellView().imageDataUrl()
             //console.log("data = " + (data ? data.slice(0, 40) + "..." : "null"))
         	field.setValue(data)
         }
@@ -76,7 +77,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     }
 
     dataUrl () {
-        return this.imageWellView().imageDataURL()
+        return this.imageWellView().imageDataUrl()
     }
 
     isEmpty () {

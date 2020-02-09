@@ -2410,15 +2410,13 @@ window.DomView = class DomView extends ProtoClass {
 
     onBrowserDragEnter (event) {
         // triggered on drop target
-        console.log("onBrowserDragEnter acceptsDrop: ", this.acceptsDrop());
-        //event.preventDefault() // needed?
+        //console.log("onBrowserDragEnter acceptsDrop: ", this.acceptsDrop());
+        event.preventDefault() // needed?
 
-        if (this.acceptsDrop()) {
+        if (this.acceptsDrop(event)) {
             this.onBrowserDragOverAccept(event)
-            event.preventDefault()
             return true
         }
-        event.preventDefault()
 
         return false;
     }
@@ -2426,15 +2424,14 @@ window.DomView = class DomView extends ProtoClass {
     onBrowserDragOver (event) {
         // triggered on drop target
         //console.log("onBrowserDragOver acceptsDrop: ", this.acceptsDrop(), " event:", event);
-        //event.preventDefault() // needed?
-        //event.dataTransfer.dropEffect = 'copy';
 
-        if (this.acceptsDrop()) {
+        event.preventDefault()
+
+        if (this.acceptsDrop(event)) {
+            event.dataTransfer.dropEffect = "copy";
             this.onBrowserDragOverAccept(event)
-            event.preventDefault()
             return true
         }
-        event.preventDefault()
 
         return false;
     }
@@ -2473,7 +2470,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBrowserDataTransfer (dataTransfer) {
-        //console.log('onDataTransfer ', dataTransfer);
+        console.log(this.typeId() + " onDataTransfer ");
 
         if (dataTransfer.files.length) {
             const dataUrls = []
@@ -2495,7 +2492,7 @@ window.DomView = class DomView extends ProtoClass {
                     onReadMethodName = "onBrowserDropImageDataUrl"
                 }
 
-                if (onReadMethodName) {
+                if (onReadMethodName && this[onReadMethodName]) {
                     const reader = new FileReader();
                     reader.onload = ((event) => {
                         const result = event.target.result
@@ -2511,7 +2508,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBrowserDropImageDataUrl (dataUrl) {
-        console.log("onBrowserDropImageDataUrl: ", dataUrl);
+        //console.log("onBrowserDropImageDataUrl: ", dataUrl);
     }
 
     onDropFiles (filePaths) {

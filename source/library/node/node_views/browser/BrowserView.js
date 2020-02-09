@@ -310,7 +310,7 @@ window.BrowserView = class BrowserView extends NodeView {
 
     newBrowserColumnGroup () {
         const cg = BrowserColumnGroup.clone().setBrowser(this).colapse()
-        cg._cloneStack = new Error().stack
+        //cg._cloneStack = new Error().stack
         return cg
     }
 
@@ -437,39 +437,45 @@ window.BrowserView = class BrowserView extends NodeView {
             console.log("setColumnGroupAtIndexToNode to null?")
         }
 
+        //console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
         // if the existing columnGroup is for the same node, use it
         const oldCg = this.columnGroups()[cgIndex]
 
-        if (oldCg && oldCg.node() === cgNode) {
-            return oldCg
+        if (oldCg) {
+
+            if (oldCg.node() === cgNode) {
+                return oldCg
+            }
+
+            if (cgNode === null) {
+                oldCg.prepareToRetire()
+                return null
+            } else {
+                // cgNode !== null
+
+                if (oldCg.node() === null) {
+                    oldCg.setNode(cgNode)
+                    return oldCg
+                }
+
+                // otherwise, see if there's a cached column for this node
+                const cachedCg = this.getCachedColumnGroupForNode(cgNode)
+                if (cachedCg /*&& oldCg !== cachedCg*/) {
+                    this.replaceColumnGroup(oldCg, cachedCg)
+                    return cachedCg
+                }  
+                
+                const newCg = this.newBrowserColumnGroup()
+                this.replaceColumnGroup(oldCg, newCg)
+                newCg.setNode(cgNode)
+                return newCg
+            }
+        } else {
+            const newCg = this.newBrowserColumnGroup()
+            newCg.setNode(cgNode)
+            this.addColumnGroup(newCg)
+            return newCg
         }
-
-        if (oldCg && cgNode === null) {
-            oldCg.prepareToRetire()
-            return null
-        }
-
-        if (cgNode && oldCg.node() === null) {
-            oldCg.setNode(cgNode)
-            return oldCg
-        }
-
-
-        //console.log(this.type() + " setColumnGroupAtIndexToNode(" + cgIndex + ", " + (cgNode ? cgNode.title() : "null") + ")" )
-
-        // otherwise, see if there's a cached column for this node
-        if (cgNode) {
-            const cachedCg = this.getCachedColumnGroupForNode(cgNode)
-            if (cachedCg && oldCg !== cachedCg) {
-                this.replaceColumnGroup(oldCg, cachedCg)
-                return cachedCg
-            }  
-        }
-        
-        const newCg = this.newBrowserColumnGroup()
-        this.replaceColumnGroup(oldCg, newCg)
-        newCg.setNode(cgNode)
-        return newCg
     }
 
     replaceColumnGroup (oldCg, newCg) {

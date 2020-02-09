@@ -71,7 +71,7 @@ window.BMURLImage = class BMURLImage extends BMNode {
         return this
     }
 
-    didFetchDataURL (dataURL) {
+    didFetchDataUrl (dataURL) {
         this.setDataURL(dataURL);
         
         /*

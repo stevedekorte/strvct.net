@@ -29,18 +29,18 @@ window.DropListener = class DropListener extends EventSetListener {
 
     start () {
         super.start()
-        this.listenTarget().__isListeningForDrop___ = true
+        //this.listenTarget().__isListeningForDrop___ = true
         return this
     }
 
     stop () {
         super.stop()
-        this.listenTarget().__isListeningForDrop___ = false // breaks if multiple drop listeners on same element
+        //this.listenTarget().__isListeningForDrop___ = false // breaks if multiple drop listeners on same element
         return this
     }
 
     onBeforeEvent (methodName, event) {
-        this.debugLog(" onBeforeEvent " + methodName)
+        this.debugLog(() => { return " onBeforeEvent " + methodName })
         return this
     }
     

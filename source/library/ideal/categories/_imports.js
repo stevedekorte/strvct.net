@@ -14,5 +14,6 @@ ResourceLoader.pushRelativePaths([
     "Set-ideal.js",
     "Error-ideal.js",
     "Function-ideal.js",
+    "Image-ideal.js",
 ]);
 

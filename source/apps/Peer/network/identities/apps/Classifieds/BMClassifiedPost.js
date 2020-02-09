@@ -19,7 +19,7 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
         this.newSlot("currency", "BTC").setShouldStoreSlot(true)
         this.newSlot("postDate", null).setShouldStoreSlot(true)
         this.newSlot("description", null).setShouldStoreSlot(true)
-        this.newSlot("imageDataURLs", null).setShouldStoreSlot(true)
+        this.newSlot("imageDataUrls", null).setShouldStoreSlot(true)
 
         this.newSlot("path", "")
         this.newSlot("objMsg", null)
@@ -40,7 +40,7 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
  		this.addField(BMOptionsNode.clone().setKey("currency").setValueMethod("currency")).setValueIsEditable(true).setValidValuesMethod("currencySymbols").setNoteMethod("currencyName")
  		this.addField(BMDateNode.clone().setKey("sent date").setValueMethod("postDate")).setValueIsEditable(false).setUnsetVisibleValue("(not sent yet)")
         this.addField(BMTextAreaField.clone().setKey("description").setValueMethod("description")).setValueIsEditable(true)
-        this.addField(BMImageWellField.clone().setKey("drop images here").setValueMethod("imageDataURLs")).setValueIsEditable(true)
+        this.addField(BMImageWellField.clone().setKey("drop images here").setValueMethod("imageDataUrls")).setValueIsEditable(true)
 
         this.setTitle("Untitled")
         this.setPrice(0)
@@ -48,7 +48,7 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
 
 
         //this.setImagesNode(BMNode.clone().setViewClassName("ImageView").setSubnodeProto("ImageNode"))
-        this.setImageDataURL(null) 
+        this.setImageDataUrl(null) 
         
         this.setObjMsg(BMObjectMessage.clone())
 
@@ -143,7 +143,7 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
             postDate: this.postDate(),
             postPeriod: this.postPeriod(),
             uuid: this.uuid(),
-            imageDataURLs: this.imageDataURLs()
+            imageDataUrls: this.imageDataUrls()
         }
     }
     
@@ -156,7 +156,7 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
         this.setPostDate(aDict.postDate)
         this.setPostPeriod(aDict.postPeriod)
         this.setUuid(aDict.uuid)
-        this.setImageDataURL(aDict.imageDataURL)
+        this.setImageDataUrl(aDict.imageDataUrl)
         //this.objMsg().setContent(this.postDict())
         this.objMsg().setContent(aDict)
         return this

@@ -169,7 +169,7 @@ window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
     syncFromNode () {
         const node = this.node()
         this.textContentView().setString(node.content())
-        this.setIconDataUrl(node.avatarImageDataURL())
+        this.setIconDataUrl(node.avatarImageDataUrl())
         this.updateSubviews()
         return this
     }

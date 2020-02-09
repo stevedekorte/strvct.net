@@ -221,7 +221,7 @@ window.BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
 
     syncFromNode () {
         let node = this.node()
-        this.setIconDataUrl(node.avatarImageDataURL())
+        this.setIconDataUrl(node.avatarImageDataUrl())
         this.textView().setString(node.content())
         this.updateSubviews()
         return this

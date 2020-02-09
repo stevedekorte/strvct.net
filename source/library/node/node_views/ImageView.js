@@ -24,14 +24,8 @@ window.ImageView = class ImageView extends NodeView {
         this.setImageContainer(DomView.clone().setDivClassName("ImageViewImageContainer"))
         this.setWidthPercentage(100)
         this.setHeightPercentage(100)
-        //this.imageContainer().setWidth("fit-content")
-        //this.imageContainer().setHeight("fit-content")
-        //this.imageContainer().setBackgroundSize("contain")
-        //this.imageContainer().autoFitChildWidth()
-        //this.imageContainer().autoFitChildHeight()
         this.addSubview(this.imageContainer())
 
-        //this.setEditable(false)
         this.setIsEditable(false)
         this.dragUnhighlight()
         this.turnOffUserSelect()
@@ -50,9 +44,8 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
 
-    
     setEditable (aBool) {
-
+        // to avoid editable content?
         return this
     }
     
@@ -91,17 +84,6 @@ window.ImageView = class ImageView extends NodeView {
 		
         this.setMarginLeft(0)
         this.setMarginRight(0)
-		
-        //this.rawImageView().setMinAndMaxWidth(0)
-        //this.imageContainer().setMinAndMaxWidth(0)
-        //this.setMinAndMaxWidth(0)
-        /*
-        let style = this.cssStyle();
-        style.paddingLeft = "0px";
-        style.paddingRight = "0px";
-        style.marginLeft = "0px";
-        style.marginRight = "0px";	
-        */
     }
     
     close () {
@@ -133,13 +115,27 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
     
-    setFromDataURL (dataURL) {
-        //console.log("setFromDataURL: ", dataURL)
-        if (!dataURL) {
-            console.warn(this.typeId() + ".setFromDataURL() called with null argument")
-            return this
+    fetchDataURLFromSrc (src) {
+        if (src.beginsWith("data:")) {
+	        this.setFromDataURL(src)
+        } else {
+            const img = new Image();
+            img.setDelegate(this)
+            img.loadUrl(src)
         }
 		
+        return this
+    }
+    
+    didFetchDataUrl (dataURL) {
+        this.setFromDataURL(dataURL)
+        this.scheduleSyncToNode() 
+        return this
+    }
+
+    setFromDataURL (dataURL) {
+        //console.log("setFromDataURL: ", dataURL)
+        assert(!Type.isNull(dataURL))
         assert(dataURL.beginsWith("data:")) 
 
         this.removeRawImageView()
@@ -151,42 +147,6 @@ window.ImageView = class ImageView extends NodeView {
         this.setRawImageView(DomView.clone().setElement(image).setDivClassName("ImageViewImageObject"))
         this.imageContainer().addSubview(this.rawImageView())
 	
-        return this
-    }
-    
-    fetchDataURLFromSrc (src) {
-        if (src.beginsWith("data:")) {
-	        this.setFromDataURL(src)
-        } else {
-		    const img = new Image();
-            img.crossOrigin = "Anonymous";
-        
-	        img.onload = () => {
-	            let canvas = document.createElement("CANVAS");
-	            let ctx = canvas.getContext("2d");
-	            canvas.height = this.height;
-	            canvas.width = this.width;
-	            ctx.drawImage(img, 0, 0);
-	            let data = canvas.toDataURL("image/jpeg");
-	            this.didFetchDataURL(data)
-	        };
-
-            img.src = src;
-
-            /*
-            if (img.complete || img.complete === undefined) {
-                img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-                img.src = src;
-            }
-            */
-        }
-		
-        return this
-    }
-    
-    didFetchDataURL (dataURL) {
-        this.setFromDataURL(dataURL)
-        this.scheduleSyncToNode() 
         return this
     }
     

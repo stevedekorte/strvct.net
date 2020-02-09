@@ -104,7 +104,7 @@ window.BMPostMessage = class BMPostMessage extends BMAppMessage {
         return this.senderId().equals(this.localIdentity())
     }
 	
-    avatarImageDataURL () {
+    avatarImageDataUrl () {
         if (this.senderId()) {
             return this.senderId().profile().profileImageDataUrl()
         }

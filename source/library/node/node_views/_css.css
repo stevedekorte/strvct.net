@@ -2,17 +2,16 @@
 .ImageWellView {
 	display: flex;
 	position: relative;
-	min-height: 100px;
-	min-width: 100px;
-	/*border: 1px dashed yellow;*/
+	justify-content: center;
+	align-items: center;
+
+	min-height: 10em;
+	min-width: 10em;
 	overflow-x: scroll;
+	overflow-x: hidden;
 	overflow-y: hidden;
-	margin-left: 0px;
-	margin-right: 0px;
-	border-radius: 5px;
-	padding: 5px;
-	padding-bottom: 3px;
-	text-align: center;
+	/*border-radius: 5px;*/
+
 
     border: 1px solid #444;
     color: white;
@@ -20,29 +19,28 @@
 }
 
 .ImageView {
-    display: inline-block;
+	display: flex;
 	position: relative;
+	justify-content: center;
+	align-items: center;
 	transition: all 0.5s;
-	border: 0px solid #eee;
 	overflow: hidden;
 }
 
 .ImageViewImageContainer { 
-    display: inline-block;
-    position: relative;
-    max-width: 200px;
-    max-height: 200px;
-    vertical-align: middle;
-    text-align: center;
-	border: 0px solid #eee;
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: center;
 	overflow: hidden;
 }
 
 .ImageViewImageObject {
-    position: relative;
-    max-width: 200px;
-    max-height: 200px;
-	border: 0px solid #eee;
+	display: flex;
+	position: relative;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
 }
 
 .ImageCloseButton {

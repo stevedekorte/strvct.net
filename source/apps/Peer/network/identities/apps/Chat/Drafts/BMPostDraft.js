@@ -48,7 +48,7 @@ window.BMPostDraft = class BMPostDraft extends BMStorableNode {
         return this.parentNodeOfType("BMLocalIdentity")
     }
     
-    avatarImageDataURL () {
+    avatarImageDataUrl () {
         return this.localIdentity().profile().profileImageDataUrl()
     }
 	

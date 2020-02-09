@@ -1,10 +1,12 @@
 
 TODO:
 
+	delete gesture doesn't work on rows in single column mode
+
 	shift/command? up/down arrow to jump to top/bottom of navigation rows
 	- shift back arrow to return to root
 	
-	After moving a field in a  JsonArray to a JsonDict, it doesn't make the keys visible
+	After moving a field in a JsonArray to a JsonDict, it doesn't make the keys visible
 	don't limit expand on hover to droppable items in case decendants can accept it
 	
 	
