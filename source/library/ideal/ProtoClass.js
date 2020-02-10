@@ -80,15 +80,6 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
-    static addToAllClasses () {
-        const allClasses = ProtoClass.allClasses()
-        if (allClasses.contains(this)) {
-            throw new Error("attempt to call initThisClass twice on the same class")
-        }
-        allClasses.push(this)
-
-    }
-
     static parentClass () {
         const p = this.__proto__
 

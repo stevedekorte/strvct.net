@@ -494,20 +494,23 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     onBrowserDropMimeTypeAndData (mimeType, data) {
-        const canOpenNodes = BMNode.allSubclasses().detect((aClass) => aClass.canOpenMimeType(mimeType))
+        const canOpenNodes = BMNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType))
         const okTypes = this.acceptedSubnodeTypes()
-        const canUseNodes = canOpenNodes.detect(nodeType => okTypes.contains(nodeType))
+        const canUseNodes = canOpenNodes /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
 
         if (canUseNodes.length) {
 
-            if (matchingNodes.length === 1) {
+            if (canUseNodes.length === 1) {
                 const match = canUseNodes.first()
 
-                match.fromMimeTypeAndData(mimeType, data)
+                const newNode = match.fromMimeTypeAndData(mimeType, data)
+                this.addSubnode(newNode)
 
+                /*
                 if (this.acceptsAddingSubnode(match)) {
                     this.addSubnode(match)
                 }
+                */
             } else {
                 // TODO: add CreatorNode with those types and
                 // hook to instantiate from mime data

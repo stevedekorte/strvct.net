@@ -2523,19 +2523,22 @@ window.DomView = class DomView extends ProtoClass {
             const dataUrls = []
             for (let i = 0; i < dataTransfer.files.length; i++) {
                 const file = dataTransfer.files[i]
+                const mimeType = file.type
                 //console.log("file: ", file)
 
                 let onReadMethodName = null
 
-                if (file.type === "text/plain") {
+                if (mimeType === "text/plain") {
                     onReadMethodName = "onBrowserDropText"
                 }
 
+                /*
                 if (file.type === "application/json") {
                     onReadMethodName = "onBrowserDropJson"
                 }
+                */
 
-                if (file.type.indexOf("image/") === 0) {
+                if (mimeType.indexOf("image/") === 0) {
                     onReadMethodName = "onBrowserDropImageDataUrl"
                 }
 
@@ -2547,7 +2550,7 @@ window.DomView = class DomView extends ProtoClass {
                 if (method) {
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        method.apply(this, [event.target.result])
+                        method.apply(this, [mimeType, event.target.result])
                     }
                     reader.readAsDataURL(file);
                 } else {

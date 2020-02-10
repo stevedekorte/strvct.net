@@ -9,6 +9,31 @@
         
 window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     
+    static canOpenMimeType (mimeType) {
+        // TODO: should probably have a JsonContainerNode instead?
+        return mimeType === "application/json"
+    }
+
+    static fromMimeTypeAndData (mimeType, data) {
+        const header = "data:application/json;base64,"
+        assert(data.indexOf(header) === 0)
+        data = data.after(header)
+        data = data.base64Decoded()
+
+        //console.log("data = '" + data + "'")
+        let json = null
+
+        try {
+            json = JSON.parse(data)
+        } catch (error) {
+
+        }
+        console.log("drop json = " + JSON.stringify(json, 2, 2) + "")
+
+        const aNode = this.nodeForJson(json)
+        return aNode
+    }
+
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
     }

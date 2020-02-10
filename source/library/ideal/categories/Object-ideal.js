@@ -105,7 +105,7 @@ const classSlots = {
         if (this.prototype.hasOwnProperty("initPrototype")) {
             this.prototype.initPrototype.apply(this.prototype)
         }
-        this.addToClasses(this)
+        this.addToAllClasses()
         return this
     },
 
@@ -115,14 +115,13 @@ const classSlots = {
 
     _allClassesSet: new Set(),
 
-    addToClasses: function(aClass) {
-        /*
-        //console.log("initThisClass: ", this)
-        if (window.Object.allClasses().contains(this)) {
+
+    addToAllClasses: function () {
+        const allClassesSet = Object._allClassesSet
+        if (allClassesSet.has(this)) {
             throw new Error("attempt to call initThisClass twice on the same class")
         }
-        */
-        this._allClassesSet.add(aClass)
+        allClassesSet.add(this)
         return this
     },
     
@@ -137,7 +136,7 @@ const classSlots = {
             return true
         }
         
-        if (sc === Object) {
+        if (sc === Object || !sc.hasAncestorClass) {
             return false
         }
 

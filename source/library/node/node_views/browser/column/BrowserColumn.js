@@ -1363,6 +1363,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         }
     }
 
+    /*
     onBrowserDropJson (data) {
         const header = "data:application/json;base64,"
         assert(data.indexOf(header) === 0)
@@ -1384,6 +1385,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             this.node().addSubnode(aNode)
         //}
     }
+    */
 
     /*
     onBrowserDrop (event) {

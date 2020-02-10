@@ -9,6 +9,7 @@
         
 window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode {
     
+
     initPrototype () {
         this.setNodeCanEditTitle(true)
         this.setShouldStore(true)
