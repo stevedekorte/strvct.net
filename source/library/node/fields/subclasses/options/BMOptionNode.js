@@ -40,6 +40,11 @@ window.BMOptionNode = class BMOptionNode extends BMStorableNode {
         return this
     }
 
+    setTitle (aString) {
+        this.setLabel(aString)
+        return this
+    }
+    
     title () {
         return this.label()
     }
@@ -48,10 +53,6 @@ window.BMOptionNode = class BMOptionNode extends BMStorableNode {
         return this.title()
     }
 
-    setTitle (aString) {
-        this.setLabel(aString)
-        return this
-    }
 
     subtitle () {
         return null

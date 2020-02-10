@@ -1,18 +1,24 @@
 
 TODO:
 
-	IMPORTANT:
-	UI is getting slow - problem with tellParents rendering?
-	- IDEAS:
-		- separate didChangeNode from didChangeSubnodes - only update ColumnView on the later?
+	Menu child summary not working right when subnode is an Options (e.g. shows "Option Title")
+
+	Change no match to return undefined for search methods
+	
+	animate failed drop slide back to original location?
+	
+	Column, if selected node has no subnodes and can't add subnodes, don't open it when selected
+
+	desiredWidth is too expensive - we need a way to support larger columns
+	- set max-width to width of browser
+	- don't set min-width?
+	- setup subnodes and then ask column for clientWidth?
 
 	support for NodeView that register to handle drop mime types
 	- e.g. ColumnView onBrowserDrop of image might create a ImageWellFieldRowView
 	- Class canOpenMimeType (s) 
 	- NodeView allSubclasses ().decect(aClass => aClass.canOpenMimeType(mimeType))
 	
-	use hide/unhide Display throughout code
-
 	delete gesture doesn't work on rows in single column mode
 
 	shift/command? up/down arrow to jump to top/bottom of navigation rows

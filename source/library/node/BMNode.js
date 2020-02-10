@@ -49,6 +49,16 @@ window.BMNode = class BMNode extends ProtoClass {
         return true
     }
 
+    // --- mime types ---
+
+    static canOpenMimeType (mimeTypeString) {
+        return false
+    }
+
+    static fromMimeTypeAndData (mimeType, data) {
+
+    }
+
     // ----
 
     initPrototype () {
@@ -482,6 +492,30 @@ window.BMNode = class BMNode extends ProtoClass {
         const match = this.acceptedSubnodeTypes().detect(type => ancestors.contains(type))
         return !Type.isNullOrUndefined(match)
     }
+
+    onBrowserDropMimeTypeAndData (mimeType, data) {
+        const canOpenNodes = BMNode.allSubclasses().detect((aClass) => aClass.canOpenMimeType(mimeType))
+        const okTypes = this.acceptedSubnodeTypes()
+        const canUseNodes = canOpenNodes.detect(nodeType => okTypes.contains(nodeType))
+
+        if (canUseNodes.length) {
+
+            if (matchingNodes.length === 1) {
+                const match = canUseNodes.first()
+
+                match.fromMimeTypeAndData(mimeType, data)
+
+                if (this.acceptsAddingSubnode(match)) {
+                    this.addSubnode(match)
+                }
+            } else {
+                // TODO: add CreatorNode with those types and
+                // hook to instantiate from mime data
+            }
+        }
+    }
+
+    // --------
 	
     isEqual (aNode) {
 	    return this === aNode

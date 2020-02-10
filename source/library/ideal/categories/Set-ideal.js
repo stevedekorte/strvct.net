@@ -27,6 +27,11 @@ Object.defineSlots(Set.prototype, {
         return this.valuesArray().detect(fn)
     },
 
+    select: function(fn) {
+        // TODO: optimize?
+        return this.valuesArray().select(fn)
+    },
+
     isSuperset: function(subset) {
         for (let v of subset) {
             if (!this.has(v)) {

@@ -1305,8 +1305,9 @@ window.DomView = class DomView extends ProtoClass {
                 this.setDisplay(this.hiddenDisplayValue())
                 this.setHiddenDisplayValue(null)
             } else {
+                this.setDisplay(null)
                 // we don't now what value to set display to, so we have to raise an exception
-                throw new Error(this.type() + " attempt to unhide display value that was not hidden")
+                //throw new Error(this.type() + " attempt to unhide display value that was not hidden")
             }
         }
         return this
@@ -2538,24 +2539,29 @@ window.DomView = class DomView extends ProtoClass {
                     onReadMethodName = "onBrowserDropImageDataUrl"
                 }
 
-                if (onReadMethodName && this[onReadMethodName]) {
+                if (!onReadMethodName) {
+                    onReadMethodName = "onBrowserDropMimeTypeAndData"
+                }
+
+                const method = this[onReadMethodName]
+                if (method) {
                     const reader = new FileReader();
-                    reader.onload = ((event) => {
-                        const result = event.target.result
-                        const method = this[onReadMethodName]
-                        if (method) {
-                            method.apply(this, [result])
-                        }
-                    })
+                    reader.onload = (event) => {
+                        method.apply(this, [event.target.result])
+                    }
                     reader.readAsDataURL(file);
+                } else {
+                    // play beep sound and visually show error?
                 }
             }
         }
     }
 
-    onBrowserDropImageDataUrl (dataUrl) {
-        //console.log("onBrowserDropImageDataUrl: ", dataUrl);
+    /*
+    onBrowserDropMimeTypeAndData (mimeType, data) {
+
     }
+    */
 
     onDropFiles (filePaths) {
         console.log("onDropFiles " + filePaths);

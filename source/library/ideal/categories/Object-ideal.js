@@ -109,18 +109,41 @@ const classSlots = {
         return this
     },
 
+    superClass: function () {
+        return this.__proto__
+    },
+
+    _allClassesSet: new Set(),
+
     addToClasses: function(aClass) {
         /*
         //console.log("initThisClass: ", this)
         if (window.Object.allClasses().contains(this)) {
             throw new Error("attempt to call initThisClass twice on the same class")
         }
-
-        Object.allClasses().push(this)
         */
+        this._allClassesSet.add(aClass)
         return this
     },
     
+    allSubclasses () {
+        return this._allClassesSet.select(aClass => aClass.hasAncestorClass(this))
+    },
+
+    hasAncestorClass (aClass) {
+        const sc = this.superClass()
+        
+        if (sc === aClass) {
+            return true
+        }
+        
+        if (sc === Object) {
+            return false
+        }
+
+        return sc.hasAncestorClass(aClass)
+    },
+
     eachSlot: function (obj, fn) {
         Object.keys(obj).forEach(k => fn(k, obj[k]) )
     },

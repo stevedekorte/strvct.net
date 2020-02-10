@@ -8,6 +8,10 @@
 
 window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowView {
     
+    canOpenMimeType (mimeType) {
+        return mimeType.beginsWith("text/")
+    }
+
     initPrototype () {
 
     }

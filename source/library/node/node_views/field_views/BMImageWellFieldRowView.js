@@ -8,6 +8,11 @@
 
 window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRowView {
     
+    canOpenMimeType (mimeType) {
+        // TODO: add checks for browser supported image types
+        return mimeType.beginsWith("image/")
+    }
+
     initPrototype () {
 
     }

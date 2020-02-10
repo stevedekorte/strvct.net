@@ -1355,6 +1355,14 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return true
     }
 
+    onBrowserDropMimeTypeAndData (mimeType, data) {
+        const node = this.node()
+
+        if (node && node.onBrowserDropMimeTypeAndData(mimeType, data)) {
+            node.onBrowserDropMimeTypeAndData(mimeType, data)
+        }
+    }
+
     onBrowserDropJson (data) {
         const header = "data:application/json;base64,"
         assert(data.indexOf(header) === 0)

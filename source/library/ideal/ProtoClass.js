@@ -307,6 +307,7 @@ window.ProtoClass = class ProtoClass extends Object {
         if(Type.isUndefined(oldSlot)) {
             const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
             console.log(msg)
+            this.allSlots()
             throw new Error(msg)
         }
         const slot = this.justNewSlot(slotName, initialValue)
