@@ -258,11 +258,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         const noteView = this.noteView()
         const errorView = this.errorView()
 
-        if (node.isVisible()) {
-            this.setDisplay("block")
-        } else {
-            this.setDisplay("none")
-        }
+        this.setDisplayIsHidden(!node.isVisible())
 
         keyView.setInnerHTML(this.visibleKey())
 
@@ -287,11 +283,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         // visible
         keyView.setIsVisible(node.keyIsVisible())
 
-        if (node.keyIsVisible()) {
-            keyView.setDisplay("inline-block")
-        } else {
-            keyView.setDisplay("none")
-        }
+        keyView.setDisplayIsHidden(!node.keyIsVisible())
 		
         //this.verticallyCenterContent()
 

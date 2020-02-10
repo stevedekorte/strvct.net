@@ -59,11 +59,7 @@ window.CloseButton = class CloseButton extends DomView {
     }
 
     syncEnabled () {
-        if (this._isEnabled) {
-            this.setDisplay("flex")
-        } else {
-            this.setDisplay("none")
-        }
+        this.setDisplayIsHidden(!this.isEnabled())
         return this
     }
 

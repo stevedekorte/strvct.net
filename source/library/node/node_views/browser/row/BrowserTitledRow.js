@@ -66,9 +66,9 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
 
     setHasSubtitle (aBool) { 
         if (aBool) {
-            this.subtitleView().setDisplay("block")
+            this.subtitleView().unhideDisplay()
         } else {
-            this.subtitleView().setDisplay("none")    // 13   
+            this.subtitleView().hideDisplay()  // 13   
         }
         /*       
         if (aBool) {
@@ -143,12 +143,12 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     // noteView
 
     showNoteView () {
-        this.noteView().setDisplay("block")     
+        this.noteView().unhideDisplay()   
         this.noteView().setInnerHTML(this.node().note())
     }
 
     hideNoteView () {
-        this.noteView().setDisplay("none")     
+        this.noteView().hideDisplay()     
     }
 
     // noteIconView
@@ -156,7 +156,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     showNoteIconView () {
         const v = this.noteIconView()
         if (v.iconName() != this.node().noteIconName()) {
-            v.setDisplay("block")     
+            v.unhideDisplay()    
             v.setIconName(this.node().noteIconName())
             //v.setDoesMatchParentColor(true)
 
@@ -170,7 +170,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     }
 
     hideNoteIconView () {
-        this.noteIconView().setDisplay("none")     
+        this.noteIconView().hideDisplay()  
     }
 
     // ---

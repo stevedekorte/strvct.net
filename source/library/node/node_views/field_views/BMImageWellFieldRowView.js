@@ -17,7 +17,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         this.valueViewContainer().flexCenterContent()
         this.valueViewContainer().setPadding("0px")
 
-        //this.keyView().setDivClassName("BMImageWellKeyField") //.setDisplay("none")
+        //this.keyView().setDivClassName("BMImageWellKeyField")
         //this.valueView().setIsEditable(false)
         this.turnOffUserSelect()
         this.keyView().setTransition("all 0.3s")

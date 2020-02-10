@@ -27,6 +27,7 @@ window.DragBarView = class DragBarView extends DomView {
         this.turnOffUserSelect()
 
         this.setDivClassName("DragBarView")
+        this.setDisplay("inline-block")
 
         this.setIsRegisteredForMouse(true)
         this.syncHighlighted()
@@ -75,11 +76,7 @@ window.DragBarView = class DragBarView extends DomView {
     }
 
     syncEnabled () {
-        if (this.isEnabled()) {
-            this.setDisplay("inline-block")
-        } else {
-            this.setDisplay("none")
-        }
+        this.setDisplayIsHidden(!this.isEnabled())
         return this
     }
 

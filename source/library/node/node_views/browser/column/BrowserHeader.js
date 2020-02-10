@@ -99,24 +99,11 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
         if (node && this.browser()) {
             if (this.shouldShowTitle()) {
     		    this.titleView().setInnerHTML(node.nodeHeaderTitle())
-    		    //this.addSubviewIfAbsent(this.titleView())
-                this.titleView().setDisplay("flex")
-	        } else {
-                //this.removeSubviewIfPresent(this.titleView())
-                this.titleView().setDisplay("none")
-            }
-
-            if (this.doesShowBackArrow()) {
-                this.backArrowView().setDisplay("flex")
-                //this.addSubviewIfAbsent(this.backArrowView())
-            } else {
-                this.backArrowView().setDisplay("none")
-                //this.removeSubviewIfPresent(this.backArrowView())
-            }
+	        } 
+            this.titleView().setDisplayIsHidden(!this.shouldShowTitle())
+            this.backArrowView().setDisplayIsHidden(!this.doesShowBackArrow())
 
             //this.syncActionButtons()
-        } else {
-            //console.log("no header subviews")
         }
         
         return this

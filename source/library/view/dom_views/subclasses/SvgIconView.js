@@ -63,14 +63,14 @@ window.SvgIconView = class SvgIconView extends DomView {
 
             if (iconNode) {
                 this.setSvgString(iconNode.svgString())
-                this.setDisplay("flex")
+                this.unhideDisplay()
             } else {
                 this.setSvgString(null)
                 //throw new Error("can't find icon '" + name + "'") 
             }
         } else {
             this.setSvgString(null)
-            this.setDisplay("none")
+            this.hideDisplay()
         }
 
         return this

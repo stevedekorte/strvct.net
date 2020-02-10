@@ -861,7 +861,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.rows().forEach((row) => {
             const y = ys[i]
             i ++
-            row.setDisplay("block")
+            row.unhideDisplay()
             row.setPosition("absolute")
             row.setTop(y)
             row.setLeft(0)
@@ -882,7 +882,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         this.rows().forEach((row) => {
             row.setPosition("absolute")
-            row.setDisplay("block")
+            row.unhideDisplay()
         })
 
         this.removeAllSubviews()
@@ -908,10 +908,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             let h = 0
 
             if (row.visibility() === "hidden" || row.display() === "none") {
-                row.setDisplay("none")
+                row.hideDisplay()
             } else {
                 h = row.computedHeight() //row.clientHeight() 
-                row.setDisplay("block")
+                row.unhideDisplay()
                 row.setPosition("absolute")
                 
                 const w = columnWidth   //row.clientWidth() //row.computedWidth() // don't work, why?
@@ -932,7 +932,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         const orderedRows = this.rows().shallowCopy().sortPerform("top")
 
         orderedRows.forEach((row) => {
-            row.setDisplay("block")
+            row.unhideDisplay()
             row.setPosition("relative")
 
             row.setTop(null)

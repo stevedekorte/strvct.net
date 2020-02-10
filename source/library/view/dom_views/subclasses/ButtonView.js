@@ -75,7 +75,7 @@ window.ButtonView = class ButtonView extends DomView {
         icon.setFillColor("white")
         icon.setStrokeColor("white")
         icon.setOpacity(1)
-        icon.setDisplay("none")
+        icon.hideDisplay()
         this.setIconView(this.addSubview(icon))
 
         this.addDefaultTapGesture()

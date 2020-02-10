@@ -14,7 +14,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
 
     init () {
         super.init()
-        this.keyView().setDisplay("none")
+        this.keyView().hideDisplay()
         //this.valueView().setDivClassName("BMTextAreaFieldValueView")
         return this
     }
