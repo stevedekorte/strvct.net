@@ -92,10 +92,10 @@
 /* --------------------------- TextArea --------------------------- */
 
 .BMTextAreaFieldRowView {
-    display: block;
+    display: flex;
     position: relative;
     width: auto;
-	height: 300px;
+	min-height: 300px;
 	margin: 0;
 	padding: 0;
 	
@@ -107,10 +107,8 @@
 }
 
 .BMMonoTextAreaFieldValueView {
-    display: block;
+    display: flex;
     position: relative;
-    top: 0px;
-    left: 0px;
 	padding: 20px;
     margin: 0px;
     width: auto;
@@ -125,8 +123,6 @@
 
     /*font-family: AppMono, monospace;*/
     font-weight: lighter;
-    background-color: transparent;
-    /*border-right: 1px solid #aaa;*/
 }
 
 .BMTextAreaFieldValueView {

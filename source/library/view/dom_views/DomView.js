@@ -2538,9 +2538,17 @@ window.DomView = class DomView extends ProtoClass {
         const reader = new FileReader();
         reader.onload = (event) => {
             const data = event.target.result
-            this.onBrowserDropMimeTypeAndData(mimeType, data)
+            this.onBrowserDropMimeTypeAndRawData(mimeType, data)
         }
         reader.readAsDataURL(file);
+    }
+
+    onBrowserDropMimeTypeAndRawData (mimeType, data) {
+        const header = "data:" + mimeType + ";base64,"
+        assert(data.indexOf(header) === 0)
+        data = data.after(header)
+        data = data.base64Decoded()
+        this.onBrowserDropMimeTypeAndData(mimeType, data)
     }
 
     onBrowserDropMimeTypeAndData (mimeType, data) {

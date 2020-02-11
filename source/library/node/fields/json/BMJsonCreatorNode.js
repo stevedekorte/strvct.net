@@ -14,11 +14,6 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     }
 
     static fromMimeTypeAndData (mimeType, data) {
-        const header = "data:application/json;base64,"
-        assert(data.indexOf(header) === 0)
-        data = data.after(header)
-        data = data.base64Decoded()
-
         //console.log("data = '" + data + "'")
         let json = null
 

@@ -1,6 +1,7 @@
 
 TODO:
 
+	backspace is getting captured by row when editing a text area
 	Fade out loading screen
 	
 	Get mime drop working on images?
