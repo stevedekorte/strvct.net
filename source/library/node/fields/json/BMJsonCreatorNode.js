@@ -10,7 +10,6 @@
 window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
     
     static canOpenMimeType (mimeType) {
-        // TODO: should probably have a JsonContainerNode instead?
         return mimeType === "application/json"
     }
 

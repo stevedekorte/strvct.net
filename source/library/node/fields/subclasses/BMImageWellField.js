@@ -7,7 +7,24 @@
 */
         
 window.BMImageWellField = class BMImageWellField extends BMField {
-    
+
+    static supportedMimeTypes () {
+        return new Set(["image/jpeg", "image/gif", "image/png"])
+    }
+
+    static canOpenMimeType (mimeType) {
+        return this.supportedMimeTypes().has(mimeType)
+    }
+
+    static fromMimeTypeAndData (mimeType, data) {
+        const newNode = this.clone()
+        newNode.setValue(data)
+        newNode.setKeyIsEditable(true)
+        newNode.setValueIsEditable(true)
+        newNode.setCanDelete(true)
+        return newNode
+    }
+
     initPrototype () {
         this.newSlot("onlyShowsKeyWhenEmpty", false)
         this.newSlot("isEditable", true)

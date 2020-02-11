@@ -1358,7 +1358,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     onBrowserDropMimeTypeAndData (mimeType, data) {
         const node = this.node()
 
-        if (node && node.onBrowserDropMimeTypeAndData(mimeType, data)) {
+        if (node && node.onBrowserDropMimeTypeAndData) {
             node.onBrowserDropMimeTypeAndData(mimeType, data)
         }
     }
