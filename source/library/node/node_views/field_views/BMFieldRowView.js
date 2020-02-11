@@ -39,7 +39,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         cv.flexSplitIntoRows(4)
         cv.setJustifyContent("center") // alignment perpendicular to flex
 
-        const titlesSection = cv.subviews().at(0)
+        const titlesSection = cv.subviews().at(0).setDivClassName("TitlesSection")
         this.setTitlesSection(titlesSection)
         titlesSection.flexSplitIntoRows(2)
 

@@ -20,11 +20,15 @@ window.ImageView = class ImageView extends NodeView {
         super.init()
         
         //this.setIsRegisteredForBrowserDrop(false)
-        this.setWidthPercentage(100)
-        this.setHeightPercentage(100)
+        //this.setWidthPercentage(100)
+        //this.setHeightPercentage(100)
+        this.setWidth("auto")
+        this.setHeight("auto")
 
         // image container
         const ic = DomFlexView.clone().setDivClassName("ImageViewImageContainer")
+        ic.setWidth("auto")
+        ic.setHeight("auto")
         this.setImageContainer(ic)
         this.addSubview(ic)
 
@@ -142,6 +146,8 @@ window.ImageView = class ImageView extends NodeView {
 
         const riv = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
         riv.makeStandardFlexView()
+        riv.setWidth("fit-content")
+        riv.setHeight("auto")
         this.setRawImageView(riv)
         this.imageContainer().addSubview(riv)
 	
