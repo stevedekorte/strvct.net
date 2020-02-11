@@ -2516,58 +2516,46 @@ window.DomView = class DomView extends ProtoClass {
         return false
     }
 
-    onBrowserDataTransfer (dataTransfer) {
-        console.log(this.typeId() + " onDataTransfer ");
+    dropMethodForMimeType (mimeType) {
+        let s = mimeType.replaceAll("/", " ")
+        s = s.replaceAll("-", " ")
+        s = s.capitalizeWords()
+        s = s.replaceAll(" ", "")
+        return "onBrowserDrop" + s
+    }
 
+    onBrowserDataTransfer (dataTransfer) {
         if (dataTransfer.files.length) {
-            const dataUrls = []
             for (let i = 0; i < dataTransfer.files.length; i++) {
                 const file = dataTransfer.files[i]
-                const mimeType = file.type
-                //console.log("file: ", file)
-
-                let onReadMethodName = null
-
-                if (mimeType === "text/plain") {
-                    onReadMethodName = "onBrowserDropText"
-                }
-
-                /*
-                if (file.type === "application/json") {
-                    onReadMethodName = "onBrowserDropJson"
-                }
-                */
-
-                if (mimeType.indexOf("image/") === 0) {
-                    onReadMethodName = "onBrowserDropImageDataUrl"
-                }
-
-                if (!onReadMethodName) {
-                    onReadMethodName = "onBrowserDropMimeTypeAndData"
-                }
-
-                const method = this[onReadMethodName]
-                if (method) {
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        method.apply(this, [mimeType, event.target.result])
-                    }
-                    reader.readAsDataURL(file);
-                } else {
-                    // play beep sound and visually show error?
-                }
+                this.onBrowserDropFile(file)
             }
         }
     }
 
-    /*
-    onBrowserDropMimeTypeAndData (mimeType, data) {
-
+    onBrowserDropFile (file) {
+        const mimeType = file.type
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const data = event.target.result
+            this.onBrowserDropMimeTypeAndData(mimeType, data)
+        }
+        reader.readAsDataURL(file);
     }
-    */
 
-    onDropFiles (filePaths) {
-        console.log("onDropFiles " + filePaths);
+    onBrowserDropMimeTypeAndData (mimeType, data) {
+        // if the view has a method for the mime type of the file
+        // e.g. onBrowserDropImageJpeg
+        // then we call it. If the view wants to handle all types,
+        // it can override this method.
+
+        const methodName = this.dropMethodForMimeType(mimeType)
+        const method = this[methodName]
+        console.log("onBrowserDropFile => ", methodName)
+
+        if (method) {
+            method.apply(this, [mimeType, event.target.result])
+        }
     }
 
     // dragging

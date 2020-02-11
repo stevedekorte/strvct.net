@@ -1,6 +1,16 @@
 
 TODO:
 
+	Fade out loading screen
+	
+	Get mime drop working on images?
+	
+	animate collapsing of columns?
+	
+	Unable to open inspector on Number or String fields
+	
+	JSON node dragging out of browser not working
+	
 	Menu child summary not working right when subnode is an Options (e.g. shows "Option Title")
 
 	Change no match to return undefined for search methods

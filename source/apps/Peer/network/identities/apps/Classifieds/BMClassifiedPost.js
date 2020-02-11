@@ -290,10 +290,6 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
         
     }
     
-    onDropFiles (filePaths) {
-        let parts = []
-    }
-    
     placeInPathString (pathString) {
         let rootNode = App.shared()
         let pathComponents = pathString.split("/")

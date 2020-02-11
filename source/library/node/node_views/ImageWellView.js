@@ -111,10 +111,10 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.removeAllSubviews()
 
         if (!Type.isNullOrUndefined(dataURL)) {
-            this.setImageView(ImageView.clone())
-            this.addSubview(this.imageView())
+            const iv = ImageView.clone()
+            this.setImageView(iv)
+            this.addSubview(iv)
 
-            const iv = this.imageView()
             iv.fetchDataURLFromSrc(dataURL)
             iv.autoFitChildHeight()
             iv.autoFitParentWidth()
@@ -131,8 +131,26 @@ window.ImageWellView = class ImageWellView extends NodeView {
         return null
     }
     
-    onBrowserDropImageDataUrl (dataURL) {
-        this.setImageDataUrl(dataURL)
+    onBrowserDropImageJpeg (mimeType, data) {
+        this.droppedImageData(data)
+    }
+
+    onBrowserDropImageGif (mimeType, data) {
+        this.droppedImageData(data)
+    }
+
+    /*
+    onBrowserDropImageTiff (mimeType, data) {
+        this.droppedImageData(data)
+    }
+    */
+
+    onBrowserDropImagePng (mimeType, data) {
+        this.droppedImageData(data)
+    }
+
+    droppedImageData (data) {
+        this.setImageDataUrl(data)
         this.scheduleSyncToNode() //this.syncToNode()
         return this        
     }

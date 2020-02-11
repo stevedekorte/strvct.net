@@ -59,8 +59,4 @@ window.BMPost = class BMPost extends BMStorableNode {
         objMsg.send()
     }
     
-    onDropFiles (filePaths) {
-        let parts = []
-    }
-
 }.initThisClass()

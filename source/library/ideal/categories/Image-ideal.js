@@ -26,7 +26,7 @@ Object.defineSlots(Image.prototype, {
     loadUrl: function(url) {
         this.crossOrigin = "Anonymous";
         this.onload = () => { this.didLoad() }
-        this.src = src;
+        this.src = url;
         return this
     },
 

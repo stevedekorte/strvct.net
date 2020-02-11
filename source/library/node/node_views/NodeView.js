@@ -260,14 +260,6 @@ window.NodeView = class NodeView extends DomStyledView {
         return this
     }
     
-    onDropFiles (filePaths) {
-        const node = this.node()
-        if (node && node.onDropFiles) {
-            node.onDropFiles(filePaths)
-        }
-        return this
-    }
-    
     // visibility
     
     onVisibility () {
