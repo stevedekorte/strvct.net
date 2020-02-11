@@ -91,7 +91,7 @@ window.DragView = class DragView extends DomStyledView {
         super.init()
         this.setHoverViews([])
 
-        this.setDisplay("block")
+        this.setDisplay("flex")
         this.setPosition("absolute")
         this.turnOffUserSelect()
         this.setOverflow("hidden")
@@ -148,6 +148,7 @@ window.DragView = class DragView extends DomStyledView {
         this.setZIndex(10)
 
         this.setInnerHTML(aView.innerHTML())
+        //this.setBackgroundColor(aView.getComputedCssAttribute("background-color"))
     }
 
     hasPan () {
@@ -299,6 +300,7 @@ window.DragView = class DragView extends DomStyledView {
     }
 
     newHoverViews () {
+        //console.log("dropPoint: " + this.dropPoint().asString())
         return this.viewsUnderDefaultPan().select(v => v.acceptsDropHover && v.acceptsDropHover(this))
     }
 

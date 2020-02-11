@@ -726,6 +726,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         const isTapLongPress = this.isTapLongPress()
 
         const dv = DragView.clone().setItem(this).setSource(this.column())
+        //dv.setBackgroundColor(this.column().backgroundColor())
 
 
         if (isTapLongPress) {

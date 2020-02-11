@@ -382,6 +382,18 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("text-transform")
     }
 
+    // word wrap
+
+    setWordWrap(s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("word-wrap", s)
+        return this
+    }
+
+    wordWrap () {
+        return this.getCssAttribute("word-wrap")
+    }
+
     // zoom
 
     setZoom (s) {

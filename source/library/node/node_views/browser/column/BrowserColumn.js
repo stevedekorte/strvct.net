@@ -1113,7 +1113,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         const index = this.indexOfSubview(subview)
         assert(index !== -1)
 
-        this.newRowPlaceHolder()
+        this.newRowPlaceHolder(dragView)
+
 
         if (dragView.isMoveOp()) {
             subview.hideForDrag()
@@ -1185,13 +1186,14 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return false
     }
 
-    newRowPlaceHolder () {
+    newRowPlaceHolder (dragView) {
         this.debugLog("newRowPlaceHolder")
         if (!this.rowPlaceHolder()) {
             const ph = DomView.clone().setDivClassName("BrowserRowPlaceHolder")
             ph.setBackgroundColor("black")
             ph.setMinAndMaxWidth(this.computedWidth())
-            ph.setMinAndMaxHeight(64)
+            //ph.setMinAndMaxHeight(64)
+            ph.setMinAndMaxHeight(dragView.minHeight())
             //ph.transitions().at("top").updateDuration(1)
             //ph.transitions().at("left").updateDuration(0.3)
             ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
@@ -1208,7 +1210,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         // insert place holder view
         if (!this.rowPlaceHolder()) {
-            this.newRowPlaceHolder()
+            this.newRowPlaceHolder(dragView)
             this.rowPlaceHolder().setMinAndMaxHeight(dragView.computedHeight())
             this.onDragDestinationHover(dragView)
         }

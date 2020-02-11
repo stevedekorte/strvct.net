@@ -126,12 +126,10 @@
 }
 
 .BMTextAreaFieldValueView {
-    display: block;
+    display: flex;
     position: relative;
-    top: 0px;
-    left: 0px;
 	padding: 0;
-    margin: 20px;
+    margin: 0;
     width: auto;
     min-height: auto;
 

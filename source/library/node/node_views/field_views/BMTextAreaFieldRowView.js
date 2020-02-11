@@ -14,13 +14,41 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
 
     init () {
         super.init()
+        const cv = this.contentView()
+        cv.setHeight("auto")
+        cv.alignItems("flex-start")
+        cv.setJustifyContent("flex-start")
+
         this.keyView().hideDisplay()
+
         //this.valueView().setDivClassName("BMTextAreaFieldValueView")
         return this
     }
 
     createValueView () {
-        return NodeView.clone().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
+        const vv = NodeView.clone().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
+        vv.setWordWrap("normal")
+        vv.setHeight("auto")
+        vv.setWidth("auto")
+        vv.setTextAlign("left")
+        vv.setPosition("relative")
+        vv.setMargin("0px")
+
+        /*
+            display: flex;
+            position: relative;
+            margin: 20px;
+            width: auto;
+            min-height: auto;
+
+            word-break: break-all;
+            unicode-bidi: embed;
+            white-space: pre-wrap;
+
+            font-weight: normal;
+            text-align: left;
+        */
+        return vv
     }
 	
     updateSubviews () {   
@@ -29,6 +57,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         //this.fillBottomOfColumnIfAvailable()
         this.setFlexGrow(100)
         //this.setMaxHeight(this.columnGroup().clientHeight() + "px")
+
         this.setMaxHeight("400px")
 
         if (this.node().isMono()) {

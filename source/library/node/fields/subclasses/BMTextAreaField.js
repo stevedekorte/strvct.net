@@ -21,7 +21,7 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
         return newNode
     }
 
-    
+
     initPrototype () {
         this.newSlot("isMono", false)
     }
