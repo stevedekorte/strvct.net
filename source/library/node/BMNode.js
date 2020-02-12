@@ -55,7 +55,7 @@ window.BMNode = class BMNode extends ProtoClass {
         return false
     }
 
-    static fromMimeTypeAndData (mimeType, data) {
+    static fromDataChunk (dataChunk) {
 
     }
 
@@ -493,7 +493,8 @@ window.BMNode = class BMNode extends ProtoClass {
         return !Type.isNullOrUndefined(match)
     }
 
-    onBrowserDropMimeTypeAndData (mimeType, data) {
+    onBrowserDropChunk (dataChunk) {
+        const mimeType = dataChunk.mimeType()
         const canOpenNodes = BMNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType))
         const okTypes = this.acceptedSubnodeTypes()
         const canUseNodes = canOpenNodes /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
@@ -503,7 +504,7 @@ window.BMNode = class BMNode extends ProtoClass {
             if (canUseNodes.length === 1) {
                 const match = canUseNodes.first()
 
-                const newNode = match.fromMimeTypeAndData(mimeType, data)
+                const newNode = match.fromDataChunk(dataChunk)
                 this.addSubnode(newNode)
 
                 /*

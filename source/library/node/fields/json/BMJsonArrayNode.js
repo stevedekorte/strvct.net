@@ -86,7 +86,7 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
         const bdd = BrowserDragData.clone()
         bdd.setMimeType("application/json")
         bdd.setFileName(this.title() + ".json")
-        bdd.setPayload(JSON.stringify(json, null, 4))
+        bdd.setDecodedData(JSON.stringify(json, null, 4))
         return bdd
     }
     

@@ -16,9 +16,10 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         return this.supportedMimeTypes().has(mimeType)
     }
 
-    static fromMimeTypeAndData (mimeType, data) {
+    static fromDataChunk (dataChunk) {
         const newNode = this.clone()
-        newNode.setValue(data)
+        newNode.setValue(dataChunk.dataUrl())
+        //newNode.setValue(dataChunk.decodedData())
         newNode.setKeyIsEditable(true)
         newNode.setValueIsEditable(true)
         newNode.setCanDelete(true)

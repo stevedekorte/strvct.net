@@ -12,48 +12,64 @@
 window.BrowserDragData = class BrowserDragData extends ProtoClass {
     
     initPrototype () {
-        this.newSlot("transferMimeType", "DownloadURL")
-        this.newSlot("fileName", "file.txt")
+        this.newSlot("dataUrl", null) // for drop
+        this.newSlot("transferMimeType", "DownloadURL") // for drag
+        this.newSlot("fileName", "file.txt") // for drag
         this.newSlot("mimeType", "text/plain")
-        this.newSlot("payload", "") // non-base64 version
+        this.newSlot("decodedData", "") // non-base64 version
+    }
+
+    mimeTypeToFileSuffixDict () {
+        return {
+            "application/json" : "json",
+            "text/javascript" : "js",
+            "text/plain" : "txt", 
+            "text/html" : "html", 
+            //"text/uri-list" 
+        }
     }
 
     /*
-    init () {
-        super.init()
-        return this
-    }
-    */
-
     validMimeTypeSet () {
         return new Set([
             "application/json",
-            //"application/x-javascript",
             "text/javascript",
-            //"text/x-javascript",
-            //"text/x-json", 
             "text/plain", 
             "text/html", 
             "text/uri-list" 
         ])
     }
+    */
 
     transferData () {
         // e.g.: "application/json:hello.json:data:application/json;base64," + btoa("[1,2,3]"));
         const header = this.mimeType() + ":" + this.fileName() + ":data:" + this.mimeType() + ";base64,"  
-        const content = btoa(this.payload())
+        const content = btoa(this.decodedData())
         const td = header + content
         return td
     }
 
-    /*
-    setupForJson (json) {
-        //const bdd = BrowserDragData.clone()
-        this.setMimeType("application/json")
-        //bdd.setFileName(this.title() + ".json")
-        this.setPayload(JSON.stringify(json, null, 4))
+    setTransferData (mimeType, dataUrl) {
+        /*
+        const type = data.before(":")
+        assert(type === "data")
+        const afterData = data.after("data:")
+        const mtype = afterData.before(",")
+        const afterComma = afterData.after("")
+        */
+        this.setDataUrl(dataUrl)
+        this.setMimeType(mimeType)
+
+        const header = "data:" + mimeType + ";base64,"
+        assert(dataUrl.indexOf(header) === 0)
+        const encodedData = dataUrl.after(header)
+        const decodedData = encodedData.base64Decoded()
+        this.setDecodedData(decodedData)
         return this
     }
-    */
+
+    attachToEvent (event) {
+        event.dataTransfer.setData(this.transferMimeType(), this.transferData())
+    }
 
 }.initThisClass()

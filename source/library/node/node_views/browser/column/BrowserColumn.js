@@ -1357,53 +1357,13 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return true
     }
 
-    onBrowserDropMimeTypeAndData (mimeType, data) {
+    onBrowserDropChunk (dataChunk) {
         const node = this.node()
 
-        if (node && node.onBrowserDropMimeTypeAndData) {
-            node.onBrowserDropMimeTypeAndData(mimeType, data)
+        if (node && node.onBrowserDropChunk) {
+            node.onBrowserDropChunk(dataChunk)
         }
     }
-
-    /*
-    onBrowserDropJson (data) {
-        const header = "data:application/json;base64,"
-        assert(data.indexOf(header) === 0)
-        data = data.after(header)
-        data = data.base64Decoded()
-
-        console.log("data = '" + data + "'")
-        let json = null
-
-        try {
-            json = JSON.parse(data)
-        } catch (error) {
-
-        }
-        console.log("drop json = " + JSON.stringify(json, 2, 2) + "")
-
-        //if (this.node().dropJson) {
-            const aNode = BMJsonCreatorNode.nodeForJson(json)
-            this.node().addSubnode(aNode)
-        //}
-    }
-    */
-
-    /*
-    onBrowserDrop (event) {
-        // triggered on drop target
-        if (this.acceptsDrop()) {
-            this.debugLog(" got drop")
-            this.onBrowserDataTransfer(event.dataTransfer)
-            this.dragUnhighlight()
-            event.preventDefault();
-            return true;
-        }
-
-        event.preventDefault();
-        return false
-    }
-    */
 
     nodeDescription () {
         const node = this.node()

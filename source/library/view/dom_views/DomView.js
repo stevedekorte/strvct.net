@@ -2522,6 +2522,7 @@ window.DomView = class DomView extends ProtoClass {
             this.onBrowserDataTransfer(event.dataTransfer)
             this.dragUnhighlight()
             event.preventDefault();
+            event.stopPropagation()
             return true;
         }
         event.preventDefault();
@@ -2555,15 +2556,12 @@ window.DomView = class DomView extends ProtoClass {
         reader.readAsDataURL(file);
     }
 
-    onBrowserDropMimeTypeAndRawData (mimeType, data) {
-        const header = "data:" + mimeType + ";base64,"
-        assert(data.indexOf(header) === 0)
-        data = data.after(header)
-        data = data.base64Decoded()
-        this.onBrowserDropMimeTypeAndData(mimeType, data)
+    onBrowserDropMimeTypeAndRawData (mimeType, dataUrl) {
+        const dd = BrowserDragData.clone().setTransferData(mimeType, dataUrl)
+        this.onBrowserDropChunk(dd)
     }
 
-    onBrowserDropMimeTypeAndData (mimeType, data) {
+    onBrowserDropChunk (dataChunk) {
         // if the view has a method for the mime type of the file
         // e.g. onBrowserDropImageJpeg
         // then we call it. If the view wants to handle all types,
@@ -2574,7 +2572,7 @@ window.DomView = class DomView extends ProtoClass {
         console.log("onBrowserDropFile => ", methodName)
 
         if (method) {
-            method.apply(this, [mimeType, event.target.result])
+            method.apply(this, [dataChunk])
         }
     }
 

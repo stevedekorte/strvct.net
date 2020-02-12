@@ -23,13 +23,31 @@ Object.defineSlots(String.prototype, {
     },
 
     beginsWith: function (prefix) {
-        if (!prefix) return false;
-        return this.indexOf(prefix) === 0;
+        if (!prefix || this.length < prefix.length) {
+            return false;
+        }
+        for (let i = 0; i < prefix.length; i ++) {
+            if (this.charAt(i) !== prefix.charAt(i)) {
+                return false
+            }
+        } 
+        return true
+        //return this.substr(0, prefix.length) === prefix // faster that indexOf as it 
+        //return this.indexOf(prefix) === 0;
     },
 
     endsWith: function (suffix) {
-        const index = this.lastIndexOf(suffix);
-        return (index !== -1) && (this.lastIndexOf(suffix) === this.length - suffix.length);
+        if (!suffix || this.length < suffix.length) {
+            return false;
+        }
+        for (let i = 0; i < suffix.length; i ++) {
+            if (this.charAt(this.length - suffix.length + i) !== suffix.charAt(i)) {
+                return false
+            }
+        } 
+        return true
+        //const index = this.lastIndexOf(suffix);
+        //return (index !== -1) && (this.lastIndexOf(suffix) === this.length - suffix.length);
     },
 
     contains: function (aString) {

@@ -13,7 +13,8 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         return mimeType === "application/json"
     }
 
-    static fromMimeTypeAndData (mimeType, data) {
+    static fromDataChunk (dataChunk) {
+        const data = dataChunk.decodedData()
         //console.log("data = '" + data + "'")
         let json = null
 

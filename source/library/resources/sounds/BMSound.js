@@ -10,6 +10,25 @@
 
 window.BMSound = class BMSound extends BMNode {
     
+    // --- mime types ---
+
+    static supportedMimeTypes() {
+        return new Set(["audio/ogg", "audio/wave", "audio/mp3"])
+    }
+
+    static canOpenMimeType (mimeType) {
+        return this.supportedMimeTypes().has(mimeType)
+    }
+
+    static fromDataChunk (dataChunk) {
+        const aNode = this.clone()
+        //setValue(dataChunk)
+        console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)
+        return aNode
+    }
+
+    // ---
+
     initPrototype () {
         this.newSlot("path", null)
     }

@@ -12,9 +12,9 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
         return mimeType.beginsWith("text/")
     }
 
-    static fromMimeTypeAndData (mimeType, data) {
+    static fromDataChunk (dataChunk) {
         const newNode = this.clone()
-        newNode.setValue(data)
+        newNode.setValue(dataChunk.decodedData())
         newNode.setKeyIsEditable(true)
         newNode.setValueIsEditable(true)
         newNode.setCanDelete(true)
