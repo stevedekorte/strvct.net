@@ -130,26 +130,26 @@ window.ImageWellView = class ImageWellView extends NodeView {
         return null
     }
     
-    onBrowserDropImageJpeg (mimeType, data) {
-        this.droppedImageData(data)
+    onBrowserDropImageJpeg (dataChunk) {
+        this.droppedImageData(dataChunk)
     }
 
-    onBrowserDropImageGif (mimeType, data) {
-        this.droppedImageData(data)
+    onBrowserDropImageGif (dataChunk) {
+        this.droppedImageData(dataChunk)
     }
 
     /*
-    onBrowserDropImageTiff (mimeType, data) {
-        this.droppedImageData(data)
+    onBrowserDropImageTiff (dataChunk) {
+        this.droppedImageData(dataChunk)
     }
     */
 
-    onBrowserDropImagePng (mimeType, data) {
-        this.droppedImageData(data)
+    onBrowserDropImagePng (dataChunk) {
+        this.droppedImageData(dataChunk)
     }
 
-    droppedImageData (data) {
-        this.setImageDataUrl(data)
+    droppedImageData (dataChunk) {
+        this.setImageDataUrl(dataChunk.dataUrl())
         this.scheduleSyncToNode() //this.syncToNode()
         return this        
     }

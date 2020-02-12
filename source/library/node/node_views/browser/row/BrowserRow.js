@@ -45,7 +45,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setPosition("relative") // so absolute position on close button works
         this.turnOffUserSelect()
         this.setAcceptsFirstResponder(false)
-        
         this.setupRowContentView()
 
         //console.log("WebBrowserWindow.shared().isTouchDevice() = ", WebBrowserWindow.shared().isTouchDevice())

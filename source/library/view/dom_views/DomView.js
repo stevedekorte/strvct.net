@@ -2567,7 +2567,7 @@ window.DomView = class DomView extends ProtoClass {
         // then we call it. If the view wants to handle all types,
         // it can override this method.
 
-        const methodName = this.dropMethodForMimeType(mimeType)
+        const methodName = this.dropMethodForMimeType(dataChunk.mimeType())
         const method = this[methodName]
         console.log("onBrowserDropFile => ", methodName)
 

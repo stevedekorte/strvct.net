@@ -124,6 +124,9 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 
     acceptsRightEdgePan () {
+        return true
+
+        
         if (this.node().nodeCanEditColumnWidth()) {
             return true
         }
