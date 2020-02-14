@@ -21,7 +21,6 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.setTransition("all 0.3s")
         this.autoFitParentWidth()
         this.autoFitChildHeight()
-        this.setWidth("-webkit-fill-available")
         this.setMinHeightPx(100)
         this.setPadding("0px")
         return this

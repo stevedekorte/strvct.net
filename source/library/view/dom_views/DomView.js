@@ -3815,7 +3815,8 @@ window.DomView = class DomView extends ProtoClass {
 
     autoFitParentWidth () {
         this.setDisplay("block")
-        this.setWidth("auto")
+        this.setWidth("-webkit-fill-available")
+        //this.setHeight("fill-available")
         return this
     }
 
@@ -3831,7 +3832,9 @@ window.DomView = class DomView extends ProtoClass {
 
     autoFitParentHeight () {
         this.setPosition("absolute")
-        this.setHeightPercentage(100)
+        //this.setHeightPercentage(100)
+        this.setHeight("-webkit-fill-available")
+        //this.setHeight("fill-available")
         return this
     }
 
