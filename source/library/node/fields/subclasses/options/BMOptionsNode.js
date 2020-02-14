@@ -58,7 +58,7 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         if (picked.length === 0) {
             return "None"
         }
-        return picked.map(subnode => subnode.summary()).join(this.nodeSummaryJoiner())
+        return picked.map(subnode => subnode.summary()).join("")
     }
 
     setSubtitle (aString) {

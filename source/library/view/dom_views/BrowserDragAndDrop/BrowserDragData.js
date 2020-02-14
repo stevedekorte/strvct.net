@@ -49,20 +49,22 @@ window.BrowserDragData = class BrowserDragData extends ProtoClass {
         return td
     }
 
-    setTransferData (mimeType, dataUrl) {
-        /*
-        const type = data.before(":")
+    setTransferData (mimeTypeHint, dataUrl) {
+        
+        const type = dataUrl.before(":")
         assert(type === "data")
-        const afterData = data.after("data:")
-        const mtype = afterData.before(",")
-        const afterComma = afterData.after("")
-        */
+        const afterData = dataUrl.after("data:")
+        const mimeType = afterData.before(";")
+        const afterComma = afterData.after(";")
+        const encodedData = afterData.after("base64,")
+        
         this.setDataUrl(dataUrl)
         this.setMimeType(mimeType)
-
+        /*
         const header = "data:" + mimeType + ";base64,"
         assert(dataUrl.indexOf(header) === 0)
         const encodedData = dataUrl.after(header)
+        */
         const decodedData = encodedData.base64Decoded()
         this.setDecodedData(decodedData)
         return this

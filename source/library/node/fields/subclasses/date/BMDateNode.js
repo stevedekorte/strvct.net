@@ -77,16 +77,18 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
 
     setupSubnodes () {
         this.removeAllSubnodes()
-
+        /*
         const startYear = this.startYear()
         const range = this.yearRange()
 
+        const years = []
         for (let i = startYear; i < startYear + range; i++) {
             const year = BMYearNode.clone().setValue(i)
             year.setCanDelete(false)
-            this.addSubnode(year)
-
+            years.push(year)
         }
+        //this.setSubnodes(years)
+        */
     }
 
     onTapOfDecendantNode (aNode) {
@@ -101,6 +103,10 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
             this.parentNode().postShouldFocusSubnode(this)
         }
         return true
+    }
+
+    endYear () {
+        return this.startYear() + this.yearRange()
     }
 
     yearRangeOk () {

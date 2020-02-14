@@ -15,24 +15,30 @@
 window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
     
     initPrototype () {
-        const joinerSlot = this.newSlot("nodeSummaryJoiner", " ").setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        joinerSlot.setCanInspect(true).setSlotType("String").setLabel("Summary joiner")
+        const joinerSlot = this.newSlot("nodeSummarySuffix", " ").setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        joinerSlot.setCanInspect(true).setSlotType("String").setLabel("suffix")
+        joinerSlot.setInspectorPath("Summary")
 
         const childSummarySlot = this.newSlot("nodeSubtitleIsChildrenSummary", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
         childSummarySlot.setCanInspect(true).setSlotType("Boolean").setLabel("Subtitle is children summary")
+        childSummarySlot.setInspectorPath("Summary")
 
         const newLineSlot = this.newSlot("hasNewlineAferSummary", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        newLineSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Has new line after summary")
+        newLineSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Has new line after self summary")
+        newLineSlot.setInspectorPath("Summary")
 
         const formatSlot = this.newSlot("summaryFormat", "value").setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        formatSlot.setCanInspect(true).setSlotType("String").setLabel("Summary format")
+        formatSlot.setCanInspect(true).setSlotType("String").setLabel("format")
         formatSlot.setValidValues(["none", "key", "value", "key value", "value key"])
+        formatSlot.setInspectorPath("Summary")
 
         const subCount = this.overrideSlot("subtitleIsSubnodeCount", false).setDuplicateOp("copyValue").setShouldStoreSlot(true)
         subCount.setCanInspect(true).setSlotType("Boolean").setLabel("Subtitle is subnode count")
+        subCount.setInspectorPath("Summary")
 
         const noteCount = this.overrideSlot("noteIsSubnodeCount", false).setDuplicateOp("copyValue").setShouldStoreSlot(true)
         noteCount.setCanInspect(true).setSlotType("Boolean").setLabel("Note is subnode count")
+        noteCount.setInspectorPath("Summary")
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
@@ -71,12 +77,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         const k = this.summaryKey()
         let v = this.summaryValue()
         const f = this.summaryFormat()
-        const j = this.nodeSummaryJoinerOut()
-        let end = ""
-        
-        if (this.hasNewlineAferSummary()) {
-            end = "<br>"
-        }
+        let end = this.nodeSummarySuffixOut()
 
         if (Type.isNull(v)) {
             v = ""
@@ -102,11 +103,11 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
     }
         
     childrenSummary () {
-        return this.subnodes().map(subnode => subnode.summary()).filter(s => s.length).join(this.nodeSummaryJoinerOut())
+        return this.subnodes().map(subnode => subnode.summary()).filter(s => s.length).join("")
     }
 
-    nodeSummaryJoinerOut () {
-        let s = this._nodeSummaryJoiner
+    nodeSummarySuffixOut () {
+        let s = this._nodeSummarySuffix
         
         if (s === "newline") {
             return "<br>"

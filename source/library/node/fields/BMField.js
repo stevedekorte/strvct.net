@@ -24,7 +24,7 @@ window.BMField = class BMField extends BMSummaryNode {
         keyIsVisibleSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Key is visible")
 
         const keyIsEditable = this.newSlot("keyIsEditable", false).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        keyIsEditable.setCanInspect(true).setSlotType("String").setLabel("Key is editable")
+        keyIsEditable.setCanInspect(true).setSlotType("Boolean").setLabel("Key is editable")
 
         // value
         this.newSlot("value", null).setShouldStoreSlot(true).setDuplicateOp("duplicate")
@@ -179,28 +179,6 @@ window.BMField = class BMField extends BMSummaryNode {
     summaryValue () {
         return this.value()
     }
-
-    /*
-    summary () {
-        return super.summary()
-    }
-    */
-
-    /*
-    summary () {
-        let parts = []
-
-        if (this.nodeSummaryShowsKey()) {
-            parts.push(this.key())
-        }
-
-        if (this.nodeSummaryShowsValue()) {
-            parts.push(this.value())
-        }
-
-        return parts.join(this.nodeSummaryJoiner())
-    }
-    */
 
     setNodeSummaryShowsKey () {
     }

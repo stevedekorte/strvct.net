@@ -35,7 +35,6 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         this.setKey("Image title")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
-        //this.protoAddStoredSlot("imageDataUrl") // stored in value
         this.setNodeCanEditRowHeight(true)
     }
 
@@ -43,13 +42,8 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         super.init()
     }
 
-    /*
-    setValue (v) {
-        super.setValue(v)
-        //this.debugLog(" setValue " + v)
-        //this.updateKey()
-        return this
+    summaryValue () {
+        return ""
     }
-    */
    
 }.initThisClass()

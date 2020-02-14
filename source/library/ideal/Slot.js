@@ -113,6 +113,8 @@ window.ideal.Slot = class Slot {
          this.simpleNewSlot("allowsMultiplePicks", false)
 
          this.simpleNewSlot("syncsToView", false)
+
+         this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
     }
 
     setSyncsToView (aBool) {

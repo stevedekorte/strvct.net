@@ -280,16 +280,14 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         valueView.setValue(newValue)
         
-        // visible
         keyView.setIsVisible(node.keyIsVisible())
-
         keyView.setDisplayIsHidden(!node.keyIsVisible())
+        keyView.setIsEditable(node.keyIsEditable())
 		
         //this.verticallyCenterContent()
 
-        // editable
-        keyView.setIsEditable(node.keyIsEditable())
         valueView.setIsEditable(node.valueIsEditable())
+        valueView.setDisplayIsHidden(!node.valueIsVisible())
 
         keyView.setColor(this.keyViewColor())
 

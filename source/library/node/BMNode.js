@@ -128,7 +128,7 @@ window.BMNode = class BMNode extends ProtoClass {
 
         // inspector
 
-        this.newSlot("nodeCanInspect", false).setDuplicateOp("copyValue")
+        this.newSlot("nodeCanInspect", true).setDuplicateOp("copyValue")
         this.newSlot("nodeInspector", null)
 
         // actions
@@ -173,7 +173,7 @@ window.BMNode = class BMNode extends ProtoClass {
 
     nodeInspector () {
         if (!this._nodeInspector) {
-            this._nodeInspector = BMNode.clone().setNodeMinWidth(500)
+            this._nodeInspector = BMNode.clone().setNodeMinWidth(300)
             this.initNodeInspector()
         }
         return this._nodeInspector
@@ -189,17 +189,36 @@ window.BMNode = class BMNode extends ProtoClass {
         return this
     }
 
+    createNodePath (aPath, pathSubnodeType = "BMMenuNode") {
+        let node = this
+
+        if (!aPath) {
+            return node
+        }
+
+        const components = aPath.split("/")
+        components.forEach(component => {
+            node = this.subnodeWithTitleIfAbsentInsertClosure(component, () => {
+                const node = window[pathSubnodeType].clone()
+                node.setTitle(component)
+                node.setNodeMinWidth(300)
+                return node
+            })
+        })
+
+        return node
+    }
+
     setupInspectorFromSlots () {
         const slots = this.thisPrototype().allSlots()
-        const fields = []
         slots.ownForEachKV((name, slot) => {
             const field = slot.newInspectorField()
             if (field) {
                 field.setTarget(this)
-                fields.push(field)
+                let node = this.nodeInspector().createNodePath(slot.inspectorPath())
+                node.addSubnode(field)
             }
         })
-        this.nodeInspector().addSubnodes(fields)
         return this
     }    
 

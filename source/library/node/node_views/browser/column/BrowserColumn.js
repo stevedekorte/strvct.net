@@ -1250,8 +1250,9 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         if(itemView.onDragRequestRemove && itemView.onDragRequestRemove()) {
             const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
             this.node().addSubnodeAt(itemView.node(), insertIndex)
-            this.removeRowPlaceHolder()
+            //this.removeRowPlaceHolder()
         }
+        this.removeRowPlaceHolder()
 
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
@@ -1363,6 +1364,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         if (node && node.onBrowserDropChunk) {
             node.onBrowserDropChunk(dataChunk)
         }
+        this.scheduleSyncFromNode()
     }
 
     nodeDescription () {

@@ -1,17 +1,53 @@
 
 TODO:
 
+	Support for Font drop:
+	var fontFace = new FontFace(family, source, descriptors);
+
+	SoundField?
+	MovieField?
+
+	make sure uses of setSubnodes don't break mutation observations on subnodes array
+
+	- support for Coalescing didMutate messages to end of event loop?
+
+	- bug: need to prevent data from changing subnodes while editing inspector
+
+	node inspector:
+		- note: default, is subnode count
+		- subtitle: default, is children summary
+		- self summary: 
+			- suffix:
+				- default
+				- new line
+				- text [ ]
+			>>>>>>>> support option return for new line?
+
+	- todo: select all when tabbing to next field value
+	
+	- summary is subnode count doesn't seem to work??
+	
+	Field
+	- support subtitle (make subtitle of key, and key is title)
+	
+	change summary joiner to be per node
+
+	bug: Node note as subnode count isn't working
+	
+	Support summary value that includes embedded images?
+	
+	
+	After dropping group of images, deleting several image field views produces a missing parent exception
+	
+	multi-touch via mouse not working?
+
 	backspace is getting captured by row when editing a text area
 	Fade out loading screen
-	
-	Get mime drop working on images?
-	
+		
 	animate collapsing of columns?
 	
 	Unable to open inspector on Number or String fields
-	
-	JSON node dragging out of browser not working
-	
+		
 	Menu child summary not working right when subnode is an Options (e.g. shows "Option Title")
 
 	Change no match to return undefined for search methods
@@ -882,16 +918,7 @@ View
     return node
 }
     
-
-nodeMirror()
-
-- select BMFieldViewRow when clicking on it
-
-- make BrowserRow note view vertically centered
-
-nodeRowLink -> nodeRowLinkMethods?
-defaultNodeRowLinkMethod?
-notification didUpdateDodeRowLinkMethods
+notification didUpdateDodeRowLinkMethods?
 
 OPTION 0
 Keep columns unaware that a node was skipped?
@@ -926,41 +953,6 @@ Will most nodes be "compacted"?
 Can we skip creating that view entirely? If so, just special case paths?
 
 
-Node
-    attributeSlots
-    subnodes
-    
-Node
-    subnodes attributes
-             someList
-             anotherList
-    
-node
-    subnodes
-    inspectorNode FieldSetNode
-    node can return 
-
-
-
-Node -> NodeView
-
-A Field is a Node that represents a Slot.
-A Slot has key, value, and other properties (canEdit, valid values, validator, etc)
-
-Field 
-    key / isVisible / isEditable / error
-    value / isVisible / isEditable / error
-    isValid
-    target
-    valueSetter
-    valueGetter
-
-A Field is a Row that is a container for a 
-
-
-Move from .node() to nodeMirror() ?
-
-
 NODES -> RowViews
 
 Action 
@@ -991,33 +983,8 @@ BMOptionRow - sends this.parentNode().selectOption(this) when clicked
 
 ---------------
 
-use control-edge drag or double finger drag to apply to prototype?
-store width hint on parent node's field?
-
-abstract edge drag to resize?
-
-gesture to add subtitle?
-
-
-should we abstract style so we can:
-- unify style and computed style
-- simplify storing and copying style
-- separate style specific helpers (e.g. PX stuff) from DomView 
-
-need generic way to open an inspector for currently focused item?
-e.g. inspect TextField currently editing to change font size
-- multi-finger long tap on touch? function-click with mouse?
-
-protocol to check editability of and store adjusted row size, font size, etc?
-option +, option - to adjust font size of text field being edited
-change font color, bg color, column color settings
-column orientation
-
 copy/paste style
 store/edit style at row prototype level
-
-dynamically add field rows?
-- option-long-click / double-long-press to inspect element to choose field type?
 
     Node
         - fields
@@ -1040,16 +1007,6 @@ dynamically add field rows?
         Array
         Method?
         
-        
-prevent onClick when finishing row reording
-
-fix row background /transparent issues
-
-Transitions abstraction work
-
-
-Column darkenUnselectedMode?
-
 --------------------------------------------------
 
 - copy/paste identity private key
@@ -1123,30 +1080,6 @@ NEW VIEWS
     Grid Browser Column
 
 -------------------------------------
-
--- support for adding/removing field set items, storing result
-
--- double tap to edit BrowserTitledRow title?
-	- method to add double tap gesture on TextArea/Textfield?
-
--- dark theme for BMFieldRow when not in FieldSet?
-
--- Dragging from anywhere in window
-	- standard long press with 2-3 fingers to drag?
-	- ask if target allows drag
-	- determine type of drag (move/copy) using modifier keys and or finger count?
-	- determine how to display drag view - some common standard of icon + label?
-	- create drag view and add to DocumentBody(?)
-	- add PanGesture to drag view, start panBegin
-	- onPanMove calcs new location using PanGesture downPositionInTarget (add helper method for calc?)
-	
-	Drop areas
-	- default to highlight drop area if allowed but can override 
-
-	ColumnBrowser onDrop
-	- check if allows drop and specific drop type
-	- create empty browser row 
-	- pause syncing from model
 
     - support multi BrowserRow selection 
         - UI interaction?
