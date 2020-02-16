@@ -65,6 +65,9 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
 
         this.setIsRegisteredForKeyboard(true)
+        //this.setIsRegisteredForDrag(true)
+
+        this.setIsDebugging(true)
 
         return this
     }
@@ -528,13 +531,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // --- dragging key ---
 
     on_d_KeyDown (event) {
-        //this.debugLog(" on_d_KeyDown ", event._id)
+        this.debugLog(" on_d_KeyDown ", event._id)
         this.setIsRegisteredForDrag(true)
         return true
     }
 
     on_d_KeyUp (event) {
-        //this.debugLog(" on_d_KeyUp ", event._id)
+        this.debugLog(" on_d_KeyUp ", event._id)
         this.setIsRegisteredForDrag(false)
         return true
     }
@@ -955,7 +958,12 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     // Browser style drag
 
-    onBrowserDragStart (event) {               
+    onBrowserDragStart (event) {  
+        let dKey = BMKeyboard.shared().keyForName("d")
+        if (!dKey.isDown()) {
+            return false
+        }
+
         const node = this.node()
         if (node && node.getBrowserDragData) {
             const bdd = node.getBrowserDragData()

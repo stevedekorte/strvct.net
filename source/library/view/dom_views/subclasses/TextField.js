@@ -38,7 +38,8 @@ window.TextField = class TextField extends DomStyledView {
         this.setJustifyContent("flex-start")
         this.setAlignItems("flex-start")
         this.turnOffUserSelect()
-        this.setWhiteSpace("nowrap")
+        //this.setWhiteSpace("nowrap")
+        this.setWhiteSpace("pre-wrap")
         this.setOverflow("hidden")
         this.setTextOverflow("clip")
         this.setSpellCheck(false)
@@ -54,6 +55,7 @@ window.TextField = class TextField extends DomStyledView {
         //this.setDidTextInputNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextInput"))
         //this.setDidTextEditNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextEdit"))
 
+        this.setIsDebugging(true)
         return this
     }
 
@@ -188,13 +190,12 @@ window.TextField = class TextField extends DomStyledView {
         //let newValue = this.visibleValue()
         if (oldValue !== newValue) {
             super.setString(newValue)
-            /*
+            
             this.debugLog(" setString(")
             console.log("    old: '" + oldValue + "'")
             console.log("    new: '" + newValue + "'")
             console.log("---")
-            */
-            //console.log("textfield '" + newValue + "' usesDoubleTapToEdit:", this.usesDoubleTapToEdit())
+            
         }
         return this
     }
@@ -225,20 +226,31 @@ window.TextField = class TextField extends DomStyledView {
     
     onKeyUp (event) {
         //this.debugLog(" onKeyUp ", event)
-        this.adjustFontSizeWithKeyboard()
+        //this.adjustFontSizeWithKeyboard()
         super.onKeyUp(event)
         //this.debugLog(" onKeyUp value: [" + this.value() + "]")
         this.didEdit()
         return false
     }
 
+    onAlternateEnterKeyUp (event) {
+        console.log(this.typeId() + " onAlternateEnterKeyDown")
+        if (this.isFocused()) {
+            this.insertTextAtCursor("\n")
+        }
+        //this.afterEnter()
+    }
+
+
     onEnterKeyUp (event) {
 	    //this.debugLog(".onEnterKeyUp()")
 	    //this.didEdit()
 
         this.formatValue()
+        this.afterEnter()
+    }
 
-        
+    afterEnter (event) {
         this.tellParentViews("didInput", this) 
             
         if (!this.doesHoldFocusOnReturn()) {

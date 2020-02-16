@@ -69,7 +69,7 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("subtitle", null).setDuplicateOp("copyValue")
         this.newSlot("note", null).setDuplicateOp("copyValue")
         const nin = this.newSlot("noteIconName", null).setDuplicateOp("copyValue")
-        nin.setCanInspect(true).setLabel("icon name").setSlotType("String")
+        nin.setCanInspect(true).setLabel("icon").setSlotType("String")
         nin.setValidValuesClosure(() => BMIconResources.shared().iconNames())
         nin.setInspectorPath("Note")
 
@@ -174,7 +174,7 @@ window.BMNode = class BMNode extends ProtoClass {
 
     nodeInspector () {
         if (!this._nodeInspector) {
-            this._nodeInspector = BMNode.clone().setNodeMinWidth(300)
+            this._nodeInspector = BMNode.clone().setNodeMinWidth(150)
             this.initNodeInspector()
         }
         return this._nodeInspector

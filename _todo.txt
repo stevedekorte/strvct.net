@@ -1,6 +1,20 @@
 
 TODO:
 
+	- need to disable row (or all?) gestures while textfield is editing to prevent interfering with click-drag selection
+
+	- how to support returns in TextField without all the other junk
+	
+	- support subtitle subnode count suffix?
+	- move summary suffix to subtitle suffix?
+	- add subtitle prefix?
+	
+	- rerender of node subtitle not occuring when subnodes reordered...
+	
+	bug when turning off summary - stil has weird subtitle value
+	
+	move to actions on down key instead of up key so key repeat can work
+
 	deleting a row not clearing next column <<<
 
 	- Textfield needs to allow tap propogation and selection of it's row, while still holding onto focus

@@ -900,7 +900,7 @@ window.DomView = class DomView extends ProtoClass {
 
     focus () {
         if (!this.isActiveElement()) {
-            //console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
+            console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
             /*
             const focusedView = WebBrowserWindow.shared().activeDomView()
 
@@ -2977,16 +2977,13 @@ window.DomView = class DomView extends ProtoClass {
         let methodName = BMKeyboard.shared().downMethodNameForEvent(event)
 
         //console.log("event.repeat = ", event.repeat)
-
         //console.log(" onKeyDown ", methodName)
-        //this.debugLog(" onKeyDown ", methodName)
-        //console.log("onKeyDown methodName: ", methodName)
-        this.invokeMethodNameForEvent(methodName, event)
-
         
-        if (event.repeat) {
-            const upMethodName = BMKeyboard.shared().upMethodNameForEvent(event)
-            this.invokeMethodNameForEvent(upMethodName, event)
+        if (!event.repeat) {
+            this.invokeMethodNameForEvent(methodName, event)
+        } else {
+            //const upMethodName = BMKeyboard.shared().upMethodNameForEvent(event)
+            //this.invokeMethodNameForEvent(upMethodName, event)
             //this.forceRedisplay()
         }
         
@@ -3174,24 +3171,70 @@ window.DomView = class DomView extends ProtoClass {
 
     // --- set caret ----
 
+    insertTextAtCursor(text) {
+        const savedSelection = this.saveSelection()
+
+        if (window.getSelection) {
+            const sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                range.deleteContents();
+                range.insertNode( document.createTextNode(text) );
+            }
+        } else if (document.selection && document.selection.createRange) {
+            document.selection.createRange().text = text;
+        }
+        savedSelection.collapse()
+        this.restoreSelection(savedSelection)
+
+        return this
+    }
+
+    saveSelection() {
+        if (window.getSelection) {
+            const sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                return sel.getRangeAt(0);
+            }
+        } else if (document.selection && document.selection.createRange) {
+            return document.selection.createRange();
+        }
+        return null;
+    }
+    
+    restoreSelection(range) {
+        if (range) {
+            if (window.getSelection) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else if (document.selection && range.select) {
+                range.select();
+            }
+        }
+    }
+
+    // --- set caret ----
+
+
     moveCaretToEnd () {
         const contentEditableElement = this.element()
         let range, selection;
 
-        if (document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
-        {
-            range = document.createRange();//Create a range (a range is a like the selection but invisible)
-            range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
-            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
-            selection = window.getSelection();//get the selection object (allows you to change selection)
-            selection.removeAllRanges();//remove any selections already made
-            selection.addRange(range);//make the range you have just created the visible selection
+        if (document.createRange) {
+            //Firefox, Chrome, Opera, Safari, IE 9+
+            range = document.createRange(); //Create a range (a range is a like the selection but invisible)
+            range.selectNodeContents(contentEditableElement); //Select the entire contents of the element with the range
+            range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
+            selection = window.getSelection(); //get the selection object (allows you to change selection)
+            selection.removeAllRanges(); //remove any selections already made
+            selection.addRange(range); //make the range you have just created the visible selection
         }
-        else if (document.selection)//IE 8 and lower
-        {
-            range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
-            range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
-            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+        else if (document.selection) {
+            //IE 8 and lower
+            range = document.body.createTextRange(); //Create a range (a range is a like the selection but invisible)
+            range.moveToElementText(contentEditableElement); //Select the entire contents of the element with the range
+            range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
             range.select();//Select the range (make it the visible selection
         }
         return this
@@ -3277,8 +3320,32 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    /*
     // untested
+
+    getCaretPosition() {
+        const editableDiv = this.element()
+        let caretPos = 0
+        if (window.getSelection) {
+            const sel = window.getSelection();
+            if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                if (range.commonAncestorContainer.parentNode == editableDiv) {
+                    caretPos = range.endOffset;
+                }
+            }
+        } else if (document.selection && document.selection.createRange) {
+            const range = document.selection.createRange();
+            if (range.parentElement() == editableDiv) {
+                const tempEl = document.createElement("span");
+                editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+                const tempRange = range.duplicate();
+                tempRange.moveToElementText(tempEl);
+                tempRange.setEndPoint("EndToEnd", range);
+                caretPos = tempRange.text.length;
+            }
+        }
+        return caretPos;
+    }
 
     setCaretPosition (caretPos) {
         const elem = this.element();
@@ -3299,7 +3366,8 @@ window.DomView = class DomView extends ProtoClass {
             }
         }
     }
-    */
+
+    // ---------------
 
     clearSelection () {
         if (window.getSelection) {

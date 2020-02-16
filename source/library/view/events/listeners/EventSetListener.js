@@ -160,6 +160,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
 
                     if (result === false) {
                         event.stopPropagation()
+                        event.preventDefault()
                     }
                 } else {
                     if (this.isDebugging()) {
