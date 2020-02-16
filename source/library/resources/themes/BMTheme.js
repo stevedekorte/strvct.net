@@ -18,7 +18,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled Theme")
         this.setNodeMinWidth(270)
-        this.setupSubnodes()
+        //this.setupSubnodes()
         this.setCanDelete(true)
 
         this.setSubnodeProto(ThemeSection)

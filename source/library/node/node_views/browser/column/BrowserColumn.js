@@ -40,6 +40,11 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
 
+    onFocus () {
+        //Error.showCurrentStack()
+        return super.onFocus()
+    }
+
     setRowBackgroundColor (aColor) {
         this.rowStyles().unselected().setBackgroundColor(aColor)
         return this
@@ -111,7 +116,12 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         super.didChangeIsSelected()
 
         if (this.isSelected()) {
-            this.focus()
+            const focusedView = WebBrowserWindow.shared().activeDomView()
+
+            // TODO: need a better solution to this problem
+            if (!focusedView || (focusedView && !this.hasFocusedDecendantView(focusedView))) {
+                this.focus()    
+            }
         } else {
             this.blur()
         }
@@ -174,25 +184,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     
     didClickRow (clickedRow) {
         this.unselectRowsBesides(clickedRow)
-
-        /*
-        if (this.shouldDarkenUnselected()) {
-            if (this.selectedRows().length > 0) {
-                this.darkenUnselectedRows()
-            } else {
-                this.undarkenAllRows()
-            }
-        }
-        */
-
-        /*
-        // follow it if we can 
-        if (clickedRow.nodeRowLink()) {
-		    //this.debugLog(".didClickRow(" + clickedRow.node().title() + ") selecting column ", this.node().title())
-        //	this.browser().selectColumn(this)
-        }
-        */
-        
         this.selectThisColumn()
         return true
     }
@@ -463,7 +454,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                 if (!row.isSelected()) {
                     //this.log("selecting row titled '" + row.title().innerHTML() + "'")
                     row.setIsSelected(true)
-                    this.didClickRow(row)
+                    //this.didClickRow(row)
+                    this.unselectRowsBesides(row)
                 }
             } else {
                 if (this.rows().length) {
@@ -472,7 +464,9 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                     row = this.rows().at(i)
                     //this.log("selecting row titled '" + row.title().innerHTML() + "'")
                     row.setIsSelected(true)
-                    this.didClickRow(row)
+                    //this.didClickRow(row)
+                    this.unselectRowsBesides(row)
+
                 }
             }
         }

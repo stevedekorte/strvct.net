@@ -424,8 +424,16 @@ window.BrowserRow = class BrowserRow extends NodeView {
             //this.setRight(-this.clientWidth())
             this.setMinAndMaxHeight(0)
             this.setIsDeleting(true)
+
+
+            if (this.isSelected()) {
+                // to make sure next column is cleared
+                this.setIsSelected(false)
+                this.browser().scheduleSyncToNode()
+            }
+
             setTimeout(() => {
-	            this.node().performAction("delete")
+                this.node().performAction("delete")
             }, 240)
         }
     }

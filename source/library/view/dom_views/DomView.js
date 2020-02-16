@@ -889,9 +889,32 @@ window.DomView = class DomView extends ProtoClass {
 
     // --- focus and blur ---
 
+
+    hasFocusedDecendantView () {
+        const focusedView = WebBrowserWindow.shared().activeDomView()
+        if (focusedView) {
+            return this.hasSubviewDescendant(focusedView)
+        }
+        return false
+    }
+
     focus () {
         if (!this.isActiveElement()) {
-            //this.debugLog(".focus() " + document.activeElement._domView)
+            //console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
+            /*
+            const focusedView = WebBrowserWindow.shared().activeDomView()
+
+            // TODO: need a better solution to this problem
+            if (focusedView && !this.hasFocusedDecendantView(focusedView)) {
+                
+                if (focusedView && focusedView.type() === "TextField") {
+                    console.log("  -- taking focus from " + focusedView.typeId())
+                }
+                
+                //this.debugLog(".focus() " + document.activeElement._domView)
+                this.addTimeout(() => { this.element().focus() }, 0)
+            }
+            */
             this.addTimeout(() => { this.element().focus() }, 0)
 
         }
@@ -1841,10 +1864,13 @@ window.DomView = class DomView extends ProtoClass {
     // --- subviews ---
 
     hasSubviewDescendant (aView) {
+        return aView.parentViewChain().contains(this)
+        /*
         const match = this.subviews().detect((sv) => {
             return sv === aView || sv.hasSubviewDescendant(aView)
         })
         return !Type.isNullOrUndefined(match)
+        */
     }
 
     subviewCount () {
@@ -3084,7 +3110,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     didReleaseFirstResponder () {
-        // called on focus event from browser
+        // called on blur event from browser?
         return this
     }
 
@@ -3126,6 +3152,7 @@ window.DomView = class DomView extends ProtoClass {
     // --------------------------------------------------------
 
     onFocus () {
+        console.log(this.typeId() + " onFocus")
         this.willAcceptFirstResponder();
         // subclasses can override 
         //this.debugLog(" onFocus")
@@ -3133,6 +3160,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBlur () {
+        console.log(this.typeId() + " onBlur")
         this.didReleaseFirstResponder();
         // subclasses can override 
         //this.debugLog(" onBlur")

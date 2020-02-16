@@ -68,7 +68,7 @@ window.BMSound = class BMSound extends BMNode {
     prepareToAccess () {
         super.prepareToAccess()
         this.play() // not a good way to do this
+        //audio.src = 'data:audio/wav;base64,UklGR...;
     }
 
-    //audio.src = 'data:audio/wav;base64,UklGR...;
 }.initThisClass()

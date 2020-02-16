@@ -28,6 +28,7 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
         this.setButtonView(ButtonView.clone().setDivClassName("BMActionNodeView"))
 	    this.buttonView().setTarget(this).setAction("didClickButton")
 	    this.buttonView().setTransition("all 0.3s")
+	    this.buttonView().setBorder("1px solid rgba(128, 128, 128, 0.5)")
 
         this.addContentSubview(this.buttonView())
         //this.setMinHeightPx(64)

@@ -64,6 +64,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         const nodes = this.thisClass().fieldTypes().map((typeName) => {
             const name = this.visibleNameForTypeName(typeName)
             const newNode = BMMenuNode.clone()
+            newNode.setNoteIconName(null)
+            newNode.setCanDelete(false)
             newNode.setTitle(name).setTarget(this).setMethodName("didChoosePrimitive").setInfo(typeName)
             return newNode
         })
@@ -78,6 +80,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
             const newNode = BMMenuNode.clone()
             newNode.setTitle(proto.title()).setSubtitle(proto.subtitle())
             newNode.setTarget(this).setMethodName("didChoosePrototype").setInfo(proto)
+            newNode.setCanDelete(false)
             newNode.setNoteIconName("inner-checkbox")
             return newNode
         })

@@ -70,6 +70,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 
     copySetupFrom (bcg) {
+        this.setIsSelected(bcg.isSelected())
         this.setIsCollapsed(bcg.isCollapsed())
         this.copySizeFrom(bcg)
         this.setDisplay(bcg.display())
@@ -126,7 +127,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     acceptsRightEdgePan () {
         return true
 
-        
+
         if (this.node().nodeCanEditColumnWidth()) {
             return true
         }

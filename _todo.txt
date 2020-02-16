@@ -1,11 +1,36 @@
 
 TODO:
 
+	deleting a row not clearing next column <<<
+
+	- Textfield needs to allow tap propogation and selection of it's row, while still holding onto focus
+		options?:
+		
+		syncFromNode calling didClickRow updating selection?
+		
+		BrowserRow
+		completeTap
+		justTap
+		Column onRequestSelectionOfRow  
+		Column didClickRow(aRow)
+        this.browser().selectColumn(this)
+		
+
+		- separate internal selection of column row from UI selection of column row?
+		- hack: don't focus if subview is focused?
+			- before allowing Column onFocus, see if subview is focused?
+		- some sort of requestFocus from current firstResponder View?
+		- have columns support isSelected? selection path so back arrow pops a level?
+			- onSelect on Row, could focus default subview - such as value text field?
+		
+
 	Support for Font drop:
 	var fontFace = new FontFace(family, source, descriptors);
 
 	SoundField?
 	MovieField?
+	UnitsNode Weight, Measures, Currencies
+	AddressNode, CityNode, PostalCode, MapNode
 
 	make sure uses of setSubnodes don't break mutation observations on subnodes array
 

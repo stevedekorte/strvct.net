@@ -336,7 +336,7 @@ window.BrowserView = class BrowserView extends NodeView {
             this.removeColumnGroup(this.columnGroups().last())
         }
 
-        //this.clearColumnsGroupsAfterIndex(count -1)
+        //this.clearColumnsGroupsAfterIndex(count -1) // <<<<<<<<<<<< test
 
         // add columns as needed
         while (this.columnGroups().length < count) {
