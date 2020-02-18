@@ -4,6 +4,7 @@
 
     BMTextAreaFieldRowView
 
+    
 */
 
 window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowView {
@@ -15,18 +16,35 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
     init () {
         super.init()
         const cv = this.contentView()
+
+        /*
+        cv.setDisplay("flex")
+        cv.setPosition("relative")
+        //cv.setWidth("auto")        
+        //cv.setMinHeight("300px")
+        //cv.setMargin("0px")
+        //cv.setPadding("0px")
+            
+        cv.setOverflow("hidden")
+        //cv.setOverFlowX("hidden")
+        //cv.setOverFlowY("scroll")
+
         cv.setHeight("auto")
         cv.alignItems("flex-start")
         cv.setJustifyContent("flex-start")
+        */
 
         this.keyView().hideDisplay()
 
-        //this.valueView().setDivClassName("BMTextAreaFieldValueView")
         return this
     }
 
     createValueView () {
-        const vv = NodeView.clone().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
+        const vv = TextField.clone().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
+        vv.setDisplay("block")
+        vv.setPosition("relative")
+        //vv.setMargin("20px")
+
         vv.setWordWrap("normal")
         vv.setHeight("auto")
         vv.setWidth("-webkit-fill-available")
@@ -35,21 +53,8 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         vv.setMargin("0px")
         vv.setOverflowX("hidden")
         vv.setOverflowY("scroll")
-
-        /*
-            display: flex;
-            position: relative;
-            margin: 20px;
-            width: auto;
-            min-height: auto;
-
-            word-break: break-all;
-            unicode-bidi: embed;
-            white-space: pre-wrap;
-
-            font-weight: normal;
-            text-align: left;
-        */
+        //vv.setDoesHoldFocusOnReturn(true)
+        vv.setDoesInput(false)
         return vv
     }
 	
@@ -60,7 +65,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         this.setFlexGrow(100)
         //this.setMaxHeight(this.columnGroup().clientHeight() + "px")
 
-        this.setMaxHeight("400px")
+        //this.setMaxHeight("400px")
 
         if (this.node().isMono()) {
             this.valueView().setDivClassName("BMMonoTextAreaFieldValueView NodeView DomView")

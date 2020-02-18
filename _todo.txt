@@ -1,6 +1,8 @@
 
 TODO:
 
+	- bug: d key to drag not working on Safari
+
 	- need to disable row (or all?) gestures while textfield is editing to prevent interfering with click-drag selection
 
 	- how to support returns in TextField without all the other junk

@@ -22,6 +22,7 @@ window.TextField = class TextField extends DomStyledView {
         this.newSlot("doesTrim", false)
         this.newSlot("didTextInputNote", null)
         this.newSlot("didTextEditNote", null)
+        this.newSlot("doesInput", false)
 
         // has to start false for proper state setup
         this.newSlot("usesDoubleTapToEdit", false) 
@@ -237,14 +238,21 @@ window.TextField = class TextField extends DomStyledView {
 
     onAlternateEnterKeyUp (event) {
         console.log(this.typeId() + " onAlternateEnterKeyDown")
-        if (this.isFocused()) {
-            this.insertTextAtCursor("\n")
-        }
+        this.insertEnterAtCursor()
         //this.afterEnter()
     }
 
+    insertEnterAtCursor (event) {
+        if (this.isFocused()) {
+            this.insertTextAtCursor("\n")
+        }   
+    }
 
     onEnterKeyUp (event) {
+        if (!this.doesInput()) {
+            //this.insertEnterAtCursor()
+            return
+        }
 	    //this.debugLog(".onEnterKeyUp()")
 	    //this.didEdit()
 

@@ -91,6 +91,7 @@
 
 /* --------------------------- TextArea --------------------------- */
 
+/*
 .BMTextAreaFieldRowView {
     display: flex;
     position: relative;
@@ -99,12 +100,12 @@
 	margin: 0;
 	padding: 0;
 	
-    /*border-bottom: 1px solid #ddd;*/
     transition: background-color .3s ease-out;
 
 	overflow-x: hidden;
 	overflow-y: scroll;
 }
+*/
 
 .BMMonoTextAreaFieldValueView {
     display: flex;
