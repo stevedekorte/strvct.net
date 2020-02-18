@@ -330,6 +330,10 @@ window.BMKeyboard = class BMKeyboard extends Device {
     onKeyUpCapture (event) {
         const shouldPropogate = true
         const key = this.keyForEvent(event)
+        if (!key) {
+            console.log("]]]]]]]]]]] WARNING: missing key for event: ", event)
+            return
+        }
         key.onKeyUp(event)
 
         if (this.isDebugging()) {

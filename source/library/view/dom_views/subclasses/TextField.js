@@ -55,7 +55,7 @@ window.TextField = class TextField extends DomStyledView {
         //this.setDidTextInputNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextInput"))
         //this.setDidTextEditNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextEdit"))
 
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
         return this
     }
 
@@ -191,10 +191,12 @@ window.TextField = class TextField extends DomStyledView {
         if (oldValue !== newValue) {
             super.setString(newValue)
             
+            /*
             this.debugLog(" setString(")
             console.log("    old: '" + oldValue + "'")
             console.log("    new: '" + newValue + "'")
             console.log("---")
+            */
             
         }
         return this

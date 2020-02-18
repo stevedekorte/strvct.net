@@ -77,9 +77,11 @@ window.STRVCT = class STRVCT extends App {
     }
 
     isBrowserCompatible () {
+        /*
         if (WebBrowserWindow.shared().agentIsSafari()) {
             return false
         }
+        */
         return true
     }
     

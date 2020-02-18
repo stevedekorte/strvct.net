@@ -17,6 +17,7 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
     init () {
         //throw new Error("this class is meant to be used as singleton, for now")
         super.init()
+        this.showAgent()
         return this
     }
 
@@ -64,8 +65,11 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
 
     showAgent () {
         console.log("navigator.userAgent = ", navigator.userAgent);
-        console.log("agentIsSafari() = ", this.agentIsSafari())
-        console.log("agentIsChrome() = ", this.agentIsChrome())
+        console.log("   agentIsSafari: ", this.agentIsSafari())
+        console.log("   agentIsChrome: ", this.agentIsChrome())
+        console.log("  agentIsFirefox: ", this.agentIsFirefox())
+        console.log("      isOnMobile: ", this.isOnMobile())
+        console.log("   isTouchDevice: ", this.isTouchDevice())
     }
     
     mobileNames () {
@@ -80,13 +84,18 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
         return navigator.vendor.toLowerCase()
     }
 
+    agentIsFirefox () {
+        const agent = navigator.userAgent;
+        return agent.contains("Firefox")
+    }
+
     agentIsSafari () {
         const vendor = navigator.vendor;
         const agent = navigator.userAgent;
         
-        const isSafari = vendor && 
+        const isSafari = !Type.isNullOrUndefined(vendor) && 
                 vendor.contains("Apple") &&
-                agent &&
+                !Type.isNullOrUndefined(agent) &&
                 !agent.contains("CriOS") &&
                 !agent.contains("FxiOS");
         return isSafari

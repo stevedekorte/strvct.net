@@ -85,7 +85,11 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
 	
     commit () {
         this.setIsCommitted(true)
-        this.tx().commit()
+        if (!Type.isUndefined(this.tx().commit)) {
+            this.tx().commit()
+        } else {
+            console.log("WARNING: no IDBTransation.commit method found for this browser")
+        }
 	    return this
     }
 	

@@ -7,6 +7,17 @@
     "version": "0.2.0",
     "configurations": [
 
+        /*
+        {
+            "name": "firefox index.html",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "file": "${workspaceFolder}/index_incremental.html#%7B%22path%22:%5B%22STRVCT%22,%22Settings%22,%22Resources%22%5D%7D",
+            "webRoot": "${workspaceFolder}"
+        },
+        */
+
         {
             "type": "chrome",
             "request": "launch",
