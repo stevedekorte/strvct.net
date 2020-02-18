@@ -7,11 +7,12 @@
 */
 
 window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
-    initPrototype () {
+    initPrototype() {
         this.newSlot("path", "/")
         this.newSlot("pathSeparator", "/") // path should end with pathSeparator
         this.newSlot("db", null)
         this.newSlot("didRequestPersistence", false)
+        this.newSlot("isGranted", false)
     }
 
     init() {
@@ -20,116 +21,118 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         this.setIsDebugging(true)
     }
 
-    requestPersistenceIfNeeded () {
+    hasIndexedDB() {
+        return "indexedDB" in window;
+    }
+
+    requestPersistenceIfNeeded() {
         if (!IndexedDBFolder.didRequestPersistence()) {
             this.requestPersistence()
         }
         return this
     }
-	
-    requestPersistence () {
-        if (navigator.storage && navigator.storage.persist)
-		  navigator.storage.persist().then((granted) => {
-		    if (granted)
-		      alert("Storage will not be cleared except by explicit user action");
-		    else
-		      alert("Storage may be cleared by the UA under storage pressure.");
-		  });
-		
+
+    requestPersistence() {
+        if (navigator.storage && navigator.storage.persist) {
+            navigator.storage.persist().then((granted) => {
+                this.setIsGranted(granted)
+                if (granted) {
+                    alert("Storage will not be cleared except by explicit user action");
+                } else {
+                    alert("Storage may be cleared by the UA under storage pressure.");
+                }
+            })
+        }
+
         IndexedDBFolder.setDidRequestPersistence(true)
-		
+
         return this
     }
-    
-    storeName () {
+
+    storeName() {
         return this.path()
     }
-    
-    root () {
+
+    root() {
         if (!IndexedDBFolder._root) {
             IndexedDBFolder._root = IndexedDBFolder.clone()
             // IndexedDBFolder._root.rootShow()
         }
         return IndexedDBFolder._root
     }
-    
-    isOpen () {
-        return (this.db() !== null) 
+
+    isOpen() {
+        return (this.db() !== null)
     }
-    
-    asyncOpenIfNeeded (callback, errorCallback) {
-        if (this.db() === null) {
+
+    asyncOpenIfNeeded(callback, errorCallback) {
+        if (!this.isOpen()) {
             this.asyncOpen(callback, errorCallback)
         }
     }
 
-    hasIndexedDB() {
-        return "indexedDB" in window;
-    }
-    
-    
-    asyncOpen (callback, errorCallback) {
+    asyncOpen(successCallback, errorCallback) {
 
         if (!this.hasIndexedDB()) {
             errorCallback("IndexedDB unavailable on this client.")
             return
         }
 
-        this.debugLog("asyncOpen")
-        //console.log(this.type() + ".asyncOpen() --- opening path '" + this.path() + "'")
-		
+        this.debugLog(() => { "asyncOpen '" + this.path() + "'" })
+
         const request = window.indexedDB.open(this.path(), 2);
-        
-        request.onerror = (event) => {
-            let message = event.message
-            if (!message) {
-                message = "Unable to open IndexedDB. May not work on Brave Browser."
-                this.debugLog(" open db error: ", event);
-            }
-            //onsole.log(event)
-            /*
-            this.debugLog(" open db error: ", event);
-            this.debugLog(" open db error event.error: " + event.error);
-            this.debugLog(" open db error event.message: " + event.message);
-            this.debugLog(" open db error event class name: " + event.__proto__.constructor.name);
-            this.debugLog(" open db error event.type: " + event.type);
-            */
-            //console.log("errorCallback = ", errorCallback)
-            if (errorCallback) {
-                errorCallback(message)
-            }
-        };
-
-        //request.onerror({message: "test!"})
-        //return 
-         
-        request.onupgradeneeded = (event) => { 
-            this.debugLog(" onupgradeneeded - likely setting up local database for the first time")
-
-            const db = event.target.result;
-
-            db.onerror = function(event) {
-                console.log("db error ", event)
-            };
-
-            this.setDb(db)
-
-            const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);          
-            objectStore.createIndex("key", "key", { unique: true });
-        };
 
         request.onsuccess = (event) => {
-            //this.debugLog(" db open onsuccess ", event)
-            this.setDb(event.target.result)
-            if (callback) {
-                callback()
-            }
-        };
-        
+            this.onOpenSuccess(event, successCallback, errorCallback)
+        }
+
+        request.onupgradeneeded = (event) => {
+            this.onOpenUpgradeNeeded(event, successCallback, errorCallback)
+        }
+
+        request.onerror = (event) => {
+            this.onOpenError(event, successCallback, errorCallback)
+        }
+
+
         return this
     }
 
-    close () {
+    onOpenError (event, successCallback, errorCallback) {
+        let message = event.message
+        if (!message) {
+            message = "Unable to open IndexedDB.<br>May not work on Brave Browser."
+            this.debugLog(" open db error: ", event);
+        }
+
+        if (errorCallback) {
+            errorCallback(message)
+        }
+    }
+
+    onOpenUpgradeNeeded (event, successCallback, errorCallback) {
+        this.debugLog(" onupgradeneeded - likely setting up local database for the first time")
+
+        const db = event.target.result;
+
+        db.onerror = function (event) {
+            console.log("db error ", event)
+        };
+
+        this.setDb(db)
+
+        const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);
+        objectStore.createIndex("key", "key", { unique: true });
+    }
+
+    onOpenSuccess(event, successCallback, errorCallback) {
+        this.setDb(event.target.result)
+        if (successCallback) {
+            successCallback()
+        }
+    }
+
+    close() {
         if (this.isOpen()) {
             this.db().close()
             this.setIsOpen(false)
@@ -137,20 +140,20 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         }
         return this
     }
-    
+
     // paths
-    
-    folderAt (pathComponent) { 
-        assert(!pathComponent.contains(this.pathSeparator())) 
+
+    folderAt(pathComponent) {
+        assert(!pathComponent.contains(this.pathSeparator()))
         const db = IndexedDBFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator())
         return db
     }
-    
-    pathForKey (key) {
+
+    pathForKey(key) {
         //assert(!key.contains(this.pathSeparator()))
         return this.path() + key
     }
-            
+
     // writing
     /*
     asyncAt (key, callback) {
@@ -186,12 +189,12 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         return this
     }
     */
-    
-    asyncAsJson (callback) {   
+
+    asyncAsJson(callback) {
         //console.log("asyncAsJson start")
         const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
         const dict = {}
-    
+
         cursorRequest.onsuccess = (event) => {
             const cursor = event.target.result;
 
@@ -203,81 +206,80 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
                 callback(dict)
             }
         };
-        
+
         cursorRequest.onerror = (event) => {
             this.debugLog(" asyncAsJson cursorRequest.onerror ", event)
             throw newError("error requesting cursor")
         }
     }
-    
-    show () {
+
+    show() {
         this.asyncAsJson((json) => {
-	        this.debugLog(" " + this.path() + " = " + JSON.stringify(json, null, 2))
+            this.debugLog(" " + this.path() + " = " + JSON.stringify(json, null, 2))
         })
     }
-    
+
     // removing
-    
-    asyncClear (callback, errorCallback) {
+
+    asyncClear(callback, errorCallback) {
         const transaction = this.db().transaction([this.storeName()], "readwrite");
 
-        transaction.onerror = function(event) {
+        transaction.onerror = function (event) {
             if (errorCallback) {
                 console.log("db clear error")
                 errorCallback(event)
             }
         };
 
-        transaction.oncomplete = function(event) {
+        transaction.oncomplete = function (event) {
             console.log("db clear completed")
         }
 
         const objectStore = transaction.objectStore(this.storeName());
         const request = objectStore.clear();
 
-        request.onsuccess = function(event) {
+        request.onsuccess = function (event) {
             if (callback) {
                 console.log("db clear request success")
                 callback(event)
             }
         };
     }
-	
-    asyncDelete () {
+
+    asyncDelete() {
         const request = window.indexedDB.deleteDatabase(this.storeName())
-		
+
         request.onerror = (event) => {
-  			this.debugLog( "Error deleting '" + this.storeName() + "'");
+            this.debugLog("Error deleting '" + this.storeName() + "'");
         }
- 
+
         request.onsuccess = (event) => {
-            this.debugLog(" deleted successfully '" + this.storeName()  + "'");
-    	}
-		
+            this.debugLog(" deleted successfully '" + this.storeName() + "'");
+        }
+
         this.setDb(null)
         return this
     }
-    
+
     // test
-    
-    test () {
+
+    test() {
         const folder = IndexedDBFolder.clone()
         folder.asyncOpen(() => {
             folder.atPut("test", "x")
-            
+
             folder.asyncAsJson(function (dict) {
                 console.log("db dict = ", dict)
             })
-            
-            folder.asyncAt("test", function (value) {  
+
+            folder.asyncAt("test", function (value) {
                 console.log("read ", value)
             })
         })
-        
+
     }
-    
-    newTx () {
+
+    newTx() {
         return window.IndexedDBTx.clone().setDbFolder(this)
     }
 }.initThisClass()
-

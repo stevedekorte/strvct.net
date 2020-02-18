@@ -102,6 +102,7 @@ const classSlots = {
     },
 
     initThisClass: function () {
+        //console.log("Prototype " + this.type() + " initThisClass")
         if (this.prototype.hasOwnProperty("initPrototype")) {
             this.prototype.initPrototype.apply(this.prototype)
         }

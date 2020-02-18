@@ -67,6 +67,7 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     static initThisClass () {
+        //console.log(this.type() + " initThisClass")
         
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()

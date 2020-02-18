@@ -42,6 +42,7 @@ window.AtomicPersistentDictionary = class AtomicPersistentDictionary extends ide
         this.setIdb(IndexedDBFolder.clone())
         //this.setIsDebugging(true)
     }
+    
     // open
 
     assertAccessible () {
