@@ -5,5 +5,6 @@ ResourceLoader.pushRelativePaths([
 ])
 
 ResourceLoader.pushDoneCallback( () => {
+    console.log("STRVCT.shared().run() <<<<<<<<<<<<<<<<<<")
     STRVCT.shared().run()
 })

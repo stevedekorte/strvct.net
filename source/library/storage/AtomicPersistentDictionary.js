@@ -62,13 +62,13 @@ window.AtomicPersistentDictionary = class AtomicPersistentDictionary extends ide
         return this
     }
 
-    asyncOpen (callback) {
+    asyncOpen (callback, errorCallback) {
         this.idb().setPath(this.name())
-        this.idb().asyncOpenIfNeeded( () => this.onOpen(callback) )
+        this.idb().asyncOpenIfNeeded( () => this.onOpen(callback), errorCallback )
         return this
     }
 	
-    onOpen (callback) {
+    onOpen (callback, errorCallback) {
         // load the cache
         this.debugLog(" onOpen() - loading cache")
         

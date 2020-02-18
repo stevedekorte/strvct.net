@@ -17,7 +17,7 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
     init() {
         super.init()
         //this.requestPersistenceIfNeeded()
-        //this.setIsDebugging(true)
+        this.setIsDebugging(true)
     }
 
     requestPersistenceIfNeeded () {
@@ -57,21 +57,51 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         return (this.db() !== null) 
     }
     
-    asyncOpenIfNeeded (callback) {
+    asyncOpenIfNeeded (callback, errorCallback) {
         if (this.db() === null) {
-            this.asyncOpen(callback)
+            this.asyncOpen(callback, errorCallback)
         }
     }
+
+    hasIndexedDB() {
+        return "indexedDB" in window;
+    }
     
-    asyncOpen (callback) {
+    
+    asyncOpen (callback, errorCallback) {
+
+        if (!this.hasIndexedDB()) {
+            errorCallback("IndexedDB unavailable on this client.")
+            return
+        }
+
         this.debugLog("asyncOpen")
         //console.log(this.type() + ".asyncOpen() --- opening path '" + this.path() + "'")
 		
         const request = window.indexedDB.open(this.path(), 2);
         
         request.onerror = (event) => {
-            this.debugLog(" open db error ", event);
+            let message = event.message
+            if (!message) {
+                message = "Unable to open IndexedDB. May not work on Brave Browser."
+                this.debugLog(" open db error: ", event);
+            }
+            //onsole.log(event)
+            /*
+            this.debugLog(" open db error: ", event);
+            this.debugLog(" open db error event.error: " + event.error);
+            this.debugLog(" open db error event.message: " + event.message);
+            this.debugLog(" open db error event class name: " + event.__proto__.constructor.name);
+            this.debugLog(" open db error event.type: " + event.type);
+            */
+            //console.log("errorCallback = ", errorCallback)
+            if (errorCallback) {
+                errorCallback(message)
+            }
         };
+
+        //request.onerror({message: "test!"})
+        //return 
          
         request.onupgradeneeded = (event) => { 
             this.debugLog(" onupgradeneeded - likely setting up local database for the first time")

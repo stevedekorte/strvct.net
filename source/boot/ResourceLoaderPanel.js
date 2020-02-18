@@ -167,6 +167,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
     didImportUrl (url, max) {
         this.setCurrentItem(url.split("/").pop())
+        //console.log("didImportUrl " + url)
         this.incrementItemCount(max)
         return this
     }
@@ -208,9 +209,22 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
         }
     }
 
+    hasLocalStorage () {
+        try {
+            window.localStorage
+            return true
+        } catch (e) {
+            return false
+        }
+    }
+
     maxFileCount () {
         if (!this._maxFileCount) {
-            var s = localStorage.getItem(this.type() + ".maxFileCount");
+            let s = undefined 
+            if (this.hasLocalStorage()) {
+                s = localStorage.getItem(this.type() + ".maxFileCount");
+            }
+
             if (s) {
                 this._maxFileCount = Number(s)
             } else {
@@ -222,7 +236,9 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
     setMaxFileCount (count) {
         this._maxFileCount = count
-        localStorage.setItem(this.type() + ".maxFileCount", count);
+        if (this.hasLocalStorage()) {
+            localStorage.setItem(this.type() + ".maxFileCount", count);
+        }
         return this
     }
 

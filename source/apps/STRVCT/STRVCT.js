@@ -21,6 +21,7 @@ window.STRVCT = class STRVCT extends App {
 
     init () {
         super.init()
+        console.log(this.type() + " init <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         this.setName("STRVCTapp")
         this.setVersion([0, 0, 0, 0])
         return this
@@ -86,6 +87,7 @@ window.STRVCT = class STRVCT extends App {
     }
     
     setupBrowser () {	
+        console.log("App setupBrowser")
         this.setBrowser(BrowserView.clone())
     
         this.browser().hideAndFadeIn()

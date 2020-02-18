@@ -114,15 +114,16 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         return this
     }
 
-    asyncOpen (callback) {
+    asyncOpen (callback, errorCallback) {
         this.recordsDict().setName(this.name())
-        this.recordsDict().asyncOpen(() => {
+        const successCallback = () => {
             this.onRecordsDictOpen()
             if (callback) {
                 callback()
             }
-            //this.scheduleStore()
-        })
+        }
+
+        this.recordsDict().asyncOpen(successCallback, errorCallback)
         return this
     }
 

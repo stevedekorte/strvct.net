@@ -49,7 +49,14 @@ window.App = class App extends BMNode {
         }
 
         this.nodeStoreDidOpenObs().watch()
-        this.defaultStore().setName(this.name()).asyncOpen() 
+        this.defaultStore().setName(this.name())
+
+        const errorCallback = (errorMessage) => {
+            console.log("App open db error: ", errorMessage)
+            window.ResourceLoaderPanel.setError(errorMessage)
+            return this
+        }
+        this.defaultStore().asyncOpen(null, errorCallback) 
     }
 
     showBrowserCompatibilityPanel () {
@@ -65,6 +72,7 @@ window.App = class App extends BMNode {
     // 2. setup 
 
     nodeStoreDidOpen (aNote) {
+        console.log("App nodeStoreDidOpen <<<<<<<<<<<<<<<<<<")
         this.nodeStoreDidOpenObs().stopWatching()
         this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
         this.setup()

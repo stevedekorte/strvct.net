@@ -471,7 +471,11 @@ window.ProtoClass = class ProtoClass extends Object {
             if (Type.isFunction(s)) {
                 s = s()
             }
-            console.log(" " + s)
+            if (arguments.length == 1) {
+                console.log(" " + s)
+            } else {
+                console.log(" ", arguments[0], arguments[1])
+            }
         }
         return this
     }
