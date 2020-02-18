@@ -62,16 +62,21 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         super.updateSubviews()
         
         //this.fillBottomOfColumnIfAvailable()
-        this.setFlexGrow(100)
+        //this.setFlexGrow(100)
         //this.setMaxHeight(this.columnGroup().clientHeight() + "px")
 
         //this.setMaxHeight("400px")
 
+        /*
         if (this.node().isMono()) {
             this.valueView().setDivClassName("BMMonoTextAreaFieldValueView NodeView DomView")
         } else {
             this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
         }
+        */
+
+        this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
+
 		
         return this
     }
