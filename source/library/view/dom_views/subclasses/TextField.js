@@ -40,7 +40,9 @@ window.TextField = class TextField extends DomStyledView {
         this.setAlignItems("flex-start")
         this.turnOffUserSelect()
         //this.setWhiteSpace("nowrap")
-        this.setWhiteSpace("pre-wrap")
+        //this.setWhiteSpace("pre-wrap")
+        this.setWhiteSpace("pre")
+        this.setWordWrap("normal")
         this.setOverflow("hidden")
         this.setTextOverflow("clip")
         this.setSpellCheck(false)
@@ -58,6 +60,16 @@ window.TextField = class TextField extends DomStyledView {
 
         //this.setIsDebugging(true)
         return this
+    }
+
+    onFocusIn () {
+        super.onFocusIn()
+        GestureManager.shared().setIsPaused(true)
+    }
+
+    onFocusOut () {
+        super.onFocusOut()
+        GestureManager.shared().setIsPaused(false)
     }
 
     // editing control
@@ -238,7 +250,7 @@ window.TextField = class TextField extends DomStyledView {
 
     onAlternateEnterKeyUp (event) {
         console.log(this.typeId() + " onAlternateEnterKeyDown")
-        this.insertEnterAtCursor()
+        //this.insertEnterAtCursor()
         //this.afterEnter()
     }
 
@@ -246,6 +258,19 @@ window.TextField = class TextField extends DomStyledView {
         if (this.isFocused()) {
             this.insertTextAtCursor("\n")
         }   
+    }
+
+    onKeyDown (event) {
+        console.log("event.keyCode = ", event.keyCode)
+        
+        if (event.keyCode == 13) {
+            // insert 2 br tags (if only one br tag is inserted the cursor won't go to the second line)
+            document.execCommand('insertHTML', false, '\n\n');
+            // prevent the default behaviour of return key pressed
+            return false;
+        }
+        
+        return true
     }
 
     onEnterKeyUp (event) {

@@ -2,19 +2,24 @@
 
 /*
 
-    BMTextAreaField
+    BMUrlField
     
 */
 
-window.BMTextAreaField = class BMTextAreaField extends BMField {
+window.BMUrlField = class BMUrlField extends BMField {
     
     static canOpenMimeType (mimeType) {
-        return mimeType.beginsWith("text/plain")
+        return mimeType.beginsWith("text/uri-list")
     }
 
     static fromDataChunk (dataChunk) {
         const newNode = this.clone()
-        newNode.setValue(dataChunk.decodedData())
+        const uris = dataChunk.decodedData().split("\n")
+        const uri = uris.first()
+        
+        newNode.setKey("Link")
+        newNode.setValue(uri)
+        newNode.setKeyIsEditable(true)
         newNode.setKeyIsEditable(true)
         newNode.setValueIsEditable(true)
         newNode.setCanDelete(true)
@@ -22,12 +27,16 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
     }
 
     initPrototype () {
-        this.newSlot("isMono", false)
+
     }
 
     init () {
         super.init()
         this.setKeyIsVisible(false)
+    }
+
+    nodeUrlLink () {
+        return this.value()
     }
     
 }.initThisClass()

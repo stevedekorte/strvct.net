@@ -9,6 +9,7 @@ ResourceLoader.pushRelativePaths([
     "BMStampField.js",
     "BMStringField.js",
     "BMTextAreaField.js",
+    "BMUrlField.js",
     "options/_imports.js",
     "date/_imports.js",
     "time/_imports.js",

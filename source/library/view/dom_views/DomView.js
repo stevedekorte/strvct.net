@@ -2569,6 +2569,48 @@ window.DomView = class DomView extends ProtoClass {
                 const file = dataTransfer.files[i]
                 this.onBrowserDropFile(file)
             }
+        } else if (dataTransfer.items) {
+            const data = dataTransfer.items
+
+            for (var i = 0; i < data.length; i++) {
+                const dataTransferItem = data[i]
+                const mimeType = dataTransferItem.type
+                if (mimeType && mimeType === "text/uri-list") {
+                    dataTransferItem.getAsString((s) => {
+                        const chunk = BrowserDragData.clone()
+                        chunk.setMimeType(mimeType)
+                        chunk.setDecodedData(s)
+                        console.log("mimeType:", mimeType)
+                        console.log("    data:", s)
+                        this.onBrowserDropChunk(chunk)
+
+                        /*
+                        text/plain
+                        text/html
+                        text/uri-list
+                        */
+                    })
+                }
+
+                /*
+                if ((data[i].kind == 'string') && (data[i].type.match('^text/plain'))) {
+                  // This item is the target node
+                  data[i].getAsString(function (s){
+                    ev.target.appendChild(document.getElementById(s)); 
+                  });
+                } else if ((data[i].kind == 'string') && (data[i].type.match('^text/html'))) {
+                  // Drag data item is HTML
+                  data[i].getAsString(function (s){
+                    console.log("... Drop: HTML = " + s);
+                  });
+                } else if ((data[i].kind == 'string') && (data[i].type.match('^text/uri-list'))) {
+                  // Drag data item is URI
+                  data[i].getAsString(function (s){
+                    console.log("... Drop: URI = " + s);
+                  });
+                }
+                */
+            }
         }
     }
 
@@ -3148,7 +3190,15 @@ window.DomView = class DomView extends ProtoClass {
 
     // --------------------------------------------------------
 
-    onFocus () {
+    onFocusIn (event) {
+        return true
+    }
+
+    onFocusOut (event) {
+        return true
+    }
+
+    onFocus (event) {
         console.log(this.typeId() + " onFocus")
         this.willAcceptFirstResponder();
         // subclasses can override 
@@ -3156,7 +3206,7 @@ window.DomView = class DomView extends ProtoClass {
         return true
     }
 
-    onBlur () {
+    onBlur (event) {
         console.log(this.typeId() + " onBlur")
         this.didReleaseFirstResponder();
         // subclasses can override 

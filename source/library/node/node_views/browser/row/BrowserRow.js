@@ -471,7 +471,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
             if (node) {
                 node.onTapOfNode()
             }
-            
+
+            if (node.nodeUrlLink) {
+                const url = node.nodeUrlLink()
+                window.open(url, "_blank")
+            }
         }
     }
 

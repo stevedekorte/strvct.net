@@ -77,7 +77,6 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
 
         this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
 
-		
         return this
     }
 

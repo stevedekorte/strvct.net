@@ -6,6 +6,14 @@
     We typically only want one gesture to be active globally.
     GestureManager helps to coordinate which gesture has control.
 
+    To pause all gestures:
+    
+        GestureManager.shared().setIsPaused(true)
+
+    To unpause:
+
+        GestureManager.shared().setIsPaused(true)
+
 */
 
 window.GestureManager = class GestureManager extends ProtoClass {
@@ -13,6 +21,7 @@ window.GestureManager = class GestureManager extends ProtoClass {
     initPrototype () {
         this.newSlot("activeGesture", null)
         this.newSlot("begunGestures", null)
+        this.newSlot("isPaused", false) // used to pause gestures while editing text fields
     }
 
     init () {
@@ -25,7 +34,29 @@ window.GestureManager = class GestureManager extends ProtoClass {
         return this.activeGesture() && this.activeGesture().isActive()
     }
 
-    requestActiveGesture (aGesture) {
+    setIsPaused (aBool) {
+        if (this._isPaused !== aBool) {
+            this._isPaused = aBool
+            if (aBool) {
+                this.cancelAllGestures()
+            }
+        }
+        return this
+    }
+
+    cancelAllGestures () {
+        this.cancelAllBegunGestures()
+        const ag = this.activeGesture()
+        if (ag) {
+            ag.cancel()
+        }
+    }
+
+    requestActiveGesture (aGesture) { // sent by gestures themselves
+        if (this.isPaused()) {
+            return false
+        }
+
         assert(aGesture)
         //this.releaseActiveGestureIfInactive()
         if(aGesture === this.activeGesture()) {

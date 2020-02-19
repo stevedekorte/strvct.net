@@ -1,6 +1,8 @@
 
 TODO:
 
+	- avoid BrowserRow justTap when clicking on Textfields within BrowserRow
+
 	- bug: d key to drag not working on Safari
 
 	- need to disable row (or all?) gestures while textfield is editing to prevent interfering with click-drag selection
