@@ -22,6 +22,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
     initPrototype () {
         this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
         this.newSlot("keyboardListener", null)
+        this.newSlot("allModifierKeys", null)
     }
 
     init () {
@@ -29,6 +30,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         this.setupCodeToKeys()
         this.startListening()
         this.setIsDebugging(true)
+        this.setAllModifierKeys(this.allModifierNames().map(kn => this.keyForName(kn)))
         return this
     }
 

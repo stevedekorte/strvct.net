@@ -472,9 +472,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
                 node.onTapOfNode()
             }
 
-            if (node.nodeUrlLink) {
-                const url = node.nodeUrlLink()
-                window.open(url, "_blank")
+            if (this.isFocused() && node.nodeUrlLink) {
+                if (!BMKeyboard.shared().hasKeysDown()) {
+                    const url = node.nodeUrlLink()
+                    window.open(url, "_blank")
+                }
             }
         }
     }

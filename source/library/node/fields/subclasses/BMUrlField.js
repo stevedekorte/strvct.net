@@ -38,5 +38,23 @@ window.BMUrlField = class BMUrlField extends BMField {
     nodeUrlLink () {
         return this.value()
     }
+
+    validate () {
+        const isValid = this.valueIsValidUrl()
+		
+        if (!isValid) {
+            this.setValueError("Invalid URL")
+        } else {
+            this.setValueError(null)
+        } 
+		
+        return isValid
+    }
+
+    valueIsValidUrl () {
+        const url = this.value()
+        const result = url.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
+        return result !== null
+    }
     
 }.initThisClass()
