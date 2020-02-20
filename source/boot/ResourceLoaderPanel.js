@@ -12,11 +12,11 @@
 
     Automatically sets up in the document when loading this file via:
 
-        window.ResourceLoaderPanel.startWhenReady()
+        window.ResourceLoaderPanel.shared().startWhenReady()
 
     When all loading is finished, external code should call:
 
-    		window.ResourceLoaderPanel.stop()  
+    		window.ResourceLoaderPanel.shared().stop()  
 
     Notes:
     This code is a bit ugly because it doesn't have any library dependencies 
@@ -25,7 +25,18 @@
 */
 
 
-class ResourceLoaderPanelClass {
+window.ResourceLoaderPanel = class ResourceLoaderPanel {
+
+    static initThisClass () {
+        return this
+    }
+
+    static shared () {
+        if (!this._shared) {
+            this._shared = ResourceLoaderPanel.clone()
+        }
+        return this._shared
+    }
 
     type() {
         return this.constructor.name
@@ -105,7 +116,7 @@ class ResourceLoaderPanelClass {
 
     setupHtml () {
         //console.log("ResourceLoaderPanel.setupHtml()")
-        document.body.innerHTML = "<div id='ProgressMain' style='position: absolute; width:100%; height: 100%; background-color: black; z-index: 100000; font-family: AppRegular, Sans-Serif; letter-spacing: 3px; font-size:13px;'> \
+        document.body.innerHTML = "<div id='ProgressMain' style='opacity: 0; transition: all 0.3s ease-out; position: absolute; width:100%; height: 100%; background-color: black; z-index: 100000; font-family: AppRegular, Sans-Serif; letter-spacing: 3px; font-size:13px;'> \
 <div id='ProgressMiddle' \
 style='position: relative; top: 50%; transform: translateY(-50%); height: auto; width: 100%; text-align: center;'> \
 <div>\
@@ -133,6 +144,8 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
         if (window.ResourceLoaderIsEmbedded) {
             this.hide()
         }
+
+        setTimeout(() => { this.mainElement().style.opacity = 1 } ,0)
 
         return this
     }
@@ -275,7 +288,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
     	        item.style.opacity = 1
 	        }
     	//}, 0)
-*/
+        */
         return this
     }
 
@@ -302,14 +315,24 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
         this.unregisterForWindowError()
 
         if (!this.error()) {
-            this.removeMainElement()
-            this.unregisterForImports()
-            delete window[this.type()]
+            this.fadeOut()
         }
         return this
     }
-}
 
-window.ResourceLoaderPanel = ResourceLoaderPanelClass.clone()
-window.ResourceLoaderPanel.startWhenReady()
+    fadeOut () {
+        const e = this.mainElement()
+        e.style.opacity = 0
+        setTimeout(() => { this.close() }, 300)
+    }
+
+    close () {
+        this.removeMainElement()
+        this.unregisterForImports()
+        delete window[this.type()]
+    }
+
+}.initThisClass()
+
+window.ResourceLoaderPanel.shared().startWhenReady()
 

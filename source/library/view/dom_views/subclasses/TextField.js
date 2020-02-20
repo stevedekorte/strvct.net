@@ -23,6 +23,7 @@ window.TextField = class TextField extends DomStyledView {
         this.newSlot("didTextInputNote", null)
         this.newSlot("didTextEditNote", null)
         this.newSlot("doesInput", false)
+        this.newSlot("allowsSetStringWhileFocused", false)
 
         // has to start false for proper state setup
         this.newSlot("usesDoubleTapToEdit", false) 
@@ -64,11 +65,13 @@ window.TextField = class TextField extends DomStyledView {
 
     onFocusIn () {
         super.onFocusIn()
+        //console.log(this.typeId() + " '" + this.string() + "' onFocusIn")
         GestureManager.shared().setIsPaused(true)
     }
 
     onFocusOut () {
         super.onFocusOut()
+        //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
         GestureManager.shared().setIsPaused(false)
     }
 
@@ -202,7 +205,17 @@ window.TextField = class TextField extends DomStyledView {
         const oldValue = this.string()
         //let newValue = this.visibleValue()
         if (oldValue !== newValue) {
-            super.setString(newValue)
+
+            if (this.isFocused()) {
+                if (this.allowsSetStringWhileFocused()) {
+                    super.setString(newValue)
+                } 
+                //throw new Error("attempt to call TextField.setString while it's focused")
+
+            } else {
+                //this.isFocused()
+                super.setString(newValue)
+            }
             
             /*
             this.debugLog(" setString(")

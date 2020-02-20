@@ -119,7 +119,7 @@ window.PeerApp = class PeerApp extends App {
         // ResourceLoaderPanel can't use notification as it's a boot object
         // what if we added a one-shot observation for it, or would that be more confusing?
 
-        window.ResourceLoaderPanel.stop() 
+        window.ResourceLoaderPanel.shared().stop() 
     }
     
 }.initThisClass()

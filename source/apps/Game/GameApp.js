@@ -117,7 +117,7 @@ window.GameApp = class GameApp extends App {
 
     appDidInit () {
         super.appDidInit()
-        window.ResourceLoaderPanel.stop() 
+        window.ResourceLoaderPanel.shared().stop() 
     }
 }.initThisClass()
 

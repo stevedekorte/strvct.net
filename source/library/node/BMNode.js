@@ -213,6 +213,10 @@ window.BMNode = class BMNode extends ProtoClass {
     setupInspectorFromSlots () {
         const slots = this.thisPrototype().allSlots()
         slots.ownForEachKV((name, slot) => {
+            console.log("setup inspector slot: " + name)
+            if (name === "protocol") {
+                console.log("---")
+            }
             const field = slot.newInspectorField()
             if (field) {
                 field.setTarget(this)

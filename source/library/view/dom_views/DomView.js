@@ -2292,7 +2292,7 @@ window.DomView = class DomView extends ProtoClass {
     setInnerHTML (v) {
         const oldValue = this.element().innerHTML
 
-        if (v == null) {
+        if (v === null) {
             v = ""
         }
 
@@ -2306,12 +2306,13 @@ window.DomView = class DomView extends ProtoClass {
 
         if (isFocused) {
             this.blur()
-        }
-
-        this.element().innerHTML = v
-
-        if (isFocused) {
+            const savedSelection = this.saveSelection()
+            this.element().innerHTML = v
+            savedSelection.collapse()
+            this.restoreSelection(savedSelection)
             this.focus()
+        } else {
+            this.element().innerHTML = v
         }
 
         return this
@@ -3199,7 +3200,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onFocus (event) {
-        console.log(this.typeId() + " onFocus")
+        //console.log(this.typeId() + " onFocus")
         this.willAcceptFirstResponder();
         // subclasses can override 
         //this.debugLog(" onFocus")
@@ -3207,7 +3208,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBlur (event) {
-        console.log(this.typeId() + " onBlur")
+        //console.log(this.typeId() + " onBlur")
         this.didReleaseFirstResponder();
         // subclasses can override 
         //this.debugLog(" onBlur")

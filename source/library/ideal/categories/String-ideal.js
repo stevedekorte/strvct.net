@@ -197,6 +197,21 @@ Object.defineSlots(String.prototype, {
         return this.stringCount("\n");
     },
 
+    splitArray: function (splitters) {
+        let s = this
+        const results = []
+        splitters.forEach( (splitter) => {
+            if (s.contains(splitter)) {
+                const before = s.before(splitter)
+                s = s.after(splitter)
+                results.push(before)
+            } else {
+                results.push(null)
+            }
+        })
+        return results
+    },
+
     // --- paths ---
 
     pathComponents: function () {

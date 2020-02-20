@@ -107,6 +107,7 @@ window.ideal.Slot = class Slot {
          // a string value, eg: "Boolean", "String", "Number" - can be used to create inspector
          this.simpleNewSlot("slotType", null)
          this.simpleNewSlot("canInspect", false)
+         this.simpleNewSlot("canEditInspection", true)
          this.simpleNewSlot("label", null) // visible label on inspector
          this.simpleNewSlot("validValues", null) // used for options field and validation
          this.simpleNewSlot("validValuesClosure", null) 
@@ -139,7 +140,7 @@ window.ideal.Slot = class Slot {
                 field.setKey(this.name())
                 field.setKeyIsEditable(false)
                 field.setValueMethod(this.name())
-                field.setValueIsEditable(true)
+                field.setValueIsEditable(this.canEditInspection())
                 field.setCanDelete(false)
 
                 if (this.label()) {
@@ -481,6 +482,10 @@ window.ideal.Slot = class Slot {
         return "set" + this.name().capitalized()
     }
 
+    directSetterName () {
+        return "directSet" + this.name().capitalized()
+    }
+
     makeDirectSetter () {
         //this.owner()[this.setterName()] = this.directSetter()
         Object.defineSlot(this.owner(), this.setterName(), this.directSetter())
@@ -504,6 +509,7 @@ window.ideal.Slot = class Slot {
     makeHookedSetter () {
         //this.owner()[this.setterName()] = this.hookedSetter()
         Object.defineSlot(this.owner(), this.setterName(), this.hookedSetter())
+        Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter())
         return this
     }
 

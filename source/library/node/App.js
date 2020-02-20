@@ -43,7 +43,7 @@ window.App = class App extends BMNode {
 
     run () {
         if (!this.isBrowserCompatible()) {
-            window.ResourceLoaderPanel.setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
+            window.ResourceLoaderPanel.shared().setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
             //this.showBrowserCompatibilityPanel()
             return this
         }
@@ -53,7 +53,7 @@ window.App = class App extends BMNode {
 
         const errorCallback = (errorMessage) => {
             console.log("App open db error: ", errorMessage)
-            window.ResourceLoaderPanel.setError(errorMessage)
+            window.ResourceLoaderPanel.shared().setError(errorMessage)
             return this
         }
         this.defaultStore().asyncOpen(null, errorCallback) 

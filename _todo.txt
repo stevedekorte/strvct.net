@@ -1,6 +1,12 @@
 
 TODO:
 
+	- if drop fails, return to source path if possible
+	
+	note icon not working on fields
+
+	- IMPORTANT: support subtitle under key on FieldView
+
 	- avoid BrowserRow justTap when clicking on Textfields within BrowserRow
 
 	- bug: d key to drag not working on Safari

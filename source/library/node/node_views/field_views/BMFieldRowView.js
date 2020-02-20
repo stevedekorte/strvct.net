@@ -296,11 +296,12 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             //valueView.setColor(this.uneditableColor())
             valueView.setColor(this.styles().disabled().color())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
-            valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
+            valueView.setBorder("0px")
         } else {
             //valueView.setColor(this.editableColor())
             valueView.setColor(this.currentStyle().color())
             //valueView.setBorder("1px solid #444")
+            valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
         }
 		
         // change color if value is invalid

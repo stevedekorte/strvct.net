@@ -463,7 +463,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
     }
 
     hasKeysDown () {
-        return this.currentlyUpKeys().length !== 0
+        return this.currentlyDownKeys().length !== 0
     }
 
     downKeyNames () {
