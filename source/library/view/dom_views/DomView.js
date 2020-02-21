@@ -2576,7 +2576,11 @@ window.DomView = class DomView extends ProtoClass {
             for (var i = 0; i < data.length; i++) {
                 const dataTransferItem = data[i]
                 const mimeType = dataTransferItem.type
-                if (mimeType && mimeType === "text/uri-list") {
+
+                // Example MIME types: 
+                // text/plain, text/html, text/uri-list
+
+                if (mimeType) {
                     dataTransferItem.getAsString((s) => {
                         const chunk = BrowserDragData.clone()
                         chunk.setMimeType(mimeType)
@@ -2584,33 +2588,8 @@ window.DomView = class DomView extends ProtoClass {
                         console.log("mimeType:", mimeType)
                         console.log("    data:", s)
                         this.onBrowserDropChunk(chunk)
-
-                        /*
-                        text/plain
-                        text/html
-                        text/uri-list
-                        */
                     })
                 }
-
-                /*
-                if ((data[i].kind == 'string') && (data[i].type.match('^text/plain'))) {
-                  // This item is the target node
-                  data[i].getAsString(function (s){
-                    ev.target.appendChild(document.getElementById(s)); 
-                  });
-                } else if ((data[i].kind == 'string') && (data[i].type.match('^text/html'))) {
-                  // Drag data item is HTML
-                  data[i].getAsString(function (s){
-                    console.log("... Drop: HTML = " + s);
-                  });
-                } else if ((data[i].kind == 'string') && (data[i].type.match('^text/uri-list'))) {
-                  // Drag data item is URI
-                  data[i].getAsString(function (s){
-                    console.log("... Drop: URI = " + s);
-                  });
-                }
-                */
             }
         }
     }

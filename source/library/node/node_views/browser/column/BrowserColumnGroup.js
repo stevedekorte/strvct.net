@@ -346,9 +346,10 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
 
     targetWidth () {
         let w = 0
-		
-        if (this.node()) {
-	        w = this.node().nodeMinWidth()
+        const node = this.node()
+        
+        if (node) {
+	        w = node.nodeMinWidth()
             if (w === null) {
                 return 0
             }
@@ -363,9 +364,11 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
             */
             
 
-            if (this.browser() && this.browser().isSingleColumn()) {
-                w = this.browser().browserWidth()
-                assert (!Type.isNull(w)) 
+            if (this.browser()) {
+                if (this.browser().isSingleColumn()) {
+                    w = this.browser().browserWidth()
+                    assert (!Type.isNull(w)) 
+                } 
             }
         }
 			
@@ -373,7 +376,12 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 
     fitToTargetWidth () {
-        this.setMinAndMaxWidth(this.targetWidth() + 50)
+        if (this.node() && this.node().nodeFillsRemainingWidth()) {
+            this.setMaxWidth("none")
+            //this.setFlexGrow(1)
+        } else {
+            this.setMinAndMaxWidth(this.targetWidth() + 50)
+        }
         return this
     }
 

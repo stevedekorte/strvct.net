@@ -1063,8 +1063,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             if (newRow.clientHeight() < minHeight) {
                 this.removeRow(newRow)
             } else {
-                newRow.contentView().setTransition("all 0.15s")
-                newRow.setTransition("all 0.3s")
+                //newRow.contentView().setTransition("all 0.15s, height 0s")
+                //newRow.setTransition("all 0.3s, height 0s")
                 setTimeout(() => { 
                     newRow.contentView().setTop(0)
                     newRow.setMinAndMaxHeight(minHeight) 

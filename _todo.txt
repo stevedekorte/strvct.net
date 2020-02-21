@@ -1,6 +1,8 @@
 
 TODO:
 
+	- feature: way to split or merge two TextArea nodes
+	
 	- if drop fails, return to source path if possible
 	
 	note icon not working on fields

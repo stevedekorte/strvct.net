@@ -56,7 +56,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     static fromDataChunk (dataChunk) {
-
+        return null
     }
 
     // ----
@@ -122,6 +122,13 @@ window.BMNode = class BMNode extends ProtoClass {
         // column settings - TODO: auto adjust to fit?
 
         this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue")
+        
+        let slot = this.newSlot("nodeFillsRemainingWidth", false).setDuplicateOp("copyValue")
+        slot.setSlotType("Boolean")
+        slot.setLabel("fills remaining width")
+        slot.setCanEditInspection(false)
+        slot.setCanInspect(false)
+
         this.newSlot("nodeUsesColumnBackgroundColor", true).setDuplicateOp("copyValue")
         this.newSlot("canDelete", false).setDuplicateOp("copyValue")
         this.newSlot("nodeCanEditRowHeight", false).setDuplicateOp("copyValue")

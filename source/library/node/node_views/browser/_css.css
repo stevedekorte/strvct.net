@@ -42,10 +42,10 @@
     display: flex;
 	flex-grow: 1;
     position: relative;
-    background-color: #333;
+    background-color: rgb(90, 26, 26);
     color: rgba(255, 255, 255, 0.5);
     text-align: center;
-    transition: all .3s ease, width 0s, max-width 0.3s, min-width 0.3s;
+    transition: all 0s ease, width 0s, max-width 0.0s, min-width 0.0s;
     overflow: hidden;
     user-select: none;
 }
@@ -217,7 +217,7 @@
     /*max-height: 60px;*/
 
     color: rbga(255, 255, 255, 0.5);
-    transition: background-color .3s ease-out;
+    transition: all 0s, background-color .3s ease-out;
 
 	overflow: hidden;
     white-space: nowrap;
