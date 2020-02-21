@@ -8,6 +8,10 @@
 
 window.BMTextAreaField = class BMTextAreaField extends BMField {
     
+    static availableAsPrimitive() {
+        return true
+    }
+
     static canOpenMimeType (mimeType) {
         return mimeType.beginsWith("text/plain")
     }

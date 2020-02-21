@@ -138,9 +138,12 @@
    	unicode-bidi: embed;
     white-space: pre-wrap;
 
-    color: black;
     font-weight: normal;
     text-align: left;
+    /*
+    font-family: monospace;
+    font-size: 85%;
+    */
 
 	/*border: 1px red dashed;*/
 }

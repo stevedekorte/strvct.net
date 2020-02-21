@@ -10,6 +10,10 @@
         
 window.BMDateNode = class BMDateNode extends BMSummaryNode {
     
+    static availableAsPrimitive() {
+        return true
+    }
+    
     initPrototype () {
         this.protoAddStoredSlot("title")
         

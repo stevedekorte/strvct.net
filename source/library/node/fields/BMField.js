@@ -63,6 +63,30 @@ window.BMField = class BMField extends BMSummaryNode {
         return this
     }
 
+    static nodeCreate () {
+        const newNode = super.nodeCreate()
+
+        if (this._didCreate) {
+            throw new Error("attempt to call create twice!")
+            return 
+        } else {
+            this._didCreate = true
+        }
+
+        if (newNode.setKeyIsEditable) {
+            newNode.setKeyIsEditable(true)
+            newNode.setValueIsEditable(true)
+        }
+
+        if (newNode.setIsEditable) {
+            newNode.setIsEditable(true)
+        }
+
+        newNode.setNodeCanInspect(true)
+        newNode.setNodeCanEditTitle(true)
+        return newNode
+    }
+
     /*
     target () {
         assert(!Type.isNull(this._target)) 

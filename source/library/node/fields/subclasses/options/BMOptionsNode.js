@@ -8,6 +8,10 @@
 
 window.BMOptionsNode = class BMOptionsNode extends BMField {
     
+    static availableAsPrimitive() {
+        return true
+    }
+
     initPrototype () {
         const picksSlot = this.newSlot("allowsMultiplePicks", false)
         picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")

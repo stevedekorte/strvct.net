@@ -89,15 +89,15 @@ window.ideal.Slot = class Slot {
         this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
         this.simpleNewSlot("initProto", null) // clone this proto on init and set to initial value
         this.simpleNewSlot("valueClass", null) // declare the value should be a kind of valueClass
-        //this.simpleNewSlot("shouldShallowCopy", false)
-        //this.simpleNewSlot("shouldDeepCopy", false)
-        //this.simpleNewSlot("initInstance", null) // clone this instance on init and set to initial value
         this.simpleNewSlot("field", null)
 
         // slot hook names
         this.simpleNewSlot("willGetSlotName", null)
         //this.simpleNewSlot("willUpdateSlotName", null)
         //this.simpleNewSlot("didUpdateSlotName", null)
+
+        //this.simpleNewSlot("initOp", "copyValue")
+        //this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"])) 
 
         this.simpleNewSlot("duplicateOp", "nop")
         this.simpleNewSlot("validDuplicateOps", new Set(["nop", "copyValue", "duplicate"])) 
@@ -607,16 +607,51 @@ window.ideal.Slot = class Slot {
     // -----------------------------------------------------
 
     onInstanceInitSlot (anInstance) {
+
+        let defaultValue = anInstance[this.privateName()]
+        // to ensure privateName isn't enumerable
+        Object.defineSlot(anInstance, this.privateName(), defaultValue)
+
+        
+        this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"])) 
+
         /*
-        if (this.initInstance()) {
-            const obj = this.initInstance()
-            const newObj = obj.prototype.clone().copyFrom(obj)
-            this.onInstanceSetValue(anInstance, newObj)
-        } else 
+        const op = this.initOp()
+        assert(this.validInitOps().contains(op)) // TODO: put on setter instead
+
+        const opMethods = {
+            "null" : () => { 
+                this.onInstanceSetValue(anInstance, null)
+            },
+
+            "lazy" : () => { 
+                const obj = this.initProto().clone()
+                anInstance[this.privateName()] = obj
+            },
+
+            "proto" : () => { 
+                const obj = this.initProto().clone()
+                this.onInstanceSetValue(anInstance, obj)
+            },
+
+            "nop" : () => { 
+            },
+
+            "copyValue" : () => { 
+                this.onInstanceSetValue(anInstance, defaultValue)
+            },
+    
+            "duplicate" : () => { 
+                if (defaultValue) {
+                    const obj = defaultValue.duplicate()
+                    this.onInstanceSetValue(anInstance, obj)
+                }
+            },
+        }
+
+        opMethods[op].apply(this)
         */
 
-        // to ensure privateName isn't enumerable
-        Object.defineSlot(anInstance, this.privateName(), anInstance[this.privateName()])
 
         if (this.isLazy()) {
             const obj = this.initProto().clone()

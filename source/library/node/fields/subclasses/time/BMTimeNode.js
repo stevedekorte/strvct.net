@@ -9,7 +9,11 @@
 */
         
 window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
-    
+      
+    static availableAsPrimitive() {
+        return true
+    }
+
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 

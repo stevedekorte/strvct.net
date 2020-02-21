@@ -8,6 +8,10 @@
 
 window.BMUrlField = class BMUrlField extends BMField {
     
+    static availableAsPrimitive() {
+        return true
+    }
+
     static canOpenMimeType (mimeType) {
         return mimeType.beginsWith("text/uri-list")
     }

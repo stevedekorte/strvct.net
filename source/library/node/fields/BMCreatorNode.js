@@ -12,6 +12,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
+        this.newSlot("typeChoices", []).setInitProto(Array)
     }
 
     init () {
@@ -34,7 +35,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
             "BMActionNode", 
             "BMBooleanField", 
             "BMDateNode",
-            //"BMIdentityField", 
             "BMImageWellField", 
             "BMJsonDictionaryNode",
             "BMJsonArrayNode",
@@ -50,92 +50,53 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         ]
     }
 
-    visibleNameForTypeName (name) {
-        const aClass = window[name]
-        return aClass.visibleClassName()
-        /*
-        name = name.sansPrefix("BM")
-        name = name.sansSuffix("Field")
-        name = name.sansSuffix("Node")
-        return name
-        */
+    primitiveClasses () {
+        let classes = BMNode.allSubclasses()
+        return classes.filter(aClass => aClass.availableAsPrimitive())
+    }
+
+    setupSubnodes () {
+        if (this.subnodes().length == 0) {
+            this.addSubnodes(this.primitiveSubnodes())
+            //this.addSubnodes(this.protoSubnodes())
+        }
+        return this
     }
 
     primitiveSubnodes () {
-        const nodes = this.thisClass().fieldTypes().map((typeName) => {
-            const name = this.visibleNameForTypeName(typeName)
+        return this.primitiveClasses().map((aClass) => {
+            const name = aClass.visibleClassName()
             const newNode = BMMenuNode.clone()
+            newNode.setTitle(name)
             newNode.setNoteIconName(null)
+            newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)
             newNode.setCanDelete(false)
-            newNode.setTitle(name).setTarget(this).setMethodName("didChoosePrimitive").setInfo(typeName)
             return newNode
         })
-
-        return nodes
     }
 
     protoSubnodes () {
         const app = this.rootNode()
-        const protos = app.firstSubnodeWithTitle("Prototypes")
-        const nodes = protos.subnodes().map((proto) => {
+        const protosNode = app.firstSubnodeWithTitle("Prototypes")
+        const protos = protosNode.subnodes()
+        return protos.map((proto) => {
             const newNode = BMMenuNode.clone()
-            newNode.setTitle(proto.title()).setSubtitle(proto.subtitle())
-            newNode.setTarget(this).setMethodName("didChoosePrototype").setInfo(proto)
+            newNode.setTitle(proto.title())
+            newNode.setSubtitle(proto.subtitle())
+            newNode.setNoteIconName(null)
+            newNode.setTarget(this).setMethodName("didChoose").setInfo(proto)
             newNode.setCanDelete(false)
-            newNode.setNoteIconName("inner-checkbox")
             return newNode
         })
-        return nodes
     }
 
-    setupSubnodes () {
-        this.addSubnodes(this.primitiveSubnodes())
-        this.addSubnodes(this.protoSubnodes())
-        return this
-    }
-
-   didChoosePrototype (actionNode) {
-        const proto = actionNode.info()
-        const newNode = proto.duplicate()
+   didChoose (actionNode) {
+        const obj = actionNode.info()
+        const newNode = obj.nodeCreate()
+        newNode.setCanDelete(true)
         this.replaceSelfWithNode(newNode)
         return this
    }
-
-    didChoosePrimitive (actionNode) {
-        const typeName = actionNode.info()
-        this.createType(typeName)
-        return this
-    }
-
-    createType (typeName) {
-        if (this._didCreate) {
-            throw new Error("attempt to call create twice!")
-            return 
-        } else {
-            this._didCreate = true
-        }
-
-        assert(!Type.isNull(this.parentNode()))
-        const proto = window[typeName]
-        const newNode = proto.clone()
-
-        if (newNode.setKeyIsEditable) {
-            newNode.setKeyIsEditable(true)
-            newNode.setValueIsEditable(true)
-        }
-
-        if (newNode.setIsEditable) {
-            newNode.setIsEditable(true)
-        }
-
-        newNode.setCanDelete(true)
-        newNode.setNodeCanInspect(true)
-        newNode.setNodeCanEditTitle(true)
-
-        this.replaceSelfWithNode(newNode)
-
-        return this
-    }
 
     replaceSelfWithNode (newNode) {
         const parentNode = this.parentNode()

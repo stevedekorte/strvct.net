@@ -9,6 +9,10 @@
 
 window.BMBooleanField = class BMBooleanField extends BMField {
     
+    static availableAsPrimitive() {
+        return true
+    }
+    
     initPrototype () {
         this.newSlot("unsetVisibleValue", "unset")
     }

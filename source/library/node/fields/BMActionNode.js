@@ -11,6 +11,10 @@
 
 window.BMActionNode = class BMActionNode extends BMStorableNode {
     
+    static availableAsPrimitive() {
+        return true
+    }
+    
     initPrototype () {
         this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String")
         this.newSlot("methodName", null).setShouldStoreSlot(true)

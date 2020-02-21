@@ -40,6 +40,7 @@ window.STRVCT = class STRVCT extends App {
 
     setupModel () {     
         const root = this.defaultStore().rootObject()
+        root.setNodeMinWidth(150)
         //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
         //root.removeAllSubnodes()
 
@@ -58,7 +59,7 @@ window.STRVCT = class STRVCT extends App {
 
     setupSettings () {
         // settings
-        this.setSettings(BMStorableNode.clone().setTitle("Settings").setSubtitle(null).setNodeMinWidth(250))
+        this.setSettings(BMStorableNode.clone().setTitle("Settings").setSubtitle(null).setNodeMinWidth(150))
         this.addSubnode(this.settings())
 
         // resources

@@ -117,6 +117,14 @@
     display: none;  /*  removes scrollbars on Safari and Chrome */
 }
 
+/* 
+notes on Scroll bars theme options
+::-webkit-scrollbar { width: 10px; } 
+::-webkit-scrollbar-track { background: #666; } 
+::-webkit-scrollbar-thumb { background-color: #f1f1f1; outline: 1px solid slategrey; } 
+::-webkit-scrollbar-thumb:hover { background: #b1b1b1; }
+*/
+
 .BrowserColumn {
     display: flex;
     flex-direction: column;

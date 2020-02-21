@@ -10,6 +10,10 @@
 
 window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     
+    static availableAsPrimitive() {
+        return true
+    }
+    
     initPrototype () {
         this.newSlot("label", "").setShouldStoreSlot(true)
         this.newSlot("target", null)
@@ -32,7 +36,7 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
         //this.setNodeUsesColumnBackgroundColor(false)
 
         this.setNodeCanInspect(true) 
-        this.setNoteIconName("right arrow")
+        //this.setNoteIconName("right arrow")
     }
 
     init () {

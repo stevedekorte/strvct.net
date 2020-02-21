@@ -33,7 +33,6 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
 
     createValueView () {
         const bv = BooleanView.clone()
-
         return bv
     }
 	

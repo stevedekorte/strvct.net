@@ -8,6 +8,10 @@
         
 window.BMImageWellField = class BMImageWellField extends BMField {
 
+    static availableAsPrimitive() {
+        return true
+    }
+    
     static supportedMimeTypes () {
         return new Set(["image/jpeg", "image/gif", "image/png"])
     }

@@ -8,6 +8,10 @@
         
 window.BMStringField = class BMStringField extends BMField {
     
+    static availableAsPrimitive() {
+        return true
+    }
+
     initPrototype () {
         this.newSlot("unsetVisibleValue", "")
     }

@@ -10,12 +10,11 @@
 window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
     
     initPrototype () {
+        this.newSlot("titlesSection", null)
         this.newSlot("keyView", null)
-        //this.newSlot("valueSectionView", null)
         this.newSlot("valueView", null)
         this.newSlot("errorView", null)
         this.newSlot("noteView", null)
-        this.newSlot("titlesSection", null)
 
         this.newSlot("editableColor", "#aaa")
         this.newSlot("uneditableColor", "#888")
@@ -24,6 +23,9 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.newSlot("keyViewContainer", null)
         this.newSlot("valueViewContainer", null)
 
+        //this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)")
+        this.newSlot("valueEditableBorder", "none")
+        this.newSlot("valueUneditableBorder", "none")
     }
 
     init () {
@@ -52,7 +54,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         const nv = cv.subviews().at(1)
         const ev = cv.subviews().at(2)
 
-        cv.subviews().forEach(sv => sv.setPaddingLeft("1.5em").setPaddingRight("1em"))
+        cv.subviews().forEach(sv => {
+            sv.setPaddingLeft("1.5em")
+            sv.setPaddingRight("1em")
+        })
         
         /*
         cv.setMinHeight("5em")
@@ -200,50 +205,6 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
     }
     */
 
-    /*
-    verticallyCenterContent () {
-        const h = this.contentHeight()
-        let minH = this.getComputedPxCssAttribute("min-height")
-        if (minH && minH > h) {
-            const p = Math.round((minH - h)/2)
-            this.contentView().setPaddingTopPx(p)
-        }
-        return this
-    }
-    */
-
-    /*
-    veritcallyCenteredValueTopMargin () {
-        const valueView = this.valueView()
-        const h = valueView.computedHeight()
-        //16 + 10 padding (5 top, 5 bottom) + 2 border (1 top, 1 bottom)
-        //console.log(" h = ", h)
-        const p1 = valueView.getComputedPxCssAttribute("padding-top")
-        const p2 = valueView.getComputedPxCssAttribute("padding-bottom")
-        const b  = valueView.getComputedPxCssAttribute("border-width")
-
-       const lineHeight = h - ((p1+p2) + 2*b)
-        let minH = this.getComputedPxCssAttribute("min-height")
-        if (minH) {
-            const vp1 = this.contentView().getComputedPxCssAttribute("padding-top")
-            const vp2 = this.contentView().getComputedPxCssAttribute("padding-bottom")
-            minH -= vp1 + vp2
-            const m = Math.round((minH - h)/2)
-            return m
-        }
-        return "auto"
-    }
-
-    veritcallyCenterValue () {
-        const m = this.veritcallyCenteredValueTopMargin()
-        this.valueView().setMarginTop(m)
-    }
-
-    unveritcallyCenterValue () {
-        //this.valueView().setMarginTop("auto")
-        return this
-    }
-    */
 
     syncFromNode () {
         super.syncFromNode()
@@ -291,17 +252,18 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         keyView.setColor(this.keyViewColor())
 
-        if (!node.valueIsEditable()) {
+        if (node.valueIsEditable()) {
+            //valueView.setColor(this.editableColor())
+            valueView.setColor(this.currentStyle().color())
+            //valueView.setBorder("1px solid #444")
+            //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
+            valueView.setBorder(this.valueEditableBorder())
+        } else {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             //valueView.setColor(this.uneditableColor())
             valueView.setColor(this.styles().disabled().color())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
-            valueView.setBorder("0px")
-        } else {
-            //valueView.setColor(this.editableColor())
-            valueView.setColor(this.currentStyle().color())
-            //valueView.setBorder("1px solid #444")
-            valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
+            valueView.setBorder(this.valueUneditableBorder())
         }
 		
         // change color if value is invalid
@@ -309,31 +271,23 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         const color = valueView.color()
         
         if (node.valueError()) {
-            //valueView.setColor(this.errorColor())
-            //valueView.setToolTip(node.valueError())
             valueView.setColor(this.errorColor())
             errorView.setColor(this.errorColor())
             errorView.setInnerHTML(node.valueError())
             errorView.fadeInHeightToDisplayBlock(15)
-
+            //valueView.setToolTip(node.valueError())
         } else {
-            //valueView.setBackgroundColor("transparent")
-            //valueView.setBorder("1px solid white")
-            //valueView.setBorderRadius(5)
-            //valueView.setBackgroundColor(this.valueBackgroundColor())
             valueView.setBackgroundColor("transparent")
             valueView.setColor(color)
-            //valueView.setToolTip("")
-            //errorView.setDisplay("none")
-            //errorView.setInnerHTML("")
             errorView.fadeOutHeightToDisplayNone()
+            //valueView.setToolTip("")
         }
 				
         if (this.visibleNote()) {
-            noteView.setDisplay("block")
+            noteView.unhideDisplay()
             noteView.setInnerHTML(this.visibleNote())
         } else {
-            noteView.setDisplay("none")
+            noteView.hideDisplay()
             noteView.setInnerHTML("")
         }
 

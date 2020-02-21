@@ -9,6 +9,10 @@
         
 window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
     
+    static availableAsPrimitive() {
+        return true
+    }
+    
     initPrototype () {
     }
 

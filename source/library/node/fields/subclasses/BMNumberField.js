@@ -11,6 +11,10 @@
         
 window.BMNumberField = class BMNumberField extends BMField {
     
+    static availableAsPrimitive() {
+        return true
+    }
+
     initPrototype () {
         this.newSlot("unsetVisibleValue", "unset")
     }

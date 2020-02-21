@@ -18,22 +18,20 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled Theme")
         this.setNodeMinWidth(270)
-        //this.setupSubnodes()
         this.setCanDelete(true)
+        this.setSubnodeProto(BMThemeClass)
+        this.setNodeCanReorderSubnodes(true)
 
-        this.setSubnodeProto(ThemeSection)
+        //this.setupSubnodes()
     }
 
     /*
     didLoadFromStore () {
         super.didLoadFromStore()
-        // called after all objects loaded within this event cycle
         this.setupSubnodes()
     }
 
     setupSubnodes () {
-        // setup with all view classes
-        
         const viewClasses = DomView.descendantClasses()
 
         viewClasses = viewClasses.select((viewClass) => {

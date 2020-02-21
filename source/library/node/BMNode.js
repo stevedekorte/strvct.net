@@ -35,6 +35,16 @@
 
 window.BMNode = class BMNode extends ProtoClass {
     
+    static availableAsPrimitive() {
+        return true
+    }
+    
+    /*
+    static initThisClass () {
+        return this
+    }
+    */
+
     // --- for CreatorNode Prototypes ---
 
     static visibleClassName () {
@@ -45,8 +55,14 @@ window.BMNode = class BMNode extends ProtoClass {
         return name
     }
 
-    static availableAsProtoNode () {
-        return true
+    static availableAsPrimitive () {
+        return false
+    }
+
+    static nodeCreate () {
+        // we implemnet this on BMNode class and prototype so 
+        // it works for both instance and class creator prototypes
+        return this.clone()
     }
 
     // --- mime types ---
@@ -80,6 +96,7 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("subnodes", null).setInitProto(SubnodesArray)
         this.newSlot("shouldStoreSubnodes", true) //.setShouldStore(true)
         this.newSlot("subnodeProto", null)
+        this.newSlot("subnodeClasses", null) // ui will present creator node if more than one option
 
         // notification notes
 
@@ -165,6 +182,12 @@ window.BMNode = class BMNode extends ProtoClass {
     prepareToRetire () {
         super.prepareToRetire() // will remove notification observations
         this._subnodes.removeMutationObserver(this)
+    }
+
+    nodeCreate () {
+        // we implemnet this on BMNode class and prototype so 
+        // it works for both instance and class creator prototypes
+        return this.duplicate()
     }
 
     duplicate () {
@@ -505,6 +528,7 @@ window.BMNode = class BMNode extends ProtoClass {
         if (this.subnodeProto()) {
             types.push(this.subnodeProto().type())
         }
+        this.subnodeClasses().forEach(c => types.push(c.type()))
         return types
     }
 
@@ -830,7 +854,21 @@ window.BMNode = class BMNode extends ProtoClass {
         return this
     }
     
-    justAddAt (anIndex) {  
+    justAddAt (anIndex) {
+        /*
+        let newSubnode = null
+        if (this.subnodeClasses()) {
+            if (this.subnodeClasses().length === 0) {
+                newSubnode = null
+            }
+            else if (this.subnodeClasses().length === 1) {
+                newSubnode = this.subnodeClasses().first().clone()
+            } else {
+                newSubnode = BMCreatorNode.clone().set
+            }
+
+        }
+        */
         const newSubnode = this.subnodeProto().clone()
         this.addSubnodeAt(newSubnode, anIndex)
         return newSubnode
@@ -1106,3 +1144,4 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
 }.initThisClass()
+

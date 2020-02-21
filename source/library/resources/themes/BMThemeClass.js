@@ -14,15 +14,19 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
 
     init () {
         super.init()
+
         this.setShouldStore(true)
-        //this.setSubtitle("class")
-        this.setNodeMinWidth(200)
-        this.setupSubnodes()
+        this.setNodeCanEditTitle(true)
+        this.setTitle("Untitled ThemeClass")
+        this.setNodeMinWidth(270)
+        this.setCanDelete(true)
+        this.setSubnodeProto(BMThemeState)
+        this.setNodeCanReorderSubnodes(true)
     }
 
+    /*
     setupSubnodes () {
         const classProto = window[this.title()]
-        //let stateNames = classProto.stateNames()
         const stateNames = ["active", "inactive", "disabled"]
         const stateNodes = stateNames.map(function (stateName) {
             return BMThemeClassState.clone().setDivClassName(stateName)
@@ -30,5 +34,6 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
         this.copySubnodes(stateNodes);
         return this
     }
+    */
 
 }.initThisClass()

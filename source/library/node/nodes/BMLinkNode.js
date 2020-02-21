@@ -10,6 +10,10 @@
 
 window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
     
+    static availableAsPrimitive() {
+        return true
+    }
+
     initPrototype () {
         this.overrideSlot("title", null).setShouldStoreSlot(true)
         this.newSlot("linkedNode", null).setShouldStoreSlot(true).setDuplicateOp("copyValue")
@@ -92,7 +96,8 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
     }
 
     noteIconName () {
-        return this.nodeRowLink() ? "double right caret" : null
+        //return this.nodeRowLink() ? "double right caret" : null
+        return null
     }
 
     nodeRowLink () {
