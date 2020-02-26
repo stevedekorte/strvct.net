@@ -259,6 +259,7 @@ window.ideal.Slot = class Slot {
     setIsLazy (aBool) {
         if (this._isLazy !== aBool) {
             this._isLazy = aBool
+            this.setDoesHookSetter(true) 
             this.setHookedGetterIsOneShot(aBool) // TODO: make these the same thing?
             //this.onChangedAttribute()
         }
@@ -375,8 +376,8 @@ window.ideal.Slot = class Slot {
         return this
     }
 
-
     makeLazyGetter () {
+        assert(this.doesHookGetter())
         //this.owner()[this.getterName()] = this.hookedGetter()
         Object.defineSlot(this.owner(), this.getterName(), this.lazyGetter())
         return this
@@ -602,6 +603,20 @@ window.ideal.Slot = class Slot {
 
     onInstanceGetValueRef (anInstance, aRef) {        
         return anInstance[this.refPrivateName()]
+    }
+
+    copyValueFromInstanceTo(anInstance, otherInstance) {
+        if (this.isLazy()) {
+            const valueRef = this.onInstanceGetValueRef(anInstance)
+            if (valueRef) {
+                this.onInstanceSetValueRef(otherInstance, valueRef)
+                return this
+            }
+        }
+
+        const v = this.onInstanceGetValue(anInstance)
+        this.onInstanceSetValue(otherInstance, v)
+        return this
     }
 
     // -----------------------------------------------------

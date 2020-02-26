@@ -16,7 +16,9 @@ window.BMActionNode = class BMActionNode extends BMStorableNode {
     }
     
     initPrototype () {
-        this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String")
+
+        this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String").setLabel("Title")
+
         this.newSlot("methodName", null).setShouldStoreSlot(true)
         this.newSlot("info", null).setShouldStoreSlot(true)
         this.newSlot("isEnabled", true).setShouldStoreSlot(true)

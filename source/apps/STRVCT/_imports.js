@@ -1,10 +1,10 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
-    "STRVCT.js",
+    "StrvctApp.js",
 ])
 
 ResourceLoader.pushDoneCallback( () => {
-    console.log("STRVCT.shared().run() <<<<<<<<<<<<<<<<<<")
-    STRVCT.shared().run()
+    StrvctApp.loadAndRunShared()
+    //StrvctApp.shared().run()
 })

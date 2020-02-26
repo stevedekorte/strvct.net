@@ -471,7 +471,7 @@ const prototypeSlots = {
     duplicate: function() {
         assert(this.isInstance())
         const instance = this.thisClass().clone().copyFrom(this)
-        instance.duplicateSlotValuesFrom(this)
+        instance.duplicateSlotValuesFrom(this) // TODO: what about lazy slots?
         /*
         const storeSlots = Object.values(this.allSlots()).filter(slot => slot.shouldStoreSlot())
         storeSlots.forEach((slot) => {
@@ -497,7 +497,7 @@ const prototypeSlots = {
 
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
-            const v = otherSlot.onInstanceGetValue(otherObject)
+            const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
             const dop = otherSlot.duplicateOp()
 
             if (dop === "copyValue") {

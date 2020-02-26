@@ -34,7 +34,7 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         this.newSlot("onlyShowsKeyWhenEmpty", false)
         this.newSlot("isEditable", true)
         
-        this.protoAddStoredSlot("nodeMinRowHeight")
+        this.overrideSlot("nodeMinRowHeight").setShouldStoreSlot(true)
 
         this.setKey("Image title")
         this.setKeyIsEditable(false)

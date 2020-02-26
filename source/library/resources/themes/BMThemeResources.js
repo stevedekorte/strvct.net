@@ -25,7 +25,7 @@
 
 */
 
-window.BMThemeResources = class BMThemeResources extends BMNode {
+window.BMThemeResources = class BMThemeResources extends BMStorableNode {
     
     initPrototype () {
 
@@ -33,13 +33,37 @@ window.BMThemeResources = class BMThemeResources extends BMNode {
 
     init () {
         super.init()
-        //this.setShouldStore(true)
         this.setTitle("Themes")
+
+        this.setShouldStore(true)
+        this.setShouldStoreSubnodes(true)
+
         this.setNoteIsSubnodeCount(true)
         this.setNodeMinWidth(270)
         this.addAction("add")
-        this.setSubnodeProto(BMTheme)
+        this.setSubnodeClasses([BMTheme])
         this.setNodeCanReorderSubnodes(true)
+        console.log(this.typeId() + " init <<<<")
+
+        //this.setSubnodes([])
+    }
+
+    didUpdateSlotSubnodes (oldValue, newValue) {
+        return super.didUpdateSlotSubnodes(oldValue, newValue)
+    }
+
+    setSubnodes (newSubnodes) {
+        //console.log(this.typeId() + " setSubnodes <<<<")
+        return super.setSubnodes(newSubnodes)
+    }
+
+    justAddSubnodeAt (aSubnode, anIndex) {
+        console.log(this.typeId() + " addSubnode")
+        return super.justAddSubnodeAt(aSubnode)
+    }
+
+    didChangeSubnodeList () {
+        return super.didChangeSubnodeList()
     }
     
 }.initThisClass()

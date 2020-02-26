@@ -14,7 +14,6 @@ window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
         this.newSlot("postPeriod", thirtyDaysInMilliseconds).setShouldStoreSlot(true)
         this.newSlot("hasSent", false).setShouldStoreSlot(true)
         this.newSlot("stamp", null).setShouldStoreSlot(true)
-        this.overrideSlot("title", null).setShouldStoreSlot(true)
         this.newSlot("price", 0).setShouldStoreSlot(true)
         this.newSlot("currency", "BTC").setShouldStoreSlot(true)
         this.newSlot("postDate", null).setShouldStoreSlot(true)

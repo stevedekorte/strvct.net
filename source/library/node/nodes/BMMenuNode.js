@@ -59,61 +59,6 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
         return BMCreatorNode.fieldTypes()
     }
 
-    /*
-    colorPairForDepth (depthNumber) {
-        if (depthNumber % 2 === 1) {
-            return [CSSColor.redColor(), CSSColor.yellowColor()]
-        }
-
-        return [CSSColor.blueColor(), CSSColor.blueColor().copy().lighten(0.75)]
-    }
-
-    nodeBackgroundColorObject () {
-        if (!this.parentNode()) {
-            return CSSColor.whiteColor()
-        }
-
-        const colorPair = this.colorPairForDepth(this.nodeDepth())
-        const index = this.subnodeIndexInParent()
-        const ratio = index / this.parentNode().subnodeCount()
-        const topColor = colorPair[0]
-        const bottomColor = colorPair[1]
-        const c = topColor.interpolateWithColorTo(bottomColor, 1 - ratio)
-        //console.log("index:" + index + " ratio:" + ratio + " c:", c.cssColorString())
-        return c
-    }
-
-    nodeRowStyles () {
-        // const nextColor = this.colorPairForDepth(this.nodeDepth()+1)[0]
-        if (!this._nodeRowStyles) {
-            this.customizeNodeRowStyles()
-        }
-
-        const styles = this._nodeRowStyles
-        const c = this.nodeBackgroundColorObject()
-
-        styles.unselected().setBackgroundColor(c.cssColorString())
-        //styles.unselected().setBackgroundColor(c.copy().darken(0.5).cssColorString())
-        //styles.unselected().setColor(c.copy().lighten(0.55).cssColorString())
-        styles.unselected().setColor(CSSColor.whiteColor().cssColorString())
-        //styles.unselected().setBorderTop("1px solid " + c.cssColorString())
-        //styles.unselected().setBorderBottom("1px solid " + c.cssColorString())
-
-        //styles.selected().setBackgroundColor(CSSColor.grayColor().cssColorString())
-        styles.selected().setColor(CSSColor.whiteColor().cssColorString())
-
-        styles.selected().setBackgroundColor(c.copy().darken(0.8).cssColorString())
-        //styles.selected().setBackgroundColor(c.copy().lighten(0.2).cssColorString())
-        //styles.selected().setBackgroundColor(c.copy().cssColorString())
-        //styles.selected().setColor(CSSColor.whiteColor().cssColorString())
-        //styles.selected().setBorderTop("1px solid white")
-        //styles.selected().setBorderBottom("1px solid white")
-
-        //this._nodeRowStyles.active().setBackgroundColor(c.copy().lighten(0.75).cssColorString())
-        return this._nodeRowStyles
-    }
-    */
-
     sendMenuAction () {
        const t = this.target()
        const m = this.methodName()

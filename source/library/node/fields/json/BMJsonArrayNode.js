@@ -45,8 +45,8 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
         return super.replaceSubnodeWith(oldNode, newNode)
     }
 
-    addSubnode (newNode) {
-        return super.addSubnode(this.prepareSubnode(newNode))
+    addSubnodeAt (aSubnode, anIndex) {
+        return super.addSubnodeAt(this.prepareSubnode(newNode), anIndex)
     }
 
     prepareSubnode (aSubnode) {

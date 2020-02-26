@@ -160,10 +160,15 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     readRoot () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
+            const rootRecord = this.recordForPid(this.rootKey())
+            //console.log("rootRecord.subnodes: ", JSON.stringify(rootRecord, null, 2))
+
             const root = this.objectForPid(this.rootKey())
             //root.thisPrototype().slotNamed("subnodes").setupInOwner()
             //root.subnodes()
             this._rootObject = root
+            //let subnodes = root.subnodes()
+            //console.log("root subnodes.length = " + subnodes.length)
             //this.setRootObject()
         }
         return this.rootObject()
@@ -264,6 +269,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         if(!this.hasActiveObject(anObject)) {
             anObject.addMutationObserver(this)
             this.activeObjects().atPut(anObject.puuid(), anObject)
+            //this.addDirtyObject(anObject)
         }
 
         return true
@@ -290,7 +296,8 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     }
 
     onDidMutateObject (anObject) {
-        if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
+        if (this.hasActiveObject(anObject)) {
+        //if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
             this.addDirtyObject(anObject)
         }
     }
@@ -331,7 +338,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         }
 
         if (!this.dirtyObjects().hasOwnProperty(puuid)) {
-            this.debugLog("addDirtyObject(" + anObject.typeId() + ")")
+            this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
             this.dirtyObjects()[puuid] = anObject
             this.scheduleStore()
         }
@@ -415,11 +422,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         if (!aClass) {
             throw new Error("missing class '" + className + "'")
         }
-        /*
-        if (className === "BMLocalIdentities") {
-            console.log("debug")
-        }
-        */
+        
         assert(aRecord.id)
         const obj = aClass.instanceFromRecordInStore(aRecord, this)
         assert(!this.hasActiveObject(obj))
@@ -660,19 +663,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     // ---------------------------
 
     rootSubnodeWithTitleForProto (aTitle, aProto) {
-        const obj = this.rootObject().firstSubnodeWithTitle(aTitle)
-
-        if (obj) {
-            if (obj.type() !== aProto.type()) {
-                const newObj = aProto.clone()
-                newObj.copyFrom(obj)
-                // TODO: Do we need to replace all references in pool and reload?
-                this.rootObject().replaceSubnodeWith(obj, newObj)
-                return newObj
-            }
-        } 
-
-        return this.rootObject().subnodeWithTitleIfAbsentInsertClosure(aTitle, () => aProto.clone())
+        return this.rootObject().subnodeWithTitleIfAbsentInsertProto(aTitle, aProto)
     }
 
     totalBytes () {

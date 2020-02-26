@@ -87,9 +87,6 @@ window.GameApp = class GameApp extends App {
     }
 
     isBrowserCompatible () {
-        if (WebBrowserWindow.shared().agentIsSafari()) {
-            return false
-        }
         return true
     }
     
@@ -117,8 +114,8 @@ window.GameApp = class GameApp extends App {
 
     appDidInit () {
         super.appDidInit()
-        window.ResourceLoaderPanel.shared().stop() 
     }
+    
 }.initThisClass()
 
 GameApp.showVersion()

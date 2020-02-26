@@ -3,19 +3,39 @@
 /*
     App 
     
-    A singleton that represents the application. For your application, 
+    A shared instance that represents the application. For your application, 
     create a subclass called App and implement a custom setup method.
 
     Handles starting up persistence system.
 
 */
 
-window.App = class App extends BMNode {
+window.App = class App extends BMStorableNode {
     
+    static loadAndRunShared () {
+        const name = this.name
+        this.defaultStore().setName(name)
+
+        const successCallback = () => {
+            this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
+            const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(name, this)
+            this.setShared(app)
+            app.run()
+        }
+
+        const errorCallback = (errorMessage) => {
+            window.ResourceLoaderPanel.shared().setError(errorMessage)
+            return this
+        }
+
+        this.defaultStore().asyncOpen(successCallback, errorCallback) 
+
+    }
+
     initPrototype () {
         this.newSlot("name", "App")
         this.newSlot("version", [0, 0])
-        this.newSlot("nodeStoreDidOpenObs", null)
+        //this.newSlot("nodeStoreDidOpenObs", null)
     }
 
     init () {
@@ -24,8 +44,8 @@ window.App = class App extends BMNode {
         //Documentation.shared().show()
         //console.log(ProtoClass.subclassesDescription())
 
-        this.setNodeStoreDidOpenObs(window.BMNotificationCenter.shared().newObservation())
-        this.nodeStoreDidOpenObs().setName("nodeStoreDidOpen").setObserver(this).setTarget(this.defaultStore())
+        //this.setNodeStoreDidOpenObs(window.BMNotificationCenter.shared().newObservation())
+        //this.nodeStoreDidOpenObs().setName("nodeStoreDidOpen").setObserver(this).setTarget(this.defaultStore())
         this.setIsDebugging(true)
     }
 
@@ -44,21 +64,26 @@ window.App = class App extends BMNode {
     run () {
         if (!this.isBrowserCompatible()) {
             window.ResourceLoaderPanel.shared().setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
-            //this.showBrowserCompatibilityPanel()
             return this
         }
 
+        /*
         this.nodeStoreDidOpenObs().watch()
         this.defaultStore().setName(this.name())
 
         const errorCallback = (errorMessage) => {
-            console.log("App open db error: ", errorMessage)
             window.ResourceLoaderPanel.shared().setError(errorMessage)
             return this
         }
         this.defaultStore().asyncOpen(null, errorCallback) 
+       this.nodeStoreDidOpen()
+        */
+
+       this.setup()
+
     }
 
+    /*
     showBrowserCompatibilityPanel () {
         console.log("showing panel")
         const panel = window.PanelView.clone()
@@ -68,15 +93,18 @@ window.App = class App extends BMNode {
         panel.setZIndex(100)
         console.log("showed panel")
     }
+    */
 
     // 2. setup 
 
+    /*
     nodeStoreDidOpen (aNote) {
         console.log("App nodeStoreDidOpen <<<<<<<<<<<<<<<<<<")
         this.nodeStoreDidOpenObs().stopWatching()
         this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
         this.setup()
     }
+    */
 
     setup () {
         return this        
@@ -85,17 +113,15 @@ window.App = class App extends BMNode {
     appDidInit () {
         this.showVersion()
 
-        //this.postNoteNamed("appDidInit")
-        const note = BMNotificationCenter.shared().newNote().setSender(this).setName("appDidInit")
-        note.post()
+        this.postNoteNamed("appDidInit")
 
         if (this.runTests) {
 		    this.runTests()
         }
 
         //Documentation.shared().show()
-
         //this.registerServiceWorker() // not working yet
+        window.ResourceLoaderPanel.shared().stop() 
     }
 	
     documentBodyView () {
@@ -126,6 +152,7 @@ window.App = class App extends BMNode {
 
     // --- server worker ---
 
+    /*
     registerServiceWorker () {
         // doesn't work
         // "srsourcec/ServiceWorker.js"
@@ -149,6 +176,6 @@ window.App = class App extends BMNode {
             );
         });
     }
+    */
 
 }.initThisClass()
-

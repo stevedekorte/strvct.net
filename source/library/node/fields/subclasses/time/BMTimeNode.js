@@ -17,10 +17,10 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
-        this.newSlot("hour", null)
-        this.newSlot("minute", null)
-        this.newSlot("timezone", null)
-        this.newSlot("formatter", null)
+        this.newSlot("hour", null).setShouldStoreSlot(true)
+        this.newSlot("minute", null).setShouldStoreSlot(true)
+        this.newSlot("timezone", null).setShouldStoreSlot(true)
+        this.newSlot("formatter", null).setShouldStoreSlot(true)
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
@@ -28,10 +28,6 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
         this.setCanDelete(true)
 
         this.setTitle("Time")
-
-        this.protoAddStoredSlot("title")
-        this.protoAddStoredSlot("hour")
-        this.protoAddStoredSlot("minute")
 
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)

@@ -9,30 +9,42 @@
 window.BMStorableNode = class BMStorableNode extends BMNode {
     
     initPrototype () {
-        this.setShouldStore(false)
-        //this.setShouldStoreSubnodes(true)
-        this.overrideSlot("canDelete", false).setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
-
-
-        let slot = this.overrideSlot("nodeFillsRemainingWidth", false)
-        slot.setShouldStoreSlot(true)
-        slot.setCanEditInspection(true)
-        slot.setCanInspect(true)
 
         this.setShouldStore(true)
+        //this.setShouldStoreSubnodes(true)
 
-        // subnodes
+        this.overrideSlot("canDelete", false).setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
+        this.overrideSlot("title", null).setShouldStoreSlot(true)
+
+        {
+            const slot = this.overrideSlot("nodeFillsRemainingWidth", false)
+            slot.setShouldStoreSlot(true)
+            slot.setCanEditInspection(true)
+            slot.setCanInspect(true)
+        }
         
-        const subnodesSlot = this.overrideSlot("subnodes", null)
-        //subnodesSlot.setOwnsSetter(true)
-        subnodesSlot.setShouldStoreSlot(true)
-        subnodesSlot.setDoesHookGetter(true)
-        subnodesSlot.setHookedGetterIsOneShot(true)
-        subnodesSlot.setIsLazy(true)
-        subnodesSlot.setInitProto(SubnodesArray)
-        subnodesSlot.setupInOwner()
+        {
+            const slot = this.overrideSlot("subnodes", null)
+            //subnodesSlot.setOwnsSetter(true)
+            slot.setShouldStoreSlot(true)
+            //slot.setDoesHookGetter(true) //node does this
+
+            slot.setDoesHookGetter(true)
+            slot.setHookedGetterIsOneShot(true)
+            slot.setIsLazy(true)
+            slot.setInitProto(SubnodesArray)
+
+            assert(slot.doesHookGetter())
+            slot.setupInOwner()
+        }
         
         this.newSlot("lazySubnodeCount", null).setShouldStoreSlot(true)
+    }
+
+    init () {
+        super.init()
+        // do we need to start observing subnodes?
+        return this
     }
 
     // --- udpates ---

@@ -60,8 +60,8 @@ Object.defineSlots(BMNode.prototype, {
 
             if (slot) {
                 if (!slot.hasSetterOnInstance(this)) {
-                    // schema must have changed 
-                    // so schedule to store again, which will remove missing slot in record
+                    // looks like the schema has changed 
+                    // so schedule to store again, which will remove missing slot in the record
                     this.scheduleSyncToStore()
                 } else {
                     if (slot.isLazy()) {

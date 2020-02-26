@@ -99,6 +99,8 @@ window.ResourceLoaderPanel = class ResourceLoaderPanel {
     }
 
     start () {
+        //this.startListeningForErrors()
+
         //console.log("ResourceLoaderPanel.start()")
         if (!ResourceLoaderClass.shared().isDone()) {
             this.setupHtml()
@@ -293,6 +295,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
     }
 
     setError (error) {
+        console.log("Error: ", error)
         this._error = error
         //console.trace()
         this.errorElement().innerHTML = error
@@ -326,9 +329,38 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
         setTimeout(() => { this.close() }, 300)
     }
 
+    /*
+    // error listener
+
+    errorListener () {
+        if (!this._errorListener) {
+            this._errorListener = (error) => {
+                this.setError(error.detail)
+            }
+        }
+        return this._errorListener
+    }
+
+    startListeningForErrors () {
+        window.addEventListener('onLoadError', this.errorListener());
+    }
+
+    stopListeningForErrors () {
+        window.removeEventListener('onLoadError', this.errorListener());
+    }
+
+    postError (detail) {
+        const event = new CustomEvent('onLoadError', { detail: detail });
+        window.dispatchEvent(event);
+    }
+    */
+
+    // ---
+
     close () {
         this.removeMainElement()
         this.unregisterForImports()
+        //this.stopListeningForErrors()
         delete window[this.type()]
     }
 

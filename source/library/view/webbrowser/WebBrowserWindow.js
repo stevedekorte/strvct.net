@@ -17,7 +17,7 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
     init () {
         //throw new Error("this class is meant to be used as singleton, for now")
         super.init()
-        this.showAgent()
+        //this.showAgent()
         return this
     }
 

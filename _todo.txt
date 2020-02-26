@@ -1,8 +1,38 @@
 
 TODO:
 
-	- add Slot initOp
+	Object
+	static isSingleton() {}
 	
+	have class clone() check and return shared if present?
+
+	
+	Root
+	BMStorageNode -> App ->	Notes
+							Resource
+							Settings
+	
+	- to help with lazy slots, add method:
+		- Slot copyValueFromInstanceTo(anInstance, otherInstance) - which checks for lazy slot and avoids load
+		- remove oneShotGetter to avoid complexity of undoing it
+		
+	- dealing with loading shared objects like Resources?
+	
+	- if a node is lazy, what happens when it's persisted?
+	  - we don't want that to force a load
+	
+	- storage issue:
+	  - if we change shouldStore, we need to mark all objects referencing it to dirty
+	  - if we change shouldStoreSubnodes, we need to mark object as dirty
+	  
+	move addSubnode overrides -> addSubnodeAt
+	- change overrides to use didAddSubnode() 
+	- add didReplaceSubnode(), didRemoveSubnode()?
+	
+	- take a look at shouldStore slot 
+	- should it have a Slot object?
+
+	- add Slot initOp (nop, null, copy, duplicate)
 	
 	- remove BMFieldSetNode?
 

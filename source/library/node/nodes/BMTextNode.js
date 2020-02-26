@@ -15,21 +15,33 @@
 window.BMTextNode = class BMTextNode extends BMStorableNode {
     
     initPrototype () {
-        this.protoAddStoredSlot("title")
-        /*
-        this.protoAddStoredSlot("fontSize")
-        this.protoAddStoredSlot("color")
-        this.protoAddStoredSlot("backgroundColor")
-        */
        
-        const fontSizeSlot = this.newSlot("fontSize", null).setShouldStoreSlot(true)
-        fontSizeSlot.setCanInspect(true).setSlotType("Number").setLabel("Font size").setSyncsToView(true)
+        {
+            const slot = this.newSlot("fontSize", null)
+            slot.setShouldStoreSlot(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("Number")
+            slot.setLabel("Font size")
+            slot.setSyncsToView(true)
+        }
 
-        const colorSlot = this.newSlot("color", null).setShouldStoreSlot(true)
-        colorSlot.setCanInspect(true).setSlotType("String").setLabel("Color").setSyncsToView(true)
+        {
+            const slot = this.newSlot("color", null)
+            slot.setShouldStoreSlot(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel("Color")
+            slot.setSyncsToView(true)
+        }
 
-        const bgColorSlot = this.newSlot("backgroundColor", null).setShouldStoreSlot(true)
-        bgColorSlot.setCanInspect(true).setSlotType("String").setLabel("Background color").setSyncsToView(true)
+        {
+            const slot = this.newSlot("backgroundColor", null)
+            slot.setShouldStoreSlot(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel("Background color")
+            slot.setSyncsToView(true)
+        }
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)

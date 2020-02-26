@@ -2,15 +2,18 @@
 
 /*
     
-    STRVCT
+    StrvctApp
 
 
 */
 
-window.STRVCT = class STRVCT extends App {
+window.StrvctApp = class StrvctApp extends App {
     
+
     initPrototype () {
         // model
+        this.newSlot("notes", null)
+        this.newSlot("prototypes", null)
         this.newSlot("settings", null)
         this.newSlot("resources", null)
         this.newSlot("dataStore", null)
@@ -21,18 +24,22 @@ window.STRVCT = class STRVCT extends App {
 
     init () {
         super.init()
-        console.log(this.type() + " init <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        this.setName("STRVCTapp")
+        //console.log(this.type() + " init <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        this.setName("StrvctApp")
         this.setVersion([0, 0, 0, 0])
+        this.setNodeCanReorderSubnodes(true)
+        this.addAction("add")
+
         return this
     } 
 
-    setup () {
+    setup () { // called by App.run
         super.setup()        
         this.setupTheme()
         this.setupModel()
         this.setupViews()
         this.appDidInit()
+        this.subnodes().forEach(sn => sn.setCanDelete(true))
         return this
     }
 
@@ -44,14 +51,11 @@ window.STRVCT = class STRVCT extends App {
         //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
         //root.removeAllSubnodes()
 
-        const myLists = this.defaultStore().rootSubnodeWithTitleForProto("Notes", BMMenuNode);
-        this.addLinkSubnode(myLists)
+        const notes = this.subnodeWithTitleIfAbsentInsertProto("Notes", BMMenuNode)
+        this.setNotes(notes)
 
-        //const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMMenuNode);
-        const prototypes = this.defaultStore().rootSubnodeWithTitleForProto("Prototypes", BMPrototypesNode);
-        prototypes.setTitle("Prototypes")
-        prototypes.setNodeCanReorderSubnodes(true)
-        this.addLinkSubnode(prototypes)
+        const prototypes = this.subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
+        this.setPrototypes(notes)
 
         this.setupSettings()
         return this
@@ -59,12 +63,16 @@ window.STRVCT = class STRVCT extends App {
 
     setupSettings () {
         // settings
-        this.setSettings(BMStorableNode.clone().setTitle("Settings").setSubtitle(null).setNodeMinWidth(150))
-        this.addSubnode(this.settings())
+        const settings = this.subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
 
-        // resources
-        this.setResources(BMResources.shared())
-        this.settings().addSubnode(this.resources())
+        //const settings = BMStorableNode.clone().setTitle("Settings").setSubtitle(null)
+        settings.setNodeMinWidth(150)
+        this.setSettings(settings)
+        this.removeOtherSubnodeWithSameTitle(settings)
+
+        // resources - should this be BMResources.shared()?
+        const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
+        this.setResources(resources)
         
         // data store
         this.setDataStore(BMDataStore.clone())
@@ -79,11 +87,6 @@ window.STRVCT = class STRVCT extends App {
     }
 
     isBrowserCompatible () {
-        /*
-        if (WebBrowserWindow.shared().agentIsSafari()) {
-            return false
-        }
-        */
         return true
     }
     
@@ -106,10 +109,9 @@ window.STRVCT = class STRVCT extends App {
         // ResourceLoaderPanel can't use notification as it's a boot object
         // what if we added a one-shot observation for it, or would that be more confusing?
 
-        window.ResourceLoaderPanel.shared().stop() 
     }
 
-    // themes
+    // themes - temporary, until ThemesResources is ready
 
     setupTheme () {
         this.setupNormalTheme()
@@ -154,3 +156,19 @@ window.STRVCT = class STRVCT extends App {
 }.initThisClass()
 
 
+/*
+
+let windowEventCount = 0
+window.addEventListener('mouseup', function(event){
+    console.log("window mouseup <<<<<<<<<<<<<<<<<<<<")
+})
+
+window.addEventListener('mouseleave', function(event){
+    console.log("window mouseleave <<<<<<<<<<<<<<<<<<<<")
+})
+
+window.addEventListener('mousemove', function(event){
+    windowEventCount ++
+    console.log("window mousemove <<<<<<<<<<<<<<<<<<<< " + windowEventCount)
+})
+*/

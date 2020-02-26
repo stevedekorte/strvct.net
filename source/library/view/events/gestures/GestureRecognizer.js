@@ -204,7 +204,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
         const listeners = this.newListeners().map((listener) => {
             listener.setUseCapture(true)
-            listener.setListenTarget(document.body)
+            //listener.setListenTarget(document.body)
+            listener.setListenTarget(window)
             //listener.setIsDebugging(true);
             listener.start()
             return listener
@@ -212,6 +213,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         this.setDocListeners(listeners)
         return this
     }
+
+
 
     // condition helpers
 

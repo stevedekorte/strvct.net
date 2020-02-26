@@ -66,9 +66,9 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
 
     // ----------
 
-    addSubnode (newNode) {
+    addSubnodeAt (newNode, anIndex) {
         newNode = this.prepareSubnode(newNode)
-        return super.addSubnode(newNode)
+        return super.addSubnodeAt(this.prepareSubnode(newNode), anIndex)
     }
 
     replaceSubnodeWith (oldNode, newNode) {

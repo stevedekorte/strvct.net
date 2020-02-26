@@ -55,19 +55,38 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return classes.filter(aClass => aClass.availableAsPrimitive())
     }
 
+    protoObjects () {
+        const app = this.rootNode()
+        const protosNode = app.firstSubnodeWithTitle("Prototypes")
+        const protos = protosNode.subnodes()
+        return protos
+    }
+
     setupSubnodes () {
         if (this.subnodes().length == 0) {
-            this.addSubnodes(this.primitiveSubnodes())
-            //this.addSubnodes(this.protoSubnodes())
+            this.addSubnodesForObjects(this.primitiveClasses())
+            //this.addSubnodesForObjects(this.protoObjects())
         }
         return this
     }
+    
+    addSubnodesForObjects (objects) {
+        const newSubnodes = objects.map((aClass) => {
+            const newNode = BMMenuNode.clone()
+            newNode.setTitle(aClass.nodeCreateName())
+            newNode.setNoteIconName(null)
+            newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)
+            newNode.setCanDelete(false)
+            return newNode
+        })
+        this.addSubnodes(newSubnodes)
+    }
 
+    /*
     primitiveSubnodes () {
         return this.primitiveClasses().map((aClass) => {
-            const name = aClass.visibleClassName()
             const newNode = BMMenuNode.clone()
-            newNode.setTitle(name)
+            newNode.setTitle(aClass.nodeCreateName())
             newNode.setNoteIconName(null)
             newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)
             newNode.setCanDelete(false)
@@ -75,20 +94,21 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         })
     }
 
+
     protoSubnodes () {
         const app = this.rootNode()
         const protosNode = app.firstSubnodeWithTitle("Prototypes")
         const protos = protosNode.subnodes()
         return protos.map((proto) => {
             const newNode = BMMenuNode.clone()
-            newNode.setTitle(proto.title())
-            newNode.setSubtitle(proto.subtitle())
+            newNode.setTitle(nodeCreateName.title())
             newNode.setNoteIconName(null)
             newNode.setTarget(this).setMethodName("didChoose").setInfo(proto)
             newNode.setCanDelete(false)
             return newNode
         })
     }
+    */
 
    didChoose (actionNode) {
         const obj = actionNode.info()

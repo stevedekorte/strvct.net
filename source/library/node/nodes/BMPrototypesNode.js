@@ -15,7 +15,9 @@ window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
 
     init () {
         super.init()
-        this.setupSubnodes()
+        this.setTitle("Prototypes")
+        this.setNodeCanReorderSubnodes(true)
+        //this.setupSubnodes()
         return this
     }
 
@@ -57,6 +59,8 @@ window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
 
     setupSubnodes () {
         let primitives = BMMenuNode.clone().setTitle("Primitives")
+        primitives.setShouldStoreSubnodes(false)
+
         this.addSubnode(primitives)
 
         primitives.addSubnodes(this.primitiveSubnodes())

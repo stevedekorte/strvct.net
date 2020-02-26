@@ -181,9 +181,11 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
     
     addNotification (note) {
         if (!this.hasNotification(note)) {
+            /*
             if (note.sender().title && note.sender().title === "STRVCTapp") {
                 console.log("NotificationCenter '" + note.sender().title() + "' " + note.name())
             }
+            */
             this.notifications().push(note)
 		    window.SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1)
         }

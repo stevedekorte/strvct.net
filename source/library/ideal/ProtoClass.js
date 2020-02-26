@@ -36,9 +36,23 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     static setClassVariable (key, value) {
-        this[key] = value
+        Object.defineSlot(this, key, value)
+        //this[key] = value
         return this
     }
+
+    // singleton
+
+    static setIsSingleton (aBool) {
+        this.setClassVariable("_isSingleton", aBool)
+        return this
+    }
+
+    static isSingleton () {
+        return this.getClassVariable("_isSingleton", false)
+    }
+
+    // shared
 
     static hasShared () {
         return !Type.isUndefined(this.getClassVariable("_shared"))
@@ -46,9 +60,14 @@ window.ProtoClass = class ProtoClass extends Object {
 
     static shared () {
         if (!this.getClassVariable("_shared")) {
-            this.setClassVariable("_shared", this.clone())
+            this.setShared(this.clone())
         }
         return this.getClassVariable("_shared")
+    }
+
+    static setShared (anInstance) {
+        this.setClassVariable("_shared", this.clone())
+        return this
     }
 
     static allClasses () {
@@ -259,29 +278,18 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // stored slots
 
+    /*
     storedSlots () {
-
-    }
-
-    storedSlotNamesSet () { // returns a set  
-        // TODO: use slot cache
-        //assert(this.isPrototype())
+        // TODO: use slot cache?
         const slotsArray = Object.values(this.allSlots())
-        return slotsArray.filter(slot => slot.shouldStoreSlot()).map(slot => slot.name()).asSet()
+        return slotsArray.filter(slot => slot.shouldStoreSlot())
     }
 
-    protoAddStoredSlots (slotNames) {
-        assert(this.isPrototype())
-        slotNames.forEach(k => this.protoAddStoredSlot(k))
-        return this
+    storedSlotNamesSet () { 
+        const slotsArray = Object.values(this.allSlots())
+        return this.storedSlots().map(slot => slot.name()).asSet()
     }
-    
-    protoAddStoredSlot (slotName) {
-        assert(this.isPrototype())
-        this.slotNamed(slotName).setShouldStoreSlot(true)
-        // Note: BMStorableNode hooks didUpdateSlot() to call scheduleSyncToStore on updates. 
-        return this
-    }
+    */
 
     // -------------------------------------
 

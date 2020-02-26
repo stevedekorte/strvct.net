@@ -38,7 +38,7 @@ window.BMNode = class BMNode extends ProtoClass {
     static availableAsPrimitive() {
         return true
     }
-    
+
     /*
     static initThisClass () {
         return this
@@ -63,6 +63,10 @@ window.BMNode = class BMNode extends ProtoClass {
         // we implemnet this on BMNode class and prototype so 
         // it works for both instance and class creator prototypes
         return this.clone()
+    }
+
+    static nodeCreateName () {
+        return this.visibleClassName()
     }
 
     // --- mime types ---
@@ -93,10 +97,10 @@ window.BMNode = class BMNode extends ProtoClass {
 
         this.newSlot("parentNode", null)
         this.newSlot("nodeCanReorderSubnodes", false)
-        this.newSlot("subnodes", null).setInitProto(SubnodesArray)
+        this.newSlot("subnodes", null).setInitProto(SubnodesArray).setDoesHookSetter(true)
         this.newSlot("shouldStoreSubnodes", true) //.setShouldStore(true)
         this.newSlot("subnodeProto", null)
-        this.newSlot("subnodeClasses", null) // ui will present creator node if more than one option
+        this.newSlot("subnodeClasses", []) //.setInitProto([]) // ui will present creator node if more than one option
 
         // notification notes
 
@@ -176,6 +180,9 @@ window.BMNode = class BMNode extends ProtoClass {
         this.setNodeColumnStyles(BMViewStyles.clone())
         //this.setNodeRowStyles(BMViewStyles.clone())
         this.setViewDict({})
+
+        this.watchSubnodes()
+
         return this
     }
 
@@ -188,6 +195,10 @@ window.BMNode = class BMNode extends ProtoClass {
         // we implemnet this on BMNode class and prototype so 
         // it works for both instance and class creator prototypes
         return this.duplicate()
+    }
+    
+    nodeCreateName () {
+        return this.title()
     }
 
     duplicate () {
@@ -855,21 +866,23 @@ window.BMNode = class BMNode extends ProtoClass {
     }
     
     justAddAt (anIndex) {
-        /*
-        let newSubnode = null
-        if (this.subnodeClasses()) {
-            if (this.subnodeClasses().length === 0) {
-                newSubnode = null
-            }
-            else if (this.subnodeClasses().length === 1) {
-                newSubnode = this.subnodeClasses().first().clone()
-            } else {
-                newSubnode = BMCreatorNode.clone().set
-            }
-
+        const classes = this.subnodeClasses().shallowCopy()
+        if (this.subnodeProto()) {
+            classes.push(this.subnodeProto())
         }
-        */
-        const newSubnode = this.subnodeProto().clone()
+
+        let newSubnode = null
+        if (classes.length === 0) {
+            newSubnode = null
+        }
+        else if (classes.length === 1) {
+            newSubnode = classes.first().clone()
+        } else {
+            newSubnode = BMCreatorNode.clone()
+            newSubnode.addSubnodesForObjects(classes)
+        }
+
+        //const newSubnode = this.subnodeProto().clone()
         this.addSubnodeAt(newSubnode, anIndex)
         return newSubnode
     }
@@ -971,12 +984,57 @@ window.BMNode = class BMNode extends ProtoClass {
         return this.subnodes().detect(subnode => subnode.subtitle() === aString)
     }
 
+    subnodeWithTitleIfAbsentInsertProto(aString, aProto) {
+        let subnode = this.firstSubnodeWithTitle(aString)
+
+        if (subnode) {
+            if (subnode.type() !== aProto.type()) {
+                const newSubnode = aProto.clone()
+                newSubnode.copyFrom(subnode)
+                // TODO: Do we need to replace all references in pool and reload?
+                this.replaceSubnodeWith(subnode, newSubnode)
+                return newSubnode
+            }
+        }
+
+        return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone())
+    }
+
+    /*
+    removeOtherSubnodeInstances (aSubnode) {
+        assert(this.hasSubnode(aSubnode))
+        this.subnodes().shallowCopy().forEach((sn) => {
+            if (sn !== aSubnode) {
+                if (sn.thisClass() === aSubnode.thisClass()) {
+                    this.removeSubnode(sn)
+                }
+            }
+        })
+        return this
+    }
+    */
+
+    removeOtherSubnodeWithSameTitle (aSubnode) {
+        assert(this.hasSubnode(aSubnode))
+        this.subnodes().shallowCopy().forEach((sn) => {
+            if (sn !== aSubnode) {
+                if (sn.title() === aSubnode.title()) {
+                    this.removeSubnode(sn)
+                }
+            }
+        })
+        return this
+    }
+
     subnodeWithTitleIfAbsentInsertClosure (aString, aClosure) {
         let subnode = this.firstSubnodeWithTitle(aString)
 
         if (!subnode && aClosure) {
             subnode = aClosure()
             subnode.setTitle(aString)
+            if (subnode.type() === "BMThemeResources") {
+                console.log("debug")
+            }
             this.addSubnode(subnode)
         }
 
@@ -1004,15 +1062,20 @@ window.BMNode = class BMNode extends ProtoClass {
         }
     }
 
-    didUpdateSlotSubnodes (oldValue, newValue) {
+    watchSubnodes () {
         this._subnodes.addMutationObserver(this)
+        return this
+    }
+
+    didUpdateSlotSubnodes (oldValue, newValue) {
+        this.watchSubnodes()
         if (this._subnodes.contains(null)) {
             this.setSubnodes(this._subnodes.filter(sn => !(sn === null) ))
         }
-        this._subnodes.forEach(subnode => subnode.setParentNode(this))
+        this._subnodes.forEach(sn => sn.setParentNode(this))
         this.didChangeSubnodeList() // not handles automatically
         return this
-    }   
+    }
     
     assertSubnodesHaveParentNodes () {
         const missing = this.subnodes().detect(subnode => !subnode.parentNode())

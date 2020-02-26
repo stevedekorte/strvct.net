@@ -14,9 +14,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         return true
     }
     
-    initPrototype () {
-        this.protoAddStoredSlot("title")
-        
+    initPrototype () {        
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
         this.newSlot("year", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")

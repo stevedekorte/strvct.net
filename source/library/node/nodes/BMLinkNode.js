@@ -15,7 +15,6 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
     }
 
     initPrototype () {
-        this.overrideSlot("title", null).setShouldStoreSlot(true)
         this.newSlot("linkedNode", null).setShouldStoreSlot(true).setDuplicateOp("copyValue")
         
         const dupSlot = this.newSlot("willDuplicateLinkedObject", false).setShouldStoreSlot(true)
@@ -107,6 +106,10 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
     nodeCanReorderSubnodes () {
         const ln = this.linkedNode()
         return ln ? ln.nodeCanReorderSubnodes() : false // have this operation done in the browser?
+    }
+
+    addSubnodeAt (aSubnode, anIndex) {
+        return super.addSubnodeAt(aSubnode, anIndex)
     }
 
 }.initThisClass()

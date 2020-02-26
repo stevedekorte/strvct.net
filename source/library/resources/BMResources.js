@@ -30,9 +30,14 @@ window.BMResources = class BMResources extends BMStorableNode {
 
     setupSubnodes () {
 
-        //this.setThemes(this.defaultStore().rootSubnodeWithTitleForProto("_themes", BMThemeResources))
-        this.setThemes(BMThemeResources.shared())
-        this.addSubnode(this.themes())
+        const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources)
+        themes.setNodeCanReorderSubnodes(true)
+        //this.addSubnode(themes)
+        let link = this.addLinkSubnode(themes)
+        console.log("themes link = ", link.debugTypeId())
+
+        console.log("themes = ", themes.debugTypeId())
+        console.log("themes.subnodes().length = ", themes.subnodes().length)
 
         this.setFonts(BMFontResources.shared())
         this.addSubnode(this.fonts())
