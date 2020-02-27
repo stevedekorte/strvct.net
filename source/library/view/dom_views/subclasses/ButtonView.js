@@ -60,13 +60,18 @@ window.ButtonView = class ButtonView extends DomView {
         this.turnOffUserSelect()
         this.setBorderRadius("1px")
         
-        this.setTitleView(TextField.clone())
-        this.addSubview(this.titleView())
-        this.titleView().fillParentView()
-        this.titleView().setPaddingTop("0em").setPaddingBottom("0em")
-        this.titleView().setPaddingLeft("1em").setPaddingRight("1em")
-        this.titleView().flexCenterContent()
-        
+        {
+            const tv = TextField.clone()
+            this.setTitleView(tv)
+            this.addSubview(tv)
+            tv.fillParentView()
+            tv.setPaddingTop("0.1em").setPaddingBottom("0.1em")
+            tv.setPaddingLeft("1em").setPaddingRight("1em")
+            tv.flexCenterContent()
+            tv.setTextAlign("center")
+            
+        }
+
         this.setTitle("")
 
         const icon = SvgIconView.clone() //.setDivClassName("RightActionView")
