@@ -52,6 +52,11 @@ window.ProtoClass = class ProtoClass extends Object {
         return this.getClassVariable("_isSingleton", false)
     }
 
+    static singleton() {
+        assert(this.isSingleton())
+        return this.shared()
+    }
+
     // shared
 
     static hasShared () {
@@ -66,7 +71,7 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     static setShared (anInstance) {
-        this.setClassVariable("_shared", this.clone())
+        this.setClassVariable("_shared", anInstance)
         return this
     }
 
@@ -168,8 +173,17 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     static clone () {
+        if (this.isSingleton() && this.hasShared()) {
+            return this.shared()
+        }
+
         const obj = new this()
         obj.init()
+
+        if (this.isSingleton()) {
+            this.setShared(this)
+        }
+
         return obj
     }
 

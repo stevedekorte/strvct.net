@@ -82,7 +82,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         this.addSubnodes(newSubnodes)
     }
 
-    /*
+    /* 
     primitiveSubnodes () {
         return this.primitiveClasses().map((aClass) => {
             const newNode = BMMenuNode.clone()

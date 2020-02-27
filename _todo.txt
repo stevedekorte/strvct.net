@@ -1,6 +1,8 @@
 
 TODO:
 
+	inspector -> note -> icon -> icon (not showing SVG icon note)
+
 	Object
 	static isSingleton() {}
 	

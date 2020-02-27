@@ -1370,7 +1370,20 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("white-space")
     }
 
-    // over flow
+
+    // word-break
+
+    setWordBreak (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("word-break", s)
+        return this
+    }
+
+    wordBreak () {
+        return this.getCssAttribute("word-break")
+    }
+
+    // overflow
 
     setOverflow (s) {
         assert(Type.isString(s))
@@ -1380,6 +1393,18 @@ window.DomView = class DomView extends ProtoClass {
 
     overflow () {
         return this.getCssAttribute("overflow")
+    }
+
+    // overflow wrap
+
+    setOverflowWrap (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("overflow-wrap", s)
+        return this
+    }
+
+    overflowWrap () {
+        return this.getCssAttribute("overflow-wrap")
     }
 
     // overflow x

@@ -32,6 +32,10 @@ window.TextField = class TextField extends DomStyledView {
 
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
         this.newSlot("isEditable", false)
+
+        this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)")
+        this.newSlot("uneditableBorder", "none")
+        this.newSlot("showsBorderWhenEditable", false)
     }
 
     init () {
@@ -45,10 +49,13 @@ window.TextField = class TextField extends DomStyledView {
         //this.setWhiteSpace("pre")
         this.setWordWrap("normal")
         this.setOverflow("hidden")
-        this.setTextOverflow("clip")
+        this.setOverflowWrap("normal")
+        this.setTextOverflow("ellipsis")
+        this.setWordBreak("keep-all")
         this.setSpellCheck(false)
         this.setMinWidth(10)
         this.setPaddingLeft("0.5em")
+        this.setPaddingRight("0.5em")
         this.setPaddingTop("0.1em")
         this.setPaddingBottom("0.1em")
 		
@@ -117,7 +124,21 @@ window.TextField = class TextField extends DomStyledView {
         return this._doubleTapGestureRecognizer
     }
 
+    syncBorder () {
+        if (this.showsBorderWhenEditable()) {
+            if (this.isEditable()) {
+                this.setBorder(this.editableBorder())   
+            } else {
+                this.setBorder(this.uneditableBorder())
+            }
+        } else {
+            this.setBorder(this.uneditableBorder())
+        }
+    }
+
     syncEditingControl () {
+        this.syncBorder()
+
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {
                 //this.doubleTapGestureRecognizer().start()
@@ -134,6 +155,7 @@ window.TextField = class TextField extends DomStyledView {
             }
             this.setContentEditable(false)
         }
+
         return this
     }
 

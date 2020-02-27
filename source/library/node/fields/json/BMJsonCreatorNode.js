@@ -106,13 +106,6 @@ window.BMJsonCreatorNode = class BMJsonCreatorNode extends BMStorableNode {
         return this
     }
 
-   didChoosePrototype (actionNode) {
-        const proto = actionNode.info()
-        const newNode = proto.duplicate()
-        this.replaceSelfWithNode(newNode)
-        return this
-   }
-
     didChoose (actionNode) {
         assert(this.parentNode())
         const typeName = actionNode.info()

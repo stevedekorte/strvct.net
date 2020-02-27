@@ -64,19 +64,21 @@ window.StrvctApp = class StrvctApp extends App {
     setupSettings () {
         // settings
         const settings = this.subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
-
-        //const settings = BMStorableNode.clone().setTitle("Settings").setSubtitle(null)
         settings.setNodeMinWidth(150)
         this.setSettings(settings)
-        this.removeOtherSubnodeWithSameTitle(settings)
+        //this.removeOtherSubnodeWithSameTitle(settings)
 
-        // resources - should this be BMResources.shared()?
+        BMResources.setIsSingleton(true)
         const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
         this.setResources(resources)
-        
+        settings.removeOtherSubnodeWithSameTitle(resources)
+
         // data store
-        this.setDataStore(BMDataStore.clone())
-        this.settings().addSubnode(this.dataStore())
+        BMDataStore.setIsSingleton(true)
+        const dataStore = settings.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore)
+        this.setDataStore(dataStore)
+        settings.removeOtherSubnodeWithSameTitle(dataStore)
+
     }
 
     // --- setup views ---

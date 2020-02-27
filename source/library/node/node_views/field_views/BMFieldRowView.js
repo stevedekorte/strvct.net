@@ -23,8 +23,8 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.newSlot("keyViewContainer", null)
         this.newSlot("valueViewContainer", null)
 
-        //this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)")
-        this.newSlot("valueEditableBorder", "none")
+        this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)")
+        //this.newSlot("valueEditableBorder", "none")
         this.newSlot("valueUneditableBorder", "none")
     }
 
@@ -257,13 +257,13 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             valueView.setColor(this.currentStyle().color())
             //valueView.setBorder("1px solid #444")
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
-            valueView.setBorder(this.valueEditableBorder())
+            //valueView.setBorder(this.valueEditableBorder())
         } else {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             //valueView.setColor(this.uneditableColor())
             valueView.setColor(this.styles().disabled().color())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
-            valueView.setBorder(this.valueUneditableBorder())
+            //valueView.setBorder(this.valueUneditableBorder())
         }
 		
         // change color if value is invalid

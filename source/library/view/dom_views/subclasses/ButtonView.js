@@ -69,6 +69,7 @@ window.ButtonView = class ButtonView extends DomView {
             tv.setPaddingLeft("1em").setPaddingRight("1em")
             tv.flexCenterContent()
             tv.setTextAlign("center")
+            tv.setMinHeight("1em")
             
         }
 
