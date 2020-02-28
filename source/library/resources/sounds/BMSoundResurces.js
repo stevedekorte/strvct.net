@@ -8,6 +8,11 @@
 
 window.BMSoundResurces = class BMSoundResurces extends BMNode {
     
+    initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+    }
+
     initPrototype () {
         this.newSlot("extensions", ["wav", "mp3", "m4a", "mp4", "oga", "ogg"])
     }
@@ -17,6 +22,7 @@ window.BMSoundResurces = class BMSoundResurces extends BMNode {
 
         this.setTitle("Sounds")
         this.setNodeMinWidth(270)
+        this.setNoteIsSubnodeCount(true)
 
         this.watchOnceForNote("appDidInit")
     }

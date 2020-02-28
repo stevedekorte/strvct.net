@@ -68,13 +68,11 @@ window.StrvctApp = class StrvctApp extends App {
         this.setSettings(settings)
         //this.removeOtherSubnodeWithSameTitle(settings)
 
-        BMResources.setIsSingleton(true)
         const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
         this.setResources(resources)
         settings.removeOtherSubnodeWithSameTitle(resources)
 
         // data store
-        BMDataStore.setIsSingleton(true)
         const dataStore = settings.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore)
         this.setDataStore(dataStore)
         settings.removeOtherSubnodeWithSameTitle(dataStore)

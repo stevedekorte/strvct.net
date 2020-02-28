@@ -8,6 +8,11 @@
 
 window.BMFontResources = class BMFontResources extends BMNode {
     
+    initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+    }
+    
     initPrototype () {
         this.newSlot("extensions", ["ttf", "woff", "woff2"])
     }
@@ -17,7 +22,7 @@ window.BMFontResources = class BMFontResources extends BMNode {
 
         this.setTitle("Fonts")
         this.setNodeMinWidth(270)
-
+        this.setNoteIsSubnodeCount(true)
         this.watchOnceForNote("appDidInit")
         return this
     }

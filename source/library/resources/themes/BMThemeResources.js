@@ -27,6 +27,11 @@
 
 window.BMThemeResources = class BMThemeResources extends BMStorableNode {
     
+    initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+    }
+
     initPrototype () {
 
     }
@@ -39,15 +44,13 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         this.setShouldStoreSubnodes(true)
 
         this.setNoteIsSubnodeCount(true)
-        this.setNodeMinWidth(270)
+        this.setNodeMinWidth(100)
         this.addAction("add")
-        this.setSubnodeClasses([BMTheme])
+        this.setSubnodeClasses([BMThemeFolder])
         this.setNodeCanReorderSubnodes(true)
-        console.log(this.typeId() + " init <<<<")
-
-        //this.setSubnodes([])
     }
 
+    /*
     didUpdateSlotSubnodes (oldValue, newValue) {
         return super.didUpdateSlotSubnodes(oldValue, newValue)
     }
@@ -65,5 +68,6 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
     didChangeSubnodeList () {
         return super.didChangeSubnodeList()
     }
+    */
     
 }.initThisClass()

@@ -8,6 +8,11 @@
 
 window.BMImageResources = class BMImageResources extends BMNode {
     
+    initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+    }
+    
     initPrototype () {
         this.newSlot("extensions", ["png", "jpg", "jpeg", "gif", "tiff", "bmp"])
     }
@@ -16,6 +21,7 @@ window.BMImageResources = class BMImageResources extends BMNode {
         super.init()
         this.setTitle("Images")
         this.setNodeMinWidth(270)
+        this.setNoteIsSubnodeCount(true)
         this.setSubnodeProto(BMURLImage)
         return this
     }

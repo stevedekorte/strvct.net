@@ -149,108 +149,47 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
     // sync 
     
-    /*
-    syncValueViewToNode () {
-        //this.debugLog(".syncValueViewToNode " + this.node().type())
-	    if (this.node().type() === "BMBooleanField" && this.valueView().type() !== "BooleanView") {
-	        //console.log("syncValueViewToNode setup bool view")
-	        const booleanView = BooleanView.clone()
-            this.removeContentSubview(this.valueView())  
-            this.setValueView(booleanView)
-            this.addContentSubview(this.valueView())  
-            //this.valueView().setUserSelect("text")   // should the value view handle this?
-		    //this.valueView().setSpellCheck(false)   // should the value view handle this?	        
-            //return TextField.clone().setDivClassName("BMFieldValueView")
-        }
-    }
-    */
-    
     didChangeIsSelected () {
         super.didChangeIsSelected()
         this.syncFromNodeNow() // need this to update selection color on fields?
         return this
     }
 
-    /*
-    syncKeyFromNode () {
-
-    }
-
-    syncValueFromNode () {
-
-    }
-    */
-
-
-    /*
-   contentHeight () {
-        const displayedViews = this.contentView().subviews().filter((sv) => sv.getComputedCssAttribute("display") !== "none")
-        const stackedViews = displayedViews.filter(sv => sv.getComputedCssAttribute("position") !== "absolute")
-
-        //const h = stackedViews.sum(v => v.computedHeight())
-        let h = 0
-        let lastWasInline = false
-
-        stackedViews.forEach((v) => {
-            if (!lastWasInline) {
-                const m1 = v.getComputedPxCssAttribute("margin-top")
-                const m2 = v.getComputedPxCssAttribute("margin-bottom")
-                h += v.computedHeight() + m1 + m2
-            }
-
-            lastWasInline = v.display().contains("inline")
-        })
-
-        return h
-    }
-    */
-
-
     syncFromNode () {
         super.syncFromNode()
         //this.debugLog(" syncFromNode")
 		
-        this.node().prepareToSyncToView()
-        //this.syncValueViewToNode() // (lazy) set up the value view to match the field's type
-
         const node = this.node()
-        const keyView = this.keyView()
-        const valueView = this.valueView()
-        const noteView = this.noteView()
-        const errorView = this.errorView()
-
+        node.prepareToSyncToView()
         this.setDisplayIsHidden(!node.isVisible())
 
+        this.syncKeyFromNode()
+        this.syncValueFromNode()
+        this.syncErrorFromNode()
+        this.syncNoteFromNode()
+        
+        return this
+    }
+
+    syncKeyFromNode () {
+        const node = this.node()
+        const keyView = this.keyView()
+
         keyView.setInnerHTML(this.visibleKey())
-
-        let newValue = this.visibleValue()
-		
-        /*
-        console.log("")
-        console.log("FieldRow.syncFromNode:")
-        console.log("  valueView.type() === ", valueView.type())
-        console.log("  valueView.innerHTML() === '" + valueView.innerHTML() + "'")
-        console.log("  valueView.value === ", valueView.value)
-        console.log("  newValue =  '" + newValue + "'")
-        */
-        
-        if (newValue === null) { 
-            // commenting out - this causes a "false" to be displayed in new fields
-            //newValue = false; // TODO: find better way to deal with adding/removing new field
-        } 
-
-        valueView.setValue(newValue)
-        
         keyView.setIsVisible(node.keyIsVisible())
         keyView.setDisplayIsHidden(!node.keyIsVisible())
         keyView.setIsEditable(node.keyIsEditable())
-		
-        //this.verticallyCenterContent()
+        keyView.setColor(this.keyViewColor())
+    }
 
+    syncValueFromNode () {
+        const node = this.node()
+        const valueView = this.valueView()
+
+        const newValue = this.visibleValue()
+        valueView.setValue(newValue)
         valueView.setIsEditable(node.valueIsEditable())
         valueView.setDisplayIsHidden(!node.valueIsVisible())
-
-        keyView.setColor(this.keyViewColor())
 
         if (node.valueIsEditable()) {
             //valueView.setColor(this.editableColor())
@@ -265,9 +204,13 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
             //valueView.setBorder(this.valueUneditableBorder())
         }
-		
-        // change color if value is invalid
-		
+    }
+
+    syncErrorFromNode () {
+        const node = this.node()
+        const valueView = this.valueView()
+        const errorView = this.errorView()
+
         const color = valueView.color()
         
         if (node.valueError()) {
@@ -282,7 +225,12 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             errorView.fadeOutHeightToDisplayNone()
             //valueView.setToolTip("")
         }
-				
+    }
+
+    syncNoteFromNode () {
+        const node = this.node()
+        const noteView = this.noteView()
+        
         if (this.visibleNote()) {
             noteView.unhideDisplay()
             noteView.setInnerHTML(this.visibleNote())
@@ -290,9 +238,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             noteView.hideDisplay()
             noteView.setInnerHTML("")
         }
-
-        return this
     }
+
+
+    // ----------------------
 
     visibleNote () {
         return this.node().note()

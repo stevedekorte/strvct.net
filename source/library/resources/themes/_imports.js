@@ -3,12 +3,12 @@
 ResourceLoader.pushRelativePaths([
     /*
     "BMThemeStyleSheet.js",
-    "BMThemeClass.js",
-    "BMThemeClassState.js",
+    "BMThemeFolder.js",
+    "BMThemeFolderState.js",
     */
 
     "BMThemeResources.js",
     "BMTheme.js",
-    "BMThemeClass.js",
+    "BMThemeFolder.js",
     "BMThemeAttribute.js",
 ])

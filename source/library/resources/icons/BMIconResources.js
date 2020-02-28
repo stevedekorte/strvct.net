@@ -9,13 +9,19 @@
 */
 
 window.BMIconResources = class BMIconResources extends BMNode {
-    
+	
+	initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+	}
+	
     initPrototype () {
 	}
 	
 	init () {
 		super.init()
 		this.setTitle("Icons")
+		this.setNoteIsSubnodeCount(true)
 		this.addIcon("empty", null)
 		return this
 	}

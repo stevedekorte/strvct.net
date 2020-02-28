@@ -17,11 +17,11 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setNodeCanEditTitle(true)
-        this.setTitle("Untitled Theme")
+        this.setTitle("Untitled " + this.thisClass().visibleClassName())
         this.setNodeMinWidth(270)
         this.setCanDelete(true)
         this.addAction("add")
-        this.setSubnodeClasses([BMThemeClass, BMThemeAttribute])
+        this.setSubnodeClasses([BMThemeFolder, BMThemeAttribute])
         this.setNodeCanReorderSubnodes(true)
 
         //this.setupSubnodes()
@@ -42,7 +42,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
 
         //console.log("viewClasses:", viewClasses)
         const themeClasses = viewClasses.map((childProto) => {
-            return BMThemeClass.clone().setTitle(childProto.type());
+            return BMThemeFolder.clone().setTitle(childProto.type());
         })
 
         this.copySubnodes(themeClasses);

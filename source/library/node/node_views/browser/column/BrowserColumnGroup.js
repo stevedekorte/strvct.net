@@ -380,7 +380,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
             this.setMaxWidth("none")
             //this.setFlexGrow(1)
         } else {
-            this.setMinAndMaxWidth(this.targetWidth() + 50)
+            this.setMinAndMaxWidth(this.targetWidth())
         }
         return this
     }

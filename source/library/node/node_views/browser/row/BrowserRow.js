@@ -812,7 +812,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     willAcceptFirstResponder () {
         super.willAcceptFirstResponder()
 	    //this.debugLog(".willAcceptFirstResponder()")
-        this.requestSelection()
+        //this.requestSelection()
         return this
     }
 

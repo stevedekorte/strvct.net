@@ -22,6 +22,7 @@ window.BrowserView = class BrowserView extends NodeView {
 
         // dict of nodes, with node.typeId() as key, and BrowserColumnGroup as value
         this.newSlot("columnGroupCache", null)
+        //this.newSlot("selectedColumnGroup", null)
     }
 
     init () {
@@ -624,7 +625,6 @@ window.BrowserView = class BrowserView extends NodeView {
         const lastActiveCg = this.lastActiveColumnGroup()
         const fillWidth = (this.browserWidth() - this.left()) - this.widthOfUncollapsedColumnsSansLastActive()
 
-
         if (lastActiveCg) {
             lastActiveCg.setFlexGrow(1)
             lastActiveCg.setFlexShrink(1)
@@ -660,7 +660,19 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     widthOfUncollapsedColumns () {
-        return this.uncollapsedColumns().sum(cg => cg.targetWidth())
+        const sum = this.uncollapsedColumns().sum(cg => cg.targetWidth())
+
+        console.log("---")
+
+        this.uncollapsedColumns().forEach((cg) => {
+            if (cg.node()) {
+                console.log("    " + cg.node().title() + " width " + cg.targetWidth())
+            }
+        })
+        console.log("    widthOfUncollapsedColumns: " + sum)
+        console.log("---")
+
+        return sum
     }
 
     widthOfUncollapsedColumnsSansLastActive () {
@@ -693,6 +705,7 @@ window.BrowserView = class BrowserView extends NodeView {
     fitForMultiColumn () {
         this.updateBackground()
         this.uncollapseAllColumns()
+        //this.uncollapsedColumns().forEach(column => column.fitToTargetWidth())
         this.collapseLeftColumnsUntilRightColumnsFit()
         this.expandLastColumnIfNeeded()
         this.updateBackArrow()
@@ -712,16 +725,24 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     collapseLeftColumnsUntilRightColumnsFit () {
+        const columnGroups = this.columnGroups()
+
         const lastActiveCg = this.lastActiveColumnGroup()
         const browserWidth = this.browserWidth()
+
         // collapse columns from left to right until they all fit
-        this.columnGroups().forEach((cg) => {
+        for (let i = 0; i < columnGroups.length; i ++) {
+            const cg = columnGroups[i]
             const usedWidth = this.widthOfUncollapsedColumns()
-            let shouldCollapse = (usedWidth > this.browserWidth()) && (cg !== lastActiveCg)
+            let shouldCollapse = (usedWidth > browserWidth) && (cg !== lastActiveCg)
             shouldCollapse = shouldCollapse || (cg.node() === null)
             //console.log(cg.name() + " shouldCollapse:" + shouldCollapse + " usedWidth: " + usedWidth + " browserWidth:" + this.browserWidth())
             cg.setIsCollapsed(shouldCollapse)
-        })
+            if (!shouldCollapse) {
+                break;
+            }
+        }
+
         return this
     }
 

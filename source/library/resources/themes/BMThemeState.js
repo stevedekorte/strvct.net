@@ -2,11 +2,11 @@
 
 /*
 
-    BMThemeClassState
+    BMThemeFolderState
 
 */
 
-window.BMThemeClassState = class BMThemeClassState extends BMStorableNode {
+window.BMThemeFolderState = class BMThemeFolderState extends BMStorableNode {
     
     static standardStateNames () {
         return ["active", "selected", "unselected", "disabled"]

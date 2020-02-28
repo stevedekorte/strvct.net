@@ -8,6 +8,11 @@
 
 window.BMResources = class BMResources extends BMStorableNode {
     
+    initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+    }
+
     initPrototype () {
         this.newSlot("themes", null)
         this.newSlot("fonts", null)

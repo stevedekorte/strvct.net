@@ -1,14 +1,20 @@
 
 TODO:
 
+	when adding new row via tap, select new row instead of first row
+	
+	IMPORTANT fix non-collapsing columns when deep browsing
+
+
+	ThemeResource -> ThemeFolder?
+	ThemeClass -> ThemeFolder
+	
+	replace Themes with Menus and Values?
+	
+	rename BMMenuNode to BMFolderNode?
+
 	inspector -> note -> icon -> icon (not showing SVG icon note)
 
-	Object
-	static isSingleton() {}
-	
-	have class clone() check and return shared if present?
-
-	
 	Root
 	BMStorageNode -> App ->	Notes
 							Resource
@@ -17,9 +23,7 @@ TODO:
 	- to help with lazy slots, add method:
 		- Slot copyValueFromInstanceTo(anInstance, otherInstance) - which checks for lazy slot and avoids load
 		- remove oneShotGetter to avoid complexity of undoing it
-		
-	- dealing with loading shared objects like Resources?
-	
+			
 	- if a node is lazy, what happens when it's persisted?
 	  - we don't want that to force a load
 	

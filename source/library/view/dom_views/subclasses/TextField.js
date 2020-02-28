@@ -58,6 +58,7 @@ window.TextField = class TextField extends DomStyledView {
         this.setPaddingRight("0.5em")
         this.setPaddingTop("0.1em")
         this.setPaddingBottom("0.1em")
+        this.setLineHeight("1.15em")
 		
         //this.setUnfocusOnEnterKey(true)
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
@@ -125,15 +126,15 @@ window.TextField = class TextField extends DomStyledView {
     }
 
     syncBorder () {
-        if (this.showsBorderWhenEditable()) {
-            if (this.isEditable()) {
-                this.setBorder(this.editableBorder())   
-            } else {
-                this.setBorder(this.uneditableBorder())
+        let b = this.uneditableBorder()
+
+        if (this.isEditable()) {
+            if (this.showsBorderWhenEditable()) {
+                b = this.editableBorder()
             }
-        } else {
-            this.setBorder(this.uneditableBorder())
         }
+        this.setBorder(b)
+        return this
     }
 
     syncEditingControl () {

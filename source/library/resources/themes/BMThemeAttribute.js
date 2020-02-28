@@ -17,6 +17,7 @@ window.BMThemeAttribute = class BMThemeAttribute extends BMStringField {
         this.setShouldStore(true)
         //this.setShouldStoreSubnodes(true)
         this.setNodeMinWidth(200)
+        this.setKey("Untitled " + this.thisClass().visibleClassName())
     }
 
 }.initThisClass()
