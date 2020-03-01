@@ -394,11 +394,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
             cb.setMinAndMaxWidthAndHeight(8)
             cb.setAction("delete")
             cb.setOpacity(0).setTransition(this.transitionStyle())
-            /*
-            if (this.shouldCenterCloseButton()) {
-               // b.verticallyAlignAbsoluteNow()
-            }
-            */
         }
         return this
     }

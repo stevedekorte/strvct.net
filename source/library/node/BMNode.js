@@ -86,12 +86,27 @@ window.BMNode = class BMNode extends ProtoClass {
         // row view summary
 
         this.newSlot("title", null).setDuplicateOp("copyValue")
-        this.newSlot("subtitle", null).setDuplicateOp("copyValue")
+        
+        {
+            const slot = this.newSlot("subtitle", null)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("value")
+            slot.setSlotType("String")
+            slot.setInspectorPath("Subtitle")
+        }
+
         this.newSlot("note", null).setDuplicateOp("copyValue")
-        const nin = this.newSlot("noteIconName", null).setDuplicateOp("copyValue")
-        nin.setCanInspect(true).setLabel("icon").setSlotType("String")
-        nin.setValidValuesClosure(() => BMIconResources.shared().iconNames())
-        nin.setInspectorPath("Note")
+
+        {
+            const slot = this.newSlot("noteIconName", null)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("icon")
+            slot.setSlotType("String")
+            slot.setValidValuesClosure(() => BMIconResources.shared().iconNames())
+            slot.setInspectorPath("Note")
+        }
 
         // parent node, subnodes
 
@@ -120,7 +135,16 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("viewClassName", null)
         this.newSlot("nodeThumbnailUrl", null)
         this.newSlot("nodeCanEditTitle", false).setDuplicateOp("copyValue")
-        this.newSlot("nodeCanEditSubtitle", false).setDuplicateOp("copyValue")
+
+        {
+            const slot = this.newSlot("nodeCanEditSubtitle", false)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("editable")
+            slot.setSlotType("Boolean")
+            slot.setInspectorPath("Subtitle")
+        }
+
         this.newSlot("nodeRowIsSelectable", true).setDuplicateOp("copyValue")
         this.newSlot("nodeRowsStartAtBottom", false).setDuplicateOp("copyValue")
         this.newSlot("nodeMinRowHeight", 0).setDuplicateOp("copyValue")
@@ -144,11 +168,13 @@ window.BMNode = class BMNode extends ProtoClass {
 
         this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue")
         
-        let slot = this.newSlot("nodeFillsRemainingWidth", false).setDuplicateOp("copyValue")
-        slot.setSlotType("Boolean")
-        slot.setLabel("fills remaining width")
-        slot.setCanEditInspection(false)
-        slot.setCanInspect(false)
+        {
+            const slot = this.newSlot("nodeFillsRemainingWidth", false).setDuplicateOp("copyValue")
+            slot.setSlotType("Boolean")
+            slot.setLabel("fills remaining width")
+            slot.setCanEditInspection(false)
+            slot.setCanInspect(false)
+        }
 
         this.newSlot("nodeUsesColumnBackgroundColor", true).setDuplicateOp("copyValue")
         this.newSlot("canDelete", false).setDuplicateOp("copyValue")

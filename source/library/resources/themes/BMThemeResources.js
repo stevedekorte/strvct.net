@@ -44,30 +44,10 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         this.setShouldStoreSubnodes(true)
 
         this.setNoteIsSubnodeCount(true)
-        this.setNodeMinWidth(100)
+        this.setNodeMinWidth(200)
         this.addAction("add")
         this.setSubnodeClasses([BMThemeFolder])
         this.setNodeCanReorderSubnodes(true)
     }
-
-    /*
-    didUpdateSlotSubnodes (oldValue, newValue) {
-        return super.didUpdateSlotSubnodes(oldValue, newValue)
-    }
-
-    setSubnodes (newSubnodes) {
-        //console.log(this.typeId() + " setSubnodes <<<<")
-        return super.setSubnodes(newSubnodes)
-    }
-
-    justAddSubnodeAt (aSubnode, anIndex) {
-        console.log(this.typeId() + " addSubnode")
-        return super.justAddSubnodeAt(aSubnode)
-    }
-
-    didChangeSubnodeList () {
-        return super.didChangeSubnodeList()
-    }
-    */
     
 }.initThisClass()

@@ -59,28 +59,6 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         return this
     }
 
-    hasSubtitle () {
-        return this.node() && this.node().subtitle() !== null
-        //return this.subtitleView().innerHTML().length > 0
-    }
-
-    setHasSubtitle (aBool) { 
-        if (aBool) {
-            this.subtitleView().unhideDisplay()
-        } else {
-            this.subtitleView().hideDisplay()  // 13   
-        }
-        /*       
-        if (aBool) {
-            this.titleView().setMarginTop(6)
-        } else {
-            this.titleView().setMarginTop(13)    // 13   
-        }
-        */
-
-        return this
-    }
-    
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
             const tv = DomView.clone().setDivClassName("BrowserRowThumbnailView")
@@ -100,18 +78,34 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         return this
     }
     
+    hasSubtitle () {
+        const node = this.node()
+
+        if (node) {
+            if (node.subtitle() !== null && node.subtitle() !== "") {
+                return true
+            }
+
+            if (node.nodeCanEditSubtitle()) {
+                return true
+            }
+        }
+
+        return false
+    }
+    
+
     updateSubviews () {
         super.updateSubviews()
 	
-        this.setHasSubtitle(this.hasSubtitle())
-
         const node = this.node()
 
-        this.titleView().setIsEditable(node ? node.nodeCanEditTitle() : false)
-        this.subtitleView().setIsEditable(node ? node.nodeCanEditSubtitle() : false)
-        
         if (node) {
+            this.titleView().setIsEditable(node.nodeCanEditTitle() )
+            this.subtitleView().setIsEditable(node.nodeCanEditSubtitle())
+            this.subtitleView().setDisplayIsHidden(!this.hasSubtitle())
 
+            // selection
             const b = this.isSelected()
             this.titleView().setIsSelected(b)
             this.subtitleView().setIsSelected(b)
@@ -121,7 +115,6 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
                 const imageUrl = node.nodeThumbnailUrl()
                 if (imageUrl) {
                     this.setupThumbnailViewIfAbsent()
-                    //this.thumbnailView().verticallyAlignAbsoluteNow() // TODO: optimize this
                     this.thumbnailView().setBackgroundImageUrlPath(imageUrl)
                 }
             } 
@@ -133,8 +126,10 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
                 this.showNoteView()
                 this.hideNoteIconView()
             }
-
-
+        } else {
+            this.titleView().setIsEditable(false)
+            this.subtitleView().setIsEditable(false)
+            this.subtitleView().setDisplayIsHidden(true)
         }
 
         return this
@@ -208,8 +203,6 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         const node = this.node()
         node.setTitle(this.titleView().innerText())
         node.setSubtitle(this.subtitleView().innerText())
-        //node.tellParentNodes("onDidEditNode", this.node())  
-        //node.scheduleSyncToStore() // TODO: this should be handled by the node
         return this
     }
 

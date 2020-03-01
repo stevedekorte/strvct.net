@@ -59,6 +59,7 @@ window.TextField = class TextField extends DomStyledView {
         this.setPaddingTop("0.1em")
         this.setPaddingBottom("0.1em")
         this.setLineHeight("1.15em")
+        this.setMinHeight("1em")
 		
         //this.setUnfocusOnEnterKey(true)
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()

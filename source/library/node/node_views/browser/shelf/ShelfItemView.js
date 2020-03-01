@@ -90,16 +90,17 @@ window.ShelfItemView = class ShelfItemView extends NodeView {
         } else {
             this.markerView().setOpacity(0)
         }
-        //this.markerView().verticallyAlignAbsoluteNow()
 		
         return this
     }
-	
+    
+    /*
     didChangeHeight () {
         super.didChangeHeight()
-	     window.SyncScheduler.shared().scheduleTargetAndMethod(this.markerView(), "verticallyAlignAbsoluteNow", 0)
+	    window.SyncScheduler.shared().scheduleTargetAndMethod(this.markerView(), "verticallyAlignAbsoluteNow", 0)
         return this
     }
+    */
     
     setItemWidthHeight (itemWidth, itemHeight) {
         //let itemWidth = 78

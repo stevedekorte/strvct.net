@@ -21,7 +21,6 @@ window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRo
 
     init () {
         super.init()
-        //this.setHasSubtitle(true)
         return this
     }
 	

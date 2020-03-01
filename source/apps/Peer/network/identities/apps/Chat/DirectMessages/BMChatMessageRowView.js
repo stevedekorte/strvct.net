@@ -62,11 +62,6 @@ window.BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRo
 	    return this
     }
 
-    setHasSubtitle (aBool) {        
-        // so it doesn't adjust title 
-        return this
-    }
-
     message () {
         return this.node()
     }

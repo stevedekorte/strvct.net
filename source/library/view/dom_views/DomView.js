@@ -3734,17 +3734,7 @@ window.DomView = class DomView extends ProtoClass {
             this.setPosition("absolute")
             const parentHeight = pv.computedHeight() //pv.calcHeight() // computedHeight?
             const height = this.computedHeight()
-
-            //console.log("parentHeight: ", parentHeight)
-            //console.log("height: ", height)
-
             this.setTop((parentHeight / 2) - (height / 2))
-            /*
-            this.addTimeout(() => {
-                //this.setTop(pv.clientHeight() / 2 - this.clientHeight() / 2)
-                this.setTop(pv.calcHeight() / 2 - this.calcHeight() / 2)
-            }, 0)
-            */
         } else {
             throw new Error("missing parentView")
         }

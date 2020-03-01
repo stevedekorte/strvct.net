@@ -20,7 +20,7 @@ window.BMThemeFolder = class BMThemeFolder extends BMStorableNode {
         
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled " + this.thisClass().visibleClassName())
-        this.setNodeMinWidth(100)
+        this.setNodeMinWidth(200)
         this.setCanDelete(true)
         this.addAction("add")
         this.setSubnodeClasses([BMThemeFolder, BMThemeAttribute])
