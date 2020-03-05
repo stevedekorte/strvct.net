@@ -27,12 +27,13 @@
 
 window.BMThemeResources = class BMThemeResources extends BMStorableNode {
     
-    initThisClass () {
+    static initThisClass () {
         super.initThisClass()
         this.setIsSingleton(true)
+		return this
     }
 
-    initPrototype () {
+    static initPrototype () {
 
     }
 
@@ -48,6 +49,10 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         this.addAction("add")
         this.setSubnodeClasses([BMThemeFolder])
         this.setNodeCanReorderSubnodes(true)
+    }
+
+    activeTheme () {
+        return this.subnodes().first()
     }
     
 }.initThisClass()

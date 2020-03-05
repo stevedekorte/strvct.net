@@ -36,6 +36,8 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     initPrototype () {
         this.newSlot("styles", null)
         this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
+        //this.newSlot("themeClassName", null)
+        this.newSlot("themeComponentName", null)
     }
 
     init () {
@@ -57,14 +59,6 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         return this._styles
     }
 
-    currentColor () {
-        return this.currentStyle().color()
-    }
-
-    currentBgColor () {
-        return this.currentStyle().backgroundColor()
-    }
-
     currentStyle () {
         let style = null
         if (this.isSelected()) {
@@ -79,7 +73,8 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
 	
     applyStyles () {
         const style = this.currentStyle()
-        style.applyToView(this)		
+        style.applyToView(this)	
+        this.applyNewStyles()	
         return this
     }
 
@@ -105,7 +100,6 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         return this
     }
 
-	
     select () {
         this.setIsSelected(true)		
         return this
@@ -114,6 +108,115 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     unselect () {
         this.setIsSelected(false)
         return this
+    }
+
+    // -----------------------------------------
+
+    themeClassName () {
+        return this.divClassName().split(" ")
+    }
+
+    themeStateName () {
+        //const states = []
+        /*
+        if (this.isActive()) {
+            return "active"
+        }
+        */
+
+        if (this.isSelected()) {
+            return "selected"
+        }
+
+        return "unselected"
+
+        /*
+        if (this.isEditable()) {
+            return "editable" //["selected", "active", "editable", "disabled"]
+        }
+
+        return "disabled"
+        */
+    }
+
+    themePathArray () {
+        const path = []
+
+        const className = this.themeClassName()
+        if (className) {
+            path.push(className)
+        }
+
+        const compName = this.themeComponentName()
+        if (compName) {
+            path.push(compName)
+        } else {
+            //path.push("Default")
+        }
+
+        const stateName = this.themeStateName() 
+        path.push(stateName)
+
+        return path
+    }
+
+    themeValueForAttribute (attributeName) {
+        const fullPath = this.themePathArray()
+        fullPath.push(attributeName)
+        //console.log("fullPath = ", fullPath)
+
+        const theme = BMThemeResources.shared().activeTheme()
+        const attribtueNode = theme ? theme.nodeAtSubpath(fullPath) : null
+        if (attribtueNode) {
+            return attribtueNode.value()
+        }
+        return null
+    }
+
+    applyNewStyles () {
+        /*
+        const color = this.themeValueForAttribute("color")
+        if (color) {
+            this.setColor(color)
+        }
+        */
+    }
+
+    /*
+        in TextField
+        const style = BMThemeResources.shared().styleAtSubpath(this.themePath(), this.themeStateName())
+        if (style) {
+            this.applyThemeStyle(style)
+        }
+
+        //keyView.setThemePath([this.themeClassName(), "key"])
+        const theme = BMThemeResources.shared().activeTheme()
+        //                                                  themeClassName themeViewName themeStateName attributeName
+        const colorAttribute = theme ? theme.nodeAtSubpath(["Field", "key", "editable", "color"]) : null
+        if (colorAttribute) {
+            keyView.setColor(colorAttribute.value())
+        }
+    */
+
+    // -------------------------------------
+
+    currentColor () {
+        const v = this.themeValueForAttribute("color")
+        if (v) {
+            return v
+        }
+
+        //console.log("this.themeValueForAttribute('color') = ", this.themeValueForAttribute('color') )
+        return this.currentStyle().color()
+    }
+
+    currentBgColor () {
+        const v = this.themeValueForAttribute("backgroundColor")
+        if (v) {
+            return v
+        }
+
+        return this.currentStyle().backgroundColor()
     }
 	
 }.initThisClass()

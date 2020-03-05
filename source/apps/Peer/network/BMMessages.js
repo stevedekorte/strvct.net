@@ -34,12 +34,9 @@ window.BMMessages = class BMMessages extends BMStorableNode {
         this.setNodeMinWidth(180)
         
         this.createSubnodesIndex()
+        this.setSubnodeProto(BMObjectMessage)
     }
     
-    subnodeProto () {
-        return BMObjectMessage
-    }
-
     didLoadFromStore () {	    
         super.didLoadFromStore()
         this.removeMessagesNotMatchingIdentities()

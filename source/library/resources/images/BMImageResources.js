@@ -8,9 +8,10 @@
 
 window.BMImageResources = class BMImageResources extends BMNode {
     
-    initThisClass () {
+    static initThisClass () {
         super.initThisClass()
         this.setIsSingleton(true)
+		return this
     }
     
     initPrototype () {

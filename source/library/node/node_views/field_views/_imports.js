@@ -5,6 +5,7 @@ ResourceLoader.pushRelativePaths([
     "BMFieldRowView.js",
     "BMActionNodeRowView.js",
     "BMBooleanFieldRowView.js",
+    "BMStringFieldRowView.js",
     "BMTextAreaFieldRowView.js",
     "BMImageWellFieldRowView.js",
     "options/_imports.js",

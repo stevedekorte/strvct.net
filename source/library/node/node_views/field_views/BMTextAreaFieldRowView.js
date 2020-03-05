@@ -43,13 +43,10 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         const vv = TextField.clone().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
         vv.setDisplay("block")
         vv.setPosition("relative")
-        //vv.setMargin("20px")
-
         vv.setWordWrap("normal")
         vv.setHeight("auto")
         vv.setWidth("-webkit-fill-available")
         vv.setTextAlign("left")
-        vv.setPosition("relative")
         vv.setMargin("0px")
         vv.setOverflowX("hidden")
         vv.setOverflowY("scroll")

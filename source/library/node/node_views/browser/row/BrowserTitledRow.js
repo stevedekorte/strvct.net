@@ -35,11 +35,22 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         lv.setJustifyContent("center") // alignment perpendicutal to flex
         lv.setFlexDirection("column")
 
-        this.setTitleView(lv.addSubview(BrowserRowTitle.clone()))
-        this.titleView().setUsesDoubleTapToEdit(true).setOverflow("visible")
-        this.setSubtitleView(lv.addSubview(BrowserRowSubtitle.clone()))
+        const tv = BrowserRowTitle.clone()
+        lv.addSubview(tv)
+        this.setTitleView(tv)
+        tv.setUsesDoubleTapToEdit(true)
+        tv.setOverflow("visible")
+        tv.setPaddingLeft("0em")
 
-        let rv = this.contentView().subviews().at(1)
+        const st = BrowserRowSubtitle.clone()
+        lv.addSubview(st)
+        this.setSubtitleView(st)
+        st.setPaddingLeft("0em")
+        st.setPaddingTop("0em")
+        st.setOpacity(0.6)
+
+
+        const rv = this.contentView().subviews().at(1)
         rv.setDisplay("flex")
         rv.setAlignItems("center")
         this.setNoteView(rv.addSubview(BrowserRowNote.clone()))

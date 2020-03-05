@@ -50,4 +50,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
     }
     */
 
+   atPath (aPath) {
+       
+   }
 }.initThisClass()

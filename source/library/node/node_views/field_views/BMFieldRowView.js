@@ -37,7 +37,8 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         const cv = this.contentView()
 
         cv.setMinHeight("5em")
-        cv.setPaddingTop("0.5em").setPaddingBottom("0.5em")
+        cv.setPaddingTop("0.5em")
+        cv.setPaddingBottom("0.5em")
         cv.flexSplitIntoRows(4)
         cv.setJustifyContent("center") // alignment perpendicular to flex
 
@@ -69,13 +70,14 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         cv.setPaddingRight("1em")
         */
 
-        const vPadding = "0.6em"
+        const vPadding = "0.1em"
 
         this.setKeyView(TextField.clone().setDivClassName("BMFieldKeyView"))
         tv.addSubview(this.keyView())     
         this.keyView().turnOffUserSelect().setSpellCheck(false)
-        this.keyView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
-        //this.keyView().setMarginLeft(18)
+        //this.keyView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
+        this.keyView().setMarginTop(vPadding).setMarginBottom(vPadding)
+        this.keyView().setPaddingLeft("0em").setPaddingRight("0em")
 
         //this.setValueSectionView(DomView.clone().setDivClassName("BMFieldValueSectionView"))
         //this.addContentSubview(this.valueSectionView())  
@@ -83,7 +85,9 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         //this.contentView().setPaddingLeftPx(20)
         this.setValueView(this.createValueView())
-        this.valueView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
+        //this.valueView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
+        this.valueView().setMarginTop(vPadding).setMarginBottom(vPadding)
+
         sv.addSubview(this.valueView())  
         //this.valueSectionView().addSubview(this.valueView())  
       
@@ -132,7 +136,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
     keyViewColor () {
         //console.log(this.node().title() + " " + this.typeId() + ".isSelected() = ", this.isSelected())
-        return this.currentStyle().color()
+        return this.currentColor()
         //return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString()
     }
 
@@ -193,16 +197,16 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
 
         if (node.valueIsEditable()) {
             //valueView.setColor(this.editableColor())
-            valueView.setColor(this.currentStyle().color())
+            valueView.setColor(this.currentColor())
             //valueView.setBorder("1px solid #444")
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
-            //valueView.setBorder(this.valueEditableBorder())
+            valueView.setBorder(this.valueEditableBorder())
         } else {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             //valueView.setColor(this.uneditableColor())
             valueView.setColor(this.styles().disabled().color())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
-            //valueView.setBorder(this.valueUneditableBorder())
+            valueView.setBorder(this.valueUneditableBorder())
         }
     }
 

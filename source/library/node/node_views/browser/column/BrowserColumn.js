@@ -628,6 +628,15 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         this.moveRight()
     }
+
+    onEscapeKeyDown (event) {
+        if (!this.canNavigate()) { 
+            return this
+        }	
+
+        this.moveLeft()
+        //return true
+    }
 	
     // --- enter key begins row editing ---------------------------
 	
@@ -766,6 +775,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         super.focus()
 		
 	    if (this.selectedRowIndex() === -1) {
+            const sr = this.rows().first()
+            if (sr) {
+                sr.setShouldShowFlash(true)
+            }
             this.setSelectedRowIndex(0)
         }
 
@@ -778,6 +791,12 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         if (nextColumn) {
             this.blur()
             //console.log("nextColumn.focus()")
+            /*
+            const sr = nextColumn.selectedRow()
+            if (sr) {
+                sr.setShouldShowFlash(true)
+            }
+            */
             nextColumn.focus()
         }
         return this

@@ -8,9 +8,10 @@
 
 window.BMSoundResurces = class BMSoundResurces extends BMNode {
     
-    initThisClass () {
+    static initThisClass () {
         super.initThisClass()
         this.setIsSingleton(true)
+		return this
     }
 
     initPrototype () {

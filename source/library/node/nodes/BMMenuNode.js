@@ -16,6 +16,8 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     
     initPrototype () {
         this.newSlot("label", "").setShouldStoreSlot(true)
+        this.overrideSlot("subtitle", "").setShouldStoreSlot(true)
+        
         this.newSlot("target", null)
         this.newSlot("methodName", null)
         this.newSlot("info", null)
@@ -51,7 +53,6 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
 
     setTitle (aString) {
         this.setLabel(aString)
-        //this.tellParentNodes("onDidEditNode", this)
         return this
     }
 
@@ -77,11 +78,6 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     didChangeParentNode () {
         this.scheduleSyncToView()
     }
-
-    /*
-    onDidEditNode (aNode) {
-    }
-    */
 
 }.initThisClass()
 

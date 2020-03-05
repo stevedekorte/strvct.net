@@ -1,7 +1,36 @@
 
 TODO:
 
+	replace subnodeProto () {
+		this.subnodeClasses().first()
+	}
+
+	use escape key to move out of a level
+	- escape on text view moves to BrowserRow,
+	- escape on row moves to column or previous row?
+	
+	separate active(?) / selected / highlighted?
+	- prepare to support multiple selection
+	
+	add Theme/name/BrowserColumn/columnColors/
+	
+	get row flash working again
+	
+	select row when clicking on editable text but avoid losing focus on text
+	
 	when adding new row via tap, select new row instead of first row
+	
+	Themes.shared().activeTheme().path("Field/key/editable/color")
+	- look in 
+		Field/key/editable/color
+		StringField/key/selected/borderColor
+	- if not found, look for _parent link slot?
+		Field/key/editable/_parent/color
+	
+	StringField/key/selected/borderColor
+	Field/key/selected/borderColor
+	NodeView/key/selected/borderColor?
+	
 	
 	IMPORTANT fix non-collapsing columns when deep browsing
 

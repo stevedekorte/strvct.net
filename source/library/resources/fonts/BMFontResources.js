@@ -8,9 +8,10 @@
 
 window.BMFontResources = class BMFontResources extends BMNode {
     
-    initThisClass () {
+    static initThisClass () {
         super.initThisClass()
         this.setIsSingleton(true)
+		return this
     }
     
     initPrototype () {

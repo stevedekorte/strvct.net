@@ -8,9 +8,10 @@
 
 window.BMResources = class BMResources extends BMStorableNode {
     
-    initThisClass () {
+    static initThisClass () {
         super.initThisClass()
         this.setIsSingleton(true)
+		return this
     }
 
     initPrototype () {

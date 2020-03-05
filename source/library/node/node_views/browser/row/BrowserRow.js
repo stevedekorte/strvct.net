@@ -284,7 +284,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             const node = this.node()
 
             if (node) {
-                this.closeButtonView().setColor(this.currentStyle().color()) // needed?
+                this.closeButtonView().setColor(this.currentColor()) // needed?
             }
 			
             if (this.canDelete()) {
@@ -350,26 +350,19 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     applyStyles () {
-        /*
-        const node = this.node() 
-        
-        if (node) {
-            this.styles().copyFrom(node.nodeRowStyles(), copyDict) // TODO: optimize this 
-        }
-        */
         super.applyStyles()
 
         // flash
-
+        
         /*
         if (this.shouldShowFlash() && this.selectedFlashColor()) {
             this.setBackgroundColor(this.selectedFlashColor())
+            this.setTransition("background-color 0.3s")
             //setTimeout(() => { this.setBackgroundColor(this.currentBgColor()) }, 100)
             setTimeout(() => { super.applyStyles() }, 100)
             this.setShouldShowFlash(false)
-        } 
+        }
         */
-
         
         return this
     }
@@ -542,6 +535,14 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setIsRegisteredForDrag(false)
         return true
     }
+
+    /*
+    onEscapeKeyDown (event) {
+        console.log(" onEscapeKeyDown ", event._id)
+        this.column().onLeftArrowKeyUp()
+        return true
+    }
+    */
 
     // ---
     
@@ -790,7 +791,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // --- selecting ---
     
     requestSelection () {
-        //if (!this.isSelected()) {
+        /*
+        creatorNode doesn't work if we do this check
+        if (this.isSelected()) {
+            return this
+        }
+        */
+
         this.select()
         //this.debugLog(" tellParentViews didClickRow")
         //this.tellParentViews("didClickRow", this)
@@ -975,6 +982,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
         }
 
         return false;
+    }
+
+    // focus
+
+    onFocusIn () {
+        this.requestSelection()
+        return super.onFocusIn()
     }
 
 }.initThisClass()

@@ -179,8 +179,6 @@ window.DomView = class DomView extends ProtoClass {
 
     setupDivClassName () {
         const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
-        ancestorNames.atInsert(0, this.type())
-
         const divName = ancestorNames.join(" ").strip()
         //console.log("divName = " + divName)
         this.setDivClassName(divName)
@@ -539,22 +537,32 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setMarginBottom (aNumber) {
-        this.setPxCssAttribute("margin-bottom", aNumber)
+    setMarginBottom (m) {
+        if (Type.isNumber(m)) {
+            this.setPxCssAttribute("margin-bottom", m)
+        } else {
+            this.setCssAttribute("margin-bottom", m)
+        }
         return this
     }
 
     setMarginLeft (aNumber) {
-        this.setPxCssAttribute("margin-left", aNumber)
+        if (Type.isNumber(m)) {
+            this.setPxCssAttribute("margin-left", m)
+        } else {
+            this.setCssAttribute("margin-left", m)
+        }
         return this
     }
 
     setMarginRight (aNumber) {
-        this.setPxCssAttribute("margin-right", aNumber)
+        if (Type.isNumber(m)) {
+            this.setPxCssAttribute("margin-right", m)
+        } else {
+            this.setCssAttribute("margin-right", m)
+        }
         return this
     }
-
-
 
     // padding string
 
@@ -3027,7 +3035,7 @@ window.DomView = class DomView extends ProtoClass {
         //console.log(" onKeyDown ", methodName)
         
         if (!event.repeat) {
-            this.invokeMethodNameForEvent(methodName, event)
+            return this.invokeMethodNameForEvent(methodName, event)
         } else {
             //const upMethodName = BMKeyboard.shared().upMethodNameForEvent(event)
             //this.invokeMethodNameForEvent(upMethodName, event)

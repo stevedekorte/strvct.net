@@ -113,8 +113,8 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("parentNode", null)
         this.newSlot("nodeCanReorderSubnodes", false)
         this.newSlot("subnodes", null).setInitProto(SubnodesArray).setDoesHookSetter(true)
-        this.newSlot("shouldStoreSubnodes", true) //.setShouldStore(true)
-        this.newSlot("subnodeProto", null)
+        this.newSlot("shouldStoreSubnodes", true).setDuplicateOp("duplicate") //.setShouldStore(true)
+        //this.newSlot("subnodeProto", null)
         this.newSlot("subnodeClasses", []) //.setInitProto([]) // ui will present creator node if more than one option
 
         // notification notes
@@ -560,6 +560,16 @@ window.BMNode = class BMNode extends ProtoClass {
         return false
     }
 
+    subnodeProto () {
+        return this.subnodeClasses().first()
+    }
+
+    setSubnodeProto (aProto) {
+        this.subnodeClasses().removeAll()
+        this.subnodeClasses().appendIfAbsent(aProto)
+        return this
+    }
+
     acceptedSubnodeTypes () {
         const types = []
         if (this.subnodeProto()) {
@@ -830,7 +840,16 @@ window.BMNode = class BMNode extends ProtoClass {
     
     nodeAtSubpath (subpathArray) {
         if (subpathArray.length) {
-            const subnode = this.firstSubnodeWithTitle(subpathArray.first())
+            const t = subpathArray.first()
+
+            let subnode = null
+            if (Type.isArray(t)) {
+                // supports a path component that is an ordered list of subnodes titles 
+                subnode = this.firstSubnodeWithTitles(t)
+            } else {
+                subnode = this.firstSubnodeWithTitle(t)
+            }
+
             if (subnode) {
                 return subnode.nodeAtSubpath(subpathArray.rest())
             }
@@ -1004,6 +1023,17 @@ window.BMNode = class BMNode extends ProtoClass {
 
     firstSubnodeWithTitle (aString) {
         return this.subnodes().detect(subnode => subnode.title() === aString)
+    }
+
+    firstSubnodeWithTitles (titlesArray) {
+        for (let i = 0; i < titlesArray.length; i++) {
+            const title = titlesArray[i]
+            const subnode = this.firstSubnodeWithTitle(title)
+            if (subnode) {
+                return subnode
+            }
+        }
+        return null
     }
 
     firstSubnodeWithSubtitle (aString) {

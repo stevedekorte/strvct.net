@@ -10,9 +10,10 @@
 
 window.BMDataStore = class BMDataStore extends BMNode {
     
-    initThisClass () {
+    static initThisClass () {
         super.initThisClass()
         this.setIsSingleton(true)
+        return this
     }
 
     initPrototype () {

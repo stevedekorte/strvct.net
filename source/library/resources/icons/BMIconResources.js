@@ -10,9 +10,10 @@
 
 window.BMIconResources = class BMIconResources extends BMNode {
 	
-	initThisClass () {
+	static initThisClass () {
         super.initThisClass()
-        this.setIsSingleton(true)
+		this.setIsSingleton(true)
+		return this
 	}
 	
     initPrototype () {

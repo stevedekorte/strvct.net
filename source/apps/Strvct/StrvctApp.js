@@ -115,12 +115,14 @@ window.StrvctApp = class StrvctApp extends App {
 
     setupTheme () {
         this.setupNormalTheme()
+        //this.setupVectorTheme()
     }
 
     setupNormalTheme () {
         const doc = DocumentBody.shared()
         //doc.setFontFamily("Sans-Serif")
-        doc.setFontFamily("Helvetica Neue")
+        doc.setFontFamily("Helvetica")
+        //doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")

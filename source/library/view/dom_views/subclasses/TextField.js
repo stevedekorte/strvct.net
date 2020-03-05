@@ -56,8 +56,8 @@ window.TextField = class TextField extends DomStyledView {
         this.setMinWidth(10)
         this.setPaddingLeft("0.5em")
         this.setPaddingRight("0.5em")
-        this.setPaddingTop("0.1em")
-        this.setPaddingBottom("0.1em")
+        this.setPaddingTop("0.3em")
+        this.setPaddingBottom("0.3em")
         this.setLineHeight("1.15em")
         this.setMinHeight("1em")
 		
@@ -70,6 +70,13 @@ window.TextField = class TextField extends DomStyledView {
 
         //this.setIsDebugging(true)
         return this
+    }
+
+    setPaddingTop (v) {
+        if (v === "0.6em") {
+            console.log(this.value() + " setPaddingTop " + v)
+        }
+        return super.setPaddingTop(v)
     }
 
     onFocusIn () {
@@ -297,18 +304,22 @@ window.TextField = class TextField extends DomStyledView {
         }   
     }
 
+    /*
     onKeyDown (event) {
+        let result = super.onKeyDown(event)
         console.log("event.keyCode = ", event.keyCode)
-        
-        if (event.keyCode == 13) {
-            // insert 2 br tags (if only one br tag is inserted the cursor won't go to the second line)
-            document.execCommand('insertHTML', false, '\n\n');
-            // prevent the default behaviour of return key pressed
-            return false;
-        }
-        
-        return true
+        return result
     }
+    */
+
+    
+    onEnterKeyDown (event) {    
+        // insert 2 returns as cursor won't go to the second line with 1
+        document.execCommand('insertHTML', false, "\n\n");
+        // prevent the default behaviour of return key pressed
+        return false;
+    }
+    
 
     onEnterKeyUp (event) {
         if (!this.doesInput()) {
@@ -320,6 +331,11 @@ window.TextField = class TextField extends DomStyledView {
 
         this.formatValue()
         this.afterEnter()
+    }
+
+    onEscapeKeyDown (event) {
+        event.stopPropagation()
+        return false
     }
 
     afterEnter (event) {

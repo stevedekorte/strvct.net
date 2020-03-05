@@ -181,7 +181,7 @@ window.ProtoClass = class ProtoClass extends Object {
         obj.init()
 
         if (this.isSingleton()) {
-            this.setShared(this)
+            this.setShared(obj)
         }
 
         return obj

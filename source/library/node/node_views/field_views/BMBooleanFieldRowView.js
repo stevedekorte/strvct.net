@@ -17,17 +17,22 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         
         this.turnOffUserSelect()
         this.keyView().setTransition("color 0.3s")
+        this.keyView().setPaddingLeft("0.5em")
 
-       this.valueView().parentView().flexCenterContent()
-       this.valueView().setPaddingBottom("0em")
+        this.valueView().parentView().flexCenterContent()
+        this.valueView().setPaddingBottom("0em")
 
-        this.contentView().debugBorders()
+        //this.contentView().debugBorders()
         this.titlesSection().subviews().at(1).flexCenterContent()
         //this.contentView().setFlexDirection("column")
         this.titlesSection().setFlexDirection("row").makeSubviewsReverseOrdered()
         //this.titlesSection().subviews().forEach(sv => sv.setAlignItems("center"))
         this.titlesSection().subviews().forEach(sv => sv.flexCenterContent())
         //this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())
+
+        this.setValueEditableBorder("none")
+        this.setValueUneditableBorder("none")
+
         return this
     }
 

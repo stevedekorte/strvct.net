@@ -17,35 +17,78 @@ window.BMField = class BMField extends BMSummaryNode {
         this.newSlot("isEnabled", true)
 
         // key
-        const keySlot = this.newSlot("key", "key").setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        keySlot.setCanInspect(true).setSlotType("String").setLabel("key")
-        keySlot.setInspectorPath("Key")
+        {
+            const slot = this.newSlot("key", "key")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel("key")
+            slot.setInspectorPath("Key")
+        }
 
 
-        const keyIsVisibleSlot = this.newSlot("keyIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        keyIsVisibleSlot.setCanInspect(true).setSlotType("Boolean").setLabel("visible")
-        keyIsVisibleSlot.setInspectorPath("Key")
+        {
+            const slot = this.newSlot("keyIsVisible", true)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("visible")
+            slot.setInspectorPath("Key")
+        }
 
-        const keyIsEditable = this.newSlot("keyIsEditable", false).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        keyIsEditable.setCanInspect(true).setSlotType("Boolean").setLabel("editable")
-        keyIsEditable.setInspectorPath("Key")
+        {
+            const slot = this.newSlot("keyIsEditable", false)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("editable")
+            slot.setInspectorPath("Key")
+        }
 
         // value
-        this.newSlot("value", null).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        {
+            const slot = this.newSlot("value", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+        }
 
-        const vivSlot = this.newSlot("valueIsVisible", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        vivSlot.setCanInspect(true).setSlotType("Boolean").setLabel("visible")
-        vivSlot.setInspectorPath("Value")
+        {
+            const slot = this.newSlot("valueIsVisible", true)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("visible")
+            slot.setInspectorPath("Value")
+        }
 
-        const vieSlot = this.newSlot("valueIsEditable", true).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        vieSlot.setCanInspect(true).setSlotType("Boolean").setLabel("editable")
-        vieSlot.setInspectorPath("Value")
+        {
+            const slot = this.newSlot("valueIsEditable", true)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("editable")
+            slot.setInspectorPath("Value")
+        }
 
         this.newSlot("link", null)
         this.newSlot("ownsLink", null)
 
-        this.newSlot("valuePrefix", null).setShouldStoreSlot(true).setDuplicateOp("duplicate")
-        this.newSlot("valuePostfix", null).setShouldStoreSlot(true).setDuplicateOp("duplicate")
+        {
+            const slot = this.newSlot("valuePrefix", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+        }
+
+        {
+            const slot = this.newSlot("valuePostfix", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+        }
 
         this.newSlot("valueMethod", null).setDuplicateOp("duplicate")
         this.newSlot("noteMethod", null)  // fetches note from a parent node method
@@ -78,6 +121,10 @@ window.BMField = class BMField extends BMSummaryNode {
         newNode.setNodeCanInspect(true)
         newNode.setNodeCanEditTitle(true)
         return newNode
+    }
+
+    title () {
+        return this.key()
     }
 
     /*
