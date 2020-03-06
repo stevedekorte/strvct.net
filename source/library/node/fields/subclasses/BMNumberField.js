@@ -20,6 +20,7 @@ window.BMNumberField = class BMNumberField extends BMField {
 
         {
             const slot = this.newSlot("isInteger", false)
+            slot.setDuplicateOp("copyValue")
             slot.setSlotType("Boolean")
             slot.setShouldStoreSlot(true)
             slot.setCanInspect(true)
@@ -30,6 +31,7 @@ window.BMNumberField = class BMNumberField extends BMField {
 
         {
             const slot = this.newSlot("hasLimits", false)
+            slot.setDuplicateOp("copyValue")
             slot.setSlotType("Boolean")
             slot.setShouldStoreSlot(true)
             slot.setCanInspect(true)
@@ -40,6 +42,7 @@ window.BMNumberField = class BMNumberField extends BMField {
 
         {
             const slot = this.newSlot("minValue", 0)
+            slot.setDuplicateOp("copyValue")
             slot.setSlotType("Number")
             slot.setShouldStoreSlot(true)
             slot.setCanInspect(true)
@@ -50,6 +53,7 @@ window.BMNumberField = class BMNumberField extends BMField {
 
         {
             const slot = this.newSlot("maxValue", 1)
+            slot.setDuplicateOp("copyValue")
             slot.setSlotType("Number")
             slot.setShouldStoreSlot(true)
             slot.setCanInspect(true)
@@ -79,10 +83,9 @@ window.BMNumberField = class BMNumberField extends BMField {
 	
     validate () {
         const v = Number(this.value())
-        const isValid = this.valueIsNumeric()
         const errors = []
         
-        if (!isValid) {
+        if (!this.valueIsNumeric()) {
             errors.push("This needs to be a number.")
         }
 
@@ -106,7 +109,8 @@ window.BMNumberField = class BMNumberField extends BMField {
         } else {
             this.setValueError(null)
         }
-		
+        
+        const isValid = this.valueError() === null
         return isValid
     }
     

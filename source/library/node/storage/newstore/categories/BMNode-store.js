@@ -78,7 +78,7 @@ Object.defineSlots(BMNode.prototype, {
             }
         })
 
-        //this.didLoadFromStore()
+        //this.didLoadFromStore() // done in ObjectPool.didInitLoadingPids() instead
         return this
     },
 

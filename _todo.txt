@@ -1,6 +1,9 @@
 
 TODO:
 
+	validate Fields on load 
+	
+	
 	Show if Boolean dot is uneditable?
 
 	FieldRowView

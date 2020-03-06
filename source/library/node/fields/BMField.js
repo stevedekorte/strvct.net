@@ -106,6 +106,11 @@ window.BMField = class BMField extends BMSummaryNode {
         return this
     }
 
+    didLoadFromStore () {
+        super.didLoadFromStore()
+        this.validate()
+    }
+
     static nodeCreate () {
         const newNode = super.nodeCreate()
 
