@@ -70,7 +70,7 @@ window.Broadcaster = class Broadcaster extends ProtoClass {
     }
 
     broadcastNameAndArgument (methodName, anArgument) {
-        for (var it = this.listenerSetForName(methodName).values(), v= null; v=it.next().value; ) {
+        for (let it = this.listenerSetForName(methodName).values(), v= null; v=it.next().value; ) {
             v[methodName].apply(v, [anArgument])
         }
         return this

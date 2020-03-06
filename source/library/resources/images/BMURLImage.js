@@ -76,7 +76,7 @@ window.BMURLImage = class BMURLImage extends BMNode {
         
         /*
         // now just to show that passing to a canvas doesn't hold the same results
-        var canvas = document.createElement("canvas");
+        const canvas = document.createElement("canvas");
         canvas.width = myImage.naturalWidth;
         canvas.height = myImage.naturalHeight;
         canvas.getContext("2d").drawImage(myImage, 0, 0);

@@ -10,9 +10,9 @@
 
 
 const RGB2HSV = function (rgb) {
-    var hsv = new Object();
-    var max = max3(rgb.r, rgb.g, rgb.b);
-    var dif = max - min3(rgb.r, rgb.g, rgb.b);
+    const hsv = new Object();
+    const max = max3(rgb.r, rgb.g, rgb.b);
+    const dif = max - min3(rgb.r, rgb.g, rgb.b);
     hsv.saturation = (max == 0.0) ? 0 : (100 * dif / max);
     if (hsv.saturation == 0) hsv.hue = 0;
     else if (rgb.r == max) hsv.hue = 60.0 * (rgb.g - rgb.b) / dif;
@@ -28,7 +28,7 @@ const RGB2HSV = function (rgb) {
 // RGB2HSV and HSV2RGB are based on Color Match Remix see: http://color.twysted.net/
 // which is based on or copied from ColorMatch 5K see: http://colormatch.dk/
 const HSV2RGB = function (hsv) {
-    var rgb = new Object();
+    const rgb = new Object();
     if (hsv.saturation == 0) {
         rgb.r = rgb.g = rgb.b = Math.round(hsv.value * 2.55);
     } else {

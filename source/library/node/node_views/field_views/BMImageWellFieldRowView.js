@@ -9,7 +9,7 @@
 window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRowView {
     
     canOpenMimeType (mimeType) {
-        // TODO: add checks for browser supported image types
+        // TODO: add checks for browser supported image types?
         return mimeType.beginsWith("image/")
     }
 
@@ -77,19 +77,6 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     isEmpty () {
         return Type.isNull(this.dataUrl())
     }
-    /*
-    updateKeyView () {
-        let opacity = 1
-        
-        if(this.node().onlyShowsKeyWhenEmpty && this.node().onlyShowsKeyWhenEmpty()) {
-		    opacity = this.isEmpty() ? 0 : 1
-        }
-        
-	    this.keyView().setOpacity(opacity)
-	    
-        return this
-    }
-    */
     
     didUpdateImageWellView (anImageWell) {
         //this.debugLog(".didUpdateImageWellView()")

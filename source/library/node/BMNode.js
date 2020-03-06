@@ -44,12 +44,6 @@ window.BMNode = class BMNode extends ProtoClass {
         return classes.filter(aClass => aClass.availableAsNodePrimitive())
     }
 
-    /*
-    static initThisClass () {
-        return this
-    }
-    */
-
     // --- for CreatorNode Prototypes ---
 
     static visibleClassName () {
@@ -708,6 +702,34 @@ window.BMNode = class BMNode extends ProtoClass {
 
     nodeReorderSudnodesTo (newSubnodes) {
         this.copySubnodes(newSubnodes)
+        return this
+    }
+
+    orderFirst () {
+        this.parentNode().orderSubnodeFirst(this)
+        return this
+    }
+
+    orderLast () {
+        this.parentNode().orderSubnodeLast(this)
+        return this  
+    }
+
+    orderSubnodeFirst (aSubnode) {
+        assert(this.hasSubnode(aSubnode))
+        const subnodes = this.subnodes().shallowCopy()
+        subnodes.remove(aSubnode)
+        subnodes.atInsert(0, aSubnode)
+        this.nodeReorderSudnodesTo(subnodes)
+        return this
+    }
+
+    orderSubnodeLast (aSubnode) {
+        assert(this.hasSubnode(aSubnode))
+        const subnodes = this.subnodes().shallowCopy()
+        subnodes.remove(aSubnode)
+        subnodes.push(aSubnode)
+        this.nodeReorderSudnodesTo(subnodes)
         return this
     }
     

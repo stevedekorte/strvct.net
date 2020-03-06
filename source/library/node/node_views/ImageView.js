@@ -54,7 +54,6 @@ window.ImageView = class ImageView extends NodeView {
         throw new Error("shouldn't be called")
     }
 
-
     // --- editable ---
     
     setIsEditable (aBool) {
@@ -144,12 +143,14 @@ window.ImageView = class ImageView extends NodeView {
         const image = new Image();
         image.src = dataURL;
 
-        const riv = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
-        riv.makeStandardFlexView()
-        riv.setWidth("fit-content")
-        riv.setHeight("auto")
-        this.setRawImageView(riv)
-        this.imageContainer().addSubview(riv)
+        {
+            const riv = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
+            riv.makeStandardFlexView()
+            riv.setWidth("fit-content")
+            riv.setHeight("auto")
+            this.setRawImageView(riv)
+            this.imageContainer().addSubview(riv)
+        }
 	
         return this
     }

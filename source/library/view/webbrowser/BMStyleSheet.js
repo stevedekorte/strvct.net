@@ -31,8 +31,8 @@ window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
         value = value.toLowerCase(); // assumed to be a string?
 
         // Change it if it exists
-        for(var i = 0; i < sheet.cssRules.length; i++) {
-            var rule = sheet.cssRules[i];
+        for(let i = 0; i < sheet.cssRules.length; i++) {
+            const rule = sheet.cssRules[i];
             if(rule.selectorText === selector) {
                 rule.style[property] = value;
                 return this;

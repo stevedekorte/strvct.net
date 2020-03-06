@@ -25,7 +25,7 @@ Object.defineSlots(Map.prototype, {
     },
 
     recordForStore: function(aStore) { // should only be called by Store
-        var iterator = this.entries();
+        let iterator = this.entries();
         let entry = iterator.next().value
         const entries = []
         while (entry) {

@@ -1,6 +1,29 @@
 
 TODO:
 
+	Show if Boolean dot is uneditable?
+
+	FieldRowView
+		keyView
+		valueView
+			- StringView, NumberView, ImageView, 
+			
+			Boolean
+			Color
+			Url
+			Date
+			Time
+			Options
+			Phone Number
+			Address
+			
+			
+		where is validator logic best placed?
+		should key and value have different validators?
+		should NumberValue be a different thing than a Number?
+			
+		
+
 	make a BMTextField type which BMStringField and BMNumberField inherit from,
 	but BMImageField, etc does not
 	- handling padding and border of value

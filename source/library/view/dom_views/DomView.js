@@ -2609,13 +2609,13 @@ window.DomView = class DomView extends ProtoClass {
             let data = dataTransfer.items
 
             let dataTransferItems = []
-            for (var i = 0; i < data.length; i++) {
+            for (let i = 0; i < data.length; i++) {
                 dataTransferItems.push(data[i])
             }
 
             dataTransferItems = dataTransferItems.reversed()
 
-            for (var i = 0; i < dataTransferItems.length; i++) {
+            for (let i = 0; i < dataTransferItems.length; i++) {
                 const dataTransferItem = dataTransferItems[i]
                 const mimeType = dataTransferItem.type
 
@@ -2777,7 +2777,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     isContentEditable () { // there's a separate method for contentEditable() that just accesses element attribute
-        //var v = window.getComputedStyle(this.element(), null).getPropertyValue("contentEditable");
+        //const v = window.getComputedStyle(this.element(), null).getPropertyValue("contentEditable");
         const s = this.element().contentEditable
         if (s === "inherit" && this.parentView()) {
             return this.parentView().isContentEditable()

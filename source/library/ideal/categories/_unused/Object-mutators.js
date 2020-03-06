@@ -11,7 +11,7 @@ Object.defineSlots(Object.prototype, {
 
     mutatorMethodNamesSet: function() {
         const names = new Set()
-        for (var k in this) {
+        for (let k in this) {
             const v = this[k]
             if (Type.isFunction(v)) {
                 if (v.isMutator()) {

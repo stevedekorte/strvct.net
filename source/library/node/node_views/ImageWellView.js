@@ -31,14 +31,6 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.tellParentViews("didUpdateImageWellView", this)
         return this
     }
-
-    /*
-    syncFromNode () {
-        super.syncFromNode()
-        this.valueView().setBackgroundColor("transparent")
-        return this
-    }
-    */
     
     isEditable () {
         // we need this to override the normal isContentEditable return value
@@ -68,19 +60,10 @@ window.ImageWellView = class ImageWellView extends NodeView {
     
     acceptsDrop (event) {
         return true
-       //const accepts = (!this.isFull()) && (this.isEditable() !== false)
-       const accepts = this.isEditable()
-       /*
-        this.debugLog(".acceptsDrop(event):")
-        console.log("    isEditable: " + this.isEditable())
-        console.log("        isFull: " + this.isFull())
-        console.log("       accepts: " + accepts)
-        console.log("\n")
-        */
-       //console.log(this.debugTypeId() + " acceptsDrop() -> " + accepts)
-       return accepts        
+        //return this.isEditable()        
     }
 
+    /*
     onBrowserDrop (event) {
         return super.onBrowserDrop(event)
     }
@@ -90,6 +73,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
         //console.log(this.debugTypeId() + " onBrowserDragOver() -> " + r)
         return r
     }
+    */
 
     setValue (aValue) {
         this.setImageDataUrl(aValue)
@@ -110,26 +94,29 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.removeAllSubviews()
 
         if (!Type.isNullOrUndefined(dataURL)) {
-            const iv = ImageView.clone()
-            this.setImageView(iv)
-            this.addSubview(iv)
+            const v = ImageView.clone()
+            this.setImageView(v)
+            this.addSubview(v)
 
-            iv.fetchDataURLFromSrc(dataURL)
-            iv.autoFitChildHeight()
-            iv.autoFitParentWidth()
+            v.fetchDataURLFromSrc(dataURL)
+            v.autoFitChildHeight()
+            v.autoFitParentWidth()
         }
 
         return this
     }
     
     imageDataUrl () {
-        const iv = this.imageView()
-        if (iv && iv.dataURL()) {
-            return iv.dataURL()
+        const v = this.imageView()
+        if (v && v.dataURL()) {
+            return v.dataURL()
         }
         return null
     }
     
+
+    // need these as method name is constructed from MIME type
+
     onBrowserDropImageJpeg (dataChunk) {
         this.droppedImageData(dataChunk)
     }
@@ -138,15 +125,11 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.droppedImageData(dataChunk)
     }
 
-    /*
-    onBrowserDropImageTiff (dataChunk) {
-        this.droppedImageData(dataChunk)
-    }
-    */
-
     onBrowserDropImagePng (dataChunk) {
         this.droppedImageData(dataChunk)
     }
+
+    // image data chunk
 
     droppedImageData (dataChunk) {
         this.setImageDataUrl(dataChunk.dataUrl())
