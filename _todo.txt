@@ -1,10 +1,13 @@
 
 TODO:
 
-	replace subnodeProto () {
-		this.subnodeClasses().first()
-	}
-
+	make a BMTextField type which BMStringField and BMNumberField inherit from,
+	but BMImageField, etc does not
+	- handling padding and border of value
+	
+	
+	add subtitle to Field -> title/key, keyError, subtitle, value, valueError
+	
 	use escape key to move out of a level
 	- escape on text view moves to BrowserRow,
 	- escape on row moves to column or previous row?

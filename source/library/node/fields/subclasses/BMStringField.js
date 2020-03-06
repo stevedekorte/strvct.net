@@ -8,7 +8,7 @@
         
 window.BMStringField = class BMStringField extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
 

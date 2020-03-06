@@ -23,7 +23,7 @@ window.BMImageResources = class BMImageResources extends BMNode {
         this.setTitle("Images")
         this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
-        this.setSubnodeProto(BMURLImage)
+        //this.setSubnodeClasses([BMURLImage])
         return this
     }
 

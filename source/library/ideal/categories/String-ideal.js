@@ -233,7 +233,12 @@ Object.defineSlots(String.prototype, {
     },
 
     lastPathComponent: function () {
-        return this.pathComponents().last();
+        //return this.pathComponents().last()
+        const components = this.pathComponents()
+        if (components.length) {
+            return this.pathComponents().last();
+        }
+        return ""
     },
 
     fileName: function() {

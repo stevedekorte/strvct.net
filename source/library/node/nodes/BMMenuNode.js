@@ -10,14 +10,14 @@
 
 window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
     
     initPrototype () {
         this.newSlot("label", "").setShouldStoreSlot(true)
         this.overrideSlot("subtitle", "").setShouldStoreSlot(true)
-        
+
         this.newSlot("target", null)
         this.newSlot("methodName", null)
         this.newSlot("info", null)
@@ -44,7 +44,7 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     init () {
         super.init()
         this.addAction("add")
-        this.setSubnodeProto(BMCreatorNode)
+        this.setSubnodeClasses(BMNode.primitiveNodeClasses())
     }
 
     title () {

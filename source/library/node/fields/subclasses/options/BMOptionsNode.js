@@ -8,7 +8,7 @@
 
 window.BMOptionsNode = class BMOptionsNode extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
 

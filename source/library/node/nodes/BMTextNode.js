@@ -61,7 +61,6 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
     init () {
         super.init()
         //this.addAction("add")
-        //this.setSubnodeProto(BMCreatorNode)
         //this.setNodeColumnStyles(BMViewStyles.clone())
         //this.setNodeRowStyles(BMViewStyles.clone())
         //this.customizeNodeRowStyles().setToWhiteOnBlack() //.selected().setBackgroundColor("red")

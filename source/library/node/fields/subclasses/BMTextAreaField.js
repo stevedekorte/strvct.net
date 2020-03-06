@@ -8,7 +8,7 @@
 
 window.BMTextAreaField = class BMTextAreaField extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
 
@@ -16,7 +16,7 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
         return mimeType.beginsWith("text/plain")
     }
 
-    static fromDataChunk (dataChunk) {
+    static openMimeChunk (dataChunk) {
         const newNode = this.clone()
         newNode.setValue(dataChunk.decodedData())
         newNode.setKeyIsEditable(true)

@@ -2598,16 +2598,25 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBrowserDataTransfer (dataTransfer) {
+        // TODO: we need a way to avoid handling the same item twice...
+
         if (dataTransfer.files.length) {
             for (let i = 0; i < dataTransfer.files.length; i++) {
                 const file = dataTransfer.files[i]
                 this.onBrowserDropFile(file)
             }
         } else if (dataTransfer.items) {
-            const data = dataTransfer.items
+            let data = dataTransfer.items
 
+            let dataTransferItems = []
             for (var i = 0; i < data.length; i++) {
-                const dataTransferItem = data[i]
+                dataTransferItems.push(data[i])
+            }
+
+            dataTransferItems = dataTransferItems.reversed()
+
+            for (var i = 0; i < dataTransferItems.length; i++) {
+                const dataTransferItem = dataTransferItems[i]
                 const mimeType = dataTransferItem.type
 
                 // Example MIME types: 
@@ -2623,6 +2632,7 @@ window.DomView = class DomView extends ProtoClass {
                         this.onBrowserDropChunk(chunk)
                     })
                 }
+                break; // only send the first MIME type for now
             }
         }
     }

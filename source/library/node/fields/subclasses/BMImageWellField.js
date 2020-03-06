@@ -8,7 +8,7 @@
         
 window.BMImageWellField = class BMImageWellField extends BMField {
 
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
     
@@ -20,7 +20,7 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         return this.supportedMimeTypes().has(mimeType)
     }
 
-    static fromDataChunk (dataChunk) {
+    static openMimeChunk (dataChunk) {
         const newNode = this.clone()
         newNode.setValue(dataChunk.dataUrl())
         //newNode.setValue(dataChunk.decodedData())

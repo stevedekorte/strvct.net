@@ -24,7 +24,8 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
 
         this.setKeyIsVisible(false)
         this.setValue("NULL")
-        this.setValueIsEditable(false)
+        //this.setValueIsEditable(false)
+        //this.overrideSlot("valueIsEditable", false).setInitValue(false)
     }
 
     jsonArchive () {
@@ -35,13 +36,14 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
         return this
     }
 
-    /*
+
     setValueIsEditable (aBool) {
+        /*
         if (aBool) {
             console.log(this.type() + " setValueIsEditable true")
         }
-        return super.setValueIsEditable(aBool)
+        */
+        return super.setValueIsEditable(false)
     }
-    */
     
 }.initThisClass()

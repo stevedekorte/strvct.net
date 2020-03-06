@@ -7,9 +7,13 @@
 
 */
         
-window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
+window.BMJsonArrayNode = class BMJsonArrayNode extends BMJsonNode {
     
-    static availableAsPrimitive() {
+    static canOpenMimeType (mimeType) {
+        return false
+    }
+
+    static availableAsNodePrimitive() {
         return true
     }
     
@@ -18,16 +22,6 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
 
     init () {
         super.init()
-        this.setNodeCanEditTitle(true)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-        this.setNodeCanReorderSubnodes(true)
-        this.setCanDelete(true)
-        this.setNoteIconName("right arrow")
-
-        this.addAction("add")
-        this.setSubnodeProto(BMJsonCreatorNode)
-        this.setTitle("JSON")
     }
 
     subtitle () {
@@ -36,17 +30,13 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
 
     // --------------
 
-    acceptsAddingSubnode (aSubnode) {
-        return BMJsonCreatorNode.acceptedDropTypes().contains(aSubnode.type())
-    }
-
     replaceSubnodeWith (oldNode, newNode) {
         newNode = this.prepareSubnode(newNode)
         return super.replaceSubnodeWith(oldNode, newNode)
     }
 
     addSubnodeAt (aSubnode, anIndex) {
-        return super.addSubnodeAt(this.prepareSubnode(newNode), anIndex)
+        return super.addSubnodeAt(this.prepareSubnode(aSubnode), anIndex)
     }
 
     prepareSubnode (aSubnode) {
@@ -76,7 +66,7 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMStorableNode {
     setJson (json) {
         let index = 0
         json.forEach((v) => {
-            const aNode = BMJsonCreatorNode.nodeForJson(v)
+            const aNode = BMJsonNode.nodeForJson(v)
             //aNode.setTitle(index)
             this.addSubnode(aNode)
             index ++

@@ -35,8 +35,13 @@
 
 window.BMNode = class BMNode extends ProtoClass {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
+    }
+
+    static primitiveNodeClasses () {
+        const classes = BMNode.allSubclasses()
+        return classes.filter(aClass => aClass.availableAsNodePrimitive())
     }
 
     /*
@@ -55,7 +60,7 @@ window.BMNode = class BMNode extends ProtoClass {
         return name
     }
 
-    static availableAsPrimitive () {
+    static availableAsNodePrimitive () {
         return false
     }
 
@@ -75,7 +80,7 @@ window.BMNode = class BMNode extends ProtoClass {
         return false
     }
 
-    static fromDataChunk (dataChunk) {
+    static openMimeChunk (dataChunk) {
         return null
     }
 
@@ -87,6 +92,15 @@ window.BMNode = class BMNode extends ProtoClass {
 
         this.newSlot("title", null).setDuplicateOp("copyValue")
         
+        {
+            const slot = this.newSlot("nodeType", null)
+            slot.setCanInspect(true)
+            slot.setLabel("type")
+            slot.setSlotType("String")
+            //slot.setInspectorPath("Subtitle")
+            slot.setCanEditInspection(false)
+        }
+
         {
             const slot = this.newSlot("subtitle", null)
             slot.setDuplicateOp("copyValue")
@@ -114,7 +128,6 @@ window.BMNode = class BMNode extends ProtoClass {
         this.newSlot("nodeCanReorderSubnodes", false)
         this.newSlot("subnodes", null).setInitProto(SubnodesArray).setDoesHookSetter(true)
         this.newSlot("shouldStoreSubnodes", true).setDuplicateOp("duplicate") //.setShouldStore(true)
-        //this.newSlot("subnodeProto", null)
         this.newSlot("subnodeClasses", []) //.setInitProto([]) // ui will present creator node if more than one option
 
         // notification notes
@@ -210,6 +223,10 @@ window.BMNode = class BMNode extends ProtoClass {
         this.watchSubnodes()
 
         return this
+    }
+
+    nodeType () {
+        return this.type()
     }
 
     prepareToRetire () {
@@ -572,9 +589,6 @@ window.BMNode = class BMNode extends ProtoClass {
 
     acceptedSubnodeTypes () {
         const types = []
-        if (this.subnodeProto()) {
-            types.push(this.subnodeProto().type())
-        }
         this.subnodeClasses().forEach(c => types.push(c.type()))
         return types
     }
@@ -606,7 +620,7 @@ window.BMNode = class BMNode extends ProtoClass {
             if (canUseNodes.length === 1) {
                 const match = canUseNodes.first()
 
-                const newNode = match.fromDataChunk(dataChunk)
+                const newNode = match.openMimeChunk(dataChunk)
                 this.addSubnode(newNode)
 
                 /*
@@ -901,34 +915,33 @@ window.BMNode = class BMNode extends ProtoClass {
     }
     
     postShouldFocusSubnode (aSubnode) {
+        assert(aSubnode)
         this.shouldFocusSubnodeNote().setInfo(aSubnode).post()
         return this
     }
 
     postShouldFocusAndExpandSubnode (aSubnode) {
+        assert(aSubnode)
         this.shouldFocusAndExpandSubnodeNote().setInfo(aSubnode).post()
         return this
     }
     
     justAddAt (anIndex) {
         const classes = this.subnodeClasses().shallowCopy()
-        if (this.subnodeProto()) {
-            classes.push(this.subnodeProto())
-        }
 
         let newSubnode = null
         if (classes.length === 0) {
             newSubnode = null
-        }
-        else if (classes.length === 1) {
+        } else if (classes.length === 1) {
             newSubnode = classes.first().clone()
         } else {
             newSubnode = BMCreatorNode.clone()
             newSubnode.addSubnodesForObjects(classes)
         }
 
-        //const newSubnode = this.subnodeProto().clone()
-        this.addSubnodeAt(newSubnode, anIndex)
+        if (newSubnode) {
+            this.addSubnodeAt(newSubnode, anIndex)
+        }
         return newSubnode
     }
 
@@ -938,8 +951,10 @@ window.BMNode = class BMNode extends ProtoClass {
 
     addAt (anIndex) {
         const newSubnode = this.justAddAt(anIndex)
-        this.didUpdateNode()
-        this.postShouldFocusAndExpandSubnode(newSubnode)
+        if (newSubnode) {
+            this.didUpdateNode()
+            this.postShouldFocusAndExpandSubnode(newSubnode)
+        }
         return newSubnode
     }
 
@@ -1051,6 +1066,7 @@ window.BMNode = class BMNode extends ProtoClass {
                 this.replaceSubnodeWith(subnode, newSubnode)
                 return newSubnode
             }
+            return subnode
         }
 
         return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone())

@@ -9,7 +9,7 @@
 
 window.BMBooleanField = class BMBooleanField extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
     

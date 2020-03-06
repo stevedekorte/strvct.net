@@ -50,11 +50,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         ]
     }
 
-    primitiveClasses () {
-        let classes = BMNode.allSubclasses()
-        return classes.filter(aClass => aClass.availableAsPrimitive())
-    }
-
     protoObjects () {
         const app = this.rootNode()
         const protosNode = app.firstSubnodeWithTitle("Prototypes")
@@ -64,7 +59,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
 
     setupSubnodes () {
         if (this.subnodes().length == 0) {
-            this.addSubnodesForObjects(this.primitiveClasses())
+            this.addSubnodesForObjects(BMNode.primitiveNodeClasses())
             //this.addSubnodesForObjects(this.protoObjects())
         }
         return this
@@ -82,33 +77,6 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         this.addSubnodes(newSubnodes)
     }
 
-    /* 
-    primitiveSubnodes () {
-        return this.primitiveClasses().map((aClass) => {
-            const newNode = BMMenuNode.clone()
-            newNode.setTitle(aClass.nodeCreateName())
-            newNode.setNoteIconName(null)
-            newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)
-            newNode.setCanDelete(false)
-            return newNode
-        })
-    }
-
-
-    protoSubnodes () {
-        const app = this.rootNode()
-        const protosNode = app.firstSubnodeWithTitle("Prototypes")
-        const protos = protosNode.subnodes()
-        return protos.map((proto) => {
-            const newNode = BMMenuNode.clone()
-            newNode.setTitle(nodeCreateName.title())
-            newNode.setNoteIconName(null)
-            newNode.setTarget(this).setMethodName("didChoose").setInfo(proto)
-            newNode.setCanDelete(false)
-            return newNode
-        })
-    }
-    */
 
    didChoose (actionNode) {
         const obj = actionNode.info()

@@ -20,7 +20,7 @@ window.BMSound = class BMSound extends BMNode {
         return this.supportedMimeTypes().has(mimeType)
     }
 
-    static fromDataChunk (dataChunk) {
+    static openMimeChunk (dataChunk) {
         const aNode = this.clone()
         //setValue(dataChunk)
         console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)

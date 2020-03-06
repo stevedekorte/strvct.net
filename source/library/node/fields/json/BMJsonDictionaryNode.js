@@ -7,8 +7,11 @@
 
 */
         
-window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode {
+window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
     
+    static canOpenMimeType (mimeType) {
+        return false
+    }
 
     initPrototype () {
         this.setNodeCanEditTitle(true)
@@ -17,23 +20,10 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
         this.setNodeCanReorderSubnodes(true)
         this.setCanDelete(true)
         this.setNoteIconName("right arrow")
-        this.setSubnodeProto(BMJsonCreatorNode)
     }
 
     init () {
         super.init()
-        /*
-        this.setNodeCanEditTitle(true)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-        this.setNodeCanReorderSubnodes(true)
-        this.setCanDelete(true)
-        this.setNoteIconName("right arrow")
-        */
-        this.addAction("add")
-        this.setSubnodeProto(BMJsonCreatorNode)
-        this.setTitle("JSON")
-
     }
 
     subtitle () {
@@ -42,19 +32,9 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMStorableNode 
 
     // ------------------------------
 
-    acceptsAddingSubnode (aSubnode) {
-        return BMJsonCreatorNode.acceptedDropTypes().contains(aSubnode.type())
-    }
-
-    dropJson (json) {
-        const aNode = BMJsonCreatorNode.nodeForJson(json)
-        aNode.setTitle("key")
-        this.addSubnode(aNode)
-    }
-
     setJson (json) {
         json.ownForEachKV((k, v) => {
-            const aNode = BMJsonCreatorNode.nodeForJson(v)
+            const aNode = this.thisClass().nodeForJson(v)
             aNode.setTitle(k)
             if (aNode.setKey) {
                 aNode.setKey(k)

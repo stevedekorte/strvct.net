@@ -8,7 +8,7 @@
 
 window.BMUrlField = class BMUrlField extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
 
@@ -16,11 +16,23 @@ window.BMUrlField = class BMUrlField extends BMField {
         return mimeType.beginsWith("text/uri-list")
     }
 
-    static fromDataChunk (dataChunk) {
+    static openMimeChunk (dataChunk) {
         const newNode = this.clone()
         const uris = dataChunk.decodedData().split("\n")
         const uri = uris.first()
-        
+
+        try {
+            const url = new URL(uri)
+            newNode.setKey(url.hostname)
+            const path = url.pathname
+            const p = path.lastPathComponent()
+            if (p) {
+                newNode.setSubtitle(p)
+            }
+        } catch (error) {
+            newNode.setKey("?")
+        }
+
         newNode.setValue(uri)
         newNode.setValueIsVisible(false)
 

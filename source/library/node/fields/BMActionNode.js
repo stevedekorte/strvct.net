@@ -11,7 +11,7 @@
 
 window.BMActionNode = class BMActionNode extends BMStorableNode {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
     

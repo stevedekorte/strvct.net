@@ -8,7 +8,7 @@
 
 window.BMColorField = class BMColorField extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
     

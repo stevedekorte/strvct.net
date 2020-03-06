@@ -704,10 +704,12 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             if (p.event().target === this.element()) {
                 if (this.node().canSelfAddSubnode()) {
                     const newNode = this.node().add()
-                    this.syncFromNode()
-                    const newSubview = this.subviewForNode(newNode)
-                    newSubview.requestSelection()
-                    assert(newNode.parentNode())
+                    if (newNode) {
+                        this.syncFromNode()
+                        const newSubview = this.subviewForNode(newNode)
+                        newSubview.requestSelection()
+                        assert(newNode.parentNode())
+                    }
                 }
             }
         }

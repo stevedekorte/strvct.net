@@ -201,12 +201,15 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
             //valueView.setBorder("1px solid #444")
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
             valueView.setBorder(this.valueEditableBorder())
+            valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em")
+
         } else {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             //valueView.setColor(this.uneditableColor())
             valueView.setColor(this.styles().disabled().color())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
             valueView.setBorder(this.valueUneditableBorder())
+            valueView.setPaddingLeft("0em").setPaddingRight("0em")
         }
     }
 

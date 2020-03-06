@@ -675,7 +675,7 @@ window.ideal.Slot = class Slot {
             const obj = this.initProto().clone()
             this.onInstanceSetValue(anInstance, obj)
         } else if (this.initValue()) {
-            this.onInstanceSetValue(anInstance, this.initValue())
+            this.onInstanceSetValue(anInstance,this.initValue() )
         }
 
         if (this.field()) {

@@ -10,7 +10,7 @@
 
 window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
 

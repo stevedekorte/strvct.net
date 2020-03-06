@@ -11,7 +11,7 @@
         
 window.BMNumberField = class BMNumberField extends BMField {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
 

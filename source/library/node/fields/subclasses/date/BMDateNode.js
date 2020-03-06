@@ -10,7 +10,7 @@
         
 window.BMDateNode = class BMDateNode extends BMSummaryNode {
     
-    static availableAsPrimitive() {
+    static availableAsNodePrimitive() {
         return true
     }
     
