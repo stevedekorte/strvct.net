@@ -546,7 +546,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setMarginLeft (aNumber) {
+    setMarginLeft (m) {
         if (Type.isNumber(m)) {
             this.setPxCssAttribute("margin-left", m)
         } else {
@@ -555,7 +555,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setMarginRight (aNumber) {
+    setMarginRight (m) {
         if (Type.isNumber(m)) {
             this.setPxCssAttribute("margin-right", m)
         } else {

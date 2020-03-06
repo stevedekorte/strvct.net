@@ -63,6 +63,28 @@ window.BMNumberField = class BMNumberField extends BMField {
         }
     }
 
+    // --- 
+    // TODO: 
+    // - add a Slot.validatorMethod or methodHook so this can be done dynamically?
+
+    didUpdateSlotIsInteger () {
+        this.validate()
+    }
+
+    didUpdateSlotHasLimits () {
+        this.validate()
+    }
+
+    didUpdateSlotMinValue () {
+        this.validate()
+    }
+
+    didUpdateSlotMaxValue () {
+        this.validate()
+    }
+
+    // ----
+
     init () {
         super.init()
         this.setKey("Number title")

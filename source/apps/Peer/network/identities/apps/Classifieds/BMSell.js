@@ -10,7 +10,6 @@ window.BMSell = class BMSell extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("post", null)
-        this.overrideSlot("subtitle", null).setShouldStoreSlot(true)
         this.newSlot("hasSent", null).setShouldStoreSlot(true)
     }
 

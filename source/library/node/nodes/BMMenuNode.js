@@ -16,7 +16,6 @@ window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
     
     initPrototype () {
         this.newSlot("label", "").setShouldStoreSlot(true)
-        this.overrideSlot("subtitle", "").setShouldStoreSlot(true)
 
         this.newSlot("target", null)
         this.newSlot("methodName", null)

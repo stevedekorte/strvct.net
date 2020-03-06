@@ -15,6 +15,7 @@ window.BMStorableNode = class BMStorableNode extends BMNode {
 
         this.overrideSlot("canDelete", false).setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
         this.overrideSlot("title", null).setShouldStoreSlot(true)
+        this.overrideSlot("subtitle", "").setShouldStoreSlot(true)
 
         {
             const slot = this.overrideSlot("nodeFillsRemainingWidth", false)

@@ -1,7 +1,9 @@
 
 TODO:
 
-	validate Fields on load 
+	Merge BMNode and BMStorable Node?
+	
+	validate Fields after editing validation related slots?
 	
 	
 	Show if Boolean dot is uneditable?

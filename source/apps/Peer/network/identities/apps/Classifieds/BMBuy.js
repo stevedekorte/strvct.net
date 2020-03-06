@@ -10,7 +10,6 @@ window.BMBuy = class BMBuy extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("post", null)
-        this.overrideSlot("subtitle", null).setShouldStoreSlot(true)
     }
 
     init () {
