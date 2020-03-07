@@ -413,14 +413,32 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
 
     // --- reading ---
 
+    conversionDict () {
+        return {}
+        /*
+        return {
+            "BMThemeFolder" : "BMMenuNode",
+            "BMThemeAttribute" : "BMStringField",
+        }
+        */
+    }
+
     objectForRecord (aRecord) { // private
         const className = aRecord.type
         
         //console.log("loading " + className + " " + aRecord.id)
         
-        const aClass = window[className]
+        let aClass = window[className]
         if (!aClass) {
-            throw new Error("missing class '" + className + "'")
+            const altClassName = this.conversionDict()[className]
+
+            if (altClassName) {
+                aClass = window[altClassName]
+            }
+
+            if (!aClass) {
+                throw new Error("missing class '" + className + "'")
+            }
         }
         
         assert(aRecord.id)
@@ -524,7 +542,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         assert(!v.isClass())
 
         if (!v.shouldStore()) {
-            console.log("warning - called refValue on " + v.type() + " which has shouldStore=false")
+            console.log("WARNING: called refValue on " + v.type() + " which has shouldStore=false")
             return null
         }
 

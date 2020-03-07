@@ -40,10 +40,8 @@ window.BMResources = class BMResources extends BMStorableNode {
         themes.setNodeCanReorderSubnodes(true)
         //this.addSubnode(themes)
         let link = this.addLinkSubnode(themes)
-        console.log("themes link = ", link.debugTypeId())
+        //console.log("themes link = ", link.debugTypeId())
 
-        console.log("themes = ", themes.debugTypeId())
-        console.log("themes.subnodes().length = ", themes.subnodes().length)
 
         this.setFonts(BMFontResources.shared())
         this.addSubnode(this.fonts())

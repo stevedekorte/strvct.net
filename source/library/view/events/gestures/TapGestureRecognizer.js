@@ -100,7 +100,7 @@ window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecogniz
     onUp (event) {
         super.onUp(event)
  
-        if (this.isDebugging()) {
+        if (true || this.isDebugging()) {
             this.debugLog(".onUp()  tapCount:" + this.tapCount() + " viewTarget:" + this.viewTarget().typeId())
         }
 

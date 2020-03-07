@@ -519,6 +519,11 @@ window.DomView = class DomView extends ProtoClass {
             this.setCssAttribute("margin", s)
         }
 
+        this.setMarginTop(null)
+        this.setMarginBottom(null)
+        this.setMarginLeft(null)
+        this.setMarginRight(null)
+
         return this
     }
 
@@ -569,29 +574,33 @@ window.DomView = class DomView extends ProtoClass {
     setPadding (s) {
         assert(Type.isString(s))
         this.setCssAttribute("padding", s)
+        this.setPaddingTop(null)
+        this.setPaddingBottom(null)
+        this.setPaddingLeft(null)
+        this.setPaddingRight(null)
         return this
     }
 
     setPaddingTop (s) {
-        assert(Type.isString(s))
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("padding-top", s)
         return this
     }
 
     setPaddingBottom (s) {
-        assert(Type.isString(s))
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("padding-bottom", s)
         return this
     }
 
     setPaddingLeft (s) {
-        assert(Type.isString(s))
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("padding-left", s)
         return this
     }
     
     setPaddingRight (s) {
-        assert(Type.isString(s))
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("padding-right", s)
         return this
     }
@@ -908,7 +917,7 @@ window.DomView = class DomView extends ProtoClass {
 
     focus () {
         if (!this.isActiveElement()) {
-            console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
+            //console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
             /*
             const focusedView = WebBrowserWindow.shared().activeDomView()
 
@@ -1152,7 +1161,7 @@ window.DomView = class DomView extends ProtoClass {
     // line height
 
     setLineHeight (aString) {
-        assert(Type.isString(aString))
+        assert(Type.isString(aString) || Type.isNull(aString))
         this.setCssAttribute("line-height", aString)
         return this
     }

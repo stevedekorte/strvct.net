@@ -598,15 +598,33 @@ window.BrowserView = class BrowserView extends NodeView {
 
     // --- fitting columns in browser ---------------------------------------------
 
+    /*
+    forceSingleColumnIfNodeFillsWindow () {
+        const scg = this.selectedColumnGroup()
+        if (scg) {
+            const node = scg.node()
+            if (node && lastActiveCg.nodeFillsRemainingWidth()) {
+                this.setIsSingleColumn(true)
+                return this
+            }
+        }
+        return this
+    }
+    */
+
     fitColumns () {
         //this.debugLog(".fitColumns()")
         this.forceSingleColumnIfNarrow()
+       // this.forceSingleColumnIfNodeFillsWindow()
 
         const lastActiveCg = this.lastActiveColumnGroup()
 
         //console.log("this.isSingleColumn(): ", this.isSingleColumn())
-
-        if (lastActiveCg && this.isSingleColumn()) {
+        const fillsWindow = lastActiveCg && lastActiveCg.node().nodeFillsWindow()
+        if (lastActiveCg) {
+            //console.log("lastActiveCg title: " + lastActiveCg.node().title() + " fillsWindow: " + fillsWindow)
+        }
+        if (lastActiveCg && (this.isSingleColumn() || fillsWindow)) {
             this.fitForSingleColumn()
         } else {
             this.fitForMultiColumn()
@@ -662,8 +680,8 @@ window.BrowserView = class BrowserView extends NodeView {
     widthOfUncollapsedColumns () {
         const sum = this.uncollapsedColumns().sum(cg => cg.targetWidth())
 
+        /*
         console.log("---")
-
         this.uncollapsedColumns().forEach((cg) => {
             if (cg.node()) {
                 console.log("    " + cg.node().title() + " width " + cg.targetWidth())
@@ -671,6 +689,7 @@ window.BrowserView = class BrowserView extends NodeView {
         })
         console.log("    widthOfUncollapsedColumns: " + sum)
         console.log("---")
+        */
 
         return sum
     }
@@ -879,7 +898,7 @@ window.BrowserView = class BrowserView extends NodeView {
 
     syncFromHashPath () {
         const hash = WebBrowserWindow.shared().urlHash()
-        console.log(this.type() + ".syncFromHashPath() --- [" + hash + "]")
+        //console.log(this.type() + ".syncFromHashPath() --- [" + hash + "]")
         let j = ""
 
         if (hash === "") {

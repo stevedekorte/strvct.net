@@ -146,6 +146,8 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
 
                 const delegate = this.delegate()
                 const method = delegate[fullMethodName]
+                
+                //console.log("fullMethodName = " + fullMethodName)
 
                 this.onBeforeEvent(fullMethodName, event)
 

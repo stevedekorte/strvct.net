@@ -193,12 +193,6 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
     // --- doc listeners ---
 
-    stopDocListeners () {
-        this.docListeners().forEach(listener => listener.stop())
-        this.setDocListeners([])
-        return this
-    }
-
     startDocListeners () {
         this.stopDocListeners()
 
@@ -206,7 +200,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
             listener.setUseCapture(true)
             //listener.setListenTarget(document.body)
             listener.setListenTarget(window)
-            //listener.setIsDebugging(true);
+            //listener.setIsDebugging(true)
             listener.start()
             return listener
         })
@@ -214,7 +208,11 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         return this
     }
 
-
+    stopDocListeners () {
+        this.docListeners().forEach(listener => listener.stop())
+        this.setDocListeners([])
+        return this
+    }
 
     // condition helpers
 
@@ -621,6 +619,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
     }
 
     cancel () {
+        console.log(this.typeId() + " cancel")
         this.sendCancelledMessage()
         //this.didFinish()
     }

@@ -1,6 +1,15 @@
 
 TODO:
 
+	Add BrowserHeader
+		- title
+		- subtitle
+	PathView
+		- clickable path view path?
+	
+		
+	Hide ColumnGroup headers when not used
+
 	Merge BMNode and BMStorable Node?
 	
 	validate Fields after editing validation related slots?

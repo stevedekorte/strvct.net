@@ -21,7 +21,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         this.setNodeMinWidth(270)
         this.setCanDelete(true)
         this.addAction("add")
-        this.setSubnodeClasses([BMThemeFolder, BMThemeAttribute])
+        this.setSubnodeClasses([BMThemeFolder, BMStringField, BMNumberField])
         this.setNodeCanReorderSubnodes(true)
 
         //this.setupSubnodes()

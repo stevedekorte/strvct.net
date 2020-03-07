@@ -35,7 +35,8 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         */
 
         this.keyView().hideDisplay()
-
+        this.setValueUneditableBorder("none")
+        this.setValueEditableBorder("none")
         return this
     }
 
@@ -71,8 +72,6 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
             this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
         }
         */
-
-        this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
 
         return this
     }

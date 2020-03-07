@@ -435,6 +435,15 @@ window.TextField = class TextField extends DomStyledView {
         super.didEdit()
         return this
     }
+    
+    setBorder (v) {
+        /*
+        if (this.value() === "a") {
+            console.log("break")
+        }
+        */
+        return super.setBorder(v)
+    }
 
 
 }.initThisClass()

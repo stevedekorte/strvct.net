@@ -178,9 +178,17 @@ window.BMNode = class BMNode extends ProtoClass {
         {
             const slot = this.newSlot("nodeFillsRemainingWidth", false).setDuplicateOp("copyValue")
             slot.setSlotType("Boolean")
-            slot.setLabel("fills remaining width")
+            slot.setLabel("fills remaining")
             slot.setCanEditInspection(false)
             slot.setCanInspect(false)
+        }
+
+        {
+            const slot = this.newSlot("nodeFillsWindow", false)
+            slot.setSlotType("Boolean")
+            slot.setLabel("fills window")
+            slot.setCanEditInspection(true)
+            slot.setCanInspect(true)
         }
 
         this.newSlot("nodeUsesColumnBackgroundColor", true).setDuplicateOp("copyValue")
@@ -291,10 +299,12 @@ window.BMNode = class BMNode extends ProtoClass {
     setupInspectorFromSlots () {
         const slots = this.thisPrototype().allSlots()
         slots.ownForEachKV((name, slot) => {
+            /*
             console.log("setup inspector slot: " + name)
             if (name === "protocol") {
                 console.log("---")
             }
+            */
             const field = slot.newInspectorField()
             if (field) {
                 field.setTarget(this)
@@ -684,7 +694,7 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     didChangeSubnodeList () {
-        this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)) // TODO: remove after debugging
+        //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)) // TODO: remove after debugging
         //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
         this.didUpdateNode()
         return this

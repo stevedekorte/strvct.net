@@ -25,9 +25,9 @@ window.BMUrlField = class BMUrlField extends BMField {
             const url = new URL(uri)
             newNode.setKey(url.hostname)
             const path = url.pathname
-            const p = path.lastPathComponent()
+            const p = path.fileName()
             if (p) {
-                newNode.setSubtitle(p)
+                newNode.setKey(p)
             }
         } catch (error) {
             newNode.setKey("?")

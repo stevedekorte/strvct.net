@@ -3,7 +3,6 @@
 /* --- FieldView --------------------------- */
 
 .BMFieldRowView {
-	/*font-family: AppRegular;*/
     opacity: 1;
     
     display: block;
@@ -14,13 +13,9 @@
     max-height: none;
     
     overflow: visible;
-
     width: auto;
-
     transition: background-color .3s ease-out;
-
     margin: 0px;
-    
 	text-align: left;
 }
 
@@ -73,7 +68,7 @@
 	padding-top: 5px;
 	padding-bottom: 5px;
 	
-    border: 1px solid #444;
+    /*border: 1px solid #444;*/
     color: white;
     background-color: transparent;
     /*border-bottom: 1px solid #555;*/
@@ -91,21 +86,6 @@
 /* --------------------------- TextArea --------------------------- */
 
 /*
-.BMTextAreaFieldRowView {
-    display: flex;
-    position: relative;
-    width: auto;
-	min-height: 300px;
-	margin: 0;
-	padding: 0;
-	
-    transition: background-color .3s ease-out;
-
-	overflow-x: hidden;
-	overflow-y: scroll;
-}
-*/
-
 .BMMonoTextAreaFieldValueView {
     display: flex;
     position: relative;
@@ -121,9 +101,10 @@
     font-weight: normal;
     text-align: left;
 
-    /*font-family: AppMono, monospace;*/
+    font-family: AppMono, monospace;
     font-weight: lighter;
 }
+*/
 
 .BMTextAreaFieldValueView {
     display: flex;
@@ -139,12 +120,6 @@
 
     font-weight: normal;
     text-align: left;
-    /*
-    font-family: monospace;
-    font-size: 85%;
-    */
-
-	/*border: 1px red dashed;*/
 }
 
 /* --------------------------- Pointer --------------------------- */
@@ -159,8 +134,6 @@
 /* --------------------------- Image --------------------------- */
 
 .BMImageWellFieldView {
-    /*background-color: #fff;*/
-
     opacity: 1;
     
     display: block;

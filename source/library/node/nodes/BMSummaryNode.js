@@ -24,6 +24,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             slot.setSlotType("String")
             slot.setLabel("suffix")
             slot.setInspectorPath("Summary")
+            slot.setSyncsToView(true)
         }
 
         {
@@ -32,8 +33,9 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             slot.setDuplicateOp("copyValue")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
-            slot.setLabel("Is children summary")
+            slot.setLabel("is children summary")
             slot.setInspectorPath("Subtitle")
+            slot.setSyncsToView(true)
         }
 
         {
@@ -42,8 +44,9 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             slot.setDuplicateOp("copyValue")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
-            slot.setLabel("Has new line ending")
+            slot.setLabel("has new line ending")
             slot.setInspectorPath("Summary")
+            slot.setSyncsToView(true)
         }
 
         {
@@ -54,6 +57,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             slot.setSlotType("String")
             slot.setLabel("format")
             slot.setValidValues(["none", "key", "value", "key value", "value key"])
+            slot.setSyncsToView(true)
             slot.setInspectorPath("Summary")
         }
 
@@ -65,6 +69,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             slot.setSlotType("Boolean")
             slot.setLabel("is subnode count")
             slot.setInspectorPath("Subtitle")
+            slot.setSyncsToView(true)
         }
 
         {
@@ -75,6 +80,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
             slot.setSlotType("Boolean")
             slot.setLabel("is subnode count")
             slot.setInspectorPath("Note")
+            slot.setSyncsToView(true)
         }
 
         this.setShouldStore(true)

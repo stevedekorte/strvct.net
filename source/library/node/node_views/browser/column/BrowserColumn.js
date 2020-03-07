@@ -458,15 +458,18 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                     this.unselectRowsBesides(row)
                 }
             } else {
+                // we should have a more explicit way of selecting the next row
+                // after a row delete as we don't always want it to default to selecting next row
                 if (this.rows().length) {
                     // otherwise, select close to last selected index
                     const i = Math.min(selectedIndex, this.rows().length - 1)
                     row = this.rows().at(i)
                     //this.log("selecting row titled '" + row.title().innerHTML() + "'")
+                    row.requestSelection()
+                    /*
                     row.setIsSelected(true)
-                    //this.didClickRow(row)
                     this.unselectRowsBesides(row)
-
+                    */
                 }
             }
         }

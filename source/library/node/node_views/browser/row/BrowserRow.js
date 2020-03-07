@@ -451,9 +451,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // -- tap gesture ---
 
     justTap () {
+        //console.log(this.debugTypeId() + " justTap")
+
         if (this.isSelectable()) {
             //this.debugLog(".requestSelection()")
-            this.requestSelection()
+            this.justRequestSelection()
 
             const node = this.node()
             if (node) {
@@ -473,7 +475,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return true
     }
 
+    debugTypeId () {
+        return this.typeId() + " " + (this.node() ? this.node().title() : "")
+    }
+
     onTapComplete (aGesture) {
+        //console.log(this.debugTypeId() + " onTapComplete")
+        
         this.setLastTapDate(new Date())
         //this.debugLog(".onTapComplete()")
         const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
@@ -791,13 +799,17 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // --- selecting ---
     
     requestSelection () {
-        /*
-        creatorNode doesn't work if we do this check
-        if (this.isSelected()) {
-            return this
-        }
-        */
+        //console.log(this.debugTypeId() + " requestSelection")
 
+        // NOTE: creatorNode doesn't work if we do this check - why?
+        if (!this.isSelected()) {
+            this.justRequestSelection()
+        }
+
+        return this
+    }
+
+    justRequestSelection () {
         this.select()
         //this.debugLog(" tellParentViews didClickRow")
         //this.tellParentViews("didClickRow", this)
@@ -987,7 +999,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // focus
 
     onFocusIn () {
-        this.requestSelection()
+        //this.requestSelection()
         return super.onFocusIn()
     }
 

@@ -10,5 +10,4 @@ ResourceLoader.pushRelativePaths([
     "BMThemeResources.js",
     "BMTheme.js",
     "BMThemeFolder.js",
-    "BMThemeAttribute.js",
 ])

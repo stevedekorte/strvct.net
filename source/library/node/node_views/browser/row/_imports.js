@@ -7,4 +7,5 @@ ResourceLoader.pushRelativePaths([
     "BrowserRowSubtitle.js",
     "BrowserRowTitle.js",
     "BrowserFieldRow.js",
+    "BMTextNodeRowView.js",
 ])

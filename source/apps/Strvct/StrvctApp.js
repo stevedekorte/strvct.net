@@ -93,7 +93,7 @@ window.StrvctApp = class StrvctApp extends App {
     }
     
     setupBrowser () {	
-        console.log("App setupBrowser")
+        //console.log("App setupBrowser")
         this.setBrowser(BrowserView.clone())
     
         this.browser().hideAndFadeIn()

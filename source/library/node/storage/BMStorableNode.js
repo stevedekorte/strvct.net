@@ -23,6 +23,11 @@ window.BMStorableNode = class BMStorableNode extends BMNode {
             slot.setCanEditInspection(true)
             slot.setCanInspect(true)
         }
+
+        {
+            const slot = this.overrideSlot("nodeFillsWindow", false)
+            slot.setShouldStoreSlot(true)
+        }
         
         {
             const slot = this.overrideSlot("subnodes", null)

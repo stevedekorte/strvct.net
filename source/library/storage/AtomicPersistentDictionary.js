@@ -79,7 +79,7 @@ window.AtomicPersistentDictionary = class AtomicPersistentDictionary extends ide
             this.asyncClear(callback)
         } else {
             this.idb().asyncAsJson((dict) => {
-                console.log(this.type() + " onOpen() --- loaded cache with " + Object.keys(dict).length + " keys")
+                //console.log(this.type() + " onOpen() --- loaded cache with " + Object.keys(dict).length + " keys")
                 this.setJsDict(dict)
                 this.setIsOpen(true)
                 if (callback) {

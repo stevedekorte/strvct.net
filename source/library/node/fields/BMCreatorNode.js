@@ -88,7 +88,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
 
     replaceSelfWithNode (newNode) {
         const parentNode = this.parentNode()
-        this.parentNode().replaceSubnodeWith(this, newNode)
+        assert(parentNode)
+        parentNode.replaceSubnodeWith(this, newNode)
         parentNode.postShouldFocusAndExpandSubnode(newNode) 
     }
 
