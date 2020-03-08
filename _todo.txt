@@ -1,7 +1,7 @@
 
 TODO:
 
-	Add BrowserHeader
+	Add ColumnGroupHeader
 		- title
 		- subtitle
 	PathView

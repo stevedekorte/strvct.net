@@ -2,11 +2,11 @@
 
 /*
 
-    BrowserFooter
+    ColumnGroupFooter
 
 */
 
-window.BrowserFooter = class BrowserFooter extends NodeView {
+window.ColumnGroupFooter = class ColumnGroupFooter extends NodeView {
     
     initPrototype () {
         this.newSlot("leftActionsView", null)
@@ -17,13 +17,13 @@ window.BrowserFooter = class BrowserFooter extends NodeView {
     init () {
         super.init()
 
-        this.setLeftActionsView(DomView.clone().setDivClassName("BrowserFooterLeftActionsView NodeView DomView"))
+        this.setLeftActionsView(DomView.clone().setDivClassName("ColumnGroupFooterLeftActionsView NodeView DomView"))
 		
-        const textView = TextField.clone().setDivClassName("BrowserFooterTextView NodeView DomView") //.setUserSelect("none")
+        const textView = TextField.clone().setDivClassName("ColumnGroupFooterTextView NodeView DomView") //.setUserSelect("none")
         this.setTextView(textView)
 	    this.textView().setIsEditable(true).setDoesClearOnReturn(true).setDoesHoldFocusOnReturn(true)
 						
-        this.setRightActionsView(DomView.clone().setDivClassName("BrowserFooterRightActionsView NodeView DomView"))
+        this.setRightActionsView(DomView.clone().setDivClassName("ColumnGroupFooterRightActionsView NodeView DomView"))
 		
         this.setZIndex(2)
         return this

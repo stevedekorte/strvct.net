@@ -2,11 +2,11 @@
 
 /*
 
-    BrowserHeader
+    ColumnGroupHeader
 
 */
 
-window.BrowserHeader = class BrowserHeader extends NodeView {
+window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
     
     initPrototype () {
         this.newSlot("backArrowView", null)
@@ -40,7 +40,7 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
         this.setTitleView(titleView)
         mv.addSubview(titleView)
 		
-        this.setRightActionsView(DomView.clone().setDivClassName("BrowserFooterRightActionsView"))
+        this.setRightActionsView(DomView.clone().setDivClassName("ColumnGroupFooterRightActionsView"))
         rv.addSubview(this.rightActionsView())
 		
         this.setZIndex(2)
@@ -48,7 +48,7 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
     }
 
     newTitleView () {
-        const titleView = DomView.clone().setDivClassName("BrowserHeaderTitleView NodeView DomView").setInnerHTML("").setUserSelect("none")
+        const titleView = DomView.clone().setDivClassName("ColumnGroupHeaderTitleView NodeView DomView").setInnerHTML("").setUserSelect("none")
         return titleView
     }
 
@@ -114,7 +114,7 @@ window.BrowserHeader = class BrowserHeader extends NodeView {
 
         node.actions().forEach((action) => {
             if (this.showsAction(action)) {
-                const button = BrowserHeaderAction.clone()
+                const button = ColumnGroupHeaderAction.clone()
                 button.setTarget(node).setAction(action)
                 button.setCanClick(this.nodeHasAction(action))
                 this.addSubview(button).syncFromNodeNow()

@@ -21,10 +21,10 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     init () {
         super.init()
          
-        this.setHeader(BrowserHeader.clone())
+        this.setHeader(ColumnGroupHeader.clone())
         this.addSubview(this.header())
 
-        this.setFooter(BrowserFooter.clone())
+        this.setFooter(ColumnGroupFooter.clone())
         //this.addSubview(this.footer())
    
         //this.setColumnWrapper(this)

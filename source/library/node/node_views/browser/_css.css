@@ -50,7 +50,7 @@
     user-select: none;
 }
 
-.BrowserHeader {
+.ColumnGroupHeader {
     position: absolute;
     top: 0px;
     left: 0px;
@@ -63,7 +63,7 @@
 	/*border: 1px blue dashed;*/
 }
 
-.BrowserFooter {
+.ColumnGroupFooter {
     position: absolute;
     bottom: 0px;
     left: 0px;
@@ -78,7 +78,7 @@
     overflow: hidden;
 }
 
-.BrowserFooterTextView {
+.ColumnGroupFooterTextView {
     position: relative;
     background-color: white;
     border-radius: 4px;
@@ -167,7 +167,7 @@ notes on Scroll bars theme options
     background-color: transparent;
 }
 
-.BrowserHeaderAction {
+.ColumnGroupHeaderAction {
     display: inline-block;
     width: 28px;
     height: 14px;
@@ -180,7 +180,7 @@ notes on Scroll bars theme options
     background-color: transparent;
 }
 
-.BrowserHeaderTitleView {
+.ColumnGroupHeaderTitleView {
     display: block;
     /*
     margin-top: 10px;
@@ -200,7 +200,7 @@ notes on Scroll bars theme options
 }
 
 /*
-.BrowserHeaderAction:hover {
+.ColumnGroupHeaderAction:hover {
     opacity: 1;
 }
 

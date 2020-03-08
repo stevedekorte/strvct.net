@@ -143,7 +143,7 @@ DB LOST IDS:
 - ImageWellView
     - insert dropped image between images at drop point instead of appending to end
     
-TODO: add way to access style sheet attribute of a given css class e.g. BrowserFooter height
+TODO: add way to access style sheet attribute of a given css class e.g. ColumnGroupFooter height
 
 - put column header actions in separate view so they can be synced separately 
 

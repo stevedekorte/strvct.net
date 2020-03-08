@@ -4,8 +4,8 @@ ResourceLoader.pushRelativePaths([
     "BrowserColumn.js",
     "BrowserColumnGroup.js",
     
-    "BrowserHeader.js",
-    "BrowserHeaderAction.js",
+    "ColumnGroupHeader.js",
+    "ColumnGroupHeaderAction.js",
     
-    "BrowserFooter.js",
+    "ColumnGroupFooter.js",
 ])

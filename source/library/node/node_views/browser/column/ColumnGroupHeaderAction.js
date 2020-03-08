@@ -2,14 +2,14 @@
 
 /*
 
-    BrowserHeaderAction
+    ColumnGroupHeaderAction
 
     Merge with ButtonView?
     
 */
 
  
-window.BrowserHeaderAction = class BrowserHeaderAction extends NodeView {
+window.ColumnGroupHeaderAction = class ColumnGroupHeaderAction extends NodeView {
     
     initPrototype () {
         this.newSlot("canClick", true)
