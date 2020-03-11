@@ -51,9 +51,11 @@
 }
 
 .ColumnGroupHeader {
-    position: absolute;
+    position: relative;
+    /*
     top: 0px;
     left: 0px;
+    */
     min-height: 40px;
     max-height: 40px;
     width: 100%;
@@ -101,11 +103,13 @@
 
 
 .BrowserScrollView {
+    width: 100%;
+    /*
     position: absolute;
     top: 40px;
     left: 0px;
-    width: 100%;
     height: calc(100% - 40px);
+    */
 	background-color: transparent;
   	overflow-y: scroll; /* has to be scroll, not auto, for touch scroll momentum to work */
     overflow-x: hidden;

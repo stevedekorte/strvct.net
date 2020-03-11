@@ -253,7 +253,7 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // --- slots ---
 
-    slotNamed (slotName) {
+    ownSlotNamed (slotName) {
         assert(this.isPrototype())
 
         const slots = this.slots()
@@ -262,8 +262,8 @@ window.ProtoClass = class ProtoClass extends Object {
         }
         
         const p = this.__proto__
-        if (p && p.slotNamed) {
-            return p.slotNamed(slotName)
+        if (p && p.ownSlotNamed) {
+            return p.ownSlotNamed(slotName)
         }
 
         return null
@@ -307,8 +307,39 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // -------------------------------------
 
+    /*
+    hasOwnSlotGetter (slotName) {
+        return Reflect.ownKeys(this).contains(slotName)
+    }
+
+    hasOwnSlotSetter (slotName) {
+        return Reflect.ownKeys(this).contains(slotName.asSetter())
+    }
+    */
+
+    hasOwnSlotObject (slotName) {
+        if( !Type.isUndefined(this.allSlots()[slotName]) ) {
+            return true
+        }
+        return false
+        //return this.hasOwnSlotGetter(slotName) || this.hasOwnSlotSetter(slotName)
+    }
+    
+    newSlotIfAbsent (slotName, initialValue = null) {
+        const slot = this.allSlots()[slotName]
+        if (slot) {
+            return slot
+        }
+        return this.justNewSlot(slotName, initialValue)
+    }
+
     newSlot (slotName, initialValue = null) {
-        if(!Type.isUndefined(this.allSlots()[slotName])) {
+        if (Reflect.ownKeys(this).contains(slotName)) {
+            //const msg = "WARNING: " + this.type() + "." + slotName + " slot already exists"
+            //console.log(msg) 
+        }
+
+        if(this.hasOwnSlotObject(slotName)) {
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
             console.log(msg)
             throw new Error(msg)

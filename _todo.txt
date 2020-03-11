@@ -1,7 +1,17 @@
 
 TODO:
 
-	Add ColumnGroupHeader
+	
+
+	For selecting theme class, need a LinkOptionsNode
+	
+	ThemeClass [LinkOptions]
+		- H1 -> select on click, but allow to explore subnodes
+	
+	LinkMirror
+	
+	Add BrowserHeader
+
 		- title
 		- subtitle
 	PathView
@@ -500,7 +510,7 @@ TODO:
 	ELEGANCE
 	- cleaner way to handle lazySubnodesCount?
 		- have storeRef able to access Record properties?
-		- Array.lengthForRecord(this.slotNamed("subnodes").storeRef().record())?
+		- Array.lengthForRecord(this.ownSlotNamed("subnodes").storeRef().record())?
 		
 	FEATURES
 	Slot type checking setTypeCheck(aClassName)

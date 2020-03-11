@@ -10,11 +10,12 @@
     
 */
 
-window.BrowserView = class BrowserView extends NodeView {
+window.BrowserView = class BrowserView extends HeaderFooterView {
     
     initPrototype () {
         this.newSlot("columns", null)
         this.newSlot("isSingleColumn", false)
+        this.newSlot("groupsView", null)
         this.newSlot("defaultHeader", null)
         this.newSlot("defaultColumnStyles", null)
         this.newSlot("defaultRowStyles", null)
@@ -27,12 +28,24 @@ window.BrowserView = class BrowserView extends NodeView {
 
     init () {
         super.init()
+        this.setDisplay("flex")
+        this.setFlexDirection("row")
+
+        /*
+        this.setHeaderClass(BrowserHeader)
+        this.setMiddleClass(DomView)
+        this.setupHeaderMiddleFooterViews()
+        this.headerView().setBorder("1px dashed yellow")
+        this.middleView().setBorder("1px dashed blue")
+        */
 
         this.setupDefaultStyles()
         this.setColumnGroupCache({})
 
         this.setIsRegisteredForDocumentResize(true)
 
+        // default header is a absolute positioned top bar to ensure that the 
+        // column group bars appear to be continued all the way across the BrowserView
         const dh = DomView.clone().setDivClassName("BrowserDefaultHeader NodeView DomView")
         this.setDefaultHeader(dh)
         this.addSubview(dh)
@@ -45,6 +58,10 @@ window.BrowserView = class BrowserView extends NodeView {
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
 
         return this
+    }
+
+    contentView () {
+        return this.middleView()
     }
 
     bgColors () {
@@ -410,7 +427,6 @@ window.BrowserView = class BrowserView extends NodeView {
         return this
     }
 
-
     updateSelectedColumnTo (selectedColumn) {
         const selectedColumnGroup = selectedColumn.columnGroup()
         this.columnGroups().forEach(cg => cg.setIsSelected(cg === selectedColumnGroup))
@@ -553,6 +569,7 @@ window.BrowserView = class BrowserView extends NodeView {
         this.setupColumnGroupColors()
         this.fitColumns()
         this.updateSelectedColumnTo(selectedColumn)
+
         return this
     }
 
@@ -575,6 +592,16 @@ window.BrowserView = class BrowserView extends NodeView {
 
         this.setupColumnGroupColors()
         this.fitColumns()
+        this.setupHeaders()
+        return this
+    }
+
+    setupHeaders () {
+        if (this.shouldShowColumnHeaders()) {
+            this.defaultHeader().unhideDisplay()
+        } else {
+            this.defaultHeader().hideDisplay()
+        }
         return this
     }
 
@@ -629,6 +656,8 @@ window.BrowserView = class BrowserView extends NodeView {
         } else {
             this.fitForMultiColumn()
         }
+
+        this.setupHeaders() // TODO: not about fitting, move this to a better location?
 
         return this
     }
@@ -702,7 +731,7 @@ window.BrowserView = class BrowserView extends NodeView {
     }
 
     setShouldShowTitles (aBool) {
-        this.columnGroups().forEach(cg => cg.header().setShouldShowTitle(aBool) )
+        this.columnGroups().forEach(cg => cg.headerView().setShouldShowTitle(aBool) )
         return this
     }
 
@@ -790,6 +819,12 @@ window.BrowserView = class BrowserView extends NodeView {
 
     windowWidth () {
         return App.shared().mainWindow().width()
+    }
+
+    // --- column headers -------------------------
+
+    shouldShowColumnHeaders () {
+        return this.columnGroups().detect(cg => cg.headerView().isUsed()) !== null
     }
 
     // --- node paths -----------------------------

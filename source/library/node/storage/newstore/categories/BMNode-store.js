@@ -56,7 +56,7 @@ Object.defineSlots(BMNode.prototype, {
             const k = entry[0]
             const v = entry[1]
 
-            const slot = this.thisPrototype().slotNamed(k)
+            const slot = this.thisPrototype().ownSlotNamed(k)
 
             if (slot) {
                 if (!slot.hasSetterOnInstance(this)) {

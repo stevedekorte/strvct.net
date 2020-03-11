@@ -73,6 +73,9 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
     }
 	
     browser () {
+        if (!this.columnGroup()) {
+            return null
+        }
         return this.columnGroup().browser()
     }
     
@@ -82,6 +85,7 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
             this.scheduleSyncFromNode()
             //console.log(" ----- " + (this.node() ? this.node().title() : null) + " setShouldShowTitle ", aBool)
         }
+        this.syncWithBrowser()
         return this
     }
 	
@@ -91,6 +95,15 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
 	
     showsAction (actionName) {
         return actionName !== "delete" // uses row delete action instead of column header action now
+    }
+
+    syncWithBrowser () {
+        if (this.browser() && this.browser().shouldShowColumnHeaders()) {
+            this.uncollapse()
+        } else {
+            this.collapse()
+        }
+        return this
     }
 
     syncFromNode () {
@@ -106,9 +119,11 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
             //this.syncActionButtons()
         }
         
+        //this.syncWithBrowser()
         return this
     }
 
+    /*
     syncActionButtons () {
         //const oldButtons = this.actionButtons()
 
@@ -123,6 +138,7 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
 
         return this
     }
+    */
     
     nodeHasAction (anAction) {
         return this.node().respondsTo(anAction)
@@ -140,6 +156,29 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
             this.scheduleSyncFromNode()
         }
         return this
+    }
+
+    isUsed () {
+        //return true
+        
+        // returns false if all views are empty (no title, no action buttons or arrows)
+        if (this.doesShowBackArrow()) {
+            return true
+        }
+
+        if (this.shouldShowTitle()) {
+            return true
+        }
+
+        return false
+    }
+
+    collapse () {
+        this.hideDisplay()
+    }
+
+    uncollapse () {
+        this.unhideDisplay()
     }
     
 }.initThisClass()

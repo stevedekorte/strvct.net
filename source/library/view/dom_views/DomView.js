@@ -961,8 +961,12 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setTop (aNumber) {
-        this.setPxCssAttribute("top", aNumber)
+    setTop (v) {
+        if (Type.isNumber(v)) {
+            this.setPxCssAttribute("top", v)
+        } else {
+            this.setCssAttribute("top", v)
+        }
         return this
     }
 

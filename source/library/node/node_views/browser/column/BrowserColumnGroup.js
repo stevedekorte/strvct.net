@@ -9,8 +9,8 @@
 window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     
     initPrototype () {
-        this.newSlot("header", null)
-        this.newSlot("footer", null)
+        this.newSlot("headerView", null)
+        this.newSlot("footerView", null)
         this.newSlot("scrollView", null) // contains column
         this.newSlot("column", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
@@ -20,49 +20,32 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
 
     init () {
         super.init()
-         
-        this.setHeader(ColumnGroupHeader.clone())
-        this.addSubview(this.header())
+        this.setDisplay("flex")
+        this.setFlexDirection("column")
+        //this.setPosition("relative")
 
-        this.setFooter(ColumnGroupFooter.clone())
-        //this.addSubview(this.footer())
-   
+         
+        this.setHeaderView(ColumnGroupHeader.clone())
+        this.addSubview(this.headerView())
+
+        this.setFooterView(ColumnGroupFooter.clone())
+        //this.addSubview(this.footerView())
         //this.setColumnWrapper(this)
 
-        this.setScrollView(DomView.clone().setDivClassName("BrowserScrollView"))
-        this.addSubview(this.scrollView())
+        const sv = DomView.clone().setDivClassName("BrowserScrollView")
+        sv.setPosition("relative")
+        this.setScrollView(sv)
+        this.addSubview(sv)
         
         this.setColumn(BrowserColumn.clone())
         this.scrollView().addSubview(this.column())
-
-
         this.updateScrollView()
         
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
 
-        //console.log(this.typeId() +  "created " + new Error().stack)
-
         return this
     }
     
-    
-    /*
-    setParentView (aView) {
-        console.log(this.typeId() + " setParentView(" + ( aView === null ? null : aView.typeId() ) + ")")
-
-        //if (aView === null && this.setParentView() !== null && this.node()) {
-        //    console.log(this.typeId() + " setting null parent view")
-        //} 
-        
-        return super.setParentView(aView)
-    }
-
-    prepareToRetire () {
-        console.log(this.typeId() + " prepareToRetire")
-        super.prepareToRetire()
-    }
-    */
-
     copySizeFrom (bcg) {
         this.setMinAndMaxWidth(bcg.minWidthPx())
         this.setFlexGrow(bcg.flexGrow())
@@ -163,45 +146,19 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
 
     // -------------------------------------
     
-    hasHeader () {
-        return true
-    }
-    
     hasFooter () {
-        return this.hasSubview(this.footer())
+        return this.hasSubview(this.footerView())
     }
     
     setHasFooter (aBool) {
         if (this.hasFooter() !== aBool) {
             if (aBool) {
-                this.addSubview(this.footer())
+                this.addSubview(this.footerView())
             } else {
-                this.removeSubview(this.footer())
+                this.removeSubview(this.footerView())
             }
             this.updateScrollView()
         }
-        return this
-    }
-    
-    updateScrollView () {
-        const headerHeight = 40
-        const footerHeight = 40
-        
-        let heightOffset = 0
-        let top = 0
-        
-        if (this.hasHeader()) { 
-            heightOffset += headerHeight
-            top = headerHeight
-        }
-        
-        if (this.hasFooter()) { 
-            heightOffset += footerHeight
-        }
-        
-        this.scrollView().setHeight("calc(100% - " + heightOffset + "px)")
-        this.scrollView().setTop(top)
-        
         return this
     }
 
@@ -238,7 +195,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 	
     updateBackArrow () {
-        this.header().setDoesShowBackArrow(this.shouldShowBackArrow())
+        this.headerView().setDoesShowBackArrow(this.shouldShowBackArrow())
         return this
     }
 	
@@ -283,47 +240,6 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         return this
     }
     
-    /// empty label 
-
-    /*
-    updateEmptyLabel () {
-        let node = this.node()
-        if (node) {
-            if (node.hasSubnodes() && node.nodeEmptyLabel()) {
-                this.setEmptyLabelText(node.nodeEmptyLabel())
-                return this
-            }
-        }
-            
-        this.removeEmptyLabel()
-        return this
-    }
-    
-    addEmptyLabelIfMissing () {
-        if (!this.emptyLabel()) {
-            this.setEmptyLabel(DomView.clone().setDivClassName("BrowserColumnEmptyLabel"))
-            this.setEmptyLabelText("").turnOffUserSelect()
-            this.addSubview(this.emptyLabel())            
-        }
-        
-        return this
-    }
-    
-    setEmptyLabelText (aString) {       
-        this.addEmptyLabelIfMissing()     
-        this.emptyLabel().setInnerHTML(aString)
-        return this
-    }
-    
-    removeEmptyLabel () {
-        if (this.emptyLabel()) {
-            this.removeSubview(this.emptyLabel())
-            this.setEmptyLabel(null)
-        }
-        return this
-    }
-*/
-    
     setColumnClass (columnClass) { // no longer used, but might use someday
         if (this.column().type() !== columnClass.type()) {
             const view = columnClass.clone().setNode(this.node())
@@ -334,15 +250,6 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         }
         return this
     }
-    
-    /*
-    setMinAndMaxWidth (w) {
-        Error.showCurrentStack()
-		this.debugLog(" / " + (this.node() ? this.node().type() : "?") + " nodeMinWidth = " + w)
-        super.setMinAndMaxWidth(w)
-        return this
-    }
-    */
 
     targetWidth () {
         let w = 0
@@ -419,38 +326,30 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
             this.setHasFooter(aNode.nodeHasFooter())
         }
         
-        this.header().setNode(aNode)
+        this.headerView().setNode(aNode)
         this.column().setNode(aNode)
-        this.footer().setNode(aNode)
+        this.footerView().setNode(aNode)
         return this
     }
-
-    /*
-    didUpdateNode () {
-        super.didUpdateNode()
-    }
-    */
 
     // just using this to make debugging easier
 
     syncFromNode () {        
         //console.log("BrowserColumnGroup syncFromNode "  + this.node().type())
-        this.header().syncFromNodeNow()
+        this.headerView().syncFromNodeNow()
         this.column().syncFromNodeNow()
-        //this.updateEmptyLabel()
+        this.updateScrollView() // only needs to change on browser size check?
+        return this
+    }
+
+    updateScrollView () {
+        this.scrollView().setHeight("100%")
+        this.scrollView().setTop(null)
         return this
     }
 
     debugTypeId () {
         return super.debugTypeId() + this.debugTypeIdSpacer() + this.column().debugTypeId()
     }
-
-    /*
-    scheduleSyncFromNode () {
-        console.log(this.debugTypeId() + " scheduleSyncFromNode")
-        super.scheduleSyncFromNode()
-        return this
-    }
-    */
 
 }.initThisClass()

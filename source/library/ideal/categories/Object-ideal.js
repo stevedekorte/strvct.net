@@ -496,7 +496,7 @@ const prototypeSlots = {
         // TODO: add a type check of some kind?
 
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
-            const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
+            const otherSlot = otherObject.thisPrototype().ownSlotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
             const dop = otherSlot.duplicateOp()
 
@@ -512,7 +512,7 @@ const prototypeSlots = {
 
     copySlotValuesFrom: function(otherObject) {
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
-            const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
+            const otherSlot = otherObject.thisPrototype().ownSlotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject)
             mySlot.onInstanceSetValue(this, v)
         })

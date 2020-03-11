@@ -164,7 +164,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
             //console.log("rootRecord.subnodes: ", JSON.stringify(rootRecord, null, 2))
 
             const root = this.objectForPid(this.rootKey())
-            //root.thisPrototype().slotNamed("subnodes").setupInOwner()
+            //root.thisPrototype().ownSlotNamed("subnodes").setupInOwner()
             //root.subnodes()
             this._rootObject = root
             //let subnodes = root.subnodes()
