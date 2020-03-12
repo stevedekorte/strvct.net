@@ -20,6 +20,16 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
     init () {
         super.init()
         this.setDisplay("flex")
+        this.setPosition("relative")
+        this.setMinAndMaxHeight("40px")
+        this.setWidth("100%")
+        this.setZIndex(3)
+        this.setBackgroundColor("transparent")
+        this.setBorderBottom("solid 1px rgba(55, 55, 55, 1)")
+        //this.setBackgroundColor("#dbdbdb")
+        this.setTextAlign("right")
+        //this.collapse()
+        //this.setTransition("all 0.3s ease-in-out")
 
         this.setActionButtons([])
 
@@ -174,11 +184,13 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
     }
 
     collapse () {
-        this.hideDisplay()
+        this.hideHeight()
+        //this.hideDisplay()
     }
 
     uncollapse () {
-        this.unhideDisplay()
+        this.unhideHeight()
+        //this.unhideDisplay()
     }
     
 }.initThisClass()

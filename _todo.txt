@@ -1,6 +1,32 @@
 
 TODO:
 
+
+	hideHeight () {
+		this._hiddenHeight = this.height()
+		this._hiddenMaxHeight = this.minHeight()
+		this._hiddenMinHeight = this.maxHeight()
+		this.setMinAndMaxHeight("0em")
+		return this
+	}
+	
+	unhideHeight() {
+		if (this._hiddenMinHeight) {
+			this.setMinHeight(this._hiddenMaxHeight)
+			this._hiddenMaxHeight = null
+		}
+		
+		if (this._hiddenMaxHeight) {
+			this.setMaxHeight(this._hiddenMaxHeight)
+			this._hiddenMaxHeight = null
+		}
+		
+		return this
+	}
+
+	
+	BrowserColumnGroup
+		rename header/footer to headerView/footerView
 	
 
 	For selecting theme class, need a LinkOptionsNode

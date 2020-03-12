@@ -34,7 +34,7 @@ window.ideal.Slot = class Slot {
         throw new Error("Slot.shouldStore should not be called")
     }
 
-    simpleNewSlot (slotName, initialValue = null) {
+    simpleNewSlot (slotName, initialValue) {
         const privateName = "_" + slotName;
         //this[privateName] = initialValue;
         Object.defineSlot(this, privateName, initialValue)

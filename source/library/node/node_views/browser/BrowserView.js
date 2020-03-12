@@ -29,15 +29,28 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     init () {
         super.init()
         this.setDisplay("flex")
-        this.setFlexDirection("row")
+        this.setFlexDirection("column")
+        this.setFlexWrap("nowrap")
+        this.setPosition("absolute")
+        this.setTop(0)
+        this.setLeft(0)
+        this.setWidth("100%")
+        this.setHeight("100%")
+        this.setOverflow("hideen")
 
-        /*
         this.setHeaderClass(BrowserHeader)
         this.setMiddleClass(DomView)
         this.setupHeaderMiddleFooterViews()
-        this.headerView().setBorder("1px dashed yellow")
-        this.middleView().setBorder("1px dashed blue")
-        */
+
+        //this.headerView().setBorder("1px dashed yellow")
+
+        const mv = this.middleView()
+        mv.setPosition("relative")
+        mv.setDisplay("flex")
+        mv.setFlexDirection("row")
+        //mv.setBorder("1px dashed blue")       
+        mv.setWidth("100%")
+        mv.setHeight("100%")
 
         this.setupDefaultStyles()
         this.setColumnGroupCache({})
@@ -48,7 +61,7 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
         // column group bars appear to be continued all the way across the BrowserView
         const dh = DomView.clone().setDivClassName("BrowserDefaultHeader NodeView DomView")
         this.setDefaultHeader(dh)
-        this.addSubview(dh)
+        this.middleView().addSubview(dh)
 
         this.setBackgroundColor(this.bgColorForIndex(Math.round(this.bgColors().length / 2)))
         this.setColumnGroupCount(1)
@@ -253,11 +266,11 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     // --- columns -------------------------------
 
     columnGroups () {
-        return this.subviews().select(subview => subview.isKindOf(BrowserColumnGroup) ) // TODO: is this still neeeded?
+        return  this.middleView().subviews().select(sv => sv.isKindOf(BrowserColumnGroup) ) // TODO: is this still neeeded?
     }
 
     addColumnGroup (v) {
-        return this.addSubview(v)
+        return this.middleView().addSubview(v)
     }
 
     removeColumnGroup (cg) {
@@ -265,8 +278,8 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
         if (!cg.isCached()) {
             cg.prepareToRetire()
         }
-        if (this.hasSubview(cg)) {
-            this.removeSubview(cg)
+        if ( this.middleView().hasSubview(cg)) {
+            this.middleView().removeSubview(cg)
         }
         return this
     }
@@ -496,7 +509,7 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     }
 
     replaceColumnGroup (oldCg, newCg) {
-        this.replaceSubviewWith(oldCg, newCg)
+        this.middleView().replaceSubviewWith(oldCg, newCg)
         newCg.copySetupFrom(oldCg)
 
         // If we won't use it again (if it's not in cache), 

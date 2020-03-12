@@ -325,7 +325,7 @@ window.ProtoClass = class ProtoClass extends Object {
         //return this.hasOwnSlotGetter(slotName) || this.hasOwnSlotSetter(slotName)
     }
     
-    newSlotIfAbsent (slotName, initialValue = null) {
+    newSlotIfAbsent (slotName, initialValue) {
         const slot = this.allSlots()[slotName]
         if (slot) {
             return slot
@@ -333,7 +333,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this.justNewSlot(slotName, initialValue)
     }
 
-    newSlot (slotName, initialValue = null) {
+    newSlot (slotName, initialValue) {
         if (Reflect.ownKeys(this).contains(slotName)) {
             //const msg = "WARNING: " + this.type() + "." + slotName + " slot already exists"
             //console.log(msg) 
@@ -347,7 +347,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this.justNewSlot(slotName, initialValue)
     }
 
-    overrideSlot (slotName, initialValue = null) {
+    overrideSlot (slotName, initialValue) {
         const oldSlot = this.allSlots()[slotName]
         if(Type.isUndefined(oldSlot)) {
             const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
@@ -362,7 +362,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return slot
     }
 
-    justNewSlot (slotName, initialValue = null) { // private
+    justNewSlot (slotName, initialValue) { // private
         assert(this.isPrototype())
         assert(Type.isString(slotName))
 

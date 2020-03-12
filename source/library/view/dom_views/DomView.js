@@ -48,7 +48,9 @@ window.DomView = class DomView extends ProtoClass {
 
         // extras
     
-        this.newSlot("hiddenDisplayValue", null)
+        this.newSlot("hiddenDisplayValue", undefined)
+        this.newSlot("hiddenMinHeight", undefined)
+        this.newSlot("hiddenMaxHeight", undefined)
     }
 
     init () {
@@ -1208,6 +1210,17 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("flex")
     }
 
+    // flex wrap
+
+    setFlexWrap (v) {
+        this.setCssAttribute("flex-wrap", v)
+        return this
+    }
+
+    flex () {
+        return this.getCssAttribute("flex-wrap")
+    }
+
     // flex order
 
     setOrder (v) {
@@ -1335,6 +1348,29 @@ window.DomView = class DomView extends ProtoClass {
     display () {
         return this.getCssAttribute("display")
     }
+
+    // hide height
+
+    hideHeight () {
+		if (Type.isUndefined(this.hiddenMinHeight())) {
+            this.setHiddenMinHeight(this.minHeight())
+            this.setHiddenMaxHeight(this.maxHeight())
+            this.setMinAndMaxHeight("0em")
+        }
+		return this
+	}
+	
+	unhideHeight() {
+		if (!Type.isUndefined(this.hiddenMinHeight())) {
+			this.setMinHeight(this.hiddenMaxHeight())
+			this.setHiddenMinHeight(undefined)
+
+			this.setMaxHeight(this.hiddenMaxHeight())
+			this.setHiddenMaxHeight(undefined)
+		}
+		
+		return this
+	}
 
     // helper for hide/show display
 
@@ -1807,14 +1843,14 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     setMinHeight (newValue) {
-        assert(Type.isString(newValue))
+        assert(Type.isString(newValue) || Type.isNull(newValue))
         // <length> | <percentage> | auto | max-content | min-content | fit-content | fill-available
         this.setCssAttribute("min-height", newValue, () => { this.didChangeHeight() })
         return this
     }
 
     setMaxHeight (newValue) {
-        assert(Type.isString(newValue))
+        assert(Type.isString(newValue) || Type.isNull(newValue))
         // <length> | <percentage> | none | max-content | min-content | fit-content | fill-available
         this.setCssAttribute("max-height", newValue, () => { this.didChangeHeight() })
         return this
