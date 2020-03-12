@@ -40,9 +40,52 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.newSlot("lastTapDate", null)
     }
 
+    /*
+    .BrowserRow {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: auto;
+
+    color: rbga(255, 255, 255, 0.5);
+    transition: all 0s, background-color .3s ease-out;
+
+	overflow: hidden;
+    white-space: nowrap;
+    
+    border-style: solid;
+    border-color: transparent;
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 1px;
+    border-bottom: 1px;
+	text-align: left;
+	margin: 0px;
+    padding: 0px;
+    -webkit-overflow-scrolling: touch; 
+}
+
+*/
     init () {
         super.init()
+        this.setDisplay("block")
         this.setPosition("relative") // so absolute position on close button works
+        this.setWidth("100%")
+        this.setHeight("auto")
+        //this.setColor("rbga(255, 255, 255, 0.5)")
+        this.setTransition("all 0s, background-color .3s ease-out")
+        this.setOverflow("hidden")
+        this.setWhiteSpace("nowrap")
+        
+        this.setBorderStyle("solid")
+        this.setBorderColor("transparent")
+        this.setBorderLeft("0px")
+        this.setBorderRight("0px")
+        this.setBorderTop("1px")
+        this.setBorderBottom("1px")
+        this.setTextAlign("left")
+        this.setWebkitOverflowScrolling("touch")
+
         this.turnOffUserSelect()
         this.setAcceptsFirstResponder(false)
         this.setupRowContentView()
@@ -124,12 +167,14 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // we route style methods to it
 
     setupRowContentView () {
+
         const cv = DomView.clone().setDivClassName("BrowserRowContentView")
         //cv.setDisplay("block")
 
         cv.setDisplay("flex")
         //cv.flexCenterContent()
-
+        cv.setHeight("auto")
+        cv.setMinHeight("60px")
         cv.setWidthPercentage(100)
         cv.setHeightPercentage(100) 
         cv.setPosition("relative")

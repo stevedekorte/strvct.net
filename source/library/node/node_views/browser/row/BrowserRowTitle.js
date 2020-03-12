@@ -19,6 +19,17 @@ window.BrowserRowTitle = class BrowserRowTitle extends TextField {
 
     init () {
         super.init()
+        this.setDisplay("block")
+        this.setPosition("relative")
+        this.setMarginTop("0px")
+        this.setMarginLeft("0px")
+        this.setMinWidth("20px")
+        this.setPaddingTop("2px")
+        this.setPaddingBottom("2px")
+        this.setTextAlign("left")
+        this.setWhiteSpace("nowrap")
+        this.setOverflow("hidden")
+        this.setWordWrap("normal")
         return this
     }
 

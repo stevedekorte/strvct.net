@@ -17,6 +17,15 @@ window.ColumnGroupHeaderAction = class ColumnGroupHeaderAction extends NodeView 
 
     init () {
         super.init()
+        this.setDisplay("inline-block")
+        this.setWidth("28px")
+        this.setHeight("14px")
+        this.setMarginTop("14px")
+        this.setMarginRight("20px")
+        this.setOpacity("1")
+        this.setBackgroundRepeat("no-repeat")
+        this.setBackgroundPosition("right center")
+        this.setBackgroundColor("transparent")
         return this
     } 
     

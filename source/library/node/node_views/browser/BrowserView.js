@@ -26,17 +26,19 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
         //this.newSlot("selectedColumnGroup", null)
     }
 
+
     init () {
         super.init()
         this.setDisplay("flex")
         this.setFlexDirection("column")
+        this.setFlexWrap("nowrap")
         this.setFlexWrap("nowrap")
         this.setPosition("absolute")
         this.setTop(0)
         this.setLeft(0)
         this.setWidth("100%")
         this.setHeight("100%")
-        this.setOverflow("hideen")
+        this.setOverflow("hidden")
 
         this.setHeaderClass(BrowserHeader)
         this.setMiddleClass(DomView)
@@ -59,7 +61,7 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
 
         // default header is a absolute positioned top bar to ensure that the 
         // column group bars appear to be continued all the way across the BrowserView
-        const dh = DomView.clone().setDivClassName("BrowserDefaultHeader NodeView DomView")
+        const dh = DomView.clone().setDivClassName("BrowserDefaultHeader")
         this.setDefaultHeader(dh)
         this.middleView().addSubview(dh)
 

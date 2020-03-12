@@ -46,7 +46,21 @@ window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
         // --------------------------------------------------
         this.addCloseButton()
         
-        this.closeButtonView().setDivClassName("BrowserRowCloseButtonTopRight")
+        {
+            const cb = this.closeButtonView()
+            cb.setDivClassName("BrowserRowCloseButtonTopRight")
+            cb.setDisplay("inline-block")
+            cb.setTop("0px")
+            cb.setRight("13px")
+            cb.setColor("#aaa")
+            cb.setMinWidth("11px")
+            cb.setMaxWidth("11px")
+            cb.setMinHeight("11px")
+            cb.setMaxHeight("11px")
+            cb.setBorder("0px dashed #ddd")
+            cb.setOpacity("0.4")
+        }
+
         this.setTopView(this.addContentSubview(DomView.clone().setDivClassName("BMPostDraftRowTopView")))
 
         // left view

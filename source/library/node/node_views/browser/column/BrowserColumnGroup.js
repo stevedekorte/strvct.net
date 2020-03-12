@@ -6,11 +6,9 @@
 
 */
 
-window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
+window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     
     initPrototype () {
-        this.newSlot("headerView", null)
-        this.newSlot("footerView", null)
         this.newSlot("scrollView", null) // contains column
         this.newSlot("column", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
@@ -18,31 +16,74 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
         this.newSlot("browser", null)
     }
 
+
     init () {
         super.init()
         this.setDisplay("flex")
+        this.setFlexGrow(1)
         this.setFlexDirection("column")
-        //this.setPosition("relative")
+        this.setPosition("relative")
+        this.setOpacity("0")
+        this.setOverflow("hidden")
+        this.setUserSelect("none")
+        this.setTransition("opacity 0.3s ease-in-out")
 
-         
-        this.setHeaderView(ColumnGroupHeader.clone())
-        this.addSubview(this.headerView())
 
-        this.setFooterView(ColumnGroupFooter.clone())
-        //this.addSubview(this.footerView())
-        //this.setColumnWrapper(this)
+        this.setHeaderClass(ColumnGroupHeader)
+        this.setMiddleClass(DomView)
+        this.setFooterClass(ColumnGroupFooter)
+        this.setupHeaderMiddleFooterViews()
+        this.footerView().hideDisplay()
+        
+        /*
+        {
+            const v = ColumnGroupHeader.clone()
+            this.setHeaderView(v)
+            this.addSubview(v)
+        }
+        */
 
-        const sv = DomView.clone().setDivClassName("BrowserScrollView")
-        sv.setPosition("relative")
-        this.setScrollView(sv)
-        this.addSubview(sv)
+        {
+            //const sv = DomView.clone()
+            const sv = this.middleView()
+            sv.setDivClassName("BrowserScrollView")
+            sv.setPosition("relative")
+            sv.setWidth("100%")
+            sv.setBackgroundColor("transparent")
+            
+            sv.setOverflowY("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
+            sv.setOverflowX("hidden")
+            sv.setMsOverflowStyle("none") // removes scrollbars on IE 10+ 
+            sv.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox 
+            
+            
+            this.setScrollView(sv)
+            //this.addSubview(sv)
+        }
+
+        /*
+        {
+            const v = ColumnGroupFooter.clone()
+            this.setFooterView(v)
+            this.addSubview(v)
+        }
+        */
         
         this.setColumn(BrowserColumn.clone())
         this.scrollView().addSubview(this.column())
         this.updateScrollView()
         
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
+        return this
+    }
 
+    setParentView (v) {
+        super.setParentView(v)
+        if (v) {
+            setTimeout(() => { this.setOpacity("1") }, 10)
+        } else {
+            this.setOpacity("0")
+        }
         return this
     }
     
@@ -68,12 +109,6 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends NodeView {
     }
 
     // caching - used to hold onto view state during drag between columns
-    
-    /*
-    browser () {
-        return this.parentView()
-    }
-    */
 
 
     isInBrowser () {

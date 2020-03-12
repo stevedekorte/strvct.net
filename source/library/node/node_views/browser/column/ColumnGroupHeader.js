@@ -17,6 +17,7 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
         this.newSlot("actionButtons", null)
     }
 
+
     init () {
         super.init()
         this.setDisplay("flex")
@@ -58,8 +59,17 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
     }
 
     newTitleView () {
-        const titleView = DomView.clone().setDivClassName("ColumnGroupHeaderTitleView NodeView DomView").setInnerHTML("").setUserSelect("none")
-        return titleView
+        const v = DomView.clone().setDivClassName("ColumnGroupHeaderTitleView")
+        v.setDisplay("block")
+        v.setColor("rgba(0,0,0,0.5)")
+        v.setTextAlign("center")
+        this.setWhiteSpace("nowrap")
+        this.setTextOverflow("ellipsis")
+        this.setPadding("1px")
+        this.setOverflow("hidden")
+        v.setInnerHTML("")
+        v.setUserSelect("none")
+        return v
     }
 
     newBackArrow () {

@@ -1070,6 +1070,17 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("border")
     }
 
+    // border style
+
+    setBorderStyle (s) {
+        this.setCssAttribute("border-style", s)
+        return this
+    }
+
+    borderStyle () {
+        return this.getCssAttribute("border-style")
+    }
+
     // border color
 
     setBorderColor (s) {
@@ -1439,6 +1450,34 @@ window.DomView = class DomView extends ProtoClass {
     wordBreak () {
         return this.getCssAttribute("word-break")
     }
+
+    // webkit specific
+
+    setWebkitOverflowScrolling (s) {
+        assert(Type.isString(s))
+        this.setCssAttribute("-webkit-overflow-scrolling", s)
+        assert(this.webkitOverflowScrolling() === s)
+        return this
+    }
+
+    webkitOverflowScrolling () {
+        return this.getCssAttribute("-webkit-overflow-scrolling")
+    }
+
+    // ms specific 
+
+    setMsOverflowStyle (s) {
+        /* -ms-overflow-style: none; removes scrollbars on IE 10+  */
+        assert(Type.isString(s))
+        this.setCssAttribute("-ms-overflow-style", s)
+        assert(this.msOverflowStyle() === s)
+        return this
+    }
+
+    msOverflowStyle () {
+        return this.getCssAttribute("-ms-overflow-style")
+    }
+
 
     // overflow
 

@@ -16,14 +16,26 @@ window.ColumnGroupFooter = class ColumnGroupFooter extends NodeView {
 
     init () {
         super.init()
+        this.setPosition("absolute")
+        this.setBottom("0px")
+        this.setLeft("0px")
+        this.setMinHeight("40px")
+        this.setMaxHeight("40px")
+        this.setHeight("auto")
+        this.setWidth("100%")
+        this.setZIndex(3)
+        this.setBackgroundColor("#dbdbdb")
+        this.setTextAlign("center")
+        this.setBorderTop("1px solid rgba(0,0,0,.05)")
+        this.setOverflow("hidden")
 
-        this.setLeftActionsView(DomView.clone().setDivClassName("ColumnGroupFooterLeftActionsView NodeView DomView"))
+        this.setLeftActionsView(DomView.clone().setDivClassName("ColumnGroupFooterLeftActionsView"))
 		
-        const textView = TextField.clone().setDivClassName("ColumnGroupFooterTextView NodeView DomView") //.setUserSelect("none")
+        const textView = TextField.clone().setDivClassName("ColumnGroupFooterTextView") //.setUserSelect("none")
         this.setTextView(textView)
 	    this.textView().setIsEditable(true).setDoesClearOnReturn(true).setDoesHoldFocusOnReturn(true)
 						
-        this.setRightActionsView(DomView.clone().setDivClassName("ColumnGroupFooterRightActionsView NodeView DomView"))
+        this.setRightActionsView(DomView.clone().setDivClassName("ColumnGroupFooterRightActionsView"))
 		
         this.setZIndex(2)
         return this

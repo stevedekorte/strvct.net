@@ -8,6 +8,8 @@
 
 */
 
+
+
 window.BrowserHeader = class BrowserHeader extends DomView {
     
     initPrototype () {

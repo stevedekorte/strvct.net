@@ -10,30 +10,10 @@
 window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowView {
     
     initPrototype () {
-
     }
 
     init () {
         super.init()
-        const cv = this.contentView()
-
-        /*
-        cv.setDisplay("flex")
-        cv.setPosition("relative")
-        //cv.setWidth("auto")        
-        //cv.setMinHeight("300px")
-        //cv.setMargin("0px")
-        //cv.setPadding("0px")
-            
-        cv.setOverflow("hidden")
-        //cv.setOverFlowX("hidden")
-        //cv.setOverFlowY("scroll")
-
-        cv.setHeight("auto")
-        cv.alignItems("flex-start")
-        cv.setJustifyContent("flex-start")
-        */
-
         this.keyView().hideDisplay()
         this.setValueUneditableBorder("none")
         this.setValueEditableBorder("none")
@@ -41,35 +21,37 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
     }
 
     createValueView () {
-        const vv = TextField.clone().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
-        vv.setDisplay("block")
-        vv.setPosition("relative")
-        vv.setWordWrap("normal")
-        vv.setHeight("auto")
-        vv.setWidth("-webkit-fill-available")
-        vv.setTextAlign("left")
-        vv.setMargin("0px")
-        vv.setOverflowX("hidden")
-        vv.setOverflowY("scroll")
-        //vv.setDoesHoldFocusOnReturn(true)
-        vv.setDoesInput(false)
-        return vv
+        const v = TextField.clone().setDivClassName("BMTextAreaFieldValueView")
+        v.setDisplay("block")
+        v.setPosition("relative")
+        v.setWordWrap("normal")
+        v.setHeight("auto")
+        v.setWidth("-webkit-fill-available")
+        v.setTextAlign("left")
+        v.setMargin("0px")
+        v.setOverflowX("hidden")
+        v.setOverflowY("scroll")
+        //v.setDoesHoldFocusOnReturn(true)
+        v.setDoesInput(false)
+        return v
     }
 	
     updateSubviews () {   
         super.updateSubviews()
         
-        //this.fillBottomOfColumnIfAvailable()
-        //this.setFlexGrow(100)
-        //this.setMaxHeight(this.columnGroup().clientHeight() + "px")
+        /*
+        this.fillBottomOfColumnIfAvailable()
+        this.setFlexGrow(100)
+        this.setMaxHeight(this.columnGroup().clientHeight() + "px")
 
-        //this.setMaxHeight("400px")
+        this.setMaxHeight("400px")
+        */
 
         /*
         if (this.node().isMono()) {
-            this.valueView().setDivClassName("BMMonoTextAreaFieldValueView NodeView DomView")
+            this.valueView().setDivClassName("BMMonoTextAreaFieldValueView")
         } else {
-            this.valueView().setDivClassName("BMTextAreaFieldValueView NodeView DomView")
+            this.valueView().setDivClassName("BMTextAreaFieldValueView")
         }
         */
 

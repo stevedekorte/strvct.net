@@ -15,11 +15,20 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.newSlot("rowStyles", null)
         this.newSlot("rowPlaceHolder", null)
         this.newSlot("hasPausedSync", false)
-        //shouldDarkenUnselected: true,
     }
 
     init () {
         super.init()
+        this.setDisplay("flex")
+        this.setFlexDirection("column")
+        this.setPosition("relative")
+        this.setWidth("100%")
+        this.setOverflow("hidden")
+        this.setMinHeight("100%")
+        this.setWebkitOverflowScrolling("regular")
+        this.setMsOverflowStyle("none")
+        this.setUserSelect("none")
+
         //this.setIsDebugging(true)
         this.setIsRegisteredForKeyboard(true)
         //this.styles().selected().setBorderLeft("1px solid rgba(0, 0, 0, 0.15)")
