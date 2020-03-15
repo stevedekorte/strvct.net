@@ -253,6 +253,12 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // --- slots ---
 
+    /*
+    slotNamed (slotName) {
+        return this.allSlots()[slotName]
+    }
+    */
+
     ownSlotNamed (slotName) {
         assert(this.isPrototype())
 
@@ -261,7 +267,8 @@ window.ProtoClass = class ProtoClass extends Object {
             return slots[slotName]
         }
         
-        const p = this.__proto__
+        // why call it "own" if we look in parent?
+        const p = this.__proto__ 
         if (p && p.ownSlotNamed) {
             return p.ownSlotNamed(slotName)
         }
@@ -333,7 +340,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this.justNewSlot(slotName, initialValue)
     }
 
-    newSlot (slotName, initialValue) {
+    newSlot (slotName, initialValue, allowOnInstance=false) {
         if (Reflect.ownKeys(this).contains(slotName)) {
             //const msg = "WARNING: " + this.type() + "." + slotName + " slot already exists"
             //console.log(msg) 
@@ -344,10 +351,10 @@ window.ProtoClass = class ProtoClass extends Object {
             console.log(msg)
             throw new Error(msg)
         }
-        return this.justNewSlot(slotName, initialValue)
+        return this.justNewSlot(slotName, initialValue, allowOnInstance)
     }
 
-    overrideSlot (slotName, initialValue) {
+    overrideSlot (slotName, initialValue, allowOnInstance=false) {
         const oldSlot = this.allSlots()[slotName]
         if(Type.isUndefined(oldSlot)) {
             const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
@@ -355,15 +362,17 @@ window.ProtoClass = class ProtoClass extends Object {
             this.allSlots()
             throw new Error(msg)
         }
-        const slot = this.justNewSlot(slotName, initialValue)
+        const slot = this.justNewSlot(slotName, initialValue, allowOnInstance)
         slot.copyFrom(oldSlot)
         slot.setInitValue(initialValue)
         slot.setOwner(this)
         return slot
     }
 
-    justNewSlot (slotName, initialValue) { // private
-        assert(this.isPrototype())
+    justNewSlot (slotName, initialValue, allowOnInstance=false) { // private
+        if (!allowOnInstance) {
+            assert(this.isPrototype())
+        }
         assert(Type.isString(slotName))
 
         /*

@@ -35,28 +35,14 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         v.setDoesInput(false)
         return v
     }
-	
+    
+    /*
     updateSubviews () {   
         super.updateSubviews()
-        
-        /*
-        this.fillBottomOfColumnIfAvailable()
-        this.setFlexGrow(100)
-        this.setMaxHeight(this.columnGroup().clientHeight() + "px")
-
-        this.setMaxHeight("400px")
-        */
-
-        /*
-        if (this.node().isMono()) {
-            this.valueView().setDivClassName("BMMonoTextAreaFieldValueView")
-        } else {
-            this.valueView().setDivClassName("BMTextAreaFieldValueView")
-        }
-        */
 
         return this
     }
+    */
 
     /*
 	

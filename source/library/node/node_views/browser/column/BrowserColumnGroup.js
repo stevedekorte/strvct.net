@@ -9,7 +9,7 @@
 window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     
     initPrototype () {
-        this.newSlot("scrollView", null) // contains column
+        //this.newSlot("scrollView", null) // contains column
         this.newSlot("column", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
         this.newSlot("animatesCollapse", true)
@@ -35,16 +35,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         this.setupHeaderMiddleFooterViews()
         this.footerView().hideDisplay()
         
-        /*
         {
-            const v = ColumnGroupHeader.clone()
-            this.setHeaderView(v)
-            this.addSubview(v)
-        }
-        */
-
-        {
-            //const sv = DomView.clone()
             const sv = this.middleView()
             sv.setDivClassName("BrowserScrollView")
             sv.setPosition("relative")
@@ -56,25 +47,19 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
             sv.setMsOverflowStyle("none") // removes scrollbars on IE 10+ 
             sv.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox 
             
-            
-            this.setScrollView(sv)
-            //this.addSubview(sv)
+            sv.setHeight("100%")
+            sv.setTop(null)
         }
-
-        /*
-        {
-            const v = ColumnGroupFooter.clone()
-            this.setFooterView(v)
-            this.addSubview(v)
-        }
-        */
         
         this.setColumn(BrowserColumn.clone())
         this.scrollView().addSubview(this.column())
-        this.updateScrollView()
         
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
         return this
+    }
+
+    scrollView () {
+        return this.middleView()
     }
 
     setParentView (v) {
@@ -182,17 +167,12 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     // -------------------------------------
     
     hasFooter () {
-        return this.hasSubview(this.footerView())
+        return !this.footerView().isDisplayHidden()
     }
     
     setHasFooter (aBool) {
         if (this.hasFooter() !== aBool) {
-            if (aBool) {
-                this.addSubview(this.footerView())
-            } else {
-                this.removeSubview(this.footerView())
-            }
-            this.updateScrollView()
+            this.footerView().setDisplayIsHidden(!aBool)
         }
         return this
     }
@@ -373,13 +353,6 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         //console.log("BrowserColumnGroup syncFromNode "  + this.node().type())
         this.headerView().syncFromNodeNow()
         this.column().syncFromNodeNow()
-        this.updateScrollView() // only needs to change on browser size check?
-        return this
-    }
-
-    updateScrollView () {
-        this.scrollView().setHeight("100%")
-        this.scrollView().setTop(null)
         return this
     }
 

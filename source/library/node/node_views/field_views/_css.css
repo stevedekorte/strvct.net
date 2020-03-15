@@ -1,30 +1,5 @@
 
 
-/* --- FieldView --------------------------- */
-
-.BMFieldRowView {
-    opacity: 1;
-    
-    display: block;
-    position: relative;
-
-    height: auto;
-    min-height: 60px;
-    max-height: none;
-    
-    overflow: visible;
-    width: auto;
-    transition: background-color .3s ease-out;
-    margin: 0px;
-	text-align: left;
-}
-
-.BooleanView {
-    display: block;
-    position: relative;
-}
-
-
 /* --------------------------- Key --------------------------- */
 
 .BMFieldKeyView {
@@ -85,27 +60,6 @@
 
 /* --------------------------- TextArea --------------------------- */
 
-/*
-.BMMonoTextAreaFieldValueView {
-    display: flex;
-    position: relative;
-	padding: 20px;
-    margin: 0px;
-    width: auto;
-    min-height: auto;
-
-    word-break: break-all;
-   	unicode-bidi: embed;
-    white-space: pre-wrap;
-
-    font-weight: normal;
-    text-align: left;
-
-    font-family: AppMono, monospace;
-    font-weight: lighter;
-}
-*/
-
 .BMTextAreaFieldValueView {
     display: flex;
     position: relative;
@@ -121,15 +75,6 @@
     font-weight: normal;
     text-align: left;
 }
-
-/* --------------------------- Pointer --------------------------- */
-
-/*
-.BMPointerFieldRowView {
-	border-bottom: 1px solid #ddd; 
-	font-family: AppRegular;
-}
-*/
 
 /* --------------------------- Image --------------------------- */
 

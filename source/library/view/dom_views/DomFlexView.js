@@ -13,6 +13,7 @@ window.DomView = class DomFlexView extends DomView {
 
     init () {
         super.init()
+        this.setDisplay("flex")
         return this
     }
 
@@ -35,7 +36,7 @@ window.DomView = class DomFlexView extends DomView {
     }
 
     newFlexSubview () {
-        let v = DomFlexView.clone()
+        const v = DomFlexView.clone()
         v.setDisplay("flex")
         v.setMinHeight("0px")
         v.setMinWidth("0px")
@@ -57,6 +58,18 @@ window.DomView = class DomFlexView extends DomView {
             sv.setOrder(count - 1 - i)
         })
     }
+
+    /*
+    flexSplitIntoRowsNamed (nameList) {
+        this.flexSplitIntoRows(nameList.length)
+        for (let i = 0; i < nameList.length; i++) {
+            const name = nameList.at(i)
+            const subview = this.subviews().at(i)
+            this.newSlot(name, subview, true)
+        }
+        return this
+    }
+    */
 
     flexSplitIntoRows (count) {
         assert(this.canSplit()) // temporary

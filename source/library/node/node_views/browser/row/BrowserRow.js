@@ -40,32 +40,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.newSlot("lastTapDate", null)
     }
 
-    /*
-    .BrowserRow {
-    display: block;
-    position: relative;
-    width: 100%;
-    height: auto;
-
-    color: rbga(255, 255, 255, 0.5);
-    transition: all 0s, background-color .3s ease-out;
-
-	overflow: hidden;
-    white-space: nowrap;
-    
-    border-style: solid;
-    border-color: transparent;
-    border-left: 0px;
-    border-right: 0px;
-    border-top: 1px;
-    border-bottom: 1px;
-	text-align: left;
-	margin: 0px;
-    padding: 0px;
-    -webkit-overflow-scrolling: touch; 
-}
-
-*/
     init () {
         super.init()
         this.setDisplay("block")
@@ -419,8 +393,28 @@ window.BrowserRow = class BrowserRow extends NodeView {
         if (this.closeButtonView() === null) {
 
             const cb = DomView.clone().setDivClassName("BrowserRowCloseButton")
+            cb.setCssDict({
+                "display": "block",
+                "right": "20px",
+                "top": "16px",
+                
+                "min-width": "20px",
+                "max-width": "20px",
+                "min-height": "20px",
+                "max-height": "20px",
+                
+                "font-size": "2em",
+                "line-height": "2em",
+                "font-weight": "normal",
+                "white-space": "nowrap",
+                "border": "0px dashed yellow",
+                "color": "rgba(255, 255, 255, 0.5)",
+                "margin": "0px",
+                "padding": "0px",
+                "padding-bottom": "10px",
+            })
+
             cb.setPosition("absolute")
-            //this.setCloseButtonView(NodeView.clone().setDivClassName("BrowserRowCloseButton"))
             this.setCloseButtonView(cb)
             this.contentView().addSubview(cb) 
             

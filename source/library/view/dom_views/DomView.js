@@ -262,6 +262,14 @@ window.DomView = class DomView extends ProtoClass {
     }
     */
 
+    setCssDict (aDict) {
+        Reflect.ownKeys(aDict).forEach((k) => {
+            const v = aDict[k]
+            this.setCssAttribute(k, v)
+        })
+        return this
+    }
+
     setCssAttribute (key, newValue, didChangeCallbackFunc) {
         assert(Type.isString(key))
 
@@ -1392,6 +1400,10 @@ window.DomView = class DomView extends ProtoClass {
             this.unhideDisplay()
         }
         return this
+    }
+
+    isDisplayHidden () {
+        return this.display() === "none"
     }
 
     hideDisplay () {

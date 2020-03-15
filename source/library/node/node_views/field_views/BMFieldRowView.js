@@ -7,10 +7,19 @@
 */
 
 
-window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
+window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
     
     initPrototype () {
+        this.newSlot("allowsCursorNavigation", false)
+        this.newSlot("vPadding",  "0.1em")
+
         this.newSlot("titlesSection", null)
+        this.newSlot("keyViewContainer", null)
+        this.newSlot("valueViewContainer", null)
+
+        this.newSlot("errorViewContainer", null)
+        this.newSlot("noteViewContainer", null)
+
         this.newSlot("keyView", null)
         this.newSlot("valueView", null)
         this.newSlot("errorView", null)
@@ -19,93 +28,121 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserFieldRow {
         this.newSlot("editableColor", "#aaa")
         this.newSlot("uneditableColor", "#888")
         this.newSlot("errorColor", "red")
-    
-        this.newSlot("keyViewContainer", null)
-        this.newSlot("valueViewContainer", null)
 
         this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)")
         //this.newSlot("valueEditableBorder", "none")
         this.newSlot("valueUneditableBorder", "none")
     }
 
-    init () {
-        super.init()
-        
-        this.setMaxHeight("none")
-        this.setHeight("auto")
+    setupRowContentView () {
+        super.setupRowContentView()
 
         const cv = this.contentView()
-
         cv.setMinHeight("5em")
         cv.setPaddingTop("0.5em")
         cv.setPaddingBottom("0.5em")
-        cv.flexSplitIntoRows(4)
         cv.setJustifyContent("center") // alignment perpendicular to flex
+        cv.setFlexDirection("column")
+        return this
+    }
 
-        const titlesSection = cv.subviews().at(0).setDivClassName("TitlesSection")
-        this.setTitlesSection(titlesSection)
-        titlesSection.flexSplitIntoRows(2)
+    init () {
+        super.init()
+        this.makeCursorDefault()
+        this.setSpellCheck(false)
 
-        const tv = titlesSection.subviews().at(0).setDivClassName("KeyViewContainer")
-        this.setKeyViewContainer(tv)
+        this.setOpacity("1")
+        this.setPosition("relative")
+        this.setHeight("auto")
+        this.setMinHeight("5em")
+        this.setMaxHeight("none")
+        this.setHeight("auto")
+        this.setOverflow("visible")
+        this.setWidth("auto")
+        this.setTransition("background-color .3s ease-out")
+        this.setTextAlign("left")
 
-        const sv = titlesSection.subviews().at(1).setDivClassName("ValueViewContainer")
-        this.setValueViewContainer(sv)
+        // titles section newFlexSubview
+        {
+            this.setTitlesSection(this.contentView().newFlexSubview().setDivClassName("TitlesSection"))
+            this.titlesSection().setFlexDirection("column")
 
-        const nv = cv.subviews().at(1)
-        const ev = cv.subviews().at(2)
+            this.setKeyViewContainer(this.titlesSection().newFlexSubview().setDivClassName("KeyViewContainer"))
+            this.setupKeyView()
 
-        cv.subviews().forEach(sv => {
-            sv.setPaddingLeft("1.5em")
-            sv.setPaddingRight("1em")
-        })
-        
-        /*
-        cv.setMinHeight("5em")
+            this.setValueViewContainer(this.titlesSection().setDivClassName("ValueViewContainer"))
+            this.setupValueView()
 
-        cv.setPaddingTop("0.7em")
-        cv.setPaddingBottom("1em")
+            this.setNoteViewContainer(this.contentView().newFlexSubview())
+            this.setupNoteView()
 
-        cv.setPaddingLeft("1.5em")
-        cv.setPaddingRight("1em")
-        */
+            this.setErrorViewContainer(this.contentView().newFlexSubview())
+            this.setupErrorView()
 
-        const vPadding = "0.1em"
-
-        this.setKeyView(TextField.clone().setDivClassName("BMFieldKeyView"))
-        tv.addSubview(this.keyView())     
-        this.keyView().turnOffUserSelect().setSpellCheck(false)
-        //this.keyView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
-        this.keyView().setMarginTop(vPadding).setMarginBottom(vPadding)
-        this.keyView().setPaddingLeft("0em").setPaddingRight("0em")
-
-        //this.setValueSectionView(DomView.clone().setDivClassName("BMFieldValueSectionView"))
-        //this.addContentSubview(this.valueSectionView())  
-
-
-        //this.contentView().setPaddingLeftPx(20)
-        this.setValueView(this.createValueView())
-        //this.valueView().setPaddingTop(vPadding).setPaddingBottom(vPadding)
-        this.valueView().setMarginTop(vPadding).setMarginBottom(vPadding)
-
-        sv.addSubview(this.valueView())  
-        //this.valueSectionView().addSubview(this.valueView())  
-      
-        this.valueView().setUserSelect("text")   // should the value view handle this?
-        this.valueView().setSpellCheck(false)   // should the value view handle this?
-        //this.valueView().setWidthPercentage(100) 
-
-        this.setNoteView(DomView.clone().setDivClassName("BMFieldRowViewNoteView"))
-        nv.addSubview(this.noteView())
-        this.noteView().setUserSelect("text")
-
-        this.setErrorView(DomView.clone().setDivClassName("BMFieldRowViewErrorView"))
-        ev.addSubview(this.errorView())
-        this.errorView().setUserSelect("text").setSpellCheck(false)
-        //this.errorView().setInnerHTML("error")
-        this.errorView().setColor("red")
+            this.contentView().subviews().forEach(subview => {
+                subview.setPaddingLeft("1.5em")
+                subview.setPaddingRight("1em")
+            })
+        }
 
         return this
+    }
+
+    setupKeyView() {
+
+        const v = TextField.clone().setDivClassName("BMFieldKeyView")
+        v.setDisplay("inline-block")
+        v.setOverflow("hidden")
+        v.setTextAlign("left")
+        v.setWhiteSpace("nowrap")
+
+        this.setKeyView(v)
+        v.turnOffUserSelect()
+        v.setSpellCheck(false)
+        //v.setPaddingTop(this.vPadding())
+        //v.setPaddingBottom(this.vPadding())
+        v.setMarginTop(this.vPadding())
+        v.setMarginBottom(this.vPadding())
+        v.setPaddingLeft("0em")
+        v.setPaddingRight("0em")
+
+        this.keyViewContainer().addSubview(v)     
+        return v
+    }
+
+    setupValueView () {
+        const v = this.createValueView()
+        v.setUserSelect("text")   // should the value view handle this?
+        v.setSpellCheck(false)   // should the value view handle this?
+        //v.setPaddingTop(this.vPadding())
+        //v.setPaddingBottom(this.vPadding())
+        v.setMarginTop(this.vPadding())
+        v.setMarginBottom(this.vPadding())
+
+        this.setValueView(v)
+        this.valueViewContainer().addSubview(v)  
+        //this.valueSectionView().addSubview(v)  
+        return v
+    }
+
+    setupNoteView () {
+        const v = DomView.clone().setDivClassName("BMFieldRowViewNoteView")
+        v.setUserSelect("text")
+        this.setNoteView(v)
+        this.noteViewContainer().addSubview(v)
+        return v
+    }
+
+    setupErrorView () {
+        const v = DomView.clone().setDivClassName("BMFieldRowViewErrorView")
+        v.setUserSelect("text")
+        v.setSpellCheck(false)
+        //v.setInnerHTML("error")
+        v.setColor("red")
+
+        this.setErrorView(v)
+        this.errorViewContainer().addSubview(v)
+        return v 
     }
 
     createValueView () {

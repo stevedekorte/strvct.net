@@ -73,6 +73,15 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
             const tv = DomView.clone().setDivClassName("BrowserRowThumbnailView")
+            tv.setDisplay("block")
+            tv.setLeft("10px")
+            tv.setTop("5px")
+            tv.setMinHeight("40px")
+            tv.setMinWidth("40px")
+            tv.setBorderRadius("7px")
+            tv.setBackgroundColor("transparent")
+            tv.setBorder("0px solid #aaa")
+
     		tv.makeBackgroundNoRepeat()
             tv.makeBackgroundCentered()
             //tv.makeBackgroundContain()
