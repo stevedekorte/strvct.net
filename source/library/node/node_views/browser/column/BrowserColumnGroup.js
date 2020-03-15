@@ -26,7 +26,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         this.setOpacity("0")
         this.setOverflow("hidden")
         this.setUserSelect("none")
-        this.setTransition("opacity 0.3s ease-in-out")
+        this.setTransition("opacity 0.6s ease-in-out")
 
 
         this.setHeaderClass(ColumnGroupHeader)
@@ -38,6 +38,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         {
             const sv = this.middleView()
             sv.setDivClassName("BrowserScrollView")
+            sv.setDisplay("block")
             sv.setPosition("relative")
             sv.setWidth("100%")
             sv.setBackgroundColor("transparent")
