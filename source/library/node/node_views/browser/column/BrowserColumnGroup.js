@@ -23,34 +23,17 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         this.setFlexGrow(1)
         this.setFlexDirection("column")
         this.setPosition("relative")
-        this.setOpacity("0")
+        this.setOpacity(0)
         this.setOverflow("hidden")
         this.setUserSelect("none")
-        this.setTransition("opacity 0.6s ease-in-out")
-
+        this.setTransition("opacity 0.5s ease-in-out")
 
         this.setHeaderClass(ColumnGroupHeader)
-        this.setMiddleClass(DomView)
+        this.setMiddleClass(BrowserScrollView)
         this.setFooterClass(ColumnGroupFooter)
         this.setupHeaderMiddleFooterViews()
+
         this.footerView().hideDisplay()
-        
-        {
-            const sv = this.middleView()
-            sv.setDivClassName("BrowserScrollView")
-            sv.setDisplay("block")
-            sv.setPosition("relative")
-            sv.setWidth("100%")
-            sv.setBackgroundColor("transparent")
-            
-            sv.setOverflowY("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
-            sv.setOverflowX("hidden")
-            sv.setMsOverflowStyle("none") // removes scrollbars on IE 10+ 
-            sv.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox 
-            
-            sv.setHeight("100%")
-            sv.setTop(null)
-        }
         
         this.setColumn(BrowserColumn.clone())
         this.scrollView().addSubview(this.column())
@@ -66,7 +49,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     setParentView (v) {
         super.setParentView(v)
         if (v) {
-            setTimeout(() => { this.setOpacity("1") }, 10)
+            setTimeout(() => { this.setOpacity(1) }, 10)
         } else {
             this.setOpacity("0")
         }

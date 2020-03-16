@@ -25,11 +25,7 @@ Object.defineSlots(BMNode.prototype, {
             //if (slot.shouldStoreSlot()) {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this)
-                assert(!Type.isUndefined(v))
-                // aStore.refValue(v) is not enough to ensure that if 
-                // v is a non-node object, that it's changes will be stored
-                // as those types have no setter hooks
-
+                //assert(!Type.isUndefined(v))
                 aRecord.entries.push([slotName, aStore.refValue(v)])
             }
         })

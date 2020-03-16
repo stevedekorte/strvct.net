@@ -372,6 +372,11 @@ window.DomView = class DomView extends ProtoClass {
     // pointer events
 
     setPointerEvents (s) {
+        assert([null, 
+            "auto", "none", "visiblePainted", 
+            "visibleFill", "visibleStroke", "visible", 
+            "painted", "fill", "stroke", "all", 
+            "inherit", "initial", "unset"].contains(v))
         return this.setCssAttribute("pointer-events", s)
     }
 
@@ -381,8 +386,9 @@ window.DomView = class DomView extends ProtoClass {
 
     // transform
 
-    setTextTransform (s) {
-        this.setCssAttribute("text-transform", s)
+    setTextTransform (v) {
+        assert([null, "none", "capitalize", "uppercase", "lowercase", "initial", "inherit"].contains(v))
+        this.setCssAttribute("text-transform", v)
         return this
     }
 
@@ -392,9 +398,9 @@ window.DomView = class DomView extends ProtoClass {
 
     // word wrap
 
-    setWordWrap(s) {
-        assert(Type.isString(s))
-        this.setCssAttribute("word-wrap", s)
+    setWordWrap(v) {
+        assert([null, "normal", "break-word", "initial", "inherit"].contains(v))
+        this.setCssAttribute("word-wrap", v)
         return this
     }
 
@@ -418,7 +424,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     setZoomRatio (r) {
-        console.log("setZoomRatio: ", r)
+        //console.log("setZoomRatio: ", r)
         this.setZoomPercentage(r * 100)
         return this
     }
@@ -432,6 +438,7 @@ window.DomView = class DomView extends ProtoClass {
     // font family
 
     setFontFamily (s) {
+        assert(Type.isString(s))
         this.setCssAttribute("font-family", s)
         return this
     }
@@ -442,8 +449,9 @@ window.DomView = class DomView extends ProtoClass {
 
     // font weight
 
-    setFontWeight (s) {
-        this.setCssAttribute("font-weight", s)
+    setFontWeight (v) {
+        assert(Type.isNumber(v) || [null, "normal", "bold", "bolder", "lighter", "initial", "inherit"].contains(v))
+        this.setCssAttribute("font-weight", v)
         return this
     }
 
@@ -451,8 +459,28 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("font-weight")
     }
 
-
     // font size
+
+    setFontSizeAndLineHeight (s) {
+        this.setFontSize(s)
+        this.setLineHeight(s)
+        return this
+    }
+
+    setFontSize (s) {
+        this.setCssAttribute("font-size", s)
+        return this
+    }
+
+    fontSize () {
+        return this.getCssAttribute("font-size")
+    }
+
+    computedFontSize () {
+        return this.getComputedCssAttribute("font-size")
+    }
+
+    // px font size
 
     setPxFontSize (s) {
         this.setPxCssAttribute("font-size", s)
@@ -480,25 +508,6 @@ window.DomView = class DomView extends ProtoClass {
 
     // ---
 
-    setFontSizeAndLineHeight (s) {
-        this.setFontSize(s)
-        this.setLineHeight(s)
-        return this
-    }
-
-    setFontSize (s) {
-        this.setCssAttribute("font-size", s)
-        return this
-    }
-
-    fontSize () {
-        return this.getCssAttribute("font-size")
-    }
-
-    computedFontSize () {
-        return this.getComputedCssAttribute("font-size")
-    }
-
     // letter spacing
 
     setLetterSpacing (s) {
@@ -521,13 +530,10 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
+    // margin
 
     setMargin (s) {
-        if (Type.isNumber(s)) {
-            this.setPxCssAttribute("margin", s)
-        } else {
-            this.setCssAttribute("margin", s)
-        }
+        this.setCssAttribute("margin", s)
 
         this.setMarginTop(null)
         this.setMarginBottom(null)
@@ -541,7 +547,24 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("margin")
     }
 
-    // ----
+    // margin px
+
+    setMarginPx (s) {
+        this.setPxCssAttribute("margin", s)
+
+        this.setMarginTop(null)
+        this.setMarginBottom(null)
+        this.setMarginLeft(null)
+        this.setMarginRight(null)
+
+        return this
+    }
+
+    marginPx () {
+        return this.getPxCssAttribute("margin")
+    }
+
+    // margin top
 
     setMarginTop (m) {
         if (Type.isNumber(m)) {
@@ -552,6 +575,8 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
+    // margin bottom
+
     setMarginBottom (m) {
         if (Type.isNumber(m)) {
             this.setPxCssAttribute("margin-bottom", m)
@@ -560,6 +585,8 @@ window.DomView = class DomView extends ProtoClass {
         }
         return this
     }
+
+    // margin left
 
     setMarginLeft (m) {
         if (Type.isNumber(m)) {
@@ -570,67 +597,85 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
+    // margin right
+
     setMarginRight (m) {
-        if (Type.isNumber(m)) {
-            this.setPxCssAttribute("margin-right", m)
-        } else {
-            this.setCssAttribute("margin-right", m)
-        }
+        this.setCssAttribute("margin-right", m)
         return this
     }
 
-    // padding string
+    marginRight () {
+        return this.getCssAttribute("margin-right")
+    }
 
-    setPadding (s) {
-        assert(Type.isString(s))
-        this.setCssAttribute("padding", s)
+    // margin right px
+
+    setMarginRightPx (m) {
+        this.setPxCssAttribute("margin-right", m)
+        return this
+    }
+
+    marginRightPx () {
+        return this.getPxCssAttribute("margin-right")
+    }
+
+    // padding
+
+    setPadding (v) {
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("padding", v)
         this.setPaddingTop(null)
         this.setPaddingBottom(null)
         this.setPaddingLeft(null)
         this.setPaddingRight(null)
         return this
     }
-
-    setPaddingTop (s) {
-        assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("padding-top", s)
-        return this
-    }
-
-    setPaddingBottom (s) {
-        assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("padding-bottom", s)
-        return this
-    }
-
-    setPaddingLeft (s) {
-        assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("padding-left", s)
-        return this
-    }
     
-    setPaddingRight (s) {
-        assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("padding-right", s)
-        return this
-    }
-
-    // get padding
-
     padding () {
         return this.getCssAttribute("padding")
     }
 
+    // top
+
+    setPaddingTop (v) {
+        assert(Type.isString(v) || Type.isNull(v))
+        this.setCssAttribute("padding-top", v)
+        return this
+    }
+
     paddingTop () {
         return this.getCssAttribute("padding-top")
+    }
+    // bottom
+
+    setPaddingBottom (v) {
+        assert(Type.isString(v) || Type.isNull(v))
+        this.setCssAttribute("padding-bottom", v)
+        return this
     }
 
     paddingBottom () {
         return this.getCssAttribute("padding-bottom")
     }
 
+    // left
+
+    setPaddingLeft (v) {
+        assert(Type.isString(v) || Type.isNull(v))
+        this.setCssAttribute("padding-left", v)
+        return this
+    }
+
     paddingLeft () {
         return this.getCssAttribute("padding-left")
+    }
+
+    // right
+    
+    setPaddingRight (v) {
+        assert(Type.isString(v) || Type.isNull(v))
+        this.setCssAttribute("padding-right", v)
+        return this
     }
 
     paddingRight () {
@@ -644,57 +689,52 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setPaddingRightPx (aNumber) {
-        this.setPxCssAttribute("padding-right", aNumber)
-        return this
-    }
-
-    setPaddingLeftPx (aNumber) {
-        this.setPxCssAttribute("padding-left", aNumber)
-        return this
-    }
-
-    setPaddingTopPx (aNumber) {
-        this.setPxCssAttribute("padding-top", aNumber)
-        return this
-    }
-
-    setPaddingBottomPx (aNumber) {
-        this.setPxCssAttribute("padding-bottom", aNumber)
-        return this
-    }
-
-    // get padding px
-
     paddingPx () {
         return this.getPxCssAttribute("padding")
     }
 
-    paddingTopPx () {
-        return this.getPxCssAttribute("padding-top")
-    }
+    // padding right px
 
-    paddingBottomPx () {
-        return this.getPxCssAttribute("padding-bottom")
-    }
-
-    paddingLeftPx () {
-        return this.getPxCssAttribute("padding-left")
+    setPaddingRightPx (aNumber) {
+        this.setPxCssAttribute("padding-right", aNumber)
+        return this
     }
 
     paddingRightPx () {
         return this.getPxCssAttribute("padding-right")
     }
 
-    // text align
+    // padding left px
 
-    setTextAlign (s) {
-        this.setCssAttribute("text-align", s)
+    setPaddingLeftPx (aNumber) {
+        this.setPxCssAttribute("padding-left", aNumber)
         return this
     }
 
-    textAlign () {
-        return this.getCssAttribute("text-align")
+    paddingLeftPx () {
+        return this.getPxCssAttribute("padding-left")
+    }
+
+    // padding top px
+
+    setPaddingTopPx (aNumber) {
+        this.setPxCssAttribute("padding-top", aNumber)
+        return this
+    }
+
+    paddingTopPx () {
+        return this.getPxCssAttribute("padding-top")
+    }
+
+    // padding bottom px
+
+    setPaddingBottomPx (aNumber) {
+        this.setPxCssAttribute("padding-bottom", aNumber)
+        return this
+    }
+
+    paddingBottomPx () {
+        return this.getPxCssAttribute("padding-bottom")
     }
 
     // background color
@@ -735,9 +775,9 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setBackgroundSize (s) {
-        assert(Type.isString(s))
-        this.setCssAttribute("background-size", s)
+    setBackgroundSize (v) {
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("background-size", v)
         return this
     }
 
@@ -849,6 +889,7 @@ window.DomView = class DomView extends ProtoClass {
     // opacity
 
     setOpacity (v) {
+        assert(Type.isNumber(v) || [null, "auto", "inherit", "initial", "unset"].contains(v))
         this.setCssAttribute("opacity", v)
         return this
     }
@@ -1034,8 +1075,9 @@ window.DomView = class DomView extends ProtoClass {
 
     // float
 
-    setFloat (s) {
-        this.setCssAttribute("float", s)
+    setFloat (v) {
+        assert([null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"].contains(v))
+        this.setCssAttribute("float", v)
         return this
     }
 
@@ -1145,13 +1187,17 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("border-right")
     }
 
+    borderRightPx () {
+        return this.getPxCssAttribute("border-right")
+    }
+
     // border radius
 
-    setBorderRadius (s) {
-        if (Type.isNumber(s)) {
-            this.setPxCssAttribute("border-radius", s)
+    setBorderRadius (v) {
+        if (Type.isNumber(v)) {
+            this.setPxCssAttribute("border-radius", v)
         } else {
-            this.setCssAttribute("border-radius", s)
+            this.setCssAttribute("border-radius", v)
         }
         return this
     }
@@ -1160,9 +1206,14 @@ window.DomView = class DomView extends ProtoClass {
         return this.getCssAttribute("border-radius")
     }
 
+    borderRadiusPx () {
+        return this.getPxCssAttribute("border-radius")
+    }
+
     // outline
 
     setOutline (s) {
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("outline", s)
         return this
     }
@@ -1197,8 +1248,9 @@ window.DomView = class DomView extends ProtoClass {
 
     // alignment
 
-    setTextAlign (s) {
-        this.setCssAttribute("text-align", s)
+    setTextAlign (v) {
+        assert([null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"].contains(v))
+        this.setCssAttribute("text-align", v)
         return this
     }
 
@@ -1209,7 +1261,7 @@ window.DomView = class DomView extends ProtoClass {
     // clear
 
     setClear (v) {
-        // clear: none|left|right|both|initial|inherit;
+        assert([null, "none", "left", "right", "both", "initial", "inherit"].contains(v))
         this.setCssAttribute("clear", v)
         return this
     }
@@ -1221,6 +1273,7 @@ window.DomView = class DomView extends ProtoClass {
     // flex 
 
     setFlex (v) {
+        assert(Type.isString(v) || Type.isNull(v))
         this.setCssAttribute("flex", v)
         return this
     }
@@ -1232,6 +1285,7 @@ window.DomView = class DomView extends ProtoClass {
     // flex wrap
 
     setFlexWrap (v) {
+        assert(["nowrap", "wrap", "wrap-reverse", "initial", "inherit"].contains(v))
         this.setCssAttribute("flex-wrap", v)
         return this
     }
@@ -1243,6 +1297,7 @@ window.DomView = class DomView extends ProtoClass {
     // flex order
 
     setOrder (v) {
+        assert(Type.isNumber(v) || ["initial", "inherit"].contains(v))
         this.setCssAttribute("order", v)
         return this
     }

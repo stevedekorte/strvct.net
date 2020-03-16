@@ -45,7 +45,7 @@ window.PanelView = class PanelView extends DomView {
         this.setLeft(0)
         this.setTop(0)
         //this.setupForDraggingWithMouse()
-        this.setBorderRadius(5)
+        this.setBorderRadius("5px")
         this.centerInParentView()
 
         this._mouseMoveTrackerFunc = (event) => {

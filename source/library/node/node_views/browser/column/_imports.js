@@ -8,4 +8,5 @@ ResourceLoader.pushRelativePaths([
     "ColumnGroupHeaderAction.js",
     
     "ColumnGroupFooter.js",
+    "BrowserScrollView.js",
 ])

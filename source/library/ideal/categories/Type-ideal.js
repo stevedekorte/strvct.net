@@ -102,7 +102,8 @@ window.Type = {
         return  Type.isString(v) ||
                 Type.isNumber(v) ||
                 Type.isBoolean(v) ||
-                Type.isNull(v);
+                Type.isNull(v) ||
+                Type.isUndefined(v);
     },
 
     isArray: function(value) {

@@ -51,7 +51,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         this.makeCursorDefault()
         this.setSpellCheck(false)
 
-        this.setOpacity("1")
+        this.setOpacity(1)
         this.setPosition("relative")
         this.setHeight("auto")
         this.setMinHeight("5em")
@@ -62,21 +62,22 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         this.setTransition("background-color .3s ease-out")
         this.setTextAlign("left")
 
-        // titles section newFlexSubview
         {
             this.setTitlesSection(this.contentView().newFlexSubview().setDivClassName("TitlesSection"))
             this.titlesSection().setFlexDirection("column")
 
             this.setKeyViewContainer(this.titlesSection().newFlexSubview().setDivClassName("KeyViewContainer"))
+            this.keyViewContainer().setAlignItems("flex-start")
             this.setupKeyView()
 
-            this.setValueViewContainer(this.titlesSection().setDivClassName("ValueViewContainer"))
+            this.setValueViewContainer(this.titlesSection().newFlexSubview().setDivClassName("ValueViewContainer"))
+            this.valueViewContainer().setAlignItems("flex-start")
             this.setupValueView()
 
-            this.setNoteViewContainer(this.contentView().newFlexSubview())
+            this.setNoteViewContainer(this.contentView().newFlexSubview().setDivClassName("NoteViewContainer"))
             this.setupNoteView()
 
-            this.setErrorViewContainer(this.contentView().newFlexSubview())
+            this.setErrorViewContainer(this.contentView().newFlexSubview().setDivClassName("ErrorViewContainer"))
             this.setupErrorView()
 
             this.contentView().subviews().forEach(subview => {
@@ -89,7 +90,6 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
     }
 
     setupKeyView() {
-
         const v = TextField.clone().setDivClassName("BMFieldKeyView")
         v.setDisplay("inline-block")
         v.setOverflow("hidden")
@@ -127,6 +127,16 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
 
     setupNoteView () {
         const v = DomView.clone().setDivClassName("BMFieldRowViewNoteView")
+        v.setDisplay("block")
+        v.setPosition("relative")
+        v.setOverflow("hidden")
+        v.setWidth("100%")
+        v.setFontWeight("normal")
+        v.setColor("#aaa")
+        v.setMarginLeft("0px")
+        v.setMarginRightPx(0)
+        v.setMarginTop("0px")
+        v.setMarginBottom("3px")
         v.setUserSelect("text")
         this.setNoteView(v)
         this.noteViewContainer().addSubview(v)
@@ -139,7 +149,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         v.setSpellCheck(false)
         //v.setInnerHTML("error")
         v.setColor("red")
-
+        v.setPaddingBottom("0px")
         this.setErrorView(v)
         this.errorViewContainer().addSubview(v)
         return v 

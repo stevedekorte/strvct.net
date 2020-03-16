@@ -21,7 +21,7 @@ window.ColumnGroupHeaderAction = class ColumnGroupHeaderAction extends NodeView 
         this.setWidth("28px")
         this.setHeight("14px")
         this.setMarginTop("14px")
-        this.setMarginRight("20px")
+        this.setMarginRightPx(20)
         this.setOpacity("1")
         this.setBackgroundRepeat("no-repeat")
         this.setBackgroundPosition("right center")

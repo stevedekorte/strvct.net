@@ -144,7 +144,7 @@ window.BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
         let tv = this.textView()
         tv.setMinWidth(50)
         //tv.setPosition("relative")
-        tv.setMarginRight(0)
+        tv.setMarginRightPx(0)
         tv.setMarginLeft(0)
         tv.setPaddingTopPx(0)
         tv.setPaddingBottomPx(4)

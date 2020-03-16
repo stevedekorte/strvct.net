@@ -38,7 +38,7 @@ window.BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRo
         this.titleView().setTop(0)
         this.titleView().setPosition("relative")
         this.titleView().setLeft(null)
-        this.titleView().setMarginRight(20)
+        this.titleView().setMarginRightPx(20)
         this.titleView().setMarginLeft(0)
         //this.titleView().setBorder("1px solid rgba(0,0,0,0.05)")
     }

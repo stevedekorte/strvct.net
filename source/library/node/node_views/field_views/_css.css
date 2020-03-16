@@ -1,22 +1,3 @@
-
-
-/* --------------------------- Key --------------------------- */
-
-.BMFieldKeyView {
-	display: inline-block;
-
-	overflow: hidden;
-
-    text-align: left;
-    white-space: nowrap;
-}
-
-/*
-.BMFieldKeyView::after {
-    content: ": "
-}
-*/
-
 /* --------------------------- Value --------------------------- */
 
 .BMFieldValueView {
@@ -78,6 +59,7 @@
 
 /* --------------------------- Image --------------------------- */
 
+/*
 .BMImageWellFieldView {
     opacity: 1;
     
@@ -88,12 +70,10 @@
     max-height: 250px;
 	padding-bottom: 35px;
     color: #CBCBCB;
-    /*border-bottom: 1px solid #ddd;*/
     transition: background-color .3s ease-out;
 	text-align:center;
 	
 	padding-left: 0px;
-
 }
 
 .BMImageWellKeyField {
@@ -119,100 +99,8 @@
     left: 0px;
     font-weight: normal;
 }
-
-/* --------------------------- Multi --------------------------- */
-
-.BMOptionsNodeRowView {
-    /*display: flex;*/
-    position: relative;
-	overflow: visible;
-}
-
-.BMOptionsTableView {
-    display: table;
-	position: absolute;
-	z-index: 1000;
-	top: 16px;
-
-	width: auto;
-	
-    background-color: white;
-
-    text-align: left;
-    
-	border: solid #ccc 1px;
-	border-radius: 4px;	
-    transition: opacity 3s ease-out;
-	opacity: 0;
-	
-	padding-top: 0px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	padding-left: 0px;
-	margin: 0px;
-	
-	white-space: normal;
-	overflow: hidden;
-}
-
-.BMOptionsTableRowView {
-	display: table-row;
-    position: relative;
-
-    width: auto;
-    height: auto;
-    text-align: left;
-    
-    color: #000;
-
-    font-weight: normal;
-
-	padding: 3px;
-	margin: 0px;
-
-	border: dashed #ccc 0px;
-	
-	overflow: hidden;
-}
-
-.BMOptionsTableColumnView {
-    display: table-column;
-	float: left; 
-
-	width: 100%;
-	height: auto;
-
-	padding-left: 6px;
-	padding-right: 6px;
-	padding-top: 3px;
-	padding-bottom: 3px;
-	overflow: hidden;
-}
-
-.BMOptionsTableColumnView:hover {
-	background-color: black;
-	color: white;
-}
-
-.BMFieldRowViewErrorView {
-    padding-bottom: 0px;
-}
-
-.BMFieldRowViewNoteView {
-	display: block;
-    position: relative;
+*/
 
 
-	overflow: hidden;
-	
-	width: 100%;
-	
-    font-weight: normal;
 
-	color: #aaa;
-	
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 3px;
-    margin-bottom: 3px;
-}
+

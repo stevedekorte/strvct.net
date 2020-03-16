@@ -695,7 +695,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         const size = 50
         v.setMinAndMaxHeight(size)
         v.setMinAndMaxWidth(size)
-        v.setBorderRadius(size/2)
+        v.setBorderRadius(Math.round(size/2) + "px")
         v.setBorder("1px dashed white")
         //v.setBackgroundColor("rgba(255, 255, 255, 0.5)")
         v.setPosition("absolute")

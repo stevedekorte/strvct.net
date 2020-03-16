@@ -82,7 +82,7 @@ window.ImageView = class ImageView extends NodeView {
         this.setPaddingRightPx(0)
 		
         this.setMarginLeft(0)
-        this.setMarginRight(0)
+        this.setMarginRightPx(0)
     }
     
     close () {

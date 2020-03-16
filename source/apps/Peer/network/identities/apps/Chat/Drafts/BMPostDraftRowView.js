@@ -116,7 +116,7 @@ window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
         tv.insertDivClassName(this.type() + "Title")
         //tv.setWidth("auto")
         tv.setPosition("relative")
-        tv.setMarginRight(0)
+        tv.setMarginRightPx(0)
         tv.setMarginLeft(0)
         this.setPaddingBottomPx(0)
         tv.setWhiteSpace("normal")
