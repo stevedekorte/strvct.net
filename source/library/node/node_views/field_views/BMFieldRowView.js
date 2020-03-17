@@ -133,10 +133,10 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         v.setWidth("100%")
         v.setFontWeight("normal")
         v.setColor("#aaa")
-        v.setMarginLeft("0px")
+        v.setMarginLeft("0em")
         v.setMarginRightPx(0)
-        v.setMarginTop("0px")
-        v.setMarginBottom("3px")
+        v.setMarginTop("0em")
+        v.setMarginBottom("0.2em")
         v.setUserSelect("text")
         this.setNoteView(v)
         this.noteViewContainer().addSubview(v)
@@ -149,14 +149,51 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         v.setSpellCheck(false)
         //v.setInnerHTML("error")
         v.setColor("red")
-        v.setPaddingBottom("0px")
+        v.setPaddingBottom("0em")
         this.setErrorView(v)
         this.errorViewContainer().addSubview(v)
         return v 
     }
 
+    /*
+.BMFieldValueView {
+	display: flex;
+    position: relative;
+
+
+
+    text-align: left;
+	overflow: hidden;
+
+    white-space: nowrap;
+
+	padding-left: 7px;
+	padding-right: 4px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	
+    color: white;
+    background-color: transparent;
+}
+*/
+
     createValueView () {
         const v = TextField.clone().setDivClassName("BMFieldValueView")
+        v.setDisplay("flex")
+        v.setPosition("relative")
+        v.setWidth("100%")
+        v.setMarginTop("0.1em")
+        v.setMarginLeft("0em")
+        v.setMarginRight("0em")
+        v.setMarginBottom("0.1em")
+        v.setTextAlign("left")
+        v.setOverflow("hidden")
+        v.setWhiteSpace("nowrap")
+        v.setPaddingLeft("7px")
+        v.setPaddingRight("4px")
+        v.setPaddingBottom("5px")
+        v.setColor("white")
+        v.setBackgroundColor("transparent")
         //tf.setSelectAllOnDoubleClick(true)
         return v
     }

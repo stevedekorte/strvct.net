@@ -19,7 +19,7 @@ window.CloseButton = class CloseButton extends DomView {
     init () {
         super.init()
         this.makeFlexAndCenterContent()
-        this.setPadding("0px")
+        this.setPadding("0em")
         this.turnOffUserSelect()
         //this.setDisplay("table") // to center svg
 

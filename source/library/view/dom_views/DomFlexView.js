@@ -38,8 +38,8 @@ window.DomView = class DomFlexView extends DomView {
     newFlexSubview () {
         const v = DomFlexView.clone()
         v.setDisplay("flex")
-        v.setMinHeight("0px")
-        v.setMinWidth("0px")
+        v.setMinHeight("0em")
+        v.setMinWidth("0em")
         const order = this.subviews().length
         v.setOrder(order)
         this.addSubview(v) 

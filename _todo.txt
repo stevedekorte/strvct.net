@@ -1,7 +1,14 @@
 
 TODO:
 
-
+	BUG: when selecting a textfield, the browser may re-layout the columns
+	
+	can't reorder text view?
+	
+	change px to em where possible?
+	
+	fix JSONNull view
+	
 	add more checks for valid CSS values
 	
 	BrowserColumnGroup

@@ -28,7 +28,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
         v.setHeight("auto")
         v.setWidth("-webkit-fill-available")
         v.setTextAlign("left")
-        v.setMargin("0px")
+        v.setMargin("0em")
         v.setOverflowX("hidden")
         v.setOverflowY("scroll")
         //v.setDoesHoldFocusOnReturn(true)
@@ -51,7 +51,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
             //this.debugLog(" update height")
             this.setMinAndMaxHeightPercentage(100)
             this.setFlexGrow(100)
-            this.setBorderBottom("0px")
+            this.setBorderBottom("0em")
 
             this.valueView().setHeight("100%")
         } else {

@@ -51,7 +51,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         if (v) {
             setTimeout(() => { this.setOpacity(1) }, 10)
         } else {
-            this.setOpacity("0")
+            this.setOpacity(0)
         }
         return this
     }

@@ -438,7 +438,7 @@ window.DomView = class DomView extends ProtoClass {
     // font family
 
     setFontFamily (s) {
-        assert(Type.isString(s))
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("font-family", s)
         return this
     }
@@ -2187,38 +2187,16 @@ window.DomView = class DomView extends ProtoClass {
             this.removeSubview(aSubview)
             this.atInsertSubview(i, aSubview)
         }
-
-        /*
-        this.element().removeChild(aSubview.element())
-        DomElement_atInsertElement(this.element(), anIndex, aSubview.element())
-        this.subviews().remove(aSubview)
-        this.subviews().atInsert(anIndex, aSubview)
-        */
         return this
     }
-
-    /*
-    max-height: none
-    min-height: ..
-    
-    width: auto
-    height: auto
-
-    */
 
     updateSubviewsToOrder (orderedSubviews) {
         assert(this.subviews() !== orderedSubviews)
         assert(this.subviews().length === orderedSubviews.length)
 
         for (let i = 0; i < this.subviews().length; i ++) {
-            //const v1 = this.subviews()[i]
             const v2 = orderedSubviews[i]
             this.moveSubviewToIndex(v2, i)
-            /*
-            if (v1 !=== v2) {
-                this.moveSubviewToIndex(v2, i)
-            }
-            */
         }
         
         return this
@@ -3973,7 +3951,7 @@ window.DomView = class DomView extends ProtoClass {
 
         const intersectionObserverOptions = {
             root: root, // watch for visibility in the viewport 
-            rootMargin: "0px",
+            rootMargin: "0em",
             threshold: 1.0
         }
 

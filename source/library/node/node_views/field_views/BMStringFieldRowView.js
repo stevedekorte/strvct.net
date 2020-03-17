@@ -26,7 +26,7 @@ window.BMStringFieldRowView = class BMStringFieldRowView extends BMFieldRowView 
         v.setHeight("auto")
         v.setWidth("-webkit-fill-available")
         v.setTextAlign("left")
-        v.setMargin("0px")
+        v.setMargin("0em")
         v.setOverflowX("hidden")
         v.setBorderRadius("0.2em")
         return v

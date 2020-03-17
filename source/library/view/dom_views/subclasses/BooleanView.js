@@ -35,7 +35,6 @@ window.BooleanView = class BooleanView extends DomStyledView {
         //this.setBorder("1px dashed red")
        
         this.turnOffUserSelect()
-        //this.setWhiteSpace("nowrap")
         this.setSpellCheck(false)
         this.setContentEditable(false)
 
@@ -55,26 +54,31 @@ window.BooleanView = class BooleanView extends DomStyledView {
         this.addSubview(iconSetView)
         */
 
-        const inner = SvgIconView.clone().setIconName("inner-checkbox")
-        //inner.setBorder("1px dashed blue")
-        inner.setDisplay("flex")
-        inner.setPosition("absolute")
-        inner.setTop("0px").setLeft("0px")
-        inner.setMinAndMaxWidthAndHeight(size)
-        inner.setStrokeColor("transparent")
-        this.setInnerCheckView(inner)
-        this.addSubview(inner)
+        {
+            const inner = SvgIconView.clone().setIconName("inner-checkbox")
+            //inner.setBorder("1px dashed blue")
+            inner.setDisplay("flex")
+            inner.setPosition("absolute")
+            inner.setTop("0em")
+            inner.setLeft("0em")
+            inner.setMinAndMaxWidthAndHeight(size)
+            inner.setStrokeColor("transparent")
+            this.setInnerCheckView(inner)
+            this.addSubview(inner)
+        }
 
-        const outer = SvgIconView.clone().setIconName("outer-checkbox")
-        //outer.setBorder("1px dashed green")
-        outer.setDisplay("flex")
-        outer.setPosition("absolute")
-        outer.setTop("0px").setLeft("0px")
-        outer.setMinAndMaxWidthAndHeight(size)
-        outer.setFillColor("transparent")
-        this.setOuterCheckView(outer)
-        this.addSubview(outer)
-
+        {
+            const outer = SvgIconView.clone().setIconName("outer-checkbox")
+            //outer.setBorder("1px dashed green")
+            outer.setDisplay("flex")
+            outer.setPosition("absolute")
+            outer.setTop("0em")
+            outer.setLeft("0em")
+            outer.setMinAndMaxWidthAndHeight(size)
+            outer.setFillColor("transparent")
+            this.setOuterCheckView(outer)
+            this.addSubview(outer)
+        }
         
         this.setIsEditable(this.isEditable())
 

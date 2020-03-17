@@ -4,6 +4,10 @@
 
     ImageWellView
 
+    - designed to contain an ImagineView
+    - can have it's own frame and decoration
+    - supports drag & drop of images
+
 */
 
 window.ImageWellView = class ImageWellView extends NodeView {
@@ -12,9 +16,21 @@ window.ImageWellView = class ImageWellView extends NodeView {
         this.newSlot("isEditable", true)
     }
 
+
     init () {
         super.init()
         this.setDisplay("flex")
+        this.setPosition("relative")
+        this.setJustifyContent("center")
+        this.setAlignItems("center")
+        this.setMinHeight("10em")
+        this.setMinWidth("10em")
+        this.setOverflowX("hidden")
+        this.setOverflowY("hidden")
+        this.setBorder("1px solid #444")
+        this.setColor("white")
+        this.setBackgroundColor("transparent")
+
         this.setIsRegisteredForBrowserDrop(true)
         this.dragUnhighlight()
         this.turnOffUserSelect()

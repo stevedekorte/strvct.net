@@ -18,6 +18,12 @@ window.ImageView = class ImageView extends NodeView {
 
     init () {
         super.init()
+        this.setDisplay("flex")
+        this.setPosition("relative")
+        this.setJustifyContent("center")
+        this.setAlignItems("center")
+        this.setTransition("all 0.5s")
+        this.setOverflow("hidden")
         
         //this.setIsRegisteredForBrowserDrop(false)
         //this.setWidthPercentage(100)
@@ -27,6 +33,11 @@ window.ImageView = class ImageView extends NodeView {
 
         // image container
         const ic = DomFlexView.clone().setDivClassName("ImageViewImageContainer")
+        ic.setDisplay("flex")
+        ic.setPosition("relative")
+        this.setJustifyContent("center")
+        this.setAlignItems("center")
+        this.setOverflow("hidden")
         ic.setWidth("auto")
         ic.setHeight("auto")
         this.setImageContainer(ic)
@@ -144,12 +155,17 @@ window.ImageView = class ImageView extends NodeView {
         image.src = dataURL;
 
         {
-            const riv = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
-            riv.makeStandardFlexView()
-            riv.setWidth("fit-content")
-            riv.setHeight("auto")
-            this.setRawImageView(riv)
-            this.imageContainer().addSubview(riv)
+            const v = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
+            v.setDisplay("flex")
+            v.setPosition("relative")
+            v.setJustifyContent("center")
+            v.setAlignItems("center")
+            v.setOverflow("hidden")
+            v.makeStandardFlexView()
+            v.setWidth("fit-content")
+            v.setHeight("auto")
+            this.setRawImageView(v)
+            this.imageContainer().addSubview(v)
         }
 	
         return this

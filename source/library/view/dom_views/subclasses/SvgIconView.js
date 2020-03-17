@@ -43,8 +43,8 @@ window.SvgIconView = class SvgIconView extends DomView {
         //this.setTop(0)
         //this.setLeft(0)
 
-        this.setPadding("0px")
-        this.setMargin("0px")
+        this.setPadding("0em")
+        this.setMargin("0em")
         
         this.setOverflow("hidden")
         this.setTransition("all 0.2s")
@@ -88,8 +88,8 @@ window.SvgIconView = class SvgIconView extends DomView {
             console.warn("missing style on svgElement")
         } else {
             style.position = "absolute"
-            //style.top = "0px"
-            //style.left = "0px"
+            //style.top = "0em"
+            //style.left = "0em"
         }
         */
         return this
