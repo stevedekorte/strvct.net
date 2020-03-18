@@ -115,8 +115,8 @@ window.BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
         
         let iconSize = 46
         iv.setPosition("relative")
-        iv.setLeft((itemSize-iconSize)/2)
-        iv.setTop((itemSize-iconSize)/2)
+        iv.setLeftPx((itemSize-iconSize)/2)
+        iv.setTopPx((itemSize-iconSize)/2)
 		iv.setMinAndMaxWidth(iconSize)
 		iv.setMinAndMaxHeight(iconSize)
 		iv.makeBackgroundNoRepeat()

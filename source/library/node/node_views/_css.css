@@ -1,48 +1,4 @@
 
-/*
-.ImageWellView {
-	display: flex;
-	position: relative;
-	justify-content: center;
-	align-items: center;
-
-	min-height: 10em;
-	min-width: 10em;
-	overflow-x: scroll;
-	overflow-x: hidden;
-	overflow-y: hidden;
-
-
-    border: 1px solid #444;
-    color: white;
-    background-color: transparent;
-}
-
-.ImageView {
-	display: flex;
-	position: relative;
-	justify-content: center;
-	align-items: center;
-	transition: all 0.5s;
-	overflow: hidden;
-}
-
-.ImageViewImageContainer { 
-	display: flex;
-	position: relative;
-	justify-content: center;
-	align-items: center;
-	overflow: hidden;
-}
-
-.RawImageView {
-	display: flex;
-	position: relative;
-	justify-content: center;
-	align-items: center;
-	overflow: hidden;
-}
-*/
 
 .ImageCloseButton {
 	display: flex;

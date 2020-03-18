@@ -172,7 +172,7 @@ window.BMMessages = class BMMessages extends BMStorableNode {
 	
     needsMessageWithHash (h) {
         const wasDeleted = this.deletedSet().hasKey(h)
-        const isMissing = this.subnodeWithHash(h) === null
+        const isMissing = Type.isNullOrUndefined(this.subnodeWithHash(h))
         return (!wasDeleted) && isMissing
     }
 	

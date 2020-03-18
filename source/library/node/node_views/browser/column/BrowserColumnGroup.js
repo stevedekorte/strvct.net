@@ -252,6 +252,13 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
 
     targetWidth () {
         let w = 0
+
+        if (this.browser()) {
+            if (this.browser().isSingleColumn()) {
+                return this.browser().browserWidth()
+            } 
+        }
+
         const node = this.node()
         
         if (node) {
@@ -262,20 +269,11 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
 
             /*
             let rw = this.column().maxRowWidth()
-            //console.log("column " + this.node().title() + " maxRowWidth:" + rw)
-            this.column().maxRowWidth()
             if (rw > w) {
                 w = rw
             }
             */
             
-
-            if (this.browser()) {
-                if (this.browser().isSingleColumn()) {
-                    w = this.browser().browserWidth()
-                    assert (!Type.isNull(w)) 
-                } 
-            }
         }
 			
         return w		
@@ -284,7 +282,6 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     fitToTargetWidth () {
         if (this.node() && this.node().nodeFillsRemainingWidth()) {
             this.setMaxWidth("none")
-            //this.setFlexGrow(1)
         } else {
             this.setMinAndMaxWidth(this.targetWidth())
         }

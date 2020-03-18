@@ -29,7 +29,7 @@ window.EventPoint = class EventPoint extends Point {
         return this
     }
 
-    copyFrom(p, copyDict) {
+    copyFrom (p, copyDict) {
         super.copyFrom(p, copyDict)
         this._id = p._id
         this._state = p._state
@@ -37,14 +37,14 @@ window.EventPoint = class EventPoint extends Point {
         return this
     }
 
-    overView() {
+    overView () {
         if (this._overView === null) {
             this._overView = this.findOverview()
         }
         return this._overView
     }
 
-    findOverview() {
+    findOverview () {
         // search up the dom elements until we find one 
         // associated with a DomView instance 
 
@@ -63,33 +63,33 @@ window.EventPoint = class EventPoint extends Point {
 
     // viewport helpers
 
-    viewportPosition() {
+    viewportPosition () {
         const e = this.event()
         const p = Point.clone().set(e.clientX, e.clientY)
         return p
     }
 
-    viewportHeight() {
+    viewportHeight () {
         return window.innerHeight
     }
 
-    viewportWidth() {
+    viewportWidth () {
         return window.innerWidth
     }
 
-    distFromTopOfViewport() {
+    distFromTopOfViewport () {
         return this.event().clientY
     }
 
-    distFromBottomOfViewport() {
+    distFromBottomOfViewport () {
         return this.viewportHeight() - this.distFromTopOfViewport()
     }
 
-    distFromLeftOfViewport() {
+    distFromLeftOfViewport () {
         return this.event().clientX
     }
 
-    distFromRightOfViewport() {
+    distFromRightOfViewport () {
         return this.viewportWidth() - this.distFromLeftOfViewport()
     }
     

@@ -229,7 +229,7 @@ window.TextField = class TextField extends DomStyledView {
 
     
     setString (newValue) {
-        if (newValue === null) {
+        if (Type.isNullOrUndefined(newValue)) {
             newValue = ""
         }
 

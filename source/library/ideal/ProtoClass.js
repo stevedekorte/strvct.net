@@ -90,9 +90,22 @@ window.ProtoClass = class ProtoClass extends Object {
         }
     }
 
+    static addChildClass (aClass) {
+        this._childClasses.add(aClass)
+        return this
+    }
+
     static initThisClass () {
         //console.log(this.type() + " initThisClass")
         
+        this.setClassVariable("_childClasses", new Set())
+        this.setClassVariable("_ancestorClasses", this.findAncestorClasses())
+
+        const p = this.parentClass()
+        if (p && p.addChildClass) {
+            p.addChildClass(this)
+        }
+
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
             //this.prototype.initPrototype.apply(this.prototype)
@@ -117,13 +130,13 @@ window.ProtoClass = class ProtoClass extends Object {
 
     static ancestorClassesTypesIncludingSelf () {
         return this.ancestorClassesIncludingSelf().map(c => c.type())
-
     }
 
     static ancestorClassesTypes () {
         return this.ancestorClasses().map(c => c.type())
     }
 
+    /*
     static ancestorClassesIncludingSelf (results = []) {
         results.push(this)
 
@@ -134,7 +147,35 @@ window.ProtoClass = class ProtoClass extends Object {
         }
         return results
     }
+    */
 
+    static isSubclassOf(aClass) {
+        return this.ancestorClassesIncludingSelf().contains(aClass)
+    }
+
+    static ancestorClassesIncludingSelf() {
+        const results = this.ancestorClasses()
+        results.atInsert(0, this)
+        return results
+    }
+
+    static ancestorClasses() {
+        const v = this.getClassVariable("_ancestorClasses")
+        assert(v)
+        return v
+    }
+
+    static findAncestorClasses () {
+        const results = []
+        let aClass = this.parentClass()
+        while (aClass && aClass.parentClass) {
+            results.push(aClass)
+            aClass = aClass.parentClass()
+        }
+        return results
+    }
+
+    /*
     static ancestorClasses (results = []) {
         const parent = this.parentClass()
         if (parent && parent.ancestorClasses) {
@@ -144,10 +185,12 @@ window.ProtoClass = class ProtoClass extends Object {
         }
         return results
     }
+    */
 
     static childClasses () {
-        // TODO: have each class cache a list of childClasses
-        // and initClass will tell parent about new child class
+        // TODO: if needed for performance, 
+        // - have each class cache a list of childClasses
+        // - use initClass method tell parent about new child class
         return ProtoClass.allClasses().filter(aClass => aClass && aClass.parentClass && aClass.parentClass() === this)
     }
 
@@ -535,9 +578,9 @@ window.ProtoClass = class ProtoClass extends Object {
                 s = s()
             }
             if (arguments.length == 1) {
-                console.log(" " + s)
+                console.log(this.typeId() + " " + s)
             } else {
-                console.log(" ", arguments[0], arguments[1])
+                console.log(this.typeId() + " ", arguments[0], arguments[1])
             }
         }
         return this

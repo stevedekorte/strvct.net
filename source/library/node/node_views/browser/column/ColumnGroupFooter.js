@@ -17,8 +17,8 @@ window.ColumnGroupFooter = class ColumnGroupFooter extends NodeView {
     init () {
         super.init()
         this.setPosition("absolute")
-        this.setBottom("0px")
-        this.setLeft("0px")
+        this.setBottomPx(0)
+        this.setLeftPx(0)
         this.setMinHeight("40px")
         this.setMaxHeight("40px")
         this.setHeight("auto")

@@ -35,16 +35,16 @@ window.BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRo
         this.titleView().setMinWidth("50px")
         this.titleView().setMaxWidth("calc(100% - 100px)")
 
-        this.titleView().setTop(0)
+        this.titleView().setTopPx(0)
         this.titleView().setPosition("relative")
-        this.titleView().setLeft(null)
+        this.titleView().setLeftPx(null)
         this.titleView().setMarginRightPx(20)
         this.titleView().setMarginLeft(0)
         //this.titleView().setBorder("1px solid rgba(0,0,0,0.05)")
     }
     
     alignToRight () {
-	    this.titleView().setRight(20)
+	    this.titleView().setRightPx(20)
         this.titleView().setFloat("right")
 	    this.titleView().setBorderRadius("8px 8px 0px 8px") // top-left, top-right,  bottom-right, bottom-left
         this.titleView().setBackgroundColor("rgb(84, 193, 250)")
@@ -54,7 +54,7 @@ window.BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRo
     }
     
     alignToLeft () {
-        this.titleView().setLeft(20)
+        this.titleView().setLeftPx(20)
     	this.titleView().setFloat("left")
         this.titleView().setBorderRadius("8px 8px 8px 0px") // top-left, top-right,  bottom-right, bottom-left 
         this.titleView().setBackgroundColor("#ccc")

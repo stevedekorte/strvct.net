@@ -51,6 +51,7 @@ window.DomView = class DomView extends ProtoClass {
         this.newSlot("hiddenDisplayValue", undefined)
         this.newSlot("hiddenMinHeight", undefined)
         this.newSlot("hiddenMaxHeight", undefined)
+        this.newSlot("hiddenTransitionValue", undefined)
     }
 
     init () {
@@ -1007,69 +1008,98 @@ window.DomView = class DomView extends ProtoClass {
 
     // top
 
-    setTopString (s) {
-        this.setCssAttribute("top", s)
-        return this
-    }
-
     setTop (v) {
-        if (Type.isNumber(v)) {
-            this.setPxCssAttribute("top", v)
-        } else {
-            this.setCssAttribute("top", v)
-        }
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("top", v)
         return this
     }
 
     top () {
+        return this.getCssAttribute("top")
+    }
+
+    // top px
+
+    setTopPx (v) {
+        assert(Type.isNull(v) || Type.isNumber(v))
+        this.setPxCssAttribute("top", v)
+        return this
+    }
+
+    topPx () {
         return this.getPxCssAttribute("top")
     }
 
     // left
 
-    setLeftString (s) {
-        this.setCssAttribute("left", s)
-        return this
-    }
-
-    setLeft (aNumber) {
-        this.setPxCssAttribute("left", aNumber)
+    setLeft (v) {
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("left", v)
         return this
     }
 
     left () {
+        return this.getCssAttribute("left")
+    }
+
+    // left px
+
+    setLeftPx (v) {
+        assert(Type.isNull(v) || Type.isNumber(v))
+        this.setPxCssAttribute("left", v)
+        return this
+    }
+
+    leftPx () {
         return this.getPxCssAttribute("left")
     }
 
     // right
 
-    setRightString (s) {
-        this.setCssAttribute("right", s)
+    setRight (v) {
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("right", v)
         return this
     }
 
-    setRight (aNumber) {
-        this.setPxCssAttribute("right", aNumber)
-        return this
-    }
 
     right () {
+        return this.getCssAttribute("right")
+    }
+
+    // right px
+
+    setRightPx (v) {
+        assert(Type.isNull(v) || Type.isNumber(v))
+        this.setPxCssAttribute("right", v)
+        return this
+    }
+
+    rightPx () {
         return this.getPxCssAttribute("right")
     }
 
     // bottom
 
-    setBottomString (s) {
-        this.setCssAttribute("bottom", s)
-        return this
-    }
-
-    setBottom (aNumber) {
-        this.setPxCssAttribute("bottom", aNumber)
+    setBottom (v) {
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("bottom", v)
         return this
     }
 
     bottom () {
+        return this.getCssAttribute("bottom")
+    }
+
+    // bottom px
+
+    setBottomPx (v) {
+        assert(Type.isNull(v) || Type.isNumber(v))
+        this.setPxCssAttribute("bottom", v)
+        return this
+    }
+
+    bottomPx () {
         return this.getPxCssAttribute("bottom")
     }
 
@@ -1446,6 +1476,30 @@ window.DomView = class DomView extends ProtoClass {
 		return this
 	}
 
+        // helper for hide/unhide transition
+    
+        isTransitionHidden () {
+            return !Type.isNullOrUndefined(this.hiddenTransitionValue())
+        }
+    
+        hideTransition () {
+            if (!this.isTransitionHidden()) {
+                this.setHiddenTransitionValue(this.transition())
+                this.setTransition("all 0s")
+            }
+            return this
+        }
+    
+        unhideTransition () {
+            if (this.isTransitionHidden()) {
+                this.setTransition(this.hiddenTransitionValue())
+                this.setHiddenTransitionValue(null)
+            } else {
+                this.setTransition(null)
+            }
+            return this
+        }
+
     // helper for hide/show display
 
     setDisplayIsHidden (aBool) {
@@ -1734,9 +1788,9 @@ window.DomView = class DomView extends ProtoClass {
 
     // width
 
-    setWidthString (s) {
-        assert(Type.isString(s) || s === null)
-        this.setCssAttribute("width", s, () => { this.didChangeWidth() })
+    setWidthString (v) {
+        assert(Type.isString(v) || Type.isNull(v))
+        this.setCssAttribute("width", v, () => { this.didChangeWidth() })
         return this
     }
 
@@ -1989,10 +2043,11 @@ window.DomView = class DomView extends ProtoClass {
 
     setHeightToAuto () {
         this.setHeightString("auto")
+        return this
     }
 
     setHeightString (s) {
-        assert(Type.isString(s) || s === null)
+        assert(Type.isString(s) || Type.isNull(s))
         this.setCssAttribute("height", s, () => { this.didChangeHeight() })
         return this
     }
@@ -2053,12 +2108,6 @@ window.DomView = class DomView extends ProtoClass {
 
     hasSubviewDescendant (aView) {
         return aView.parentViewChain().contains(this)
-        /*
-        const match = this.subviews().detect((sv) => {
-            return sv === aView || sv.hasSubviewDescendant(aView)
-        })
-        return !Type.isNullOrUndefined(match)
-        */
     }
 
     subviewCount () {
@@ -2224,8 +2273,8 @@ window.DomView = class DomView extends ProtoClass {
         this.setTransition("all " + seconds + "s")
         assert(this.position() === "absolute")
         this.addTimeout(() => {
-            this.setTop(destinationFrame.origin().y())
-            this.setLeft(destinationFrame.origin().x())
+            this.setTopPx(destinationFrame.origin().y())
+            this.setLeftPx(destinationFrame.origin().x())
             this.setMinAndMaxWidth(destinationFrame.size().width())
             this.setMinAndMaxHeight(destinationFrame.size().height())
         }, 0)
@@ -2240,8 +2289,8 @@ window.DomView = class DomView extends ProtoClass {
         this.setTransition("all " + seconds + "s")
         assert(this.position() === "absolute")
         this.addTimeout(() => {
-            this.setTop(destinationPoint.y())
-            this.setLeft(destinationPoint.x())
+            this.setTopPx(destinationPoint.y())
+            this.setLeftPx(destinationPoint.x())
         }, 0)
 
         this.addTimeout(() => {
@@ -2331,6 +2380,7 @@ window.DomView = class DomView extends ProtoClass {
         // use justRemoteSubview for internal changes
 
         this.setTransition("all " + delayInSeconds + "s")
+
         this.addTimeout(() => {
             this.setOpacity(0)
         }, 0)
@@ -3788,8 +3838,8 @@ window.DomView = class DomView extends ProtoClass {
 
     setRelativePos (p) {
         // why not a 2d transform?
-        this.setLeft(p.x())
-        this.setTop(p.y())
+        this.setLeftPx(p.x())
+        this.setTopPx(p.y())
         return this
     }
 
@@ -3864,8 +3914,8 @@ window.DomView = class DomView extends ProtoClass {
 
     setRelativePos (p) {
         //this.setPosition("absolute")
-        this.setLeft(p.x())
-        this.setTop(p.y())
+        this.setLeftPx(p.x())
+        this.setTopPx(p.y())
         return this
     }
 
@@ -3885,7 +3935,7 @@ window.DomView = class DomView extends ProtoClass {
             this.setPosition("absolute")
             const parentHeight = pv.computedHeight() //pv.calcHeight() // computedHeight?
             const height = this.computedHeight()
-            this.setTop((parentHeight / 2) - (height / 2))
+            this.setTopPx((parentHeight / 2) - (height / 2))
         } else {
             throw new Error("missing parentView")
         }
@@ -3897,7 +3947,7 @@ window.DomView = class DomView extends ProtoClass {
         if (pv) {
             this.setPosition("absolute")
             this.addTimeout(() => {
-                this.setRight(pv.clientWidth() / 2 - this.clientWidth() / 2)
+                this.setRightPx(pv.clientWidth() / 2 - this.clientWidth() / 2)
             }, 0)
         }
         return this
@@ -3951,14 +4001,13 @@ window.DomView = class DomView extends ProtoClass {
 
         const intersectionObserverOptions = {
             root: root, // watch for visibility in the viewport 
-            rootMargin: "0em",
+            rootMargin: "0px",
             threshold: 1.0
         }
 
         const obs = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-
                     //console.log("onVisibility!")
                     if (this._endScrollIntoViewFunc) {
                         this._endScrollIntoViewFunc()
@@ -3994,7 +4043,7 @@ window.DomView = class DomView extends ProtoClass {
         this.setOverflow("auto")
         this.setMarginString("auto")
         this.setPosition("absolute")
-        this.setTop(0).setLeft(0).setRight(0).setBottom(0)
+        this.setTopPx(0).setLeftPx(0).setRightPx(0).setBottomPx(0)
     }
 
     /*
@@ -4012,7 +4061,7 @@ window.DomView = class DomView extends ProtoClass {
         this.addTimeout(() => { 
             let sh = this.parentView().clientHeight()
             let h = this.clientHeight()
-            this.setTop(sh/2 - h/2)
+            this.setTopPx(sh/2 - h/2)
         }, 1)
 
         return this
@@ -4032,7 +4081,7 @@ window.DomView = class DomView extends ProtoClass {
         this.addTimeout(() => { 
             let sw = this.parentView().clientWidth()
             let w = this.clientWidth()
-            this.setTop(sw/2 - w/2)
+            this.setTopPx(sw/2 - w/2)
         }, 1)
 
         return this

@@ -124,7 +124,7 @@ window.BMNetwork = class BMNetwork extends BMFieldSetNode {
     
     idWithPublicKeyString (publicKeyString) { 
         
-        if (publicKeyString === null) {
+        if (Type.isNullOrUndefined(publicKeyString)) {
             console.warn("publicKeyString is null")
         }
         
@@ -270,7 +270,7 @@ window.BMNetwork = class BMNetwork extends BMFieldSetNode {
     }
 	
     idsBloomFilter () {
-        if (this._idsBloomFilter === null) {
+        if (Type.isNullOrUndefined(this._idsBloomFilter)) {
             this.updateIdsBloomFilter()
         }
         return this._idsBloomFilter

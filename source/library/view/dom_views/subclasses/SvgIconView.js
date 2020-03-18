@@ -40,8 +40,8 @@ window.SvgIconView = class SvgIconView extends DomView {
         this.setOverflow("hidden")
 
         //this.setPosition("absolute")
-        //this.setTop(0)
-        //this.setLeft(0)
+        //this.setTopPx(0)
+        //this.setLeftPx(0)
 
         this.setPadding("0em")
         this.setMargin("0em")

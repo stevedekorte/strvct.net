@@ -140,8 +140,8 @@ window.DragView = class DragView extends DomStyledView {
         this.setMinAndMaxHeight(h)
 
         const p = f.origin()
-        this.setLeft(p.x())
-        this.setTop(p.y())
+        this.setLeftPx(p.x())
+        this.setTopPx(p.y())
 
         //this.setBackgroundColor("black")
         //this.setColor("white")
@@ -210,8 +210,8 @@ window.DragView = class DragView extends DomStyledView {
 
     updatePosition () {
         const newPosition = this.dragStartPos().add(this.defaultPanGesture().diffPos()) 
-        this.setLeft(newPosition.x())
-        this.setTop(newPosition.y())
+        this.setLeftPx(newPosition.x())
+        this.setTopPx(newPosition.y())
     }
 
     onPanMove (aGesture) {

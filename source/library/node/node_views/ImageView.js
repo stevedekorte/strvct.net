@@ -24,33 +24,17 @@ window.ImageView = class ImageView extends NodeView {
         this.setAlignItems("center")
         this.setTransition("all 0.5s")
         this.setOverflow("hidden")
-        
-        //this.setIsRegisteredForBrowserDrop(false)
-        //this.setWidthPercentage(100)
-        //this.setHeightPercentage(100)
         this.setWidth("auto")
         this.setHeight("auto")
+        //this.setIsRegisteredForBrowserDrop(false)
 
         // image container
-        const ic = DomFlexView.clone().setDivClassName("ImageViewImageContainer")
-        ic.setDisplay("flex")
-        ic.setPosition("relative")
-        this.setJustifyContent("center")
-        this.setAlignItems("center")
-        this.setOverflow("hidden")
-        ic.setWidth("auto")
-        ic.setHeight("auto")
+        const ic = this.newImageViewContainer()
         this.setImageContainer(ic)
         this.addSubview(ic)
 
         // close button
-        const cb = ButtonView.clone().setDivClassName("ImageCloseButton")
-        cb.setDisplay("flex")
-        cb.setPosition("absolute")
-        cb.setTitleIsVisible(false)
-        cb.setTop("0px").setRight("0px")
-        cb.setTarget(this).setAction("close")
-        cb.setIconName("close")
+        const cb = this.newCloseButtonView()
         this.setCloseButtonView(cb)
         this.addSubview(cb)
 
@@ -59,6 +43,30 @@ window.ImageView = class ImageView extends NodeView {
         this.turnOffUserSelect()
         this.setTransition("all 0.3s")
         return this
+    }
+
+    newCloseButtonView () {
+        const v = ButtonView.clone().setDivClassName("ImageCloseButton")
+        v.setDisplay("flex")
+        v.setPosition("absolute")
+        v.setTitleIsVisible(false)
+        v.setTopPx(0)
+        v.setRightPx(0)
+        v.setTarget(this).setAction("close")
+        v.setIconName("close")
+        return v
+    }
+
+    newImageViewContainer () {
+        const v = DomFlexView.clone().setDivClassName("ImageViewImageContainer")
+        v.setDisplay("flex")
+        v.setPosition("relative")
+        v.setJustifyContent("center")
+        v.setAlignItems("center")
+        v.setOverflow("hidden")
+        v.setWidth("auto")
+        v.setHeight("auto")
+        return v
     }
 
     setIsRegisteredForBrowserDrop(aBool) {
@@ -105,12 +113,6 @@ window.ImageView = class ImageView extends NodeView {
             this.closeButtonView().hideDisplay()
             const parentView = this.parentView()
             this.removeFromParentView()
-            /*
-            if (parentView && parentView.subviewRequestsClose) {
-                parentView.subviewRequestsClose(this)
-            }
-            */
-            //this.debugLog(".close complete parentView = ", parentView)
             parentView.scheduleSyncToNode()
         }, seconds * 1000)
     }
@@ -143,6 +145,19 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
 
+    newRawImageViewForImage (image) {
+        const v = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
+        v.setDisplay("flex")
+        v.setPosition("relative")
+        v.setJustifyContent("center")
+        v.setAlignItems("center")
+        v.setOverflow("hidden")
+        v.makeStandardFlexView()
+        v.setWidth("fit-content")
+        v.setHeight("auto")
+        return v
+    }
+
     setFromDataURL (dataURL) {
         //console.log("setFromDataURL: ", dataURL)
         assert(!Type.isNull(dataURL))
@@ -154,19 +169,9 @@ window.ImageView = class ImageView extends NodeView {
         const image = new Image();
         image.src = dataURL;
 
-        {
-            const v = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
-            v.setDisplay("flex")
-            v.setPosition("relative")
-            v.setJustifyContent("center")
-            v.setAlignItems("center")
-            v.setOverflow("hidden")
-            v.makeStandardFlexView()
-            v.setWidth("fit-content")
-            v.setHeight("auto")
-            this.setRawImageView(v)
-            this.imageContainer().addSubview(v)
-        }
+        const v = this.newRawImageViewForImage(image)
+        this.setRawImageView(v)
+        this.imageContainer().addSubview(v)
 	
         return this
     }

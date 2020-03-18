@@ -1,6 +1,22 @@
 
 TODO:
 
+	row
+	- requestSingleSelection (click)
+	- requestExtendSelection (shift-click)
+	- requestAppendSelection (command/alt-click)
+	- requestDelete [column may delete multiple items]
+	- command-A, if can navigate into, then select all subitems, otherwise, let column handle it
+	
+	column
+	- command-A - select all rows
+	
+	edit browser header
+	
+	group selection
+	
+	redo autoFitParentHeight, autoFitChildHeight etc for flex views?
+
 	BUG: when selecting a textfield, the browser may re-layout the columns
 	
 	can't reorder text view?
@@ -8,9 +24,7 @@ TODO:
 	change px to em where possible?
 	
 	fix JSONNull view
-	
-	add more checks for valid CSS values
-	
+		
 	BrowserColumnGroup
 		rename header/footer to headerView/footerView
 		- move to HeaderFooterView

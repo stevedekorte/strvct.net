@@ -47,7 +47,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setWidth("100%")
         this.setHeight("auto")
         //this.setColor("rbga(255, 255, 255, 0.5)")
-        this.setTransition("all 0s, background-color .3s ease-out")
+        this.setTransition("all 0s, top 0.3s, background-color .3s ease-out")
         this.setOverflow("hidden")
         this.setWhiteSpace("nowrap")
         
@@ -141,14 +141,10 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // we route style methods to it
 
     setupRowContentView () {
-
         const cv = DomView.clone().setDivClassName("BrowserRowContentView")
-        //cv.setDisplay("block")
-
         cv.setDisplay("flex")
-        //cv.flexCenterContent()
         cv.setHeight("auto")
-        cv.setMinHeight("60px")
+        cv.setMinHeightPx(60)
         cv.setWidthPercentage(100)
         cv.setHeightPercentage(100) 
         cv.setPosition("relative")
@@ -157,7 +153,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         //cv.autoFitParentWidth().autoFitParentHeight() // can't do this since we need to float left for sliding
 
         cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s")
-        //cv.setMinHeightPx(60)
         cv.setZIndex(2) // so it will be above other views like the slide delete button 
         this.setZIndex(1)
         this.setContentView(cv)
@@ -451,10 +446,9 @@ window.BrowserRow = class BrowserRow extends NodeView {
         if (this.canDelete()) {
             this.passFirstResponderToColumn()
             this.setOpacity(0)
-            //this.setRight(-this.clientWidth())
+            //this.setRightPx(-this.clientWidth())
             this.setMinAndMaxHeight(0)
             this.setIsDeleting(true)
-
 
             if (this.isSelected()) {
                 // to make sure next column is cleared
@@ -520,22 +514,19 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     onTapComplete (aGesture) {
         //console.log(this.debugTypeId() + " onTapComplete")
-        
         this.setLastTapDate(new Date())
-        //this.debugLog(".onTapComplete()")
         const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
         const hasThreeFingersDown = aGesture.numberOfFingersDown() === 3;
         const isAltTap = keyModifiers.contains("Alternate");
     
-        /*
         if (keyModifiers.length) {
             const methodName = "just" + keyModifiers.join("") + "Tap"
             //this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
                 this[methodName].apply(this)
+                return this
             }
         } 
-        */
         
         if (hasThreeFingersDown || isAltTap) {
             this.justInspect()
@@ -547,15 +538,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return this
     }
 
-    // --- delete key ---
-
-    /*
-    onShiftPlusKeyUp () {
-        this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
-        this.column().add()
-        return false // stop propogation
-    }
-    */
+    // --- keyboard controls ---
 
    onEnterKeyUp () {
         //this.debugLog(this.type() + " for " + this.node().title() + " onEnterKeyUp")
@@ -634,7 +617,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             const size = 10
             cb.setMinAndMaxWidthAndHeight(size)
             cb.verticallyAlignAbsoluteNow()
-            cb.setRight(size * 2)
+            cb.setRightPx(size * 2)
             cb.setZIndex(0)
             this.setDragDeleteButtonView(cb)
         }
@@ -662,9 +645,9 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     setTouchRight (v) {
         //this.setTransform("translateX(" + (v) + "px)");
-        //this.setLeft(-v)
-        //this.setRight(v)
-        this.contentView().setRight(v)
+        //this.setLeftPx(-v)
+        //this.setRightPx(v)
+        this.contentView().setRightPx(v)
     }
 	
     onSlideComplete (slideGesture) {
@@ -725,23 +708,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
     hasCloseButton () {
         return this.closeButtonView() && this.closeButtonView().target() != null
     }
-    
-    /*
-    onMouseOver (event) {
-        if (this.canDelete() && this.closeButtonView()) {
-            this.closeButtonView().setOpacity(1)
-            this.closeButtonView().setTarget(this)
-        }
-    }
-    
-    onMouseLeave (event) {
-        //this.debugLog(" onMouseLeave")
-        if (this.hasCloseButton()) {
-            this.closeButtonView().setOpacity(this.restCloseButtonOpacity())
-            this.closeButtonView().setTarget(null)
-        }        
-    }
-    */
 
     // tap hold
 
@@ -883,12 +849,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.updateSubviews()
         return this
     }
-
-    /*
-    sibilingDidChangeSelection () {
-
-    }
-    */
     
     nodeRowLink () {
         //this.debugLog(".visibleSubnodes() isInspecting:" + this.isInspecting())

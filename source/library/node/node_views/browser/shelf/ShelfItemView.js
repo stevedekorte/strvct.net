@@ -113,8 +113,8 @@ window.ShelfItemView = class ShelfItemView extends NodeView {
         const iconWidth  = itemWidth  * 0.7
         const iconHeight = itemHeight * 0.7
         iv.setPosition("relative")
-        iv.setLeft((itemWidth-iconWidth)/2)
-        iv.setTop((itemHeight-iconHeight)/2)
+        iv.setLeftPx((itemWidth-iconWidth)/2)
+        iv.setTopPx((itemHeight-iconHeight)/2)
         iv.setMinAndMaxWidth(iconWidth)
         iv.setMinAndMaxHeight(iconHeight)
         return this

@@ -29,7 +29,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         super.init()
         this.setupCodeToKeys()
         this.startListening()
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
         this.setAllModifierKeys(this.allModifierNames().map(kn => this.keyForName(kn)))
         return this
     }
@@ -320,7 +320,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
             key.onKeyDown(event)
 
             if (this.isDebugging()) {
-                this.debugLog(".onKeyDownCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event))
+                this.debugLog(".onKeyDownCapture " + this.modsAndKeyNameForEvent(event) + "KeyDown")
             }
         } else {
             console.warn("BMKeyboard.shared() no key found for event ", event)
@@ -339,7 +339,8 @@ window.BMKeyboard = class BMKeyboard extends Device {
         key.onKeyUp(event)
 
         if (this.isDebugging()) {
-            this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event))
+            this.debugLog(".onKeyUpCapture " + this.modsAndKeyNameForEvent(event) + "KeyUp")
+            //this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp")
         }
 
         return shouldPropogate
@@ -478,6 +479,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         return [
             "Alternate", 
             "Control", 
+            "Meta",
             "MetaLeft", 
             "MetaRight", 
             "Shift", 
@@ -498,10 +500,16 @@ window.BMKeyboard = class BMKeyboard extends Device {
         }
         
         if (event.metaKey) {
-            if (event.location === 1) {
+            const n = event.location
+
+            //console.log("event.location = ", event.location)
+
+            if (n === 1) {
                 modifierNames.push("MetaLeft")
-            } else {
+            } else if (n === 2) {
                 modifierNames.push("MetaRight")
+            } else {
+                modifierNames.push("Meta")
             }
         } 
         

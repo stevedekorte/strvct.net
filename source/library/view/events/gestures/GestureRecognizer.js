@@ -352,8 +352,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
     // so we can share the event handling code for both devices 
 
     pointsForEvent (event) {
-        if (event === null) {
-            throw new Error(this.type() + ".pointsForEvent(event) event is null")
+        if (Type.isNullOrUndefined(event)) {
+            throw new Error(this.type() + ".pointsForEvent(event) event is missing")
         }
 
         const eventClass = event.__proto__.constructor;
@@ -680,8 +680,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
         v.setMinAndMaxHeight(bounds.height())
         v.setMinAndMaxWidth(bounds.width())
-        v.setLeft(bounds.x())
-        v.setTop(bounds.y())
+        v.setLeftPx(bounds.x())
+        v.setTopPx(bounds.y())
     }
 
 
@@ -743,8 +743,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
             idsToRemove.remove(id) 
             const nx = point.x() - v.clientWidth()/2;
             const ny = point.y() - v.clientHeight()/2;
-            v.setLeft(nx);
-            v.setTop(ny);
+            v.setLeftPx(nx);
+            v.setTopPx(ny);
             v.setInnerHTML(this.titleForFingerNumber(count))
             v.setBorder("1px dashed white")
             if(this.isPressing()) {

@@ -32,7 +32,7 @@ window.PanelView = class PanelView extends DomView {
 
         this.setButton1(ButtonView.clone())
         this.addSubview(this.button1())
-        this.button1().setPosition("absolute").setRight(10).setBottom(10)
+        this.button1().setPosition("absolute").setRightPx(10).setBottomPx(10)
         this.button1().setMinAndMaxWidth(100)
         this.button1().setTitle("OK")
         this.button1().setTarget(this).setAction("hitButton1")
@@ -42,8 +42,8 @@ window.PanelView = class PanelView extends DomView {
         this.setBackgroundColor("black")
         //this.setBorder("1px solid #ccc")
         this.setPosition("absolute")
-        this.setLeft(0)
-        this.setTop(0)
+        this.setLeftPx(0)
+        this.setTopPx(0)
         //this.setupForDraggingWithMouse()
         this.setBorderRadius("5px")
         this.centerInParentView()
@@ -76,8 +76,8 @@ window.PanelView = class PanelView extends DomView {
     mouseMoveTracker (event) {
         //console.log("mouse pos: ", event.clientX, " x ", event.clientY)
         if (this.isDragging()) {
-            this.setLeft(event.clientX - (this._startClientX - this._startLeft))
-            this.setTop(event.clientY  - (this._startClientY - this._startTop))
+            this.setLeftPx(event.clientX - (this._startClientX - this._startLeft))
+            this.setTopPx(event.clientY  - (this._startClientY - this._startTop))
         }
     }
 

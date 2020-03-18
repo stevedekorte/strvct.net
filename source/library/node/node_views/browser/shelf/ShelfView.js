@@ -55,13 +55,13 @@ window.ShelfView = class ShelfView extends NodeView {
     unhide () {
         if (this.subviews().length) {
             this.setMinAndMaxWidth(this.defaultWidth())
-            this.browser().setLeft(this.defaultWidth())
+            this.browser().setLeftPx(this.defaultWidth())
         }
     }
     
     hide () {
         this.setMinAndMaxWidth(0)
-        this.browser().setLeft(0)
+        this.browser().setLeftPx(0)
     }
 
     // --- sync -----------------------

@@ -25,8 +25,8 @@ window.CloseButton = class CloseButton extends DomView {
 
         const iv = SvgIconView.clone().setIconName("close")
         iv.makeFlexAndCenterContent()
-        //iv.setTop(0)
-        //iv.setLeft(0)
+        //iv.setTopPx(0)
+        //iv.setLeftPx(0)
         
         //iv.setMarginBottom("1px") // TODO: fix the SVG for this icon so this isn't needed?
         

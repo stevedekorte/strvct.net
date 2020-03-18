@@ -230,7 +230,7 @@ window.BMPow = class BMPow extends ProtoClass {
     }
     
     globalEstimateTriesPerMs () {
-        if (this._globalEstimateTriesPerMs === null) {
+        if (Type.isNullOrUndefined(this._globalEstimateTriesPerMs)) {
             let pow = BMPow.clone()
             pow.setTargetDifficulty(this.maxDifficulty()) // to make sure we don't find it
             this.setTries(0)

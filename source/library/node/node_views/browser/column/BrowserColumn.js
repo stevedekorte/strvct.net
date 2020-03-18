@@ -81,28 +81,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     columnGroup () {
         return this.parentView().parentView()
     }
-    
-    // subviews
-
-    /*
-    hasRow (aRow) {
-        return this.hasSubview(aRow)
-    }
-    */
-
-    willAddSubview (aSubview) {
-        // for subclasses to over-ride
-        //if(!this.hasRow(aSubview)) {
-        //console.warn("")
-        //}
-    }
-
-    willRemoveSubview (aSubview) {
-        // for subclasses to over-ride
-        //if(!this.hasRow(aSubview)) {
-        //console.warn("")
-        //}
-    }
 
     // --- rows ---
     
@@ -117,7 +95,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     removeRow (v) {
         return this.removeSubview(v)
     }
-
 
     // selection
 	
@@ -138,6 +115,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
 
+    /*
     darkenUnselectedRows () {
         const darkenOpacity = 0.5
         this.rows().forEach((row) => {
@@ -155,6 +133,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             row.setOpacity(1)
         })
     }
+    */
 
     rowWithNode (aNode) {
         return this.rows().detect(row => row.node() === aNode)
@@ -210,35 +189,50 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     rowRequestsAddColumnForNode (aNode) {
     }
   
+    // selection
+
+    hasMultipleSelections () {
+        return this.selectedRows().length > 0
+    }
+
+    // selected rows
+
     selectedRows () {
-        return this.rows().filter((row) => { 
-            if (!row.isSelected) {
-                //console.warn("=WARNING= " + this.typeId() + ".selectedRows() row " + row.typeId() + " missing isSelected method")
-                return false
-            }
-            return row.isSelected(); 
-        })
+        return this.rows().filter(row => row.isSelected && row.isSelected())
     }
 
     selectedRow () {
-        return this.selectedRows()[0]
+        const sr = this.selectedRows()
+        if (sr.length === 1) {
+            return sr.first()
+        }
+        return null
     }
-    
+
+    // selected nodes
+
+    selectedNodes () {
+        return this.selectedRows().map(row => row.node())
+    }
+
     selectedNode () {
-        const row = this.selectedRow()
-        return row ? row.node() : null
+        const r = this.selectedRow()
+        return r ? r.node() : null
     }
     
-    selectedRowIndex () {
+    selectedRowIndex () { 
+        // returns -1 if no rows selected
         return this.rows().indexOf(this.selectedRow())
     }
+
+    // selecting rows
     
     setSelectedRowIndex (index) {
         const oldIndex = this.selectedRowIndex()
         //console.log("this.setSelectedRowIndex(" + index + ") oldIndex=", oldIndex)
         if (index !== oldIndex) {
             const rows = this.rows()
-            if (index < rows.length && index !== -1) {
+            if (index >= 0 && index < rows.length) {
                 const row = rows[index]
                 row.select()
                 this.didClickRow(row)
@@ -251,8 +245,13 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this.rows().detectIndex(row => row.node() === aNode)
     }
 
+    selectAllRows () {
+        this.rows().forEach(row => row.select())
+        return this
+    }
+
     unselectAllRows () {
-        this.rows().forEach(row => { if (row.unselect) { row.unselect()} })
+        this.rows().forEach(row => row.unselect())
         return this
     }
 	
@@ -502,7 +501,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 
 
-    // -----------------
+    // --- controls --------------
 
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
@@ -522,12 +521,23 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return false // stop propogation
     }
 
-    //onMetaLeft_d_KeyUp (event) {
+    // duplicate
+
     onAlternate_d_KeyUp (event) {
         //this.debugLog(" onMetaLeft_d_KeyUp")
         this.duplicateSelectedRow()
         return false // stop propogation
     }
+
+    // select all
+
+    onMeta_a_KeyDown (event) {
+        this.selectAllRows()
+        event.stopPropagation()
+        return false // stop propogation
+    }
+
+    // inspecting
 
     isInspecting () {
         // see if the row that selected this column is being inspected
@@ -540,23 +550,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         }
         return false
     }
-
-    /*
-    onControl_i_KeyUp (event) {
-        // forward method to selected row and resync next column 
-        this.debugLog(".onControl_i_KeyUp()")
-
-        const row = this.selectedRow()
-        if (row) {
-            const result = row.onControl_i_KeyUp(event)
-            const nextColumn = this.nextColumn()
-            if (nextColumn) {
-                nextColumn.scheduleSyncFromNode()
-            }
-            return result
-        }
-    }
-    */
 
     duplicateSelectedRow () {
         const node = this.node()
@@ -652,10 +645,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 	
     // --- enter key begins row editing ---------------------------
 	
-    onEnterKeyUp (event) {
-        //this.debugLog(".onEnterKeyUp()")
-        
-        if (!this.canNavigate()) { return }
+    onEnterKeyUp (event) {        
+        if (!this.canNavigate()) { 
+            return this
+        }
 	
         const row = this.selectedRow()
         if (row) { 
@@ -668,23 +661,29 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     // --- keyboard controls, add and delete actions -----------------------------
 
     /*
-    deleteSelectedRow () {
-        let sNode = this.selectedNode()
+    deleteRow (aRow) {
+        let sNode = aRow.node()
         if (sNode && sNode.canDelete()) { 
 			sNode.performAction("delete") 
-			if (this.rows().length === 0) {
-				this.selectPreviousColumn()
-			}
 		}
+        return this
+    }
+
+    deleteSelectedRows () {
+        this.selectedRows().forEach(r => this.deleteRow(r))
+
+        if (this.rows().length === 0) {
+            this.selectPreviousColumn()
+        }
     }
     */
 
-    onDeleteKeyUp (event) {
+    onShiftDeleteKeyUp (event) {
         if (!this.canNavigate()) { 
             return 
         }
 
-        //this.deleteSelectedRow()
+        //this.deleteSelectedRows()
         return false
     }
 	
@@ -890,10 +889,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             i ++
             row.unhideDisplay()
             row.setPosition("absolute")
-            row.setTop(y)
-            row.setLeft(0)
-            row.setRight(null)
-            row.setBottom(null)
+            row.setTopPx(y)
+            row.setLeftPx(0)
+            row.setRightPx(null)
+            row.setBottomPx(null)
             row.setWidthPercentage(100)
             //console.log("i" + i + " : y" + y)
         })
@@ -932,6 +931,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         const columnWidth =  this.computedWidth()
         
         orderedRows.forEach((row) => {
+            row.setTransition("all 0.1s")
             let h = 0
 
             if (row.visibility() === "hidden" || row.display() === "none") {
@@ -947,7 +947,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             }
 
             //console.log("y:", y + " h:", h)
-            row.setTop(y)
+            row.setTopPx(y)
             y += h
         })
 
@@ -962,10 +962,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             row.unhideDisplay()
             row.setPosition("relative")
 
-            row.setTop(null)
-            row.setLeft(null)
-            row.setRight(null)
-            row.setBottom(null)
+            row.setTopPx(null)
+            row.setLeftPx(null)
+            row.setRightPx(null)
+            row.setBottomPx(null)
 
             row.setMinAndMaxWidth(null).setMinAndMaxHeight(null)                
 
@@ -1033,7 +1033,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             const newRow = this.subviewForNode(newSubnode)
             newRow.setMinAndMaxHeight(0)
             newRow.contentView().setMinAndMaxHeight(64)
-            newRow.setTransition("all 0s")
+            newRow.setTransition("all 0.3s")
             newRow.contentView().setTransition("all 0s")
             newRow.setBackgroundColor("black")
 
@@ -1063,7 +1063,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             //newRow.setBackgroundColor("black")
             newRow.setMinAndMaxHeight(s)
             const t = Math.floor(s/2 - minHeight/2);
-            newRow.contentView().setTop(t)
+            newRow.contentView().setTopPx(t)
 
             const h = BrowserRow.defaultHeight()
 
@@ -1099,7 +1099,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                 //newRow.contentView().setTransition("all 0.15s, height 0s")
                 //newRow.setTransition("all 0.3s, height 0s")
                 setTimeout(() => { 
-                    newRow.contentView().setTop(0)
+                    newRow.contentView().setTopPx(0)
                     newRow.setMinAndMaxHeight(minHeight) 
                 }, 0)
             }
@@ -1249,7 +1249,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         if (ph) {
             const vp = this.viewPosForWindowPos(dragView.dropPoint())
             const y = vp.y() - dragView.computedHeight()/2
-            ph.setTop(vp.y() - dragView.computedHeight()/2)
+            ph.setTopPx(vp.y() - dragView.computedHeight()/2)
             this.stackRows() // need to use this so we can animate the row movements
         }
     }
@@ -1301,7 +1301,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             this.addSubview(dv)
 
             dv.setPosition("absolute")
-            dv.setTop(this.rowPlaceHolder().top())
+            dv.setTopPx(this.rowPlaceHolder().top())
 
             assert(dv.hasParentView()) //
             this.swapSubviews(dv, this.rowPlaceHolder())

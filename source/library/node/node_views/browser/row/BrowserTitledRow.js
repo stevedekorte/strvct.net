@@ -74,8 +74,8 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         if (!this.thumbnailView()) {
             const tv = DomView.clone().setDivClassName("BrowserRowThumbnailView")
             tv.setDisplay("block")
-            tv.setLeft("10px")
-            tv.setTop("5px")
+            tv.setLeftPx(10)
+            tv.setTopPx(5)
             tv.setMinHeight("40px")
             tv.setMinWidth("40px")
             tv.setBorderRadius("7px")
@@ -92,8 +92,8 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
             
             // TODO: make this dynamic with subview for title & subtitle
             const offset = 60
-            this.titleView().setLeft(offset)
-            this.subtitleView().setLeft(offset)
+            this.titleView().setLeftPx(offset)
+            this.subtitleView().setLeftPx(offset)
         }
         return this
     }

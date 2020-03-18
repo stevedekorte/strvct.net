@@ -28,7 +28,7 @@ window.BrowserScrollView = class BrowserScrollView extends NodeView {
         this.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox 
         
         this.setHeight("100%")
-        this.setTop(null)
+        this.setTopPx(null)
 
         return this
     }

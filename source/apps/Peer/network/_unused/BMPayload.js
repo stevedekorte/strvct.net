@@ -79,12 +79,12 @@ window.BMPayload = class BMPayload extends ProtoClass {
     }
         
     assertType (typeName) {
-        if (this._data === null) {
+        if (Type.isNullOrUndefined(this._data)) {
             console.log("Payload object = ", this)
             throw new Error("payload has null data ")
         }
         
-        if (typeof(this._data.type) !== "string") {
+        if (!Type.isString(this._data.type)) {
             console.log(this._data)
             throw new Error("Payload data type is a " + typeof(this._data.type))
         }
@@ -176,7 +176,7 @@ window.BMPayload = class BMPayload extends ProtoClass {
         const decryptedString = sjcl.codec.utf8String.fromBits(encryptedBits)
         const decryptedPayloadDict = decryptedString.toJsonDict();
 
-        if (decryptedPayloadDict === null) {
+        if (Type.isNullOrUndefined(decryptedPayloadDict)) {
             throw new Error("can't convert decrypted payload to JSON");    
         }
         

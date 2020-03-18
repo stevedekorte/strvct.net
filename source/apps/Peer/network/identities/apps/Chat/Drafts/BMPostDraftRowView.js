@@ -50,8 +50,8 @@ window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
             const cb = this.closeButtonView()
             cb.setDivClassName("BrowserRowCloseButtonTopRight")
             cb.setDisplay("inline-block")
-            cb.setTop("0px")
-            cb.setRight("13px")
+            cb.setTopPx(0)
+            cb.setRightPx(13)
             cb.setColor("#aaa")
             cb.setMinWidth("11px")
             cb.setMaxWidth("11px")
@@ -83,7 +83,7 @@ window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
         this.textContentView().setIsEditable(true)
 
         this.closeButtonView().setBackgroundImageUrlPath(this.pathForIconName("close"))
-        this.closeButtonView().setTop(15).setRight(15).setMinAndMaxWidth(10).setMinAndMaxHeight(10)
+        this.closeButtonView().setTopPx(15).setRightPx(15).setMinAndMaxWidth(10).setMinAndMaxHeight(10)
         // delete button
         /*
         this.setDeleteButton(this.rightView().addSubview(DomView.clone().setDivClassName("BMPostDraftRowCloseButton")))
