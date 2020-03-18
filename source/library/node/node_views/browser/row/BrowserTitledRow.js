@@ -78,7 +78,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
             tv.setTopPx(5)
             tv.setMinHeight("40px")
             tv.setMinWidth("40px")
-            tv.setBorderRadius("7px")
+            tv.setBorderRadiusPx(7)
             tv.setBackgroundColor("transparent")
             tv.setBorder("0px solid #aaa")
 

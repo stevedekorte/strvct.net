@@ -1001,7 +1001,8 @@ window.DomView = class DomView extends ProtoClass {
         return this.isActiveElement()
     }
 
-    blur () { // surrender focus
+    blur () { 
+        // i.e. unfocus
         this.element().blur()
         return this
     }
@@ -1224,16 +1225,21 @@ window.DomView = class DomView extends ProtoClass {
     // border radius
 
     setBorderRadius (v) {
-        if (Type.isNumber(v)) {
-            this.setPxCssAttribute("border-radius", v)
-        } else {
-            this.setCssAttribute("border-radius", v)
-        }
+        assert(Type.isNull(v) || Type.isString(v))
+        this.setCssAttribute("border-radius", v)
         return this
     }
 
     borderRadius () {
         return this.getCssAttribute("border-radius")
+    }
+
+    // border radius
+
+    setBorderRadiusPx (v) {
+        assert(Type.isNull(v) || Type.isNumber(v))
+        this.setPxCssAttribute("border-radius", v)
+        return this
     }
 
     borderRadiusPx () {

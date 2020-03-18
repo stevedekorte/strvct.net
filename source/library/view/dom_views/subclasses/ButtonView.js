@@ -58,7 +58,7 @@ window.ButtonView = class ButtonView extends DomView {
         this.setPaddingRight("1em")
 
         this.turnOffUserSelect()
-        this.setBorderRadius("1px")
+        this.setBorderRadiusPx(1)
         
         {
             const tv = TextField.clone()
