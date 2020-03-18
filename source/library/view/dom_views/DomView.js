@@ -1333,7 +1333,7 @@ window.DomView = class DomView extends ProtoClass {
     // flex order
 
     setOrder (v) {
-        assert(Type.isNumber(v) || ["initial", "inherit"].contains(v))
+        assert(Type.isNull(v) || Type.isNumber(v) || ["initial", "inherit"].contains(v))
         this.setCssAttribute("order", v)
         return this
     }
@@ -1931,11 +1931,11 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     pxNumberToString (aNumber) {
-        if (aNumber === null) {
+        if (Type.isNull(aNumber)) {
             return null
         }
 
-        if (typeof (aNumber) === "string") {
+        if (Type.isString(aNumber)) {
             if (aNumber.beginsWith("calc") || aNumber.endsWith("px")) {
                 return aNumber
             }

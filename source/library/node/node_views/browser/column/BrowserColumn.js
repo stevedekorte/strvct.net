@@ -904,7 +904,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     /*
     orderRows () {
-        const orderedRows = this.rows().shallowCopy().sortPerform("top")
+        const orderedRows = this.rows().shallowCopy().sortPerform("topPx")
 
         this.rows().forEach((row) => {
             row.setPosition("absolute")
@@ -924,14 +924,11 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         // but we do when calling stackRows while moving a drop view around,
         // so just always do it as top is null, and rows are already ordered the 1st time
 
-        const orderedRows = this.rows().shallowCopy().sortPerform("top") 
-
+        const orderedRows = this.rows().shallowCopy().sortPerform("topPx") 
         let y = 0
-        
         const columnWidth =  this.computedWidth()
         
         orderedRows.forEach((row) => {
-            row.setTransition("all 0.1s")
             let h = 0
 
             if (row.visibility() === "hidden" || row.display() === "none") {
@@ -940,14 +937,13 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                 h = row.computedHeight() //row.clientHeight() 
                 row.unhideDisplay()
                 row.setPosition("absolute")
-                
-                const w = columnWidth   //row.clientWidth() //row.computedWidth() // don't work, why?
-
-                row.setMinAndMaxWidth(w).setMinAndMaxHeight(h)                
+                row.setMinAndMaxWidth(columnWidth)
+                row.setMinAndMaxHeight(h)                
             }
 
             //console.log("y:", y + " h:", h)
             row.setTopPx(y)
+            row.setOrder(null)
             y += h
         })
 
@@ -956,7 +952,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     unstackRows () {
         // should we calc a new subview ordering based on sorting by top values?
-        const orderedRows = this.rows().shallowCopy().sortPerform("top")
+        const orderedRows = this.rows().shallowCopy().sortPerform("topPx")
 
         orderedRows.forEach((row) => {
             row.unhideDisplay()
@@ -967,8 +963,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             row.setRightPx(null)
             row.setBottomPx(null)
 
-            row.setMinAndMaxWidth(null).setMinAndMaxHeight(null)                
-
+            row.setMinAndMaxWidth(null)
+            row.setMinAndMaxHeight(null)                
         })
 
         this.removeAllSubviews()
@@ -1142,13 +1138,16 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         this.newRowPlaceHolder(dragView)
 
-
         if (dragView.isMoveOp()) {
             subview.hideForDrag()
             this.moveSubviewToIndex(this.rowPlaceHolder(), index)
         }
 
         this.columnGroup().cache() // only needed for source column, since we might navigate while dragging
+
+        this.rows().forEach(row => row.setTransition("all 0.3s"))
+        this.rowPlaceHolder().setTransition("all 0s")
+
         this.stackRows()
         return this
     }
@@ -1172,6 +1171,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     onDragSourceDropped (dragView) {
         const dv = dragView.item()
+        //const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
+
         this.unstackRows()
 
         if (dragView.isMoveOp()) {
@@ -1250,6 +1251,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             const vp = this.viewPosForWindowPos(dragView.dropPoint())
             const y = vp.y() - dragView.computedHeight()/2
             ph.setTopPx(vp.y() - dragView.computedHeight()/2)
+            //console.log("ph.top() = ", ph.top())
             this.stackRows() // need to use this so we can animate the row movements
         }
     }
@@ -1272,20 +1274,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     onDragDestinationDropped (dragView) {
         this.unstackRows()
- 
-        /*
-                const dv = dragView.item()
-
-
-        if (dragView.isMoveOp()) {
-            this.swapSubviews(dv, this.rowPlaceHolder())
-        } else if (dragView.isCopyOp()) {
-            const dupRow = dv.duplicate()
-            this.node().addSubnode(dupRow.node())
-            this.addSubview(dupRow)
-            this.swapSubviews(dupRow, this.rowPlaceHolder())
-        }
-        */
 
        const itemView = dragView.item()
        const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
@@ -1309,35 +1297,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.syncFromNodeNow()
         //this.endDropMode() // we already unstacked the rows
     }
-
-    /*
-    // version that works with views instead of nodes
-
-    onDragDestinationDropped (dragView) {
-        const dv = dragView.item()
-
-        this.unstackRows()
- 
-        // move a view between parents
-        if(dv.onDragRequestRemove && dv.onDragRequestRemove()) {
-            assert(dv.hasParentView() === false)
-            //this.addSubnode(dv.node()) // this happens automatically with didReorderSubviews?
-            this.addSubview(dv)
-
-            dv.setPosition("absolute")
-            dv.setTopPx(this.rowPlaceHolder().top())
-
-            assert(dv.hasParentView()) //
-            this.swapSubviews(dv, this.rowPlaceHolder())
-            this.removeRowPlaceHolder()
-
-            dv.unhideForDrag()
-        }
-
-        this.endDropMode()
-        assert(dv.hasParentView())
-    }
-    */
 
     removeRowPlaceHolder () {
         this.debugLog("removeRowPlaceHolder")
