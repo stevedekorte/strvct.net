@@ -64,7 +64,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setAcceptsFirstResponder(false)
         this.setupRowContentView()
 
-        //console.log("WebBrowserWindow.shared().isTouchDevice() = ", WebBrowserWindow.shared().isTouchDevice())
         if (TouchScreen.shared().isSupported() || true) { // testing 
             //
         } else {
@@ -748,7 +747,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     onLongPressComplete (longPressGesture) {
         longPressGesture.deactivate() // needed?
 
-        const isTapLongPress = this.isTapLongPress()
+        const isTapLongPress = this.isTapLongPress() // is tap-hold
 
         const dv = DragView.clone().setItem(this).setSource(this.column())
         //dv.setBackgroundColor(this.column().backgroundColor())

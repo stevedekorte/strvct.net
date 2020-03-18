@@ -143,8 +143,6 @@ window.DragView = class DragView extends DomStyledView {
         this.setLeftPx(p.x())
         this.setTopPx(p.y())
 
-        //this.setBackgroundColor("black")
-        //this.setColor("white")
         this.setZIndex(10)
 
         this.setInnerHTML(aView.innerHTML())
@@ -158,8 +156,8 @@ window.DragView = class DragView extends DomStyledView {
 
     openWithEvent (event) {
         // TODO: this is a hack, find a way to init pan without this
-
         // setup the Pan Gesture to already be started
+
         const pan = this.addDefaultPanGesture()
         pan.setShouldRemoveOnComplete(true)
         pan.setMinDistToBegin(0)
@@ -182,9 +180,7 @@ window.DragView = class DragView extends DomStyledView {
         this.setupView()
         DocumentBody.shared().addSubview(this)
         this.orderFront()
-
         this.onBegin()
-
         return this
     }
 
