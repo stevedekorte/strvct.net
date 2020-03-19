@@ -482,9 +482,16 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     // -- tap gesture ---
 
+    justMetaTap () {
+        this.select()
+    }
+
+    justShiftTap () {
+
+    }
+
     justTap () {
         //console.log(this.debugTypeId() + " justTap")
-
         if (this.isSelectable()) {
             //this.debugLog(".requestSelection()")
             this.justRequestSelection()
@@ -520,7 +527,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     
         if (keyModifiers.length) {
             const methodName = "just" + keyModifiers.join("") + "Tap"
-            //this.debugLog(" tap method " + methodName)
+            this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
                 this[methodName].apply(this)
                 return this
