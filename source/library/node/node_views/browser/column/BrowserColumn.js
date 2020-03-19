@@ -1288,23 +1288,24 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     onDragDestinationDropped (dragView) {
         this.unstackRows()
 
-       const itemView = dragView.item()
+       const itemViews = dragView.items()
        const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
+       this.removeRowPlaceHolder()
 
        if (dragView.isMoveOp()) {
-            if(itemView.onDragRequestRemove && itemView.onDragRequestRemove()) {
-                this.node().addSubnodeAt(itemView.node(), insertIndex)
-            }
+            itemViews.reversed().forEach(itemView => {
+                if(itemView.onDragRequestRemove && itemView.onDragRequestRemove()) {
+                    this.node().addSubnodeAt(itemView.node(), insertIndex)
+                }
+            })
         } else if (dragView.isCopyOp()) {
-            const dupNode = itemView.node().duplicate()
-            this.node().addSubnodeAt(dupNode, insertIndex)
+            itemViews.reversed().forEach(itemView => {
+                const dupNode = itemView.node().duplicate()
+                this.node().addSubnodeAt(dupNode, insertIndex)
+            })
         } else {
             throw new Error("unhandled drag operation")
         }
-
-        //----------------------------
-
-        this.removeRowPlaceHolder()
 
         this.setHasPausedSync(false)
         this.syncFromNodeNow()

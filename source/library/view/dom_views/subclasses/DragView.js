@@ -163,19 +163,24 @@ window.DragView = class DragView extends DomStyledView {
 
         let maxWidth = this.items().map(v => v.frameInDocument().width()).maxValue()
         let minY = this.items().map(v => v.frameInDocument().top()).minValue()
-        let maxY = this.items().map(v => v.frameInDocument().bottom()).maxValue()
+        //let maxY = this.items().map(v => v.frameInDocument().bottom()).maxValue()
 
-        this.setMinAndMaxHeight(maxY - minY)
+        //this.setMinAndMaxHeight(maxY - minY)
         let offset = minY - f.top()
         this.setTopPx(minY)
 
+        let y = 0
         this.items().map((item) => {
+            const h = item.frameInDocument().height()
             const v = item.htmlDuplicateView()
             const vf = item.frameInParentView()
             v.setPosition("absolute")
-            v.setTopPx(vf.top() - offset)
+            v.setTopPx(y)
+            y += h
             this.addSubview(v)
         })
+        this.setMinAndMaxHeight(y)
+
     }
 
     setupSingleItemView () {
@@ -416,7 +421,7 @@ window.DragView = class DragView extends DomStyledView {
     // --- drag style ---
 
     addPanStyle () {
-        const r = 1.1
+        const r = 1 // 1.1 * (1/Math.sqrt(this.items().length))
         this.setTransform("scale(" + r + ")")
         this.setBoxShadow("0px 0px 10px 10px rgba(0, 0, 0, 0.5)")
         return this
