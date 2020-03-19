@@ -63,7 +63,14 @@ window.DragView = class DragView extends DomStyledView {
     
     initPrototype () {
         // the view that will be dragged when operation is complete
-        this.newSlot("item", null)
+        //this.newSlot("item", null)
+
+        // the set of views that will be dragged
+        this.newSlot("items", [])
+
+        // a place for the source to store any extra info about the drag operation,
+        // such as the indexes of the items
+        this.newSlot("info", null)
 
         // the view which is the owner of the view being dragged that implements the source protocol
         this.newSlot("source", null)
@@ -81,6 +88,8 @@ window.DragView = class DragView extends DomStyledView {
 
         // the drag operation type: move, copy, link, delete
         this.newSlot("dragOperation", "move").setDoesHookSetter(true)
+
+        this.newSlot("slideBackPeriod", 0.2) // seconds
     }
 
     didUpdateSlotDragOperation () {
@@ -99,9 +108,9 @@ window.DragView = class DragView extends DomStyledView {
         this.setMinHeightPx(10)
         this.setWidth("fit-content")
         this.setMinHeight("fit-content")
+        this.setInfo({})
 
         //this.setIsDebugging(true)
-
         return this
     }
 
@@ -123,36 +132,63 @@ window.DragView = class DragView extends DomStyledView {
         return this.dragOperation() === "delete"
     }
 
+    // ----
+
+    setItem (aView) {
+        this.setItems([aView])
+        return this
+    }
+
+    item () {
+        return this.items().first()
+    }
 
     // ----
 
     setupView () {
-        const aView = this.item()
-        assert(aView.hasParentView())
-
-        const f = aView.frameInDocument()
-
-        const w = f.size().width() //aView.computedWidth()
-        const h = f.size().height() //aView.computedHeight()
-
-        // match dimensions
-        this.setMinAndMaxWidth(w)
-        this.setMinAndMaxHeight(h)
-
-        const p = f.origin()
-        this.setLeftPx(p.x())
-        this.setTopPx(p.y())
-
+        if (this.items().length === 1) {
+            this.setupSingleItemView()
+        } else {
+            this.setupMultiItemView()
+        }
         this.setZIndex(10)
-
-        this.setInnerHTML(aView.innerHTML())
-        //this.setBackgroundColor(aView.getComputedCssAttribute("background-color"))
+        return this
     }
+
+    setupMultiItemView () {
+        const parentView = this.items().first().parentView()
+        const f = parentView.frameInDocument()
+        this.setFrameInDocument(f)
+        this.setBackgroundColor("transparent")
+
+        let maxWidth = this.items().map(v => v.frameInDocument().width()).maxValue()
+        let minY = this.items().map(v => v.frameInDocument().top()).minValue()
+        let maxY = this.items().map(v => v.frameInDocument().bottom()).maxValue()
+
+        this.setMinAndMaxHeight(maxY - minY)
+        let offset = minY - f.top()
+        this.setTopPx(minY)
+
+        this.items().map((item) => {
+            const v = item.htmlDuplicateView()
+            const vf = item.frameInParentView()
+            v.setPosition("absolute")
+            v.setTopPx(vf.top() - offset)
+            this.addSubview(v)
+        })
+    }
+
+    setupSingleItemView () {
+        const aView = this.item()
+        this.setFrameInDocument(aView.frameInDocument())
+        this.setInnerHTML(aView.innerHTML())
+    }
+
+    // --- 
 
     hasPan () {
         return !Type.isNull(this.defaultPanGesture())
     }
-
 
     openWithEvent (event) {
         // TODO: this is a hack, find a way to init pan without this
@@ -185,7 +221,6 @@ window.DragView = class DragView extends DomStyledView {
     }
 
     onBegin () {
-        this.sendProtocolMessage(this.item(), "onDragItemBegin")
         this.sendProtocolMessage(this.source(), "onDragSourceBegin")
     }
     
@@ -219,11 +254,16 @@ window.DragView = class DragView extends DomStyledView {
     }
 
     onPanCancelled (aGesture) {
-        this.sendProtocolMessage(this.item(),  "onDragItemCancelled")
-        this.sendProtocolMessage(this.source(), "onDragSourceCancelled")
-        this.sendProtocolMessage(this.source(), "onDragSourceEnd")
-        // TODO: add slide back animation?
-        this.close()
+        const destFrame = this.source().dropCompleteDocumentFrame()
+
+        const completionCallback = () => { 
+            this.sendProtocolMessage(this.source(), "onDragSourceCancelled")
+            this.sendProtocolMessage(this.source(), "onDragSourceEnd")
+            this.close() 
+        }
+
+        this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback)
+        this.removePanStyle()
     }
 
     firstAcceptingDropTarget () {
@@ -251,35 +291,32 @@ window.DragView = class DragView extends DomStyledView {
 
         //this.setDragOperation(this.currentOperation())
 
-        const aView = this.firstAcceptingDropTarget()
+        const destView = this.firstAcceptingDropTarget()
         
-        if(!aView) {
+        if(!destView) {
             this.onPanCancelled(aGesture)
             return;
         }
 
-        const isSource = aView === this.source()
+        const isSource = (destView === this.source())
 
-        this.setDestination(aView)
+        this.setDestination(destView)
 
-        if (aView) {
+        if (destView) {
             const completionCallback = () => {
-                this.sendProtocolMessage(this.item(), "onDragItemDropped")
-                this.sendProtocolAction(aView, "Dropped") // onDragSourceDropped onDragDestinationDropped
+                this.sendProtocolAction(destView, "Dropped") // onDragSourceDropped onDragDestinationDropped
 
                 this.sendProtocolMessage(this.source(), "onDragSourceEnd")
-                if (aView !== this.source()) {
-                    this.sendProtocolMessage(aView, "onDragDestinationEnd")
+                if (destView !== this.source()) {
+                    this.sendProtocolMessage(destView, "onDragDestinationEnd")
                 }
 
                 this.close()
             }
-            const period = 0.2 // seconds
-            const destFrame = aView.dropCompleteDocumentFrame()
-
-            this.animateToDocumentFrame(destFrame, period, completionCallback)
+            const destFrame = destView.dropCompleteDocumentFrame()
+            this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback)
             this.removePanStyle()
-            this.hoverViews().remove(aView) // so no exit hover message will be sent to it
+            this.hoverViews().remove(destView) // so no exit hover message will be sent to it
         } else {
             this.close()
         }

@@ -1892,6 +1892,12 @@ window.DomView = class DomView extends ProtoClass {
 
     // ----
 
+    setMinAndMaxSize (aSize) {
+        this.setMinAndMaxWidth(aSize.x())
+        this.setMinAndMaxHeight(aSize.y())
+        return this
+    }
+
     setMaxWidth (v) {
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
@@ -3875,6 +3881,16 @@ window.DomView = class DomView extends ProtoClass {
 
     // document coordinates helpers
 
+    // --- document positioning ---
+
+    setFrameInDocument (aRect) {
+        this.setPosition("absolute")
+        this.setLeftPx(aRect.origin().x())
+        this.setTopPx(aRect.origin().y())
+        this.setMinAndMaxSize(aRect.size())
+        return this
+    }
+
     frameInDocument () {
         const origin = this.positionInDocument()
         const size = this.size()
@@ -3909,6 +3925,23 @@ window.DomView = class DomView extends ProtoClass {
 
     // ---------------------
 
+    setFrameInParent (aRect) {
+        this.setPosition("absolute")
+        this.setLeftPx(aRect.origin().x())
+        this.setTopPx(aRect.origin().y())
+        this.setMinAndMaxSize(aRect.size())
+        return this
+    }
+
+    frameInParentView () {
+        const origin = this.relativePos()
+        const size = this.size()
+        const frame = Rectangle.clone().setOrigin(origin).setSize(size)
+        return frame
+    }
+
+    // ---
+
     relativePos () {
         const pv = this.parentView()
         if (pv) {
@@ -3924,6 +3957,8 @@ window.DomView = class DomView extends ProtoClass {
         this.setTopPx(p.y())
         return this
     }
+
+    // ---
 
     viewPosForWindowPos (pos) {
         return pos.subtract(this.positionInDocument())
@@ -4192,5 +4227,36 @@ window.DomView = class DomView extends ProtoClass {
         this.setHeight("fit-content")
         return this
     }
+
+    // 
+
+    htmlDuplicateView () {
+        const v = DomView.clone()
+        v.setFrameInParent(this.frameInParentView())
+        v.setInnerHTML(this.innerHTML())
+        return v
+    }
+
+    frameForSubviewsInDocument () {
+        let u = null
+
+        this.subviews().forEach(sv => {
+            const f = sv.frameInDocument()
+            if (u === null) {
+                u = f
+            } else {
+                u = u.unionWith(f)
+            }
+        })
+
+        return u
+    }
+
+    /*
+    clipToFitSubviews () {
+        const sf = this.frameForSubviewsInParent()
+
+    }
+    */
 
 }.initThisClass()

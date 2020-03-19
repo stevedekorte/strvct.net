@@ -249,7 +249,7 @@ window.BMNode = class BMNode extends ProtoClass {
     duplicate () {
         const dup = super.duplicate()
         if (!this.shouldStore() || this.shouldStoreSubnodes()) {
-            dup.setSubnodes(this.subnodes().map(sn => sn.duplicate()))
+            dup.copySubnodes(this.subnodes().map(sn => sn.duplicate()))
         }
         return dup
     }
@@ -546,6 +546,11 @@ window.BMNode = class BMNode extends ProtoClass {
         this.removeSubnode(aSubnode)
         this.addSubnodeAt(newSubnode, index)
         return newSubnode
+    }
+
+    moveSubnodesToIndex (movedSubnodes, anIndex) {
+        this.subnodes().moveItemsToIndex(movedSubnodes, anIndex)
+        return this
     }
 
     addSubnode (aSubnode) {
@@ -1172,9 +1177,13 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 
     didUpdateSlotSubnodes (oldValue, newValue) {
+        if (oldValue) {
+            oldValue.removeMutationObserver()
+        }
+
         this.watchSubnodes()
         if (this._subnodes.contains(null)) {
-            this.setSubnodes(this._subnodes.filter(sn => !(sn === null) ))
+            this._subnodes.filterInPlace(sn => !(sn === null) )
         }
         this._subnodes.forEach(sn => sn.setParentNode(this))
         this.didChangeSubnodeList() // not handles automatically

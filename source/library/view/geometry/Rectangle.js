@@ -30,61 +30,88 @@ window.Rectangle = class Rectangle extends ProtoClass {
         return this
     }
     
-    containsPoint(p) {
+    containsPoint (p) {
         const a = p.isGreaterThanOrEqualTo(this.origin()) 
         const b = p.isLessThanOrEqualTo(this.maxPoint())
         return a && b
     }
 
-    containsRectangle(r) {
+    containsRectangle (r) {
         return r.origin().isGreaterThanOrEqualTo(this.origin()) && r.maxPoint().isLessThanOrEqualTo(this.maxPoint())
     }
 
-    maxPoint() {
+    unionWith (r) {
+        const u = Rectangle.clone()
+        const o1 = this.origin()
+        const o2 = r.origin()
+        const m1 = this.maxPoint()
+        const m2 = r.maxPoint()
+        u.origin().setX(Math.min(o1.x(), o2.x()))
+        u.origin().setY(Math.min(o1.y(), o2.y()))
+        const mx = Math.min(m1.x(), m2.x())
+        const my = Math.min(m1.y(), m2.y())
+        u.setWidth(mx - u.origin().x())
+        u.setHeight(my - u.origin().y())
+        return u
+    }
+
+    maxPoint () {
         return this.origin().add(this.size())
     }
 
-    asString() {
+    asString () {
         return this.type() + "(" + this.origin().asString() + ", " + this.size().asString() + ")"
     }
 
     // x, y
 
-    x() {
+    x () {
         return this.origin().x();
     }
 
-    y() {
+    y () {
         return this.origin().y();
     }
 
-    // width, height
+    // width 
 
-    width() {
+    setWidth (w) {
+        this.size().setX(w)
+        return this
+    }
+
+    width () {
         return this.size().x();
     }
 
-    height() {
+    // height
+
+    setHeight (h) {
+        this.size().setY(h)
+        return this
+    }
+
+    height () {
         return this.size().y();
     }
 
     // top, bottom
 
-    top() {
+    top () {
         return this.y() 
     }
 
-    bottom() {
+    bottom () {
         return this.y() + this.height() 
     }
 
     // left, right
 
-    left() {
+    left () {
         return this.x() 
     }
 
-    right() {
+    right () {
         return this.x() + this.width() 
     }
 

@@ -749,9 +749,9 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
         const isTapLongPress = this.isTapLongPress() // is tap-hold
 
-        const dv = DragView.clone().setItem(this).setSource(this.column())
-        //dv.setBackgroundColor(this.column().backgroundColor())
-
+        //const dv = DragView.clone().setItem(this).setSource(this.column())
+        this.select()
+        const dv = DragView.clone().setItems(this.column().selectedRows()).setSource(this.column())
 
         if (isTapLongPress) {
             dv.setDragOperation("copy")

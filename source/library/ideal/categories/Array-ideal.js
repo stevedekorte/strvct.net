@@ -247,6 +247,34 @@ Object.defineSlots(Array.prototype, {
         return this;
     },
 
+    moveItemsToIndex: function (movedItems, anIndex) {
+        const newArray = this.shallowCopy()
+        let insertIndex = anIndex
+
+        movedItems.forEach(item => assert(this.contains(item)) ) // sanity check
+
+        //console.log("start: " + this.map(s => s.title()).join("-") + ".moveItemsToIndex("  + movedItems.map(s => s.title()).join("-") + ", " + anIndex + ")")
+
+        movedItems.forEach(item => {
+            const i = this.indexOf(item)
+            if (i == -1) {
+                throw new Error("this isn't handled yet")
+            }
+
+            if (i < insertIndex) {
+                insertIndex --
+            }
+            newArray.remove(item)
+        })
+
+        movedItems.reversed().forEach(item => {
+            newArray.atInsert(insertIndex, item)
+        })
+
+        this.copyFrom(newArray)
+        return this
+    },
+
     prepend: function (e) {
         this.unshift(e);
         return this;
@@ -479,7 +507,7 @@ Object.defineSlots(Array.prototype, {
     },
 
     minValue: function (optionalCallback) {
-        return this.maxEntry(optionalCallback)[1];
+        return this.minEntry(optionalCallback)[1];
     },
 
     // sum
@@ -564,7 +592,7 @@ Object.defineSlots(Array.prototype, {
     filterInPlace: function(callback) {
         for (let i = this.length -1; i >= 0; i--) {
             const v = this.at(i);
-            if (callback(v)) {
+            if (!callback(v)) {
                 this.removeAt(i)
             }
         }

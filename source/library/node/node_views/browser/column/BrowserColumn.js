@@ -425,7 +425,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         //console.log(this.type() + " " + (this.node() ? this.node().title() : "null") + " .syncFromNode()")
 
 
-        if (this.hasPausedSync()) {
+        if (this.hasPausedSync()) { // why is this needed?
             return this
         }
 
@@ -954,7 +954,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         // should we calc a new subview ordering based on sorting by top values?
         const orderedRows = this.rows().shallowCopy().sortPerform("topPx")
 
-        orderedRows.forEach((row) => {
+        this.rows().forEach((row) => {
             row.unhideDisplay()
             row.setPosition("relative")
 
@@ -1132,9 +1132,18 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     onDragSourceBegin (dragView) {
         this.setHasPausedSync(true)
 
+        // ---
+
+        dragView.items().forEach(subview => {
+            subview.hideForDrag()
+        })
+
+        // ---
         const subview = dragView.item()
         const index = this.indexOfSubview(subview)
         assert(index !== -1)
+
+        this.rows().forEach(row => row.setTransition("all 0.3s"))
 
         this.newRowPlaceHolder(dragView)
 
@@ -1145,15 +1154,15 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         this.columnGroup().cache() // only needed for source column, since we might navigate while dragging
 
-        this.rows().forEach(row => row.setTransition("all 0.3s"))
-        this.rowPlaceHolder().setTransition("all 0s")
 
         this.stackRows()
         return this
     }
 
     onDragSourceCancelled (dragView) {
-        dragView.item().unhideForDrag()
+        dragView.items().forEach(subview => {
+            subview.unhideForDrag()
+        })
         this.removeRowPlaceHolder()
     }
 
@@ -1170,22 +1179,27 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 
     onDragSourceDropped (dragView) {
-        const dv = dragView.item()
-        //const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
+        const node = this.node()
+        const movedNodes = dragView.items().map(item => item.node())
 
         this.unstackRows()
+        const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
+        this.removeRowPlaceHolder()
+
+        dragView.items().forEach(item => {
+            item.unhideForDrag()
+        })
 
         if (dragView.isMoveOp()) {
-            this.swapSubviews(dv, this.rowPlaceHolder())
+            node.moveSubnodesToIndex(movedNodes, insertIndex)
         } else if (dragView.isCopyOp()) {
-            const dupRow = dv.duplicate()
-            this.node().addSubnode(dupRow.node())
-            this.addSubview(dupRow)
-            this.swapSubviews(dupRow, this.rowPlaceHolder())
+            const dupMovedNodes = dragView.items().map(item => item.duplicate())
+            node.moveSubnodesToIndex(dupMovedNodes, insertIndex)
         }
 
-        this.removeRowPlaceHolder()
-        dv.unhideForDrag()
+        //console.log("new order: " + this.node().subnodes().map(sn => sn.title()).join("-"))
+        this.setHasPausedSync(false)
+        this.syncFromNodeNow()
     }
 
     onDragSourceEnd (dragView) {
@@ -1220,11 +1234,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             const ph = DomView.clone().setDivClassName("BrowserRowPlaceHolder")
             ph.setBackgroundColor("black")
             ph.setMinAndMaxWidth(this.computedWidth())
-            //ph.setMinAndMaxHeight(64)
             ph.setMinAndMaxHeight(dragView.minHeight())
-            //ph.transitions().at("top").updateDuration(1)
-            //ph.transitions().at("left").updateDuration(0.3)
-            ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
+            ph.transitions().at("top").updateDuration(0)
+            ph.transitions().at("left").updateDuration(0.3)
+            //ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
             this.addSubview(ph)
             this.setRowPlaceHolder(ph)
         }

@@ -23,17 +23,17 @@ window.Point = class Point extends ProtoClass {
         return this
     }
 
-    valueArray() {
+    valueArray () {
         return [this._x, this._y, this._z]
     }
 
-    setTimeToNow() {
+    setTimeToNow () {
         const d = new Date();
         this._t = d.getTime();
         return this
     }
 
-    copyFrom(p, copyDict) {
+    copyFrom (p, copyDict) {
         this._x = p._x
         this._y = p._y
         this._z = p._z
@@ -41,7 +41,7 @@ window.Point = class Point extends ProtoClass {
         return this
     }
     
-    set(x, y, z, t) {
+    set (x, y, z, t) {
         this._x = x;
         this._y = y;
         if (z || z === 0) {
@@ -53,7 +53,7 @@ window.Point = class Point extends ProtoClass {
         return this
     }
 
-    addInPlace(p) {
+    addInPlace (p) {
         this._x += p._x
         this._y += p._y
         this._z += p._z
@@ -61,7 +61,7 @@ window.Point = class Point extends ProtoClass {
         return this
     }
 
-    subtractInPlace(p) {
+    subtractInPlace (p) {
         this._x -= p._x
         this._y -= p._y
         this._z -= p._z
@@ -69,26 +69,26 @@ window.Point = class Point extends ProtoClass {
         return this
     }
 
-    floorInPlace() {
+    floorInPlace () {
         this._x = Math.floor(this._x)
         this._y = Math.floor(this._y)
         this._z = Math.floor(this._z)
         return this
     }
 
-    copy() {
+    copy () {
         return this.thisClass().clone().copyFrom(this)
     }
 
-    add(p) {
+    add (p) {
         return this.copy().addInPlace(p)
     }
 
-    subtract(p) {
+    subtract (p) {
         return this.copy().subtractInPlace(p)
     }
 
-    asString() {
+    asString () {
         let s = this.type() + "(" + this._x + ", " + this._y 
 
         if (this._z) { 
@@ -104,30 +104,30 @@ window.Point = class Point extends ProtoClass {
         return s + ")"
     }
 
-    distanceFromOrigin() {
+    distanceFromOrigin () {
         const ds = Math.pow(this.x(), 2) + Math.pow(this.y(), 2) + Math.pow(this.z(), 2)
         return Math.sqrt(ds)
     }
 
     // difference with another point
 
-    dxFrom(p) {
+    dxFrom (p) {
         return this.x() - p.x()
     }
 
-    dyFrom(p) {
+    dyFrom (p) {
         return this.y() - p.y()
     }
 
-    dzFrom(p) {
+    dzFrom (p) {
         return this.z() - p.z()
     }
 
-    dtFrom(p) {
+    dtFrom (p) {
         return this.t() - p.t()
     }
 
-    distanceFrom(p) {
+    distanceFrom (p) {
         const dx = this.dxFrom(p)
         const dy = this.dyFrom(p)
         const dz = this.dzFrom(p)
@@ -136,69 +136,69 @@ window.Point = class Point extends ProtoClass {
 
     // eqaulity
 
-    isEqual(p) {
+    isEqual (p) {
         return (this.x() === p.x()) && (this.y() === p.y()) && (this.z() === p.z()) // && (this.t() === p.t())
     }
 
-    isEqualWithTime(p) { // not ideal
+    isEqualWithTime (p) { // not ideal
         return (this.x() === p.x()) && (this.y() === p.y()) && (this.z() === p.z()) && (this.t() === p.t())
     }
 
     // comparison 
 
-    isGreaterThan(p) {
+    isGreaterThan (p) {
         return this.x() > p.x() && this.y() > p.y()
     }
 
-    isLessThan(p) {
+    isLessThan (p) {
         return this.x() < p.x() && this.y() < p.y()
     }
 
-    isGreaterThanOrEqualTo(p) {
+    isGreaterThanOrEqualTo (p) {
         return this.x() >= p.x() && this.y() >= p.y()
     }
 
-    isLessThanOrEqualTo(p) {
+    isLessThanOrEqualTo (p) {
         return this.x() <= p.x() && this.y() <= p.y()
     }
 
-    angleInRadians() {
+    angleInRadians () {
         return Math.atan2(y, x);
     }
 
-    angleInDegrees() {
+    angleInDegrees () {
         return this.angleInRadians() * 180 / Math.PI;
     }
 
-    angleInRadiansTo(p) {
+    angleInRadiansTo (p) {
         return p.subtract(this).angleInRadians()
     }
 
-    angleInDegreesTo(p) {
+    angleInDegreesTo (p) {
         return p.subtract(this).angleInDegrees()
     }
 
-    midpointTo(p) {
+    midpointTo (p) {
         return this.add(p).divideByScalar(2)
     }
 
-    multiplyByScalar(v) {
+    multiplyByScalar (v) {
         const p = Point.clone()
         p.set(this.x() * v, this.y() * v, this.z() * v)
         return p
     }
 
-    divideByScalar(v) {
+    divideByScalar (v) {
         return this.multiplyByScalar(1/v)
     }
 
-    negated(p) {
+    negated (p) {
         return this.multiplyByScalar(-1)
     }
 
     // css
 
-    asCssStringWithUnitSuffix(name, unitSuffix) {
+    asCssStringWithUnitSuffix (name, unitSuffix) {
         if (!unitSuffix) { 
             unitSuffix = ""
         }
@@ -209,27 +209,26 @@ window.Point = class Point extends ProtoClass {
         //return name + "(" + s + ")"
     }
 
-    asCssTranslate3dString() {
+    asCssTranslate3dString () {
         return this.asCssStringWithUnitSuffix("translate3d", "px")
     }
 
-    asCssRotate3dDegreesString() {
+    asCssRotate3dDegreesString () {
         return this.asCssStringWithUnitSuffix("rotate3d", "deg")
     }
 
-    asCssScale3dString() {
+    asCssScale3dString () {
         return this.asCssStringWithUnitSuffix("scale3d", "")
     }
 
     // size - TODO: move to Size type?
 
-    width() {
+    width () {
         return this.x()
     }
 
-    height() {
+    height () {
         return this.y()
     }
-
-
+    
 }.initThisClass()
