@@ -578,9 +578,9 @@ window.ProtoClass = class ProtoClass extends Object {
                 s = s()
             }
             if (arguments.length == 1) {
-                console.log(this.typeId() + " " + s)
+                console.log(this.debugTypeId() + " " + s)
             } else {
-                console.log(this.typeId() + " ", arguments[0], arguments[1])
+                console.log(this.debugTypeId() + " ", arguments[0], arguments[1])
             }
         }
         return this

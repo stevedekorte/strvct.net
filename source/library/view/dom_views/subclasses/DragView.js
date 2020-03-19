@@ -108,7 +108,9 @@ window.DragView = class DragView extends DomStyledView {
         this.setMinHeightPx(10)
         this.setWidth("fit-content")
         this.setMinHeight("fit-content")
+        this.setOpacity(0.9)
         this.setInfo({})
+
 
         //this.setIsDebugging(true)
         return this
@@ -169,6 +171,28 @@ window.DragView = class DragView extends DomStyledView {
         let offset = minY - f.top()
         this.setTopPx(minY)
 
+        // initial positions
+        let y = 0
+        this.items().map((item) => {
+            const h = item.frameInDocument().height()
+            const v = item.htmlDuplicateView()
+            const vf = item.frameInParentView()
+            v.setPosition("absolute")
+            v.setTopPx(vf.y() - offset)
+            v._targetTop = y
+            y += h
+            v.setTransition("top 0.2s")
+            this.addSubview(v)
+        })
+        this.setMinAndMaxHeight(y)
+        this.setOverflow("visible")
+
+        setTimeout(() => {
+            this.subviews().forEach(v => v.setTopPx(v._targetTop))
+        }, 1)
+
+        /*
+        // target positions
         let y = 0
         this.items().map((item) => {
             const h = item.frameInDocument().height()
@@ -177,9 +201,10 @@ window.DragView = class DragView extends DomStyledView {
             v.setPosition("absolute")
             v.setTopPx(y)
             y += h
-            this.addSubview(v)
+            //this.addSubview(v)
         })
         this.setMinAndMaxHeight(y)
+        */
 
     }
 
@@ -187,6 +212,7 @@ window.DragView = class DragView extends DomStyledView {
         const aView = this.item()
         this.setFrameInDocument(aView.frameInDocument())
         this.setInnerHTML(aView.innerHTML())
+        this.setOverflow("visible")
     }
 
     // --- 
@@ -421,15 +447,25 @@ window.DragView = class DragView extends DomStyledView {
     // --- drag style ---
 
     addPanStyle () {
-        const r = 1 // 1.1 * (1/Math.sqrt(this.items().length))
+        const s = "0px 0px 10px 10px rgba(0, 0, 0, 0.5)"
+        const r = 1.05 // 1.1 * (1/Math.sqrt(this.items().length))
         this.setTransform("scale(" + r + ")")
-        this.setBoxShadow("0px 0px 10px 10px rgba(0, 0, 0, 0.5)")
+        if (this.subviews().length) {
+            this.subviews().forEach(v => v.setBoxShadow(s))
+        } else {
+            this.setBoxShadow(s)
+        }
         return this
     }
 
     removePanStyle () {
+        const s = "none"
         this.setTransform("scale(1)")
-        this.setBoxShadow("none")
+        if (this.subviews().length) {
+            this.subviews().forEach(v => v.setBoxShadow(s))
+        } else {
+            this.setBoxShadow(s)
+        }
         return this
     }
 

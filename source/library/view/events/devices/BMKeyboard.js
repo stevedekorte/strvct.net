@@ -15,6 +15,20 @@
         Control -> Control
         Function -> [not seen by JS either as key event or modifier]
 
+    Browser Issues:
+
+        Key combinations intercepted by browser:
+
+            OSX:
+                meta-n (new window)
+                meta-m (minimize window)
+                meta-w (close window)
+                meta-t (new tab)
+
+                but we can intercept:
+                meta-o
+
+
 */
 
 
@@ -35,7 +49,8 @@ window.BMKeyboard = class BMKeyboard extends Device {
     }
 
     startListening () {
-        this.setKeyboardListener(KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
+        const listener = KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this)
+        this.setKeyboardListener(listener)
         this.keyboardListener().setIsListening(true)
         return this
     }
@@ -320,7 +335,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
             key.onKeyDown(event)
 
             if (this.isDebugging()) {
-                this.debugLog(".onKeyDownCapture " + this.modsAndKeyNameForEvent(event) + "KeyDown")
+                this.debugLog(" " + this.downMethodNameForEvent(event))
             }
         } else {
             console.warn("BMKeyboard.shared() no key found for event ", event)
@@ -339,7 +354,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         key.onKeyUp(event)
 
         if (this.isDebugging()) {
-            this.debugLog(".onKeyUpCapture " + this.modsAndKeyNameForEvent(event) + "KeyUp")
+            this.debugLog(" " + this.upMethodNameForEvent(event))
             //this.debugLog(".onKeyUpCapture " + key.name() + " -> " + this.modsAndKeyNameForEvent(event) + "KeyUp")
         }
 

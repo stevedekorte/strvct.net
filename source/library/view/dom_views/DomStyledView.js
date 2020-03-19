@@ -100,6 +100,15 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         return this
     }
 
+    toggleSelection () {
+        if (this.isSelected()) {
+            this.unselect()
+        } else {
+            this.select()
+        }
+        return this
+    }
+
     select () {
         this.setIsSelected(true)		
         return this

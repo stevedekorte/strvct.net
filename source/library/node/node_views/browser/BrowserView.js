@@ -67,7 +67,6 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
 
         this.setBackgroundColor(this.bgColorForIndex(Math.round(this.bgColors().length / 2)))
         this.setColumnGroupCount(1)
-        //this.selectFirstColumn()
 
         this.addGestureRecognizer(LeftEdgePanGestureRecognizer.clone()) 
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
@@ -457,7 +456,9 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     popLastActiveColumn () {
         //console.log("popLastActiveColumn this.activeColumnGroups().length = ", this.activeColumnGroups().length)
         let n = this.activeColumnGroups().length - 1
-        if (n < 0) { n = 0; }
+        if (n < 0) { 
+            n = 0
+        }
         this.setColumnGroupCount(n) // TODO: collapse cg instead?
         this.fitColumns()
         this.syncToHashPath()
@@ -474,7 +475,6 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
         const oldCg = this.columnGroups()[cgIndex]
 
         if (oldCg) {
-
             if (oldCg.node() === cgNode) {
                 return oldCg
             }
@@ -574,10 +574,11 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
                     }
                     */
                     
-                }
-                else {
+                } else {
                     this.clearColumnsGroupsAfter(selectedColumnGroup)
                 }
+            } else {
+                this.clearColumnsGroupsAfter(selectedColumnGroup)
             }
         }
 

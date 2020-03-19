@@ -1,6 +1,11 @@
 
 TODO:
 
+    - on activating a row, if multiple selection, clear next row
+	
+	
+	- command-d to duplicate selection?
+	
 	row
 	- requestSingleSelection (click)
 	- requestExtendSelection (shift-click)

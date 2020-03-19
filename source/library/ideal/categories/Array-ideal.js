@@ -36,6 +36,10 @@ Object.defineSlots(Array.prototype, {
     },
     */
 
+    duplicate: function() {
+        return this.shallowCopy()
+    },
+
     clear: function() {
         while (this.length) {
             this.pop()
@@ -479,6 +483,11 @@ Object.defineSlots(Array.prototype, {
     maxValue: function (optionalCallback, theDefault) {
         return this.maxEntry(optionalCallback)[1];
     },
+
+    maxItem: function (optionalCallback) {
+        return this.at(this.maxIndex(optionalCallback));
+    },
+
 
     // min
 

@@ -38,6 +38,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.newSlot("dragDeleteButtonView", null)
         this.newSlot("isDeleting", false)
         this.newSlot("lastTapDate", null)
+        this.newSlot("lastSelectionDate", null)
     }
 
     init () {
@@ -279,14 +280,21 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return styles.unselected()
     }
     */
-    
 
     select () {
         if (!this.isSelected()) {
             this.setShouldShowFlash(true)
         }
-
         super.select()
+        this.setLastSelectionDate(Date.clone())
+        this.column().didSelectRow(this)
+        return this
+    }
+
+    unselect () {
+        super.unselect()
+        this.setLastSelectionDate(null)
+        this.column().didUnselectRow(this)
         return this
     }
     
@@ -483,11 +491,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // -- tap gesture ---
 
     justMetaTap () {
-        this.select()
+        this.toggleSelection()
     }
 
     justShiftTap () {
-
+        this.column().requestShiftSelectRow(this)
     }
 
     justTap () {
@@ -530,6 +538,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
                 this[methodName].apply(this)
+                this.unselectNextColumnRows()
                 return this
             }
         } 
@@ -539,8 +548,17 @@ window.BrowserRow = class BrowserRow extends NodeView {
         } else {
             this.setIsInspecting(false)
             this.justTap()
+            this.unselectNextColumnRows()
         }
 
+        return this
+    }
+
+    unselectNextColumnRows() {
+        const c = this.column().nextColumn()
+        if (c) {
+            c.unselectAllRows()
+        }
         return this
     }
 
@@ -559,6 +577,17 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     // --- dragging key ---
+
+    onMeta_a_KeyDown (event) {
+        // only select subnodes if this row can have them,
+        // otherwise, like the column handle this event
+        const c = this.column().nextColumn()
+        if (c) {
+            c.selectAllRows()
+        }
+        event.stopPropagation()
+        return false 
+    }
 
     on_d_KeyDown (event) {
         this.debugLog(" on_d_KeyDown ", event._id)

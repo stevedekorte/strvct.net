@@ -2475,7 +2475,11 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     removeAllSubviews () {
-        this.subviews().shallowCopy().forEach(subview => this.removeSubview(subview))
+        //const sv = this.subviews().shallowCopy()
+        //sv.forEach(subview => this.removeSubview(subview))
+        while(this.subviews().length) {
+            this.removeSubview(this.subviews().last())
+        }
         assert(this.subviews().length === 0)
         return this
     }

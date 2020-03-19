@@ -176,6 +176,48 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return true
     }
 
+    indexOfRow (aRow) {
+        // we might want this to be based on flex view order instead, 
+        // so best to keep it abstract
+        return this.indexOfSubview(aRow)
+    }
+
+    rowAtIndex (anIndex) {
+        return this.subviews().at(anIndex)
+    }
+
+    requestShiftSelectRow (aRow) {
+        let lastRow = this.lastSelectedRow()
+        if (!lastRow) {
+            lastRow = this.rows().first()
+        }
+        if (lastRow) {
+            const r1 = this.indexOfRow(aRow)
+            const r2 = this.indexOfRow(lastRow)
+            assert(r1 !== -1 && r2 !== -1)
+            const i1 = r1 < r2 ? r1 : r2
+            const i2 = r1 < r2 ? r2 : r1 
+            for (let i = i1; i <= i2; i++) {
+                const row = this.rowAtIndex(i)
+                if (!row.isSelected()) {
+                    row.select()
+                }
+            }
+        }
+    }
+
+    lastSelectedRow () {
+        return this.selectedRows().maxItem(row => row.lastSelectionDate().getTime())
+    }
+
+    didSelectRow (aRow) {
+        this.selectThisColumn()
+    }
+
+    didUnselectRow (aRow) {
+
+    }
+
     selectThisColumn () {
         if (Type.isNull(this.browser())) {
             this.debugLog(" selectThisColumn WARNING: this.browser() === null" )
@@ -184,9 +226,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         }
         this.browser().selectColumn(this)
         return this
-    }
-    
-    rowRequestsAddColumnForNode (aNode) {
     }
   
     // selection
@@ -254,10 +293,15 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.rows().forEach(row => row.unselect())
         return this
     }
+
+    rowWithNode (aNode) {
+        const row = this.rows().detect(row => row.node().nodeRowLink() === aNode)
+        return row
+    }
 	
     selectRowWithNode (aNode) {
         //console.log(">>> column " + this.node().title() + " select row " + aNode.title())
-        const selectedRow = this.rows().detect(row => row.node().nodeRowLink() === aNode)
+        const selectedRow = this.rowWithNode(aNode)
 		
         if (selectedRow) {
             selectedRow.setIsSelected(true)
@@ -503,6 +547,55 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
     // --- controls --------------
 
+    onMetaKeyDown (event) {
+        console.log("new folder")
+        event.stopPropagation()
+        event.preventDefault();
+    }
+
+    onMeta_m_KeyDown (event) {
+        console.log("new folder")
+        event.stopPropagation()
+        event.preventDefault()
+    }
+
+    onMeta_d_KeyDown (event) {
+        console.log("duplicate selection down")
+        this.duplicateSelectedRows()
+        event.stopPropagation()
+        event.preventDefault();
+    }
+
+    duplicateSelectedRows () {
+        const newNodes = []
+
+        this.selectedRows().forEach(row => {
+            const i = this.indexOfSubview(row)
+            const dupNode = row.node().duplicate()
+            newNodes.push(dupNode)
+            this.node().addSubnodeAt(dupNode, i+1)
+        })
+        this.unselectAllRows()
+        this.syncFromNodeNow()
+
+        // TODO: unselect current rows at browser level
+        newNodes.forEach(newNode => {
+            const newRow = this.rowWithNode(newNode)
+            newRow.select()
+        })
+
+        return this
+    }
+
+    onMeta_d_KeyUp (event) {
+        console.log("duplicate selection up")
+        this.selectedRows().forEach()
+        event.stopPropagation()
+        event.preventDefault();
+        return false
+    }
+
+
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
         if (this.selectedRow()) { 
@@ -511,7 +604,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return false // stop propogation
     }
 
-    onShiftPlusKeyUp () {
+    onShiftPlusKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
         const node = this.node()
         const canAdd = node.canSelfAddSubnode() 
