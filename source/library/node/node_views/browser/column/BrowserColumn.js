@@ -148,7 +148,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         return this
     }
     
-    unselectRowsBesides (selectedRow) {
+    unselectAllRowsExcept (selectedRow) {
         const rows = this.rows()
 
         // unselect all other rows
@@ -157,7 +157,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                 if (row.unselect) {
                     row.unselect()
                 } else {
-                    //console.warn("=WARNING= " + this.typeId() + ".unselectRowsBesides() row " + row.typeId() + " missing unselect method")
+                    //console.warn("=WARNING= " + this.typeId() + ".unselectAllRowsExcept() row " + row.typeId() + " missing unselect method")
                 }
             }
         })
@@ -171,7 +171,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
     
     didClickRow (clickedRow) {
-        this.unselectRowsBesides(clickedRow)
+        this.unselectAllRowsExcept(clickedRow)
         this.selectThisColumn()
         return true
     }
@@ -285,12 +285,12 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 
     selectAllRows () {
-        this.rows().forEach(row => row.select())
+        this.rows().forEachRespondingPerform("select")
         return this
     }
 
     unselectAllRows () {
-        this.rows().forEach(row => row.unselect())
+        this.rows().forEachRespondingPerform("unselect")
         return this
     }
 
@@ -507,7 +507,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                     //this.log("selecting row titled '" + row.title().innerHTML() + "'")
                     row.setIsSelected(true)
                     //this.didClickRow(row)
-                    this.unselectRowsBesides(row)
+                    this.unselectAllRowsExcept(row)
                 }
             } else {
                 // we should have a more explicit way of selecting the next row
@@ -520,7 +520,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                     row.requestSelection()
                     /*
                     row.setIsSelected(true)
-                    this.unselectRowsBesides(row)
+                    this.unselectAllRowsExcept(row)
                     */
                 }
             }

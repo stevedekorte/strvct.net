@@ -785,7 +785,10 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
         const isTapLongPress = this.isTapLongPress() // is tap-hold
 
-        //const dv = DragView.clone().setItem(this).setSource(this.column())
+        if (!this.isSelected()) {
+            this.column().unselectAllRowsExcept(this)
+        }
+
         this.select()
         const dv = DragView.clone().setItems(this.column().selectedRows()).setSource(this.column())
 

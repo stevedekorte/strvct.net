@@ -367,6 +367,7 @@ Object.defineSlots(Array.prototype, {
 
     // --- enumeration ---
 
+    /*
     forEachCall: function (functionName) {
         const args = this.slice.call(arguments).slice(1);
         args.push(0);
@@ -376,17 +377,39 @@ Object.defineSlots(Array.prototype, {
                 const fn = e[functionName];
                 if (fn) {
                     fn.apply(e, args);
-                }
-                else {
+                } else {
                     console.warn("Array.forEachCall: No method " + functionName);
                 }
             }
         });
         return this;
     },
+    */
 
-    forEachPerform: function () {
-        return this.forEachCall.apply(this, arguments);
+    forEachRespondingPerform: function (methodName, arg1, arg2, arg3) {
+        this.forEach((item) => {
+            if (item) {
+                const f = item[methodName]
+                if (f) {
+                    f.call(item, arg1, arg2, arg3)
+                } 
+            }
+        })
+        return this
+    },
+
+    forEachPerform: function (methodName, arg1, arg2, arg3) {
+        this.forEach((item) => {
+            if (item) {
+                const f = item[methodName]
+                if (f) {
+                    f.call(item, arg1, arg2, arg3)
+                } else {
+                    throw new Error(Type.typeName(item) + " does not respond to '" + methodName + "'")
+                }
+            }
+        })
+        return this
     },
 
     sortPerform: function (functionName) { // WARNING: sorts IN-PLACE

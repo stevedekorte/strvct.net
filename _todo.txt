@@ -1,25 +1,11 @@
 
-TODO:
+TODO:	
+	
 
-    - on activating a row, if multiple selection, clear next row
-	
-	
-	- command-d to duplicate selection?
-	
-	row
-	- requestSingleSelection (click)
-	- requestExtendSelection (shift-click)
-	- requestAppendSelection (command/alt-click)
-	- requestDelete [column may delete multiple items]
-	- command-A, if can navigate into, then select all subitems, otherwise, let column handle it
-	
-	column
-	- command-A - select all rows
+	rename BMMenuNode to BMFolderNode
 	
 	edit browser header
-	
-	group selection
-	
+		
 	redo autoFitParentHeight, autoFitChildHeight etc for flex views?
 
 	BUG: when selecting a textfield, the browser may re-layout the columns
