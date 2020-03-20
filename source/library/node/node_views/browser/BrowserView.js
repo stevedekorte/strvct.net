@@ -30,14 +30,18 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     init () {
         super.init()
         this.setDisplay("flex")
-        this.setFlexDirection("column")
-        this.setFlexWrap("nowrap")
-        this.setFlexWrap("nowrap")
+        this.setPosition("relative")
+        /*
         this.setPosition("absolute")
         this.setTopPx(0)
         this.setLeftPx(0)
+        */
         this.setWidth("100%")
         this.setHeight("100%")
+
+        this.setFlexDirection("column")
+        this.setFlexWrap("nowrap")
+        this.setFlexWrap("nowrap")
         this.setOverflow("hidden")
 
         this.setHeaderClass(BrowserHeader)

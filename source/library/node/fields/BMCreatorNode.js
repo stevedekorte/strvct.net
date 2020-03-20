@@ -69,6 +69,8 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         const newSubnodes = objects.map((aClass) => {
             const newNode = BMFolderNode.clone()
             newNode.setTitle(aClass.nodeCreateName())
+            newNode.setNodeCanEditTitle(false)
+            newNode.setNodeCanEditSubtitle(false)
             newNode.setNoteIconName(null)
             newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)
             newNode.setCanDelete(false)

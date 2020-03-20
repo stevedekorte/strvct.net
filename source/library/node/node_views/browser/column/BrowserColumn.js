@@ -597,26 +597,33 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.selectedRows().forEach()
         event.stopPropagation()
         event.preventDefault();
-        return false
     }
-
 
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
         if (this.selectedRow()) { 
             this.selectedRow().delete()
         }
-        return false // stop propogation
+        event.stopPropagation()
     }
 
     onShiftPlusKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
+        this.addIfPossible()
+        event.stopPropagation()
+    }
+
+    addIfPossible () {
         const node = this.node()
-        const canAdd = node.canSelfAddSubnode() 
-        if (canAdd) {
-            node.add()
+
+        if (node.canSelfAddSubnode()) {
+            const newNode = node.add()
+            if (newNode) {
+                this.syncFromNode()
+                const newSubview = this.subviewForNode(newNode)
+                newSubview.requestSelection()
+            }
         }
-        return false // stop propogation
     }
 
     // duplicate
@@ -661,7 +668,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
                 const newSubnode = subnode.copy()
                 const index = node.indexOfSubnode(subnode)
                 node.addSubnodeAt(newSubnode, index)
-                //node.addSubnode(newSubnode)
                 this.scheduleSyncFromNode()
             }
         }
@@ -711,6 +717,8 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     moveRight () {
         if (this.nextColumn() && this.nextColumn().rows().length > 0) {
         	this.selectNextColumn()
+        } else {
+            this.selectNextColumn()
         }
 
         return this
@@ -811,15 +819,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
             const p = aGesture.downPosition() // there may not be an up position on windows?
             //this.debugLog(".onTapComplete() ", aGesture.upEvent())
             if (p.event().target === this.element()) {
-                if (this.node().canSelfAddSubnode()) {
-                    const newNode = this.node().add()
-                    if (newNode) {
-                        this.syncFromNode()
-                        const newSubview = this.subviewForNode(newNode)
-                        newSubview.requestSelection()
-                        assert(newNode.parentNode())
-                    }
-                }
+                this.addIfPossible()
             }
         }
         return this

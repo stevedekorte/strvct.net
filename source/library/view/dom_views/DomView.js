@@ -3326,7 +3326,9 @@ window.DomView = class DomView extends ProtoClass {
         return false
     }
 
-    becomeKeyView () {
+    becomeKeyView () { 
+        // use this method instead of focus() in order to give the receiver 
+        // a chance to give focus to one of it's decendant views
         this.focus()
         return this
     }

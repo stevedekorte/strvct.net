@@ -1,7 +1,10 @@
 
 TODO:	
 	
+	when deleting folder, column to right isn't emptied (maybe only on deep path?)
 
+	add a TextField completedEditingNote so row can regain focus?
+	
 	after dropping items, select them
 		
 	edit browser header
