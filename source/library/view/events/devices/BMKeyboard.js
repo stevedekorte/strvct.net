@@ -43,7 +43,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         super.init()
         this.setupCodeToKeys()
         this.startListening()
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         this.setAllModifierKeys(this.allModifierNames().map(kn => this.keyForName(kn)))
         return this
     }

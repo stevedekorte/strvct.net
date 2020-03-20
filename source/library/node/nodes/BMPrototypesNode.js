@@ -23,7 +23,7 @@ window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
 
     setupSubnodes () {
         /*
-        let primitives = BMMenuNode.clone().setTitle("Primitives")
+        let primitives = BMFolderNode.clone().setTitle("Primitives")
         primitives.setShouldStoreSubnodes(false)
 
         this.addSubnode(primitives)

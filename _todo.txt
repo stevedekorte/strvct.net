@@ -2,8 +2,8 @@
 TODO:	
 	
 
-	rename BMMenuNode to BMFolderNode
-	
+	after dropping items, select them
+		
 	edit browser header
 		
 	redo autoFitParentHeight, autoFitChildHeight etc for flex views?
@@ -108,7 +108,7 @@ TODO:
 	
 	replace Themes with Menus and Values?
 	
-	rename BMMenuNode to BMFolderNode?
+	rename BMFolderNode to BMFolderNode?
 
 	inspector -> note -> icon -> icon (not showing SVG icon note)
 
@@ -400,7 +400,7 @@ TODO:
 	
 	
 	
-	BMMenuNode option to allow subtitle to be edited
+	BMFolderNode option to allow subtitle to be edited
 	
 	ImageWell forgetting image
 
@@ -635,7 +635,7 @@ TODO:
 	
 	copying an object
 	
-	StorableNode -> SummaryNode -> MenuNode
+	StorableNode -> SummaryNode -> FolderNode
                                    OptionsNode
 								   
 								   
@@ -665,7 +665,7 @@ TODO:
 	- OptionNode
 		- if single selection jump back on activing
 	- TextNode store isSelectable
-		- MenuNode store wantsRestOfWidth or wantsFillWidth?
+		- FolderNode store wantsRestOfWidth or wantsFillWidth?
 
 	- bug: undefined showing up for notes in Peer app
 	- bug row content view 1px less height than row?

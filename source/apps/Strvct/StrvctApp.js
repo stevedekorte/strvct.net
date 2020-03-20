@@ -51,7 +51,7 @@ window.StrvctApp = class StrvctApp extends App {
         //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
         //root.removeAllSubnodes()
 
-        const notes = this.subnodeWithTitleIfAbsentInsertProto("Notes", BMMenuNode)
+        const notes = this.subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
         //notes.subnodes().forEach(sn => sn.setCanDelete(true))
         //notes.orderFirst()
         this.setNotes(notes)

@@ -276,7 +276,7 @@ window.BMNode = class BMNode extends ProtoClass {
         return this
     }
 
-    createNodePath (aPath, pathSubnodeType = "BMMenuNode") {
+    createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
         let node = this
 
         if (!aPath) {

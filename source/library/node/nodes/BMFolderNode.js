@@ -2,13 +2,13 @@
 
 /*
     
-    BMMenuNode
+    BMFolderNode
     
     A node that supports for adding, reordering, etc other nodes to it within the UI.
     
 */
 
-window.BMMenuNode = class BMMenuNode extends BMSummaryNode {
+window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
     
     static availableAsNodePrimitive() {
         return true

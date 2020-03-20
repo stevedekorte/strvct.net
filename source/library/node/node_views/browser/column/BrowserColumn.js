@@ -135,6 +135,10 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
     */
 
+    rowsWithNodes (nodeArray) {
+        return nodeArray.map(node => this.rowWithNode(node))
+    }
+
     rowWithNode (aNode) {
         return this.rows().detect(row => row.node() === aNode)
     }
@@ -1296,6 +1300,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         //console.log("new order: " + this.node().subnodes().map(sn => sn.title()).join("-"))
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
+        this.rowsWithNodes(movedNodes).forEach(row => row.select())
     }
 
     onDragSourceEnd (dragView) {
@@ -1385,6 +1390,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
         this.unstackRows()
 
        const itemViews = dragView.items()
+       const movedNodes = dragView.items().map(item => item.node())
        const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
        this.removeRowPlaceHolder()
 
@@ -1405,6 +1411,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
 
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
+        this.rowsWithNodes(movedNodes).forEach(row => row.select())
         //this.endDropMode() // we already unstacked the rows
     }
 

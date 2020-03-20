@@ -2,7 +2,7 @@
 
 ResourceLoader.pushRelativePaths([
     "BMSummaryNode.js",
-    "BMMenuNode.js",
+    "BMFolderNode.js",
     "BMImageNode.js",
     "BMTextNode.js",
     "BMLinkNode.js",

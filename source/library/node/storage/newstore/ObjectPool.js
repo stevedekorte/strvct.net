@@ -414,10 +414,12 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     // --- reading ---
 
     conversionDict () {
-        return {}
+        return { 
+            "BMMenuNode" : "BMFolderNode" 
+        }
         /*
         return {
-            "BMThemeFolder" : "BMMenuNode",
+            "BMThemeFolder" : "BMFolderNode",
             "BMThemeAttribute" : "BMStringField",
         }
         */

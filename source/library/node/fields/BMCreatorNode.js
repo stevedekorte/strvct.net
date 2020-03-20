@@ -38,7 +38,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
             "BMImageWellField", 
             "BMJsonDictionaryNode",
             "BMJsonArrayNode",
-            "BMMenuNode", 
+            "BMFolderNode", 
             "BMNumberField", 
             "BMOptionsNode",
             "BMStringField",
@@ -67,7 +67,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     
     addSubnodesForObjects (objects) {
         const newSubnodes = objects.map((aClass) => {
-            const newNode = BMMenuNode.clone()
+            const newNode = BMFolderNode.clone()
             newNode.setTitle(aClass.nodeCreateName())
             newNode.setNoteIconName(null)
             newNode.setTarget(this).setMethodName("didChoose").setInfo(aClass)

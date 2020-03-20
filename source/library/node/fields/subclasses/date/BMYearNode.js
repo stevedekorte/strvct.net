@@ -21,7 +21,7 @@ window.BMYearNode = class BMYearNode extends BMNode {
 
         this.setNodeCanEditTitle(true)
 
-        //this.setSubnodeProto(BMMenuNode)
+        //this.setSubnodeProto(BMFolderNode)
         this.setSubnodeProto(BMOptionNode)
         this.setNodeCanReorderSubnodes(true)
 
