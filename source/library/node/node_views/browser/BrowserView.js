@@ -158,6 +158,10 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     }
 
     uncacheColumnGroup (cg) {
+        if (!cg.node()) {
+            console.log("should this happen?")
+            return this
+        }
         assert(cg.type() === "BrowserColumnGroup")
         const k = cg.node().typeId()
         this.columnGroupCache().removeAt(k)

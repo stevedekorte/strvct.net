@@ -1073,6 +1073,9 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 
     didReorderRows () { 
+        if (!this.node() || !this.isInBrowser()) {
+            return this
+        }
         // TODO: make a more scaleable API
         const subnodes = this.rows().map(row => row.node())
         this.node().nodeRowLink().nodeReorderSudnodesTo(subnodes)
