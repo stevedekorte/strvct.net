@@ -257,5 +257,18 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
         return this		
     }
 
+    onEnterKeyUp (event) {
+        //this.debugLog(".onEnterKeyUp()")
+
+        if(this.titleView().isEditable()) {
+            this.titleView().activate()
+        } else if (this.subtitleView().isEditable()) {
+            this.subtitleView().activate()
+        }
+        
+        event.stopPropagation()
+        return this
+    }
+
     
 }.initThisClass()

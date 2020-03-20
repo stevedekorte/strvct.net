@@ -155,28 +155,6 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         return v 
     }
 
-    /*
-.BMFieldValueView {
-	display: flex;
-    position: relative;
-
-
-
-    text-align: left;
-	overflow: hidden;
-
-    white-space: nowrap;
-
-	padding-left: 7px;
-	padding-right: 4px;
-	padding-top: 5px;
-	padding-bottom: 5px;
-	
-    color: white;
-    background-color: transparent;
-}
-*/
-
     createValueView () {
         const v = TextField.clone().setDivClassName("BMFieldValueView")
         v.setDisplay("flex")
@@ -197,7 +175,6 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         //tf.setSelectAllOnDoubleClick(true)
         return v
     }
-
 
     // colors
 
@@ -354,13 +331,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
     }
     
     onDidEdit (changedView) {
-        //this.syncToNode() 
         this.scheduleSyncToNode() 
-        //this.log(this.type() + " onDidEdit")   
-        //this.node().setKey(this.keyView().value())
-        //this.node().setValue(this.valueView().value())
-        //this.node().didUpdateView(this)
-        //this.scheduleSyncFromNode() // needed for validation? // causes bug with TextEditing if a 2nd edit is ahead of node state
         return true
     }
 

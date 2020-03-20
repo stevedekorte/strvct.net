@@ -3404,9 +3404,12 @@ window.DomView = class DomView extends ProtoClass {
             this.blur()
         }
 
+        this.tellParentViews("decendantReleasedFocus", this)
+        /*
         if (this.parentView()) {
             this.parentView().becomeFirstResponder()
         }
+        */
         return this
     }
 

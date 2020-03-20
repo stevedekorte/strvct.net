@@ -600,6 +600,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setIsRegisteredForDrag(false)
         return true
     }
+    
+    decendantReleasedFocus (aView) {
+        this.focus()
+        return true
+    }
 
     /*
     onEscapeKeyDown (event) {

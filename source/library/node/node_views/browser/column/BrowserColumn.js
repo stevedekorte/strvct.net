@@ -175,6 +175,7 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
     
     didClickRow (clickedRow) {
+        clickedRow.focus()
         this.unselectAllRowsExcept(clickedRow)
         this.selectThisColumn()
         return true

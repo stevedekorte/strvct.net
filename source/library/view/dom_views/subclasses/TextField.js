@@ -31,7 +31,7 @@ window.TextField = class TextField extends DomStyledView {
         this.newSlot("doubleTapGestureRecognizer", null)
 
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
-        this.newSlot("isEditable", false)
+        this.newSlot("isEditable", false).setOwnsSetter(true).setDoesHookSetter(true)
 
         this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)")
         this.newSlot("uneditableBorder", "none")
@@ -44,9 +44,7 @@ window.TextField = class TextField extends DomStyledView {
         this.setJustifyContent("flex-start")
         this.setAlignItems("flex-start")
         this.turnOffUserSelect()
-        //this.setWhiteSpace("nowrap")
         this.setWhiteSpace("pre-wrap")
-        //this.setWhiteSpace("pre")
         this.setWordWrap("normal")
         this.setOverflow("hidden")
         this.setOverflowWrap("normal")
@@ -93,6 +91,7 @@ window.TextField = class TextField extends DomStyledView {
 
     // editing control
 
+    /*
     setIsEditable (aBool) {
         if (this._isEditable !== aBool) {
             this._isEditable = aBool
@@ -105,7 +104,11 @@ window.TextField = class TextField extends DomStyledView {
     isEditable () {
         return this._isEditable
     }
+    */
     
+    didUpdateSlotIsEditable () {
+        this.syncEditingControl()
+    }
 
     setUsesDoubleTapToEdit (aBool) {
         if (this._usesDoubleTapToEdit !== aBool) {
@@ -172,7 +175,6 @@ window.TextField = class TextField extends DomStyledView {
         // make content editable and select text
         //this.debugLog(".onDoubleTapComplete()")
         if (this.contentEditable()) {
-            //this.setBorder("1px dashed red")
             return this
         }
         this.setContentEditable(true)
@@ -185,7 +187,6 @@ window.TextField = class TextField extends DomStyledView {
 
     onBlur () {
         super.onBlur()
-        //this.debugLog(".onBlur()")
         if (this.usesDoubleTapToEdit()) {
             this.setContentEditable(false)
             this.setBorder("none")
@@ -333,7 +334,9 @@ window.TextField = class TextField extends DomStyledView {
         this.afterEnter()
     }
 
+
     onEscapeKeyDown (event) {
+        this.releaseFirstResponder()
         event.stopPropagation()
         return false
     }
@@ -342,7 +345,6 @@ window.TextField = class TextField extends DomStyledView {
         this.tellParentViews("didInput", this) 
             
         if (!this.doesHoldFocusOnReturn()) {
-            //this.debugLog(" calling releaseFirstResponder")
             this.releaseFirstResponder()
         }
         
@@ -355,6 +357,7 @@ window.TextField = class TextField extends DomStyledView {
             this.didTextInputNote().post()
         }
         
+        event.stopPropagation()
         return false
     }
 	
@@ -397,29 +400,16 @@ window.TextField = class TextField extends DomStyledView {
     */
 
     activate () {
-        this.focus()
+        if (this.usesDoubleTapToEdit()) {
+            this.onDoubleTapComplete()
+        } else {
+            this.focus()
+        }
         return this
     }
-
-    /*
-    setSelectAllOnDoubleClick (aBool) {
-        this.setIsRegisteredForClicks(aBool)
-        return this
-    }
-
-    onDoubleClick (event) {
-        this.debugLog(".onDoubleClick()")
-        //this.focus()
-        this.selectAll() // looses focus!
-        this.element().focus()
-        //this.focusAfterDelay(.125) 
-        return true
-    }
-    */
-
     
     onClick (event) {
-        // to prevent click-to-edit event from selecting the background row
+        // needed to prevent click-to-edit event from selecting the background row
         //this.debugLog(".onClick()")
 
         if (this.contentEditable()) {
