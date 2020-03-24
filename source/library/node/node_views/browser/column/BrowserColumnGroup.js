@@ -9,11 +9,11 @@
 window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     
     initPrototype () {
-        //this.newSlot("scrollView", null) // contains column
+        this.newSlot("browser", null)
+        //this.newSlot("scrollView", null) // contains column is middleView
         this.newSlot("column", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
         this.newSlot("animatesCollapse", true)
-        this.newSlot("browser", null)
     }
 
 
@@ -85,7 +85,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     }
 
     cache () {
-        this._browser.cacheColumnGroup(this)
+        this.browser().cacheColumnGroup(this)
         //this.browser().cacheColumnGroup(this)
         //this.debugLog(".cache()")
         return this
@@ -96,7 +96,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
     }
     
     uncache () {
-        this._browser.uncacheColumnGroup(this)
+        this.browser().uncacheColumnGroup(this)
         //this.browser().uncacheColumnGroup(this)
         //this.debugLog(".uncache()")
         return this
@@ -301,7 +301,7 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
             this.debugLog(" setNode(null)")
         }
 
-        if (aNode === this._node) {
+        if (aNode === this.node()) {
             return this
         }
          
@@ -310,15 +310,6 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         this.setColumnClass(BrowserColumn)
         
         if (aNode) {
-            // obey node's width preferences
-            // use custom class for column if node wants it
-            /*
-            const customViewClass = aNode.viewClass()
-            if (customViewClass) {
-                this.setColumnClass(customViewClass)
-            }
-            */
-            
             this.setHasFooter(aNode.nodeHasFooter())
         }
         

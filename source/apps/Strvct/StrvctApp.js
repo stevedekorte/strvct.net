@@ -20,26 +20,32 @@ window.StrvctApp = class StrvctApp extends App {
 
         // view
         this.newSlot("browser", null)
+        this.newSlot("stackView", null)
     }
 
     init () {
         super.init()
-        //console.log(this.type() + " init <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         this.setName("StrvctApp")
         this.setVersion([0, 0, 0, 0])
         this.setNodeCanReorderSubnodes(true)
         this.addAction("add")
-
         return this
     } 
 
-    setup () { // called by App.run
+    setup () {
+        const v = StackView.clone().setDirection("down")
+        this.setStackView(v)
+        v.setNode(this)
+        this.documentBodyView().addSubview(v)
+        this.appDidInit()
+    }
+
+    setup_old () { // called by App.run
         super.setup()        
         this.setupTheme()
         this.setupModel()
         this.setupViews()
         this.appDidInit()
-        this.subnodes().forEach(sn => sn.setCanDelete(true))
         return this
     }
 
@@ -95,10 +101,8 @@ window.StrvctApp = class StrvctApp extends App {
     setupBrowser () {	
         //console.log("App setupBrowser")
         this.setBrowser(BrowserView.clone())
-    
         this.browser().hideAndFadeIn()
         this.browser().setNode(this)
-                
         this.documentBodyView().addSubview(this.browser())
         this.browser().syncFromNodeNow()
         this.browser().syncFromHashPath()

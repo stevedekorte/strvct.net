@@ -50,7 +50,6 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
     }
 
     onFocus () {
-        //Error.showCurrentStack()
         return super.onFocus()
     }
 

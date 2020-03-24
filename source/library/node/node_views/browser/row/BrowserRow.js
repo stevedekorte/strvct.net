@@ -252,7 +252,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             return rs
         }
 
-        if (this.column()) {
+        if (this.column() && this.column().rowStyles) {
             const cs = this.column().rowStyles()
             if (cs) {
                 if (debugStyles) {
@@ -806,43 +806,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
         dv.openWithEvent(longPressGesture.currentEvent())
     }
 
-    // --- add/remove pan gesture ----
-
-    /*
-    addPanGesture () {
-        return this.addGestureRecognizer(PanGestureRecognizer.clone())
-    }
-
-    removePanGesture () {
-        this.removeGestureRecognizersOfType("PanGestureRecognizer")
-        return this
-    }
-    */
-
     // --- handle pan gesture ---
 
     acceptsPan () {
         return this._isReordering
     }
-   
-    // orient testing
-
-    /*
-    onOrientBegin (aGesture) {
-        this.debugLog(".onOrientBegin()")
-        aGesture.show()
-    }
-
-    onOrientMove (aGesture) {
-        this.debugLog(".onOrientMove()")
-        aGesture.show()
-    }
-
-    onOrientComplete (aGesture) {
-        this.debugLog(".onOrientComplete()")
-        aGesture.show()
-    }
-    */
 
     // --- selecting ---
     

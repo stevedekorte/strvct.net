@@ -154,7 +154,7 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     static ancestorClassesIncludingSelf() {
-        const results = this.ancestorClasses()
+        const results = this.ancestorClasses().shallowCopy()
         results.atInsert(0, this)
         return results
     }

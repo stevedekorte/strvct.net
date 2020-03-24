@@ -9,9 +9,6 @@
 window.BrowserScrollView = class BrowserScrollView extends NodeView {
     
     initPrototype () {
-        this.newSlot("leftActionsView", null)
-        this.newSlot("textView", null)
-        this.newSlot("rightActionsView", null)
     }
 
     init () {

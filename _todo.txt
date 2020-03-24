@@ -1,5 +1,9 @@
 
 TODO:	
+
+	on click, walk back to orientation change 
+	- measure width and height of container view
+	- then walk forward, collapsing views until they fit withing container
 	
 	when deleting folder, column to right isn't emptied (maybe only on deep path?)
 

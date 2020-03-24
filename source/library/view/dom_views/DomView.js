@@ -183,7 +183,6 @@ window.DomView = class DomView extends ProtoClass {
     setupDivClassName () {
         const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
         const divName = ancestorNames.join(" ").strip()
-        //console.log("divName = " + divName)
         this.setDivClassName(divName)
         return this
     }
@@ -240,28 +239,6 @@ window.DomView = class DomView extends ProtoClass {
         }
         return null
     }
-
-    /*
-    setCssClassAttribute (name, value) {
-      
-        //let stylesheet = this.stylesheetWithClassName(className)
-        //console.log(className + " stylesheet: ", stylesheet)
-        for (let i = 0; i < document.styleSheets.length; i++) {
-            let stylesheet = document.styleSheets[i]
-            if ("cssRules" in stylesheet) {
-                try {
-                    stylesheet.insertRule(rule, stylesheet.cssRules.length); 
-                    console.log("== added CSS rule: " + rule + "")
-                    break;
-                } catch (e) {
-                    console.log("couldn't add CSS rule: " + rule + "")
-                }
-            }
-        }
-        // TODO: hack - add something to remove existing rule instead of inserting more
-        return this
-    }
-    */
 
     setCssDict (aDict) {
         Reflect.ownKeys(aDict).forEach((k) => {
@@ -624,11 +601,11 @@ window.DomView = class DomView extends ProtoClass {
 
     setPadding (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("padding", v)
         this.setPaddingTop(null)
         this.setPaddingBottom(null)
         this.setPaddingLeft(null)
         this.setPaddingRight(null)
+        this.setCssAttribute("padding", v)
         return this
     }
     
@@ -1843,6 +1820,7 @@ window.DomView = class DomView extends ProtoClass {
 
     minWidthPx () {
         const s = this.getCssAttribute("min-width")
+        // TODO: support em to px translation 
         return this.pxStringToNumber(s)
     }
 
@@ -1887,6 +1865,68 @@ window.DomView = class DomView extends ProtoClass {
         this.setMinAndMaxWidth(null)
         this.setMinAndMaxHeight(null)
         return this
+    }
+    */
+
+    // ----
+
+    displayIsFlex () {
+        // TODO: choose a better name for this method?
+        return (this.display() === "flex" || this.hiddenDisplayValue() === "flex")
+    }
+
+    // fixed width
+
+    setFixedWidthPx (v) {
+        assert(Type.isNumber(v))
+        if (this.displayIsFlex()) {
+            this.setFlexGrow(0)
+            this.setFlexShrink(0)
+            this.setFlexBasis(v + "px")
+        } else {
+            this.setMinAndMaxWidth(v)
+        }
+        return this
+    }
+
+    fixedWidthPx () {
+        if (this.displayIsFlex()) {
+            const w = this.getPxCssAttribute("flex-basis")
+            assert(Type.isNumber(w))
+            return w
+        } else {
+            const w1 = this.getPxCssAttribute("min-width")
+            const w2 = this.getPxCssAttribute("max-width")
+            assert(Type.isNumber(w1) && w1 === w2)
+            return w1
+        }
+    }
+
+    // fixed height
+    /*
+    setFixedHeightPx (v) {
+        assert(Type.isNumber(v))
+        if (this.displayIsFlex()) {
+            this.setFlexGrow(0)
+            this.setFlexShrink(0)
+            this.setFlexBasis(v + "px")
+        } else {
+            this.setMinAndMaxWidth(v)
+        }
+        return this
+    }
+
+    fixedHeightPx () {
+        if (this.displayIsFlex()) {
+            const w = this.getPxCssAttribute("flex-basis")
+            assert(Type.isNumber(w))
+            return w
+        } else {
+            const w1 = this.getPxCssAttribute("min-width")
+            const w2 = this.getPxCssAttribute("max-width")
+            assert(Type.isNumber(w1) && w1 === w2)
+            return w1
+        }
     }
     */
 
@@ -2571,14 +2611,42 @@ window.DomView = class DomView extends ProtoClass {
 
     tellParentViews (msg, aView) {
         const f = this[msg]
-        if (f && f.apply(this, [aView])) {
-            return // stop propogation on first view returning non-false
+        if (f) {
+            if (f.apply(this, [aView]) === true) {
+                return // stop propogation on first view returning non-false
+            }
         }
 
         const p = this.parentView()
         if (p) {
             p.tellParentViews(msg, aView)
         }
+    }
+
+    askParentViews (msg, aView) {
+        const f = this[msg]
+        if (f) {
+            const r = f.call(this, aView)
+            return r
+        }
+
+        const p = this.parentView()
+        if (p) {
+            return p.getParentViewMethod(msg, aView)
+        }
+
+        return undefined
+    }
+
+    firstParentViewWithAncestorClass (aClass) {
+        const p = this.parentView()
+        if (p) {
+            if (p.isSubclassOf(aClass)) {
+                return p
+            }
+            return p.firstParentViewWithAncestorClass(aClass)
+        }
+        return undefined
     }
 
     // --- events --------------------------------------------------------------------
@@ -3115,34 +3183,24 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
+    // orient testing
+
     /*
-    requestActiveGesture (aGesture) {
-        return GestureManager.shared().requestActiveGesture(aGesture);
+    onOrientBegin (aGesture) {
+        this.debugLog(".onOrientBegin()")
+        aGesture.show()
     }
 
-    firstActiveGesture () {
-        return this.gestureRecognizers().detect((gr) => {
-            return gr.isActive()
-        })
+    onOrientMove (aGesture) {
+        this.debugLog(".onOrientMove()")
+        aGesture.show()
     }
 
-    requestActiveGesture (aGesture) {
-        assert(aGesture)
-
-        const first = this.firstActiveGesture()
-
-        if (!first) {
-            this.cancelAllGesturesExcept(aGesture)
-            return true
-        }
-        
-        if (first === aGesture) {
-            return true
-        }
-
-        return false
+    onOrientComplete (aGesture) {
+        this.debugLog(".onOrientComplete()")
+        aGesture.show()
     }
-`   */
+    */
 
     cancelAllGesturesExcept (aGesture) {
         this.gestureRecognizers().forEach((gr) => {

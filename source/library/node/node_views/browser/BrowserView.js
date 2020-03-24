@@ -6,7 +6,7 @@
 
     A Miller Column browser. It's subviews are BrowserColumnGroups.
     Each BrowserColumnGroup has a ColumnHeader, ScrollView, and ColumnFooter.
-    Within a BrowserColumnGroup ScrollView is BrowserColumn whose subviews are BrowserRows.
+    Within a BrowserColumnGroup's ScrollView is a BrowserColumn whose subviews are BrowserRows.
     
 */
 
@@ -40,7 +40,6 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
         this.setHeight("100%")
 
         this.setFlexDirection("column")
-        this.setFlexWrap("nowrap")
         this.setFlexWrap("nowrap")
         this.setOverflow("hidden")
 
@@ -431,6 +430,8 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
     // --- get selected column ---------------------------------------
 
     selectedColumnGroup () {
+        // TODO: there's a reason for doing this *and* keeping _selectedColumnGroup,
+        // but I don't recall what it is - take a look and document
         return this.columnGroups().detect(cg => cg.isSelected())
     }
 
@@ -575,12 +576,6 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
                     } 
                                         
                     this.clearColumnsGroupsAfter(nextCg)
-
-                    /*
-                    if ((nextNode.viewClassName() !== "BrowserColumnGroup") || nextNode.isKindOf(BMFieldSetNode)) { // TODO: use a better rule here
-                        this.setColumnGroupCount(index + 2)
-                    }
-                    */
                     
                 } else {
                     this.clearColumnsGroupsAfter(selectedColumnGroup)
