@@ -2940,7 +2940,7 @@ window.DomView = class DomView extends ProtoClass {
         }
     }
 
-    // dragging
+    // browser dragging
 
     setDraggable (aBool) {
         assert(Type.isBoolean(aBool))

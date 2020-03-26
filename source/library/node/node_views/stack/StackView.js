@@ -75,18 +75,30 @@ window.StackView = class StackView extends NodeView {
 
     // --- cache ---
 
+    cacheId () {
+        return this.node().typeId()
+    }
+
     isCached () {
-        return this.thisClass().instanceCache().hasKey(this.typeId())
+        return this.thisClass().instanceCache().hasKey(this.cacheId())
     }
 
     cache () {
-        this.thisClass().instanceCache().atPut(this.typeId(), this)
+        this.thisClass().instanceCache().atPut(this.cacheId(), this)
         return this
     }
 
     uncache () {
-        this.thisClass().instanceCache().removeKey(this.typeId())
+        this.thisClass().instanceCache().removeKey(this.cacheId())
         return this
+    }
+
+    stackViewForNode (aNode) {
+        let sv = this.thisClass().instanceCache().at(aNode.typeId(), this)
+        if (!sv) {
+            sv = StackView.clone().setNode(aNode)
+        }
+        return sv
     }
 
     // ---  ---
@@ -151,15 +163,23 @@ window.StackView = class StackView extends NodeView {
         return this.otherView().subviews().first()
     }
 
-    didSelectItem (itemView) {
-        const node = itemView.node()
-        const snv = StackView.clone().setNode(node)
-        this.setOtherViewContent(snv)
-
-        this.updateCompaction()
-        this.tellParentViews("updateCompaction")
-        //this.stackViewSubchain().forEach(sv => sv.updateCompaction())
+    didChangeNavSelection (itemView) {
+        this.syncFromNavSelection()
         return true
+    }
+
+    syncFromNavSelection () {
+        const itemView = this.navView().itemSetView().selectedRow()
+        if (itemView && itemView.nodeRowLink()) {
+            const ov = this.stackViewForNode(itemView.nodeRowLink())
+            if (ov !== this.otherView()) {
+                this.setOtherViewContent(ov)
+                this.updateCompaction()
+                this.tellParentViews("updateCompaction")
+            }
+        } else {
+            this.clearOtherView()
+        }
     }
 
     // stack view chain

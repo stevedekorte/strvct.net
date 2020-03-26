@@ -305,6 +305,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     selectThisColumn () {
+        this.didChangeNavSelection()
         /*
         if (Type.isNull(this.browser())) {
             this.debugLog(" selectThisColumn WARNING: this.browser() === null" )
@@ -485,6 +486,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
                 this.previousColumn().selectThisColumn()
             }
 
+            this.didChangeNavSelection()
+
             //this.selectThisColumn()
 		    //subview.dynamicScrollIntoView()
         } else {
@@ -493,6 +496,13 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 	    }
 
 	    return this 
+    }
+
+    didChangeNavSelection () {
+        if (this.stackView()) {
+            this.stackView().didChangeNavSelection()
+        }
+        return this
     }
 	
     scrollToSubnode (aSubnode) {

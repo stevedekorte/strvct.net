@@ -295,9 +295,12 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
     */
 
-    tappedIt () {
-        this.tellParentViews("didSelectItem", this)
-    }
+
+   didChangeIsSelected () {
+        super.didChangeIsSelected()
+        this.itemSetView().didChangeNavSelection()
+   }
+    
 
     select () {
         if (!this.isSelected()) {
@@ -306,20 +309,14 @@ window.BrowserRow = class BrowserRow extends NodeView {
         super.select()
         this.setLastSelectionDate(Date.clone())
 
-        //this.column().didSelectRow(this)
-        //this.tellParentViews("didSelectItem", this)
-
-        this.tappedIt()
+        this.itemSetView().didSelectRow(this)
         return this
     }
 
     unselect () {
+        const didChange = this.isSelected()
         super.unselect()
         this.setLastSelectionDate(null)
-
-        //this.column().didUnselectRow(this)
-        this.tellParentViews("didUnselectItem", this)
-
         return this
     }
     
@@ -384,9 +381,12 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return this
     }
 
+    itemSetView () {
+        return this.parentView()
+    }
+
     stackView () {
-        const itemSetView = this.parentView()
-        const scrollView = itemSetView.parentView()
+        const scrollView = this.itemSetView().parentView()
         const navView = scrollView.parentView()
         const stackView = navView.parentView()
         return stackView
@@ -394,6 +394,10 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     syncOrientation () {
+        if (!this.parentView()) {
+            return this
+        }
+
         const d = this.stackView().direction()
         if (d === "right") {
             this.makeOrientationRight()
