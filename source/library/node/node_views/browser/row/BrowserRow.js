@@ -91,8 +91,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
 
         this.setIsRegisteredForKeyboard(true)
-        //this.setIsRegisteredForDrag(true)
-
         this.setIsDebugging(true)
 
         return this
@@ -657,13 +655,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     on_d_KeyDown (event) {
         this.debugLog(" on_d_KeyDown ", event._id)
-        this.setIsRegisteredForDrag(true)
+        this.setIsRegisteredForBrowserDrag(true)
         return true
     }
 
     on_d_KeyUp (event) {
         this.debugLog(" on_d_KeyUp ", event._id)
-        this.setIsRegisteredForDrag(false)
+        this.setIsRegisteredForBrowserDrag(false)
         return true
     }
     
@@ -829,7 +827,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
     
     onLongPressBegin (aGesture) {
-        if (this.isRegisteredForDrag()) {
+        if (this.isRegisteredForBrowserDrag()) {
             aGesture.cancel() // don't allow in-browser drag when we're doing a drag outside
         }
     }

@@ -6,7 +6,7 @@ TODO:
 	rename nodeRowLink to nodeItemLink
 	rename Row method names to Item
 	rename RowViews class names to ItemView
-	rename setIsRegisteredForDrag (and related methods) to setIsRegisteredForBrowserDrag
+	rename setIsRegisteredForBrowserDrag (and related methods) to setIsRegisteredForBrowserDrag?
 	
 	replace direction lookup in parents with stackDirection slot set by parent?
 	

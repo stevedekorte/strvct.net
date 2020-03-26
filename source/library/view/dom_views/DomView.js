@@ -2677,7 +2677,7 @@ window.DomView = class DomView extends ProtoClass {
         return this.listenerNamed("DocumentListener") // listen target will be the window
     }
 
-    dragListener () {
+    browserDragListener () {
         return this.listenerNamed("DragListener")
     }
 
@@ -2944,57 +2944,25 @@ window.DomView = class DomView extends ProtoClass {
 
     setDraggable (aBool) {
         assert(Type.isBoolean(aBool))
-        this.element().setAttribute("draggable", aBool);
+        this.element().setAttribute("draggable", aBool)
         return this
     }
 
-    isRegisteredForDrag () {
-        return this.dragListener().isListening()
+    draggable () {
+        return this.element().getAttribute("draggable")
     }
 
-    setIsRegisteredForDrag (aBool) {
-        this.dragListener().setIsListening(aBool)
+    isRegisteredForBrowserDrag () {
+        return this.browserDragListener().isListening()
+    }
+
+    setIsRegisteredForBrowserDrag (aBool) {
+        this.browserDragListener().setIsListening(aBool)
         this.setDraggable(aBool)
         return this
     }
 
     onBrowserDragStart (event) {
-        // triggered in element being dragged
-        // DownloadURL only works in Chrome?
-        
-        /*
-        application/json // doesn't work
-        application/x-javascript // doesn't work
-        text/javascript // doesn't work
-        text/x-javascript // doesn't work
-        text/x-json // doesn't work
-        text/plain // works
-        text/html // doesn't works 
-
-        text/uri-list // should work
-        */
-       
-        /*
-        const json = { type: this.type() }
-        //const fileDetails = "application/json:filename.json:{}"
-        //event.dataTransfer.setData("text/plain", "test")
-
-        //const mimeType = "text/plain"
-        const mimeType = "image/png"
-        event.dataTransfer.setData(mimeType, JSON.stringify(json))
-        event.dataTransfer.effectAllowed = "copy";
-        */
-
-        /*
-        const fileDetails = "application/octet-stream:Eadui.ttf:http://thecssninja.com/gmail_dragout/Eadui.ttf"
-        event.dataTransfer.setData("DownloadURL", fileDetails);
-
-        //event.dataTransfer.setData("DownloadURL", fileDetails);
-            <a href="Eadui.ttf" id="dragout" draggable="true" data-downloadurl="
-            application/octet-stream
-            :Eadui.ttf
-            :http://thecssninja.com/gmail_dragout/Eadui.ttf">Font file</a>
-        */
         return false;
     }
 
