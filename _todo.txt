@@ -1,12 +1,16 @@
 
 TODO:	
 
+
+    didChangeIsSelected () {
+        super.didChangeIsSelected()
+        this.itemSetView().didChangeNavSelection()
+    }
+	
 	- option click row not working
 	
-	rename nodeRowLink to nodeItemLink
 	rename Row method names to Item
 	rename RowViews class names to ItemView
-	rename setIsRegisteredForBrowserDrag (and related methods) to setIsRegisteredForBrowserDrag?
 	
 	replace direction lookup in parents with stackDirection slot set by parent?
 	

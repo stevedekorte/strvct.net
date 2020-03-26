@@ -458,7 +458,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             this.selectRowWithNode(subnode)
             subview.scrollIntoView()
             subview.requestSelection()
-            //this.selectThisColumn()
+            this.didChangeNavSelection()
 		    //subview.dynamicScrollIntoView()
         } else {
             console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())

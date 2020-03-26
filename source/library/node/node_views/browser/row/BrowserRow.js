@@ -294,12 +294,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
     */
 
 
-   didChangeIsSelected () {
+    didChangeIsSelected () {
         super.didChangeIsSelected()
         this.itemSetView().didChangeNavSelection()
-   }
+    }
     
-
     select () {
         if (!this.isSelected()) {
             this.setShouldShowFlash(true)
