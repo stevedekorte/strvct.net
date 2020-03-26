@@ -214,7 +214,8 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
 
     onDidEdit (aView) {
         super.onDidEdit() 
-        this.browser().fitColumns()
+        // need to broadcast recompact to all
+        //this.browser().fitColumns()
         return true // stop propogation
     }
 
@@ -229,6 +230,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     }
 
     syncFromNode () {
+        super.syncFromNode()
         const node = this.node()
         this.titleView().setString(node.title())
         this.subtitleView().setString(node.subtitle())

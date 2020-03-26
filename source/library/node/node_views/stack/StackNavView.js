@@ -27,7 +27,7 @@ window.StackNavView = class StackNavView extends NodeView {
 
     init () {
         super.init()
-        this.setDisplay("flex")
+        this.setDisplay("block")
         this.setPosition("relative")
         this.setFlexDirection("column")
         this.setFlexGrow(1)
@@ -70,7 +70,7 @@ window.StackNavView = class StackNavView extends NodeView {
     makeOrientationRight () {
         this.setFlexDirection("column")
         this.setFlexBasis(this.targetWidth() + "px")
-        this.setFlexGrow(1)
+        this.setFlexGrow(0)
         this.setFlexShrink(0)
         this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
         this.scrollView().setIsVertical(true)

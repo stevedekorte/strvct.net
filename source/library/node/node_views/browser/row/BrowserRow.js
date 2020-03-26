@@ -45,13 +45,20 @@ window.BrowserRow = class BrowserRow extends NodeView {
         super.init()
         this.setDisplay("block")
         this.setPosition("relative") // so absolute position on close button works
+        //this.setFlexGrow(0)
+        //this.setFlexShrink(0)
+        this.makeOrientationRight()
+
         this.setWidth("100%")
-        this.setHeight("auto")
+        this.setHeight("fit-content")
+
+        //this.setMinHeight("4em")
         //this.setColor("rbga(255, 255, 255, 0.5)")
         this.setTransition("all 0s, top 0.3s, background-color .3s ease-out")
         this.setOverflow("hidden")
         this.setWhiteSpace("nowrap")
         
+        /*
         this.setBorderStyle("solid")
         this.setBorderColor("transparent")
         this.setBorderLeft("0px")
@@ -59,6 +66,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setBorderTop("1px")
         this.setBorderBottom("1px")
         this.setTextAlign("left")
+        */
+
         this.setWebkitOverflowScrolling("touch")
 
         this.turnOffUserSelect()
@@ -86,6 +95,11 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
         this.setIsDebugging(true)
 
+        return this
+    }
+
+    setNode (aNode) {
+        super.setNode(aNode)
         return this
     }
 
@@ -281,20 +295,31 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
     */
 
+    tappedIt () {
+        this.tellParentViews("didSelectItem", this)
+    }
+
     select () {
         if (!this.isSelected()) {
             this.setShouldShowFlash(true)
         }
         super.select()
         this.setLastSelectionDate(Date.clone())
-        this.column().didSelectRow(this)
+
+        //this.column().didSelectRow(this)
+        //this.tellParentViews("didSelectItem", this)
+
+        this.tappedIt()
         return this
     }
 
     unselect () {
         super.unselect()
         this.setLastSelectionDate(null)
-        this.column().didUnselectRow(this)
+
+        //this.column().didUnselectRow(this)
+        this.tellParentViews("didUnselectItem", this)
+
         return this
     }
     
@@ -355,7 +380,44 @@ window.BrowserRow = class BrowserRow extends NodeView {
     syncFromNode () {
         // is this ever called?
         this.updateSubviews()
+        this.syncOrientation()
         return this
+    }
+
+    stackView () {
+        const itemSetView = this.parentView()
+        const scrollView = itemSetView.parentView()
+        const navView = scrollView.parentView()
+        const stackView = navView.parentView()
+        return stackView
+        //return this.firstParentViewWithAncestorClass(StackView)
+    }
+
+    syncOrientation () {
+        const d = this.stackView().direction()
+        if (d === "right") {
+            this.makeOrientationRight()
+        } else if (d === "down") {
+            this.makeOrientationDown() 
+        }
+        return this
+    }
+
+    makeOrientationRight () {  //stackview is right
+        this.setDisplay("block")  
+        this.setWidth("100%")
+        this.setHeight("fit-content")
+        this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
+
+        //this.setBorderRight("1px solid rgba(255, 0, 0, 1)")
+    }
+
+    makeOrientationDown () { 
+        this.setDisplay("inline-block")  
+        this.setWidth("200px")
+        //this.setHeight("fit-content")
+        this.setHeight("100%")
+        this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
     }
 
     // --- styles ---
@@ -460,7 +522,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             if (this.isSelected()) {
                 // to make sure next column is cleared
                 this.setIsSelected(false)
-                this.browser().scheduleSyncToNode()
+                //this.browser().scheduleSyncToNode()
             }
 
             setTimeout(() => {
@@ -756,7 +818,10 @@ window.BrowserRow = class BrowserRow extends NodeView {
             console.log("missing parent view on: " + this.typeId())
         }
 
-        return this.column().canReorderRows()
+        if (this.column()) {
+            return this.column().canReorderRows()
+        }
+        return false
     }
     
     onLongPressBegin (aGesture) {
@@ -830,6 +895,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         //this.debugLog(" tellParentViews didClickRow")
         //this.tellParentViews("didClickRow", this)
         this.tellParentViews("onRequestSelectionOfRow", this)
+        //this.tellParentViews("didSelectItem", this)
 
         const node = this.node()
         if (node) {

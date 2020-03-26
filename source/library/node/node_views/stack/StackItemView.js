@@ -41,6 +41,11 @@ window.StackItemView = class StackItemView extends NodeView {
         this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
     }
 
+    column () {
+        return this.parentView()
+    }
+
+    /*
     stackItemSetView () {
         return this.firstParentViewWithAncestorClass(StackItemSetView)
     }
@@ -54,6 +59,7 @@ window.StackItemView = class StackItemView extends NodeView {
     stackView () {
         return this.parentView().stackView()
     }
+    */
 
     // ---
 
@@ -84,7 +90,7 @@ window.StackItemView = class StackItemView extends NodeView {
     }
 
     onTapComplete (aGesture) {
-        this.tellParentViews("tappedStackItemView", this)
+        this.tellParentViews("didSelectItem", this)
         this.select()
     }
 
@@ -106,6 +112,10 @@ window.StackItemView = class StackItemView extends NodeView {
 
     collapseParentsAsNeeded (direction) {
 
+    }
+
+    unselectAllRowsExcept (item) {
+        
     }
 
 }.initThisClass()

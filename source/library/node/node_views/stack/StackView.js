@@ -8,6 +8,15 @@
 
 window.StackView = class StackView extends NodeView {
     
+    static instanceCache () {
+        let v = this.getClassVariable("_instanceCache")
+        if (!v) {
+            v = Dictionary.clone()
+            this.setClassVariable("_instanceCache", v)
+        }
+        return v
+    }
+
     initPrototype () {
         this.newSlot("navView", null)
         this.newSlot("otherView", null)
@@ -63,6 +72,24 @@ window.StackView = class StackView extends NodeView {
         this.clearOtherView()
         return this
     }
+
+    // --- cache ---
+
+    isCached () {
+        return this.thisClass().instanceCache().hasKey(this.typeId())
+    }
+
+    cache () {
+        this.thisClass().instanceCache().atPut(this.typeId(), this)
+        return this
+    }
+
+    uncache () {
+        this.thisClass().instanceCache().removeKey(this.typeId())
+        return this
+    }
+
+    // ---  ---
 
     didUpdateSlotDirection () {
         this.syncOrientation()
@@ -124,7 +151,7 @@ window.StackView = class StackView extends NodeView {
         return this.otherView().subviews().first()
     }
 
-    tappedStackItemView (itemView) {
+    didSelectItem (itemView) {
         const node = itemView.node()
         const snv = StackView.clone().setNode(node)
         this.setOtherViewContent(snv)

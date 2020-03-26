@@ -113,7 +113,11 @@ window.NodeView = class NodeView extends DomStyledView {
     updateSubnodeToSubviewMap () {
         // TODO: make this more efficient with add/remove hooks
         const dict = {}
-        this.subviews().forEach( sv => dict.atPut(sv.node(), sv) )
+        this.subviews().forEach( sv => {
+            if (sv.node) { 
+                dict.atPut(sv.node(), sv) 
+            } 
+        })
         this._subnodeToSubview = dict
         return this
     }

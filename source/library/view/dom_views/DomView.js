@@ -2147,20 +2147,25 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    parentViewChain (chain = []) {
-        chain.push(this)
-        const pv = this.parentView()
-        if (pv) {
-            pv.parentViewChain(chain)
+    // view chains
+
+    parentViewChain () {
+        // returned list in order of very top parent first
+        const chain = []
+        let p = this.parentView()
+        while (p) {
+            chain.push(p)
+            p = p.parentView()
         }
-        return chain
+        return chain.reversed()
+    }
+
+    parentViewsOfClass (aClass) {
+        return this.parentViewChain().filter(v => v.thisClass().isSubclassOf(aClass))
     }
 
     // --- subviews ---
 
-    hasSubviewDescendant (aView) {
-        return aView.parentViewChain().contains(this)
-    }
 
     subviewCount () {
         return this.subviews().length
@@ -2612,7 +2617,8 @@ window.DomView = class DomView extends ProtoClass {
     tellParentViews (msg, aView) {
         const f = this[msg]
         if (f) {
-            if (f.apply(this, [aView]) === true) {
+            const r = f.apply(this, [aView]) 
+            if (r === true) {
                 return // stop propogation on first view returning non-false
             }
         }
