@@ -91,19 +91,6 @@ window.NodeView = class NodeView extends DomStyledView {
     }
 
     // --- syncing ---
-    
-    managedSubviews () {
-        // use managedSubviews inside NodeView and subclasses so we can separate the
-        // views with the NodeView syncs with the Node and it's subviews
-        return this.subviews()
-    }
-
-    /*
-    subviewForNode (aNode) {
-        // TODO: optimize with a dictionary? 
-        return this.managedSubviews().detect(aView => aView.node() === aNode )
-    }
-    */
 
     subviewForNode (aNode) {
         assert(this._subnodeToSubview)
@@ -158,6 +145,7 @@ window.NodeView = class NodeView extends DomStyledView {
     }
     
     syncFromNode () {
+        let subnodesDidChange = false
         // override this method if the view manages it's own subviews
 
         if (!this.node()) { 
@@ -189,7 +177,8 @@ window.NodeView = class NodeView extends DomStyledView {
             newSubviews.push(subview)   
         })
         
-        if (!newSubviews.isEqual(this.managedSubviews())) {
+        if (!newSubviews.isEqual(this.subviews())) {
+            subnodesDidChange = true
             //this.removeAllSubviews() 
             this.removeAllSubviews()
             this.addSubviews(newSubviews)
@@ -198,9 +187,9 @@ window.NodeView = class NodeView extends DomStyledView {
             // subviews no longer referenced in subviews list will be collected
         }
 
-        this.managedSubviews().forEach(subview => subview.syncFromNodeNow())
+        this.subviews().forEach(subview => subview.syncFromNodeNow())
 
-        return this
+        return subnodesDidChange
     }
     
     syncToNode () {

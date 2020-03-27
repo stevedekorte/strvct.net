@@ -5,6 +5,6 @@ ResourceLoader.pushRelativePaths([
     "StackNavView.js",
     "StackScrollView.js",
     "StackItemSetView.js",
-    "StackItemView.js",
+    //"StackItemView.js",
 ])
 

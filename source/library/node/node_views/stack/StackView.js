@@ -129,7 +129,8 @@ window.StackView = class StackView extends NodeView {
 
     syncFromNode () {
         this.syncOrientation()
-        this.navView().syncFromNode()
+        //this.navView().syncFromNodeNow()
+        this.syncFromNavSelection()
 
         //this.setupColumnGroupColors()
         //this.fitColumns()
@@ -163,16 +164,24 @@ window.StackView = class StackView extends NodeView {
         return this.otherView().subviews().first()
     }
 
-    didChangeNavSelection (itemView) {
-        this.syncFromNavSelection()
+    didChangeNavSelection () {
+        //this.syncFromNavSelection()
+        this.scheduleMethod("syncFromNode")
         return true
     }
 
     syncFromNavSelection () {
+        // update otherViewContent view to match selected ite,
+        if (this.node().title() === "A") {
+            console.log(" --- A --- ")
+        }
+        console.log("StackView " + this.node().title() + " syncFromNavSelection")
         const itemView = this.navView().itemSetView().selectedRow()
         if (itemView && itemView.nodeRowLink()) {
-            const ov = this.stackViewForNode(itemView.nodeRowLink())
-            if (ov !== this.otherView()) {
+            const oNode = itemView.nodeRowLink()
+            const ovc = this.otherViewContent()
+            if (!ovc || (ovc.node() !== oNode)) {
+                const ov = this.stackViewForNode(oNode)
                 this.setOtherViewContent(ov)
                 this.updateCompaction()
                 this.tellParentViews("updateCompaction")

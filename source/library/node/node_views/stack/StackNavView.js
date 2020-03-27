@@ -93,7 +93,7 @@ window.StackNavView = class StackNavView extends NodeView {
 
     syncFromNode () {
         this.syncOrientation()
-        this.itemSetView().syncFromNode()
+        //this.itemSetView().syncFromNode()
         return this
     }
 

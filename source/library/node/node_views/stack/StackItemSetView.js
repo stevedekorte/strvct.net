@@ -91,12 +91,11 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     syncFromNode () {
         this.syncOrientation()
-        super.syncFromNode()
+        super.syncFromNode() 
         return this
     }
 
     subviewProtoForSubnode (aSubnode) {
-        /*
         let proto = aSubnode.nodeRowViewClass()
 		
         if (!proto) {
@@ -104,8 +103,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         }
 				
         return proto      
-        */
-        return StackItemView      
+        
+        //return StackItemView      
     }
 
     /*
@@ -179,8 +178,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     // selection
 	
-    didChangeIsSelected () {
-        super.didChangeIsSelected()
+    didUpdateSlotIsSelected (oldValue, newValue) {
+        super.didUpdateSlotIsSelected(oldValue, newValue)
 
         if (this.isSelected()) {
             const focusedView = WebBrowserWindow.shared().activeDomView()
@@ -223,15 +222,47 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     rowWithNode (aNode) {
         return this.rows().detect(row => row.node() === aNode)
     }
+
+    // --- row tapping ---
+
+    didTapItem (anItem) {
+        anItem.select()
+        anItem.focus()
+        this.unselectAllRowsExcept(anItem)
+        this.didChangeNavSelection() // this may already have been sent
+    }
     
-    didClickRowWithNode (aNode) {
-        const row = this.rowWithNode(aNode)
-        if (!row) {
-            throw new Error("column  missing row for node '" + aNode.title() + "'")
+    didShiftTapItem (anItem) {
+        let lastItem = this.lastSelectedRow()
+
+        if (!lastItem) {
+            lastItem = this.rows().first()
         }
-        this.didClickRow(row)
+
+        if (lastItem) {
+            const r1 = this.indexOfRow(anItem)
+            const r2 = this.indexOfRow(lastItem)
+            assert(r1 !== -1 && r2 !== -1)
+            const i1 = Math.min(r1, r2)
+            const i2 = Math.max(r1, r2)
+            for (let i = i1; i <= i2; i++) {
+                const item = this.rowAtIndex(i)
+                if (!item.isSelected()) {
+                    item.select()
+                }
+            }
+        }
+
         return this
     }
+
+    didMetaTapItem (anItem) {
+        anItem.toggleSelection()
+    }
+
+    // ------------------
+    
+    // --- ---
     
     unselectAllRowsExcept (selectedRow) {
         const rows = this.rows()
@@ -249,18 +280,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         
         return this
     }
-    
-    onRequestSelectionOfRow (aRow) {
-        this.didClickRow(aRow)
-        return true
-    }
-    
-    didClickRow (clickedRow) {
-        clickedRow.focus()
-        this.unselectAllRowsExcept(clickedRow)
-        this.selectThisColumn()
-        return true
-    }
+
+    // -----------------------------------------
 
     indexOfRow (aRow) {
         // we might want this to be based on flex view order instead, 
@@ -272,50 +293,21 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         return this.subviews().at(anIndex)
     }
 
-    requestShiftSelectRow (aRow) {
-        let lastRow = this.lastSelectedRow()
-        if (!lastRow) {
-            lastRow = this.rows().first()
-        }
-        if (lastRow) {
-            const r1 = this.indexOfRow(aRow)
-            const r2 = this.indexOfRow(lastRow)
-            assert(r1 !== -1 && r2 !== -1)
-            const i1 = r1 < r2 ? r1 : r2
-            const i2 = r1 < r2 ? r2 : r1 
-            for (let i = i1; i <= i2; i++) {
-                const row = this.rowAtIndex(i)
-                if (!row.isSelected()) {
-                    row.select()
-                }
-            }
-        }
-    }
-
     lastSelectedRow () {
         return this.selectedRows().maxItem(row => row.lastSelectionDate().getTime())
     }
 
+    /*
     didSelectRow (aRow) {
-        this.selectThisColumn()
+        this.didChangeNavSelection()
     }
 
     didUnselectRow (aRow) {
-
-    }
-
-    selectThisColumn () {
         this.didChangeNavSelection()
-        /*
-        if (Type.isNull(this.browser())) {
-            this.debugLog(" selectThisColumn WARNING: this.browser() === null" )
-            // TODO: find out why this happens
-            return this
-        }
-        this.browser().selectColumn(this)
-        */
-        return this
+
     }
+    */
+
   
     // selection
 
@@ -362,8 +354,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             const rows = this.rows()
             if (index >= 0 && index < rows.length) {
                 const row = rows[index]
-                row.select()
-                this.didClickRow(row)
+                this.didTapItem(row)
             }
         }
         return this
@@ -445,8 +436,6 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         }
 
 	    const subnode = aNote.info()
-
-        //console.log(this.debugTypeId() + " shouldFocusAndExpandSubnode " + subnode.debugTypeId())
 	    let subview = this.subviewForNode(subnode)
 	    
         if (!subview) {
@@ -457,8 +446,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         if (subview) {
             this.selectRowWithNode(subnode)
             subview.scrollIntoView()
-            subview.requestSelection()
-            this.didChangeNavSelection()
+            subview.justTap()
+            //this.didChangeNavSelection()
 		    //subview.dynamicScrollIntoView()
         } else {
             console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())
@@ -482,13 +471,13 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             subview.scrollIntoView()
 
             // just focus the row without expanding it
+            /*
             if (this.previousColumn()) {
-                this.previousColumn().selectThisColumn()
+                this.previousColumn().didChangeNavSelection()
             }
+            */
 
             this.didChangeNavSelection()
-
-            //this.selectThisColumn()
 		    //subview.dynamicScrollIntoView()
         } else {
             console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId())
@@ -640,7 +629,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             if (newNode) {
                 this.syncFromNode()
                 const newSubview = this.subviewForNode(newNode)
-                newSubview.requestSelection()
+                newSubview.justTap()
             }
         }
     }
@@ -727,19 +716,21 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 			
             const newSelectedRow = pc.selectedRow()
             newSelectedRow.setShouldShowFlash(true).updateSubviews()
-            pc.didClickRow(newSelectedRow)
+            pc.didTapItem(newSelectedRow)
         	this.selectPreviousColumn()
         }
         return this
     }
 
     moveRight () {
+        /*
         if (this.nextColumn() && this.nextColumn().rows().length > 0) {
         	this.selectNextColumn()
         } else {
-            this.selectNextColumn()
+            //this.selectNextColumn()
         }
-
+        */
+        this.selectNextColumn()
         return this
     }
 	

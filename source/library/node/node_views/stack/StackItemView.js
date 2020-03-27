@@ -90,7 +90,7 @@ window.StackItemView = class StackItemView extends NodeView {
     }
 
     onTapComplete (aGesture) {
-        this.tellParentViews("didSelectItem", this)
+        this.column().didSelectItem(this)
         this.select()
     }
 

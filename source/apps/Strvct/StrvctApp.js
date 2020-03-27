@@ -33,6 +33,7 @@ window.StrvctApp = class StrvctApp extends App {
     } 
 
     setup () {
+        this.setupTheme()
         const v = StackView.clone().setDirection("down")
         this.setStackView(v)
         v.setNode(this)

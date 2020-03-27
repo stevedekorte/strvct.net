@@ -293,28 +293,18 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
     */
 
+   didUpdateSlotIsSelected (oldValue, newValue) {
+        super.didUpdateSlotIsSelected (oldValue, newValue)
 
-    didChangeIsSelected () {
-        super.didChangeIsSelected()
-        this.itemSetView().didChangeNavSelection()
-    }
-    
-    select () {
-        if (!this.isSelected()) {
+        if (this.isSelected()) {
+            this.setLastSelectionDate(Date.clone())
+        } else {
             this.setShouldShowFlash(true)
+            this.setLastSelectionDate(null)
         }
-        super.select()
-        this.setLastSelectionDate(Date.clone())
 
-        this.itemSetView().didSelectRow(this)
-        return this
-    }
-
-    unselect () {
-        const didChange = this.isSelected()
-        super.unselect()
-        this.setLastSelectionDate(null)
-        return this
+        this.itemSetView().didChangeNavSelection()
+        this.updateSubviews()
     }
     
     // update
@@ -514,6 +504,9 @@ window.BrowserRow = class BrowserRow extends NodeView {
     delete () {
         //console.log("delete")
         if (this.canDelete()) {
+            this.node().delete()
+
+            /*
             this.passFirstResponderToColumn()
             this.setOpacity(0)
             //this.setRightPx(-this.clientWidth())
@@ -529,6 +522,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
             setTimeout(() => {
                 this.node().performAction("delete")
             }, 240)
+            */
         }
     }
 
@@ -551,35 +545,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return false
     }
 
-    // -- tap gesture ---
-
-    justMetaTap () {
-        this.toggleSelection()
-    }
-
-    justShiftTap () {
-        this.column().requestShiftSelectRow(this)
-    }
-
-    justTap () {
-        //console.log(this.debugTypeId() + " justTap")
-        if (this.isSelectable()) {
-            //this.debugLog(".requestSelection()")
-            this.justRequestSelection()
-
-            const node = this.node()
-            if (node) {
-                node.onTapOfNode()
-            }
-
-            if (this.isFocused() && node.nodeUrlLink) {
-                if (!BMKeyboard.shared().hasKeysDown()) {
-                    const url = node.nodeUrlLink()
-                    window.open(url, "_blank")
-                }
-            }
-        }
-    }
+    // --- tap gesture -------- 
 
     acceptsTapBegin (aGesture) {
         return true
@@ -593,30 +559,77 @@ window.BrowserRow = class BrowserRow extends NodeView {
         //console.log(this.debugTypeId() + " onTapComplete")
         this.setLastTapDate(new Date())
         const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
-        const hasThreeFingersDown = aGesture.numberOfFingersDown() === 3;
-        const isAltTap = keyModifiers.contains("Alternate");
+        ///const hasThreeFingersDown = aGesture.numberOfFingersDown() === 3;
+        //const isAltTap = keyModifiers.contains("Alternate");
     
-        if (keyModifiers.length) {
+        //if (keyModifiers.length) {
             const methodName = "just" + keyModifiers.join("") + "Tap"
             this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
                 this[methodName].apply(this)
-                this.unselectNextColumnRows()
                 return this
             }
-        } 
+        //} 
         
+        /*
         if (hasThreeFingersDown || isAltTap) {
             this.justInspect()
         } else {
             this.setIsInspecting(false)
             this.justTap()
-            this.unselectNextColumnRows()
         }
+        */
 
         return this
     }
 
+    // -- just taps ---
+
+    justTap () {
+        this.setIsInspecting(false)
+        this.column().didTapItem(this)
+
+        //console.log(this.debugTypeId() + " justTap")
+        if (this.isSelectable()) {
+            //this.select()
+
+            const node = this.node()
+            if (node) {
+                node.onTapOfNode()
+                node.onRequestSelectionOfNode(this)
+            }
+
+            if (this.isFocused() && node.nodeUrlLink) {
+                if (!BMKeyboard.shared().hasKeysDown()) {
+                    const url = node.nodeUrlLink()
+                    window.open(url, "_blank")
+                }
+            }
+        }
+    }
+
+    justShiftTap () {
+        this.setIsInspecting(false)
+        this.column().didShiftTapItem(this)
+    }
+
+    justAlternateTap () {
+        this.debugLog(".justInspect()")
+        if (this.node().nodeCanInspect()) { 
+            this.setIsInspecting(true)
+            this.column().didTapItem(this)
+        }
+    }
+
+    justMetaTap () {
+        this.setIsInspecting(false)
+        this.toggleSelection()
+    }
+
+    
+    // -------------------
+
+    /*
     unselectNextColumnRows() {
         const c = this.column().nextColumn()
         if (c) {
@@ -624,6 +637,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         }
         return this
     }
+    */
 
     // --- keyboard controls ---
 
@@ -676,18 +690,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return true
     }
     */
-
-    // ---
-    
-    justInspect (event) {
-        this.debugLog(".justInspect()")
-        if (this.node().nodeCanInspect()) { 
-            this.setIsInspecting(true)
-            //this.scheduleSyncToNode()
-            //this.select()
-            this.justTap()
-        }
-    }
 
     // -- slide gesture ---
 
@@ -879,54 +881,14 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     // --- selecting ---
-    
-    requestSelection () {
-        //console.log(this.debugTypeId() + " requestSelection")
-
-        // NOTE: creatorNode doesn't work if we do this check - why?
-        if (!this.isSelected()) {
-            this.justRequestSelection()
-        }
-
-        return this
-    }
-
-    justRequestSelection () {
-        this.select()
-        //this.debugLog(" tellParentViews didClickRow")
-        //this.tellParentViews("didClickRow", this)
-        this.tellParentViews("onRequestSelectionOfRow", this)
-        //this.tellParentViews("didSelectItem", this)
-
-        const node = this.node()
-        if (node) {
-            node.onRequestSelectionOfNode(this)
-        }
-
-        return this      
-    }
 	
     willAcceptFirstResponder () {
         super.willAcceptFirstResponder()
 	    //this.debugLog(".willAcceptFirstResponder()")
-        //this.requestSelection()
         return this
     }
 
     // -------------------------
-
-    didChangeIsSelected () {
-        super.didChangeIsSelected()
-        /*
-        if (this.isSelected()) {
-            this.setOpacity(1)
-        } else {
-            this.setOpacity(0.25)
-        }
-        */
-        this.updateSubviews()
-        return this
-    }
     
     nodeRowLink () {
         //this.debugLog(".visibleSubnodes() isInspecting:" + this.isInspecting())
@@ -998,6 +960,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
     onDragDestinationExit (dragView) {
         this.cancelDropHoverTimeout()
+        //this.unselect()
+        //this.column().unselectAllRowsExcept(anItem)
     }
 
     // --- dropping on row - usefull for LinkNode? ---
@@ -1050,7 +1014,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     dropHoverDidTimeout () {
-        this.requestSelection()
+        this.justTap()
     }
 
     // Browser style drag
@@ -1076,7 +1040,6 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // focus
 
     onFocusIn () {
-        //this.requestSelection()
         return super.onFocusIn()
     }
 

@@ -1,6 +1,33 @@
 
 TODO:	
 
+	Row
+	justTap
+	justRequestSelection
+	ItemSet onRequestSelectionOfRow
+	
+	StackView (when messages needed from StackItemSetView)
+	- didChangeSelection
+	- did add/remove node - handled by post from node 
+	
+	stackView.scheduleSyncWithNav()
+
+	when deleting folder, column to right isn't emptied (maybe only on deep path?)
+
+	support for HashCommand on stacks?
+	- StackBrowser?
+	
+	change Row select semantics
+	
+	on tap send these to ItemSetView
+		didTapItem
+		didShiftTapItem
+		didCommandTapItem
+		
+	let ItemSetView control selection?
+	
+	select() and unselect() only side effects are changing isSelected and style
+	
 
     didChangeIsSelected () {
         super.didChangeIsSelected()
@@ -19,7 +46,6 @@ TODO:
 	- measure width and height of container view
 	- then walk forward, collapsing views until they fit withing container
 	
-	when deleting folder, column to right isn't emptied (maybe only on deep path?)
 
 	add a TextField completedEditingNote so row can regain focus?
 	

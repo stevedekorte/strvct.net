@@ -79,23 +79,9 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     }
 
     // select
-	
-    setIsSelected (aBool) {
-        if (aBool !== this._isSelected) {
-	    	this._isSelected = aBool
-	    	this.didChangeIsSelected()
-        }
-        console.log(this.typeId() + " setIsSelected(" + aBool + ")")
-	    return this
-    }
 
     didUpdateSlotIsSelected (oldValue, newValue) {
         // sent by hooked setter
-        this.didChangeIsSelected()
-        return this
-    }
-
-    didChangeIsSelected () {
         this.applyStyles()
         return this
     }
@@ -115,7 +101,9 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     }
 
     unselect () {
-        this.setIsSelected(false)
+        if (this.isSelected()) { // for debugging 
+            this.setIsSelected(false)
+        }
         return this
     }
 
