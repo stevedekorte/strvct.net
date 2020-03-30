@@ -1178,7 +1178,7 @@ window.BMNode = class BMNode extends ProtoClass {
 
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
-            oldValue.removeMutationObserver()
+            oldValue.removeMutationObserver(this)
         }
 
         this.watchSubnodes()

@@ -1370,23 +1370,36 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         // ---
 
+
+        /*
         dragView.items().forEach(sv => {
             sv.hideForDrag()
         })
+        */
 
         // ---
         const subview = dragView.item()
         const index = this.indexOfSubview(subview)
         assert(index !== -1)
 
+        if (dragView.isMoveOp()) {
+            dragView.items().forEach(sv => this.removeSubview(sv))
+        } else if (dragView.isCopyOp()) {
+
+        }
+
         this.rows().forEach(row => row.setTransition("all 0.3s"))
 
         this.newRowPlaceHolder(dragView)
 
+        /*
         if (dragView.isMoveOp()) {
             subview.hideForDrag()
             this.moveSubviewToIndex(this.rowPlaceHolder(), index)
         }
+        */
+
+        this.moveSubviewToIndex(this.rowPlaceHolder(), index)
 
         this.stackView().cache() // only needed for source column, since we might navigate while dragging
 
@@ -1396,9 +1409,11 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     onDragSourceCancelled (dragView) {
+        /*
         dragView.items().forEach(subview => {
             subview.unhideForDrag()
         })
+        */
         this.removeRowPlaceHolder()
     }
 
@@ -1408,36 +1423,73 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     onDragSourceHover (dragView) {
         this.onDragDestinationHover(dragView)
+        this.indexOfRowPlaceHolder()
     }
 
     onDragSourceExit (dragView) {
         this.onDragDestinationHover(dragView)
     }
 
+    indexOfRowPlaceHolder () {
+        const orderedRows = this.rows().shallowCopy().sortPerform("topPx") 
+        console.log("order: ", orderedRows.map(r => {
+            if (r.node) {
+                return r.node().title() + "-" + r.display()
+            }
+            return r.type() 
+        }).join(", "))
+        const insertIndex = orderedRows.indexOf(this.rowPlaceHolder()) 
+        console.log("hover insertIndex: ", insertIndex)
+        return insertIndex
+    }
+
     onDragSourceDropped (dragView) {
-        const node = this.node()
-        const movedNodes = dragView.items().map(item => item.node())
+        const insertIndex = this.indexOfRowPlaceHolder()
+
+        let movedNodes = dragView.items().map(item => item.node())
+        if (dragView.isMoveOp()) {
+        } else if (dragView.isCopyOp()) {
+             movedNodes = movedNodes.map(aNode => aNode.duplicate())
+        } else {
+            throw new Error("unhandled drag operation")
+        }
 
         this.unstackRows()
-        const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
         this.removeRowPlaceHolder()
 
-        dragView.items().forEach(item => {
-            item.unhideForDrag()
-        })
-
-        if (dragView.isMoveOp()) {
-            node.moveSubnodesToIndex(movedNodes, insertIndex)
-        } else if (dragView.isCopyOp()) {
-            const dupMovedNodes = dragView.items().map(item => item.duplicate())
-            node.moveSubnodesToIndex(dupMovedNodes, insertIndex)
-        }
+        const newSubnodesOrder = this.subviews().map(sv => sv.node())
+        newSubnodesOrder.atInsertItems(insertIndex, movedNodes)
+        this.node().setSubnodes(newSubnodesOrder)
 
         //console.log("new order: " + this.node().subnodes().map(sn => sn.title()).join("-"))
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
-
         this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
+    }
+
+
+    onDragDestinationDropped (dragView) {
+        const insertIndex = this.indexOfRowPlaceHolder()
+
+        let movedNodes = dragView.items().map(item => item.node())
+        if (dragView.isMoveOp()) {
+        } else if (dragView.isCopyOp()) {
+             movedNodes = movedNodes.map(aNode => aNode.duplicate())
+        } else {
+            throw new Error("unhandled drag operation")
+        }
+
+        this.unstackRows()
+        this.removeRowPlaceHolder()
+
+        const newSubnodesOrder = this.subviews().map(sv => sv.node())
+        newSubnodesOrder.atInsertItems(insertIndex, movedNodes)
+        this.node().setSubnodes(newSubnodesOrder)
+
+        this.setHasPausedSync(false)
+        this.syncFromNodeNow()
+        this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
+        //this.endDropMode() // we already unstacked the rows
     }
 
     onDragSourceEnd (dragView) {
@@ -1471,22 +1523,31 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         if (!this.rowPlaceHolder()) {
             const ph = DomView.clone().setDivClassName("BrowserRowPlaceHolder")
             ph.setBackgroundColor("black")
-            if (this.isVertical()) {
-                ph.setMinAndMaxWidth(this.computedWidth())
-                ph.setMinAndMaxHeight(dragView.minHeight())
-                ph.transitions().at("top").updateDuration(0)
-                ph.transitions().at("left").updateDuration(0.3)
-            } else {
-                ph.setMinAndMaxWidth(dragView.minWidth())
-                ph.setMinAndMaxHeight(this.computedHeight())
-                ph.transitions().at("top").updateDuration(0.3)
-                ph.transitions().at("left").updateDuration(0)
-            }
+
             //ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
             this.addSubview(ph)
             this.setRowPlaceHolder(ph)
+            this.syncRowPlaceHolderSize(dragView)
         }
         return this.rowPlaceHolder()
+    }
+
+    syncRowPlaceHolderSize (dragView) {
+        const ph = this.rowPlaceHolder()
+
+        if (this.isVertical()) {
+            ph.setMinAndMaxWidth(this.computedWidth())
+            ph.setMinAndMaxHeight(dragView.minHeight())
+            ph.transitions().at("top").updateDuration(0)
+            ph.transitions().at("left").updateDuration(0.3)
+        } else {
+            ph.setMinAndMaxWidth(dragView.minWidth())
+            ph.setMinAndMaxHeight(this.computedHeight())
+            ph.transitions().at("top").updateDuration(0.3)
+            ph.transitions().at("left").updateDuration(0)
+        }
+
+        return this
     }
 
     // --- drag destination ---
@@ -1506,6 +1567,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         // move place holder view
         const ph = this.rowPlaceHolder()
         if (ph) {
+            this.syncRowPlaceHolderSize(dragView)
             const vp = this.viewPosForWindowPos(dragView.dropPoint())
             if (this.isVertical()) {
                 const h = dragView.computedHeight()
@@ -1537,34 +1599,6 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         return this.rowPlaceHolder().frameInDocument()
     }
 
-    onDragDestinationDropped (dragView) {
-        this.unstackRows()
-
-       const itemViews = dragView.items()
-       const movedNodes = dragView.items().map(item => item.node())
-       const insertIndex = this.indexOfSubview(this.rowPlaceHolder())
-       this.removeRowPlaceHolder()
-
-       if (dragView.isMoveOp()) {
-            itemViews.reversed().forEach(itemView => {
-                if(itemView.onDragRequestRemove && itemView.onDragRequestRemove()) {
-                    this.node().addSubnodeAt(itemView.node(), insertIndex)
-                }
-            })
-        } else if (dragView.isCopyOp()) {
-            itemViews.reversed().forEach(itemView => {
-                const dupNode = itemView.node().duplicate()
-                this.node().addSubnodeAt(dupNode, insertIndex)
-            })
-        } else {
-            throw new Error("unhandled drag operation")
-        }
-
-        this.setHasPausedSync(false)
-        this.syncFromNodeNow()
-        this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
-        //this.endDropMode() // we already unstacked the rows
-    }
 
     removeRowPlaceHolder () {
         this.debugLog("removeRowPlaceHolder")

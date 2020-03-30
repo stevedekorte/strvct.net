@@ -236,6 +236,15 @@ Object.defineSlots(Array.prototype, {
         return this
     },
 
+    atInsertItems: function (i, items) {
+        let n = i
+        items.forEach(item => {
+            this.atInsert(n, item) 
+            n ++
+        })
+        return this
+    },
+
     append: function () {
         this.appendItems.call(this, arguments);
         return this;

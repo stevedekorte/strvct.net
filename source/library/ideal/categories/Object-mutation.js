@@ -28,6 +28,7 @@ Object.defineSlots(Object.prototype, {
     },
 
     removeMutationObserver: function(anObserver) {
+        assert(anObserver)
         this.mutationObservers().delete(anObserver)
         return this
     },

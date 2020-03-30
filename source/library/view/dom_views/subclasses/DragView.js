@@ -187,6 +187,7 @@ window.DragView = class DragView extends DomStyledView {
             sv.setTop(null)
             sv.setLeft(null)
             sv.setBorder(null)
+            sv.setFloat("left")
             /*
             sv.decrementFixedWidth()
             sv.decrementFixedHeight()
@@ -199,10 +200,15 @@ window.DragView = class DragView extends DomStyledView {
         })
         
         this.setDisplay("block")
-        this.setWhiteSpace("pre-wrap")
+        this.setWhiteSpace("normal")
         this.setOverflow("hidden")
         this.setWidth(null)
         this.setHeight(null)
+
+        this.setWidth("fit-content")
+        this.setHeight("fit-content")
+        this.setMinAndMaxWidth(null)
+        this.setMinAndMaxHeight(null)
         /*
         let maxWidth = this.items().map(v => v.frameInDocument().width()).maxValue()
         let minX = this.items().map(v => v.frameInDocument().left()).minValue()
