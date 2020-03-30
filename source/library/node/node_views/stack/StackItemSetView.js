@@ -22,9 +22,9 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         super.init()
         this.setDisplay("block")
         this.setPosition("relative")
-        this.setFlexBasis("fit-content")
-        this.setFlexGrow(0)
-        this.setFlexShrink(0)
+        //this.setFlexBasis("fit-content")
+        //this.setFlexGrow(0)
+        //this.setFlexShrink(0)
         this.makeOrientationRight()
 
         this.setOverflow("hidden")
@@ -49,6 +49,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         this.setIsRegisteredForBrowserDrop(true)
         
+        //this.setBorder("1px dashed red")
 
         return this
     }
@@ -61,10 +62,9 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     syncOrientation () {
-        const d = this.stackView().direction()
-        if (d === "right") {
+        if (this.isVertical()) {
             this.makeOrientationRight()
-        } else if (d === "down") {
+        } else {
             this.makeOrientationDown() 
         }
         return this
@@ -74,7 +74,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         //this.setFlexDirection("column")
         this.setMinAndMaxWidth("100%")
         this.setMinHeight("100%")
-        this.setMaxHeight("fit-content")
+        //this.setMaxHeight("fit-content")
         //this.setFlexBasis("300px")
         //this.setMinAndMaxWidth("300px")
         //this.setMinAndMaxHeight(null)
@@ -82,7 +82,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     makeOrientationDown () {
         //this.setFlexDirection("row")
-        this.setMinAndMaxWidth("fit-content")
+        //this.setMinAndMaxWidth("fit-content")
+        this.setMinAndMaxWidth("100%")
         this.setMinAndMaxHeight("100%")
         //this.setMinAndMaxWidth(null)
         //this.setMinAndMaxHeight("50px")   
@@ -281,6 +282,21 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         return this
     }
 
+    unselectAllRowsExceptRows (rowsToSelect) {
+        const rows = this.rows()
+
+        // unselect all other rows
+        rows.forEach((row) => {
+            if (rowsToSelect.contains(row)) {
+                row.performIfResponding("select") 
+            } else {
+                row.performIfResponding("unselect") 
+            }
+        })
+        
+        return this
+    }
+
     // -----------------------------------------
 
     indexOfRow (aRow) {
@@ -365,12 +381,12 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     selectAllRows () {
-        this.rows().forEachRespondingPerform("select")
+        this.rows().forEachPerformIfResponds("select")
         return this
     }
 
     unselectAllRows () {
-        this.rows().forEachRespondingPerform("unselect")
+        this.rows().forEachPerformIfResponds("unselect")
         return this
     }
 
@@ -472,8 +488,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
             // just focus the row without expanding it
             /*
-            if (this.previousColumn()) {
-                this.previousColumn().didChangeNavSelection()
+            if (this.previousItemSet()) {
+                this.previousItemSet().didChangeNavSelection()
             }
             */
 
@@ -654,7 +670,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     isInspecting () {
         // see if the row that selected this column is being inspected
-        const prev = this.previousColumn() 
+        const prev = this.previousItemSet() 
         if (prev) {
             const row = prev.selectedRow()
             if (row) {
@@ -708,7 +724,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     moveLeft () {
-        const pc = this.previousColumn()	
+        const pc = this.previousItemSet()	
         if (pc) {
             if (this.selectedRow()) { 
                 this.selectedRow().unselect() 
@@ -932,18 +948,19 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     
     // previous column
 	
-    previousColumn () {
-        if(!this.browser()) {
-            return null
+    previousItemSet () {
+        if(this.stackView()) {
+            const ps = this.stackView().previousStackView()
+            if (ps) {
+                return ps.itemSetView()
+            }
         }
-        const i = this.columnIndex()
-        const previousColumn = this.browser().columns()[i - 1]
-        return previousColumn
+        return null
     }
 
     selectPreviousColumn () {
         //this.log("selectPreviousColumn this.columnIndex() = " + this.columnIndex())
-        const prevColumn = this.previousColumn()
+        const prevColumn = this.previousItemSet()
         if (prevColumn) {
             this.blur()
             prevColumn.focus()
@@ -1034,54 +1051,155 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     // -- stacking rows ---
 
+    /*
+    Row methods:
+
+    makeAbsolutePositionAndSize () {
+        const f = this.frameInParentView()
+        this.setFrameInParent(f)
+        return this 
+    }
+
+    makeRelativePositionAndSize () {
+        this.setPosition("relative")
+
+        this.setTopPx(null)
+        this.setLeftPx(null)
+        this.setRightPx(null)
+        this.setBottomPx(null)
+
+        this.setMinAndMaxWidth(null)
+        this.setMinAndMaxHeight(null)  
+        return this 
+    }
+
+    flexDirectionLength () {
+        const fd = this.parentView().flexDirection() 
+        // row is left to right
+        if (Type.isNull(fd)) {
+            fd = "row"
+        }
+        assert(fd)
+        const wfunc = () => { return this.computedWidth() }
+        const hfunc = () => { return this.computedHeight() }
+        const d = {
+            "row" : () => hfunc,
+            "row-reverse" : hfunc,
+            "column" : () => wfunc,
+            "column-reverse" : wfunc,
+        }
+        return d[fd]()
+    }
+
+    flexDirectionBreadth () {
+        const fd = this.parentView().flexDirection()
+        if (fd)
+        assert(fd)
+        const wfunc = () => { return this.computedWidth() }
+        const hfunc = () => { return this.computedHeight() }
+        const d = {
+            "row" : wfunc,
+            "row-reverse" : wfunc,
+            "column" : () => hfunc,
+            "column-reverse" : hfunc,
+        }
+        return d[fd]()
+    }
+    flexDirectionStartPosition
+
+    */
+
+    // --------------
+
+    isVertical () {
+        return this.stackView().direction() === "right"
+    }
+
     stackRows () {
+        if (this.isVertical()) {
+            this.stackRowsVertically()
+        } else {
+            this.stackRowsHorizontally()
+        }
+        return this
+    }
+
+    unstackRows () {
+        if (this.isVertical()) {
+            this.unstackRowsVertically()
+        } else {
+            this.unstackRowsHorizontally()
+        }
+        return this
+    }
+
+    // --------------
+
+    stackRowsVertically () {
         // we don't need to order rows for 1st call of stackRows, 
         // but we do when calling stackRows while moving a drop view around,
         // so just always do it as top is null, and rows are already ordered the 1st time
 
         const orderedRows = this.rows().shallowCopy().sortPerform("topPx") 
+        const displayedRows = orderedRows.filter(r => !r.isDisplayHidden())
         let y = 0
-        const columnWidth =  this.computedWidth()
         
-        orderedRows.forEach((row) => {
-            let h = 0
-
-            if (row.visibility() === "hidden" || row.display() === "none") {
-                row.hideDisplay()
-            } else {
-                h = row.computedHeight() //row.clientHeight() 
-                row.unhideDisplay()
-                row.setPosition("absolute")
-                row.setMinAndMaxWidth(columnWidth)
-                row.setMinAndMaxHeight(h)                
+        displayedRows.forEach((row) => {
+            let h = row.computedHeight() 
+            if (row.position() !== "absolute") {
+                row.makeAbsolutePositionAndSize()
+                row.setLeftPx(0)
+                row.setOrder(null)
             }
-
-            //console.log("y:", y + " h:", h)
             row.setTopPx(y)
-            row.setOrder(null)
             y += h
         })
 
         return this
     }
 
-    unstackRows () {
-        // should we calc a new subview ordering based on sorting by top values?
+    unstackRowsVertically  () {
         const orderedRows = this.rows().shallowCopy().sortPerform("topPx")
+        orderedRows.forEachPerform("makeRelativePositionAndSize")
+        this.removeAllSubviews()
+        this.addSubviews(orderedRows)
+        return this
+    }
 
-        this.rows().forEach((row) => {
-            row.unhideDisplay()
-            row.setPosition("relative")
+    // --------------
 
-            row.setTopPx(null)
-            row.setLeftPx(null)
-            row.setRightPx(null)
-            row.setBottomPx(null)
+    stackRowsHorizontally () {
+        const orderedRows = this.rows().shallowCopy().sortPerform("leftPx") 
+        const displayedRows = orderedRows.filter(r => !r.isDisplayHidden())
+        let x = 0
 
-            row.setMinAndMaxWidth(null)
-            row.setMinAndMaxHeight(null)                
+        /*
+        let names = []
+        this.rows().forEach((row) => { 
+            if (row.node) { 
+                names.push(row.node().title() + " " + row.leftPx() + "px")
+            }
+        })
+        console.log("horizontal: ", names.join(", "))
+        */
+        
+        displayedRows.forEach((row) => {
+            let w = row.computedWidth() 
+            if (row.position() !== "absolute") {
+                row.makeAbsolutePositionAndSize()
+                row.setTopPx(0)
+                row.setOrder(null)
+            }
+            row.setLeftPx(x)
+            x += w
         })
 
+        return this
+    }
+
+    unstackRowsHorizontally () {
+        const orderedRows = this.rows().shallowCopy().sortPerform("leftPx")
+        orderedRows.forEachPerform("makeRelativePositionAndSize")
         this.removeAllSubviews()
         this.addSubviews(orderedRows)
         return this
@@ -1252,8 +1370,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         // ---
 
-        dragView.items().forEach(subview => {
-            subview.hideForDrag()
+        dragView.items().forEach(sv => {
+            sv.hideForDrag()
         })
 
         // ---
@@ -1318,7 +1436,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         //console.log("new order: " + this.node().subnodes().map(sn => sn.title()).join("-"))
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
-        this.rowsWithNodes(movedNodes).forEach(row => row.select())
+
+        this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
     }
 
     onDragSourceEnd (dragView) {
@@ -1352,10 +1471,17 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         if (!this.rowPlaceHolder()) {
             const ph = DomView.clone().setDivClassName("BrowserRowPlaceHolder")
             ph.setBackgroundColor("black")
-            ph.setMinAndMaxWidth(this.computedWidth())
-            ph.setMinAndMaxHeight(dragView.minHeight())
-            ph.transitions().at("top").updateDuration(0)
-            ph.transitions().at("left").updateDuration(0.3)
+            if (this.isVertical()) {
+                ph.setMinAndMaxWidth(this.computedWidth())
+                ph.setMinAndMaxHeight(dragView.minHeight())
+                ph.transitions().at("top").updateDuration(0)
+                ph.transitions().at("left").updateDuration(0.3)
+            } else {
+                ph.setMinAndMaxWidth(dragView.minWidth())
+                ph.setMinAndMaxHeight(this.computedHeight())
+                ph.transitions().at("top").updateDuration(0.3)
+                ph.transitions().at("left").updateDuration(0)
+            }
             //ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
             this.addSubview(ph)
             this.setRowPlaceHolder(ph)
@@ -1381,8 +1507,15 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         const ph = this.rowPlaceHolder()
         if (ph) {
             const vp = this.viewPosForWindowPos(dragView.dropPoint())
-            const y = vp.y() - dragView.computedHeight()/2
-            ph.setTopPx(vp.y() - dragView.computedHeight()/2)
+            if (this.isVertical()) {
+                const h = dragView.computedHeight()
+                //const y = vp.y() - h/2
+                ph.setTopPx(vp.y() - h/2)
+            } else {
+                const w = dragView.computedWidth()
+                //const y = vp.y() - h/2
+                ph.setLeftPx(vp.x() - w/2)
+            }
             //console.log("ph.top() = ", ph.top())
             this.stackRows() // need to use this so we can animate the row movements
         }
@@ -1429,7 +1562,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
-        this.rowsWithNodes(movedNodes).forEach(row => row.select())
+        this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
         //this.endDropMode() // we already unstacked the rows
     }
 
@@ -1461,7 +1594,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     endDropMode () {
         this.debugLog("endDropMode")
-        this.unstackRows()
+        //this.unstackRows()
         this.removeRowPlaceHolder()
         this.unstackRows()
         this.setHasPausedSync(false)

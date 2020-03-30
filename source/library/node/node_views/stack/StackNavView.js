@@ -15,7 +15,7 @@ window.StackNavView = class StackNavView extends NodeView {
         this.newSlot("isCollapsed", false)
         this.newSlot("animatesCollapse", true)
         //this.newSlot("targetWidth", 200)
-        this.newSlot("targetHeight", 50)
+        this.newSlot("targetHeight", 64)
     }
 
     targetWidth () {
@@ -57,11 +57,14 @@ window.StackNavView = class StackNavView extends NodeView {
         return this
     }
 
+    isVertical () {
+        return this.stackView().direction() === "right"
+    }
+
     syncOrientation () {
-        const d = this.stackView().direction()
-        if (d === "right") {
+        if (this.isVertical()) {
             this.makeOrientationRight()
-        } else if (d === "down") {
+        } else {
             this.makeOrientationDown() 
         }
         return this

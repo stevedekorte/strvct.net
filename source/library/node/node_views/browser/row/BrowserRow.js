@@ -910,11 +910,13 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // --- dragging source protocol ---
 
     hideForDrag () {
-        this.setVisibility("hidden")
+        //this.setVisibility("hidden")
+        this.hideDisplay()
     }
 
     unhideForDrag () {
-        this.setVisibility("visible")
+        //this.setVisibility("visible")
+        this.unhideDisplay()
     }
 
     /*

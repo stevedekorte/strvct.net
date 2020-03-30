@@ -386,7 +386,7 @@ Object.defineSlots(Array.prototype, {
     },
     */
 
-    forEachRespondingPerform: function (methodName, arg1, arg2, arg3) {
+    forEachPerformIfResponds: function (methodName, arg1, arg2, arg3) {
         this.forEach((item) => {
             if (item) {
                 const f = item[methodName]

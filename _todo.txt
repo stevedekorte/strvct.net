@@ -1,6 +1,8 @@
 
 TODO:	
 
+	update stackRows to work in horizontal orientation
+
 	Row
 	justTap
 	justRequestSelection

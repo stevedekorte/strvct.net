@@ -287,6 +287,24 @@ const prototypeSlots = {
     },
 
     // -------------------
+
+    perform: function(methodName, arg1, arg2, arg3) {
+        const f = this[methodName]
+        if (f) {
+            return f.call(this, arg1, arg2, arg3)
+        }
+        throw new Error(this.typeId() + " does not repsond to '" + methodName + "'")
+    },
+
+    performIfResponding: function(methodName, arg1, arg2, arg3) {
+        const f = this[methodName]
+        if (f) {
+            return f.call(this, arg1, arg2, arg3)
+        }
+    },
+
+
+    // -------------------
     
     shallowCopy: function () {
         let copy = Object.assign({}, this);

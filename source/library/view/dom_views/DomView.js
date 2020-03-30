@@ -1816,7 +1816,7 @@ window.DomView = class DomView extends ProtoClass {
         return this.element().offsetHeight
     }
 
-    // width
+    // width px
 
     minWidthPx () {
         const s = this.getCssAttribute("min-width")
@@ -1831,6 +1831,24 @@ window.DomView = class DomView extends ProtoClass {
         }
         return this.pxStringToNumber(w)
     }
+
+    // height px
+
+    minHeightPx () {
+        const s = this.getCssAttribute("min-height")
+        // TODO: support em to px translation 
+        return this.pxStringToNumber(s)
+    }
+
+    maxHeightPx () {
+        const s = this.getCssAttribute("max-height")
+        if (s === "") {
+            return null
+        }
+        return this.pxStringToNumber(s)
+    }
+
+    // -----------
 
     cssStyle () {
         return this.element().style
@@ -1877,6 +1895,7 @@ window.DomView = class DomView extends ProtoClass {
 
     // fixed width
 
+    /*
     setFixedWidthPx (v) {
         assert(Type.isNumber(v))
         if (this.displayIsFlex()) {
@@ -1901,6 +1920,7 @@ window.DomView = class DomView extends ProtoClass {
             return w1
         }
     }
+    */
 
     // fixed height
     /*
@@ -2189,6 +2209,13 @@ window.DomView = class DomView extends ProtoClass {
         if (this.hasSubview(aSubview)) {
             throw new Error(this.type() + ".addSubview(" + aSubview.type() + ") attempt to add duplicate subview ")
         }
+
+        assert(Type.isNullOrUndefined(aSubview.parentView()))
+        /*
+        if (aSubview.parentView()) {
+            aSubview.removeFromParent()
+        }
+        */
 
         this.willAddSubview(aSubview)
         this.subviews().append(aSubview)
@@ -3939,6 +3966,91 @@ window.DomView = class DomView extends ProtoClass {
         return frame
     }
 
+    // -------------------
+    // fixed - assumes position is absolute and width and height are fixed via min-width === max-width, etc
+    // -------------------
+
+    // fixed position
+
+    hasFixedX () {
+        return !Type.isNullOrUndefined(this.leftPx() ) 
+    }
+
+    hasFixedY () {
+        return !Type.isNullOrUndefined(this.topPx() ) 
+    }
+
+    hasFixedPosition () {
+        return this.position() === "absolute" && this.hasFixedX() && this.hasFixedY()
+    }
+
+    // fixed size
+
+    hasFixedSize () {
+        return this.hasFixedWidth() && this.hasFixedHeight()
+    }
+
+    hasFixedWidth () {
+        const v1 = this.minWidthPx()
+        const v2 = this.maxWidthPx()
+        return !Type.isNullOrUndefined(v1) && v1 === v2
+    }
+
+    hasFixedHeight () {
+        const v1 = this.minHeightPx()
+        const v2 = this.maxHeightPx()
+        return !Type.isNullOrUndefined(v1) && v1 === v2
+    }
+
+    decrementFixedWidth () {
+        assert(this.hasFixedWidth())
+        this.setMinAndMaxWidth(Math.max(0, this.minWidthPx()-1))
+        return this
+    }
+
+    decrementFixedHeight () {
+        assert(this.hasFixedHeight())
+        this.setMinAndMaxHeight(Math.max(0, this.minHeightPx()-1))
+        return this
+    }
+
+    // fixed frame
+
+    hasFixedFrame () {
+        return this.hasFixedPosition() && this.hasFixedSize()
+    }
+
+    fixedFrame () {
+        assert(this.hasFixedFrame())
+        const origin = Point.clone().set(Math.round(this.leftPx()), Math.round(this.topPx()))
+        const size   = Point.clone().set(Math.round(this.minWidthPx()), Math.round(this.minHeightPx()))
+        const frame  = Rectangle.clone().setOrigin(origin).setSize(size)
+        return frame
+    }
+
+    //--------------
+
+    estimatedWidthPx () {
+        const v1 = this.minWidthPx()
+        const v2 = this.maxWidthPx()
+        if (!Type.isNullOrUndefined(v1) && v1 === v2) {
+            return v1
+        }
+        return this.clientWidth()
+    }
+
+    estimatedHeightPx () {
+        const v1 = this.minHeightPx()
+        const v2 = this.maxHeightPx()
+        if (!Type.isNullOrUndefined(v1) && v1 === v2) {
+            return v1
+        }
+        return this.clientHeight()
+    }
+
+    // ------------------------
+
+
     positionInDocument () {
         const box = this.element().getBoundingClientRect();
 
@@ -4003,6 +4115,28 @@ window.DomView = class DomView extends ProtoClass {
 
     viewPosForWindowPos (pos) {
         return pos.subtract(this.positionInDocument())
+    }
+
+    // --------------
+
+    makeAbsolutePositionAndSize () {
+        const f = this.frameInParentView()
+        this.setFrameInParent(f)
+        return this 
+    }
+
+    makeRelativePositionAndSize () {
+        // TODO: check if it's flex and set flex basis in flex direction instead?
+        this.setPosition("relative")
+
+        this.setTopPx(null)
+        this.setLeftPx(null)
+        this.setRightPx(null)
+        this.setBottomPx(null)
+
+        this.setMinAndMaxWidth(null)
+        this.setMinAndMaxHeight(null)  
+        return this 
     }
 
     // --------------
@@ -4263,13 +4397,44 @@ window.DomView = class DomView extends ProtoClass {
 
     autoFitChildHeight () {
         //assert(!this.hasAbsolutePositionChild()) // won't be able to autofit!
-
         this.setPosition("relative") // or static? but can't be absolute
         this.setHeight("fit-content")
         return this
     }
 
-    // 
+    // organizing
+
+    moveToAbsoluteDocumentBody () {
+        const f = this.frameInDocument()
+        this.setFrameInDocument(f)
+        this.removeFromParentView()
+        DocumentBody.shared().addSubview(this)
+        return this
+    }
+
+    // organizing
+
+    absoluteOrganizeSubviewsVertically () {
+        let top = 0
+        this.subviews().shallowCopy().forEach((sv) => {
+            const h = sv.clientHeight()
+            sv.setLeftPx(0)
+            sv.setTopPx(top)
+            top += h
+        })
+    }
+
+    absoluteOrganizeSubviewsHorizontally () {
+        let left = 0
+        this.subviews().shallowCopy().forEach((sv) => {
+            const w = sv.clientWidth()
+            sv.setLeftPx(left)
+            sv.setTopPx(0)
+            left += x
+        })
+    }
+
+    // html duplicates
 
     htmlDuplicateView () {
         const v = DomView.clone()
@@ -4278,11 +4443,35 @@ window.DomView = class DomView extends ProtoClass {
         return v
     }
 
-    frameForSubviewsInDocument () {
+    htmlDuplicateViewAndSubviews (selectedSubviews) {
+        selectedSubviews.forEach(sv => asset(sv.parentView() === this))
+
+        const v = DomView.clone()
+        v.setFrameInParent(this.frameInParentView())
+        selectedSubviews.forEach(sv => v.addSubview(sv.htmlDuplicateView()))
+        return v
+    }
+
+    htmlDuplicateViewWithSubviews () {
+        const v = DomView.clone()
+        v.setFrameInParent(this.frameInParentView())
+        this.subviews().forEach(sv => v.addSubview(sv.htmlDuplicateView()))
+        return v
+    }
+
+    // fitting
+
+    fitSubviews () {
+        const f = this.frameFittingSubviewsInParent()
+        this.setFrameInParent(f)
+        return this
+    }
+
+    frameFittingSubviewsInParent () {
         let u = null
 
         this.subviews().forEach(sv => {
-            const f = sv.frameInDocument()
+            const f = sv.frameInParent()
             if (u === null) {
                 u = f
             } else {
@@ -4293,11 +4482,25 @@ window.DomView = class DomView extends ProtoClass {
         return u
     }
 
-    /*
-    clipToFitSubviews () {
-        const sf = this.frameForSubviewsInParent()
+    fixedFrameFittingSubviews() {
+        let u = null
 
+        this.subviews().forEach(sv => {
+            const f = sv.fixedFrame()
+            if (u === null) {
+                u = f
+            } else {
+                u = u.unionWith(f)
+            }
+        })
+
+        return u
     }
-    */
+
+    convertFrameToDocument (aRect) {
+        const p = this.positionInDocument()
+        const newOrigin = aRect.origin().add(p)
+        return aRect.copy().setOrigin(newOrigin)
+    }
 
 }.initThisClass()

@@ -73,6 +73,8 @@ window.StackView = class StackView extends NodeView {
         return this
     }
 
+    // --- direction ---
+
     // --- cache ---
 
     cacheId () {

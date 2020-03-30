@@ -159,11 +159,53 @@ window.DragView = class DragView extends DomStyledView {
 
     setupMultiItemView () {
         const parentView = this.items().first().parentView()
+
+        // copy parent frame
         const f = parentView.frameInDocument()
         this.setFrameInDocument(f)
         this.setBackgroundColor("transparent")
 
+        // duplicate item subviews
+        this.items().forEach(sv => {
+            let dup = sv.htmlDuplicateView()
+            this.addSubview(dup)
+            assert(dup.hasFixedFrame())
+            console.log("item dup subview frameInDocument: " + dup.frameInDocument().asString())
+            console.log("item dup subview frameInParentView: " + dup.frameInParentView().asString())
+        })
+
+        const ff = this.fixedFrameFittingSubviews()
+        const nf = parentView.convertFrameToDocument(ff)
+        this.setFrameInDocument(nf)
+        //this.setFrameInDocument(this.fixedFrameFittingSubviewsInDocument())
+        //this.setBorder("1px dashed yellow")
+
+        // make subviews inline-block
+        this.subviews().forEach(sv => {
+            sv.setDisplay("inline-block")
+            sv.setPosition("relative")
+            sv.setTop(null)
+            sv.setLeft(null)
+            sv.setBorder(null)
+            /*
+            sv.decrementFixedWidth()
+            sv.decrementFixedHeight()
+            sv.decrementFixedWidth()
+            sv.decrementFixedHeight()
+            sv.setMinAndMaxWidth(150)
+            sv.setBorder("1px dashed blue")
+            */
+            //sv.setMinAndMaxHeight(30)
+        })
+        
+        this.setDisplay("block")
+        this.setWhiteSpace("pre-wrap")
+        this.setOverflow("hidden")
+        this.setWidth(null)
+        this.setHeight(null)
+        /*
         let maxWidth = this.items().map(v => v.frameInDocument().width()).maxValue()
+        let minX = this.items().map(v => v.frameInDocument().left()).minValue()
         let minY = this.items().map(v => v.frameInDocument().top()).minValue()
         //let maxY = this.items().map(v => v.frameInDocument().bottom()).maxValue()
 
@@ -178,6 +220,7 @@ window.DragView = class DragView extends DomStyledView {
             const v = item.htmlDuplicateView()
             const vf = item.frameInParentView()
             v.setPosition("absolute")
+            v.setLeftPx(vf.x())
             v.setTopPx(vf.y() - offset)
             v._targetTop = y
             y += h
@@ -190,6 +233,7 @@ window.DragView = class DragView extends DomStyledView {
         setTimeout(() => {
             this.subviews().forEach(v => v.setTopPx(v._targetTop))
         }, 1)
+        */
 
         /*
         // target positions

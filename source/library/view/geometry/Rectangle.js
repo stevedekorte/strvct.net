@@ -29,6 +29,16 @@ window.Rectangle = class Rectangle extends ProtoClass {
         this.setSize(Point.clone())
         return this
     }
+
+    duplicate () {
+        return this.thisClass().clone().copyFrom(this)
+    }
+
+    copyFrom (aRect) {
+        this.origin().copyFrom(aRect.origin())
+        this.size().copyFrom(aRect.size())
+        return this
+    }
     
     containsPoint (p) {
         const a = p.isGreaterThanOrEqualTo(this.origin()) 
@@ -46,12 +56,14 @@ window.Rectangle = class Rectangle extends ProtoClass {
         const o2 = r.origin()
         const m1 = this.maxPoint()
         const m2 = r.maxPoint()
-        u.origin().setX(Math.min(o1.x(), o2.x()))
-        u.origin().setY(Math.min(o1.y(), o2.y()))
-        const mx = Math.min(m1.x(), m2.x())
-        const my = Math.min(m1.y(), m2.y())
-        u.setWidth(mx - u.origin().x())
-        u.setHeight(my - u.origin().y())
+        const minX = Math.min(o1.x(), o2.x())
+        const minY = Math.min(o1.y(), o2.y())
+        u.origin().setX(minX)
+        u.origin().setY(minY)
+        const maxX = Math.max(m1.x(), m2.x())
+        const maxY = Math.max(m1.y(), m2.y())
+        u.setWidth(maxX - minX)
+        u.setHeight(maxY - minY)
         return u
     }
 
