@@ -93,6 +93,17 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     syncFromNode () {
         this.syncOrientation()
         super.syncFromNode() 
+        if (this.selectedRows().length === 0) {
+            this.didChangeNavSelection() // TODO: is this right?
+        }
+        return this
+    }
+
+    unselectRowsInNextColumn () {
+        const c = this.nextColumn()
+        if (c) {
+            c.unselectAllRows()
+        }
         return this
     }
 
@@ -230,6 +241,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         anItem.select()
         anItem.focus()
         this.unselectAllRowsExcept(anItem)
+        this.unselectRowsInNextColumn()
         this.didChangeNavSelection() // this may already have been sent
     }
     

@@ -1,7 +1,16 @@
 
 TODO:	
 
+	- deleting a row doesn't remove the next column
+	
+	- selecting a row doesn't unselect child column rows
+	
+	
+	duplicating a row makes it's title uneditable?
+
 	update stackRows to work in horizontal orientation
+	
+	- after dropping in sub folder, subfolder isn't focus/expanded
 
 	Row
 	justTap
