@@ -1432,15 +1432,29 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     indexOfRowPlaceHolder () {
         const orderedRows = this.rows().shallowCopy().sortPerform("topPx") 
-        console.log("order: ", orderedRows.map(r => {
+        const insertIndex = orderedRows.indexOf(this.rowPlaceHolder()) 
+        
+        this.showRows(orderedRows)
+        console.log("hover insertIndex: ", insertIndex)
+        
+        return insertIndex
+    }
+
+    showRows (rows) {
+        console.log("rows: ", rows.map(r => {
             if (r.node) {
-                return r.node().title() + "-" + r.display()
+                return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "")
             }
             return r.type() 
         }).join(", "))
-        const insertIndex = orderedRows.indexOf(this.rowPlaceHolder()) 
-        console.log("hover insertIndex: ", insertIndex)
-        return insertIndex
+        return this
+    }
+
+    showNodes (nodes) {
+        console.log("nodes: ", nodes.map(node => {
+            return node.title()
+        }).join(", "))
+        return this
     }
 
     onDragSourceDropped (dragView) {
@@ -1448,6 +1462,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         let movedNodes = dragView.items().map(item => item.node())
         if (dragView.isMoveOp()) {
+
         } else if (dragView.isCopyOp()) {
              movedNodes = movedNodes.map(aNode => aNode.duplicate())
         } else {
@@ -1456,23 +1471,40 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         this.unstackRows()
         this.removeRowPlaceHolder()
-
+    
+        //console.log("---")
+        //this.showNodes(movedNodes)
+        //this.showRows(this.subviews())
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
+        this.showNodes(newSubnodesOrder)
+        assert(!newSubnodesOrder.containsAny(movedNodes))
         newSubnodesOrder.atInsertItems(insertIndex, movedNodes)
+        //this.showNodes(newSubnodesOrder)
+
         this.node().setSubnodes(newSubnodesOrder)
 
         //console.log("new order: " + this.node().subnodes().map(sn => sn.title()).join("-"))
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
-        this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
+        this.selectAndFocusNodes(movedNodes)
     }
 
+    selectAndFocusNodes (nodes) {
+        const selectRows = this.rowsWithNodes(nodes)
+        this.unselectAllRowsExceptRows(selectRows)
+        if (nodes.length === 1) {
+            const focusNode = nodes.first()
+            focusNode.parentNode().postShouldFocusAndExpandSubnode(focusNode)
+        }
+        return this
+    }
 
     onDragDestinationDropped (dragView) {
         const insertIndex = this.indexOfRowPlaceHolder()
 
         let movedNodes = dragView.items().map(item => item.node())
         if (dragView.isMoveOp()) {
+            movedNodes.forEach(aNode => aNode.removeFromParentNode())
         } else if (dragView.isCopyOp()) {
              movedNodes = movedNodes.map(aNode => aNode.duplicate())
         } else {
@@ -1483,13 +1515,13 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         this.removeRowPlaceHolder()
 
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
+        assert(!newSubnodesOrder.containsAny(movedNodes))
         newSubnodesOrder.atInsertItems(insertIndex, movedNodes)
         this.node().setSubnodes(newSubnodesOrder)
 
         this.setHasPausedSync(false)
         this.syncFromNodeNow()
-        this.unselectAllRowsExceptRows(this.rowsWithNodes(movedNodes))
-        //this.endDropMode() // we already unstacked the rows
+        this.selectAndFocusNodes(movedNodes)
     }
 
     onDragSourceEnd (dragView) {

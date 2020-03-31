@@ -141,6 +141,11 @@ Object.defineSlots(Array.prototype, {
         return this.indexOf(element) !== -1;
     },
 
+    containsAny: function (anArray) {
+        const match = anArray.detect(item => this.contains(item))
+        return !Type.isNullOrUndefined(match)
+    },
+
     hasPrefix: function (otherArray) {
         if (this.length < otherArray.length) { 
             return false; 
