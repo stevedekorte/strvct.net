@@ -18,7 +18,7 @@ window.PersistentObjectPool = class PersistentObjectPool extends ObjectPool {
     init () {
         super.init()
         this.setName("defaultDataStore")
-        this.setRecordsDict(AtomicPersistentDictionary.clone())
+        this.setRecordsDict(PersistentAtomicDictionary.clone())
         return this
     }
 

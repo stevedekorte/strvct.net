@@ -164,7 +164,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
         //cv.autoFitParentWidth().autoFitParentHeight() // can't do this since we need to float left for sliding
 
-        cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s")
+        cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s, width 0s, min-width 0s, max-width 0s")
         cv.setZIndex(2) // so it will be above other views like the slide delete button 
         this.setZIndex(1)
         this.setContentView(cv)

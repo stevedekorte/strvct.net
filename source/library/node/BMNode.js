@@ -1109,6 +1109,11 @@ window.BMNode = class BMNode extends ProtoClass {
         return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone())
     }
 
+    removeSubnodesWithTitle (aString) {
+        this.subnodes().select(sn => sn.title() === aString).forEach(sn => sn.delete())
+        return this
+    }
+
     /*
     removeOtherSubnodeInstances (aSubnode) {
         assert(this.hasSubnode(aSubnode))

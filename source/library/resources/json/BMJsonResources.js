@@ -2,11 +2,11 @@
 
 /*
 
-    BMImageResources
+    BMJsonResources
 
 */
 
-window.BMImageResources = class BMImageResources extends BMNode {
+window.BMJsonResources = class BMJsonResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -15,17 +15,26 @@ window.BMImageResources = class BMImageResources extends BMNode {
     }
     
     initPrototype () {
-        this.newSlot("extensions", ["png", "jpg", "jpeg", "gif", "tiff", "bmp"])
+        this.newSlot("extensions", ["json"])
     }
 
     init () {
         super.init()
-        this.setTitle("Images")
+        this.setTitle("Json")
         this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
-        //this.setSubnodeClasses([BMURLImage])
+        //this.setSubnodeClasses([BMJsonResource])
+        this.watchOnceForNote("appDidInit")
         return this
     }
+    
+    /*
+    prepareForFirstAccess () {
+         super.prepareForFirstAccess()
+       this.setupSubnodes()
+        return this
+    }
+    */
 
     resourcePaths () {
         return ResourceLoader.resourceFilePathsWithExtensions(this.extensions())
@@ -37,14 +46,16 @@ window.BMImageResources = class BMImageResources extends BMNode {
     }
 
     setupSubnodes () {
-        this.resourcePaths().forEach(path => this.addImageWithPath(path))
+        this.resourcePaths().forEach(path => this.addResourceWithPath(path))
         return this
     }
 
-    addImageWithPath (aPath) {
-        const image = this.justAdd()
-        image.setPath(aPath)
+    addResourceWithPath (aPath) {
+        const resource = this.justAdd()
+        resource.setPath(aPath)
         return this
     }
 
 }.initThisClass()
+
+

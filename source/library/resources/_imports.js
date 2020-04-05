@@ -6,5 +6,6 @@ ResourceLoader.pushRelativePaths([
     "images/_imports.js",
     "themes/_imports.js",
     "icons/_imports.js",
+    "json/_imports.js",
     "BMResources.js",
 ])

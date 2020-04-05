@@ -2,7 +2,7 @@
 
 /*
 
-    AtomicPersistentDictionary
+    PersistentAtomicDictionary
 
     An atomic persistent dictionary implemented as 
     a read & write cache on top of IndexedDB.
@@ -28,9 +28,9 @@
         
 */
 
-window.AtomicPersistentDictionary = class AtomicPersistentDictionary extends ideal.AtomicDictionary {
+window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ideal.AtomicDictionary {
     initPrototype () {
-        this.newSlot("name", "AtomicPersistentDictionary")
+        this.newSlot("name", "PersistentAtomicDictionary")
         this.newSlot("idb", null)
         this.newSlot("changedKeys", null)
     }
@@ -98,7 +98,7 @@ window.AtomicPersistentDictionary = class AtomicPersistentDictionary extends ide
     // ----
 		
     asyncClear (callback) {
-        //throw new Error("AtomicPersistentDictionary clear")
+        //throw new Error("PersistentAtomicDictionary clear")
         this.setJsDict({})
         this.idb().asyncClear(callback) // TODO: lock until callback?
     }

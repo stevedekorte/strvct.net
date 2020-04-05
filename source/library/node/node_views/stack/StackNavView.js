@@ -34,8 +34,9 @@ window.StackNavView = class StackNavView extends NodeView {
         //this.setOpacity(0)
         this.setOverflow("hidden")
         this.setUserSelect("none")
-        this.setTransition("opacity 0.5s ease-in-out")
-        this.setTransition("flex-basis 0.1s")
+        //this.setTransition("opacity 0.5s ease-in-out")
+        //this.setTransition("flex-basis 0.1s")
+        this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
 
         //this.setBorder("1px solid rgba(255, 255, 255, 0.3")
 

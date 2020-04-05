@@ -2,30 +2,30 @@
 
 /*
     
-    StrvctApp
+    StatsApp
 
 
 */
 
-window.StrvctApp = class StrvctApp extends App {
+window.StatsApp = class StatsApp extends App {
     
 
     initPrototype () {
         // model
-        this.newSlot("notes", null)
-        this.newSlot("prototypes", null)
+        this.newSlot("stats", null)
+
         this.newSlot("settings", null)
         this.newSlot("resources", null)
         this.newSlot("dataStore", null)
+        this.newSlot("cache", null)
 
         // view
-        this.newSlot("browser", null)
         this.newSlot("stackView", null)
     }
 
     init () {
         super.init()
-        this.setName("StrvctApp")
+        this.setName("StatsApp")
         this.setVersion([0, 0, 0, 0])
         this.setNodeCanReorderSubnodes(true)
         this.addAction("add")
@@ -36,20 +36,12 @@ window.StrvctApp = class StrvctApp extends App {
         this.setupTheme()
         this.setupModel()
 
-        const v = StackView.clone().setDirection("down")
-        this.setStackView(v)
+        const v = StackView.clone()
+        //v.setDirection("down")
         v.setNode(this)
+        this.setStackView(v)
         this.documentBodyView().addSubview(v)
         this.appDidInit()
-    }
-
-    setup_old () { // called by App.run
-        super.setup()        
-        this.setupTheme()
-        this.setupModel()
-        this.setupViews()
-        this.appDidInit()
-        return this
     }
 
     // --- setup model ---
@@ -57,16 +49,18 @@ window.StrvctApp = class StrvctApp extends App {
     setupModel () {     
         const root = this.defaultStore().rootObject()
         root.setNodeMinWidth(150)
-        //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
-        //root.removeAllSubnodes()
 
-        const notes = this.subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
-        //notes.subnodes().forEach(sn => sn.setCanDelete(true))
-        //notes.orderFirst()
-        this.setNotes(notes)
+        const stats = this.subnodeWithTitleIfAbsentInsertProto("DataSources", BMFolderNode)
+        this.setStats(stats)
 
-        const prototypes = this.subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
-        this.setPrototypes(notes)
+        const kinsa = stats.subnodeWithTitleIfAbsentInsertProto("Kinsa", Kinsa)
+        stats.removeSubnodesWithTitle("Foursquare")
+        const foursquare = stats.subnodeWithTitleIfAbsentInsertProto("Foursquare", Foursquare)
+        //stats.removeSubnodesWithTitle("Foursquare")
+        
+        const safegraph = stats.subnodeWithTitleIfAbsentInsertProto("SafeGraph", BMFolderNode)
+        const usafacts = stats.subnodeWithTitleIfAbsentInsertProto("USA Facts", BMFolderNode)
+        // https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv
 
         this.setupSettings()
         return this
@@ -77,16 +71,26 @@ window.StrvctApp = class StrvctApp extends App {
         const settings = this.subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
         settings.setNodeMinWidth(150)
         this.setSettings(settings)
-        //this.removeOtherSubnodeWithSameTitle(settings)
 
-        const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
-        this.setResources(resources)
-        settings.removeOtherSubnodeWithSameTitle(resources)
+        {
+            const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
+            this.setResources(resources)
+            settings.removeOtherSubnodeWithSameTitle(resources)
+        }
 
-        // data store
-        const dataStore = settings.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore)
-        this.setDataStore(dataStore)
-        settings.removeOtherSubnodeWithSameTitle(dataStore)
+        {
+            const dataStore = settings.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore)
+            this.setDataStore(dataStore)
+            settings.removeOtherSubnodeWithSameTitle(dataStore)
+        }
+
+        {
+            const cache = settings.subnodeWithTitleIfAbsentInsertProto("Cache", BMCache)
+            this.setCache(cache)
+            settings.removeOtherSubnodeWithSameTitle(cache)
+        }
+
+        settings.subnodes().forEach(node => node.setCanDelete(true))
 
     }
 
@@ -114,6 +118,7 @@ window.StrvctApp = class StrvctApp extends App {
 
     appDidInit () {
         super.appDidInit()
+        //this.removeAllSubnodes()
         
         // ResourceLoaderPanel can't use notification as it's a boot object
         // what if we added a one-shot observation for it, or would that be more confusing?
@@ -131,6 +136,7 @@ window.StrvctApp = class StrvctApp extends App {
         const doc = DocumentBody.shared()
         //doc.setFontFamily("Sans-Serif")
         doc.setFontFamily("Helvetica")
+        //doc.setBackgroundColor("white")
         //doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")

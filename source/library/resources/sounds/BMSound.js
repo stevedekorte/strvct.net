@@ -50,14 +50,6 @@ window.BMSound = class BMSound extends BMNode {
         return this.path().lastPathComponent().sansExtension()
     }
 
-    /*
-    setPath (aPath) {
-        // update if playing?
-        this._path = aPath
-        return this
-    }
-    */
-
     play () {
         const audioPlayer = BMAudioPlayer.shared()
         audioPlayer.setPath(this.path())

@@ -154,19 +154,40 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         return this.path() + key
     }
 
-    // writing
-    /*
+    // reading
+
+    hasKey (key, callback) {
+        const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+        const request = objectStore.openCursor(key)
+
+        request.onsuccess = function(e) {
+          var cursor = e.target.result
+          if (cursor) { // key already exist
+             callback(true)
+          } else { // key not exist
+            callback(false)
+          }
+        }
+
+        /*
+        request.onerror = (event) => {
+            console.log("asyncAt('" + key + "') onerror", event.target.error)
+            callback(undefined)
+        }
+        */
+    }
+    
     asyncAt (key, callback) {
         //console.log("asyncAt ", key)
-        const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName());
+        const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
         const request = objectStore.get(key);
 
-        const stack = new Error().stack
+        const stack = "(stack recording disabled)" //new Error().stack
         
         request.onerror = (event) => {
             console.log("asyncAt('" + key + "') onerror", event.target.error)
             callback(undefined)
-        };
+        }
         
         request.onsuccess = (event) => {
             //console.log("asyncAt onsuccess ", event)
@@ -184,11 +205,11 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
             } catch (e) {
                 this.debugLog(" asyncAt('" +  key + "') caught stack ", stack)
             }
-        };
+        }
         
         return this
     }
-    */
+    
 
     asyncAsJson(callback) {
         //console.log("asyncAsJson start")

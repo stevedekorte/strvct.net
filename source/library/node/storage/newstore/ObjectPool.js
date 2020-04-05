@@ -415,7 +415,8 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
 
     conversionDict () {
         return { 
-            "BMMenuNode" : "BMFolderNode" 
+            "BMMenuNode" : "BMFolderNode",
+            "KinsaResources" : "Kinsa",
         }
         /*
         return {

@@ -325,6 +325,10 @@ const prototypeSlots = {
         return this
     },
 
+    ownKVMap (fn) {
+        return Object.keys(this).map(k => fn(k, this[k]) )
+    },
+
     ownForEachValue: function(fn) {
         Object.keys(this).forEach( k => fn(this[k]) )
         return this

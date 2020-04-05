@@ -125,18 +125,6 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
     }
 	
     // --- operations ----
-    
-    /*
-    hasKey (key) {
-        // not efficient - only use for debugging
-	    const domStringList = this.objectStore().indexNames
-	    const hasKey = domStringList.contains(key) 
-	    //console.log("domStringList.length : ", domStringList.length)
-	    //console.log("domStringList['" + key + "'] exists ", hasKey)
-	    return hasKey
-    }
-    */
-
 
     /*
     atPut (key, object) {

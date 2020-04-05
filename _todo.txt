@@ -1,9 +1,5 @@
 
-TODO:	
-
-	- deleting a row doesn't remove the next column
-	
-	- selecting a row doesn't unselect child column rows
+TODO:		
 	
 	
 	duplicating a row makes it's title uneditable?

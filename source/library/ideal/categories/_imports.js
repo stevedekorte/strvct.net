@@ -15,5 +15,6 @@ ResourceLoader.pushRelativePaths([
     "Error-ideal.js",
     "Function-ideal.js",
     "Image-ideal.js",
+    "TypedArray-ideal.js",
 ]);
 

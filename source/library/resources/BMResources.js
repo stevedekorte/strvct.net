@@ -20,6 +20,7 @@ window.BMResources = class BMResources extends BMStorableNode {
         this.newSlot("sounds", null)
         this.newSlot("images", null)
         this.newSlot("icons", null)
+        this.newSlot("json", null)
     }
 
     init () {
@@ -35,13 +36,11 @@ window.BMResources = class BMResources extends BMStorableNode {
     }
 
     setupSubnodes () {
-
         const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources)
         themes.setNodeCanReorderSubnodes(true)
         //this.addSubnode(themes)
         let link = this.addLinkSubnode(themes)
         //console.log("themes link = ", link.debugTypeId())
-
 
         this.setFonts(BMFontResources.shared())
         this.addSubnode(this.fonts())
@@ -54,6 +53,9 @@ window.BMResources = class BMResources extends BMStorableNode {
 
         this.setIcons(BMIconResources.shared())
         this.addSubnode(this.icons())
+
+        this.setJson(BMJsonResources.shared())
+        this.addSubnode(this.json())
 
         return this
     }

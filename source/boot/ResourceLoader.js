@@ -280,7 +280,7 @@ class ResourceLoaderClass extends ResourceLoaderBase {
         //const audioExtensions = ["wav", "mp3", "m4a", "mp4", "oga", "ogg"]
         //const imageExtensions = ["png", "jpg", "jpeg", "gif", "tiff", "bmp"]
 
-        if (extension === "js" || extension === "json") {
+        if (extension === "js" /*|| extension === "json"*/) {
             this.jsFilesLoaded().push(url)
             const script = JSScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
             this.setCurrentScript(script)

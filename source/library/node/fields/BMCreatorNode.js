@@ -27,6 +27,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     }
 
     prepareForFirstAccess () {
+        super.prepareForFirstAccess()
         this.setupSubnodes()
     }
 

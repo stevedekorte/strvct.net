@@ -27,8 +27,7 @@ window.BMDataStore = class BMDataStore extends BMNode {
     }
 
     subtitle () {
-        const sizeDescription = ByteFormatter.clone().setValue(this.defaultStore().totalBytes()).formattedValue()
-        return sizeDescription
+        return this.defaultStore().totalBytes().byteSizeDescription()
     }
 
     storeHasChanged () {
@@ -74,8 +73,7 @@ window.BMDataStore = class BMDataStore extends BMNode {
         subnode.setKey(aRecord.id)
         subnode.setStore(this.store())
         const size = JSON.stringify(aRecord).length
-        const sizeDescription = ByteFormatter.clone().setValue(size).formattedValue()
-        subnode.setSubtitle(sizeDescription)
+        subnode.setSubtitle(size.byteSizeDescription())
 
         const classNode = this.subnodeForClassName(aRecord.type)
         classNode.setNodeMinWidth(300)

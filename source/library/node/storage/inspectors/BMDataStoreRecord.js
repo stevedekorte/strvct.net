@@ -22,6 +22,7 @@ window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
     }
 
     prepareForFirstAccess () {
+        super.prepareForFirstAccess()
         const jsonField = BMTextAreaField.clone().setKey("recordString")
         jsonField.setValueMethod("recordString").setValueIsEditable(false).setIsMono(true)
         this.addField(jsonField)
@@ -67,8 +68,7 @@ window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
         subnode.setKey(aRecord.id)
         subnode.setStore(this.defaultStore()) //// <-------------------- avoid this?
         const size = JSON.stringify(aRecord).length
-        const sizeDescription = ByteFormatter.clone().setValue(size).formattedValue()
-        subnode.setSubtitle(sizeDescription)
+        subnode.setSubtitle(size.byteSizeDescription())
         return subnode
     }
     

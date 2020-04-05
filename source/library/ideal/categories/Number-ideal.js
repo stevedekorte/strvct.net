@@ -120,5 +120,9 @@ Object.defineSlots(Number.prototype, {
         // Number.prototype.fromBase64("...")
         return Base64.toInt(base64String)
     },
+
+    byteSizeDescription: function() {
+        return ByteFormatter.clone().setValue(this).formattedValue()
+    },
     
 });

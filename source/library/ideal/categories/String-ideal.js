@@ -172,8 +172,8 @@ Object.defineSlots(String.prototype, {
     },
 
     base64Encoded: function () {
-        //btoa(this);
-        return new Buffer(String(this), "utf8").toString("base64");
+        //return new Buffer(String(this), "utf8").toString("base64");
+        return window.btoa(this);
     },
 
     base64UrlEncoded: function () {
@@ -182,7 +182,7 @@ Object.defineSlots(String.prototype, {
 
     base64Decoded: function () {
         //return new Buffer(String(this), "base64").toString("utf8");
-        return atob(this);
+        return window.atob(this);
     },
 
     base64UrlDecoded: function () {
@@ -194,7 +194,28 @@ Object.defineSlots(String.prototype, {
     },
 
     lineCount: function () {
-        return this.stringCount("\n");
+        let count = 0
+        for (let i = 0; i < this.length; i++) {
+            const c = this.charAt(i)
+            if (c === "\n") {
+                count ++
+            }
+        }
+        return count
+    },
+
+    forEachCharacter: function(fn) {
+        for (let i = 0; i < this.length; i++) {
+            const c = this.charAt(i)
+            fn(c)
+        }
+    },
+
+    forEachKV: function(fn) {
+        for (let i = 0; i < this.length; i++) {
+            const c = this.charAt(i)
+            fn(i, c)
+        }
     },
 
     splitArray: function (splitters) {
@@ -367,10 +388,44 @@ Object.defineSlots(String.prototype, {
             s4() + "-" + s4() + s4() + s4();
     },
 
+    byteSizeDescription: function() {
+        return this.length.byteSizeDescription()
+    },
+
+    asyncSha256Digest: async function () {
+        // example use let digestHex = await "hello".asyncSha256DigestHex()
+
+        // encode as UTF-8
+        const msgBuffer = new TextEncoder('utf-8').encode(this);                    
+    
+        // hash the message
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+
+        return hashBuffer
+        /*
+        // convert ArrayBuffer to Array
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+    
+        // convert bytes to hex string                  
+        const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+
+        var base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(hashBuffer)));
+
+        return hashHex;
+        */
+    },
+
 });
 
+/*
+async function test() {
+    let text = 'An obscure body in the S-K System, your majesty. The inhabitants refer to it as the planet Earth.';
+    let digestHex = await text.sha256Hex()
+    console.log(digestHex);
+}
 
-
+test()
+*/
 
 
 
