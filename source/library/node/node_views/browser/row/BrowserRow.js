@@ -1028,10 +1028,10 @@ window.BrowserRow = class BrowserRow extends NodeView {
         }
 
         const node = this.node()
-        if (node && node.getBrowserDragData) {
-            const bdd = node.getBrowserDragData()
+        if (node && node.getBMDataUrl) {
+            const bdd = node.getBMDataUrl()
             if (bdd) {
-                event.dataTransfer.setData(bdd.transferMimeType(), bdd.transferData())
+                event.dataTransfer.setData(bdd.transferMimeType(), bdd.dataUrlString())
                 return true;
             }
         }

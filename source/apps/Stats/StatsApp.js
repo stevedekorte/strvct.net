@@ -54,12 +54,10 @@ window.StatsApp = class StatsApp extends App {
         this.setStats(stats)
 
         const kinsa = stats.subnodeWithTitleIfAbsentInsertProto("Kinsa", Kinsa)
-        stats.removeSubnodesWithTitle("Foursquare")
         const foursquare = stats.subnodeWithTitleIfAbsentInsertProto("Foursquare", Foursquare)
-        //stats.removeSubnodesWithTitle("Foursquare")
-        
         const safegraph = stats.subnodeWithTitleIfAbsentInsertProto("SafeGraph", BMFolderNode)
         const usafacts = stats.subnodeWithTitleIfAbsentInsertProto("USA Facts", BMFolderNode)
+
         // https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv
 
         this.setupSettings()
@@ -72,26 +70,20 @@ window.StatsApp = class StatsApp extends App {
         settings.setNodeMinWidth(150)
         this.setSettings(settings)
 
-        {
-            const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
-            this.setResources(resources)
-            settings.removeOtherSubnodeWithSameTitle(resources)
-        }
+        this.addSettingNameAndClass("Resources", BMResources)
+        this.addSettingNameAndClass("Storage", BMDataStore)
+        this.addSettingNameAndClass("Resources", BMResources)
+        //this.addSettingNameAndClass("Cache", BMCache)
+        this.addSettingNameAndClass("CamStore", BMCamStore)
+        this.addSettingNameAndClass("Blobs", BMBlobs)
 
-        {
-            const dataStore = settings.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore)
-            this.setDataStore(dataStore)
-            settings.removeOtherSubnodeWithSameTitle(dataStore)
-        }
+        //settings.subnodes().forEach(node => node.setCanDelete(true))
+    }
 
-        {
-            const cache = settings.subnodeWithTitleIfAbsentInsertProto("Cache", BMCache)
-            this.setCache(cache)
-            settings.removeOtherSubnodeWithSameTitle(cache)
-        }
-
-        settings.subnodes().forEach(node => node.setCanDelete(true))
-
+    addSettingNameAndClass (aName, aClass) {
+        const subnode = this.settings().subnodeWithTitleIfAbsentInsertProto(aName, aClass)
+        this.settings().removeOtherSubnodeWithSameTitle(subnode)
+        return subnode
     }
 
     // --- setup views ---

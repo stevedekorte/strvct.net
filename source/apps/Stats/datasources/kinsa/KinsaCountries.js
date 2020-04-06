@@ -35,7 +35,7 @@ window.KinsaCountries = class KinsaCountries extends BMNode {
     setupSubnodes () {
         this.countriesArray().forEach((countryDict) => {
             const kg = KinsaGroup.clone().setTitle(countryDict.name)
-            kg.jsonResource().setPath("https://static.kinsahealth.com/" + countryDict.code +  "_data.json") //.setTitle(countryDict.name)
+            kg.urlResource().setPath("https://static.kinsahealth.com/" + countryDict.code +  "_data.json") //.setTitle(countryDict.name)
             this.addSubnode(kg)
         })
 

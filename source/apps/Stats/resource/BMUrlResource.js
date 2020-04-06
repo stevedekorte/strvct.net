@@ -10,14 +10,18 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     
     initPrototype () {
         this.newSlot("path", "")
-        this.newSlot("data", null).setSyncsToView(true)
         this.newSlot("error", null).setSyncsToView(true)
         this.newSlot("status", null).setSyncsToView(true)
+        this.newSlot("dataUrl", null)
+        //this.newSlot("rawData", null).setSyncsToView(true)
+        this.newSlot("decodedData", null).setSyncsToView(true)
+        //this.newSlot("decodedJson", null).setSyncsToView(true)
     }
 
     init () {
         super.init()
         this.setNodeMinWidth(600)
+        this.setDataUrl(BMDataUrl.clone())
         return this
     }
 
@@ -39,14 +43,13 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         }
 
         const dataType = this.path().pathExtension()
-        if (this.data()) {
-            return this.dataString().byteSizeDescription() + " " + dataType
+        if (this.decodedData()) {
+            return this.dataUrl().decodedData().byteSizeDescription() + " " + this.dataUrl().mimeTypeDescription()
         }
         return ""
     }
 
     didUpdateSlotPath () {
-        this.loadFromCache()
     }
 
     isLoaded () {
@@ -57,19 +60,16 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         return !Type.isNull(this.data())
     }
 
-    isCached () {
-        return BMCache.shared().hasKey(this.path())
-    }
-
     // --- setup ---
 
     prepareForFirstAccess () {
         super.prepareForFirstAccess()
         this.setupDataField()
+        this.load()
     }
 
     setupDataField () {
-        const field = BMTextAreaField.clone().setKey("recordString")
+        const field = BMTextAreaField.clone().setKey("dataString")
         field.setValueMethod("dataString").setValueIsEditable(false).setIsMono(true)
         field.setTarget(this) 
         field.getValueFromTarget()
@@ -79,23 +79,6 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
 
     // --- actions ---
 
-    loadIfNeeded () {
-        if (!this.data()) {
-            this.loadFromCache()
-        }
-    }
-
-    loadFromCache () {
-        const value = BMCache.shared().valueForKey(this.path())
-        if  (!Type.isUndefined(value)) {
-            this.parseDataUrl(value)
-        }
-    }
-
-    removeFromCache () {
-        BMCache.shared().removeKey(this.path())
-    }
-
     refresh () {
         this.clear()
         this.load()
@@ -103,7 +86,6 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     }
 
     clear () {
-        this.removeFromCache()
         this.setData(null)
         return this
     }
@@ -111,13 +93,6 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     // --- loading ---
 
     load () {
-        {
-            this.loadFromCache()
-            if  (this.data()) {
-                return this
-            }
-        }
-
         this.setStatus("loading...")
 
         const rq = new XMLHttpRequest();
@@ -137,11 +112,11 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     // --- http request events ---
 
     onRequestAbort (event) {
-        this.setError("http request aborted") 
+        this.setError("request aborted") 
     }
 
     onRequestError (event) {
-        this.setError("http request error") 
+        this.setError("request error") 
     }
 
     onRequestLoadEnd (event) {
@@ -149,7 +124,12 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     }
 
     onRequestProgress (event) {
-        this.setError("file read error") 
+        if (event.total) {
+            const percentage = Math.round( (event.loaded / event.total) * 100 )
+            this.setStatus("requesting: " + percentage + "%")
+        } else {
+            this.setStatus("receiving header")
+        }
     }
 
     onRequestLoadStart (event) {
@@ -189,37 +169,46 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
 
     onReaderLoad (event) {
         const fileReader = event.currentTarget
-        const dataUrl = fileReader.result
-        BMCache.shared().setKeyValueTimeout(this.path(), dataUrl)
-        this.parseDataUrl(dataUrl)
+        this.dataUrl().setDataUrlString(fileReader.result)
+        this.setError(null)
+        this.scheduleSyncToView()
     }
 
     onReaderLoadEnd () {
         this.setStatus(null)
     }
 
-    // --- parse ---
+    // --- decoding ---
 
-    parseDataUrl (dataUrl) {
-        const bd = BrowserDragData.clone().setTransferData(null, dataUrl)
-        if (bd.mimeType() !== "application/json") {
-            this.setData(null)
-            this.setError("missing data")
-            this.scheduleSyncToView()
-            return this
+    decodedData () {
+        return this.dataUrl().decodedData()
+    }
+
+    asJson () {
+        if(this.dataUlr().isJson() ) {
+            return JSON.parse(this.decodedData())
         }
-
-        const jsonString = bd.decodedData()
-        const json = JSON.parse(jsonString)
-        this.setData(json)
+        return undefined
     }
 
     dataString () {
-        return JSON.stringify(this.data(), null, 2)
+        const du = this.dataUrl()
+        if (du.isXml() ) { 
+            return this.escapeHtml(this.decodedData())
+        } else if (du.isJson()) {
+            const json = JSON.parse(this.decodedData())
+            return JSON.stringify(json, null, 2)
+        }
+        return this.decodedData() 
     }
 
-    jsonData () {
-        this.data()
+    escapeHtml (unsafe) {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
     }
 
 }.initThisClass()

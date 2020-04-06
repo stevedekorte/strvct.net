@@ -4,6 +4,12 @@
 
     BMBlobs
 
+    blobs -> blob (name, valueHash) -> CamStore -> CamRecord (valueHash, valueData)
+
+    A container for existing blobs. 
+    A blob is a name to data hash entry.
+    The data hash is used as a pointer to a CamRecord
+
     store a blob:
 
     const blob = blobs.blobForKey(k)
@@ -21,8 +27,6 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
     }
     
     initPrototype () {
-        this.newSlot("asyncDict", null)
-        this.newSlot("syncsSubnodes", false)
     }
 
     init () {
@@ -33,26 +37,19 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(true)
-        this.setAsyncDict(PersistentAsyncDictionary.clone().setName("blobs"))
         return this
     }
 
     blobForKey (key) {
-        const wm = this.weakMap() 
-        let blob = wm.get(key)
-        if (!blob) {
-            blob = this.newBlob()
-            blob.seyKey(key)
-            wm.set(key, blob)
+        //const subnode = this.firstSubnodeWithTitle(key)
+        const subnode = this.subnodeWithHash(key)
+        if (subnode) {
+            return subnode
         }
-        return blob
-    }
 
-    newBlob () {
-        const blob = BMBlob.clone().setBlobs(this)
-        if (this.syncsSubnodes()) {
-            this.addSubnode(blob)
-        }
+        const blob = this.newBlob()
+        blob.seyKey(key)
+        this.addSubnode(blob)
         return blob
     }
 

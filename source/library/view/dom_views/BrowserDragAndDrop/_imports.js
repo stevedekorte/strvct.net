@@ -1,6 +1,6 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
-    "BrowserDragData.js",
+    "BMDataUrl.js",
 ])
 

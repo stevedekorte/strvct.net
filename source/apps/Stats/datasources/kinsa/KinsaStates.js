@@ -27,7 +27,6 @@ window.KinsaStates = class KinsaStates extends BMNode {
         return this
     }
 
-
     appDidInit () {
         this.setupSubnodes()
         return this
@@ -36,7 +35,7 @@ window.KinsaStates = class KinsaStates extends BMNode {
     setupSubnodes () {
         this.usStatesDict().ownKVMap((stateCode, stateName) => {
             const kg = KinsaGroup.clone().setTitle(stateName)
-            kg.jsonResource().setPath("https://static.kinsahealth.com/" + stateCode +  "_data.json")
+            kg.urlResource().setPath("https://static.kinsahealth.com/" + stateCode +  "_data.json")
             this.addSubnode(kg)
         })
 

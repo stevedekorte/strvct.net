@@ -62,7 +62,7 @@ window.StatsResource = class StatsResource extends BMNode {
     }
 
     didLoadDataUrl (dataUrl) {
-        const jsonString = BrowserDragData.clone().setTransferData(null, dataUrl).decodedData()
+        const jsonString = BMDataUrl.clone().setDataUrlString(dataUrl).decodedData()
         const json = JSON.parse(jsonString)
         this.setData(json)
         this.didLoad()

@@ -1101,8 +1101,11 @@ window.BMNode = class BMNode extends ProtoClass {
                 newSubnode.copyFrom(subnode)
                 // TODO: Do we need to replace all references in pool and reload?
                 this.replaceSubnodeWith(subnode, newSubnode)
+                this.removeOtherSubnodeWithSameTitle(newSubnode)
                 return newSubnode
             }
+
+            this.removeOtherSubnodeWithSameTitle(subnode)
             return subnode
         }
 

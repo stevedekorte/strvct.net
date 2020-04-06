@@ -6,6 +6,9 @@
 
     Content Addressable Memory Store
 
+    the subnodes are the "active" record 
+    which are either in a state of sync loading or already loaded.
+
 */
 
 window.BMCamStore = class BMCamStore extends BMStorableNode {
@@ -17,8 +20,7 @@ window.BMCamStore = class BMCamStore extends BMStorableNode {
     }
     
     initPrototype () {
-        this.newSlot("asyncDict", null)
-        this.newSlot("syncsSubnodes", false)
+        this.newSlot("store", null)
     }
 
     init () {
@@ -29,7 +31,8 @@ window.BMCamStore = class BMCamStore extends BMStorableNode {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(true)
-        this.setAsyncDict(PersistentAsyncDictionary.clone().setName("CamStore"))
+        this.setStore(PersistentAsyncDictionary.clone().setName("CamStore"))
+        this.store().asyncOpen()
         return this
     }
 
@@ -51,10 +54,9 @@ window.BMCamStore = class BMCamStore extends BMStorableNode {
         return blob
     }
 
-
     prepareForFirstAccess () {
         super.prepareForFirstAccess()
-        this.asyncDict().asyncAllKeys((keys) => {
+        this.store().asyncAllKeys((keys) => {
             keys.forEach((key) => {
                 const blob = this.blobForKey(key)
                 this.addSubnodeIfAbsent(blob)

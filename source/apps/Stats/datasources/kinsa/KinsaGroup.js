@@ -14,7 +14,7 @@ window.KinsaGroup = class KinsaGroup extends BMNode {
     }
     
     initPrototype () {
-        this.newSlot("jsonResource", null)
+        this.newSlot("urlResource", null)
         this.newSlot("table", null)
     }
 
@@ -24,8 +24,8 @@ window.KinsaGroup = class KinsaGroup extends BMNode {
         this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(false)
 
-        this.setJsonResource(BMUrlResource.clone())
-        this.addSubnode(this.jsonResource())
+        this.setUrlResource(BMUrlResource.clone())
+        this.addSubnode(this.urlResource())
 
         this.setTable(JTable.clone())
         this.addSubnode(this.table())
@@ -34,8 +34,8 @@ window.KinsaGroup = class KinsaGroup extends BMNode {
     }
 
     subtitle () {
-        return this.jsonResource().subtitle()
-        //return this.jsonResource().isLoaded() ? "loaded" : ""
+        return this.urlResource().subtitle()
+        //return this.urlResource().isLoaded() ? "loaded" : ""
     }
 
     setupSubnodes () {
@@ -43,17 +43,17 @@ window.KinsaGroup = class KinsaGroup extends BMNode {
     }
 
     load () {
-        this.jsonResource().load()
+        this.urlResource().load()
         return this
     }
 
     refresh () {
-        this.jsonResource().refresh()
+        this.urlResource().refresh()
         return this
     }
 
     clear () {
-        this.jsonResource().clear()
+        this.urlResource().clear()
         return this
     }
 

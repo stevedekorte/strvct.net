@@ -74,10 +74,10 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMJsonNode {
         return this
     }
 
-    getBrowserDragData () {
+    getBMDataUrl () {
         //const json = this.node().copyArchiveDict() 
         const json = this.jsonArchive() 
-        const bdd = BrowserDragData.clone()
+        const bdd = BMDataUrl.clone()
         bdd.setMimeType("application/json")
         bdd.setFileName(this.title() + ".json")
         bdd.setDecodedData(JSON.stringify(json, null, 4))

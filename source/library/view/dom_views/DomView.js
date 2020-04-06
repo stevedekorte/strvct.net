@@ -2924,7 +2924,7 @@ window.DomView = class DomView extends ProtoClass {
 
                 if (mimeType) {
                     dataTransferItem.getAsString((s) => {
-                        const chunk = BrowserDragData.clone()
+                        const chunk = BMDataUrl.clone()
                         chunk.setMimeType(mimeType)
                         chunk.setDecodedData(s)
                         console.log("mimeType:", mimeType)
@@ -2948,7 +2948,7 @@ window.DomView = class DomView extends ProtoClass {
     }
 
     onBrowserDropMimeTypeAndRawData (mimeType, dataUrl) {
-        const dd = BrowserDragData.clone().setTransferData(mimeType, dataUrl)
+        const dd = BMDataUrl.clone().setDataUrlString(dataUrl)
         this.onBrowserDropChunk(dd)
     }
 

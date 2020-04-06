@@ -9,9 +9,9 @@
 window.BMBlob = class BMBlob extends BMNode {
     
     initPrototype () {
-        this.newSlot("value", null).setSyncsToView(true).setShouldStoreSlot(true)
-        this.newSlot("size", 0).setShouldStoreSlot(true)
-        this.newSlot("blobs", null)
+        // title is the key
+        this.newSlot("hashValue", null).setSyncsToView(true).setShouldStoreSlot(true)
+        this.newSlot("value", null).setSyncsToView(true).setShouldStoreSlot(false)
     }
 
     init () {
@@ -19,6 +19,20 @@ window.BMBlob = class BMBlob extends BMNode {
         this.setNodeMinWidth(600)
         this.setShouldStore(true)
         return this
+    }
+
+    setupValueField () {
+        const field = BMTextAreaField.clone().setKey("value")
+        field.setValueMethod("value")
+        field.setValueIsEditable(false)
+        field.setIsMono(true)
+        field.setTarget(this) 
+        field.getValueFromTarget()
+        this.addSubnode(field)        
+    }
+
+    blobs () {
+        return this.parentNode()
     }
 
     setKey (key) {
@@ -31,6 +45,7 @@ window.BMBlob = class BMBlob extends BMNode {
     }
 
     hash () {
+        // for blobs subnode search
         return this.key()
     }
 
@@ -48,13 +63,7 @@ window.BMBlob = class BMBlob extends BMNode {
 
     prepareForFirstAccess () {
         super.prepareForFirstAccess()
-        const field = BMTextAreaField.clone().setKey("value")
-        field.setValueMethod("value")
-        field.setValueIsEditable(false)
-        field.setIsMono(true)
-        field.setTarget(this) 
-        field.getValueFromTarget()
-        this.addSubnode(field)        
+        this.setupValueField()     
     }
 
     value () {
