@@ -22,7 +22,7 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
 
     init() {
         super.init()
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     db () {
@@ -42,8 +42,12 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
     newTx () {
         assert(Type.isNullOrUndefined(this.tx()))
         const tx = this.db().transaction(this.storeName(), "readwrite")        
+        //tx.onerror = (event) => { this.onTxError(event) }
+        //tx.onsuccess = (event) => { this.onTxSuccess(event) }
+
         tx.onerror = (event) => { this.onTxError(event) }
-        tx.onsuccess = (event) => { this.onTxSuccess(event) }
+        tx.oncomplete = (event) => { this.onTxSuccess(event) }
+
         this.setTx(tx)
         return tx
     }
@@ -84,6 +88,7 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
     }
 	
     commit () {
+        this.assertNotCommitted()
         this.setIsCommitted(true)
         if (!Type.isUndefined(this.tx().commit)) {
             this.tx().commit()

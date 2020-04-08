@@ -116,6 +116,11 @@ window.ideal.Slot = class Slot {
          this.simpleNewSlot("syncsToView", false)
 
          this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
+
+         // debugging 
+
+         this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
+         this.simpleNewSlot("doesBreakInSetter", false) // uses "debugger;"
     }
 
     setSyncsToView (aBool) {

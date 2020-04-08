@@ -15,6 +15,7 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         this.newSlot("dataUrl", null)
         //this.newSlot("rawData", null).setSyncsToView(true)
         this.newSlot("decodedData", null).setSyncsToView(true)
+        this.newSlot("timeoutInterval", 24*60*60*1000).setSyncsToView(true)
         //this.newSlot("decodedJson", null).setSyncsToView(true)
     }
 
@@ -92,9 +93,23 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
 
     // --- loading ---
 
-    load () {
-        this.setStatus("loading...")
+    load () {        
+        const blobs = BMBlobs.shared()
+        if (blobs.hasBlobWithName(this.path())) {
+            const blob = blobs.blobWithName(this.path())
+            if (blob.age() < this.timeoutInterval()) {
+                this.setStatus("reading from cache...")
+                const resolve = () => { this.justSetDataUrlString(blob.value()) }
+                const reject = () => { this.justLoad() }
+                blob.asyncReadValue(resolve, reject)
+                return this
+            }
+        }
+        this.justLoad() 
+    }
 
+    justLoad () {
+        this.setStatus("sending request...")
         const rq = new XMLHttpRequest();
         rq.open("get", this.path());
         rq.responseType = "blob";
@@ -105,7 +120,7 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
         rq.onprogress  = (event) => { this.onRequestProgress(event) }
         rq.ontimeout   = (event) => { this.onRequestTimeout(event) }
-        rq.send();
+        rq.send()
         return this
     }
 
@@ -169,13 +184,20 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
 
     onReaderLoad (event) {
         const fileReader = event.currentTarget
-        this.dataUrl().setDataUrlString(fileReader.result)
-        this.setError(null)
-        this.scheduleSyncToView()
+        const result = fileReader.result
+        this.justSetDataUrlString(result)
     }
 
     onReaderLoadEnd () {
         this.setStatus(null)
+    }
+
+    justSetDataUrlString (aString) {
+        this.dataUrl().setDataUrlString(aString)
+        BMBlobs.shared().createBlobWithNameAndValue(this.path(), aString)
+        this.setStatus(null)
+        this.setError(null)
+        this.scheduleSyncToView()
     }
 
     // --- decoding ---

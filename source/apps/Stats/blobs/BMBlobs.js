@@ -27,6 +27,7 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
     }
     
     initPrototype () {
+        this.newSlot("store", null)
     }
 
     init () {
@@ -35,29 +36,68 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
         this.setNodeMinWidth(400)
         this.setNoteIsSubnodeCount(true)
         this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
+        this.setShouldStoreSubnodes(true)
         this.setNodeCanReorderSubnodes(true)
+
+        this.setStore(PersistentAsyncDictionary.clone().setName("BlobHashStore"))
+        this.store().asyncOpen(() => {
+            //this.removeAllSubnodes()
+            //this.camForValue("hello world") 
+            this.collectGarbage()
+        })
+
         return this
     }
 
-    blobForKey (key) {
-        //const subnode = this.firstSubnodeWithTitle(key)
-        const subnode = this.subnodeWithHash(key)
-        if (subnode) {
-            return subnode
+    blobWithName (aName) {
+        return this.subnodeWithHash(aName)
+    }
+
+    hasBlobWithName (aName) {
+        return !Type.isNullOrUndefined(this.blobWithName(aName))
+    }
+
+    createBlobWithNameAndValue (aName, aValue) {
+        const oldBlob = this.blobWithName(aName)
+        if (oldBlob) {
+            oldBlob.setValue(aValue)
+            return oldBlob
         }
 
+        assert(!this.hasBlobWithName(aName))
         const blob = BMBlob.clone()
-        blob.setKey(key)
+        blob.setName(aName)
+        blob.setValue(aValue) // this will trigger an async compute of valueHash and store of value
         this.addSubnode(blob)
         return blob
     }
 
+    collectGarbage () {
+        this.subnodes().shallowCopy().forEach((blob) => {
+            if (!blob.isValid()) {
+                console.log("collecting inValid blob:", blob.description())
+                blob.delete()
+            }
+        })
+
+        const subnodeHashes = this.subnodes().map(sn => sn.valueHash()).asSet()
+        const store = this.store()
+        store.asyncAllKeys((storedHashes) => {
+            storedHashes.forEach((h) => {
+                if (!subnodeHashes.has(h)) {
+                    console.log("collecting unreferenced blob hash:", h)
+                    store.asyncRemoveKey(h)
+                }
+            })
+        })
+    }
 
 }.initThisClass()
 
+/*
 setTimeout(() => {
-    const blob = BMBlobs.shared().blobForKey("http://dekorte.com/")
+    const blob = BMBlobs.shared().blobForKey("http://test.com/")
     blob.setValue("test content")
     blob.asyncWrite()
 })
+*/

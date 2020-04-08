@@ -18,7 +18,7 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
     init() {
         super.init()
         //this.requestPersistenceIfNeeded()
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     hasIndexedDB() {
@@ -227,7 +227,25 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
             } else {
                 callback(keys)
             }
-        };
+        }
+
+        cursorRequest.onerror = (event) => {
+            this.debugLog(" asyncAsJson cursorRequest.onerror ", event)
+            throw newError("error requesting cursor")
+        }
+    }
+
+    asyncForeachKey(callback) {
+        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
+
+        cursorRequest.onsuccess = (event) => {
+            const cursor = event.target.result
+            if (cursor) {
+                const key = cursor.value.key
+                callback(key)
+                cursor.continue()
+            }
+        }
 
         cursorRequest.onerror = (event) => {
             this.debugLog(" asyncAsJson cursorRequest.onerror ", event)

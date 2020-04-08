@@ -467,6 +467,9 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
     didUpdateSlot (aSlot, oldValue, newValue) {
+        if (aSlot.shouldStoreSlot()) {
+            this.didMutate(aSlot.name())
+        }
         /*
         // persistence system can hook this
         const methodName = "didUpdateSlot" + aSlot.name().capitalized()

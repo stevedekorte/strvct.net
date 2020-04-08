@@ -73,7 +73,7 @@ window.StatsApp = class StatsApp extends App {
         this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Storage", BMDataStore)
         this.addSettingNameAndClass("Resources", BMResources)
-        this.addSettingNameAndClass("Cams", BMCams)
+        //this.addSettingNameAndClass("Cams", BMCams)
         this.addSettingNameAndClass("Blobs", BMBlobs)
 
         //settings.subnodes().forEach(node => node.setCanDelete(true))

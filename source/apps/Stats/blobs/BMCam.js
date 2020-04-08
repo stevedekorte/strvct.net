@@ -106,7 +106,6 @@ window.BMCam = class BMCam extends BMNode {
 
     async exists () {
         this.cams().store().asyncHasKey(this.hash(), this.value(), resolve, reject)
-
     }
 
 

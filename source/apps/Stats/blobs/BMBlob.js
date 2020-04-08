@@ -9,9 +9,41 @@
 window.BMBlob = class BMBlob extends BMNode {
 
     initPrototype() {
-        // title is the key
-        this.newSlot("valueHash", null).setSyncsToView(true).setShouldStoreSlot(true)
-        this.newSlot("cam", null).setSyncsToView(true).setShouldStoreSlot(false)
+
+        {
+            const slot = this.newSlot("name", null)
+            slot.setSyncsToView(true)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+        }
+
+        {
+            const slot = this.newSlot("valueHash", null)
+            slot.setSyncsToView(true)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+        }
+
+        {
+            const slot = this.newSlot("valueSize", null)
+            slot.setSyncsToView(true)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+        }
+
+        {
+            const slot = this.newSlot("lastModifiedTime", null)
+            slot.setSyncsToView(true)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+        }
+
+        {
+            const slot = this.newSlot("value", null)
+            slot.setSyncsToView(true)
+            slot.setShouldStoreSlot(false)
+            slot.setDoesHookSetter(true)
+        }
     }
 
     init() {
@@ -19,21 +51,19 @@ window.BMBlob = class BMBlob extends BMNode {
         this.setNodeMinWidth(600)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
+        //this.setCanDelete(true)
         return this
     }
 
+    age () {
+        return new Date().getTime() - this.lastModifiedTime() 
+    }
 
     prepareForFirstAccess() {
         super.prepareForFirstAccess()
-        //this.setupValueField()
-        /*
-        if (this.camRecord()) {
-            this.addSubnode(this.camRecord())
-        }
-        */
+        this.setupValueField()
     }
 
-    /*
     setupValueField() {
         const field = BMTextAreaField.clone().setKey("value")
         field.setValueMethod("value")
@@ -42,67 +72,123 @@ window.BMBlob = class BMBlob extends BMNode {
         field.setTarget(this)
         field.getValueFromTarget()
         this.addSubnode(field)
-    }
-    */
 
-    blobs() {
-        return this.parentNode()
+        this.asyncReadValue()
+    }
+
+    title () {
+        return this.name()
+    }
+
+    subtitle () {
+        const size = this.valueSize()
+        if (size) {
+            return size.byteSizeDescription() 
+        }
+        return null
     }
 
     // key
 
-    setKey(key) {
-        this.setTitle(key)
+    hash() {
+        return this.name() // for subnode lookup
+    }
+
+    didUpdateSlotValue (oldValue, newValue) {
+        if (newValue) {
+            this.setValueSize(newValue.length)
+            this.setLastModifiedTime(new Date().getTime())
+            this.asyncWriteValue()
+        }
         return this
     }
 
-    key() {
-        return this.title()
+    store () {
+        return this.parentNode().store()
     }
 
-    hash() {
-        // for blobs subnode search
-        return this.key()
-    }
+    async asyncWriteValue () {
+        const v = this.value()
+        const digest = await v.asyncSha256Digest()
+        const h = digest.base64Encoded()
+        this.setValueHash(h)
 
-    updateHashValue() {
-    }
+        assert(this.isValid())
 
-    cam () {
-        return BMCams.shared().camWithHash(this.hashValue())
-    }
-
-    value () {
-        const cam = this.cam()
-        if (cam) {
-            const v = cam.value()
-            if (v) {
-                return v
-            }
+        const success = () => {
+            console.log("did write hash/value pair: " + this.description())
         }
-        return null
+
+
+        this.store().asyncAtPut(h, v, success, null)
     }
 
-    subtitle () {
-        if (this.value()) {
-            return this.value().size().byteSizeDescription() 
+    asyncReadValue (resolve, reject) {
+        if (!this.value()) {
+            assert(this.isValid())
+            assert(this.valueHash())
+            const t1 = new Date().getTime()
+            this.store().asyncAt(this.valueHash(), (value) => {
+                const t2 = new Date().getTime()
+                console.log("seconds to async fetch value: ", (t2-t1)/1000)
+                this._value = value
+                this.didUpdateNode()
+                if (resolve) {
+                    resolve()    
+                }     
+            }, reject)
         }
-        return null
     }
 
-    async asyncRead() {
-        this.setValue(await this.cam().asyncRead())
-        return this.value()
+    isValid () {
+        if (Type.isNull(this.name())) {
+            return false
+        }
+
+        if (Type.isNull(this.valueHash())) {
+            return false
+        }
+
+        if (Type.isNull(this.valueSize())) {
+            return false
+        }
+
+        if (Type.isNull(this.lastModifiedTime()) || this.lastModifiedTime() === 0) {
+            return false
+        }
+
+        return true
     }
 
-    async asyncWrite() {
-        assert(this.value())
-        this.cam().setValue(this.value())
-        await camRecord.asyncWrite()
+    description () {
+        const slotNames = ["name", "valueHash", "valueSize", "lastModifiedTime"]
+        const parts = [this.typeId()]
+        slotNames.forEach(slotName => {
+            parts.push(slotName + ":" + this[slotName]())
+        })
+        return parts.join(", ")
     }
 
-    async asyncExists() {
-        //this.blobs().asyncDict().hasKey(this.key(), callback)
+    recordForStore (aStore) {
+        const r = super.recordForStore(aStore)
+        console.log(this.typeId() + " recordForStore : ", JSON.stringify(r, null, 2))
+        return r
+    }
+
+    loadFromRecord (aRecord, aStore) {
+        const result = super.loadFromRecord(aRecord, aStore)
+        console.log("after loadFromRecord:" + JSON.stringify(aRecord, null, 2))
+        return result
+    }
+
+    addMutationObserver (anObserver) {
+        //console.log(this.typeId() + ".addMutationObserver(" + anObserver.typeId() + ")")
+        return super.addMutationObserver(anObserver)
+    }
+
+    didMutate () {
+        //console.log("didMutate:" + this.description())
+        return super.didMutate()
     }
 
 }.initThisClass()
