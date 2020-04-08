@@ -116,6 +116,9 @@ window.BMNode = class BMNode extends ProtoClass {
             slot.setInspectorPath("Note")
         }
 
+
+        //this.newSlot("isDebuggingPersistence", false)
+
         // parent node, subnodes
 
         this.newSlot("parentNode", null)

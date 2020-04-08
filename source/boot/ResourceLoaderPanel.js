@@ -280,6 +280,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
     setCurrentItem (itemName) {
         const item = this.itemElement()
+        this._currentItemName = itemName
         //item.style.opacity = 0
         item.style.color = "#444"
         //item.currentValue = itemName	
@@ -295,11 +296,13 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
     }
 
     setError (error) {
-        console.log("Error: ", error)
+        const msg = "ERROR: " + this._currentItemName + " : " + error
+        console.log(msg)
         this._error = error
         //console.trace()
         this.errorElement().innerHTML = error
         this.show()
+        throw new Error(msg)
         return this
     }
 

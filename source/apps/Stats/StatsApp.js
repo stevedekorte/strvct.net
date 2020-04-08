@@ -57,7 +57,6 @@ window.StatsApp = class StatsApp extends App {
         const foursquare = stats.subnodeWithTitleIfAbsentInsertProto("Foursquare", Foursquare)
         const safegraph = stats.subnodeWithTitleIfAbsentInsertProto("SafeGraph", BMFolderNode)
         const usafacts = stats.subnodeWithTitleIfAbsentInsertProto("USA Facts", BMFolderNode)
-
         // https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv
 
         this.setupSettings()
@@ -69,12 +68,12 @@ window.StatsApp = class StatsApp extends App {
         const settings = this.subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
         settings.setNodeMinWidth(150)
         this.setSettings(settings)
+        //settings.removeSubnodesWithTitle("Cams")
 
         this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Storage", BMDataStore)
         this.addSettingNameAndClass("Resources", BMResources)
-        //this.addSettingNameAndClass("Cache", BMCache)
-        this.addSettingNameAndClass("CamStore", BMCamStore)
+        this.addSettingNameAndClass("Cams", BMCams)
         this.addSettingNameAndClass("Blobs", BMBlobs)
 
         //settings.subnodes().forEach(node => node.setCanDelete(true))

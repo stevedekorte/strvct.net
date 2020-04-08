@@ -93,7 +93,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
         this.setNodeStoreDidOpenNote(window.BMNotificationCenter.shared().newNote().setSender(this).setName("nodeStoreDidOpen"))
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
         return this
     }
 
@@ -417,6 +417,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
         return { 
             "BMMenuNode" : "BMFolderNode",
             "KinsaResources" : "Kinsa",
+            "BMCamStore" : "BMCams",
         }
         /*
         return {

@@ -62,7 +62,10 @@ window.IndexedArray = class IndexedArray extends HookedArray {
     // index closure
 
     setIndexClosure (aFunction) {
-        this._indexClosure = aFunction
+        if (aFunction !== this._indexClosure) {
+            this._indexClosure = aFunction
+            this.setNeedsReindex(true)
+        }
         return this
     }
 
@@ -77,7 +80,7 @@ window.IndexedArray = class IndexedArray extends HookedArray {
     // --- lazy reindexing ---
 
     setNeedsReindex (aBool) {
-        this.__needsReindex = aBool
+        this._needsReindex = aBool
         return this
     }
 
@@ -135,9 +138,9 @@ window.IndexedArray = class IndexedArray extends HookedArray {
     // accessing index - public
 
     itemForIndexKey (key) { // public
-        if (this.hasIndexKey(key)) {
-            return this.index().at(key)
-        }
+        //if (this.hasIndexKey(key)) {
+        return this.index().at(key)
+        //}
     }
 
     indexHasItem (v) { // public

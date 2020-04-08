@@ -11,14 +11,14 @@
         asyncOpen(callback, errorCallback) 
         close()
         asyncClear(callback)
-        hasKey(key, callback)  // callback passes true or false
+        asyncHasKey(key, callback)  // callback passes true or false
         asyncAt(key, callback) // callback passes value or undefined
         asyncAtPut(key, value, successCallback, errorCallback) 
         asyncRemoveKey(key, successCallback, errorCallback)
         
 */
 
-window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal.AtomicDictionary {
+window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ProtoClass {
     initPrototype () {
         this.newSlot("name", "PersistentAsyncDictionary")
         this.newSlot("idb", null)
@@ -26,7 +26,6 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
 
     init() {
         super.init()
-        this.setIsOpen(false)
         this.setIdb(IndexedDBFolder.clone())
         //this.setIsDebugging(true)
     }
@@ -36,6 +35,10 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
     assertAccessible () {
         super.assertAccessible()
         this.assertOpen()
+    }
+
+    isOpen () {
+        return this.idb().isOpen()
     }
 
     open () {
@@ -53,7 +56,9 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
 
     asyncOpen (callback, errorCallback) {
         this.idb().setPath(this.name())
-        this.idb().asyncOpenIfNeeded( () => this.onOpen(callback), errorCallback )
+        this.idb().asyncOpenIfNeeded( () => {
+            this.onOpen(callback) 
+        }, errorCallback )
         return this
     }
 	
@@ -64,15 +69,9 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
         if (false) {
             this.asyncClear(callback)
         } else {
-            this.idb().asyncAsJson((dict) => {
-                //console.log(this.type() + " onOpen() --- loaded cache with " + Object.keys(dict).length + " keys")
-                this.setJsDict(dict)
-                this.setIsOpen(true)
-                if (callback) {
-                    callback()
-                }
-                //this.verifySync()
-            })
+            if (callback) {
+                callback()
+            }
         }
     }
 	
@@ -87,9 +86,21 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
         this.idb().asyncClear(callback) 
     }
 
-    hasKey (key, callback) { // callback passes true or false
-        this.idb().heyKey(callback) 
+    asyncAllKeys (callback) {
+        this.idb().asyncAllKeys(callback) 
     }
+
+    asyncHasKey (key, callback) { // callback passes true or false
+        this.idb().asyncHasKey(key, callback) 
+    }
+
+    /*
+    async asyncHasKey (key) {
+        return new Promise((resolve, reject) => {
+            this.idb().hasKey(key, resolve) 
+        })
+    }
+    */
 
     asyncAt (key, callback) { // callback passes value or undefined
         assert(!Type.isNullOrUndefined(callback))
@@ -97,7 +108,7 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
     }
 
     asyncAtPut (key, value, successCallback, errorCallback) {
-        this.hasKey(key, (hasKey) => {
+        this.asyncHasKey(key, (hasKey) => {
             if (hasKey) {
                 this.asyncUpdate(key, value, successCallback, errorCallback)
             } else {
@@ -112,7 +123,7 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
         tx.setIsDebugging(this.isDebugging())
         tx.setSucccessCallback(successCallback)
         tx.setErrorCallback(errorCallback)
-        tx.atUpdate(k, v)
+        tx.atUpdate(key, value)
         tx.commit() 
     }
 
@@ -122,7 +133,7 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
         tx.setIsDebugging(this.isDebugging())
         tx.setSucccessCallback(successCallback)
         tx.setErrorCallback(errorCallback)
-        tx.atAdd(k, v)
+        tx.atAdd(key, value)
         tx.commit() 
     }
 
@@ -132,7 +143,7 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ideal
         tx.setIsDebugging(this.isDebugging())
         tx.setSucccessCallback(successCallback)
         tx.setErrorCallback(errorCallback)
-        tx.removeAt(k)
+        tx.removeAt(key)
         tx.commit() 
     }
 

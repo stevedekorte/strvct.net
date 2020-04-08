@@ -47,8 +47,8 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
             return subnode
         }
 
-        const blob = this.newBlob()
-        blob.seyKey(key)
+        const blob = BMBlob.clone()
+        blob.setKey(key)
         this.addSubnode(blob)
         return blob
     }
@@ -56,3 +56,8 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
 
 }.initThisClass()
 
+setTimeout(() => {
+    const blob = BMBlobs.shared().blobForKey("http://dekorte.com/")
+    blob.setValue("test content")
+    blob.asyncWrite()
+})

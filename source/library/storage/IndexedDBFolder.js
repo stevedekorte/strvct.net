@@ -68,6 +68,8 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
     asyncOpenIfNeeded(callback, errorCallback) {
         if (!this.isOpen()) {
             this.asyncOpen(callback, errorCallback)
+        } else {
+            callback()
         }
     }
 
@@ -156,8 +158,10 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
 
     // reading
 
-    hasKey (key, callback) {
+    asyncHasKey (key, callback) {
         const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+        //const keyRangeValue = IDBKeyRange.bound(key, key)
+        //const request = objectStore.openCursor(keyRangeValue)
         const request = objectStore.openCursor(key)
 
         request.onsuccess = function(e) {
@@ -210,6 +214,27 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         return this
     }
     
+
+    asyncAllKeys(callback) {
+        const keys = []
+        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
+
+        cursorRequest.onsuccess = (event) => {
+            const cursor = event.target.result
+            if (cursor) {
+                keys.push(cursor.value.key)
+                cursor.continue()
+            } else {
+                callback(keys)
+            }
+        };
+
+        cursorRequest.onerror = (event) => {
+            this.debugLog(" asyncAsJson cursorRequest.onerror ", event)
+            throw newError("error requesting cursor")
+        }
+    }
+
 
     asyncAsJson(callback) {
         //console.log("asyncAsJson start")

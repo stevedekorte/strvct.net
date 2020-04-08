@@ -7,76 +7,104 @@
 */
 
 window.BMBlob = class BMBlob extends BMNode {
-    
-    initPrototype () {
+
+    initPrototype() {
         // title is the key
-        this.newSlot("hashValue", null).setSyncsToView(true).setShouldStoreSlot(true)
-        this.newSlot("value", null).setSyncsToView(true).setShouldStoreSlot(false)
+        this.newSlot("valueHash", null).setSyncsToView(true).setShouldStoreSlot(true)
+        this.newSlot("cam", null).setSyncsToView(true).setShouldStoreSlot(false)
     }
 
-    init () {
+    init() {
         super.init()
         this.setNodeMinWidth(600)
         this.setShouldStore(true)
+        this.setShouldStoreSubnodes(false)
         return this
     }
 
-    setupValueField () {
+
+    prepareForFirstAccess() {
+        super.prepareForFirstAccess()
+        //this.setupValueField()
+        /*
+        if (this.camRecord()) {
+            this.addSubnode(this.camRecord())
+        }
+        */
+    }
+
+    /*
+    setupValueField() {
         const field = BMTextAreaField.clone().setKey("value")
         field.setValueMethod("value")
         field.setValueIsEditable(false)
         field.setIsMono(true)
-        field.setTarget(this) 
+        field.setTarget(this)
         field.getValueFromTarget()
-        this.addSubnode(field)        
+        this.addSubnode(field)
     }
+    */
 
-    blobs () {
+    blobs() {
         return this.parentNode()
     }
 
-    setKey (key) {
+    // key
+
+    setKey(key) {
         this.setTitle(key)
         return this
     }
 
-    key () {
+    key() {
         return this.title()
     }
 
-    hash () {
+    hash() {
         // for blobs subnode search
         return this.key()
     }
 
-    subtitle () {
-        return this.size()
+    updateHashValue() {
     }
 
-    didUpdateSlotValue (oldValue, newValue) {
-        if (newValue) {
-            this.setSize(newValue.length)
-        } else {
-            this.setSize(0)
-        }
-    }
-
-    prepareForFirstAccess () {
-        super.prepareForFirstAccess()
-        this.setupValueField()     
+    cam () {
+        return BMCams.shared().camWithHash(this.hashValue())
     }
 
     value () {
-
+        const cam = this.cam()
+        if (cam) {
+            const v = cam.value()
+            if (v) {
+                return v
+            }
+        }
+        return null
     }
 
-    fetchIfAvailable (callback) {
-
+    subtitle () {
+        if (this.value()) {
+            return this.value().size().byteSizeDescription() 
+        }
+        return null
     }
 
-    exists () {
+    async asyncRead() {
+        this.setValue(await this.cam().asyncRead())
+        return this.value()
+    }
+
+    async asyncWrite() {
+        assert(this.value())
+        this.cam().setValue(this.value())
+        await camRecord.asyncWrite()
+    }
+
+    async asyncExists() {
         //this.blobs().asyncDict().hasKey(this.key(), callback)
     }
 
 }.initThisClass()
+
 

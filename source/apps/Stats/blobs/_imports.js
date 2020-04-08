@@ -1,8 +1,8 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
-    "BMCamRecord.js",
-    "BMCamStore.js",
+    "BMCam.js",
+    "BMCams.js",
 
     "BMBlob.js",
     "BMBlobs.js",
