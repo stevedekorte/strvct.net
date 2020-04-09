@@ -39,6 +39,13 @@ window.BMBlob = class BMBlob extends BMNode {
         }
 
         {
+            const slot = this.newSlot("expirationDate", null)
+            slot.setSyncsToView(true)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+        }
+
+        {
             const slot = this.newSlot("value", null)
             slot.setSyncsToView(true)
             slot.setShouldStoreSlot(false)
@@ -74,6 +81,7 @@ window.BMBlob = class BMBlob extends BMNode {
         this.addSubnode(field)
 
         this.asyncReadValue()
+        this.scheduleSyncToView()
     }
 
     title () {
@@ -116,28 +124,26 @@ window.BMBlob = class BMBlob extends BMNode {
         assert(this.isValid())
 
         const success = () => {
-            console.log("did write hash/value pair: " + this.description())
+            //console.log("did write hash/value pair: " + this.description())
         }
-
 
         this.store().asyncAtPut(h, v, success, null)
     }
 
     asyncReadValue (resolve, reject) {
-        if (!this.value()) {
-            assert(this.isValid())
-            assert(this.valueHash())
-            const t1 = new Date().getTime()
-            this.store().asyncAt(this.valueHash(), (value) => {
-                const t2 = new Date().getTime()
-                console.log("seconds to async fetch value: ", (t2-t1)/1000)
-                this._value = value
-                this.didUpdateNode()
-                if (resolve) {
-                    resolve()    
-                }     
-            }, reject)
+        if (this.value()) {
+            resolve()
         }
+
+        assert(this.isValid())
+
+        this.store().asyncAt(this.valueHash(), (value) => {
+            this._value = value
+            this.didUpdateNode()
+            if (resolve) {
+                resolve()    
+            }     
+        }, reject)
     }
 
     isValid () {
@@ -169,6 +175,7 @@ window.BMBlob = class BMBlob extends BMNode {
         return parts.join(", ")
     }
 
+    /*
     recordForStore (aStore) {
         const r = super.recordForStore(aStore)
         console.log(this.typeId() + " recordForStore : ", JSON.stringify(r, null, 2))
@@ -190,6 +197,7 @@ window.BMBlob = class BMBlob extends BMNode {
         //console.log("didMutate:" + this.description())
         return super.didMutate()
     }
+    */
 
 }.initThisClass()
 

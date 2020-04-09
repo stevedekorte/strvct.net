@@ -194,16 +194,13 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
         }
         
         request.onsuccess = (event) => {
-            //console.log("asyncAt onsuccess ", event)
             // request.result is undefined if value not in DB
             try {
                 if (!Type.isUndefined(request.result)) {
-                    //console.log("asyncAt('" + key + "') onsuccess request.result = ", request.result)
                     const entry = request.result
                     const value = JSON.parse(entry.value)
                     callback(value)
                 } else {
-                    //console.log("asyncAt('" + key + "') onsuccess request.result = ", request.result)
                     callback(undefined)
                 }
             } catch (e) {

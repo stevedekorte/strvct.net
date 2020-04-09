@@ -74,7 +74,6 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
     }
 
     onTxSuccess (event) {
-        console.log("indexdb tx onsuccess")
         const f = this.succcessCallback()
         if (f) {
             f()

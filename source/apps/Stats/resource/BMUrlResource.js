@@ -93,6 +93,10 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
 
     // --- loading ---
 
+    blobName () {
+        return "URL:encoded:" + this.path()
+    }
+
     load () {        
         const blobs = BMBlobs.shared()
         if (blobs.hasBlobWithName(this.path())) {
@@ -218,8 +222,8 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         if (du.isXml() ) { 
             return this.escapeHtml(this.decodedData())
         } else if (du.isJson()) {
-            const json = JSON.parse(this.decodedData())
-            return JSON.stringify(json, null, 2)
+            //const json = JSON.parse(this.decodedData())
+            //return JSON.stringify(json, null, 2)
         }
         return this.decodedData() 
     }

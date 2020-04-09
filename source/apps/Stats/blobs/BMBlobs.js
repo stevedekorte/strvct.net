@@ -75,7 +75,7 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
     collectGarbage () {
         this.subnodes().shallowCopy().forEach((blob) => {
             if (!blob.isValid()) {
-                console.log("collecting inValid blob:", blob.description())
+                this.debugLog(" collecting inValid blob:", blob.description())
                 blob.delete()
             }
         })
@@ -85,7 +85,7 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
         store.asyncAllKeys((storedHashes) => {
             storedHashes.forEach((h) => {
                 if (!subnodeHashes.has(h)) {
-                    console.log("collecting unreferenced blob hash:", h)
+                    this.debugLog("collecting unreferenced blob hash:", h)
                     store.asyncRemoveKey(h)
                 }
             })
