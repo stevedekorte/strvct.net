@@ -58,7 +58,7 @@ window.BMBlob = class BMBlob extends BMNode {
         this.setNodeMinWidth(600)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
-        //this.setCanDelete(true)
+        this.setCanDelete(true)
         return this
     }
 

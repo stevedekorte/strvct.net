@@ -18,10 +18,12 @@ window.Point = class Point extends ProtoClass {
         this.newSlot("t", 0)
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
     valueArray () {
         return [this._x, this._y, this._z]

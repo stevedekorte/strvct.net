@@ -1,6 +1,7 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
+    "Mirror.js",
     "Type-ideal.js",
     "Object-ideal.js",
     //"Object-associations.js",

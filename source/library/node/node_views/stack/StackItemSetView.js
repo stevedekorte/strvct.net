@@ -964,7 +964,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         if(this.stackView()) {
             const ps = this.stackView().previousStackView()
             if (ps) {
-                return ps.itemSetView()
+                return ps.navView().itemSetView()
             }
         }
         return null

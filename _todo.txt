@@ -1,6 +1,9 @@
 
-TODO:		
+TODO:	
+
+	- change ZoomView onWheel to adjust offsets such that zoom occurs on current mouse position 
 	
+	- move asyncX APIs to async asyncX with await?
 	
 	duplicating a row makes it's title uneditable?
 

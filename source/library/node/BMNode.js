@@ -1208,7 +1208,14 @@ window.BMNode = class BMNode extends ProtoClass {
         }
         return this
     }
-	
+    
+    // --- sorting helper ---
+
+    makeSortSubnodesByTitle () {
+        this.setSubnodeSortFunc( (a, b) => a.title().localeCompare(b.title()) )
+        return this
+    }
+
     // --- subnode sorting ---
 	
     setSubnodeSortFunc (f) {

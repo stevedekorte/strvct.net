@@ -77,7 +77,7 @@ window.SortedArray = class SortedArray extends IndexedArray {
 
         super.didMutate(slotName, optionalValue)
 
-        if (this.needsResortOnForSlot(slotName)) {
+        if (this._sortFunc && this.needsResortOnForSlot(slotName)) {
             this.resort()
         }
     }

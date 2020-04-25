@@ -6,7 +6,7 @@
 
 */
 
-window.BMUrlResource = class BMUrlResource extends BMNode {
+window.BMUrlResource = class BMUrlResource extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -17,12 +17,21 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         this.newSlot("decodedData", null).setSyncsToView(true)
         this.newSlot("timeoutInterval", 24*60*60*1000).setSyncsToView(true)
         //this.newSlot("decodedJson", null).setSyncsToView(true)
+        //this.newSlot("completeNote", null).setSyncsToView(true)
+        this.newSlot("urlDelegate", null)
     }
 
     init () {
         super.init()
         this.setNodeMinWidth(600)
         this.setDataUrl(BMDataUrl.clone())
+        //this.setCompleteNote(BMNotificationCenter.shared().newNote().setSender(this).setName("onUrlResourceComplete"))
+        return this
+    }
+
+    postComplete() {
+        //this.completeNote().post()
+        this.urlDelegate().performIfResponding("onUrlResourceComplete", this)
         return this
     }
 
@@ -97,19 +106,37 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         return "URL:encoded:" + this.path()
     }
 
-    load () {        
+    load () {
+        if (this.loadIfCached()) {
+            return this
+        }
+        this.justLoad()
+        return this
+    }
+
+    loadIfCached () {        
         const blobs = BMBlobs.shared()
-        if (blobs.hasBlobWithName(this.path())) {
+        const isCached = blobs.hasBlobWithName(this.path())
+        if (isCached) {
             const blob = blobs.blobWithName(this.path())
             if (blob.age() < this.timeoutInterval()) {
                 this.setStatus("reading from cache...")
-                const resolve = () => { this.justSetDataUrlString(blob.value()) }
-                const reject = () => { this.justLoad() }
+
+                const resolve = () => { 
+                    this.justSetDataUrlString(blob.value()) 
+                    this.postComplete()
+                }
+
+                const reject = () => { 
+                    this.justLoad() 
+                }
+                
                 blob.asyncReadValue(resolve, reject)
                 return this
             }
+            return true
         }
-        this.justLoad() 
+        return false
     }
 
     justLoad () {
@@ -139,7 +166,6 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     }
 
     onRequestLoadEnd (event) {
-
     }
 
     onRequestProgress (event) {
@@ -202,6 +228,7 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
         this.setStatus(null)
         this.setError(null)
         this.scheduleSyncToView()
+        this.postComplete()
     }
 
     // --- decoding ---
@@ -211,7 +238,7 @@ window.BMUrlResource = class BMUrlResource extends BMNode {
     }
 
     asJson () {
-        if(this.dataUlr().isJson() ) {
+        if(this.dataUrl().isJson() ) {
             return JSON.parse(this.decodedData())
         }
         return undefined

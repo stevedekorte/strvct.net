@@ -14,6 +14,8 @@ window.StatsApp = class StatsApp extends App {
         // model
         this.newSlot("stats", null)
 
+        
+
         this.newSlot("settings", null)
         this.newSlot("resources", null)
         this.newSlot("dataStore", null)
@@ -58,7 +60,7 @@ window.StatsApp = class StatsApp extends App {
         const safegraph = stats.subnodeWithTitleIfAbsentInsertProto("SafeGraph", BMFolderNode)
         const usafacts = stats.subnodeWithTitleIfAbsentInsertProto("USA Facts", BMFolderNode)
         // https://usafactsstatic.blob.core.windows.net/public/data/covid-19/covid_confirmed_usafacts.csv
-
+    
         this.setupSettings()
         return this
     }
@@ -75,6 +77,7 @@ window.StatsApp = class StatsApp extends App {
         this.addSettingNameAndClass("Resources", BMResources)
         //this.addSettingNameAndClass("Cams", BMCams)
         this.addSettingNameAndClass("Blobs", BMBlobs)
+        this.addSettingNameAndClass("World", World)
 
         //settings.subnodes().forEach(node => node.setCanDelete(true))
     }
@@ -119,19 +122,20 @@ window.StatsApp = class StatsApp extends App {
     // themes - temporary, until ThemesResources is ready
 
     setupTheme () {
-        this.setupNormalTheme()
-        //this.setupVectorTheme()
+        //this.setupNormalTheme()
+        this.setupVectorTheme()
     }
 
     setupNormalTheme () {
         const doc = DocumentBody.shared()
         //doc.setFontFamily("Sans-Serif")
-        doc.setFontFamily("Helvetica")
+        //doc.setFontFamily("Helvetica")
+        //doc.setFontFamily("Lato")
         //doc.setBackgroundColor("white")
         //doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
-        //doc.setFontFamily("OpenSans Regular")
+        doc.setFontFamily("OpenSans Regular")
         doc.setFontSizeAndLineHeight("15px")
     }
 

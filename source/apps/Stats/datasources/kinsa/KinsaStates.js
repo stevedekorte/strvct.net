@@ -27,83 +27,24 @@ window.KinsaStates = class KinsaStates extends BMNode {
         return this
     }
 
-    appDidInit () {
+    prepareForFirstAccess () {
+        super.prepareForFirstAccess()
         this.setupSubnodes()
+        this.subnodes().forEach(sn => sn.loadIfCached())
         return this
     }
 
     setupSubnodes () {
-        this.usStatesDict().ownKVMap((stateCode, stateName) => {
-            const kg = KinsaGroup.clone().setTitle(stateName)
-            kg.urlResource().setPath("https://static.kinsahealth.com/" + stateCode +  "_data.json")
+        const states = UnitedStates.shared().states()
+        states.subnodes().forEach((state) => {
+            const kg = KinsaGroup.clone().setTitle(state.name())
+            kg.urlResource().setPath("https://static.kinsahealth.com/" + state.abbreviation() +  "_data.json")
+            kg.urlResource().setTitle("data")
+            kg.mapNode().setPlace(state)
+            kg.setNodeMinWidth(960)
             this.addSubnode(kg)
         })
-
         return this
-    }
-
-    usStatesDict () {
-        return {
-            "AL": "Alabama",
-            "AK": "Alaska",
-            "AS": "American Samoa",
-            "AZ": "Arizona",
-            "AR": "Arkansas",
-            "CA": "California",
-            "CO": "Colorado",
-            "CT": "Connecticut",
-            "DE": "Delaware",
-            "DC": "District Of Columbia",
-            "FM": "Federated States Of Micronesia",
-            "FL": "Florida",
-            "GA": "Georgia",
-            "GU": "Guam",
-            "HI": "Hawaii",
-            "ID": "Idaho",
-            "IL": "Illinois",
-            "IN": "Indiana",
-            "IA": "Iowa",
-            "KS": "Kansas",
-            "KY": "Kentucky",
-            "LA": "Louisiana",
-            "ME": "Maine",
-            "MH": "Marshall Islands",
-            "MD": "Maryland",
-            "MA": "Massachusetts",
-            "MI": "Michigan",
-            "MN": "Minnesota",
-            "MS": "Mississippi",
-            "MO": "Missouri",
-            "MT": "Montana",
-            "NE": "Nebraska",
-            "NV": "Nevada",
-            "NH": "New Hampshire",
-            "NJ": "New Jersey",
-            "NM": "New Mexico",
-            "NY": "New York",
-            "NC": "North Carolina",
-            "ND": "North Dakota",
-            "MP": "Northern Mariana Islands",
-            "OH": "Ohio",
-            "OK": "Oklahoma",
-            "OR": "Oregon",
-            "PW": "Palau",
-            "PA": "Pennsylvania",
-            "PR": "Puerto Rico",
-            "RI": "Rhode Island",
-            "SC": "South Carolina",
-            "SD": "South Dakota",
-            "TN": "Tennessee",
-            "TX": "Texas",
-            "UT": "Utah",
-            "VT": "Vermont",
-            "VI": "Virgin Islands",
-            "VA": "Virginia",
-            "WA": "Washington",
-            "WV": "West Virginia",
-            "WI": "Wisconsin",
-            "WY": "Wyoming"
-        }
     }
 
 }.initThisClass()

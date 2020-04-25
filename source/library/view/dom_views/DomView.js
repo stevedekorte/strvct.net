@@ -45,6 +45,8 @@ window.DomView = class DomView extends ProtoClass {
         this.newSlot("eventListenersDict", null)
         //this.newSlot("activeTimeoutIdSet", null)
         this.newSlot("defaultTapGesture", null)
+        this.newSlot("defaultDoubleTapGesture", null)
+        this.newSlot("defaultPanGesture", null)
 
         // extras
     
@@ -178,6 +180,12 @@ window.DomView = class DomView extends ProtoClass {
         this.setDivId(this.typeId())
         this.setupDivClassName()
         return this
+    }
+
+    escapedElementId () {
+        const id = this.element().id
+        const escapedId = id.replace(/[^a-z|\d]/gi, '\\$&');
+        return escapedId
     }
 
     setupDivClassName () {
@@ -935,6 +943,12 @@ window.DomView = class DomView extends ProtoClass {
 
     // --- focus and blur ---
 
+    hasSubviewDescendant (aView) {
+        if (aView == this) {
+            return true
+        }
+        return this.subviews().detect(sv => sv.hasSubviewDescendant(aView))
+    }
 
     hasFocusedDecendantView () {
         const focusedView = WebBrowserWindow.shared().activeDomView()
@@ -2088,12 +2102,12 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-    setWidthPxNumber (aNumber) {
+    setWidthPx (aNumber) {
         this.setWidthString(this.pxNumberToString(aNumber))
         return this
     }
 
-    setHeightPxNumber (aNumber) {
+    setHeightPx (aNumber) {
         this.setHeightString(this.pxNumberToString(aNumber))
         return this
     }
@@ -2102,7 +2116,7 @@ window.DomView = class DomView extends ProtoClass {
         // height: auto|length|initial|inherit;
 
         if (Type.isNumber(s)) {
-            return this.setHeightPxNumber(s)
+            return this.setHeightPx(s)
         }
         this.setHeightString(s)
         return this
@@ -3159,6 +3173,34 @@ window.DomView = class DomView extends ProtoClass {
         if (this.defaultTapGesture()) {
             this.removeGestureRecognizer(this.defaultTapGesture())
             this.setDefaultTapGesture(null)
+        }
+        return this
+    }
+
+    // double tap gesture
+
+    newDoubleTapGestureRecognizer () { // private
+        const tg = TapGestureRecognizer.clone()
+        tg.setNumberOfTapsRequired(2)
+        tg.setNumberOfFingersRequired(1)
+        tg.setCompleteMessage("onDoubleTapComplete")
+        tg.setIsDebugging(true)
+        return tg
+    }
+
+    addDefaultDoubleTapGesture () { 
+        if (!this.defaultDoubleTapGesture()) {
+            const gr = this.newDoubleTapGestureRecognizer()
+            this.setDefaultDoubleTapGesture(gr)
+            this.addGestureRecognizer(gr)
+        }
+        return this.defaultDoubleTapGesture()
+    }
+
+    removeDefaultDoubleTapGesture () { 
+        if (this.defaultDoubleTapGesture()) {
+            this.removeGestureRecognizer(this.defaultDoubleTapGesture())
+            this.setDefaultDoubleTapGesture(null)
         }
         return this
     }

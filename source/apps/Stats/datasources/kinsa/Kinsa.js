@@ -15,8 +15,9 @@ window.Kinsa = class Kinsa extends BMNode {
     }
     
     initPrototype () {
+        this.newSlot("selectedState", null)
         this.newSlot("states", null)
-        this.newSlot("countries", null)
+        //this.newSlot("countries", null)
     }
 
     init () {
@@ -27,10 +28,11 @@ window.Kinsa = class Kinsa extends BMNode {
         //this.setSubnodeClasses([BMUrlResource])
         this.watchOnceForNote("appDidInit")
 
+
         {
-            const countries = KinsaCountries.clone()
-            this.setCountries(countries)
-            this.addSubnode(countries)
+            //const countries = KinsaCountries.clone()
+            //this.setCountries(countries)
+            //this.addSubnode(countries)
         }
 
         {
@@ -39,10 +41,12 @@ window.Kinsa = class Kinsa extends BMNode {
             this.addSubnode(states)
         }
 
+        /*
         this.addButtonForMethod("load")
         this.addButtonForMethod("refresh")
         this.addButtonForMethod("clear")
-        
+        */
+       
         return this
     }
 
@@ -54,7 +58,7 @@ window.Kinsa = class Kinsa extends BMNode {
 
     allGroups () {
         const groups = []
-        groups.appendItems(this.countries().subnodes())
+        //groups.appendItems(this.countries().subnodes())
         groups.appendItems(this.states().subnodes())
         return groups
     }

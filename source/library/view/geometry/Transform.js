@@ -18,7 +18,7 @@ window.Transform = class Transform extends ProtoClass {
         super.init()
         this.setPosition(Point.clone())
         this.setRotation(Point.clone())
-        this.setScale(Point.clone())
+        this.setScale(Point.clone().setX(1).setY(1).setZ(1))
         return this
     }
 
@@ -27,7 +27,7 @@ window.Transform = class Transform extends ProtoClass {
     cssString() {
         // NOTE: multiple transform one line directives are applied from right to left
         const s = 
-          this.scale().asCssTranslate3dString() + " " 
+          this.scale().asCssScale3dString() + " " 
         + this.position().asCssTranslate3dString() + " " 
         + this.rotation().asCssRotate3dDegreesString(); // is this the expected order?
         return s

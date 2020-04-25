@@ -85,9 +85,38 @@ window.Rectangle = class Rectangle extends ProtoClass {
         return this.origin().y();
     }
 
+    minX () {
+        return this.x()
+    }
+
+    minY () {
+        return this.y()
+    }
+
+    maxX () {
+        return this.x() + this.width()
+    }
+
+    maxY () {
+        return this.y() + this.height()
+    }
+    
+    setMaxX (mx) {
+        const w = mx - this.x()
+        this.setWidth(w)
+        return this
+    }
+
+    setMaxY (my) {
+        const h = my - this.y()
+        this.setHeight(h)
+        return this
+    }
+
     // width 
 
     setWidth (w) {
+        assert(w >= 0)
         this.size().setX(w)
         return this
     }
@@ -99,6 +128,7 @@ window.Rectangle = class Rectangle extends ProtoClass {
     // height
 
     setHeight (h) {
+        assert(h >= 0)
         this.size().setY(h)
         return this
     }
@@ -125,6 +155,33 @@ window.Rectangle = class Rectangle extends ProtoClass {
 
     right () {
         return this.x() + this.width() 
+    }
+
+    makeBoundsOfPoints (points) {
+        let minX = points[0].x()
+        let maxX = points[0].x()
+        let minY = points[0].y()
+        let maxY = points[0].y()
+        points.forEach((p) => {
+            const x = p.x()
+            const y = p.y()
+
+            if (x < minX) {
+                minX = x
+            } else if (x > maxX) {
+                maxX = x 
+            }
+
+            if (y < minY) {
+                minY = y 
+            } else if (y > maxY) {
+                maxY = y
+            }
+        })
+        this.origin().setX(minX).setY(minY)
+        this.setMaxX(maxX)
+        this.setMaxY(maxY)
+        return this
     }
 
 }.initThisClass()

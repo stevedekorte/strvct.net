@@ -22,6 +22,10 @@ Object.defineSlots(String.prototype, {
         return this.length === 0;
     },
 
+    size: function () {
+        return this.length;
+    },
+    
     beginsWith: function (prefix) {
         if (!prefix || this.length < prefix.length) {
             return false;

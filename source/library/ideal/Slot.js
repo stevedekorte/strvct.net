@@ -627,14 +627,12 @@ window.ideal.Slot = class Slot {
     // -----------------------------------------------------
 
     onInstanceInitSlot (anInstance) {
-
-        let defaultValue = anInstance[this.privateName()]
+        const name = this.privateName()
+        let defaultValue = anInstance[name]
         // to ensure privateName isn't enumerable
-        Object.defineSlot(anInstance, this.privateName(), defaultValue)
+        Object.defineSlot(anInstance, name, defaultValue)
 
         
-        this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"])) 
-
         /*
         const op = this.initOp()
         assert(this.validInitOps().contains(op)) // TODO: put on setter instead

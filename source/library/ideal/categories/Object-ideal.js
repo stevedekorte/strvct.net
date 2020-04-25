@@ -33,8 +33,9 @@ Object.hasOwnSlot = function(obj, slotName) {
 }
 
 Object.defineSlot = function(obj, slotName, slotValue) {
-    if (Object.hasOwnSlot(obj, slotName, slotValue)) {
-        this[slotName] = slotValue
+    //if (Object.hasOwnSlot(obj, slotName)) {
+    if (Object.getOwnPropertyDescriptor(slotName)) {
+            this[slotName] = slotValue
     } else {
         const descriptor = {
             configurable: true,

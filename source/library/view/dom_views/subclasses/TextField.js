@@ -28,8 +28,6 @@ window.TextField = class TextField extends DomStyledView {
         // has to start false for proper state setup
         this.newSlot("usesDoubleTapToEdit", false) 
 
-        this.newSlot("doubleTapGestureRecognizer", null)
-
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
         this.newSlot("isEditable", false).setOwnsSetter(true).setDoesHookSetter(true)
 
@@ -118,24 +116,6 @@ window.TextField = class TextField extends DomStyledView {
         return this
     }
 
-    // double tap gesture
-
-    newDoubleTapGestureRecognizer () { // private
-        const tg = TapGestureRecognizer.clone()
-        tg.setNumberOfTapsRequired(2)
-        tg.setNumberOfFingersRequired(1)
-        tg.setCompleteMessage("onDoubleTapComplete")
-        //tg.setIsDebugging(true)
-        return tg
-    }
-
-    doubleTapGestureRecognizer () {
-        if (!this._doubleTapGestureRecognizer) {
-            this._doubleTapGestureRecognizer = this.newDoubleTapGestureRecognizer()
-        }
-        return this._doubleTapGestureRecognizer
-    }
-
     syncBorder () {
         let b = this.uneditableBorder()
 
@@ -153,17 +133,14 @@ window.TextField = class TextField extends DomStyledView {
 
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {
-                //this.doubleTapGestureRecognizer().start()
-                this.addGestureRecognizerIfAbsent(this.doubleTapGestureRecognizer())
+                this.addDefaultDoubleTapGesture()
                 this.setContentEditable(false)
             } else {
                 this.setContentEditable(true)
             }
         } else {
             if (this.usesDoubleTapToEdit()) {
-                //this.doubleTapGestureRecognizer().stop()
-                this.removeGestureRecognizer(this.doubleTapGestureRecognizer())
-                this.setDoubleTapGestureRecognizer(null)
+                this.removeDefaultDoubleTapGesture()
             }
             this.setContentEditable(false)
         }

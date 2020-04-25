@@ -23,11 +23,13 @@ window.EventPoint = class EventPoint extends Point {
         this.newSlot("overView", null)
         this.newSlot("event", null)
     }
-    
+   
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
     copyFrom (p, copyDict) {
         super.copyFrom(p, copyDict)
