@@ -23,7 +23,7 @@
         const tg = TapGestureRecognizer.clone()
         tg.setNumberOfTapsRequired(2)
         tg.setNumberOfFingersRequired(2)
-        tg.setCompleteMessage("onDoubleFingerDoubleTapComplete")
+        tg.setGestureName("DoubleFingerDoubleTap") // on recognize, will send a onDoubleFingerDoubleTapComplete() message
         this.addGestureRecognizer(tg)
 
 */

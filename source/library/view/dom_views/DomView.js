@@ -3183,8 +3183,9 @@ window.DomView = class DomView extends ProtoClass {
         const tg = TapGestureRecognizer.clone()
         tg.setNumberOfTapsRequired(2)
         tg.setNumberOfFingersRequired(1)
-        tg.setCompleteMessage("onDoubleTapComplete")
-        tg.setIsDebugging(true)
+        tg.setGestureName("DoubleTap")
+        //tg.setCompleteMessage("onDoubleTapComplete")
+        //tg.setIsDebugging(true)
         return tg
     }
 

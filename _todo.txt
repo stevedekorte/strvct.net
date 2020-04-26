@@ -1,6 +1,9 @@
 
 TODO:	
 
+	- options
+		- add/remove bottom/right lines
+		- adjust height (if horizontal stack) or width (if vertical stack) of stack content view
 	- change ZoomView onWheel to adjust offsets such that zoom occurs on current mouse position 
 	
 	- move asyncX APIs to async asyncX with await?

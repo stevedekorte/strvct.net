@@ -77,6 +77,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
         // standard messages
 
+        this.newSlot("gestureName", null) // sets <GestureType> name used for messages
         this.newSlot("acceptMessage", null)  //"accepts<GestureType>"
         this.newSlot("beginMessage", null) //"on<GestureType>Begin",
         this.newSlot("moveMessage", null) //"on<GestureType>Move",
@@ -106,9 +107,11 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         this.setListenerClasses([]) // subclasses override this in their
         this.setDocListeners([])
         this.setViewListeners([])
+        //this.setGestureName(this.type().before("GestureRecognizer"))
         this.autoSetMessageNames()
         this.setIsEmulatingTouch(true)
         this.setFingerViewDict({})
+
         //this.setIsDebugging(true)
         //this.setIsVisualDebugging(true)
         return this
@@ -550,7 +553,16 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         return funcs[this.direction()](dx, dy)
     }
 
+    setGestureName (aName) {
+        this._gestureName = aName
+        this.autoSetMessageNames()
+        return this
+    }
+
     gestureName () {
+        if (this._gestureName) {
+            return this._gestureName
+        }
         return this.type().before("GestureRecognizer")
     }
 
@@ -558,12 +570,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         return "on" + this.gestureName() + state.capitalized()
     }
 
-    defaultAcceptMessage () {
-        return "accepts" + this.gestureName()
-    }
-
     autoSetMessageNames () {
-        this.setAcceptMessage(this.defaultAcceptMessage())
+        this.setAcceptMessage("accepts" + this.gestureName())
         this.setBeginMessage(this.defaultMessageForState("Begin"))
         this.setMoveMessage(this.defaultMessageForState("Move"))
         this.setCancelledMessage(this.defaultMessageForState("Cancelled"))
