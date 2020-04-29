@@ -75,18 +75,6 @@ window.TextField = class TextField extends DomStyledView {
         return super.setPaddingTop(v)
     }
 
-    onFocusIn () {
-        super.onFocusIn()
-        //console.log(this.typeId() + " '" + this.string() + "' onFocusIn")
-        GestureManager.shared().setIsPaused(true)
-    }
-
-    onFocusOut () {
-        super.onFocusOut()
-        //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
-        GestureManager.shared().setIsPaused(false)
-    }
-
     // editing control
 
     /*
@@ -148,7 +136,16 @@ window.TextField = class TextField extends DomStyledView {
         return this
     }
 
+    onDoubleTapRequestCancel (aGesture, requestingGesture) {
+        //return false
+    }
+
+    onDoubleTapCancelled (aGesture) {
+        console.log(this.value() + " onDoubleTapCancelled")
+    }
+
     onDoubleTapComplete (aGesture) {
+        //console.log(this.value() + " onDoubleTapComplete")
         // make content editable and select text
         //this.debugLog(".onDoubleTapComplete()")
         if (this.contentEditable()) {
@@ -157,12 +154,32 @@ window.TextField = class TextField extends DomStyledView {
         this.setContentEditable(true)
         this.focus()
         this.selectAll()
+        this.pauseGestures()
         //this.focus()
         //this.setBorder("1px dashed white")
         return this
     }
 
+    pauseGestures () {
+        GestureManager.shared().setIsPaused(true) // so things like text selection don't trigger gestures
+    }
+
+    onFocusIn () {
+        super.onFocusIn()
+        //console.log(this.typeId() + " '" + this.string() + "' onFocusIn")
+        if (this.contentEditable()) {
+            this.pauseGestures()
+        }
+    }
+
+    onFocusOut () {
+        super.onFocusOut()
+        //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
+        GestureManager.shared().setIsPaused(false)
+    }
+
     onBlur () {
+        //console.log(this.value() + " onBlur")
         super.onBlur()
         if (this.usesDoubleTapToEdit()) {
             this.setContentEditable(false)

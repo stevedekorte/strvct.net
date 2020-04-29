@@ -124,5 +124,20 @@ window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends Ges
         }
         return this
     }
+
+    /*
+
+    shouldCancel () {
+        return this.hasTimer()
+    }
+
+    willCancel () {
+        this.stopTimer()
+    }
+
+    didCancel () {
+        this.didFinish()
+    }
+    */
     
 }.initThisClass()

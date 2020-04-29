@@ -174,9 +174,12 @@ window.StackView = class StackView extends NodeView {
 
     syncFromNavSelection () {
         // update otherViewContent view to match selected ite,
+        /*
         if (this.node().title() === "A") {
             console.log(" --- A --- ")
         }
+        */
+       
         //console.log("StackView " + this.node().title() + " syncFromNavSelection")
         const itemView = this.navView().itemSetView().selectedRow()
         if (itemView && itemView.nodeRowLink()) {

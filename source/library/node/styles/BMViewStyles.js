@@ -98,12 +98,12 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
 
     setToWhiteOnBlack () {
         assert(this.isMutable())
-        this.unselected().setColor("#aaa")
-        this.unselected().setBackgroundColor("black")
+        this.unselected().setColor("#ccc")
+        this.unselected().setBackgroundColor("#191919")
         this.unselected().setBorderBottom("none") 
 
         this.selected().setColor("white")
-        this.selected().setBackgroundColor("#444") // change for column?
+        this.selected().setBackgroundColor("#333") // change for column?
         this.selected().setBorderBottom("none")
 
         /*

@@ -53,7 +53,7 @@ window.BMZoomView = class BMZoomView extends DomView {
     }
 
     onDoubleTapComplete (aGesture) {
-        console.log("onDoubleTapComplete")
+        //console.log("onDoubleTapComplete")
     }
 
     onTapBegin (aGesture) {

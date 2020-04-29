@@ -943,6 +943,20 @@ window.DomView = class DomView extends ProtoClass {
 
     // --- focus and blur ---
 
+    hasParentViewAncestor (aView) {
+        const pv = this.parentView()
+        
+        if (!pv) {
+            return false
+        }
+
+        if (pv === aView) {
+            return true
+        }
+
+        return pv.hasParentViewAncestor(aView)
+    }
+
     hasSubviewDescendant (aView) {
         if (aView == this) {
             return true
@@ -965,7 +979,7 @@ window.DomView = class DomView extends ProtoClass {
             const focusedView = WebBrowserWindow.shared().activeDomView()
 
             // TODO: need a better solution to this problem
-            if (focusedView && !this.hasFocusedDecendantView(focusedView)) {
+            if (focusedView && !this.hasFocusedDecendantView()) {
                 
                 if (focusedView && focusedView.type() === "TextField") {
                     console.log("  -- taking focus from " + focusedView.typeId())
@@ -975,8 +989,9 @@ window.DomView = class DomView extends ProtoClass {
                 this.addTimeout(() => { this.element().focus() }, 0)
             }
             */
-            this.addTimeout(() => { this.element().focus() }, 0)
+            //this.addTimeout(() => { this.element().focus() }, 0)
 
+            this.element().focus()
         }
         return this
     }

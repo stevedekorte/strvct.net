@@ -29,7 +29,7 @@ window.StatsApp = class StatsApp extends App {
         super.init()
         this.setName("StatsApp")
         this.setVersion([0, 0, 0, 0])
-        this.setNodeCanReorderSubnodes(true)
+        this.setNodeCanReorderSubnodes(false)
         this.addAction("add")
         return this
     } 
@@ -75,7 +75,6 @@ window.StatsApp = class StatsApp extends App {
         this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Storage", BMDataStore)
         this.addSettingNameAndClass("Resources", BMResources)
-        //this.addSettingNameAndClass("Cams", BMCams)
         this.addSettingNameAndClass("Blobs", BMBlobs)
         this.addSettingNameAndClass("World", World)
 

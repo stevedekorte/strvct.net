@@ -120,14 +120,14 @@ window.GestureManager = class GestureManager extends ProtoClass {
     }
 
     cancelAllBegunGestures () {
-        Object.values(this.begunGestures()).forEach(g => g.cancel() );
+        Object.values(this.begunGestures()).forEach(g => g.requestCancel() );
         return this
     }
 
     cancelBegunGesturesExcept (aGesture) {
         Object.values(this.begunGestures()).forEach((g) => {
             if (g !== aGesture) {
-                g.cancel()
+                g.requestCancel()
             }
         });
         return this

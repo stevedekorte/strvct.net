@@ -112,7 +112,7 @@ window.DragView = class DragView extends DomStyledView {
         this.setInfo({})
 
 
-        //this.setIsDebugging(true)
+        this.setIsDebugging(true)
         return this
     }
 
@@ -455,6 +455,7 @@ window.DragView = class DragView extends DomStyledView {
         // onDragSourceHover & onDragDestinationHover
         const isSource = aView === this.source()
         const methodName = "onDrag" + (isSource ? "Source" : "Destination") + action
+        this.debugLog(aView.node().title() + " " + methodName)
         this.sendProtocolMessage(aView, methodName)
     }
 

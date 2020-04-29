@@ -1,6 +1,15 @@
 
 TODO:	
 
+   - background BrowserRow not full height of contentView
+	
+	- dragging to a non drop location and releasing doesn't return the item to it's original location (until page reload)
+	
+		  
+	
+	- hot key to hide/reveal top menu?
+	
+
 	- options
 		- add/remove bottom/right lines
 		- adjust height (if horizontal stack) or width (if vertical stack) of stack content view

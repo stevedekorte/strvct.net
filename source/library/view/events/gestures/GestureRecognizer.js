@@ -81,6 +81,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         this.newSlot("acceptMessage", null)  //"accepts<GestureType>"
         this.newSlot("beginMessage", null) //"on<GestureType>Begin",
         this.newSlot("moveMessage", null) //"on<GestureType>Move",
+        this.newSlot("requestCancelMessage", null) // "on<GestureType>RequestCancel"
         this.newSlot("cancelledMessage", null) // "on<GestureType>Cancelled",
         this.newSlot("completeMessage", null) // "on<GestureType>Complete",
         
@@ -318,8 +319,8 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
     // subclass helpers
 
-    sendDelegateMessage (methodName) {
-        let result = null
+    sendDelegateMessage (methodName, argument) {
+        let result = undefined
         assert(methodName !== null)
         const vt = this.viewTarget()
 
@@ -330,7 +331,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         //try {
         if (vt) {
             if (vt[methodName]) {
-                result = vt[methodName].apply(vt, [this])
+                result = vt[methodName].apply(vt, [this, argument])
             } else {
                 if (this.isDebugging()) {
                     console.log("gesture delegate missing method " + methodName)
@@ -574,6 +575,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         this.setAcceptMessage("accepts" + this.gestureName())
         this.setBeginMessage(this.defaultMessageForState("Begin"))
         this.setMoveMessage(this.defaultMessageForState("Move"))
+        this.setRequestCancelMessage("on" + this.gestureName() + "RequestCancel")
         this.setCancelledMessage(this.defaultMessageForState("Cancelled"))
         this.setCompleteMessage(this.defaultMessageForState("Complete"))
         return this
@@ -626,11 +628,30 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         return this
     }
 
+    requestCancel (byGesture) {
+        const shouldCancel = this.sendDelegateMessage(this.requestCancelMessage(), byGesture)
+        //console.log("this.requestCancelMessage() =================== ", this.requestCancelMessage(), " -> ", shouldCancel)
+        if (shouldCancel || Type.isUndefined(shouldCancel)) { 
+            this.cancel()
+        }
+    }
+
     cancel () {
-        console.log(this.typeId() + " cancel")
+        this.debugLog(" cancel")
+        //this.willCancel()
         this.sendCancelledMessage()
+        //this.didCancel()
+    }
+
+    /*\
+    willCancel () {
+
+    }
+
+    didCancel () {
         //this.didFinish()
     }
+    */
 
     // ---
 

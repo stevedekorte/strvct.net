@@ -17,26 +17,29 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
 
         // use same names as css style, nulls aren't applied
 
-        this.newSlot("color", null)
-        this.newSlot("backgroundColor", null)
-        this.newSlot("opacity", null)
-        this.newSlot("borderLeft", null)
-        this.newSlot("borderRight", null)
-        this.newSlot("borderTop", null)
-        this.newSlot("borderBottom", null)
-        this.newSlot("borderWidth", null)
-        this.newSlot("borderColor", null)
-        this.newSlot("borderRadius", null) 
-
-        this.newSlot("styleNames", [
+        const styleNames = [
             "color", 
             "backgroundColor", 
             "opacity", 
-            "borderLeft", "borderRight", "borderTop", "borderBottom",
-            //"borderWidth"
-            //"borderRadius"
-        ])
 
+            "borderLeft", 
+            "borderRight", 
+            "borderTop", 
+            "borderBottom",
+
+            "borderWidth", 
+            "borderColor", 
+            "borderRadius",
+
+            "fontFamily",
+            "fontWeight",
+            "fontSize",
+            "lineHeight",
+            "letterSpacing",
+        ]
+
+        this.newSlot("styleNames", styleNames)
+        styleNames.forEach(k => this.newSlot(k, null))
     }
 
     init () {

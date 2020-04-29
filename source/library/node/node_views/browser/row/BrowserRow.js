@@ -41,9 +41,16 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.newSlot("lastSelectionDate", null)
     }
 
+    setDisplay (v) {
+        if (v === "block") {
+            console.log(this.typeId() + " setDisplay " + v)
+        }
+        return super.setDisplay(v)
+    }
+
     init () {
         super.init()
-        this.setDisplay("block")
+        this.setDisplay("inline-block")
         this.setPosition("relative") // so absolute position on close button works
         //this.setFlexGrow(0)
         //this.setFlexShrink(0)
@@ -51,6 +58,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
         this.setWidth("100%")
         this.setHeight("fit-content")
+        this.setWhiteSpace("no-wrap")
+        //this.setHeight("auto")
 
         //this.setMinHeight("4em")
         //this.setColor("rbga(255, 255, 255, 0.5)")
@@ -395,7 +404,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     makeOrientationRight () {  //stackview is right
-        this.setDisplay("block")  
+        this.setDisplay("inline-block")  
         this.setWidth("100%")
         this.setHeight("fit-content")
         this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
@@ -997,7 +1006,9 @@ window.BrowserRow = class BrowserRow extends NodeView {
     }
 
     canDropSelect () {
-        return this.node().hasSubnodes() || this.node().nodeCanReorderSubnodes()
+        // only want to prevent this for non-navigation nodes
+        return true
+        //return this.node().hasSubnodes() || this.node().nodeCanReorderSubnodes()
     }
 
     // -----------------

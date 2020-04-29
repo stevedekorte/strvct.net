@@ -12,5 +12,8 @@ ResourceLoader.pushRelativePaths([
     
     "node_views/_imports.js",
 
+    "blobs/_imports.js",
+    "network/_imports.js",
+
     "App.js"
 ])

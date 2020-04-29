@@ -6,8 +6,6 @@ ResourceLoader.pushRelativePaths([
     "StatsResource.js",
     "table/_imports.js",
     //"cache/_imports.js",
-    "blobs/_imports.js",
-    "resource/_imports.js",
     "datasources/_imports.js",
     "mapping/_imports.js",
     "charting/_imports.js",

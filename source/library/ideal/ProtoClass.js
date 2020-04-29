@@ -296,12 +296,6 @@ window.ProtoClass = class ProtoClass extends Object {
 
     // --- slots ---
 
-    /*
-    slotNamed (slotName) {
-        return this.allSlots()[slotName]
-    }
-    */
-
     ownSlotNamed (slotName) {
         assert(this.isPrototype())
 

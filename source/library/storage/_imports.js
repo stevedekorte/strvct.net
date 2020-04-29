@@ -4,5 +4,5 @@ ResourceLoader.pushRelativePaths([
     "IndexedDBFolder.js",
     "IndexedDBTx.js",
     "PersistentAtomicDictionary.js",
-    "PersistentAsyncDictionary.js"
+    "PersistentAsyncDictionary.js",
 ])

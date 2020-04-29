@@ -197,7 +197,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             const focusedView = WebBrowserWindow.shared().activeDomView()
 
             // TODO: need a better solution to this problem
-            if (!focusedView || (focusedView && !this.hasFocusedDecendantView(focusedView))) {
+            if (!focusedView || (focusedView && !this.hasFocusedDecendantView())) {
                 this.focus()    
             }
         } else {
@@ -239,7 +239,9 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     didTapItem (anItem) {
         anItem.select()
-        anItem.focus()
+        if (!anItem.hasFocusedDecendantView()) {
+            anItem.focus()
+        }
         this.unselectAllRowsExcept(anItem)
         this.unselectRowsInNextColumn()
         this.didChangeNavSelection() // this may already have been sent
@@ -716,13 +718,19 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     onControl_p_KeyUp (event) {
         // paste?
     }
-	
+
+    // --- arrow keys ---
+
     onUpArrowKeyUp (event) {
         if (!this.canNavigate()) { 
             return 
         }
-        this.selectPreviousRow()
-        this.showSelected()
+
+        if (this.isVertical()) {
+            this.moveDown()
+        } else {
+            this.moveLeft()
+        }
         return false
     }
 	
@@ -730,10 +738,40 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         if (!this.canNavigate()) { 
             return 
         }
-        this.selectNextRow()
-        this.showSelected()
+
+        if (this.isVertical()) {
+            this.moveUp()
+        } else {
+            this.moveRight()
+        }
         return false
     }
+
+	
+    onLeftArrowKeyUp (event) {
+        if (!this.canNavigate()) { 
+            return this
+        }	
+        if (this.isVertical()) {
+            this.moveLeft()
+        } else {
+            this.moveDown()
+        }
+    }
+	
+    onRightArrowKeyUp (event) {
+        if (!this.canNavigate()) { 
+            return this
+        }	
+
+        if (this.isVertical()) {
+            this.moveRight()
+        } else {
+            this.moveUp()
+        }
+    }
+
+    // --- arrow moves ---
 
     moveLeft () {
         const pc = this.previousItemSet()	
@@ -751,32 +789,23 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     moveRight () {
-        /*
-        if (this.nextColumn() && this.nextColumn().rows().length > 0) {
-        	this.selectNextColumn()
-        } else {
-            //this.selectNextColumn()
-        }
-        */
         this.selectNextColumn()
         return this
     }
-	
-    onLeftArrowKeyUp (event) {
-        if (!this.canNavigate()) { 
-            return this
-        }	
 
-        this.moveLeft()
+    moveUp () {
+        this.selectNextRow()
+        this.showSelected()
+        return this
     }
-	
-    onRightArrowKeyUp (event) {
-        if (!this.canNavigate()) { 
-            return this
-        }	
 
-        this.moveRight()
+    moveDown () {
+        this.selectPreviousRow()
+        this.showSelected()
+        return this
     }
+
+    // -----------------------------------------------
 
     onEscapeKeyDown (event) {
         if (!this.canNavigate()) { 
@@ -850,7 +879,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     // -----------------------------
     
     onTapComplete (aGesture) {
-        //this.debugLog(".onTapComplete()")
+        //console.log(this.typeId() + ".onTapComplete()")
         if (this.node()) {
             // add a subnode if tapping on empty area
             // make sure tap isn't on a row
@@ -976,7 +1005,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         if (prevColumn) {
             this.blur()
             prevColumn.focus()
-            this.browser().selectColumn(prevColumn)
+            //this.browser().selectColumn(prevColumn)
         }
         return this
     }
@@ -1221,7 +1250,6 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     canReorderRows () {
         return this.node().nodeRowLink().nodeCanReorderSubnodes()
-        //return this.node().nodeCanReorderSubnodes()
     }
 
     didReorderRows () { 
@@ -1244,7 +1272,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
 
-    onPinchBegin (aGesture) {
+    onPinchBegin (aGesture) { // pinch apart to insert a new row
         // TODO: move row specific code to BrowserRow
 
         //this.debugLog(".onPinchBegin()")
@@ -1379,7 +1407,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     onDragSourceBegin (dragView) {
         this.setHasPausedSync(true)
-
+        console.log(this.typeId() + " onDragSourceBegin")
         // ---
 
 
@@ -1443,10 +1471,11 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     }
 
     indexOfRowPlaceHolder () {
-        const orderedRows = this.rows().shallowCopy().sortPerform("topPx") 
+        const sortMethod = this.isVertical() ? "topPx" : "leftPx"
+        const orderedRows = this.rows().shallowCopy().sortPerform(sortMethod) 
         const insertIndex = orderedRows.indexOf(this.rowPlaceHolder()) 
         
-        this.showRows(orderedRows)
+        //this.showRows(orderedRows)
         console.log("hover insertIndex: ", insertIndex)
         
         return insertIndex
@@ -1488,7 +1517,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         //this.showNodes(movedNodes)
         //this.showRows(this.subviews())
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
-        this.showNodes(newSubnodesOrder)
+        //this.showNodes(newSubnodesOrder)
         assert(!newSubnodesOrder.containsAny(movedNodes))
         newSubnodesOrder.atInsertItems(insertIndex, movedNodes)
         //this.showNodes(newSubnodesOrder)
@@ -1544,6 +1573,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     // -- messages sent by DragView to the potential drop view, if not the source ---
 
     acceptsDropHover (dragView) {
+        return true 
+
         const node = this.node()
         if (node) {
             const dropNode = dragView.item().node()
@@ -1615,12 +1646,13 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             const vp = this.viewPosForWindowPos(dragView.dropPoint())
             if (this.isVertical()) {
                 const h = dragView.computedHeight()
-                //const y = vp.y() - h/2
-                ph.setTopPx(vp.y() - h/2)
+                const y = vp.y() - h/2
+                ph.setTopPx(y)
             } else {
                 const w = dragView.computedWidth()
-                //const y = vp.y() - h/2
-                ph.setLeftPx(vp.x() - w/2)
+                const x = vp.x() - w/2
+                console.log("w:" + w + " x:" + vp.x())
+                ph.setLeftPx(x)
             }
             //console.log("ph.top() = ", ph.top())
             this.stackRows() // need to use this so we can animate the row movements

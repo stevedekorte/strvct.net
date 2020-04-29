@@ -79,15 +79,21 @@ window.StrvctApp = class StrvctApp extends App {
         this.setSettings(settings)
         //this.removeOtherSubnodeWithSameTitle(settings)
 
-        const resources = settings.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources)
-        this.setResources(resources)
-        settings.removeOtherSubnodeWithSameTitle(resources)
+        this.addSettingNameAndClass("Resources", BMResources)
+        this.addSettingNameAndClass("Storage", BMDataStore)
+        this.addSettingNameAndClass("Resources", BMResources)
+        this.addSettingNameAndClass("Blobs", BMBlobs)
 
-        // data store
-        const dataStore = settings.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore)
-        this.setDataStore(dataStore)
-        settings.removeOtherSubnodeWithSameTitle(dataStore)
+    }
 
+    addSettingNameAndClass (aName, aClass) {
+        const subnode = this.settings().subnodeWithTitleIfAbsentInsertProto(aName, aClass)
+        this.settings().removeOtherSubnodeWithSameTitle(subnode)
+        const slot = this.thisPrototype().ownSlotNamed(aName)
+        if (slot) {
+            slot.onInstanceSetValue(subnode) // or should we dynamically get these from the subnodes?
+        }
+        return subnode
     }
 
     // --- setup views ---
@@ -129,8 +135,10 @@ window.StrvctApp = class StrvctApp extends App {
 
     setupNormalTheme () {
         const doc = DocumentBody.shared()
+        doc.setBackgroundColor("#191919")
         //doc.setFontFamily("Sans-Serif")
         doc.setFontFamily("Helvetica")
+        doc.setFontWeight("bold")
         //doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
