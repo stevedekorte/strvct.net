@@ -155,6 +155,16 @@ window.BMNode = class BMNode extends ProtoClass {
             slot.setInspectorPath("Subtitle")
         }
 
+        {
+            const slot = this.newSlot("nodeIsVertical", true)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("is vertical")
+            slot.setSlotType("Boolean")
+            //slot.setInspectorPath("")
+            slot.setShouldStoreSlot(true)
+        }
+
         this.newSlot("nodeRowIsSelectable", true).setDuplicateOp("copyValue")
         this.newSlot("nodeRowsStartAtBottom", false).setDuplicateOp("copyValue")
         this.newSlot("nodeMinRowHeight", 0).setDuplicateOp("copyValue")
@@ -207,6 +217,10 @@ window.BMNode = class BMNode extends ProtoClass {
         // actions
 
         this.newSlot("actions", null).setInitProto(Array)
+    }
+
+    nodeOrientation () {
+        return this.nodeIsVertical() ? "right" : "down" 
     }
 
     init () {
@@ -688,6 +702,11 @@ window.BMNode = class BMNode extends ProtoClass {
         this.justRemoveSubnode(aSubnode)
         //this.didChangeSubnodeList() handled by hooked array
         return aSubnode
+    }
+
+    removeSubnodes (subnodeList) {
+        subnodeList.forEach(sn => this.removeSubnode(sn))
+        return this
     }
     
     removeAllSubnodes () {

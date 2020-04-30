@@ -136,13 +136,15 @@ window.TextField = class TextField extends DomStyledView {
         return this
     }
 
+    /*
     onDoubleTapRequestCancel (aGesture, requestingGesture) {
         //return false
     }
 
     onDoubleTapCancelled (aGesture) {
-        console.log(this.value() + " onDoubleTapCancelled")
+        //console.log(this.value() + " onDoubleTapCancelled")
     }
+    */
 
     onDoubleTapComplete (aGesture) {
         //console.log(this.value() + " onDoubleTapComplete")

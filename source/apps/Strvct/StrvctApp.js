@@ -12,6 +12,7 @@ window.StrvctApp = class StrvctApp extends App {
 
     initPrototype () {
         // model
+        this.newSlot("rootNode", null)
         this.newSlot("notes", null)
         this.newSlot("prototypes", null)
         this.newSlot("settings", null)
@@ -33,12 +34,15 @@ window.StrvctApp = class StrvctApp extends App {
     } 
 
     setup () {
+        this.setRootNode(BMNode.clone().setTitle("root"))
+        this.rootNode().addSubnode(this)
+
         this.setupTheme()
         this.setupModel()
 
-        const v = StackView.clone().setDirection("down")
+        const v = StackView.clone() //.setDirection("down")
         this.setStackView(v)
-        v.setNode(this)
+        v.setNode(this.rootNode())
         this.documentBodyView().addSubview(v)
         this.appDidInit()
     }

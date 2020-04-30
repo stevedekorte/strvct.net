@@ -629,11 +629,14 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
     }
 
     requestCancel (byGesture) {
+        this.cancel()
+        /*
         const shouldCancel = this.sendDelegateMessage(this.requestCancelMessage(), byGesture)
         //console.log("this.requestCancelMessage() =================== ", this.requestCancelMessage(), " -> ", shouldCancel)
         if (shouldCancel || Type.isUndefined(shouldCancel)) { 
             this.cancel()
         }
+        */
     }
 
     cancel () {

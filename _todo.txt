@@ -1,11 +1,13 @@
 
 TODO:	
 
+	- on option tap StackItemSetView background, open inspector for parent node?
+	
    - background BrowserRow not full height of contentView
 	
 	- dragging to a non drop location and releasing doesn't return the item to it's original location (until page reload)
 	
-		  
+	- hide url on link - make link a property of folder?
 	
 	- hot key to hide/reveal top menu?
 	

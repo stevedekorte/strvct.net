@@ -130,6 +130,9 @@ window.StackView = class StackView extends NodeView {
     }
 
     syncFromNode () {
+
+        this.setDirection(this.node().nodeOrientation())
+
         this.syncOrientation()
         //this.navView().syncFromNodeNow()
         this.syncFromNavSelection()
@@ -179,7 +182,7 @@ window.StackView = class StackView extends NodeView {
             console.log(" --- A --- ")
         }
         */
-       
+
         //console.log("StackView " + this.node().title() + " syncFromNavSelection")
         const itemView = this.navView().itemSetView().selectedRow()
         if (itemView && itemView.nodeRowLink()) {

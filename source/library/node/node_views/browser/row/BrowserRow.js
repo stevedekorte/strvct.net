@@ -407,17 +407,17 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.setDisplay("inline-block")  
         this.setWidth("100%")
         this.setHeight("fit-content")
-        this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
+        //this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
 
         //this.setBorderRight("1px solid rgba(255, 0, 0, 1)")
     }
 
     makeOrientationDown () { 
         this.setDisplay("inline-block")  
-        this.setWidth("200px")
+        this.setWidth("170px")
         //this.setHeight("fit-content")
         this.setHeight("100%")
-        this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
+        //this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
     }
 
     // --- styles ---

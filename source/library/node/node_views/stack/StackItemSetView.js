@@ -16,6 +16,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         this.newSlot("rowStyles", null)
         this.newSlot("rowPlaceHolder", null)
         this.newSlot("hasPausedSync", false)
+        //this.newSlot("isColumnInspecting", false)
     }
 
     init () {
@@ -683,6 +684,11 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     // inspecting
 
     isInspecting () {
+        /*
+        if (this.isColumnInspecting()) {
+            return true
+        }
+        */
         // see if the row that selected this column is being inspected
         const prev = this.previousItemSet() 
         if (prev) {
@@ -808,6 +814,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     // -----------------------------------------------
 
     onEscapeKeyDown (event) {
+        this.setIsColumnInspecting(false)
+
         if (!this.canNavigate()) { 
             return this
         }	
@@ -878,15 +886,33 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 	
     // -----------------------------
     
+    /*
+    setIsColumnInspecting (aBool) {
+        if (this._isColumnInspecting !== aBool) {
+            this._isColumnInspecting = aBool
+            this.scheduleSyncFromNode()
+        }
+        return this
+    }
+    */
+
     onTapComplete (aGesture) {
         //console.log(this.typeId() + ".onTapComplete()")
         if (this.node()) {
+
             // add a subnode if tapping on empty area
-            // make sure tap isn't on a row
             const p = aGesture.downPosition() // there may not be an up position on windows?
             //this.debugLog(".onTapComplete() ", aGesture.upEvent())
             if (p.event().target === this.element()) {
-                this.addIfPossible()
+                const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
+                const isAltTap = keyModifiers.contains("Alternate");
+                if (isAltTap) {
+                    // inspect parent node
+                    //this.setIsColumnInspecting(true)
+                    return this
+                } else {
+                    this.addIfPossible()
+                }
             }
         }
         return this
@@ -1454,7 +1480,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             subview.unhideForDrag()
         })
         */
-        this.removeRowPlaceHolder()
+        this.onDragSourceDropped(dragView)
+        //this.removeRowPlaceHolder()
     }
 
     onDragSourceEnter (dragView) {
@@ -1518,7 +1545,11 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         //this.showRows(this.subviews())
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
         //this.showNodes(newSubnodesOrder)
-        assert(!newSubnodesOrder.containsAny(movedNodes))
+        
+        this.node().removeSubnodes(movedNodes) // is this needed?
+        //assert(!newSubnodesOrder.containsAny(movedNodes))
+
+
         newSubnodesOrder.atInsertItems(insertIndex, movedNodes)
         //this.showNodes(newSubnodesOrder)
 
@@ -1651,7 +1682,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
             } else {
                 const w = dragView.computedWidth()
                 const x = vp.x() - w/2
-                console.log("w:" + w + " x:" + vp.x())
+                //console.log("w:" + w + " x:" + vp.x())
                 ph.setLeftPx(x)
             }
             //console.log("ph.top() = ", ph.top())
