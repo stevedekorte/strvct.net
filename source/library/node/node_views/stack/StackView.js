@@ -232,7 +232,7 @@ window.StackView = class StackView extends NodeView {
             pd.compactNavAsNeeded()
         }
         */
-        return this
+        return false
     }
 
     /*
@@ -275,12 +275,14 @@ window.StackView = class StackView extends NodeView {
 
     compactNavAsNeeded () {
         if (this.direction() === "right") {
-            const mw = this.frameInDocument().width()
+            const maxWidth = this.frameInDocument().width()
             const w = this.sumOfNavWidths()
 
-            if (w > mw) {
+            if (w > maxWidth) {
+                console.log(this.node().title() + " sumOfNavWidths " + w + " > window " + maxWidth)
                 this.navView().collapse()
             } else {
+                console.log(this.node().title() + " sumOfNavWidths " + w + " < window " + maxWidth)
                 this.navView().uncollapse()
             }
         }

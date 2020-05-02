@@ -36,8 +36,6 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     initPrototype () {
         this.newSlot("styles", null)
         this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
-        //this.newSlot("themeClassName", null)
-        this.newSlot("themeComponentName", null)
     }
 
     init () {
@@ -73,8 +71,8 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
 	
     applyStyles () {
         const style = this.currentStyle()
-        style.applyToView(this)	
-        this.applyNewStyles()	
+        //style.applyToView(this)	
+        this.currentThemeState().applyToView(this)
         return this
     }
 
@@ -110,7 +108,7 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     // -----------------------------------------
 
     themeClassName () {
-        return this.divClassName().split(" ")
+        return null
     }
 
     themeStateName () {
@@ -139,22 +137,35 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     themePathArray () {
         const path = []
 
-        const className = this.themeClassName()
-        if (className) {
-            path.push(className)
-        }
-
-        const compName = this.themeComponentName()
-        if (compName) {
-            path.push(compName)
+        const themeClassName = this.themeClassName()
+        if (themeClassName) {
+            path.push(themeClassName)
         } else {
-            //path.push("Default")
+            path.push("DefaultThemeClass")
         }
 
         const stateName = this.themeStateName() 
         path.push(stateName)
 
         return path
+    }
+
+    currentThemeClass () {
+        const theme = BMThemeResources.shared().activeTheme()
+        const className = this.themeClassName() ? this.themeClassName() : "DefaultThemeClass"
+        const themeClass = theme.firstSubnodeWithTitle(className)
+        return themeClass
+    }
+
+    currentThemeState () {
+        const tc = this.currentThemeClass() 
+        let state = null
+        if (tc) {
+            let stateName = this.isSelected() ? "selected" : "unselected"
+            const state = tc.firstSubnodeWithTitle(stateName)
+            return state
+        }
+        return null
     }
 
     themeValueForAttribute (attributeName) {
@@ -165,35 +176,17 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         const theme = BMThemeResources.shared().activeTheme()
         const attribtueNode = theme ? theme.nodeAtSubpath(fullPath) : null
         if (attribtueNode) {
-            return attribtueNode.value()
+            const value = attribtueNode.value()
+            if (!value) {
+                console.log("no color found for ", fullPath)
+                return null
+            }
+            return value
         }
+        console.log("no color found for ", fullPath)
+
         return null
     }
-
-    applyNewStyles () {
-        /*
-        const color = this.themeValueForAttribute("color")
-        if (color) {
-            this.setColor(color)
-        }
-        */
-    }
-
-    /*
-        in TextField
-        const style = BMThemeResources.shared().styleAtSubpath(this.themePath(), this.themeStateName())
-        if (style) {
-            this.applyThemeStyle(style)
-        }
-
-        //keyView.setThemePath([this.themeClassName(), "key"])
-        const theme = BMThemeResources.shared().activeTheme()
-        //                                                  themeClassName themeViewName themeStateName attributeName
-        const colorAttribute = theme ? theme.nodeAtSubpath(["Field", "key", "editable", "color"]) : null
-        if (colorAttribute) {
-            keyView.setColor(colorAttribute.value())
-        }
-    */
 
     // -------------------------------------
 
@@ -202,9 +195,10 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         if (v) {
             return v
         }
+        return "yellow"
 
         //console.log("this.themeValueForAttribute('color') = ", this.themeValueForAttribute('color') )
-        return this.currentStyle().color()
+        //return this.currentStyle().color()
     }
 
     currentBgColor () {
@@ -212,8 +206,9 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         if (v) {
             return v
         }
+        return "orange"
 
-        return this.currentStyle().backgroundColor()
+        //return this.currentStyle().backgroundColor()
     }
 	
 }.initThisClass()

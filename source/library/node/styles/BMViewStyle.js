@@ -11,13 +11,9 @@
 */
 
 window.BMViewStyle = class BMViewStyle extends ProtoClass {
-    
-    initPrototype () {
-        this.newSlot("name", "")
-
-        // use same names as css style, nulls aren't applied
-
-        const styleNames = [
+  
+    static styleNames () {
+        return  [
             "color", 
             "backgroundColor", 
             "opacity", 
@@ -37,7 +33,13 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
             "lineHeight",
             "letterSpacing",
         ]
+    }
 
+    initPrototype () {
+        this.newSlot("name", "")
+
+        // use same names as css style, nulls aren't applied
+        const styleNames = this.thisClass().styleNames()
         this.newSlot("styleNames", styleNames)
         styleNames.forEach(k => this.newSlot(k, null))
     }

@@ -2,32 +2,73 @@
 
 /*
 
-    BMThemeFolderState
+    BMThemeState
+
+    Replaces BMStyle
 
 */
 
-window.BMThemeFolderState = class BMThemeFolderState extends BMStorableNode {
+window.BMThemeState = class BMThemeState extends BMStorableNode {
     
     static standardStateNames () {
-        return ["active", "selected", "unselected", "disabled"]
+        return [
+            "unselected", 
+            "selected", 
+            "active", 
+            "disabled"
+        ]
+    }
+
+    static styleNames () {
+        return  [
+            "color", 
+            "backgroundColor", 
+            "opacity", 
+
+            "fontFamily",
+            "fontWeight",
+            "fontSize",
+            "lineHeight",
+            "letterSpacing",
+
+            "borderLeft", 
+            "borderRight", 
+            "borderTop", 
+            "borderBottom",
+
+            "borderWidth", 
+            "borderColor", 
+            "borderRadius",
+        ]
     }
 
     initPrototype () {
-
+        this.thisClass().styleNames().forEach(styleName => {
+            const slot = this.newSlot(styleName, "")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            //slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel(styleName)
+            //slot.setInspectorPath("Key")
+        })
     }
 
     init () {
         super.init()
+
         this.setShouldStore(true)
-        //this.setSubtitle("state")
+        this.setShouldStoreSubnodes(true) 
+        
+        //this.setSubtitle("ThemeState")
         this.setNodeMinWidth(200)
-        this.setupSubnodes()
+        this.setSubnodeClasses([BMStringField])
+        //this.setupSubnodes()
     }
 
-    attributeNames () {
-        // TODO: request this from the view class, use view class theme state methods instead of direct css keys
-        //return ["background", "color", "border"] 
-        return BMViewStyle.styleNames()
+    didInit () {
+        //console.log(this.typeId() + " subnodes: ", this.subnodes())
+        this.setupSubnodes()
     }
 
     syncFromViewStyle () {
@@ -35,11 +76,48 @@ window.BMThemeFolderState = class BMThemeFolderState extends BMStorableNode {
         return this
     }
 
+    subnodeNames () {
+        return this.thisClass().styleNames()
+    }
+
     setupSubnodes () {
-        this.attributeNames().forEach((attributeName) => {
-            const field = BMField.clone().setKey(attributeName).setValueIsEditable(""); // TODO: no .setValueMethod()??
-            this.addStoredField(field)
+        const subnodeClass = this.subnodeClasses().first()
+        this.subnodes()
+        this.subnodeNames().forEach(name => {
+            const subnode = this.subnodeWithTitleIfAbsentInsertProto(name, subnodeClass)
+            subnode.setKey(name) //.setValue("")
+            subnode.setTarget(this)
+            subnode.setValueMethod(name)
         })
+    }
+
+    styleNames () {
+        return this.thisClass().styleNames()
+    }
+
+    applyToView (aView) {		
+        this.styleNames().forEach( (name) => { 
+            const getterMethod = this[name]
+            if (!getterMethod) {
+                const errorMsg = "missing getter method: " + this.type() + "." + name + "()"
+                console.warn(errorMsg)
+                throw new Error(errorMsg)
+            }
+            let v = getterMethod.apply(this)
+            if (v === "") { 
+                v = null
+            }
+            try {
+                if (v !== null) {
+                    aView.performIfResponding(aView.setterNameForSlot(name), v)
+                    //const setter = aView[aView.setterNameForSlot(name)]
+                    //aView[aView.setterNameForSlot(name)].apply(aView, [v])
+                }
+            } catch (e) {
+                console.warn("error appling style '" + name + "' " + e.message)
+            }
+        })
+		
         return this
     }
     

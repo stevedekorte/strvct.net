@@ -152,8 +152,10 @@ window.StrvctApp = class StrvctApp extends App {
 
     setupVectorTheme () {
         const doc = DocumentBody.shared()
+        doc.setBackgroundColor("#191919")
         doc.setFontFamily("Hyperspace Bold")
-        doc.setFontSize("12px")
+        doc.setFontSize("15px")
+        doc.setFontWeight("bold")
         //doc.setFontSizeAndLineHeight("1.1em")
         doc.setLetterSpacing("0.1em")
         doc.setTextShadow("0px 0px 1px rgba(255,255,255,1)")

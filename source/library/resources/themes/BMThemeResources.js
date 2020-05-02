@@ -20,7 +20,7 @@
     so we default to the "unselected" ThemeState.
 
     Should ThemeClass implement a defaultSubnode() method for failed lookups?
-    Should it ask subnodes isDefault()?
+    Should it ask subnodes isDefault()? 
 
 
 */
@@ -47,12 +47,16 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         this.setNoteIsSubnodeCount(true)
         this.setNodeMinWidth(200)
         this.addAction("add")
-        this.setSubnodeClasses([BMThemeFolder])
+        this.setSubnodeClasses([BMTheme])
         this.setNodeCanReorderSubnodes(true)
     }
 
     activeTheme () {
         return this.subnodes().first()
+    }
+
+    defaultThemeClass () {
+        return this.activeTheme().subnodes().first()
     }
     
 }.initThisClass()

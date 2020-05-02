@@ -71,12 +71,16 @@ window.StackNavView = class StackNavView extends NodeView {
         return this
     }
 
+    borderColor () {
+        return "rgba(255, 255, 255, 0.3)"
+    }
+
     makeOrientationRight () {
         this.setFlexDirection("column")
         this.setFlexBasis(this.targetWidth() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
-        this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
+        this.setBorderRight("1px solid " + this.borderColor())
         this.scrollView().setIsVertical(true)
     }
 
@@ -85,7 +89,7 @@ window.StackNavView = class StackNavView extends NodeView {
         this.setFlexBasis(this.targetHeight() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)   
-        this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
+        this.setBorderBottom("1px solid " + this.borderColor())
         this.scrollView().setIsVertical(false)
     }
 
@@ -107,15 +111,19 @@ window.StackNavView = class StackNavView extends NodeView {
 
     collapse () {
         if (!this.isCollapsed()) {
+            //this.hideDisplay()
             //this.setMinAndMaxWidth(0)
+            
             this.setFlexBasis("0px")
             this.setFlexGrow(0)
             this.setFlexShrink(0)
+            
         }
     }
 
     uncollapse () {
         if (this.isCollapsed()) {
+            //this.unhideDisplay()
             //this.setMinAndMaxWidth(this.targetWidth() + "px")
             this.syncOrientation()
         }

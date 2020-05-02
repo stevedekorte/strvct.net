@@ -1,6 +1,9 @@
 
 TODO:	
 
+	- on BrowserRow tap, need to recompact columns
+	
+	
 	- on option tap StackItemSetView background, open inspector for parent node?
 	
    - background BrowserRow not full height of contentView

@@ -40,16 +40,6 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
             //slot.setInspectorPath("Style")
         }
 
-        {
-            const slot = this.newSlot("themeClassName", "Text")
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setSlotType("String")
-            slot.setLabel("Theme Class")
-            slot.setSyncsToView(true)
-            slot.setInspectorPath("Style")
-        }
-
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setCanDelete(true)

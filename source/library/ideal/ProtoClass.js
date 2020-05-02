@@ -514,7 +514,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this[message].apply(this, argList);
     }
 
-    perform (message) {
+    perform (message) { // will apply any extra arguments to call
         if (this[message] && this[message].apply) {
             return this[message].apply(this, this.argsAsArray(arguments).slice(1));
         }

@@ -204,6 +204,16 @@ window.BMNode = class BMNode extends ProtoClass {
             slot.setCanInspect(true)
         }
 
+        {
+            const slot = this.newSlot("themeClassName", "DefaultThemeClass")
+            slot.setShouldStoreSlot(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel("Theme Class")
+            slot.setSyncsToView(true)
+            slot.setInspectorPath("Style")
+        }
+
         this.newSlot("nodeUsesColumnBackgroundColor", true).setDuplicateOp("copyValue")
         this.newSlot("canDelete", false).setDuplicateOp("copyValue")
         this.newSlot("nodeCanEditRowHeight", false).setDuplicateOp("copyValue")

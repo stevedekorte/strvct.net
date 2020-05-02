@@ -115,6 +115,14 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     }
     
 
+    syncSelected () {
+        const b = this.isSelected()
+        this.titleView().setIsSelected(b)
+        this.subtitleView().setIsSelected(b)
+        this.noteView().setIsSelected(b)
+        return this
+    }
+
     updateSubviews () {
         super.updateSubviews()
 	
@@ -124,13 +132,9 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
             this.titleView().setIsEditable(node.nodeCanEditTitle() )
             this.subtitleView().setIsEditable(node.nodeCanEditSubtitle())
             this.subtitleView().setDisplayIsHidden(!this.hasSubtitle())
+    
+            this.syncSelected()
 
-            // selection
-            const b = this.isSelected()
-            this.titleView().setIsSelected(b)
-            this.subtitleView().setIsSelected(b)
-            this.noteView().setIsSelected(b)
-            
             if (node) {
                 const imageUrl = node.nodeThumbnailUrl()
                 if (imageUrl) {
