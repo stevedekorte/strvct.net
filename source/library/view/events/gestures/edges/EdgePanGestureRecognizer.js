@@ -16,19 +16,23 @@
         
 */
 
-window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends GestureRecognizer {
-    
-    initPrototype () {
+window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGestureRecognizer {
+
+    initPrototype() {
         this.newSlot("edgeName", null)
         this.newSlot("maxStartDistance", 15)
     }
 
-    init () {
+    init() {
         super.init()
-        this.setListenerClasses(this.defaultListenerClasses()) 
+        this.setListenerClasses(this.defaultListenerClasses())
         this.setMinDistToBegin(5)
         //this.setIsDebugging(true)
         return this
+    }
+
+    start() {
+        return super.start()
     }
 
     /*
@@ -51,26 +55,40 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends Gesture
     }
     */
 
-    isReadyToBegin () {
+    /*
+    onDown(event) {
+        super.onDown(event)
+
+        if (this.isReadyToBegin()) {
+            this.doPress(event)
+        }
+
+        return this
+    }
+    */
+
+
+    isReadyToBegin() {
         return this.hasOkFingerCount() &&
-                this.distanceFromEdge() <= this.maxStartDistance();
+            this.distanceFromEdge() <= this.maxStartDistance();
     }
 
-    distanceFromEdge () {
+    distanceFromEdge() {
         const name = this.edgeName()
         assert(name)
         const d = this.currentEdgeDistances()[name]
         assertDefined(d)
+        console.log("distanceFromEdge ", d)
         return d
     }
 
     // -------------
 
-    maxEdgeDistance () {
+    maxEdgeDistance() {
         return 100000
     }
 
-    currentEdgeDistances () {
+    currentEdgeDistances() {
         const max = this.maxEdgeDistance()
         const points = this.allPoints() // event points are in document coordinates
         const vt = this.viewTarget()
@@ -79,17 +97,17 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends Gesture
             this.debugLog(" missing viewTarget")
             return max
         }
-        
+
         const f = vt.frameInDocument()
 
         // use maxValue to make sure all fingers are close to the edge
 
         return {
-            top:    points.maxValue(p => Math.abs(f.top()    - p.y()), max),
+            top: points.maxValue(p => Math.abs(f.top() - p.y()), max),
             bottom: points.maxValue(p => Math.abs(f.bottom() - p.y()), max),
-            left:   points.maxValue(p => Math.abs(f.left()   - p.x()), max),
-            right:  points.maxValue(p => Math.abs(f.right()  - p.x()), max)
+            left: points.maxValue(p => Math.abs(f.left() - p.x()), max),
+            right: points.maxValue(p => Math.abs(f.right() - p.x()), max)
         }
     }
-    
+
 }.initThisClass()

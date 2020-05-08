@@ -276,5 +276,15 @@ window.NodeView = class NodeView extends DomStyledView {
     value () {
         return this.innerHTML()
     }
+
+    // ---
+
+    resyncAllViews () {
+        if (!this.hasScheduleSyncToNode()) {
+            this.scheduleSyncFromNode()
+        }
+        super.resyncAllViews()
+        return this
+    }
     
 }.initThisClass()

@@ -57,6 +57,7 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         return this._styles
     }
 
+    /*
     currentStyle () {
         let style = null
         if (this.isSelected()) {
@@ -68,11 +69,15 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         }
         return style
     }
+    */
 	
     applyStyles () {
-        const style = this.currentStyle()
+        //const style = this.currentStyle()
         //style.applyToView(this)	
-        this.currentThemeState().applyToView(this)
+        const state = this.currentThemeState()
+        if (state) {
+            state.applyToView(this)
+        }
         return this
     }
 
@@ -152,6 +157,9 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
 
     currentThemeClass () {
         const theme = BMThemeResources.shared().activeTheme()
+        if (!theme) {
+            return null
+        }
         const className = this.themeClassName() ? this.themeClassName() : "DefaultThemeClass"
         const themeClass = theme.firstSubnodeWithTitle(className)
         return themeClass

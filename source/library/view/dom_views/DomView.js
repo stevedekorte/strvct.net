@@ -435,8 +435,12 @@ window.DomView = class DomView extends ProtoClass {
 
     // font weight
 
+    fontWeightValidatorFunction (v) {
+       return (v) => { Type.isNumber(v) || [null, "normal", "bold", "bolder", "lighter", "initial", "inherit"].contains(v) }
+    }
+
     setFontWeight (v) {
-        assert(Type.isNumber(v) || [null, "normal", "bold", "bolder", "lighter", "initial", "inherit"].contains(v))
+        //assert(this.fontWeightValidatorFunction()(v))
         this.setCssAttribute("font-weight", v)
         return this
     }
@@ -874,8 +878,12 @@ window.DomView = class DomView extends ProtoClass {
 
     // opacity
 
+    opacityValidatorFunction () {
+        return (v) => { return Type.isNumber(v) || [null, "auto", "inherit", "initial", "unset"].contains(v) }
+    }
+
     setOpacity (v) {
-        assert(Type.isNumber(v) || [null, "auto", "inherit", "initial", "unset"].contains(v))
+        //assert(this.opacityValidatorFunction()(v))
         this.setCssAttribute("opacity", v)
         return this
     }
@@ -4559,6 +4567,13 @@ window.DomView = class DomView extends ProtoClass {
         const p = this.positionInDocument()
         const newOrigin = aRect.origin().add(p)
         return aRect.copy().setOrigin(newOrigin)
+    }
+
+    // ----
+
+    resyncAllViews () {
+        this.subviews().forEach(sv => sv.resyncAllViews())
+        return this
     }
 
 }.initThisClass()

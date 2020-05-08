@@ -35,10 +35,6 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
         //this.setIsDebugging(true)
         this.setIsRegisteredForKeyboard(true)
-        //this.styles().selected().setBorderLeft("1px solid rgba(0, 0, 0, 0.15)")
-        //this.styles().unselected().setBorderLeft("1px solid rgba(0, 0, 0, 0.15)")
-        this.applyStyles()
-        //this.setIsRegisteredForClicks(true) // use tap gesture instead
         this.setAcceptsFirstResponder(true)
 
         this.setUserSelect("none")
@@ -53,6 +49,11 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         //this.setBorder("1px dashed red")
 
         return this
+    }
+
+    didInit () {
+        super.didInit()
+        //this.applyStyles()
     }
 
     stackView () {
@@ -94,6 +95,13 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     syncFromNode () {
         this.syncOrientation()
         super.syncFromNode() 
+
+        /*
+        if (this.node().nodeMinRowHeight()) {
+            this.setMinAndMaxHeight(this.node().nodeMinRowHeight())
+        }
+        */
+
         if (this.selectedRows().length === 0) {
             this.didChangeNavSelection() // TODO: is this right?
         }
@@ -625,7 +633,9 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         // TODO: unselect current rows at browser level
         newNodes.forEach(newNode => {
             const newRow = this.rowWithNode(newNode)
-            newRow.select()
+            if (newRow) {
+                newRow.select()
+            }
         })
 
         return this
@@ -897,7 +907,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     */
 
     onTapComplete (aGesture) {
-        //console.log(this.typeId() + ".onTapComplete()")
+        console.log(this.typeId() + ".onTapComplete()")
         if (this.node()) {
 
             // add a subnode if tapping on empty area
@@ -1503,7 +1513,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
         const insertIndex = orderedRows.indexOf(this.rowPlaceHolder()) 
         
         //this.showRows(orderedRows)
-        console.log("hover insertIndex: ", insertIndex)
+        //console.log("hover insertIndex: ", insertIndex)
         
         return insertIndex
     }
@@ -1798,6 +1808,8 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
        return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription()
     }
     
+
+
     
     
 }.initThisClass()

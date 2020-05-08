@@ -22,7 +22,9 @@ window.BottomEdgePanGestureRecognizer = class BottomEdgePanGestureRecognizer ext
     init () {
         super.init()
         this.setEdgeName("bottom")
+        //this.setIsDebugging(true)
         return this
     }
+    
     
 }.initThisClass()

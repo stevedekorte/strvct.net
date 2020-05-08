@@ -250,7 +250,24 @@ window.StackView = class StackView extends NodeView {
     }
     */
 
+    stackViewSuperChain () {
+         // returns list of self and StackViews above self
+        const chain = []
+        let current = this
+        while (current) {
+            chain.push(current)
+            const p = current.previousStackView() 
+            current = p
+        }
+        return chain
+    }
+
+    stackViewDepth () {
+        return this.stackViewSuperChain().length - 1
+    }
+
     stackViewSubchain () {
+        // returns all self and StackViews below self
         const chain = []
         let current = this
         while (current) {
@@ -279,10 +296,10 @@ window.StackView = class StackView extends NodeView {
             const w = this.sumOfNavWidths()
 
             if (w > maxWidth) {
-                console.log(this.node().title() + " sumOfNavWidths " + w + " > window " + maxWidth)
+                //console.log(this.node().title() + " sumOfNavWidths " + w + " > window " + maxWidth)
                 this.navView().collapse()
             } else {
-                console.log(this.node().title() + " sumOfNavWidths " + w + " < window " + maxWidth)
+                //console.log(this.node().title() + " sumOfNavWidths " + w + " < window " + maxWidth)
                 this.navView().uncollapse()
             }
         }

@@ -1,6 +1,21 @@
 
 TODO:	
 
+
+	--- needed to host iolanguage.org ---
+
+	- adjust width/height of edges
+	- hide/show
+	- shift-option-tap to open parent inspector?
+	
+	-----------------------------------------------------
+	
+	have ThemeState attributes added manually
+	- custom fields for each attribute, with validators 
+	
+	- apply theme to StackNavView background? Or StackView background?
+	#212121, #f6f7f6
+
 	- on BrowserRow tap, need to recompact columns
 	
 	

@@ -97,7 +97,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         this.addGestureRecognizer(SlideGestureRecognizer.clone()) // for slide delete
         this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width?
-        this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
+        //this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
 
         this.setIsRegisteredForKeyboard(true)
         this.setIsDebugging(true)

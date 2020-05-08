@@ -47,7 +47,7 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         this.setNoteIsSubnodeCount(true)
         this.setNodeMinWidth(200)
         this.addAction("add")
-        this.setSubnodeClasses([BMTheme])
+        this.setSubnodeClasses([BMTheme, BMDefaultTheme])
         this.setNodeCanReorderSubnodes(true)
     }
 

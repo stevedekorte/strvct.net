@@ -4,4 +4,5 @@ ResourceLoader.pushRelativePaths([
     "BMFontResources.js",
     "BMFontFamily.js",
     "BMFont.js",
+    "BMFontRowView.js",
 ])

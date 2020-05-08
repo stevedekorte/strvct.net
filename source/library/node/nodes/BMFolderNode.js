@@ -74,7 +74,7 @@ window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
         return this
     }
 
-    didChangeParentNode () {
+    didUpdateSlotParentNode (oldValue, newValue) {
         this.scheduleSyncToView()
     }
 

@@ -86,6 +86,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
             })
         }
 
+        
         return this
     }
 

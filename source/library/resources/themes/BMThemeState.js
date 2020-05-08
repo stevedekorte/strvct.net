@@ -14,8 +14,8 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
         return [
             "unselected", 
             "selected", 
-            "active", 
-            "disabled"
+            //"active", 
+            //"disabled"
         ]
     }
 
@@ -43,6 +43,16 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
     }
 
     initPrototype () {
+        /*
+        {
+            const slot = this.newSlot("color", "")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            slot.setLabel("color")
+        }
+        */
+
         this.thisClass().styleNames().forEach(styleName => {
             const slot = this.newSlot(styleName, "")
             slot.setShouldStoreSlot(true)
@@ -64,12 +74,34 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
         this.setNodeMinWidth(200)
         this.setSubnodeClasses([BMStringField])
         //this.setupSubnodes()
+
+        //this._didChangeThemeNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeTheme")
     }
 
     didInit () {
+        if(this.hasDoneInit()) {
+            return
+        }
+
         //console.log(this.typeId() + " subnodes: ", this.subnodes())
+        super.didInit()
         this.setupSubnodes()
     }
+
+    /*
+        setupInspectorFromSlots() {
+        const slots = this.thisPrototype().allSlots()
+        slots.ownForEachKV((name, slot) => {
+            const field = slot.newInspectorField()
+            if (field) {
+                field.setTarget(this)
+                let node = this.nodeInspector().createNodePath(slot.inspectorPath())
+                node.addSubnode(field)
+            }
+        })
+        return this
+    }    
+    */
 
     syncFromViewStyle () {
   
@@ -107,18 +139,32 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
             if (v === "") { 
                 v = null
             }
-            try {
+            //try {
                 if (v !== null) {
                     aView.performIfResponding(aView.setterNameForSlot(name), v)
                     //const setter = aView[aView.setterNameForSlot(name)]
                     //aView[aView.setterNameForSlot(name)].apply(aView, [v])
                 }
+                /*
             } catch (e) {
                 console.warn("error appling style '" + name + "' " + e.message)
             }
+            */
         })
 		
         return this
+    }
+    
+    onDidEdit () {
+        console.log(this.typeId() + " onDidEdit")
+        return false
+    }
+
+    didUpdateSlot (aSlot, oldValue, newValue) {
+        if (this.hasDoneInit()) {
+            DocumentBody.shared().resyncAllViews()
+        }
+        return super.didUpdateSlot(aSlot, oldValue, newValue) 
     }
     
 }.initThisClass()

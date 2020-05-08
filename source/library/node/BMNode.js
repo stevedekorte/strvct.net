@@ -17,7 +17,8 @@
             - shouldFocusSubnode // request that the UI focus on the sender
 
         Update messages sent to self:
-            - didChangeParentNode 
+            - didUpdateSlotParentNode(oldValue, newValue)
+            
             - didChangeSubnodeList // hook to resort if needed and call didReorderParentSubnodes
             - prepareForFirstAccess // sent to self on first access to subnodes
             - prepareToAccess // sent to sent whenever a subnode is accessed
@@ -298,10 +299,19 @@ window.BMNode = class BMNode extends ProtoClass {
         return this
     }
 
-    addInspectorField (aField) {
-        this.nodeInspector().addSubnode(aField)
+    setupInspectorFromSlots() {
+        const slots = this.thisPrototype().allSlots()
+        slots.ownForEachKV((name, slot) => {
+            const field = slot.newInspectorField()
+            if (field) {
+                field.setTarget(this)
+                let node = this.nodeInspector().createNodePath(slot.inspectorPath())
+                node.addSubnode(field)
+            }
+        })
         return this
-    }
+    }    
+
 
     createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
         let node = this
@@ -322,25 +332,6 @@ window.BMNode = class BMNode extends ProtoClass {
 
         return node
     }
-
-    setupInspectorFromSlots () {
-        const slots = this.thisPrototype().allSlots()
-        slots.ownForEachKV((name, slot) => {
-            /*
-            console.log("setup inspector slot: " + name)
-            if (name === "protocol") {
-                console.log("---")
-            }
-            */
-            const field = slot.newInspectorField()
-            if (field) {
-                field.setTarget(this)
-                let node = this.nodeInspector().createNodePath(slot.inspectorPath())
-                node.addSubnode(field)
-            }
-        })
-        return this
-    }    
 
     customizeNodeRowStyles () {
         if (!this.getOwnProperty("_nodeRowStyles")) {
@@ -511,24 +502,19 @@ window.BMNode = class BMNode extends ProtoClass {
     
     
     setParentNode (aNode) {
-        if (aNode === this._parentNode) {
-            //console.warn(this.type() + " setParentNode(" + aNode.type() + ")  already has parent ", this._parentNode.type())
-            //Error.showCurrentStack()
-            return this
+        if (aNode !== this._parentNode) { 
+            if (this._parentNode && aNode) {
+                console.warn(this.type() + " setParentNode(" + aNode.type() + ")  already has parent " + this._parentNode.type())
+            }
+            
+            const oldNode = this._parentNode
+            this._parentNode = aNode
+            this.didUpdateSlotParentNode(oldNode, aNode)
         }
-
-        assert(aNode !== this)
-		
-        if (this._parentNode && aNode) {
-            console.warn(this.type() + " setParentNode(" + aNode.type() + ")  already has parent " + this._parentNode.type())
-        }
-		
-        this._parentNode = aNode
-        this.didChangeParentNode()
         return this
     }
 
-    didChangeParentNode () {
+    didUpdateSlotParentNode (oldValue, newValue) {
         // for subclasses to override
     }
 
@@ -555,8 +541,8 @@ window.BMNode = class BMNode extends ProtoClass {
     }
 	
     justAddSubnodeAt (aSubnode, anIndex) {
-        aSubnode.setParentNode(this)
         this.subnodes().atInsert(anIndex, aSubnode)
+        aSubnode.setParentNode(this)
         return aSubnode        
     }
 
@@ -730,17 +716,20 @@ window.BMNode = class BMNode extends ProtoClass {
         return this
     }
 
+    didReorderParentSubnodes () {
+    }
+
+    onDidReorderSubnodes () {
+        this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
+    }
+
     didChangeSubnodeList () {
         //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)) // TODO: remove after debugging
+        this.scheduleMethod("onDidReorderSubnodes")
         //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
         this.didUpdateNode()
         return this
     }
-
-    /*
-    didReorderParentSubnodes () {
-    }
-    */
 
     copySubnodes (newSubnodes) {
         this.subnodes().copyFrom(newSubnodes)

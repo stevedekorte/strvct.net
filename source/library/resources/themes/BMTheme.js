@@ -14,7 +14,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
 
     init () {
         super.init()
-        
+
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 
@@ -24,7 +24,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         this.setNodeMinWidth(270)
         this.setCanDelete(true)
         this.addAction("add")
-        this.setSubnodeClasses([BMThemeClass])
+        this.setSubnodeClasses([BMThemeLevel])
         this.setNodeCanReorderSubnodes(true)
 
         //this.setupSubnodes()
@@ -56,4 +56,12 @@ window.BMTheme = class BMTheme extends BMStorableNode {
    atPath (aPath) {
        
    }
+
+    setupAsDefault() {
+        this.setTitle("DefaultTheme")
+        const defaultThemeClass = BMThemeClass.clone().setupAsDefault()
+        this.addSubnode(defaultThemeClass)
+        return this
+   }
+
 }.initThisClass()

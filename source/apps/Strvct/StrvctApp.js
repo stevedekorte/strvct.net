@@ -133,6 +133,10 @@ window.StrvctApp = class StrvctApp extends App {
     // themes - temporary, until ThemesResources is ready
 
     setupTheme () {
+        const doc = DocumentBody.shared()
+        doc.setColor("#f4f4ec")
+        doc.setBackgroundColor("rgb(25, 25, 25)")
+
         this.setupNormalTheme()
         //this.setupVectorTheme()
     }

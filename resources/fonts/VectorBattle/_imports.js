@@ -1,4 +1,0 @@
-
-ResourceLoader.pushRelativePaths([
-    "VectorBattle.ttf",
-]);
