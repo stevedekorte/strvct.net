@@ -75,10 +75,10 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGest
 
     distanceFromEdge() {
         const name = this.edgeName()
-        assert(name)
+        //assert(name)
         const d = this.currentEdgeDistances()[name]
-        assertDefined(d)
-        console.log("distanceFromEdge ", d)
+        //assertDefined(d)
+        //console.log("distanceFromEdge ", d)
         return d
     }
 

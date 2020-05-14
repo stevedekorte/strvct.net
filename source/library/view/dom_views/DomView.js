@@ -188,7 +188,8 @@ window.DomView = class DomView extends ProtoClass {
         return escapedId
     }
 
-    setupDivClassName () {
+/*
+    setupDivClassNameOld () {
         const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
         const divName = ancestorNames.join(" ").strip()
         this.setDivClassName(divName)
@@ -207,6 +208,27 @@ window.DomView = class DomView extends ProtoClass {
         const names = this.divClassName().split(" ")
         names.removeOccurancesOf(aName)
         this.setDivClassNames(names)
+        return this
+    }
+*/
+
+
+    setupDivClassName () {
+        const e = this.element()
+        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
+        ancestorNames.forEach(name => e.classList.add(name))
+        return this
+    }
+
+    insertDivClassName (aName) {
+        const e = this.element()
+        e.classList.add(aName)
+        return this
+    }
+
+    removeDivClassName (aName) {
+        const e = this.element()
+        e.classList.remove(aName)
         return this
     }
 
@@ -836,6 +858,56 @@ window.DomView = class DomView extends ProtoClass {
     transition () {
         return this.getCssAttribute("transition")
     }
+
+    // helper for hide/unhide transition
+
+    isTransitionHidden () {
+        return !Type.isNullOrUndefined(this.hiddenTransitionValue())
+    }
+
+    hideTransition () {
+        if (!this.isTransitionHidden()) {
+            this.setHiddenTransitionValue(this.transition())
+            this.setTransition("all 0s")
+            this.subviews().forEach(sv => sv.hideTransition())
+        }
+        return this
+    }
+
+    unhideTransition () {
+        if (this.isTransitionHidden()) {
+            this.setTransition(this.hiddenTransitionValue())
+            this.setHiddenTransitionValue(null)
+            this.subviews().forEach(sv => sv.unhideTransition())
+        } else {
+            this.setTransition(null)
+        }
+        return this
+    }
+
+    // hide/unhide transition
+
+    /*
+    hideTransition () {
+        if (!Type.isNull(this.transition())) {
+            this.setHiddenTransitionValue(this.transition())
+            this.setTransition(null)
+            this.subviews().forEach(sv => sv.hideTransition())
+        }
+        return this
+    }
+
+    unhideTransition () {
+        if (Type.isNull(this.transition())) {
+            if (this.hiddenTransitionValue()) {
+                this.setTransition(this.hiddenTransitionValue())
+                this.setHiddenTransitionValue(null)
+                this.subviews().forEach(sv => sv.unhideTransition())
+            }
+        }
+        return this
+    }
+    */
 
     // transitions
 
@@ -1495,30 +1567,6 @@ window.DomView = class DomView extends ProtoClass {
 		
 		return this
 	}
-
-        // helper for hide/unhide transition
-    
-        isTransitionHidden () {
-            return !Type.isNullOrUndefined(this.hiddenTransitionValue())
-        }
-    
-        hideTransition () {
-            if (!this.isTransitionHidden()) {
-                this.setHiddenTransitionValue(this.transition())
-                this.setTransition("all 0s")
-            }
-            return this
-        }
-    
-        unhideTransition () {
-            if (this.isTransitionHidden()) {
-                this.setTransition(this.hiddenTransitionValue())
-                this.setHiddenTransitionValue(null)
-            } else {
-                this.setTransition(null)
-            }
-            return this
-        }
 
     // helper for hide/show display
 

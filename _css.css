@@ -49,7 +49,6 @@ html * {
     min-height: 1px; 
     max-height: 999999px; 
     zoom: 100%;
-    box-sizing: border-box;
     /*text-transform: uppercase;*/
 }
 

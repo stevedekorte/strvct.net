@@ -9,7 +9,6 @@
 window.BMStorableNode = class BMStorableNode extends BMNode {
     
     initPrototype () {
-
         this.setShouldStore(true)
         //this.setShouldStoreSubnodes(true)
 
@@ -24,11 +23,6 @@ window.BMStorableNode = class BMStorableNode extends BMNode {
             slot.setCanInspect(true)
         }
 
-        {
-            const slot = this.overrideSlot("nodeFillsWindow", false)
-            slot.setShouldStoreSlot(true)
-        }
-        
         {
             const slot = this.overrideSlot("subnodes", null)
             //subnodesSlot.setOwnsSetter(true)

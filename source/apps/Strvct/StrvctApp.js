@@ -12,7 +12,6 @@ window.StrvctApp = class StrvctApp extends App {
 
     initPrototype () {
         // model
-        this.newSlot("rootNode", null)
         this.newSlot("notes", null)
         this.newSlot("prototypes", null)
         this.newSlot("settings", null)
@@ -34,9 +33,6 @@ window.StrvctApp = class StrvctApp extends App {
     } 
 
     setup () {
-        this.setRootNode(BMNode.clone().setTitle("root"))
-        this.rootNode().addSubnode(this)
-
         this.setupTheme()
         this.setupModel()
 
@@ -58,18 +54,27 @@ window.StrvctApp = class StrvctApp extends App {
 
     // --- setup model ---
 
-    setupModel () {     
+    rootNode () {
         const root = this.defaultStore().rootObject()
-        root.setNodeMinWidth(150)
-        //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )
-        //root.removeAllSubnodes()
+        root.setTitle("root")
+        return root
+    }
 
-        const notes = this.subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
+    setupModel () {        
+        //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )dfdfdfddfsdfsfdsdfsdsfdfsdfsfdsdsffdsfds
+        //root.removeAllSubnodes( 
+        {
+            this.rootNode().removeFirstSubnodeWithTitle("StrvctApp")
+            this.rootNode().removeFirstSubnodeWithTitle("Themes")
+            this.rootNode().scheduleMethod("scheduleSyncToStore")
+
+        }
+        const notes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
         //notes.subnodes().forEach(sn => sn.setCanDelete(true))
         //notes.orderFirst()
         this.setNotes(notes)
 
-        const prototypes = this.subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
+        const prototypes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
         this.setPrototypes(notes)
 
         this.setupSettings()
@@ -78,7 +83,7 @@ window.StrvctApp = class StrvctApp extends App {
 
     setupSettings () {
         // settings
-        const settings = this.subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
+        const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
         settings.setNodeMinWidth(150)
         this.setSettings(settings)
         //this.removeOtherSubnodeWithSameTitle(settings)
@@ -87,7 +92,6 @@ window.StrvctApp = class StrvctApp extends App {
         this.addSettingNameAndClass("Storage", BMDataStore)
         this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Blobs", BMBlobs)
-
     }
 
     addSettingNameAndClass (aName, aClass) {
@@ -102,7 +106,7 @@ window.StrvctApp = class StrvctApp extends App {
 
     // --- setup views ---
     
-    setupViews () {
+    setupViews () { 
         this.setupBrowser()
         //this.setupShelf()
     }
@@ -124,7 +128,8 @@ window.StrvctApp = class StrvctApp extends App {
 
     appDidInit () {
         super.appDidInit()
-        
+        this.rootNode().removeFirstSubnodeWithTitle("Themes")
+
         // ResourceLoaderPanel can't use notification as it's a boot object
         // what if we added a one-shot observation for it, or would that be more confusing?
 

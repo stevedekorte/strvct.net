@@ -162,13 +162,26 @@ window.BMNode = class BMNode extends ProtoClass {
             slot.setCanInspect(true)
             slot.setLabel("is vertical")
             slot.setSlotType("Boolean")
-            //slot.setInspectorPath("")
+            slot.setInspectorPath("Layout")
             slot.setShouldStoreSlot(true)
         }
 
         this.newSlot("nodeRowIsSelectable", true).setDuplicateOp("copyValue")
         this.newSlot("nodeRowsStartAtBottom", false).setDuplicateOp("copyValue")
-        this.newSlot("nodeMinRowHeight", 0).setDuplicateOp("copyValue")
+
+        {
+            const slot = this.newSlot("nodeMinRowHeight", 0)
+            slot.setDuplicateOp("copyValue")
+            slot.setShouldStoreSlot(true)
+            slot.setInspectorPath("style")
+        }
+
+        {
+            const slot = this.newSlot("nodeMinRowWidth", 0)
+            slot.setDuplicateOp("copyValue")
+            slot.setShouldStoreSlot(true)
+            slot.setInspectorPath("style")
+        }
 
         // html
 
@@ -195,6 +208,7 @@ window.BMNode = class BMNode extends ProtoClass {
             slot.setLabel("fills remaining")
             slot.setCanEditInspection(false)
             slot.setCanInspect(false)
+            slot.setInspectorPath("Layout")
         }
 
         {
@@ -203,6 +217,8 @@ window.BMNode = class BMNode extends ProtoClass {
             slot.setLabel("fills window")
             slot.setCanEditInspection(true)
             slot.setCanInspect(true)
+            slot.setShouldStoreSlot(true)
+            slot.setInspectorPath("Layout")
         }
 
         {
@@ -1092,6 +1108,14 @@ window.BMNode = class BMNode extends ProtoClass {
 	
     firstSubnodeOfType (aProto) {
         return this.subnodes().detect(subnode => subnode.type() === aProto.type())
+    }
+
+    removeFirstSubnodeWithTitle (aString) {
+        const sn = this.firstSubnodeWithTitle(aString)
+        if (sn) {
+            sn.delete()
+        }
+        return this
     }
 
     firstSubnodeWithTitle (aString) {

@@ -403,13 +403,15 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return this
     }
 
-    makeOrientationRight () {  //stackview is right
+    makeOrientationRight () {  //stackview is right (other view is on the right and nav is top to bottom)
         this.setDisplay("inline-block")  
         this.setWidth("100%")
         this.setHeight("fit-content")
         //this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
 
         //this.setBorderRight("1px solid rgba(255, 0, 0, 1)")
+        this.setMinAndMaxHeight(null)
+        //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
     }
 
     makeOrientationDown () { 
@@ -418,6 +420,20 @@ window.BrowserRow = class BrowserRow extends NodeView {
         //this.setHeight("fit-content")
         this.setHeight("100%")
         //this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
+        //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
+
+        
+        if (this.stackView()) {
+            const node = this.stackView().node()
+            if (node) {
+                const h = node.nodeMinRowHeight()
+                console.log("node " + this.node().title() + " height " + h)
+                if (h) {
+                    this.setMinAndMaxHeight(h)
+                    this.contentView().setMinAndMaxHeight(h)
+                }
+            }
+        }
     }
 
     // --- styles ---

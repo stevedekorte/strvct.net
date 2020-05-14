@@ -69,14 +69,16 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
 
         {
             const unselected = this.unselectedThemeState()
-            unselected.firstSubnodeWithTitle("color").setValue("#bbb")
-            unselected.firstSubnodeWithTitle("backgroundColor").setValue("transparent")
+            unselected.setThemeAttribute("color", "#bbb")
+            unselected.setThemeAttribute("backgroundColor", "transparent")
+            unselected.setThemeAttribute("fontWeight", "normal")
         }
 
         {
             const selected = this.selectedThemeState()
-            selected.firstSubnodeWithTitle("color").setValue("white")
-            selected.firstSubnodeWithTitle("backgroundColor").setValue("#333")
+            selected.setThemeAttribute("color", "white")
+            selected.setThemeAttribute("backgroundColor", "#333")
+            selected.setThemeAttribute("fontWeight", "bold")
         }
 
         {

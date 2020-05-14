@@ -419,6 +419,11 @@ Object.defineSlots(String.prototype, {
         */
     },
 
+    stripHTML: function () {
+        const doc = new DOMParser().parseFromString(this, 'text/html');
+        return doc.body.textContent || "";
+    },
+
 });
 
 /*

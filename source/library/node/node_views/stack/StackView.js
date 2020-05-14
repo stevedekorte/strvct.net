@@ -7,7 +7,7 @@
 */
 
 window.StackView = class StackView extends NodeView {
-    
+
     static instanceCache () {
         let v = this.getClassVariable("_instanceCache")
         if (!v) {
@@ -117,7 +117,7 @@ window.StackView = class StackView extends NodeView {
             //this.navView().setIsVertical(false)
 
         } else if (d == "down") {
-            this.setFlexDirection("column")  
+            this.setFlexDirection("column")
             //this.navView().setIsVertical(true)
         }
         this.navView().syncOrientation()
@@ -130,7 +130,6 @@ window.StackView = class StackView extends NodeView {
     }
 
     syncFromNode () {
-
         this.setDirection(this.node().nodeOrientation())
 
         this.syncOrientation()
@@ -147,7 +146,7 @@ window.StackView = class StackView extends NodeView {
         return this
     }
 
-    setOtherViewContent (v) {
+    setOtherViewContent(v) {
         const ov = this.otherView()
         ov.setFlexBasis(null)
         ov.setFlexGrow(1)
@@ -210,7 +209,7 @@ window.StackView = class StackView extends NodeView {
         return null
     }
 
-    nextStackView () {
+    nextStackView( ) {
         return this.otherView().subviews().first()
     }
 
@@ -251,12 +250,12 @@ window.StackView = class StackView extends NodeView {
     */
 
     stackViewSuperChain () {
-         // returns list of self and StackViews above self
+        // returns list of self and StackViews above self
         const chain = []
         let current = this
         while (current) {
             chain.push(current)
-            const p = current.previousStackView() 
+            const p = current.previousStackView()
             current = p
         }
         return chain
@@ -280,12 +279,16 @@ window.StackView = class StackView extends NodeView {
     sumOfNavWidths () {
         let w = 0
         const views = this.stackViewSubchain()
-        for (let i = 0; i < views.length; i ++) {
+        for (let i = 0; i < views.length; i++) {
             const sv = views[i]
+            /*
             if (sv.direction() !== this.direction()) {
                 break
             }
-            w += sv.navView().targetWidth()
+            */
+            if (sv.navView().isVertical()) {
+                w += sv.navView().targetWidth()
+            }
         }
         return w
     }
@@ -296,16 +299,16 @@ window.StackView = class StackView extends NodeView {
             const w = this.sumOfNavWidths()
 
             if (w > maxWidth) {
-                //console.log(this.node().title() + " sumOfNavWidths " + w + " > window " + maxWidth)
+                console.log(this.node().title() + " sum" + w + " > win" + maxWidth + " COLLAPSE")
                 this.navView().collapse()
             } else {
-                //console.log(this.node().title() + " sumOfNavWidths " + w + " < window " + maxWidth)
+                console.log(this.node().title() + " sum" + w + " < win" + maxWidth + " UNCOLLAPSE")
                 this.navView().uncollapse()
             }
         }
 
-       return false
+        return false
     }
-    
-    
+
+
 }.initThisClass()

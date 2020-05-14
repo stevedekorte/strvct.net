@@ -103,6 +103,11 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
     }    
     */
 
+    setThemeAttribute (key, value) {
+        this.firstSubnodeWithTitle(key).setValue(value)
+        return this
+    }
+
     syncFromViewStyle () {
   
         return this
@@ -141,7 +146,14 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
             }
             //try {
                 if (v !== null) {
-                    aView.performIfResponding(aView.setterNameForSlot(name), v)
+                    const isLocked = aView.lockedStyleAttributeSet().has(name)
+                    console.log("apply style to " + aView.type())
+                    if (aView.type() === "BrowserRowTitle") {
+                        console.log("ready")
+                    }
+                    if (!isLocked) {
+                        aView.performIfResponding(aView.setterNameForSlot(name), v)
+                    }
                     //const setter = aView[aView.setterNameForSlot(name)]
                     //aView[aView.setterNameForSlot(name)].apply(aView, [v])
                 }

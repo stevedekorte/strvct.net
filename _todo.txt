@@ -4,9 +4,10 @@ TODO:
 
 	--- needed to host iolanguage.org ---
 
-	- adjust width/height of edges
 	- hide/show
 	- shift-option-tap to open parent inspector?
+	
+	- make column fit window width if in single column mode
 	
 	-----------------------------------------------------
 	

@@ -24,6 +24,7 @@ window.TextField = class TextField extends DomStyledView {
         this.newSlot("didTextEditNote", null)
         this.newSlot("doesInput", false)
         this.newSlot("allowsSetStringWhileFocused", false)
+        //this.newSlot("hasBackground", false)
 
         // has to start false for proper state setup
         this.newSlot("usesDoubleTapToEdit", false) 
@@ -65,6 +66,7 @@ window.TextField = class TextField extends DomStyledView {
         //this.setDidTextEditNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextEdit"))
 
         //this.setIsDebugging(true)
+        this.lockedStyleAttributeSet().add("backgroundColor")
         return this
     }
 
@@ -255,8 +257,7 @@ window.TextField = class TextField extends DomStyledView {
         }
         return this
     }
-    
-	
+
     // ------------------
 
     adjustFontSizeWithKeyboard () {
@@ -431,5 +432,9 @@ window.TextField = class TextField extends DomStyledView {
         return super.setBorder(v)
     }
 
+    setBackgroundColor (aColor) {
+        super.setBackgroundColor(aColor)
+        return this
+    }
 
 }.initThisClass()

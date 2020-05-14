@@ -36,10 +36,12 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
     initPrototype () {
         this.newSlot("styles", null)
         this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
+        this.newSlot("lockedStyleAttributeSet", null)
     }
 
     init () {
         super.init()
+        this.setLockedStyleAttributeSet(new Set())
         return this
     }
 

@@ -261,6 +261,7 @@ window.DragView = class DragView extends DomStyledView {
         const aView = this.item()
         this.setFrameInDocument(aView.frameInDocument())
         this.setInnerHTML(aView.innerHTML())
+        //const clonedElement = aView.element().cloneNode(true);
         this.setOverflow("visible")
     }
 
