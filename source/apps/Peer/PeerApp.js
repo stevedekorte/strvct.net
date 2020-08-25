@@ -20,7 +20,8 @@ window.PeerApp = class PeerApp extends App {
         this.newSlot("resources", null)
 
         // views
-        this.newSlot("browser", null)
+        this.newSlot("stackView", null)
+        //this.newSlot("browser", null)
         this.newSlot("shelf", null)
     }
 
@@ -30,7 +31,7 @@ window.PeerApp = class PeerApp extends App {
         this.setVersion([0, 5, 1, 0])
     }
 
-    setup () {
+    setup_old () {
         super.setup()
         
         this.setupModel()
@@ -40,16 +41,31 @@ window.PeerApp = class PeerApp extends App {
         return this
     }
 
+    setup () {
+        this.setupTheme()
+        this.setupModel()
+
+        const v = StackView.clone() //.setDirection("down")
+        this.setStackView(v)
+        v.setNode(this.rootNode())
+        this.documentBodyView().addSubview(v)
+        this.appDidInit()
+    }
+
     // --- setup model ---
 
     setupModel () {
-
         // identities
-        this.setLocalIdentities(this.defaultStore().rootSubnodeWithTitleForProto("Local Identities", BMLocalIdentities))
+        const identities = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Local Identities", BMLocalIdentities)
+        this.setLocalIdentities(identities)
         this.addLinkSubnode(this.localIdentities()).setTitle("Identities")
 
-        // about 
 
+        // identities
+        //this.setLocalIdentities(this.defaultStore().rootSubnodeWithTitleForProto("Local Identities", BMLocalIdentities))
+        //this.addLinkSubnode(this.localIdentities()).setTitle("Identities")
+
+        // about 
         this.setAbout(BMStorableNode.clone().setTitle("Settings").setSubtitle(null).setNodeMinWidth(250))
         this.addSubnode(this.about())
 		
@@ -88,7 +104,7 @@ window.PeerApp = class PeerApp extends App {
     isBrowserCompatible () {
         return true
     }
-    
+
     setupBrowser () {	
         this.setBrowser(BrowserView.clone())
     

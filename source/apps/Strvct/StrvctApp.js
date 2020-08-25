@@ -9,7 +9,6 @@
 
 window.StrvctApp = class StrvctApp extends App {
     
-
     initPrototype () {
         // model
         this.newSlot("notes", null)
@@ -54,11 +53,6 @@ window.StrvctApp = class StrvctApp extends App {
 
     // --- setup model ---
 
-    rootNode () {
-        const root = this.defaultStore().rootObject()
-        root.setTitle("root")
-        return root
-    }
 
     setupModel () {        
         //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )dfdfdfddfsdfsfdsdfsdsfdfsdfsfdsdsffdsfds
@@ -114,7 +108,8 @@ window.StrvctApp = class StrvctApp extends App {
     isBrowserCompatible () {
         return true
     }
-    
+
+    /*
     setupBrowser () {	
         //console.log("App setupBrowser")
         this.setBrowser(BrowserView.clone())
@@ -125,6 +120,7 @@ window.StrvctApp = class StrvctApp extends App {
         this.browser().syncFromHashPath()
         return this
     }
+    */
 
     appDidInit () {
         super.appDidInit()
@@ -150,14 +146,17 @@ window.StrvctApp = class StrvctApp extends App {
         const doc = DocumentBody.shared()
         doc.setBackgroundColor("#191919")
         //doc.setFontFamily("Sans-Serif")
-        doc.setFontFamily("Helvetica")
-        doc.setFontWeight("bold")
+        doc.setFontFamily("Electrolize-Regular")
+        //doc.setFontFamily("Helvetica")
+        //doc.setFontWeight("bold")
         //doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")
         doc.setFontSizeAndLineHeight("15px")
-    }
+        doc.setLetterSpacing("0.05em")
+        //doc.setTextTransform("uppercase")
+   }
 
     setupVectorTheme () {
         const doc = DocumentBody.shared()
@@ -169,7 +168,7 @@ window.StrvctApp = class StrvctApp extends App {
         doc.setLetterSpacing("0.1em")
         doc.setTextShadow("0px 0px 1px rgba(255,255,255,1)")
         doc.setFontWeight(900)
-        doc.setTextTransform("uppercase")
+        //doc.setTextTransform("uppercase")
         //DocumentBody.shared().setTextTransform("uppercase")
     }
 

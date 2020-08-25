@@ -34,7 +34,6 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
     }
 
     static initPrototype () {
-
     }
 
     init () {

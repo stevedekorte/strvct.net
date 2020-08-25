@@ -824,7 +824,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     // -----------------------------------------------
 
     onEscapeKeyDown (event) {
-        this.setIsColumnInspecting(false)
+        //this.setIsColumnInspecting(false)
 
         if (!this.canNavigate()) { 
             return this

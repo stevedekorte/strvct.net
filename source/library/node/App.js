@@ -16,6 +16,7 @@ window.App = class App extends BMStorableNode {
         const name = this.name
         this.defaultStore().setName(name)
 
+        /*
         const successCallback = () => {
             this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
             const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(name, this)
@@ -29,7 +30,21 @@ window.App = class App extends BMStorableNode {
         }
 
         this.defaultStore().asyncOpen(successCallback, errorCallback) 
+        */
 
+        this.defaultStore().asyncOpen(() => { this.onLoadSuccess() }, (e) => { this.onLoadError(e) }) 
+    }
+
+    static onLoadSuccess () {
+        const name = this.name
+        this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
+        const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(name, this)
+        this.setShared(app)
+        app.run()
+    }
+
+    static onLoadError (errorMessage) {
+        window.ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
     initPrototype () {
@@ -177,5 +192,30 @@ window.App = class App extends BMStorableNode {
         });
     }
     */
+
+    setupTheme () {
+        const doc = DocumentBody.shared()
+        doc.setColor("#f4f4ec")
+        doc.setBackgroundColor("rgb(25, 25, 25)")
+
+        this.setupNormalTheme()
+        //this.setupVectorTheme()
+    }
+
+    setupNormalTheme () {
+        const doc = DocumentBody.shared()
+        doc.setBackgroundColor("#191919")
+        //doc.setFontFamily("Sans-Serif")
+        doc.setFontFamily("Electrolize-Regular")
+        //doc.setFontFamily("Helvetica")
+        //doc.setFontWeight("bold")
+        //doc.setFontFamily("Helvetica Neue")
+        //doc.setFontFamily("San Francisco Display")
+        //doc.setFontFamily("PublicSans Light")
+        //doc.setFontFamily("OpenSans Regular")
+        doc.setFontSizeAndLineHeight("15px")
+        doc.setLetterSpacing("0.05em")
+        //doc.setTextTransform("uppercase")
+   }
 
 }.initThisClass()

@@ -8,4 +8,5 @@ ResourceLoader.pushRelativePaths([
 
     "Hyperspace/_imports.js",
     "PublicSans/_imports.js",
+    "Electrolize/_imports.js",
 ]);

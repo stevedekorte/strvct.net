@@ -8,6 +8,12 @@
 
 window.BMNetwork = class BMNetwork extends BMFieldSetNode {
     
+    static initThisClass () {
+        super.initThisClass()
+        this.setIsSingleton(true)
+		return this
+    }
+
     initPrototype () {
         this.newSlot("servers", null)
         this.newSlot("stunServers", null)

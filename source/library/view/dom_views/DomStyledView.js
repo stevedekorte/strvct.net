@@ -188,12 +188,12 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         if (attribtueNode) {
             const value = attribtueNode.value()
             if (!value) {
-                console.log("no color found for ", fullPath)
+                //console.log("no color found for ", fullPath)
                 return null
             }
             return value
         }
-        console.log("no color found for ", fullPath)
+        //console.log("no color found for ", fullPath)
 
         return null
     }

@@ -21,6 +21,7 @@ window.BMResources = class BMResources extends BMStorableNode {
         this.newSlot("images", null)
         this.newSlot("icons", null)
         this.newSlot("json", null)
+        this.newSlot("files", null)
     }
 
     init () {
@@ -56,6 +57,9 @@ window.BMResources = class BMResources extends BMStorableNode {
 
         this.setJson(BMJsonResources.shared())
         this.addSubnode(this.json())
+
+        this.setFiles(BMFileResources.shared())
+        this.addSubnode(this.files())
 
         return this
     }

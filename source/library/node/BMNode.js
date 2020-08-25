@@ -1137,6 +1137,16 @@ window.BMNode = class BMNode extends ProtoClass {
         return this.subnodes().detect(subnode => subnode.subtitle() === aString)
     }
 
+    rootNode () {
+        const root = this.defaultStore().rootObject()
+        root.setTitle("root")
+        return root
+    }
+
+    rootSubnodeWithTitleForProto(aString, aProto) {
+        return this.rootNode().subnodeWithTitleIfAbsentInsertProto(aString, aProto)
+    }
+
     subnodeWithTitleIfAbsentInsertProto(aString, aProto) {
         let subnode = this.firstSubnodeWithTitle(aString)
 

@@ -19,6 +19,44 @@ window.ProtoClass = class ProtoClass extends Object {
     }
     */
 
+    static minimalClone () {
+        const obj = new this()
+        obj.init()
+        return obj
+   }
+
+   static minimalNewSlot (slotName, slotValue) {
+        if (Object.getOwnPropertyDescriptor(slotName)) {
+                this[slotName] = slotValue
+        } else {
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: slotValue,
+                writable: true,
+            }
+            Object.defineProperty(obj, slotName, descriptor)
+        }
+        return this
+   }
+
+   /* ------------------------------------------------ */
+
+    static clone () {
+        if (this.isSingleton() && this.hasShared()) {
+            return this.shared()
+        }
+
+        const obj = new this()
+        obj.init()
+
+        if (this.isSingleton()) {
+            this.setShared(obj)
+        }
+
+        return obj
+    }
+
     initPrototype () { 
         // subclasses should call this at end of their definition
     }
@@ -215,20 +253,6 @@ window.ProtoClass = class ProtoClass extends Object {
         return this.superClass().prototype
     }
 
-    static clone () {
-        if (this.isSingleton() && this.hasShared()) {
-            return this.shared()
-        }
-
-        const obj = new this()
-        obj.init()
-
-        if (this.isSingleton()) {
-            this.setShared(obj)
-        }
-
-        return obj
-    }
 
     /*
     static subclassesDescription (level) {

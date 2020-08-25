@@ -14,7 +14,7 @@
             "request": "launch",
             "reAttach": true,
             "file": "${workspaceFolder}/index_incremental.html#%7B%22path%22:%5B%22STRVCT%22,%22Settings%22,%22Resources%22%5D%7D",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
         */
 
@@ -23,7 +23,7 @@
             "request": "launch",
             "name": "Launch FILE incremental hash",
             "url": "file:///${workspaceFolder}/index_incremental.html#%7B%22path%22:%5B%22STRVCT%22,%22Settings%22,%22Resources%22%5D%7D",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
 
         {
@@ -31,7 +31,7 @@
             "request": "launch",
             "name": "Launch FILE incremental",
             "url": "file:///${workspaceFolder}/index_incremental.html",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
 
 
@@ -40,7 +40,7 @@
             "request": "launch",
             "name": "Launch localhost HTTP incremental",
             "url": "http://127.0.0.1:8080/index_incremental.html",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
 
         {
@@ -48,7 +48,7 @@
             "request": "launch",
             "name": "Launch localhost HTTPS incremental",
             "url": "https://localhost:4443/index_incremental.html",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
 
 
@@ -58,7 +58,7 @@
             "request": "launch",
             "name": "Launch site HTTPS",
             "url": "https://strvct.net",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
 
         {
@@ -66,19 +66,25 @@
             "request": "launch",
             "name": "Launch site HTTPS incremental",
             "url": "https://strvct.net/index_incremental.html",
-            "webRoot": "${workspaceFolder}"
+            "webRoot": "${workspaceFolder}",
         },
 
-        /*
-        // not supported
         {
-            "type": "safari",
+            "type": "chrome",
             "request": "launch",
-            "name": "Safari Launch Local Index File",
+            "name": "Launch Local Index File",
             "url": "file:///${workspaceFolder}/index.html",
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "create index.html"
+            "preLaunchTask": "create index.html",
         },
-        */
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Incremental on local server",
+            "url": "https://localhost:4443/index_incremental.html",
+            "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "Run local Python HTTPS server",
+        },
     ]
 }

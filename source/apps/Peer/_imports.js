@@ -6,5 +6,6 @@ ResourceLoader.pushRelativePaths([
 ])
 
 ResourceLoader.pushDoneCallback( () => {
-    PeerApp.shared().run()
+    PeerApp.loadAndRunShared()
+    //PeerApp.shared().run()
 })

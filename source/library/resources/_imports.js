@@ -1,6 +1,7 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
+    "files/_imports.js",
     "fonts/_imports.js",
     "sounds/_imports.js",
     "images/_imports.js",
