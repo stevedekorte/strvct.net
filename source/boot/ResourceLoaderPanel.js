@@ -86,7 +86,9 @@ window.ResourceLoaderPanel = class ResourceLoaderPanel {
     // --- start ------------------------------------------------
 
     canStart () {
-        return window["ResourceLoader"] !== undefined
+        const isDefined = window["ResourceLoader"] !== undefined 
+        const hasElement = this.mainElement() !== null
+        return isDefined && hasElement
     }
 
     startWhenReady () {
@@ -328,7 +330,9 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
     fadeOut () {
         const e = this.mainElement()
-        e.style.opacity = 0
+        if (e) {
+            e.style.opacity = 0
+        }
         setTimeout(() => { this.close() }, 300)
     }
 
@@ -364,7 +368,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
         this.removeMainElement()
         this.unregisterForImports()
         //this.stopListeningForErrors()
-        delete window[this.type()]
+        //delete window[this.type()]
     }
 
 }.initThisClass()

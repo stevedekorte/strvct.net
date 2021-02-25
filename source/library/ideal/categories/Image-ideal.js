@@ -12,6 +12,10 @@
 
 */
 
+if (!getGlobalThis().Image) {
+    console.log("WARNING: no Image object found - maybe we are not in browser?")
+}
+
 Object.defineSlots(Image.prototype, {
 
     setDelegate: function(anObject) {

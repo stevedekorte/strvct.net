@@ -1,0 +1,59 @@
+
+
+JS Client <-----> Node Server
+
+request JSON
+
+protocol:
+
+- read all records and full hash
+- write changes with timestamp, include new full hash to verify
+
+
+{
+	type: "Request",
+	payload: {
+		header: {
+			timestamp: ts,
+		}
+		data: {
+			[set of writes]
+		}
+	}
+	sender: pubkey,
+	signature: sig,
+}
+
+{
+	type: "ReadAllRequest",	
+}
+
+
+{
+	type: "ChangeSetRequest",	
+
+	changes: [
+		{	
+			type: "DeleteChange",
+			id: ObjectID,
+		},
+		{
+			type: "UpdateChange",
+			id: ObjectID,	
+			data : {...}
+		},
+		{
+			type: "InsertChange",
+			id: ObjectID,	
+			data : {...}
+		}
+	]
+}
+
+
+
+{
+	type: "ReadAllRequest",
+	path: ["a", "b"],
+	
+}

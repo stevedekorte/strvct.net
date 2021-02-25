@@ -7,6 +7,7 @@
     "version": "0.2.0",
     "configurations": [
 
+
         /*
         {
             "name": "firefox index.html",
@@ -47,7 +48,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Launch localhost HTTPS incremental",
-            "url": "https://localhost:4443/index_incremental.html",
+            "url": "https://localhost:8000/index_incremental.html",
             "webRoot": "${workspaceFolder}",
         },
 
@@ -81,10 +82,29 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Incremental on local server",
+            "name": "Launch Incremental on local python server",
             "url": "https://localhost:4443/index_incremental.html",
             "webRoot": "${workspaceFolder}",
             "preLaunchTask": "Run local Python HTTPS server",
         },
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Incremental on local node server",
+            "url": "https://localhost:8000/index_incremental.html",
+            "preLaunchTask": "Run local node HTTPS server",
+        },
+
+        
+        {
+            "type": "node",
+            "protocol": "inspector",
+            "request": "launch",
+            "name": "Launch node server",
+            "cwd": "${workspaceFolder}/server",
+            "program": "${workspaceFolder}/server/server.js"
+          },
+          
     ]
 }

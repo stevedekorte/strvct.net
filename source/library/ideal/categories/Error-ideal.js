@@ -140,14 +140,14 @@ Object.defineSlots(Error.prototype, {
 
 // --- helper functions ---
 
-function assert(v) {
+getGlobalThis().assert = function assert(v) {
     return Error.assert(v)
 }
 
-function assertDefined(v) {
+getGlobalThis().assertDefined = function assertDefined(v) {
     return Error.assertDefined(v)
 }
 
-function assertThrows(func) {
+getGlobalThis().assertThrows = function assertThrows(func) {
     Error.assertThrows(func)
 }

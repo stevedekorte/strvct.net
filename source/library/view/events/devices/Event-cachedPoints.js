@@ -6,6 +6,9 @@
 
 */
 
+if (!getGlobalThis().Event) {
+    console.log("WARNING: no Event object found - maybe we are not in browser?")
+}
 
 Object.defineSlots(Event.prototype, {
     hasCachedPoints: function() {

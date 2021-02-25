@@ -147,9 +147,9 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
             //try {
                 if (v !== null) {
                     const isLocked = aView.lockedStyleAttributeSet().has(name)
-                    console.log("apply style to " + aView.type())
+                    //console.log("apply style to " + aView.type())
                     if (aView.type() === "BrowserRowTitle") {
-                        console.log("ready")
+                        //console.log("ready")
                     }
                     if (!isLocked) {
                         aView.performIfResponding(aView.setterNameForSlot(name), v)

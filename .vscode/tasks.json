@@ -54,6 +54,25 @@
                 "panel": "shared"
             },
             "problemMatcher": [],
+        },
+
+        {
+            "label": "Run local node HTTPS server",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "server.js"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}/server",
+                "_runner": "terminal",
+                "isBackground": "true",
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
         }
 
         /*

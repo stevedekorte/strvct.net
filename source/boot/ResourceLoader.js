@@ -36,6 +36,10 @@
     
 */
 
+function IsInBrowser() {
+	return (typeof document !== 'undefined')
+}
+
 Object.defineSlot = function(obj, slotName, slotValue) {
     //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
     const descriptor = {
@@ -122,6 +126,10 @@ class CSSLink extends ResourceLoaderBase {
     }
 
     run () {
+        if (!IsInBrowser()) {
+            return
+        }
+
         const styles = document.createElement("link")
         styles.rel = "stylesheet"
         styles.type = "text/css"
@@ -142,6 +150,51 @@ class JSScript extends ResourceLoaderBase {
     }
 
     run () {
+        //console.log("JSScript run " + this.fullPath())
+        
+        if (IsInBrowser()) {
+            //this.runUsingImport() // can't use with file:// due to CORS
+            this.runInBrowser()
+        } else {
+            setTimeout(() => { this.runInNode() }, 1)
+            //setTimeout(() => { this.runUsingImport() }, 1)
+            //this.runInNode()
+        }
+    }
+
+    runInNode () {
+        //const path = __dirname + "/" + this.fullPath()
+        //console.log("__dirname = ", __dirname)
+        //const path = "../../" + this.fullPath()
+        const path = this.fullPath()
+        //console.log("runInNode path: ", path)
+        //root_require(path)
+
+        try {
+            root_require(path)
+            this._doneCallback()
+        } catch (error) {
+            this.importer().setError(error)
+            throw new Error(error.essage + " loading url " + path)
+        }
+
+        //console.log("required path: ", path)
+    }
+
+    runUsingImport () {
+        const path = this.fullPath()
+        
+        console.log("ResourceLoader runInImport " + path)
+
+        import(path).then((module) => {
+            this._doneCallback()
+        }).catch((error) => {
+            this.importer().setError(error)
+            throw new Error("missing url " + this.fullPath())
+        })
+    }
+
+    runInBrowser () {
         const script = document.createElement("script")
         //console.log("JSScript loading: '" + this.fullPath() + "'")
 
@@ -324,8 +377,14 @@ class ResourceLoaderClass extends ResourceLoaderBase {
     }
 }
 
+
+
+
+
+
 window.ResourceLoader = ResourceLoaderClass.shared()
 
 if (window.ResourceLoaderIsEmbedded !== true) {
     ResourceLoader.pushRelativePaths(["_imports.js"]).run()
+    //ResourceLoader.pushRelativePaths(["../../_imports.js"]).run()
 }
