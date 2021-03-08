@@ -1,0 +1,4 @@
+
+ResourceLoader.pushRelativePaths([
+    "fonts.css",
+]);

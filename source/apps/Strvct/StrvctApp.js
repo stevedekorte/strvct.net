@@ -153,8 +153,8 @@ window.StrvctApp = class StrvctApp extends App {
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")
-        doc.setFontSizeAndLineHeight("15px")
-        doc.setLetterSpacing("0.05em")
+        doc.setFontSizeAndLineHeight("14px")
+        //doc.setLetterSpacing("0.05em")
         //doc.setTextTransform("uppercase")
    }
 
