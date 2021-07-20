@@ -9,6 +9,7 @@
     <meta name="Description" content="">
     <meta name="theme-color" content="#317EFB"/>
     <link rel="icon" href="resources/favicons/favicon.ico">
+    <link rel="apple-touch-icon" href="resources/icons/appicon-black-192x192.png">
     <title>...</title>
     <style>
 
@@ -35674,7 +35675,7 @@ window.App = class App extends BMStorableNode {
         }
 
         //Documentation.shared().show()
-        //this.registerServiceWorker() // not working yet
+        this.registerServiceWorker() // not working yet
         window.ResourceLoaderPanel.shared().stop() 
     }
 	
@@ -35706,7 +35707,6 @@ window.App = class App extends BMStorableNode {
 
     // --- server worker ---
 
-    /*
     registerServiceWorker () {
         // doesn't work
         // "srsourcec/ServiceWorker.js"
@@ -35730,7 +35730,6 @@ window.App = class App extends BMStorableNode {
             );
         });
     }
-    */
 
     setupTheme () {
         const doc = DocumentBody.shared()

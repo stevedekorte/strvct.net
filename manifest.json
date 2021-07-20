@@ -7,6 +7,12 @@
           "src": "resources/icons/appicon-black-600x600.png",
           "type": "image/png",
           "sizes": "600x600"
+        },
+        {
+          "src": "resources/icons/appicon-black-600x600-maskable.png",
+          "type": "image/png",
+          "sizes": "512x512",
+          "purpose": "any maskable"
         }
     ],
     "start_url": "index_incremental.html",
