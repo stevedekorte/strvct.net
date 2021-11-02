@@ -52,8 +52,6 @@
             "webRoot": "${workspaceFolder}",
         },
 
-
-
         {
             "type": "chrome",
             "request": "launch",
@@ -93,7 +91,7 @@
             "request": "launch",
             "name": "Launch Incremental on local node server",
             "url": "https://localhost:8000/index_incremental.html",
-            "preLaunchTask": "Run local node HTTPS server",
+           /* "preLaunchTask": "Run local node HTTPS server",*/
         },
 
         
