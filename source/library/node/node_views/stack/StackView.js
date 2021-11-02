@@ -29,6 +29,7 @@ window.StackView = class StackView extends NodeView {
         this.setPosition("relative")
         this.setWidth("100%")
         this.setHeight("100%")
+        this.setMinHeight("100%")
 
         this.setFlexDirection("row")
         this.setFlexWrap("nowrap")
@@ -40,6 +41,7 @@ window.StackView = class StackView extends NodeView {
         //this.setBorder("1px dashed white")
 
         this.setFlexBasis("fit-content")
+        this.setFlexBasis("auto")
         this.setFlexGrow(1)
         this.setFlexShrink(0)
 

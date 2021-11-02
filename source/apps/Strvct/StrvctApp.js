@@ -135,6 +135,7 @@ window.StrvctApp = class StrvctApp extends App {
 
     setupTheme () {
         const doc = DocumentBody.shared()
+        doc.setHeight("100%") // trying to fix body not fitting window
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
 
