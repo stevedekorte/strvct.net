@@ -78,7 +78,7 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
             const selected = this.selectedThemeState()
             selected.setThemeAttribute("color", "white")
             selected.setThemeAttribute("backgroundColor", "#333")
-            selected.setThemeAttribute("fontWeight", "bold")
+            selected.setThemeAttribute("fontWeight", "normal")
         }
 
         {

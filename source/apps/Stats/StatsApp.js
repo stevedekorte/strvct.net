@@ -121,8 +121,8 @@ window.StatsApp = class StatsApp extends App {
     // themes - temporary, until ThemesResources is ready
 
     setupTheme () {
-        //this.setupNormalTheme()
-        this.setupVectorTheme()
+        this.setupNormalTheme()
+        //this.setupVectorTheme()
     }
 
     setupNormalTheme () {
@@ -131,10 +131,10 @@ window.StatsApp = class StatsApp extends App {
         //doc.setFontFamily("Helvetica")
         //doc.setFontFamily("Lato")
         //doc.setBackgroundColor("white")
-        //doc.setFontFamily("Helvetica Neue")
+        doc.setFontFamily("Helvetica")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
-        doc.setFontFamily("OpenSans Regular")
+        //doc.setFontFamily("OpenSans Regular")
         doc.setFontSizeAndLineHeight("15px")
     }
 

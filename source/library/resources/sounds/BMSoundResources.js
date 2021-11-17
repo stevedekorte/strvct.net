@@ -2,11 +2,11 @@
 
 /*
 
-    BMSoundResurces
+    BMSoundResources
 
 */
 
-window.BMSoundResurces = class BMSoundResurces extends BMNode {
+window.BMSoundResources = class BMSoundResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()

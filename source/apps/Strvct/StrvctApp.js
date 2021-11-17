@@ -40,6 +40,13 @@ window.StrvctApp = class StrvctApp extends App {
         v.setNode(this.rootNode())
         this.documentBodyView().addSubview(v)
         this.appDidInit()
+
+        setTimeout( () => this.showClasses(), 1)
+    }
+
+    showClasses() {
+        const s = ProtoClass.subclassesDescription()
+        console.log(s)
     }
 
     setup_old () { // called by App.run
@@ -150,7 +157,7 @@ window.StrvctApp = class StrvctApp extends App {
         //doc.setFontFamily("Electrolize-Regular")
         doc.setFontFamily("Helvetica")
         //doc.setFontWeight("bold")
-        //doc.setFontFamily("Helvetica Neue")
+        doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")

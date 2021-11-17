@@ -46,7 +46,7 @@ window.BMResources = class BMResources extends BMStorableNode {
         this.setFonts(BMFontResources.shared())
         this.addSubnode(this.fonts())
 
-        this.setSounds(BMSoundResurces.shared())
+        this.setSounds(BMSoundResources.shared())
         this.addSubnode(this.sounds())
 
         this.setImages(BMImageResources.shared())

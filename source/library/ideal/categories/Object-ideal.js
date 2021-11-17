@@ -131,6 +131,10 @@ const classSlots = {
         return this._allClassesSet.select(aClass => aClass.hasAncestorClass(this))
     },
 
+    subclasses () {
+        return this._allClassesSet.select(aClass => aClass.superClass() === this)
+    },
+
     hasAncestorClass (aClass) {
         const sc = this.superClass()
         

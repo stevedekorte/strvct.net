@@ -36180,7 +36180,7 @@ window.BMFontRowView = class BMFontRowView extends BrowserTitledRow {
 "use strict"
 
 ResourceLoader.pushRelativePaths([
-    "BMSoundResurces.js",
+    "BMSoundResources.js",
     "BMSound.js",
     "BMAudioPlayer.js",
 ])
@@ -36189,11 +36189,11 @@ ResourceLoader.pushRelativePaths([
 
 /*
 
-    BMSoundResurces
+    BMSoundResources
 
 */
 
-window.BMSoundResurces = class BMSoundResurces extends BMNode {
+window.BMSoundResources = class BMSoundResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -36252,7 +36252,7 @@ window.BMSoundResurces = class BMSoundResurces extends BMNode {
 
     BMSound
 
-    Managed by BMSoundResurces.
+    Managed by BMSoundResources.
 
 */
 
@@ -37508,7 +37508,7 @@ window.BMResources = class BMResources extends BMStorableNode {
         this.setFonts(BMFontResources.shared())
         this.addSubnode(this.fonts())
 
-        this.setSounds(BMSoundResurces.shared())
+        this.setSounds(BMSoundResources.shared())
         this.addSubnode(this.sounds())
 
         this.setImages(BMImageResources.shared())

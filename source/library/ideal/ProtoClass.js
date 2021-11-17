@@ -133,9 +133,20 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
+    static classModulePath () {   
+        const src = this.getClassVariable("_classSrcPath")
+        const url = new URL(src);
+        const parts = url.pathname.split('/')
+        parts.pop()
+        const index = parts.indexOf("library") 
+        const afterLibrary = parts.slice(index+1)
+        return afterLibrary.join("/")
+    }
+
     static initThisClass () {
         //console.log(this.type() + " initThisClass")
-        
+        this.setClassVariable("_classSrcPath", document.currentScript.src)
+
         this.setClassVariable("_childClasses", new Set())
         this.setClassVariable("_ancestorClasses", this.findAncestorClasses())
 
@@ -254,18 +265,42 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
 
-    /*
-    static subclassesDescription (level) {
+    static subclassesDescription (level, traversed) {
+
         if (Type.isUndefined(level)) {
             level = 0
         }
+
+        if (Type.isUndefined(traversed)) {
+            traversed = new Set()
+        }
+
+        /*
+        if (traversed.has(this)) {
+            throw new Error("already traversed ", this.type())
+        } else {
+            console.log("newly traversing ", this.type())
+        }
+        traversed.add(this)
+        */
+        const prefix = "<div class=level" + level + ">"
+        const postfix = "</div>"
+
         const spacer = "  ".repeat(level)
-        const lines = [spacer + this.type()]
-        const subclassLines = this.subclasses().map(subclass => spacer + subclass.subclassesDescription(level + 1))
+        const lines = []
+        if (level === 1) {
+            //lines.append("----")
+        }
+        const path = "<div class=path>" + this.classModulePath().replaceAll("/", " ") + "</div>"
+        lines.append(prefix + spacer + this.type() + " " + path + postfix)
+        const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()))
+        const subclassLines = sortedSubclasses.map((subclass) => {
+            //return spacer + subclass.subclassesDescription(level + 1, traversed) 
+            return subclass.subclassesDescription(level + 1, traversed) 
+        })
         lines.appendItems(subclassLines)
         return lines.join("\n")
     }
-    */
 
     static isClass () {
         return true

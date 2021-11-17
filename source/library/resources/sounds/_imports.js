@@ -1,7 +1,7 @@
 "use strict"
 
 ResourceLoader.pushRelativePaths([
-    "BMSoundResurces.js",
+    "BMSoundResources.js",
     "BMSound.js",
     "BMAudioPlayer.js",
 ])
