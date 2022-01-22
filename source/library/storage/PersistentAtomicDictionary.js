@@ -11,20 +11,24 @@
     so we can do synchronous reads and writes (avoiding IndexedDB's async API),
     and then call the async commit at the end of the event loop.
 
+    Notes:
+
     - keys and values are assumed to be strings
+	- any exception between begin and commit should halt the app and require a restart to ensure consistency
+
+    API:
 
     - at(key) returns a value from the internal dict
     - begin() shallow copies the current internal dict
     - atPut(key, value) & removeAt(key)
         applies normal op and adds key to changedKeys
-    - revert()
-        not supported yet
+    - revert() reverts changes since begin
     - commit() constructs a transaction using changedKeys 
 	- at(key) first checks the writeCache beforing checking the readCache
-	
-	- any exception between begin and commit should halt the app and require a restart to ensure consistency
-	
-    TODO: auto sweep after a write if getting full?
+		
+    TODO: 
+    
+    - auto sweep after a write if getting full? 
         
 */
 
