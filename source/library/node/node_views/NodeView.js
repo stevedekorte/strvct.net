@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.NodeView = class NodeView extends DomStyledView {
+(class NodeView extends DomStyledView {
     
     initPrototype () {
         this.newSlot("node", null) //.setDuplicateOp("duplicate")
@@ -287,4 +287,4 @@ window.NodeView = class NodeView extends DomStyledView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

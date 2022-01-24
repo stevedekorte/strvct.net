@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -59,7 +59,7 @@
 
 */
 
-window.DragView = class DragView extends DomStyledView {
+(class DragView extends DomStyledView {
     
     initPrototype () {
         // the view that will be dragged when operation is complete
@@ -520,4 +520,4 @@ window.DragView = class DragView extends DomStyledView {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

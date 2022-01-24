@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -22,7 +22,7 @@
 
 */
 
-window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends GestureRecognizer {
+(class LongPressGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("timePeriod", 500).setComment("milliseconds")
@@ -140,4 +140,4 @@ window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends Ges
     }
     */
     
-}.initThisClass()
+}.initThisClass())

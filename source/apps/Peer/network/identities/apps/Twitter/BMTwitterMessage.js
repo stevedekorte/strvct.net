@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMTwitterMessage = class BMTwitterMessage extends BMAppMessage {
+getGlobalThis().BMTwitterMessage = class BMTwitterMessage extends BMAppMessage {
     
     initPrototype () {
 

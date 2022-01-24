@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DropListener
@@ -7,7 +7,7 @@
 
 */
 
-window.DropListener = class DropListener extends EventSetListener {
+(class DropListener extends EventSetListener {
     
     initPrototype () {
 
@@ -44,4 +44,4 @@ window.DropListener = class DropListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMThemeFolder = class BMThemeFolder extends BMStorableNode {
+(class BMThemeFolder extends BMStorableNode {
     
     initPrototype () {
 
@@ -27,4 +27,4 @@ window.BMThemeFolder = class BMThemeFolder extends BMStorableNode {
         this.setNodeCanReorderSubnodes(true)
     }
 
-}.initThisClass()
+}.initThisClass())

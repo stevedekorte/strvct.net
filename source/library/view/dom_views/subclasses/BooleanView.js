@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -15,7 +15,7 @@
 
 */
 
-window.BooleanView = class BooleanView extends DomStyledView {
+(class BooleanView extends DomStyledView {
     
     initPrototype () {
         this.newSlot("doesClearOnReturn", false)  // needed?
@@ -163,4 +163,4 @@ window.BooleanView = class BooleanView extends DomStyledView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())

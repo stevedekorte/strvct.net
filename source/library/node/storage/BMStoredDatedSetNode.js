@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMStoredDatedSetNode = class BMStoredDatedSetNode extends BMStorableNode {
+(class BMStoredDatedSetNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("maxAgeInSeconds", 30*24*60*60).setShouldStoreSlot(true)
@@ -82,4 +82,4 @@ window.BMStoredDatedSetNode = class BMStoredDatedSetNode extends BMStorableNode 
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

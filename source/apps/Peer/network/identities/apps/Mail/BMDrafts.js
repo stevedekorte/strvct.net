@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMDrafts = class BMDrafts extends BMStorableNode {
+getGlobalThis().BMDrafts = class BMDrafts extends BMStorableNode {
     
     initPrototype () {
 

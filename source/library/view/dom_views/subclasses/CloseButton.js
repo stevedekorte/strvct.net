@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /* 
@@ -9,7 +9,7 @@
 
 */
 
-window.CloseButton = class CloseButton extends DomView {
+(class CloseButton extends DomView {
     
     initPrototype () {
         this.newSlot("isEnabled", true)
@@ -71,4 +71,4 @@ window.CloseButton = class CloseButton extends DomView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())

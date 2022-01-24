@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ShelfGroup = class ShelfGroup extends BMNode {
+(class ShelfGroup extends BMNode {
     
     initPrototype () {
         this.newSlot("refNode", null)
@@ -63,5 +63,5 @@ window.ShelfGroup = class ShelfGroup extends BMNode {
         return this  
     }
         
-}.initThisClass()
+}.initThisClass())
 

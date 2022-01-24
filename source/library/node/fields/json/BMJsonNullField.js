@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
         
-window.BMJsonNullField = class BMJsonNullField extends BMField {
+(class BMJsonNullField extends BMField {
     
     initPrototype () {
     }
@@ -46,4 +46,4 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
         return super.setValueIsEditable(false)
     }
     
-}.initThisClass()
+}.initThisClass())

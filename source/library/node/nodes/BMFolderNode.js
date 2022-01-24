@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
     
 */
 
-window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
+(class BMFolderNode extends BMSummaryNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -78,5 +78,5 @@ window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
         this.scheduleSyncToView()
     }
 
-}.initThisClass()
+}.initThisClass())
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
 
-window.ProtoClass = class ProtoClass extends Object { 
+(class ProtoClass extends Object { 
 
     /*
     static newUniqueInstanceId() {
@@ -642,7 +642,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
-}.initThisClass() 
+}.initThisClass())
 
 
 

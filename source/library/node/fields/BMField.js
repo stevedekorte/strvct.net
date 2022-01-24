@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
 */
         
 
-window.BMField = class BMField extends BMSummaryNode {
+(class BMField extends BMSummaryNode {
     
     initPrototype () {
         this.newSlot("isVisible", true)
@@ -270,4 +270,4 @@ window.BMField = class BMField extends BMSummaryNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

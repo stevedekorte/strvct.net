@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -28,7 +28,7 @@
 */
 
 
-window.BMViewStyles = class BMViewStyles extends ProtoClass {
+(class BMViewStyles extends ProtoClass {
     
     initPrototype () {
         this.newSlot("name", "")
@@ -145,4 +145,4 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
         return this        
     }
     
-}.initThisClass()
+}.initThisClass())

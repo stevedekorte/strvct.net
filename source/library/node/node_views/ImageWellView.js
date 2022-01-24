@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
 
 */
 
-window.ImageWellView = class ImageWellView extends NodeView {
+(class ImageWellView extends NodeView {
     initPrototype () {
         this.newSlot("imageView", null)
         this.newSlot("isEditable", true)
@@ -162,4 +162,4 @@ window.ImageWellView = class ImageWellView extends NodeView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

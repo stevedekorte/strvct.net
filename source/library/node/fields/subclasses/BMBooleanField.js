@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
       
 /*
 
@@ -7,7 +7,7 @@
     
 */
 
-window.BMBooleanField = class BMBooleanField extends BMField {
+(class BMBooleanField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -61,4 +61,4 @@ window.BMBooleanField = class BMBooleanField extends BMField {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

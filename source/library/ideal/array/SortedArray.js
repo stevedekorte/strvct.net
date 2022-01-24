@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -21,7 +21,7 @@
 
 */
 
-window.SortedArray = class SortedArray extends IndexedArray {
+(class SortedArray extends IndexedArray {
 
     initPrototype () {
 
@@ -92,4 +92,4 @@ window.SortedArray = class SortedArray extends IndexedArray {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()

@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.DomTransition = class DomTransition extends ProtoClass {
+(class DomTransition extends ProtoClass {
     initPrototype () {
         this.newSlot("property", "")
         this.newSlot("duration", 0)
@@ -98,6 +98,6 @@ window.DomTransition = class DomTransition extends ProtoClass {
         this.transitions().syncToDomView()
         return this
     }
-}.initThisClass()
+}.initThisClass())
 
 

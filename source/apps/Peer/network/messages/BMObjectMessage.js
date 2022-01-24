@@ -30,11 +30,11 @@
         
 */
 
-"use strict"
+"use strict";
 
 var BitcoreMessage = require("bitcore-message");
 
-window.BMObjectMessage = class BMObjectMessage extends BMMessage {
+(class BMObjectMessage extends BMMessage {
     
     initPrototype () {
         this.overrideSlot("msgType", "object").setShouldStoreSlot(true)
@@ -218,5 +218,5 @@ window.BMObjectMessage = class BMObjectMessage extends BMMessage {
         return errors
     }
     
-}.initThisClass()
+}.initThisClass())
 

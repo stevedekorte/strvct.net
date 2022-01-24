@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -16,7 +16,7 @@
 
 */
 
-window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
+(class DomTextTapeMeasure extends ProtoClass {
     
     initPrototype () {
         this.newSlot("idName", "DomTextTapeMeasure")
@@ -94,4 +94,4 @@ window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
         return this	
     }
 	
-}.initThisClass()
+}.initThisClass())

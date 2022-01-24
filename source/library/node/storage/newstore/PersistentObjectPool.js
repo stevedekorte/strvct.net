@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
 
-window.PersistentObjectPool = class PersistentObjectPool extends ObjectPool {
+(class PersistentObjectPool extends ObjectPool {
     
     initPrototype () {
 
@@ -44,7 +44,7 @@ window.PersistentObjectPool = class PersistentObjectPool extends ObjectPool {
         console.log(this.type() + " --- self test end --- ")
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 //setTimeout(() => {

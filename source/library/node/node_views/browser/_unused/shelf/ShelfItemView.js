@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ShelfItemView = class ShelfItemView extends NodeView {
+(class ShelfItemView extends NodeView {
     
     initPrototype () {
         this.newSlot("isSelectable", true)
@@ -177,4 +177,4 @@ window.ShelfItemView = class ShelfItemView extends NodeView {
         return false
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.Place = class Place extends BMNode {
+(class Place extends BMNode {
     
     initPrototype () {
         //this.newSlot("path", null) 
@@ -117,4 +117,4 @@ window.Place = class Place extends BMNode {
     }
     */
 	
-}.initThisClass()
+}.initThisClass())

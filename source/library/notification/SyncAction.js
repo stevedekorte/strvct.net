@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /*
@@ -9,7 +9,7 @@
 
 */
 
-window.SyncAction = class SyncAction extends ProtoClass {
+(class SyncAction extends ProtoClass {
 
     static ActionKeyForTargetAndMethod (target, method) {
         return target.typeId() + "." + method
@@ -63,5 +63,5 @@ window.SyncAction = class SyncAction extends ProtoClass {
         return t + " " + this.method() + "" + o
     }
 
-}.initThisClass()
+}.initThisClass())
 

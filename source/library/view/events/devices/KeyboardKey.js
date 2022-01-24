@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     KeyboardKey
@@ -6,7 +6,7 @@
 
 */
 
-window.KeyboardKey = class KeyboardKey extends Device {
+(class KeyboardKey extends Device {
     
     initPrototype () {
         this.newSlot("isDown", false)
@@ -48,4 +48,4 @@ window.KeyboardKey = class KeyboardKey extends Device {
         return c >= 65 && c <= 90
     }
     
-}.initThisClass()
+}.initThisClass())

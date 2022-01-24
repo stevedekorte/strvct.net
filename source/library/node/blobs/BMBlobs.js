@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -18,7 +18,7 @@
 
 */
 
-window.BMBlobs = class BMBlobs extends BMStorableNode {
+(class BMBlobs extends BMStorableNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -92,7 +92,7 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
         })
     }
 
-}.initThisClass()
+}.initThisClass())
 
 /*
 setTimeout(() => {

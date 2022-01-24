@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -13,7 +13,7 @@
 */
 
 
-window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRow {
+(class BMOptionsNodeRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -24,4 +24,4 @@ window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRo
         return this
     }
 	
-}.initThisClass()
+}.initThisClass())

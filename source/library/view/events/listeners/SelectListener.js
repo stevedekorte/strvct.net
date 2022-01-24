@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     SelectListener
@@ -7,7 +7,7 @@
 
 */
 
-window.SelectListener = class SelectListener extends EventSetListener {
+(class SelectListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -30,4 +30,4 @@ window.SelectListener = class SelectListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

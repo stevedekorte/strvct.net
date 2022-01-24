@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     Keyboard
@@ -32,7 +32,7 @@
 */
 
 
-window.BMKeyboard = class BMKeyboard extends Device {
+(class BMKeyboard extends Device {
     initPrototype () {
         this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
         this.newSlot("keyboardListener", null)
@@ -547,4 +547,4 @@ window.BMKeyboard = class BMKeyboard extends Device {
         console.log("---")
     }
     
-}.initThisClass()
+}.initThisClass())

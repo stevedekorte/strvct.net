@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     Rectangle
@@ -17,7 +17,7 @@
 
 */
 
-window.Rectangle = class Rectangle extends ProtoClass {
+(class Rectangle extends ProtoClass {
     initPrototype () {
         this.newSlot("origin", null)
         this.newSlot("size", null)
@@ -184,4 +184,4 @@ window.Rectangle = class Rectangle extends ProtoClass {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

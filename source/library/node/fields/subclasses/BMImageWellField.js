@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
         
-window.BMImageWellField = class BMImageWellField extends BMField {
+(class BMImageWellField extends BMField {
 
     static availableAsNodePrimitive() {
         return true
@@ -50,4 +50,4 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         return ""
     }
    
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.GeoMapNode = class GeoMapNode extends BMStorableNode {
+(class GeoMapNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("selectedState", null)
@@ -39,4 +39,4 @@ window.GeoMapNode = class GeoMapNode extends BMStorableNode {
     }
 
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -9,7 +9,7 @@
 
 */
 
-window.StackFrame = class StackFrame extends ProtoClass {
+(class StackFrame extends ProtoClass {
     initPrototype () {
         this.newSlot("functionName", null)
         this.newSlot("url", null)
@@ -54,12 +54,12 @@ window.StackFrame = class StackFrame extends ProtoClass {
     show() {
         console.log(this.description())
     }
-}.initThisClass() 
+}.initThisClass());
 
 
 // -----------------------------------------------------------------
 
-window.StackTrace = class StackTrace extends ProtoClass {
+(class StackTrace extends ProtoClass {
     initPrototype () {
         this.newSlot("error", null)
         this.newSlot("stackFrames", [])
@@ -102,7 +102,7 @@ window.StackTrace = class StackTrace extends ProtoClass {
         f3()        
     }
 
-}.initThisClass() 
+}.initThisClass());
 
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())

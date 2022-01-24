@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DomFlexView
@@ -6,7 +6,7 @@
 
 */
 
-window.DomView = class DomFlexView extends DomView {
+(class DomFlexView extends DomView {
     
     initPrototype () {
     }
@@ -107,4 +107,4 @@ window.DomView = class DomFlexView extends DomView {
         //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
 
-}.initThisClass()
+}.initThisClass())

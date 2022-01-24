@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -14,7 +14,7 @@
 
 */
 
-window.BMActorNode = class BMActorNode extends BMNode {
+(class BMActorNode extends BMNode {
     
     initPrototype () {
         this.newSlot("inbox", null).setInitProto(Array) // asyncMessageQueue
@@ -87,4 +87,4 @@ window.BMActorNode = class BMActorNode extends BMNode {
     }
     
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMURLImage = class BMURLImage extends BMNode {
+(class BMURLImage extends BMNode {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -85,4 +85,4 @@ window.BMURLImage = class BMURLImage extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DomCSSInspector
@@ -9,7 +9,7 @@
 
 */
 
-window.DomCSSInspector = class DomCSSInspector extends ProtoClass {
+(class DomCSSInspector extends ProtoClass {
     
     initPrototype () {
         this.newSlot("idName", "DomCSSInspector")
@@ -43,4 +43,4 @@ window.DomCSSInspector = class DomCSSInspector extends ProtoClass {
         return this.testElement().style
     }
     
-}.initThisClass()
+}.initThisClass())

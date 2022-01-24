@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMHourNode = class BMHourNode extends BMNode {
+(class BMHourNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 0).setComment("0 to 23")
@@ -68,4 +68,4 @@ window.BMHourNode = class BMHourNode extends BMNode {
         }
     }
     
-}.initThisClass()
+}.initThisClass())

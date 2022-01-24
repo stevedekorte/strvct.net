@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     GamePad
@@ -7,7 +7,7 @@
 
 */
 
-window.GamePad = class GamePad extends Device {
+(class GamePad extends Device {
     
     initPrototype () {
         this.newSlot("gamePadManager", null)
@@ -120,4 +120,4 @@ window.GamePad = class GamePad extends Device {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMDayNode = class BMDayNode extends BMNode {
+(class BMDayNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("day value starts with 1")
@@ -53,4 +53,4 @@ window.BMDayNode = class BMDayNode extends BMNode {
         return null
     }
     
-}.initThisClass()
+}.initThisClass())

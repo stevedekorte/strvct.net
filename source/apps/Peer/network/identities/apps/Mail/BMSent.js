@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMSent = class BMSent extends BMStorableNode {
+getGlobalThis().BMSent = class BMSent extends BMStorableNode {
     
     initPrototype () {
 

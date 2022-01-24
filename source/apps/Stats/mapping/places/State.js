@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.State = class State extends Place {
+(class State extends Place {
 
     initPrototype () {
         this.newSlot("dict", null)
@@ -39,4 +39,4 @@ window.State = class State extends Place {
 	}
 	*/
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.Kinsa = class Kinsa extends BMNode {
+getGlobalThis().Kinsa = class Kinsa extends BMNode {
     
     static initThisClass () {
         super.initThisClass()

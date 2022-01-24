@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -20,7 +20,7 @@
 
 */
 
-window.BMPow = class BMPow extends ProtoClass {
+getGlobalThis().BMPow = class BMPow extends ProtoClass {
     
     initPrototype () {
         this.newSlot("targetDifficulty", 15)

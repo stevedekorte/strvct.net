@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ColumnGroupFooter = class ColumnGroupFooter extends NodeView {
+(class ColumnGroupFooter extends NodeView {
     
     initPrototype () {
         this.newSlot("leftActionsView", null)
@@ -113,6 +113,6 @@ window.ColumnGroupFooter = class ColumnGroupFooter extends NodeView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 

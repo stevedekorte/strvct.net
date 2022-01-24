@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
     
 */
 
-window.BMDataStore = class BMDataStore extends BMNode {
+(class BMDataStore extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -82,5 +82,4 @@ window.BMDataStore = class BMDataStore extends BMNode {
         return this
     }
     
-    
-}.initThisClass()
+}.initThisClass())

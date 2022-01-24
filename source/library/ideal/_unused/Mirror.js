@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /*
@@ -12,7 +12,7 @@
 
 Object._mirrors = new WeakMap(); // has, set, get methods
 
-window.ideal.Mirror = class FilePath extends ProtoClass {
+getGlobalThis().ideal.Mirror = class FilePath extends ProtoClass {
 
 }
 

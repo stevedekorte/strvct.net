@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -33,7 +33,7 @@
 */
 
 
-window.SlideGestureRecognizer = class SlideGestureRecognizer extends GestureRecognizer {
+(class SlideGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("direction", "left")
@@ -201,4 +201,4 @@ window.SlideGestureRecognizer = class SlideGestureRecognizer extends GestureReco
         return Math.abs(funcs[this.direction()](dx, dy))
     }
 
-}.initThisClass()
+}.initThisClass())

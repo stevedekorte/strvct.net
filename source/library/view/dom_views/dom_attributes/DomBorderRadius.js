@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -12,7 +12,7 @@
 */
 
 
-window.DomBorderRadius = class DomBorderRadius extends ProtoClass {
+(class DomBorderRadius extends ProtoClass {
     initPrototype () {
         this.newSlot("divView", null)
         this.newSlot("topLeft", 0)
@@ -104,5 +104,5 @@ window.DomBorderRadius = class DomBorderRadius extends ProtoClass {
 
         return this
     }
-}.initThisClass()
+}.initThisClass())
 

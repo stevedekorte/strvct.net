@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
 
-window.Mouse = class Mouse extends Device {
+(class Mouse extends Device {
     
     initPrototype () {
         this.newSlot("isDown", false)
@@ -130,4 +130,4 @@ window.Mouse = class Mouse extends Device {
         return "on" + s + "MouseUp"
     }
     
-}.initThisClass()
+}.initThisClass())

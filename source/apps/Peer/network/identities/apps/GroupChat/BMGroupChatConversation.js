@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMGroupConversation = class BMGroupConversation extends BMApplet {
+getGlobalThis().BMGroupConversation = class BMGroupConversation extends BMApplet {
     
     initPrototype () {
         this.newSlot("remoteIdentity", null)

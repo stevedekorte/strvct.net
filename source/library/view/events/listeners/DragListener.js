@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DragListener
@@ -7,7 +7,7 @@
 
 */
 
-window.DragListener = class DragListener extends EventSetListener {
+(class DragListener extends EventSetListener {
     
     initPrototype () {
 
@@ -32,4 +32,4 @@ window.DragListener = class DragListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     TouchListener
@@ -7,7 +7,7 @@
 
 */
  
-window.TouchListener = class TouchListener extends EventSetListener {
+(class TouchListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -25,4 +25,4 @@ window.TouchListener = class TouchListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

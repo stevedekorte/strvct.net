@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMJsonResources = class BMJsonResources extends BMNode {
+(class BMJsonResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -56,6 +56,6 @@ window.BMJsonResources = class BMJsonResources extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 

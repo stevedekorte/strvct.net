@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -12,7 +12,7 @@
 
 */
 
-window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
+(class BMSummaryNode extends BMStorableNode {
     
     initPrototype () {
 
@@ -173,5 +173,5 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         return s
     }
     
-}.initThisClass()
+}.initThisClass())
 

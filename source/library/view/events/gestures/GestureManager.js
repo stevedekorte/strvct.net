@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     GestureManager
@@ -16,7 +16,7 @@
 
 */
 
-window.GestureManager = class GestureManager extends ProtoClass {
+(class GestureManager extends ProtoClass {
     
     initPrototype () {
         this.newSlot("activeGesture", null)
@@ -133,4 +133,4 @@ window.GestureManager = class GestureManager extends ProtoClass {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

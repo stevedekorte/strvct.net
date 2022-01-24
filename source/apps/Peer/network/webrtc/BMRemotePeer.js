@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMRemotePeer = class BMRemotePeer extends BMNode {
+getGlobalThis().BMRemotePeer = class BMRemotePeer extends BMNode {
     
     initPrototype () {
         this.newSlot("conn", null)

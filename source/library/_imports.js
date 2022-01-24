@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "ideal/_imports.js",

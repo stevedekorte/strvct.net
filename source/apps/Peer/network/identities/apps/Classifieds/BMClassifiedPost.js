@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
+getGlobalThis().BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
     
     initPrototype () {
         const thirtyDaysInMilliseconds = 30 * 24 * 60 * 60 * 1000

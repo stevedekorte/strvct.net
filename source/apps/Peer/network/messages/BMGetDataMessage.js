@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMGetDataMessage = class BMGetDataMessage extends BMMessage {
+getGlobalThis().BMGetDataMessage = class BMGetDataMessage extends BMMessage {
     
     initPrototype () {
 

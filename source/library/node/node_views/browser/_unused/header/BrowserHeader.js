@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -9,8 +9,7 @@
 */
 
 
-
-window.BrowserHeader = class BrowserHeader extends DomView {
+(class BrowserHeader extends DomView {
     
     initPrototype () {
 
@@ -32,4 +31,4 @@ window.BrowserHeader = class BrowserHeader extends DomView {
     }
     
    
-}.initThisClass()
+}.initThisClass())

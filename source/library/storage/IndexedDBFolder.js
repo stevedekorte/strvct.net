@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
+(class IndexedDBFolder extends ProtoClass {
     initPrototype() {
         this.newSlot("path", "/")
         this.newSlot("pathSeparator", "/") // path should end with pathSeparator
@@ -341,6 +341,6 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
     }
 
     newTx() {
-        return window.IndexedDBTx.clone().setDbFolder(this)
+        return IndexedDBTx.clone().setDbFolder(this)
     }
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMCacheEntry = class BMCacheEntry extends BMStorableNode {
+getGlobalThis().BMCacheEntry = class BMCacheEntry extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("key", null).setShouldStoreSlot(true) 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -288,7 +288,7 @@ const statesArray = [
   ]
 
 
-window.UnitedStates = class UnitedStates extends Country {
+(class UnitedStates extends Country {
 	
 	static initThisClass () {
         super.initThisClass()
@@ -380,4 +380,4 @@ window.UnitedStates = class UnitedStates extends Country {
 	
 	
     
-}.initThisClass()
+}.initThisClass())

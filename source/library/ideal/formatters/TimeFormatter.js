@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -28,7 +28,7 @@ TimeFormatter
 
 */
 
-window.TimeFormatter = class TimeFormatter extends ProtoClass {
+(class TimeFormatter extends ProtoClass {
     initPrototype () {
         this.newSlot("is24Hour", false)
         this.newSlot("showsMeridiem", true)
@@ -160,7 +160,7 @@ window.TimeFormatter = class TimeFormatter extends ProtoClass {
 
         return s
     }
-}.initThisClass()
+}.initThisClass())
 
 
 

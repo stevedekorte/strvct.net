@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
 
-window.TouchScreen = class TouchScreen extends Device {
+(class TouchScreen extends Device {
 
     initPrototype () {
         this.newSlot("currentEvent", null)
@@ -187,4 +187,4 @@ window.TouchScreen = class TouchScreen extends Device {
     }
     */
    
-}.initThisClass()
+}.initThisClass())

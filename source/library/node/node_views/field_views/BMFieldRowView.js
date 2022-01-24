@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 */
 
 
-window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
+(class BMFieldRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("allowsCursorNavigation", false)
@@ -394,4 +394,4 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

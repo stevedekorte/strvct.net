@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMBlob = class BMBlob extends BMNode {
+(class BMBlob extends BMNode {
 
     initPrototype() {
 
@@ -199,6 +199,6 @@ window.BMBlob = class BMBlob extends BMNode {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 

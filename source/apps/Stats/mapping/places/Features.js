@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.Features = class Features extends BMNode {
+(class Features extends BMNode {
 
     initPrototype () {
         this.newSlot("features", null)
@@ -51,4 +51,4 @@ window.Features = class Features extends BMNode {
         return bounds
     }
     
-}.initThisClass()
+}.initThisClass())

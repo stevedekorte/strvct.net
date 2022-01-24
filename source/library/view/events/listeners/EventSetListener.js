@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     EventSetListener
@@ -15,7 +15,7 @@
     
 */
 
-window.EventSetListener = class EventSetListener extends ProtoClass {
+(class EventSetListener extends ProtoClass {
     
     initPrototype () {
         this.newSlot("listenTarget", null)
@@ -130,7 +130,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
         if (this.isListening()) {
             return this
         }
-        this._isListening = true;
+        this._isListening = true; // can't use setter here as it would cause a loop
 
         this.assertHasListenTarget()
 
@@ -201,7 +201,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
     }
 
     onAfterEvent (methodName, event) {
-        if (window.SyncScheduler) {
+        if (getGlobalThis().SyncScheduler) {
             /*
                 run scheduled events here to ensure that a UI event won't occur
                 before sync as that could leave the node and view out of sync
@@ -218,7 +218,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
                 this.debugLog(" onAfterEvent " + methodName)
             }
             */
-            window.SyncScheduler.shared().fullSyncNow()
+            SyncScheduler.shared().fullSyncNow()
         }
         return this
     }
@@ -241,7 +241,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
         return this
     }   
 
-}.initThisClass()
+}.initThisClass())
 
 /*
     // globally track whether we are inside an event 

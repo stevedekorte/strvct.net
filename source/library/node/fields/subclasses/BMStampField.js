@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMStampField = class BMStampField extends BMField {
+(class BMStampField extends BMField {
     
     initPrototype () {
 
@@ -20,4 +20,4 @@ window.BMStampField = class BMStampField extends BMField {
         this.setValueIsEditable(false)
     }
     
-}.initThisClass()
+}.initThisClass())

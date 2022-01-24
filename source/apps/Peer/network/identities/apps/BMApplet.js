@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMApplet = class BMApplet extends BMStorableNode {
+getGlobalThis().BMApplet = class BMApplet extends BMStorableNode {
     
     initPrototype () {
 

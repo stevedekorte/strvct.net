@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ShelfView = class ShelfView extends NodeView {
+(class ShelfView extends NodeView {
     
     initPrototype () {
         this.newSlot("browser", null)
@@ -153,5 +153,5 @@ window.ShelfView = class ShelfView extends NodeView {
         item.setIsSelectable(false)
     }
     
-}.initThisClass()
+}.initThisClass())
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMPointerFieldRowView = class BMPointerFieldRowView extends BrowserTitledRow {
+(class BMPointerFieldRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -42,4 +42,4 @@ window.BMPointerFieldRowView = class BMPointerFieldRowView extends BrowserTitled
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

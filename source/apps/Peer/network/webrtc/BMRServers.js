@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMRServers = class BMRServers extends BMStorableNode {
+getGlobalThis().BMRServers = class BMRServers extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("maxConnections", 8)

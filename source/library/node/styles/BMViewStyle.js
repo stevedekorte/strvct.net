@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
  
 */
 
-window.BMViewStyle = class BMViewStyle extends ProtoClass {
+(class BMViewStyle extends ProtoClass {
   
     static styleNames () {
         return  [
@@ -88,4 +88,4 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

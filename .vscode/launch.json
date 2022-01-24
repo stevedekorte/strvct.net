@@ -25,6 +25,10 @@
             "name": "Launch FILE incremental hash",
             "url": "file:///${workspaceFolder}/index_incremental.html#%7B%22path%22:%5B%22STRVCT%22,%22Settings%22,%22Resources%22%5D%7D",
             "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--disable-web-security"
+              ],
+
         },
 
         {
@@ -33,6 +37,9 @@
             "name": "Launch FILE incremental",
             "url": "file:///${workspaceFolder}/index_incremental.html",
             "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--disable-web-security"
+              ],
         },
 
 
@@ -42,6 +49,9 @@
             "name": "Launch localhost HTTP incremental",
             "url": "http://127.0.0.1:8080/index_incremental.html",
             "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--disable-web-security"
+              ],
         },
 
         {
@@ -50,6 +60,9 @@
             "name": "Launch localhost HTTPS incremental",
             "url": "https://localhost:8000/index_incremental.html",
             "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--disable-web-security"
+              ],
         },
 
         {
@@ -75,6 +88,9 @@
             "url": "file:///${workspaceFolder}/index.html",
             "webRoot": "${workspaceFolder}",
             "preLaunchTask": "create index.html",
+            "runtimeArgs": [
+                "--disable-web-security"
+              ],
         },
 
         {

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMUrlResource = class BMUrlResource extends BMStorableNode {
+(class BMUrlResource extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -264,4 +264,4 @@ window.BMUrlResource = class BMUrlResource extends BMStorableNode {
              .replace(/'/g, "&#039;");
     }
 
-}.initThisClass()
+}.initThisClass())

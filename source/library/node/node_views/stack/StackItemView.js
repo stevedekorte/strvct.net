@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.StackItemView = class StackItemView extends NodeView {
+(class StackItemView extends NodeView {
     
     init () {
         super.init()
@@ -118,4 +118,4 @@ window.StackItemView = class StackItemView extends NodeView {
         
     }
 
-}.initThisClass()
+}.initThisClass())

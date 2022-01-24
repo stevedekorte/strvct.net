@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMChatThread = class BMChatThread extends BMStorableNode {
+getGlobalThis().BMChatThread = class BMChatThread extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("remoteIdentity", null).setShouldStoreSlot(true)

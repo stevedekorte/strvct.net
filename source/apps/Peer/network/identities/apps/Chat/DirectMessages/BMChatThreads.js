@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMChatThreads = class BMChatThreads extends BMContactLinks {
+getGlobalThis().BMChatThreads = class BMChatThreads extends BMContactLinks {
     
     initPrototype () {
 

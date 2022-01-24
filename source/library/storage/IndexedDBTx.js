@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -8,7 +8,7 @@
 
 */
 
-window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
+(class IndexedDBTx extends ProtoClass {
     initPrototype () {
         this.newSlot("dbFolder", null)
         this.newSlot("objectStore", null)
@@ -196,7 +196,7 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 

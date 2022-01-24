@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
+(class BMMeridiemNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("month value starts with 1")
@@ -88,4 +88,4 @@ window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     }
     */
     
-}.initThisClass()
+}.initThisClass())

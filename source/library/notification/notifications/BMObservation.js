@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
 
 */
 
-window.BMObservation = class BMObservation extends ProtoClass {
+(class BMObservation extends ProtoClass {
     initPrototype () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("targetId", null) // uniqueId string for target
@@ -105,4 +105,4 @@ window.BMObservation = class BMObservation extends ProtoClass {
         return this.observer().typeId() + " listening to " + this.targetId() + " " + this.name()
     }
 
-}.initThisClass()
+}.initThisClass())

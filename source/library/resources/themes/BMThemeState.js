@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.BMThemeState = class BMThemeState extends BMStorableNode {
+(class BMThemeState extends BMStorableNode {
     
     static standardStateNames () {
         return [
@@ -179,6 +179,6 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
         return super.didUpdateSlot(aSlot, oldValue, newValue) 
     }
     
-}.initThisClass()
+}.initThisClass())
 
 

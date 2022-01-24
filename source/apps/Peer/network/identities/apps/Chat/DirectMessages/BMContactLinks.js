@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMContactLinks = class BMContactLinks extends BMStorableNode {
+getGlobalThis().BMContactLinks = class BMContactLinks extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("linkProto", null)
@@ -55,7 +55,7 @@ window.BMContactLinks = class BMContactLinks extends BMStorableNode {
 
     didChangeIdentity (aNote) {
         //console.log(this.nodePathString() + ".didChangeIdentities() <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "updatedContacts")
+        getGlobalThis().SyncScheduler.shared().scheduleTargetAndMethod(this, "updatedContacts")
     }
 
     chatApp () {

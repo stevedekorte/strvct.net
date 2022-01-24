@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     WheelListener
@@ -7,7 +7,7 @@
 
 */
 
-window.WheelListener = class WheelListener extends EventSetListener {
+(class WheelListener extends EventSetListener {
     
     initPrototype () {
 
@@ -23,4 +23,4 @@ window.WheelListener = class WheelListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

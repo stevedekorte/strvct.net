@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMChat = class BMChat extends BMApplet {
+getGlobalThis().BMChat = class BMChat extends BMApplet {
     
     initPrototype () {
         this.newSlot("feedPosts", null).setShouldStoreSlot(true).setInitProto(BMFeedPosts)

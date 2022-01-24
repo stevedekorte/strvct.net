@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMFileResources = class BMFileResources extends BMNode {
+(class BMFileResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -63,4 +63,4 @@ window.BMFileResources = class BMFileResources extends BMNode {
     }
 
 
-}.initThisClass()
+}.initThisClass())

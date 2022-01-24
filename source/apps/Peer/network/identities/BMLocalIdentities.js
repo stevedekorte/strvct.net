@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
     
 */
 
-window.BMLocalIdentities = class BMLocalIdentities extends BMStorableNode {
+getGlobalThis().BMLocalIdentities = class BMLocalIdentities extends BMStorableNode {
     
     initPrototype () {
 

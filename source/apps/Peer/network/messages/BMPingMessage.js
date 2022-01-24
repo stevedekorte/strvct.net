@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMPingMessage = class BMPingMessage extends BMMessage {
+getGlobalThis().BMPingMessage = class BMPingMessage extends BMMessage {
     
     initPrototype () {
 

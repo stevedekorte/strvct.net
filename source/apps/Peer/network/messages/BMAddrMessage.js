@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMAddrMessage = class BMAddrMessage extends BMMessage {
+getGlobalThis().BMAddrMessage = class BMAddrMessage extends BMMessage {
     
     initPrototype () {
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     WebSocketListener
@@ -7,7 +7,7 @@
 
 */
 
-window.WebSocketListener = class WebSocketListener extends EventSetListener {
+(class WebSocketListener extends EventSetListener {
     
     initPrototype () {
 
@@ -26,4 +26,4 @@ window.WebSocketListener = class WebSocketListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

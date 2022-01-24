@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
+(class BrowserColumnGroup extends HeaderFooterView {
     
     initPrototype () {
         this.newSlot("browser", null)
@@ -332,4 +332,4 @@ window.BrowserColumnGroup = class BrowserColumnGroup extends HeaderFooterView {
         return super.debugTypeId() + this.debugTypeIdSpacer() + this.column().debugTypeId()
     }
 
-}.initThisClass()
+}.initThisClass())

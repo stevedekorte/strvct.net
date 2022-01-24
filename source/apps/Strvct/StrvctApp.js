@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.StrvctApp = class StrvctApp extends App {
+(class StrvctApp extends App {
     
     initPrototype () {
         // model
@@ -41,7 +41,7 @@ window.StrvctApp = class StrvctApp extends App {
         this.documentBodyView().addSubview(v)
         this.appDidInit()
 
-        setTimeout( () => this.showClasses(), 1)
+        //setTimeout( () => this.showClasses(), 1)
     }
 
     showClasses() {
@@ -194,7 +194,7 @@ window.StrvctApp = class StrvctApp extends App {
         doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
     }
 
-}.initThisClass()
+}.initThisClass())
 
 /*
 

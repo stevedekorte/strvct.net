@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 */
 
  
-window.ColumnGroupHeaderAction = class ColumnGroupHeaderAction extends NodeView {
+(class ColumnGroupHeaderAction extends NodeView {
     
     initPrototype () {
         this.newSlot("canClick", true)
@@ -69,4 +69,4 @@ window.ColumnGroupHeaderAction = class ColumnGroupHeaderAction extends NodeView 
         return false
     }
     
-}.initThisClass()
+}.initThisClass())

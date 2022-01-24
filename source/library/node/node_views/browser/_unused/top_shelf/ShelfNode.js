@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -13,7 +13,7 @@
 
 */
 
-window.ShelfNode = class ShelfNode extends BMStorableNode {
+(class ShelfNode extends BMStorableNode {
     
     initPrototype () {
     }
@@ -24,5 +24,5 @@ window.ShelfNode = class ShelfNode extends BMStorableNode {
     }
     
         
-}.initThisClass()
+}.initThisClass())
 

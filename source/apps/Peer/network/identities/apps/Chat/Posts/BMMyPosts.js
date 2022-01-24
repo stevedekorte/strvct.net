@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMMyPosts = class BMMyPosts extends BMStorableNode {
+getGlobalThis().BMMyPosts = class BMMyPosts extends BMStorableNode {
     
     initPrototype () {
 

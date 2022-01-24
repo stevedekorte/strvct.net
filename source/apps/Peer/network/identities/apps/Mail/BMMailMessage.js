@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMMailMessage = class BMMailMessage extends BMAppMessage {
+getGlobalThis().BMMailMessage = class BMMailMessage extends BMAppMessage {
     
     initPrototype () {
     }

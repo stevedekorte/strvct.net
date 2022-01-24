@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMGroupChat = class BMGroupChat extends BMApplet {
+getGlobalThis().BMGroupChat = class BMGroupChat extends BMApplet {
     
     initPrototype () {
         this.newSlot("channels", null)

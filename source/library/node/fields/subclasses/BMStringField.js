@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
         
-window.BMStringField = class BMStringField extends BMField {
+(class BMStringField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -27,4 +27,4 @@ window.BMStringField = class BMStringField extends BMField {
         this.setValueIsEditable(true)
     }
     
-}.initThisClass()
+}.initThisClass())

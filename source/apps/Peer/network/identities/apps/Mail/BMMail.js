@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMMail = class BMMail extends BMApplet {
+getGlobalThis().BMMail = class BMMail extends BMApplet {
     
     initPrototype () {
         this.newSlot("feed", null)

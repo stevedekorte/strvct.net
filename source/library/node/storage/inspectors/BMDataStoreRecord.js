@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
     
 */
 
-window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
+(class BMDataStoreRecord extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("key", null)
@@ -72,5 +72,5 @@ window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
         return subnode
     }
     
-}.initThisClass()
+}.initThisClass())
 

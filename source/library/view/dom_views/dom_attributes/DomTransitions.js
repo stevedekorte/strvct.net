@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -24,7 +24,7 @@
 */
 
 
-window.DomTransitions = class DomTransitions extends ProtoClass {
+(class DomTransitions extends ProtoClass {
     initPrototype () {
         this.newSlot("properties", null)
         this.newSlot("domView", null)
@@ -73,6 +73,6 @@ window.DomTransitions = class DomTransitions extends ProtoClass {
 
         return this
     }
-}.initThisClass()
+}.initThisClass())
 
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     Devices
@@ -14,7 +14,7 @@
 
 */
 
-window.Devices = class Devices extends ProtoClass {
+(class Devices extends ProtoClass {
     
     initPrototype () {
         //this.newSlot("gamePadListener", null)
@@ -51,4 +51,4 @@ window.Devices = class Devices extends ProtoClass {
         return es.min(e => e.timeStamp)
     }
     
-}.initThisClass()
+}.initThisClass())

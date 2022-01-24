@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMUrlField = class BMUrlField extends BMField {
+(class BMUrlField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -222,4 +222,4 @@ window.BMUrlField = class BMUrlField extends BMField {
         return result !== null
     }
     
-}.initThisClass()
+}.initThisClass())

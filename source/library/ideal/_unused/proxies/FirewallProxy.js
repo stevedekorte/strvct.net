@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -21,7 +21,7 @@
 
 */
 
-window.FirewallProxy = class FirewallProxy extends ObservableProxy {
+(class FirewallProxy extends ObservableProxy {
     
     initPrototype () {
         this.newSlot("protectedTraps", null).setComment("a Set")
@@ -131,7 +131,7 @@ window.FirewallProxy = class FirewallProxy extends ObservableProxy {
 
         console.log(this.type() + " - self test passed")
     }
-}.initThisClass()
+}.initThisClass())
 
 
 // ------------------------------------------------------------------

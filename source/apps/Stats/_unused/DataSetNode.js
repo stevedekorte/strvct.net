@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.DataSetNode = class DataSetNode extends BMStorableNode {
+getGlobalThis().DataSetNode = class DataSetNode extends BMStorableNode {
     
 
     initPrototype () {
@@ -38,8 +38,8 @@ window.DataSetNode = class DataSetNode extends BMStorableNode {
     
     setupDictRows () {
 		const us = window.us_counties_20m
-		//const data = window.data_csv
-		//ready(null, window.us_json, window.data_csv)
+		//const data = getGlobalThis().data_csv
+		//ready(null, getGlobalThis().us_json, getGlobalThis().data_csv)
 
 
 		const selectedFeatures = us.features //.filter(f => f.properties.STATE === "06")

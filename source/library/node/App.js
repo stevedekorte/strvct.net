@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     App 
@@ -10,7 +10,7 @@
 
 */
 
-window.App = class App extends BMStorableNode {
+(class App extends BMStorableNode {
     
     static loadAndRunShared () {
         const name = this.name
@@ -218,4 +218,4 @@ window.App = class App extends BMStorableNode {
         //doc.setTextTransform("uppercase")
    }
 
-}.initThisClass()
+}.initThisClass())

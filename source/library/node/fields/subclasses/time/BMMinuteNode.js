@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMMinuteNode = class BMMinuteNode extends BMNode {
+(class BMMinuteNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1)
@@ -52,4 +52,4 @@ window.BMMinuteNode = class BMMinuteNode extends BMNode {
         return null
     }
     
-}.initThisClass()
+}.initThisClass())

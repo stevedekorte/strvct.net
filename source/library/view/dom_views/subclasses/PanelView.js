@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.PanelView = class PanelView extends DomView {
+(class PanelView extends DomView {
     
     initPrototype () {
         this.newSlot("titleView", null)
@@ -112,4 +112,4 @@ window.PanelView = class PanelView extends DomView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

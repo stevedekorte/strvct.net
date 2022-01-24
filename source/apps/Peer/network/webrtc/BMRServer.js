@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 */
 
 
-window.BMRServer = class BMRServer extends BMFieldSetNode {
+getGlobalThis().BMRServer = class BMRServer extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("serverConnection", null)

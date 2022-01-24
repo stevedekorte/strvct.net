@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.DocumentBody = class DocumentBody extends DomView {
+(class DocumentBody extends DomView {
     
     initPrototype () {
 
@@ -84,5 +84,5 @@ window.DocumentBody = class DocumentBody extends DomView {
     }
     */
    
-}.initThisClass()
+}.initThisClass())
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMYearNode = class BMYearNode extends BMNode {
+(class BMYearNode extends BMNode {
     
     initPrototype () {
         this.newSlot("allowsMultiplePicks", false)
@@ -58,4 +58,4 @@ window.BMYearNode = class BMYearNode extends BMNode {
         }
     }
     
-}.initThisClass()
+}.initThisClass())

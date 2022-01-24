@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DomView
@@ -8,7 +8,7 @@
     TODO: add dict[propertyName] -> validValueSet and check css values when set
 */
 
-window.DomView = class DomView extends ProtoClass {
+(class DomView extends ProtoClass {
     
     initPrototype () {
         this.newSlot("divClassName", "")
@@ -4624,4 +4624,4 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

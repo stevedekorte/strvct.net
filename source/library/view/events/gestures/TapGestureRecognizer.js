@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -28,7 +28,7 @@
 
 */
 
-window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecognizer {
+(class TapGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("maxHoldPeriod", 1000).setComment("milliseconds per tap")
@@ -168,4 +168,4 @@ window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecogniz
     }
     */
 
-}.initThisClass()
+}.initThisClass())

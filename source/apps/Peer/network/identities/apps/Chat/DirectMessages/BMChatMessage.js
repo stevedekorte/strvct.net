@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMChatMessage = class BMChatMessage extends BMAppMessage {
+getGlobalThis().BMChatMessage = class BMChatMessage extends BMAppMessage {
     
     initPrototype () {
         this.newSlot("content", null).setShouldStoreSlot(true)

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     KeyboardListener
@@ -7,7 +7,7 @@
 
 */
 
-window.KeyboardListener = class KeyboardListener extends EventSetListener {
+(class KeyboardListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -27,4 +27,4 @@ window.KeyboardListener = class KeyboardListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

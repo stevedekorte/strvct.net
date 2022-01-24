@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.HeaderFooterView = class HeaderFooterView extends NodeView {
+(class HeaderFooterView extends NodeView {
     
     initPrototype () {
         this.newSlot("headerClass", null)
@@ -63,4 +63,4 @@ window.HeaderFooterView = class HeaderFooterView extends NodeView {
     }
     */
     
-}.initThisClass()
+}.initThisClass())

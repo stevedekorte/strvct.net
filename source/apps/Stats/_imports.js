@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "d3/_imports.js",

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.World = class World extends Place {
+(class World extends Place {
     
     initPrototype () {
         this.newSlot("countries", null)
@@ -55,4 +55,4 @@ window.World = class World extends Place {
         return this.features()
     }
 
-}.initThisClass()
+}.initThisClass())

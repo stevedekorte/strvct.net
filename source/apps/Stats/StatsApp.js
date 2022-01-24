@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,14 +7,11 @@
 
 */
 
-window.StatsApp = class StatsApp extends App {
-    
+getGlobalThis().StatsApp = class StatsApp extends App {
 
     initPrototype () {
         // model
         this.newSlot("stats", null)
-
-        
 
         this.newSlot("settings", null)
         this.newSlot("resources", null)

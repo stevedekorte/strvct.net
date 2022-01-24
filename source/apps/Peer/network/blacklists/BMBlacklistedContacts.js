@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMBlacklistedContacts = class BMBlacklistedContacts extends BMBlacklist {
+getGlobalThis().BMBlacklistedContacts = class BMBlacklistedContacts extends BMBlacklist {
     
     initPrototype () {
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.GeoMapNodeRowView = class GeoMapNodeRowView extends BrowserRow {
+(class GeoMapNodeRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("mapWidthPx", 960)
@@ -224,6 +224,6 @@ window.GeoMapNodeRowView = class GeoMapNodeRowView extends BrowserRow {
         return "rgb(" + [c,c,c].join(",") + ")"
     }
 
-}.initThisClass()
+}.initThisClass())
 
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.Continent = class Continent extends Place {
+(class Continent extends Place {
     
 
     initPrototype () {
@@ -21,4 +21,4 @@ window.Continent = class Continent extends Place {
 
 
     
-}.initThisClass()
+}.initThisClass())

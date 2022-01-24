@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -202,6 +202,7 @@ class JSScript extends ResourceLoaderBase {
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
+            console.log("loaded script src:'" + script.src)
             this._doneCallback()
         }
 

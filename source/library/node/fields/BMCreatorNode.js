@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
         
-window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
+(class BMCreatorNode extends BMStorableNode {
     
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
@@ -100,4 +100,4 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return ""
     }
     
-}.initThisClass()
+}.initThisClass())

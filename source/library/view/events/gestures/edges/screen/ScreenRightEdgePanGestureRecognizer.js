@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -13,7 +13,7 @@
 
 */
 
-window.ScreenRightEdgePanGestureRecognizer = class ScreenRightEdgePanGestureRecognizer extends ScreenEdgePanGestureRecognizer {
+(class ScreenRightEdgePanGestureRecognizer extends ScreenEdgePanGestureRecognizer {
     
     initPrototype () {
 
@@ -25,4 +25,4 @@ window.ScreenRightEdgePanGestureRecognizer = class ScreenRightEdgePanGestureReco
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

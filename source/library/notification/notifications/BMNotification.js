@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMNotification = class BMNotification extends ProtoClass {
+(class BMNotification extends ProtoClass {
     initPrototype () {
         this.newSlot("name", null)
         this.newSlot("sender", null)
@@ -75,5 +75,5 @@ window.BMNotification = class BMNotification extends ProtoClass {
         const n = this.name() ? this.name() : "null"
         return s + " " + n
     }
-}.initThisClass()
+}.initThisClass())
 

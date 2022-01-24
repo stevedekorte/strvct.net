@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -50,7 +50,7 @@
 
 */
 
-window.ObjectPool = class ObjectPool extends ProtoClass {
+(class ObjectPool extends ProtoClass {
     
     initPrototype () {
         this.newSlot("name", "defaultDataStore")
@@ -743,7 +743,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 
 // -------------------

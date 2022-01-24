@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.ideal.AtomicDictionary = class AtomicDictionary extends ideal.Dictionary {
+getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Dictionary {
 
     initPrototype () {
         this.newSlot("hasBegun", false) // private method

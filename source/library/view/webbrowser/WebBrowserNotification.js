@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.WebBrowserNotification = class WebBrowserNotification extends ProtoClass {
+(class WebBrowserNotification extends ProtoClass {
     
     initPrototype () {
         this.newSlot("title", "")
@@ -38,7 +38,7 @@ window.WebBrowserNotification = class WebBrowserNotification extends ProtoClass 
         setTimeout(notification.close.bind(this.notificationRef()), this.timeoutMs());
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 

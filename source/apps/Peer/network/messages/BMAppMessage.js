@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMAppMessage = class BMAppMessage extends BMFieldSetNode {
+getGlobalThis().BMAppMessage = class BMAppMessage extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("senderId", null).setShouldStoreSlot(true)

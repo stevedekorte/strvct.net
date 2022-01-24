@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMTwitter = class BMTwitter extends BMApplet {
+getGlobalThis().BMTwitter = class BMTwitter extends BMApplet {
     
     initPrototype () {
         this.newSlot("feed", null)

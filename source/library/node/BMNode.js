@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -34,7 +34,7 @@
 
 */
 
-window.BMNode = class BMNode extends ProtoClass {
+(class BMNode extends ProtoClass {
     
     static availableAsNodePrimitive() {
         return true
@@ -1389,5 +1389,5 @@ window.BMNode = class BMNode extends ProtoClass {
         return super.debugTypeId() + " '" + this.title() + "'"
     }
 
-}.initThisClass()
+}.initThisClass())
 

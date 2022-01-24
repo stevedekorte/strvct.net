@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -25,7 +25,7 @@
 
 */
 
-window.BMThemeResources = class BMThemeResources extends BMStorableNode {
+(class BMThemeResources extends BMStorableNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -58,4 +58,4 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         return this.activeTheme().subnodes().first()
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
 
-window.BMActionNode = class BMActionNode extends BMStorableNode {
+(class BMActionNode extends BMStorableNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -61,4 +61,4 @@ window.BMActionNode = class BMActionNode extends BMStorableNode {
 	    return this
     }
     
-}.initThisClass()
+}.initThisClass())

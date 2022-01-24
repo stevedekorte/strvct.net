@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -33,7 +33,7 @@
     Example use:
 */
 
-window.Broadcaster = class Broadcaster extends ProtoClass {
+(class Broadcaster extends ProtoClass {
     initPrototype () {
         this.newSlot("nameToListenerSet", null)  // dict to set
     }
@@ -86,7 +86,7 @@ window.Broadcaster = class Broadcaster extends ProtoClass {
         })
     }
 
-}.initThisClass()
+}.initThisClass())
 
 Object.defineSlots(ProtoClass.prototype, {
 

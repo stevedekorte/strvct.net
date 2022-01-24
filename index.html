@@ -480,7 +480,7 @@ notes on Scroll bars theme options
 
 window.ResourceLoaderIsEmbedded = true
 
-      "use strict"
+      "use strict";
 
 /*
 
@@ -858,7 +858,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 window.ResourceLoaderPanel.shared().startWhenReady()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -1258,7 +1258,7 @@ ResourceLoader.pushRelativePaths([
     "resources/_imports.js",
 ]);
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "getGlobalThis.js",
@@ -1287,7 +1287,7 @@ function getGlobalThis() {
   };
   getGlobalThis().getGlobalThis = getGlobalThis;
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "ideal/_imports.js",
@@ -1298,7 +1298,7 @@ ResourceLoader.pushRelativePaths([
     "resources/_imports.js",
 ])
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "categories/_imports.js",
@@ -1317,7 +1317,7 @@ ResourceLoader.pushRelativePaths([
 
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "Mirror.js",
@@ -1419,7 +1419,7 @@ window.Mirror = class Mirror extends Object {
 	
 }
 
-"use strict"
+"use strict";
 
 /*
 
@@ -1717,7 +1717,7 @@ window.Type = {
 }
 
 //Type.test()
-//"use strict"
+//"use strict";
 
 /*
 
@@ -2266,7 +2266,7 @@ const prototypeSlots = {
 Object.defineSlots(Object.prototype, prototypeSlots)
 
 Object.initThisClass()
-"use strict"
+"use strict";
 
 Object.defineSlots(Object, {
     /*
@@ -2339,7 +2339,7 @@ Object.defineSlots(Object.prototype, {
 
 })
 
-"use strict"
+"use strict";
 
 Object.defineSlots(Object, {
 
@@ -2397,7 +2397,7 @@ Object.defineSlots(Object.prototype, {
 
 })
 
-"use strict"
+"use strict";
 
 /*
 
@@ -3231,7 +3231,7 @@ Object.defineSlots(Array.prototype, {
 });
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -3317,7 +3317,7 @@ Object.defineSlots(Date.prototype, {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -3758,7 +3758,7 @@ test()
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -3887,7 +3887,7 @@ Object.defineSlots(Number.prototype, {
     
 });
 
-"use strict"
+"use strict";
 
 /*
 
@@ -3931,7 +3931,7 @@ Object.defineSlots(Boolean.prototype, {
 
 });
 
-"use strict"
+"use strict";
 
 /*
 
@@ -4038,7 +4038,7 @@ Object.defineSlots(Set.prototype, {
     
 });
 
-"use strict"
+"use strict";
 
 /*
 
@@ -4192,7 +4192,7 @@ getGlobalThis().assertThrows = function assertThrows(func) {
     Error.assertThrows(func)
 }
 
-"use strict"
+"use strict";
 
 /*
 
@@ -4203,7 +4203,7 @@ getGlobalThis().assertThrows = function assertThrows(func) {
 */
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -4278,7 +4278,7 @@ Object.defineSlots(Image.prototype, {
 
 
 
-"use strict"
+"use strict";
 
 Type.typedArrayTypeNames().forEach((name) => {
     const aClass = window[name]
@@ -4316,7 +4316,7 @@ Object.defineSlots(ArrayBuffer.prototype, {
 })
 
 //console.log("base64Encoded test:", new Uint32Array([1, 2, 3]).base64Encoded())
-"use strict"
+"use strict";
 
 
 /*
@@ -4325,11 +4325,11 @@ Object.defineSlots(ArrayBuffer.prototype, {
 
 */
 
-if (!window.ideal) {
-    window.ideal = {}
+if (!getGlobalThis().ideal) {
+    getGlobalThis().ideal = {}
 }
 
-window.ideal.Slot = class Slot { 
+getGlobalThis().ideal.Slot = class Slot { 
 
     static clone () {
         const obj = new this()
@@ -5080,7 +5080,7 @@ Object.defineSlots(Function.prototype, {
 
 })
 */
-"use strict"
+"use strict";
 
 /*
 
@@ -5694,7 +5694,7 @@ window.ProtoClass = class ProtoClass extends Object {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -5822,7 +5822,7 @@ Object.defineSlots(Function.prototype, {
 })
 
 */
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "HookedArray.js",
@@ -5835,7 +5835,7 @@ ResourceLoader.pushRelativePaths([
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -5933,7 +5933,7 @@ window.HookedArray = class HookedArray extends Array {
 }.initThisClass() //.selfTest()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -5986,7 +5986,7 @@ window.HookedSet = class HookedSet extends Set {
 }.initThisClass() //.selfTest()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -6038,7 +6038,7 @@ window.HookedMap = class HookedMap extends Map {
 }.initThisClass() //.selfTest()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -6226,7 +6226,7 @@ window.IndexedArray = class IndexedArray extends HookedArray {
 
 }.initThisClass() //.selfTest()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -6322,7 +6322,7 @@ window.SortedArray = class SortedArray extends IndexedArray {
 
 }.initThisClass() //.selfTest()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "Dictionary.js",
@@ -6331,7 +6331,7 @@ ResourceLoader.pushRelativePaths([
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -6343,7 +6343,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.ideal.Dictionary = class Dictionary extends ProtoClass {
+getGlobalThis().ideal.Dictionary = class Dictionary extends ProtoClass {
     static withJsDict (jsDict) {
         return this.clone().setJsDict(jsDict)
     }
@@ -6529,7 +6529,7 @@ window.ideal.Dictionary = class Dictionary extends ProtoClass {
     }
 
 }.initThisClass()
-"use strict"
+"use strict";
 
 /*
 
@@ -6539,7 +6539,7 @@ window.ideal.Dictionary = class Dictionary extends ProtoClass {
 
 */
 
-window.ideal.AtomicDictionary = class AtomicDictionary extends ideal.Dictionary {
+getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Dictionary {
 
     initPrototype () {
         this.newSlot("hasBegun", false) // private method
@@ -6745,7 +6745,7 @@ window.ideal.AtomicDictionary = class AtomicDictionary extends ideal.Dictionary 
 }.initThisClass()//.selfTest()
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -6854,7 +6854,7 @@ window.StackTrace = class StackTrace extends ProtoClass {
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "ByteFormatter.js",
@@ -6864,7 +6864,7 @@ ResourceLoader.pushRelativePaths([
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -6938,7 +6938,7 @@ window.ByteFormatter = class ByteFormatter extends ProtoClass {
     }
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -7003,7 +7003,7 @@ window.TimePeriodFormatter = class TimePeriodFormatter extends ProtoClass {
     }
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -7171,7 +7171,7 @@ window.TimeFormatter = class TimeFormatter extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7288,7 +7288,7 @@ class NamespaceSearch extends ProtoClass {
 
 //NamespaceSearch.selfTest()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "SyncAction.js",
@@ -7297,7 +7297,7 @@ ResourceLoader.pushRelativePaths([
     "Broadcaster.js",
 ])
 
-"use strict"
+"use strict";
 
 
 /*
@@ -7365,7 +7365,7 @@ window.SyncAction = class SyncAction extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7635,7 +7635,7 @@ Object.defineSlots(ProtoClass.prototype, {
 
 })
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMNotification.js",
@@ -7643,7 +7643,7 @@ ResourceLoader.pushRelativePaths([
     "BMObservation.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7723,7 +7723,7 @@ window.BMNotification = class BMNotification extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /* 
 
@@ -8028,7 +8028,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
     }
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -8137,7 +8137,7 @@ window.BMObservation = class BMObservation extends ProtoClass {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -8236,7 +8236,7 @@ Object.defineSlots(ProtoClass.prototype, {
     
 })
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "IndexedDBFolder.js",
@@ -8245,7 +8245,7 @@ ResourceLoader.pushRelativePaths([
     "PersistentAsyncDictionary.js",
 ])
 
-"use strict"
+"use strict";
 
 /* 
 
@@ -8592,7 +8592,7 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
     }
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /* 
 
@@ -8796,7 +8796,7 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -8995,7 +8995,7 @@ window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ide
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -9147,7 +9147,7 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends Proto
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     //"css/_imports.js",
@@ -9158,7 +9158,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "Point.js",
@@ -9167,7 +9167,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
     Point
@@ -9404,7 +9404,7 @@ window.Point = class Point extends ProtoClass {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     Rectangle
@@ -9593,7 +9593,7 @@ window.Rectangle = class Rectangle extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -9665,7 +9665,7 @@ window.Transform = class Transform extends ProtoClass {
     */
    
 }.initThisClass()
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "devices/_imports.js",
@@ -9674,7 +9674,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "Event-cachedPoints.js",
@@ -9690,7 +9690,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -9722,7 +9722,7 @@ Object.defineSlots(Event.prototype, {
 })
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -9821,7 +9821,7 @@ window.EventPoint = class EventPoint extends Point {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     Device
@@ -9841,7 +9841,7 @@ window.Device = class Device extends ProtoClass {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     KeyboardKey
@@ -9893,7 +9893,7 @@ window.KeyboardKey = class KeyboardKey extends Device {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     Keyboard
@@ -10444,7 +10444,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -10578,7 +10578,7 @@ window.Mouse = class Mouse extends Device {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -10769,7 +10769,7 @@ window.TouchScreen = class TouchScreen extends Device {
    
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     GamePadManager
@@ -10923,7 +10923,7 @@ window.GamePadManager = class GamePadManager extends ProtoClass {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     GamePad
@@ -11047,7 +11047,7 @@ window.GamePad = class GamePad extends Device {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     Devices
@@ -11102,7 +11102,7 @@ window.Devices = class Devices extends ProtoClass {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "EventSetListener.js",
@@ -11123,7 +11123,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
     EventSetListener
@@ -11404,7 +11404,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
         }
     }
 */
-"use strict"
+"use strict";
 
 /*
     ClipboardListener
@@ -11433,7 +11433,7 @@ window.ClipboardListener = class ClipboardListener extends EventSetListener {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     DocumentListener
@@ -11480,7 +11480,7 @@ window.DocumentListener = class DocumentListener extends EventSetListener {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     DragListener
@@ -11515,7 +11515,7 @@ window.DragListener = class DragListener extends EventSetListener {
     }
     
 }.initThisClass()
-"use strict"
+"use strict";
 
 /*
     DropListener
@@ -11563,7 +11563,7 @@ window.DropListener = class DropListener extends EventSetListener {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     FocusListener
@@ -11593,7 +11593,7 @@ window.FocusListener = class FocusListener extends EventSetListener {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     KeyboardListener
@@ -11624,7 +11624,7 @@ window.KeyboardListener = class KeyboardListener extends EventSetListener {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     MouseListener
@@ -11666,7 +11666,7 @@ window.MouseListener = class MouseListener extends EventSetListener {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     SelectListener
@@ -11699,7 +11699,7 @@ window.SelectListener = class SelectListener extends EventSetListener {
     }
     
 }.initThisClass()
-"use strict"
+"use strict";
 
 /*
     TouchListener
@@ -11728,7 +11728,7 @@ window.TouchListener = class TouchListener extends EventSetListener {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     TransitionListener
@@ -11758,7 +11758,7 @@ window.TransitionListener = class TransitionListener extends EventSetListener {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     GamePadListener
@@ -11787,7 +11787,7 @@ window.GamePadListener = class GamePadListener extends EventSetListener {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
     WebSocketListener
@@ -11817,7 +11817,7 @@ window.WebSocketListener = class WebSocketListener extends EventSetListener {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     WheelListener
@@ -11844,7 +11844,7 @@ window.WheelListener = class WheelListener extends EventSetListener {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "GestureManager.js",
@@ -11860,7 +11860,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
     GestureManager
@@ -11997,7 +11997,7 @@ window.GestureManager = class GestureManager extends ProtoClass {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     GestureRecognizer
@@ -12868,7 +12868,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13012,7 +13012,7 @@ window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends Ges
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13217,7 +13217,7 @@ window.SlideGestureRecognizer = class SlideGestureRecognizer extends GestureReco
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13389,7 +13389,7 @@ window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecogniz
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13696,7 +13696,7 @@ window.OrientGestureRecognizer = class OrientGestureRecognizer extends GestureRe
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13835,7 +13835,7 @@ window.PanGestureRecognizer = class PanGestureRecognizer extends GestureRecogniz
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13884,7 +13884,7 @@ window.PinchGestureRecognizer = class PinchGestureRecognizer extends GestureReco
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -13929,7 +13929,7 @@ window.RotationGestureRecognizer = class RotationGestureRecognizer extends Gestu
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     //"screen/_imports.js",
@@ -13941,7 +13941,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14055,7 +14055,7 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGest
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14084,7 +14084,7 @@ window.TopEdgePanGestureRecognizer = class TopEdgePanGestureRecognizer extends E
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14115,7 +14115,7 @@ window.BottomEdgePanGestureRecognizer = class BottomEdgePanGestureRecognizer ext
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14144,7 +14144,7 @@ window.LeftEdgePanGestureRecognizer = class LeftEdgePanGestureRecognizer extends
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14173,7 +14173,7 @@ window.RightEdgePanGestureRecognizer = class RightEdgePanGestureRecognizer exten
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "WebBrowserScreen.js",
@@ -14185,7 +14185,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14253,7 +14253,7 @@ window.WebBrowserScreen = class WebBrowserScreen extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14432,7 +14432,7 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14530,7 +14530,7 @@ window.WebBrowserNotifications = class WebBrowserNotifications extends ProtoClas
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14575,7 +14575,7 @@ window.WebBrowserNotification = class WebBrowserNotification extends ProtoClass 
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14618,7 +14618,7 @@ window.WebDocument = class WebDocument extends ProtoClass {
     }
 
 }.initThisClass()
-"use strict"
+"use strict";
 
 /*
 
@@ -14671,7 +14671,7 @@ window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "dom_attributes/_imports.js",
@@ -14684,7 +14684,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "DomTransition.js",
@@ -14693,7 +14693,7 @@ ResourceLoader.pushRelativePaths([
     "ViewAnimator.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14796,7 +14796,7 @@ window.DomTransition = class DomTransition extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14876,7 +14876,7 @@ window.DomTransitions = class DomTransitions extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -14985,7 +14985,7 @@ window.DomBorderRadius = class DomBorderRadius extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -15101,7 +15101,7 @@ window.ViewAnimator = class ViewAnimator extends ProtoClass {
 
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "DomTextTapeMeasure.js",
@@ -15111,7 +15111,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -15209,7 +15209,7 @@ window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
 	
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     DomCSSInspector
@@ -15256,7 +15256,7 @@ window.DomCSSInspector = class DomCSSInspector extends ProtoClass {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -15605,7 +15605,7 @@ window.CSSColor = class CSSColor extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -15665,7 +15665,7 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
         Element_setStyleIncludingDecendants(child, k, v)
     }
 }
-"use strict"
+"use strict";
 
 /*
     DomView
@@ -20293,7 +20293,7 @@ window.DomView = class DomView extends ProtoClass {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     DomFlexView
@@ -20404,7 +20404,7 @@ window.DomView = class DomFlexView extends DomView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     DomStyledView
@@ -20629,7 +20629,7 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
 	
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BooleanView.js",
@@ -20644,7 +20644,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -20811,7 +20811,7 @@ window.BooleanView = class BooleanView extends DomStyledView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -20955,7 +20955,7 @@ window.ButtonView = class ButtonView extends DomView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 
 /* 
@@ -21030,7 +21030,7 @@ window.CloseButton = class CloseButton extends DomView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -21119,7 +21119,7 @@ window.DocumentBody = class DocumentBody extends DomView {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /* 
 
@@ -21308,7 +21308,7 @@ window.DragBarView = class DragBarView extends DomView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -21832,7 +21832,7 @@ window.DragView = class DragView extends DomStyledView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -21948,7 +21948,7 @@ window.PanelView = class PanelView extends DomView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -22127,7 +22127,7 @@ window.SvgIconView = class SvgIconView extends DomView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -22568,14 +22568,14 @@ window.TextField = class TextField extends DomStyledView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMDataUrl.js",
 ])
 
 
-"use strict"
+"use strict";
 
 /*
     BMDataUrl
@@ -22677,7 +22677,7 @@ window.BMDataUrl = class BMDataUrl extends ProtoClass {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "styles/_imports.js",
@@ -22697,14 +22697,14 @@ ResourceLoader.pushRelativePaths([
     "App.js"
 ])
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMViewStyles.js",
     "BMViewStyle.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -22853,7 +22853,7 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -22945,7 +22945,7 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -22961,7 +22961,7 @@ window.SubnodesArray = class SubnodesArray extends SortedArray {
 
 
 }
-"use strict"
+"use strict";
 
 /*
 
@@ -24355,7 +24355,7 @@ window.BMNode = class BMNode extends ProtoClass {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMStorableNode.js",
@@ -24365,7 +24365,7 @@ ResourceLoader.pushRelativePaths([
     //"NodeStore.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -24483,7 +24483,7 @@ window.BMStorableNode = class BMStorableNode extends BMNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -24568,7 +24568,7 @@ window.BMStoredDatedSetNode = class BMStoredDatedSetNode extends BMStorableNode 
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "categories/_imports.js",
@@ -24577,7 +24577,7 @@ ResourceLoader.pushRelativePaths([
     "StoreRef.js",
 ])
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     //"Object-puuid.js",
@@ -24587,7 +24587,7 @@ ResourceLoader.pushRelativePaths([
     "primitives/_imports.js",
 ])
 
-"use strict"
+"use strict";
 
 
 Object.defineSlots(ProtoClass, {
@@ -24637,7 +24637,7 @@ Object.defineSlots(ProtoClass.prototype, {
     },
 
 })
-"use strict"
+"use strict";
 
 
 Object.defineSlots(BMNode, {
@@ -24735,14 +24735,14 @@ Object.defineSlots(BMNode.prototype, {
 
 })
 
-"use strict"
+"use strict";
 
 Object.defineSlots(BMStorableNode.prototype, {
 
     
 })
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "Array-store.js",
@@ -24755,7 +24755,7 @@ ResourceLoader.pushRelativePaths([
     "literals/_imports.js",
 ])
 
-"use strict"
+"use strict";
 
 
 Object.defineSlots(Array, {
@@ -24809,7 +24809,7 @@ Object.defineSlots(Array.prototype, {
 
 
 
-"use strict"
+"use strict";
 
 
 Object.defineSlots(ArrayBuffer, {
@@ -24858,7 +24858,7 @@ Object.defineSlots(ArrayBuffer.prototype, {
 
 
 
-"use strict"
+"use strict";
 
 Object.defineSlots(Date, {
     instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store
@@ -24893,7 +24893,7 @@ Object.defineSlots(Date.prototype, {
 })
 
 
-"use strict"
+"use strict";
 
 Object.defineSlots(Map, {
 
@@ -24954,7 +24954,7 @@ Object.defineSlots(Map.prototype, {
 
 
 
-"use strict"
+"use strict";
 
 
 Object.defineSlots(Set, {
@@ -25001,7 +25001,7 @@ Object.defineSlots(Set.prototype, {
 
 
 
-"use strict"
+"use strict";
 
 
 Object.defineSlots(Object, {
@@ -25069,7 +25069,7 @@ Object.defineSlots(Object.prototype, {
 
 })
 
-"use strict"
+"use strict";
 
 Type.typedArrayTypeNames().forEach((name) => {
     const aClass = window[name]
@@ -25115,7 +25115,7 @@ Type.typedArrayTypeNames().forEach((name) => {
     })
 
 })
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "String-store.js",
@@ -25123,7 +25123,7 @@ ResourceLoader.pushRelativePaths([
     "Number-store.js",
 ])
 
-"use strict"
+"use strict";
 
 Object.defineSlots(String.prototype, {
 
@@ -25134,7 +25134,7 @@ Object.defineSlots(String.prototype, {
 })
 
 
-"use strict"
+"use strict";
 
 Object.defineSlots(Boolean.prototype, {
 
@@ -25145,7 +25145,7 @@ Object.defineSlots(Boolean.prototype, {
 })
 
 
-"use strict"
+"use strict";
 
 Object.defineSlots(Number.prototype, {
 
@@ -25156,7 +25156,7 @@ Object.defineSlots(Number.prototype, {
 })
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -25914,7 +25914,7 @@ setTimeout(() => {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -25969,7 +25969,7 @@ window.PersistentObjectPool = class PersistentObjectPool extends ObjectPool {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -26019,14 +26019,14 @@ window.StoreRef = class StoreRef {
 }
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMDataStore.js",
     //"BMDataStoreRecord.js", // need to load FieldSet first
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -26113,7 +26113,7 @@ window.BMDataStore = class BMDataStore extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMSummaryNode.js",
@@ -26126,7 +26126,7 @@ ResourceLoader.pushRelativePaths([
 
 //console.log("Currently running script:", Error.callingScriptURL())
 
-"use strict"
+"use strict";
 
 /*
     
@@ -26304,7 +26304,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -26387,7 +26387,7 @@ window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -26421,7 +26421,7 @@ window.BMImageNode = class BMImageNode extends BMStorableNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -26492,7 +26492,7 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -26609,7 +26609,7 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -26647,7 +26647,7 @@ window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMFieldSetNode.js",
@@ -26659,7 +26659,7 @@ ResourceLoader.pushRelativePaths([
     "subclasses/_imports.js"
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -26757,7 +26757,7 @@ window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27031,7 +27031,7 @@ window.BMField = class BMField extends BMSummaryNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27096,7 +27096,7 @@ window.BMActionNode = class BMActionNode extends BMStorableNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMJsonNode.js",
@@ -27105,7 +27105,7 @@ ResourceLoader.pushRelativePaths([
     "BMJsonNullField.js"
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27183,7 +27183,7 @@ window.BMJsonNode = class BMJsonNode extends BMStorableNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27271,7 +27271,7 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMJsonNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27364,7 +27364,7 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27414,7 +27414,7 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27518,7 +27518,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMBooleanField.js",
@@ -27537,7 +27537,7 @@ ResourceLoader.pushRelativePaths([
     
 ])
 
-"use strict"
+"use strict";
       
 /*
 
@@ -27602,7 +27602,7 @@ window.BMBooleanField = class BMBooleanField extends BMField {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27673,7 +27673,7 @@ window.BMColorField = class BMColorField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27729,7 +27729,7 @@ window.BMIdentityField = class BMIdentityField extends BMField {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27783,7 +27783,7 @@ window.BMImageWellField = class BMImageWellField extends BMField {
    
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27928,7 +27928,7 @@ window.BMNumberField = class BMNumberField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -27979,7 +27979,7 @@ window.BMPointerField = class BMPointerField extends BMField {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28003,7 +28003,7 @@ window.BMStampField = class BMStampField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28034,7 +28034,7 @@ window.BMStringField = class BMStringField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28072,7 +28072,7 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28298,14 +28298,14 @@ window.BMUrlField = class BMUrlField extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMOptionsNode.js",
     "BMOptionNode.js"
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28434,7 +28434,7 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28504,7 +28504,7 @@ window.BMOptionNode = class BMOptionNode extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMDateNode.js",
@@ -28513,7 +28513,7 @@ ResourceLoader.pushRelativePaths([
     "BMDayNode.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28659,7 +28659,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28721,7 +28721,7 @@ window.BMYearNode = class BMYearNode extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28813,7 +28813,7 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28870,7 +28870,7 @@ window.BMDayNode = class BMDayNode extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMTimeNode.js",
@@ -28879,7 +28879,7 @@ ResourceLoader.pushRelativePaths([
     "BMMeridiemNode.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -28975,7 +28975,7 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29047,7 +29047,7 @@ window.BMHourNode = class BMHourNode extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29103,7 +29103,7 @@ window.BMMinuteNode = class BMMinuteNode extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29195,7 +29195,7 @@ window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -29272,7 +29272,7 @@ window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
 }.initThisClass()
 
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "_css.css",
@@ -29286,7 +29286,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29577,7 +29577,7 @@ window.NodeView = class NodeView extends DomStyledView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29644,7 +29644,7 @@ window.HeaderFooterView = class HeaderFooterView extends NodeView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29810,7 +29810,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -29990,7 +29990,7 @@ window.ImageView = class ImageView extends NodeView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "_css.css",
@@ -30004,7 +30004,7 @@ ResourceLoader.pushRelativePaths([
     //"top_shelf/_imports.js",
 ])
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BrowserRow.js",
@@ -30015,7 +30015,7 @@ ResourceLoader.pushRelativePaths([
     "BMTextNodeRowView.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
     
@@ -31091,7 +31091,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -31373,7 +31373,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -31398,7 +31398,7 @@ window.BrowserRowNote = class BrowserRowNote extends TextField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -31430,7 +31430,7 @@ window.BrowserRowSubtitle = class BrowserRowSubtitle extends TextField {
 
 
 
-"use strict"
+"use strict";
 
 /*
     BrowserRowTitle
@@ -31482,7 +31482,7 @@ window.BrowserRowTitle = class BrowserRowTitle extends TextField {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -31598,7 +31598,7 @@ window.BMTextNodeRowView = class BMTextNodeRowView extends BrowserRow {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "_css.css",
@@ -31612,7 +31612,7 @@ ResourceLoader.pushRelativePaths([
     "BMPointerFieldRowView.js"
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32010,7 +32010,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32096,7 +32096,7 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32151,7 +32151,7 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32204,7 +32204,7 @@ window.BMStringFieldRowView = class BMStringFieldRowView extends BMFieldRowView 
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32270,7 +32270,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32358,14 +32358,14 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMOptionsNodeRowView.js",
     "BMOptionNodeRowView.js"
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32393,7 +32393,7 @@ window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRo
 	
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32460,7 +32460,7 @@ window.BMOptionNodeRowView = class BMOptionNodeRowView extends BrowserTitledRow 
 	
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -32506,7 +32506,7 @@ window.BMPointerFieldRowView = class BMPointerFieldRowView extends BrowserTitled
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "StackView.js",
@@ -32517,7 +32517,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -32832,7 +32832,7 @@ window.StackView = class StackView extends NodeView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -33072,7 +33072,7 @@ window.StackNavView = class StackNavView extends NodeView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -33129,7 +33129,7 @@ window.StackScrollView = class StackScrollView extends DomView {
 
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -34945,7 +34945,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMBlob.js",
@@ -34953,7 +34953,7 @@ ResourceLoader.pushRelativePaths([
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -35158,7 +35158,7 @@ window.BMBlob = class BMBlob extends BMNode {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -35262,14 +35262,14 @@ setTimeout(() => {
 })
 */
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMUrlResource.js",
 ])
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -35537,7 +35537,7 @@ window.BMUrlResource = class BMUrlResource extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     App 
@@ -35759,7 +35759,7 @@ window.App = class App extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "files/_imports.js",
@@ -35772,7 +35772,7 @@ ResourceLoader.pushRelativePaths([
     "BMResources.js",
 ])
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMFileResources.js",
@@ -35780,7 +35780,7 @@ ResourceLoader.pushRelativePaths([
     "BMFileSystemFile.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -35847,7 +35847,7 @@ window.BMFileResources = class BMFileResources extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -35887,7 +35887,7 @@ window.BMFileSystemFolder = class BMFileSystemFolder extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -35930,7 +35930,7 @@ window.BMFile = class BMFile extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMFontResources.js",
@@ -35939,7 +35939,7 @@ ResourceLoader.pushRelativePaths([
     "BMFontRowView.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36026,7 +36026,7 @@ window.BMFontResources = class BMFontResources extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36066,7 +36066,7 @@ window.BMFontFamily = class BMFontFamily extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36142,7 +36142,7 @@ window.BMFont = class BMFont extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
     
@@ -36177,7 +36177,7 @@ window.BMFontRowView = class BMFontRowView extends BrowserTitledRow {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMSoundResources.js",
@@ -36185,7 +36185,7 @@ ResourceLoader.pushRelativePaths([
     "BMAudioPlayer.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36246,7 +36246,7 @@ window.BMSoundResources = class BMSoundResources extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36313,7 +36313,7 @@ window.BMSound = class BMSound extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 
 /*
@@ -36512,14 +36512,14 @@ window.BMAudioPlayer = class BMAudioPlayer extends DomView {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMImageResources.js",
     "BMURLImage.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36570,7 +36570,7 @@ window.BMImageResources = class BMImageResources extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36659,7 +36659,7 @@ window.BMURLImage = class BMURLImage extends BMNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMThemeResources.js",
@@ -36671,7 +36671,7 @@ ResourceLoader.pushRelativePaths([
     "BMThemeFolder.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36733,7 +36733,7 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
     
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36801,7 +36801,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36833,7 +36833,7 @@ window.BMDefaultTheme = class BMDefaultTheme extends BMTheme {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36890,7 +36890,7 @@ window.BMThemeLevel = class BMThemeLevel extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -36997,7 +36997,7 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 /*
 
@@ -37182,7 +37182,7 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -37220,7 +37220,7 @@ ResourceLoader.pushRelativePaths([
     "SvgData.js",
 ]);
 
-"use strict"
+"use strict";
 
 /*
     
@@ -37272,7 +37272,7 @@ window.BMIconResources = class BMIconResources extends BMNode {
 
 
 
-"use strict"
+"use strict";
 
 /*
     
@@ -37392,13 +37392,13 @@ BMIconResources.shared().addIcon("inner-checkbox", `
 	<circle stroke-width='1' cx=7 cy=7 r=4 />
 </svg>
 `)
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "BMJsonResources.js",
 ])
 
-"use strict"
+"use strict";
 
 /*
 
@@ -37460,7 +37460,7 @@ window.BMJsonResources = class BMJsonResources extends BMNode {
 
 
 
-"use strict"
+"use strict";
 
 /*
 
@@ -37544,7 +37544,7 @@ window.BMResources = class BMResources extends BMStorableNode {
 
 }.initThisClass()
 
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     //"Game/_imports.js",
@@ -37552,7 +37552,7 @@ ResourceLoader.pushRelativePaths([
     "Strvct/_imports.js",
     //"Stats/_imports.js",
 ])
-"use strict"
+"use strict";
 
 ResourceLoader.pushRelativePaths([
     "StrvctApp.js",
@@ -37563,7 +37563,7 @@ ResourceLoader.pushDoneCallback( () => {
     //StrvctApp.shared().run()
 })
 
-"use strict"
+"use strict";
 
 /*
     

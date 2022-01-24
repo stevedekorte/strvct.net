@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
         
-window.BMPointerField = class BMPointerField extends BMField {
+(class BMPointerField extends BMField {
     
     initPrototype () {
 
@@ -47,4 +47,4 @@ window.BMPointerField = class BMPointerField extends BMField {
         return this.value()
     }
 
-}.initThisClass()
+}.initThisClass())

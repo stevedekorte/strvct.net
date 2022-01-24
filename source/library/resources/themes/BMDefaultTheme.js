@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMDefaultTheme = class BMDefaultTheme extends BMTheme {
+(class BMDefaultTheme extends BMTheme {
     
 
     init () {
@@ -28,4 +28,4 @@ window.BMDefaultTheme = class BMDefaultTheme extends BMTheme {
         return this
    }
 
-}.initThisClass()
+}.initThisClass())

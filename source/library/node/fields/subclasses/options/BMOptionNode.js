@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
         
-window.BMOptionNode = class BMOptionNode extends BMStorableNode {
+(class BMOptionNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("label", "Option Title").setShouldStoreSlot(true).setDuplicateOp("copyValue")
@@ -66,4 +66,4 @@ window.BMOptionNode = class BMOptionNode extends BMStorableNode {
         return this.isPicked() ? "✓" : ""
     }
 
-}.initThisClass()
+}.initThisClass())

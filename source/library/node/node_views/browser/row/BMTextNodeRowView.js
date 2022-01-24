@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.BMTextNodeRowView = class BMTextNodeRowView extends BrowserRow {
+(class BMTextNodeRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("textView", null)
@@ -112,4 +112,4 @@ window.BMTextNodeRowView = class BMTextNodeRowView extends BrowserRow {
         this.textView().setPaddingBottom(this.themeValueForAttribute("paddingBottom"))
     }
     
-}.initThisClass()
+}.initThisClass())

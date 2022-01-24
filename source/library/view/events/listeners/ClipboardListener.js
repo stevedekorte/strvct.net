@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     ClipboardListener
@@ -7,7 +7,7 @@
 
 */
 
-window.ClipboardListener = class ClipboardListener extends EventSetListener {
+(class ClipboardListener extends EventSetListener {
     
     initPrototype () {
 
@@ -25,4 +25,4 @@ window.ClipboardListener = class ClipboardListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

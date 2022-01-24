@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -16,7 +16,7 @@
         
 */
 
-window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGestureRecognizer {
+(class EdgePanGestureRecognizer extends PanGestureRecognizer {
 
     initPrototype() {
         this.newSlot("edgeName", null)
@@ -110,4 +110,4 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGest
         }
     }
 
-}.initThisClass()
+}.initThisClass())

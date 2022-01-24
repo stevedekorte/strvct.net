@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /* 
@@ -7,7 +7,7 @@
 
 */
 
-window.ShelfItemGroupView = class ShelfItemGroupView extends NodeView {
+(class ShelfItemGroupView extends NodeView {
     
     initPrototype () {
         this.newSlot("isCompacted", true)
@@ -155,4 +155,4 @@ window.ShelfItemGroupView = class ShelfItemGroupView extends NodeView {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

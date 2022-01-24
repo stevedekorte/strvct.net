@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
     
 */
 
-window.SvgIconNode = class SvgIconNode extends BMNode {
+(class SvgIconNode extends BMNode {
     
     initPrototype () {
       this.newSlot("svgString", null).setCanInspect(true).setSlotType("String").setLabel("SVG string")
@@ -22,7 +22,7 @@ window.SvgIconNode = class SvgIconNode extends BMNode {
       return this.title()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 

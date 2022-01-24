@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -32,7 +32,7 @@
         
 */
 
-window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ideal.AtomicDictionary {
+(class PersistentAtomicDictionary extends ideal.AtomicDictionary {
     initPrototype () {
         this.newSlot("name", "PersistentAtomicDictionary")
         this.newSlot("idb", null)
@@ -198,5 +198,5 @@ window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ide
             }
         })
     }
-}.initThisClass()
+}.initThisClass())
 

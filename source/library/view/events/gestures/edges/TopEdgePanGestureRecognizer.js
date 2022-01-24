@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -13,7 +13,7 @@
 
 */
 
-window.TopEdgePanGestureRecognizer = class TopEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
+(class TopEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
     initPrototype () {
 
@@ -25,4 +25,4 @@ window.TopEdgePanGestureRecognizer = class TopEdgePanGestureRecognizer extends E
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

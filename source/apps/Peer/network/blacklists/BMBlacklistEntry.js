@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMBlacklistEntry = class BMBlacklistEntry extends BMFieldSetNode {
+getGlobalThis().BMBlacklistEntry = class BMBlacklistEntry extends BMFieldSetNode {
     
     initPrototype () {
 

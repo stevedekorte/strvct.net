@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     AnimationListener
@@ -7,7 +7,7 @@
 
 */
 
-window.AnimationListener = class AnimationListener extends EventSetListener {
+(class AnimationListener extends EventSetListener {
     
     initPrototype () {
 
@@ -25,4 +25,4 @@ window.AnimationListener = class AnimationListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

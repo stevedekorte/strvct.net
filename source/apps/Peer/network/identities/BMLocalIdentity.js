@@ -3,7 +3,7 @@ var BitcoreMessage = require("bitcore-message");
 var ECIES = require("bitcore-ecies");
 var Buffer = bitcore.deps.Buffer;
 
-"use strict"
+"use strict";
 
 /*
 
@@ -11,7 +11,7 @@ var Buffer = bitcore.deps.Buffer;
     
 */
 
-window.BMLocalIdentity = class BMLocalIdentity extends BMKeyPair {
+getGlobalThis().BMLocalIdentity = class BMLocalIdentity extends BMKeyPair {
     
     initPrototype () {
         this.overrideSlot("name", "").setShouldStoreSlot(true)

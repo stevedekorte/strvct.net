@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMRegions = class BMRegions extends BMRegion {
+getGlobalThis().BMRegions = class BMRegions extends BMRegion {
     
     initPrototype () {
 

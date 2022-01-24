@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
     
 */
 
-window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowView {
+(class BMTextAreaFieldRowView extends BMFieldRowView {
     
     initPrototype () {
     }
@@ -62,4 +62,4 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
     }
     */
     
-}.initThisClass()
+}.initThisClass())

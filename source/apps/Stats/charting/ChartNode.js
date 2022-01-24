@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.ChartNode = class ChartNode extends BMStorableNode {
+getGlobalThis().ChartNode = class ChartNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("valueDelegate", null)

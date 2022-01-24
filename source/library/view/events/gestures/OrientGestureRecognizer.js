@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -39,7 +39,7 @@
 */
 
 
-window.OrientGestureRecognizer = class OrientGestureRecognizer extends GestureRecognizer {
+(class OrientGestureRecognizer extends GestureRecognizer {
 
     initPrototype() {
 
@@ -303,4 +303,4 @@ window.OrientGestureRecognizer = class OrientGestureRecognizer extends GestureRe
         console.log(this.debugJson())
     }
 
-}.initThisClass()
+}.initThisClass())

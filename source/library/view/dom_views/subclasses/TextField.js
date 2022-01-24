@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -12,7 +12,7 @@
 
 */
 
-window.TextField = class TextField extends DomStyledView {
+(class TextField extends DomStyledView {
     
     initPrototype () {
         this.newSlot("selectedColor", null)
@@ -437,4 +437,4 @@ window.TextField = class TextField extends DomStyledView {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

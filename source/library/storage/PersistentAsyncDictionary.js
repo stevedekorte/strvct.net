@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -18,7 +18,7 @@
         
 */
 
-window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ProtoClass {
+(class PersistentAsyncDictionary extends ProtoClass {
     initPrototype () {
         this.newSlot("name", "PersistentAsyncDictionary")
         this.newSlot("idb", null)
@@ -147,5 +147,5 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends Proto
         tx.commit() 
     }
 
-}.initThisClass()
+}.initThisClass())
 

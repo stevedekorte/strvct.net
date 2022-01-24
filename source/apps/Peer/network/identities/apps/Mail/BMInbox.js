@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMInbox = class BMInbox extends BMStorableNode {
+getGlobalThis().BMInbox = class BMInbox extends BMStorableNode {
     
     initPrototype () {
 

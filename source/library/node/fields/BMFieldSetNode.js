@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -29,7 +29,7 @@
 
 */  
         
-window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
+(class BMFieldSetNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("status", "")
@@ -94,4 +94,4 @@ window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
         return this.validate() // could cache this later...
     }
 
-}.initThisClass()
+}.initThisClass())

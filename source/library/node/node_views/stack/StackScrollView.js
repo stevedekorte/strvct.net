@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.StackScrollView = class StackScrollView extends DomView {
+(class StackScrollView extends DomView {
     
     initPrototype () {
     }
@@ -51,6 +51,6 @@ window.StackScrollView = class StackScrollView extends DomView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 

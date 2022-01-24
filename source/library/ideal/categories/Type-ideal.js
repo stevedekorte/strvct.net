@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -46,7 +46,7 @@
 
 */
 
-window.Type = {
+getGlobalThis().Type = {
 
     allTypeNames: function() {
         return [

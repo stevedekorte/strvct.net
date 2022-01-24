@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMFontResources = class BMFontResources extends BMNode {
+(class BMFontResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -83,4 +83,4 @@ window.BMFontResources = class BMFontResources extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

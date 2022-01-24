@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
+getGlobalThis().BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
     
     initPrototype () {
 

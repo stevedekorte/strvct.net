@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     Point
@@ -10,7 +10,7 @@
 */
 
 
-window.Point = class Point extends ProtoClass {
+(class Point extends ProtoClass {
     initPrototype () {
         this.newSlot("x", 0)
         this.newSlot("y", 0)
@@ -233,4 +233,4 @@ window.Point = class Point extends ProtoClass {
         return this.y()
     }
     
-}.initThisClass()
+}.initThisClass())

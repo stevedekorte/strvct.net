@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -22,7 +22,7 @@
 
 */
 
-window.RotationGestureRecognizer = class RotationGestureRecognizer extends GestureRecognizer {
+(class RotationGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
 
@@ -41,4 +41,4 @@ window.RotationGestureRecognizer = class RotationGestureRecognizer extends Gestu
         return a >= ma
     }
     
-}.initThisClass()
+}.initThisClass())

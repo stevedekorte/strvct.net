@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
+(class BrowserTitledRow extends BrowserRow {
     
     initPrototype () {
         this.newSlot("titleView", null)
@@ -278,4 +278,4 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     }
 
     
-}.initThisClass()
+}.initThisClass())

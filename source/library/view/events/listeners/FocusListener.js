@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     FocusListener
@@ -7,7 +7,7 @@
 
 */
 
-window.FocusListener = class FocusListener extends EventSetListener {
+(class FocusListener extends EventSetListener {
     
     initPrototype () {
 
@@ -26,4 +26,4 @@ window.FocusListener = class FocusListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

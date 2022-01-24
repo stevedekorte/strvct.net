@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -19,7 +19,7 @@
 
 */
 
-window.HookedArray = class HookedArray extends Array {
+(class HookedArray extends Array {
 
     initPrototype () {
         this.setupMutatorHooks()
@@ -93,5 +93,5 @@ window.HookedArray = class HookedArray extends Array {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 

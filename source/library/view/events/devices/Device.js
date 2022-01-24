@@ -1,11 +1,11 @@
-"use strict"
+"use strict";
 
 /*
     Device
 
 */
 
-window.Device = class Device extends ProtoClass {
+(class Device extends ProtoClass {
     
     initPrototype () {
 
@@ -16,4 +16,4 @@ window.Device = class Device extends ProtoClass {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

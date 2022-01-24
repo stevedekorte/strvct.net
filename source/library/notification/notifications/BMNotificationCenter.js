@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -63,7 +63,7 @@
 
 */
 
-window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
+(class BMNotificationCenter extends ProtoClass {
     initPrototype () {
         this.newSlot("observations", null) // array 
         this.newSlot("notifications", null) // array 
@@ -301,4 +301,4 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
             console.log("current post sender stack: ", this.currentNote().senderStack())
         }
     }
-}.initThisClass()
+}.initThisClass())

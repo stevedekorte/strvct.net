@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMImageNode = class BMImageNode extends BMStorableNode {
+(class BMImageNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("dataURL", null).setShouldStoreSlot(true)
@@ -30,4 +30,4 @@ window.BMImageNode = class BMImageNode extends BMStorableNode {
         this.scheduleSyncToStore()
     }
     
-}.initThisClass()
+}.initThisClass())

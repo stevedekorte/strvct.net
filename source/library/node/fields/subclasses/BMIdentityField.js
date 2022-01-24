@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMIdentityField = class BMIdentityField extends BMField {
+(class BMIdentityField extends BMField {
     
     initPrototype () {
 
@@ -52,4 +52,4 @@ window.BMIdentityField = class BMIdentityField extends BMField {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

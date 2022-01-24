@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     GestureRecognizer
@@ -51,7 +51,7 @@
     TODO: move visualizer to separate class?
 */
 
-window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
+(class GestureRecognizer extends ProtoClass {
     
     initPrototype () {
         this.newSlot("viewTarget", null)
@@ -866,5 +866,5 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target")
     }
     
-}.initThisClass()
+}.initThisClass())
 

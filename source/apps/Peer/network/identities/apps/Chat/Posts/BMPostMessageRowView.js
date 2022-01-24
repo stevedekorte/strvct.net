@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
+getGlobalThis().BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("leftView", null)

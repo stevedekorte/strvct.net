@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DomStyledView
@@ -31,7 +31,7 @@
 */
 
 
-window.DomStyledView = class DomStyledView extends DomFlexView {
+(class DomStyledView extends DomFlexView {
     
     initPrototype () {
         this.newSlot("styles", null)
@@ -221,4 +221,4 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         //return this.currentStyle().backgroundColor()
     }
 	
-}.initThisClass()
+}.initThisClass())

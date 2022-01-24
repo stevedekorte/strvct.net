@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
 
 */
 
-window.ideal.Dictionary = class Dictionary extends ProtoClass {
+getGlobalThis().ideal.Dictionary = class Dictionary extends ProtoClass {
     static withJsDict (jsDict) {
         return this.clone().setJsDict(jsDict)
     }

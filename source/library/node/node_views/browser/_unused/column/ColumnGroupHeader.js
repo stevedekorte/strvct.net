@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
+(class ColumnGroupHeader extends NodeView {
     
     initPrototype () {
         this.newSlot("backArrowView", null)
@@ -203,6 +203,6 @@ window.ColumnGroupHeader = class ColumnGroupHeader extends NodeView {
         //this.unhideDisplay()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 

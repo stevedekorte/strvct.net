@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -7,7 +7,7 @@
 */
 
 
-window.DragBarView = class DragBarView extends DomView {
+(class DragBarView extends DomView {
     
     initPrototype () {
         this.newSlot("isEnabled", true)
@@ -185,4 +185,4 @@ window.DragBarView = class DragBarView extends DomView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())

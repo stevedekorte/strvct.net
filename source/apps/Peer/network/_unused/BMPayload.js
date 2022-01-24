@@ -46,9 +46,9 @@
 
 // timestamp?
 
-"use strict"
+"use strict";
 
-window.BMPayload = class BMPayload extends ProtoClass {
+getGlobalThis().BMPayload = class BMPayload extends ProtoClass {
     
     initPrototype () {
         this.newSlot("data", null)

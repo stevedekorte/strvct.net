@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowView {
+(class BMBooleanFieldRowView extends BMFieldRowView {
     
     initPrototype () {
 
@@ -51,4 +51,4 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

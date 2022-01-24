@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.WebBrowserScreen = class WebBrowserScreen extends ProtoClass {
+(class WebBrowserScreen extends ProtoClass {
     
     initPrototype () {
 
@@ -63,5 +63,5 @@ window.WebBrowserScreen = class WebBrowserScreen extends ProtoClass {
         return prefersDark
     }
 
-}.initThisClass()
+}.initThisClass())
 

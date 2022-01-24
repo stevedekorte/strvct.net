@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -19,7 +19,7 @@
 */
 
 
-window.SvgIconView = class SvgIconView extends DomView {
+(class SvgIconView extends DomView {
     
     initPrototype () {
         this.newSlot("doesMatchParentColor", false)
@@ -175,4 +175,4 @@ window.SvgIconView = class SvgIconView extends DomView {
     }
     */
 
-}.initThisClass()
+}.initThisClass())

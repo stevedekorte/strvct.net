@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMConnection = class BMConnection extends BMNode {
+getGlobalThis().BMConnection = class BMConnection extends BMNode {
     
     initPrototype () {
         this.newSlot("connection", null)
@@ -142,5 +142,5 @@ window.BMConnection = class BMConnection extends BMNode {
 	
 }.initThisClass()
 
-//window.BMConnection.shared() // setup shared instance, needed?
+//getGlobalThis().BMConnection.shared() // setup shared instance, needed?
 

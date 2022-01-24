@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMClassifieds = class BMClassifieds extends BMApplet {
+getGlobalThis().BMClassifieds = class BMClassifieds extends BMApplet {
     
     initPrototype () {
         this.newSlot("regions", null)

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMBlacklists = class BMBlacklists extends BMStorableNode {
+getGlobalThis().BMBlacklists = class BMBlacklists extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("servers", null).setShouldStoreSlot(true).setInitProto(BMBlacklistedServers)

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     DocumentListener
@@ -7,7 +7,7 @@
 
 */
 
-window.DocumentListener = class DocumentListener extends EventSetListener {
+(class DocumentListener extends EventSetListener {
     
     initPrototype () {
 
@@ -43,4 +43,4 @@ window.DocumentListener = class DocumentListener extends EventSetListener {
         return window // is this the best way to handle this?
     }
     
-}.initThisClass()
+}.initThisClass())

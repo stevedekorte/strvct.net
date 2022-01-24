@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
 
 */  
 
-window.BMImageResourcesNode = class BMImageResourcesNode extends BMStorableNode {
+(class BMImageResourcesNode extends BMStorableNode {
     
     initPrototype () {
     }
@@ -28,4 +28,4 @@ window.BMImageResourcesNode = class BMImageResourcesNode extends BMStorableNode 
 
     }
     
-}.initThisClass()
+}.initThisClass())

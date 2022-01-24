@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ImageView = class ImageView extends NodeView {
+(class ImageView extends NodeView {
     
     initPrototype () {
         this.newSlot("imageContainer", null)
@@ -176,4 +176,4 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

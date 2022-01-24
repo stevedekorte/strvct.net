@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.StackItemSetView = class StackItemSetView extends NodeView {
+(class StackItemSetView extends NodeView {
     
         
     initPrototype () {
@@ -1812,4 +1812,4 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     
     
-}.initThisClass()
+}.initThisClass())

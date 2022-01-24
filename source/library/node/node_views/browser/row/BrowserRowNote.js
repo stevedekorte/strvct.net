@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.BrowserRowNote = class BrowserRowNote extends TextField {
+(class BrowserRowNote extends TextField {
 
     initPrototype () {
     }
@@ -21,4 +21,4 @@ window.BrowserRowNote = class BrowserRowNote extends TextField {
         return this
     } 
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.BMFontRowView = class BMFontRowView extends BrowserTitledRow {
+(class BMFontRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -31,4 +31,4 @@ window.BMFontRowView = class BMFontRowView extends BrowserTitledRow {
     }
 
     
-}.initThisClass()
+}.initThisClass())

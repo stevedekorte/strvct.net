@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,9 +6,9 @@
     
 */
 
-var bitcore = require("bitcore-lib")
+const bitcore = require("bitcore-lib")
 
-window.BMRemoteIdentity = class BMRemoteIdentity extends BMStorableNode {
+getGlobalThis().BMRemoteIdentity = class BMRemoteIdentity extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("name", "untitled").setShouldStoreSlot(true)

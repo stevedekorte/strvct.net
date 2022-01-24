@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -35,7 +35,7 @@
 
 */
 
-window.ButtonView = class ButtonView extends DomView {
+(class ButtonView extends DomView {
     
     initPrototype () {
         this.newSlot("titleView", null)
@@ -140,4 +140,4 @@ window.ButtonView = class ButtonView extends DomView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())

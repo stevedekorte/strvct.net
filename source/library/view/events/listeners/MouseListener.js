@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     MouseListener
@@ -8,7 +8,7 @@
 */
 
 
-window.MouseListener = class MouseListener extends EventSetListener {
+(class MouseListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -38,4 +38,4 @@ window.MouseListener = class MouseListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

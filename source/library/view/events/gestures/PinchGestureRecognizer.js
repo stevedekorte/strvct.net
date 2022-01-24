@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -22,7 +22,7 @@
 */
 
 
-window.PinchGestureRecognizer = class PinchGestureRecognizer extends GestureRecognizer {
+(class PinchGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
 
@@ -45,4 +45,4 @@ window.PinchGestureRecognizer = class PinchGestureRecognizer extends GestureReco
         return d >= m
     }
     
-}.initThisClass()
+}.initThisClass())

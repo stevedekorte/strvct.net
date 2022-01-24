@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -20,7 +20,7 @@ TimePeriodFormatter
 
 */
 
-window.TimePeriodFormatter = class TimePeriodFormatter extends ProtoClass {
+(class TimePeriodFormatter extends ProtoClass {
     initPrototype () {
         this.newSlot("valueInSeconds", 0)
     }
@@ -61,4 +61,4 @@ window.TimePeriodFormatter = class TimePeriodFormatter extends ProtoClass {
         const days = Math.floor(hours/24)
         return days + periods.days
     }
-}.initThisClass()
+}.initThisClass())

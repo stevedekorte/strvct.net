@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 	PeerId
@@ -8,7 +8,7 @@
 
 */
 
-window.BMPeerId = class BMPeerId extends BMNode {
+getGlobalThis().BMPeerId = class BMPeerId extends BMNode {
     
     initPrototype () {
         this.newSlot("publicKeyString", null)

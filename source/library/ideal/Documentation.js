@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
 
 */
 
-window.Documentation = class Documentation extends ProtoClass {
+(class Documentation extends ProtoClass {
     initPrototype () {
 
     }
@@ -76,7 +76,7 @@ window.Documentation = class Documentation extends ProtoClass {
         */
         console.log("DOCUMENTATION:\n\n", lines.join("\n"))
     }
-}.initThisClass()
+}.initThisClass())
 
 
 /*

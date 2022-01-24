@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BrowserScrollView = class BrowserScrollView extends NodeView {
+(class BrowserScrollView extends NodeView {
     
     initPrototype () {
     }
@@ -31,6 +31,6 @@ window.BrowserScrollView = class BrowserScrollView extends NodeView {
     }
     
     
-}.initThisClass()
+}.initThisClass())
 
 

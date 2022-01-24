@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /*
@@ -8,7 +8,7 @@
     
 */
 
-window.BMBlacklistedServers = class BMBlacklistedServers extends BMBlacklist {
+getGlobalThis().BMBlacklistedServers = class BMBlacklistedServers extends BMBlacklist {
     
     initPrototype () {
         this.newSlot("ipsDict", null).setShouldStoreSlot(true)

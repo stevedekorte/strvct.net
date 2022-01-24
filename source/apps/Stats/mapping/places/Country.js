@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.Country = class Country extends Place {
+(class Country extends Place {
 
     initPrototype () {
     }
@@ -19,4 +19,4 @@ window.Country = class Country extends Place {
 	} 
 	
     
-}.initThisClass()
+}.initThisClass())

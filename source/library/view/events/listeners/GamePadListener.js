@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     GamePadListener
@@ -7,7 +7,7 @@
 
 */
 
-window.GamePadListener = class GamePadListener extends EventSetListener {
+(class GamePadListener extends EventSetListener {
     
     initPrototype () {
 
@@ -24,5 +24,5 @@ window.GamePadListener = class GamePadListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 

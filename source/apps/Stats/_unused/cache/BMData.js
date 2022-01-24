@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMData = class BMData extends BMStorableNode {
+getGlobalThis().BMData = class BMData extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("value", "").setSyncsToView(true).setShouldStoreSlot(true)

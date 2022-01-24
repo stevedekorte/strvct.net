@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMTextAreaField = class BMTextAreaField extends BMField {
+(class BMTextAreaField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -34,4 +34,4 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
         this.setKeyIsVisible(false)
     }
     
-}.initThisClass()
+}.initThisClass())

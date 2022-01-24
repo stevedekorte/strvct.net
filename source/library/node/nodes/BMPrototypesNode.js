@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
+(class BMPrototypesNode extends BMStorableNode {
     
     initPrototype () {
     }
@@ -33,5 +33,5 @@ window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 

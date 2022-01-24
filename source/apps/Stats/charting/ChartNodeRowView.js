@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.ChartNodeRowView = class ChartNodeRowView extends BrowserRow {
+getGlobalThis().ChartNodeRowView = class ChartNodeRowView extends BrowserRow {
 
     initPrototype() {
         this.newSlot("mapWidthPx", 960)

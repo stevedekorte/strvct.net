@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 */
 
 
-window.ideal.Iterator = class Iterator extends ProtoClass {
+(class Iterator extends ProtoClass {
 
     static fromIter (anIter) {
         return this.clone().setIter(anIter)
@@ -32,5 +32,5 @@ window.ideal.Iterator = class Iterator extends ProtoClass {
 
     }
 
-}.initThisClass()
+}.initThisClass())
 

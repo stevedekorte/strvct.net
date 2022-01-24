@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 Type.typedArrayTypeNames().forEach((name) => {
     const aClass = window[name]

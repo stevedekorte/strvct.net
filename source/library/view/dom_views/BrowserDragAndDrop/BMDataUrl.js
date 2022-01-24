@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     BMDataUrl
@@ -9,7 +9,7 @@
         event.dataTransfer.setData("DownloadURL", "text/plain:hello.txt:data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D");
 */
 
-window.BMDataUrl = class BMDataUrl extends ProtoClass {
+(class BMDataUrl extends ProtoClass {
     
     initPrototype () {
         this.newSlot("dataUrl", null) // for drop
@@ -98,4 +98,4 @@ window.BMDataUrl = class BMDataUrl extends ProtoClass {
     }
     */
 
-}.initThisClass()
+}.initThisClass())

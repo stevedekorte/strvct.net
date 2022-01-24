@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -12,7 +12,7 @@
     
 */
 
-window.BMStunServer = class BMStunServer extends BMFieldSetNode { 
+getGlobalThis().BMStunServer = class BMStunServer extends BMFieldSetNode { 
     
     initPrototype () {
 

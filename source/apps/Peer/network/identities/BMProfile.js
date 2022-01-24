@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMProfile = class BMProfile extends BMFieldSetNode {
+getGlobalThis().BMProfile = class BMProfile extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("name", "").setShouldStoreSlot(true)

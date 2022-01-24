@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.Foursquare = class Foursquare extends BMNode {
+getGlobalThis().Foursquare = class Foursquare extends BMNode {
     
     static initThisClass () {
         super.initThisClass()

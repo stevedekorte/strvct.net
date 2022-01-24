@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMStunServers = class BMStunServers extends BMStorableNode {
+getGlobalThis().BMStunServers = class BMStunServers extends BMStorableNode {
     
     initPrototype () {
 

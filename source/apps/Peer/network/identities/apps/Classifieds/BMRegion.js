@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -10,7 +10,7 @@
 */
 
 
-window.BMRegion = class BMRegion extends BMNode {
+getGlobalThis().BMRegion = class BMRegion extends BMNode {
     
     initPrototype () {
         this.newSlot("lazyChildrenDict", null)
@@ -133,4 +133,4 @@ window.BMRegion = class BMRegion extends BMNode {
     
 }.initThisClass()
 
-//window.Region = BMRegion
+//getGlobalThis().Region = BMRegion

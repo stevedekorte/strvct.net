@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
         
-window.BMJsonNode = class BMJsonNode extends BMStorableNode {
+(class BMJsonNode extends BMStorableNode {
     
     static canOpenMimeType (mimeType) {
         return mimeType === "application/json"
@@ -74,4 +74,4 @@ window.BMJsonNode = class BMJsonNode extends BMStorableNode {
     }
 
     
-}.initThisClass()
+}.initThisClass())

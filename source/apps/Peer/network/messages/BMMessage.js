@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -11,7 +11,7 @@
 
 */
 
-window.BMMessage = class BMMessage extends BMFieldSetNode {
+getGlobalThis().BMMessage = class BMMessage extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("msgType", null)

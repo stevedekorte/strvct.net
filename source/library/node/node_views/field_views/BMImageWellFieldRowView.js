@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRowView {
+(class BMImageWellFieldRowView extends BMFieldRowView {
     
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
@@ -84,4 +84,4 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.ShelfFooterView = class ShelfFooterView extends DomView {
+(class ShelfFooterView extends DomView {
     
     initPrototype () {
 
@@ -131,4 +131,4 @@ window.ShelfFooterView = class ShelfFooterView extends DomView {
     }
     */
    
-}.initThisClass()
+}.initThisClass())

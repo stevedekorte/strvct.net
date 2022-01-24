@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMCache = class BMCache extends BMStorableNode {
+getGlobalThis().BMCache = class BMCache extends BMStorableNode {
     
     static initThisClass () {
         super.initThisClass()

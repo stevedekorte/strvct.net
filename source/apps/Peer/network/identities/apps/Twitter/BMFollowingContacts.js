@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMFollowingContacts = class BMFollowingContacts extends BMStorableNode {
+getGlobalThis().BMFollowingContacts = class BMFollowingContacts extends BMStorableNode {
     
     initPrototype () {
 

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.BMFont = class BMFont extends BMNode {
+(class BMFont extends BMNode {
     
     initPrototype () {
         this.newSlot("path", null)
@@ -72,4 +72,4 @@ window.BMFont = class BMFont extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

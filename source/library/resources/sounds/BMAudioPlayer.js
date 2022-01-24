@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /*
@@ -20,7 +20,7 @@
 
 */
 
-window.BMAudioPlayer = class BMAudioPlayer extends DomView {
+(class BMAudioPlayer extends DomView {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -195,4 +195,4 @@ window.BMAudioPlayer = class BMAudioPlayer extends DomView {
         return this;
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -10,7 +10,7 @@
     
 */
 
-window.BrowserView = class BrowserView extends HeaderFooterView {
+(class BrowserView extends HeaderFooterView {
     
     initPrototype () {
         this.newSlot("columns", null)
@@ -1044,4 +1044,4 @@ window.BrowserView = class BrowserView extends HeaderFooterView {
         return this.typeId() + " for " +  nodeName
     }
     
-}.initThisClass()
+}.initThisClass())

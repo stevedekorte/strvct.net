@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
     
 */
 
-window.Transform = class Transform extends ProtoClass {
+(class Transform extends ProtoClass {
     initPrototype () {
         this.newSlot("position", null).setComment("in px units") 
         this.newSlot("rotation", null).setComment("in degrees units") 
@@ -70,4 +70,4 @@ window.Transform = class Transform extends ProtoClass {
     }
     */
    
-}.initThisClass()
+}.initThisClass())

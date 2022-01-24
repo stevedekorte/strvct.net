@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 */
 
 
-window.ideal.FilePath = class FilePath extends ProtoClass {
+getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
 
     init () {
         this.newSlot("pathString", null)

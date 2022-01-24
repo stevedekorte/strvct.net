@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
 
-window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
+(class WebBrowserWindow extends ProtoClass {
     
     initPrototype () {
     }
@@ -173,6 +173,6 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
         return null
     }
 
-}.initThisClass()
+}.initThisClass())
 
 

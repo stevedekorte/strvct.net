@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 Object.defineSlots(Date, {
     instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     TransitionListener
@@ -7,7 +7,7 @@
 
 */
 
-window.TransitionListener = class TransitionListener extends EventSetListener {
+(class TransitionListener extends EventSetListener {
     
     initPrototype () {
 
@@ -26,4 +26,4 @@ window.TransitionListener = class TransitionListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

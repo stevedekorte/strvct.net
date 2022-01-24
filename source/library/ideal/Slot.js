@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 
 /*
@@ -7,11 +7,11 @@
 
 */
 
-if (!window.ideal) {
-    window.ideal = {}
+if (!getGlobalThis().ideal) {
+    getGlobalThis().ideal = {}
 }
 
-window.ideal.Slot = class Slot { 
+getGlobalThis().ideal.Slot = class Slot { 
 
     static clone () {
         const obj = new this()

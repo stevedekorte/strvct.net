@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
     sheet.setSelectorProperty("body", "color", "red")
 */
 
-window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
+(class BMStyleSheet extends ProtoClass {
     
     initPrototype () {
         this.newSlot("sheetElement", null)
@@ -48,5 +48,5 @@ window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
         console.log("sheetElement:", this.sheetElement())
     }
 
-}.initThisClass()
+}.initThisClass())
 

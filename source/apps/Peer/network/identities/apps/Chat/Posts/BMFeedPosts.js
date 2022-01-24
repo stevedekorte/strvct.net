@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMFeedPosts = class BMFeedPosts extends BMStorableNode {
+getGlobalThis().BMFeedPosts = class BMFeedPosts extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("hasRead", true)

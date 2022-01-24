@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
     
 */
 
-window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
+(class BMLinkNode extends BMSummaryNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -112,5 +112,5 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
         return super.addSubnodeAt(aSubnode, anIndex)
     }
 
-}.initThisClass()
+}.initThisClass())
 

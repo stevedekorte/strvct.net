@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -16,7 +16,7 @@
 
 */
 
-window.PanGestureRecognizer = class PanGestureRecognizer extends GestureRecognizer {
+(class PanGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("minNumberOfFingersRequired", 1)
@@ -135,4 +135,4 @@ window.PanGestureRecognizer = class PanGestureRecognizer extends GestureRecogniz
         return this.currentPosition().distanceFrom(this.beginPosition())
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMThemeLevel = class BMThemeLevel extends BMStorableNode {
+(class BMThemeLevel extends BMStorableNode {
     
     initPrototype () {
 
@@ -53,4 +53,4 @@ window.BMThemeLevel = class BMThemeLevel extends BMStorableNode {
     }
 
 
-}.initThisClass()
+}.initThisClass())

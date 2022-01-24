@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /* 
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BrowserColumn = class BrowserColumn extends NodeView {
+(class BrowserColumn extends NodeView {
     
     initPrototype () {
         this.newSlot("rows", null)
@@ -1506,5 +1506,5 @@ window.BrowserColumn = class BrowserColumn extends NodeView {
        return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription()
     }
     
-}.initThisClass()
+}.initThisClass())
 

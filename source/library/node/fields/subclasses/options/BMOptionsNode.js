@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMOptionsNode = class BMOptionsNode extends BMField {
+(class BMOptionsNode extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -125,4 +125,4 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMColorField = class BMColorField extends BMField {
+(class BMColorField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -67,4 +67,4 @@ window.BMColorField = class BMColorField extends BMField {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

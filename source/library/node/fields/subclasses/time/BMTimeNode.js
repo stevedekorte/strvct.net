@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
         
-window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
+(class BMTimeNode extends BMSummaryNode {
       
     static availableAsNodePrimitive() {
         return true
@@ -92,4 +92,4 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
         return d ? d.toString() : null
     }
 
-}.initThisClass()
+}.initThisClass())

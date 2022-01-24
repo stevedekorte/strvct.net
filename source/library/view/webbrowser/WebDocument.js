@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.WebDocument = class WebDocument extends ProtoClass {
+(class WebDocument extends ProtoClass {
     
     initPrototype () {
 
@@ -40,4 +40,4 @@ window.WebDocument = class WebDocument extends ProtoClass {
         this.styleSheets().forEach(sheet => sheet.show())
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
     
 */
 
-window.BMIconResources = class BMIconResources extends BMNode {
+(class BMIconResources extends BMNode {
 	
 	static initThisClass () {
         super.initThisClass()
@@ -45,7 +45,7 @@ window.BMIconResources = class BMIconResources extends BMNode {
 		return this.subnodes().map(sn => sn.title())
 	}
 
-}.initThisClass()
+}.initThisClass())
 
 
 

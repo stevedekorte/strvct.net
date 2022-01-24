@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -9,7 +9,7 @@
 
 */
         
-window.BMNumberField = class BMNumberField extends BMField {
+(class BMNumberField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -141,4 +141,4 @@ window.BMNumberField = class BMNumberField extends BMField {
         return isValid
     }
     
-}.initThisClass()
+}.initThisClass())

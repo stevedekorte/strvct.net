@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMServerConnection = class BMServerConnection extends BMNode {
+getGlobalThis().BMServerConnection = class BMServerConnection extends BMNode {
     
     initPrototype () {
         this.newSlot("server", null)

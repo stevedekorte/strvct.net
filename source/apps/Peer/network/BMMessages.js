@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
     
 */
 
-window.BMMessages = class BMMessages extends BMStorableNode {
+getGlobalThis().BMMessages = class BMMessages extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("changeNote", null)

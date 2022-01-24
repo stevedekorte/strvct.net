@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMServerMessage = class BMServerMessage extends ProtoClass {
+getGlobalThis().BMServerMessage = class BMServerMessage extends ProtoClass {
 
     static incrementInstanceCount () {
         if (Type.isUndefined(this._instanceCount)) {

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 */
 
 
-window.BMPostThread = class BMPostThread extends BMAppMessage {
+getGlobalThis().BMPostThread = class BMPostThread extends BMAppMessage {
     
     initPrototype () {
 

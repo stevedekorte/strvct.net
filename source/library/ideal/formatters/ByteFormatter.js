@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -22,7 +22,7 @@
 
 */
 
-window.ByteFormatter = class ByteFormatter extends ProtoClass {
+(class ByteFormatter extends ProtoClass {
     initPrototype () {
 
         this.newSlot("value", 0)
@@ -70,4 +70,4 @@ window.ByteFormatter = class ByteFormatter extends ProtoClass {
 		
         return v + space + orderName + postfix
     }
-}.initThisClass()
+}.initThisClass())

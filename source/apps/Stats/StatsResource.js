@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.StatsResource = class StatsResource extends BMNode {
+getGlobalThis().StatsResource = class StatsResource extends BMNode {
     
     initPrototype () {
         this.newSlot("path", "")

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
 
 */
 
-window.BMZoomView = class BMZoomView extends DomView {
+(class BMZoomView extends DomView {
     
     initPrototype () {
         this.newSlot("offsetPos", null)
@@ -119,6 +119,6 @@ window.BMZoomView = class BMZoomView extends DomView {
     }
 
 
-}.initThisClass()
+}.initThisClass())
 
 

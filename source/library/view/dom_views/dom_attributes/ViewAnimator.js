@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.ViewAnimator = class ViewAnimator extends ProtoClass {
+(class ViewAnimator extends ProtoClass {
     initPrototype () {
         this.newSlot("startValue", 0)
         this.newSlot("targetValue", 0)
@@ -111,6 +111,6 @@ window.ViewAnimator = class ViewAnimator extends ProtoClass {
         }
     }
     */
-}.initThisClass()
+}.initThisClass())
 
 

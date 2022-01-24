@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -8,7 +8,7 @@
 
 */
 
-window.BMSound = class BMSound extends BMNode {
+(class BMSound extends BMNode {
     
     // --- mime types ---
 
@@ -63,4 +63,4 @@ window.BMSound = class BMSound extends BMNode {
         //audio.src = 'data:audio/wav;base64,UklGR...;
     }
 
-}.initThisClass()
+}.initThisClass())

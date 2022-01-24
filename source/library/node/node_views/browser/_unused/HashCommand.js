@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
     
 */
 
-window.HashCommand = class HashCommand extends ProtoClass {
+(class HashCommand extends ProtoClass {
     
     initPrototype () {
         this.newSlot("target", null)
@@ -77,4 +77,4 @@ window.HashCommand = class HashCommand extends ProtoClass {
 
     }
     
-}.initThisClass()
+}.initThisClass())

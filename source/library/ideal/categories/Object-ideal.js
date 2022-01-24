@@ -1,4 +1,4 @@
-//"use strict"
+//"use strict";
 
 /*
 
@@ -48,7 +48,7 @@ Object.defineSlot = function(obj, slotName, slotValue) {
 }
 
 /*
-window.Test = class Test {
+Test = class Test {
     setup () {
         this._foo = 123
     }
@@ -88,21 +88,26 @@ Object.defineSlots = function(obj, dict) {
 
 const classSlots = {
 
-    clone: function() {
+    clone: function () {
         const obj = new this()
         obj.init()
         return obj
     },
 
-    type: function() {
+    type: function () {
         return this.name
     },
 
-    isClass: function() {
+    isClass: function () {
         return true
     },
 
+    globals: function () {
+        return getGlobalThis()
+    },
+
     initThisClass: function () {
+        this.globals()[this.type()] = this
         //console.log("Prototype " + this.type() + " initThisClass")
         if (this.prototype.hasOwnProperty("initPrototype")) {
             this.prototype.initPrototype.apply(this.prototype)

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -10,9 +10,7 @@
     
 */
 
-window.BMTextNode = class BMTextNode extends BMStorableNode {
-    
-
+(class BMTextNode extends BMStorableNode {
     static availableAsNodePrimitive() {
         return true
     }
@@ -65,6 +63,5 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         return []
     }
 
-
-}.initThisClass()
+}.initThisClass())
 

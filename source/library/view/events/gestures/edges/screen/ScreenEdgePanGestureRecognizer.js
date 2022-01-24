@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -26,7 +26,7 @@
         
 */
 
-window.ScreenEdgePanGestureRecognizer = class ScreenEdgePanGestureRecognizer extends PanGestureRecognizer {
+(class ScreenEdgePanGestureRecognizer extends PanGestureRecognizer {
     
     initPrototype () {
         this.newSlot("edgeName", null)
@@ -85,4 +85,4 @@ window.ScreenEdgePanGestureRecognizer = class ScreenEdgePanGestureRecognizer ext
         }
     }
     
-}.initThisClass()
+}.initThisClass())

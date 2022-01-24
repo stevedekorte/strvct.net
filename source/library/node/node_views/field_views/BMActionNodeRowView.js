@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
+(class BMActionNodeRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("buttonView", null)
@@ -82,4 +82,4 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
         return true
     }
     
-}.initThisClass()
+}.initThisClass())

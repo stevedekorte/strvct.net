@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMSoundResources = class BMSoundResources extends BMNode {
+(class BMSoundResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -57,4 +57,4 @@ window.BMSoundResources = class BMSoundResources extends BMNode {
         return this.subnodes()
     }
 
-}.initThisClass()
+}.initThisClass())

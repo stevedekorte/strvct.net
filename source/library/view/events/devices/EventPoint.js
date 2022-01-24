@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -14,7 +14,7 @@
 
 */
 
-window.EventPoint = class EventPoint extends Point {
+(class EventPoint extends Point {
     initPrototype () {
         this.newSlot("id", null)
         this.newSlot("state", null)
@@ -95,4 +95,4 @@ window.EventPoint = class EventPoint extends Point {
         return this.viewportWidth() - this.distFromLeftOfViewport()
     }
     
-}.initThisClass()
+}.initThisClass())

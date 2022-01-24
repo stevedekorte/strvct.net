@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,8 +8,11 @@
 	
 */
 
+// RGB2HSV and HSV2RGB are based on Color Match Remix see: http://color.twysted.net/
+// which is based on or copied from ColorMatch 5K see: http://colormatch.dk/
 
-const RGB2HSV = function (rgb) {
+const RGB2HSV = function (rgb) { 
+    // rgb is a dict in form { r: 0-255, g: 0-255, b: 0-255 }
     const hsv = new Object();
     const max = max3(rgb.r, rgb.g, rgb.b);
     const dif = max - min3(rgb.r, rgb.g, rgb.b);
@@ -25,8 +28,7 @@ const RGB2HSV = function (rgb) {
     return hsv;
 }
 
-// RGB2HSV and HSV2RGB are based on Color Match Remix see: http://color.twysted.net/
-// which is based on or copied from ColorMatch 5K see: http://colormatch.dk/
+
 const HSV2RGB = function (hsv) {
     const rgb = new Object();
     if (hsv.saturation == 0) {
@@ -75,7 +77,9 @@ const max3 = function(a, b, c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
 }
 
-window.CSSColor = class CSSColor extends ProtoClass {
+// ----------------------------------------------------------------------------------
+
+(class CSSColor extends ProtoClass {
     
     initPrototype () {
         // values between 0.0 and 1.0
@@ -344,5 +348,5 @@ window.CSSColor = class CSSColor extends ProtoClass {
         }
     }
 
-}.initThisClass()
+}.initThisClass())
 

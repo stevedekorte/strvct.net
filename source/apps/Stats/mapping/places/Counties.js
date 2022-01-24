@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -7,7 +7,7 @@
 
 */
 
-window.Counties = class Counties extends BMNode {
+w(class Counties extends BMNode {
     
 
     initPrototype () {
@@ -21,4 +21,4 @@ window.Counties = class Counties extends BMNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

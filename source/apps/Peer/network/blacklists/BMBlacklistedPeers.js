@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
     
 */
 
-window.BMBlacklistedPeers = class BMBlacklistedPeers extends BMBlacklist {
+getGlobalThis().BMBlacklistedPeers = class BMBlacklistedPeers extends BMBlacklist {
     
     initPrototype () {
 

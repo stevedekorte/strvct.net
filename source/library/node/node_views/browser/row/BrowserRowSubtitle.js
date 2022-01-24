@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.BrowserRowSubtitle = class BrowserRowSubtitle extends TextField {
+(class BrowserRowSubtitle extends TextField {
     
     initPrototype () {
 
@@ -26,6 +26,6 @@ window.BrowserRowSubtitle = class BrowserRowSubtitle extends TextField {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 

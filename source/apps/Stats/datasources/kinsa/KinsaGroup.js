@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.KinsaGroup = class KinsaGroup extends BMNode {
+(class KinsaGroup extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -174,6 +174,6 @@ window.KinsaGroup = class KinsaGroup extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 

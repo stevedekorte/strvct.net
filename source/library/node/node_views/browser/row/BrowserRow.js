@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -21,7 +21,7 @@
 
 */
 
-window.BrowserRow = class BrowserRow extends NodeView {
+(class BrowserRow extends NodeView {
     
     initPrototype () {
         this.newSlot("isSelectable", true) //.setDuplicateOp("copyValue")
@@ -162,7 +162,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // we route style methods to it
 
     setupRowContentView () {
-        const cv = DomView.clone().setDivClassName("BrowserRowContentView")
+        //const cv = DomView.clone().setDivClassName("BrowserRowContentView")
+        const cv = DomFlexView.clone().setDivClassName("BrowserRowContentView")
         cv.setDisplay("flex")
         cv.setHeight("auto")
         cv.setMinHeightPx(60)
@@ -1072,4 +1073,4 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return super.onFocusIn()
     }
 
-}.initThisClass()
+}.initThisClass())

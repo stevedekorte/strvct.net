@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.StackNavView = class StackNavView extends NodeView {
+(class StackNavView extends NodeView {
 
     initPrototype() {
         this.newSlot("stackView", null)
@@ -236,4 +236,4 @@ window.StackNavView = class StackNavView extends NodeView {
         this.unhideTransition()
     }
 
-}.initThisClass()
+}.initThisClass())

@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMTheme = class BMTheme extends BMStorableNode {
+(class BMTheme extends BMStorableNode {
     
     initPrototype () {
 
@@ -64,4 +64,4 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         return this
    }
 
-}.initThisClass()
+}.initThisClass())

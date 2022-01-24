@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     GamePadManager
@@ -29,7 +29,7 @@
 
 */
 
-window.GamePadManager = class GamePadManager extends ProtoClass {
+(class GamePadManager extends ProtoClass {
     
     initPrototype () {
         //this.newSlot("gamePadListener", null)
@@ -150,4 +150,4 @@ window.GamePadManager = class GamePadManager extends ProtoClass {
         }
     }
 
-}.initThisClass()
+}.initThisClass())

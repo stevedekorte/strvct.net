@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -20,7 +20,7 @@
 */
 
 
-window.WebBrowserNotifications = class WebBrowserNotifications extends ProtoClass {
+(class WebBrowserNotifications extends ProtoClass {
     
     initPrototype () {
         this.newSlot("permissionRequestResult", null)
@@ -93,5 +93,5 @@ window.WebBrowserNotifications = class WebBrowserNotifications extends ProtoClas
         return WebBrowserNotification.clone()
     }
     
-}.initThisClass()
+}.initThisClass())
 

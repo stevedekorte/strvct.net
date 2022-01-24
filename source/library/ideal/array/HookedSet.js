@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -11,7 +11,7 @@
 
 */
 
-window.HookedSet = class HookedSet extends Set {
+(class HookedSet extends Set {
 
     initPrototype () {
         this.setupMutatorHooks()
@@ -48,5 +48,5 @@ window.HookedSet = class HookedSet extends Set {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 

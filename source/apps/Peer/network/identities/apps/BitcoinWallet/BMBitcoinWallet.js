@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMBitcoinWallet = class BMBitcoinWallet extends BMApplet {
+getGlobalThis().BMBitcoinWallet = class BMBitcoinWallet extends BMApplet {
     
     initPrototype () {
 

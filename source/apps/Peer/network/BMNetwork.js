@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMNetwork = class BMNetwork extends BMFieldSetNode {
+getGlobalThis().BMNetwork = class BMNetwork extends BMFieldSetNode {
     
     static initThisClass () {
         super.initThisClass()

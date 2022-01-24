@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -6,7 +6,7 @@
     
 */
 
-window.StackView = class StackView extends NodeView {
+(class StackView extends NodeView {
 
     static instanceCache () {
         let v = this.getClassVariable("_instanceCache")
@@ -313,4 +313,4 @@ window.StackView = class StackView extends NodeView {
     }
 
 
-}.initThisClass()
+}.initThisClass())

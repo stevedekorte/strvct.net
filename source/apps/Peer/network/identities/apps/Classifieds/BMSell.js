@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMSell = class BMSell extends BMStorableNode {
+getGlobalThis().BMSell = class BMSell extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("post", null)

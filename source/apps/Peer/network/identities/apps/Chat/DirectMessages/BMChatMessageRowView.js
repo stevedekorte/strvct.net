@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRow {
+getGlobalThis().BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRow {
     
     initPrototype () {
 

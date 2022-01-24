@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
     
@@ -8,7 +8,7 @@
 
 */
 
-window.PeerApp = class PeerApp extends App {
+getGlobalThis().PeerApp = class PeerApp extends App {
     
     initPrototype () {
         
@@ -113,7 +113,7 @@ window.PeerApp = class PeerApp extends App {
                 
         this.documentBodyView().addSubview(this.browser())
         this.browser().scheduleSyncFromNode()
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
+        getGlobalThis().SyncScheduler.shared().scheduleTargetAndMethod(this.browser(), "syncFromHashPath", 10)
         return this
     }
 
@@ -121,7 +121,7 @@ window.PeerApp = class PeerApp extends App {
         this.setShelf(ShelfView.clone())
         this.documentBodyView().addSubview(this.shelf())
 
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this.shelf(), "appDidInit", 10)
+        getGlobalThis().SyncScheduler.shared().scheduleTargetAndMethod(this.shelf(), "appDidInit", 10)
 
         return this        
     }

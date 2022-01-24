@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
 
 */
 
-window.BMChannel = class BMChannel extends BMStorableNode {
+getGlobalThis().BMChannel = class BMChannel extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("name", "").setShouldStoreSlot(true)

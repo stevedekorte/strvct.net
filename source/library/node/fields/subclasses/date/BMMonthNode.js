@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMMonthNode = class BMMonthNode extends BMNode {
+(class BMMonthNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("month value starts with 1")
@@ -88,4 +88,4 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
         }
     }
     
-}.initThisClass()
+}.initThisClass())

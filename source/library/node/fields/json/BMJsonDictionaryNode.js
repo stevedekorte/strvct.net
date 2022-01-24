@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
         
-window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
+(class BMJsonDictionaryNode extends BMJsonNode {
     
     static canOpenMimeType (mimeType) {
         return false
@@ -89,4 +89,4 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
         return bdd
     }
     
-}.initThisClass()
+}.initThisClass())

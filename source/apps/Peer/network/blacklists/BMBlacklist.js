@@ -1,4 +1,4 @@
-"use strict"
+"use strict";
 
 /*
 
@@ -6,7 +6,7 @@
     
 */
 
-window.BMBlacklist = class BMBlacklist extends BMStorableNode {
+getGlobalThis().BMBlacklist = class BMBlacklist extends BMStorableNode {
     
     initPrototype () {
 

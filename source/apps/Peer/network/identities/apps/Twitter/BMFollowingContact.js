@@ -1,5 +1,5 @@
 
-"use strict"
+"use strict";
 
 /*
 
@@ -7,7 +7,7 @@
 
 */
 
-window.BMFollowingContact = class BMFollowingContact extends BMStorableNode {
+getGlobalThis().BMFollowingContact = class BMFollowingContact extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("isFollowing", false).setShouldStoreSlot(true)
