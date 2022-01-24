@@ -8,9 +8,7 @@
 
 */
 
+(class SubnodesArray extends SortedArray {
 
 
-window.SubnodesArray = class SubnodesArray extends SortedArray {
-
-
-}
+}.initThisClass())

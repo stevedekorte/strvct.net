@@ -36,7 +36,7 @@
 */
 
 
-window.ObservableProxy = class ObservableProxy extends ProtoClass {
+(class ObservableProxy extends ProtoClass {
     
     initPrototype () {
         this.newSlot("observers", null)
@@ -249,6 +249,6 @@ window.ObservableProxy = class ObservableProxy extends ProtoClass {
         return true
     }
 
-}.initThisClass()
+}.initThisClass())
 
 //ObservableProxy.selfTest()

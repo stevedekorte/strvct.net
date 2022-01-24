@@ -33,7 +33,7 @@
 
 */
 
-window.IndexedArray = class IndexedArray extends HookedArray {
+(class IndexedArray extends HookedArray {
 
     initPrototype () {
     }
@@ -184,4 +184,4 @@ window.IndexedArray = class IndexedArray extends HookedArray {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()

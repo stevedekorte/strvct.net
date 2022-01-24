@@ -1062,6 +1062,7 @@ class JSScript extends ResourceLoaderBase {
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
+            console.log("loaded script src:'" + script.src)
             this._doneCallback()
         }
 
@@ -1271,20 +1272,32 @@ ResourceLoader.pushRelativePaths([
 
 // A naive attempt at getting the global `this`. Don’t use this!
 function getGlobalThis() {
-	if (typeof globalThis !== 'undefined') return globalThis;
-	if (typeof self !== 'undefined') return self;
-	if (typeof window !== 'undefined') {
+	if (typeof(globalThis) !== 'undefined') {
+		return globalThis
+	}
+	
+	if (typeof(self) !== 'undefined') {
+		return self
+	}
+
+	if (typeof(window) !== 'undefined') {
 		window.global = window
-		return window;
+		return window
 	}
-	if (typeof global !== 'undefined') {
+
+	if (typeof(global) !== 'undefined') {
 		global.window = global
-		return global;
+		return global
 	}
+
 	// Note: this might still return the wrong result!
-	if (typeof this !== 'undefined') return this;
+	if (typeof(this) !== 'undefined') {
+		return this
+	}
+
 	throw new Error('Unable to locate global `this`');
-  };
+  }
+  
   getGlobalThis().getGlobalThis = getGlobalThis;
 
 "use strict";
@@ -1467,7 +1480,7 @@ window.Mirror = class Mirror extends Object {
 
 */
 
-window.Type = {
+getGlobalThis().Type = {
 
     allTypeNames: function() {
         return [
@@ -1767,7 +1780,7 @@ Object.defineSlot = function(obj, slotName, slotValue) {
 }
 
 /*
-window.Test = class Test {
+Test = class Test {
     setup () {
         this._foo = 123
     }
@@ -1807,21 +1820,26 @@ Object.defineSlots = function(obj, dict) {
 
 const classSlots = {
 
-    clone: function() {
+    clone: function () {
         const obj = new this()
         obj.init()
         return obj
     },
 
-    type: function() {
+    type: function () {
         return this.name
     },
 
-    isClass: function() {
+    isClass: function () {
         return true
     },
 
+    globals: function () {
+        return getGlobalThis()
+    },
+
     initThisClass: function () {
+        this.globals()[this.type()] = this
         //console.log("Prototype " + this.type() + " initThisClass")
         if (this.prototype.hasOwnProperty("initPrototype")) {
             this.prototype.initPrototype.apply(this.prototype)
@@ -1848,6 +1866,10 @@ const classSlots = {
     
     allSubclasses () {
         return this._allClassesSet.select(aClass => aClass.hasAncestorClass(this))
+    },
+
+    subclasses () {
+        return this._allClassesSet.select(aClass => aClass.superClass() === this)
     },
 
     hasAncestorClass (aClass) {
@@ -5091,7 +5113,7 @@ Object.defineSlots(Function.prototype, {
 
 */
 
-window.ProtoClass = class ProtoClass extends Object { 
+(class ProtoClass extends Object { 
 
     /*
     static newUniqueInstanceId() {
@@ -5215,9 +5237,20 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
+    static classModulePath () {   
+        const src = this.getClassVariable("_classSrcPath")
+        const url = new URL(src);
+        const parts = url.pathname.split('/')
+        parts.pop()
+        const index = parts.indexOf("library") 
+        const afterLibrary = parts.slice(index+1)
+        return afterLibrary.join("/")
+    }
+
     static initThisClass () {
         //console.log(this.type() + " initThisClass")
-        
+        this.setClassVariable("_classSrcPath", document.currentScript.src)
+
         this.setClassVariable("_childClasses", new Set())
         this.setClassVariable("_ancestorClasses", this.findAncestorClasses())
 
@@ -5336,18 +5369,42 @@ window.ProtoClass = class ProtoClass extends Object {
     }
 
 
-    /*
-    static subclassesDescription (level) {
+    static subclassesDescription (level, traversed) {
+
         if (Type.isUndefined(level)) {
             level = 0
         }
+
+        if (Type.isUndefined(traversed)) {
+            traversed = new Set()
+        }
+
+        /*
+        if (traversed.has(this)) {
+            throw new Error("already traversed ", this.type())
+        } else {
+            console.log("newly traversing ", this.type())
+        }
+        traversed.add(this)
+        */
+        const prefix = "<div class=level" + level + ">"
+        const postfix = "</div>"
+
         const spacer = "  ".repeat(level)
-        const lines = [spacer + this.type()]
-        const subclassLines = this.subclasses().map(subclass => spacer + subclass.subclassesDescription(level + 1))
+        const lines = []
+        if (level === 1) {
+            //lines.append("----")
+        }
+        const path = "<div class=path>" + this.classModulePath().replaceAll("/", " ") + "</div>"
+        lines.append(prefix + spacer + this.type() + " " + path + postfix)
+        const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()))
+        const subclassLines = sortedSubclasses.map((subclass) => {
+            //return spacer + subclass.subclassesDescription(level + 1, traversed) 
+            return subclass.subclassesDescription(level + 1, traversed) 
+        })
         lines.appendItems(subclassLines)
         return lines.join("\n")
     }
-    */
 
     static isClass () {
         return true
@@ -5689,7 +5746,7 @@ window.ProtoClass = class ProtoClass extends Object {
         return this
     }
 
-}.initThisClass() 
+}.initThisClass())
 
 
 
@@ -5706,7 +5763,7 @@ window.ProtoClass = class ProtoClass extends Object {
 
 */
 
-window.Documentation = class Documentation extends ProtoClass {
+(class Documentation extends ProtoClass {
     initPrototype () {
 
     }
@@ -5772,7 +5829,7 @@ window.Documentation = class Documentation extends ProtoClass {
         */
         console.log("DOCUMENTATION:\n\n", lines.join("\n"))
     }
-}.initThisClass()
+}.initThisClass())
 
 
 /*
@@ -5856,7 +5913,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.HookedArray = class HookedArray extends Array {
+(class HookedArray extends Array {
 
     initPrototype () {
         this.setupMutatorHooks()
@@ -5930,7 +5987,7 @@ window.HookedArray = class HookedArray extends Array {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 
 
 "use strict";
@@ -5946,7 +6003,7 @@ window.HookedArray = class HookedArray extends Array {
 
 */
 
-window.HookedSet = class HookedSet extends Set {
+(class HookedSet extends Set {
 
     initPrototype () {
         this.setupMutatorHooks()
@@ -5983,7 +6040,7 @@ window.HookedSet = class HookedSet extends Set {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 
 
 "use strict";
@@ -6073,7 +6130,7 @@ window.HookedMap = class HookedMap extends Map {
 
 */
 
-window.IndexedArray = class IndexedArray extends HookedArray {
+(class IndexedArray extends HookedArray {
 
     initPrototype () {
     }
@@ -6224,7 +6281,7 @@ window.IndexedArray = class IndexedArray extends HookedArray {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 
 "use strict";
 
@@ -6249,7 +6306,7 @@ window.IndexedArray = class IndexedArray extends HookedArray {
 
 */
 
-window.SortedArray = class SortedArray extends IndexedArray {
+(class SortedArray extends IndexedArray {
 
     initPrototype () {
 
@@ -6320,7 +6377,7 @@ window.SortedArray = class SortedArray extends IndexedArray {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 
 "use strict";
 
@@ -6756,7 +6813,7 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
 
 */
 
-window.StackFrame = class StackFrame extends ProtoClass {
+(class StackFrame extends ProtoClass {
     initPrototype () {
         this.newSlot("functionName", null)
         this.newSlot("url", null)
@@ -6801,12 +6858,12 @@ window.StackFrame = class StackFrame extends ProtoClass {
     show() {
         console.log(this.description())
     }
-}.initThisClass() 
+}.initThisClass());
 
 
 // -----------------------------------------------------------------
 
-window.StackTrace = class StackTrace extends ProtoClass {
+(class StackTrace extends ProtoClass {
     initPrototype () {
         this.newSlot("error", null)
         this.newSlot("stackFrames", [])
@@ -6849,7 +6906,7 @@ window.StackTrace = class StackTrace extends ProtoClass {
         f3()        
     }
 
-}.initThisClass() 
+}.initThisClass());
 
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())
@@ -6888,7 +6945,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.ByteFormatter = class ByteFormatter extends ProtoClass {
+(class ByteFormatter extends ProtoClass {
     initPrototype () {
 
         this.newSlot("value", 0)
@@ -6936,7 +6993,7 @@ window.ByteFormatter = class ByteFormatter extends ProtoClass {
 		
         return v + space + orderName + postfix
     }
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -6960,7 +7017,7 @@ TimePeriodFormatter
 
 */
 
-window.TimePeriodFormatter = class TimePeriodFormatter extends ProtoClass {
+(class TimePeriodFormatter extends ProtoClass {
     initPrototype () {
         this.newSlot("valueInSeconds", 0)
     }
@@ -7001,7 +7058,7 @@ window.TimePeriodFormatter = class TimePeriodFormatter extends ProtoClass {
         const days = Math.floor(hours/24)
         return days + periods.days
     }
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -7033,7 +7090,7 @@ TimeFormatter
 
 */
 
-window.TimeFormatter = class TimeFormatter extends ProtoClass {
+(class TimeFormatter extends ProtoClass {
     initPrototype () {
         this.newSlot("is24Hour", false)
         this.newSlot("showsMeridiem", true)
@@ -7165,7 +7222,7 @@ window.TimeFormatter = class TimeFormatter extends ProtoClass {
 
         return s
     }
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -7308,7 +7365,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.SyncAction = class SyncAction extends ProtoClass {
+(class SyncAction extends ProtoClass {
 
     static ActionKeyForTargetAndMethod (target, method) {
         return target.typeId() + "." + method
@@ -7362,7 +7419,7 @@ window.SyncAction = class SyncAction extends ProtoClass {
         return t + " " + this.method() + "" + o
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -7651,7 +7708,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMNotification = class BMNotification extends ProtoClass {
+(class BMNotification extends ProtoClass {
     initPrototype () {
         this.newSlot("name", null)
         this.newSlot("sender", null)
@@ -7720,7 +7777,7 @@ window.BMNotification = class BMNotification extends ProtoClass {
         const n = this.name() ? this.name() : "null"
         return s + " " + n
     }
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -7788,7 +7845,7 @@ window.BMNotification = class BMNotification extends ProtoClass {
 
 */
 
-window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
+(class BMNotificationCenter extends ProtoClass {
     initPrototype () {
         this.newSlot("observations", null) // array 
         this.newSlot("notifications", null) // array 
@@ -8026,7 +8083,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
             console.log("current post sender stack: ", this.currentNote().senderStack())
         }
     }
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -8040,7 +8097,7 @@ window.BMNotificationCenter = class BMNotificationCenter extends ProtoClass {
 
 */
 
-window.BMObservation = class BMObservation extends ProtoClass {
+(class BMObservation extends ProtoClass {
     initPrototype () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("targetId", null) // uniqueId string for target
@@ -8135,7 +8192,7 @@ window.BMObservation = class BMObservation extends ProtoClass {
         return this.observer().typeId() + " listening to " + this.targetId() + " " + this.name()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -8172,7 +8229,7 @@ window.BMObservation = class BMObservation extends ProtoClass {
     Example use:
 */
 
-window.Broadcaster = class Broadcaster extends ProtoClass {
+(class Broadcaster extends ProtoClass {
     initPrototype () {
         this.newSlot("nameToListenerSet", null)  // dict to set
     }
@@ -8225,7 +8282,7 @@ window.Broadcaster = class Broadcaster extends ProtoClass {
         })
     }
 
-}.initThisClass()
+}.initThisClass())
 
 Object.defineSlots(ProtoClass.prototype, {
 
@@ -8253,7 +8310,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
+(class IndexedDBFolder extends ProtoClass {
     initPrototype() {
         this.newSlot("path", "/")
         this.newSlot("pathSeparator", "/") // path should end with pathSeparator
@@ -8588,9 +8645,9 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
     }
 
     newTx() {
-        return window.IndexedDBTx.clone().setDbFolder(this)
+        return IndexedDBTx.clone().setDbFolder(this)
     }
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -8602,7 +8659,7 @@ window.IndexedDBFolder = class IndexedDBFolder extends ProtoClass {
 
 */
 
-window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
+(class IndexedDBTx extends ProtoClass {
     initPrototype () {
         this.newSlot("dbFolder", null)
         this.newSlot("objectStore", null)
@@ -8790,7 +8847,7 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -8809,24 +8866,28 @@ window.IndexedDBTx = class IndexedDBTx extends ProtoClass {
     so we can do synchronous reads and writes (avoiding IndexedDB's async API),
     and then call the async commit at the end of the event loop.
 
+    Notes:
+
     - keys and values are assumed to be strings
+	- any exception between begin and commit should halt the app and require a restart to ensure consistency
+
+    API:
 
     - at(key) returns a value from the internal dict
     - begin() shallow copies the current internal dict
     - atPut(key, value) & removeAt(key)
         applies normal op and adds key to changedKeys
-    - revert()
-        not supported yet
+    - revert() reverts changes since begin
     - commit() constructs a transaction using changedKeys 
 	- at(key) first checks the writeCache beforing checking the readCache
-	
-	- any exception between begin and commit should halt the app and require a restart to ensure consistency
-	
-    TODO: auto sweep after a write if getting full?
+		
+    TODO: 
+    
+    - auto sweep after a write if getting full? 
         
 */
 
-window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ideal.AtomicDictionary {
+(class PersistentAtomicDictionary extends ideal.AtomicDictionary {
     initPrototype () {
         this.newSlot("name", "PersistentAtomicDictionary")
         this.newSlot("idb", null)
@@ -8992,7 +9053,7 @@ window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ide
             }
         })
     }
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -9015,7 +9076,7 @@ window.PersistentAtomicDictionary = class PersistentAtomicDictionary extends ide
         
 */
 
-window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends ProtoClass {
+(class PersistentAsyncDictionary extends ProtoClass {
     initPrototype () {
         this.newSlot("name", "PersistentAsyncDictionary")
         this.newSlot("idb", null)
@@ -9144,7 +9205,7 @@ window.PersistentAsyncDictionary = class PersistentAsyncDictionary extends Proto
         tx.commit() 
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -9179,7 +9240,7 @@ ResourceLoader.pushRelativePaths([
 */
 
 
-window.Point = class Point extends ProtoClass {
+(class Point extends ProtoClass {
     initPrototype () {
         this.newSlot("x", 0)
         this.newSlot("y", 0)
@@ -9402,7 +9463,7 @@ window.Point = class Point extends ProtoClass {
         return this.y()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -9423,7 +9484,7 @@ window.Point = class Point extends ProtoClass {
 
 */
 
-window.Rectangle = class Rectangle extends ProtoClass {
+(class Rectangle extends ProtoClass {
     initPrototype () {
         this.newSlot("origin", null)
         this.newSlot("size", null)
@@ -9590,7 +9651,7 @@ window.Rectangle = class Rectangle extends ProtoClass {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -9601,7 +9662,7 @@ window.Rectangle = class Rectangle extends ProtoClass {
     
 */
 
-window.Transform = class Transform extends ProtoClass {
+(class Transform extends ProtoClass {
     initPrototype () {
         this.newSlot("position", null).setComment("in px units") 
         this.newSlot("rotation", null).setComment("in degrees units") 
@@ -9664,7 +9725,7 @@ window.Transform = class Transform extends ProtoClass {
     }
     */
    
-}.initThisClass()
+}.initThisClass())
 "use strict";
 
 ResourceLoader.pushRelativePaths([
@@ -9738,7 +9799,7 @@ Object.defineSlots(Event.prototype, {
 
 */
 
-window.EventPoint = class EventPoint extends Point {
+(class EventPoint extends Point {
     initPrototype () {
         this.newSlot("id", null)
         this.newSlot("state", null)
@@ -9819,7 +9880,7 @@ window.EventPoint = class EventPoint extends Point {
         return this.viewportWidth() - this.distFromLeftOfViewport()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -9828,7 +9889,7 @@ window.EventPoint = class EventPoint extends Point {
 
 */
 
-window.Device = class Device extends ProtoClass {
+(class Device extends ProtoClass {
     
     initPrototype () {
 
@@ -9839,7 +9900,7 @@ window.Device = class Device extends ProtoClass {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -9849,7 +9910,7 @@ window.Device = class Device extends ProtoClass {
 
 */
 
-window.KeyboardKey = class KeyboardKey extends Device {
+(class KeyboardKey extends Device {
     
     initPrototype () {
         this.newSlot("isDown", false)
@@ -9891,8 +9952,7 @@ window.KeyboardKey = class KeyboardKey extends Device {
         return c >= 65 && c <= 90
     }
     
-}.initThisClass()
-
+}.initThisClass())
 "use strict";
 
 /*
@@ -9927,7 +9987,7 @@ window.KeyboardKey = class KeyboardKey extends Device {
 */
 
 
-window.BMKeyboard = class BMKeyboard extends Device {
+(class BMKeyboard extends Device {
     initPrototype () {
         this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
         this.newSlot("keyboardListener", null)
@@ -10442,7 +10502,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
         console.log("---")
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -10455,7 +10515,7 @@ window.BMKeyboard = class BMKeyboard extends Device {
 
 */
 
-window.Mouse = class Mouse extends Device {
+(class Mouse extends Device {
     
     initPrototype () {
         this.newSlot("isDown", false)
@@ -10576,7 +10636,7 @@ window.Mouse = class Mouse extends Device {
         return "on" + s + "MouseUp"
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -10589,7 +10649,7 @@ window.Mouse = class Mouse extends Device {
 
 */
 
-window.TouchScreen = class TouchScreen extends Device {
+(class TouchScreen extends Device {
 
     initPrototype () {
         this.newSlot("currentEvent", null)
@@ -10767,7 +10827,7 @@ window.TouchScreen = class TouchScreen extends Device {
     }
     */
    
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -10800,7 +10860,7 @@ window.TouchScreen = class TouchScreen extends Device {
 
 */
 
-window.GamePadManager = class GamePadManager extends ProtoClass {
+(class GamePadManager extends ProtoClass {
     
     initPrototype () {
         //this.newSlot("gamePadListener", null)
@@ -10921,8 +10981,7 @@ window.GamePadManager = class GamePadManager extends ProtoClass {
         }
     }
 
-}.initThisClass()
-
+}.initThisClass())
 "use strict";
 
 /*
@@ -10932,7 +10991,7 @@ window.GamePadManager = class GamePadManager extends ProtoClass {
 
 */
 
-window.GamePad = class GamePad extends Device {
+(class GamePad extends Device {
     
     initPrototype () {
         this.newSlot("gamePadManager", null)
@@ -11045,7 +11104,7 @@ window.GamePad = class GamePad extends Device {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11063,7 +11122,7 @@ window.GamePad = class GamePad extends Device {
 
 */
 
-window.Devices = class Devices extends ProtoClass {
+(class Devices extends ProtoClass {
     
     initPrototype () {
         //this.newSlot("gamePadListener", null)
@@ -11100,7 +11159,7 @@ window.Devices = class Devices extends ProtoClass {
         return es.min(e => e.timeStamp)
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11140,7 +11199,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.EventSetListener = class EventSetListener extends ProtoClass {
+(class EventSetListener extends ProtoClass {
     
     initPrototype () {
         this.newSlot("listenTarget", null)
@@ -11255,7 +11314,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
         if (this.isListening()) {
             return this
         }
-        this._isListening = true;
+        this._isListening = true; // can't use setter here as it would cause a loop
 
         this.assertHasListenTarget()
 
@@ -11326,7 +11385,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
     }
 
     onAfterEvent (methodName, event) {
-        if (window.SyncScheduler) {
+        if (getGlobalThis().SyncScheduler) {
             /*
                 run scheduled events here to ensure that a UI event won't occur
                 before sync as that could leave the node and view out of sync
@@ -11343,7 +11402,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
                 this.debugLog(" onAfterEvent " + methodName)
             }
             */
-            window.SyncScheduler.shared().fullSyncNow()
+            SyncScheduler.shared().fullSyncNow()
         }
         return this
     }
@@ -11366,7 +11425,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
         return this
     }   
 
-}.initThisClass()
+}.initThisClass())
 
 /*
     // globally track whether we are inside an event 
@@ -11413,7 +11472,7 @@ window.EventSetListener = class EventSetListener extends ProtoClass {
 
 */
 
-window.ClipboardListener = class ClipboardListener extends EventSetListener {
+(class ClipboardListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11431,7 +11490,7 @@ window.ClipboardListener = class ClipboardListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11442,7 +11501,7 @@ window.ClipboardListener = class ClipboardListener extends EventSetListener {
 
 */
 
-window.DocumentListener = class DocumentListener extends EventSetListener {
+(class DocumentListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11478,7 +11537,7 @@ window.DocumentListener = class DocumentListener extends EventSetListener {
         return window // is this the best way to handle this?
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11489,7 +11548,7 @@ window.DocumentListener = class DocumentListener extends EventSetListener {
 
 */
 
-window.DragListener = class DragListener extends EventSetListener {
+(class DragListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11514,7 +11573,7 @@ window.DragListener = class DragListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 "use strict";
 
 /*
@@ -11524,7 +11583,7 @@ window.DragListener = class DragListener extends EventSetListener {
 
 */
 
-window.DropListener = class DropListener extends EventSetListener {
+(class DropListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11561,7 +11620,7 @@ window.DropListener = class DropListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11572,7 +11631,7 @@ window.DropListener = class DropListener extends EventSetListener {
 
 */
 
-window.FocusListener = class FocusListener extends EventSetListener {
+(class FocusListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11591,7 +11650,7 @@ window.FocusListener = class FocusListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11602,7 +11661,7 @@ window.FocusListener = class FocusListener extends EventSetListener {
 
 */
 
-window.KeyboardListener = class KeyboardListener extends EventSetListener {
+(class KeyboardListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -11622,7 +11681,7 @@ window.KeyboardListener = class KeyboardListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11634,7 +11693,7 @@ window.KeyboardListener = class KeyboardListener extends EventSetListener {
 */
 
 
-window.MouseListener = class MouseListener extends EventSetListener {
+(class MouseListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -11664,7 +11723,7 @@ window.MouseListener = class MouseListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11675,7 +11734,7 @@ window.MouseListener = class MouseListener extends EventSetListener {
 
 */
 
-window.SelectListener = class SelectListener extends EventSetListener {
+(class SelectListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -11698,7 +11757,7 @@ window.SelectListener = class SelectListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 "use strict";
 
 /*
@@ -11708,7 +11767,7 @@ window.SelectListener = class SelectListener extends EventSetListener {
 
 */
  
-window.TouchListener = class TouchListener extends EventSetListener {
+(class TouchListener extends EventSetListener {
     
     initPrototype () {
     }
@@ -11726,7 +11785,7 @@ window.TouchListener = class TouchListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11737,7 +11796,7 @@ window.TouchListener = class TouchListener extends EventSetListener {
 
 */
 
-window.TransitionListener = class TransitionListener extends EventSetListener {
+(class TransitionListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11756,7 +11815,7 @@ window.TransitionListener = class TransitionListener extends EventSetListener {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11767,7 +11826,7 @@ window.TransitionListener = class TransitionListener extends EventSetListener {
 
 */
 
-window.GamePadListener = class GamePadListener extends EventSetListener {
+(class GamePadListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11784,7 +11843,7 @@ window.GamePadListener = class GamePadListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -11796,7 +11855,7 @@ window.GamePadListener = class GamePadListener extends EventSetListener {
 
 */
 
-window.WebSocketListener = class WebSocketListener extends EventSetListener {
+(class WebSocketListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11815,7 +11874,7 @@ window.WebSocketListener = class WebSocketListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11826,7 +11885,7 @@ window.WebSocketListener = class WebSocketListener extends EventSetListener {
 
 */
 
-window.WheelListener = class WheelListener extends EventSetListener {
+(class WheelListener extends EventSetListener {
     
     initPrototype () {
 
@@ -11842,7 +11901,7 @@ window.WheelListener = class WheelListener extends EventSetListener {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -11878,7 +11937,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.GestureManager = class GestureManager extends ProtoClass {
+(class GestureManager extends ProtoClass {
     
     initPrototype () {
         this.newSlot("activeGesture", null)
@@ -11995,7 +12054,7 @@ window.GestureManager = class GestureManager extends ProtoClass {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -12050,7 +12109,7 @@ window.GestureManager = class GestureManager extends ProtoClass {
     TODO: move visualizer to separate class?
 */
 
-window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
+(class GestureRecognizer extends ProtoClass {
     
     initPrototype () {
         this.newSlot("viewTarget", null)
@@ -12865,7 +12924,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
         return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target")
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -12892,7 +12951,7 @@ window.GestureRecognizer = class GestureRecognizer extends ProtoClass {
 
 */
 
-window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends GestureRecognizer {
+(class LongPressGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("timePeriod", 500).setComment("milliseconds")
@@ -13010,7 +13069,7 @@ window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends Ges
     }
     */
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13047,7 +13106,7 @@ window.LongPressGestureRecognizer = class LongPressGestureRecognizer extends Ges
 */
 
 
-window.SlideGestureRecognizer = class SlideGestureRecognizer extends GestureRecognizer {
+(class SlideGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("direction", "left")
@@ -13215,7 +13274,7 @@ window.SlideGestureRecognizer = class SlideGestureRecognizer extends GestureReco
         return Math.abs(funcs[this.direction()](dx, dy))
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13247,7 +13306,7 @@ window.SlideGestureRecognizer = class SlideGestureRecognizer extends GestureReco
 
 */
 
-window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecognizer {
+(class TapGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("maxHoldPeriod", 1000).setComment("milliseconds per tap")
@@ -13387,7 +13446,7 @@ window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecogniz
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13430,7 +13489,7 @@ window.TapGestureRecognizer = class TapGestureRecognizer extends GestureRecogniz
 */
 
 
-window.OrientGestureRecognizer = class OrientGestureRecognizer extends GestureRecognizer {
+(class OrientGestureRecognizer extends GestureRecognizer {
 
     initPrototype() {
 
@@ -13694,7 +13753,7 @@ window.OrientGestureRecognizer = class OrientGestureRecognizer extends GestureRe
         console.log(this.debugJson())
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13714,7 +13773,7 @@ window.OrientGestureRecognizer = class OrientGestureRecognizer extends GestureRe
 
 */
 
-window.PanGestureRecognizer = class PanGestureRecognizer extends GestureRecognizer {
+(class PanGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
         this.newSlot("minNumberOfFingersRequired", 1)
@@ -13833,7 +13892,7 @@ window.PanGestureRecognizer = class PanGestureRecognizer extends GestureRecogniz
         return this.currentPosition().distanceFrom(this.beginPosition())
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13859,7 +13918,7 @@ window.PanGestureRecognizer = class PanGestureRecognizer extends GestureRecogniz
 */
 
 
-window.PinchGestureRecognizer = class PinchGestureRecognizer extends GestureRecognizer {
+(class PinchGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
 
@@ -13882,7 +13941,7 @@ window.PinchGestureRecognizer = class PinchGestureRecognizer extends GestureReco
         return d >= m
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13908,7 +13967,7 @@ window.PinchGestureRecognizer = class PinchGestureRecognizer extends GestureReco
 
 */
 
-window.RotationGestureRecognizer = class RotationGestureRecognizer extends GestureRecognizer {
+(class RotationGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
 
@@ -13927,7 +13986,7 @@ window.RotationGestureRecognizer = class RotationGestureRecognizer extends Gestu
         return a >= ma
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -13959,7 +14018,7 @@ ResourceLoader.pushRelativePaths([
         
 */
 
-window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGestureRecognizer {
+(class EdgePanGestureRecognizer extends PanGestureRecognizer {
 
     initPrototype() {
         this.newSlot("edgeName", null)
@@ -14053,7 +14112,7 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGest
         }
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -14070,7 +14129,7 @@ window.EdgePanGestureRecognizer = class EdgePanGestureRecognizer extends PanGest
 
 */
 
-window.TopEdgePanGestureRecognizer = class TopEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
+(class TopEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
     initPrototype () {
 
@@ -14082,7 +14141,7 @@ window.TopEdgePanGestureRecognizer = class TopEdgePanGestureRecognizer extends E
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -14099,7 +14158,7 @@ window.TopEdgePanGestureRecognizer = class TopEdgePanGestureRecognizer extends E
 
 */
 
-window.BottomEdgePanGestureRecognizer = class BottomEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
+(class BottomEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
     initPrototype () {
 
@@ -14113,7 +14172,7 @@ window.BottomEdgePanGestureRecognizer = class BottomEdgePanGestureRecognizer ext
     }
     
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -14130,7 +14189,7 @@ window.BottomEdgePanGestureRecognizer = class BottomEdgePanGestureRecognizer ext
 
 */
 
-window.LeftEdgePanGestureRecognizer = class LeftEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
+(class LeftEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
     initPrototype () {
 
@@ -14142,7 +14201,7 @@ window.LeftEdgePanGestureRecognizer = class LeftEdgePanGestureRecognizer extends
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -14159,7 +14218,7 @@ window.LeftEdgePanGestureRecognizer = class LeftEdgePanGestureRecognizer extends
 
 */
 
-window.RightEdgePanGestureRecognizer = class RightEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
+(class RightEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
     initPrototype () {
 
@@ -14171,7 +14230,7 @@ window.RightEdgePanGestureRecognizer = class RightEdgePanGestureRecognizer exten
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -14193,7 +14252,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.WebBrowserScreen = class WebBrowserScreen extends ProtoClass {
+(class WebBrowserScreen extends ProtoClass {
     
     initPrototype () {
 
@@ -14250,7 +14309,7 @@ window.WebBrowserScreen = class WebBrowserScreen extends ProtoClass {
         return prefersDark
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -14264,7 +14323,7 @@ window.WebBrowserScreen = class WebBrowserScreen extends ProtoClass {
 
 */
 
-window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
+(class WebBrowserWindow extends ProtoClass {
     
     initPrototype () {
     }
@@ -14428,7 +14487,7 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
         return null
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -14454,7 +14513,7 @@ window.WebBrowserWindow = class WebBrowserWindow extends ProtoClass {
 */
 
 
-window.WebBrowserNotifications = class WebBrowserNotifications extends ProtoClass {
+(class WebBrowserNotifications extends ProtoClass {
     
     initPrototype () {
         this.newSlot("permissionRequestResult", null)
@@ -14527,7 +14586,7 @@ window.WebBrowserNotifications = class WebBrowserNotifications extends ProtoClas
         return WebBrowserNotification.clone()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -14539,7 +14598,7 @@ window.WebBrowserNotifications = class WebBrowserNotifications extends ProtoClas
 
 */
 
-window.WebBrowserNotification = class WebBrowserNotification extends ProtoClass {
+(class WebBrowserNotification extends ProtoClass {
     
     initPrototype () {
         this.newSlot("title", "")
@@ -14570,7 +14629,7 @@ window.WebBrowserNotification = class WebBrowserNotification extends ProtoClass 
         setTimeout(notification.close.bind(this.notificationRef()), this.timeoutMs());
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -14585,7 +14644,7 @@ window.WebBrowserNotification = class WebBrowserNotification extends ProtoClass 
 
 */
 
-window.WebDocument = class WebDocument extends ProtoClass {
+(class WebDocument extends ProtoClass {
     
     initPrototype () {
 
@@ -14617,7 +14676,7 @@ window.WebDocument = class WebDocument extends ProtoClass {
         this.styleSheets().forEach(sheet => sheet.show())
     }
 
-}.initThisClass()
+}.initThisClass())
 "use strict";
 
 /*
@@ -14628,7 +14687,7 @@ window.WebDocument = class WebDocument extends ProtoClass {
     sheet.setSelectorProperty("body", "color", "red")
 */
 
-window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
+(class BMStyleSheet extends ProtoClass {
     
     initPrototype () {
         this.newSlot("sheetElement", null)
@@ -14668,7 +14727,7 @@ window.BMStyleSheet = class BMStyleSheet extends ProtoClass {
         console.log("sheetElement:", this.sheetElement())
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -14702,7 +14761,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.DomTransition = class DomTransition extends ProtoClass {
+(class DomTransition extends ProtoClass {
     initPrototype () {
         this.newSlot("property", "")
         this.newSlot("duration", 0)
@@ -14792,7 +14851,7 @@ window.DomTransition = class DomTransition extends ProtoClass {
         this.transitions().syncToDomView()
         return this
     }
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -14822,7 +14881,7 @@ window.DomTransition = class DomTransition extends ProtoClass {
 */
 
 
-window.DomTransitions = class DomTransitions extends ProtoClass {
+(class DomTransitions extends ProtoClass {
     initPrototype () {
         this.newSlot("properties", null)
         this.newSlot("domView", null)
@@ -14871,7 +14930,7 @@ window.DomTransitions = class DomTransitions extends ProtoClass {
 
         return this
     }
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -14889,7 +14948,7 @@ window.DomTransitions = class DomTransitions extends ProtoClass {
 */
 
 
-window.DomBorderRadius = class DomBorderRadius extends ProtoClass {
+(class DomBorderRadius extends ProtoClass {
     initPrototype () {
         this.newSlot("divView", null)
         this.newSlot("topLeft", 0)
@@ -14981,7 +15040,7 @@ window.DomBorderRadius = class DomBorderRadius extends ProtoClass {
 
         return this
     }
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -14994,7 +15053,7 @@ window.DomBorderRadius = class DomBorderRadius extends ProtoClass {
 
 */
 
-window.ViewAnimator = class ViewAnimator extends ProtoClass {
+(class ViewAnimator extends ProtoClass {
     initPrototype () {
         this.newSlot("startValue", 0)
         this.newSlot("targetValue", 0)
@@ -15097,7 +15156,7 @@ window.ViewAnimator = class ViewAnimator extends ProtoClass {
         }
     }
     */
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -15129,7 +15188,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
+(class DomTextTapeMeasure extends ProtoClass {
     
     initPrototype () {
         this.newSlot("idName", "DomTextTapeMeasure")
@@ -15207,7 +15266,7 @@ window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
         return this	
     }
 	
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -15220,7 +15279,7 @@ window.DomTextTapeMeasure = class DomTextTapeMeasure extends ProtoClass {
 
 */
 
-window.DomCSSInspector = class DomCSSInspector extends ProtoClass {
+(class DomCSSInspector extends ProtoClass {
     
     initPrototype () {
         this.newSlot("idName", "DomCSSInspector")
@@ -15254,7 +15313,7 @@ window.DomCSSInspector = class DomCSSInspector extends ProtoClass {
         return this.testElement().style
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -15266,8 +15325,11 @@ window.DomCSSInspector = class DomCSSInspector extends ProtoClass {
 	
 */
 
+// RGB2HSV and HSV2RGB are based on Color Match Remix see: http://color.twysted.net/
+// which is based on or copied from ColorMatch 5K see: http://colormatch.dk/
 
-const RGB2HSV = function (rgb) {
+const RGB2HSV = function (rgb) { 
+    // rgb is a dict in form { r: 0-255, g: 0-255, b: 0-255 }
     const hsv = new Object();
     const max = max3(rgb.r, rgb.g, rgb.b);
     const dif = max - min3(rgb.r, rgb.g, rgb.b);
@@ -15283,8 +15345,7 @@ const RGB2HSV = function (rgb) {
     return hsv;
 }
 
-// RGB2HSV and HSV2RGB are based on Color Match Remix see: http://color.twysted.net/
-// which is based on or copied from ColorMatch 5K see: http://colormatch.dk/
+
 const HSV2RGB = function (hsv) {
     const rgb = new Object();
     if (hsv.saturation == 0) {
@@ -15333,7 +15394,9 @@ const max3 = function(a, b, c) {
     return (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c);
 }
 
-window.CSSColor = class CSSColor extends ProtoClass {
+// ----------------------------------------------------------------------------------
+
+(class CSSColor extends ProtoClass {
     
     initPrototype () {
         // values between 0.0 and 1.0
@@ -15602,7 +15665,7 @@ window.CSSColor = class CSSColor extends ProtoClass {
         }
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -15675,7 +15738,7 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
     TODO: add dict[propertyName] -> validValueSet and check css values when set
 */
 
-window.DomView = class DomView extends ProtoClass {
+(class DomView extends ProtoClass {
     
     initPrototype () {
         this.newSlot("divClassName", "")
@@ -20291,7 +20354,7 @@ window.DomView = class DomView extends ProtoClass {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -20301,7 +20364,7 @@ window.DomView = class DomView extends ProtoClass {
 
 */
 
-window.DomView = class DomFlexView extends DomView {
+(class DomFlexView extends DomView {
     
     initPrototype () {
     }
@@ -20402,7 +20465,7 @@ window.DomView = class DomFlexView extends DomView {
         //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -20437,7 +20500,7 @@ window.DomView = class DomFlexView extends DomView {
 */
 
 
-window.DomStyledView = class DomStyledView extends DomFlexView {
+(class DomStyledView extends DomFlexView {
     
     initPrototype () {
         this.newSlot("styles", null)
@@ -20627,7 +20690,7 @@ window.DomStyledView = class DomStyledView extends DomFlexView {
         //return this.currentStyle().backgroundColor()
     }
 	
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -20661,7 +20724,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BooleanView = class BooleanView extends DomStyledView {
+(class BooleanView extends DomStyledView {
     
     initPrototype () {
         this.newSlot("doesClearOnReturn", false)  // needed?
@@ -20809,7 +20872,7 @@ window.BooleanView = class BooleanView extends DomStyledView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -20848,7 +20911,7 @@ window.BooleanView = class BooleanView extends DomStyledView {
 
 */
 
-window.ButtonView = class ButtonView extends DomView {
+(class ButtonView extends DomView {
     
     initPrototype () {
         this.newSlot("titleView", null)
@@ -20953,7 +21016,7 @@ window.ButtonView = class ButtonView extends DomView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -20966,7 +21029,7 @@ window.ButtonView = class ButtonView extends DomView {
 
 */
 
-window.CloseButton = class CloseButton extends DomView {
+(class CloseButton extends DomView {
     
     initPrototype () {
         this.newSlot("isEnabled", true)
@@ -21028,7 +21091,7 @@ window.CloseButton = class CloseButton extends DomView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -21038,7 +21101,7 @@ window.CloseButton = class CloseButton extends DomView {
 
 */
 
-window.DocumentBody = class DocumentBody extends DomView {
+(class DocumentBody extends DomView {
     
     initPrototype () {
 
@@ -21116,7 +21179,7 @@ window.DocumentBody = class DocumentBody extends DomView {
     }
     */
    
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -21128,7 +21191,7 @@ window.DocumentBody = class DocumentBody extends DomView {
 */
 
 
-window.DragBarView = class DragBarView extends DomView {
+(class DragBarView extends DomView {
     
     initPrototype () {
         this.newSlot("isEnabled", true)
@@ -21306,7 +21369,7 @@ window.DragBarView = class DragBarView extends DomView {
         return false
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -21369,7 +21432,7 @@ window.DragBarView = class DragBarView extends DomView {
 
 */
 
-window.DragView = class DragView extends DomStyledView {
+(class DragView extends DomStyledView {
     
     initPrototype () {
         // the view that will be dragged when operation is complete
@@ -21830,7 +21893,7 @@ window.DragView = class DragView extends DomStyledView {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -21840,7 +21903,7 @@ window.DragView = class DragView extends DomStyledView {
 
 */
 
-window.PanelView = class PanelView extends DomView {
+(class PanelView extends DomView {
     
     initPrototype () {
         this.newSlot("titleView", null)
@@ -21946,7 +22009,7 @@ window.PanelView = class PanelView extends DomView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -21969,7 +22032,7 @@ window.PanelView = class PanelView extends DomView {
 */
 
 
-window.SvgIconView = class SvgIconView extends DomView {
+(class SvgIconView extends DomView {
     
     initPrototype () {
         this.newSlot("doesMatchParentColor", false)
@@ -22125,7 +22188,7 @@ window.SvgIconView = class SvgIconView extends DomView {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -22141,7 +22204,7 @@ window.SvgIconView = class SvgIconView extends DomView {
 
 */
 
-window.TextField = class TextField extends DomStyledView {
+(class TextField extends DomStyledView {
     
     initPrototype () {
         this.newSlot("selectedColor", null)
@@ -22566,7 +22629,7 @@ window.TextField = class TextField extends DomStyledView {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -22586,7 +22649,7 @@ ResourceLoader.pushRelativePaths([
         event.dataTransfer.setData("DownloadURL", "text/plain:hello.txt:data:text/plain;base64,SGVsbG8sIFdvcmxkIQ%3D%3D");
 */
 
-window.BMDataUrl = class BMDataUrl extends ProtoClass {
+(class BMDataUrl extends ProtoClass {
     
     initPrototype () {
         this.newSlot("dataUrl", null) // for drop
@@ -22675,7 +22738,7 @@ window.BMDataUrl = class BMDataUrl extends ProtoClass {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -22734,7 +22797,7 @@ ResourceLoader.pushRelativePaths([
 */
 
 
-window.BMViewStyles = class BMViewStyles extends ProtoClass {
+(class BMViewStyles extends ProtoClass {
     
     initPrototype () {
         this.newSlot("name", "")
@@ -22851,7 +22914,7 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
         return this        
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -22865,7 +22928,7 @@ window.BMViewStyles = class BMViewStyles extends ProtoClass {
  
 */
 
-window.BMViewStyle = class BMViewStyle extends ProtoClass {
+(class BMViewStyle extends ProtoClass {
   
     static styleNames () {
         return  [
@@ -22943,7 +23006,7 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -22955,12 +23018,10 @@ window.BMViewStyle = class BMViewStyle extends ProtoClass {
 
 */
 
+(class SubnodesArray extends SortedArray {
 
 
-window.SubnodesArray = class SubnodesArray extends SortedArray {
-
-
-}
+}.initThisClass())
 "use strict";
 
 /*
@@ -22997,7 +23058,7 @@ window.SubnodesArray = class SubnodesArray extends SortedArray {
 
 */
 
-window.BMNode = class BMNode extends ProtoClass {
+(class BMNode extends ProtoClass {
     
     static availableAsNodePrimitive() {
         return true
@@ -24352,7 +24413,7 @@ window.BMNode = class BMNode extends ProtoClass {
         return super.debugTypeId() + " '" + this.title() + "'"
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -24373,7 +24434,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.BMStorableNode = class BMStorableNode extends BMNode {
+(class BMStorableNode extends BMNode {
     
     initPrototype () {
         this.setShouldStore(true)
@@ -24480,7 +24541,7 @@ window.BMStorableNode = class BMStorableNode extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -24491,7 +24552,7 @@ window.BMStorableNode = class BMStorableNode extends BMNode {
 
 */
 
-window.BMStoredDatedSetNode = class BMStoredDatedSetNode extends BMStorableNode {
+(class BMStoredDatedSetNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("maxAgeInSeconds", 30*24*60*60).setShouldStoreSlot(true)
@@ -24566,7 +24627,7 @@ window.BMStoredDatedSetNode = class BMStoredDatedSetNode extends BMStorableNode 
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -25208,7 +25269,7 @@ Object.defineSlots(Number.prototype, {
 
 */
 
-window.ObjectPool = class ObjectPool extends ProtoClass {
+(class ObjectPool extends ProtoClass {
     
     initPrototype () {
         this.newSlot("name", "defaultDataStore")
@@ -25901,7 +25962,7 @@ window.ObjectPool = class ObjectPool extends ProtoClass {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 
 // -------------------
@@ -25925,7 +25986,7 @@ setTimeout(() => {
 
 */
 
-window.PersistentObjectPool = class PersistentObjectPool extends ObjectPool {
+(class PersistentObjectPool extends ObjectPool {
     
     initPrototype () {
 
@@ -25960,7 +26021,7 @@ window.PersistentObjectPool = class PersistentObjectPool extends ObjectPool {
         console.log(this.type() + " --- self test end --- ")
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 //setTimeout(() => {
@@ -26036,7 +26097,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.BMDataStore = class BMDataStore extends BMNode {
+(class BMDataStore extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -26110,8 +26171,7 @@ window.BMDataStore = class BMDataStore extends BMNode {
         return this
     }
     
-    
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -26140,7 +26200,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
+(class BMSummaryNode extends BMStorableNode {
     
     initPrototype () {
 
@@ -26301,7 +26361,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
         return s
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -26314,7 +26374,7 @@ window.BMSummaryNode = class BMSummaryNode extends BMStorableNode {
     
 */
 
-window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
+(class BMFolderNode extends BMSummaryNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -26384,7 +26444,7 @@ window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
         this.scheduleSyncToView()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -26395,7 +26455,7 @@ window.BMFolderNode = class BMFolderNode extends BMSummaryNode {
     
 */
 
-window.BMImageNode = class BMImageNode extends BMStorableNode {
+(class BMImageNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("dataURL", null).setShouldStoreSlot(true)
@@ -26419,7 +26479,7 @@ window.BMImageNode = class BMImageNode extends BMStorableNode {
         this.scheduleSyncToStore()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -26433,9 +26493,7 @@ window.BMImageNode = class BMImageNode extends BMStorableNode {
     
 */
 
-window.BMTextNode = class BMTextNode extends BMStorableNode {
-    
-
+(class BMTextNode extends BMStorableNode {
     static availableAsNodePrimitive() {
         return true
     }
@@ -26488,8 +26546,7 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
         return []
     }
 
-
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -26502,7 +26559,7 @@ window.BMTextNode = class BMTextNode extends BMStorableNode {
     
 */
 
-window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
+(class BMLinkNode extends BMSummaryNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -26606,7 +26663,7 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
         return super.addSubnodeAt(aSubnode, anIndex)
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -26619,7 +26676,7 @@ window.BMLinkNode = class BMLinkNode extends BMSummaryNode {
 
 */
 
-window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
+(class BMPrototypesNode extends BMStorableNode {
     
     initPrototype () {
     }
@@ -26644,7 +26701,7 @@ window.BMPrototypesNode = class BMPrototypesNode extends BMStorableNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -26690,7 +26747,7 @@ ResourceLoader.pushRelativePaths([
 
 */  
         
-window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
+(class BMFieldSetNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("status", "")
@@ -26755,7 +26812,7 @@ window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
         return this.validate() // could cache this later...
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -26769,7 +26826,7 @@ window.BMFieldSetNode = class BMFieldSetNode extends BMStorableNode {
 */
         
 
-window.BMField = class BMField extends BMSummaryNode {
+(class BMField extends BMSummaryNode {
     
     initPrototype () {
         this.newSlot("isVisible", true)
@@ -27029,7 +27086,7 @@ window.BMField = class BMField extends BMSummaryNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27042,7 +27099,7 @@ window.BMField = class BMField extends BMSummaryNode {
 
 */
 
-window.BMActionNode = class BMActionNode extends BMStorableNode {
+(class BMActionNode extends BMStorableNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -27094,7 +27151,7 @@ window.BMActionNode = class BMActionNode extends BMStorableNode {
 	    return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27114,7 +27171,7 @@ ResourceLoader.pushRelativePaths([
 
 */
         
-window.BMJsonNode = class BMJsonNode extends BMStorableNode {
+(class BMJsonNode extends BMStorableNode {
     
     static canOpenMimeType (mimeType) {
         return mimeType === "application/json"
@@ -27181,7 +27238,7 @@ window.BMJsonNode = class BMJsonNode extends BMStorableNode {
     }
 
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27192,7 +27249,7 @@ window.BMJsonNode = class BMJsonNode extends BMStorableNode {
 
 */
         
-window.BMJsonArrayNode = class BMJsonArrayNode extends BMJsonNode {
+(class BMJsonArrayNode extends BMJsonNode {
     
     static canOpenMimeType (mimeType) {
         return false
@@ -27269,7 +27326,7 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMJsonNode {
         return bdd
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27280,7 +27337,7 @@ window.BMJsonArrayNode = class BMJsonArrayNode extends BMJsonNode {
 
 */
         
-window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
+(class BMJsonDictionaryNode extends BMJsonNode {
     
     static canOpenMimeType (mimeType) {
         return false
@@ -27362,7 +27419,7 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
         return bdd
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27373,7 +27430,7 @@ window.BMJsonDictionaryNode = class BMJsonDictionaryNode extends BMJsonNode {
 
 */
         
-window.BMJsonNullField = class BMJsonNullField extends BMField {
+(class BMJsonNullField extends BMField {
     
     initPrototype () {
     }
@@ -27412,7 +27469,7 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
         return super.setValueIsEditable(false)
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27424,7 +27481,7 @@ window.BMJsonNullField = class BMJsonNullField extends BMField {
 
 */
         
-window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
+(class BMCreatorNode extends BMStorableNode {
     
     initPrototype () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
@@ -27516,7 +27573,7 @@ window.BMCreatorNode = class BMCreatorNode extends BMStorableNode {
         return ""
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27546,7 +27603,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.BMBooleanField = class BMBooleanField extends BMField {
+(class BMBooleanField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -27600,7 +27657,7 @@ window.BMBooleanField = class BMBooleanField extends BMField {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27610,7 +27667,7 @@ window.BMBooleanField = class BMBooleanField extends BMField {
     
 */
 
-window.BMColorField = class BMColorField extends BMField {
+(class BMColorField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -27671,7 +27728,7 @@ window.BMColorField = class BMColorField extends BMField {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27681,7 +27738,7 @@ window.BMColorField = class BMColorField extends BMField {
 
 */
 
-window.BMIdentityField = class BMIdentityField extends BMField {
+(class BMIdentityField extends BMField {
     
     initPrototype () {
 
@@ -27727,7 +27784,7 @@ window.BMIdentityField = class BMIdentityField extends BMField {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27737,7 +27794,7 @@ window.BMIdentityField = class BMIdentityField extends BMField {
 
 */
         
-window.BMImageWellField = class BMImageWellField extends BMField {
+(class BMImageWellField extends BMField {
 
     static availableAsNodePrimitive() {
         return true
@@ -27781,7 +27838,7 @@ window.BMImageWellField = class BMImageWellField extends BMField {
         return ""
     }
    
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27794,7 +27851,7 @@ window.BMImageWellField = class BMImageWellField extends BMField {
 
 */
         
-window.BMNumberField = class BMNumberField extends BMField {
+(class BMNumberField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -27926,7 +27983,7 @@ window.BMNumberField = class BMNumberField extends BMField {
         return isValid
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27939,7 +27996,7 @@ window.BMNumberField = class BMNumberField extends BMField {
 
 */
         
-window.BMPointerField = class BMPointerField extends BMField {
+(class BMPointerField extends BMField {
     
     initPrototype () {
 
@@ -27977,7 +28034,7 @@ window.BMPointerField = class BMPointerField extends BMField {
         return this.value()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -27987,7 +28044,7 @@ window.BMPointerField = class BMPointerField extends BMField {
 
 */
 
-window.BMStampField = class BMStampField extends BMField {
+(class BMStampField extends BMField {
     
     initPrototype () {
 
@@ -28001,7 +28058,7 @@ window.BMStampField = class BMStampField extends BMField {
         this.setValueIsEditable(false)
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28011,7 +28068,7 @@ window.BMStampField = class BMStampField extends BMField {
 
 */
         
-window.BMStringField = class BMStringField extends BMField {
+(class BMStringField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -28032,7 +28089,7 @@ window.BMStringField = class BMStringField extends BMField {
         this.setValueIsEditable(true)
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28042,7 +28099,7 @@ window.BMStringField = class BMStringField extends BMField {
     
 */
 
-window.BMTextAreaField = class BMTextAreaField extends BMField {
+(class BMTextAreaField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -28070,7 +28127,7 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
         this.setKeyIsVisible(false)
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28080,7 +28137,7 @@ window.BMTextAreaField = class BMTextAreaField extends BMField {
     
 */
 
-window.BMUrlField = class BMUrlField extends BMField {
+(class BMUrlField extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -28296,7 +28353,7 @@ window.BMUrlField = class BMUrlField extends BMField {
         return result !== null
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28313,7 +28370,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.BMOptionsNode = class BMOptionsNode extends BMField {
+(class BMOptionsNode extends BMField {
     
     static availableAsNodePrimitive() {
         return true
@@ -28432,7 +28489,7 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28444,7 +28501,7 @@ window.BMOptionsNode = class BMOptionsNode extends BMField {
 
 */
         
-window.BMOptionNode = class BMOptionNode extends BMStorableNode {
+(class BMOptionNode extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("label", "Option Title").setShouldStoreSlot(true).setDuplicateOp("copyValue")
@@ -28502,7 +28559,7 @@ window.BMOptionNode = class BMOptionNode extends BMStorableNode {
         return this.isPicked() ? "✓" : ""
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28523,7 +28580,7 @@ ResourceLoader.pushRelativePaths([
 
 */
         
-window.BMDateNode = class BMDateNode extends BMSummaryNode {
+(class BMDateNode extends BMSummaryNode {
     
     static availableAsNodePrimitive() {
         return true
@@ -28657,7 +28714,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
         return d ? d.toString() : null
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28667,7 +28724,7 @@ window.BMDateNode = class BMDateNode extends BMSummaryNode {
     
 */
 
-window.BMYearNode = class BMYearNode extends BMNode {
+(class BMYearNode extends BMNode {
     
     initPrototype () {
         this.newSlot("allowsMultiplePicks", false)
@@ -28719,7 +28776,7 @@ window.BMYearNode = class BMYearNode extends BMNode {
         }
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28729,7 +28786,7 @@ window.BMYearNode = class BMYearNode extends BMNode {
     
 */
 
-window.BMMonthNode = class BMMonthNode extends BMNode {
+(class BMMonthNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("month value starts with 1")
@@ -28811,7 +28868,7 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
         }
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28821,7 +28878,7 @@ window.BMMonthNode = class BMMonthNode extends BMNode {
     
 */
 
-window.BMDayNode = class BMDayNode extends BMNode {
+(class BMDayNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("day value starts with 1")
@@ -28868,7 +28925,7 @@ window.BMDayNode = class BMDayNode extends BMNode {
         return null
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28889,7 +28946,7 @@ ResourceLoader.pushRelativePaths([
 
 */
         
-window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
+(class BMTimeNode extends BMSummaryNode {
       
     static availableAsNodePrimitive() {
         return true
@@ -28973,7 +29030,7 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
         return d ? d.toString() : null
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -28983,7 +29040,7 @@ window.BMTimeNode = class BMTimeNode extends BMSummaryNode {
     
 */
 
-window.BMHourNode = class BMHourNode extends BMNode {
+(class BMHourNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 0).setComment("0 to 23")
@@ -29045,7 +29102,7 @@ window.BMHourNode = class BMHourNode extends BMNode {
         }
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -29055,7 +29112,7 @@ window.BMHourNode = class BMHourNode extends BMNode {
     
 */
 
-window.BMMinuteNode = class BMMinuteNode extends BMNode {
+(class BMMinuteNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1)
@@ -29101,7 +29158,7 @@ window.BMMinuteNode = class BMMinuteNode extends BMNode {
         return null
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -29111,7 +29168,7 @@ window.BMMinuteNode = class BMMinuteNode extends BMNode {
     
 */
 
-window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
+(class BMMeridiemNode extends BMNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("month value starts with 1")
@@ -29193,7 +29250,7 @@ window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     }
     */
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -29205,7 +29262,7 @@ window.BMMeridiemNode = class BMMeridiemNode extends BMNode {
     
 */
 
-window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
+(class BMDataStoreRecord extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("key", null)
@@ -29269,7 +29326,7 @@ window.BMDataStoreRecord = class BMDataStoreRecord extends BMFieldSetNode {
         return subnode
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 "use strict";
@@ -29294,7 +29351,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.NodeView = class NodeView extends DomStyledView {
+(class NodeView extends DomStyledView {
     
     initPrototype () {
         this.newSlot("node", null) //.setDuplicateOp("duplicate")
@@ -29575,7 +29632,7 @@ window.NodeView = class NodeView extends DomStyledView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -29585,7 +29642,7 @@ window.NodeView = class NodeView extends DomStyledView {
 
 */
 
-window.HeaderFooterView = class HeaderFooterView extends NodeView {
+(class HeaderFooterView extends NodeView {
     
     initPrototype () {
         this.newSlot("headerClass", null)
@@ -29642,7 +29699,7 @@ window.HeaderFooterView = class HeaderFooterView extends NodeView {
     }
     */
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -29656,7 +29713,7 @@ window.HeaderFooterView = class HeaderFooterView extends NodeView {
 
 */
 
-window.ImageWellView = class ImageWellView extends NodeView {
+(class ImageWellView extends NodeView {
     initPrototype () {
         this.newSlot("imageView", null)
         this.newSlot("isEditable", true)
@@ -29808,7 +29865,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -29818,7 +29875,7 @@ window.ImageWellView = class ImageWellView extends NodeView {
 
 */
 
-window.ImageView = class ImageView extends NodeView {
+(class ImageView extends NodeView {
     
     initPrototype () {
         this.newSlot("imageContainer", null)
@@ -29988,7 +30045,7 @@ window.ImageView = class ImageView extends NodeView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -30038,7 +30095,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BrowserRow = class BrowserRow extends NodeView {
+(class BrowserRow extends NodeView {
     
     initPrototype () {
         this.newSlot("isSelectable", true) //.setDuplicateOp("copyValue")
@@ -30179,7 +30236,8 @@ window.BrowserRow = class BrowserRow extends NodeView {
     // we route style methods to it
 
     setupRowContentView () {
-        const cv = DomView.clone().setDivClassName("BrowserRowContentView")
+        //const cv = DomView.clone().setDivClassName("BrowserRowContentView")
+        const cv = DomFlexView.clone().setDivClassName("BrowserRowContentView")
         cv.setDisplay("flex")
         cv.setHeight("auto")
         cv.setMinHeightPx(60)
@@ -31089,7 +31147,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
         return super.onFocusIn()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -31099,7 +31157,7 @@ window.BrowserRow = class BrowserRow extends NodeView {
     
 */
 
-window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
+(class BrowserTitledRow extends BrowserRow {
     
     initPrototype () {
         this.newSlot("titleView", null)
@@ -31371,7 +31429,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     }
 
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -31381,7 +31439,7 @@ window.BrowserTitledRow = class BrowserTitledRow extends BrowserRow {
     
 */
 
-window.BrowserRowNote = class BrowserRowNote extends TextField {
+(class BrowserRowNote extends TextField {
 
     initPrototype () {
     }
@@ -31396,7 +31454,7 @@ window.BrowserRowNote = class BrowserRowNote extends TextField {
         return this
     } 
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -31406,7 +31464,7 @@ window.BrowserRowNote = class BrowserRowNote extends TextField {
     
 */
 
-window.BrowserRowSubtitle = class BrowserRowSubtitle extends TextField {
+(class BrowserRowSubtitle extends TextField {
     
     initPrototype () {
 
@@ -31426,7 +31484,7 @@ window.BrowserRowSubtitle = class BrowserRowSubtitle extends TextField {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -31443,7 +31501,7 @@ window.BrowserRowSubtitle = class BrowserRowSubtitle extends TextField {
 
 */
 
-window.BrowserRowTitle = class BrowserRowTitle extends TextField {
+(class BrowserRowTitle extends TextField {
     
     initPrototype () {
 
@@ -31480,7 +31538,7 @@ window.BrowserRowTitle = class BrowserRowTitle extends TextField {
         return true
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -31490,7 +31548,7 @@ window.BrowserRowTitle = class BrowserRowTitle extends TextField {
     
 */
 
-window.BMTextNodeRowView = class BMTextNodeRowView extends BrowserRow {
+(class BMTextNodeRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("textView", null)
@@ -31596,7 +31654,7 @@ window.BMTextNodeRowView = class BMTextNodeRowView extends BrowserRow {
         this.textView().setPaddingBottom(this.themeValueForAttribute("paddingBottom"))
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -31621,7 +31679,7 @@ ResourceLoader.pushRelativePaths([
 */
 
 
-window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
+(class BMFieldRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("allowsCursorNavigation", false)
@@ -32008,7 +32066,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32018,7 +32076,7 @@ window.BMFieldRowView = class BMFieldRowView extends BrowserRow {
 
 */
 
-window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
+(class BMActionNodeRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("buttonView", null)
@@ -32094,7 +32152,7 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
         return true
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32104,7 +32162,7 @@ window.BMActionNodeRowView = class BMActionNodeRowView extends BrowserRow {
 
 */
 
-window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowView {
+(class BMBooleanFieldRowView extends BMFieldRowView {
     
     initPrototype () {
 
@@ -32149,7 +32207,7 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32159,7 +32217,7 @@ window.BMBooleanFieldRowView = class BMBooleanFieldRowView extends BMFieldRowVie
 
 */
 
-window.BMStringFieldRowView = class BMStringFieldRowView extends BMFieldRowView {
+(class BMStringFieldRowView extends BMFieldRowView {
     
     initPrototype () {
 
@@ -32202,7 +32260,7 @@ window.BMStringFieldRowView = class BMStringFieldRowView extends BMFieldRowView 
         }
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32213,7 +32271,7 @@ window.BMStringFieldRowView = class BMStringFieldRowView extends BMFieldRowView 
     
 */
 
-window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowView {
+(class BMTextAreaFieldRowView extends BMFieldRowView {
     
     initPrototype () {
     }
@@ -32268,7 +32326,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
     }
     */
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32278,7 +32336,7 @@ window.BMTextAreaFieldRowView = class BMTextAreaFieldRowView extends BMFieldRowV
 
 */
 
-window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRowView {
+(class BMImageWellFieldRowView extends BMFieldRowView {
     
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
@@ -32356,7 +32414,7 @@ window.BMImageWellFieldRowView = class BMImageWellFieldRowView extends BMFieldRo
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32380,7 +32438,7 @@ ResourceLoader.pushRelativePaths([
 */
 
 
-window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRow {
+(class BMOptionsNodeRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -32391,7 +32449,7 @@ window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRo
         return this
     }
 	
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32402,7 +32460,7 @@ window.BMOptionsNodeRowView = class BMOptionsNodeRowView extends BrowserTitledRo
  
 */
 
-window.BMOptionNodeRowView = class BMOptionNodeRowView extends BrowserTitledRow {
+(class BMOptionNodeRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -32458,7 +32516,7 @@ window.BMOptionNodeRowView = class BMOptionNodeRowView extends BrowserTitledRow 
         return this
     }
 	
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32468,7 +32526,7 @@ window.BMOptionNodeRowView = class BMOptionNodeRowView extends BrowserTitledRow 
 
 */
 
-window.BMPointerFieldRowView = class BMPointerFieldRowView extends BrowserTitledRow {
+(class BMPointerFieldRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -32504,7 +32562,7 @@ window.BMPointerFieldRowView = class BMPointerFieldRowView extends BrowserTitled
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32525,7 +32583,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.StackView = class StackView extends NodeView {
+(class StackView extends NodeView {
 
     static instanceCache () {
         let v = this.getClassVariable("_instanceCache")
@@ -32548,6 +32606,7 @@ window.StackView = class StackView extends NodeView {
         this.setPosition("relative")
         this.setWidth("100%")
         this.setHeight("100%")
+        this.setMinHeight("100%")
 
         this.setFlexDirection("row")
         this.setFlexWrap("nowrap")
@@ -32559,6 +32618,7 @@ window.StackView = class StackView extends NodeView {
         //this.setBorder("1px dashed white")
 
         this.setFlexBasis("fit-content")
+        this.setFlexBasis("auto")
         this.setFlexGrow(1)
         this.setFlexShrink(0)
 
@@ -32830,7 +32890,7 @@ window.StackView = class StackView extends NodeView {
     }
 
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -32840,7 +32900,7 @@ window.StackView = class StackView extends NodeView {
     
 */
 
-window.StackNavView = class StackNavView extends NodeView {
+(class StackNavView extends NodeView {
 
     initPrototype() {
         this.newSlot("stackView", null)
@@ -33070,7 +33130,7 @@ window.StackNavView = class StackNavView extends NodeView {
         this.unhideTransition()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -33080,7 +33140,7 @@ window.StackNavView = class StackNavView extends NodeView {
 
 */
 
-window.StackScrollView = class StackScrollView extends DomView {
+(class StackScrollView extends DomView {
     
     initPrototype () {
     }
@@ -33125,7 +33185,7 @@ window.StackScrollView = class StackScrollView extends DomView {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -33137,7 +33197,7 @@ window.StackScrollView = class StackScrollView extends DomView {
     
 */
 
-window.StackItemSetView = class StackItemSetView extends NodeView {
+(class StackItemSetView extends NodeView {
     
         
     initPrototype () {
@@ -34943,7 +35003,7 @@ window.StackItemSetView = class StackItemSetView extends NodeView {
 
     
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -34961,7 +35021,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMBlob = class BMBlob extends BMNode {
+(class BMBlob extends BMNode {
 
     initPrototype() {
 
@@ -35154,7 +35214,7 @@ window.BMBlob = class BMBlob extends BMNode {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -35178,7 +35238,7 @@ window.BMBlob = class BMBlob extends BMNode {
 
 */
 
-window.BMBlobs = class BMBlobs extends BMStorableNode {
+(class BMBlobs extends BMStorableNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -35252,7 +35312,7 @@ window.BMBlobs = class BMBlobs extends BMStorableNode {
         })
     }
 
-}.initThisClass()
+}.initThisClass())
 
 /*
 setTimeout(() => {
@@ -35277,7 +35337,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMUrlResource = class BMUrlResource extends BMStorableNode {
+(class BMUrlResource extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -35535,7 +35595,7 @@ window.BMUrlResource = class BMUrlResource extends BMStorableNode {
              .replace(/'/g, "&#039;");
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -35549,7 +35609,7 @@ window.BMUrlResource = class BMUrlResource extends BMStorableNode {
 
 */
 
-window.App = class App extends BMStorableNode {
+(class App extends BMStorableNode {
     
     static loadAndRunShared () {
         const name = this.name
@@ -35757,7 +35817,7 @@ window.App = class App extends BMStorableNode {
         //doc.setTextTransform("uppercase")
    }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -35788,7 +35848,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMFileResources = class BMFileResources extends BMNode {
+(class BMFileResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -35845,7 +35905,7 @@ window.BMFileResources = class BMFileResources extends BMNode {
     }
 
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -35855,7 +35915,7 @@ window.BMFileResources = class BMFileResources extends BMNode {
 
 */
 
-window.BMFileSystemFolder = class BMFileSystemFolder extends BMNode {
+(class BMFileSystemFolder extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -35885,7 +35945,7 @@ window.BMFileSystemFolder = class BMFileSystemFolder extends BMNode {
     }
 
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -35895,7 +35955,7 @@ window.BMFileSystemFolder = class BMFileSystemFolder extends BMNode {
 
 */
 
-window.BMFile = class BMFile extends BMNode {
+(class BMFile extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -35928,7 +35988,7 @@ window.BMFile = class BMFile extends BMNode {
     }
 
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -35947,7 +36007,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMFontResources = class BMFontResources extends BMNode {
+(class BMFontResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -36024,7 +36084,7 @@ window.BMFontResources = class BMFontResources extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36035,7 +36095,7 @@ window.BMFontResources = class BMFontResources extends BMNode {
 
 */
 
-window.BMFontFamily = class BMFontFamily extends BMNode {
+(class BMFontFamily extends BMNode {
     
     initPrototype () {
         this.newSlot("name", null)
@@ -36064,7 +36124,7 @@ window.BMFontFamily = class BMFontFamily extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36076,7 +36136,7 @@ window.BMFontFamily = class BMFontFamily extends BMNode {
 
 */
 
-window.BMFont = class BMFont extends BMNode {
+(class BMFont extends BMNode {
     
     initPrototype () {
         this.newSlot("path", null)
@@ -36140,7 +36200,7 @@ window.BMFont = class BMFont extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36150,7 +36210,7 @@ window.BMFont = class BMFont extends BMNode {
     
 */
 
-window.BMFontRowView = class BMFontRowView extends BrowserTitledRow {
+(class BMFontRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -36175,7 +36235,7 @@ window.BMFontRowView = class BMFontRowView extends BrowserTitledRow {
     }
 
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36193,7 +36253,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMSoundResources = class BMSoundResources extends BMNode {
+(class BMSoundResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -36244,7 +36304,7 @@ window.BMSoundResources = class BMSoundResources extends BMNode {
         return this.subnodes()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36256,7 +36316,7 @@ window.BMSoundResources = class BMSoundResources extends BMNode {
 
 */
 
-window.BMSound = class BMSound extends BMNode {
+(class BMSound extends BMNode {
     
     // --- mime types ---
 
@@ -36311,7 +36371,7 @@ window.BMSound = class BMSound extends BMNode {
         //audio.src = 'data:audio/wav;base64,UklGR...;
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36335,7 +36395,7 @@ window.BMSound = class BMSound extends BMNode {
 
 */
 
-window.BMAudioPlayer = class BMAudioPlayer extends DomView {
+(class BMAudioPlayer extends DomView {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -36510,7 +36570,7 @@ window.BMAudioPlayer = class BMAudioPlayer extends DomView {
         return this;
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36527,7 +36587,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMImageResources = class BMImageResources extends BMNode {
+(class BMImageResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -36568,7 +36628,7 @@ window.BMImageResources = class BMImageResources extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36578,7 +36638,7 @@ window.BMImageResources = class BMImageResources extends BMNode {
 
 */
 
-window.BMURLImage = class BMURLImage extends BMNode {
+(class BMURLImage extends BMNode {
     
     initPrototype () {
         this.newSlot("path", "")
@@ -36657,7 +36717,7 @@ window.BMURLImage = class BMURLImage extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36698,7 +36758,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMThemeResources = class BMThemeResources extends BMStorableNode {
+(class BMThemeResources extends BMStorableNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -36731,7 +36791,7 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
         return this.activeTheme().subnodes().first()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36741,7 +36801,7 @@ window.BMThemeResources = class BMThemeResources extends BMStorableNode {
 
 */
 
-window.BMTheme = class BMTheme extends BMStorableNode {
+(class BMTheme extends BMStorableNode {
     
     initPrototype () {
 
@@ -36799,7 +36859,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
         return this
    }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36809,7 +36869,7 @@ window.BMTheme = class BMTheme extends BMStorableNode {
 
 */
 
-window.BMDefaultTheme = class BMDefaultTheme extends BMTheme {
+(class BMDefaultTheme extends BMTheme {
     
 
     init () {
@@ -36831,7 +36891,7 @@ window.BMDefaultTheme = class BMDefaultTheme extends BMTheme {
         return this
    }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36841,7 +36901,7 @@ window.BMDefaultTheme = class BMDefaultTheme extends BMTheme {
 
 */
 
-window.BMThemeLevel = class BMThemeLevel extends BMStorableNode {
+(class BMThemeLevel extends BMStorableNode {
     
     initPrototype () {
 
@@ -36888,7 +36948,7 @@ window.BMThemeLevel = class BMThemeLevel extends BMStorableNode {
     }
 
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -36898,7 +36958,7 @@ window.BMThemeLevel = class BMThemeLevel extends BMStorableNode {
 
 */
 
-window.BMThemeClass = class BMThemeClass extends BMStorableNode {
+(class BMThemeClass extends BMStorableNode {
     
     initPrototype () {
 
@@ -36970,7 +37030,7 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
             const selected = this.selectedThemeState()
             selected.setThemeAttribute("color", "white")
             selected.setThemeAttribute("backgroundColor", "#333")
-            selected.setThemeAttribute("fontWeight", "bold")
+            selected.setThemeAttribute("fontWeight", "normal")
         }
 
         {
@@ -36995,7 +37055,7 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
         return this
    }
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -37007,7 +37067,7 @@ window.BMThemeClass = class BMThemeClass extends BMStorableNode {
 
 */
 
-window.BMThemeState = class BMThemeState extends BMStorableNode {
+(class BMThemeState extends BMStorableNode {
     
     static standardStateNames () {
         return [
@@ -37178,7 +37238,7 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
         return super.didUpdateSlot(aSlot, oldValue, newValue) 
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -37190,7 +37250,7 @@ window.BMThemeState = class BMThemeState extends BMStorableNode {
 
 */
 
-window.BMThemeFolder = class BMThemeFolder extends BMStorableNode {
+(class BMThemeFolder extends BMStorableNode {
     
     initPrototype () {
 
@@ -37211,7 +37271,7 @@ window.BMThemeFolder = class BMThemeFolder extends BMStorableNode {
         this.setNodeCanReorderSubnodes(true)
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 ResourceLoader.pushRelativePaths([
@@ -37230,7 +37290,7 @@ ResourceLoader.pushRelativePaths([
     
 */
 
-window.BMIconResources = class BMIconResources extends BMNode {
+(class BMIconResources extends BMNode {
 	
 	static initThisClass () {
         super.initThisClass()
@@ -37267,7 +37327,7 @@ window.BMIconResources = class BMIconResources extends BMNode {
 		return this.subnodes().map(sn => sn.title())
 	}
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -37281,7 +37341,7 @@ window.BMIconResources = class BMIconResources extends BMNode {
     
 */
 
-window.SvgIconNode = class SvgIconNode extends BMNode {
+(class SvgIconNode extends BMNode {
     
     initPrototype () {
       this.newSlot("svgString", null).setCanInspect(true).setSlotType("String").setLabel("SVG string")
@@ -37296,7 +37356,7 @@ window.SvgIconNode = class SvgIconNode extends BMNode {
       return this.title()
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -37406,7 +37466,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.BMJsonResources = class BMJsonResources extends BMNode {
+(class BMJsonResources extends BMNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -37456,7 +37516,7 @@ window.BMJsonResources = class BMJsonResources extends BMNode {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 
 
 
@@ -37468,7 +37528,7 @@ window.BMJsonResources = class BMJsonResources extends BMNode {
 
 */
 
-window.BMResources = class BMResources extends BMStorableNode {
+(class BMResources extends BMStorableNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -37542,7 +37602,7 @@ window.BMResources = class BMResources extends BMStorableNode {
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
 "use strict";
 
@@ -37572,7 +37632,7 @@ ResourceLoader.pushDoneCallback( () => {
 
 */
 
-window.StrvctApp = class StrvctApp extends App {
+(class StrvctApp extends App {
     
     initPrototype () {
         // model
@@ -37605,6 +37665,13 @@ window.StrvctApp = class StrvctApp extends App {
         v.setNode(this.rootNode())
         this.documentBodyView().addSubview(v)
         this.appDidInit()
+
+        //setTimeout( () => this.showClasses(), 1)
+    }
+
+    showClasses() {
+        const s = ProtoClass.subclassesDescription()
+        console.log(s)
     }
 
     setup_old () { // called by App.run
@@ -37700,6 +37767,7 @@ window.StrvctApp = class StrvctApp extends App {
 
     setupTheme () {
         const doc = DocumentBody.shared()
+        doc.setHeight("100%") // trying to fix body not fitting window
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
 
@@ -37714,7 +37782,7 @@ window.StrvctApp = class StrvctApp extends App {
         //doc.setFontFamily("Electrolize-Regular")
         doc.setFontFamily("Helvetica")
         //doc.setFontWeight("bold")
-        //doc.setFontFamily("Helvetica Neue")
+        doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")
@@ -37751,7 +37819,7 @@ window.StrvctApp = class StrvctApp extends App {
         doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
     }
 
-}.initThisClass()
+}.initThisClass())
 
 /*
 
@@ -37779,68 +37847,20 @@ ResourceLoader.pushRelativePaths([
 
 
 ResourceLoader.pushRelativePaths([
+    /*
     "Courier Prime/_imports.js",
     "Blender Pro/_imports.js",
     "OpenSans/_imports.js",
     "Lato/_imports.js",
     "ShareTechMono/_imports.js",
-
+*/
     "Hyperspace/_imports.js",
+/*
     "PublicSans/_imports.js",
     "Electrolize/_imports.js",
+    */
     "Helvetica/_imports.js",
-]);
 
-
-ResourceLoader.pushRelativePaths([
-    //"Code/Courier Prime Code Italic.ttf",
-    //"Code/Courier Prime Code.ttf",
-    "Default/Courier Prime Bold Italic.ttf",
-    "Default/Courier Prime Bold.ttf",
-    "Default/Courier Prime Italic.ttf",
-    "Default/Courier Prime.ttf",
-    "Sans/Courier Prime Sans Bold Italic.ttf",
-    "Sans/Courier Prime Sans Bold.ttf",
-    "Sans/Courier Prime Sans Italic.ttf",
-    "Sans/Courier Prime Sans.ttf",
-    "Semibold/CourierPrime Medium.ttf",
-    "Semibold/CourierPrime Semibold.ttf",
-]);
-
-
-ResourceLoader.pushRelativePaths([
-    "Blender Pro Book.ttf",
-    "Blender Pro Thin.ttf",
-]);
-
-
-ResourceLoader.pushRelativePaths([
-    "OpenSans Bold.ttf",
-    "OpenSans Bold Italic.ttf",
-    "OpenSans Condensed Bold.ttf",
-    "OpenSans Condensed Light.ttf",
-    "OpenSans Condensed Light Italic.ttf",
-    "OpenSans Extra Bold.ttf",
-    "OpenSans Extra Bold Italic.ttf",
-    "OpenSans Italic.ttf",
-    "OpenSans Light.ttf",
-    "OpenSans Light Italic.ttf",
-    "OpenSans Regular.ttf",
-    "OpenSans Semibold.ttf",
-    "OpenSans Semibold Italic.ttf",
-]);
-
-
-ResourceLoader.pushRelativePaths([
-    "Lato Bold.ttf",
-    "Lato Hairline.ttf",
-    "Lato Hairline Italic.ttf",
-    "Lato Light.ttf",
-]);
-
-
-ResourceLoader.pushRelativePaths([
-    "ShareTechMono Regular.ttf",
 ]);
 
 
@@ -37849,37 +37869,6 @@ ResourceLoader.pushRelativePaths([
     "Hyperspace Bold.ttf",
     "Hyperspace Bold Italic.ttf",
     "Hyperspace Italic.ttf"
-]);
-
-//"LICENSE.txt",
-//"CREDITS.txt",
-//"README.md",
-
-
-ResourceLoader.pushRelativePaths([
-    "PublicSans Black.woff2",
-    "PublicSans Black Italic.woff2",
-    "PublicSans Bold.woff2",
-    "PublicSans Bold Italic.woff2",
-    "PublicSans Extra Bold.woff2",
-    "PublicSans Extra Light.woff2",
-    "PublicSans Extra Light Italic.woff2",
-    "PublicSans Italic.woff2",
-    "PublicSans Light.woff2",
-    "PublicSans Light Italic.woff2",
-    "PublicSans Medium.woff2",
-    "PublicSans Medium Italic.woff2",
-    "PublicSans Regular.woff2",
-    "PublicSans Semibold.woff2",
-    "PublicSans Semibold Italic.woff2",
-    "PublicSans Thin.woff2",
-    "PublicSans Thin Italic.woff2",
-]);
-
-
-
-ResourceLoader.pushRelativePaths([
-    "Electrolize-Regular.ttf",
 ]);
 
 
@@ -37898,7 +37887,7 @@ ResourceLoader.pushRelativePaths([
     "appicon-black-600x600.png",
 ]);
 
-ResourceLoader.setResourceFilePaths(["./resources/fonts/Courier Prime/Default/Courier Prime Bold Italic.ttf","./resources/fonts/Courier Prime/Default/Courier Prime Bold.ttf","./resources/fonts/Courier Prime/Default/Courier Prime Italic.ttf","./resources/fonts/Courier Prime/Default/Courier Prime.ttf","./resources/fonts/Courier Prime/Sans/Courier Prime Sans Bold Italic.ttf","./resources/fonts/Courier Prime/Sans/Courier Prime Sans Bold.ttf","./resources/fonts/Courier Prime/Sans/Courier Prime Sans Italic.ttf","./resources/fonts/Courier Prime/Sans/Courier Prime Sans.ttf","./resources/fonts/Courier Prime/Semibold/CourierPrime Medium.ttf","./resources/fonts/Courier Prime/Semibold/CourierPrime Semibold.ttf","./resources/fonts/Blender Pro/Blender Pro Book.ttf","./resources/fonts/Blender Pro/Blender Pro Thin.ttf","./resources/fonts/OpenSans/OpenSans Bold.ttf","./resources/fonts/OpenSans/OpenSans Bold Italic.ttf","./resources/fonts/OpenSans/OpenSans Condensed Bold.ttf","./resources/fonts/OpenSans/OpenSans Condensed Light.ttf","./resources/fonts/OpenSans/OpenSans Condensed Light Italic.ttf","./resources/fonts/OpenSans/OpenSans Extra Bold.ttf","./resources/fonts/OpenSans/OpenSans Extra Bold Italic.ttf","./resources/fonts/OpenSans/OpenSans Italic.ttf","./resources/fonts/OpenSans/OpenSans Light.ttf","./resources/fonts/OpenSans/OpenSans Light Italic.ttf","./resources/fonts/OpenSans/OpenSans Regular.ttf","./resources/fonts/OpenSans/OpenSans Semibold.ttf","./resources/fonts/OpenSans/OpenSans Semibold Italic.ttf","./resources/fonts/Lato/Lato Bold.ttf","./resources/fonts/Lato/Lato Hairline.ttf","./resources/fonts/Lato/Lato Hairline Italic.ttf","./resources/fonts/Lato/Lato Light.ttf","./resources/fonts/ShareTechMono/ShareTechMono Regular.ttf","./resources/fonts/Hyperspace/Hyperspace.ttf","./resources/fonts/Hyperspace/Hyperspace Bold.ttf","./resources/fonts/Hyperspace/Hyperspace Bold Italic.ttf","./resources/fonts/Hyperspace/Hyperspace Italic.ttf","./resources/fonts/PublicSans/PublicSans Black.woff2","./resources/fonts/PublicSans/PublicSans Black Italic.woff2","./resources/fonts/PublicSans/PublicSans Bold.woff2","./resources/fonts/PublicSans/PublicSans Bold Italic.woff2","./resources/fonts/PublicSans/PublicSans Extra Bold.woff2","./resources/fonts/PublicSans/PublicSans Extra Light.woff2","./resources/fonts/PublicSans/PublicSans Extra Light Italic.woff2","./resources/fonts/PublicSans/PublicSans Italic.woff2","./resources/fonts/PublicSans/PublicSans Light.woff2","./resources/fonts/PublicSans/PublicSans Light Italic.woff2","./resources/fonts/PublicSans/PublicSans Medium.woff2","./resources/fonts/PublicSans/PublicSans Medium Italic.woff2","./resources/fonts/PublicSans/PublicSans Regular.woff2","./resources/fonts/PublicSans/PublicSans Semibold.woff2","./resources/fonts/PublicSans/PublicSans Semibold Italic.woff2","./resources/fonts/PublicSans/PublicSans Thin.woff2","./resources/fonts/PublicSans/PublicSans Thin Italic.woff2","./resources/fonts/Electrolize/Electrolize-Regular.ttf","./resources/sounds/beep_06.wav","./resources/sounds/bleep_04.wav","./resources/images/appicon-black-600x600.png"]);
+ResourceLoader.setResourceFilePaths(["./resources/fonts/Hyperspace/Hyperspace.ttf","./resources/fonts/Hyperspace/Hyperspace Bold.ttf","./resources/fonts/Hyperspace/Hyperspace Bold Italic.ttf","./resources/fonts/Hyperspace/Hyperspace Italic.ttf","./resources/sounds/beep_06.wav","./resources/sounds/bleep_04.wav","./resources/images/appicon-black-600x600.png"]);
 
 
       window.onload = function() { 

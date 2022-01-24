@@ -11,7 +11,7 @@
 
 */
 
-window.HookedMap = class HookedMap extends Map {
+(class HookedMap extends Map {
 
     initPrototype () {
         this.setupMutatorHooks()
@@ -47,5 +47,5 @@ window.HookedMap = class HookedMap extends Map {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 
