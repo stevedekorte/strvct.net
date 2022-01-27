@@ -1,22 +1,8 @@
 
-/*
-getGlobalThis().root_require = function (path) {
-  //console.log("root_require " + path)
-  //console.log("__dirname " + __dirname)
-
-  const fs = require('fs');
-
-  const fullPath = __dirname + "/../" + path // back one folder from server
-  console.log("root_require fullPath " + fullPath)
-
-  if (!fs.existsSync(fullPath)) {
-	  console.log("missing " + fullPath)
-  }
-  return require(fullPath)
-}
-*/
 
 require("./getGlobalThis.js")
+require("./Base.js")
+require("./MimeExtensions.js")
 
 // ---------------------------------------------------------------------
 
@@ -24,30 +10,51 @@ const https = require('https');
 const fs = require('fs');
 //var vm = require('vm')
 
-class StrvctHttpsServer {
+
+class StrvctHttpsServerRequest extends Base {
 	constructor() {
-		this._options = {
-			key: fs.readFileSync('keys/server.key'),
-			cert: fs.readFileSync('keys/server.crt')
-		};
-
-		this._server = null;
-		this._port = 8000;
+		super()
+		this.newSlot("server", null)
+		this.newSlot("request", null)
+		this.newSlot("response", null)
+		this.newSlot("urlObject", null)
+		this.newSlot("queryDict", null)
+		this.newSlot("path", null)
 	}
 
-	port() {
-		return this._port;
+	process() {
+		//this.response().write("request:\n, this.requestDescription(request))
+		console.log("request url:" + this.request().url)
+		//console.log("  decoded url:" + decodeURI(this.request().url))
+		//response.write("  path: '" + url.pathname + "'\n" );			
+		this.setUrlObject(this.getUrlObject())
+		this.setQueryDict(this.getQueryDict())
+		this.setPath(this.getPath())
+
+		if (this.queryDict()) {
+			this.onQuery()
+		} else {
+			this.onFileRequest()
+		}
 	}
 
-	options() {
-		return this._options;
+	getUrlObject () {
+		return new URL("https://" + this.server().hostname() + this.request().url)
 	}
 
-	pathExtensionFor(filepath) {
-		return filepath.split('.').pop();
+	getPath () {
+		return ".." + decodeURI(this.urlObject().pathname)
 	}
 
-	requestDescription(request) {
+	getPathExtension() {
+		if (this.path().indexOf(".") !== -1) {
+			return this.path().split('.').pop();
+		}
+		return undefined
+	}
+
+	requestDescription() {
+		const request = this.request()
 		let s = ""
 		const keys = []
 
@@ -68,101 +75,149 @@ class StrvctHttpsServer {
 		return s
 	}
 
-
-	run() {
-		require("./mime_extensions.js")
-		console.log("loaded mime extensions")
-		/*
-		require("../source/boot/ResourceLoader.js")
-		//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))
-		//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceLoader.js"))
-		*/
-
-		this._server = https.createServer(this.options(), (request, res) => { this.onRequest(request, res) })
-		this._server.listen(this.port());
-
-		console.log("listening on port " + this.port() + " - connect with https://localhost:8000/index.html")
-	}
-
-	onRequest(request, res) {
-		//response.write("request:\n, this.requestDescription(request))
-
-		console.log("request url:" + request.url)
-		//console.log("  decoded url:" + decodeURI(request.url))
-		//response.write("  path: '" + url.pathname + "'\n" );			
-		const url = new URL("https://hostname" + request.url)
-		const path = ".." + decodeURI(url.pathname)
-
+	getQueryDict () {
 		const queryDict = {}
-		Array.from(url.searchParams.entries()).forEach(entry => queryDict[entry[0]] = entry[1])
+		const entries = Array.from(this.urlObject().searchParams.entries())
+		entries.forEach(entry => { 
+			queryDict[entry[0]] = entry[1]
+		})
 
 		if (Object.keys(queryDict).length > 0) {
 			console.log("  queryDict = ", queryDict)
-			/*
-			const resultJson = app.handleServerRequest(request, result, queryDict)
-			JSON.stringify(resultJson)
-			response.write(data.toString());		
-			//console.log("  sent " + data.length + " bytes")	
-			response.end();
-			return
-			*/
+			return queryDict
 		}
+		return null
+	}
 
+	onFileRequest () {
 		//console.log("  path:" + path)
+		const path = this.path()
 
 		if (path.indexOf("..") !== 0) {
-			response.writeHead(401, {});
-			response.end()
-			console.log("  error: invalid path ", path)
+			this.response().writeHead(401, {});
+			this.response().end()
+			console.log("  error: invalid path '" + path + "'")
 			return
 		}
-		const ext = Path_extension(path)
+
+		// Ensure there is a file extension
+		// need this to determine contentType
+
+		const ext = this.getPathExtension()
 		//console.log("  ext:" + ext)
 
 		if (!ext) {
-			response.writeHead(401, {});
-			response.end()
-			console.log("  error: no file extension ", ext)
+			this.response().writeHead(401, {});
+			this.response().end()
+			console.log("  error: no file extension '" + ext + "'")
 			return
 		}
 
+		// Ensure request is for a valid content type
+		// need this so client will accept our contentType response header
+
+		const contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
+
+		if (!contentType) {
+			this.response().writeHead(401, {})
+			this.response().end()
+			console.log("  error: invalid extension ", ext)
+			return
+		}
+
+		// Ensure path is within sandbox
+
+		/*
+		if (path.indexOf("/") === 0 || path.indexOf("..") !== -1) {
+			this.response().writeHead(401, {});
+			this.response().end()
+			console.log("  error: attempt to access file path outside of sandbox '" + path + "'")
+			return
+		}
+		*/
+
+		// Ensure valid file path
+
+		if (!fs.existsSync(path)) {
+			this.response().writeHead(401, {});
+			this.response().end()
+			console.log("  error: missing file ", path)
+			return
+		}
+
+		// read file and send response
+
+		this.response().writeHead(200, {
+			'Content-Type': contentType,
+			'Access-Control-Allow-Origin': '*',
+		});
+
+		const data = fs.readFileSync(path)
+		//this.response().write(data.toString());		
+		this.response().write(data);
+		//console.log("  sent " + data.length + " bytes")	
+		this.response().end();
+	}
+
+	onQuery() {
 		/*
 		how to handle non-file requests?
 		http://host/path?query
 		ignore path, send decoded query dict to app handleQuery(queryDict) method? 	
 		*/
 
-		const contentType = fileExtensionToMimeTypeDict["." + ext]
+		const resultJson = app.handleServerRequest(this.request(), this.response(), this.queryDict())
+		const jsonString = JSON.stringify(resultJson)
 
-		if (!contentType) {
-			response.writeHead(401, {})
-			response.end()
-			console.log("  error: invalid extension ", ext)
-			return
-		}
-
-		// if it's a file request
-
-		if (!fs.existsSync(path)) {
-			response.writeHead(401, {});
-			response.end()
-			console.log("  error: missing file ", path)
-			return
-		}
-
-		response.writeHead(200, {
-			'Content-Type': contentType,
+		this.response().writeHead(200, {
+			'Content-Type': "application/json",
 			'Access-Control-Allow-Origin': '*',
 		});
-
-		const data = fs.readFileSync(path)
-		//response.write(data.toString());		
-		response.write(data);
-		//console.log("  sent " + data.length + " bytes")	
-		response.end();
+		this.response().write(jsonString);
+		//console.log("  sent json " + jsonString.length + " bytes")	
+		this.response().end();
+		return
 	}
 }
 
+// -------------------------------------------------------------
+
+class StrvctHttpsServer extends Base {
+	constructor() {
+		super()
+		this.newSlot("options", {
+			key: fs.readFileSync('keys/server.key'),
+			cert: fs.readFileSync('keys/server.crt')
+		})
+
+		this.newSlot("server", null);
+		this.newSlot("hostname", "localhost");
+		this.newSlot("port", 8000);
+	}
+
+	run() {
+		/*
+		require("../source/boot/ResourceLoader.js")
+		//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))
+		//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceLoader.js"))
+		*/
+
+		this._server = https.createServer(this.options(), (request, response) => { 
+				this.onRequest(request, response) 
+		})
+		this._server.listen(this.port());
+
+		console.log("listening on port " + this.port() + " - connect with https://localhost:8000/index.html")
+	}
+
+	onRequest(request, response) {
+		const r = new StrvctHttpsServerRequest()
+		r.setServer(this)
+		r.setRequest(request)
+		r.setResponse(response)
+		r.process()
+	}
+}
 
 const server = new StrvctHttpsServer()
 server.run()
