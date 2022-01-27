@@ -195,20 +195,3 @@
     }
 
 }.initThisClass())
-
-/*
-
-let windowEventCount = 0
-window.addEventListener('mouseup', function(event){
-    console.log("window mouseup <<<<<<<<<<<<<<<<<<<<")
-})
-
-window.addEventListener('mouseleave', function(event){
-    console.log("window mouseleave <<<<<<<<<<<<<<<<<<<<")
-})
-
-window.addEventListener('mousemove', function(event){
-    windowEventCount ++
-    console.log("window mousemove <<<<<<<<<<<<<<<<<<<< " + windowEventCount)
-})
-*/

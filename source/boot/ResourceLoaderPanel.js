@@ -373,5 +373,5 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
 }.initThisClass()
 
-window.ResourceLoaderPanel.shared().startWhenReady()
+getGlobalThis().ResourceLoaderPanel.shared().startWhenReady()
 

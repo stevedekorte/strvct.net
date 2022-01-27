@@ -62,6 +62,8 @@ if (!String.prototype.capitalized) {
     )
 }
 
+// --- ResourceLoaderBase ---------------------------------------------------
+
 class ResourceLoaderBase {
 
     static shared() {
@@ -223,7 +225,7 @@ class JSScript extends ResourceLoaderBase {
     }
 }
 
-// --- ResourceLoader -----------------------------------------------
+// --- ResourceLoaderClass -----------------------------------------------
 
 class ResourceLoaderClass extends ResourceLoaderBase {
 
@@ -378,14 +380,11 @@ class ResourceLoaderClass extends ResourceLoaderBase {
     }
 }
 
+// --- ResourceLoaderClass -----------------------------------------------
 
+getGlobalThis().ResourceLoader = ResourceLoaderClass.shared()
 
-
-
-
-window.ResourceLoader = ResourceLoaderClass.shared()
-
-if (window.ResourceLoaderIsEmbedded !== true) {
+if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
     ResourceLoader.pushRelativePaths(["_imports.js"]).run()
     //ResourceLoader.pushRelativePaths(["../../_imports.js"]).run()
 }

@@ -1,205 +1,169 @@
 
-
-// A naive attempt at getting the global `this`. Don’t use this!
-function getGlobalThis() {
-	if (typeof globalThis !== 'undefined') return globalThis;
-	if (typeof self !== 'undefined') return self;
-	if (typeof window !== 'undefined') {
-		window.global = window
-		return window;
-	}
-	if (typeof global !== 'undefined') {
-		global.window = global
-		return global;
-	}
-	// Note: this might still return the wrong result!
-	if (typeof this !== 'undefined') return this;
-	throw new Error('Unable to locate global `this`');
-  };
-  getGlobalThis().getGlobalThis = getGlobalThis;
-
-
-  getGlobalThis().root_require = function (path) {
-	//console.log("root_require " + path)
-	//console.log("__dirname " + __dirname)
-
-	const fs = require('fs');
-
-	const fullPath = __dirname + "/../" + path // back one folder from server
-	console.log("root_require fullPath " + fullPath)
-
-	/*
-	if (fullPath === "/Users/steve/_projects/strvct/server/.././source/library/ideal/categories/Image-ideal.js") {
-		console.log("-- error?")
-	}
-	*/
-
-	if (!fs.existsSync(fullPath)) {
-		console.log("missing " + fullPath)
-	}
-	return require(fullPath)
-}
-
 /*
-function Globals_set(name, value) {
-	if (IsInBrowser()) {
-		window[name] = value 
-	} else {
-		global[name] = value
-	}
+getGlobalThis().root_require = function (path) {
+  //console.log("root_require " + path)
+  //console.log("__dirname " + __dirname)
 
-	return value
+  const fs = require('fs');
+
+  const fullPath = __dirname + "/../" + path // back one folder from server
+  console.log("root_require fullPath " + fullPath)
+
+  if (!fs.existsSync(fullPath)) {
+	  console.log("missing " + fullPath)
+  }
+  return require(fullPath)
 }
-
-function Globals_setup() {
-	getGlobalThis()
-	try {
-		globalThis.x = 1
-		window = globalThis
-		console.log(">>>  window = globalThis")
-	} catch {
-		globalThis = window
-		console.log(">>>  globalThis = window")
-	}
-}
-
-Globals_setup()
 */
 
+require("./getGlobalThis.js")
+
+// ---------------------------------------------------------------------
 
 const https = require('https');
 const fs = require('fs');
 //var vm = require('vm')
 
-/*
-const options = {
-  key: fs.readFileSync('key.pem'),
-  cert: fs.readFileSync('cert.pem')
-};
-*/
+class StrvctHttpsServer {
+	constructor() {
+		this._options = {
+			key: fs.readFileSync('keys/server.key'),
+			cert: fs.readFileSync('keys/server.crt')
+		};
 
-const options = {
-	key: fs.readFileSync('server.key'),
-	cert: fs.readFileSync('server.crt')
-  };
+		this._server = null;
+		this._port = 8000;
+	}
 
-function Path_extension(filepath) {
-     return filepath.split('.').pop();
+	port() {
+		return this._port;
+	}
+
+	options() {
+		return this._options;
+	}
+
+	pathExtensionFor(filepath) {
+		return filepath.split('.').pop();
+	}
+
+	requestDescription(request) {
+		let s = ""
+		const keys = []
+
+		for (k in request) {
+			keys.push(k)
+		}
+		keys.sort()
+
+		keys.forEach((k) => {
+			const v = request[k]
+			const t = typeof (v)
+			if (["string", "number"].contains(t)) {
+				s += "  " + k + ": '" + v + "'\n";
+			} else {
+				s += "  " + k + ": " + t + "\n";
+			}
+		})
+		return s
+	}
+
+
+	run() {
+		require("./mime_extensions.js")
+		console.log("loaded mime extensions")
+		/*
+		require("../source/boot/ResourceLoader.js")
+		//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))
+		//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceLoader.js"))
+		*/
+
+		this._server = https.createServer(this.options(), (request, res) => { this.onRequest(request, res) })
+		this._server.listen(this.port());
+
+		console.log("listening on port " + this.port() + " - connect with https://localhost:8000/index.html")
+	}
+
+	onRequest(request, res) {
+		//response.write("request:\n, this.requestDescription(request))
+
+		console.log("request url:" + request.url)
+		//console.log("  decoded url:" + decodeURI(request.url))
+		//response.write("  path: '" + url.pathname + "'\n" );			
+		const url = new URL("https://hostname" + request.url)
+		const path = ".." + decodeURI(url.pathname)
+
+		const queryDict = {}
+		Array.from(url.searchParams.entries()).forEach(entry => queryDict[entry[0]] = entry[1])
+
+		if (Object.keys(queryDict).length > 0) {
+			console.log("  queryDict = ", queryDict)
+			/*
+			const resultJson = app.handleServerRequest(request, result, queryDict)
+			JSON.stringify(resultJson)
+			response.write(data.toString());		
+			//console.log("  sent " + data.length + " bytes")	
+			response.end();
+			return
+			*/
+		}
+
+		//console.log("  path:" + path)
+
+		if (path.indexOf("..") !== 0) {
+			response.writeHead(401, {});
+			response.end()
+			console.log("  error: invalid path ", path)
+			return
+		}
+		const ext = Path_extension(path)
+		//console.log("  ext:" + ext)
+
+		if (!ext) {
+			response.writeHead(401, {});
+			response.end()
+			console.log("  error: no file extension ", ext)
+			return
+		}
+
+		/*
+		how to handle non-file requests?
+		http://host/path?query
+		ignore path, send decoded query dict to app handleQuery(queryDict) method? 	
+		*/
+
+		const contentType = fileExtensionToMimeTypeDict["." + ext]
+
+		if (!contentType) {
+			response.writeHead(401, {})
+			response.end()
+			console.log("  error: invalid extension ", ext)
+			return
+		}
+
+		// if it's a file request
+
+		if (!fs.existsSync(path)) {
+			response.writeHead(401, {});
+			response.end()
+			console.log("  error: missing file ", path)
+			return
+		}
+
+		response.writeHead(200, {
+			'Content-Type': contentType,
+			'Access-Control-Allow-Origin': '*',
+		});
+
+		const data = fs.readFileSync(path)
+		//response.write(data.toString());		
+		response.write(data);
+		//console.log("  sent " + data.length + " bytes")	
+		response.end();
+	}
 }
 
-require("./mime_extensions.js")
-console.log("loaded mime extensions")
-/*
-require("../source/boot/ResourceLoader.js")
-*/
 
-//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))
-
-//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceLoader.js"))
-
-https.createServer(options, function (request, res) {
-	//res.write("request:\n");
-
-
-	/*
-	const keys = []
-	
-	for (k in request) {
-		keys.push(k)
-	}
-	keys.sort()
-	
-	keys.forEach((k) => {
-		const v = request[k]
-		const t = typeof(v)
-		if (["string", "number"].contains(t) ) {
-			res.write("  " + k + ": '" + v + "'\n" );
-		} else {
-			res.write("  " + k + ": " + t + "\n" );			
-		}
-	})
-	*/
-	
-	//console.log("request:")
-	console.log("request url:" + request.url)
-	//console.log("  decoded url:" + decodeURI(request.url))
-	//res.write("  path: '" + url.pathname + "'\n" );			
-	const url = new URL("https://hostname" + request.url)
-	const path = ".." + decodeURI(url.pathname)
-
-	var queryDict = {}
-	Array.from(url.searchParams.entries()).forEach(entry => queryDict[entry[0]] = entry[1])
-
-	if (Object.keys(queryDict).length > 0) {
-		console.log("  queryDict = ",  queryDict)
-		/*
-		const resultJson = app.handleServerRequest(request, result, queryDict)
-		JSON.stringify(resultJson)
-		res.write(data.toString());		
-		//console.log("  sent " + data.length + " bytes")	
-		res.end();
-		return
-		*/
-	}
-
-	//console.log("  path:" + path)
-
-	if (path.indexOf("..") !== 0) {
-		res.writeHead(401, {});
-		res.end()
-		console.log("  error: invalid path ", path)
-		return 
-	}
-	const ext = Path_extension(path)
-	//console.log("  ext:" + ext)
-
-    if(!ext) {
-		res.writeHead(401, {});
-		res.end()
-		console.log("  error: no file extension ", ext)
-		return 
-	}
-
-	/*
-
-	how to handle non-file requests?
-
-	http://host/path?query
-
-	ignore path, send decoded query dict to app handleQuery(queryDict) method? 
-
-	*/
-
-	var contentType = fileExtensionToMimeTypeDict["." + ext]
-
-	if (!contentType) {
-		res.writeHead(401, {})
-		res.end()
-		console.log("  error: invalid extension ", ext)
-		return 
-	}
-
-	// if it's a file request
-
-    if(!fs.existsSync(path)) {
-		res.writeHead(401, {});
-		res.end()
-		console.log("  error: missing file ", path)
-		return 
-	}
-
-	res.writeHead(200, {
-		'Content-Type': contentType,
-		'Access-Control-Allow-Origin': '*',
-	});
-
-	var data = fs.readFileSync(path)
-	//res.write(data.toString());		
-	res.write(data);		
-	//console.log("  sent " + data.length + " bytes")	
-	res.end();
-}).listen(8000);
-
-console.log("listening on port 8000 - connect with https://localhost:8000/index.html")
-// https://localhost:8000/
+const server = new StrvctHttpsServer()
+server.run()
 

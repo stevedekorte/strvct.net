@@ -922,6 +922,8 @@ if (!String.prototype.capitalized) {
     )
 }
 
+// --- ResourceLoaderBase ---------------------------------------------------
+
 class ResourceLoaderBase {
 
     static shared() {
@@ -1083,7 +1085,7 @@ class JSScript extends ResourceLoaderBase {
     }
 }
 
-// --- ResourceLoader -----------------------------------------------
+// --- ResourceLoaderClass -----------------------------------------------
 
 class ResourceLoaderClass extends ResourceLoaderBase {
 
@@ -1238,14 +1240,11 @@ class ResourceLoaderClass extends ResourceLoaderBase {
     }
 }
 
+// --- ResourceLoaderClass -----------------------------------------------
 
+getGlobalThis().ResourceLoader = ResourceLoaderClass.shared()
 
-
-
-
-window.ResourceLoader = ResourceLoaderClass.shared()
-
-if (window.ResourceLoaderIsEmbedded !== true) {
+if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
     ResourceLoader.pushRelativePaths(["_imports.js"]).run()
     //ResourceLoader.pushRelativePaths(["../../_imports.js"]).run()
 }
@@ -1269,37 +1268,37 @@ ResourceLoader.pushRelativePaths([
 
 
 
+// A single function to access globals that works
+// in the browser (which uses 'window') and on node.js (which uses 'global')
 
-// A naive attempt at getting the global `this`. Don’t use this!
 function getGlobalThis() {
 	if (typeof(globalThis) !== 'undefined') {
-		return globalThis
-	}
-	
+        return globalThis;
+    }
+
 	if (typeof(self) !== 'undefined') {
-		return self
-	}
+        return self;
+    }
 
 	if (typeof(window) !== 'undefined') {
-		window.global = window
-		return window
+		window.global = window;
+		return window;
 	}
 
 	if (typeof(global) !== 'undefined') {
-		global.window = global
-		return global
+		global.window = global;
+		return global;
 	}
 
 	// Note: this might still return the wrong result!
 	if (typeof(this) !== 'undefined') {
-		return this
-	}
-
+        return this;
+    }
+    
 	throw new Error('Unable to locate global `this`');
-  }
-  
-  getGlobalThis().getGlobalThis = getGlobalThis;
+  };
 
+  getGlobalThis().getGlobalThis = getGlobalThis;
 "use strict";
 
 ResourceLoader.pushRelativePaths([
@@ -6056,7 +6055,7 @@ ResourceLoader.pushRelativePaths([
 
 */
 
-window.HookedMap = class HookedMap extends Map {
+(class HookedMap extends Map {
 
     initPrototype () {
         this.setupMutatorHooks()
@@ -6092,7 +6091,7 @@ window.HookedMap = class HookedMap extends Map {
         return this
     }
 
-}.initThisClass() //.selfTest()
+}.initThisClass()) //.selfTest()
 
 
 "use strict";
@@ -37820,24 +37819,6 @@ ResourceLoader.pushDoneCallback( () => {
     }
 
 }.initThisClass())
-
-/*
-
-let windowEventCount = 0
-window.addEventListener('mouseup', function(event){
-    console.log("window mouseup <<<<<<<<<<<<<<<<<<<<")
-})
-
-window.addEventListener('mouseleave', function(event){
-    console.log("window mouseleave <<<<<<<<<<<<<<<<<<<<")
-})
-
-window.addEventListener('mousemove', function(event){
-    windowEventCount ++
-    console.log("window mousemove <<<<<<<<<<<<<<<<<<<< " + windowEventCount)
-})
-*/
-
 
 ResourceLoader.pushRelativePaths([
     "fonts/_imports.js",
