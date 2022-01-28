@@ -8,7 +8,7 @@
 
 */
 
-getGlobalThis().PeerApp = class PeerApp extends App {
+(class PeerApp extends App {
     
     initPrototype () {
         
@@ -134,6 +134,6 @@ getGlobalThis().PeerApp = class PeerApp extends App {
 
     }
     
-}.initThisClass()
+}.initThisClass())
 
 

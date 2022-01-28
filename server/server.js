@@ -24,7 +24,7 @@ class StrvctHttpsServerRequest extends Base {
 
 	process() {
 		//this.response().write("request:\n, this.requestDescription(request))
-		console.log("request url:" + this.request().url)
+		//console.log("request url:" + this.request().url)
 		//console.log("  decoded url:" + decodeURI(this.request().url))
 		//response.write("  path: '" + url.pathname + "'\n" );			
 		this.setUrlObject(this.getUrlObject())

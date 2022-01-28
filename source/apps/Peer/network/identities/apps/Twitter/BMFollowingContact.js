@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMFollowingContact = class BMFollowingContact extends BMStorableNode {
+(class BMFollowingContact extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("isFollowing", false).setShouldStoreSlot(true)
@@ -21,5 +21,5 @@ getGlobalThis().BMFollowingContact = class BMFollowingContact extends BMStorable
         return this.remoteIdentity().title()
     }
     
-}.initThisClass()
+}.initThisClass())
 

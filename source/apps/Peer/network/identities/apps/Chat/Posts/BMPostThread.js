@@ -7,7 +7,7 @@
 */
 
 
-getGlobalThis().BMPostThread = class BMPostThread extends BMAppMessage {
+(class BMPostThread extends BMAppMessage {
     
     initPrototype () {
 
@@ -34,5 +34,5 @@ getGlobalThis().BMPostThread = class BMPostThread extends BMAppMessage {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 

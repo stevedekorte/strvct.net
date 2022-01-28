@@ -9,7 +9,7 @@
 */
 
 
-getGlobalThis().BMRServer = class BMRServer extends BMFieldSetNode {
+(class BMRServer extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("serverConnection", null)
@@ -196,4 +196,4 @@ getGlobalThis().BMRServer = class BMRServer extends BMFieldSetNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -8,7 +8,7 @@
 
 */
 
-getGlobalThis().BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow {
+(class BMPostDraftRowView extends BrowserRow {
     
     initPrototype () {
 
@@ -205,5 +205,5 @@ getGlobalThis().BMPostDraftRowView = class BMPostDraftRowView extends BrowserRow
     }
     */
    
-}.initThisClass()
+}.initThisClass())
 

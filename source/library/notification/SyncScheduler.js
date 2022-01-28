@@ -53,7 +53,7 @@
     	
 */
 
-window.SyncScheduler = class SyncScheduler extends ProtoClass {
+(class SyncScheduler extends ProtoClass {
     initPrototype () {
         this.newSlot("actions", ideal.Dictionary.clone())
         //this.newSlot("syncSets", ideal.Dictionary.clone())
@@ -257,7 +257,7 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
         console.log(this.actionsDescription())
     }
 
-}.initThisClass()
+}.initThisClass())
 
 Object.defineSlots(ProtoClass.prototype, {
 

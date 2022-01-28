@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMChatMessage = class BMChatMessage extends BMAppMessage {
+(class BMChatMessage extends BMAppMessage {
     
     initPrototype () {
         this.newSlot("content", null).setShouldStoreSlot(true)
@@ -54,5 +54,5 @@ getGlobalThis().BMChatMessage = class BMChatMessage extends BMAppMessage {
         return this.senderId().equals(this.localIdentity())
     }
     
-}.initThisClass()
+}.initThisClass())
 

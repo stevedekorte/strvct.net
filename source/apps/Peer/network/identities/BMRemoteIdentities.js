@@ -6,7 +6,7 @@
     
 */
 
-getGlobalThis().BMRemoteIdentities = class BMRemoteIdentities extends BMStorableNode {
+(class BMRemoteIdentities extends BMStorableNode {
     
     initPrototype () {
 
@@ -100,4 +100,4 @@ getGlobalThis().BMRemoteIdentities = class BMRemoteIdentities extends BMStorable
         //	    return "users-white"
     }
     
-}.initThisClass()
+}.initThisClass())

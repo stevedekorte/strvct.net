@@ -6,7 +6,7 @@
     
 */
 
-getGlobalThis().BMPongMessage = class BMPongMessage extends BMMessage {
+(class BMPongMessage extends BMMessage {
     
     initPrototype () {
 
@@ -23,4 +23,4 @@ getGlobalThis().BMPongMessage = class BMPongMessage extends BMMessage {
         }
     }
     
-}.initThisClass()
+}.initThisClass())

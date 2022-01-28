@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMMail = class BMMail extends BMApplet {
+(class BMMail extends BMApplet {
     
     initPrototype () {
         this.newSlot("feed", null)
@@ -51,5 +51,5 @@ getGlobalThis().BMMail = class BMMail extends BMApplet {
         }		
     }
     
-}.initThisClass()
+}.initThisClass())
 

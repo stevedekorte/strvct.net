@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMAddrMessage = class BMAddrMessage extends BMMessage {
+(class BMAddrMessage extends BMMessage {
     
     initPrototype () {
 
@@ -30,5 +30,5 @@ getGlobalThis().BMAddrMessage = class BMAddrMessage extends BMMessage {
         }
     }
     
-}.initThisClass()
+}.initThisClass())
 

@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMFeedPosts = class BMFeedPosts extends BMStorableNode {
+(class BMFeedPosts extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("hasRead", true)
@@ -80,4 +80,4 @@ getGlobalThis().BMFeedPosts = class BMFeedPosts extends BMStorableNode {
         return !this.hasRead()
     }
 
-}.initThisClass()
+}.initThisClass())

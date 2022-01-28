@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMGroupConversation = class BMGroupConversation extends BMApplet {
+(class BMGroupConversation extends BMApplet {
     
     initPrototype () {
         this.newSlot("remoteIdentity", null)
@@ -25,5 +25,5 @@ getGlobalThis().BMGroupConversation = class BMGroupConversation extends BMApplet
         return this.subnodes()
     }
 
-}.initThisClass()
+}.initThisClass())
 

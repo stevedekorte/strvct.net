@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMRegions = class BMRegions extends BMRegion {
+(class BMRegions extends BMRegion {
     
     initPrototype () {
 
@@ -41,5 +41,5 @@ getGlobalThis().BMRegions = class BMRegions extends BMRegion {
     }
     */
    
-}.initThisClass()
+}.initThisClass())
 

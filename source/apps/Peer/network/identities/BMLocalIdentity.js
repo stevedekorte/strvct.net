@@ -11,7 +11,7 @@ var Buffer = bitcore.deps.Buffer;
     
 */
 
-getGlobalThis().BMLocalIdentity = class BMLocalIdentity extends BMKeyPair {
+(class BMLocalIdentity extends BMKeyPair {
     
     initPrototype () {
         this.overrideSlot("name", "").setShouldStoreSlot(true)
@@ -161,4 +161,4 @@ getGlobalThis().BMLocalIdentity = class BMLocalIdentity extends BMKeyPair {
         return null
     }
         
-}.initThisClass()
+}.initThisClass())

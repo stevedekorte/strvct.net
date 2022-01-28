@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMServerConnection = class BMServerConnection extends BMNode {
+(class BMServerConnection extends BMNode {
     
     initPrototype () {
         this.newSlot("server", null)
@@ -424,7 +424,7 @@ getGlobalThis().BMServerConnection = class BMServerConnection extends BMNode {
         return this.remotePeers().count()
     }
     
-}.initThisClass()
+}.initThisClass())
 
 
 

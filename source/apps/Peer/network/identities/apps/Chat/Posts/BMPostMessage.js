@@ -7,10 +7,9 @@
 */
 
 
-getGlobalThis().BMPostMessage = class BMPostMessage extends BMAppMessage {
+(class BMPostMessage extends BMAppMessage {
     
     initPrototype () {
-
         this.newSlot("content", null).setShouldStoreSlot(true)
         this.overrideSlot("hasRead", false).setShouldStoreSlot(true)
         this.newSlot("replyCount", 0).setShouldStoreSlot(true)
@@ -163,5 +162,5 @@ getGlobalThis().BMPostMessage = class BMPostMessage extends BMAppMessage {
         return this._replies
     }
     
-}.initThisClass()
+}.initThisClass())
 

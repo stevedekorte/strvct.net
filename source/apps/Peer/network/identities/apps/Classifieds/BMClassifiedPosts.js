@@ -7,7 +7,7 @@
 */
 
 
-getGlobalThis().BMClassifiedPosts = class BMClassifiedPosts extends BMStorableNode {
+(class BMClassifiedPosts extends BMStorableNode {
     
     initPrototype () {
 
@@ -20,4 +20,4 @@ getGlobalThis().BMClassifiedPosts = class BMClassifiedPosts extends BMStorableNo
         this.setNoteIsSubnodeCount(true)
     }
 
-}.initThisClass()
+}.initThisClass())

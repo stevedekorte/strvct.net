@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMDrafts = class BMDrafts extends BMStorableNode {
+(class BMDrafts extends BMStorableNode {
     
     initPrototype () {
 
@@ -33,4 +33,4 @@ getGlobalThis().BMDrafts = class BMDrafts extends BMStorableNode {
         return newPrivateMsg
     }
     
-}.initThisClass()
+}.initThisClass())

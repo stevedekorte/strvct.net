@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMBlacklistedContacts = class BMBlacklistedContacts extends BMBlacklist {
+(class BMBlacklistedContacts extends BMBlacklist {
     
     initPrototype () {
 
@@ -18,4 +18,4 @@ getGlobalThis().BMBlacklistedContacts = class BMBlacklistedContacts extends BMBl
         this.setTitle("contacts")
     }
 	
-}.initThisClass()
+}.initThisClass())

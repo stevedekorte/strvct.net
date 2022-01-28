@@ -11,7 +11,7 @@ var Buffer = bitcore.deps.Buffer;
     
 */
 
-getGlobalThis().BMKeyPair = class BMKeyPair extends BMStorableNode {
+(class BMKeyPair extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("name", "")
@@ -90,4 +90,4 @@ getGlobalThis().BMKeyPair = class BMKeyPair extends BMStorableNode {
         return anIdentity !== null && this.publicKeyString() === anIdentity.publicKeyString()
     }
 
-}.initThisClass()
+}.initThisClass())

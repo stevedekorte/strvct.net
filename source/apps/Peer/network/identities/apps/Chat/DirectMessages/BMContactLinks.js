@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMContactLinks = class BMContactLinks extends BMStorableNode {
+(class BMContactLinks extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("linkProto", null)
@@ -127,4 +127,4 @@ getGlobalThis().BMContactLinks = class BMContactLinks extends BMStorableNode {
     }
     */
     
-}.initThisClass()
+}.initThisClass())

@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMPost = class BMPost extends BMStorableNode {
+(class BMPost extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("price", null).setShouldStoreSlot(true)
@@ -58,4 +58,4 @@ getGlobalThis().BMPost = class BMPost extends BMStorableNode {
         objMsg.send()
     }
     
-}.initThisClass()
+}.initThisClass())

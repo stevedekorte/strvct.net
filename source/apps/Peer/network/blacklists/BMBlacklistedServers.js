@@ -8,7 +8,7 @@
     
 */
 
-getGlobalThis().BMBlacklistedServers = class BMBlacklistedServers extends BMBlacklist {
+(class BMBlacklistedServers extends BMBlacklist {
     
     initPrototype () {
         this.newSlot("ipsDict", null).setShouldStoreSlot(true)
@@ -20,4 +20,4 @@ getGlobalThis().BMBlacklistedServers = class BMBlacklistedServers extends BMBlac
         this.setTitle("servers")
     }
 	
-}.initThisClass()
+}.initThisClass())

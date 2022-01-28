@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMNetwork = class BMNetwork extends BMFieldSetNode {
+(class BMNetwork extends BMFieldSetNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -302,4 +302,4 @@ getGlobalThis().BMNetwork = class BMNetwork extends BMFieldSetNode {
         return false
     }
 	
-}.initThisClass()
+}.initThisClass())

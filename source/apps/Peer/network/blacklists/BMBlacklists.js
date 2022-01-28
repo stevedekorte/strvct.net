@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMBlacklists = class BMBlacklists extends BMStorableNode {
+(class BMBlacklists extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("servers", null).setShouldStoreSlot(true).setInitProto(BMBlacklistedServers)
@@ -22,4 +22,4 @@ getGlobalThis().BMBlacklists = class BMBlacklists extends BMStorableNode {
         this.setTitle("Blacklists")
     }
 	
-}.initThisClass()
+}.initThisClass())

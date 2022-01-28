@@ -12,7 +12,7 @@
     
 */
 
-getGlobalThis().BMStunServer = class BMStunServer extends BMFieldSetNode { 
+(class BMStunServer extends BMFieldSetNode { 
     
     initPrototype () {
 
@@ -75,4 +75,4 @@ getGlobalThis().BMStunServer = class BMStunServer extends BMFieldSetNode {
         return { url: url }
     }
     
-}.initThisClass()
+}.initThisClass())

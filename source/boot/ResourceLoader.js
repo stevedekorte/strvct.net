@@ -204,7 +204,7 @@ class JSScript extends ResourceLoaderBase {
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
-            console.log("loaded script src:'" + script.src)
+            //console.log("loaded script src:'" + script.src)
             this._doneCallback()
         }
 
@@ -227,7 +227,7 @@ class JSScript extends ResourceLoaderBase {
 
 // --- ResourceLoaderClass -----------------------------------------------
 
-class ResourceLoaderClass extends ResourceLoaderBase {
+window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBase {
 
     init() {
         super.init()

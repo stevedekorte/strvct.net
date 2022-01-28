@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMSent = class BMSent extends BMStorableNode {
+(class BMSent extends BMStorableNode {
     
     initPrototype () {
 
@@ -21,4 +21,4 @@ getGlobalThis().BMSent = class BMSent extends BMStorableNode {
         this.setTitle("sent")
     }
     
-}.initThisClass()
+}.initThisClass())

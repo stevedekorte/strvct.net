@@ -7,7 +7,7 @@
     
 */
 
-getGlobalThis().BMMessages = class BMMessages extends BMStorableNode {
+(class BMMessages extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("changeNote", null)
@@ -265,4 +265,4 @@ getGlobalThis().BMMessages = class BMMessages extends BMStorableNode {
 	
         return this
     }
-}.initThisClass()
+}.initThisClass())

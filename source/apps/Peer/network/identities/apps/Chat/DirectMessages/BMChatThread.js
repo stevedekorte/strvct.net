@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMChatThread = class BMChatThread extends BMStorableNode {
+(class BMChatThread extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("remoteIdentity", null).setShouldStoreSlot(true)
@@ -100,4 +100,4 @@ getGlobalThis().BMChatThread = class BMChatThread extends BMStorableNode {
 	    return this
     }
     
-}.initThisClass()
+}.initThisClass())

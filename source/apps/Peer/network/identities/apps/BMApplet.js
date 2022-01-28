@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMApplet = class BMApplet extends BMStorableNode {
+(class BMApplet extends BMStorableNode {
     
     initPrototype () {
 
@@ -32,5 +32,5 @@ getGlobalThis().BMApplet = class BMApplet extends BMStorableNode {
         return ids
     }
 
-}.initThisClass()
+}.initThisClass())
 

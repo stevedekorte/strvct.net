@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMChannel = class BMChannel extends BMStorableNode {
+(class BMChannel extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("name", "").setShouldStoreSlot(true)
@@ -30,4 +30,4 @@ getGlobalThis().BMChannel = class BMChannel extends BMStorableNode {
 	    return this.privateKey().toPublicKey().toString()
     }
 	
-}.initThisClass()
+}.initThisClass())

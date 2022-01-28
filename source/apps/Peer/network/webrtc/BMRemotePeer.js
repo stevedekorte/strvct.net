@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMRemotePeer = class BMRemotePeer extends BMNode {
+(class BMRemotePeer extends BMNode {
     
     initPrototype () {
         this.newSlot("conn", null)
@@ -306,4 +306,4 @@ getGlobalThis().BMRemotePeer = class BMRemotePeer extends BMNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMBitcoinWallet = class BMBitcoinWallet extends BMApplet {
+(class BMBitcoinWallet extends BMApplet {
     
     initPrototype () {
 
@@ -18,5 +18,5 @@ getGlobalThis().BMBitcoinWallet = class BMBitcoinWallet extends BMApplet {
 
     }
     
-}.initThisClass()
+}.initThisClass())
 

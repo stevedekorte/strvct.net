@@ -20,7 +20,7 @@
 
 */
 
-getGlobalThis().BMPow = class BMPow extends ProtoClass {
+(class BMPow extends ProtoClass {
     
     initPrototype () {
         this.newSlot("targetDifficulty", 15)
@@ -337,4 +337,4 @@ getGlobalThis().BMPow = class BMPow extends ProtoClass {
         this.boundsCheckTargetDifficulty()
     }
 
-}.initThisClass()
+}.initThisClass())

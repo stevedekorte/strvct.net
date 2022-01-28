@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMGetDataMessage = class BMGetDataMessage extends BMMessage {
+(class BMGetDataMessage extends BMMessage {
     
     initPrototype () {
 
@@ -35,4 +35,4 @@ getGlobalThis().BMGetDataMessage = class BMGetDataMessage extends BMMessage {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

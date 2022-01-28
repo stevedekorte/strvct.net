@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMSells = class BMSells extends BMStorableNode {
+(class BMSells extends BMStorableNode {
     
     initPrototype () {
 
@@ -24,4 +24,4 @@ getGlobalThis().BMSells = class BMSells extends BMStorableNode {
         this.setNoteIsSubnodeCount(true)
     }
 
-}.initThisClass()
+}.initThisClass())
