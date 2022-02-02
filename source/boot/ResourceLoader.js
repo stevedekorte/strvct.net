@@ -1,233 +1,7 @@
 "use strict";
 
-/*
 
-    ResourceLoader
-
-    A simple Javascript importing system.
-
-    Several classes are in this one file to avoid JS loading synchronization issues.
-	This runs _import.js which will then reference js and css files and
-    _import.js file in it's subfolders.
-    
-	This makes source reorganizations easier and helps
-	keep folder organization aligned with dependency organization
-	
-	Add an _imports.js file - here's an example. Notice you can reference css files as well.
-	
-	ResourceLoader.pushRelativePaths([
-		"_css.css", 
-		"external_libs/_imports.js",
-		"resources/data/_imports.js",
-		"source/_imports.js",
-		"MyApp.js",
-	])
-	
-	The paths in each _imports.js file are relative to the folder it is found within.
-
-	If you need to call some initialization functions after everything is loaded, 
-	you can call ResourceLoader.pushDoneCallback() in the related folder's _imports.js
-
-		ResourceLoader.pushDoneCallback( () => {
-			sjcl.random.startCollectors();
-		})		
-
-    Note: Should probably clean this up with promises.
-    
-*/
-
-function IsInBrowser() {
-	return (typeof document !== 'undefined')
-}
-
-Object.defineSlot = function(obj, slotName, slotValue) {
-    //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
-    const descriptor = {
-        configurable: true,
-        enumerable: false,
-        value: slotValue,
-        writable: true,
-    }
-    Object.defineProperty(obj, slotName, descriptor)
-    //}
-}
-
-if (!String.prototype.capitalized) {
-    Object.defineSlot(String.prototype, "capitalized", 
-        function () {
-            return this.replace(/\b[a-z]/g, function (match) {
-                return match.toUpperCase();
-            });
-        }
-    )
-}
-
-// --- ResourceLoaderBase ---------------------------------------------------
-
-class ResourceLoaderBase {
-
-    static shared() {
-        if (!this._shared) {
-            this._shared = this.clone()
-        }
-        return this._shared
-    }
-
-    type() {
-        return this.constructor.name
-    }
-
-    static clone() {
-        const obj = new this()
-        obj.init()
-        return obj
-    }
-    
-    init() {
-        // subclasses should override to initialize
-    }
-
-    newSlot(slotName, initialValue) {
-        if (typeof(slotName) !== "string") {
-            throw new Error("slot name must be a string"); 
-        }
-
-        if (initialValue === undefined) { 
-            initialValue = null 
-        };
-
-        const privateName = "_" + slotName;
-        this[privateName] = initialValue;
-
-        if (!this[slotName]) {
-            this[slotName] = function () {
-                return this[privateName];
-            }
-        }
-
-        const setterName = "set" + slotName.capitalized()
-
-        if (!this[setterName]) {
-            this[setterName] = function (newValue) {
-                this[privateName] = newValue;
-                return this;
-            }
-        }
-
-        return this;
-    }
-}
-
-// --- CSSLink ---------------------------------------------------
-
-class CSSLink extends ResourceLoaderBase {
-    init() {
-        super.init()
-        this.newSlot("fullPath", null);
-        // subclasses should override to initialize
-    }
-
-    run () {
-        if (!IsInBrowser()) {
-            return
-        }
-
-        const styles = document.createElement("link")
-        styles.rel = "stylesheet"
-        styles.type = "text/css"
-        styles.media = "screen"
-        styles.href = this.fullPath()
-        document.getElementsByTagName("head")[0].appendChild(styles)
-    }
-}
-
-// --- JSScript ---------------------------------------------------
-
-class JSScript extends ResourceLoaderBase {
-    init() {
-        super.init()
-        this.newSlot("importer", null);
-        this.newSlot("fullPath", null);
-        this.newSlot("doneCallback", null);
-    }
-
-    run () {
-        //console.log("JSScript run " + this.fullPath())
-        
-        if (IsInBrowser()) {
-            //this.runUsingImport() // can't use with file:// due to CORS
-            this.runInBrowser()
-        } else {
-            setTimeout(() => { this.runInNode() }, 1)
-            //setTimeout(() => { this.runUsingImport() }, 1)
-            //this.runInNode()
-        }
-    }
-
-    runInNode () {
-        //const path = __dirname + "/" + this.fullPath()
-        //console.log("__dirname = ", __dirname)
-        //const path = "../../" + this.fullPath()
-        const path = this.fullPath()
-        //console.log("runInNode path: ", path)
-        //root_require(path)
-
-        try {
-            root_require(path)
-            this._doneCallback()
-        } catch (error) {
-            this.importer().setError(error)
-            throw new Error(error.essage + " loading url " + path)
-        }
-
-        //console.log("required path: ", path)
-    }
-
-    runUsingImport () {
-        const path = this.fullPath()
-        
-        console.log("ResourceLoader runInImport " + path)
-
-        import(path).then((module) => {
-            this._doneCallback()
-        }).catch((error) => {
-            this.importer().setError(error)
-            throw new Error("missing url " + this.fullPath())
-        })
-    }
-
-    runInBrowser () {
-        const script = document.createElement("script")
-        //console.log("JSScript loading: '" + this.fullPath() + "'")
-
-        script.src = this.fullPath()
-
-        script.onload = () => {
-            //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
-            //console.log("loaded script src:'" + script.src)
-            this._doneCallback()
-        }
-
-        script.onerror = (error) => {
-            this.importer().setError(error)
-            throw new Error("missing url " + this.fullPath())
-        }
-
-        const parent = document.getElementsByTagName("head")[0] || document.body
-        parent.appendChild(script)
-    }
-
-    basePath () {
-        const parts = this.fullPath().split("/")
-        parts.pop()
-        const basePath = parts.join("/")
-        return basePath
-    }
-}
-
-// --- ResourceLoaderClass -----------------------------------------------
-
-window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBase {
+(class ResourceLoaderClass extends ResourceLoaderBase {
 
     init() {
         super.init()
@@ -243,7 +17,7 @@ window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBas
         //this.newSlot("archive", null)
 
         this.newSlot("resourceFilePaths", [])
-        this._maxUrlCount = 0
+        this.newSlot("maxUrlCount", 0)
     }
 
     resourceFilePathsWithExtensions(extensions) {
@@ -279,7 +53,7 @@ window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBas
 
     pushFilePaths (paths) {
         this.setUrls(paths.concat(this.urls()))
-        this._maxUrlCount += paths.length
+        this.setMaxUrlCount(this.maxUrlCount() + paths.length)
         return this
     }
 
@@ -329,7 +103,7 @@ window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBas
     }
 
     loadUrl (url) {
-        this.urlLoadingCallbacks().forEach(callback => callback(url, this._maxUrlCount))
+        this.urlLoadingCallbacks().forEach(callback => callback(url, this.maxUrlCount()))
 
         const extension = url.split(".").pop().toLowerCase()
         //const fontExtensions = ["ttf", "woff", "woff2"]
@@ -338,12 +112,12 @@ window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBas
 
         if (extension === "js" /*|| extension === "json"*/) {
             this.jsFilesLoaded().push(url)
-            const script = JSScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+            const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
             this.setCurrentScript(script)
             this.currentScript().run()
         } else if (extension === "css") {
             this.cssFilesLoaded().push(url)
-            CSSLink.clone().setFullPath(url).run() // move to CSSResources?
+            CssLink.clone().setFullPath(url).run() // move to CSSResources?
             this.loadNext()
         } else {
             this.resourceFilePaths().push(url)
@@ -378,7 +152,7 @@ window.ResourceLoaderClass = class ResourceLoaderClass extends ResourceLoaderBas
         this.errorCallbacks().forEach(callback => callback(error))
         return this
     }
-}
+}.initThisClass())
 
 // --- ResourceLoaderClass -----------------------------------------------
 

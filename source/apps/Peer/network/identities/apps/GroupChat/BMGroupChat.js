@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMGroupChat = class BMGroupChat extends BMApplet {
+(class BMGroupChat extends BMApplet {
     
     initPrototype () {
         this.newSlot("channels", null)
@@ -25,5 +25,5 @@ getGlobalThis().BMGroupChat = class BMGroupChat extends BMApplet {
         this.addSubnode(this.directMessages())
     }
 
-}.initThisClass()
+}.initThisClass())
 

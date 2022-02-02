@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMMyPosts = class BMMyPosts extends BMStorableNode {
+(class BMMyPosts extends BMStorableNode {
     
     initPrototype () {
 
@@ -45,4 +45,4 @@ getGlobalThis().BMMyPosts = class BMMyPosts extends BMStorableNode {
         //	    return "home3-white"
     }
     
-}.initThisClass()
+}.initThisClass())

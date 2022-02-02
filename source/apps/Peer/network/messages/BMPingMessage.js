@@ -6,7 +6,7 @@
     
 */
 
-getGlobalThis().BMPingMessage = class BMPingMessage extends BMMessage {
+(class BMPingMessage extends BMMessage {
     
     initPrototype () {
 
@@ -23,4 +23,4 @@ getGlobalThis().BMPingMessage = class BMPingMessage extends BMMessage {
         }
     }
 
-}.initThisClass()
+}.initThisClass())

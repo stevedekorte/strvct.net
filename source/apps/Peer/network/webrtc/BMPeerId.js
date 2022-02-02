@@ -8,7 +8,7 @@
 
 */
 
-getGlobalThis().BMPeerId = class BMPeerId extends BMNode {
+(class BMPeerId extends BMNode {
     
     initPrototype () {
         this.newSlot("publicKeyString", null)
@@ -127,7 +127,7 @@ getGlobalThis().BMPeerId = class BMPeerId extends BMNode {
 	},
     */
     
-}.initThisClass()
+}.initThisClass())
 
 
 

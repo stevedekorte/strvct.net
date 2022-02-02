@@ -1,18 +1,45 @@
+"use strict";
 
-// ------------------------------------------------------------------
 
-if (!String.prototype.capitalized) {
-    String.prototype.capitalized = function () {
-        return this.replace(/\b[a-z]/g, function (match) {
-            return match.toUpperCase();
-        });
+
+Object.defineSlot = function(obj, slotName, slotValue) {
+    //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
+    const descriptor = {
+        configurable: true,
+        enumerable: false,
+        value: slotValue,
+        writable: true,
     }
+    Object.defineProperty(obj, slotName, descriptor)
+    //}
 }
 
-// ------------------------------------------------------------------
+if (!String.prototype.capitalized) {
+    Object.defineSlot(String.prototype, "capitalized", 
+        function () {
+            return this.replace(/\b[a-z]/g, function (match) {
+                return match.toUpperCase();
+            });
+        }
+    )
+}
 
-getGlobalThis().Base = class Base {
-    // Base class with helpful methods for cloning and slot creation 
+// --- ResourceLoaderBase ---------------------------------------------------
+
+(class ResourceLoaderBase {
+
+    isInBrowser() {
+        return (typeof(document) !== 'undefined')
+    }
+
+    static type() {
+        return this.name
+    }
+
+    static initThisClass () {
+        window[this.type()] = this
+        return this
+    }
 
     static shared() {
         if (!this._shared) {
@@ -21,11 +48,7 @@ getGlobalThis().Base = class Base {
         return this._shared
     }
 
-    static type () {
-        return this.name
-    }
-
-    type () {
+    type() {
         return this.constructor.name
     }
 
@@ -68,24 +91,4 @@ getGlobalThis().Base = class Base {
 
         return this;
     }
-
-    static initThisClass () {
-        //console.log("this.classType() = ", this.classType())
-        getGlobalThis()[this.type()] = this
-        return this
-    }
-}
-// ------------------------------------------------------------------
-
-
-// ---
-
-getGlobalThis().Iterator_asArray = function (it) {
-    const array = []
-    let result = it.next()
-    while (!result.done) {
-        array.push(result.value)
-        result = it.next()
-    }
-    return array
-}
+}.initThisClass())

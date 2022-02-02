@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMPostMessageRowView = class BMPostMessageRowView extends BrowserRow {
+(class BMPostMessageRowView extends BrowserRow {
     
     initPrototype () {
         this.newSlot("leftView", null)
@@ -250,4 +250,4 @@ getGlobalThis().BMPostMessageRowView = class BMPostMessageRowView extends Browse
         return this
     }
 
-}.initThisClass()
+}.initThisClass())

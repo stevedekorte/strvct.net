@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMAppMessage = class BMAppMessage extends BMFieldSetNode {
+(class BMAppMessage extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("senderId", null).setShouldStoreSlot(true)
@@ -165,4 +165,4 @@ getGlobalThis().BMAppMessage = class BMAppMessage extends BMFieldSetNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

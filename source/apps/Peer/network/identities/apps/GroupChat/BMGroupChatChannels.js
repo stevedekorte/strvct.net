@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMGroupChatChannel = class BMGroupChatChannel extends BMApplet {
+(class BMGroupChatChannel extends BMApplet {
     
     initPrototype () {
         this.newSlot("name", "Untitled")
@@ -26,5 +26,5 @@ getGlobalThis().BMGroupChatChannel = class BMGroupChatChannel extends BMApplet {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 

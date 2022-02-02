@@ -170,7 +170,7 @@
         return this;
     }
 
-    receiveResponse(response) {
+    receiveResponse (response) {
         const pendingMessage = this.pendingMessages()[response.id];
         if (pendingMessage) {
             delete this.pendingMessages()[response.id];
@@ -186,7 +186,7 @@
         }
     }
 
-    receiveSignalFromPeer(data) {
+    receiveSignalFromPeer (data) {
         let remotePeer = this.remotePeers().subnodes().detect(p => p.peerId().toString() === data.fromPeer);
         if (remotePeer === null) {
             remotePeer = this.remotePeers().addRemotePeerForId(data.fromPeer);

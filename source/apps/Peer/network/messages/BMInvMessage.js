@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMInvMessage = class BMInvMessage extends BMMessage {
+(class BMInvMessage extends BMMessage {
     
     initPrototype () {
 
@@ -39,4 +39,4 @@ getGlobalThis().BMInvMessage = class BMInvMessage extends BMMessage {
         }
     }
 
-}.initThisClass()
+}.initThisClass())

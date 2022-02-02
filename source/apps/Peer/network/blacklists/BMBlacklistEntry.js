@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMBlacklistEntry = class BMBlacklistEntry extends BMFieldSetNode {
+(class BMBlacklistEntry extends BMFieldSetNode {
     
     initPrototype () {
 
@@ -34,4 +34,4 @@ getGlobalThis().BMBlacklistEntry = class BMBlacklistEntry extends BMFieldSetNode
         return this.fieldNamed("reason").value()  
     }
 	
-}.initThisClass()
+}.initThisClass())

@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMPostDraft = class BMPostDraft extends BMStorableNode {
+(class BMPostDraft extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("content", null).setShouldStoreSlot(true)
@@ -60,5 +60,5 @@ getGlobalThis().BMPostDraft = class BMPostDraft extends BMStorableNode {
         //this.addMessage(msg)
     }
     
-}.initThisClass()
+}.initThisClass())
 

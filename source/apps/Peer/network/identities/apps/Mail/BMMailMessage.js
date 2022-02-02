@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMMailMessage = class BMMailMessage extends BMAppMessage {
+(class BMMailMessage extends BMAppMessage {
     
     initPrototype () {
     }
@@ -147,4 +147,4 @@ getGlobalThis().BMMailMessage = class BMMailMessage extends BMAppMessage {
         this.delete()
     }
 
-}.initThisClass()
+}.initThisClass())

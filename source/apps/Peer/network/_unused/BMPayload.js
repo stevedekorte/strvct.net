@@ -48,7 +48,7 @@
 
 "use strict";
 
-getGlobalThis().BMPayload = class BMPayload extends ProtoClass {
+(class BMPayload extends ProtoClass {
     
     initPrototype () {
         this.newSlot("data", null)
@@ -251,4 +251,4 @@ getGlobalThis().BMPayload = class BMPayload extends ProtoClass {
         return pow.actualPowDifficulty()
     }
     
-}.initThisClass()
+}.initThisClass())

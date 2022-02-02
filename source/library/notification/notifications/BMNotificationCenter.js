@@ -24,7 +24,7 @@
             BMObservation.setTargetId() and 
             BMNotification.setSender()
         
-        you can pass a typeId string/number for the object. e.g. the ideal.js 
+        you can pass a typeId string/number for the object. e.g. ideal.js 
         assigns each instance a unique typeId.
         
         This should work assuming:

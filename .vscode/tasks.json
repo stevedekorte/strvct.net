@@ -38,25 +38,6 @@
         },
 
         {
-            "label": "Run local Python HTTPS server",
-            "type": "shell",
-            "command": "python",
-            "args": [
-                "simple-https-server.py"
-            ],
-            "options": {
-                "cwd": "${workspaceRoot}",
-                "_runner": "terminal",
-                "isBackground": "true",
-            },
-            "presentation": {
-                "reveal": "silent",
-                "panel": "shared"
-            },
-            "problemMatcher": [],
-        },
-
-        {
             "label": "Run local node HTTPS server",
             "type": "shell",
             "command": "node",
@@ -64,7 +45,7 @@
                 "server.js"
             ],
             "options": {
-                "cwd": "${workspaceRoot}/server",
+                "cwd": "${workspaceRoot}/LocalWebServer",
                 "_runner": "terminal",
                 "isBackground": "true",
             },

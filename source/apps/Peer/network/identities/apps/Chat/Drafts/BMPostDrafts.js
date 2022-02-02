@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMPostDrafts = class BMPostDrafts extends BMStorableNode {
+(class BMPostDrafts extends BMStorableNode {
     
     initPrototype () {
 
@@ -48,4 +48,4 @@ getGlobalThis().BMPostDrafts = class BMPostDrafts extends BMStorableNode {
         return this.subnodesCount() > 0
     }
     
-}.initThisClass()
+}.initThisClass())

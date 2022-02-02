@@ -8,7 +8,7 @@
 
 const bitcore = require("bitcore-lib")
 
-getGlobalThis().BMRemoteIdentity = class BMRemoteIdentity extends BMStorableNode {
+(class BMRemoteIdentity extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("name", "untitled").setShouldStoreSlot(true)
@@ -166,4 +166,4 @@ getGlobalThis().BMRemoteIdentity = class BMRemoteIdentity extends BMStorableNode
         return ids
     }
 
-}.initThisClass()
+}.initThisClass())

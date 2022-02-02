@@ -6,7 +6,7 @@
     
 */
 
-getGlobalThis().BMProfile = class BMProfile extends BMFieldSetNode {
+(class BMProfile extends BMFieldSetNode {
     
     initPrototype () {
         this.newSlot("name", "").setShouldStoreSlot(true)
@@ -70,4 +70,4 @@ getGlobalThis().BMProfile = class BMProfile extends BMFieldSetNode {
         //	    return "user-white"
     }
     
-}.initThisClass()
+}.initThisClass())

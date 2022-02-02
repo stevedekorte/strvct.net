@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMRemotePeers = class BMRemotePeers extends BMNode {
+(class BMRemotePeers extends BMNode {
     
     initPrototype () {
 
@@ -87,4 +87,4 @@ getGlobalThis().BMRemotePeers = class BMRemotePeers extends BMNode {
         return this.subnodesCount()
     }
     
-}.initThisClass()
+}.initThisClass())

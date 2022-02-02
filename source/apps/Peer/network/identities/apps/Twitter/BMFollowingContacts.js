@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMFollowingContacts = class BMFollowingContacts extends BMStorableNode {
+(class BMFollowingContacts extends BMStorableNode {
     
     initPrototype () {
 
@@ -22,5 +22,5 @@ getGlobalThis().BMFollowingContacts = class BMFollowingContacts extends BMStorab
         
     }
     
-}.initThisClass()
+}.initThisClass())
 

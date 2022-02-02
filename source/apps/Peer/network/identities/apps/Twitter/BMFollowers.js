@@ -8,7 +8,7 @@
 */
 
 
-getGlobalThis().BMFollowers = class BMFollowers extends BMStorableNode {
+(class BMFollowers extends BMStorableNode {
     
     initPrototype () {
 
@@ -23,5 +23,5 @@ getGlobalThis().BMFollowers = class BMFollowers extends BMStorableNode {
         
     }
     
-}.initThisClass()
+}.initThisClass())
 

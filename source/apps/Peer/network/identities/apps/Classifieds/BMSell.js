@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMSell = class BMSell extends BMStorableNode {
+(class BMSell extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("post", null)
@@ -37,4 +37,4 @@ getGlobalThis().BMSell = class BMSell extends BMStorableNode {
         //this.post().didUpdateNode()
     }
 
-}.initThisClass()
+}.initThisClass())

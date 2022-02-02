@@ -855,239 +855,13 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
 }.initThisClass()
 
-window.ResourceLoaderPanel.shared().startWhenReady()
+getGlobalThis().ResourceLoaderPanel.shared().startWhenReady()
 
 
 "use strict";
 
-/*
 
-    ResourceLoader
-
-    A simple Javascript importing system.
-
-    Several classes are in this one file to avoid JS loading synchronization issues.
-	This runs _import.js which will then reference js and css files and
-    _import.js file in it's subfolders.
-    
-	This makes source reorganizations easier and helps
-	keep folder organization aligned with dependency organization
-	
-	Add an _imports.js file - here's an example. Notice you can reference css files as well.
-	
-	ResourceLoader.pushRelativePaths([
-		"_css.css", 
-		"external_libs/_imports.js",
-		"resources/data/_imports.js",
-		"source/_imports.js",
-		"MyApp.js",
-	])
-	
-	The paths in each _imports.js file are relative to the folder it is found within.
-
-	If you need to call some initialization functions after everything is loaded, 
-	you can call ResourceLoader.pushDoneCallback() in the related folder's _imports.js
-
-		ResourceLoader.pushDoneCallback( () => {
-			sjcl.random.startCollectors();
-		})		
-
-    Note: Should probably clean this up with promises.
-    
-*/
-
-function IsInBrowser() {
-	return (typeof document !== 'undefined')
-}
-
-Object.defineSlot = function(obj, slotName, slotValue) {
-    //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
-    const descriptor = {
-        configurable: true,
-        enumerable: false,
-        value: slotValue,
-        writable: true,
-    }
-    Object.defineProperty(obj, slotName, descriptor)
-    //}
-}
-
-if (!String.prototype.capitalized) {
-    Object.defineSlot(String.prototype, "capitalized", 
-        function () {
-            return this.replace(/\b[a-z]/g, function (match) {
-                return match.toUpperCase();
-            });
-        }
-    )
-}
-
-// --- ResourceLoaderBase ---------------------------------------------------
-
-class ResourceLoaderBase {
-
-    static shared() {
-        if (!this._shared) {
-            this._shared = this.clone()
-        }
-        return this._shared
-    }
-
-    type() {
-        return this.constructor.name
-    }
-
-    static clone() {
-        const obj = new this()
-        obj.init()
-        return obj
-    }
-    
-    init() {
-        // subclasses should override to initialize
-    }
-
-    newSlot(slotName, initialValue) {
-        if (typeof(slotName) !== "string") {
-            throw new Error("slot name must be a string"); 
-        }
-
-        if (initialValue === undefined) { 
-            initialValue = null 
-        };
-
-        const privateName = "_" + slotName;
-        this[privateName] = initialValue;
-
-        if (!this[slotName]) {
-            this[slotName] = function () {
-                return this[privateName];
-            }
-        }
-
-        const setterName = "set" + slotName.capitalized()
-
-        if (!this[setterName]) {
-            this[setterName] = function (newValue) {
-                this[privateName] = newValue;
-                return this;
-            }
-        }
-
-        return this;
-    }
-}
-
-// --- CSSLink ---------------------------------------------------
-
-class CSSLink extends ResourceLoaderBase {
-    init() {
-        super.init()
-        this.newSlot("fullPath", null);
-        // subclasses should override to initialize
-    }
-
-    run () {
-        if (!IsInBrowser()) {
-            return
-        }
-
-        const styles = document.createElement("link")
-        styles.rel = "stylesheet"
-        styles.type = "text/css"
-        styles.media = "screen"
-        styles.href = this.fullPath()
-        document.getElementsByTagName("head")[0].appendChild(styles)
-    }
-}
-
-// --- JSScript ---------------------------------------------------
-
-class JSScript extends ResourceLoaderBase {
-    init() {
-        super.init()
-        this.newSlot("importer", null);
-        this.newSlot("fullPath", null);
-        this.newSlot("doneCallback", null);
-    }
-
-    run () {
-        //console.log("JSScript run " + this.fullPath())
-        
-        if (IsInBrowser()) {
-            //this.runUsingImport() // can't use with file:// due to CORS
-            this.runInBrowser()
-        } else {
-            setTimeout(() => { this.runInNode() }, 1)
-            //setTimeout(() => { this.runUsingImport() }, 1)
-            //this.runInNode()
-        }
-    }
-
-    runInNode () {
-        //const path = __dirname + "/" + this.fullPath()
-        //console.log("__dirname = ", __dirname)
-        //const path = "../../" + this.fullPath()
-        const path = this.fullPath()
-        //console.log("runInNode path: ", path)
-        //root_require(path)
-
-        try {
-            root_require(path)
-            this._doneCallback()
-        } catch (error) {
-            this.importer().setError(error)
-            throw new Error(error.essage + " loading url " + path)
-        }
-
-        //console.log("required path: ", path)
-    }
-
-    runUsingImport () {
-        const path = this.fullPath()
-        
-        console.log("ResourceLoader runInImport " + path)
-
-        import(path).then((module) => {
-            this._doneCallback()
-        }).catch((error) => {
-            this.importer().setError(error)
-            throw new Error("missing url " + this.fullPath())
-        })
-    }
-
-    runInBrowser () {
-        const script = document.createElement("script")
-        //console.log("JSScript loading: '" + this.fullPath() + "'")
-
-        script.src = this.fullPath()
-
-        script.onload = () => {
-            //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
-            console.log("loaded script src:'" + script.src)
-            this._doneCallback()
-        }
-
-        script.onerror = (error) => {
-            this.importer().setError(error)
-            throw new Error("missing url " + this.fullPath())
-        }
-
-        const parent = document.getElementsByTagName("head")[0] || document.body
-        parent.appendChild(script)
-    }
-
-    basePath () {
-        const parts = this.fullPath().split("/")
-        parts.pop()
-        const basePath = parts.join("/")
-        return basePath
-    }
-}
-
-// --- ResourceLoaderClass -----------------------------------------------
-
-class ResourceLoaderClass extends ResourceLoaderBase {
+(class ResourceLoaderClass extends ResourceLoaderBase {
 
     init() {
         super.init()
@@ -1103,7 +877,7 @@ class ResourceLoaderClass extends ResourceLoaderBase {
         //this.newSlot("archive", null)
 
         this.newSlot("resourceFilePaths", [])
-        this._maxUrlCount = 0
+        this.newSlot("maxUrlCount", 0)
     }
 
     resourceFilePathsWithExtensions(extensions) {
@@ -1139,7 +913,7 @@ class ResourceLoaderClass extends ResourceLoaderBase {
 
     pushFilePaths (paths) {
         this.setUrls(paths.concat(this.urls()))
-        this._maxUrlCount += paths.length
+        this.setMaxUrlCount(this.maxUrlCount() + paths.length)
         return this
     }
 
@@ -1189,7 +963,7 @@ class ResourceLoaderClass extends ResourceLoaderBase {
     }
 
     loadUrl (url) {
-        this.urlLoadingCallbacks().forEach(callback => callback(url, this._maxUrlCount))
+        this.urlLoadingCallbacks().forEach(callback => callback(url, this.maxUrlCount()))
 
         const extension = url.split(".").pop().toLowerCase()
         //const fontExtensions = ["ttf", "woff", "woff2"]
@@ -1198,12 +972,12 @@ class ResourceLoaderClass extends ResourceLoaderBase {
 
         if (extension === "js" /*|| extension === "json"*/) {
             this.jsFilesLoaded().push(url)
-            const script = JSScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+            const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
             this.setCurrentScript(script)
             this.currentScript().run()
         } else if (extension === "css") {
             this.cssFilesLoaded().push(url)
-            CSSLink.clone().setFullPath(url).run() // move to CSSResources?
+            CssLink.clone().setFullPath(url).run() // move to CSSResources?
             this.loadNext()
         } else {
             this.resourceFilePaths().push(url)
@@ -1238,7 +1012,7 @@ class ResourceLoaderClass extends ResourceLoaderBase {
         this.errorCallbacks().forEach(callback => callback(error))
         return this
     }
-}
+}.initThisClass())
 
 // --- ResourceLoaderClass -----------------------------------------------
 
@@ -1252,7 +1026,7 @@ if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
 ResourceLoader.pushRelativePaths([
     "_css.css",
     "_fonts.css",
-    //"external_libs/_imports.js", // import these from apps that need them
+    //"external-libs/_imports.js", // import these from apps that need them
     //"resources/data/_imports.js",
     "source/_imports.js",
     "resources/_imports.js",
@@ -1261,44 +1035,11 @@ ResourceLoader.pushRelativePaths([
 "use strict";
 
 ResourceLoader.pushRelativePaths([
-    "getGlobalThis.js",
     "library/_imports.js",
     "apps/_imports.js",
 ])
 
 
-
-// A single function to access globals that works
-// in the browser (which uses 'window') and on node.js (which uses 'global')
-
-function getGlobalThis() {
-	if (typeof(globalThis) !== 'undefined') {
-        return globalThis;
-    }
-
-	if (typeof(self) !== 'undefined') {
-        return self;
-    }
-
-	if (typeof(window) !== 'undefined') {
-		window.global = window;
-		return window;
-	}
-
-	if (typeof(global) !== 'undefined') {
-		global.window = global;
-		return global;
-	}
-
-	// Note: this might still return the wrong result!
-	if (typeof(this) !== 'undefined') {
-        return this;
-    }
-    
-	throw new Error('Unable to locate global `this`');
-  };
-
-  getGlobalThis().getGlobalThis = getGlobalThis;
 "use strict";
 
 ResourceLoader.pushRelativePaths([
@@ -7476,7 +7217,7 @@ ResourceLoader.pushRelativePaths([
     	
 */
 
-window.SyncScheduler = class SyncScheduler extends ProtoClass {
+(class SyncScheduler extends ProtoClass {
     initPrototype () {
         this.newSlot("actions", ideal.Dictionary.clone())
         //this.newSlot("syncSets", ideal.Dictionary.clone())
@@ -7680,7 +7421,7 @@ window.SyncScheduler = class SyncScheduler extends ProtoClass {
         console.log(this.actionsDescription())
     }
 
-}.initThisClass()
+}.initThisClass())
 
 Object.defineSlots(ProtoClass.prototype, {
 
@@ -7805,7 +7546,7 @@ ResourceLoader.pushRelativePaths([
             BMObservation.setTargetId() and 
             BMNotification.setSender()
         
-        you can pass a typeId string/number for the object. e.g. the ideal.js 
+        you can pass a typeId string/number for the object. e.g. ideal.js 
         assigns each instance a unique typeId.
         
         This should work assuming:
@@ -35762,34 +35503,6 @@ ResourceLoader.pushRelativePaths([
     showVersion () {
         console.log("Application '" + this.name() + "' version " + this.versionsString())
     }
-
-    // --- server worker ---
-
-    /*
-    registerServiceWorker () {
-        // doesn't work
-        // "srsourcec/ServiceWorker.js"
-        // "/source/ServiceWorker.js"
-        // "../ServiceWorker.js"
-        const path = "ServiceWorker.js"
-        console.log("registering service worker '" + path + "'")
-        const promise = navigator.serviceWorker.register(path); //{ scope: ""../"}
-
-        promise.then(function (registration) {
-            console.log("Service worker successfully registered on scope", registration.scope);
-        }).catch(function (error) {
-            console.log("Service worker failed to register:\n",
-                "  typeof(error): ", typeof(error), "\n", 
-                "  message:", error.message, "\n",
-                "  fileName:", error.fileName, "\n",
-                "  lineNumber:", error.lineNumber,  "\n",
-                "  stack:", error.stack,  "\n"
-                //"  JSON.stringify(error):", JSON.stringify(error),  "\n",
-                //"  toString:", error.toString()
-            );
-        });
-    }
-    */
 
     setupTheme () {
         const doc = DocumentBody.shared()

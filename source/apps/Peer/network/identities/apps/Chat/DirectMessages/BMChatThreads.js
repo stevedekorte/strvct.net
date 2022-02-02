@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMChatThreads = class BMChatThreads extends BMContactLinks {
+(class BMChatThreads extends BMContactLinks {
     
     initPrototype () {
 
@@ -27,4 +27,4 @@ getGlobalThis().BMChatThreads = class BMChatThreads extends BMContactLinks {
 	    //return "mail-white"
     }
     
-}.initThisClass()
+}.initThisClass())

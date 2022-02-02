@@ -104,7 +104,7 @@
             "request": "launch",
             "name": "Launch node server",
             "cwd": "${workspaceFolder}/server",
-            "program": "${workspaceFolder}/server/server.js"
+            "program": "${workspaceFolder}/LocalWebServer/server.js"
         },
     ]
 }

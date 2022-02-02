@@ -7,7 +7,7 @@
     
 */
 
-getGlobalThis().BMLocalIdentities = class BMLocalIdentities extends BMStorableNode {
+(class BMLocalIdentities extends BMStorableNode {
     
     initPrototype () {
 
@@ -74,4 +74,4 @@ getGlobalThis().BMLocalIdentities = class BMLocalIdentities extends BMStorableNo
         return result
     }
     
-}.initThisClass()
+}.initThisClass())

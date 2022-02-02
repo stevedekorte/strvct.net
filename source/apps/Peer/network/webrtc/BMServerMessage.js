@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMServerMessage = class BMServerMessage extends ProtoClass {
+(class BMServerMessage extends ProtoClass {
 
     static incrementInstanceCount () {
         if (Type.isUndefined(this._instanceCount)) {
@@ -53,4 +53,4 @@ getGlobalThis().BMServerMessage = class BMServerMessage extends ProtoClass {
         this._reject(reason);
     }
     
-}.initThisClass()
+}.initThisClass())

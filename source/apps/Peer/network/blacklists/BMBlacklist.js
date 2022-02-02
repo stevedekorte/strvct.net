@@ -6,7 +6,7 @@
     
 */
 
-getGlobalThis().BMBlacklist = class BMBlacklist extends BMStorableNode {
+(class BMBlacklist extends BMStorableNode {
     
     initPrototype () {
 
@@ -22,4 +22,4 @@ getGlobalThis().BMBlacklist = class BMBlacklist extends BMStorableNode {
         this.setNoteIsSubnodeCount(true)
     }
 	
-}.initThisClass()
+}.initThisClass())

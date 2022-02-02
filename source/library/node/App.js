@@ -165,34 +165,6 @@
         console.log("Application '" + this.name() + "' version " + this.versionsString())
     }
 
-    // --- server worker ---
-
-    /*
-    registerServiceWorker () {
-        // doesn't work
-        // "srsourcec/ServiceWorker.js"
-        // "/source/ServiceWorker.js"
-        // "../ServiceWorker.js"
-        const path = "ServiceWorker.js"
-        console.log("registering service worker '" + path + "'")
-        const promise = navigator.serviceWorker.register(path); //{ scope: ""../"}
-
-        promise.then(function (registration) {
-            console.log("Service worker successfully registered on scope", registration.scope);
-        }).catch(function (error) {
-            console.log("Service worker failed to register:\n",
-                "  typeof(error): ", typeof(error), "\n", 
-                "  message:", error.message, "\n",
-                "  fileName:", error.fileName, "\n",
-                "  lineNumber:", error.lineNumber,  "\n",
-                "  stack:", error.stack,  "\n"
-                //"  JSON.stringify(error):", JSON.stringify(error),  "\n",
-                //"  toString:", error.toString()
-            );
-        });
-    }
-    */
-
     setupTheme () {
         const doc = DocumentBody.shared()
         doc.setColor("#f4f4ec")

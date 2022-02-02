@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMConnection = class BMConnection extends BMNode {
+(class BMConnection extends BMNode {
     
     initPrototype () {
         this.newSlot("connection", null)
@@ -140,7 +140,7 @@ getGlobalThis().BMConnection = class BMConnection extends BMNode {
         return false
     }
 	
-}.initThisClass()
+}.initThisClass())
 
 //getGlobalThis().BMConnection.shared() // setup shared instance, needed?
 

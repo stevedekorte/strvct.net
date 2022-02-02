@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMInbox = class BMInbox extends BMStorableNode {
+(class BMInbox extends BMStorableNode {
     
     initPrototype () {
 
@@ -21,4 +21,4 @@ getGlobalThis().BMInbox = class BMInbox extends BMStorableNode {
         this.setTitle("inbox")
     }
     
-}.initThisClass()
+}.initThisClass())

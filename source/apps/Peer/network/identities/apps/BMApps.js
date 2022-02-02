@@ -8,7 +8,7 @@
 
 */
 
-getGlobalThis().BMApps = class BMApps extends BMStorableNode {
+(class BMApps extends BMStorableNode {
     
     initPrototype () {
 
@@ -74,5 +74,5 @@ getGlobalThis().BMApps = class BMApps extends BMStorableNode {
         this.subnodes().forEach(app => app.handleAppMsg(aMessage) )
     }
     
-}.initThisClass()
+}.initThisClass())
 

@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMRServers = class BMRServers extends BMStorableNode {
+(class BMRServers extends BMStorableNode {
     
     initPrototype () {
         this.newSlot("maxConnections", 8)
@@ -177,4 +177,4 @@ getGlobalThis().BMRServers = class BMRServers extends BMStorableNode {
         return this
     }
     
-}.initThisClass()
+}.initThisClass())

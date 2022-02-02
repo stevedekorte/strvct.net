@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMTwitterMessage = class BMTwitterMessage extends BMAppMessage {
+(class BMTwitterMessage extends BMAppMessage {
     
     initPrototype () {
 
@@ -22,5 +22,5 @@ getGlobalThis().BMTwitterMessage = class BMTwitterMessage extends BMAppMessage {
         
     }
     
-}.initThisClass()
+}.initThisClass())
 

@@ -10,7 +10,7 @@
 */
 
 
-getGlobalThis().BMRegion = class BMRegion extends BMNode {
+(class BMRegion extends BMNode {
     
     initPrototype () {
         this.newSlot("lazyChildrenDict", null)
@@ -131,6 +131,6 @@ getGlobalThis().BMRegion = class BMRegion extends BMNode {
         return null
     }
     
-}.initThisClass()
+}.initThisClass())
 
 //getGlobalThis().Region = BMRegion

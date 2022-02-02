@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMChat = class BMChat extends BMApplet {
+(class BMChat extends BMApplet {
     
     initPrototype () {
         this.newSlot("feedPosts", null).setShouldStoreSlot(true).setInitProto(BMFeedPosts)
@@ -94,5 +94,5 @@ getGlobalThis().BMChat = class BMChat extends BMApplet {
     	}
     }
 		
-}.initThisClass()
+}.initThisClass())
 

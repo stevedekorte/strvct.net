@@ -7,7 +7,7 @@
     
 */
 
-getGlobalThis().BMBlacklistedPeers = class BMBlacklistedPeers extends BMBlacklist {
+(class BMBlacklistedPeers extends BMBlacklist {
     
     initPrototype () {
 
@@ -19,4 +19,4 @@ getGlobalThis().BMBlacklistedPeers = class BMBlacklistedPeers extends BMBlacklis
         this.setTitle("peers")
     }
 	
-}.initThisClass()
+}.initThisClass())

@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMClassifieds = class BMClassifieds extends BMApplet {
+(class BMClassifieds extends BMApplet {
     
     initPrototype () {
         this.newSlot("regions", null)
@@ -25,5 +25,5 @@ getGlobalThis().BMClassifieds = class BMClassifieds extends BMApplet {
         this.addSubnode(this.sells())
     }
 
-}.initThisClass()
+}.initThisClass())
 

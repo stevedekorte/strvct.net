@@ -7,7 +7,7 @@
 
 */
 
-getGlobalThis().BMGroupChatRoom = class BMGroupChatRoom extends BMApplet {
+(class BMGroupChatRoom extends BMApplet {
     
     initPrototype () {
         this.newSlot("name", "Untitled")
@@ -33,5 +33,5 @@ getGlobalThis().BMGroupChatRoom = class BMGroupChatRoom extends BMApplet {
         return this
     }
 
-}.initThisClass()
+}.initThisClass())
 

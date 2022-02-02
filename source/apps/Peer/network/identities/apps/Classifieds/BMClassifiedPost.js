@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode {
+(class BMClassifiedPost extends BMFieldSetNode {
     
     initPrototype () {
         const thirtyDaysInMilliseconds = 30 * 24 * 60 * 60 * 1000
@@ -363,4 +363,4 @@ getGlobalThis().BMClassifiedPost = class BMClassifiedPost extends BMFieldSetNode
         this.setPrice(Math.floor(Math.random()*100)/2)
     }
 
-}.initThisClass()
+}.initThisClass())

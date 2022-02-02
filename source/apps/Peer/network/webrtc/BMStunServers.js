@@ -6,7 +6,7 @@
     
 */
 
-getGlobalThis().BMStunServers = class BMStunServers extends BMStorableNode {
+(class BMStunServers extends BMStorableNode {
     
     initPrototype () {
 
@@ -90,4 +90,4 @@ getGlobalThis().BMStunServers = class BMStunServers extends BMStorableNode {
         return dict
     }
     
-}.initThisClass()
+}.initThisClass())

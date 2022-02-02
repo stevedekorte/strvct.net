@@ -6,7 +6,7 @@
 
 */
 
-getGlobalThis().BMChatMessageRowView = class BMChatMessageRowView extends BrowserTitledRow {
+(class BMChatMessageRowView extends BrowserTitledRow {
     
     initPrototype () {
 
@@ -102,5 +102,5 @@ getGlobalThis().BMChatMessageRowView = class BMChatMessageRowView extends Browse
     }
     */
 
-}.initThisClass()
+}.initThisClass())
 
