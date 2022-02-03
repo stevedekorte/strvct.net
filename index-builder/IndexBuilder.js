@@ -149,6 +149,10 @@ class IndexBuilder {
 
     allScriptPaths() {
         const scriptPaths =  []
+        scriptPaths.push("../source/boot/getGlobalThis.js")
+        scriptPaths.push("../source/boot/Base.js")
+        scriptPaths.push("../source/boot/CssLink.js")
+        scriptPaths.push("../source/boot/JsScript.js")
         scriptPaths.push("../source/boot/ResourceLoaderPanel.js")
         scriptPaths.push("../source/boot/ResourceLoader.js")
         scriptPaths.appendItems(this.filePaths())
@@ -160,7 +164,7 @@ class IndexBuilder {
         console.log(this.filePaths().join("\n"))
 
         const css      = this.stringForPaths(this.cssPaths())
-        const script   = this.stringForPaths(this.allScriptPaths()) + "\nResourceLoader.setResourceFilePaths(" + JSON.stringify(this._resourceFilePaths) + ");\n"
+        const script   = this.stringForPaths(this.allScriptPaths()) + "\nResourceLoader.shared().setResourceFilePaths(" + JSON.stringify(this._resourceFilePaths) + ");\n"
         let index = this.stringForPaths(["template.html"])
         index = index.replaceAll("/* INSERT CSS HERE */", css)
         index = index.replaceAll("/* INSERT SCRIPT HERE */", script)

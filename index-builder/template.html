@@ -22,7 +22,7 @@ window.ResourceLoaderIsEmbedded = true
       /* INSERT SCRIPT HERE */
 
       window.onload = function() { 
-        setTimeout(() => { ResourceLoader.done() }, 200) // hack for startWhenReady for loading order issue        
+        setTimeout(() => { ResourceLoader.shared().done() }, 200) // hack for startWhenReady for loading order issue        
       }
 
     </script>

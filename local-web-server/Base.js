@@ -14,13 +14,18 @@ if (!String.prototype.capitalized) {
 (class Base {
     // Base class with helpful methods for cloning and slot creation 
 
+    constructor () {
+        this.init()
+        debugger
+    }
+
     static initThisClass () {
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
             //this.prototype.initPrototype.apply(this.prototype)
             this.prototype.initPrototype()
         }
-        
+
         getGlobalThis()[this.type()] = this
         return this
     }
@@ -42,7 +47,7 @@ if (!String.prototype.capitalized) {
 
     static clone() {
         const obj = new this()
-        obj.init()
+        //obj.init()
         return obj
     }
     

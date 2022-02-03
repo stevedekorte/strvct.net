@@ -36,6 +36,7 @@
     }
 
     init () {
+        super.init()
         this.setupCallbacks()
         this.setupElements()
     }
@@ -373,6 +374,11 @@
         this.stopListening()
     }
 
+    registerForWindowLoad () {
+        window.addEventListener("load", () => { this.open() });
+        return this
+    }
+
 }.initThisClass())
 
-ResourceLoaderPanel.shared().open() // window.onload event has already occurred to stat boot
+ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index page
