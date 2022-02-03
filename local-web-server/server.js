@@ -215,7 +215,15 @@ class StrvctHttpsServer extends Base {
 		r.setServer(this)
 		r.setRequest(request)
 		r.setResponse(response)
+		//this.wait(10);
 		r.process()
+	}
+
+	wait(ms) {
+		console.log("wait(" + ms + ")");
+		const start = Date.now();
+		while (Date.now() - start < ms) {
+		}
 	}
 }
 

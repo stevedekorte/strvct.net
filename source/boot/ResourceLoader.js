@@ -18,8 +18,8 @@
         this.newSlot("currentScript", null);
         this.newSlot("urls", []);
         this.newSlot("doneCallbacks", []),
-        this.newSlot("urlLoadingCallbacks", []);
-        this.newSlot("errorCallbacks", []);
+        //this.newSlot("urlLoadingCallbacks", []);
+        //this.newSlot("errorCallbacks", []);
         
         this.newSlot("jsFilesLoaded", []) // these may be embedded in index.html
         this.newSlot("cssFilesLoaded", [])  // these may be embedded in index.html
@@ -72,6 +72,7 @@
         return this
     }
 
+    /*
     pushUrlLoadingCallback (aCallback) {
         this.urlLoadingCallbacks().push(aCallback)
         return this
@@ -91,6 +92,7 @@
         this.urlLoadingCallbacks().remove(aCallback)
         return this
     }
+    */
 
     // --- run ---
 
@@ -128,7 +130,7 @@
     }
 
     loadUrl (url) {
-        this.urlLoadingCallbacks().forEach(callback => callback(url, this.maxUrlCount()))
+        //this.urlLoadingCallbacks().forEach(callback => callback(url, this.maxUrlCount()))
 
         if (this.isInBrowser()) {
             const detail = { url: url, maxUrlCount: this.maxUrlCount() }
@@ -180,7 +182,7 @@
     }
 
     setError (error) {
-        this.errorCallbacks().forEach(callback => callback(error))
+        //this.errorCallbacks().forEach(callback => callback(error))
         this.postEvent("resourceLoaderError", { error: error }) 
         return this
     }

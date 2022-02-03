@@ -136,7 +136,6 @@
 
         //Documentation.shared().show()
         //this.registerServiceWorker() // not working yet
-        window.ResourceLoaderPanel.shared().stop() 
     }
 	
     documentBodyView () {
