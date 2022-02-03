@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMBlob.js",
     "BMBlobs.js",
 ])

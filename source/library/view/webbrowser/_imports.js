@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "WebBrowserScreen.js",
     "WebBrowserWindow.js",
     "WebBrowserNotifications.js",

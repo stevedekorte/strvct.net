@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "HookedArray.js",
     "HookedSet.js",
     "HookedMap.js",

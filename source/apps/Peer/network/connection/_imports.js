@@ -1,5 +1,5 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMConnection.js",
 ])

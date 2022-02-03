@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Dictionary.js",
     "AtomicDictionary.js",
 ]);

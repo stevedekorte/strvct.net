@@ -1,5 +1,5 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "bit-buffer.js"
 ]);
 

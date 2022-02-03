@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMFontResources.js",
     "BMFontFamily.js",
     "BMFont.js",

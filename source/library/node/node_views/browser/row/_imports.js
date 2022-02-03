@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BrowserRow.js",
     "BrowserTitledRow.js",
     "BrowserRowNote.js",

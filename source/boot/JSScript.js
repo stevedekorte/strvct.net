@@ -1,6 +1,6 @@
 "use strict";
 
-(class JsScript extends ResourceLoaderBase {
+(class JsScript extends Base {
     init() {
         super.init()
         this.newSlot("importer", null);

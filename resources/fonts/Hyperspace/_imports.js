@@ -1,5 +1,5 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Hyperspace.ttf",
     "Hyperspace Bold.ttf",
     "Hyperspace Bold Italic.ttf",

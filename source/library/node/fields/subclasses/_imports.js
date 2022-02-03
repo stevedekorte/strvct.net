@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMBooleanField.js",
     "BMColorField.js",
     "BMIdentityField.js",

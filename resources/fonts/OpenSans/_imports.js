@@ -1,5 +1,5 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "OpenSans Bold.ttf",
     "OpenSans Bold Italic.ttf",
     "OpenSans Condensed Bold.ttf",

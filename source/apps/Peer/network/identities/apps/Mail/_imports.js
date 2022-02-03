@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"BMDrafts.js",
     "BMInbox.js",
     "BMSent.js",

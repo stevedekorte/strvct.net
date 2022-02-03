@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMSummaryNode.js",
     "BMFolderNode.js",
     "BMImageNode.js",

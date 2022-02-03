@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "IndexedDBFolder.js",
     "IndexedDBTx.js",
     "PersistentAtomicDictionary.js",

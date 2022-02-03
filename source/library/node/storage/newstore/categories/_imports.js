@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"Object-puuid.js",
     "ProtoClass-store.js",
     "BMNode-store.js",

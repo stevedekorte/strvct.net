@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "categories/_imports.js",
     "ObjectPool.js",
     "PersistentObjectPool.js",

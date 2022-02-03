@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "devices/_imports.js",
     "listeners/_imports.js",
     "gestures/_imports.js"

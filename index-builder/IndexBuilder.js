@@ -242,7 +242,7 @@ class SourceFolder {
     open() {
         const dirPath = this.fullPath().before("_imports.js")
         const data = fs.readFileSync(this.fullPath(),  "utf8");
-        const s = data.between("ResourceLoader.pushRelativePaths(", ")")
+        const s = data.between("resourceLoader.pushRelativePaths(", ")")
         const rPaths = eval(s)
         const builder = this.indexBuilder()
 

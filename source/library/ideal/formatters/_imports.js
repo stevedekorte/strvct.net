@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "ByteFormatter.js",
     "TimePeriodFormatter.js",
     "TimeFormatter.js"

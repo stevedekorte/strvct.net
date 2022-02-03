@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "DomTransition.js",
     "DomTransitions.js",
     "DomBorderRadius.js",

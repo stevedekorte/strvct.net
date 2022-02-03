@@ -1,6 +1,6 @@
 "use strict";
 
-(class CssLink extends ResourceLoaderBase {
+(class CssLink extends Base {
     init() {
         super.init()
         this.newSlot("fullPath", null);

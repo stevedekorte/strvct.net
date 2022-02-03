@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMTimeNode.js",
     "BMHourNode.js",
     "BMMinuteNode.js",

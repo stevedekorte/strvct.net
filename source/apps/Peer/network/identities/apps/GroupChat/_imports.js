@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMGroupChat.js",
     "BMGroupChatRoom.js",
     "BMGroupChatChannel.js",

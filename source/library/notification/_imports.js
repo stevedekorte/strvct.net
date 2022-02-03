@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "SyncAction.js",
     "SyncScheduler.js",
     "notifications/_imports.js",

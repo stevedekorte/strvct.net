@@ -3,7 +3,7 @@
 //"README.md",
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "PublicSans Black.woff2",
     "PublicSans Black Italic.woff2",
     "PublicSans Bold.woff2",

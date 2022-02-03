@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMStorableNode.js",
     "BMStoredDatedSetNode.js",
     "newstore/_imports.js",

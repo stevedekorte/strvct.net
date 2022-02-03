@@ -1,4 +1,4 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "ShareTechMono Regular.ttf",
 ]);

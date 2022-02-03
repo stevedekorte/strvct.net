@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Array-store.js",
     "ArrayBuffer-store.js",
     "Date-store.js",

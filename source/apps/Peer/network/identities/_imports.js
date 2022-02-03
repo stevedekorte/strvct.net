@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "apps/_imports.js",
     "BMProfile.js",
     "BMRemoteIdentities.js",

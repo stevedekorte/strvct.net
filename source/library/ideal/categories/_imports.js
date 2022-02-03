@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Mirror.js",
     "Type-ideal.js",
     "Object-ideal.js",

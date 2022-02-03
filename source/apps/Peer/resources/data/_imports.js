@@ -1,3 +1,3 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
 ]);

@@ -1,6 +1,5 @@
-"use strict";
 
-
+// ------------------------------------------------------------------
 
 Object.defineSlot = function(obj, slotName, slotValue) {
     //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
@@ -23,24 +22,15 @@ if (!String.prototype.capitalized) {
         }
     )
 }
+// ------------------------------------------------------------------
 
-// --- ResourceLoaderBase ---------------------------------------------------
-
-(class ResourceLoaderBase {
+(class Base {
+    // Base class with helpful methods for cloning and slot creation 
 
     isInBrowser() {
         return (typeof(document) !== 'undefined')
     }
-
-    static type() {
-        return this.name
-    }
-
-    static initThisClass () {
-        window[this.type()] = this
-        return this
-    }
-
+    
     static shared() {
         if (!this._shared) {
             this._shared = this.clone()
@@ -48,7 +38,17 @@ if (!String.prototype.capitalized) {
         return this._shared
     }
 
-    type() {
+    static initThisClass () {
+        //console.log("this.classType() = ", this.classType())
+        getGlobalThis()[this.type()] = this
+        return this
+    }
+
+    static type () {
+        return this.name
+    }
+
+    type () {
         return this.constructor.name
     }
 
@@ -91,4 +91,7 @@ if (!String.prototype.capitalized) {
 
         return this;
     }
+
+
 }.initThisClass())
+

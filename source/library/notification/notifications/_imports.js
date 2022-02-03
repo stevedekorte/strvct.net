@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMNotification.js",
     "BMNotificationCenter.js",
     "BMObservation.js",

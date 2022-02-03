@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     "BMFieldRowView.js",
     "BMActionNodeRowView.js",

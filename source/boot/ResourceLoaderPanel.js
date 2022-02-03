@@ -25,32 +25,11 @@
 */
 
 
-window.ResourceLoaderPanel = class ResourceLoaderPanel {
-
-    static initThisClass () {
-        return this
-    }
-
-    static shared () {
-        if (!this._shared) {
-            this._shared = ResourceLoaderPanel.clone()
-        }
-        return this._shared
-    }
-
-    type() {
-        return this.constructor.name
-    }
-
-    static clone() {
-        const obj = new this()
-        obj.init()
-        return obj
-    }
+(class ResourceLoaderPanel extends Base {
     
     init() {
-        this._error = null;
-        this._loadCount = 0
+        this.newSlot("error", null)
+        this.newSlot("loadCount", 0)
     }
     
     // --- elements ------------------------------------------------
@@ -92,29 +71,36 @@ window.ResourceLoaderPanel = class ResourceLoaderPanel {
     }
 
     startWhenReady () {
+        /*
         //console.log("ResourceLoaderPanel.startWhenReady()")
         if (this.canStart()) {
             this.start()
         } else {
             setTimeout(() => { this.startWhenReady() }, 100)
         }
+        */
+
+        this.start()
+
     }
 
     start () {
         //this.startListeningForErrors()
 
         //console.log("ResourceLoaderPanel.start()")
-        if (!ResourceLoaderClass.shared().isDone()) {
+        //if (!ResourceLoader.shared().isDone()) {
             this.setupHtml()
             this.initTitle()
             this.registerForWindowError()
             this.registerForImports()
-        }
+        //}
 
-        if (ResourceLoaderClass.shared().isDone()) {
+        /*
+        if (ResourceLoader.shared().isDone()) {
             //this.setupHtml()
             this.stop()
         }
+        */
         return this
     }
 
@@ -166,19 +152,37 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
     // --- callabcks ------------------------------------------------
 
+    resourceLoaderLoadUrl (event) {
+        console.log(this.type() + " got resourceLoaderLoadUrl " + JSON.stringify(event.detail))
+    }
+
+    resourceLoaderError (event) {
+        console.log(this.type() + " got resourceLoaderError " + event.detail)
+    }
+
+    resourceLoaderDone(event) {
+        console.log(this.type() + " got resourceLoaderDone " + event.detail)
+    }
+
     registerForImports () {
+        window.addEventListener("resourceLoaderLoadUrl", (event) => { this.resourceLoaderLoadUrl(event) })
+        window.addEventListener("resourceLoaderError", (event) => { this.resourceLoaderError(event) })
+        window.addEventListener("resourceLoaderDone", (event) => { this.resourceLoaderDone(event) })
+
+        /*
         this._importerUrlCallback = (url, max) => { this.didImportUrl(url, max) }
-        ResourceLoaderClass.shared().pushUrlLoadingCallback(this._importerUrlCallback)
+        ResourceLoader.shared().pushUrlLoadingCallback(this._importerUrlCallback)
 
         this._importerErrorCallback = (error) => { this.setError(error) }
-        ResourceLoaderClass.shared().pushErrorCallback(this._importerErrorCallback)
+        ResourceLoader.shared().pushErrorCallback(this._importerErrorCallback)
+        */
 
         return this
     }
 
     unregisterForImports () {
-        ResourceLoaderClass.shared().removeUrlCallback(this._importerUrlCallback)
-        ResourceLoaderClass.shared().removeErrorCallback(this._importerErrorCallback)
+        //ResourceLoader.shared().removeUrlCallback(this._importerUrlCallback)
+        //ResourceLoader.shared().removeErrorCallback(this._importerErrorCallback)
         return this
     }
 
@@ -220,7 +224,7 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
     }
 
     unregisterForWindowError () {
-        const isRegistered = window.onerror === this._windowErrorCallback
+        const isRegistered = (window.onerror === this._windowErrorCallback)
         if (isRegistered) {
             window.onerror = null
         }
@@ -371,7 +375,6 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
         //delete window[this.type()]
     }
 
-}.initThisClass()
+}.initThisClass())
 
-getGlobalThis().ResourceLoaderPanel.shared().startWhenReady()
-
+ResourceLoaderPanel.shared().startWhenReady() // page has already been loaded before boot runs

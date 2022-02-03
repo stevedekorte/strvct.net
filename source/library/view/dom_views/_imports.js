@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "dom_attributes/_imports.js",
     "dom_helpers/_imports.js",
     "DomView.js",

@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BooleanView.js",
     "ButtonView.js",
     "CloseButton.js",

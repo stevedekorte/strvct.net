@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "GestureManager.js",
     "GestureRecognizer.js",
     "LongPressGestureRecognizer.js",

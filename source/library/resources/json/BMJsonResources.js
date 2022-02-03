@@ -37,7 +37,7 @@
     */
 
     resourcePaths () {
-        return ResourceLoader.resourceFilePathsWithExtensions(this.extensions())
+        return ResourceLoader.shared().resourceFilePathsWithExtensions(this.extensions())
     }
     
     appDidInit () {

@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "styles/_imports.js",
     "SubnodesArray.js",
     "BMNode.js",

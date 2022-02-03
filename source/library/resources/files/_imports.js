@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMFileResources.js",
     "BMFileSystemFolder.js",
     "BMFileSystemFile.js",

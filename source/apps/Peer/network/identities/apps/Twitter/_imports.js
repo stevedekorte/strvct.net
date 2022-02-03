@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMTwitter.js",
     "BMFollowingContacts.js",
     "BMFollowingContact.js",

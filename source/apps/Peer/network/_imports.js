@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMMessages.js",
     "BMNetwork.js",
     //"BMPayload.js",

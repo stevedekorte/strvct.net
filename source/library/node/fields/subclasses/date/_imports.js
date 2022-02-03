@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMDateNode.js",
     "BMYearNode.js",
     "BMMonthNode.js",

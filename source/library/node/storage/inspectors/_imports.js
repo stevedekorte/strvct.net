@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMDataStore.js",
     //"BMDataStoreRecord.js", // need to load FieldSet first
 ])

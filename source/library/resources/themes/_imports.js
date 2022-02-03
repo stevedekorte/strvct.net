@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMThemeResources.js",
     "BMTheme.js",
     "BMDefaultTheme.js",

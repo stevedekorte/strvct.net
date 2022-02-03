@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "StackView.js",
     "StackNavView.js",
     "StackScrollView.js",

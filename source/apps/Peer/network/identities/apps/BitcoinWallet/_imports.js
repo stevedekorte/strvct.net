@@ -1,4 +1,4 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMBitcoinWallet.js",
 ])

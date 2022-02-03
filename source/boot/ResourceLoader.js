@@ -1,7 +1,17 @@
 "use strict";
 
 
-(class ResourceLoaderClass extends ResourceLoaderBase {
+/*
+
+    sends these events to window:
+
+        resourceLoaderLoadUrl, with detail { url: , maxUrlCount: }
+        resourceLoaderError, with detail { error: }
+        resourceLoaderDone
+
+*/
+
+(class ResourceLoader extends Base {
 
     init() {
         super.init()
@@ -102,8 +112,28 @@
         return this
     }
 
+    postEvent (eventName, detail) {
+        if (this.isInBrowser()) {
+            const myEvent = new CustomEvent(eventName, {
+                detail: detail,
+                bubbles: true,
+                cancelable: true,
+                composed: false,
+              });
+              window.dispatchEvent(myEvent);
+
+            //window.postMessage("importerUrl", { url: url, maxUrlCount: this.maxUrlCount() });
+        }
+
+    }
+
     loadUrl (url) {
         this.urlLoadingCallbacks().forEach(callback => callback(url, this.maxUrlCount()))
+
+        if (this.isInBrowser()) {
+            const detail = { url: url, maxUrlCount: this.maxUrlCount() }
+            this.postEvent("resourceLoaderLoadUrl", detail)
+        }
 
         const extension = url.split(".").pop().toLowerCase()
         //const fontExtensions = ["ttf", "woff", "woff2"]
@@ -145,20 +175,21 @@
     done () {
         //console.log("ResourceLoader.done() -----------------------------")
         this.doneCallbacks().forEach(callback => callback())
+        this.postEvent("resourceLoaderDone", { }) 
         return this
     }
 
     setError (error) {
         this.errorCallbacks().forEach(callback => callback(error))
+        this.postEvent("resourceLoaderError", { error: error }) 
         return this
     }
 }.initThisClass())
 
-// --- ResourceLoaderClass -----------------------------------------------
+// --- ResourceLoader -----------------------------------------------
 
-getGlobalThis().ResourceLoader = ResourceLoaderClass.shared()
+getGlobalThis().resourceLoader = ResourceLoader.shared()
 
 if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
-    ResourceLoader.pushRelativePaths(["_imports.js"]).run()
-    //ResourceLoader.pushRelativePaths(["../../_imports.js"]).run()
+        resourceLoader.pushRelativePaths(["_imports.js"]).run()
 }

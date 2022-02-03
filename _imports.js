@@ -1,5 +1,5 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     "_fonts.css",
     //"external-libs/_imports.js", // import these from apps that need them

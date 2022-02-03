@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     "ShelfView.js",
     "ShelfItemView.js",

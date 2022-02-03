@@ -1,5 +1,5 @@
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     /*
     "Courier Prime/_imports.js",
     "Blender Pro/_imports.js",

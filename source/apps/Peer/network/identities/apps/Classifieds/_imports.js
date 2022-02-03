@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMBuy.js",
     "BMBuys.js",
     "BMRegion.js",

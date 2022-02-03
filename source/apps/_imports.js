@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"Game/_imports.js",
     //"Peer/_imports.js",
     "Strvct/_imports.js",

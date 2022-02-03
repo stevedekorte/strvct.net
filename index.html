@@ -586,14 +586,14 @@ window.ResourceLoaderPanel = class ResourceLoaderPanel {
         //this.startListeningForErrors()
 
         //console.log("ResourceLoaderPanel.start()")
-        if (!ResourceLoaderClass.shared().isDone()) {
+        if (!ResourceLoader.shared().isDone()) {
             this.setupHtml()
             this.initTitle()
             this.registerForWindowError()
             this.registerForImports()
         }
 
-        if (ResourceLoaderClass.shared().isDone()) {
+        if (ResourceLoader.shared().isDone()) {
             //this.setupHtml()
             this.stop()
         }
@@ -650,17 +650,17 @@ style='position: relative; top: 50%; transform: translateY(-50%); height: auto; 
 
     registerForImports () {
         this._importerUrlCallback = (url, max) => { this.didImportUrl(url, max) }
-        ResourceLoaderClass.shared().pushUrlLoadingCallback(this._importerUrlCallback)
+        ResourceLoader.shared().pushUrlLoadingCallback(this._importerUrlCallback)
 
         this._importerErrorCallback = (error) => { this.setError(error) }
-        ResourceLoaderClass.shared().pushErrorCallback(this._importerErrorCallback)
+        ResourceLoader.shared().pushErrorCallback(this._importerErrorCallback)
 
         return this
     }
 
     unregisterForImports () {
-        ResourceLoaderClass.shared().removeUrlCallback(this._importerUrlCallback)
-        ResourceLoaderClass.shared().removeErrorCallback(this._importerErrorCallback)
+        ResourceLoader.shared().removeUrlCallback(this._importerUrlCallback)
+        ResourceLoader.shared().removeErrorCallback(this._importerErrorCallback)
         return this
     }
 
@@ -861,7 +861,7 @@ getGlobalThis().ResourceLoaderPanel.shared().startWhenReady()
 "use strict";
 
 
-(class ResourceLoaderClass extends ResourceLoaderBase {
+(class ResourceLoader extends ResourceLoaderBase {
 
     init() {
         super.init()
@@ -1014,16 +1014,16 @@ getGlobalThis().ResourceLoaderPanel.shared().startWhenReady()
     }
 }.initThisClass())
 
-// --- ResourceLoaderClass -----------------------------------------------
+// --- ResourceLoader -----------------------------------------------
 
-getGlobalThis().ResourceLoader = ResourceLoaderClass.shared()
+getGlobalThis().ResourceLoader = ResourceLoader.shared()
 
 if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
-    ResourceLoader.pushRelativePaths(["_imports.js"]).run()
-    //ResourceLoader.pushRelativePaths(["../../_imports.js"]).run()
+    resourceLoader.pushRelativePaths(["_imports.js"]).run()
+    //resourceLoader.pushRelativePaths(["../../_imports.js"]).run()
 }
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     "_fonts.css",
     //"external-libs/_imports.js", // import these from apps that need them
@@ -1034,7 +1034,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "library/_imports.js",
     "apps/_imports.js",
 ])
@@ -1042,7 +1042,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "ideal/_imports.js",
     "notification/_imports.js",
     "storage/_imports.js",
@@ -1053,7 +1053,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "categories/_imports.js",
     "Slot.js",
     //"Proto.js",
@@ -1072,7 +1072,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Mirror.js",
     "Type-ideal.js",
     "Object-ideal.js",
@@ -5621,7 +5621,7 @@ Object.defineSlots(Function.prototype, {
 */
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "HookedArray.js",
     "HookedSet.js",
     "HookedMap.js",
@@ -6121,7 +6121,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Dictionary.js",
     "AtomicDictionary.js",
 ]);
@@ -6653,7 +6653,7 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "ByteFormatter.js",
     "TimePeriodFormatter.js",
     "TimeFormatter.js"
@@ -7087,7 +7087,7 @@ class NamespaceSearch extends ProtoClass {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "SyncAction.js",
     "SyncScheduler.js",
     "notifications/_imports.js",
@@ -7434,7 +7434,7 @@ Object.defineSlots(ProtoClass.prototype, {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMNotification.js",
     "BMNotificationCenter.js",
     "BMObservation.js",
@@ -8035,7 +8035,7 @@ Object.defineSlots(ProtoClass.prototype, {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "IndexedDBFolder.js",
     "IndexedDBTx.js",
     "PersistentAtomicDictionary.js",
@@ -8950,7 +8950,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"css/_imports.js",
     "geometry/_imports.js",
     "events/_imports.js",
@@ -8961,7 +8961,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Point.js",
     "Rectangle.js",
     "Transform.js",
@@ -9468,7 +9468,7 @@ ResourceLoader.pushRelativePaths([
 }.initThisClass())
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "devices/_imports.js",
     "listeners/_imports.js",
     "gestures/_imports.js"
@@ -9477,7 +9477,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Event-cachedPoints.js",
     "EventPoint.js",
     "Device.js",
@@ -10903,7 +10903,7 @@ Object.defineSlots(Event.prototype, {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "EventSetListener.js",
 
     "ClipboardListener.js",
@@ -11645,7 +11645,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "GestureManager.js",
     "GestureRecognizer.js",
     "LongPressGestureRecognizer.js",
@@ -13730,7 +13730,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"screen/_imports.js",
     "EdgePanGestureRecognizer.js",
     "TopEdgePanGestureRecognizer.js",
@@ -13974,7 +13974,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "WebBrowserScreen.js",
     "WebBrowserWindow.js",
     "WebBrowserNotifications.js",
@@ -14472,7 +14472,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "dom_attributes/_imports.js",
     "dom_helpers/_imports.js",
     "DomView.js",
@@ -14485,7 +14485,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "DomTransition.js",
     "DomTransitions.js",
     "DomBorderRadius.js",
@@ -14902,7 +14902,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "DomTextTapeMeasure.js",
     "DomCSSInspector.js",
     "CSSColor.js",
@@ -20434,7 +20434,7 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BooleanView.js",
     "ButtonView.js",
     "CloseButton.js",
@@ -22373,7 +22373,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMDataUrl.js",
 ])
 
@@ -22482,7 +22482,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "styles/_imports.js",
     "SubnodesArray.js",
     "BMNode.js",
@@ -22502,7 +22502,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMViewStyles.js",
     "BMViewStyle.js",
 ])
@@ -24158,7 +24158,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMStorableNode.js",
     "BMStoredDatedSetNode.js",
     "newstore/_imports.js",
@@ -24371,7 +24371,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "categories/_imports.js",
     "ObjectPool.js",
     "PersistentObjectPool.js",
@@ -24380,7 +24380,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"Object-puuid.js",
     "ProtoClass-store.js",
     "BMNode-store.js",
@@ -24545,7 +24545,7 @@ Object.defineSlots(BMStorableNode.prototype, {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Array-store.js",
     "ArrayBuffer-store.js",
     "Date-store.js",
@@ -24918,7 +24918,7 @@ Type.typedArrayTypeNames().forEach((name) => {
 })
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "String-store.js",
     "Boolean-store.js",
     "Number-store.js",
@@ -25822,7 +25822,7 @@ window.StoreRef = class StoreRef {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMDataStore.js",
     //"BMDataStoreRecord.js", // need to load FieldSet first
 ])
@@ -25915,7 +25915,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMSummaryNode.js",
     "BMFolderNode.js",
     "BMImageNode.js",
@@ -26446,7 +26446,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMFieldSetNode.js",
     "BMField.js",
     
@@ -26895,7 +26895,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMJsonNode.js",
     "BMJsonArrayNode.js",
     "BMJsonDictionaryNode.js",
@@ -27317,7 +27317,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMBooleanField.js",
     "BMColorField.js",
     "BMIdentityField.js",
@@ -28097,7 +28097,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMOptionsNode.js",
     "BMOptionNode.js"
 ])
@@ -28303,7 +28303,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMDateNode.js",
     "BMYearNode.js",
     "BMMonthNode.js",
@@ -28669,7 +28669,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMTimeNode.js",
     "BMHourNode.js",
     "BMMinuteNode.js",
@@ -29071,7 +29071,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     "NodeView.js",
     "HeaderFooterView.js",
@@ -29789,7 +29789,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     //"HashCommand.js",
     //"BrowserView.js",
@@ -29803,7 +29803,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BrowserRow.js",
     "BrowserTitledRow.js",
     "BrowserRowNote.js",
@@ -31398,7 +31398,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "_css.css",
     "BMFieldRowView.js",
     "BMActionNodeRowView.js",
@@ -32158,7 +32158,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMOptionsNodeRowView.js",
     "BMOptionNodeRowView.js"
 ])
@@ -32306,7 +32306,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "StackView.js",
     "StackNavView.js",
     "StackScrollView.js",
@@ -34747,7 +34747,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMBlob.js",
     "BMBlobs.js",
 ])
@@ -35064,7 +35064,7 @@ setTimeout(() => {
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMUrlResource.js",
 ])
 
@@ -35533,7 +35533,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "files/_imports.js",
     "fonts/_imports.js",
     "sounds/_imports.js",
@@ -35546,7 +35546,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMFileResources.js",
     "BMFileSystemFolder.js",
     "BMFileSystemFile.js",
@@ -35704,7 +35704,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMFontResources.js",
     "BMFontFamily.js",
     "BMFont.js",
@@ -35951,7 +35951,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMSoundResources.js",
     "BMSound.js",
     "BMAudioPlayer.js",
@@ -36286,7 +36286,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMImageResources.js",
     "BMURLImage.js",
 ])
@@ -36433,7 +36433,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMThemeResources.js",
     "BMTheme.js",
     "BMDefaultTheme.js",
@@ -36986,7 +36986,7 @@ ResourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMIconResources.js",
     "SvgIconNode.js",
     "SvgData.js",
@@ -37166,7 +37166,7 @@ BMIconResources.shared().addIcon("inner-checkbox", `
 `)
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMJsonResources.js",
 ])
 
@@ -37318,7 +37318,7 @@ ResourceLoader.pushRelativePaths([
 
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     //"Game/_imports.js",
     //"Peer/_imports.js",
     "Strvct/_imports.js",
@@ -37326,11 +37326,11 @@ ResourceLoader.pushRelativePaths([
 ])
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "StrvctApp.js",
 ])
 
-ResourceLoader.pushDoneCallback( () => {
+resourceLoader.pushDoneCallback( () => {
     StrvctApp.loadAndRunShared()
     //StrvctApp.shared().run()
 })
@@ -37533,14 +37533,14 @@ ResourceLoader.pushDoneCallback( () => {
 
 }.initThisClass())
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "fonts/_imports.js",
     "sounds/_imports.js",
     "images/_imports.js",
 ]);
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     /*
     "Courier Prime/_imports.js",
     "Blender Pro/_imports.js",
@@ -37558,7 +37558,7 @@ ResourceLoader.pushRelativePaths([
 ]);
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "Hyperspace.ttf",
     "Hyperspace Bold.ttf",
     "Hyperspace Bold Italic.ttf",
@@ -37566,18 +37566,18 @@ ResourceLoader.pushRelativePaths([
 ]);
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "fonts.css",
 ]);
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "beep_06.wav",
     "bleep_04.wav",
 ]);
 
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "appicon-black-600x600.png",
 ]);
 

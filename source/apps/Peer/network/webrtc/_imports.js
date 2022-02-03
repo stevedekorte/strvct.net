@@ -1,6 +1,6 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "BMPeerId.js",
     "BMServerConnection.js",
     "BMServerMessage.js",

@@ -11,7 +11,7 @@
                 "IndexBuilder.js"
             ],
             "options": {
-                "cwd": "${workspaceRoot}/indexbuilder"
+                "cwd": "${workspaceRoot}/index-builder"
             },
             "presentation": {
                 "reveal": "silent",

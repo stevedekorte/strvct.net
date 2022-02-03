@@ -71,9 +71,10 @@
 
 BootLoader.shared().addFiles([
     "./getGlobalThis.js",
+    "./Base.js",
     "./ResourceLoaderBase.js",
-    "./CSSLink.js",
+    "./CssLink.js",
     "./JsScript.js",
-    "./ResourceLoader.js",
     "./ResourceLoaderPanel.js",
+    "./ResourceLoader.js",
 ]).registerForWindowLoad()

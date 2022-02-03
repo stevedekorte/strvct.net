@@ -1,10 +1,10 @@
 "use strict";
 
-ResourceLoader.pushRelativePaths([
+resourceLoader.pushRelativePaths([
     "StrvctApp.js",
 ])
 
-ResourceLoader.pushDoneCallback( () => {
+resourceLoader.pushDoneCallback( () => {
     StrvctApp.loadAndRunShared()
     //StrvctApp.shared().run()
 })
