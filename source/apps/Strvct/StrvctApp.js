@@ -21,7 +21,7 @@
         this.newSlot("browser", null)
         this.newSlot("stackView", null)
 
-        breakThisApp()
+        //breakThisApp()
     }
 
     init () {

@@ -21,7 +21,7 @@
 
 (class ResourceLoaderPanel extends Base {
     
-    init() {
+    initPrototype () {
         this.newSlot("mainElement", null)
         this.newSlot("middleElement", null)
         this.newSlot("iconElement", null)
@@ -33,11 +33,13 @@
 
         this.newSlot("error", null)
         this.newSlot("loadCount", 0)
+    }
+
+    init () {
         this.setupCallbacks()
         this.setupElements()
     }
     
-
     // --- open ------------------------------------------------
 
     open () {

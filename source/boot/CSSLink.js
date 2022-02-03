@@ -1,8 +1,7 @@
 "use strict";
 
 (class CssLink extends Base {
-    init() {
-        super.init()
+    initPrototype() {
         this.newSlot("fullPath", null);
         // subclasses should override to initialize
     }

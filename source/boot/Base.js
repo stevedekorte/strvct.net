@@ -41,6 +41,12 @@ if (!String.prototype.capitalized) {
     static initThisClass () {
         //console.log("this.classType() = ", this.classType())
         getGlobalThis()[this.type()] = this
+
+        if (this.prototype.hasOwnProperty("initPrototype")) {
+            // each class inits it's own prototype, so make sure we only call our own initPrototype()
+            //this.prototype.initPrototype.apply(this.prototype)
+            this.prototype.initPrototype()
+        }
         return this
     }
 

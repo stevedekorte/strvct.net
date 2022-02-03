@@ -13,8 +13,7 @@
 
 (class ResourceLoader extends Base {
 
-    init() {
-        super.init()
+    initPrototype () {
         this.newSlot("currentScript", null);
         this.newSlot("urls", []);
         this.newSlot("doneCallbacks", []),
@@ -71,28 +70,6 @@
         this.doneCallbacks().push(aCallback)
         return this
     }
-
-    /*
-    pushUrlLoadingCallback (aCallback) {
-        this.urlLoadingCallbacks().push(aCallback)
-        return this
-    }
-
-    pushErrorCallback (aCallback) {
-        this.errorCallbacks().push(aCallback)
-        return this
-    }
-
-    removeErrorCallback (aCallback) {
-        this.errorCallbacks().remove(aCallback)
-        return this
-    }
-
-    removeUrlCallback (aCallback) {
-        this.urlLoadingCallbacks().remove(aCallback)
-        return this
-    }
-    */
 
     // --- run ---
 

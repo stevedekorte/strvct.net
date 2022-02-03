@@ -103,8 +103,8 @@
             "protocol": "inspector",
             "request": "launch",
             "name": "Launch node server",
-            "cwd": "${workspaceFolder}/server",
-            "program": "${workspaceFolder}/LocalWebServer/server.js"
+            "cwd": "${workspaceFolder}/local-web-server",
+            "program": "${workspaceFolder}/local-web-server/server.js"
         },
     ]
 }

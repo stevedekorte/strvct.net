@@ -1,8 +1,7 @@
 "use strict";
 
 (class JsScript extends Base {
-    init() {
-        super.init()
+    initPrototype () {
         this.newSlot("importer", null);
         this.newSlot("fullPath", null);
         this.newSlot("doneCallback", null);
@@ -77,7 +76,6 @@
     basePath () {
         const parts = this.fullPath().split("/")
         parts.pop()
-        const basePath = parts.join("/")
-        return basePath
+        return parts.join("/")
     }
 }.initThisClass())

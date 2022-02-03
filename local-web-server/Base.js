@@ -11,9 +11,20 @@ if (!String.prototype.capitalized) {
 
 // ------------------------------------------------------------------
 
-getGlobalThis().Base = class Base {
+(class Base {
     // Base class with helpful methods for cloning and slot creation 
 
+    static initThisClass () {
+        if (this.prototype.hasOwnProperty("initPrototype")) {
+            // each class inits it's own prototype, so make sure we only call our own initPrototype()
+            //this.prototype.initPrototype.apply(this.prototype)
+            this.prototype.initPrototype()
+        }
+        
+        getGlobalThis()[this.type()] = this
+        return this
+    }
+    
     static shared() {
         if (!this._shared) {
             this._shared = this.clone()
@@ -69,11 +80,4 @@ getGlobalThis().Base = class Base {
         return this;
     }
 
-    static initThisClass () {
-        //console.log("this.classType() = ", this.classType())
-        getGlobalThis()[this.type()] = this
-        return this
-    }
-}
-
-// ------------------------------------------------------------------
+}.initThisClass())
