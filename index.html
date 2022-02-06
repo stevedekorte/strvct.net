@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="cache-control" content="no-cache">    
-    <meta http-equiv="pragma" content="no-cache">      
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=0.1">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="Description" content="">
-    <meta name="theme-color" content="#317EFB"/>
-    <link rel="icon" href="resources/favicons/favicon.ico">
-    <title>...</title>
-    <style>
 
-      
+<head>
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=0.1">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="Description" content="">
+  <meta name="theme-color" content="#317EFB" />
+  <link rel="icon" href="resources/favicons/favicon.ico">
+  <title>...</title>
+  <style>
+    
 html, body {
     position: absolute;
     overflow: hidden;
@@ -482,13 +482,15 @@ notes on Scroll bars theme options
     src:url("1566282/847d8475-4db3-43ce-9bc9-003ce96e1ff6.woff2") format("woff2"),url("1566282/b33db801-fb57-4998-83c2-79868ea9f00b.woff") format("woff");
 }
 
+  </style>
+  <script>
 
-    </style>
-<script>
+    window.ResourceLoaderIsEmbedded = true
 
-window.ResourceLoaderIsEmbedded = true
+    {
 
-      
+"use strict";
+
 // A single function to access globals that works
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
@@ -525,10 +527,15 @@ function getGlobalThis() {
   };
 
   getGlobalThis().getGlobalThis = getGlobalThis;
+};
+
+{
+
+"use strict";
 
 // ------------------------------------------------------------------
 
-Object.defineSlot = function(obj, slotName, slotValue) {
+Object.defineSlot = function (obj, slotName, slotValue) {
     //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
     const descriptor = {
         configurable: true,
@@ -541,7 +548,7 @@ Object.defineSlot = function(obj, slotName, slotValue) {
 }
 
 if (!String.prototype.capitalized) {
-    Object.defineSlot(String.prototype, "capitalized", 
+    Object.defineSlot(String.prototype, "capitalized",
         function () {
             return this.replace(/\b[a-z]/g, function (match) {
                 return match.toUpperCase();
@@ -555,9 +562,9 @@ if (!String.prototype.capitalized) {
     // Base class with helpful methods for cloning and slot creation 
 
     isInBrowser() {
-        return (typeof(document) !== 'undefined')
+        return (typeof (document) !== 'undefined')
     }
-    
+
     static shared() {
         if (!this._shared) {
             this._shared = this.clone()
@@ -565,8 +572,19 @@ if (!String.prototype.capitalized) {
         return this._shared
     }
 
-    static initThisClass () {
+    static type() {
+        return this.name
+    }
+
+    static initThisClass() {
         //console.log("this.classType() = ", this.classType())
+        /*
+        if (typeof(getGlobalThis()[this.type()]) !== "undefined") {
+            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + this.type() + "']"
+            console.warn(msg)
+            throw new Error(msg)
+        }*/
+
         getGlobalThis()[this.type()] = this
 
         if (this.prototype.hasOwnProperty("initPrototype")) {
@@ -577,11 +595,11 @@ if (!String.prototype.capitalized) {
         return this
     }
 
-    static type () {
+    static type() {
         return this.name
     }
 
-    type () {
+    type() {
         return this.constructor.name
     }
 
@@ -590,18 +608,18 @@ if (!String.prototype.capitalized) {
         obj.init()
         return obj
     }
-    
+
     init() {
         // subclasses should override to initialize
     }
 
     newSlot(slotName, initialValue) {
-        if (typeof(slotName) !== "string") {
-            throw new Error("slot name must be a string"); 
+        if (typeof (slotName) !== "string") {
+            throw new Error("slot name must be a string");
         }
 
-        if (initialValue === undefined) { 
-            initialValue = null 
+        if (initialValue === undefined) {
+            initialValue = null
         };
 
         const privateName = "_" + slotName;
@@ -629,6 +647,9 @@ if (!String.prototype.capitalized) {
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 (class CssLink extends Base {
@@ -651,6 +672,9 @@ if (!String.prototype.capitalized) {
     }
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 (class JsScript extends Base {
@@ -707,13 +731,14 @@ if (!String.prototype.capitalized) {
 
     runInBrowser () {
         const script = document.createElement("script")
-        //console.log("JsScript loading: '" + this.fullPath() + "'")
-
+        console.log("JsScript loading: '" + this.fullPath() + "'")
+        
         script.src = this.fullPath()
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
-            //console.log("loaded script src:'" + script.src)
+            console.log("loaded script src:'" + script.src)
+            debugger
             this._doneCallback()
         }
 
@@ -733,6 +758,9 @@ if (!String.prototype.capitalized) {
     }
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -1116,10 +1144,15 @@ if (!String.prototype.capitalized) {
 
 }.initThisClass())
 
-ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index page
 
+if (!window.ResourceLoaderIsEmbedded) {
+    ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index 
+}
+
+};
+
+{
 "use strict";
-
 
 /*
 
@@ -1147,6 +1180,8 @@ ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has 
 
         this.newSlot("resourceFilePaths", [])
         this.newSlot("maxUrlCount", 0)
+
+        this.newSlot("isEmbeded", false)
     }
 
     resourceFilePathsWithExtensions(extensions) {
@@ -1176,6 +1211,7 @@ ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has 
     }
 
     pushRelativePaths (paths) {
+        //debugger
         this.pushFilePaths(this.absolutePathsForRelativePaths(paths))
         return this
     }
@@ -1223,7 +1259,14 @@ ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has 
 
             //window.postMessage("importerUrl", { url: url, maxUrlCount: this.maxUrlCount() });
         }
+        return this
+    }
 
+    loadJsUrl (url) {
+        this.jsFilesLoaded().push(url)
+        const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+        this.setCurrentScript(script)
+        this.currentScript().run()
     }
 
     loadUrl (url) {
@@ -1235,50 +1278,41 @@ ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has 
         }
 
         const extension = url.split(".").pop().toLowerCase()
-        //const fontExtensions = ["ttf", "woff", "woff2"]
-        //const audioExtensions = ["wav", "mp3", "m4a", "mp4", "oga", "ogg"]
-        //const imageExtensions = ["png", "jpg", "jpeg", "gif", "tiff", "bmp"]
+        const isImportsFile = url.split("/").pop() === "_imports.js"
 
         if (extension === "js" /*|| extension === "json"*/) {
-            this.jsFilesLoaded().push(url)
-            const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
-            this.setCurrentScript(script)
-            this.currentScript().run()
+            if (!this.isEmbeded()) {
+                console.log("load js ", url)
+                this.loadJsUrl(url)
+            } else {
+                this.loadNext() 
+            }
         } else if (extension === "css") {
-            this.cssFilesLoaded().push(url)
-            CssLink.clone().setFullPath(url).run() // move to CSSResources?
+            if (!this.isEmbeded()) {
+                console.log("load css ", url)
+                this.cssFilesLoaded().push(url)
+                CssLink.clone().setFullPath(url).run() // move to CSSResources?
+            }
             this.loadNext()
         } else {
-            this.resourceFilePaths().push(url)
+            // leave it to other resource handlers which call ResourceLoader.shared().resourceFilePathsWithExtensions()
+            this.resourceFilePaths().push(url) 
             this.loadNext()
         }
-
-        /*
-        } else if (fontExtensions.contains(extension)) {
-            this.fontFilePaths().push(url)
-            this.loadNext()
-        } else if (audioExtensions.contains(extension)) {
-            this.audioFilePaths().push(url)
-            this.loadNext()
-        } else if (imageExtensions.contains(extension)) {
-            this.imageFilePaths().push(url)
-            this.loadNext()
-        } else {
-            throw new Error("unrecognized extension on url '" + url + "'")
-        }
-        */
 
         return this
     }
 
     done () {
-        //console.log("ResourceLoader.done() -----------------------------")
+        console.log("ResourceLoader.done() -----------------------------")
+        debugger
         this.doneCallbacks().forEach(callback => callback())
-        this.postEvent("resourceLoaderDone", { }) 
+        this.postEvent("resourceLoaderDone", {}) 
         return this
     }
 
     setError (error) {
+        debugger
         //this.errorCallbacks().forEach(callback => callback(error))
         this.postEvent("resourceLoaderError", { error: error }) 
         return this
@@ -1287,11 +1321,20 @@ ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has 
 
 // --- ResourceLoader -----------------------------------------------
 
-getGlobalThis().resourceLoader = ResourceLoader.shared()
 
-if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
-        resourceLoader.pushRelativePaths(["_imports.js"]).run()
+getGlobalThis().resourceLoader = ResourceLoader.shared();
+resourceLoader.pushRelativePaths(["_imports.js"]);
+
+if (getGlobalThis().ResourceLoaderIsEmbedded) {
+    resourceLoader.setIsEmbeded(getGlobalThis().ResourceLoaderIsEmbedded)
+    window.addEventListener("load", () => { resourceLoader.run(); });
+} else {
+    resourceLoader.run();
 }
+
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "_css.css",
@@ -1302,6 +1345,9 @@ resourceLoader.pushRelativePaths([
     "resources/_imports.js",
 ]);
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -1310,6 +1356,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -1321,6 +1370,9 @@ resourceLoader.pushRelativePaths([
     "resources/_imports.js",
 ])
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -1340,6 +1392,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -1362,6 +1417,9 @@ resourceLoader.pushRelativePaths([
 ]);
 
 
+};
+
+{
 /*
 
 	An object wrapper for the Reflect functions
@@ -1442,6 +1500,9 @@ window.Mirror = class Mirror extends Object {
 	
 }
 
+};
+
+{
 "use strict";
 
 /*
@@ -1740,6 +1801,9 @@ getGlobalThis().Type = {
 }
 
 //Type.test()
+};
+
+{
 //"use strict";
 
 /*
@@ -1765,9 +1829,12 @@ getGlobalThis().Type = {
 
 */
 
-const classesToFix =[Array, Set, Map]
-classesToFix.forEach(aClass => aClass.__proto__ = Object)
+{
+    const classesToFix =[Array, Set, Map]
+    classesToFix.forEach(aClass => aClass.__proto__ = Object)
+}
 
+{
 
 Object.hasOwnSlot = function(obj, slotName) {
     const descriptor = Object.getOwnPropertyDescriptor(slotName)
@@ -2295,9 +2362,14 @@ const prototypeSlots = {
 }
 
 
-Object.defineSlots(Object.prototype, prototypeSlots)
+Object.defineSlots(Object.prototype, prototypeSlots);
 
-Object.initThisClass()
+Object.initThisClass();
+
+}
+};
+
+{
 "use strict";
 
 Object.defineSlots(Object, {
@@ -2371,6 +2443,9 @@ Object.defineSlots(Object.prototype, {
 
 })
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(Object, {
@@ -2429,6 +2504,9 @@ Object.defineSlots(Object.prototype, {
 
 })
 
+};
+
+{
 "use strict";
 
 /*
@@ -3263,6 +3341,9 @@ Object.defineSlots(Array.prototype, {
 });
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -3349,6 +3430,9 @@ Object.defineSlots(Date.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -3790,6 +3874,9 @@ test()
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -3800,6 +3887,7 @@ test()
 
 */
 
+{
 
 const Base64 = (function () {
     const digitsStr = 
@@ -3836,15 +3924,15 @@ const Base64 = (function () {
 Object.defineSlots(Number.prototype, {
 
     duplicate: function() {
-        return this
+        return this;
     },
     
     copy: function() {
-        return this
+        return this;
     },
 
     shallowCopy: function() {
-        return this
+        return this;
     },
 
     repeat: function (callback) {
@@ -3859,14 +3947,14 @@ Object.defineSlots(Number.prototype, {
     forEach (func) {
         assert(Number.isInteger(this))
         for (let i = 0; i < this; i++) {
-            func(i)
+            func(i);
         }
     },
 
     reverseForEach (func) {
         assert(Number.isInteger(this))
         for (let i = this - 1; i >= 0; i++) {
-            func(i)
+            func(i);
         }
     },
 
@@ -3887,9 +3975,9 @@ Object.defineSlots(Number.prototype, {
     },
 
     ordinalSuffix: function() {
-        const i = this
-        let j = i % 10
-        let k = i % 100
+        const i = this;
+        let j = i % 10;
+        let k = i % 100;
         
         if (j === 1 && k !== 11) {
             return "st";
@@ -3904,21 +3992,26 @@ Object.defineSlots(Number.prototype, {
     },
 
     toBase64: function() {
-        return Base64.fromInt(this)
+        return Base64.fromInt(this);
     },
 
     fromBase64: function(base64String) {
         // need to call like: 
         // Number.prototype.fromBase64("...")
-        return Base64.toInt(base64String)
+        return Base64.toInt(base64String);
     },
 
     byteSizeDescription: function() {
-        return ByteFormatter.clone().setValue(this).formattedValue()
+        return ByteFormatter.clone().setValue(this).formattedValue();
     },
     
 });
 
+};
+
+};
+
+{
 "use strict";
 
 /*
@@ -3963,6 +4056,9 @@ Object.defineSlots(Boolean.prototype, {
 
 });
 
+};
+
+{
 "use strict";
 
 /*
@@ -4070,6 +4166,9 @@ Object.defineSlots(Set.prototype, {
     
 });
 
+};
+
+{
 "use strict";
 
 /*
@@ -4224,6 +4323,9 @@ getGlobalThis().assertThrows = function assertThrows(func) {
     Error.assertThrows(func)
 }
 
+};
+
+{
 "use strict";
 
 /*
@@ -4235,6 +4337,9 @@ getGlobalThis().assertThrows = function assertThrows(func) {
 */
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -4310,6 +4415,9 @@ Object.defineSlots(Image.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 Type.typedArrayTypeNames().forEach((name) => {
@@ -4348,6 +4456,9 @@ Object.defineSlots(ArrayBuffer.prototype, {
 })
 
 //console.log("base64Encoded test:", new Uint32Array([1, 2, 3]).base64Encoded())
+};
+
+{
 "use strict";
 
 
@@ -5112,6 +5223,9 @@ Object.defineSlots(Function.prototype, {
 
 })
 */
+};
+
+{
 "use strict";
 
 /*
@@ -5232,8 +5346,8 @@ Object.defineSlots(Function.prototype, {
     }
     
     static defineClassGlobally () {
-        if(Type.isUndefined(window[this.type()])) {
-            window[this.type()] = this
+        if(Type.isUndefined(getGlobalThis()[this.type()])) {
+            getGlobalThis()[this.type()] = this
             //console.log(this.type() + ".initThisClass()")
         } else {
             const msg = "WARNING: Attempt to redefine window['" + this.type() + "']"
@@ -5761,6 +5875,9 @@ Object.defineSlots(Function.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -5889,6 +6006,9 @@ Object.defineSlots(Function.prototype, {
 })
 
 */
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -5902,6 +6022,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -6000,6 +6123,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass()) //.selfTest()
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -6053,6 +6179,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass()) //.selfTest()
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -6105,6 +6234,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass()) //.selfTest()
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -6293,6 +6425,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass()) //.selfTest()
 
+};
+
+{
 "use strict";
 
 /*
@@ -6389,6 +6524,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass()) //.selfTest()
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -6398,6 +6536,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -6596,6 +6737,9 @@ getGlobalThis().ideal.Dictionary = class Dictionary extends ProtoClass {
     }
 
 }.initThisClass()
+};
+
+{
 "use strict";
 
 /*
@@ -6812,6 +6956,9 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
 }.initThisClass()//.selfTest()
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -6921,6 +7068,9 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -6931,6 +7081,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -7005,6 +7158,9 @@ resourceLoader.pushRelativePaths([
     }
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -7070,6 +7226,9 @@ TimePeriodFormatter
     }
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -7238,6 +7397,9 @@ TimeFormatter
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -7258,7 +7420,7 @@ TimeFormatter
 
 */
 
-class NamespaceSearch extends ProtoClass {
+(class NamespaceSearch extends ProtoClass {
 
     init () {
         this.newSlot("visited", null)
@@ -7281,7 +7443,8 @@ class NamespaceSearch extends ProtoClass {
             })
         }
 
-        this.findOnObject(globalThis, ["globalThis"])
+        //this.findOnObject(globalThis, ["globalThis"])
+        this.findOnObject(getGlobalThis(), ["globalThis"])
         return this
     }
 
@@ -7290,10 +7453,10 @@ class NamespaceSearch extends ProtoClass {
             return false
         }
 
-        if (this._visited.has(v)) {
+        if (this.visited().has(v)) {
             return false
         } else {
-            this._visited.add(v)
+            this.visited().add(v)
         }
 
         //const joinedPath = path.join("/")
@@ -7331,15 +7494,15 @@ class NamespaceSearch extends ProtoClass {
 
     addMatchingPath (aPath) {
         const stringPath = aPath.join("/")
-        if (!this._matchingPaths.contains(stringPath)) {
-            this._matchingPaths.push(stringPath)
+        if (!this.matchingPaths().contains(stringPath)) {
+            this.matchingPaths().push(stringPath)
         }
         return this
     }
 
     showMatches () {
         console.log("matchingPaths:")
-        this._matchingPaths.forEach(p => console.log("  " + p))
+        this.matchingPaths().forEach(p => console.log("  " + p))
     }
 
     static selfTest () {
@@ -7351,10 +7514,13 @@ class NamespaceSearch extends ProtoClass {
         assert(ns.matchingPaths()[0] === "globalThis/String")
     }
 
-}
+}.initThisClass())
 
 //NamespaceSearch.selfTest()
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -7364,6 +7530,9 @@ resourceLoader.pushRelativePaths([
     "Broadcaster.js",
 ])
 
+};
+
+{
 "use strict";
 
 
@@ -7432,6 +7601,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -7702,6 +7874,9 @@ Object.defineSlots(ProtoClass.prototype, {
 
 })
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -7710,6 +7885,9 @@ resourceLoader.pushRelativePaths([
     "BMObservation.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -7790,6 +7968,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /* 
@@ -8095,6 +8276,9 @@ resourceLoader.pushRelativePaths([
     }
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -8204,6 +8388,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -8303,6 +8490,9 @@ Object.defineSlots(ProtoClass.prototype, {
     
 })
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -8312,6 +8502,9 @@ resourceLoader.pushRelativePaths([
     "PersistentAsyncDictionary.js",
 ])
 
+};
+
+{
 "use strict";
 
 /* 
@@ -8659,6 +8852,9 @@ resourceLoader.pushRelativePaths([
     }
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /* 
@@ -8863,6 +9059,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -9066,6 +9265,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -9218,6 +9420,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -9229,6 +9434,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -9238,6 +9446,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -9475,6 +9686,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -9663,6 +9877,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 
 "use strict";
 
@@ -9736,6 +9953,9 @@ resourceLoader.pushRelativePaths([
     */
    
 }.initThisClass())
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -9745,6 +9965,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -9761,6 +9984,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -9793,6 +10019,9 @@ Object.defineSlots(Event.prototype, {
 })
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -9892,6 +10121,9 @@ Object.defineSlots(Event.prototype, {
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -9912,6 +10144,9 @@ Object.defineSlots(Event.prototype, {
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -9963,6 +10198,9 @@ Object.defineSlots(Event.prototype, {
     }
     
 }.initThisClass())
+};
+
+{
 "use strict";
 
 /*
@@ -10514,6 +10752,9 @@ Object.defineSlots(Event.prototype, {
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -10648,6 +10889,9 @@ Object.defineSlots(Event.prototype, {
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -10839,6 +11083,9 @@ Object.defineSlots(Event.prototype, {
    
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -10992,6 +11239,9 @@ Object.defineSlots(Event.prototype, {
     }
 
 }.initThisClass())
+};
+
+{
 "use strict";
 
 /*
@@ -11116,6 +11366,9 @@ Object.defineSlots(Event.prototype, {
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11171,6 +11424,9 @@ Object.defineSlots(Event.prototype, {
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -11192,6 +11448,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -11473,6 +11732,9 @@ resourceLoader.pushRelativePaths([
         }
     }
 */
+};
+
+{
 "use strict";
 
 /*
@@ -11502,6 +11764,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11549,6 +11814,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11584,6 +11852,9 @@ resourceLoader.pushRelativePaths([
     }
     
 }.initThisClass())
+};
+
+{
 "use strict";
 
 /*
@@ -11632,6 +11903,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11662,6 +11936,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11693,6 +11970,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11735,6 +12015,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11768,6 +12051,9 @@ resourceLoader.pushRelativePaths([
     }
     
 }.initThisClass())
+};
+
+{
 "use strict";
 
 /*
@@ -11797,6 +12083,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11827,6 +12116,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11856,6 +12148,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -11886,6 +12181,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -11913,6 +12211,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -11929,6 +12230,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -12066,6 +12370,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -12937,6 +13244,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -13081,6 +13391,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -13286,6 +13599,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -13458,6 +13774,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -13765,6 +14084,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -13904,6 +14226,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -13953,6 +14278,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -13998,6 +14326,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -14010,6 +14341,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14124,6 +14458,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -14153,6 +14490,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -14184,6 +14524,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -14213,6 +14556,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -14242,6 +14588,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -14254,6 +14603,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14322,6 +14674,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14501,6 +14856,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14599,6 +14957,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14644,6 +15005,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14687,6 +15051,9 @@ resourceLoader.pushRelativePaths([
     }
 
 }.initThisClass())
+};
+
+{
 "use strict";
 
 /*
@@ -14740,6 +15107,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -14753,6 +15123,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -14761,6 +15134,9 @@ resourceLoader.pushRelativePaths([
     "DomBorderRadius.js",
     "ViewAnimator.js",
 ])
+};
+
+{
 
 "use strict";
 
@@ -14865,6 +15241,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -14944,6 +15323,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 
 "use strict";
 
@@ -15053,6 +15435,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 
 "use strict";
 
@@ -15170,6 +15555,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -15180,6 +15568,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -15278,6 +15669,9 @@ resourceLoader.pushRelativePaths([
 	
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -15325,6 +15719,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -15678,6 +16075,9 @@ const max3 = function(a, b, c) {
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -15738,6 +16138,9 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
         Element_setStyleIncludingDecendants(child, k, v)
     }
 }
+};
+
+{
 "use strict";
 
 /*
@@ -20366,6 +20769,9 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -20477,6 +20883,9 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -20702,6 +21111,9 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
 	
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -20717,6 +21129,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -20884,6 +21299,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -21028,6 +21446,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 
@@ -21103,6 +21524,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -21192,6 +21616,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /* 
@@ -21381,6 +21808,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -21905,6 +22335,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -22021,6 +22454,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -22200,6 +22636,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -22641,6 +23080,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -22648,6 +23090,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -22750,6 +23195,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -22770,6 +23218,9 @@ resourceLoader.pushRelativePaths([
     "App.js"
 ])
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -22777,6 +23228,9 @@ resourceLoader.pushRelativePaths([
     "BMViewStyle.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -22926,6 +23380,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -23018,6 +23475,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -23032,6 +23492,9 @@ resourceLoader.pushRelativePaths([
 
 
 }.initThisClass())
+};
+
+{
 "use strict";
 
 /*
@@ -24426,6 +24889,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -24436,6 +24902,9 @@ resourceLoader.pushRelativePaths([
     //"NodeStore.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -24553,6 +25022,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 
 "use strict";
 
@@ -24639,6 +25111,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -24648,6 +25123,9 @@ resourceLoader.pushRelativePaths([
     "StoreRef.js",
 ])
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -24658,6 +25136,9 @@ resourceLoader.pushRelativePaths([
     "primitives/_imports.js",
 ])
 
+};
+
+{
 "use strict";
 
 
@@ -24708,6 +25189,9 @@ Object.defineSlots(ProtoClass.prototype, {
     },
 
 })
+};
+
+{
 "use strict";
 
 
@@ -24806,6 +25290,9 @@ Object.defineSlots(BMNode.prototype, {
 
 })
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(BMStorableNode.prototype, {
@@ -24813,6 +25300,9 @@ Object.defineSlots(BMStorableNode.prototype, {
     
 })
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -24826,6 +25316,9 @@ resourceLoader.pushRelativePaths([
     "literals/_imports.js",
 ])
 
+};
+
+{
 "use strict";
 
 
@@ -24880,6 +25373,9 @@ Object.defineSlots(Array.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 
@@ -24929,6 +25425,9 @@ Object.defineSlots(ArrayBuffer.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(Date, {
@@ -24964,6 +25463,9 @@ Object.defineSlots(Date.prototype, {
 })
 
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(Map, {
@@ -25025,6 +25527,9 @@ Object.defineSlots(Map.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 
@@ -25072,6 +25577,9 @@ Object.defineSlots(Set.prototype, {
 
 
 
+};
+
+{
 "use strict";
 
 
@@ -25140,6 +25648,9 @@ Object.defineSlots(Object.prototype, {
 
 })
 
+};
+
+{
 "use strict";
 
 Type.typedArrayTypeNames().forEach((name) => {
@@ -25186,6 +25697,9 @@ Type.typedArrayTypeNames().forEach((name) => {
     })
 
 })
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -25194,6 +25708,9 @@ resourceLoader.pushRelativePaths([
     "Number-store.js",
 ])
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(String.prototype, {
@@ -25205,6 +25722,9 @@ Object.defineSlots(String.prototype, {
 })
 
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(Boolean.prototype, {
@@ -25216,6 +25736,9 @@ Object.defineSlots(Boolean.prototype, {
 })
 
 
+};
+
+{
 "use strict";
 
 Object.defineSlots(Number.prototype, {
@@ -25227,6 +25750,9 @@ Object.defineSlots(Number.prototype, {
 })
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -25985,6 +26511,9 @@ setTimeout(() => {
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -26040,6 +26569,9 @@ setTimeout(() => {
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -26090,6 +26622,9 @@ window.StoreRef = class StoreRef {
 }
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -26097,6 +26632,9 @@ resourceLoader.pushRelativePaths([
     //"BMDataStoreRecord.js", // need to load FieldSet first
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -26183,6 +26721,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -26196,6 +26737,9 @@ resourceLoader.pushRelativePaths([
 
 //console.log("Currently running script:", Error.callingScriptURL())
 
+};
+
+{
 "use strict";
 
 /*
@@ -26374,6 +26918,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -26457,6 +27004,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -26491,6 +27041,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -26559,6 +27112,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -26676,6 +27232,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -26714,6 +27273,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -26726,6 +27288,9 @@ resourceLoader.pushRelativePaths([
     "subclasses/_imports.js"
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -26824,6 +27389,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27098,6 +27666,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27163,6 +27734,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -27172,6 +27746,9 @@ resourceLoader.pushRelativePaths([
     "BMJsonNullField.js"
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -27250,6 +27827,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27338,6 +27918,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27431,6 +28014,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27481,6 +28067,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27585,6 +28174,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -27604,6 +28196,9 @@ resourceLoader.pushRelativePaths([
     
 ])
 
+};
+
+{
 "use strict";
       
 /*
@@ -27669,6 +28264,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27740,6 +28338,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27796,6 +28397,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27850,6 +28454,9 @@ resourceLoader.pushRelativePaths([
    
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -27995,6 +28602,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28046,6 +28656,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28070,6 +28683,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28101,6 +28717,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28139,6 +28758,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28365,6 +28987,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -28372,6 +28997,9 @@ resourceLoader.pushRelativePaths([
     "BMOptionNode.js"
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -28501,6 +29129,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28571,6 +29202,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -28580,6 +29214,9 @@ resourceLoader.pushRelativePaths([
     "BMDayNode.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -28726,6 +29363,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28788,6 +29428,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28880,6 +29523,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -28937,6 +29583,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -28946,6 +29595,9 @@ resourceLoader.pushRelativePaths([
     "BMMeridiemNode.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -29042,6 +29694,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -29114,6 +29769,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -29170,6 +29828,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -29262,6 +29923,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -29339,6 +30003,9 @@ resourceLoader.pushRelativePaths([
 }.initThisClass())
 
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -29353,6 +30020,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -29644,6 +30314,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -29711,6 +30384,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -29877,6 +30553,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -30057,6 +30736,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -30071,6 +30753,9 @@ resourceLoader.pushRelativePaths([
     //"top_shelf/_imports.js",
 ])
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -30082,6 +30767,9 @@ resourceLoader.pushRelativePaths([
     "BMTextNodeRowView.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -31159,6 +31847,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -31441,6 +32132,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -31466,6 +32160,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -31498,6 +32195,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -31550,6 +32250,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -31666,6 +32369,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -31680,6 +32386,9 @@ resourceLoader.pushRelativePaths([
     "BMPointerFieldRowView.js"
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -32078,6 +32787,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32164,6 +32876,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32219,6 +32934,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32272,6 +32990,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32338,6 +33059,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32426,6 +33150,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -32433,6 +33160,9 @@ resourceLoader.pushRelativePaths([
     "BMOptionNodeRowView.js"
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -32461,6 +33191,9 @@ resourceLoader.pushRelativePaths([
 	
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32528,6 +33261,9 @@ resourceLoader.pushRelativePaths([
 	
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -32574,6 +33310,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -32585,6 +33324,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -32902,6 +33644,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -33142,6 +33887,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -33199,6 +33947,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -35015,6 +35766,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -35023,6 +35777,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -35228,6 +35985,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -35332,6 +36092,9 @@ setTimeout(() => {
 })
 */
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -35339,6 +36102,9 @@ resourceLoader.pushRelativePaths([
 ])
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -35607,6 +36373,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -35800,6 +36569,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -35813,6 +36585,9 @@ resourceLoader.pushRelativePaths([
     "BMResources.js",
 ])
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -35821,6 +36596,9 @@ resourceLoader.pushRelativePaths([
     "BMFileSystemFile.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -35888,6 +36666,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -35928,6 +36709,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -35971,6 +36755,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -35980,6 +36767,9 @@ resourceLoader.pushRelativePaths([
     "BMFontRowView.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -36067,6 +36857,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36107,6 +36900,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36183,6 +36979,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36218,6 +37017,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -36226,6 +37028,9 @@ resourceLoader.pushRelativePaths([
     "BMAudioPlayer.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -36287,6 +37092,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36354,6 +37162,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 
@@ -36553,6 +37364,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -36560,6 +37374,9 @@ resourceLoader.pushRelativePaths([
     "BMURLImage.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -36611,6 +37428,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36700,6 +37520,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -36712,6 +37535,9 @@ resourceLoader.pushRelativePaths([
     "BMThemeFolder.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -36774,6 +37600,9 @@ resourceLoader.pushRelativePaths([
     
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36842,6 +37671,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36874,6 +37706,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -36931,6 +37766,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -37038,6 +37876,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 /*
@@ -37223,6 +38064,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -37254,6 +38098,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "BMIconResources.js",
@@ -37261,6 +38108,9 @@ resourceLoader.pushRelativePaths([
     "SvgData.js",
 ]);
 
+};
+
+{
 "use strict";
 
 /*
@@ -37313,6 +38163,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -37342,6 +38195,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 
 BMIconResources.shared().addIcon("double right caret", `
 <svg x="0px" y="0px" width="100%" height="100%" preserveAspectRatio="xMidYMin slice" viewBox="0 0 284.936 284.936" style="enable-background:new 0 0 284.936 284.936;">
@@ -37433,12 +38289,18 @@ BMIconResources.shared().addIcon("inner-checkbox", `
 	<circle stroke-width='1' cx=7 cy=7 r=4 />
 </svg>
 `)
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
     "BMJsonResources.js",
 ])
 
+};
+
+{
 "use strict";
 
 /*
@@ -37501,6 +38363,9 @@ resourceLoader.pushRelativePaths([
 
 
 
+};
+
+{
 "use strict";
 
 /*
@@ -37585,6 +38450,9 @@ resourceLoader.pushRelativePaths([
 
 }.initThisClass())
 
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -37593,6 +38461,9 @@ resourceLoader.pushRelativePaths([
     "Strvct/_imports.js",
     //"Stats/_imports.js",
 ])
+};
+
+{
 "use strict";
 
 resourceLoader.pushRelativePaths([
@@ -37604,6 +38475,9 @@ resourceLoader.pushDoneCallback( () => {
     //StrvctApp.shared().run()
 })
 
+};
+
+{
 "use strict";
 
 /*
@@ -37803,6 +38677,9 @@ resourceLoader.pushDoneCallback( () => {
     }
 
 }.initThisClass())
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "fonts/_imports.js",
@@ -37810,6 +38687,9 @@ resourceLoader.pushRelativePaths([
     "images/_imports.js",
 ]);
 
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     /*
@@ -37828,6 +38708,9 @@ resourceLoader.pushRelativePaths([
 
 ]);
 
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "Hyperspace.ttf",
@@ -37836,30 +38719,47 @@ resourceLoader.pushRelativePaths([
     "Hyperspace Italic.ttf"
 ]);
 
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "fonts.css",
 ]);
 
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "beep_06.wav",
     "bleep_04.wav",
 ]);
 
+};
+
+{
 
 resourceLoader.pushRelativePaths([
     "appicon-black-600x600.png",
 ]);
 
+};
+
 ResourceLoader.shared().setResourceFilePaths(["./resources/fonts/Hyperspace/Hyperspace.ttf","./resources/fonts/Hyperspace/Hyperspace Bold.ttf","./resources/fonts/Hyperspace/Hyperspace Bold Italic.ttf","./resources/fonts/Hyperspace/Hyperspace Italic.ttf","./resources/sounds/beep_06.wav","./resources/sounds/bleep_04.wav","./resources/images/appicon-black-600x600.png"]);
 
 
-      window.onload = function() { 
-        setTimeout(() => { ResourceLoader.shared().done() }, 200) // hack for startWhenReady for loading order issue        
-      }
+    /*
+    window.addEventListener("load", () => {
+      ResourceLoader.shared().done()
+    })
+    */
 
-    </script>
-  </head>
-  <body id="body"></body>
+    //resourceLoader.run()
+
+  </script>
+</head>
+
+<body id="body"></body>
+
 </html>

@@ -381,4 +381,7 @@
 
 }.initThisClass())
 
-ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index page
+
+if (!window.ResourceLoaderIsEmbedded) {
+    ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index 
+}

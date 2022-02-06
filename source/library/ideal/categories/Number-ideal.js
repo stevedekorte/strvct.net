@@ -8,6 +8,7 @@
 
 */
 
+{
 
 const Base64 = (function () {
     const digitsStr = 
@@ -44,15 +45,15 @@ const Base64 = (function () {
 Object.defineSlots(Number.prototype, {
 
     duplicate: function() {
-        return this
+        return this;
     },
     
     copy: function() {
-        return this
+        return this;
     },
 
     shallowCopy: function() {
-        return this
+        return this;
     },
 
     repeat: function (callback) {
@@ -67,14 +68,14 @@ Object.defineSlots(Number.prototype, {
     forEach (func) {
         assert(Number.isInteger(this))
         for (let i = 0; i < this; i++) {
-            func(i)
+            func(i);
         }
     },
 
     reverseForEach (func) {
         assert(Number.isInteger(this))
         for (let i = this - 1; i >= 0; i++) {
-            func(i)
+            func(i);
         }
     },
 
@@ -95,9 +96,9 @@ Object.defineSlots(Number.prototype, {
     },
 
     ordinalSuffix: function() {
-        const i = this
-        let j = i % 10
-        let k = i % 100
+        const i = this;
+        let j = i % 10;
+        let k = i % 100;
         
         if (j === 1 && k !== 11) {
             return "st";
@@ -112,17 +113,19 @@ Object.defineSlots(Number.prototype, {
     },
 
     toBase64: function() {
-        return Base64.fromInt(this)
+        return Base64.fromInt(this);
     },
 
     fromBase64: function(base64String) {
         // need to call like: 
         // Number.prototype.fromBase64("...")
-        return Base64.toInt(base64String)
+        return Base64.toInt(base64String);
     },
 
     byteSizeDescription: function() {
-        return ByteFormatter.clone().setValue(this).formattedValue()
+        return ByteFormatter.clone().setValue(this).formattedValue();
     },
     
 });
+
+};

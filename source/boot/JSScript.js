@@ -54,13 +54,14 @@
 
     runInBrowser () {
         const script = document.createElement("script")
-        //console.log("JsScript loading: '" + this.fullPath() + "'")
-
+        console.log("JsScript loading: '" + this.fullPath() + "'")
+        
         script.src = this.fullPath()
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
-            //console.log("loaded script src:'" + script.src)
+            console.log("loaded script src:'" + script.src)
+            debugger
             this._doneCallback()
         }
 

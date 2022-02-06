@@ -23,9 +23,12 @@
 
 */
 
-const classesToFix =[Array, Set, Map]
-classesToFix.forEach(aClass => aClass.__proto__ = Object)
+{
+    const classesToFix =[Array, Set, Map]
+    classesToFix.forEach(aClass => aClass.__proto__ = Object)
+}
 
+{
 
 Object.hasOwnSlot = function(obj, slotName) {
     const descriptor = Object.getOwnPropertyDescriptor(slotName)
@@ -553,6 +556,8 @@ const prototypeSlots = {
 }
 
 
-Object.defineSlots(Object.prototype, prototypeSlots)
+Object.defineSlots(Object.prototype, prototypeSlots);
 
-Object.initThisClass()
+Object.initThisClass();
+
+}

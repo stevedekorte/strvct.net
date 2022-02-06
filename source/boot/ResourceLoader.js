@@ -1,6 +1,5 @@
 "use strict";
 
-
 /*
 
     sends these events to window:
@@ -27,6 +26,8 @@
 
         this.newSlot("resourceFilePaths", [])
         this.newSlot("maxUrlCount", 0)
+
+        this.newSlot("isEmbeded", false)
     }
 
     resourceFilePathsWithExtensions(extensions) {
@@ -56,6 +57,7 @@
     }
 
     pushRelativePaths (paths) {
+        //debugger
         this.pushFilePaths(this.absolutePathsForRelativePaths(paths))
         return this
     }
@@ -103,7 +105,14 @@
 
             //window.postMessage("importerUrl", { url: url, maxUrlCount: this.maxUrlCount() });
         }
+        return this
+    }
 
+    loadJsUrl (url) {
+        this.jsFilesLoaded().push(url)
+        const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+        this.setCurrentScript(script)
+        this.currentScript().run()
     }
 
     loadUrl (url) {
@@ -115,50 +124,41 @@
         }
 
         const extension = url.split(".").pop().toLowerCase()
-        //const fontExtensions = ["ttf", "woff", "woff2"]
-        //const audioExtensions = ["wav", "mp3", "m4a", "mp4", "oga", "ogg"]
-        //const imageExtensions = ["png", "jpg", "jpeg", "gif", "tiff", "bmp"]
+        const isImportsFile = url.split("/").pop() === "_imports.js"
 
         if (extension === "js" /*|| extension === "json"*/) {
-            this.jsFilesLoaded().push(url)
-            const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
-            this.setCurrentScript(script)
-            this.currentScript().run()
+            if (!this.isEmbeded()) {
+                console.log("load js ", url)
+                this.loadJsUrl(url)
+            } else {
+                this.loadNext() 
+            }
         } else if (extension === "css") {
-            this.cssFilesLoaded().push(url)
-            CssLink.clone().setFullPath(url).run() // move to CSSResources?
+            if (!this.isEmbeded()) {
+                console.log("load css ", url)
+                this.cssFilesLoaded().push(url)
+                CssLink.clone().setFullPath(url).run() // move to CSSResources?
+            }
             this.loadNext()
         } else {
-            this.resourceFilePaths().push(url)
+            // leave it to other resource handlers which call ResourceLoader.shared().resourceFilePathsWithExtensions()
+            this.resourceFilePaths().push(url) 
             this.loadNext()
         }
-
-        /*
-        } else if (fontExtensions.contains(extension)) {
-            this.fontFilePaths().push(url)
-            this.loadNext()
-        } else if (audioExtensions.contains(extension)) {
-            this.audioFilePaths().push(url)
-            this.loadNext()
-        } else if (imageExtensions.contains(extension)) {
-            this.imageFilePaths().push(url)
-            this.loadNext()
-        } else {
-            throw new Error("unrecognized extension on url '" + url + "'")
-        }
-        */
 
         return this
     }
 
     done () {
-        //console.log("ResourceLoader.done() -----------------------------")
+        console.log("ResourceLoader.done() -----------------------------")
+        debugger
         this.doneCallbacks().forEach(callback => callback())
         this.postEvent("resourceLoaderDone", { }) 
         return this
     }
 
     setError (error) {
+        debugger
         //this.errorCallbacks().forEach(callback => callback(error))
         this.postEvent("resourceLoaderError", { error: error }) 
         return this
@@ -167,8 +167,13 @@
 
 // --- ResourceLoader -----------------------------------------------
 
-getGlobalThis().resourceLoader = ResourceLoader.shared()
 
-if (getGlobalThis().ResourceLoaderIsEmbedded !== true) {
-        resourceLoader.pushRelativePaths(["_imports.js"]).run()
+getGlobalThis().resourceLoader = ResourceLoader.shared();
+resourceLoader.pushRelativePaths(["_imports.js"]);
+
+if (getGlobalThis().ResourceLoaderIsEmbedded) {
+    resourceLoader.setIsEmbeded(getGlobalThis().ResourceLoaderIsEmbedded)
+    window.addEventListener("load", () => { resourceLoader.run(); });
+} else {
+    resourceLoader.run();
 }

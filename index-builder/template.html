@@ -1,31 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="cache-control" content="no-cache">    
-    <meta http-equiv="pragma" content="no-cache">      
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=0.1">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="Description" content="">
-    <meta name="theme-color" content="#317EFB"/>
-    <link rel="icon" href="resources/favicons/favicon.ico">
-    <title>...</title>
-    <style>
 
-      /* INSERT CSS HERE */
+<head>
+  <meta http-equiv="cache-control" content="no-cache">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=0.1">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="Description" content="">
+  <meta name="theme-color" content="#317EFB" />
+  <link rel="icon" href="resources/favicons/favicon.ico">
+  <title>...</title>
+  <style>
+    /* INSERT CSS HERE */
+  </style>
+  <script>
 
-    </style>
-<script>
+    window.ResourceLoaderIsEmbedded = true
 
-window.ResourceLoaderIsEmbedded = true
+    /* INSERT SCRIPT HERE */
 
-      /* INSERT SCRIPT HERE */
+    /*
+    window.addEventListener("load", () => {
+      ResourceLoader.shared().done()
+    })
+    */
 
-      window.onload = function() { 
-        setTimeout(() => { ResourceLoader.shared().done() }, 200) // hack for startWhenReady for loading order issue        
-      }
+    //resourceLoader.run()
 
-    </script>
-  </head>
-  <body id="body"></body>
+  </script>
+</head>
+
+<body id="body"></body>
+
 </html>

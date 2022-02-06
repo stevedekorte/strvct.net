@@ -3,6 +3,7 @@
 /*
 
     A minimal Javascript sequential file loader. 
+    This is needed because script tags will reliably load in sequence. 
     We use this to sequentially load a few JS files that
     get a more full featured loader running 
     that can deal with more reasource types including js, css, fonts, etc.
@@ -20,7 +21,7 @@
 
 (class BootLoader {
     static initThisClass () {
-        window.BootLoader = this
+        window.BootLoader = this // only used in web browser?
     }
 
     static shared () {
@@ -54,9 +55,14 @@
 
         if (nextFile) {
             const path = "./" + nextFile
-            //console.log("importing '" + path + "'")
+            console.log("BootLoader importing '" + path + "'")
+            //debugger
+
             import(path).then((module) => {
                 this.loadNextFile()
+            }).catch(function (error) {
+                console.log(error.message)
+                debugger
             })
         }
         return this

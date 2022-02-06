@@ -118,8 +118,8 @@
     }
     
     static defineClassGlobally () {
-        if(Type.isUndefined(window[this.type()])) {
-            window[this.type()] = this
+        if(Type.isUndefined(getGlobalThis()[this.type()])) {
+            getGlobalThis()[this.type()] = this
             //console.log(this.type() + ".initThisClass()")
         } else {
             const msg = "WARNING: Attempt to redefine window['" + this.type() + "']"

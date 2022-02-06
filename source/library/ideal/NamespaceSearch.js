@@ -18,7 +18,7 @@
 
 */
 
-class NamespaceSearch extends ProtoClass {
+(class NamespaceSearch extends ProtoClass {
 
     init () {
         this.newSlot("visited", null)
@@ -41,7 +41,8 @@ class NamespaceSearch extends ProtoClass {
             })
         }
 
-        this.findOnObject(globalThis, ["globalThis"])
+        //this.findOnObject(globalThis, ["globalThis"])
+        this.findOnObject(getGlobalThis(), ["globalThis"])
         return this
     }
 
@@ -50,10 +51,10 @@ class NamespaceSearch extends ProtoClass {
             return false
         }
 
-        if (this._visited.has(v)) {
+        if (this.visited().has(v)) {
             return false
         } else {
-            this._visited.add(v)
+            this.visited().add(v)
         }
 
         //const joinedPath = path.join("/")
@@ -91,15 +92,15 @@ class NamespaceSearch extends ProtoClass {
 
     addMatchingPath (aPath) {
         const stringPath = aPath.join("/")
-        if (!this._matchingPaths.contains(stringPath)) {
-            this._matchingPaths.push(stringPath)
+        if (!this.matchingPaths().contains(stringPath)) {
+            this.matchingPaths().push(stringPath)
         }
         return this
     }
 
     showMatches () {
         console.log("matchingPaths:")
-        this._matchingPaths.forEach(p => console.log("  " + p))
+        this.matchingPaths().forEach(p => console.log("  " + p))
     }
 
     static selfTest () {
@@ -111,6 +112,6 @@ class NamespaceSearch extends ProtoClass {
         assert(ns.matchingPaths()[0] === "globalThis/String")
     }
 
-}
+}.initThisClass())
 
 //NamespaceSearch.selfTest()

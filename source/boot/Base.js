@@ -1,7 +1,9 @@
 
+"use strict";
+
 // ------------------------------------------------------------------
 
-Object.defineSlot = function(obj, slotName, slotValue) {
+Object.defineSlot = function (obj, slotName, slotValue) {
     //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
     const descriptor = {
         configurable: true,
@@ -14,7 +16,7 @@ Object.defineSlot = function(obj, slotName, slotValue) {
 }
 
 if (!String.prototype.capitalized) {
-    Object.defineSlot(String.prototype, "capitalized", 
+    Object.defineSlot(String.prototype, "capitalized",
         function () {
             return this.replace(/\b[a-z]/g, function (match) {
                 return match.toUpperCase();
@@ -28,9 +30,9 @@ if (!String.prototype.capitalized) {
     // Base class with helpful methods for cloning and slot creation 
 
     isInBrowser() {
-        return (typeof(document) !== 'undefined')
+        return (typeof (document) !== 'undefined')
     }
-    
+
     static shared() {
         if (!this._shared) {
             this._shared = this.clone()
@@ -38,8 +40,19 @@ if (!String.prototype.capitalized) {
         return this._shared
     }
 
-    static initThisClass () {
+    static type() {
+        return this.name
+    }
+
+    static initThisClass() {
         //console.log("this.classType() = ", this.classType())
+        /*
+        if (typeof(getGlobalThis()[this.type()]) !== "undefined") {
+            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + this.type() + "']"
+            console.warn(msg)
+            throw new Error(msg)
+        }*/
+
         getGlobalThis()[this.type()] = this
 
         if (this.prototype.hasOwnProperty("initPrototype")) {
@@ -50,11 +63,11 @@ if (!String.prototype.capitalized) {
         return this
     }
 
-    static type () {
+    static type() {
         return this.name
     }
 
-    type () {
+    type() {
         return this.constructor.name
     }
 
@@ -63,18 +76,18 @@ if (!String.prototype.capitalized) {
         obj.init()
         return obj
     }
-    
+
     init() {
         // subclasses should override to initialize
     }
 
     newSlot(slotName, initialValue) {
-        if (typeof(slotName) !== "string") {
-            throw new Error("slot name must be a string"); 
+        if (typeof (slotName) !== "string") {
+            throw new Error("slot name must be a string");
         }
 
-        if (initialValue === undefined) { 
-            initialValue = null 
+        if (initialValue === undefined) {
+            initialValue = null
         };
 
         const privateName = "_" + slotName;
