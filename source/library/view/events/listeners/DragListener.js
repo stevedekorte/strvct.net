@@ -32,4 +32,4 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());

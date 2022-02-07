@@ -102,5 +102,5 @@
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 

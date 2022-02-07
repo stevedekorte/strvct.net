@@ -845,4 +845,4 @@
 			".woff": "font/woff",
 		}
 	}
-}.initThisClass())
+}.initThisClass());

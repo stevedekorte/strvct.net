@@ -45,4 +45,4 @@
         //	    return "home3-white"
     }
     
-}.initThisClass())
+}.initThisClass());

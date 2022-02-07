@@ -337,4 +337,4 @@
         this.boundsCheckTargetDifficulty()
     }
 
-}.initThisClass())
+}.initThisClass());

@@ -177,4 +177,4 @@
         return false
     }
 
-}.initThisClass())
+}.initThisClass());

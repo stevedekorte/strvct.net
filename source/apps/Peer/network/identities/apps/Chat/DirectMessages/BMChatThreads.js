@@ -27,4 +27,4 @@
 	    //return "mail-white"
     }
     
-}.initThisClass())
+}.initThisClass());

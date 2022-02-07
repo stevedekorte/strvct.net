@@ -25,5 +25,5 @@
         this.addSubnode(this.sells())
     }
 
-}.initThisClass())
+}.initThisClass());
 

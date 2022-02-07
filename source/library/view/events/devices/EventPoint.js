@@ -95,4 +95,4 @@
         return this.viewportWidth() - this.distFromLeftOfViewport()
     }
     
-}.initThisClass())
+}.initThisClass());

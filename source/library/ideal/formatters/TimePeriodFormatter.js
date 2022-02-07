@@ -61,4 +61,4 @@ TimePeriodFormatter
         const days = Math.floor(hours/24)
         return days + periods.days
     }
-}.initThisClass())
+}.initThisClass());

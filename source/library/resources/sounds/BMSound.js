@@ -63,4 +63,4 @@
         //audio.src = 'data:audio/wav;base64,UklGR...;
     }
 
-}.initThisClass())
+}.initThisClass());

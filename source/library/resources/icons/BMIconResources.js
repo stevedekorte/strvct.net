@@ -45,7 +45,7 @@
 		return this.subnodes().map(sn => sn.title())
 	}
 
-}.initThisClass())
+}.initThisClass());
 
 
 

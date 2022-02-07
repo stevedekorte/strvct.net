@@ -179,6 +179,6 @@
         return super.didUpdateSlot(aSlot, oldValue, newValue) 
     }
     
-}.initThisClass())
+}.initThisClass());
 
 

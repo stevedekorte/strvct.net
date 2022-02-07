@@ -54,5 +54,5 @@
         return this.senderId().equals(this.localIdentity())
     }
     
-}.initThisClass())
+}.initThisClass());
 

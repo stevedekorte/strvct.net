@@ -135,4 +135,4 @@
         return this.currentPosition().distanceFrom(this.beginPosition())
     }
 
-}.initThisClass())
+}.initThisClass());

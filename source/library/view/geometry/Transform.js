@@ -70,4 +70,4 @@
     }
     */
    
-}.initThisClass())
+}.initThisClass());

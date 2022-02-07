@@ -48,4 +48,4 @@
         return true
     }
     
-}.initThisClass())
+}.initThisClass());

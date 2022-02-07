@@ -90,4 +90,4 @@
         return dict
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -20,4 +20,4 @@
         this.setNoteIsSubnodeCount(true)
     }
 
-}.initThisClass())
+}.initThisClass());

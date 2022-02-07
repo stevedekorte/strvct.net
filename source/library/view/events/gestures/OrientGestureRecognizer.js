@@ -303,4 +303,4 @@
         console.log(this.debugJson())
     }
 
-}.initThisClass())
+}.initThisClass());

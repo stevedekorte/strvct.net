@@ -70,4 +70,4 @@
 		
         return v + space + orderName + postfix
     }
-}.initThisClass())
+}.initThisClass());

@@ -90,4 +90,4 @@ var Buffer = bitcore.deps.Buffer;
         return anIdentity !== null && this.publicKeyString() === anIdentity.publicKeyString()
     }
 
-}.initThisClass())
+}.initThisClass());

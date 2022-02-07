@@ -41,4 +41,4 @@
         return a >= ma
     }
     
-}.initThisClass())
+}.initThisClass());

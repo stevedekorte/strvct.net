@@ -111,6 +111,6 @@
         }
     }
     */
-}.initThisClass())
+}.initThisClass());
 
 

@@ -63,5 +63,5 @@
         return t + " " + this.method() + "" + o
     }
 
-}.initThisClass())
+}.initThisClass());
 

@@ -162,5 +162,5 @@
         return this._replies
     }
     
-}.initThisClass())
+}.initThisClass());
 

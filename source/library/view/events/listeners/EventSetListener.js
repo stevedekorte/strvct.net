@@ -241,7 +241,7 @@
         return this
     }   
 
-}.initThisClass())
+}.initThisClass());
 
 /*
     // globally track whether we are inside an event 

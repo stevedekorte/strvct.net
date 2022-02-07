@@ -313,4 +313,4 @@
     }
 
 
-}.initThisClass())
+}.initThisClass());

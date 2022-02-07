@@ -43,4 +43,4 @@
         return this.testElement().style
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -34,4 +34,4 @@
         this.setKeyIsVisible(false)
     }
     
-}.initThisClass())
+}.initThisClass());

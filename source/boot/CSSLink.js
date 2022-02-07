@@ -18,4 +18,4 @@
         styles.href = this.fullPath()
         document.getElementsByTagName("head")[0].appendChild(styles)
     }
-}.initThisClass())
+}.initThisClass());

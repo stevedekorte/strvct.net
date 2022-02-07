@@ -112,5 +112,5 @@
         return super.addSubnodeAt(aSubnode, anIndex)
     }
 
-}.initThisClass())
+}.initThisClass());
 

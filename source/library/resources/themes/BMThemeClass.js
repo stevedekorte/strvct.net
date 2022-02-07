@@ -103,4 +103,4 @@
         return this
    }
 
-}.initThisClass())
+}.initThisClass());

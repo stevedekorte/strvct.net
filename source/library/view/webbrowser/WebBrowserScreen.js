@@ -63,5 +63,5 @@
         return prefersDark
     }
 
-}.initThisClass())
+}.initThisClass());
 

@@ -105,4 +105,4 @@
         return this.observer().typeId() + " listening to " + this.targetId() + " " + this.name()
     }
 
-}.initThisClass())
+}.initThisClass());

@@ -84,5 +84,5 @@
     }
     */
    
-}.initThisClass())
+}.initThisClass());
 

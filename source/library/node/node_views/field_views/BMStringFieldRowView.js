@@ -49,4 +49,4 @@
         }
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -92,7 +92,7 @@
         })
     }
 
-}.initThisClass())
+}.initThisClass());
 
 /*
 setTimeout(() => {

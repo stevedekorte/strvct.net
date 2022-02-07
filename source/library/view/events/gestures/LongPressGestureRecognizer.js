@@ -140,4 +140,4 @@
     }
     */
     
-}.initThisClass())
+}.initThisClass());

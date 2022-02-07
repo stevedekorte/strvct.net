@@ -43,4 +43,4 @@
         return window // is this the best way to handle this?
     }
     
-}.initThisClass())
+}.initThisClass());

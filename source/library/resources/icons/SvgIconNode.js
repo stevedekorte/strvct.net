@@ -22,7 +22,7 @@
       return this.title()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 

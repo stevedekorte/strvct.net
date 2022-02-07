@@ -93,5 +93,5 @@
         return WebBrowserNotification.clone()
     }
     
-}.initThisClass())
+}.initThisClass());
 

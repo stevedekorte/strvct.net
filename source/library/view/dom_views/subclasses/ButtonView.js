@@ -140,4 +140,4 @@
         return false
     }
     
-}.initThisClass())
+}.initThisClass());

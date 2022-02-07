@@ -94,4 +94,4 @@
         return this.validate() // could cache this later...
     }
 
-}.initThisClass())
+}.initThisClass());

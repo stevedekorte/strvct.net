@@ -1044,4 +1044,4 @@
         return this.typeId() + " for " +  nodeName
     }
     
-}.initThisClass())
+}.initThisClass());

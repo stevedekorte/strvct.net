@@ -147,5 +147,5 @@
         tx.commit() 
     }
 
-}.initThisClass())
+}.initThisClass());
 

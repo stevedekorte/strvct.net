@@ -134,6 +134,6 @@
 
     }
     
-}.initThisClass())
+}.initThisClass());
 
 

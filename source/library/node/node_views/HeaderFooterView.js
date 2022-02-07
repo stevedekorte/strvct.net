@@ -63,4 +63,4 @@
     }
     */
     
-}.initThisClass())
+}.initThisClass());

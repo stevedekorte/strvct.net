@@ -131,7 +131,7 @@
 
         console.log(this.type() + " - self test passed")
     }
-}.initThisClass())
+}.initThisClass());
 
 
 // ------------------------------------------------------------------

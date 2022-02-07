@@ -233,4 +233,4 @@
         return this.y()
     }
     
-}.initThisClass())
+}.initThisClass());

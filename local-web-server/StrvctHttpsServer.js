@@ -55,5 +55,5 @@ const fs = require('fs');
 			// do nothing
 		}
 	}
-}.initThisClass())
+}.initThisClass());
 

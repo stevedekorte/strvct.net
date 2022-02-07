@@ -39,4 +39,4 @@
             error: aString
         })
     }
-}.initThisClass())
+}.initThisClass());

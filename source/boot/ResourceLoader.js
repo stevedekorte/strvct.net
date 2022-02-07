@@ -12,6 +12,11 @@
 
 (class ResourceLoader extends Base {
 
+    initThisClass () {
+        debugger
+        super.initThisClass()
+    }
+
     initPrototype () {
         this.newSlot("currentScript", null);
         this.newSlot("urls", []);
@@ -30,6 +35,10 @@
         this.newSlot("isEmbeded", false)
     }
 
+    isInIndexMode () {
+        return getGlobalThis().isBuildingIndex
+    }
+
     resourceFilePathsWithExtensions(extensions) {
         return this.resourceFilePaths().select(path => extensions.contains(path.pathExtension().toLowerCase()))
     }
@@ -37,6 +46,10 @@
     currentScriptPath () {
         if (this.currentScript()) {
             return this.currentScript().basePath()
+        } 
+
+        if (!this.isInBrowser()) {
+            return process.cwd()
         }
         return ""
     }
@@ -45,7 +58,7 @@
         const parts = this.currentScriptPath().split("/").concat(aPath.split("/"))
         let rPath = parts.join("/")
 
-        if (rPath[0] === "/"[0]) {
+        if (rPath[0] === "/"[0] && this.isInBrowser()) {
             rPath = "." + rPath
         }
 
@@ -108,11 +121,32 @@
         return this
     }
 
+    fullPathForUrl (url) {
+        if (!this.isInBrowser()) {
+            if (url.indexOf("://") === -1 && url.indexOf("/") !== 0) {
+                //console.log("url: '" + url + "'")
+                const rootPath = process.cwd()
+                const nodePath = require("path")
+                const fullPath = nodePath.join(rootPath, url)
+                console.log("url: '" + url + "' -> '" + fullPath + "'")
+                return fullPath
+            }
+        }
+        return url
+    }
+
     loadJsUrl (url) {
-        this.jsFilesLoaded().push(url)
-        const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+        const fullPath = this.fullPathForUrl(url)
+        this.jsFilesLoaded().push(fullPath)
+        const script = JsScript.clone().setImporter(this).setFullPath(fullPath).setDoneCallback(() => { this.loadNext() })
         this.setCurrentScript(script)
-        this.currentScript().run()
+
+        const isImportsFile = url.split("/").pop() === "_imports.js"
+        if (this.isInIndexMode() && !isImportsFile) {
+            this.loadNext()
+        } else {
+            this.currentScript().run()
+        }
     }
 
     loadUrl (url) {
@@ -124,7 +158,6 @@
         }
 
         const extension = url.split(".").pop().toLowerCase()
-        const isImportsFile = url.split("/").pop() === "_imports.js"
 
         if (extension === "js" /*|| extension === "json"*/) {
             if (!this.isEmbeded()) {
@@ -134,9 +167,9 @@
                 this.loadNext() 
             }
         } else if (extension === "css") {
+            this.cssFilesLoaded().push(url)
             if (!this.isEmbeded()) {
                 console.log("load css ", url)
-                this.cssFilesLoaded().push(url)
                 CssLink.clone().setFullPath(url).run() // move to CSSResources?
             }
             this.loadNext()
@@ -151,19 +184,18 @@
 
     done () {
         console.log("ResourceLoader.done() -----------------------------")
-        debugger
+        //debugger
         this.doneCallbacks().forEach(callback => callback())
         this.postEvent("resourceLoaderDone", { }) 
         return this
     }
 
     setError (error) {
-        debugger
         //this.errorCallbacks().forEach(callback => callback(error))
         this.postEvent("resourceLoaderError", { error: error }) 
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 // --- ResourceLoader -----------------------------------------------
 
@@ -175,5 +207,5 @@ if (getGlobalThis().ResourceLoaderIsEmbedded) {
     resourceLoader.setIsEmbeded(getGlobalThis().ResourceLoaderIsEmbedded)
     window.addEventListener("load", () => { resourceLoader.run(); });
 } else {
-    resourceLoader.run();
+    //resourceLoader.run();
 }

@@ -4,7 +4,7 @@
 
 */
 
-window.Mirror = class Mirror extends Object {
+getGlobalThis().Mirror = class Mirror extends Object {
 	
 	static reflectOn (aTarget) {
 		return this.clone().setTarget(aTarget)

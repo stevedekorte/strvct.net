@@ -236,4 +236,4 @@
         this.unhideTransition()
     }
 
-}.initThisClass())
+}.initThisClass());

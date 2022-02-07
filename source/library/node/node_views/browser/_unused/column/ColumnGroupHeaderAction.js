@@ -69,4 +69,4 @@
         return false
     }
     
-}.initThisClass())
+}.initThisClass());

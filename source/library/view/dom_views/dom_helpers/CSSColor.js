@@ -348,5 +348,5 @@ const max3 = function(a, b, c) {
         }
     }
 
-}.initThisClass())
+}.initThisClass());
 

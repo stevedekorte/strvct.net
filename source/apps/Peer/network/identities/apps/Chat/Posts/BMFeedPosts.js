@@ -80,4 +80,4 @@
         return !this.hasRead()
     }
 
-}.initThisClass())
+}.initThisClass());

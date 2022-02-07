@@ -25,5 +25,5 @@
         return this.subnodes()
     }
 
-}.initThisClass())
+}.initThisClass());
 

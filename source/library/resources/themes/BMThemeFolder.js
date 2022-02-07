@@ -27,4 +27,4 @@
         this.setNodeCanReorderSubnodes(true)
     }
 
-}.initThisClass())
+}.initThisClass());

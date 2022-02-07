@@ -37,4 +37,4 @@
         //this.post().didUpdateNode()
     }
 
-}.initThisClass())
+}.initThisClass());

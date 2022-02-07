@@ -11,4 +11,4 @@
 (class SubnodesArray extends SortedArray {
 
 
-}.initThisClass())
+}.initThisClass());

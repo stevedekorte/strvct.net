@@ -257,7 +257,7 @@
         console.log(this.actionsDescription())
     }
 
-}.initThisClass())
+}.initThisClass());
 
 Object.defineSlots(ProtoClass.prototype, {
 

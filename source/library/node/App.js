@@ -189,4 +189,4 @@
         //doc.setTextTransform("uppercase")
    }
 
-}.initThisClass())
+}.initThisClass());

@@ -27,4 +27,4 @@
         this.setValueIsEditable(true)
     }
     
-}.initThisClass())
+}.initThisClass());

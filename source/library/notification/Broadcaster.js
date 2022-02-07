@@ -86,7 +86,7 @@
         })
     }
 
-}.initThisClass())
+}.initThisClass());
 
 Object.defineSlots(ProtoClass.prototype, {
 

@@ -249,6 +249,6 @@
         return true
     }
 
-}.initThisClass())
+}.initThisClass());
 
 //ObservableProxy.selfTest()

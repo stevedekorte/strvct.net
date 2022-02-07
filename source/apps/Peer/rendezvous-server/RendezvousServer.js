@@ -67,4 +67,4 @@ require("RendezvousClientMessage.js")
     }
 
 
-}.initThisClass())
+}.initThisClass());

@@ -1506,5 +1506,5 @@
        return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription()
     }
     
-}.initThisClass())
+}.initThisClass());
 

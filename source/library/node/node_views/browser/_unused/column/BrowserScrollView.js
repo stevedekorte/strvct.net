@@ -31,6 +31,6 @@
     }
     
     
-}.initThisClass())
+}.initThisClass());
 
 

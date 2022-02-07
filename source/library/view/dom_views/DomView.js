@@ -4624,4 +4624,4 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());

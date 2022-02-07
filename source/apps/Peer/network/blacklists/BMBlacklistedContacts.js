@@ -18,4 +18,4 @@
         this.setTitle("contacts")
     }
 	
-}.initThisClass())
+}.initThisClass());

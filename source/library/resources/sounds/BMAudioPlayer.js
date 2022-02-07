@@ -195,4 +195,4 @@
         return this;
     }
 
-}.initThisClass())
+}.initThisClass());

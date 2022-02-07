@@ -51,5 +51,5 @@
         }		
     }
     
-}.initThisClass())
+}.initThisClass());
 

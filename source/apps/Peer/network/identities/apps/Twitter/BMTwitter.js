@@ -46,5 +46,5 @@
         
     }
     
-}.initThisClass())
+}.initThisClass());
 

@@ -40,4 +40,4 @@
         this.styleSheets().forEach(sheet => sheet.show())
     }
 
-}.initThisClass())
+}.initThisClass());

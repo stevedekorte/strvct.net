@@ -20,4 +20,4 @@
         this.setSubtitleIsSubnodeCount(true)
     }
 
-}.initThisClass())
+}.initThisClass());

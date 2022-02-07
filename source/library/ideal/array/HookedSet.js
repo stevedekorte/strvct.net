@@ -48,5 +48,5 @@
         return this
     }
 
-}.initThisClass()) //.selfTest()
+}.initThisClass()); //.selfTest()
 

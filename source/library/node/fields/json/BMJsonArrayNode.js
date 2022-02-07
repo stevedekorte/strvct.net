@@ -84,4 +84,4 @@
         return bdd
     }
     
-}.initThisClass())
+}.initThisClass());

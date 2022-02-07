@@ -73,6 +73,6 @@
 
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 

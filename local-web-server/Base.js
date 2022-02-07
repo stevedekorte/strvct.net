@@ -85,4 +85,4 @@ if (!String.prototype.capitalized) {
         return this;
     }
 
-}.initThisClass())
+}.initThisClass());

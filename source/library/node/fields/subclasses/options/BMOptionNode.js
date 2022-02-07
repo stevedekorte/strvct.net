@@ -66,4 +66,4 @@
         return this.isPicked() ? "✓" : ""
     }
 
-}.initThisClass())
+}.initThisClass());

@@ -1389,5 +1389,5 @@
         return super.debugTypeId() + " '" + this.title() + "'"
     }
 
-}.initThisClass())
+}.initThisClass());
 

@@ -29,6 +29,10 @@ if (!String.prototype.capitalized) {
 (class Base {
     // Base class with helpful methods for cloning and slot creation 
 
+    static isInBrowser() {
+        return (typeof (document) !== 'undefined')
+    }
+
     isInBrowser() {
         return (typeof (document) !== 'undefined')
     }
@@ -112,5 +116,5 @@ if (!String.prototype.capitalized) {
     }
 
 
-}.initThisClass())
+}.initThisClass());
 

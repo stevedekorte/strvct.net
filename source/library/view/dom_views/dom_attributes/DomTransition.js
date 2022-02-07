@@ -98,6 +98,6 @@
         this.transitions().syncToDomView()
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 

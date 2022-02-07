@@ -7,6 +7,15 @@
         this.newSlot("doneCallback", null);
     }
 
+    setFullPath (aPath) {
+        const isAbsolute = (aPath.indexOf("/") === 0) || (aPath.indexOf("://") !== -1)
+        if (!isAbsolute) {
+            throw new Error("not an absolute path: '" + path + "'")
+        }
+        this._fullPath = aPath
+        return this
+    }
+
     run () {
         //console.log("JsScript run " + this.fullPath())
         
@@ -24,16 +33,31 @@
         //const path = __dirname + "/" + this.fullPath()
         //console.log("__dirname = ", __dirname)
         //const path = "../../" + this.fullPath()
-        const path = this.fullPath()
-        //console.log("runInNode path: ", path)
+        let path = this.fullPath()
+        console.log("runInNode path: ", path)
         //root_require(path)
 
+
         try {
-            root_require(path)
+            //const root_require = require('root-require');
+            //path = __dirname + "/" + path
+            const nodePath = require('path');
+
+            /*
+            if (path[0] !== "/") {
+                throw new Error("not an absolute path: '" + path + "'")
+            }
+            */
+            //path = nodePath.resolve("../../", path)
+            console.log("require '" + path + "'")
+
+            require(path)
             this._doneCallback()
         } catch (error) {
             this.importer().setError(error)
-            throw new Error(error.essage + " loading url " + path)
+            console.log("current working directory __dirname = '" + __dirname + "'")
+            console.log("can't find = '" + path + "'")
+            throw new Error(error.message + " loading url " + path)
         }
 
         //console.log("required path: ", path)
@@ -61,7 +85,7 @@
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
             console.log("loaded script src:'" + script.src)
-            debugger
+            //debugger
             this._doneCallback()
         }
 
@@ -79,4 +103,4 @@
         parts.pop()
         return parts.join("/")
     }
-}.initThisClass())
+}.initThisClass());

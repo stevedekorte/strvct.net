@@ -76,7 +76,7 @@
         */
         console.log("DOCUMENTATION:\n\n", lines.join("\n"))
     }
-}.initThisClass())
+}.initThisClass());
 
 
 /*

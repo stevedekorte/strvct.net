@@ -201,4 +201,4 @@
         return Math.abs(funcs[this.direction()](dx, dy))
     }
 
-}.initThisClass())
+}.initThisClass());

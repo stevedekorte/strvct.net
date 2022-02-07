@@ -107,4 +107,4 @@
         //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
 
-}.initThisClass())
+}.initThisClass());

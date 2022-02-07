@@ -21,4 +21,4 @@
         this.setTitle("sent")
     }
     
-}.initThisClass())
+}.initThisClass());

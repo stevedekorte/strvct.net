@@ -74,5 +74,5 @@
         this.subnodes().forEach(app => app.handleAppMsg(aMessage) )
     }
     
-}.initThisClass())
+}.initThisClass());
 

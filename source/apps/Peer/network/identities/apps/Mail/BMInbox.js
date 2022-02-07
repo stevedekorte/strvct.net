@@ -21,4 +21,4 @@
         this.setTitle("inbox")
     }
     
-}.initThisClass())
+}.initThisClass());

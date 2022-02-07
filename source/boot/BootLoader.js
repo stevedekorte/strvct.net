@@ -19,9 +19,15 @@
 */
 
 
-(class BootLoader {
+const BootLoader = (class BootLoader {
     static initThisClass () {
-        window.BootLoader = this // only used in web browser?
+        if (typeof(window) !== "undefined") {
+            window.BootLoader = this // only used in web browser?
+        } else {
+            global.BootLoader = this
+        }
+
+        return this
     }
 
     static shared () {
@@ -31,6 +37,29 @@
         return this._shared
     }
 
+    isInBrowser () {
+        return (typeof (document) !== 'undefined')
+    }
+
+    sourceFolderPath () {
+        if (this.isInBrowser()) {
+            const script = document.currentScript;
+            const fullUrl = script.src;
+            const parts = fullUrl.split("/")
+            parts.pop()
+            const folder = parts.join("/")
+            return folder
+        } else { // we're in node
+            return __dirname
+        }
+    }
+
+    absolutePathFiles () {
+        return this.files().map((file) => {
+            return this.sourceFolderPath() + "/" + file
+        })
+    }
+
     init () {
         this._files = []
         this.registerForWindowLoad()
@@ -38,7 +67,9 @@
     }
 
     registerForWindowLoad () {
-        window.addEventListener("load", () => { this.load() });
+        if (typeof(window) !== "undefined") {
+            window.addEventListener("load", () => { this.load() });
+        }
     }
 
     files () {
@@ -72,7 +103,11 @@
         this.loadNextFile() 
     }
 
-}.initThisClass())
+    loadWithRequire () {
+        this.files().forEach(file => require(file))
+    }
+
+}.initThisClass());
 
 
 BootLoader.shared().addFiles([

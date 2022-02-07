@@ -4,9 +4,10 @@
 // A single function to access globals that works
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
+
 function getGlobalThis() {
 
-	function isDefined (v) {
+	const isDefined = function (v) {
 		return typeof(v) !== "undefined"
 	}
 

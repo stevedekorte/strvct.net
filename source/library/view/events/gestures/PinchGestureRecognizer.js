@@ -45,4 +45,4 @@
         return d >= m
     }
     
-}.initThisClass())
+}.initThisClass());

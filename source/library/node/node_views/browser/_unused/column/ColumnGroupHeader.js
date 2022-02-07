@@ -203,6 +203,6 @@
         //this.unhideDisplay()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 

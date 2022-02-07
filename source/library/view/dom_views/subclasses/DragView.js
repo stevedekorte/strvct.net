@@ -520,4 +520,4 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());

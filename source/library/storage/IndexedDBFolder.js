@@ -343,4 +343,4 @@
     newTx() {
         return IndexedDBTx.clone().setDbFolder(this)
     }
-}.initThisClass())
+}.initThisClass());

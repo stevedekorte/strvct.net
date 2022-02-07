@@ -30,4 +30,4 @@
 	    return this.privateKey().toPublicKey().toString()
     }
 	
-}.initThisClass())
+}.initThisClass());

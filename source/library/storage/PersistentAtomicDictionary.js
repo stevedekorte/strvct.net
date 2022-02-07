@@ -198,5 +198,5 @@
             }
         })
     }
-}.initThisClass())
+}.initThisClass());
 

@@ -30,4 +30,4 @@
         this.scheduleSyncToStore()
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -379,9 +379,11 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
-if (!window.ResourceLoaderIsEmbedded) {
-    ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index 
+if (!getGlobalThis().ResourceLoaderIsEmbedded) {
+    if (ResourceLoaderPanel.isInBrowser()) {
+        ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index
+    }
 }

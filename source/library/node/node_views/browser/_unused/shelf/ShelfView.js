@@ -153,5 +153,5 @@
         item.setIsSelectable(false)
     }
     
-}.initThisClass())
+}.initThisClass());
 

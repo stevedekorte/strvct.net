@@ -62,4 +62,4 @@
     }
     */
     
-}.initThisClass())
+}.initThisClass());

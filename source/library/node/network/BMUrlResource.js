@@ -264,4 +264,4 @@
              .replace(/'/g, "&#039;");
     }
 
-}.initThisClass())
+}.initThisClass());

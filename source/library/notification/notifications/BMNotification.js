@@ -75,5 +75,5 @@
         const n = this.name() ? this.name() : "null"
         return s + " " + n
     }
-}.initThisClass())
+}.initThisClass());
 

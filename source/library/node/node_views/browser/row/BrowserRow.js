@@ -1073,4 +1073,4 @@
         return super.onFocusIn()
     }
 
-}.initThisClass())
+}.initThisClass());

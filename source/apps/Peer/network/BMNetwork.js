@@ -302,4 +302,4 @@
         return false
     }
 	
-}.initThisClass())
+}.initThisClass());

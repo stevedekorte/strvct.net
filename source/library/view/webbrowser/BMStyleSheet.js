@@ -48,5 +48,5 @@
         console.log("sheetElement:", this.sheetElement())
     }
 
-}.initThisClass())
+}.initThisClass());
 

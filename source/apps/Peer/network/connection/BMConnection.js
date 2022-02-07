@@ -140,7 +140,7 @@
         return false
     }
 	
-}.initThisClass())
+}.initThisClass());
 
 //getGlobalThis().BMConnection.shared() // setup shared instance, needed?
 

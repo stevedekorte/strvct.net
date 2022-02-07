@@ -173,6 +173,6 @@
         return null
     }
 
-}.initThisClass())
+}.initThisClass());
 
 

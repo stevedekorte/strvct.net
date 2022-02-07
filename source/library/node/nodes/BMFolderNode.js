@@ -78,5 +78,5 @@
         this.scheduleSyncToView()
     }
 
-}.initThisClass())
+}.initThisClass());
 

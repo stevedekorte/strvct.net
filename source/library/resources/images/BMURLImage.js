@@ -85,4 +85,4 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());

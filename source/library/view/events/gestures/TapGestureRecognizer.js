@@ -168,4 +168,4 @@
     }
     */
 
-}.initThisClass())
+}.initThisClass());

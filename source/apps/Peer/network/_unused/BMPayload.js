@@ -251,4 +251,4 @@
         return pow.actualPowDifficulty()
     }
     
-}.initThisClass())
+}.initThisClass());

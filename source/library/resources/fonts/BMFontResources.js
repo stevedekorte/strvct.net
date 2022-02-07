@@ -83,4 +83,4 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());

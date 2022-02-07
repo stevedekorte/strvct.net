@@ -222,4 +222,4 @@
         return result !== null
     }
     
-}.initThisClass())
+}.initThisClass());

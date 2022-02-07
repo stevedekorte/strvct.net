@@ -278,4 +278,4 @@
     }
 
     
-}.initThisClass())
+}.initThisClass());

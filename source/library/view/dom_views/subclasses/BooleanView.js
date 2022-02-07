@@ -163,4 +163,4 @@
         return false
     }
     
-}.initThisClass())
+}.initThisClass());

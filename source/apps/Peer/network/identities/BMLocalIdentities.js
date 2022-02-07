@@ -74,4 +74,4 @@
         return result
     }
     
-}.initThisClass())
+}.initThisClass());

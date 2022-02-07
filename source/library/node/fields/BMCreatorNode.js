@@ -100,4 +100,4 @@
         return ""
     }
     
-}.initThisClass())
+}.initThisClass());

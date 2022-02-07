@@ -394,4 +394,4 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());

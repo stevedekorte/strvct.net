@@ -53,4 +53,4 @@
         this._reject(reason);
     }
     
-}.initThisClass())
+}.initThisClass());

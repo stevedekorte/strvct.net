@@ -866,5 +866,5 @@
         return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target")
     }
     
-}.initThisClass())
+}.initThisClass());
 

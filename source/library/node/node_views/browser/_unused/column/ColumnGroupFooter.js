@@ -113,6 +113,6 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 

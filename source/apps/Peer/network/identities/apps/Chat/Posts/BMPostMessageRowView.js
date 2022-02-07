@@ -250,4 +250,4 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());

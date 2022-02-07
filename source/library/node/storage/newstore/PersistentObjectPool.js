@@ -44,7 +44,7 @@
         console.log(this.type() + " --- self test end --- ")
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 //setTimeout(() => {

@@ -34,5 +34,5 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 

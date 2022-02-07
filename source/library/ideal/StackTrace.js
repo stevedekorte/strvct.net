@@ -54,7 +54,7 @@
     show() {
         console.log(this.description())
     }
-}.initThisClass());
+}.initThisClass());;
 
 
 // -----------------------------------------------------------------
@@ -102,7 +102,7 @@
         f3()        
     }
 
-}.initThisClass());
+}.initThisClass());;
 
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())

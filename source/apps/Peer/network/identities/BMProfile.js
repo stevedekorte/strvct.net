@@ -70,4 +70,4 @@
         //	    return "user-white"
     }
     
-}.initThisClass())
+}.initThisClass());

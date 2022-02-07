@@ -63,5 +63,5 @@
         return []
     }
 
-}.initThisClass())
+}.initThisClass());
 

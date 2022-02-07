@@ -74,4 +74,4 @@
     }
 
     
-}.initThisClass())
+}.initThisClass());

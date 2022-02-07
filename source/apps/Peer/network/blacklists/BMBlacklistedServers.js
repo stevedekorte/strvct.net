@@ -20,4 +20,4 @@
         this.setTitle("servers")
     }
 	
-}.initThisClass())
+}.initThisClass());

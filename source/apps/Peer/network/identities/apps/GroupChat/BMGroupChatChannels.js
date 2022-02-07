@@ -26,5 +26,5 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 

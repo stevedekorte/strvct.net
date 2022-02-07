@@ -642,7 +642,7 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 

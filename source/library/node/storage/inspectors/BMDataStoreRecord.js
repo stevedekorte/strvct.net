@@ -72,5 +72,5 @@
         return subnode
     }
     
-}.initThisClass())
+}.initThisClass());
 

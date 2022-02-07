@@ -218,5 +218,5 @@ var BitcoreMessage = require("bitcore-message");
         return errors
     }
     
-}.initThisClass())
+}.initThisClass());
 

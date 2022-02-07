@@ -221,4 +221,4 @@
         //return this.currentStyle().backgroundColor()
     }
 	
-}.initThisClass())
+}.initThisClass());

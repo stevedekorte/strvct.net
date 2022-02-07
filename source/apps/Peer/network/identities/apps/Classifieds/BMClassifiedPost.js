@@ -363,4 +363,4 @@
         this.setPrice(Math.floor(Math.random()*100)/2)
     }
 
-}.initThisClass())
+}.initThisClass());

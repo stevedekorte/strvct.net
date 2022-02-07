@@ -88,4 +88,4 @@
         }
     }
     
-}.initThisClass())
+}.initThisClass());

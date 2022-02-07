@@ -24,5 +24,5 @@
     }
     
         
-}.initThisClass())
+}.initThisClass());
 

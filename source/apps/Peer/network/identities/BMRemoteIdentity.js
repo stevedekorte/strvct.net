@@ -166,4 +166,4 @@ const bitcore = require("bitcore-lib")
         return ids
     }
 
-}.initThisClass())
+}.initThisClass());

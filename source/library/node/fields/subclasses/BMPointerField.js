@@ -47,4 +47,4 @@
         return this.value()
     }
 
-}.initThisClass())
+}.initThisClass());

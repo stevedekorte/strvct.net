@@ -494,9 +494,10 @@ notes on Scroll bars theme options
 // A single function to access globals that works
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
+
 function getGlobalThis() {
 
-	function isDefined (v) {
+	const isDefined = function (v) {
 		return typeof(v) !== "undefined"
 	}
 
@@ -560,6 +561,10 @@ if (!String.prototype.capitalized) {
 
 (class Base {
     // Base class with helpful methods for cloning and slot creation 
+
+    static isInBrowser() {
+        return (typeof (document) !== 'undefined')
+    }
 
     isInBrowser() {
         return (typeof (document) !== 'undefined')
@@ -644,7 +649,7 @@ if (!String.prototype.capitalized) {
     }
 
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -670,7 +675,7 @@ if (!String.prototype.capitalized) {
         styles.href = this.fullPath()
         document.getElementsByTagName("head")[0].appendChild(styles)
     }
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -682,6 +687,15 @@ if (!String.prototype.capitalized) {
         this.newSlot("importer", null);
         this.newSlot("fullPath", null);
         this.newSlot("doneCallback", null);
+    }
+
+    setFullPath (aPath) {
+        const isAbsolute = (aPath.indexOf("/") === 0) || (aPath.indexOf("://") !== -1)
+        if (!isAbsolute) {
+            throw new Error("not an absolute path: '" + path + "'")
+        }
+        this._fullPath = aPath
+        return this
     }
 
     run () {
@@ -701,16 +715,31 @@ if (!String.prototype.capitalized) {
         //const path = __dirname + "/" + this.fullPath()
         //console.log("__dirname = ", __dirname)
         //const path = "../../" + this.fullPath()
-        const path = this.fullPath()
-        //console.log("runInNode path: ", path)
+        let path = this.fullPath()
+        console.log("runInNode path: ", path)
         //root_require(path)
 
+
         try {
-            root_require(path)
+            //const root_require = require('root-require');
+            //path = __dirname + "/" + path
+            const nodePath = require('path');
+
+            /*
+            if (path[0] !== "/") {
+                throw new Error("not an absolute path: '" + path + "'")
+            }
+            */
+            //path = nodePath.resolve("../../", path)
+            console.log("require '" + path + "'")
+
+            require(path)
             this._doneCallback()
         } catch (error) {
             this.importer().setError(error)
-            throw new Error(error.essage + " loading url " + path)
+            console.log("current working directory __dirname = '" + __dirname + "'")
+            console.log("can't find = '" + path + "'")
+            throw new Error(error.message + " loading url " + path)
         }
 
         //console.log("required path: ", path)
@@ -738,7 +767,7 @@ if (!String.prototype.capitalized) {
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
             console.log("loaded script src:'" + script.src)
-            debugger
+            //debugger
             this._doneCallback()
         }
 
@@ -756,7 +785,7 @@ if (!String.prototype.capitalized) {
         parts.pop()
         return parts.join("/")
     }
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -1142,11 +1171,13 @@ if (!String.prototype.capitalized) {
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
-if (!window.ResourceLoaderIsEmbedded) {
-    ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index 
+if (!getGlobalThis().ResourceLoaderIsEmbedded) {
+    if (ResourceLoaderPanel.isInBrowser()) {
+        ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index
+    }
 }
 
 };
@@ -1166,6 +1197,11 @@ if (!window.ResourceLoaderIsEmbedded) {
 
 (class ResourceLoader extends Base {
 
+    initThisClass () {
+        debugger
+        super.initThisClass()
+    }
+
     initPrototype () {
         this.newSlot("currentScript", null);
         this.newSlot("urls", []);
@@ -1184,6 +1220,10 @@ if (!window.ResourceLoaderIsEmbedded) {
         this.newSlot("isEmbeded", false)
     }
 
+    isInIndexMode () {
+        return getGlobalThis().isBuildingIndex
+    }
+
     resourceFilePathsWithExtensions(extensions) {
         return this.resourceFilePaths().select(path => extensions.contains(path.pathExtension().toLowerCase()))
     }
@@ -1191,6 +1231,10 @@ if (!window.ResourceLoaderIsEmbedded) {
     currentScriptPath () {
         if (this.currentScript()) {
             return this.currentScript().basePath()
+        } 
+
+        if (!this.isInBrowser()) {
+            return process.cwd()
         }
         return ""
     }
@@ -1199,7 +1243,7 @@ if (!window.ResourceLoaderIsEmbedded) {
         const parts = this.currentScriptPath().split("/").concat(aPath.split("/"))
         let rPath = parts.join("/")
 
-        if (rPath[0] === "/"[0]) {
+        if (rPath[0] === "/"[0] && this.isInBrowser()) {
             rPath = "." + rPath
         }
 
@@ -1262,11 +1306,32 @@ if (!window.ResourceLoaderIsEmbedded) {
         return this
     }
 
+    fullPathForUrl (url) {
+        if (!this.isInBrowser()) {
+            if (url.indexOf("://") === -1 && url.indexOf("/") !== 0) {
+                //console.log("url: '" + url + "'")
+                const rootPath = process.cwd()
+                const nodePath = require("path")
+                const fullPath = nodePath.join(rootPath, url)
+                console.log("url: '" + url + "' -> '" + fullPath + "'")
+                return fullPath
+            }
+        }
+        return url
+    }
+
     loadJsUrl (url) {
-        this.jsFilesLoaded().push(url)
-        const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+        const fullPath = this.fullPathForUrl(url)
+        this.jsFilesLoaded().push(fullPath)
+        const script = JsScript.clone().setImporter(this).setFullPath(fullPath).setDoneCallback(() => { this.loadNext() })
         this.setCurrentScript(script)
-        this.currentScript().run()
+
+        const isImportsFile = url.split("/").pop() === "_imports.js"
+        if (this.isInIndexMode() && !isImportsFile) {
+            this.loadNext()
+        } else {
+            this.currentScript().run()
+        }
     }
 
     loadUrl (url) {
@@ -1278,7 +1343,6 @@ if (!window.ResourceLoaderIsEmbedded) {
         }
 
         const extension = url.split(".").pop().toLowerCase()
-        const isImportsFile = url.split("/").pop() === "_imports.js"
 
         if (extension === "js" /*|| extension === "json"*/) {
             if (!this.isEmbeded()) {
@@ -1288,9 +1352,9 @@ if (!window.ResourceLoaderIsEmbedded) {
                 this.loadNext() 
             }
         } else if (extension === "css") {
+            this.cssFilesLoaded().push(url)
             if (!this.isEmbeded()) {
                 console.log("load css ", url)
-                this.cssFilesLoaded().push(url)
                 CssLink.clone().setFullPath(url).run() // move to CSSResources?
             }
             this.loadNext()
@@ -1305,19 +1369,18 @@ if (!window.ResourceLoaderIsEmbedded) {
 
     done () {
         console.log("ResourceLoader.done() -----------------------------")
-        debugger
+        //debugger
         this.doneCallbacks().forEach(callback => callback())
-        this.postEvent("resourceLoaderDone", {}) 
+        this.postEvent("resourceLoaderDone", { }) 
         return this
     }
 
     setError (error) {
-        debugger
         //this.errorCallbacks().forEach(callback => callback(error))
         this.postEvent("resourceLoaderError", { error: error }) 
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 // --- ResourceLoader -----------------------------------------------
 
@@ -1329,7 +1392,7 @@ if (getGlobalThis().ResourceLoaderIsEmbedded) {
     resourceLoader.setIsEmbeded(getGlobalThis().ResourceLoaderIsEmbedded)
     window.addEventListener("load", () => { resourceLoader.run(); });
 } else {
-    resourceLoader.run();
+    //resourceLoader.run();
 }
 
 };
@@ -1426,7 +1489,7 @@ resourceLoader.pushRelativePaths([
 
 */
 
-window.Mirror = class Mirror extends Object {
+getGlobalThis().Mirror = class Mirror extends Object {
 	
 	static reflectOn (aTarget) {
 		return this.clone().setTarget(aTarget)
@@ -5870,7 +5933,7 @@ Object.defineSlots(Function.prototype, {
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -5956,7 +6019,7 @@ Object.defineSlots(Function.prototype, {
         */
         console.log("DOCUMENTATION:\n\n", lines.join("\n"))
     }
-}.initThisClass())
+}.initThisClass());
 
 
 /*
@@ -6120,7 +6183,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass()) //.selfTest()
+}.initThisClass()); //.selfTest()
 
 
 };
@@ -6176,7 +6239,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass()) //.selfTest()
+}.initThisClass()); //.selfTest()
 
 
 };
@@ -6231,7 +6294,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass()) //.selfTest()
+}.initThisClass()); //.selfTest()
 
 
 };
@@ -6423,7 +6486,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass()) //.selfTest()
+}.initThisClass()); //.selfTest()
 
 };
 
@@ -6522,7 +6585,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass()) //.selfTest()
+}.initThisClass()); //.selfTest()
 
 };
 
@@ -7015,7 +7078,7 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
     show() {
         console.log(this.description())
     }
-}.initThisClass());
+}.initThisClass());;
 
 
 // -----------------------------------------------------------------
@@ -7063,7 +7126,7 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
         f3()        
     }
 
-}.initThisClass());
+}.initThisClass());;
 
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())
@@ -7156,7 +7219,7 @@ resourceLoader.pushRelativePaths([
 		
         return v + space + orderName + postfix
     }
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -7224,7 +7287,7 @@ TimePeriodFormatter
         const days = Math.floor(hours/24)
         return days + periods.days
     }
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -7391,7 +7454,7 @@ TimeFormatter
 
         return s
     }
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -7514,7 +7577,7 @@ TimeFormatter
         assert(ns.matchingPaths()[0] === "globalThis/String")
     }
 
-}.initThisClass())
+}.initThisClass());
 
 //NamespaceSearch.selfTest()
 
@@ -7598,7 +7661,7 @@ resourceLoader.pushRelativePaths([
         return t + " " + this.method() + "" + o
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -7863,7 +7926,7 @@ resourceLoader.pushRelativePaths([
         console.log(this.actionsDescription())
     }
 
-}.initThisClass())
+}.initThisClass());
 
 Object.defineSlots(ProtoClass.prototype, {
 
@@ -7965,7 +8028,7 @@ resourceLoader.pushRelativePaths([
         const n = this.name() ? this.name() : "null"
         return s + " " + n
     }
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -8274,7 +8337,7 @@ resourceLoader.pushRelativePaths([
             console.log("current post sender stack: ", this.currentNote().senderStack())
         }
     }
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -8386,7 +8449,7 @@ resourceLoader.pushRelativePaths([
         return this.observer().typeId() + " listening to " + this.targetId() + " " + this.name()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -8479,7 +8542,7 @@ resourceLoader.pushRelativePaths([
         })
     }
 
-}.initThisClass())
+}.initThisClass());
 
 Object.defineSlots(ProtoClass.prototype, {
 
@@ -8850,7 +8913,7 @@ resourceLoader.pushRelativePaths([
     newTx() {
         return IndexedDBTx.clone().setDbFolder(this)
     }
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -9053,7 +9116,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -9262,7 +9325,7 @@ resourceLoader.pushRelativePaths([
             }
         })
     }
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -9417,7 +9480,7 @@ resourceLoader.pushRelativePaths([
         tx.commit() 
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -9684,7 +9747,7 @@ resourceLoader.pushRelativePaths([
         return this.y()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -9875,7 +9938,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -9952,7 +10015,7 @@ resourceLoader.pushRelativePaths([
     }
     */
    
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -10119,7 +10182,7 @@ Object.defineSlots(Event.prototype, {
         return this.viewportWidth() - this.distFromLeftOfViewport()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -10142,7 +10205,7 @@ Object.defineSlots(Event.prototype, {
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -10197,7 +10260,7 @@ Object.defineSlots(Event.prototype, {
         return c >= 65 && c <= 90
     }
     
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -10750,7 +10813,7 @@ Object.defineSlots(Event.prototype, {
         console.log("---")
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -10887,7 +10950,7 @@ Object.defineSlots(Event.prototype, {
         return "on" + s + "MouseUp"
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11081,7 +11144,7 @@ Object.defineSlots(Event.prototype, {
     }
     */
    
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11238,7 +11301,7 @@ Object.defineSlots(Event.prototype, {
         }
     }
 
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -11364,7 +11427,7 @@ Object.defineSlots(Event.prototype, {
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11422,7 +11485,7 @@ Object.defineSlots(Event.prototype, {
         return es.min(e => e.timeStamp)
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11694,7 +11757,7 @@ resourceLoader.pushRelativePaths([
         return this
     }   
 
-}.initThisClass())
+}.initThisClass());
 
 /*
     // globally track whether we are inside an event 
@@ -11762,7 +11825,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11812,7 +11875,7 @@ resourceLoader.pushRelativePaths([
         return window // is this the best way to handle this?
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11851,7 +11914,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -11901,7 +11964,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11934,7 +11997,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -11968,7 +12031,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -12013,7 +12076,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -12050,7 +12113,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -12081,7 +12144,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -12114,7 +12177,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -12145,7 +12208,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -12179,7 +12242,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -12209,7 +12272,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -12368,7 +12431,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -13241,7 +13304,7 @@ resourceLoader.pushRelativePaths([
         return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target")
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -13389,7 +13452,7 @@ resourceLoader.pushRelativePaths([
     }
     */
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -13597,7 +13660,7 @@ resourceLoader.pushRelativePaths([
         return Math.abs(funcs[this.direction()](dx, dy))
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -13772,7 +13835,7 @@ resourceLoader.pushRelativePaths([
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14082,7 +14145,7 @@ resourceLoader.pushRelativePaths([
         console.log(this.debugJson())
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14224,7 +14287,7 @@ resourceLoader.pushRelativePaths([
         return this.currentPosition().distanceFrom(this.beginPosition())
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14276,7 +14339,7 @@ resourceLoader.pushRelativePaths([
         return d >= m
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14324,7 +14387,7 @@ resourceLoader.pushRelativePaths([
         return a >= ma
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14456,7 +14519,7 @@ resourceLoader.pushRelativePaths([
         }
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14488,7 +14551,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14522,7 +14585,7 @@ resourceLoader.pushRelativePaths([
     }
     
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14554,7 +14617,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14586,7 +14649,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -14671,7 +14734,7 @@ resourceLoader.pushRelativePaths([
         return prefersDark
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -14852,7 +14915,7 @@ resourceLoader.pushRelativePaths([
         return null
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -14954,7 +15017,7 @@ resourceLoader.pushRelativePaths([
         return WebBrowserNotification.clone()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -15000,7 +15063,7 @@ resourceLoader.pushRelativePaths([
         setTimeout(notification.close.bind(this.notificationRef()), this.timeoutMs());
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -15050,7 +15113,7 @@ resourceLoader.pushRelativePaths([
         this.styleSheets().forEach(sheet => sheet.show())
     }
 
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -15104,7 +15167,7 @@ resourceLoader.pushRelativePaths([
         console.log("sheetElement:", this.sheetElement())
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -15237,7 +15300,7 @@ resourceLoader.pushRelativePaths([
         this.transitions().syncToDomView()
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -15319,7 +15382,7 @@ resourceLoader.pushRelativePaths([
 
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -15432,7 +15495,7 @@ resourceLoader.pushRelativePaths([
 
         return this
     }
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -15551,7 +15614,7 @@ resourceLoader.pushRelativePaths([
         }
     }
     */
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -15667,7 +15730,7 @@ resourceLoader.pushRelativePaths([
         return this	
     }
 	
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -15717,7 +15780,7 @@ resourceLoader.pushRelativePaths([
         return this.testElement().style
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -16072,7 +16135,7 @@ const max3 = function(a, b, c) {
         }
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -20767,7 +20830,7 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -20881,7 +20944,7 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
         //this.subviews().forEach(sv => sv.setBorder("1px solid rgba(255, 255, 255, 0.2)"))
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -21109,7 +21172,7 @@ window.Element_setStyleIncludingDecendants = function(e, k, v) {
         //return this.currentStyle().backgroundColor()
     }
 	
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -21297,7 +21360,7 @@ resourceLoader.pushRelativePaths([
         return false
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -21444,7 +21507,7 @@ resourceLoader.pushRelativePaths([
         return false
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -21522,7 +21585,7 @@ resourceLoader.pushRelativePaths([
         return false
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -21613,7 +21676,7 @@ resourceLoader.pushRelativePaths([
     }
     */
    
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -21806,7 +21869,7 @@ resourceLoader.pushRelativePaths([
         return false
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -22333,7 +22396,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -22452,7 +22515,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -22634,7 +22697,7 @@ resourceLoader.pushRelativePaths([
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -23078,7 +23141,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -23193,7 +23256,7 @@ resourceLoader.pushRelativePaths([
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -23378,7 +23441,7 @@ resourceLoader.pushRelativePaths([
         return this        
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -23473,7 +23536,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -23491,7 +23554,7 @@ resourceLoader.pushRelativePaths([
 (class SubnodesArray extends SortedArray {
 
 
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -24886,7 +24949,7 @@ resourceLoader.pushRelativePaths([
         return super.debugTypeId() + " '" + this.title() + "'"
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -25020,7 +25083,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -25109,7 +25172,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -26498,7 +26561,7 @@ Object.defineSlots(Number.prototype, {
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 
 // -------------------
@@ -26560,7 +26623,7 @@ setTimeout(() => {
         console.log(this.type() + " --- self test end --- ")
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 //setTimeout(() => {
@@ -26719,7 +26782,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -26915,7 +26978,7 @@ resourceLoader.pushRelativePaths([
         return s
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -27001,7 +27064,7 @@ resourceLoader.pushRelativePaths([
         this.scheduleSyncToView()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -27039,7 +27102,7 @@ resourceLoader.pushRelativePaths([
         this.scheduleSyncToStore()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -27109,7 +27172,7 @@ resourceLoader.pushRelativePaths([
         return []
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -27229,7 +27292,7 @@ resourceLoader.pushRelativePaths([
         return super.addSubnodeAt(aSubnode, anIndex)
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -27270,7 +27333,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -27387,7 +27450,7 @@ resourceLoader.pushRelativePaths([
         return this.validate() // could cache this later...
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -27664,7 +27727,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -27732,7 +27795,7 @@ resourceLoader.pushRelativePaths([
 	    return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -27825,7 +27888,7 @@ resourceLoader.pushRelativePaths([
     }
 
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -27916,7 +27979,7 @@ resourceLoader.pushRelativePaths([
         return bdd
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28012,7 +28075,7 @@ resourceLoader.pushRelativePaths([
         return bdd
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28065,7 +28128,7 @@ resourceLoader.pushRelativePaths([
         return super.setValueIsEditable(false)
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28172,7 +28235,7 @@ resourceLoader.pushRelativePaths([
         return ""
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28262,7 +28325,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28336,7 +28399,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28395,7 +28458,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28452,7 +28515,7 @@ resourceLoader.pushRelativePaths([
         return ""
     }
    
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28600,7 +28663,7 @@ resourceLoader.pushRelativePaths([
         return isValid
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28654,7 +28717,7 @@ resourceLoader.pushRelativePaths([
         return this.value()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28681,7 +28744,7 @@ resourceLoader.pushRelativePaths([
         this.setValueIsEditable(false)
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28715,7 +28778,7 @@ resourceLoader.pushRelativePaths([
         this.setValueIsEditable(true)
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28756,7 +28819,7 @@ resourceLoader.pushRelativePaths([
         this.setKeyIsVisible(false)
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -28985,7 +29048,7 @@ resourceLoader.pushRelativePaths([
         return result !== null
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29127,7 +29190,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29200,7 +29263,7 @@ resourceLoader.pushRelativePaths([
         return this.isPicked() ? "✓" : ""
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29361,7 +29424,7 @@ resourceLoader.pushRelativePaths([
         return d ? d.toString() : null
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29426,7 +29489,7 @@ resourceLoader.pushRelativePaths([
         }
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29521,7 +29584,7 @@ resourceLoader.pushRelativePaths([
         }
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29581,7 +29644,7 @@ resourceLoader.pushRelativePaths([
         return null
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29692,7 +29755,7 @@ resourceLoader.pushRelativePaths([
         return d ? d.toString() : null
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29767,7 +29830,7 @@ resourceLoader.pushRelativePaths([
         }
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29826,7 +29889,7 @@ resourceLoader.pushRelativePaths([
         return null
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -29921,7 +29984,7 @@ resourceLoader.pushRelativePaths([
     }
     */
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -30000,7 +30063,7 @@ resourceLoader.pushRelativePaths([
         return subnode
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 };
@@ -30312,7 +30375,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -30382,7 +30445,7 @@ resourceLoader.pushRelativePaths([
     }
     */
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -30551,7 +30614,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -30734,7 +30797,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -31845,7 +31908,7 @@ resourceLoader.pushRelativePaths([
         return super.onFocusIn()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32130,7 +32193,7 @@ resourceLoader.pushRelativePaths([
     }
 
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32158,7 +32221,7 @@ resourceLoader.pushRelativePaths([
         return this
     } 
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32191,7 +32254,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -32248,7 +32311,7 @@ resourceLoader.pushRelativePaths([
         return true
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32367,7 +32430,7 @@ resourceLoader.pushRelativePaths([
         this.textView().setPaddingBottom(this.themeValueForAttribute("paddingBottom"))
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32785,7 +32848,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32874,7 +32937,7 @@ resourceLoader.pushRelativePaths([
         return true
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32932,7 +32995,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -32988,7 +33051,7 @@ resourceLoader.pushRelativePaths([
         }
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33057,7 +33120,7 @@ resourceLoader.pushRelativePaths([
     }
     */
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33148,7 +33211,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33189,7 +33252,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 	
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33259,7 +33322,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 	
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33308,7 +33371,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33642,7 +33705,7 @@ resourceLoader.pushRelativePaths([
     }
 
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33885,7 +33948,7 @@ resourceLoader.pushRelativePaths([
         this.unhideTransition()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -33943,7 +34006,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -35764,7 +35827,7 @@ resourceLoader.pushRelativePaths([
 
     
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -35981,7 +36044,7 @@ resourceLoader.pushRelativePaths([
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -36082,7 +36145,7 @@ resourceLoader.pushRelativePaths([
         })
     }
 
-}.initThisClass())
+}.initThisClass());
 
 /*
 setTimeout(() => {
@@ -36371,7 +36434,7 @@ resourceLoader.pushRelativePaths([
              .replace(/'/g, "&#039;");
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36567,7 +36630,7 @@ resourceLoader.pushRelativePaths([
         //doc.setTextTransform("uppercase")
    }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36664,7 +36727,7 @@ resourceLoader.pushRelativePaths([
     }
 
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36707,7 +36770,7 @@ resourceLoader.pushRelativePaths([
     }
 
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36753,7 +36816,7 @@ resourceLoader.pushRelativePaths([
     }
 
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36855,7 +36918,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36898,7 +36961,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -36977,7 +37040,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37015,7 +37078,7 @@ resourceLoader.pushRelativePaths([
     }
 
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37090,7 +37153,7 @@ resourceLoader.pushRelativePaths([
         return this.subnodes()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37160,7 +37223,7 @@ resourceLoader.pushRelativePaths([
         //audio.src = 'data:audio/wav;base64,UklGR...;
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37362,7 +37425,7 @@ resourceLoader.pushRelativePaths([
         return this;
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37426,7 +37489,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37518,7 +37581,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37598,7 +37661,7 @@ resourceLoader.pushRelativePaths([
         return this.activeTheme().subnodes().first()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37669,7 +37732,7 @@ resourceLoader.pushRelativePaths([
         return this
    }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37704,7 +37767,7 @@ resourceLoader.pushRelativePaths([
         return this
    }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37764,7 +37827,7 @@ resourceLoader.pushRelativePaths([
     }
 
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -37874,7 +37937,7 @@ resourceLoader.pushRelativePaths([
         return this
    }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -38060,7 +38123,7 @@ resourceLoader.pushRelativePaths([
         return super.didUpdateSlot(aSlot, oldValue, newValue) 
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -38096,7 +38159,7 @@ resourceLoader.pushRelativePaths([
         this.setNodeCanReorderSubnodes(true)
     }
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -38158,7 +38221,7 @@ resourceLoader.pushRelativePaths([
 		return this.subnodes().map(sn => sn.title())
 	}
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -38190,7 +38253,7 @@ resourceLoader.pushRelativePaths([
       return this.title()
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -38359,7 +38422,7 @@ resourceLoader.pushRelativePaths([
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 
@@ -38448,7 +38511,7 @@ resourceLoader.pushRelativePaths([
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 };
 
@@ -38676,7 +38739,7 @@ resourceLoader.pushDoneCallback( () => {
         doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
     }
 
-}.initThisClass())
+}.initThisClass());
 };
 
 {
@@ -38746,7 +38809,7 @@ resourceLoader.pushRelativePaths([
 
 };
 
-ResourceLoader.shared().setResourceFilePaths(["./resources/fonts/Hyperspace/Hyperspace.ttf","./resources/fonts/Hyperspace/Hyperspace Bold.ttf","./resources/fonts/Hyperspace/Hyperspace Bold Italic.ttf","./resources/fonts/Hyperspace/Hyperspace Italic.ttf","./resources/sounds/beep_06.wav","./resources/sounds/bleep_04.wav","./resources/images/appicon-black-600x600.png"]);
+ResourceLoader.shared().setResourceFilePaths([]);
 
 
     /*

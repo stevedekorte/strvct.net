@@ -287,4 +287,4 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());

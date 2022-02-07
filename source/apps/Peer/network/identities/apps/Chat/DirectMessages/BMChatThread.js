@@ -100,4 +100,4 @@
 	    return this
     }
     
-}.initThisClass())
+}.initThisClass());

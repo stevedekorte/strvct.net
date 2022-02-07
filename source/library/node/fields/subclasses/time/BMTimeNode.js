@@ -92,4 +92,4 @@
         return d ? d.toString() : null
     }
 
-}.initThisClass())
+}.initThisClass());

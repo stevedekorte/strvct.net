@@ -332,4 +332,4 @@
         return super.debugTypeId() + this.debugTypeIdSpacer() + this.column().debugTypeId()
     }
 
-}.initThisClass())
+}.initThisClass());

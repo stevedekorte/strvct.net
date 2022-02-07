@@ -547,4 +547,4 @@
         console.log("---")
     }
     
-}.initThisClass())
+}.initThisClass());

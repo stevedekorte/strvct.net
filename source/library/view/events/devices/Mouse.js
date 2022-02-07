@@ -130,4 +130,4 @@
         return "on" + s + "MouseUp"
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -48,4 +48,4 @@
         return c >= 65 && c <= 90
     }
     
-}.initThisClass())
+}.initThisClass());

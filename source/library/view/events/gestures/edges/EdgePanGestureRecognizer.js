@@ -110,4 +110,4 @@
         }
     }
 
-}.initThisClass())
+}.initThisClass());

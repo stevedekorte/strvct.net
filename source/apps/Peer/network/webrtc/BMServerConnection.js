@@ -424,7 +424,7 @@
         return this.remotePeers().count()
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 

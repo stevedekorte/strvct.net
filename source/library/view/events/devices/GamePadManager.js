@@ -150,4 +150,4 @@
         }
     }
 
-}.initThisClass())
+}.initThisClass());

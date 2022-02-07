@@ -131,6 +131,6 @@
         return null
     }
     
-}.initThisClass())
+}.initThisClass());
 
 //getGlobalThis().Region = BMRegion

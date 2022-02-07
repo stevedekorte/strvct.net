@@ -196,7 +196,7 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());
 
 
 

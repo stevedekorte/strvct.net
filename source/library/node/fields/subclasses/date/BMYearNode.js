@@ -58,4 +58,4 @@
         }
     }
     
-}.initThisClass())
+}.initThisClass());

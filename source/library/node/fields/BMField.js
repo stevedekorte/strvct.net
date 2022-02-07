@@ -270,4 +270,4 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());

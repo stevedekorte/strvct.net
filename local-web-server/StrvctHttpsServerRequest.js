@@ -173,4 +173,4 @@ const fs = require('fs');
 		this.response().end();
 		return
 	}
-}.initThisClass())
+}.initThisClass());

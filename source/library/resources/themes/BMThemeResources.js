@@ -58,4 +58,4 @@
         return this.activeTheme().subnodes().first()
     }
     
-}.initThisClass())
+}.initThisClass());

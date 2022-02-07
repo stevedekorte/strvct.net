@@ -58,4 +58,4 @@
         objMsg.send()
     }
     
-}.initThisClass())
+}.initThisClass());

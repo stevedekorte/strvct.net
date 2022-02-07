@@ -48,4 +48,4 @@
         return this.subnodesCount() > 0
     }
     
-}.initThisClass())
+}.initThisClass());

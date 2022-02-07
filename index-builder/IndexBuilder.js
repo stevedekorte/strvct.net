@@ -44,11 +44,11 @@ class IndexBuilder {
         this.createIndex()
     }
 
-    addFilePath(aFullPath) {
+    addFilePath (aFullPath) {
         this.filePaths().push(aFullPath)
     }
 
-    addImportPath(aPath) {
+    addImportPath (aPath) {
         this.addFilePath(aPath)
         const folder = new SourceFolder()
         folder.setFullPath(aPath)
@@ -58,11 +58,11 @@ class IndexBuilder {
         //this.importPaths().push(aPath)
     }
 
-    addCssPath(aPath) {
+    addCssPath (aPath) {
         this.cssPaths().push(aPath)
     }
 
-    addResourceFilePath(aPath) {
+    addResourceFilePath (aPath) {
         // since indexbuilder isn't on top level, but index.html will be,
         // we need to fix the path
         aPath = aPath.replaceAll("../", "./") 

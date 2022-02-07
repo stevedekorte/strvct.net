@@ -46,4 +46,4 @@
         return super.setValueIsEditable(false)
     }
     
-}.initThisClass())
+}.initThisClass());

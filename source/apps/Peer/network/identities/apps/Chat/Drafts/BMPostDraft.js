@@ -60,5 +60,5 @@
         //this.addMessage(msg)
     }
     
-}.initThisClass())
+}.initThisClass());
 

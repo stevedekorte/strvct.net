@@ -1812,4 +1812,4 @@
 
     
     
-}.initThisClass())
+}.initThisClass());

@@ -127,4 +127,4 @@
     }
     */
     
-}.initThisClass())
+}.initThisClass());

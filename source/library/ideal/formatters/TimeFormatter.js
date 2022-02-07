@@ -160,7 +160,7 @@ TimeFormatter
 
         return s
     }
-}.initThisClass())
+}.initThisClass());
 
 
 

@@ -31,4 +31,4 @@
     }
     
    
-}.initThisClass())
+}.initThisClass());

@@ -34,4 +34,4 @@
         return this.fieldNamed("reason").value()  
     }
 	
-}.initThisClass())
+}.initThisClass());

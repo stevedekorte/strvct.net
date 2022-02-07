@@ -173,5 +173,5 @@
         return s
     }
     
-}.initThisClass())
+}.initThisClass());
 

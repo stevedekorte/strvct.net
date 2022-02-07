@@ -80,4 +80,4 @@
     }
     */
 
-}.initThisClass())
+}.initThisClass());

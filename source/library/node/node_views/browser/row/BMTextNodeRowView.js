@@ -112,4 +112,4 @@
         this.textView().setPaddingBottom(this.themeValueForAttribute("paddingBottom"))
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -51,4 +51,4 @@
         return es.min(e => e.timeStamp)
     }
     
-}.initThisClass())
+}.initThisClass());

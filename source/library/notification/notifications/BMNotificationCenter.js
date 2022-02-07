@@ -301,4 +301,4 @@
             console.log("current post sender stack: ", this.currentNote().senderStack())
         }
     }
-}.initThisClass())
+}.initThisClass());

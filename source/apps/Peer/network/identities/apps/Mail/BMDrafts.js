@@ -33,4 +33,4 @@
         return newPrivateMsg
     }
     
-}.initThisClass())
+}.initThisClass());

@@ -19,4 +19,4 @@
         this.setTitle("peers")
     }
 	
-}.initThisClass())
+}.initThisClass());

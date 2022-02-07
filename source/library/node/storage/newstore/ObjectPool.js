@@ -743,7 +743,7 @@
     }
     */
 
-}.initThisClass())
+}.initThisClass());
 
 
 // -------------------

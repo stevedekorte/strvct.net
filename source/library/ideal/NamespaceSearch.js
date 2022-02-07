@@ -112,6 +112,6 @@
         assert(ns.matchingPaths()[0] === "globalThis/String")
     }
 
-}.initThisClass())
+}.initThisClass());
 
 //NamespaceSearch.selfTest()

@@ -23,4 +23,4 @@
         }
     }
 
-}.initThisClass())
+}.initThisClass());

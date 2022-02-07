@@ -38,7 +38,7 @@
         setTimeout(notification.close.bind(this.notificationRef()), this.timeoutMs());
     }
 
-}.initThisClass())
+}.initThisClass());
 
 
 

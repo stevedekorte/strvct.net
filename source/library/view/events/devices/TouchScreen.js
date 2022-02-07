@@ -187,4 +187,4 @@
     }
     */
    
-}.initThisClass())
+}.initThisClass());

@@ -161,4 +161,4 @@ var Buffer = bitcore.deps.Buffer;
         return null
     }
         
-}.initThisClass())
+}.initThisClass());

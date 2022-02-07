@@ -18,5 +18,5 @@
 
     }
     
-}.initThisClass())
+}.initThisClass());
 

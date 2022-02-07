@@ -147,4 +147,4 @@
         this.delete()
     }
 
-}.initThisClass())
+}.initThisClass());

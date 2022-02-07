@@ -20,4 +20,4 @@
         this.setValueIsEditable(false)
     }
     
-}.initThisClass())
+}.initThisClass());

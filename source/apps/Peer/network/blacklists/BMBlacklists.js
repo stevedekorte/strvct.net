@@ -22,4 +22,4 @@
         this.setTitle("Blacklists")
     }
 	
-}.initThisClass())
+}.initThisClass());

@@ -38,4 +38,4 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());

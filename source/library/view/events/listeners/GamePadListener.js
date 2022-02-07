@@ -24,5 +24,5 @@
         return this
     }
 
-}.initThisClass())
+}.initThisClass());
 

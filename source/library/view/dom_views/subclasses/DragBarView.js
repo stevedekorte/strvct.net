@@ -185,4 +185,4 @@
         return false
     }
     
-}.initThisClass())
+}.initThisClass());

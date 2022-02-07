@@ -100,4 +100,4 @@
         //	    return "users-white"
     }
     
-}.initThisClass())
+}.initThisClass());

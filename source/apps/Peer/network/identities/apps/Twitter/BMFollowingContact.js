@@ -21,5 +21,5 @@
         return this.remoteIdentity().title()
     }
     
-}.initThisClass())
+}.initThisClass());
 

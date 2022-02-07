@@ -128,4 +128,4 @@
     onPing (messageJson) {
         message.respondWithSuccess();
     }
-}.initThisClass())
+}.initThisClass());

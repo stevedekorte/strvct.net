@@ -162,4 +162,4 @@
         return this
     }
     
-}.initThisClass())
+}.initThisClass());

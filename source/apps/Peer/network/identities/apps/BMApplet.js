@@ -32,5 +32,5 @@
         return ids
     }
 
-}.initThisClass())
+}.initThisClass());
 
