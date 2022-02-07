@@ -8,17 +8,18 @@
     }
 
     setFullPath (aPath) {
+        /*
         const isAbsolute = (aPath.indexOf("/") === 0) || (aPath.indexOf("://") !== -1)
         if (!isAbsolute) {
             throw new Error("not an absolute path: '" + path + "'")
         }
+        */
         this._fullPath = aPath
         return this
     }
 
     run () {
         //console.log("JsScript run " + this.fullPath())
-        
         if (this.isInBrowser()) {
             //this.runUsingImport() // can't use with file:// due to CORS
             this.runInBrowser()

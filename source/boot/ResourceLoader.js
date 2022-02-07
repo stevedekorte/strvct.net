@@ -204,8 +204,11 @@ getGlobalThis().resourceLoader = ResourceLoader.shared();
 resourceLoader.pushRelativePaths(["_imports.js"]);
 
 if (getGlobalThis().ResourceLoaderIsEmbedded) {
+    console.log("ResourceLoader is embeded, will run on page load")
     resourceLoader.setIsEmbeded(getGlobalThis().ResourceLoaderIsEmbedded)
     window.addEventListener("load", () => { resourceLoader.run(); });
 } else {
-    //resourceLoader.run();
+    console.log("ResourceLoader is not embeded, will not auto run")
+    //console.log("ResourceLoader is not embeded, will run with timeout")
+    setTimeout(() => resourceLoader.run(), 1)
 }

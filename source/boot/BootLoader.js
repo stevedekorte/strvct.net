@@ -62,7 +62,7 @@ const BootLoader = (class BootLoader {
 
     init () {
         this._files = []
-        this.registerForWindowLoad()
+        this._isRunning = false
         return this
     }
 
@@ -90,16 +90,27 @@ const BootLoader = (class BootLoader {
             //debugger
 
             import(path).then((module) => {
+                console.log("BootLoader imported '" + path + "'")
                 this.loadNextFile()
             }).catch(function (error) {
                 console.log(error.message)
                 debugger
             })
+        } else {
+            this.done()
         }
         return this
     }
 
+    done () {
+        //resourceLoader.shared().run()
+    }
+
     load () {
+        if (this._isRunning) {
+            throw new Error("already running")
+        }
+        this._isRunning  = true
         this.loadNextFile() 
     }
 
