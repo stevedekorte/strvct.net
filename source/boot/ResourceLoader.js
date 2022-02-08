@@ -13,7 +13,6 @@
 (class ResourceLoader extends Base {
 
     initThisClass () {
-        debugger
         super.initThisClass()
     }
 
@@ -21,11 +20,10 @@
         this.newSlot("currentScript", null);
         this.newSlot("urls", []);
         this.newSlot("doneCallbacks", []),
-        //this.newSlot("urlLoadingCallbacks", []);
         //this.newSlot("errorCallbacks", []);
         
-        this.newSlot("jsFilesLoaded", []) // these may be embedded in index.html
-        this.newSlot("cssFilesLoaded", [])  // these may be embedded in index.html
+        this.newSlot("jsFilesLoaded", [])  // track these so index builder can embed in index.html
+        this.newSlot("cssFilesLoaded", []) // track these so index builder can embed in index.html
 
         //this.newSlot("archive", null)
 
@@ -33,6 +31,7 @@
         this.newSlot("maxUrlCount", 0)
 
         this.newSlot("isEmbeded", false)
+        this.newSlot("finalCallback", null)
     }
 
     isInIndexMode () {
@@ -46,11 +45,12 @@
     currentScriptPath () {
         if (this.currentScript()) {
             return this.currentScript().basePath()
-        } 
+        }
 
         if (!this.isInBrowser()) {
-            return process.cwd()
+            return process.cwd() // will need this for first script, as there's no currentScript yet
         }
+
         return ""
     }
 
@@ -70,14 +70,23 @@
     }
 
     pushRelativePaths (paths) {
-        //debugger
         this.pushFilePaths(this.absolutePathsForRelativePaths(paths))
         return this
     }
 
     pushFilePaths (paths) {
+        paths.forEach(path => this.pushFilePath(path))
+        /*
         this.setUrls(paths.concat(this.urls()))
         this.setMaxUrlCount(this.maxUrlCount() + paths.length)
+        */
+        return this
+    }
+
+    pushFilePath (path) {
+        console.log("ResourceLoader pushFilePath: '" + path + "'")
+        this.urls().push(path)
+        this.setMaxUrlCount(this.maxUrlCount() + 1)
         return this
     }
 
@@ -90,6 +99,7 @@
 
     run () {
         this.loadNext()
+        return this
     }
 
     isDone () {
@@ -115,8 +125,6 @@
                 composed: false,
               });
               window.dispatchEvent(myEvent);
-
-            //window.postMessage("importerUrl", { url: url, maxUrlCount: this.maxUrlCount() });
         }
         return this
     }
@@ -135,63 +143,74 @@
         return url
     }
 
-    loadJsUrl (url) {
-        const fullPath = this.fullPathForUrl(url)
-        this.jsFilesLoaded().push(fullPath)
-        const script = JsScript.clone().setImporter(this).setFullPath(fullPath).setDoneCallback(() => { this.loadNext() })
-        this.setCurrentScript(script)
-
-        const isImportsFile = url.split("/").pop() === "_imports.js"
-        if (this.isInIndexMode() && !isImportsFile) {
-            this.loadNext()
-        } else {
-            this.currentScript().run()
-        }
-    }
-
     loadUrl (url) {
-        //this.urlLoadingCallbacks().forEach(callback => callback(url, this.maxUrlCount()))
+        const fullPath = this.fullPathForUrl(url)
+        console.log("ResourceLoader loadUrl: '" + fullPath + "'")
 
         if (this.isInBrowser()) {
-            const detail = { url: url, maxUrlCount: this.maxUrlCount() }
+            const detail = { url: fullPath, maxUrlCount: this.maxUrlCount() }
             this.postEvent("resourceLoaderLoadUrl", detail)
         }
 
         const extension = url.split(".").pop().toLowerCase()
 
         if (extension === "js" /*|| extension === "json"*/) {
-            if (!this.isEmbeded()) {
-                console.log("load js ", url)
-                this.loadJsUrl(url)
-            } else {
-                this.loadNext() 
-            }
+            this.loadJsUrl(fullPath)
         } else if (extension === "css") {
-            this.cssFilesLoaded().push(url)
-            if (!this.isEmbeded()) {
-                console.log("load css ", url)
-                CssLink.clone().setFullPath(url).run() // move to CSSResources?
-            }
-            this.loadNext()
+            this.loadCssUrl(fullPath)
         } else {
             // leave it to other resource handlers which call ResourceLoader.shared().resourceFilePathsWithExtensions()
-            this.resourceFilePaths().push(url) 
+            this.resourceFilePaths().push(fullPath) 
             this.loadNext()
         }
 
         return this
     }
 
+    loadJsUrl (url) {
+        this.jsFilesLoaded().push(url)
+
+        if (this.isEmbeded()) {
+            this.loadNext()
+            return
+        }
+
+        const isImportsFile = url.split("/").pop() === "_imports.js"
+        if (this.isInIndexMode() && !isImportsFile) {
+            this.loadNext()
+            return
+        }
+
+        const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
+        this.setCurrentScript(script)
+        this.currentScript().run()
+        return this
+    }
+
+    loadCssUrl (url) {
+        this.cssFilesLoaded().push(url)
+
+        if (!this.isEmbeded()) {
+            CssLink.clone().setFullPath(url).run() // move to CSSResources?
+        }
+
+        this.loadNext()
+        return this
+    }
+
     done () {
         console.log("ResourceLoader.done() -----------------------------")
-        //debugger
-        this.doneCallbacks().forEach(callback => callback())
+        if (!this.isInIndexMode()) {
+            this.doneCallbacks().forEach(callback => callback())
+        }
         this.postEvent("resourceLoaderDone", { }) 
+        if (this.finalCallback()) {
+            this.finalCallback()()
+        }
         return this
     }
 
     setError (error) {
-        //this.errorCallbacks().forEach(callback => callback(error))
         this.postEvent("resourceLoaderError", { error: error }) 
         return this
     }
@@ -210,5 +229,5 @@ if (getGlobalThis().ResourceLoaderIsEmbedded) {
 } else {
     console.log("ResourceLoader is not embeded, will not auto run")
     //console.log("ResourceLoader is not embeded, will run with timeout")
-    setTimeout(() => resourceLoader.run(), 1)
+    //setTimeout(() => resourceLoader.run(), 1)
 }

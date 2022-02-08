@@ -2,9 +2,10 @@
 
 (class JsScript extends Base {
     initPrototype () {
-        this.newSlot("importer", null);
+        this.newSlot("importer", null); // parent - ResourceLoader
         this.newSlot("fullPath", null);
         this.newSlot("doneCallback", null);
+        this.newSlot("scriptElement", null);
     }
 
     setFullPath (aPath) {
@@ -24,50 +25,33 @@
             //this.runUsingImport() // can't use with file:// due to CORS
             this.runInBrowser()
         } else {
-            setTimeout(() => { this.runInNode() }, 1)
+            setTimeout(() => { this.runUsingRequire() }, 1) // timeout to maintain async semantics?
             //setTimeout(() => { this.runUsingImport() }, 1)
-            //this.runInNode()
         }
     }
 
-    runInNode () {
-        //const path = __dirname + "/" + this.fullPath()
-        //console.log("__dirname = ", __dirname)
-        //const path = "../../" + this.fullPath()
+    runUsingRequire () { //  for node.js
         let path = this.fullPath()
-        console.log("runInNode path: ", path)
-        //root_require(path)
-
+        console.log("ResourceLoader runUsingRequire: '" + path + "'")
 
         try {
-            //const root_require = require('root-require');
-            //path = __dirname + "/" + path
-            const nodePath = require('path');
-
-            /*
-            if (path[0] !== "/") {
-                throw new Error("not an absolute path: '" + path + "'")
-            }
-            */
-            //path = nodePath.resolve("../../", path)
-            console.log("require '" + path + "'")
-
             require(path)
             this._doneCallback()
         } catch (error) {
             this.importer().setError(error)
-            console.log("current working directory __dirname = '" + __dirname + "'")
-            console.log("can't find = '" + path + "'")
+            //console.log("this file's path __dirname = '" + __dirname + "'")
+            //console.log("current working directory: = '" + process.cwd() + "'")
+            console.log("ResourceLoader runUsingRequire() error: '" + error.message + "' running file: '" + path + "'")
             throw new Error(error.message + " loading url " + path)
         }
 
         //console.log("required path: ", path)
     }
 
-    runUsingImport () {
+    runUsingImport () { // can't use with file:// due to CORS
         const path = this.fullPath()
         
-        console.log("ResourceLoader runInImport " + path)
+        console.log("ResourceLoader runUsingImport: '" + path + "'")
 
         import(path).then((module) => {
             this._doneCallback()
@@ -79,14 +63,17 @@
 
     runInBrowser () {
         const script = document.createElement("script")
-        console.log("JsScript loading: '" + this.fullPath() + "'")
+        this.setScriptElement(script)
+        console.log("JsScript runInBrowser: '" + this.fullPath() + "'")
         
         script.src = this.fullPath()
+        script.async = undefined // needed?
+        script.defer = undefined // needed?
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
-            console.log("loaded script src:'" + script.src)
-            //debugger
+            //console.log("JsScript runInBrowser: loaded:'" + script.src)
+            this.removeScript() // helpful?
             this._doneCallback()
         }
 
@@ -99,9 +86,15 @@
         parent.appendChild(script)
     }
 
+    removeScript () {
+        const e = this.scriptElement()
+        e.parentNode.removeChild(e);
+    }
+
     basePath () {
         const parts = this.fullPath().split("/")
         parts.pop()
         return parts.join("/")
     }
+
 }.initThisClass());

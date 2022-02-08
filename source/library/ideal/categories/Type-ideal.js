@@ -293,6 +293,6 @@ getGlobalThis().Type = {
         //assert(Type.isNullOrUndefined(null))
     },
 
-}
+};
 
 //Type.test()

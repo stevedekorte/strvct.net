@@ -211,5 +211,5 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
 
         return this
     }
-}.initThisClass()//.selfTest()
+}.initThisClass(); //.selfTest()
 

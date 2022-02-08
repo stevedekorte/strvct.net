@@ -87,7 +87,6 @@ const BootLoader = (class BootLoader {
         if (nextFile) {
             const path = "./" + nextFile
             console.log("BootLoader importing '" + path + "'")
-            //debugger
 
             import(path).then((module) => {
                 console.log("BootLoader imported '" + path + "'")
@@ -99,11 +98,12 @@ const BootLoader = (class BootLoader {
         } else {
             this.done()
         }
+
         return this
     }
 
     done () {
-        //resourceLoader.shared().run()
+        ResourceLoader.shared().run()
     }
 
     load () {
@@ -111,11 +111,13 @@ const BootLoader = (class BootLoader {
             throw new Error("already running")
         }
         this._isRunning  = true
-        this.loadNextFile() 
+        this.loadNextFile()
+        return this
     }
 
     loadWithRequire () {
         this.files().forEach(file => require(file))
+        return this
     }
 
 }.initThisClass());

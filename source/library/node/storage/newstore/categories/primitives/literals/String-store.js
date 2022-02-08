@@ -6,5 +6,5 @@ Object.defineSlots(String.prototype, {
         return puuids
     },
 
-})
+});
 

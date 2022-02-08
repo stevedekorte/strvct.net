@@ -33,6 +33,6 @@ Object.defineSlots(ArrayBuffer.prototype, {
         return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
     },
 
-})
+});
 
 //console.log("base64Encoded test:", new Uint32Array([1, 2, 3]).base64Encoded())
