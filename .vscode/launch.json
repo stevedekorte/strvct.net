@@ -21,10 +21,10 @@
             "name": "FILE index",
             "url": "file:///${workspaceFolder}/index.html",
             "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "create index.html",
             "runtimeArgs": [
                 "--disable-web-security"
             ],
+            "preLaunchTask": "create index.html",
         },
         {
             "type": "chrome",
@@ -35,6 +35,7 @@
             "runtimeArgs": [
                 "--disable-web-security"
             ],
+            "preLaunchTask": "create index.html",
         },
         {
             "type": "chrome",
@@ -72,10 +73,10 @@
             "request": "launch",
             "name": "local HTTPS index",
             "url": "https://localhost:8000/index.html",
-            /* "preLaunchTask": "Run local node HTTPS server",*/
             "runtimeArgs": [
                 "--disable-web-security"
             ],
+            "preLaunchTask": "create index.html",
         },
 
         {
@@ -95,6 +96,7 @@
             "name": "remote HTTPS index",
             "url": "https://strvct.net",
             "webRoot": "${workspaceFolder}",
+            "preLaunchTask": "create index.html",
         },
         {
             "type": "chrome",

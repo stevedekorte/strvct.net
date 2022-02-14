@@ -55,11 +55,17 @@
     }
 
     absolutePathForRelativePath (aPath) {
+        const ext = aPath.split(".").pop() 
+
         const parts = this.currentScriptPath().split("/").concat(aPath.split("/"))
         let rPath = parts.join("/")
 
         if (rPath[0] === "/"[0] && this.isInBrowser()) {
             rPath = "." + rPath
+        }
+
+        if (ext === "ttf") {
+            console.log("font path: '" + rPath + "'")
         }
 
         return rPath
@@ -75,12 +81,21 @@
     }
 
     pushFilePaths (paths) {
-        //paths.forEach(path => this.pushFilePath(path))
+        paths.slice().reverse().forEach(path => this.unshiftFilePath(path))
         
         // we want these to be in front of previous ones
+        /*
         this.setUrls(paths.concat(this.urls()))
         this.setMaxUrlCount(this.maxUrlCount() + paths.length)
-        
+        */
+
+        return this
+    }
+
+    unshiftFilePath (path) {
+        //console.log("ResourceLoader unshiftFilePath: '" + path + "'")
+        this.urls().unshift(path)
+        this.setMaxUrlCount(this.maxUrlCount() + 1)
         return this
     }
 
