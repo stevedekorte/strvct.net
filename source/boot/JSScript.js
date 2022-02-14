@@ -64,7 +64,7 @@
     runInBrowser () {
         const script = document.createElement("script")
         this.setScriptElement(script)
-        console.log("JsScript runInBrowser: '" + this.fullPath() + "'")
+        //console.log("JsScript runInBrowser: '" + this.fullPath() + "'")
         
         script.src = this.fullPath()
         script.async = undefined // needed?

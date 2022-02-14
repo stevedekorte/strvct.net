@@ -1,4 +1,4 @@
-
+require("./Base.js");
 
 (class RendezvousClientRequest extends Base {
 

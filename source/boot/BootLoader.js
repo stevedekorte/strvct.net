@@ -89,7 +89,7 @@ const BootLoader = (class BootLoader {
             console.log("BootLoader importing '" + path + "'")
 
             import(path).then((module) => {
-                console.log("BootLoader imported '" + path + "'")
+                //console.log("BootLoader imported '" + path + "'")
                 this.loadNextFile()
             }).catch(function (error) {
                 console.log(error.message)

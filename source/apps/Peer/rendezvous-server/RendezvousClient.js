@@ -1,17 +1,41 @@
 
 /*
 
+    See:
+
+        https://www.npmjs.com/package/ws#how-to-detect-and-close-broken-connections
+
+    for WebSocket module docs
+
     TODO:
 
-    - timeout if no client id sent
+    
 
 */
 
+require("./Base.js");
+
 (class RendezvousClient extends Base {
     init () {
+        this.newSlot("connectionRequest", null);
         this.newSlot("server", null);
         this.newSlot("webSocket", null);
         this.newSlot("id", null); // client id
+        this.newSlot("error", null); 
+        this.newSlot("pingPeriod", 30 * 1000); // milliseconds
+        this.newSlot("sendPingTimeout", null); // timeout to send next ping
+        this.newSlot("pongTimeout", null); // timeout to stop waiting for pong and close
+    }
+
+    ipAddress () {
+        const req = this.connectionRequest()
+        const forward = req.headers['x-forwarded-for']
+        if (forward) {
+            // When the server runs behind a proxy like NGINX, 
+            // the de-facto standard is to use the X-Forwarded-For header.
+            return forward.split(',')[0].trim();
+        }
+        return req.socket.remoteAddress
     }
 
     setWebSocket (aWebSocket) {
@@ -34,20 +58,40 @@
             ws.on('error', (data) => {
                 this.onError(data);
             });
+
+            ws.on('pong', (data) => {
+                this.onPong(data);
+            });
         }
+        this.sendPing()
     }
 
     onClose (code, reason) {
+        console.log(this.type() + " onClose: '" + reason + "'")
+        this.shutdown(this);
+    }
+
+    shutdown () {
+        console.log(this.type() + " shutdown")
+        this.clearTimeouts()
+        this.webSocket().terminate()
         this.server().removeClient(this);
     }
 
+    onError (data) {
+        console.log(this.type() + " onError: '" + data + "'")
+        this.setError(data)
+        debugger
+        //this.close()
+    }
+
     onMessage (data) {
-        console.log('Client received: ' + data.toString());
+        console.log(this.type() + " received: " + data.toString());
         
         try {
             const json = JSON.parse(data)
         } catch (error) {
-            console.log("error parsing message '" + data + "'")
+            console.log(this.type() + " error parsing message '" + data + "'")
             return 
         }
 
@@ -65,9 +109,6 @@
             case 'signalToPeer':
                 this.onSignalToPeer(message);
                 break;
-            case 'ping':
-                this.onPing(message);
-                break;
             default:
                 message.respondWithError('Server does not respond to message: ' + message.name);
         }
@@ -82,9 +123,8 @@
             const message = JSON.stringify(json);
             console.log('Client sent: ' + message);
             this.webSocket.send(message);
-        }
-        else {
-            console.warn('webSocket was closed');
+        } else {
+            console.warn(this.type() + " send() - error: can't send as webSocket was closed");
         }
         return this
     }
@@ -125,7 +165,44 @@
         }
     }
 
-    onPing (messageJson) {
-        message.respondWithSuccess();
+    // --- timeouts ---
+
+    clearTimeouts () {
+        this.clearSendPingTimeout()
+        this.clearPongTimeout()
     }
+
+    clearSendPingTimeout () {
+        if (this.sendPingTimeout()) {
+            clearTimeout(this.sendPingTimeout())
+            this.setSendPingTimeout(null) 
+        }
+    }
+
+    clearPongTimeout () {
+        if (this.pongTimeout()) {
+            clearTimeout(this.pongTimeout())
+            this.setPongTimeout(null) 
+        }
+    }
+
+    onPong () {
+        this.clearPongTimeout()
+        const timeout = setTimeout(() => { this.sendPing() }, this.pingPeriod()) // setup timer to send next ping
+        this.setSendPingTimeout(timeout)
+    }
+
+    sendPing () {
+        console.log(this.type() + " sendPing")
+        this.webSocket().ping() // pong should be automatically returned
+        const timeout = setTimeout(() => { this.onPongTimeout() }, this.pingPeriod())
+        this.setPongTimeout(timeout)
+    }
+
+    onPongTimeout () {
+        console.log(this.type() + " onPongTimeout")
+        // our last ping to the client didn't return a pong in the pong timeout period
+        this.shutdown()
+    }
+
 }.initThisClass());

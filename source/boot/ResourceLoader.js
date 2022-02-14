@@ -75,16 +75,17 @@
     }
 
     pushFilePaths (paths) {
-        paths.forEach(path => this.pushFilePath(path))
-        /*
+        //paths.forEach(path => this.pushFilePath(path))
+        
+        // we want these to be in front of previous ones
         this.setUrls(paths.concat(this.urls()))
         this.setMaxUrlCount(this.maxUrlCount() + paths.length)
-        */
+        
         return this
     }
 
     pushFilePath (path) {
-        console.log("ResourceLoader pushFilePath: '" + path + "'")
+        //console.log("ResourceLoader pushFilePath: '" + path + "'")
         this.urls().push(path)
         this.setMaxUrlCount(this.maxUrlCount() + 1)
         return this

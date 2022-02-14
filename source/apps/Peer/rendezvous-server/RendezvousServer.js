@@ -1,14 +1,20 @@
 
 const WebSocket = require('ws');
-require("getGlobalThis.js")
-require("Base.js")
-require("RendezvousClient.js")
-require("RendezvousClientMessage.js")
+require("./getGlobalThis.js");
+require("./Base.js");
+require("./RendezvousClient.js");
+require("./RendezvousClientRequest.js");
 
+
+Object.defineSlot(Array.prototype, "remove",
+    function (item) {
+        return this.splice(this.indexOf(item), 1);
+    }
+);
 
 (class RendezvousServer extends Base {
 
-    init() {
+    init () {
         this.newSlot("port", 9000);
         this.newSlot("server", null);
         this.newSlot("clients", []);
@@ -20,12 +26,12 @@ require("RendezvousClientMessage.js")
         }
     }
 
-    start() {
+    start () {
         const server = new WebSocket.Server(this.options())
         this.setServer(server);
 
-        server.on('connection', (socket) => {
-            this.onConnection(socket);
+        server.on('connection', (webSocket) => {
+            this.onConnection(webSocket);
         })
 
         /*
@@ -41,9 +47,10 @@ require("RendezvousClientMessage.js")
         console.log('RendezvousServer listening on port ' + this.port());
     }
 
-    onConnection (webSocket) {
-        console.log('RendezvousServer onConnect');
-        const client = new RendezvousClient();
+    onConnection (webSocket, request) {
+        console.log('RendezvousServer onConnect()');
+        const client = RendezvousClient.clone();
+        client.setConnectionRequest(request)
         client.setServer(this);
         client.setWebSocket(webSocket);
         this.clients().push(client);
@@ -51,6 +58,7 @@ require("RendezvousClientMessage.js")
     }
 
     removeClient (aClient) {
+        console.log('RendezvousServer removeClient()');
         this.clients().remove(aClient);
         return this;
     }
@@ -65,6 +73,5 @@ require("RendezvousClientMessage.js")
         const client = this.allClients().find(c => c.id() == id);
         return client
     }
-
 
 }.initThisClass());
