@@ -24,14 +24,16 @@
         
         this.newSlot("jsFilesLoaded", [])  // track these so index builder can embed in index.html
         this.newSlot("cssFilesLoaded", []) // track these so index builder can embed in index.html
+        this.newSlot("resourceFilePaths", []) // track these so index builder can embed in index.html
 
         //this.newSlot("archive", null)
 
-        this.newSlot("resourceFilePaths", [])
         this.newSlot("maxUrlCount", 0)
 
         this.newSlot("isEmbeded", false)
         this.newSlot("finalCallback", null)
+
+        this.newSlot("currentImportPath", "")
     }
 
     isInIndexMode () {
@@ -42,14 +44,26 @@
         return this.resourceFilePaths().select(path => extensions.contains(path.pathExtension().toLowerCase()))
     }
 
+    baseForPath (path) {
+        const parts = path.split("/")
+        parts.pop()
+        return parts.join("/")
+    }
+
     currentScriptPath () {
+        
         if (this.currentScript()) {
             return this.currentScript().basePath()
         }
-
+             
         if (!this.isInBrowser()) {
             return process.cwd() // will need this for first script, as there's no currentScript yet
         }
+
+        //if (this.currentImportPath()) {
+            console.log("this.currentImportPath() = '" + this.currentImportPath() + "'")
+            return this.currentImportPath()
+        //}
 
         return ""
     }
@@ -81,17 +95,18 @@
     }
 
     pushFilePaths (paths) {
-        paths.slice().reverse().forEach(path => this.unshiftFilePath(path))
+        //paths.slice().reverse().forEach(path => this.unshiftFilePath(path))
         
         // we want these to be in front of previous ones
-        /*
+        
         this.setUrls(paths.concat(this.urls()))
         this.setMaxUrlCount(this.maxUrlCount() + paths.length)
-        */
+        
 
         return this
     }
 
+    /*
     unshiftFilePath (path) {
         //console.log("ResourceLoader unshiftFilePath: '" + path + "'")
         this.urls().unshift(path)
@@ -105,6 +120,7 @@
         this.setMaxUrlCount(this.maxUrlCount() + 1)
         return this
     }
+    */
 
     pushDoneCallback (aCallback) {
         this.doneCallbacks().push(aCallback)
@@ -163,20 +179,22 @@
         const fullPath = this.fullPathForUrl(url)
         console.log("ResourceLoader loadUrl: '" + fullPath + "'")
 
-        if (this.isInBrowser()) {
+        if (this.isInBrowser()) { // post event
             const detail = { url: fullPath, maxUrlCount: this.maxUrlCount() }
             this.postEvent("resourceLoaderLoadUrl", detail)
         }
 
-        const extension = url.split(".").pop().toLowerCase()
+        const ext = url.split(".").pop().toLowerCase()
 
-        if (extension === "js" /*|| extension === "json"*/) {
+        if (ext === "js" /*|| ext === "json"*/) {
             this.loadJsUrl(fullPath)
-        } else if (extension === "css") {
+        } else if (ext === "css") {
             this.loadCssUrl(fullPath)
         } else {
+            if (!this.isEmbeded()) {
+                this.resourceFilePaths().push(fullPath) 
+            }
             // leave it to other resource handlers which call ResourceLoader.shared().resourceFilePathsWithExtensions()
-            this.resourceFilePaths().push(fullPath) 
             this.loadNext()
         }
 
@@ -185,14 +203,18 @@
 
     loadJsUrl (url) {
         this.jsFilesLoaded().push(url)
+        const isImportsFile = url.split("/").pop() === "_imports.js"
 
-        if (this.isEmbeded()) {
+        if (this.isInBrowser() && isImportsFile) {
+            this.setCurrentImportPath(this.baseForPath(url))
+        }
+
+        if (this.isEmbeded()) { // skip script and goto next because these are all merged into one big script tag already
             this.loadNext()
             return
         }
 
-        const isImportsFile = url.split("/").pop() === "_imports.js"
-        if (this.isInIndexMode() && !isImportsFile) {
+        if (this.isInIndexMode() && !isImportsFile) { // skip script and goto next because we're building index and only need to load imports
             this.loadNext()
             return
         }

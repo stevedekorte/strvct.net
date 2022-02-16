@@ -29,7 +29,16 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
     constructor() {
         this._jsPaths = []
         this._cssPaths = []
-        this._resourceFilePaths = []
+    }
+
+    resourceFilePaths () {
+        const paths = ResourceLoader.shared().resourceFilePaths().slice()
+        const rPaths = paths.filter(path => {
+            const ext = path.split(".").pop().toLowerCase()
+            return ["css", "js"].indexOf(ext) === -1
+        })
+        const results = rPaths.map(path => this.pathRelativetoCwd(path))
+        return results
     }
 
     jsPaths () {
@@ -53,6 +62,13 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
         this.createIndex()
     }
 
+    // --- path ---
+
+    pathRelativetoCwd (aFullPath) {
+        const relativeToCwd = path.relative(process.cwd(), aFullPath)
+        return "./" + relativeToCwd
+    }
+
     // --- js ---
 
     addJsPaths (paths) {
@@ -61,7 +77,7 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
     }
 
     addJsPath(aFullPath) {
-        this.jsPaths().push(aFullPath)
+        this.jsPaths().push(this.pathRelativetoCwd(aFullPath))
     }
 
     // --- css ---
@@ -71,14 +87,14 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
         return this
     }
 
-    addCssPath(aPath) {
-        this.cssPaths().push(aPath)
+    addCssPath(aFullPath) {
+        this.cssPaths().push(this.pathRelativetoCwd(aFullPath))
     }
 
     // --- reading files ---
 
     /*
-    addResourceFilePath(aPath) {
+    addResourceFilePath (aPath) {
         // since indexbuilder isn't on top level, but index.html will be,
         // we need to fix the path
         aPath = aPath.replaceAll("../", "./") 
@@ -86,12 +102,28 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
     }
     */
 
+    justStringForPath (path) {
+        console.log("justStringForPath '" + path + "'")
+        const s = fs.readFileSync(path,  "utf8")
+        return s
+    }
+
     stringForPath (path) {
+        console.log("stringForPath '" + path + "'")
+
         const s = fs.readFileSync(path,  "utf8")
         const extension = path.split(".").pop().toLowerCase()
         if (extension === "js") {
-            return "{\n" + s + "\n};\n"
+            let parts = []
+            parts.push("/* --- BEGIN FILE: '" + path + "' --- */")
+            parts.push("{\n" + s + "\n};")
+            parts.push("/* --- END FILE: '" + path + "' --- */")
+            return "\n" + parts.join("\n") + "\n"
         }
+        if (extension === "css") {
+            return s
+        }
+        throw new Error("unexpected type '" + extension + "' to inline in index file")
         return s
     }
 
@@ -102,7 +134,7 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
     // --- index ---
 
     isInBrowser () {
-        return (typeof (document) !== 'undefined')
+        return (typeof(document) !== 'undefined')
     }
 
     sourceFolderPath () {
@@ -124,8 +156,8 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
 
         const css = this.stringForPaths(this.cssPaths())
         let script = this.stringForPaths(this.jsPaths()) 
-        script += "\nResourceLoader.shared().setResourceFilePaths(" + JSON.stringify(this._resourceFilePaths) + ");\n"
-        let index = this.stringForPaths([this.sourceFolderPath() + "/template.html"])
+        script += "\nResourceLoader.shared().setResourceFilePaths(" + JSON.stringify(this.resourceFilePaths()) + ");\n"
+        let index = this.justStringForPath(this.sourceFolderPath() + "/template.html")
         index = index.replaceAll("/* INSERT CSS HERE */", css)
         index = index.replaceAll("/* INSERT SCRIPT HERE */", script)
 
