@@ -1,4 +1,5 @@
 
 resourceLoader.pushRelativePaths([
-    "fonts.css",
+    //"fonts.css",
+    "fonts/_imports.js",
 ]);

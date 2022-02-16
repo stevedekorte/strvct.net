@@ -1,3 +1,4 @@
+/* WARNING: these relative paths won't work properly if we embed this css in another location, such as index.html */
 
 @font-face{
     font-family:"Helvetica Neue";
@@ -17,8 +18,6 @@
     font-family:"Helvetica Bold";
     src:url("1489452/7ce0a2f5-eb00-46aa-919c-5b3f3667646c.woff2") format("woff2"),url("1489452/cad22c74-45b4-4c49-9e6a-0cd3768a7bc7.woff") format("woff");
 }
-
-
 
 
 @font-face{

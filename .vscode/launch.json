@@ -129,5 +129,14 @@
             "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/source/apps/Peer/rendezvous-server/main.js"
         },
+
+        {
+            "type": "node",
+            "protocol": "inspector",
+            "request": "launch",
+            "name": "RUN font converter",
+            "cwd": "${workspaceFolder}/resources/fonts/Helvetica/",
+            "program": "./convertCssToImport.js"
+        },
     ]
 }

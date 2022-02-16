@@ -14,6 +14,7 @@
         this.newSlot("path", null)
         this.newSlot("name", null)
         this.newSlot("options", null)
+        this.setIsDebugging(true)
     }
 
     init () {
