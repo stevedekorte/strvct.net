@@ -4,7 +4,7 @@
 This is a minimal HTTPS web server for local testing. 
 The command to run in the console is:
 
-  node server.js
+  node main.js
 
 
 # generating a certificate

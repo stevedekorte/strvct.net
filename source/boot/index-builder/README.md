@@ -8,6 +8,6 @@
    
    Run within the indexbuilder folder:
    
-   	node IndexBuilder.js
+   	node main.js
 	
   The resulting index.html file will be placed in the home folder.

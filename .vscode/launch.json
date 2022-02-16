@@ -111,7 +111,7 @@
             "request": "launch",
             "name": "RUN node server",
             "cwd": "${workspaceFolder}/local-web-server",
-            "program": "${workspaceFolder}/local-web-server/server.js"
+            "program": "${workspaceFolder}/local-web-server/main.js"
         },
         {
             "type": "node",
@@ -119,7 +119,7 @@
             "request": "launch",
             "name": "RUN build index.html",
             "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/source/boot/index-builder/buildindex.js"
+            "program": "${workspaceFolder}/source/boot/index-builder/main.js"
         },
         {
             "type": "node",

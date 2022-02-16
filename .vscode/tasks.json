@@ -3,15 +3,12 @@
     // for the documentation about the tasks.json format
     "version": "2.0.0",
     "tasks": [
-
-        //             "program": "${workspaceFolder}/source/boot/index-builder/buildindex.js"
-
         {
             "label": "create index.html",
             "type": "shell",
             "command": "node",
             "args": [
-                "./source/boot/index-builder/buildindex.js"
+                "./source/boot/index-builder/main.js"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"
