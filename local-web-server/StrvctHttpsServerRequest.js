@@ -4,6 +4,7 @@ require("./getGlobalThis.js")
 require("./Base.js")
 require("./MimeExtensions.js")
 const fs = require('fs');
+const nodePath = require('path');
 //var vm = require('vm')
 
 
@@ -38,7 +39,7 @@ const fs = require('fs');
 	}
 
 	getPath () {
-		return ".." + decodeURI(this.urlObject().pathname)
+		return nodePath.join(process.cwd(), decodeURI(this.urlObject().pathname))
 	}
 
 	getPathExtension() {
@@ -88,13 +89,6 @@ const fs = require('fs');
 		//console.log("  path:" + path)
 		const path = this.path()
 
-		if (path.indexOf("..") !== 0) {
-			this.response().writeHead(401, {});
-			this.response().end()
-			console.log("  error: invalid path '" + path + "'")
-			return
-		}
-
 		// Ensure there is a file extension
 		// need this to determine contentType
 
@@ -122,16 +116,18 @@ const fs = require('fs');
 
 		// Ensure path is within sandbox
 
-		/*
-		if (path.indexOf("/") === 0 || path.indexOf("..") !== -1) {
+		const sandboxPath =  process.cwd()
+		const normalPath = nodePath.normalize(path)
+		const pathRelativeToCwd = nodePath.relative(sandboxPath, normalPath); // relative from, to
+
+		if (pathRelativeToCwd.indexOf("..") !== -1) {
 			this.response().writeHead(401, {});
 			this.response().end()
-			console.log("  error: attempt to access file path outside of sandbox '" + path + "'")
+			console.log("  error: attempt to access file path '" + path + "' which is outside of sandbox path '" + sandboxPath + "' relative path is '" + pathRelativeToCwd + "'")
 			return
 		}
-		*/
 
-		// Ensure valid file path
+		// Ensure file exists
 
 		if (!fs.existsSync(path)) {
 			this.response().writeHead(401, {});

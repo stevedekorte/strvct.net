@@ -6,8 +6,8 @@
 
     Fast notifications that immediately message listeners 
     instead of using Observer and Notification objects.
-    As mltiple notifications of the same name are not merged
-    within the same event loop, so listeners should implement handlers efficiently.
+    As multiple notifications of the same name are not merged
+    within the same event loop, it's up to listeners to implement handlers efficiently.
 
     Example use:
 
@@ -21,7 +21,7 @@
         // inside a StoreableNode, on slot change
         onSlotChange (...) {
             ...
-            Broadcaster.shared().broadcastEventName("didChangeStoredSlot")
+            Broadcaster.shared().broadcastNameAndArgument("didChangeStoredSlot", this)
             ...
         }
 
@@ -91,7 +91,7 @@
 Object.defineSlots(ProtoClass.prototype, {
 
     broadcastMessage: function(methodName) {
-        window.Broadcaster.shared().broadcastEventName(methodName, this)
+        Broadcaster.shared().broadcastNameAndArgument(methodName, this)
         return this
     }
     

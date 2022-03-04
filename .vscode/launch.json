@@ -109,7 +109,7 @@
             "type": "node",
             "protocol": "inspector",
             "request": "launch",
-            "name": "RUN node server",
+            "name": "RUN node HTTPS server",
             "cwd": "${workspaceFolder}/local-web-server",
             "program": "${workspaceFolder}/local-web-server/main.js"
         },

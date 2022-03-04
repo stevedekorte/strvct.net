@@ -58,14 +58,30 @@
 
         audio.appendChild(source)
         audio.addEventListener("playing", event => this.onPlaying(event), false); 
+        audio.addEventListener("progress", event => this.onProgress(event), false); 
+        audio.addEventListener("ended", event => this.onEnded(event), false); 
+        audio.addEventListener("error", event => this.onError(event), false); 
         return audio
     }
+    
+    // events
 
-    onPlaying () {
+    onPlaying (event) {
         if (this.isDebugging()) {
             this.debugLog(".onPlaying() ")
         }
         return this
+    }
+
+    onProgress (event) {
+
+    }
+
+    onEnded (event) {
+        //const note = BMNotificationCenter.shared().newNote().setSender(this).setName("onEndedSound").post()
+    }
+
+    onError (event) {
     }
 
     // path

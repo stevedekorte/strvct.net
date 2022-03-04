@@ -42,10 +42,10 @@
             "type": "shell",
             "command": "node",
             "args": [
-                "server.js"
+                "local-web-server/main.js"
             ],
             "options": {
-                "cwd": "${workspaceRoot}/LocalWebServer",
+                "cwd": "${workspaceRoot}",
                 "_runner": "terminal",
                 "isBackground": "true",
             },

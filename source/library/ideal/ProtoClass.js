@@ -145,7 +145,7 @@
 
     static initThisClass () {
         //console.log(this.type() + " initThisClass")
-        this.setClassVariable("_classSrcPath", document.currentScript.src)
+        //this.setClassVariable("_classSrcPath", document.currentScript.src)
 
         this.setClassVariable("_childClasses", new Set())
         this.setClassVariable("_ancestorClasses", this.findAncestorClasses())

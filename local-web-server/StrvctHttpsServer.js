@@ -7,21 +7,34 @@ require("./StrvctHttpsServerRequest.js")
 const https = require('https');
 const fs = require('fs');
 //var vm = require('vm')
+const nodePath = require('path');
 
 
 (class StrvctHttpsServer extends Base {
 	initPrototype () {
-		this.newSlot("options", null)
 		this.newSlot("server", null);
 		this.newSlot("hostname", "localhost");
 		this.newSlot("port", 8000);
 	}
 
+	serverKeyPath () {
+		return nodePath.join(__dirname, 'keys/server.key')
+	}
+
+	serverCertPath () {
+		return nodePath.join(__dirname, 'keys/server.crt')
+	}
+
 	init () {
-		this.setOptions({
-			key: fs.readFileSync('keys/server.key'),
-			cert: fs.readFileSync('keys/server.crt')
-		})
+		super.init()
+		return this
+	}
+
+	options () {
+		return {
+			key: fs.readFileSync(this.serverKeyPath()),
+			cert: fs.readFileSync(this.serverCertPath())
+		}
 	}
 
 	run() {
@@ -36,7 +49,7 @@ const fs = require('fs');
 		})
 		this._server.listen(this.port());
 
-		console.log("listening on port " + this.port() + " - connect with https://localhost:8000/index.html")
+		console.log("listening on port " + this.port() + " - connect with https://" + this.hostname() + ":" + this.port() + "/index.html")
 	}
 
 	onRequest(request, response) {

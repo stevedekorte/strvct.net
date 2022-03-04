@@ -11,10 +11,10 @@
         
     Warning about Weak links: 
     
-        As Javascript doesn't support weak links, you'll need to be careful
-        about having your observers tell the NotificationCenter when they 
-        are done observing, otherwise, it will hold a reference to them that
-        will prevent them from being garbage collected and they'll continue
+        As Javascript doesn't support weak links, we need to be careful
+        about having observers tell the NotificationCenter when they 
+        are done observing, otherwise, their Observation object will hold a reference to 
+        the observer that will prevent it from being garbage collected, and the observer will continue
         to receive matching notifications. 
     
     Weak links solution (for target/sender):
@@ -34,6 +34,8 @@
 
     Example use:
  
+    Observing notifications:
+
         // start watching for "changed" message from target object
         this._obs = BMNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setTarget(target).watch()
     
@@ -46,20 +48,21 @@
         // stop watching all
         BMNotificationCenter.shared().removeObserver(this)
         
+    Posting notifications:
+
         // post a notification
         const note = BMNotificationCenter.shared().newNote().setSender(this).setName("hello").post()
 
         // repost same notification
         note.post()
 
-    Broadcast notifications:
+    Broadcasting notifications:
 
         For use cases where the overhead of creating post objects would be costly, 
         it's possible to send a direct message to all name listeners without waiting
         until the event loop to end. These will pass the target itself instead of a Notification object.
 
-        // call's changedStoredSlot(target) on all listeners for "changedStoredSlot"
-        BMNotificationCenter.shared().broadcastTargetAndName(this, "changedStoredSlot")
+        See Broadcaster class.
 
 */
 

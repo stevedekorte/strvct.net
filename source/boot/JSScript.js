@@ -69,6 +69,7 @@
         script.src = this.fullPath()
         script.async = undefined // needed?
         script.defer = undefined // needed?
+        script.type = "module" // charset and defer attributes ignore if type is "module"
 
         script.onload = () => {
             //console.log("loaded script src:'" + script.src + "' type:'" + script.type + "' text:[[[" + script.text + "]]]")
