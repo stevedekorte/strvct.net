@@ -121,11 +121,13 @@ const nodePath = require('path');
 		const normalPath = nodePath.normalize(path)
 		const pathRelativeToCwd = nodePath.relative(sandboxPath, normalPath); // relative from, to
 
+		/*
 		console.log("path: '" + path + "'")
 		console.log("sandboxPath: '" + sandboxPath + "'")
 		console.log("normalPath: '" + normalPath + "'")
 		console.log("pathRelativeToCwd: '" + pathRelativeToCwd + "'")
 		console.log("---")
+		*/
 
 		if (pathRelativeToCwd.indexOf("..") !== -1) {
 			this.response().writeHead(401, {});
