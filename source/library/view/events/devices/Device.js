@@ -8,7 +8,6 @@
 (class Device extends ProtoClass {
     
     initPrototype () {
-
     }
 
     init () {

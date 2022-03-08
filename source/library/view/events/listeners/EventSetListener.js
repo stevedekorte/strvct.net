@@ -24,6 +24,8 @@
         this.newSlot("eventsDict", null).setComment("should only write from within class & subclasses")
         this.newSlot("useCapture", false).setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree")
         this.newSlot("methodSuffix", "")
+        this.newSlot("hasReceivedEvent", false)
+
     }
 
     init () {
@@ -201,6 +203,11 @@
     }
 
     onAfterEvent (methodName, event) {
+        if (!this.hasReceivedEvent()) {
+            this.setHasReceivedEvent(true)
+            Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
+        }
+
         if (getGlobalThis().SyncScheduler) {
             /*
                 run scheduled events here to ensure that a UI event won't occur

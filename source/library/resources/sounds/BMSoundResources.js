@@ -43,7 +43,8 @@
     }
 
     addSoundWithPath (aPath) {
-        const sound = BMSound.clone().setPath(aPath)
+        //const sound = BMSound.clone().setPath(aPath)
+        const sound = WASound.clone().setPath(aPath).loadIfNeeded()
         this.addSound(sound)
         return this
     }
