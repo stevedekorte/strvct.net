@@ -8,24 +8,26 @@
     
 */
 
-(class BMIconResources extends BMNode {
-	
-	static initThisClass () {
-        super.initThisClass()
-		this.setIsSingleton(true)
-		return this
-	}
-	
-    initPrototype () {
-	}
-	
+(class BMIconResources extends BMResourceGroup {
+
 	init () {
 		super.init()
 		this.setTitle("Icons")
-		this.setNoteIsSubnodeCount(true)
 		this.addIcon("empty", null)
 		return this
 	}
+
+	setup () {
+        // subclasses need to use this to set ResourceClasses
+        this.setResourceClasses([SvgIconNode])
+    }
+
+	setupSubnodes () {
+		super.setupSubnodes()
+		return this
+	}
+
+	// --- old code to add svg directly using a string ---
 
     addIcon (aName, svgString) {
 		const node = SvgIconNode.clone().setTitle(aName).setSvgString(svgString)

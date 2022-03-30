@@ -205,6 +205,7 @@
     onAfterEvent (methodName, event) {
         if (!this.hasReceivedEvent()) {
             this.setHasReceivedEvent(true)
+
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
         }
 

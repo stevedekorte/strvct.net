@@ -129,5 +129,6 @@ BootLoader.shared().addFiles([
     "./CssLink.js",
     "./JsScript.js",
     "./ResourceLoaderPanel.js",
+    "./ResourceEntry.js",
     "./ResourceLoader.js",
 ]).registerForWindowLoad()

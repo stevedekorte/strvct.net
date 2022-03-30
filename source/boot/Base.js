@@ -11,6 +11,11 @@ Object.defineSlot = function (obj, slotName, slotValue) {
         value: slotValue,
         writable: true,
     }
+
+    if (typeof(slotValue) === "function") {
+        slotValue.displayName = slotName
+    }
+    
     Object.defineProperty(obj, slotName, descriptor)
     //}
 }

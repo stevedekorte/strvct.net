@@ -47,6 +47,10 @@
         
         // stop watching all
         BMNotificationCenter.shared().removeObserver(this)
+
+        // watch only for first note named "appDidInit"
+        this.watchOnceForNote("appDidInit")
+
         
     Posting notifications:
 

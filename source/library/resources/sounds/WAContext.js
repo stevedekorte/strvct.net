@@ -17,6 +17,9 @@
         super.initThisClass()
         Broadcaster.shared().addListenerForName(this, "firstUserEvent")
         this.firstUserEvent()
+
+                    //this.watchOnceForNote("firstUserEvent")
+
         return this
     }
 
@@ -27,6 +30,8 @@
         //}
     }
     */
+
+
 
     initPrototype () {
         this.newSlot("audioContext", null)

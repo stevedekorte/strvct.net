@@ -6,6 +6,7 @@
         this.newSlot("fullPath", null);
         this.newSlot("doneCallback", null);
         this.newSlot("scriptElement", null);
+        this.newSlot("error", null);
     }
 
     setFullPath (aPath) {
@@ -32,7 +33,7 @@
 
     runUsingRequire () { //  for node.js
         let path = this.fullPath()
-        console.log("ResourceLoader runUsingRequire: '" + path + "'")
+        //console.log("ResourceLoader runUsingRequire: '" + path + "'")
 
         try {
             require(path)
@@ -62,6 +63,42 @@
     }
 
     runInBrowser () {
+        const path = this.fullPath() 
+        const request = new XMLHttpRequest();
+        request.open('GET', path, true);
+        console.log("runInBrowser: ", path)
+        request.responseType = 'application/javascript'; // optional
+        request.onload  = (event) => { this.onLoad(event) }
+        request.onerror = (event) => { this.onLoadError(event) }
+        request.send();
+        return this
+    }
+
+    onLoad (event) {
+        const request = event.currentTarget;
+        if (request.status >= 400 && request.status <= 599) {
+            const error = request.status + " " + request.statusText + " error loading " + this.fullPath() + " "
+            this.setError(error)
+            throw new Error(error)
+            return
+        }
+        const code = request.response;
+        const sourceUrl = "\n//# sourceURL=" + this.fullPath() + " \n"
+        const debugCode = code + sourceUrl
+        eval(debugCode)
+        this._doneCallback()
+    }
+
+    onLoadError (event) {
+        const request = event.currentTarget; // is event or error passed?
+        console.log(this.type() + " onLoadError ", error, " " + this.fullPath())
+        this.setError(error)
+        throw new Error("error loading " + this.fullPath())
+    }
+  
+
+    /*
+    runInBrowser () {
         const script = document.createElement("script")
         this.setScriptElement(script)
         //console.log("JsScript runInBrowser: '" + this.fullPath() + "'")
@@ -86,7 +123,8 @@
         const parent = document.getElementsByTagName("head")[0] || document.body
         parent.appendChild(script)
     }
-
+    */
+   
     removeScript () {
         const e = this.scriptElement()
         e.parentNode.removeChild(e);

@@ -6,10 +6,14 @@
 
 */
 
-(class BMURLImage extends BMNode {
+(class BMURLImage extends BMResource {
     
+    static supportedExtensions () {
+        return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"]
+    }
+
     initPrototype () {
-        this.newSlot("path", "")
+        //this.newSlot("path", "")
         this.newSlot("dataURL", "")
     }
 
@@ -27,11 +31,18 @@
         return this.path().pathExtension()
     }
 
+    /*
     setPath (aPath) {
         if (this._path !== aPath) {
             this._path = aPath
             this.loadDataURL()
         }
+        return this
+    }
+    */
+
+    load () {
+        this.loadDataURL()
         return this
     }
 
@@ -86,3 +97,5 @@
     }
 
 }.initThisClass());
+
+//console.log("BMURLImage: ", BMURLImage)

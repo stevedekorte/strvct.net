@@ -1,6 +1,7 @@
 "use strict";
 
 /*
+
    IndexBuilder.js
    
    This script builds a index.html file for the app
@@ -8,10 +9,32 @@
   
    The resulting index.html (with the font and icon folders) 
    should be able to run the app on it's own.
+
+   source map comments are used so the debugger can refer to the 
+   original files instead of the packaged code.
    
 */
 
-//global.window = global
+// ------------------------------------------------------
+// See: https://developer.chrome.com/blog/sourcemappingurl-and-sourceurl-syntax-changed/
+// See: https://www.html5rocks.com/en/tutorials/developertools/sourcemaps/#toc-sourceurl
+/*
+String.prototype.base64Encoded = function () {
+    return this.toString("base64");
+}
+
+String.prototype.base64UrlEncoded = function () {
+    return this.base64Encoded().replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, ",");
+}
+*/
+
+/*
+String.prototype.pathAsSourceMapUrl = function () {
+    return "\n//# sourceURL=" + this + " \n"
+}
+*/
+
+// --------------------------------------------------
 
 const path = require("path");
 const fs = require("fs")
@@ -102,34 +125,28 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
     }
     */
 
-    justStringForPath (path) {
-        console.log("justStringForPath '" + path + "'")
-        const s = fs.readFileSync(path,  "utf8")
-        return s
-    }
-
     stringForPath (path) {
-        console.log("stringForPath '" + path + "'")
+        return fs.readFileSync(path,  "utf8")
+    }
 
+    stringForCssPath (path) {
         const s = fs.readFileSync(path,  "utf8")
-        const extension = path.split(".").pop().toLowerCase()
-        if (extension === "js") {
-            let parts = []
-            parts.push("/* --- BEGIN FILE: '" + path + "' --- */")
-            parts.push("{\n" + s + "\n};")
-            parts.push("/* --- END FILE: '" + path + "' --- */")
-            return "\n" + parts.join("\n") + "\n"
-        }
-        if (extension === "css") {
-            return s
-        }
-        throw new Error("unexpected type '" + extension + "' to inline in index file")
+        //const comment = this.sourceMapStringForUrl(path)
+        //const out = "\n" + s + comment + "\n"
         return s
     }
 
-    stringForPaths(paths) {
-        return paths.map(path =>  this.stringForPath(path)).join("\n")
+    stringForJsPath (path) {
+        const sourceCode = fs.readFileSync(path,  "utf8")
+        const sourceUrl = "\n//# sourceURL=" + path + " \n"
+        const code = sourceCode + sourceUrl 
+        let out = "    // " + path + "\n"
+        //out += "    eval(" +  JSON.stringify(code) + ")\n"
+        out += "    Function(" +  JSON.stringify(code) + ")()\n"
+        return out
     }
+
+
 
     // --- index ---
 
@@ -150,18 +167,45 @@ getGlobalThis().IndexBuilder = class IndexBuilder {
         }
     }
 
+    // --- component strings ---
+
+    templateString () {
+        const template = this.stringForPath(this.sourceFolderPath() + "/template.html")
+        return template
+    }
+
+    cssString () {
+        const css = this.cssPaths().map(path => this.stringForCssPath(path)).join("\n")
+        return css
+    }
+
+    jsonForJsPath (path) {
+        const sourceCode = fs.readFileSync(path,  "utf8")
+        const sourceUrl = "\n//# sourceURL=" + path.slice(2) + " \n"
+        const code = sourceCode + sourceUrl 
+        const dict = { path: path, code: code }
+        return dict
+    }
+
+    jsString () {
+        const json = this.jsPaths().map(path => this.jsonForJsPath(path))
+        let script = "const json = " + JSON.stringify(json, 2, 2) + ";\n\n"
+        script += "json.forEach(dict => eval(dict.code));\n" // evals in global context
+        //script += "json.forEach(dict => eval(dict.code));\n" // evals in global context
+        script += "ResourceLoader.shared().setResourceFilePaths(" + JSON.stringify(this.resourceFilePaths(), 2, 2) + ");\n"
+        return script
+    }
+
+    // --- build ---
+
     createIndex() {
         console.log("IndexBuilder: inserting imports between templates to create index.html")
-        console.log(this.jsPaths().join("\n"))
+        //console.log(this.jsPaths().join("\n"))
 
-        const css = this.stringForPaths(this.cssPaths())
-        let script = this.stringForPaths(this.jsPaths()) 
-        script += "\nResourceLoader.shared().setResourceFilePaths(" + JSON.stringify(this.resourceFilePaths()) + ");\n"
-        let index = this.justStringForPath(this.sourceFolderPath() + "/template.html")
-        index = index.replaceAll("/* INSERT CSS HERE */", css)
-        index = index.replaceAll("/* INSERT SCRIPT HERE */", script)
+        let index = this.templateString()
+        index = index.replaceAll("/* INSERT CSS HERE */", "\n" + this.cssString())
+        index = index.replaceAll("/* INSERT SCRIPT HERE */", "\n" + this.jsString())
 
-        //console.log(index)
         fs.writeFileSync(this.outputFilePath(), index, "utf8")
         console.log("IndexBuilder: SUCCESS: created '" + this.outputFilePath() + "'")
     }

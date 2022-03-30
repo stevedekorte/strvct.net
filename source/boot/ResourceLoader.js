@@ -40,7 +40,7 @@
         return getGlobalThis().isBuildingIndex
     }
 
-    resourceFilePathsWithExtensions(extensions) {
+    resourceFilePathsWithExtensions (extensions) {
         return this.resourceFilePaths().select(path => extensions.contains(path.pathExtension().toLowerCase()))
     }
 
@@ -177,7 +177,7 @@
 
     loadUrl (url) {
         const fullPath = this.fullPathForUrl(url)
-        console.log("ResourceLoader loadUrl: '" + fullPath + "'")
+         //console.log("ResourceLoader loadUrl: '" + fullPath + "'")
 
         if (this.isInBrowser()) { // post event
             const detail = { url: fullPath, maxUrlCount: this.maxUrlCount() }

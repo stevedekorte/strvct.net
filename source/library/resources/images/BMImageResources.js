@@ -6,36 +6,22 @@
 
 */
 
-(class BMImageResources extends BMNode {
+(class BMImageResources extends BMResourceGroup {
     
-    static initThisClass () {
-        super.initThisClass()
-        this.setIsSingleton(true)
-		return this
-    }
-    
-    initPrototype () {
-        this.newSlot("extensions", ["png", "jpg", "jpeg", "gif", "tiff", "bmp"])
-    }
 
     init () {
         super.init()
         this.setTitle("Images")
-        this.setNodeMinWidth(270)
-        this.setNoteIsSubnodeCount(true)
-        //this.setSubnodeClasses([BMURLImage])
+        this.setSubnodeClasses([BMURLImage])
         return this
     }
 
-    resourcePaths () {
-        return ResourceLoader.shared().resourceFilePathsWithExtensions(this.extensions())
-    }
-    
-    appDidInit () {
-        this.setupSubnodes()
-        return this
+    setup () {
+        // subclasses need to use this to set ResourceClasses
+        this.setResourceClasses([BMURLImage])
     }
 
+    /*
     setupSubnodes () {
         this.resourcePaths().forEach(path => this.addImageWithPath(path))
         return this
@@ -46,5 +32,6 @@
         image.setPath(aPath)
         return this
     }
+    */
 
 }.initThisClass());

@@ -2,6 +2,6 @@
 
 resourceLoader.pushRelativePaths([
     "BMFileResources.js",
-    "BMFileSystemFolder.js",
-    "BMFileSystemFile.js",
+    "BMResourceFolder.js",
+    "BMResourceFile.js",
 ])

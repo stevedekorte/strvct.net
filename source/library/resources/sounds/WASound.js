@@ -8,30 +8,17 @@
 
 */
 
-(class WASound extends BMNode {
+(class WASound extends BMResource {
 
-    // --- mime types ---
-
-    static supportedMimeTypes() {
-        return new Set(["audio/ogg", "audio/wave", "audio/mp3"])
-    }
-
-    static canOpenMimeType(mimeType) {
-        return this.supportedMimeTypes().has(mimeType)
-    }
-
-    static openMimeChunk(dataChunk) {
-        const aNode = this.clone()
-        //setValue(dataChunk)
-        console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)
-        return aNode
+    static supportedExtensions () {
+        return ["aac", "alac", "amr", "flac", "mp3", "mp4", "3gp",  "opus", "oga", "ogg", "ogv", "wav"]
     }
 
     // ---
 
-    initPrototype() {
+    initPrototype () {
         this.newSlot("request", null)
-        this.newSlot("path", null)
+        //this.newSlot("path", null)
         this.newSlot("loadState", "unloaded") // "unloaded", "loading", "decoding", "loaded"
         //this.newSlot("downloadBuffer", null)
         this.newSlot("decodedBuffer", null)
@@ -44,22 +31,24 @@
         // source attributes
         this.newSlot("loop", false)
         this.newSlot("playbackRate", 1)
+        //this.newSlot("loopStart", null)
+        //this.newSlot("loopEnd", null)
     }
 
-    init() {
+    init () {
         super.init()
         this.setNodeMinWidth(270)
     }
 
-    title() {
+    title () {
         return this.name() 
     }
 
-    subtitle() {
+    subtitle () {
         return this.path().pathExtension() + ", " + this.loadState()
     }
 
-    name() {
+    name () {
         return this.path().lastPathComponent().sansExtension()
     }
 
@@ -72,16 +61,30 @@
         return 0
     }
 
+    length () { // sample count
+        if (this.decodedBuffer()) {
+            return this.decodedBuffer().length
+        }
+        return 0
+    }
+
+    numberOfChannels () { // sample count
+        if (this.decodedBuffer()) {
+            return this.decodedBuffer().numberOfChannels
+        }
+        return 0
+    }
+
     // --- load ---
 
-    loadIfNeeded() {
+    loadIfNeeded () {
         if (this.loadState() === "unloaded") {
             this.load()
         }
         return this
     }
 
-    load() {
+    load () {
         this.setLoadState("loading")
 
         const request = new XMLHttpRequest();
@@ -93,16 +96,16 @@
         return this
     }
 
-    onLoadError(event) {
+    onLoadError (event) {
         console.log(this.type() + " onLoadError ", error, " " + this.path())
         this.setError(error)
     }
 
-    audioCtx() {
+    audioCtx () {
         return WAContext.shared().setupIfNeeded().audioContext()
     }
 
-    onLoad(event) {
+    onLoad (event) {
         const request = event.currentTarget;
         const downloadedBuffer = request.response;
         //this.setDownloadedBuffer(downloadedBuffer) // array buffer
@@ -116,31 +119,38 @@
 
     // --- decode ---
 
-    onDecode(decodedBuffer) {
+    onDecode (decodedBuffer) {
         this.setDecodedBuffer(decodedBuffer)
         this.setLoadState("loaded")
+        //console.log(this.type() + " didDecode " + this.path())
         if (this.shouldPlayOnLoad()) {
             this.play()
         }
+        this.didLoad()
     }
 
-    onDecodeError(e) {
-        console.log(this.type() + " onDecodeError ", e.error, " " + this.path())
+    onDecodeError (e) {
+        console.warn(this.type() + " onDecodeError ", e.error, " " + this.path())
         this.setError(e.error)
     }
 
     // --- audio source ---
 
-    newAudioSource() {
+    newAudioSource () {
         const ctx = this.audioCtx()
         const source = ctx.createBufferSource();
         source.buffer = this.decodedBuffer();
         source.connect(ctx.destination);
         this.syncToSource(source)
+        source.addEventListener("ended", (event) => { this.onEnded(event) })
         return source
     }
 
-    syncToSource(source) {
+    onEnded (event) {
+
+    }
+
+    syncToSource (source) {
         source.playbackRate.value = this.playbackRate();
         source.loop = this.loop();
         return this
@@ -148,13 +158,17 @@
 
     // --- play ---
 
-    play() {
+    play () {
         const source = this.newAudioSource()
-        source.start(0);
+        source.start();
         return this
     }
 
-    prepareToAccess() {
+    pause () {
+        //source.stop()
+    }
+
+    prepareToAccess () {
         super.prepareToAccess()
         this.play() // not a good way to do this?
     }

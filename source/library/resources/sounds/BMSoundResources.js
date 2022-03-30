@@ -6,56 +6,30 @@
 
 */
 
-(class BMSoundResources extends BMNode {
-    
-    static initThisClass () {
-        super.initThisClass()
-        this.setIsSingleton(true)
-		return this
-    }
-
-    initPrototype () {
-        this.newSlot("extensions", ["wav", "mp3", "m4a", "mp4", "oga", "ogg"])
-    }
+(class BMSoundResources extends BMResourceGroup {
 
     init () {
         super.init()
-
         this.setTitle("Sounds")
-        this.setNodeMinWidth(270)
-        this.setNoteIsSubnodeCount(true)
-
-        this.watchOnceForNote("appDidInit")
     }
 
-    appDidInit () {
-        this.setupSubnodes()
-        return this
-    }
-
-    resourcePaths () {
-        return ResourceLoader.shared().resourceFilePathsWithExtensions(this.extensions())
-    }
-
-    setupSubnodes () {
-        this.resourcePaths().forEach(path => this.addSoundWithPath(path))
-        return this
+    setup () {
+        // subclasses need to use this to set ResourceClasses
+        this.setResourceClasses([WASound])
     }
 
     addSoundWithPath (aPath) {
-        //const sound = BMSound.clone().setPath(aPath)
-        const sound = WASound.clone().setPath(aPath).loadIfNeeded()
-        this.addSound(sound)
+        this.addResourceWithPath(aPath)
         return this
     }
 
     addSound (aSound) {
-        this.addSubnode(aSound)
+        this.addResource(aSound)
         return this
     }
 
     sounds () {
-        return this.subnodes()
+        return this.resources()
     }
 
 }.initThisClass());

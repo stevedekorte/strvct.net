@@ -1,6 +1,7 @@
 "use strict";
 
 resourceLoader.pushRelativePaths([
-    "BMImageResources.js",
+    "BMImage.js",
     "BMURLImage.js",
+    "BMImageResources.js",
 ])

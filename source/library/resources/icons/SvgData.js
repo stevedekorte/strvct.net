@@ -1,4 +1,7 @@
 
+// embeded these to avoid need for local web server when running app locally,
+// but we depend on too many resources (fonts, images, sounds, etc) to get away with this now
+
 BMIconResources.shared().addIcon("double right caret", `
 <svg x="0px" y="0px" width="100%" height="100%" preserveAspectRatio="xMidYMin slice" viewBox="0 0 284.936 284.936" style="enable-background:new 0 0 284.936 284.936;">
 	<g>

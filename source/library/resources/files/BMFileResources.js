@@ -21,7 +21,7 @@
     init () {
         super.init()
 
-        this.setTitle("FileSystem")
+        this.setTitle("FileResources")
         this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         this.watchOnceForNote("appDidInit")
@@ -31,35 +31,29 @@
     appDidInit () {
         //this.debugLog(".appDidInit()")
         //this.setupSubnodes()
-        this.setup()
+        this.setupSubnodes()
         return this
     }
     
     setupSubnodes () {
-        this.addSubnode(BMFileSystemFolder.clone())
+        const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
+        this.addSubnode(rootFolder)
+        const allPaths = ResourceLoader.shared().resourceFilePaths()
+        allPaths.forEach(aPath => {
+            const pathArray = aPath.split("/")
+            while (pathArray.first() === ".") {
+                pathArray.shift()
+            }
+            const file = rootFolder.addRelativeResourcePathArray(pathArray)
+            if (!file) {
+                throw new Error("no file added")
+            }
+        }) // will find path to last folder and insert resource
         return this
     }
 
-    setup () {
-        window.requestFileSystem  = window.requestFileSystem || window.webkitRequestFileSystem;
-
-        window.requestFileSystem(
-            window.PERSISTENT, 
-            1*1000*1000, 
-            (fileSystem) => this.onOpen(fileSystem), 
-            (error) => this.onOpenError(error)
-        )
-
-        return this
-    }
-
-    onOpen (fileSystem) {
-        console.log("opened filesystem")
-
-    }
-
-    onOpenError (error) {
-        console.log(error)
+    rootFolder () {
+        return this.subnodes().first()
     }
 
 

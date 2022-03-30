@@ -2,25 +2,35 @@
 
 /*
     
-	SvgIconNode
+  SvgIconNode
 	
     
 */
 
-(class SvgIconNode extends BMNode {
-    
-    initPrototype () {
-      this.newSlot("svgString", null).setCanInspect(true).setSlotType("String").setLabel("SVG string")
-    }
+(class SvgIconNode extends BMResource {
 
-    svgIconView () {
-      const icon = SvgIconView.clone().setSvgString(this.svgString())
-      return icons
-    }
+  static supportedExtensions () {
+    return ["svg"]
+  }
 
-    noteIconName () {
-      return this.title()
-    }
+  initPrototype() {
+    this.newSlot("svgString", null).setCanInspect(true).setSlotType("String").setLabel("SVG string")
+    //this.newSlot("path", null)
+  }
+
+  load () {
+    this.setTitle(this.path().lastPathComponent().sansExtension())
+    return this
+  }
+
+  svgIconView() {
+    const icon = SvgIconView.clone().setSvgString(this.svgString())
+    return icon
+  }
+
+  noteIconName() {
+    return this.title()
+  }
 
 }.initThisClass());
 

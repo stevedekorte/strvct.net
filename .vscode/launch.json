@@ -73,6 +73,7 @@
             "request": "launch",
             "name": "local HTTPS index",
             "url": "https://localhost:8000/index.html",
+            "webRoot": "${workspaceFolder}",
             "runtimeArgs": [
                 "--disable-web-security"
             ],

@@ -1,5 +1,6 @@
 
 resourceLoader.pushRelativePaths([
+    "js-sha256/_imports.js",
     "bitcore/_imports.js",
     "bit-buffer/_imports.js",
     "json-stable-stringify/_imports.js",

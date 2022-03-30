@@ -43,7 +43,7 @@ const nodePath = require('path');
 		return nodePath.join(".", decodeURI(this.urlObject().pathname))
 	}
 
-	getPathExtension() {
+	getPathExtension () {
 		if (this.path().indexOf(".") !== -1) {
 			return this.path().split('.').pop();
 		}
@@ -99,7 +99,7 @@ const nodePath = require('path');
 		if (!ext) {
 			this.response().writeHead(401, {});
 			this.response().end()
-			console.log("  error: no file extension '" + ext + "'")
+			console.log("  error: no file extension found in path: '" + path + "'")
 			return
 		}
 
@@ -111,7 +111,7 @@ const nodePath = require('path');
 		if (!contentType) {
 			this.response().writeHead(401, {})
 			this.response().end()
-			console.log("  error: invalid extension ", ext)
+			console.log("  error: no known mime type for extension: '" + ext + "'")
 			return
 		}
 
