@@ -1,8 +1,8 @@
 [
   {
     "path": "_css.css",
-    "size": 1608,
-    "hash": "EWPW6ny13jqi012b7Ya4JVQOoauiwkWUPSM4156YjrM="
+    "size": 1573,
+    "hash": "86YZSsyu2h0WkknMklOn1hv/MOpAZNOl7kAVqmpad9w="
   },
   {
     "path": "external-libs/js-sha256/src/sha256.js",
@@ -1021,8 +1021,8 @@
   },
   {
     "path": "source/library/resources/BMResource.js",
-    "size": 1456,
-    "hash": "XRQQ2/5TMli4uZw+4Ypl9DLwFZGUfD70MS9HfcRPTNk="
+    "size": 1454,
+    "hash": "qkMsB63rUuslDJPSbmiJAY19ZTm3vmGKQbMkFehRrO4="
   },
   {
     "path": "source/library/resources/BMResources.js",
@@ -1176,8 +1176,8 @@
   },
   {
     "path": "source/apps/Strvct/_init.js",
-    "size": 83,
-    "hash": "BaK2T9AIFGo8jiFnChIovN2i+Q9JzuU4jGXNL1/RQLo="
+    "size": 74,
+    "hash": "cPcFquCLISIA5i8dUyyxPra7XU+jRBmM0Mkh1GgPtN8="
   },
   {
     "path": "resources/fonts/Hyperspace/Hyperspace.ttf",

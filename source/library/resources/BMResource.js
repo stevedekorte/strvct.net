@@ -42,7 +42,7 @@
     // ---
 
     initPrototype () {
-        this.newSlot("path", null)
+        this.newSlot("path", "")
         this.newSlot("isLoaded", false)
     }
 

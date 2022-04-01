@@ -39,11 +39,11 @@ body {
     -webkit-text-size-adjust: 100%;
     */
 
-    touch-action: none;
     /* disable pinch-zoom browser action, but still available to JS */
-    -ms-scroll-chaining: none;
-    /* disable left-right paging on windows surface */
+    touch-action: none;
 
+    /* disable left-right paging on windows surface */
+    -ms-scroll-chaining: none;
 }
 
 /* an attempt to deal with tiny fonts on mobile */
@@ -52,7 +52,6 @@ html * {
     min-height: 1px;
     max-height: 999999px;
     zoom: 100%;
-    /*text-transform: uppercase;*/
 }
 
 /* to avoid slow/choppy handling of touchmove events */
