@@ -1,5 +1,3 @@
-"use strict";
-
-resourceLoader.pushRelativePaths([
-    "BrowserHeader.js",
-])
+[
+    "BrowserHeader.js"
+]

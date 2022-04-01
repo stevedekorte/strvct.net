@@ -1,27 +1,27 @@
-
-html, body {
+html,
+body {
     position: absolute;
     overflow: hidden;
-    
+
     overscroll-behavior-x: none;
     overscroll-behavior-y: none;
-    
-	top: 0px;
-	left: 0px;
-	
+
+    top: 0px;
+    left: 0px;
+
     height: 100%;
     width: 100%;
-	
-	padding: 0px;
-	margin: 0px;
+
+    padding: 0px;
+    margin: 0px;
     border: 0px;
-    
-	background-color: black;
+
+    background-color: black;
     zoom: 100%;
 
     font-size: 16px;
-    text-size-adjust: 100%; 
-    
+    text-size-adjust: 100%;
+
     -webkit-font-smoothing: antialiased;
 
     /*
@@ -39,48 +39,50 @@ html, body {
     -webkit-text-size-adjust: 100%;
     */
 
-    touch-action: none; /* disable pinch-zoom browser action, but still available to JS */
-    -ms-scroll-chaining: none; /* disable left-right paging on windows surface */
+    touch-action: none;
+    /* disable pinch-zoom browser action, but still available to JS */
+    -ms-scroll-chaining: none;
+    /* disable left-right paging on windows surface */
 
 }
 
 /* an attempt to deal with tiny fonts on mobile */
-html * { 
-    min-height: 1px; 
-    max-height: 999999px; 
+
+html * {
+    min-height: 1px;
+    max-height: 999999px;
     zoom: 100%;
     /*text-transform: uppercase;*/
 }
 
 /* to avoid slow/choppy handling of touchmove events */
 
-html * { 
-    touch-action: pan-y; 
+html * {
+    touch-action: pan-y;
 }
 
 /* use border-box to make sure padding is included in dom width calculations */
 
-html * { 
+html * {
     box-sizing: border-box;
 }
 
 /* avoid outlines */
 
-html * { 
-    outline: none; 
-    outline-style: none; 
-    -moz-outline-style: none; 
+html * {
+    outline: none;
+    outline-style: none;
+    -moz-outline-style: none;
 }
 
-html * :focus { 
-    outline: none; 
-    outline-style: none; 
-    -moz-outline-style: none; 
+html * :focus {
+    outline: none;
+    outline-style: none;
+    -moz-outline-style: none;
 }
 
-html * :active { 
-    outline: none; 
-    outline-style: none; 
-    -moz-outline-style: none; 
+html * :active {
+    outline: none;
+    outline-style: none;
+    -moz-outline-style: none;
 }
-

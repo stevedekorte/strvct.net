@@ -1,6 +1,4 @@
-"use strict";
-
-resourceLoader.pushRelativePaths([
+[
     "BrowserColumn.js",
     "BrowserColumnGroup.js",
     
@@ -8,5 +6,5 @@ resourceLoader.pushRelativePaths([
     "ColumnGroupHeaderAction.js",
     
     "ColumnGroupFooter.js",
-    "BrowserScrollView.js",
-])
+    "BrowserScrollView.js"
+]

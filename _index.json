@@ -1,0 +1,1697 @@
+[
+  {
+    "path": "_css.css",
+    "size": 1608,
+    "hash": "EWPW6ny13jqi012b7Ya4JVQOoauiwkWUPSM4156YjrM="
+  },
+  {
+    "path": "external-libs/js-sha256/src/sha256.js",
+    "size": 18387,
+    "hash": "Ui3RFlLjqUn5Uh6gVmwgQ0oJjMVdkSeNbt7ilSGpyeI="
+  },
+  {
+    "path": "external-libs/bit-buffer/bit-buffer.js",
+    "size": 12383,
+    "hash": "hTZ8pSvl6MW42jo6GskYUg5S5y0Kv73HuvqBF/I9n48="
+  },
+  {
+    "path": "external-libs/json-stable-stringify/json-stable-stringify.js",
+    "size": 2943,
+    "hash": "cBE/CwFXAXjlgqj3um2U01LtSGv1fZZsWM8mQOTqMXg="
+  },
+  {
+    "path": "external-libs/simple-peer/simplepeer.min.js",
+    "size": 88939,
+    "hash": "diBSzpURaXONPmX2XFVhsyYK9+7Smsl2dgBAN1vPVUg="
+  },
+  {
+    "path": "external-libs/jsbloom/bloom.js",
+    "size": 15515,
+    "hash": "nubwL0TJi4YNq3lV/kq+5+fZViVqRCB5ZV+KXpPmv9s="
+  },
+  {
+    "path": "external-libs/jsbloom/_init.js",
+    "size": 1268,
+    "hash": "4D2u5OencIuJYYfLi6GIKzfk7CEroBMUqzLHJwQd20o="
+  },
+  {
+    "path": "source/library/ideal/getGlobalThis.js",
+    "size": 722,
+    "hash": "t11KP5rd5RSfy3Bb3u6BbBhtRrA6Ls+cXyhQ7A4r808="
+  },
+  {
+    "path": "source/library/ideal/categories/Mirror.js",
+    "size": 1441,
+    "hash": "4oP18P3p/goG2L+awpSVRP/u7SRcfYutLMaH0geHKkQ="
+  },
+  {
+    "path": "source/library/ideal/categories/Type-ideal.js",
+    "size": 7522,
+    "hash": "VutHFAiM5VEHDTlIQ7rB83FyTPuvXeHlU/+j/NpwP2w="
+  },
+  {
+    "path": "source/library/ideal/categories/Object-ideal.js",
+    "size": 14204,
+    "hash": "wiC5WevoPhexQ7uNNm9UX2MKhNXq+H8HMyKSVyYOwSg="
+  },
+  {
+    "path": "source/library/ideal/categories/Object-puuid.js",
+    "size": 1833,
+    "hash": "bmwJyga2cRq81SaeA8jlUAgkgpWzflkH/yuv8TDpmCU="
+  },
+  {
+    "path": "source/library/ideal/categories/Object-mutation.js",
+    "size": 1184,
+    "hash": "PoR+99lvKtQE07Kr7x3rij9OdmJND8OlFx1q68FkzX4="
+  },
+  {
+    "path": "source/library/ideal/categories/Array-ideal.js",
+    "size": 19539,
+    "hash": "uh/72O1K0xGtj3MqudBa2bl0LqT66E/sf5gALAYlA5I="
+  },
+  {
+    "path": "source/library/ideal/categories/Date-ideal.js",
+    "size": 1629,
+    "hash": "HzU/SZ13mOwCassKQhwyhGycGt1YlfyTP9oQfENXiGU="
+  },
+  {
+    "path": "source/library/ideal/categories/String-ideal.js",
+    "size": 14094,
+    "hash": "8fUlNNIbyZFLIldsQoJNxMyrTFiKulNovOZMVQ6L+ng="
+  },
+  {
+    "path": "source/library/ideal/categories/Number-ideal.js",
+    "size": 2864,
+    "hash": "dcsR8DTVI5ofdG6MRaf0hwzhd7EFxw9nV5lscRra31M="
+  },
+  {
+    "path": "source/library/ideal/categories/Boolean-ideal.js",
+    "size": 565,
+    "hash": "gCxVjQmHPGvxwv+nEMxjn6P7dJ3lID+ViJsjkBqyScM="
+  },
+  {
+    "path": "source/library/ideal/categories/Set-ideal.js",
+    "size": 2279,
+    "hash": "HKYE1LgJPoO9ARR/zSWNYdXQPXzvwL2kTewjqGIqb94="
+  },
+  {
+    "path": "source/library/ideal/categories/Error-ideal.js",
+    "size": 3683,
+    "hash": "B92nv1Eq7aooTcE9RphVNx1Kq9qqefzPmXXzS80CfKk="
+  },
+  {
+    "path": "source/library/ideal/categories/Function-ideal.js",
+    "size": 106,
+    "hash": "CIlVHb7L9tp5gELK+ERLBMmmGAPmEFatuXxPAstEcWk="
+  },
+  {
+    "path": "source/library/ideal/categories/Image-ideal.js",
+    "size": 1554,
+    "hash": "spArI5HVK1qD0euLj9dPIDtCYhNzBvh4T+YQCmM6dz0="
+  },
+  {
+    "path": "source/library/ideal/categories/TypedArray-ideal.js",
+    "size": 799,
+    "hash": "Ckhr5Ktx0/1onPN4oC4Z5R/vFvIChxgEuThkH0R4bOo="
+  },
+  {
+    "path": "source/library/ideal/Slot.js",
+    "size": 22798,
+    "hash": "lOWs/GxJ+qd0+E6TqKgzoVvPpf4fr3DEbbD5eXESrYg="
+  },
+  {
+    "path": "source/library/ideal/ProtoClass.js",
+    "size": 17323,
+    "hash": "Xdt5iUAl+GwxI7r02QnzyUkLo+18MwXA3QtcJca5c7Q="
+  },
+  {
+    "path": "source/library/ideal/Documentation.js",
+    "size": 3274,
+    "hash": "iykTZyCUZwQfjFFrPhlJlnUKUOCpmLMRfK7v8vF5uJw="
+  },
+  {
+    "path": "source/library/ideal/array/HookedArray.js",
+    "size": 2194,
+    "hash": "txSLZw+ZVjWbZ+TUYzPtNmGDLUcDsEgVd5V2zcjDNIo="
+  },
+  {
+    "path": "source/library/ideal/array/HookedSet.js",
+    "size": 965,
+    "hash": "NETshysAR+g/99apyxWpcFKG+4zIBv4lshNmnOvWq+g="
+  },
+  {
+    "path": "source/library/ideal/array/HookedMap.js",
+    "size": 927,
+    "hash": "4Csmjpxu3DMuHThaunhCdGYoilDUwyjlHgyKQR5Ol1k="
+  },
+  {
+    "path": "source/library/ideal/array/IndexedArray.js",
+    "size": 4946,
+    "hash": "ZNnm9KBmRB8jTrQGLt/v1X/NZ7B+95CmAZHxERsEt44="
+  },
+  {
+    "path": "source/library/ideal/array/SortedArray.js",
+    "size": 2037,
+    "hash": "M9cvLbN7eRvGbYyJU91zA0hKxQXzlpJYlmzZMj4FWs8="
+  },
+  {
+    "path": "source/library/ideal/dictionary/Dictionary.js",
+    "size": 4049,
+    "hash": "DSjCbRm2I8/4LF54TRPoZBu4zxpNjweLrjqKKxapRyg="
+  },
+  {
+    "path": "source/library/ideal/dictionary/AtomicDictionary.js",
+    "size": 4633,
+    "hash": "04VxRc/sKZEuNB5/2VzJ3jbQ0mvS/cj8SPQidx8+UbA="
+  },
+  {
+    "path": "source/library/ideal/StackTrace.js",
+    "size": 2484,
+    "hash": "HrWC41vrfEKxdepwfZksbK/ud41fTgyqK8OW8QECS+s="
+  },
+  {
+    "path": "source/library/ideal/formatters/ByteFormatter.js",
+    "size": 2090,
+    "hash": "ThN2egmQgxnh6NIlp1jwbC0VozZXzezGFduTJDZDo64="
+  },
+  {
+    "path": "source/library/ideal/formatters/TimePeriodFormatter.js",
+    "size": 1405,
+    "hash": "xN1XnbXI01PWbX8/bguJKQjScCDkTB3QVF9Cmajg0KI="
+  },
+  {
+    "path": "source/library/ideal/formatters/TimeFormatter.js",
+    "size": 4043,
+    "hash": "hJfvEGFlnV56N0gwfEGC5wvbObXSzhSZSKod5YJBO3k="
+  },
+  {
+    "path": "source/library/ideal/NamespaceSearch.js",
+    "size": 3100,
+    "hash": "LTT+XTdr0T5PJJlrsl0ZMUQPYygcFRGhRX7zDEzqG2A="
+  },
+  {
+    "path": "source/library/notification/SyncAction.js",
+    "size": 1512,
+    "hash": "MQDnHC6WD3Xm8Cyk8CUdLeRGU3K32fQyw7QK659jPoY="
+  },
+  {
+    "path": "source/library/notification/SyncScheduler.js",
+    "size": 8088,
+    "hash": "MrE7T8NjQjl0ibvpQLt1snj88jPvI34Wdj0/RMBDEiY="
+  },
+  {
+    "path": "source/library/notification/notifications/BMNotification.js",
+    "size": 2057,
+    "hash": "3Z1+ohPE8yQ5wlD1GByMTsuSlIzKwvdglsGkxTTMCxk="
+  },
+  {
+    "path": "source/library/notification/notifications/BMNotificationCenter.js",
+    "size": 10368,
+    "hash": "2I2+ehWNXkByt68d0MRwHnt0rp4ECj/JjG4MACTDeNo="
+  },
+  {
+    "path": "source/library/notification/notifications/BMObservation.js",
+    "size": 3085,
+    "hash": "UAU3nZANK7CnSwhogRnZi+XDB6C6R9T+MUBI5VuFAaU="
+  },
+  {
+    "path": "source/library/notification/Broadcaster.js",
+    "size": 2485,
+    "hash": "WshV5IAu+OnU6b3pY//HL7sxjO76kGntDftkukmF5ec="
+  },
+  {
+    "path": "source/library/storage/IndexedDBFolder.js",
+    "size": 9684,
+    "hash": "+QXAFcNlqT6Hv0zi8W9ZJ6GlvRHkH42jHKBFP+R9G8Q="
+  },
+  {
+    "path": "source/library/storage/IndexedDBTx.js",
+    "size": 5074,
+    "hash": "1usjU7cSnvdIOPiwomGztkLlgSewqF25xi3uvI5pyi8="
+  },
+  {
+    "path": "source/library/storage/PersistentAtomicDictionary.js",
+    "size": 5506,
+    "hash": "A4nJNjDG3Hiu8EyA2qphd5I7PZ7xeGRqtTA1CWpIp7A="
+  },
+  {
+    "path": "source/library/storage/PersistentAsyncDictionary.js",
+    "size": 3526,
+    "hash": "0iMXGxMVjEpwslQeXYFGqIGld9b9Ms2nwGVKHsLhNAY="
+  },
+  {
+    "path": "source/library/view/geometry/Point.js",
+    "size": 4665,
+    "hash": "pQeaxk2z2mpWr2H9giF30MUA5iccW4hRv7FVSgD29NM="
+  },
+  {
+    "path": "source/library/view/geometry/Rectangle.js",
+    "size": 3547,
+    "hash": "0+Tm9L3hYPv5af/5tvC7+cCGN13e/HAuq1vtg1dMkuA="
+  },
+  {
+    "path": "source/library/view/geometry/Transform.js",
+    "size": 1829,
+    "hash": "FWsbvKA+qsGJo3nAtsfiaFVISsycHg8Ab2A5lnybNAA="
+  },
+  {
+    "path": "source/library/view/events/devices/Event-cachedPoints.js",
+    "size": 577,
+    "hash": "6MLjszAV1uGYW24P3rIwrs1YiCCDVPUBqxsJneMnIic="
+  },
+  {
+    "path": "source/library/view/events/devices/EventPoint.js",
+    "size": 2072,
+    "hash": "xiy1CIugKk9mVTTh7Pl2oEoQeqiEL+U6K3WGueqR/Pg="
+  },
+  {
+    "path": "source/library/view/events/devices/Device.js",
+    "size": 186,
+    "hash": "hXnWJKgJUHhE/DH0TW/kv0bYpTTQf2RAgiItjdyZuAo="
+  },
+  {
+    "path": "source/library/view/events/devices/KeyboardKey.js",
+    "size": 1019,
+    "hash": "mLESV68iiUxXJ2mIq8ECve9Gwu2vpr9CeKm+QasDUwM="
+  },
+  {
+    "path": "source/library/view/events/devices/BMKeyboard.js",
+    "size": 14196,
+    "hash": "QdvDp+St+3R/6aCPu0/q4LCqGcZGJmKLmngYcGPM7ls="
+  },
+  {
+    "path": "source/library/view/events/devices/Mouse.js",
+    "size": 3029,
+    "hash": "zuL/AklxkmI96SKz24G10YmF1eqPVp8bjMC13e5bBMY="
+  },
+  {
+    "path": "source/library/view/events/devices/TouchScreen.js",
+    "size": 5291,
+    "hash": "+Rk1uaIXXBTKNzIhOkwFXXq33+KHUKn0kk/7ZD5F4Xs="
+  },
+  {
+    "path": "source/library/view/events/devices/GamePadManager.js",
+    "size": 4020,
+    "hash": "7OEYuTtT2XufyvPQk2qwd0E7oW20PtW2TM+PuuQo5vE="
+  },
+  {
+    "path": "source/library/view/events/devices/GamePad.js",
+    "size": 3309,
+    "hash": "Jm+IpSHjz8V06Z0vB5YkrtLmBCE4ob0TtfEffA62mZY="
+  },
+  {
+    "path": "source/library/view/events/devices/Devices.js",
+    "size": 1275,
+    "hash": "BEH5p6eHtMPRyknuaq3mpKGcfp88nncLM5W1vmrl3M8="
+  },
+  {
+    "path": "source/library/view/events/listeners/EventSetListener.js",
+    "size": 8019,
+    "hash": "0euqjKEANvAiCWcEAJqGfbu8wxE8V9zfZHYK8Q/MCrc="
+  },
+  {
+    "path": "source/library/view/events/listeners/ClipboardListener.js",
+    "size": 485,
+    "hash": "7H8YS+b79Zc89z+MOKL8lUQjJcfMuwwNeNzoITwmCYw="
+  },
+  {
+    "path": "source/library/view/events/listeners/DocumentListener.js",
+    "size": 1150,
+    "hash": "13WyTiC6SzCzE65I1MaPN6kQispcJfKVviecTUG8zhY="
+  },
+  {
+    "path": "source/library/view/events/listeners/DragListener.js",
+    "size": 756,
+    "hash": "YKzCi/yLcXRCiBMTzUujcrfgf9cXyQc+WkY1YryfHsI="
+  },
+  {
+    "path": "source/library/view/events/listeners/DropListener.js",
+    "size": 1125,
+    "hash": "PalXnG8dUg8E4PX9nrj1B5IzvYcyn/AugcOamJqRsl4="
+  },
+  {
+    "path": "source/library/view/events/listeners/FocusListener.js",
+    "size": 547,
+    "hash": "A3xH4bb8K5mSwQhJ+AXTNWFNOGGln0n12Aj+4cdrM5M="
+  },
+  {
+    "path": "source/library/view/events/listeners/KeyboardListener.js",
+    "size": 666,
+    "hash": "B7FlLnWZVxA6LUaaTIcyAqSqVurOTFfj8c9WHDB540A="
+  },
+  {
+    "path": "source/library/view/events/listeners/MouseListener.js",
+    "size": 1325,
+    "hash": "LXhmkAPpf4LZhisUKalOxaiVX9L+zoQnTywXpYORAeQ="
+  },
+  {
+    "path": "source/library/view/events/listeners/SelectListener.js",
+    "size": 685,
+    "hash": "Bj5Adee/Neu4DjKgV0ylz3cbOyBousIODyTCGd0EtEY="
+  },
+  {
+    "path": "source/library/view/events/listeners/TouchListener.js",
+    "size": 581,
+    "hash": "f3uoum4omuDDioNw94/3IgX5m0/4tqpbDAwBVDqWPO8="
+  },
+  {
+    "path": "source/library/view/events/listeners/TransitionListener.js",
+    "size": 641,
+    "hash": "qYRwOSvYe/eSF93/rEReUYglcKLhZq9SYGGFPiva3Oc="
+  },
+  {
+    "path": "source/library/view/events/listeners/GamePadListener.js",
+    "size": 475,
+    "hash": "YHGujblEqp2dRQfqxLuCic5WQx4GNFfQlQcywYk5URY="
+  },
+  {
+    "path": "source/library/view/events/listeners/WebSocketListener.js",
+    "size": 553,
+    "hash": "ZUQq2n3Kc0cbMA2BkNnsVZ0KHGhXeCXrmlmYM2Q5ap4="
+  },
+  {
+    "path": "source/library/view/events/listeners/WheelListener.js",
+    "size": 383,
+    "hash": "68m4CVqRvbYuGICEtEiLg0HfhXLD5F8ILbkC9uKpL2g="
+  },
+  {
+    "path": "source/library/view/events/gestures/GestureManager.js",
+    "size": 3528,
+    "hash": "43mSeQtmGIXpGbidDNVdC90kL3qZDAjEIpVScfAwYDU="
+  },
+  {
+    "path": "source/library/view/events/gestures/GestureRecognizer.js",
+    "size": 23910,
+    "hash": "OaQtdCrGXhQcLdm4Ij6f6EZLTAWkjM+CzlJAjkc9feI="
+  },
+  {
+    "path": "source/library/view/events/gestures/LongPressGestureRecognizer.js",
+    "size": 2974,
+    "hash": "SwXApAXvlz5fZORrqZHLTyGLBAe1OUgbi3EP8DbdqGE="
+  },
+  {
+    "path": "source/library/view/events/gestures/SlideGestureRecognizer.js",
+    "size": 4987,
+    "hash": "5AA16T9JbtGiIYOOp76dfaj9tWyNNyuzRgFaQP80ZE8="
+  },
+  {
+    "path": "source/library/view/events/gestures/TapGestureRecognizer.js",
+    "size": 4296,
+    "hash": "GgZPEfglcEyEzkeIxvXvYx1qtSsfUG8pVPZ1MvesRYU="
+  },
+  {
+    "path": "source/library/view/events/gestures/OrientGestureRecognizer.js",
+    "size": 7709,
+    "hash": "VXjqsoz08RWVQmZaie0ubIg0JKUvrOC1HMja6ZTe7Fk="
+  },
+  {
+    "path": "source/library/view/events/gestures/PanGestureRecognizer.js",
+    "size": 3076,
+    "hash": "T/9hMc+HtbdQJK/D4fCB/gL6b2wwVyoKrIMFzbLqFMY="
+  },
+  {
+    "path": "source/library/view/events/gestures/PinchGestureRecognizer.js",
+    "size": 1065,
+    "hash": "DstrFAiTBkaP87Xv12HlPsp2M1m8cimMFPPMSoAqTs8="
+  },
+  {
+    "path": "source/library/view/events/gestures/RotationGestureRecognizer.js",
+    "size": 978,
+    "hash": "x2xS4yfbkpOPcbe0Nylx3xF0MGvMI5oiw/9+FX+lr9g="
+  },
+  {
+    "path": "source/library/view/events/gestures/edges/EdgePanGestureRecognizer.js",
+    "size": 2691,
+    "hash": "fON2xNol1slIxtzK4vHgcTLeVRaItdUDEkhw9RRVcTE="
+  },
+  {
+    "path": "source/library/view/events/gestures/edges/TopEdgePanGestureRecognizer.js",
+    "size": 411,
+    "hash": "jTVJV4Ot2euz67H1xbOq9mrBxTiKfIaYmUjECr37b10="
+  },
+  {
+    "path": "source/library/view/events/gestures/edges/BottomEdgePanGestureRecognizer.js",
+    "size": 477,
+    "hash": "UclPGDnvYwz83VJQ5uLmb1D7DZpPqHmb5/KMA+7ntK8="
+  },
+  {
+    "path": "source/library/view/events/gestures/edges/LeftEdgePanGestureRecognizer.js",
+    "size": 418,
+    "hash": "0ITx+u7sQnYJBrOwOKR6QdvDs+UJy421x8Fa6ESzNFk="
+  },
+  {
+    "path": "source/library/view/events/gestures/edges/RightEdgePanGestureRecognizer.js",
+    "size": 425,
+    "hash": "GeWbkuqOZVvWItfjwtDwXrudQbDgTZNx1gqmH2MBsPk="
+  },
+  {
+    "path": "source/library/view/webbrowser/WebBrowserScreen.js",
+    "size": 1775,
+    "hash": "XjE2rfVifdWBGg5V4AlL0B2s03tikK2bjF38uuwUjy0="
+  },
+  {
+    "path": "source/library/view/webbrowser/WebBrowserWindow.js",
+    "size": 4508,
+    "hash": "20sTPJtp4ReCgRvQbHUoJ+uYNJQ4jsRTT/WGv53vmjQ="
+  },
+  {
+    "path": "source/library/view/webbrowser/WebBrowserNotifications.js",
+    "size": 2224,
+    "hash": "bZq5xrXvqgz8VjPKzMFQrJatvut826rSSCoiIJ2gInE="
+  },
+  {
+    "path": "source/library/view/webbrowser/WebBrowserNotification.js",
+    "size": 860,
+    "hash": "O/SCWnjUQYZP5VDcqkG+NqJRBlTuGfOODbkLyBo/m8Y="
+  },
+  {
+    "path": "source/library/view/webbrowser/WebDocument.js",
+    "size": 711,
+    "hash": "ped6D8iU3z3G44dy0ZVETvOk7a7Nq8uUaM9q1n7mnLU="
+  },
+  {
+    "path": "source/library/view/webbrowser/BMStyleSheet.js",
+    "size": 1174,
+    "hash": "dU7jFy2SUPp39GK/VUJUU8J0EXSMVZh+rpF8OHZJ2pQ="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_attributes/DomTransition.js",
+    "size": 2045,
+    "hash": "XPf7gD9LzAQLEk0cHTxvneUxvYh+N79Tt/cneBQW1c8="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_attributes/DomTransitions.js",
+    "size": 1670,
+    "hash": "EZXtGJFb1wwjqah9xWqAVhulO3cDoomDXGmYTlMy+bs="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_attributes/DomBorderRadius.js",
+    "size": 2150,
+    "hash": "VzmL3jHLI51MJ6VqvVa3YCdZQIzJPG5H79xA4R5BkI4="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_attributes/ViewAnimator.js",
+    "size": 2664,
+    "hash": "yWQ59XWY3EXUz+G/CIonQc5iXy4k6HJhBiCSBkGqbdc="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_helpers/DomTextTapeMeasure.js",
+    "size": 2610,
+    "hash": "mHXFDFZn59EVP6f8DkaeXK6q4i7gogEG4fznAsgdjnM="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_helpers/DomCSSInspector.js",
+    "size": 1139,
+    "hash": "Z1t0LGrM+VBKgaacRQNT+ITJLLWghh0UIokUDU+Gjok="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_helpers/CSSColor.js",
+    "size": 8965,
+    "hash": "+YaqgcfDhRLfWh2lkj6PdvjHHla6I34QyWEnHEbEt38="
+  },
+  {
+    "path": "source/library/view/dom_views/dom_helpers/DomElementHelpers.js",
+    "size": 1139,
+    "hash": "2Y4nnw6C3/H8ZUIZMzr/F7GjzA3YkpG5y6CWwag7l/Y="
+  },
+  {
+    "path": "source/library/view/dom_views/DomView.js",
+    "size": 116952,
+    "hash": "xTgG9ZwdJXo0HSCNbno3JR04raDCpKfZD7S6dd+9RPw="
+  },
+  {
+    "path": "source/library/view/dom_views/DomFlexView.js",
+    "size": 2447,
+    "hash": "EVGMJNQHcPmuWJE9IITlJ/LX27b+u6skwJUYabtWhZw="
+  },
+  {
+    "path": "source/library/view/dom_views/DomStyledView.js",
+    "size": 5343,
+    "hash": "8uEOp0wOKovV5ftjBFcANnQGJGbDorv8cFoKO1DrWQc="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/BooleanView.js",
+    "size": 4335,
+    "hash": "bjlbIoA9GKEzs3sclVwjecsqQ3cKOADBA4jb9fdZwc8="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/ButtonView.js",
+    "size": 3149,
+    "hash": "vBXtNjppnOQnFrs2T8okeriRllS4UzmDQVRn47PZC/M="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/CloseButton.js",
+    "size": 1587,
+    "hash": "bduBp2R5IwSXkA8VHCKlM8OAG/xOSoxlnJ43NY26D0s="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/DocumentBody.js",
+    "size": 1904,
+    "hash": "xg4B0hoGfZ6IfRzNjLlFSeDTLkv9/vop/gAqkTuf9Z8="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/DragBarView.js",
+    "size": 4462,
+    "hash": "rF/BahVhiRhTHPwX9t9Zgw7GflgOuI0Zvc/zhRz5BsI="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/DragView.js",
+    "size": 15014,
+    "hash": "uAwCsRE0iodhV/aKfPGV67Al0hTxY9z3moH2KyLQx6E="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/PanelView.js",
+    "size": 3071,
+    "hash": "IfAGGOjW8EhebT/MHmxn+ugWIQ2wFOS3eiHnbnSAchU="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/SvgIconView.js",
+    "size": 5058,
+    "hash": "CPwwrGBvcuXUzxH8tT8TeN1EMOxpeOrckPethH0XCrM="
+  },
+  {
+    "path": "source/library/view/dom_views/subclasses/TextField.js",
+    "size": 11707,
+    "hash": "pEy+UlvdEm9yhtAF//4QDBpuiThqBWawEnDFdrf4FjU="
+  },
+  {
+    "path": "source/library/view/dom_views/BrowserDragAndDrop/BMDataUrl.js",
+    "size": 2758,
+    "hash": "WbAdulBvoU0cq/fKrcm5wGqn1SDAxEn5t/f6iMF5aU0="
+  },
+  {
+    "path": "source/library/node/styles/BMViewStyles.js",
+    "size": 4363,
+    "hash": "7LWhagZ+3zYkq3d8Rc6diK0RSSPAXQtk/FiG0ggHBpM="
+  },
+  {
+    "path": "source/library/node/styles/BMViewStyle.js",
+    "size": 2146,
+    "hash": "ezc0/B6oHOq1dq3fdjgmNGTSdhJpOy0kLRfzDEUVZvs="
+  },
+  {
+    "path": "source/library/node/SubnodesArray.js",
+    "size": 174,
+    "hash": "czaetdhyZUOAWFRiD5Bo/BUJGQejK62X4yz7Y2scEgQ="
+  },
+  {
+    "path": "source/library/node/BMNode.js",
+    "size": 37517,
+    "hash": "E+f0+3KOrUXVIvSeauclO0ccXtULmk0pJ08doxUU0MQ="
+  },
+  {
+    "path": "source/library/node/storage/BMStorableNode.js",
+    "size": 3091,
+    "hash": "aZoi9uY3oE+qgmxcXMpL+u76TAu44/dsIilBwmkDAaU="
+  },
+  {
+    "path": "source/library/node/storage/BMStoredDatedSetNode.js",
+    "size": 1907,
+    "hash": "YFqbpOXDEufxY30UYF9Cmcqpx3dNZTO9UQXJsOX9CgY="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/ProtoClass-store.js",
+    "size": 1014,
+    "hash": "yeQ414nPB8JtVN5yXaE3kTuGcULm4CaWqXQAr6+1h2c="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/BMNode-store.js",
+    "size": 3084,
+    "hash": "Wc3xtBY5CFT3BTNYalR8TpkI6kPAgsnw9LV0hQZLhIk="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/BMStorableNode-store.js",
+    "size": 71,
+    "hash": "tgiLSi9P5wCiyjySL63SxR8q68zq7txRe4DDrimCtv0="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/Array-store.js",
+    "size": 1314,
+    "hash": "zDGT/4rgk3cS8hzUemkauNjggOj9Ac/6Cnyk5Z3xg+0="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/ArrayBuffer-store.js",
+    "size": 1140,
+    "hash": "0GeBGimNhFrqPJTYORagwXm956dqHCZOTw/kA1MHh4A="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/Date-store.js",
+    "size": 759,
+    "hash": "8tFGGvwr0T9oQuSpVItfvoF83t7a1nwmP+qwSDzNVUE="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/Map-store.js",
+    "size": 1306,
+    "hash": "RlYCcDACeWjwQXtQ8Wt0sWEuUQs5BglMbRbbyXOxSGc="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/Set-store.js",
+    "size": 1013,
+    "hash": "4o6HTvs5VTfjqAuF/w/PIZxYqUlesmXd85Mag4GJHaE="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/Object-store.js",
+    "size": 1503,
+    "hash": "aJZT/jUw2KC8IlZXh/KunF4aYD70twDKI85f7Fl4w3I="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/TypedArray-store.js",
+    "size": 1238,
+    "hash": "hxJL/WzbVJF2pXQQ4ssVGkztrbPUwTB9GLE8/LmK0zQ="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/literals/String-store.js",
+    "size": 147,
+    "hash": "91X2IDUAns8Dm2xw/PbezS6pmhgGli5pil+WNlJEd+o="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/literals/Boolean-store.js",
+    "size": 148,
+    "hash": "6hTzDZ/yclwTQhzlZ7rPFGTY4v2Oz1tBkaS4e8JTLgo="
+  },
+  {
+    "path": "source/library/node/storage/newstore/categories/primitives/literals/Number-store.js",
+    "size": 147,
+    "hash": "rsYCjxEoAErydv0FlcxEAxh/9jb5eG3EldI3Vjq2Qw8="
+  },
+  {
+    "path": "source/library/node/storage/newstore/ObjectPool.js",
+    "size": 21270,
+    "hash": "kEUO6Ni3u1R494nBnVC91QNDMNZRnZGVeaDcLZqqMYQ="
+  },
+  {
+    "path": "source/library/node/storage/newstore/PersistentObjectPool.js",
+    "size": 1215,
+    "hash": "FG20x1wNnhsLy5iJ0CrX0Gtthp+w2feu1ueZ9B7ZIAM="
+  },
+  {
+    "path": "source/library/node/storage/newstore/StoreRef.js",
+    "size": 676,
+    "hash": "Lcr4ZftPS+f22PGlNIp5w3JjRwqECgmWCWY+7hqpYKU="
+  },
+  {
+    "path": "source/library/node/storage/inspectors/BMDataStore.js",
+    "size": 2140,
+    "hash": "ZOoaFPYIHtwlsi7swBmCo17hMcfRD8i647JEnyny6IU="
+  },
+  {
+    "path": "source/library/node/nodes/BMSummaryNode.js",
+    "size": 4416,
+    "hash": "6q+fIGpOSmbdOdCsjmDXCWd07O9397K2p6bJPaikExY="
+  },
+  {
+    "path": "source/library/node/nodes/BMFolderNode.js",
+    "size": 1759,
+    "hash": "UXd9h3YgX9X/kdb6f42Xw+uzXqBY3kw16viri9RkQCg="
+  },
+  {
+    "path": "source/library/node/nodes/BMImageNode.js",
+    "size": 609,
+    "hash": "xaOyQkMiUiKhpUcGM3Q8lgru3dxzPrX0dAheQUQC2XA="
+  },
+  {
+    "path": "source/library/node/nodes/BMTextNode.js",
+    "size": 1502,
+    "hash": "wb388nyLgVhLnqFxprC7N0sl7gW5RFRrXvJhYEZ2dJ4="
+  },
+  {
+    "path": "source/library/node/nodes/BMLinkNode.js",
+    "size": 2513,
+    "hash": "9tpen7ZozUEx6ya/Dm5EGFHT2LS9fZzsNXPtIQZd6HI="
+  },
+  {
+    "path": "source/library/node/nodes/BMPrototypesNode.js",
+    "size": 613,
+    "hash": "Vd2GX060Qk6QelrdX+khS8/OsL/alwJFXcLJs2RJjME="
+  },
+  {
+    "path": "source/library/node/fields/BMFieldSetNode.js",
+    "size": 2139,
+    "hash": "DzE9uzEXluaqu0owPqnoITLEVB0x7VbvnDzZyqEhrsg="
+  },
+  {
+    "path": "source/library/node/fields/BMField.js",
+    "size": 6906,
+    "hash": "Rx2KLiJClbosjyxVGrrgKuBTMGAR756RIeBnszuQFfc="
+  },
+  {
+    "path": "source/library/node/fields/BMActionNode.js",
+    "size": 1664,
+    "hash": "kitPBOS7ZG9BBOzE+WezN4tOoeGkfVLXTGPsRVxwcEM="
+  },
+  {
+    "path": "source/library/node/fields/json/BMJsonNode.js",
+    "size": 1895,
+    "hash": "us57BSFOPICQCkq+NoTFMF098uvWkLlW+K6qIgZip1Y="
+  },
+  {
+    "path": "source/library/node/fields/json/BMJsonArrayNode.js",
+    "size": 1945,
+    "hash": "YXjT1BXCzBHgM8vVqL3MdgBHbZHP+xz3XMG513Q1fRw="
+  },
+  {
+    "path": "source/library/node/fields/json/BMJsonDictionaryNode.js",
+    "size": 2075,
+    "hash": "4g98NltLFXmJ9M4rv5/eDQShOEo+6bSG6Gd67NsU5IQ="
+  },
+  {
+    "path": "source/library/node/fields/json/BMJsonNullField.js",
+    "size": 967,
+    "hash": "fiPIXqxvx9db8Sq41ezjp/lpH6oJ4Xf6H0u67ntrUCU="
+  },
+  {
+    "path": "source/library/node/fields/BMCreatorNode.js",
+    "size": 2740,
+    "hash": "zy9dextowRvftF2SjDj6b57u6Ov6poTyeHIhb3E5yjw="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMBooleanField.js",
+    "size": 1187,
+    "hash": "BhxubfXm40xZDKVMag5iAAYiAhA0OGTmTWmBP/vWoRI="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMColorField.js",
+    "size": 1655,
+    "hash": "aAV/lELxnHRhAE8hHOn2AWEu/3RbRCvQV2UgNBKL9s0="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMIdentityField.js",
+    "size": 1252,
+    "hash": "sw8Yzz+CyI+p0eIv+Cf0+i2xOe6BWMgx7tBuphJt0Pw="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMImageWellField.js",
+    "size": 1166,
+    "hash": "W2asykaqXvsL+t7BRh37BaII4MhiySfkO/2coC40qtI="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMNumberField.js",
+    "size": 3620,
+    "hash": "sCuEzxxwxIm2lx7OrqcpVv2H5cE6v9Q/RJl3uBR3RRw="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMPointerField.js",
+    "size": 864,
+    "hash": "E7PLrxxk2iCZBQtDwTOVccnlRG3vagFLPef9/bQtgSw="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMStampField.js",
+    "size": 337,
+    "hash": "6S6vqRWFo/bKhy8Hnc4QjwPX4M09BXL5LlyyXXaJIr0="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMStringField.js",
+    "size": 487,
+    "hash": "mpUaJGfnnz/f8rhIHQLnsZx23NL4zaJYd9Opk7w2yZY="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMTextAreaField.js",
+    "size": 698,
+    "hash": "AsTb6cnsAMt5OqgOKsxBT9D2hyM6n20YPJpzjSB/LO8="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/BMUrlField.js",
+    "size": 5283,
+    "hash": "BlfbUUzEPIx2JDXglQWyOvtkQzkiMDEBQjct+rlyHHE="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
+    "size": 2901,
+    "hash": "CCxX+kvHqgvTKZ0v8rZlWK5yGICUygj2+B0sEsCReNo="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
+    "size": 1383,
+    "hash": "JdbOBkkGh5ah9DFT83GV26LE/U4XUuZD5nwZWi+w4hI="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/date/BMDateNode.js",
+    "size": 3910,
+    "hash": "nHFYRLmhr0DjaAhOiGkUmAZGxDrru0NwqZgYK3ZETZM="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/date/BMYearNode.js",
+    "size": 1273,
+    "hash": "NHWVGgDgVCqj77H/t+74jzx+viyekNczaEQfVh24qnc="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/date/BMMonthNode.js",
+    "size": 1941,
+    "hash": "PZ9MVSNf+q20gv+4q/8zuTB9CBnxv69IbjeS+hP/+1Q="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/date/BMDayNode.js",
+    "size": 944,
+    "hash": "5t39T4VPaZASYZtarld4o1Z1V8z7NgY+ylWF9DbKElM="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/time/BMTimeNode.js",
+    "size": 2285,
+    "hash": "R1gWa4U4jwg+7mejr9pUSVYEXDhLRoyryKmQZRx/w1c="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/time/BMHourNode.js",
+    "size": 1296,
+    "hash": "MBprJt3W+Z3EmEhbsaOs2845QZyCh6n07a9PK6qenUo="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/time/BMMinuteNode.js",
+    "size": 920,
+    "hash": "6V3QeqxgDX4ISAy/Li+5GYunjf3UV4ovnO2Np+zNEcU="
+  },
+  {
+    "path": "source/library/node/fields/subclasses/time/BMMeridiemNode.js",
+    "size": 1889,
+    "hash": "Q/MCaD95dFPjRXbNUbeAe1fHznWBHdRpd3q0wBJcn1I="
+  },
+  {
+    "path": "source/library/node/storage/inspectors/BMDataStoreRecord.js",
+    "size": 1882,
+    "hash": "Fk8TAleSkoTSUbeNN9rxedRDXI+r49kFM6figJ0M8/A="
+  },
+  {
+    "path": "source/library/node/node_views/_css.css",
+    "size": 381,
+    "hash": "YwMQbgI8GiAVkzG8qGdJQmonDe6P9k6fgIRgLfErL+E="
+  },
+  {
+    "path": "source/library/node/node_views/NodeView.js",
+    "size": 7793,
+    "hash": "8g3+zCITDMVUZPfrUyn8rfbfMVKX5aPRUJpAFCDYv9g="
+  },
+  {
+    "path": "source/library/node/node_views/HeaderFooterView.js",
+    "size": 1339,
+    "hash": "Wa77/+eBmrX8KNdjiKBBHN3kC0JYwpiGu78dsMvI3lM="
+  },
+  {
+    "path": "source/library/node/node_views/ImageWellView.js",
+    "size": 3801,
+    "hash": "4vN0She2ynq1Kv8ALGQtAM9wL8+BaGHBfz/mfWe/TBg="
+  },
+  {
+    "path": "source/library/node/node_views/ImageView.js",
+    "size": 4387,
+    "hash": "gMCObA7W+iasE3CYiuHaj9/mD5iiITvVr0GQTqNAZ10="
+  },
+  {
+    "path": "source/library/node/node_views/browser/_css.css",
+    "size": 591,
+    "hash": "8Krl4mhvQVchk1Hv5LD+3Sge3zHsXptLw85d04mFv7w="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/BrowserRow.js",
+    "size": 28696,
+    "hash": "SO+U2ZvfHltWtJlaQdeb9aLlH6OTk49wLw7i1xBRaNc="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/BrowserTitledRow.js",
+    "size": 7530,
+    "hash": "l/l8tU8+HOYBdASAWIK+Qy2FADPmi0td6rGToY8CsS4="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/BrowserRowNote.js",
+    "size": 393,
+    "hash": "VsRQStJMUn8VS/lxpOAMsOQpqtwF+nSkyG/20fFF14I="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/BrowserRowSubtitle.js",
+    "size": 535,
+    "hash": "OVgam7UFbt8JByfpJ3q2JAQjG4K+87U0K/yXgE+9L2M="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/BrowserRowTitle.js",
+    "size": 1144,
+    "hash": "Oso6KLkaHGQ8h6DWQN+d1YrsUdF60rgle39ajGZs9O0="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/BMTextNodeRowView.js",
+    "size": 3017,
+    "hash": "shIUHeKx1N8x4DvKDhvpXJNN9ggJn/U0ADLZozxx5gU="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/_css.css",
+    "size": 393,
+    "hash": "idz1xXrGOIiISC1tXHHa6iZzzL5Gy+aKD4mXd0ihdB4="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMFieldRowView.js",
+    "size": 11480,
+    "hash": "3nTcuoFNisSs39tq4/cTIrcjIOj6Cb5jRG8bx94xqXc="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMActionNodeRowView.js",
+    "size": 1869,
+    "hash": "mbPyV5AaHtw4tYJx7pCmk0alcnQ/OsJ53rYZhBsbytA="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMBooleanFieldRowView.js",
+    "size": 1336,
+    "hash": "ZbUbQOzJkMkVEQEA32ChmOta1rABmiBTjfAxcL0IlnQ="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMStringFieldRowView.js",
+    "size": 1209,
+    "hash": "1u3X9HTSYdaFCAgwyjNlJXiWSq9dsDGxzJjru4JMgnA="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMTextAreaFieldRowView.js",
+    "size": 1441,
+    "hash": "LMMFOsOxJLFDxxr1ze0/4ncTuduYtNiQXcC4faEEq7A="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMImageWellFieldRowView.js",
+    "size": 2132,
+    "hash": "f3oXueVqQbCsfENWXkKg2N1q5eNBt8Dj0Apo/DpPFOo="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/options/BMOptionsNodeRowView.js",
+    "size": 384,
+    "hash": "pG7z4lMquTuxcsBFGoVjcL57r1Ciy2SN/vZ6IMHEStQ="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/options/BMOptionNodeRowView.js",
+    "size": 1184,
+    "hash": "rq4ij3RkjjlYqdmayuOL0sPsePYWyQmbogNdYOfcatg="
+  },
+  {
+    "path": "source/library/node/node_views/field_views/BMPointerFieldRowView.js",
+    "size": 792,
+    "hash": "9YQfp9wDsQEx0eYL3lIbF0gHH3G/WEmTVDDWSy0ebIY="
+  },
+  {
+    "path": "source/library/node/node_views/stack/StackView.js",
+    "size": 7701,
+    "hash": "szYydwiF68X72mBLQxo4BZHv/1BHZF4cpCdmnum7gxM="
+  },
+  {
+    "path": "source/library/node/node_views/stack/StackNavView.js",
+    "size": 6948,
+    "hash": "nQm+OLai7i8KrXdWJTl4ExDiqVoBhWAXKhzvBBqc92k="
+  },
+  {
+    "path": "source/library/node/node_views/stack/StackScrollView.js",
+    "size": 1329,
+    "hash": "+yDN93FmwxgZdXBQKXj9l9IZ+W1Dw/NA0SOINuQa/zU="
+  },
+  {
+    "path": "source/library/node/node_views/stack/StackItemSetView.js",
+    "size": 47607,
+    "hash": "ApG2XMwjKLSJC1FqCxP3qw5wyrAkpfgxnJa79v4lj1I="
+  },
+  {
+    "path": "source/library/node/blobs/BMBlob.js",
+    "size": 4835,
+    "hash": "SzBAatAI0kqlS06eOuPtSOkCOA/bvZJdTtzdhq45Bvg="
+  },
+  {
+    "path": "source/library/node/blobs/BMBlobs.js",
+    "size": 2621,
+    "hash": "StkJX9uoz6rP2B7catbRJ0axLeNZvlnlFUcdVKBCGZo="
+  },
+  {
+    "path": "source/library/node/network/BMUrlResource.js",
+    "size": 6983,
+    "hash": "78WJYzA/f8f8SR1nmsotxorvlPNI9A1bUcErXN8N13k="
+  },
+  {
+    "path": "source/library/node/App.js",
+    "size": 5247,
+    "hash": "OrijrZOht7Gg3Q0j5R/VzOVkI1Le5VsYDwKCFJ4qJe4="
+  },
+  {
+    "path": "source/library/resources/BMResource.js",
+    "size": 1456,
+    "hash": "XRQQ2/5TMli4uZw+4Ypl9DLwFZGUfD70MS9HfcRPTNk="
+  },
+  {
+    "path": "source/library/resources/BMResources.js",
+    "size": 1901,
+    "hash": "wlDw23p4V7LlI8rlcOXpQclqa3GKWe94EDDOYuWTGOo="
+  },
+  {
+    "path": "source/library/resources/BMResourceGroup.js",
+    "size": 2103,
+    "hash": "4rRMLlOck/9OHBE6N6ULMTh4tBxrb6FvakvIdBSJ87s="
+  },
+  {
+    "path": "source/library/resources/Base.js",
+    "size": 2998,
+    "hash": "QhtDglyylLBonDjyQhKjTYNGuCUyWjxK0f0cQ0LUwEc="
+  },
+  {
+    "path": "source/library/resources/MimeExtensions.js",
+    "size": 32948,
+    "hash": "hjaOGG0nSJbyBoSK+r+vyFNBcnrsLvbnK6u1a5M2Ie0="
+  },
+  {
+    "path": "source/library/resources/files/BMFileResources.js",
+    "size": 1375,
+    "hash": "Og7bdUetFzgCXCEdR2XDkqvWc5FhBP01tpPv5cUIXLI="
+  },
+  {
+    "path": "source/library/resources/files/BMResourceFolder.js",
+    "size": 3891,
+    "hash": "K5k6F6MI22bhF3/3F6FAB9Cz7mTO9WOm/ghCE+n19/Q="
+  },
+  {
+    "path": "source/library/resources/files/BMResourceFile.js",
+    "size": 840,
+    "hash": "Xbwi5x8ejTzHQESuAQZNLxMrntkBt2Q0k1uTNwrNlTg="
+  },
+  {
+    "path": "source/library/resources/fonts/BMFontResources.js",
+    "size": 1882,
+    "hash": "bq4Vxa3fpgb17dkWKdqhQT1civaqilbbdhGkdvCDCiI="
+  },
+  {
+    "path": "source/library/resources/fonts/BMFontFamily.js",
+    "size": 556,
+    "hash": "ubD8iIpp1v0qZplird6lX35bfrU9ptkHOLiqcVQuk5Y="
+  },
+  {
+    "path": "source/library/resources/fonts/BMFont.js",
+    "size": 1622,
+    "hash": "JrFVZboZqAQnt9+QPR0bLy+6qqjPi/vRvUsvVVkrDPE="
+  },
+  {
+    "path": "source/library/resources/fonts/BMFontRowView.js",
+    "size": 460,
+    "hash": "mV/eUotHyMg3CAvoGnpvyudj1rZI2HpACIG/Um/5kGk="
+  },
+  {
+    "path": "source/library/resources/sounds/BMSoundResources.js",
+    "size": 554,
+    "hash": "CslDST7N64ohMSpznGgTjCq576bwiNmJnAD0z/LC7z8="
+  },
+  {
+    "path": "source/library/resources/sounds/BMSound.js",
+    "size": 1270,
+    "hash": "eT5o5DZ5Atfiie3vh9Qo3bvhki0HxQT2nT/QJVijlrg="
+  },
+  {
+    "path": "source/library/resources/sounds/BMAudioPlayer.js",
+    "size": 4475,
+    "hash": "+eAeQAG9JMEgNZxPvUfiA+NY6ljpCg+QgqVPF5ZpZoU="
+  },
+  {
+    "path": "source/library/resources/sounds/WASound.js",
+    "size": 4184,
+    "hash": "qjFSRvq5JzbQHQ4ayLMAt9McBYGj16pT/jK0Jfj3hNQ="
+  },
+  {
+    "path": "source/library/resources/sounds/WAContext.js",
+    "size": 1419,
+    "hash": "tj2PVsJ2LfbO1I4sMMJQAF2yqdczoHufI2G+5Ejw1kI="
+  },
+  {
+    "path": "source/library/resources/images/BMImage.js",
+    "size": 2160,
+    "hash": "6axWvGlKZarcecLbNgzCT3sBdTy1VNDX0XWPButQVHo="
+  },
+  {
+    "path": "source/library/resources/images/BMURLImage.js",
+    "size": 2210,
+    "hash": "daCElXR/m6qwSgS9Guef0xvqNJ8wddDazRQg5PWk/14="
+  },
+  {
+    "path": "source/library/resources/images/BMImageResources.js",
+    "size": 652,
+    "hash": "wHe6xKmkXDNn1OeE2Ns1KfviDnRb4CjEA9RQhsdEHM4="
+  },
+  {
+    "path": "source/library/resources/themes/BMThemeResources.js",
+    "size": 1429,
+    "hash": "Hn840W9eZ4yAVAF5ax/b1YwlmbNVNrAeO6Rb/k2vSps="
+  },
+  {
+    "path": "source/library/resources/themes/BMTheme.js",
+    "size": 1497,
+    "hash": "qSSMju22YdjVcmoD20/R/Y0TNe75GucY95vUhj7CuLU="
+  },
+  {
+    "path": "source/library/resources/themes/BMDefaultTheme.js",
+    "size": 519,
+    "hash": "9zAOo3pZ+qunlBXomReV8VhYV4ePYTOQl8BcgCCFCdY="
+  },
+  {
+    "path": "source/library/resources/themes/BMThemeLevel.js",
+    "size": 1166,
+    "hash": "PWijZEsa9jR918RiaeEOMD4k0h4jPHN3fV+sUh3PX7o="
+  },
+  {
+    "path": "source/library/resources/themes/BMThemeClass.js",
+    "size": 2689,
+    "hash": "lwHEF1vOvSOCtcmC10m14MQyx83a3QJYzpRGLkBa7Zo="
+  },
+  {
+    "path": "source/library/resources/themes/BMThemeState.js",
+    "size": 4803,
+    "hash": "X5d4rk875U1z648LrAc9230Cs2R0tBUSzUYKFstBzbc="
+  },
+  {
+    "path": "source/library/resources/themes/BMThemeFolder.js",
+    "size": 618,
+    "hash": "sgko01l5FRpmefNS15Dgu8tI3MA2PjPq93IXWNc/N8g="
+  },
+  {
+    "path": "source/library/resources/icons/BMIconResources.js",
+    "size": 963,
+    "hash": "7r0JaPixbwUiHMz37w8oGG0cKPXgpismCQbZhAlES/A="
+  },
+  {
+    "path": "source/library/resources/icons/SvgIconNode.js",
+    "size": 622,
+    "hash": "XMTt0isvRrKg/zQ8ilIgeUf+KJ19AXn2+KxCW/vUN9A="
+  },
+  {
+    "path": "source/library/resources/json/BMJsonResources.js",
+    "size": 1170,
+    "hash": "qgj3fjXliRS4otbF/Korc45ja8afDxeSg8yCUH8F1vQ="
+  },
+  {
+    "path": "source/apps/Strvct/StrvctApp.js",
+    "size": 5862,
+    "hash": "gibLUkpDZYHv6QZMjzw3XpI46MT1JD/8q7DceuLaGWc="
+  },
+  {
+    "path": "source/apps/Strvct/_init.js",
+    "size": 83,
+    "hash": "BaK2T9AIFGo8jiFnChIovN2i+Q9JzuU4jGXNL1/RQLo="
+  },
+  {
+    "path": "resources/fonts/Hyperspace/Hyperspace.ttf",
+    "size": 21908,
+    "hash": "3TMjAVcnKwcgL3C5FH8KXDr2Q7Y/syCcgimPPGpqRpI="
+  },
+  {
+    "path": "resources/fonts/Hyperspace/Hyperspace Bold.ttf",
+    "size": 22468,
+    "hash": "Y67EQ0moH806/jmYfFGhwCjPamt2+/K6BXr5Cd+P2HQ="
+  },
+  {
+    "path": "resources/fonts/Hyperspace/Hyperspace Bold Italic.ttf",
+    "size": 23640,
+    "hash": "A3v7gNzI0QqKTmDVUFuvtzTPXrKyBvNSYwVMs9nR+Jc="
+  },
+  {
+    "path": "resources/fonts/Hyperspace/Hyperspace Italic.ttf",
+    "size": 23540,
+    "hash": "uXYpM47ajzVzMUxzYZt1847NVA0Vb9ANW8o9a8E9y3Y="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Neue.woff2",
+    "size": 19540,
+    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Neue Bold.woff2",
+    "size": 19284,
+    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica.woff2",
+    "size": 19540,
+    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold.woff2",
+    "size": 19284,
+    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light.woff2",
+    "size": 17636,
+    "hash": "2Yo9dfn69uSllWaAVkEHUIsS5GLdMYNy2ZJCXt0glQ4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Oblique.woff2",
+    "size": 18324,
+    "hash": "ag5Wk1GTC2MREiOnugQou0QaT3UwFp4V7SEScEX9hDw="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Roman.woff2",
+    "size": 19540,
+    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Obliqu1489444.woff2",
+    "size": 20472,
+    "hash": "KQbIVtSMwRgtVGJv2LAFqFwzrtD5C1g2XkPnAAVsNQs="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold.woff2",
+    "size": 19284,
+    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold O1489460.woff2",
+    "size": 20112,
+    "hash": "9YQU1vu1v9zhRorMwyRH7fL9QsUSSnuMjcFdGemcgk4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black.woff2",
+    "size": 18088,
+    "hash": "nPl6A9W2+KyIgR7h7hmyAxLZjw/5igvrF4Vs34YDf3Y="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Oblique.woff2",
+    "size": 18796,
+    "hash": "w7bFJxlUPRks3w7JYzBIOeGiLXkLwFIAXtXoYtMkVQ4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Cond.woff2",
+    "size": 17952,
+    "hash": "qoh++iK/opE5oVrDs8Aqavq3sfFU1GGmGINVWbP0dVM="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Cn Obl.woff2",
+    "size": 19124,
+    "hash": "Wdlj69vhLVw9GhcL30BDbpYo/0q1GX+n1VZg5jEJdUA="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Condensed.woff2",
+    "size": 18148,
+    "hash": "XPLi6eYI1S57B6sratgoANS2uKw8f8WsVApAeoqEbP0="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Condensed Obl.woff2",
+    "size": 19192,
+    "hash": "nG/bswgnp1/8LaiBQDwfCtF5YRAU1FZaNeCnB6o+yAI="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Cond.woff2",
+    "size": 18704,
+    "hash": "IbEiYQP8kt3yxAsJo94jUprAm9MYHnKIwfjMOX8t4Us="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Cond Obl.woff2",
+    "size": 19812,
+    "hash": "kXNEAT/mltRctzj+Lmko8G5IHsreMgVIHu0ADonU9+w="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Cond.woff2",
+    "size": 17980,
+    "hash": "dy9m05wySomBFDLPZyGsPrMEx245DZjbyOMuh82mJos="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Cn Obl.woff2",
+    "size": 19264,
+    "hash": "VKdy2sPIOYv64kOnSuY8dK4iwuKcf30B6jh5sI6OuPE="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Compressed.woff2",
+    "size": 17984,
+    "hash": "8guf9Rx9fcAOiLtaOT579kJSOhelEsPSnKWzBi2dkVs="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 X Compressed.woff2",
+    "size": 17088,
+    "hash": "lFCCLzBw50JW88uPrR8kC3ltMgJVJJ4TOWMjCXa1UDc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Ult Comp.woff2",
+    "size": 17792,
+    "hash": "CkU5CX24SXNg8WYQ9WFJJkVwQsS9znvw2vlPCrxmsYM="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Inserat LT W01 Rg.woff2",
+    "size": 18844,
+    "hash": "YsPuUqRHoqKzI0MQOUZgISq/92nY8FHQimFUK8pAISc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Narrow.woff2",
+    "size": 17836,
+    "hash": "asm+E++nde6lPycCwB6xCQrxA0JhkuVQPLKk/D4UhGQ="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Narrow Obl.woff2",
+    "size": 18876,
+    "hash": "eW2Y6nc3CuXsP9HhqfCp0XMyoo1jQxJ4pATxWCdVlEQ="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Narrow.woff2",
+    "size": 20596,
+    "hash": "VT9Pf4O+tCO7larrK7wx1GPq2IyrvxUXptmvv2sjyA8="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Nr Obl.woff2",
+    "size": 21556,
+    "hash": "0rCiSP1mkKxQiNjbe02kgTURywKGj/5HoPadmmH9oCI="
+  },
+  {
+    "path": "resources/sounds/beep_06.wav",
+    "size": 808960,
+    "hash": "/qMCZC35UWhliXZ3meL4ZXok3gfX8mdCCkfu/kGFsBo="
+  },
+  {
+    "path": "resources/sounds/bleep_04.wav",
+    "size": 225280,
+    "hash": "Xh2H6QRuNyWJLfV3H2dX8J9YvIK7ekaL4byR1672vkQ="
+  },
+  {
+    "path": "resources/sounds/bleep_17.wav",
+    "size": 234054,
+    "hash": "MzFE7+kwXEszMlZmpL39inF4cO5u08pXygVcpY4Ls1E="
+  },
+  {
+    "path": "resources/images/appicon-black-600x600.png",
+    "size": 9484,
+    "hash": "jQS/Yh4ImvHby2UkoaWfzhyqiaQjqYK3xSRVSypSnMc="
+  },
+  {
+    "path": "resources/icons/add-user-white.svg",
+    "size": 1275,
+    "hash": "22uxedOarJoZT0pE4Vgdk8FHp1y/Quhoz5Icxge1TfM="
+  },
+  {
+    "path": "resources/icons/add-user.svg",
+    "size": 1315,
+    "hash": "tm0I/EGdgrChVV6qJtwHQBBmmiOScNHid8eqHGolQJs="
+  },
+  {
+    "path": "resources/icons/add.svg",
+    "size": 1119,
+    "hash": "rn0DnaHeWTP7RgYEVtUikncqmEnZtEzQNzkaiWZibng="
+  },
+  {
+    "path": "resources/icons/appicon-black-600x600.png",
+    "size": 9484,
+    "hash": "jQS/Yh4ImvHby2UkoaWfzhyqiaQjqYK3xSRVSypSnMc="
+  },
+  {
+    "path": "resources/icons/appicon-black.svg",
+    "size": 2023,
+    "hash": "FU3P89hSf14Jmjy5GVs/YzXHZ9Cn72h8hvSe2utaXnA="
+  },
+  {
+    "path": "resources/icons/appicon.svg",
+    "size": 2023,
+    "hash": "8D5uhLYE2GsbcvquTGivtM+dW+i7qAsx4BCcOmv+7oo="
+  },
+  {
+    "path": "resources/icons/at-white.svg",
+    "size": 1675,
+    "hash": "rLdbYBFy/ILUzlIbe7YinUsfGfSg3qRFwc2VDDv9GD8="
+  },
+  {
+    "path": "resources/icons/bell-white.svg",
+    "size": 1081,
+    "hash": "WWD1uDIjDxAMiodNxUwc5Hcb1l824n96R7a7Kk6+2kY="
+  },
+  {
+    "path": "resources/icons/black-envelope.svg",
+    "size": 1113,
+    "hash": "JtVtTOKlncv/KAgcrWEcL4KZGemgHleXU5+IbZU02vM="
+  },
+  {
+    "path": "resources/icons/bubble-white.svg",
+    "size": 1055,
+    "hash": "5kczv9AbDXImieBrCTHuOpfzUC8sw5U3x7TYTiuCUdM="
+  },
+  {
+    "path": "resources/icons/cancel.svg",
+    "size": 854,
+    "hash": "GcCE34RMMO/B+EuYA6AtXm1Hc/gVD65prL8AxeqP744="
+  },
+  {
+    "path": "resources/icons/checkbox-circle-checked.svg",
+    "size": 257,
+    "hash": "GV5qUdWoDSmQ2HKNgc6Kng1UMCN2pSiouHMuRcvgiyY="
+  },
+  {
+    "path": "resources/icons/checkbox-circle-unchecked.svg",
+    "size": 334,
+    "hash": "I3dSUUsYsy9G43TyEZwUkowZ0eoZBj+0x0mPST+jyo0="
+  },
+  {
+    "path": "resources/icons/checkbox-square-checked.svg",
+    "size": 389,
+    "hash": "xDE3oKU8Udwm8g+l2Ujvw4/7gXvYzs7+9P7Zo+b1dV8="
+  },
+  {
+    "path": "resources/icons/checkbox-square-unchecked.svg",
+    "size": 302,
+    "hash": "3MFGLceDTa6BYJ0lAKLZWPKIxaeGMqYTYTZglqLXPYY="
+  },
+  {
+    "path": "resources/icons/checkmark.svg",
+    "size": 658,
+    "hash": "dpBx1+bpZVFYqSwft01Yrw9CIsX2HFm947LP4oRUDNc="
+  },
+  {
+    "path": "resources/icons/close-rounded.svg",
+    "size": 1028,
+    "hash": "6+iZyRN5thj5rCEStpQ52uLCXZOci22uFjHCETZV8/I="
+  },
+  {
+    "path": "resources/icons/close-white.svg",
+    "size": 992,
+    "hash": "yHv2akFtTdogg5wU1/NlBz/QpPiIDtAciGQD+F3c38g="
+  },
+  {
+    "path": "resources/icons/close.svg",
+    "size": 1142,
+    "hash": "55XdYnz+nu71aQpvz5vS7Ok7oaq2Cg0xr9B1WDtWDJQ="
+  },
+  {
+    "path": "resources/icons/compose.svg",
+    "size": 855,
+    "hash": "bSC98fOHaznK96N/mzdOcDU6euPJaxq8KNE7dRxgMRQ="
+  },
+  {
+    "path": "resources/icons/delete.svg",
+    "size": 849,
+    "hash": "+vKUvtbNRE4R71pfrxoMqfdfCKO/e5BEQ9ViTxeMPp0="
+  },
+  {
+    "path": "resources/icons/deleteAll.svg",
+    "size": 849,
+    "hash": "+vKUvtbNRE4R71pfrxoMqfdfCKO/e5BEQ9ViTxeMPp0="
+  },
+  {
+    "path": "resources/icons/down.svg",
+    "size": 437,
+    "hash": "EtkF9TfW8cqoD5QcrhPFvpKAuR/H2iTMZeJ948TJQSA="
+  },
+  {
+    "path": "resources/icons/envelope-white.svg",
+    "size": 1082,
+    "hash": "UrplYGQdkt00D+6jyFprY4sYMYB4SiWImeNsBIVA8Gg="
+  },
+  {
+    "path": "resources/icons/envelope.svg",
+    "size": 1113,
+    "hash": "JtVtTOKlncv/KAgcrWEcL4KZGemgHleXU5+IbZU02vM="
+  },
+  {
+    "path": "resources/icons/eye.svg",
+    "size": 1193,
+    "hash": "PXUhI+1tgoirZ49iIUm6yutBfY8sc/zFDqajAqdSRcs="
+  },
+  {
+    "path": "resources/icons/favorite.svg",
+    "size": 504,
+    "hash": "HUmJWlVINJQ6DyT3We7hbBBfJ8vIiviIhAu0Pxfvj3c="
+  },
+  {
+    "path": "resources/icons/gear-filled-white.svg",
+    "size": 2480,
+    "hash": "KjcfEXsCGUA632MEFwenNgPUuP8eTEsB1iAkwX+g4jc="
+  },
+  {
+    "path": "resources/icons/gear-filled.svg",
+    "size": 2494,
+    "hash": "1EauDvLn0vJywx2IhyYCk01XDs5+Sytsnta0eg5jnG8="
+  },
+  {
+    "path": "resources/icons/gear-white.svg",
+    "size": 4180,
+    "hash": "Kksx/67t2qpCUas29J9y+LJ/4B7F5dt6O0Kjb+J1mME="
+  },
+  {
+    "path": "resources/icons/heart-black-filled.svg",
+    "size": 905,
+    "hash": "PYYJwdqajO6YnAA3ofVdlKwXLsdHjhjzbx3bYx8Q7Hk="
+  },
+  {
+    "path": "resources/icons/heart-black-outlined.svg",
+    "size": 1302,
+    "hash": "0iUdixqbI30oECS6TZ/HoNO/a5drZ8T5OLAvxruQKaw="
+  },
+  {
+    "path": "resources/icons/heart-red-filled.svg",
+    "size": 879,
+    "hash": "gdM4iFnC7L0wpSN1SudgsN/UWqjLEycbetHQYiOuHE8="
+  },
+  {
+    "path": "resources/icons/home-white.svg",
+    "size": 1480,
+    "hash": "y67ggieNrRl7xE6zBmU2IV6c4Q1aREmkgdpk2iiM3Is="
+  },
+  {
+    "path": "resources/icons/home.svg",
+    "size": 1512,
+    "hash": "Ld7cLeKqFlhCSKtOwi81+Wy/py8ORb03YrufTs5gOJA="
+  },
+  {
+    "path": "resources/icons/home2-white.svg",
+    "size": 829,
+    "hash": "QyGARCMrzXywRAKTpKUNhwmkwSzYLGKyNiOc+yXw/pw="
+  },
+  {
+    "path": "resources/icons/home3-white.svg",
+    "size": 819,
+    "hash": "nAEcebLwnFr408ToSCp9PArzznw9QRZFua1N0XMyc3g="
+  },
+  {
+    "path": "resources/icons/home4-white.svg",
+    "size": 737,
+    "hash": "OEnCPN3BaNys22pU6BGi3gYQDUkcuKHWgK5+FqXnxLA="
+  },
+  {
+    "path": "resources/icons/left.svg",
+    "size": 438,
+    "hash": "mF8QvH9XV9qO2npvqc63j395jtiJpdUxYumCvzZTQsw="
+  },
+  {
+    "path": "resources/icons/lightning-white.svg",
+    "size": 1066,
+    "hash": "jY9f8+kzWf38DjDHxGuBveIV0o9pGnZrQecw56R5Yvw="
+  },
+  {
+    "path": "resources/icons/lightning2-white.svg",
+    "size": 1237,
+    "hash": "W8dwNRq8HiK2vqmM5T0S0fakUldGjspc4en/7Zq2/j4="
+  },
+  {
+    "path": "resources/icons/lightning3-white.svg",
+    "size": 781,
+    "hash": "Eh9AAyy4TAcatGiFFKxVox3oVcxe0hsvxH5aOhnCh+c="
+  },
+  {
+    "path": "resources/icons/mail-white.svg",
+    "size": 907,
+    "hash": "OPdFMJiiF/RHGNK6FKi9NdmZZAnUCRqH9j9x+yCkuu8="
+  },
+  {
+    "path": "resources/icons/plus-white.svg",
+    "size": 534,
+    "hash": "oHe3Ff4q7xhRcDb5sR4BZfSkSUoH0zCpbgtOHrqebWM="
+  },
+  {
+    "path": "resources/icons/plus.svg",
+    "size": 490,
+    "hash": "qYdXYqylRJXWuKxIQFiQ7cgF00NIbEf3FV+KQ1YfZRQ="
+  },
+  {
+    "path": "resources/icons/reply.svg",
+    "size": 709,
+    "hash": "Z6gzcRac9DS4nWHzEKkPSfAQ41LOo7tRcf/sy3Awglo="
+  },
+  {
+    "path": "resources/icons/repost-white.svg",
+    "size": 1590,
+    "hash": "8iZGsL0gLZGqgkiOQWiU6TTgkOxCcuKtHfLvHdK3IEM="
+  },
+  {
+    "path": "resources/icons/repost.svg",
+    "size": 579,
+    "hash": "ctJUuIYVSYiL2PxWX9uIh943VHsPwoaQGtI0ETJGskc="
+  },
+  {
+    "path": "resources/icons/right-gray.svg",
+    "size": 760,
+    "hash": "dLevgb1o+G7+dW7TETeOSxk2QIO5rkGwFpPokrdT81U="
+  },
+  {
+    "path": "resources/icons/right-white.svg",
+    "size": 763,
+    "hash": "DWgDzYNoiYbuiboPEFb9vkNXb6BTysH/Fjv4ZjCwkng="
+  },
+  {
+    "path": "resources/icons/right.svg",
+    "size": 437,
+    "hash": "w5fJj/XqEUntzF/Qo+bVp1WiuR6XG+Mico5LPrGeVfU="
+  },
+  {
+    "path": "resources/icons/sandwich-menu.svg",
+    "size": 1173,
+    "hash": "+Nxe5F1K2umMTW5KAr5MWDPaJCH+OW+GkeZLohknpM4="
+  },
+  {
+    "path": "resources/icons/search-white.svg",
+    "size": 1189,
+    "hash": "xNyoGlaEJN+T6+MlsRpQGxPsmFntVCReOudsHTpoxCo="
+  },
+  {
+    "path": "resources/icons/search.svg",
+    "size": 1192,
+    "hash": "zCHXCvIc8q/KMLIFFRWUu4+jVTXPiB0x11Yxb5Oz4l0="
+  },
+  {
+    "path": "resources/icons/send.svg",
+    "size": 1170,
+    "hash": "3XaE+3fPHgIly+VD4x/ulhlesaUv9o+njSd7nC19QbU="
+  },
+  {
+    "path": "resources/icons/three-vertical-dots-outline.svg",
+    "size": 1335,
+    "hash": "t0/KWo1IVfGTq3EFZB1K5jSv8wXBGhDnP3xUhhRU32I="
+  },
+  {
+    "path": "resources/icons/three-vertical-dots.svg",
+    "size": 685,
+    "hash": "rreFczzUTkSmM40EaT3I/Te9r7Fz0u4mYSrOVQALF3w="
+  },
+  {
+    "path": "resources/icons/toggle-off.svg",
+    "size": 791,
+    "hash": "vTWS0yKMFWo+RYLPl4WpWxcq1hy8Pwm4LqlVKQ6R5O0="
+  },
+  {
+    "path": "resources/icons/toggle-on.svg",
+    "size": 1112,
+    "hash": "5Rm5cyOLdp8pjBdF3cvm9YJI4ncZiBbQDFa2UlZoQXE="
+  },
+  {
+    "path": "resources/icons/trash.svg",
+    "size": 849,
+    "hash": "+vKUvtbNRE4R71pfrxoMqfdfCKO/e5BEQ9ViTxeMPp0="
+  },
+  {
+    "path": "resources/icons/up.svg",
+    "size": 438,
+    "hash": "9Wf2JaDmpW3FnHH+nY0bLVnnsNQ00TuqUtw9bkFGPaU="
+  },
+  {
+    "path": "resources/icons/user-white.svg",
+    "size": 1455,
+    "hash": "hBzZUTJWbRP/W8pyDy3CqtCLPSvtQjDhzoa7q5ncFes="
+  },
+  {
+    "path": "resources/icons/user.svg",
+    "size": 1036,
+    "hash": "8EzlNI6PF/t+rs3voPBUalJIyELh6IcjDsPhJECbQo4="
+  },
+  {
+    "path": "resources/icons/users-white.svg",
+    "size": 1942,
+    "hash": "r6WMgdEM0RCip/zn0hq1Kq9qnn9DZ6ZFBoChnEpiTbM="
+  },
+  {
+    "path": "resources/icons/users.svg",
+    "size": 1986,
+    "hash": "88YmTByPIX8IBnf/mcWGx93UDIpGnM9ZXfBMn2+VWjA="
+  },
+  {
+    "path": "resources/icons/write-white.svg",
+    "size": 1041,
+    "hash": "l/yhWt7PIzrBgg0gJB9TXcKYQ2naC6IIN276rPeuScE="
+  },
+  {
+    "path": "resources/icons/write.svg",
+    "size": 1070,
+    "hash": "H6izz6kub6D9FZObbvXUZt/8PkHw/eGDroeVSqCcK3k="
+  }
+]

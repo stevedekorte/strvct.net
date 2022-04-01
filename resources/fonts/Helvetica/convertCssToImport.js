@@ -57,5 +57,5 @@ entries.forEach((entry) => {
 const familyNames = entries.map(e => e.toName);
 const namesString = familyNames.map(n => '"' + n + '"' ).join(",\n")
 const importsString = "resourceLoader.pushRelativePaths([\n" + namesString + "\n]);"
-fs.writeFileSync("fonts/_imports.js", importsString, "utf8")
+fs.writeFileSync("fonts/_imports.json", importsString, "utf8")
 

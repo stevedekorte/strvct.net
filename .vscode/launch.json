@@ -5,27 +5,21 @@
     //
     "version": "0.2.0",
     "configurations": [
-        /*
-        {
-            "name": "firefox index.html",
-            "type": "firefox",
-            "request": "launch",
-            "reAttach": true,
-            "file": "${workspaceFolder}/index_incremental.html#%7B%22path%22:%5B%22STRVCT%22,%22Settings%22,%22Resources%22%5D%7D",
-            "webRoot": "${workspaceFolder}",
-        },
-        */
+
         {
             "type": "chrome",
             "request": "launch",
-            "name": "FILE index",
-            "url": "file:///${workspaceFolder}/index.html",
+            "name": "launch local HTTPS",
+            "url": "https://localhost:8000/index.html",
             "webRoot": "${workspaceFolder}",
             "runtimeArgs": [
                 "--disable-web-security"
             ],
-            "preLaunchTask": "create index.html",
+            "preLaunchTask": "Build",
+            "enableContentValidation": false
         },
+
+        /*
         {
             "type": "chrome",
             "request": "launch",
@@ -35,77 +29,11 @@
             "runtimeArgs": [
                 "--disable-web-security"
             ],
-            "preLaunchTask": "create index.html",
-        },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "FILE incremental",
-            "url": "file:///${workspaceFolder}/index_incremental.html",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--disable-web-security"
-            ],
-        },
-        /*
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "Launch local Incremental on local python server",
-            "url": "https://localhost:4443/index_incremental.html",
-            "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "Run local Python HTTPS server",
-        },
-        
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "local HTTP incremental",
-            "url": "http://127.0.0.1:8080/index_incremental.html",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--disable-web-security"
-            ],
+            "preLaunchTask": "Build",
+            "enableContentValidation": false
         },
         */
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "local HTTPS index",
-            "url": "https://localhost:8000/index.html",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--disable-web-security"
-            ],
-            "preLaunchTask": "create index.html",
-        },
 
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "local HTTPS incremental",
-            "url": "https://localhost:8000/index_incremental.html",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--disable-web-security"
-            ],
-            /* "preLaunchTask": "Run local node HTTPS server",*/
-        },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "remote HTTPS index",
-            "url": "https://strvct.net",
-            "webRoot": "${workspaceFolder}",
-            "preLaunchTask": "create index.html",
-        },
-        {
-            "type": "chrome",
-            "request": "launch",
-            "name": "remote HTTPS incremental",
-            "url": "https://strvct.net/index_incremental.html",
-            "webRoot": "${workspaceFolder}",
-        },
         {
             "type": "node",
             "protocol": "inspector",
@@ -114,14 +42,7 @@
             "cwd": "${workspaceFolder}/local-web-server",
             "program": "${workspaceFolder}/local-web-server/main.js"
         },
-        {
-            "type": "node",
-            "protocol": "inspector",
-            "request": "launch",
-            "name": "RUN build index.html",
-            "cwd": "${workspaceFolder}",
-            "program": "${workspaceFolder}/source/boot/index-builder/main.js"
-        },
+
         {
             "type": "node",
             "protocol": "inspector",
@@ -131,6 +52,7 @@
             "program": "${workspaceFolder}/source/apps/Peer/rendezvous-server/main.js"
         },
 
+        /*
         {
             "type": "node",
             "protocol": "inspector",
@@ -139,5 +61,17 @@
             "cwd": "${workspaceFolder}/resources/fonts/Helvetica/",
             "program": "./convertCssToImport.js"
         },
+
+
+        {
+            "type": "node",
+            "protocol": "inspector",
+            "request": "launch",
+            "name": "launch build _index.json and _cam.json",
+            "cwd": "${workspaceFolder}",
+            "program": "./source/boot/index-builder/ImportsIndexer.js"
+        }
+        */
+
     ]
 }

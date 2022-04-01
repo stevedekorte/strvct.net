@@ -1,7 +1,0 @@
-"use strict";
-
-resourceLoader.pushRelativePaths([
-  "beep_06.wav",
-  "bleep_04.wav",
-  "bleep_17.wav"
-]);

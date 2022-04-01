@@ -16,7 +16,6 @@ if (!String.prototype.capitalized) {
 
     constructor () {
         this.init()
-        debugger
     }
 
     static initThisClass () {

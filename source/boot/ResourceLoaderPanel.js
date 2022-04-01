@@ -194,7 +194,7 @@
     // --- event callback functions ------------------------------------
 
     setupCallbacks () {
-        this._resourceLoaderLoadUrlFunc = (event) => { this.resourceLoaderLoadUrl(event) }
+        this._resourceLoaderProgressFunc = (event) => { this.resourceLoaderProgress(event) }
         this._resourceLoaderErrorFunc = (event) => { this.resourceLoaderError(event) }
         this._resourceLoaderDoneFunc = (event) => { this.resourceLoaderDone(event) }
         this._windowErrorFunc = (event) => { return this.handleError(event) }
@@ -202,9 +202,9 @@
 
     // --- handle events ------------------------------------------------
 
-    resourceLoaderLoadUrl (event) {
+    resourceLoaderProgress (event) {
         //console.log(this.type() + " got resourceLoaderLoadUrl " + JSON.stringify(event.detail))
-        this.didImportUrl(event.detail.url, event.detail.maxUrlCount)
+        this.didImportUrl(event.detail.url, event.detail.progress)
     }
 
     resourceLoaderError (event) {
@@ -220,7 +220,7 @@
     // --- register / unregister for events ---------------------------------
 
     startListening () {
-        window.addEventListener("resourceLoaderLoadUrl", this._resourceLoaderLoadUrlFunc)
+        window.addEventListener("resourceLoaderProgress", this._resourceLoaderProgressFunc)
         window.addEventListener("resourceLoaderError",   this._resourceLoaderErrorFunc)
         window.addEventListener("resourceLoaderDone",    this._resourceLoaderDoneFunc)
         window.addEventListener("error",    this._windowErrorFunc)
@@ -228,7 +228,7 @@
     }
 
     stopListening () {
-        window.removeEventListener("resourceLoaderLoadUrl",   this._resourceLoaderLoadUrlFunc)
+        window.removeEventListener("resourceLoaderProgress",   this._resourceLoaderProgressFunc)
         window.removeEventListener("resourceLoaderError",    this._resourceLoaderErrorFunc)
         window.removeEventListener("resourceLoaderDone",    this._resourceLoaderDoneFunc)
         window.removeEventListener("error", this._windowErrorFunc)
@@ -240,7 +240,7 @@
             this.setCurrentItem(url.split("/").pop())
         }
         //console.log("didImportUrl " + url)
-        this.incrementItemCount(max)
+        this.updateProgressBar(max)
         return this
     }
 
@@ -256,58 +256,13 @@
         return false;
     }
 
-    hasLocalStorage () {
-        try {
-            window.localStorage
-            return true
-        } catch (e) {
-            return false
-        }
-    }
-
     // --- tracking file count -------------------------
 
-    maxFileCount () {
-        if (!this._maxFileCount) {
-            let s = undefined 
-            if (this.hasLocalStorage()) {
-                s = localStorage.getItem(this.type() + ".maxFileCount");
-            }
-
-            if (s) {
-                this._maxFileCount = Number(s)
-            } else {
-                this._maxFileCount = 1
-            }
-        }
-        return this._maxFileCount
-    }
-
-    setMaxFileCount (count) {
-        this._maxFileCount = count
-        if (this.hasLocalStorage()) {
-            localStorage.setItem(this.type() + ".maxFileCount", count);
-        }
-        return this
-    }
-
-    incrementItemCount (max) {
-        this._loadCount ++
-        if (this._loadCount > this.maxFileCount()) {
-            this.setMaxFileCount(this._loadCount)
-        }
-
+    updateProgressBar (ratio) {
         const e = this.barElement()
         if (e) {
-            let p = Math.floor(100 * this._loadCount / this.maxFileCount())
-            if (p >= 100) {
-                p = 100
-                e.style.transition = "all 0.3s"
-                e.style.backgroundColor = this._loadCount % 2 ? "#777" : "#ccc"
-                e.style.width = this._loadCount % 2 ? "100%" : "95%"
-            } else {
-                e.style.width = p + "%"
-            }
+            const p = Math.floor(100 * ratio)
+            e.style.width = p + "%"
         }
         return this
     }
@@ -381,9 +336,4 @@
 
 }.initThisClass());
 
-
-if (!getGlobalThis().ResourceLoaderIsEmbedded) {
-    if (ResourceLoaderPanel.isInBrowser()) {
-        ResourceLoaderPanel.shared().registerForWindowLoad() // window.onload event has already occurred to stat boot UNLESS this file is built into index
-    }
-}
+ResourceLoaderPanel.open()

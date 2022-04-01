@@ -2,150 +2,199 @@
 
 /*
 
-    sends these events to window:
+    A minimal Javascript sequential file loader. 
 
-        resourceLoaderLoadUrl, with detail { url: , maxUrlCount: }
-        resourceLoaderError, with detail { error: }
-        resourceLoaderDone
+    Loads _index.json and _cam.json, then
+    evals JS files in _index in order (adding sourceURL comment for debugger).
+
+    The loading begins on the window load event.
+
+    Should also post events to load panel.
 
 */
 
-(class ResourceLoader extends Base {
-
-    initThisClass () {
-        super.initThisClass()
-    }
-
-    initPrototype () {
-        this.newSlot("currentScript", null);
-        this.newSlot("urls", []);
-        this.newSlot("doneCallbacks", []),
-        //this.newSlot("errorCallbacks", []);
-        
-        this.newSlot("jsFilesLoaded", [])  // track these so index builder can embed in index.html
-        this.newSlot("cssFilesLoaded", []) // track these so index builder can embed in index.html
-        this.newSlot("resourceFilePaths", []) // track these so index builder can embed in index.html
-
-        //this.newSlot("archive", null)
-
-        this.newSlot("maxUrlCount", 0)
-
-        this.newSlot("isEmbeded", false)
-        this.newSlot("finalCallback", null)
-
-        this.newSlot("currentImportPath", "")
-    }
-
-    isInIndexMode () {
-        return getGlobalThis().isBuildingIndex
-    }
-
-    resourceFilePathsWithExtensions (extensions) {
-        return this.resourceFilePaths().select(path => extensions.contains(path.pathExtension().toLowerCase()))
-    }
-
-    baseForPath (path) {
-        const parts = path.split("/")
-        parts.pop()
-        return parts.join("/")
-    }
-
-    currentScriptPath () {
-        
-        if (this.currentScript()) {
-            return this.currentScript().basePath()
-        }
-             
-        if (!this.isInBrowser()) {
-            return process.cwd() // will need this for first script, as there's no currentScript yet
-        }
-
-        //if (this.currentImportPath()) {
-            //console.log("this.currentImportPath() = '" + this.currentImportPath() + "'")
-            return this.currentImportPath()
-        //}
-
-        return ""
-    }
-
-    absolutePathForRelativePath (aPath) {
-        const ext = aPath.split(".").pop() 
-
-        const parts = this.currentScriptPath().split("/").concat(aPath.split("/"))
-        let rPath = parts.join("/")
-
-        if (rPath[0] === "/"[0] && this.isInBrowser()) {
-            rPath = "." + rPath
-        }
-
-        if (ext === "ttf") {
-            console.log("font path: '" + rPath + "'")
-        }
-
-        return rPath
-    }
-
-    absolutePathsForRelativePaths (paths) {
-        return paths.map((aPath) => { return this.absolutePathForRelativePath(aPath) })
-    }
-
-    pushRelativePaths (paths) {
-        this.pushFilePaths(this.absolutePathsForRelativePaths(paths))
+class BootResource {
+    init () {
+        this._path = null
+        this._request = null
+        this._onLoad = null
         return this
     }
 
-    pushFilePaths (paths) {
-        //paths.slice().reverse().forEach(path => this.unshiftFilePath(path))
-        
-        // we want these to be in front of previous ones
-        
-        this.setUrls(paths.concat(this.urls()))
-        this.setMaxUrlCount(this.maxUrlCount() + paths.length)
-        
+    setPath (aPath) {
+        this._path = aPath
+        return this
+    }
 
+    setOnLoad (aFunc) {
+        this._onLoad = aFunc
+        return this
+    }
+
+    load () {
+        const path = this._path
+        const request = new XMLHttpRequest();
+        request.open('GET', path, true);
+        console.log("runInBrowser: ", path)
+        //request.responseType = 'application/json'; // optional
+        request.onload  = (event) => { this.onLoad(event) }
+        request.onerror = (event) => { this.onLoadError(event) }
+        request.send();
+        this._request = request
+        return this
+    }
+
+    onLoad (event) {
+        const request = this._request;
+        if (request.status >= 400 && request.status <= 599) {
+            const error = request.status + " " + request.statusText + " error loading " + this.fullPath() + " "
+            this.setError(error)
+            throw new Error(error)
+            return
+        }
+        this._onLoad(this)
+    }
+
+    onLoadError (event) {
+        const request = this._request; // is event or error passed?
+        console.log(this.type() + " onLoadError ", error, " " + this.fullPath())
+        this.setError(error)
+        throw new Error("error loading " + this.fullPath())
+    }
+
+    data () {
+        return this._request.response;
+    }
+
+    dataAsJson () {
+        return JSON.parse(this.data())
+    }
+}
+
+// ------------------------------------------------------------------------
+
+class ResourceLoader {
+
+    static shared () {
+        if (!this._shared) {
+            this._shared = new ResourceLoader().init()
+        }
+        return this._shared
+    }
+
+    isInBrowser () {
+        return (typeof (document) !== 'undefined')
+    }
+
+    init () {
+        this._index = null
+        this._cam = null
+        this._evalCount = 0
+        return this
+    }
+
+    run () {
+        this.loadIndex()
+        this.loadCam()
+        return this
+    }
+
+    // --- load index ---
+
+    loadIndex () {
+        const path = "_index.json"
+        this._indexResource = new BootResource().init().setPath(path).setOnLoad((resource) => (this.onLoadIndex(resource))).load()
+        return this
+    }
+
+    onLoadIndex (resource) {
+        this._index = resource.dataAsJson()
+        this.evalIfReady()
+    }
+
+    // --- load cam ---
+
+    loadCam () {
+        const path = "_cam.json"
+        this._indexResource = new BootResource().init().setPath(path).setOnLoad(resource => this.onLoadCam(resource)).load()
+        return this
+    }
+
+    onLoadCam (resource) {
+        this._cam = resource.dataAsJson()
+        this.evalIfReady()
+    }
+
+    // --- eval ---
+
+    evalIfReady () {
+        if (this._index && this._cam) {
+            this.eval()
+            this.onDone()
+        }
+    }
+
+    extForPath (path) {
+        const parts = path.split(".")
+        return parts.length ? parts[parts.length -1] : undefined
+    }
+
+    camValueForEntry (entry) {
+        const value = this._cam[entry.hash]
+        if (!value) {
+            throw new Error("missing cam value for entry: " + JSON.stringify(entry))
+        }
+        return value
+    }
+
+    jsEntries () {
+        return this._index.filter(entry => this.extForPath(entry.path) === "js")
+    }
+
+    cssEntries () {
+        return this._index.filter(entry => this.extForPath(entry.path) === "css")
+    }
+
+    eval () {
+        this.cssEntries().forEach(entry => this.evalCssEntry(entry))
+        this._jsEntriesCount = this.jsEntries().length
+        this.jsEntries().forEach(entry => this.evalJsEntry(entry))
+    }
+
+    evalJsEntry (entry) {
+        const value = this.camValueForEntry(entry)
+        console.log("eval: " +  entry.path)
+        const sourceUrl = "\n//# sourceURL=" + entry.path + " \n"
+        //const sourceUrl = "\n//# sourceURL=./" + entry.path + " \n"
+        const debugCode = value + sourceUrl
+        eval(debugCode)
+        return this
+    }
+    
+    evalCssEntry (entry) {
+        if (this.isInBrowser()) {
+            const cssString = this.camValueForEntry(entry) 
+            const debugCssString = cssString + "\n\n/* " + entry.path + "*/"
+            console.log("eval css: " +  entry.path)
+            const element = document.createElement('style');
+            element.type = 'text/css';
+            element.appendChild(document.createTextNode(debugCssString))
+            document.head.appendChild(element);
+        }
         return this
     }
 
     /*
-    unshiftFilePath (path) {
-        //console.log("ResourceLoader unshiftFilePath: '" + path + "'")
-        this.urls().unshift(path)
-        this.setMaxUrlCount(this.maxUrlCount() + 1)
-        return this
-    }
-
-    pushFilePath (path) {
-        //console.log("ResourceLoader pushFilePath: '" + path + "'")
-        this.urls().push(path)
-        this.setMaxUrlCount(this.maxUrlCount() + 1)
+    evalWithRequire () {
+        this.files().forEach(file => require(file))
         return this
     }
     */
 
-    pushDoneCallback (aCallback) {
-        this.doneCallbacks().push(aCallback)
-        return this
-    }
+    // --- browser specific ---
 
-    // --- run ---
-
-    run () {
-        this.loadNext()
-        return this
-    }
-
-    isDone () {
-        return this.urls().length === 0
-    }
-
-    loadNext () {
-        if (!this.isDone()) {
-            const url = this.urls().shift()
-            this.loadUrl(url)
-        } else {
-            this.done()
-        }
-        return this
+    isInBrowser () {
+        return (typeof(document) !== 'undefined')
     }
 
     postEvent (eventName, detail) {
@@ -160,112 +209,37 @@
         }
         return this
     }
-
-    fullPathForUrl (url) {
-        if (!this.isInBrowser()) {
-            if (url.indexOf("://") === -1 && url.indexOf("/") !== 0) {
-                //console.log("url: '" + url + "'")
-                const rootPath = process.cwd()
-                const nodePath = require("path")
-                const fullPath = nodePath.join(rootPath, url)
-                console.log("url: '" + url + "' -> '" + fullPath + "'")
-                return fullPath
-            }
-        }
-        return url
+    
+    onProgress (path, max) {
+        this._evalCount ++
+        const detail = { url: path, progress: this._evalCount / this._jsEntriesCount }
+        //this.postEvent("resourceLoaderLoadUrl", detail)
+        this.postEvent("resourceLoaderProgress", detail)
     }
 
-    loadUrl (url) {
-        const fullPath = this.fullPathForUrl(url)
-         //console.log("ResourceLoader loadUrl: '" + fullPath + "'")
-
-        if (this.isInBrowser()) { // post event
-            const detail = { url: fullPath, maxUrlCount: this.maxUrlCount() }
-            this.postEvent("resourceLoaderLoadUrl", detail)
-        }
-
-        const ext = url.split(".").pop().toLowerCase()
-
-        if (ext === "js" /*|| ext === "json"*/) {
-            this.loadJsUrl(fullPath)
-        } else if (ext === "css") {
-            this.loadCssUrl(fullPath)
-        } else {
-            if (!this.isEmbeded()) {
-                this.resourceFilePaths().push(fullPath) 
-            }
-            // leave it to other resource handlers which call ResourceLoader.shared().resourceFilePathsWithExtensions()
-            this.loadNext()
-        }
-
-        return this
-    }
-
-    loadJsUrl (url) {
-        this.jsFilesLoaded().push(url)
-        const isImportsFile = url.split("/").pop() === "_imports.js"
-
-        if (this.isInBrowser() && isImportsFile) {
-            this.setCurrentImportPath(this.baseForPath(url))
-        }
-
-        if (this.isEmbeded()) { // skip script and goto next because these are all merged into one big script tag already
-            this.loadNext()
-            return
-        }
-
-        if (this.isInIndexMode() && !isImportsFile) { // skip script and goto next because we're building index and only need to load imports
-            this.loadNext()
-            return
-        }
-
-        const script = JsScript.clone().setImporter(this).setFullPath(url).setDoneCallback(() => { this.loadNext() })
-        this.setCurrentScript(script)
-        this.currentScript().run()
-        return this
-    }
-
-    loadCssUrl (url) {
-        this.cssFilesLoaded().push(url)
-
-        if (!this.isEmbeded()) {
-            CssLink.clone().setFullPath(url).run() // move to CSSResources?
-        }
-
-        this.loadNext()
-        return this
-    }
-
-    done () {
-        console.log("ResourceLoader.done() -----------------------------")
-        if (!this.isInIndexMode()) {
-            this.doneCallbacks().forEach(callback => callback())
-        }
-        this.postEvent("resourceLoaderDone", { }) 
-        if (this.finalCallback()) {
-            this.finalCallback()()
-        }
-        return this
-    }
-
-    setError (error) {
+    onError (error) {
         this.postEvent("resourceLoaderError", { error: error }) 
-        return this
     }
-}.initThisClass());
 
-// --- ResourceLoader -----------------------------------------------
+    onDone () {
+        this.postEvent("resourceLoaderDone", {}) 
+    }
 
+    // --- public API ---
 
-getGlobalThis().resourceLoader = ResourceLoader.shared();
-resourceLoader.pushRelativePaths(["_imports.js"]);
+    resourceFilePaths () {
+        return this._index.map(entry => entry.path)
+    }
 
-if (getGlobalThis().ResourceLoaderIsEmbedded) {
-    console.log("ResourceLoader is embeded, will run on page load")
-    resourceLoader.setIsEmbeded(getGlobalThis().ResourceLoaderIsEmbedded)
-    window.addEventListener("load", () => { resourceLoader.run(); });
-} else {
-    console.log("ResourceLoader is not embeded, will not auto run")
-    //console.log("ResourceLoader is not embeded, will run with timeout")
-    //setTimeout(() => resourceLoader.run(), 1)
+    resourceEntriesWithExtensions (extensions) {
+        return this._index.filter(entry => extensions.indexOf(entry.path) !== -1)
+    }
+
+    resourceFilePathsWithExtensions (extensions) {
+        return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
+    }
 }
+
+ResourceLoader.shared().run()
+
+

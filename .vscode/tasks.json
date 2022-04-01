@@ -4,28 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "create index.html",
-            "type": "shell",
-            "command": "node",
-            "args": [
-                "./source/boot/index-builder/main.js"
-            ],
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "presentation": {
-                "reveal": "silent",
-                "panel": "shared"
-            },
-            "problemMatcher": []
+            "label": "Build",
+            "dependsOn": [
+                "build _index.json & _cam.json",
+            ]
         },
 
         {
-            "label": "remove index.html",
+            "label": "build _index.json & _cam.json",
             "type": "shell",
-            "command": "rm",
+            "command": "node",
             "args": [
-                "index.html"
+                "./source/boot/index-builder/ImportsIndexer.js"
             ],
             "options": {
                 "cwd": "${workspaceRoot}"
@@ -55,15 +45,5 @@
             },
             "problemMatcher": [],
         }
-
-        /*
-        {
-            "label": "Run Server",
-            "dependsOn": [
-                "CleanUp_Client",
-                "Client_Build"
-            ]
-        },
-        */
     ]
 }

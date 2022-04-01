@@ -1,8 +1,6 @@
-"use strict";
-
-resourceLoader.pushRelativePaths([
-    //"ObservableProxy.js",
-    //"FirewallProxy.js",
-]);
+[
+    "ObservableProxy.js",
+    "FirewallProxy.js"
+]
 
 

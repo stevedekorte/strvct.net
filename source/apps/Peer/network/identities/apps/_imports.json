@@ -1,0 +1,12 @@
+[
+    "BMApplet.js",
+
+    "Classifieds/_imports.json",
+    "Twitter/_imports.json",
+    "BitcoinWallet/_imports.json",
+    "Chat/_imports.json",
+    "GroupChat/_imports.json",
+    "Mail/_imports.json",
+
+    "BMApps.js"
+]
