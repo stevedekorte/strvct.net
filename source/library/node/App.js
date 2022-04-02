@@ -15,23 +15,6 @@
     static loadAndRunShared () {
         const name = this.name
         this.defaultStore().setName(name)
-
-        /*
-        const successCallback = () => {
-            this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
-            const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(name, this)
-            this.setShared(app)
-            app.run()
-        }
-
-        const errorCallback = (errorMessage) => {
-            window.ResourceLoaderPanel.shared().setError(errorMessage)
-            return this
-        }
-
-        this.defaultStore().asyncOpen(successCallback, errorCallback) 
-        */
-
         this.defaultStore().asyncOpen(() => { this.onLoadSuccess() }, (e) => { this.onLoadError(e) }) 
     }
 

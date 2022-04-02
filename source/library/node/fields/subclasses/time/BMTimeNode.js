@@ -35,7 +35,7 @@
 
     init () {
         super.init()
-        this.setNoteIconName("right arrow")
+        this.setNoteIconName("right-arrow")
         this.setFormatter(TimeFormatter.clone())
         return this
     }

@@ -19,7 +19,7 @@
         this.setShouldStoreSubnodes(true)
         this.setNodeCanReorderSubnodes(true)
         this.setCanDelete(true)
-        this.setNoteIconName("right arrow")
+        this.setNoteIconName("right-arrow")
     }
 
     init () {

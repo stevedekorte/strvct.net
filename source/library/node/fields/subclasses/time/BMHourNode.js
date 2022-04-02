@@ -22,7 +22,7 @@
         this.setNodeCanEditTitle(false)
         this.setNodeCanReorderSubnodes(false)
 
-        this.setNoteIconName("right arrow")
+        this.setNoteIconName("right-arrow")
     }
 
     setValue (v) {

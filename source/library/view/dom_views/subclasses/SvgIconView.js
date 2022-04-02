@@ -62,11 +62,15 @@
             const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)
 
             if (iconNode) {
+                debugger;
                 this.setSvgString(iconNode.svgString())
                 this.unhideDisplay()
             } else {
                 this.setSvgString(null)
-                //throw new Error("can't find icon '" + name + "'") 
+                const error = "can't find icon '" + name + "'"
+                console.log(error)
+                debugger;
+                //throw new Error(error) 
             }
         } else {
             this.setSvgString(null)

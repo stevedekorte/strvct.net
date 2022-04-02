@@ -14,7 +14,7 @@
         this.newSlot("path", null)
         this.newSlot("name", null)
         this.newSlot("options", null)
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     init () {
@@ -60,7 +60,7 @@
 
     didLoad () {
         if (this.isDebugging()) {
-            this.debugLog(".didLoad(" + this.name() + ") " + this.path())
+            this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'")
             //this.debugLog(".didLoad('" + this.name() + "')")
         }
         return this

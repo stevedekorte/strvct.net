@@ -38,7 +38,7 @@
         this.addAction("add")
         this.setSummaryFormat("value")
         this.setSubnodeProto(BMOptionNode)
-        this.setNoteIconName("right arrow")
+        this.setNoteIconName("right-arrow")
     }
 
     /*

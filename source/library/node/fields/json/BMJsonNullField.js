@@ -20,7 +20,7 @@
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)
         this.setCanDelete(true)
-        //this.setNoteIconName("right arrow")
+        //this.setNoteIconName("right-arrow")
 
         this.setKeyIsVisible(false)
         this.setValue("NULL")

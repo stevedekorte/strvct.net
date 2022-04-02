@@ -31,7 +31,7 @@
     init () {
         super.init()
         
-        this.setNoteIconName("right arrow")
+        this.setNoteIconName("right-arrow")
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)

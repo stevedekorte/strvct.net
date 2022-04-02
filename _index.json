@@ -571,8 +571,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/SvgIconView.js",
-    "size": 5062,
-    "hash": "ivzO5OhTnbttaIQ+OUnA2fAQf/AiVZAwVjb67hyfexo="
+    "size": 5185,
+    "hash": "ViVj/MQdYv5M5Smdtzq90ZUiiEiWmYY6/TxMwvyN6U8="
   },
   {
     "path": "source/library/view/dom_views/subclasses/TextField.js",
@@ -707,7 +707,7 @@
   {
     "path": "source/library/node/nodes/BMFolderNode.js",
     "size": 1759,
-    "hash": "UXd9h3YgX9X/kdb6f42Xw+uzXqBY3kw16viri9RkQCg="
+    "hash": "fBTLyaPnwLlyzzfmUFNQEPGcBCaVzr2azzRWCqtC/1k="
   },
   {
     "path": "source/library/node/nodes/BMImageNode.js",
@@ -747,7 +747,7 @@
   {
     "path": "source/library/node/fields/json/BMJsonNode.js",
     "size": 1895,
-    "hash": "us57BSFOPICQCkq+NoTFMF098uvWkLlW+K6qIgZip1Y="
+    "hash": "Q8qL+CJPZF1uqGU+izmDzqPmOIq/LySZoYQSE/iD/tk="
   },
   {
     "path": "source/library/node/fields/json/BMJsonArrayNode.js",
@@ -757,17 +757,17 @@
   {
     "path": "source/library/node/fields/json/BMJsonDictionaryNode.js",
     "size": 2075,
-    "hash": "4g98NltLFXmJ9M4rv5/eDQShOEo+6bSG6Gd67NsU5IQ="
+    "hash": "V0JGfokquE/guVLNpQKLVpMfl0Eq451j9OAim1c+ixo="
   },
   {
     "path": "source/library/node/fields/json/BMJsonNullField.js",
     "size": 967,
-    "hash": "fiPIXqxvx9db8Sq41ezjp/lpH6oJ4Xf6H0u67ntrUCU="
+    "hash": "/UFKZqBJojqSXEtNXWgT3EIhc0YkRSQayHdswLbHhnY="
   },
   {
     "path": "source/library/node/fields/BMCreatorNode.js",
     "size": 2740,
-    "hash": "zy9dextowRvftF2SjDj6b57u6Ov6poTyeHIhb3E5yjw="
+    "hash": "TwiRI+cvY7wg50mgNH2l76GP1qyq16Gq7Q36iAEgows="
   },
   {
     "path": "source/library/node/fields/subclasses/BMBooleanField.js",
@@ -822,7 +822,7 @@
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
     "size": 2901,
-    "hash": "CCxX+kvHqgvTKZ0v8rZlWK5yGICUygj2+B0sEsCReNo="
+    "hash": "T9zgzP/4/3LoJ/ogJQM21t92V/6tEozGtwSoVSnNjyk="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
@@ -832,7 +832,7 @@
   {
     "path": "source/library/node/fields/subclasses/date/BMDateNode.js",
     "size": 3910,
-    "hash": "nHFYRLmhr0DjaAhOiGkUmAZGxDrru0NwqZgYK3ZETZM="
+    "hash": "R0HwCTBfPDmTK4gP5zo11Y1MYvGRxF9lhnNFiFTVG/0="
   },
   {
     "path": "source/library/node/fields/subclasses/date/BMYearNode.js",
@@ -842,7 +842,7 @@
   {
     "path": "source/library/node/fields/subclasses/date/BMMonthNode.js",
     "size": 1941,
-    "hash": "PZ9MVSNf+q20gv+4q/8zuTB9CBnxv69IbjeS+hP/+1Q="
+    "hash": "7ZSp4m78MnsJc5iSJbVWDBK4hvK/B09z9GnDTl8DRWY="
   },
   {
     "path": "source/library/node/fields/subclasses/date/BMDayNode.js",
@@ -852,12 +852,12 @@
   {
     "path": "source/library/node/fields/subclasses/time/BMTimeNode.js",
     "size": 2285,
-    "hash": "R1gWa4U4jwg+7mejr9pUSVYEXDhLRoyryKmQZRx/w1c="
+    "hash": "hvk15bj4xpSRAMYVd9ObyMMZOkMulX8srLvyiJui0DU="
   },
   {
     "path": "source/library/node/fields/subclasses/time/BMHourNode.js",
     "size": 1296,
-    "hash": "MBprJt3W+Z3EmEhbsaOs2845QZyCh6n07a9PK6qenUo="
+    "hash": "bB24iM8noi0PSYtEe28AEGjPzgUT44s32L9/Lw0155o="
   },
   {
     "path": "source/library/node/fields/subclasses/time/BMMinuteNode.js",
@@ -867,7 +867,7 @@
   {
     "path": "source/library/node/fields/subclasses/time/BMMeridiemNode.js",
     "size": 1889,
-    "hash": "Q/MCaD95dFPjRXbNUbeAe1fHznWBHdRpd3q0wBJcn1I="
+    "hash": "O3B3FJedg3bbe33FE6bJpcMMuThVq4S/nuWb9qPnlVQ="
   },
   {
     "path": "source/library/node/storage/inspectors/BMDataStoreRecord.js",
@@ -1071,8 +1071,8 @@
   },
   {
     "path": "source/library/resources/fonts/BMFont.js",
-    "size": 1622,
-    "hash": "JrFVZboZqAQnt9+QPR0bLy+6qqjPi/vRvUsvVVkrDPE="
+    "size": 1632,
+    "hash": "jJ67exNN2aoSQl8KFNNftGrJYRdrS13KflAe9Dc7iD8="
   },
   {
     "path": "source/library/resources/fonts/BMFontRowView.js",
@@ -1598,6 +1598,11 @@
     "path": "resources/icons/repost.svg",
     "size": 579,
     "hash": "ctJUuIYVSYiL2PxWX9uIh943VHsPwoaQGtI0ETJGskc="
+  },
+  {
+    "path": "resources/icons/right-arrow.svg",
+    "size": 405,
+    "hash": "ivh3s3SIP60y90DwzIc7ewW6VNbDS40KIVzP15C3fUs="
   },
   {
     "path": "resources/icons/right-gray.svg",

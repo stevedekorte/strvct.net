@@ -60,7 +60,7 @@ BMIconResources.shared().addIcon("left", `
 </svg>
 `)
 
-BMIconResources.shared().addIcon("right arrow", `
+BMIconResources.shared().addIcon("right-arrow", `
 <svg width="100%" height="100%" viewBox="0 0 306 306">
 	<polygon points="94.35,0 58.65,35.7 175.95,153 58.65,270.3 94.35,306 247.35,153" fill="#888"/>
 </svg>

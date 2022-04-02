@@ -37,7 +37,7 @@
         //this.setNodeUsesColumnBackgroundColor(false)
 
         this.setNodeCanInspect(true) 
-        //this.setNoteIconName("right arrow")
+        //this.setNoteIconName("right-arrow")
     }
 
     init () {

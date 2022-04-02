@@ -12,14 +12,14 @@
 
     Automatically sets up in the document when loading this file via:
 
-        ResourceLoaderPanel.shared().open()
+        FullScreenProgressPanel.shared().open()
 
     When a ResourceLoader done event is received, the panel removes it's HTML element from the document.
 
 */
 
 
-(class ResourceLoaderPanel extends Base {
+(class FullScreenProgressPanel extends Base {
     
     initPrototype () {
         this.newSlot("mainElement", null)
@@ -321,4 +321,4 @@
 
 }.initThisClass());
 
-ResourceLoaderPanel.shared().open()
+FullScreenProgressPanel.shared().open()

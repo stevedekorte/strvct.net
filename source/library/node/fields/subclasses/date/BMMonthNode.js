@@ -14,7 +14,7 @@
 
     init () {
         super.init()
-        this.setNoteIconName("right arrow")
+        this.setNoteIconName("right-arrow")
 
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
