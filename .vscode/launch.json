@@ -19,6 +19,18 @@
             "enableContentValidation": false
         },
 
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "launch strvct.net",
+            "url": "https://strvct.net/",
+            "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--disable-web-security"
+            ],
+            "enableContentValidation": false
+        },
+
         /*
         {
             "type": "chrome",

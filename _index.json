@@ -35,9 +35,14 @@
     "hash": "4D2u5OencIuJYYfLi6GIKzfk7CEroBMUqzLHJwQd20o="
   },
   {
-    "path": "source/library/ideal/getGlobalThis.js",
+    "path": "source/boot/getGlobalThis.js",
     "size": 722,
     "hash": "t11KP5rd5RSfy3Bb3u6BbBhtRrA6Ls+cXyhQ7A4r808="
+  },
+  {
+    "path": "source/boot/Base.js",
+    "size": 2998,
+    "hash": "QhtDglyylLBonDjyQhKjTYNGuCUyWjxK0f0cQ0LUwEc="
   },
   {
     "path": "source/library/ideal/categories/Mirror.js",
@@ -541,8 +546,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/CloseButton.js",
-    "size": 1587,
-    "hash": "bduBp2R5IwSXkA8VHCKlM8OAG/xOSoxlnJ43NY26D0s="
+    "size": 1591,
+    "hash": "fIkIOrk31cXdFHI+4oZe7oJs2e5Fp0u4x+aAmuTnmpU="
   },
   {
     "path": "source/library/view/dom_views/subclasses/DocumentBody.js",
@@ -566,8 +571,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/SvgIconView.js",
-    "size": 5058,
-    "hash": "CPwwrGBvcuXUzxH8tT8TeN1EMOxpeOrckPethH0XCrM="
+    "size": 5062,
+    "hash": "ivzO5OhTnbttaIQ+OUnA2fAQf/AiVZAwVjb67hyfexo="
   },
   {
     "path": "source/library/view/dom_views/subclasses/TextField.js",
@@ -1035,11 +1040,6 @@
     "hash": "4rRMLlOck/9OHBE6N6ULMTh4tBxrb6FvakvIdBSJ87s="
   },
   {
-    "path": "source/library/resources/Base.js",
-    "size": 2998,
-    "hash": "QhtDglyylLBonDjyQhKjTYNGuCUyWjxK0f0cQ0LUwEc="
-  },
-  {
     "path": "source/library/resources/MimeExtensions.js",
     "size": 32948,
     "hash": "hjaOGG0nSJbyBoSK+r+vyFNBcnrsLvbnK6u1a5M2Ie0="
@@ -1061,8 +1061,8 @@
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
-    "size": 1882,
-    "hash": "bq4Vxa3fpgb17dkWKdqhQT1civaqilbbdhGkdvCDCiI="
+    "size": 1898,
+    "hash": "D5Mh02JZVtQh6qWI4eJdGTwppb5VLlziSefs5Wn9m0A="
   },
   {
     "path": "source/library/resources/fonts/BMFontFamily.js",

@@ -32,7 +32,6 @@
         this.newSlot("errorElement", null)
 
         this.newSlot("error", null)
-        this.newSlot("loadCount", 0)
     }
 
     init () {
@@ -204,7 +203,7 @@
 
     resourceLoaderProgress (event) {
         //console.log(this.type() + " got resourceLoaderLoadUrl " + JSON.stringify(event.detail))
-        this.didImportUrl(event.detail.url, event.detail.progress)
+        this.didLoadPath(event.detail.path, event.detail.progress)
     }
 
     resourceLoaderError (event) {
@@ -235,12 +234,14 @@
         return this
     }
 
-    didImportUrl (url, max) {
+    // ---------------------------------------------
+
+    didLoadPath (url, progress) {
         if (!this.hasError()) {
             this.setCurrentItem(url.split("/").pop())
         }
         //console.log("didImportUrl " + url)
-        this.updateProgressBar(max)
+        this.updateProgressBar(progress)
         return this
     }
 
@@ -274,13 +275,6 @@
         item.style.color = "#444"
         item.currentValue = itemName	
         item.innerHTML = itemName // commented out to make cleaner 
-        /*
-    	//setTimeout(() => { 
-    	    if (item.currentValue === item.innerHTML) {
-    	        item.style.opacity = 1
-	        }
-    	//}, 0)
-        */
         return this
     }
 
@@ -296,11 +290,6 @@
         const msg = "ERROR: " + this._currentItemName + " : " + error
         console.log(msg)
 
-        /*
-        if (this.error()) {
-            this.setError(this.error() + "<br>" + error)
-        }
-        */
         this._error = error
         //console.trace()
         this.errorElement().innerHTML = error
@@ -329,11 +318,7 @@
         this.stopListening()
     }
 
-    registerForWindowLoad () {
-        window.addEventListener("load", () => { this.open() });
-        return this
-    }
 
 }.initThisClass());
 
-ResourceLoaderPanel.open()
+ResourceLoaderPanel.shared().open()

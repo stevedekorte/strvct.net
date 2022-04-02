@@ -35,7 +35,6 @@ class BootResource {
         const path = this._path
         const request = new XMLHttpRequest();
         request.open('GET', path, true);
-        console.log("runInBrowser: ", path)
         //request.responseType = 'application/json'; // optional
         request.onload  = (event) => { this.onLoad(event) }
         request.onerror = (event) => { this.onLoadError(event) }
@@ -94,6 +93,7 @@ class ResourceLoader {
     }
 
     run () {
+        this.onProgress("", 0)
         this.loadIndex()
         this.loadCam()
         return this
@@ -108,6 +108,7 @@ class ResourceLoader {
     }
 
     onLoadIndex (resource) {
+        //this.onProgress("index", 1/2)
         this._index = resource.dataAsJson()
         this.evalIfReady()
     }
@@ -121,6 +122,7 @@ class ResourceLoader {
     }
 
     onLoadCam (resource) {
+        //this.onProgress("cam", 1/2)
         this._cam = resource.dataAsJson()
         this.evalIfReady()
     }
@@ -163,10 +165,11 @@ class ResourceLoader {
 
     evalJsEntry (entry) {
         const value = this.camValueForEntry(entry)
-        console.log("eval: " +  entry.path)
+        //console.log("eval: " +  entry.path)
         const sourceUrl = "\n//# sourceURL=" + entry.path + " \n"
         //const sourceUrl = "\n//# sourceURL=./" + entry.path + " \n"
         const debugCode = value + sourceUrl
+        //this.onProgress(entry.path)
         eval(debugCode)
         return this
     }
@@ -175,7 +178,7 @@ class ResourceLoader {
         if (this.isInBrowser()) {
             const cssString = this.camValueForEntry(entry) 
             const debugCssString = cssString + "\n\n/* " + entry.path + "*/"
-            console.log("eval css: " +  entry.path)
+            //console.log("eval css: " +  entry.path)
             const element = document.createElement('style');
             element.type = 'text/css';
             element.appendChild(document.createTextNode(debugCssString))
@@ -210,9 +213,9 @@ class ResourceLoader {
         return this
     }
     
-    onProgress (path, max) {
+    onProgress (path) {
         this._evalCount ++
-        const detail = { url: path, progress: this._evalCount / this._jsEntriesCount }
+        const detail = { path: path, progress: this._evalCount / this._jsEntriesCount }
         //this.postEvent("resourceLoaderLoadUrl", detail)
         this.postEvent("resourceLoaderProgress", detail)
     }
@@ -232,7 +235,7 @@ class ResourceLoader {
     }
 
     resourceEntriesWithExtensions (extensions) {
-        return this._index.filter(entry => extensions.indexOf(entry.path) !== -1)
+        return this._index.filter(entry => extensions.indexOf(this.extForPath(entry.path)) !== -1)
     }
 
     resourceFilePathsWithExtensions (extensions) {

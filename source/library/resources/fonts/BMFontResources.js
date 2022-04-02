@@ -47,8 +47,9 @@
         const components = aPath.split("/")
 
         // verify path is in expected format 
-        const dot = components.removeFirst()
-        assert(dot === ".")
+        if (components.first() === ".") {
+            components.removeFirst()
+        }
 
         const resources = components.removeFirst()
         assert(resources === "resources")

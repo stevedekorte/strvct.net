@@ -9,23 +9,32 @@
 
        [
             {
-                path: aString, // relate to root path
-                size: aNumber,
-                hash: aHash
+                path: aString, // relative to root path
+                size: aNumber, // useful for controlling loading behavior
+                hash: aHash // used to look up contents in cam dictionary (see below)
             },
             ...
         ]
 
    Also builds a _cam.json (Content Addressable Memory) file with format:
+
     {
-        hash: {
+        "<aHash>": {
             data: aString,
             // room for meta data
         },
         ...
     }
 
-    which only contains entries for JS and CSS files.
+    which only contains entries for JS and CSS files. 
+
+    A zipped version of cam file is also produced.
+
+    Use:
+
+    The root index.html file just needs to run ResourceLoader.js which 
+    will load the above two files and eval the JS and CSS code to start
+    the app.
    
 */
 
