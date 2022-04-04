@@ -19,7 +19,7 @@
 */
 
 
-(class FullScreenProgressPanel extends Base {
+(class ResourceLoaderPanel extends Base {
     
     initPrototype () {
         this.newSlot("mainElement", null)
@@ -220,16 +220,16 @@
 
     startListening () {
         window.addEventListener("resourceLoaderProgress", this._resourceLoaderProgressFunc)
-        window.addEventListener("resourceLoaderError",   this._resourceLoaderErrorFunc)
-        window.addEventListener("resourceLoaderDone",    this._resourceLoaderDoneFunc)
-        window.addEventListener("error",    this._windowErrorFunc)
+        window.addEventListener("resourceLoaderError", this._resourceLoaderErrorFunc)
+        window.addEventListener("resourceLoaderDone", this._resourceLoaderDoneFunc)
+        window.addEventListener("error", this._windowErrorFunc)
         return this
     }
 
     stopListening () {
-        window.removeEventListener("resourceLoaderProgress",   this._resourceLoaderProgressFunc)
-        window.removeEventListener("resourceLoaderError",    this._resourceLoaderErrorFunc)
-        window.removeEventListener("resourceLoaderDone",    this._resourceLoaderDoneFunc)
+        window.removeEventListener("resourceLoaderProgress", this._resourceLoaderProgressFunc)
+        window.removeEventListener("resourceLoaderError", this._resourceLoaderErrorFunc)
+        window.removeEventListener("resourceLoaderDone", this._resourceLoaderDoneFunc)
         window.removeEventListener("error", this._windowErrorFunc)
         return this
     }
@@ -321,4 +321,4 @@
 
 }.initThisClass());
 
-FullScreenProgressPanel.shared().open()
+ResourceLoaderPanel.shared().open()

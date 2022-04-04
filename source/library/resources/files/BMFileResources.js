@@ -6,13 +6,7 @@
 
 */
 
-(class BMFileResources extends BMNode {
-    
-    static initThisClass () {
-        super.initThisClass()
-        this.setIsSingleton(true)
-		return this
-    }
+(class BMFileResources extends BMResourceGroup {
     
     initPrototype () {
         this.newSlot("rootPath", ".")
@@ -20,25 +14,27 @@
 
     init () {
         super.init()
-
         this.setTitle("FileResources")
         this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         this.watchOnceForNote("appDidInit")
+
+        this.setupSubnodes()
+        //this.onFinishInit()
         return this
     }
 
     appDidInit () {
         //this.debugLog(".appDidInit()")
         //this.setupSubnodes()
-        this.setupSubnodes()
+   
         return this
     }
     
     setupSubnodes () {
         const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
         this.addSubnode(rootFolder)
-        const allPaths = ResourceLoader.shared().resourceFilePaths()
+        const allPaths = ResourceManager.shared().resourceFilePaths()
         allPaths.forEach(aPath => {
             const pathArray = aPath.split("/")
             while (pathArray.first() === ".") {

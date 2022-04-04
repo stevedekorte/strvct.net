@@ -39,9 +39,9 @@ const nodePath = require('path');
 
 	run() {
 		/*
-		require("../source/boot/ResourceLoader.js")
+		require("../source/boot/ResourceManager.js")
 		//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))
-		//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceLoader.js"))
+		//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceManager.js"))
 		*/
 
 		this._server = https.createServer(this.options(), (request, response) => { 

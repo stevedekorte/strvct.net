@@ -27,7 +27,7 @@
     }
 
     static onLoadError (errorMessage) {
-        window.ResourceLoaderPanel.shared().setError(errorMessage)
+        //window.ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
     initPrototype () {

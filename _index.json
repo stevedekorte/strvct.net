@@ -571,8 +571,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/SvgIconView.js",
-    "size": 5185,
-    "hash": "ViVj/MQdYv5M5Smdtzq90ZUiiEiWmYY6/TxMwvyN6U8="
+    "size": 5159,
+    "hash": "glliVz+OOZWhI9/4sQWYwdt3/I7KJMMkFp6HXtO5BTE="
   },
   {
     "path": "source/library/view/dom_views/subclasses/TextField.js",
@@ -601,8 +601,8 @@
   },
   {
     "path": "source/library/node/BMNode.js",
-    "size": 37517,
-    "hash": "E+f0+3KOrUXVIvSeauclO0ccXtULmk0pJ08doxUU0MQ="
+    "size": 37637,
+    "hash": "523o+ZCpReQY7D/V0JWaAtytFRu3G7+CnXkG1iwc2A8="
   },
   {
     "path": "source/library/node/storage/BMStorableNode.js",
@@ -1021,13 +1021,13 @@
   },
   {
     "path": "source/library/node/App.js",
-    "size": 5247,
-    "hash": "OrijrZOht7Gg3Q0j5R/VzOVkI1Le5VsYDwKCFJ4qJe4="
+    "size": 4700,
+    "hash": "/YhTFmyla1HoFLfSGtm6nhpei6jtbyGz2ZQ0wmLcpwk="
   },
   {
     "path": "source/library/resources/BMResource.js",
-    "size": 1454,
-    "hash": "qkMsB63rUuslDJPSbmiJAY19ZTm3vmGKQbMkFehRrO4="
+    "size": 1812,
+    "hash": "qewpOFMU7qdrZZ32s5LDNMnqy2urCEHRGOx6PBtDEuk="
   },
   {
     "path": "source/library/resources/BMResources.js",
@@ -1036,8 +1036,8 @@
   },
   {
     "path": "source/library/resources/BMResourceGroup.js",
-    "size": 2103,
-    "hash": "4rRMLlOck/9OHBE6N6ULMTh4tBxrb6FvakvIdBSJ87s="
+    "size": 2153,
+    "hash": "AYRPZ2PXYQgumq6iXw+zJN5LEbAqGhcdBXgqcV79lcs="
   },
   {
     "path": "source/library/resources/MimeExtensions.js",
@@ -1046,8 +1046,8 @@
   },
   {
     "path": "source/library/resources/files/BMFileResources.js",
-    "size": 1375,
-    "hash": "Og7bdUetFzgCXCEdR2XDkqvWc5FhBP01tpPv5cUIXLI="
+    "size": 1300,
+    "hash": "BiKLoX8lflLQacjCR5csTTpezsI/yhJmZA8N42NvpQ4="
   },
   {
     "path": "source/library/resources/files/BMResourceFolder.js",
@@ -1056,13 +1056,13 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 840,
-    "hash": "Xbwi5x8ejTzHQESuAQZNLxMrntkBt2Q0k1uTNwrNlTg="
+    "size": 2320,
+    "hash": "/GmIExwsEk2hSnUJ1+6M7DlFgCLTuadV7RrOhEVorsQ="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
-    "size": 1898,
-    "hash": "D5Mh02JZVtQh6qWI4eJdGTwppb5VLlziSefs5Wn9m0A="
+    "size": 1899,
+    "hash": "sr0ddGKMO1nWpelz3etb9M+q9MmLhtbTqIsANfwNNqM="
   },
   {
     "path": "source/library/resources/fonts/BMFontFamily.js",
@@ -1161,18 +1161,18 @@
   },
   {
     "path": "source/library/resources/icons/SvgIconNode.js",
-    "size": 622,
-    "hash": "XMTt0isvRrKg/zQ8ilIgeUf+KJ19AXn2+KxCW/vUN9A="
+    "size": 1293,
+    "hash": "YxkEK+k4Fn0K1GHXENBYrtxuCaovtEPO4VAh4f72xck="
   },
   {
     "path": "source/library/resources/json/BMJsonResources.js",
-    "size": 1170,
-    "hash": "qgj3fjXliRS4otbF/Korc45ja8afDxeSg8yCUH8F1vQ="
+    "size": 1171,
+    "hash": "s8gxu4VCrJ1Vqn/aRAKrD9cZNROPmlNIuOAoE18NHV0="
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 5862,
-    "hash": "gibLUkpDZYHv6QZMjzw3XpI46MT1JD/8q7DceuLaGWc="
+    "size": 5692,
+    "hash": "6N7FRX2ucULogTCCGWeOj47ePl+cYdBTBnPVJnjsB4M="
   },
   {
     "path": "source/apps/Strvct/_init.js",
@@ -1361,18 +1361,18 @@
   },
   {
     "path": "resources/icons/add-user-white.svg",
-    "size": 1275,
-    "hash": "22uxedOarJoZT0pE4Vgdk8FHp1y/Quhoz5Icxge1TfM="
+    "size": 1306,
+    "hash": "nDqDVCrAxT+TqdoAmkJ1ihE8wB4oA1VDk7Ei3TZpwEg="
   },
   {
     "path": "resources/icons/add-user.svg",
-    "size": 1315,
-    "hash": "tm0I/EGdgrChVV6qJtwHQBBmmiOScNHid8eqHGolQJs="
+    "size": 1334,
+    "hash": "G3vJmqMsDx44Xxm4u/ckVEADUy/ZFc9FVymcZshzqn8="
   },
   {
     "path": "resources/icons/add.svg",
-    "size": 1119,
-    "hash": "rn0DnaHeWTP7RgYEVtUikncqmEnZtEzQNzkaiWZibng="
+    "size": 1110,
+    "hash": "WlgZXuN8/N0m84AY8hOU4I4FXBv1oHaxEd87/C3o/cM="
   },
   {
     "path": "resources/icons/appicon-black-600x600.png",
@@ -1381,322 +1381,322 @@
   },
   {
     "path": "resources/icons/appicon-black.svg",
-    "size": 2023,
-    "hash": "FU3P89hSf14Jmjy5GVs/YzXHZ9Cn72h8hvSe2utaXnA="
+    "size": 2037,
+    "hash": "t+5OBBIgXy5OQEkIU6Ue0b1sze9Xjw2Ztu7BpwIaX+w="
   },
   {
     "path": "resources/icons/appicon.svg",
-    "size": 2023,
-    "hash": "8D5uhLYE2GsbcvquTGivtM+dW+i7qAsx4BCcOmv+7oo="
+    "size": 2037,
+    "hash": "4pgco+Y0xjvhqaMznVFc8VPgbTIM0Ymt2fL4EBRAkdw="
   },
   {
     "path": "resources/icons/at-white.svg",
-    "size": 1675,
-    "hash": "rLdbYBFy/ILUzlIbe7YinUsfGfSg3qRFwc2VDDv9GD8="
+    "size": 1706,
+    "hash": "VpBTIxMt5RV0eGjsE/wvF+5kSnK8LHAxhqj/TiioOfg="
   },
   {
     "path": "resources/icons/bell-white.svg",
-    "size": 1081,
-    "hash": "WWD1uDIjDxAMiodNxUwc5Hcb1l824n96R7a7Kk6+2kY="
+    "size": 1112,
+    "hash": "n9qglpxMT12VEa23aKVoJBbVqo8/1kerFBAAWiLVDt4="
   },
   {
     "path": "resources/icons/black-envelope.svg",
-    "size": 1113,
-    "hash": "JtVtTOKlncv/KAgcrWEcL4KZGemgHleXU5+IbZU02vM="
+    "size": 1174,
+    "hash": "r+DqtC+TmBfEaxgRMODDux9u4Y2sUK8fxyGA1jmn1Fk="
   },
   {
     "path": "resources/icons/bubble-white.svg",
-    "size": 1055,
-    "hash": "5kczv9AbDXImieBrCTHuOpfzUC8sw5U3x7TYTiuCUdM="
+    "size": 1086,
+    "hash": "hgnfaeTy3qL+zmYpWPVaPrBcLKc43XTBhPvJUF2lPP8="
   },
   {
     "path": "resources/icons/cancel.svg",
-    "size": 854,
-    "hash": "GcCE34RMMO/B+EuYA6AtXm1Hc/gVD65prL8AxeqP744="
+    "size": 861,
+    "hash": "HNskMsd4ky7gsqu9QjWLLhm/TGBh4Rdxksa4WtjPSKc="
   },
   {
     "path": "resources/icons/checkbox-circle-checked.svg",
-    "size": 257,
-    "hash": "GV5qUdWoDSmQ2HKNgc6Kng1UMCN2pSiouHMuRcvgiyY="
+    "size": 266,
+    "hash": "UI1a1eZQN8Jt1nG4ZMueyfzKRr83x3+t/6dCA0EKbrw="
   },
   {
     "path": "resources/icons/checkbox-circle-unchecked.svg",
-    "size": 334,
-    "hash": "I3dSUUsYsy9G43TyEZwUkowZ0eoZBj+0x0mPST+jyo0="
+    "size": 343,
+    "hash": "QKF4JY+Q1a0LdTgoy02AqjBbInK5dfQhtq81NTJkt60="
   },
   {
     "path": "resources/icons/checkbox-square-checked.svg",
-    "size": 389,
-    "hash": "xDE3oKU8Udwm8g+l2Ujvw4/7gXvYzs7+9P7Zo+b1dV8="
+    "size": 398,
+    "hash": "cmPp0kyGO83ilRLdtscgvMuvPdJrTasuHpXnG6zjWsM="
   },
   {
     "path": "resources/icons/checkbox-square-unchecked.svg",
-    "size": 302,
-    "hash": "3MFGLceDTa6BYJ0lAKLZWPKIxaeGMqYTYTZglqLXPYY="
+    "size": 311,
+    "hash": "E4MIFXwm0+5XJMjX91jvUo4yjQWzz4NQ0wGfrrjtOf8="
   },
   {
     "path": "resources/icons/checkmark.svg",
-    "size": 658,
-    "hash": "dpBx1+bpZVFYqSwft01Yrw9CIsX2HFm947LP4oRUDNc="
+    "size": 665,
+    "hash": "Rg6tJVy+IZeaVof2pzeYKeTdCgJlxZ75FAuF0U+KBv4="
   },
   {
     "path": "resources/icons/close-rounded.svg",
-    "size": 1028,
-    "hash": "6+iZyRN5thj5rCEStpQ52uLCXZOci22uFjHCETZV8/I="
+    "size": 1085,
+    "hash": "3K4gy979lDvZGFWOMyYLi5+CBbnAFZBQl29pX2wXiOk="
   },
   {
     "path": "resources/icons/close-white.svg",
-    "size": 992,
-    "hash": "yHv2akFtTdogg5wU1/NlBz/QpPiIDtAciGQD+F3c38g="
+    "size": 1017,
+    "hash": "/+K+twBekPBk/jm+UY0vKV8OIrOgPD4hzfiCPx6df68="
   },
   {
     "path": "resources/icons/close.svg",
-    "size": 1142,
-    "hash": "55XdYnz+nu71aQpvz5vS7Ok7oaq2Cg0xr9B1WDtWDJQ="
+    "size": 1197,
+    "hash": "EiJrJ+lwJBvp+sDNzcq5JUq1fh1IOe9Mh16JpFdFtxM="
   },
   {
     "path": "resources/icons/compose.svg",
-    "size": 855,
-    "hash": "bSC98fOHaznK96N/mzdOcDU6euPJaxq8KNE7dRxgMRQ="
+    "size": 862,
+    "hash": "RoPqCSHDSEgnIFBqnGXjIsD43wVszxeCclGuYjpgSCg="
   },
   {
     "path": "resources/icons/delete.svg",
-    "size": 849,
-    "hash": "+vKUvtbNRE4R71pfrxoMqfdfCKO/e5BEQ9ViTxeMPp0="
+    "size": 879,
+    "hash": "VcGTGNxFYCVLvwul3ptypB6+ONC6eOjfMi0/B2Gvj9s="
   },
   {
     "path": "resources/icons/deleteAll.svg",
-    "size": 849,
-    "hash": "+vKUvtbNRE4R71pfrxoMqfdfCKO/e5BEQ9ViTxeMPp0="
+    "size": 879,
+    "hash": "VcGTGNxFYCVLvwul3ptypB6+ONC6eOjfMi0/B2Gvj9s="
   },
   {
     "path": "resources/icons/down.svg",
-    "size": 437,
-    "hash": "EtkF9TfW8cqoD5QcrhPFvpKAuR/H2iTMZeJ948TJQSA="
+    "size": 444,
+    "hash": "MBPZxqL9aF/vtTmhzgZedSAbrncX7ibco4qbSKIrUzo="
   },
   {
     "path": "resources/icons/envelope-white.svg",
-    "size": 1082,
-    "hash": "UrplYGQdkt00D+6jyFprY4sYMYB4SiWImeNsBIVA8Gg="
+    "size": 1117,
+    "hash": "y1egJBulKEvScnIY5VyBxZEZ7+VyvNCrpbKzJrXVVDY="
   },
   {
     "path": "resources/icons/envelope.svg",
-    "size": 1113,
-    "hash": "JtVtTOKlncv/KAgcrWEcL4KZGemgHleXU5+IbZU02vM="
+    "size": 1174,
+    "hash": "r+DqtC+TmBfEaxgRMODDux9u4Y2sUK8fxyGA1jmn1Fk="
   },
   {
     "path": "resources/icons/eye.svg",
-    "size": 1193,
-    "hash": "PXUhI+1tgoirZ49iIUm6yutBfY8sc/zFDqajAqdSRcs="
+    "size": 1254,
+    "hash": "Iy/jem0LieEFKTmRH+qHp0taoSYRLWUvOiGoz8L4sds="
   },
   {
     "path": "resources/icons/favorite.svg",
-    "size": 504,
-    "hash": "HUmJWlVINJQ6DyT3We7hbBBfJ8vIiviIhAu0Pxfvj3c="
+    "size": 496,
+    "hash": "2JN1P4ZuKhABMPWM5M72QxE2Gan/D13Vj33dDxnS4oA="
   },
   {
     "path": "resources/icons/gear-filled-white.svg",
-    "size": 2480,
-    "hash": "KjcfEXsCGUA632MEFwenNgPUuP8eTEsB1iAkwX+g4jc="
+    "size": 2513,
+    "hash": "FN76PIIF2wybwss/FWHtZGArF+CRxeYO500tUR2tBJk="
   },
   {
     "path": "resources/icons/gear-filled.svg",
-    "size": 2494,
-    "hash": "1EauDvLn0vJywx2IhyYCk01XDs5+Sytsnta0eg5jnG8="
+    "size": 2553,
+    "hash": "H8n6txSR8OPjJ1KSRmkSL/ezjOo1j+qbXwPeNzZ7Ukc="
   },
   {
     "path": "resources/icons/gear-white.svg",
-    "size": 4180,
-    "hash": "Kksx/67t2qpCUas29J9y+LJ/4B7F5dt6O0Kjb+J1mME="
+    "size": 4219,
+    "hash": "9pQrK+g6wmWlCP+QYiSkQdQxlXc1csYc6fPx3aA/uQE="
   },
   {
     "path": "resources/icons/heart-black-filled.svg",
-    "size": 905,
-    "hash": "PYYJwdqajO6YnAA3ofVdlKwXLsdHjhjzbx3bYx8Q7Hk="
+    "size": 960,
+    "hash": "McZccA7TnMjZ7rt/+dmQbB2xubS9K3Nz4qjKA/Mztvk="
   },
   {
     "path": "resources/icons/heart-black-outlined.svg",
-    "size": 1302,
-    "hash": "0iUdixqbI30oECS6TZ/HoNO/a5drZ8T5OLAvxruQKaw="
+    "size": 1359,
+    "hash": "viN2XrVgUOn0H339jCJ3VwI5i5YvnckEfOwLghOT0aM="
   },
   {
     "path": "resources/icons/heart-red-filled.svg",
-    "size": 879,
-    "hash": "gdM4iFnC7L0wpSN1SudgsN/UWqjLEycbetHQYiOuHE8="
+    "size": 934,
+    "hash": "p5d73A4yhnjUsv+/myUy6WgFq8Uox7C7fkJvenIQqGo="
   },
   {
     "path": "resources/icons/home-white.svg",
-    "size": 1480,
-    "hash": "y67ggieNrRl7xE6zBmU2IV6c4Q1aREmkgdpk2iiM3Is="
+    "size": 1517,
+    "hash": "SVLQqcIhLGtISndpQqIF3otJIv7oUELG+KkLhLgFLz4="
   },
   {
     "path": "resources/icons/home.svg",
-    "size": 1512,
-    "hash": "Ld7cLeKqFlhCSKtOwi81+Wy/py8ORb03YrufTs5gOJA="
+    "size": 1535,
+    "hash": "7etgdqxxML51v7HAti6CDpwAZD/yJI+MGe/icn9fJKM="
   },
   {
     "path": "resources/icons/home2-white.svg",
-    "size": 829,
-    "hash": "QyGARCMrzXywRAKTpKUNhwmkwSzYLGKyNiOc+yXw/pw="
+    "size": 827,
+    "hash": "pY5Bn1S9kd4BKw2pnVoxfuouEjer4cA2MbpIhgHmHpQ="
   },
   {
     "path": "resources/icons/home3-white.svg",
-    "size": 819,
-    "hash": "nAEcebLwnFr408ToSCp9PArzznw9QRZFua1N0XMyc3g="
+    "size": 817,
+    "hash": "wAqiec/gv57UAl5Y2oZKnHTwJbDTGuj1JN+xhFVNhG0="
   },
   {
     "path": "resources/icons/home4-white.svg",
-    "size": 737,
-    "hash": "OEnCPN3BaNys22pU6BGi3gYQDUkcuKHWgK5+FqXnxLA="
+    "size": 768,
+    "hash": "mOsYdDpgGyHIR+1SlprovucszrXWRr23T0k2Y+9H57w="
   },
   {
     "path": "resources/icons/left.svg",
-    "size": 438,
-    "hash": "mF8QvH9XV9qO2npvqc63j395jtiJpdUxYumCvzZTQsw="
+    "size": 445,
+    "hash": "zugXvoo7bEkU3p7ud26HNVZq0Ue1+fKc/xRoSeo8rMo="
   },
   {
     "path": "resources/icons/lightning-white.svg",
-    "size": 1066,
-    "hash": "jY9f8+kzWf38DjDHxGuBveIV0o9pGnZrQecw56R5Yvw="
+    "size": 1097,
+    "hash": "byeFMX9KTSCAnseNPkR3YlDrK3oIu3A0v85/gCUQzVo="
   },
   {
     "path": "resources/icons/lightning2-white.svg",
-    "size": 1237,
-    "hash": "W8dwNRq8HiK2vqmM5T0S0fakUldGjspc4en/7Zq2/j4="
+    "size": 1270,
+    "hash": "TOWeXifWtkt3rb+SfZRdfOSgsnJ+MBAgVoJ3Huog8gc="
   },
   {
     "path": "resources/icons/lightning3-white.svg",
-    "size": 781,
-    "hash": "Eh9AAyy4TAcatGiFFKxVox3oVcxe0hsvxH5aOhnCh+c="
+    "size": 812,
+    "hash": "1sBBvqKrOPKg7/8EYnUy7BuhC4xI6bx0lKNJSlH1yKY="
   },
   {
     "path": "resources/icons/mail-white.svg",
-    "size": 907,
-    "hash": "OPdFMJiiF/RHGNK6FKi9NdmZZAnUCRqH9j9x+yCkuu8="
+    "size": 944,
+    "hash": "aM3a3nfJzTqL0mX2UjE/HTi9U7l4DeizjPX/sfjWtq8="
   },
   {
     "path": "resources/icons/plus-white.svg",
-    "size": 534,
-    "hash": "oHe3Ff4q7xhRcDb5sR4BZfSkSUoH0zCpbgtOHrqebWM="
+    "size": 532,
+    "hash": "/Ew5ZOaQohYdwbuVyPFIdwKysueH2qhwcKvKk4kTozc="
   },
   {
     "path": "resources/icons/plus.svg",
-    "size": 490,
-    "hash": "qYdXYqylRJXWuKxIQFiQ7cgF00NIbEf3FV+KQ1YfZRQ="
+    "size": 517,
+    "hash": "8N8hvwK462tdISMaxJN53VfMFl3sOn4Q21VSVCxeYlM="
   },
   {
     "path": "resources/icons/reply.svg",
-    "size": 709,
-    "hash": "Z6gzcRac9DS4nWHzEKkPSfAQ41LOo7tRcf/sy3Awglo="
+    "size": 768,
+    "hash": "j3g12JFHuGBfh7lg6vO6rTxwDp2LHWNZKmZ6Y6bmSDU="
   },
   {
     "path": "resources/icons/repost-white.svg",
-    "size": 1590,
-    "hash": "8iZGsL0gLZGqgkiOQWiU6TTgkOxCcuKtHfLvHdK3IEM="
+    "size": 1625,
+    "hash": "nycpp/f9Qm0wnDbcDA2ZfU2RxsmEw3E4EBoi4M0z+3s="
   },
   {
     "path": "resources/icons/repost.svg",
-    "size": 579,
-    "hash": "ctJUuIYVSYiL2PxWX9uIh943VHsPwoaQGtI0ETJGskc="
+    "size": 600,
+    "hash": "iwFmBO7AAXEKXSATFccrq7uGynsVvAfAIONXmF21W54="
   },
   {
     "path": "resources/icons/right-arrow.svg",
-    "size": 405,
-    "hash": "ivh3s3SIP60y90DwzIc7ewW6VNbDS40KIVzP15C3fUs="
+    "size": 406,
+    "hash": "9wY2eA4T56Lu7Vflp+Q49m19Qgvhr/nXjFB/tAT8P8k="
   },
   {
     "path": "resources/icons/right-gray.svg",
-    "size": 760,
-    "hash": "dLevgb1o+G7+dW7TETeOSxk2QIO5rkGwFpPokrdT81U="
+    "size": 793,
+    "hash": "Q7VHsfJJaELaMtz3aphEYSpjqcJAhZXwXBe/tv7eW/E="
   },
   {
     "path": "resources/icons/right-white.svg",
-    "size": 763,
-    "hash": "DWgDzYNoiYbuiboPEFb9vkNXb6BTysH/Fjv4ZjCwkng="
+    "size": 761,
+    "hash": "SVoQqxb3Ms7FIGSBK++vk20/2zBku2FVXY2gov6+3Mg="
   },
   {
     "path": "resources/icons/right.svg",
-    "size": 437,
-    "hash": "w5fJj/XqEUntzF/Qo+bVp1WiuR6XG+Mico5LPrGeVfU="
+    "size": 444,
+    "hash": "bVisyfTZx1jir+oA7NN9VSZOBIfMszIDHRiDw7yANKU="
   },
   {
     "path": "resources/icons/sandwich-menu.svg",
-    "size": 1173,
-    "hash": "+Nxe5F1K2umMTW5KAr5MWDPaJCH+OW+GkeZLohknpM4="
+    "size": 1198,
+    "hash": "49OXcpgTtJIVZxjzqWuYYuZkOJzxxGx+/ZG/Ml0F3Cc="
   },
   {
     "path": "resources/icons/search-white.svg",
-    "size": 1189,
-    "hash": "xNyoGlaEJN+T6+MlsRpQGxPsmFntVCReOudsHTpoxCo="
+    "size": 1220,
+    "hash": "pf8YUNABHNsgbf0NQqn6jGGYIrCuBzZ5i2t19T69g6Q="
   },
   {
     "path": "resources/icons/search.svg",
-    "size": 1192,
-    "hash": "zCHXCvIc8q/KMLIFFRWUu4+jVTXPiB0x11Yxb5Oz4l0="
+    "size": 1211,
+    "hash": "4S4FqtwKsfGMADHWDEYh+kWr4XjRi+Cyg1B6z74VMGg="
   },
   {
     "path": "resources/icons/send.svg",
-    "size": 1170,
-    "hash": "3XaE+3fPHgIly+VD4x/ulhlesaUv9o+njSd7nC19QbU="
+    "size": 1225,
+    "hash": "evW9O3CDDB6HfYAiaF7hTHErlHkma0Kl258oEWmz+d4="
   },
   {
     "path": "resources/icons/three-vertical-dots-outline.svg",
-    "size": 1335,
-    "hash": "t0/KWo1IVfGTq3EFZB1K5jSv8wXBGhDnP3xUhhRU32I="
+    "size": 1394,
+    "hash": "IxKzUndZ3y0+hX4LOokYOiBhYVZVAjOg9SlSddN3Qx4="
   },
   {
     "path": "resources/icons/three-vertical-dots.svg",
-    "size": 685,
-    "hash": "rreFczzUTkSmM40EaT3I/Te9r7Fz0u4mYSrOVQALF3w="
+    "size": 750,
+    "hash": "4LuGU/B8cBmy2I6jdfF53GQ4UJTPGEQB3MMWOrIxkeg="
   },
   {
     "path": "resources/icons/toggle-off.svg",
-    "size": 791,
-    "hash": "vTWS0yKMFWo+RYLPl4WpWxcq1hy8Pwm4LqlVKQ6R5O0="
+    "size": 783,
+    "hash": "9RJ7GbiWJvH8y6Sy00alHa0pbMFiKoeU/CfKJhD7iDA="
   },
   {
     "path": "resources/icons/toggle-on.svg",
-    "size": 1112,
-    "hash": "5Rm5cyOLdp8pjBdF3cvm9YJI4ncZiBbQDFa2UlZoQXE="
+    "size": 1109,
+    "hash": "q+4Ia/xnVbcav05dMiQ+JHUyCPOs58+bPKOdqicXQJs="
   },
   {
     "path": "resources/icons/trash.svg",
-    "size": 849,
-    "hash": "+vKUvtbNRE4R71pfrxoMqfdfCKO/e5BEQ9ViTxeMPp0="
+    "size": 879,
+    "hash": "VcGTGNxFYCVLvwul3ptypB6+ONC6eOjfMi0/B2Gvj9s="
   },
   {
     "path": "resources/icons/up.svg",
-    "size": 438,
-    "hash": "9Wf2JaDmpW3FnHH+nY0bLVnnsNQ00TuqUtw9bkFGPaU="
+    "size": 445,
+    "hash": "v7EiSrgGdKSh9heyWh/Bg/ms9rmUhxQ63ypiHsaJQqE="
   },
   {
     "path": "resources/icons/user-white.svg",
-    "size": 1455,
-    "hash": "hBzZUTJWbRP/W8pyDy3CqtCLPSvtQjDhzoa7q5ncFes="
+    "size": 1492,
+    "hash": "8z1w7HTqbp814SmfcFcyWneCXweZ1PExnjYUgcdckjU="
   },
   {
     "path": "resources/icons/user.svg",
-    "size": 1036,
-    "hash": "8EzlNI6PF/t+rs3voPBUalJIyELh6IcjDsPhJECbQo4="
+    "size": 1059,
+    "hash": "vNJ5AcoF0U/kTF1CyS5MSByyxqWPqyhKeKe3ZXG5Vo4="
   },
   {
     "path": "resources/icons/users-white.svg",
-    "size": 1942,
-    "hash": "r6WMgdEM0RCip/zn0hq1Kq9qnn9DZ6ZFBoChnEpiTbM="
+    "size": 1973,
+    "hash": "l4rQFVRTVlj6uxfzdUdN5P0tGx1/AZEp9znh6JX8oXo="
   },
   {
     "path": "resources/icons/users.svg",
-    "size": 1986,
-    "hash": "88YmTByPIX8IBnf/mcWGx93UDIpGnM9ZXfBMn2+VWjA="
+    "size": 2007,
+    "hash": "csIEoj2jXHTZtLQpfF6gPOPSXdrDvCz2lbBUaSZUTH0="
   },
   {
     "path": "resources/icons/write-white.svg",
-    "size": 1041,
-    "hash": "l/yhWt7PIzrBgg0gJB9TXcKYQ2naC6IIN276rPeuScE="
+    "size": 1072,
+    "hash": "plTcSUUTTMfejpps/uii+udMzReLmbHQBhCx5pCDYas="
   },
   {
     "path": "resources/icons/write.svg",
-    "size": 1070,
-    "hash": "H6izz6kub6D9FZObbvXUZt/8PkHw/eGDroeVSqCcK3k="
+    "size": 1098,
+    "hash": "9dnCH3OGcEcm8hlOT6uU7UgFJ2BoF5SbnL98ijz+YzA="
   }
 ]

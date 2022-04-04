@@ -134,10 +134,6 @@
     appDidInit () {
         super.appDidInit()
         this.rootNode().removeFirstSubnodeWithTitle("Themes")
-
-        // ResourceLoaderPanel can't use notification as it's a boot object
-        // what if we added a one-shot observation for it, or would that be more confusing?
-
     }
 
     // themes - temporary, until ThemesResources is ready

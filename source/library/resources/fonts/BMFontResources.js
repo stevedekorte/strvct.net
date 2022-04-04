@@ -35,7 +35,7 @@
     }
 
     resourcePaths () {
-        return ResourceLoader.shared().resourceFilePathsWithExtensions(this.extensions())
+        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
     }
 
     setupSubnodes () {

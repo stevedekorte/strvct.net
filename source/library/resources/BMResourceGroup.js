@@ -35,6 +35,7 @@
     }
 
     appDidInit () {
+        console.log(this.type() + " appDidInit")
         this.setupSubnodes()
         return this
     }
@@ -45,7 +46,7 @@
     }
 
     resourcePaths () {
-        return ResourceLoader.shared().resourceFilePathsWithExtensions(this.extensions())
+        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
     }
 
     setupSubnodes () {

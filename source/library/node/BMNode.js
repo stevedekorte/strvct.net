@@ -1332,6 +1332,10 @@
         return obs
     }
 
+    watchOnceForNoteFrom (aNoteName, sender) {
+        return this.watchOnceForNote(aNoteName).setTarget(sender)
+    }
+
     postNoteNamed (aNoteName) {
         const note = window.BMNotificationCenter.shared().newNote()
         note.setSender(this)

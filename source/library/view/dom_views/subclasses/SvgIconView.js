@@ -62,7 +62,6 @@
             const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)
 
             if (iconNode) {
-                debugger;
                 this.setSvgString(iconNode.svgString())
                 this.unhideDisplay()
             } else {

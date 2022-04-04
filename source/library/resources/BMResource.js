@@ -44,11 +44,22 @@
     initPrototype () {
         this.newSlot("path", "")
         this.newSlot("isLoaded", false)
+        this.newSlot("finishedInitNote", null)
     }
 
     init () {
         super.init()
         this.setNodeMinWidth(270)
+        this.setFinishedInitNote(BMNotificationCenter.shared().newNote().setSender(this).setName(this.finishedInitNodeName()))
+    }
+
+    finishedInitNodeName () {
+        return this.type().uncapitalized() + "FinisedInit"
+    }
+
+    onFinishInit () {
+        this.finishedInitNote().post()
+        return this
     }
 
     title () {

@@ -72,11 +72,41 @@ class BootResource {
 
 // ------------------------------------------------------------------------
 
-class ResourceLoader {
+/*
+class ResourceEntry {
+    init () {
+        this._path = null
+        this._size = 0
+        this._hash = null
+        this._data = null
+    }
+
+    setDict (aDict) {
+        this._path = aDict.path
+        this._size = aDict.size
+        this._hash = aDict.hash
+        return this
+    }
+
+    data () {
+        return this._data
+    }
+
+    setData (aData) {
+        this._data = aData
+        return this
+    }
+}
+*/
+
+
+// ------------------------------------------------------------------------
+
+class ResourceManager {
 
     static shared () {
         if (!this._shared) {
-            this._shared = new ResourceLoader().init()
+            this._shared = (new this).init()
         }
         return this._shared
     }
@@ -167,7 +197,6 @@ class ResourceLoader {
         const value = this.camValueForEntry(entry)
         //console.log("eval: " +  entry.path)
         const sourceUrl = "\n//# sourceURL=" + entry.path + " \n"
-        //const sourceUrl = "\n//# sourceURL=./" + entry.path + " \n"
         const debugCode = value + sourceUrl
         //this.onProgress(entry.path)
         eval(debugCode)
@@ -177,7 +206,8 @@ class ResourceLoader {
     evalCssEntry (entry) {
         if (this.isInBrowser()) {
             const cssString = this.camValueForEntry(entry) 
-            const debugCssString = cssString + "\n\n/* " + entry.path + "*/"
+            const sourceUrl = "\n\n//# sourceURL=" + entry.path + " \n"
+            const debugCssString = cssString + sourceUrl
             //console.log("eval css: " +  entry.path)
             const element = document.createElement('style');
             element.type = 'text/css';
@@ -243,6 +273,6 @@ class ResourceLoader {
     }
 }
 
-ResourceLoader.shared().run()
+ResourceManager.shared().run()
 
 
