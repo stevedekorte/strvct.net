@@ -10,7 +10,7 @@
 
 */
 
-function DomElement_atInsertElement(el, index, child) {
+getGlobalThis().DomElement_atInsertElement = function (el, index, child) {
     const children = el.children
     
     if (index < children.length) {
@@ -26,7 +26,7 @@ function DomElement_atInsertElement(el, index, child) {
     throw new Error("invalid dom child index")
 }
 
-function DomElement_description(element) {
+getGlobalThis().DomElement_description = function (element) {
     let s = false
 
     if (element === window) {
@@ -48,7 +48,7 @@ function DomElement_description(element) {
     return s
 }
 
-window.Element_setStyleIncludingDecendants = function(e, k, v) {
+getGlobalThis().Element_setStyleIncludingDecendants = function(e, k, v) {
     if (e.style) {
         e.style[k] = v
     }

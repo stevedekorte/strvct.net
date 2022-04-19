@@ -516,8 +516,8 @@
   },
   {
     "path": "source/library/view/dom_views/dom_helpers/DomElementHelpers.js",
-    "size": 1139,
-    "hash": "2Y4nnw6C3/H8ZUIZMzr/F7GjzA3YkpG5y6CWwag7l/Y="
+    "size": 1186,
+    "hash": "I5vb8YSIZUKSQXfgIWtsU0Ksb9WKjfIsPGKeqeKtm1M="
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
@@ -816,8 +816,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/BMUrlField.js",
-    "size": 5283,
-    "hash": "BlfbUUzEPIx2JDXglQWyOvtkQzkiMDEBQjct+rlyHHE="
+    "size": 5384,
+    "hash": "rwJQhDqgtxA8fvcel/OCJ13q8mEL41TvxyVPnvh1Q4Q="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
@@ -986,8 +986,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackView.js",
-    "size": 10412,
-    "hash": "BKKh22EmI4fsV7X5zhGEV8u2pNd/mOy0QsNLLUXCvDg="
+    "size": 10418,
+    "hash": "eI8Mo946mqflDd0InRQV1KhbxPg+VCp9OF32XGQlkIs="
   },
   {
     "path": "source/library/node/node_views/stack/StackNavView.js",

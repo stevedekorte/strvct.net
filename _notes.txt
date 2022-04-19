@@ -2,12 +2,10 @@
 
 
 Sites:
-- Start converting Io and Dekortre sites to JSON?
+- Start converting Io and Dekorte sites to JSON?
 
 
 Browser:
-- on selecting a node that would be too far right, the compation compats all except that node
-- resize window behavior different from layout resulting from row selection
 - key nav not moving selected node into view
 - need special highlight for end node
 - need back arrow
@@ -28,3 +26,5 @@ Notifications:
 Misc:
 - use fixed width font on pre text nodes
 - make return end editing on node label edits
+- can drop nodes into root folder but can't move them out
+- cancelling delete on row doesn't reset it's background color

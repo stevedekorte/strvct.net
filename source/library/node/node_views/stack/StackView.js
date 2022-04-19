@@ -26,7 +26,7 @@
         topmost StackView or first few levels (so there will be left to right navigation menus at the top level) 
         while children could use the "right" direction so navigation under the top level is left to right.
 
-        In this way, we can compose most common hierarchical navigation systems out of this single view, 
+        In this way, we can compose most common hierarchical navigation systems out of this single view type, 
         maximizing code reuse and flexibility. For example:
         - developer can change layout without code changes
         - layout could flexibly change with display size 
@@ -338,11 +338,13 @@
         return w
     }
 
+    topViewWidth () {
+        return this.topStackView().frameInDocument().width()
+    }
+
     compactNavAsNeeded () {
         if (this.direction() === "right") {
-            //const maxWidth = this.frameInDocument().width()
-            const maxWidth = this.topStackView().frameInDocument().width()
-
+            const maxWidth = this.topViewWidth()
             const sum = this.sumOfNavWidths()
 
             if (sum > maxWidth) {
