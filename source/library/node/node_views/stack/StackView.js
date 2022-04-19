@@ -16,24 +16,34 @@
             otherView, which is a DomFlexView whose content is used to display the selected ite, and can be set with setOtherViewContent()
         
     
-    There is also a "direction" attribute. If it's value is:
-    - "right": the navView is on the left, and otherView is on the right, causing navigation to head towards the left
-    - "down": the navView is on the top, and otherView is on the bottom, causing navigation to head downwards
+        There is also a "direction" attribute. If it's value is:
+        - "right": the navView is on the left, and otherView is on the right, causing navigation to head towards the left
+        - "down": the navView is on the top, and otherView is on the bottom, causing navigation to head downwards
 
-    Note: StackItemSetViews will ask their parent StackView about their direction setting to determine the orientation layout of their subviews
+        Note: StackItemSetViews will ask their parent StackView about their direction setting to determine the orientation layout of their subviews
 
-    The direction for child StackViews can be set individually, so for example, we could use a "down" direction for the 
-    topmost StackView or first few levels (so there will be left to right navigation menus at the top level) 
-    while children could use the "right" direction so navigation under the top level is left to right.
+        The direction for child StackViews can be set individually, so for example, we could use a "down" direction for the 
+        topmost StackView or first few levels (so there will be left to right navigation menus at the top level) 
+        while children could use the "right" direction so navigation under the top level is left to right.
 
-    In this way, we can compose most common hierarchical navigation systems out of this single view, 
-    maximizing code reuse and flexibility. For example:
-    - developer can change layout without code changes
-    - layout could flexibly change with display size 
-    - each user could potentially chose a preferred layout
+        In this way, we can compose most common hierarchical navigation systems out of this single view, 
+        maximizing code reuse and flexibility. For example:
+        - developer can change layout without code changes
+        - layout could flexibly change with display size 
+        - each user could potentially chose a preferred layout
 
-    This also means all the logic around expanding, collapsing, selecting, navigating the views
-    can be reused among all the possible navigation layouts.
+        This also means all the logic around expanding, collapsing, selecting, navigating the views
+        can be reused among all the possible navigation layouts.
+
+    Overview of expand/collapse behavior:
+
+        The StackView will try to collapse and expand levels of navigation to make the best use of the available display area.
+        For example, as one navigates deeper into the hierarchy such that the columns would consume the width of the display,
+        the top most views will start collpasing to allow the deepest views to be displayed. 
+
+        The relevant method is:
+        StackView.updateCompaction () which calls StackView.compactNavAsNeeded()
+    
 
 */
 
@@ -330,14 +340,16 @@
 
     compactNavAsNeeded () {
         if (this.direction() === "right") {
-            const maxWidth = this.frameInDocument().width()
-            const w = this.sumOfNavWidths()
+            //const maxWidth = this.frameInDocument().width()
+            const maxWidth = this.topStackView().frameInDocument().width()
 
-            if (w > maxWidth) {
-                console.log(this.node().title() + " sum" + w + " > win" + maxWidth + " COLLAPSE")
+            const sum = this.sumOfNavWidths()
+
+            if (sum > maxWidth) {
+                console.log(this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
                 this.navView().collapse()
             } else {
-                console.log(this.node().title() + " sum" + w + " < win" + maxWidth + " UNCOLLAPSE")
+                console.log(this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
                 this.navView().uncollapse()
             }
         }

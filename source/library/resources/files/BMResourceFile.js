@@ -73,7 +73,7 @@
         let path = this.path().sansPrefix("./")
         const camValue = ResourceManager.shared().camValueForPath(path)
         if (camValue) {
-            console.log("loaded via cam for path: ", path)
+            //console.log("loaded via cam for path: ", path)
             this.setData(camValue)
             this.postLoad()
             return this

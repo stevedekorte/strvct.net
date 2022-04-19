@@ -43,7 +43,7 @@
         this.documentBodyView().addSubview(v)
         this.appDidInit()
 
-        setTimeout( () => this.showClasses(), 1)
+        //setTimeout( () => this.showClasses(), 1)
     }
 
     showClasses() {

@@ -986,8 +986,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackView.js",
-    "size": 9907,
-    "hash": "WP2nLJEqcCeNgZAvcZ35TXhcqLBSbhgPYnGkfK+i7w8="
+    "size": 10412,
+    "hash": "BKKh22EmI4fsV7X5zhGEV8u2pNd/mOy0QsNLLUXCvDg="
   },
   {
     "path": "source/library/node/node_views/stack/StackNavView.js",
@@ -1056,8 +1056,8 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 3179,
-    "hash": "uoxFKrGKXgr961Cg4wLVDsHhW20fHLUiOv3xt0lPlFY="
+    "size": 3181,
+    "hash": "M6hB7fYYMjMSJb944YZRLzAZeelXhD4HPbonOPHqn10="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
@@ -1171,8 +1171,8 @@
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 5708,
-    "hash": "Jo0guwuulmt5oxlaohDB+EEsynG1mflaLZ87jTgVGdU="
+    "size": 5710,
+    "hash": "V6HERhSobgQfWwK9VBh1NGFANuUOvDzD7xrnUL9Ye34="
   },
   {
     "path": "source/apps/Strvct/_init.js",
