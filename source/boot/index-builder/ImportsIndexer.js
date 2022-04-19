@@ -49,23 +49,16 @@ const zlib = require("zlib");
 class IndexBuilder { 
     constructor() {
         this._paths = [] 
-        //this._indexQueue = []
     }
 
     paths () {
         return this._paths
     }
 
-    /*
-    indexQueue () {
-        return this._indexQueue
-    }
-    */
-
     // --- build ---
 
     run () {
-        this.processIndexQueue()
+        this.readImports()
         this.writeIndex()
         this.writeCam()
         this.compressCam()
@@ -77,15 +70,8 @@ class IndexBuilder {
         return "_imports.json"
     }
 
-    processIndexQueue () {
+    readImports () {
         this.readImportsPath(this.importsFileName())
-        /*
-        this.indexQueue().push(this.importsFileName())
-        while (this.indexQueue().length > 0) {
-            const importsPath = this.indexQueue().shift()
-            this.readImportsPath(importsPath)
-        }
-        */
     }
 
     readImportsPath (importsPath) {
@@ -131,7 +117,7 @@ class IndexBuilder {
         const fullPath = nodePath.join(process.cwd(), path)
 
         if (!fs.existsSync(path)) {
-            throw newError("missing path '" + path + "'")    
+            throw new Error("missing path '" + path + "'")    
         }
 
         const data = fs.readFileSync(fullPath,  "utf8")
@@ -153,7 +139,7 @@ class IndexBuilder {
     }
 
     writeCam () {
-        const paths = this.pathsWithExtensions(["js", "css"])
+        const paths = this.pathsWithExtensions(["js", "css", "svg"])
         const cam = {}
         paths.forEach(path => {
             const fullPath = nodePath.join(process.cwd(), path)
@@ -182,8 +168,6 @@ class IndexBuilder {
             }
         });
     }
-
-
 }
 
 new IndexBuilder().run()

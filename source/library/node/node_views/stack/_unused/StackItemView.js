@@ -36,7 +36,7 @@
 
         this.setColor("white")
         //this.setBorder("1px solid rgba(255, 255, 255, 0.3")
-        this.setFontFamily("Helvetica")
+        //this.setFontFamily("Helvetica")
 
         this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
     }

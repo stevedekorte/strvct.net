@@ -171,6 +171,19 @@ class ResourceManager {
         return parts.length ? parts[parts.length -1] : undefined
     }
 
+    entryForPath (path) {
+        return this._index.detect(entry => entry.path === path)
+    }
+
+    camValueForPath (path) {
+        const entry = this.entryForPath(path)
+        if (entry) {
+            const value = this._cam[entry.hash]
+            return value
+        }
+        return undefined
+    }
+
     camValueForEntry (entry) {
         const value = this._cam[entry.hash]
         if (!value) {

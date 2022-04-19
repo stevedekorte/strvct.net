@@ -31,6 +31,7 @@
         v.setMargin("0em")
         v.setOverflowX("hidden")
         v.setOverflowY("scroll")
+        //v.setFontFamily("Mono")
         //v.setDoesHoldFocusOnReturn(true)
         v.setDoesInput(false)
         return v

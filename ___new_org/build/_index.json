@@ -126,8 +126,8 @@
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
-    "size": 17521,
-    "hash": "YHpIMv7bL7A6F5SVHPrcyRIm5HCe2sndaqz4kX7xKrM="
+    "size": 17323,
+    "hash": "Xdt5iUAl+GwxI7r02QnzyUkLo+18MwXA3QtcJca5c7Q="
   },
   {
     "path": "source/library/ideal/Documentation.js",
@@ -541,8 +541,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/ButtonView.js",
-    "size": 3153,
-    "hash": "xcV5c0sqAp7HAz+rXY8sioXwKv3yqqhi2hduZbZeZVU="
+    "size": 3149,
+    "hash": "vBXtNjppnOQnFrs2T8okeriRllS4UzmDQVRn47PZC/M="
   },
   {
     "path": "source/library/view/dom_views/subclasses/CloseButton.js",
@@ -961,8 +961,8 @@
   },
   {
     "path": "source/library/node/node_views/field_views/BMTextAreaFieldRowView.js",
-    "size": 1475,
-    "hash": "D+eWDUxbBPBeuZS2d7RRyF1zI0s8VvB1MkJW+vAvO9w="
+    "size": 1441,
+    "hash": "LMMFOsOxJLFDxxr1ze0/4ncTuduYtNiQXcC4faEEq7A="
   },
   {
     "path": "source/library/node/node_views/field_views/BMImageWellFieldRowView.js",
@@ -986,8 +986,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackView.js",
-    "size": 9907,
-    "hash": "WP2nLJEqcCeNgZAvcZ35TXhcqLBSbhgPYnGkfK+i7w8="
+    "size": 7701,
+    "hash": "szYydwiF68X72mBLQxo4BZHv/1BHZF4cpCdmnum7gxM="
   },
   {
     "path": "source/library/node/node_views/stack/StackNavView.js",
@@ -1121,8 +1121,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeResources.js",
-    "size": 1489,
-    "hash": "hkzl0o6TflRxBzZfRl0be3nbswzTOhPAMRFFOUDI5fE="
+    "size": 1429,
+    "hash": "Hn840W9eZ4yAVAF5ax/b1YwlmbNVNrAeO6Rb/k2vSps="
   },
   {
     "path": "source/library/resources/themes/BMTheme.js",
@@ -1171,8 +1171,8 @@
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 5708,
-    "hash": "Jo0guwuulmt5oxlaohDB+EEsynG1mflaLZ87jTgVGdU="
+    "size": 5692,
+    "hash": "6N7FRX2ucULogTCCGWeOj47ePl+cYdBTBnPVJnjsB4M="
   },
   {
     "path": "source/apps/Strvct/_init.js",

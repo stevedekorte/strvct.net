@@ -75,5 +75,22 @@
         const n = this.name() ? this.name() : "null"
         return s + " " + n
     }
+
+    newObservation () {
+        /*
+            this avoids note name typos and helps runtime check/debug note name changes as note name isn't hardcoded as string in multiple places
+            example use:
+
+                aFileLoader.doneNote().newObservation().setObserver(this).setIsOneShot(true).watch()
+
+                how about:
+
+                (in Node)
+
+                this.observeNote(aFileLoader.doneNote())
+                this.observeNoteOnce(aFileLoader.doneNote())
+        */
+        return BMNotificationCenter.shared().newObservation().setName(this.name()).setTarget(this.sender())
+    }
 }.initThisClass());
 

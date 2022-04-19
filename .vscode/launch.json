@@ -16,7 +16,8 @@
                 "--disable-web-security"
             ],
             "preLaunchTask": "Build",
-            "enableContentValidation": false
+            "enableContentValidation": false,
+            "sourceMaps": true
         },
 
         {
@@ -28,7 +29,8 @@
             "runtimeArgs": [
                 "--disable-web-security"
             ],
-            "enableContentValidation": false
+            "enableContentValidation": false,
+            "sourceMaps": true
         },
 
         /*

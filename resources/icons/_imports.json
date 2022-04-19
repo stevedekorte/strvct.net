@@ -2,7 +2,6 @@
   "add-user-white.svg",
   "add-user.svg",
   "add.svg",
-  "appicon-black-600x600.png",
   "appicon-black.svg",
   "appicon.svg",
   "at-white.svg",
@@ -66,5 +65,8 @@
   "users-white.svg",
   "users.svg",
   "write-white.svg",
-  "write.svg"
+  "write.svg",
+  "arrows/_imports.json",
+  "chat/_imports.json",
+  "core/_imports.json"
 ]

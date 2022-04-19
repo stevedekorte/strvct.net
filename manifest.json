@@ -4,7 +4,7 @@
     "description": "",
     "icons": [
         {
-          "src": "resources/icons/appicon-black-600x600.png",
+          "src": "resources/images/appicon-black-600x600.png",
           "type": "image/png",
           "sizes": "600x600"
         }

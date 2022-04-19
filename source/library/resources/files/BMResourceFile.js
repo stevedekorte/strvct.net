@@ -10,11 +10,17 @@
 
     initPrototype () {
         this.newSlot("path", ".")
+        
         this.newSlot("data", null)
         this.newSlot("encoding", "utf8")
         this.newSlot("request", null) // this set back to null after request is successfully completed
         this.newSlot("error", null) 
         this.newSlot("isLoading", null) // true while async reading from URL request or indexedDB
+
+        // notifications
+        this.newSlot("isLoaded", false)
+        this.newSlot("loadNote", null) 
+        this.newSlot("loadErrorNote", null) 
     }
 
     init () {
@@ -22,6 +28,10 @@
         this.setTitle("File")
         this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
+
+        // notifications
+        this.setLoadNote(BMNotificationCenter.shared().newNote().setSender(this).setName("resourceFileLoaded"))
+        this.setLoadErrorNote(BMNotificationCenter.shared().newNote().setSender(this).setName("resourceFileLoadError"))
         return this
     }
 
@@ -43,26 +53,38 @@
         return sound
     }
 
+    // move this loading code to parent BMResource?
+
     hasData () {
         return this.data() !== null
     }
 
     loadIfNeeded () { 
-        /* sender should subscribe to resourceFileLoaded before calling this
-        */
+        /* sender should subscribe to loadNote and loadErrorNote */
 
         if (!this.isLoading() && !this.hasData()) {
+            this.setIsLoading(true)
             this.load() 
         }
         return this
     }
 
     load () {
+        let path = this.path().sansPrefix("./")
+        const camValue = ResourceManager.shared().camValueForPath(path)
+        if (camValue) {
+            console.log("loaded via cam for path: ", path)
+            this.setData(camValue)
+            this.postLoad()
+            return this
+        }
         this.loadFromUrl()
         return this
     }
 
     loadFromUrl () {
+        console.log("loaded via url fetch for path: ", this.path())
+
         const path = this.path()
         const request = new XMLHttpRequest();
         request.open('GET', path, true);
@@ -77,18 +99,25 @@
     onUrlLoad () {
         const data = this.request().response
         this.setData(data)
-        BMNotificationCenter.shared().newNote().setSender(this).setName("resourceFileLoaded").post()
+        this.postLoad()
+        this.setIsLoading(false)
         return this
     }
 
     onUrlLoadError (event) {
         this.setError(event.error)
-        // post error note
+        this.postLoadError()
+        this.setIsLoading(false)
         return this
     }
 
-    postError () {
-        BMNotificationCenter.shared().newNote().setSender(this).setName("resourceFileLoadError").post()
+    postLoad () {
+        this.loadNote().post()
+        return this
+    }
+
+    postLoadError () {
+        this.loadErrorNote().post()
         return this
     }
 

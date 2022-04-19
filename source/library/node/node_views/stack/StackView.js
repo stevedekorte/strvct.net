@@ -3,12 +3,45 @@
 /*
     
     StackView
+
+    A view for from which a sort of generalized Miller Column system can be built.
     
+    Overview of view structure:
+
+        StackView contains:
+            navView, which is a StackNavView and contains:
+                scrollView, which is a StackScrollView and contains:
+                    itemSetView, which is a StackItemSetView contains array of: 
+                        BrowserRows(or subclass), (each of which contains a contentView, so things like slide-to-delete gestures work)
+            otherView, which is a DomFlexView whose content is used to display the selected ite, and can be set with setOtherViewContent()
+        
+    
+    There is also a "direction" attribute. If it's value is:
+    - "right": the navView is on the left, and otherView is on the right, causing navigation to head towards the left
+    - "down": the navView is on the top, and otherView is on the bottom, causing navigation to head downwards
+
+    Note: StackItemSetViews will ask their parent StackView about their direction setting to determine the orientation layout of their subviews
+
+    The direction for child StackViews can be set individually, so for example, we could use a "down" direction for the 
+    topmost StackView or first few levels (so there will be left to right navigation menus at the top level) 
+    while children could use the "right" direction so navigation under the top level is left to right.
+
+    In this way, we can compose most common hierarchical navigation systems out of this single view, 
+    maximizing code reuse and flexibility. For example:
+    - developer can change layout without code changes
+    - layout could flexibly change with display size 
+    - each user could potentially chose a preferred layout
+
+    This also means all the logic around expanding, collapsing, selecting, navigating the views
+    can be reused among all the possible navigation layouts.
+
 */
 
 (class StackView extends NodeView {
 
     static instanceCache () {
+        // need to cache these so we can return to the state (e.g. selection, scroll point, etc) 
+        // we left off in when we changed the selected node
         let v = this.getClassVariable("_instanceCache")
         if (!v) {
             v = Dictionary.clone()

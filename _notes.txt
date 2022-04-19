@@ -1,0 +1,29 @@
+
+
+
+Sites:
+- Start converting Io and Dekortre sites to JSON?
+
+
+Browser:
+- resize window behavior different from layout resulting from row selection
+- key nav not moving selected node into view
+- need special highlight for end node
+- need back arrow
+- weird column collapse/uncollapse behavior
+- make return act like click if whole column is selected (so we can add node with keyboard?)
+-- how to add node from keyboard in non empty column?
+
+Resources:
+- have it look for some file like _autoImport?
+- move BMResourceFile loading code to to parent BMResource?
+- Abstraction for ResourceEntry?
+
+
+Notifications:
+- clean up Notification posts/obs with new Node methods? (newObservation, etc)
+
+
+Misc:
+- use fixed width font on pre text nodes
+- make return end editing on node label edits

@@ -135,6 +135,9 @@
 
     static classModulePath () {   
         const src = this.getClassVariable("_classSrcPath")
+        if (typeof(src) === "undefined") {
+            return "unknown path"
+        } 
         const url = new URL(src);
         const parts = url.pathname.split('/')
         parts.pop()
@@ -145,7 +148,7 @@
 
     static initThisClass () {
         //console.log(this.type() + " initThisClass")
-        //this.setClassVariable("_classSrcPath", document.currentScript.src)
+        //this.setClassVariable("_classSrcPath", document.currentScript.src) // doesn't work with eval
 
         this.setClassVariable("_childClasses", new Set())
         this.setClassVariable("_ancestorClasses", this.findAncestorClasses())
@@ -283,15 +286,19 @@
         }
         traversed.add(this)
         */
-        const prefix = "<div class=level" + level + ">"
-        const postfix = "</div>"
+        //const prefix = "<div class=level" + level + ">"
+        //const postfix = "</div>"
+
+        const prefix = ""
+        const postfix = ""
 
         const spacer = "  ".repeat(level)
         const lines = []
         if (level === 1) {
             //lines.append("----")
         }
-        const path = "<div class=path>" + this.classModulePath().replaceAll("/", " ") + "</div>"
+        //const path = "<div class=path>" + this.classModulePath().replaceAll("/", " ") + "</div>"
+        const path = ""
         lines.append(prefix + spacer + this.type() + " " + path + postfix)
         const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()))
         const subclassLines = sortedSubclasses.map((subclass) => {

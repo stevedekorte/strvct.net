@@ -48,6 +48,8 @@
         this.addAction("add")
         this.setSubnodeClasses([BMTheme, BMDefaultTheme])
         this.setNodeCanReorderSubnodes(true)
+
+        this.setSubnodes([BMDefaultTheme.clone()]) // hack
     }
 
     activeTheme () {

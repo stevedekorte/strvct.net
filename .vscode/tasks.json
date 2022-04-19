@@ -7,6 +7,7 @@
             "label": "Build",
             "dependsOn": [
                 "build _index.json & _cam.json",
+                "auto index resources"
             ]
         },
 
@@ -44,6 +45,27 @@
                 "panel": "shared"
             },
             "problemMatcher": [],
+        },
+
+        {
+            "label": "auto index resources",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "./source/boot/index-builder/ResourceIndexer.js",
+                "./resources/icons"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}",
+                "_runner": "terminal",
+                "isBackground": "true",
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared"
+            },
+            "problemMatcher": [],
         }
+
     ]
 }
