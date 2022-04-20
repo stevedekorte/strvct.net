@@ -1,6 +1,13 @@
 "use strict";
 
-window.JSBloom = {};
+var globalsRoot = function () {
+    if (typeof(window) === "undefined") {
+        return global
+    }
+    return window
+}
+
+globalsRoot().JSBloom = {};
 
 JSBloom.filter = function (items, target_prob) {
 
