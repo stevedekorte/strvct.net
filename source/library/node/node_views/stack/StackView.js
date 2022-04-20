@@ -350,7 +350,7 @@
     }
 
     compactNavAsNeeded () {
-        console.log("StackView " + this.node().title() + " compactNavAsNeeded")
+        //console.log("StackView " + this.node().title() + " compactNavAsNeeded")
 
         if (this.direction() === "right") {
             const maxWidth = this.topViewWidth()

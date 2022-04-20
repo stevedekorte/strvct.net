@@ -97,7 +97,7 @@
     /*
     didChangeHeight () {
         super.didChangeHeight()
-	    window.SyncScheduler.shared().scheduleTargetAndMethod(this.markerView(), "verticallyAlignAbsoluteNow", 0)
+	    SyncScheduler.shared().scheduleTargetAndMethod(this.markerView(), "verticallyAlignAbsoluteNow", 0)
         return this
     }
     */

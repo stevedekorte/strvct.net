@@ -6,10 +6,8 @@ Sites:
 
 
 Browser:
-- key nav not moving selected node into view
+- need back arrow - add new Browser class with header, footer, stack view in middle - room for shelf?
 - need special highlight for end node
-- need back arrow
-- weird column collapse/uncollapse behavior
 - make return act like click if whole column is selected (so we can add node with keyboard?)
 -- how to add node from keyboard in non empty column?
 
@@ -20,7 +18,16 @@ Resources:
 
 
 Notifications:
-- clean up Notification posts/obs with new Node methods? (newObservation, etc)
+- clean up Notification posts/obs with new Node methods? (BMNotification instance).newObservation()
+
+
+	this.postNoteNamed("hello")
+        this.watchOnceForNote("hello")
+        this.watchOnceForNoteFrom("hello", sourceObject)
+
+        this.observeNote(aFileLoader.doneNote()) // still need to handle observation removal
+        this.observeNoteOnce(aFileLoader.doneNote()) 
+
 
 
 Misc:

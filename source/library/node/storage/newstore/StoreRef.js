@@ -7,7 +7,7 @@
 */
 
 
-window.StoreRef = class StoreRef {
+getGlobalThis().StoreRef = class StoreRef {
     
     static clone() {
         const instance = new StoreRef()

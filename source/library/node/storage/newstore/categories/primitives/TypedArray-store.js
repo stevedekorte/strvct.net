@@ -1,7 +1,7 @@
 "use strict";
 
 Type.typedArrayTypeNames().forEach((name) => {
-    const aClass = window[name]
+    const aClass = Object.getClassNamed(name)
 
     if (Type.isUndefined(aClass)) {
         console.warn("TypeArray-store error: missing type " + name)

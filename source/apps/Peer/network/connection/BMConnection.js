@@ -87,7 +87,8 @@
     onNetworkInformationChange () {
         //this.debugLog("Connection type changed from " + this.lastConnectionType() + " to " +  this.connectionType(), this.connection());	  
 
-        BMNotificationCenter.shared().newNote().setSender(this).setName("onNetworkInformationChange").post()
+        this.postNoteNamed("onNetworkInformationChange")
+
         
         this.updateLastState()            
         this.didUpdateNode()
@@ -102,11 +103,11 @@
     }
 	
     onNetworkOnline () {
-        BMNotificationCenter.shared().newNote().setSender(this).setName("onNetworkOnline").post()
+        this.postNoteNamed("onNetworkOnline")
     }
     
     onNetworkOffline () {
-        BMNotificationCenter.shared().newNote().setSender(this).setName("onNetworkOffline").post()
+        this.postNoteNamed("onNetworkOffline")
     }
 	
     isOnline () {

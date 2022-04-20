@@ -339,7 +339,7 @@
         const components = aPath.split("/")
         components.forEach(component => {
             node = this.subnodeWithTitleIfAbsentInsertClosure(component, () => {
-                const node = window[pathSubnodeType].clone()
+                const node = Object.getClassNamed(pathSubnodeType).clone()
                 node.setTitle(component)
                 node.setNodeMinWidth(300)
                 return node
@@ -496,7 +496,7 @@
     viewClass () {        
         const name = this.viewClassName()
         if (name) {
-            return window[name]
+            return Object.getClassNamed(name)
         }
 
 	  	return this.firstAncestorWithMatchingPostfixClass("View")
@@ -789,7 +789,7 @@
     
     scheduleSyncToView () {
         this.didUpdateNode()
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView")
+        //SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView")
         return this
     }
 
@@ -1337,7 +1337,7 @@
     }
 
     postNoteNamed (aNoteName) {
-        const note = window.BMNotificationCenter.shared().newNote()
+        const note = BMNotificationCenter.shared().newNote()
         note.setSender(this)
         note.setName(aNoteName)
         note.post()
@@ -1346,7 +1346,7 @@
     }
 
     scheduleSelfFor (aMethodName, milliseconds) {
-        return window.SyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
+        return SyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
     }
 
     // -- selection requests ---

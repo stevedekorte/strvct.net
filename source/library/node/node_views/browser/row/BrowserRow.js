@@ -248,7 +248,7 @@
 
     didChangeParentView () {
         super.didChangeParentView()
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "applyStyles", 0)
+        //SyncScheduler.shared().scheduleTargetAndMethod(this, "applyStyles", 0)
         this.applyStyles()
         return this
     }

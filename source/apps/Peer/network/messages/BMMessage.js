@@ -75,7 +75,7 @@
         if (this.msgTypes().contains(msgType)) {
             const className = "BM" + msgType.capitalized() + "Message"
             //this.log("className '" + className + "'")
-            const proto = window[className]
+            const proto = getGlobalThis()[className]
             return proto.clone().setMsgDict(dict)
         }
         

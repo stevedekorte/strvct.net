@@ -110,6 +110,10 @@ const classSlots = {
         return true
     },
 
+    getClassNamed: function(aName) {
+        return getGlobalThis()[aName]
+    },
+
     globals: function () {
         return getGlobalThis()
     },
@@ -433,12 +437,12 @@ const prototypeSlots = {
     },
 
     scheduleDidInit: function () {
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
+        //SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
         this.didInit()
     },
 
     scheduleDidLoadFromStore: function() {
-        //window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
+        //SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
         this.didLoadFromStore()
     },
 
@@ -454,13 +458,13 @@ const prototypeSlots = {
     },
 
     removeAllNotificationObservations: function() {
-        if (window["BMNotificationCenter"]) {
+        if (getGlobalThis()["BMNotificationCenter"]) {
             BMNotificationCenter.shared().removeObserver(this)
         }
     },
 
     removeScheduledActions: function () {
-        if (window["SyncScheduler"]) {
+        if (getGlobalThis()["SyncScheduler"]) {
             SyncScheduler.shared().unscheduleTarget(this)
         }
     },

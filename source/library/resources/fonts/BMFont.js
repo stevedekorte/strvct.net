@@ -39,7 +39,7 @@
     // loading 
 
     load () {
-        if (!window["FontFace"]) {
+        if (!getGlobalThis()["FontFace"]) {
             console.warn("this browser is missing FontFace class")
             return this
         }

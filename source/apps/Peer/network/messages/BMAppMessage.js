@@ -32,7 +32,7 @@
 	
     duplicate () {
 	    assert(this.objMsg() !== null)
-        const obj = window[this.type()].clone()
+        const obj = getGlobalThis()[this.type()].clone()
         obj.setSenderId(this.senderId())
         obj.setReceiverId(this.receiverId())
         obj.setObjMsg(this.objMsg())
@@ -117,7 +117,7 @@
             return null
         }
         
-        const proto = window[className]
+        const proto = getGlobalThis()[className]
         if (!proto) {
             return null
         }

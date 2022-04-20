@@ -66,7 +66,7 @@
     
     /*
     schedulePost () {
-	     window.SyncScheduler.shared().scheduleTargetAndMethod(this, "post")
+	     SyncScheduler.shared().scheduleTargetAndMethod(this, "post")
     }
     */
 

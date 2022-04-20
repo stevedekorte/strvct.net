@@ -4,7 +4,7 @@
 Object.defineSlots(BMNode, {
 
     instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store    
-        //const proto = window[aRecord.type]
+        //const proto = Object.getClassNamed(aRecord.type)
         const obj = this.clone()
         //obj.loadFromRecord(aRecord, aStore)
         return obj
@@ -81,11 +81,11 @@ Object.defineSlots(BMNode.prototype, {
     scheduleDidInit: function () {
         // Object scheduleDidInit just calls this.didInit()
         assert(!this.hasDoneInit())
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
     },
 
     scheduleDidLoadFromStore: function() {
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
     },
 
     /*

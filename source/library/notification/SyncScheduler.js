@@ -13,7 +13,7 @@
 
        example use:
     
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView")
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView")
 
     Automatic sync loop detection
 
@@ -24,7 +24,7 @@
 
     Scheduled actions can also be given a priority via an optional 3rd argument:
 
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView", 1)
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView", 1)
 
     Higher orders will be performed *later* than lower ones. 
 
@@ -121,7 +121,7 @@
     }
 
     hasScheduledTargetAndMethod (target, syncMethod) {
-        const actionKey = window.SyncAction.ActionKeyForTargetAndMethod(target, syncMethod)
+        const actionKey = SyncAction.ActionKeyForTargetAndMethod(target, syncMethod)
     	return this.actions().hasKey(actionKey)
     }
 
@@ -231,7 +231,7 @@
                 /*
                 this.(() => " --- processSets # " + count + " --- ")
                 this.debugLog(() => this.description())
-                this.debugLog(() => window.BMNotificationCenter.shared().notesDescription())
+                this.debugLog(() => BMNotificationCenter.shared().notesDescription())
                 this.debugLog(" --- ")
                 */
                 this.processSets()
@@ -262,7 +262,7 @@
 Object.defineSlots(ProtoClass.prototype, {
 
     scheduleMethod: function(methodName, priority) {
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority)
+        SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority)
         return this
     }
 

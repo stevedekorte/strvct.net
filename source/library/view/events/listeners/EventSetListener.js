@@ -222,7 +222,7 @@
             */
 
             /*
-            if ( window.SyncScheduler.shared().actionCount()) {
+            if (SyncScheduler.shared().actionCount()) {
                 this.debugLog(" onAfterEvent " + methodName)
             }
             */

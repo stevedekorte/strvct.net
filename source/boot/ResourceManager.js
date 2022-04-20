@@ -251,7 +251,7 @@ class ResourceManager {
                 cancelable: true,
                 composed: false,
               });
-              window.dispatchEvent(myEvent);
+              window.dispatchEvent(myEvent); // only called in Browser
         }
         return this
     }

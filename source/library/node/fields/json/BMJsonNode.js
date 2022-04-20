@@ -49,7 +49,7 @@
         const t = Type.typeName(json)
         const protoName = this.jsonToProtoNameDict()[t]  
         if (protoName) {
-            const proto = window[protoName]
+            const proto = Object.getClassNamed(protoName)
             if (proto) {
                 const instance = proto.clone().setJson(json)
                 return instance

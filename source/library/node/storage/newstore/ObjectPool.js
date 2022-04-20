@@ -92,7 +92,7 @@
         this.setLoadingPids(new Set())
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
-        this.setNodeStoreDidOpenNote(window.BMNotificationCenter.shared().newNote().setSender(this).setName("nodeStoreDidOpen"))
+        this.setNodeStoreDidOpenNote(BMNotificationCenter.shared().newNote().setSender(this).setName("nodeStoreDidOpen"))
         this.setIsDebugging(false)
         return this
     }
@@ -432,12 +432,12 @@
         
         //console.log("loading " + className + " " + aRecord.id)
         
-        let aClass = window[className]
+        let aClass = Object.getClassNamed(className)
         if (!aClass) {
             const altClassName = this.conversionDict()[className]
 
             if (altClassName) {
-                aClass = window[altClassName]
+                aClass = Object.getClassNamed(altClassName)
             }
 
             if (!aClass) {
@@ -468,7 +468,7 @@
         }
 
         if (!this.isFinalizing() && this.loadingPids().size === 0) {
-            window.SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids")
+            SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids")
         }
 
         this.loadingPids().add(puuid)

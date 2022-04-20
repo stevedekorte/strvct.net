@@ -51,6 +51,9 @@
         // watch only for first note named "appDidInit"
         this.watchOnceForNote("appDidInit")
 
+    If the source object has an accessor for a notification it uses, we can do:
+
+        sourceObject.didLoadNote().newObservation().setObserver(this).watch()
         
     Posting notifications:
 
@@ -67,6 +70,17 @@
         until the event loop to end. These will pass the target itself instead of a Notification object.
 
         See Broadcaster class.
+
+    Helper methods available to subclasses of BMNode:
+
+        this.postNoteNamed("hello")
+        this.watchOnceForNote("hello")
+        this.watchOnceForNoteFrom("hello", sourceObject)
+
+        this.observeNote(aFileLoader.doneNote()) // still need to handle observation removal
+        this.observeNoteOnce(aFileLoader.doneNote()) 
+
+        note: I think nodes try remove their observations when removed?
 
 */
 
@@ -194,7 +208,7 @@
             }
             */
             this.notifications().push(note)
-		    window.SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1)
+		    SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1)
         }
         return this
     }

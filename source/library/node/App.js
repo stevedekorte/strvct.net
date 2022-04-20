@@ -27,7 +27,7 @@
     }
 
     static onLoadError (errorMessage) {
-        //window.ResourceLoaderPanel.shared().setError(errorMessage)
+        //ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
     initPrototype () {
@@ -42,7 +42,7 @@
         //Documentation.shared().show()
         //console.log(ProtoClass.subclassesDescription())
 
-        //this.setNodeStoreDidOpenObs(window.BMNotificationCenter.shared().newObservation())
+        //this.setNodeStoreDidOpenObs(BMNotificationCenter.shared().newObservation())
         //this.nodeStoreDidOpenObs().setName("nodeStoreDidOpen").setObserver(this).setTarget(this.defaultStore())
         this.setIsDebugging(true)
     }
@@ -61,7 +61,7 @@
 
     run () {
         if (!this.isBrowserCompatible()) {
-            window.ResourceLoaderPanel.shared().setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
+            ResourceLoaderPanel.shared().setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
             return this
         }
 
@@ -70,11 +70,11 @@
         this.defaultStore().setName(this.name())
 
         const errorCallback = (errorMessage) => {
-            window.ResourceLoaderPanel.shared().setError(errorMessage)
+            ResourceLoaderPanel.shared().setError(errorMessage)
             return this
         }
         this.defaultStore().asyncOpen(null, errorCallback) 
-       this.nodeStoreDidOpen()
+        this.nodeStoreDidOpen()
         */
 
        this.setup()
@@ -84,7 +84,7 @@
     /*
     showBrowserCompatibilityPanel () {
         console.log("showing panel")
-        const panel = window.PanelView.clone()
+        const panel = PanelView.clone()
         this.documentBodyView().addSubview(panel)
         panel.setTitle("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
         panel.orderFront()

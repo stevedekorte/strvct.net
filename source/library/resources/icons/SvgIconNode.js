@@ -9,7 +9,7 @@
 
 (class SvgIconNode extends BMResource {
 
-  static supportedExtensions () {
+  static supportedExtensions() {
     return ["svg"]
   }
 
@@ -19,11 +19,11 @@
     //this.newSlot("path", null)
   }
 
-  load () {
+  load() {
     this.setTitle(this.path().lastPathComponent().sansExtension())
 
     const rootFolder = BMFileResources.shared().rootFolder()
-    const fileResource = rootFolder.nodeAtSubpathString(this.path())    
+    const fileResource = rootFolder.nodeAtSubpathString(this.path())
     if (!fileResource) {
       const error = "no index for file resource at path '" + this.path() + "'"
       this.setError(error)
@@ -31,14 +31,13 @@
     }
     this.watchOnceForNoteFrom("resourceFileLoaded", fileResource)
     fileResource.load()
-
     return this
   }
 
-  resourceFileLoaded (aNote) {
+  resourceFileLoaded(aNote) {
     const fileResource = aNote.sender()
     this.setSvgString(fileResource.data())
-    BMNotificationCenter.shared().newNote().setSender(this).setName("resourceLoaded").post()
+    this.postNoteNamed("resourceLoaded")
     return this
   }
 

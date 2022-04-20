@@ -22,7 +22,7 @@
         this.setMinAndMaxWidth(0)
         
         this.setScrollView(this.addSubview(NodeView.clone().setDivClassName("ShelfScrollView")))
-        this.scrollView().setOverrideSubviewProto(window.ShelfItemGroupView)
+        this.scrollView().setOverrideSubviewProto(ShelfItemGroupView)
         this.setFooterView(this.addSubview(ShelfFooterView.clone()))        
 		
         return this

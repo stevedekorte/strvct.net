@@ -8,7 +8,7 @@ Object.defineSlots(Array, {
         if (typeName !== "SubnodesArray") {
             typeName = "SubnodesArray" // TODO: have setSubnodes do a type conversion? 
         }
-        const aClass = window[typeName]
+        const aClass = Object.getClassNamed(typeName)
         const obj = aClass.clone()
         //const obj = this.thisClass().clone()
         //obj.loadFromRecord(aRecord, aStore) 

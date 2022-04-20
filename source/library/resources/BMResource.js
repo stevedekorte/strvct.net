@@ -65,7 +65,7 @@
 
     didLoad () {
         this.setIsLoaded(true)
-        BMNotificationCenter.shared().newNote().setSender(this).setName("didLoad").post()
+        this.postNoteNamed("didLoad")
     }
 
 }.initThisClass());

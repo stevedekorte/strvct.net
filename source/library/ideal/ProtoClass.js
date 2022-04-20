@@ -122,7 +122,7 @@
             getGlobalThis()[this.type()] = this
             //console.log(this.type() + ".initThisClass()")
         } else {
-            const msg = "WARNING: Attempt to redefine window['" + this.type() + "']"
+            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + this.type() + "']"
             console.warn(msg)
             throw new Error(msg)
         }
@@ -616,10 +616,10 @@
         //this.debugLog(" firstAncestorWithMatchingPostfixClass(" + aPostfix + ")")
         const match = this.thisClass().ancestorClassesIncludingSelf().detect((obj) => {
             const name = obj.type() + aPostfix
-            const proto = window[name]
+            const proto = Object.getClassNamed(name)
             return proto
         })
-        const result = match ? window[match.type() + aPostfix] : null
+        const result = match ? Object.getClassNamed(match.type() + aPostfix) : null
 
         return result
     }

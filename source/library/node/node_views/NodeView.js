@@ -214,21 +214,21 @@
             return this
         }
         
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 0)
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 0)
         return this
     }
     
     hasScheduleSyncToNode () {
-        return window.SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode")
+        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode")
     }
 
     hasScheduleSyncFromNode () {
-        return window.SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
+        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
     }
 
     scheduleSyncFromNode () {
         assert(!this.hasScheduleSyncToNode())
-        window.SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2) // let posts happen first
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2) // let posts happen first
         return this
     }
 

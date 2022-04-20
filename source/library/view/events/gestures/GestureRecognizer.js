@@ -168,7 +168,7 @@
 
     newListeners () {
         return this.listenerClasses().map((className) => {
-            const proto = window[className];
+            const proto = Object.getClassNamed(className);
             const listener = proto.clone();
             listener.setDelegate(this);
             return listener

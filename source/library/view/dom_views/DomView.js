@@ -2775,7 +2775,7 @@
         const dict = this.eventListenersDict()
         if (!dict[className]) {
             assert(className in window)
-            const proto = window[className]
+            const proto = Object.getClassNamed(className)
             dict[className] = proto.clone().setListenTarget(this.element()).setDelegate(this)
         }
         return dict[className]

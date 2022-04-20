@@ -138,7 +138,7 @@ getGlobalThis().ideal.Slot = class Slot {
             if (this.validValues() || this.validValuesClosure()) {
                 fieldName = "BMOptionsNode"
             }
-            const proto = window[fieldName]
+            const proto = getGlobalThis()[fieldName]
             if (proto) {
                 const field = proto.clone()
 
