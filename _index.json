@@ -912,7 +912,7 @@
   {
     "path": "source/library/node/node_views/browser/row/BrowserTitledRow.js",
     "size": 7530,
-    "hash": "l/l8tU8+HOYBdASAWIK+Qy2FADPmi0td6rGToY8CsS4="
+    "hash": "pBL30Ge5CEsWszKB0bY5pxejrpwlZWv7LaJP6cm8+KY="
   },
   {
     "path": "source/library/node/node_views/browser/row/BrowserRowNote.js",
@@ -986,8 +986,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackView.js",
-    "size": 10418,
-    "hash": "eI8Mo946mqflDd0InRQV1KhbxPg+VCp9OF32XGQlkIs="
+    "size": 10612,
+    "hash": "45gOjtZXHr9ml2XGydYmSqKcpvoqH1J/+dEC0o9pijg="
   },
   {
     "path": "source/library/node/node_views/stack/StackNavView.js",
@@ -1001,8 +1001,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackItemSetView.js",
-    "size": 47607,
-    "hash": "ApG2XMwjKLSJC1FqCxP3qw5wyrAkpfgxnJa79v4lj1I="
+    "size": 47731,
+    "hash": "edf8iofDQ93FJj2gb+UbQ1JmKZl2GOxIciB/e/FmhKo="
   },
   {
     "path": "source/library/node/blobs/BMBlob.js",
@@ -1171,8 +1171,8 @@
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 5710,
-    "hash": "V6HERhSobgQfWwK9VBh1NGFANuUOvDzD7xrnUL9Ye34="
+    "size": 5712,
+    "hash": "JjKQYg9LH5VekLkCO3UQtriof3Lm4RCwttNe6heMIfg="
   },
   {
     "path": "source/apps/Strvct/_init.js",

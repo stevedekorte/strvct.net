@@ -54,7 +54,7 @@
         rv.setDisplay("flex")
         rv.setAlignItems("center")
         this.setNoteView(rv.addSubview(BrowserRowNote.clone()))
-        rv.setMinWidth("2em")
+        rv.setMinWidth("3em")
         rv.setJustifyContent("center")
 
         const icon = SvgIconView.clone().setDivClassName("NoteIconView")

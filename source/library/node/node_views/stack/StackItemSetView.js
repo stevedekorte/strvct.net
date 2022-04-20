@@ -593,6 +593,7 @@
             this.selectedRow().scrollIntoView()
         }
         */
+        //this.didChangeNavSelection()
         return this	    
     }
 
@@ -800,6 +801,8 @@
             newSelectedRow.setShouldShowFlash(true).updateSubviews()
             pc.didTapItem(newSelectedRow)
         	this.selectPreviousColumn()
+
+            //pc.didChangeNavSelection()
         }
         return this
     }
@@ -1041,6 +1044,7 @@
         if (prevColumn) {
             this.blur()
             prevColumn.focus()
+            //this.didChangeNavSelection()
             //this.browser().selectColumn(prevColumn)
         }
         return this

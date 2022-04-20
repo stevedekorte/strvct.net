@@ -154,7 +154,7 @@
         doc.setBackgroundColor("#191919")
         //doc.setFontFamily("Sans-Serif")
         //doc.setFontFamily("Electrolize-Regular")
-        doc.setFontFamily("Helvetica")
+        //doc.setFontFamily("Helvetica")
         //doc.setFontWeight("bold")
         doc.setFontFamily("Helvetica Neue")
         //doc.setFontFamily("San Francisco Display")

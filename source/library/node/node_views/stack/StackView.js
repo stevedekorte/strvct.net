@@ -42,7 +42,7 @@
         the top most views will start collpasing to allow the deepest views to be displayed. 
 
         The relevant method is:
-        StackView.updateCompaction () which calls StackView.compactNavAsNeeded()
+        StackView.updateCompactionChain()
     
 
 */
@@ -214,6 +214,8 @@
     }
 
     didChangeNavSelection () {
+        console.log(this.node().title() + " didChangeNavSelection")
+        //debugger;
         //this.syncFromNavSelection()
         this.scheduleMethod("syncFromNode")
         return true
@@ -227,7 +229,7 @@
         }
         */
 
-        //console.log("StackView " + this.node().title() + " syncFromNavSelection")
+        console.log("StackView " + this.node().title() + " syncFromNavSelection")
         const itemView = this.navView().itemSetView().selectedRow()
         if (itemView && itemView.nodeRowLink()) {
             const oNode = itemView.nodeRowLink()
@@ -235,12 +237,12 @@
             if (!ovc || (ovc.node() !== oNode)) {
                 const ov = this.stackViewForNode(oNode)
                 this.setOtherViewContent(ov)
-                this.updateCompaction()
-                this.tellParentViews("updateCompaction")
             }
         } else {
             this.clearOtherView()
         }
+
+        this.updateCompactionChain()
     }
 
     // stack view chain
@@ -267,6 +269,11 @@
     }
 
     // compaction
+
+    updateCompactionChain () {
+        this.updateCompaction() 
+        this.tellParentViews("updateCompaction") 
+    }
 
     updateCompaction () {
         this.compactNavAsNeeded()
@@ -343,15 +350,17 @@
     }
 
     compactNavAsNeeded () {
+        console.log("StackView " + this.node().title() + " compactNavAsNeeded")
+
         if (this.direction() === "right") {
             const maxWidth = this.topViewWidth()
             const sum = this.sumOfNavWidths()
 
             if (sum > maxWidth) {
-                console.log(this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
+                //console.log(this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
                 this.navView().collapse()
             } else {
-                console.log(this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
+                //console.log(this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
                 this.navView().uncollapse()
             }
         }
