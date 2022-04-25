@@ -7,6 +7,11 @@
 */
 
 (class BMStorableNode extends BMNode {
+
+
+    viewClass () { // test ////////////////////////
+        super.viewClass()
+    }
     
     initPrototype () {
         this.setShouldStore(true)

@@ -24,10 +24,8 @@ Notifications:
 	this.postNoteNamed("hello")
         this.watchOnceForNote("hello")
         this.watchOnceForNoteFrom("hello", sourceObject)
-
         this.observeNote(aFileLoader.doneNote()) // still need to handle observation removal
         this.observeNoteOnce(aFileLoader.doneNote()) 
-
 
 
 Misc:

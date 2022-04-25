@@ -59,6 +59,7 @@ class IndexBuilder {
 
     run () {
         this.readImports()
+        this.makeBuildFolder()
         this.writeIndex()
         this.writeCam()
         this.compressCam()
@@ -93,14 +94,32 @@ class IndexBuilder {
         })
     }
 
+    // --- out files ---
+
+    buildFolderPath () {
+        return nodePath.join(process.cwd(), "build")
+    }
+
+    makeBuildFolder () {
+        const path = this.buildFolderPath()
+        if (!fs.existsSync(path)) {
+            fs.mkdirSync(path)
+        }
+        return this
+    }
+
     // --- index ---
 
     indexFileName () {
         return "_index.json"
     }
 
+    outIndexPath () {
+        return nodePath.join(this.buildFolderPath(), this.indexFileName())
+    }
+
     writeIndex () {
-        const outPath = nodePath.join(process.cwd(), this.indexFileName())
+        const outPath = this.outIndexPath()
         const index = this.paths().map(path => this.indexEntryForPath(path))
         const data = JSON.stringify(index, 2, 2)
         fs.writeFileSync(outPath, data, "utf8")
@@ -132,10 +151,14 @@ class IndexBuilder {
         return entry
     }
 
-    // --- cam ---
+    // --- out cam file ---
 
     camFileName () {
         return "_cam.json"
+    }
+
+    outCamPath () {
+        return nodePath.join(this.buildFolderPath(), this.camFileName())
     }
 
     writeCam () {
@@ -148,7 +171,7 @@ class IndexBuilder {
             cam[hash] = value
         })
         const data = JSON.stringify(cam, 2, 2)
-        fs.writeFileSync(this.camFileName(), data, "utf8")
+        fs.writeFileSync(this.outCamPath(), data, "utf8")
     }
 
     pathsWithExtensions (exts) {
@@ -159,10 +182,10 @@ class IndexBuilder {
     }
 
     compressCam () {
-        const inputData = fs.readFileSync(this.camFileName(),  "utf8")
+        const inputData = fs.readFileSync(this.outCamPath(),  "utf8")
         zlib.gzip(inputData, (error, zippedData) => {
             if (!error) {
-                fs.writeFileSync(this.camFileName() + ".zip", zippedData)
+                fs.writeFileSync(this.outCamPath() + ".zip", zippedData)
             } else {
                 throw new Error(error)
             }

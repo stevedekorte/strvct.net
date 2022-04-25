@@ -37,11 +37,19 @@
         this.setupTheme()
         this.setupModel()
 
+        const b = BrowserView.clone()
+        b.setNode(this.rootNode())
+        this.setBrowser(b)
+        this.documentBodyView().addSubview(b)
+        this.appDidInit()
+
+        /*
         const v = StackView.clone() //.setDirection("down")
         this.setStackView(v)
         v.setNode(this.rootNode())
         this.documentBodyView().addSubview(v)
         this.appDidInit()
+        */
 
         //setTimeout( () => this.showClasses(), 1)
     }
@@ -52,6 +60,7 @@
         console.log(s)
     }
 
+    /*
     setup_old () { // called by App.run
         super.setup()        
         this.setupTheme()
@@ -60,6 +69,7 @@
         this.appDidInit()
         return this
     }
+    */
 
     // --- setup model ---
 
@@ -110,10 +120,13 @@
 
     // --- setup views ---
     
+    /*
     setupViews () { 
+        debugger;
         this.setupBrowser()
         //this.setupShelf()
     }
+    */
 
     isBrowserCompatible () {
         return true

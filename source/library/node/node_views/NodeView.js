@@ -129,6 +129,8 @@
         const proto = this.subviewProtoForSubnode(aSubnode)
 		
         if (!proto) {
+            debugger;
+            aSubnode.viewClass()
             throw new Error("no subviewProto for subnode " + aSubnode.typeId())
         }
 		

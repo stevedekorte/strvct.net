@@ -1,4 +1,6 @@
 [
     "_css.css",
-    "row/_imports.json"
+    "row/_imports.json",
+    "BrowserView.js",
+    "BrowserHeader.js"
 ]

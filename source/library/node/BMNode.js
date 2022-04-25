@@ -483,23 +483,46 @@
 
     // --- viewClassName ---
     
-    /*
+    
     viewClassName () {
         if (!this._viewClassName) {
-            return this.type() + "View" //.sansPrefix("BM")
+            return (this.type() + "View" )
         }
         
         return this._viewClassName
     }
-    */
     
-    viewClass () {        
+    
+    viewClass () {
+        let proto = null;
         const name = this.viewClassName()
         if (name) {
-            return Object.getClassNamed(name)
+            proto = Object.getClassNamed(name)
         }
 
-	  	return this.firstAncestorWithMatchingPostfixClass("View")
+        if (!proto) {
+            const sansName = name.sansPrefix("BM")
+            if (sansName) {
+                proto = Object.getClassNamed(sansName)
+            }
+        }
+
+        if (this.type() !== "BMNode") {
+            console.log("this.type(): ", this.type())
+            console.log("this.superClass().type(): ", this.superClass().type())
+
+            //console.log("super.viewClass: ", super.viewClass)
+            proto = super.viewClass()
+        }
+
+        /*
+        if (!proto && this.superClass() && this.superClass().thisPrototype().ownsSlot("viewClass")) {
+            proto = super.viewClass()
+        }
+        */
+        return proto
+        
+	  	//return this.firstAncestorWithMatchingPostfixClass("View")
     }
 
     // --- nodeRowViewClass ---
@@ -1394,4 +1417,31 @@
     }
 
 }.initThisClass());
+
+
+
+
+// ------------------
+
+// super test
+
+class FooBar {
+    viewClass () {
+        return 1   
+    }
+}
+
+class FooBar2 extends FooBar {
+}
+
+class FooBar3 extends FooBar2 {
+    viewClass () {
+        return super.viewClass() 
+    }
+}
+
+var fooBar = new FooBar2()
+console.log("fooBar.viewClass() = ", fooBar.viewClass())
+
+
 
