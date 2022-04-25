@@ -333,35 +333,35 @@ const prototypeSlots = {
         return copy
     },
 
-    at (key) {
+    at: function (key) {
         return this[key] 
     },
 
-    atPut(key, value) {
+    atPut: function (key, value) {
         this[key] = value
         return this
     },
 
-    removeAt (key) {
+    removeAt: function (key) {
         delete this[key]
         return this
     },
 
-    ownKVMap (fn) {
+    ownKVMap: function (fn) {
         return Object.keys(this).map(k => fn(k, this[k]) )
     },
 
-    ownForEachValue: function(fn) {
+    ownForEachValue: function (fn) {
         Object.keys(this).forEach( k => fn(this[k]) )
         return this
     },
 
-    ownForEachKey: function(fn) {
+    ownForEachKey: function (fn) {
         Object.keys(this).forEach( k => fn(k) )
         return this
     },
     
-    ownForEachKV: function(fn) {    
+    ownForEachKV: function (fn) {    
         Object.keys(this).forEach( k => fn(k, this[k]) )
         return this
     },
@@ -564,6 +564,7 @@ const prototypeSlots = {
     },
 }
 
+//console.log("prototypeSlots.atPut: ", prototypeSlots.atPut)
 
 Object.defineSlots(Object.prototype, prototypeSlots);
 

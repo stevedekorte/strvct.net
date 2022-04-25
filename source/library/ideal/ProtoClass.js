@@ -614,14 +614,24 @@
         // existing class with the same name as the ancestor + the given postfix
         // useful for things like type + "View" or type + "RowView", etc
         //this.debugLog(" firstAncestorWithMatchingPostfixClass(" + aPostfix + ")")
-        const match = this.thisClass().ancestorClassesIncludingSelf().detect((obj) => {
-            const name = obj.type() + aPostfix
-            const proto = Object.getClassNamed(name)
-            return proto
-        })
-        const result = match ? Object.getClassNamed(match.type() + aPostfix) : null
+        const classes = this.thisClass().ancestorClassesIncludingSelf()
+        for (let i = 0; i < classes.length; i++) {
+            const aClass = classes[i]
 
-        return result
+            const name = aClass.type() + aPostfix
+            const proto = Object.getClassNamed(name)
+            if (proto) {
+                return proto
+            }
+            const sansName = name.sansPrefix("BM")
+            //console.log("sansName:", sansName)
+            const sansProto = Object.getClassNamed(sansName) // hack to deal with viewClass issues
+            if (sansProto) {
+              //  debugger;
+                return sansProto
+            }
+        }
+        return null
     }
 
     // debugging

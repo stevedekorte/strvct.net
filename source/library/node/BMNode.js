@@ -492,7 +492,6 @@
         return this._viewClassName
     }
     
-    
     viewClass () {
         let proto = null;
         const name = this.viewClassName()
@@ -506,6 +505,7 @@
                 proto = Object.getClassNamed(sansName)
             }
         }
+        /*
 
         if (this.type() !== "BMNode") {
             console.log("this.type(): ", this.type())
@@ -515,14 +515,10 @@
             proto = super.viewClass()
         }
 
-        /*
-        if (!proto && this.superClass() && this.superClass().thisPrototype().ownsSlot("viewClass")) {
-            proto = super.viewClass()
-        }
-        */
         return proto
+        */
         
-	  	//return this.firstAncestorWithMatchingPostfixClass("View")
+	  	return this.firstAncestorWithMatchingPostfixClass("View") 
     }
 
     // --- nodeRowViewClass ---
