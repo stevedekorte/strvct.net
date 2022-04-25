@@ -38,18 +38,19 @@
         this.setupModel()
 
         const b = BrowserView.clone()
+        debugger;
         b.setNode(this.rootNode())
         this.setBrowser(b)
         this.documentBodyView().addSubview(b)
-        this.appDidInit()
 
         /*
         const v = StackView.clone() //.setDirection("down")
         this.setStackView(v)
         v.setNode(this.rootNode())
         this.documentBodyView().addSubview(v)
-        this.appDidInit()
         */
+
+        this.appDidInit()
 
         //setTimeout( () => this.showClasses(), 1)
     }
@@ -59,17 +60,6 @@
         const s = ProtoClass.subclassesDescription()
         console.log(s)
     }
-
-    /*
-    setup_old () { // called by App.run
-        super.setup()        
-        this.setupTheme()
-        this.setupModel()
-        this.setupViews()
-        this.appDidInit()
-        return this
-    }
-    */
 
     // --- setup model ---
 

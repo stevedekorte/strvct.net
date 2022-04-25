@@ -1,0 +1,4 @@
+[
+    "BrowserView.js",
+    "BrowserHeader.js"
+]

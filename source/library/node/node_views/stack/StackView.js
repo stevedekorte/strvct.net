@@ -250,7 +250,7 @@
     previousStackView () {
         // stackView -> otherView -> stackView
         const p = this.parentView()
-        if (p) {
+        if (p && p.previousStackView) {
             return p.parentView()
         }
         return null

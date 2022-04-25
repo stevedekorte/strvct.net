@@ -507,6 +507,9 @@
         }
         /*
 
+        // we can't do this becuase "this.type()" will be the top type, not the
+        // lookup context type
+
         if (this.type() !== "BMNode") {
             console.log("this.type(): ", this.type())
             console.log("this.superClass().type(): ", this.superClass().type())
