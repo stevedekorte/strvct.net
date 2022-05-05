@@ -609,11 +609,11 @@
 
     // --- ancestors ---
 
-    firstAncestorWithMatchingPostfixClass (aPostfix) {
-        // not a great name but this walks back the ancestors and tries to find an
+    firstAncestorClassWithPostfix (aPostfix) {
+        // not a great name but this walks back the ancestors (including self) and tries to find an
         // existing class with the same name as the ancestor + the given postfix
         // useful for things like type + "View" or type + "RowView", etc
-        //this.debugLog(" firstAncestorWithMatchingPostfixClass(" + aPostfix + ")")
+        //this.debugLog(" firstAncestorClassWithPostfix(" + aPostfix + ")")
         const classes = this.thisClass().ancestorClassesIncludingSelf()
         for (let i = 0; i < classes.length; i++) {
             const aClass = classes[i]
@@ -623,9 +623,9 @@
             if (proto) {
                 return proto
             }
-            const sansName = name.sansPrefix("BM")
+            const sansName = name.sansPrefix("BM") // TODO: remove this hack
             //console.log("sansName:", sansName)
-            const sansProto = Object.getClassNamed(sansName) // hack to deal with viewClass issues
+            const sansProto = Object.getClassNamed(sansName) // hack to deal with nodeViewClass issues
             if (sansProto) {
               //  debugger;
                 return sansProto

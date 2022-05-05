@@ -25,7 +25,7 @@
         this.setSubnodeProto(BMOptionNode)
         this.setNodeCanReorderSubnodes(true)
 
-        //this.setViewClassName("BMOptionsNodeView")
+        //this.setNodeViewClassName("BMOptionsNodeView")
     }
 
     title () {

@@ -47,6 +47,7 @@
         this.setIsRegisteredForBrowserDrop(true)
         
         //this.setBorder("1px dashed red")
+        this.setDefaultSubviewProto(BrowserTitledRow)
 
         return this
     }
@@ -116,17 +117,7 @@
         return this
     }
 
-    subviewProtoForSubnode (aSubnode) {
-        let proto = aSubnode.nodeRowViewClass()
-		
-        if (!proto) {
-            proto = BrowserTitledRow
-        }
-				
-        return proto      
-        
-        //return StackItemView      
-    }
+
 
     /*
     didSelectItem (itemView) {
@@ -446,10 +437,10 @@
     // --- sync -----------------------------
 
     subviewProtoForSubnode (aSubnode) {
-        let proto = aSubnode.nodeRowViewClass()
+        let proto = aSubnode.nodeRowViewClass() // we need this to get row versions of view
 		
         if (!proto) {
-            proto = BrowserTitledRow
+            proto = this.defaultSubviewProto()
         }
 				
         return proto      
@@ -1029,7 +1020,7 @@
     // previous column
 	
     previousItemSet () {
-        if(this.stackView()) {
+        if (this.stackView()) {
             const ps = this.stackView().previousStackView()
             if (ps) {
                 return ps.navView().itemSetView()

@@ -88,7 +88,7 @@
         return "rgba(255, 255, 255, 0.3)"
     }
 
-    makeOrientationRight() {
+    makeOrientationRight () {
         this.setFlexDirection("column")
         this.setFlexBasis(this.targetWidth() + "px")
         this.setFlexGrow(0)
@@ -98,7 +98,7 @@
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
     }
 
-    makeOrientationDown() {
+    makeOrientationDown () {
         this.setFlexDirection("row")
         this.setFlexBasis(this.targetHeight() + "px")
         this.setFlexGrow(0)

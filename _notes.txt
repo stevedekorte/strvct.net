@@ -1,5 +1,65 @@
 
 
+- up/left back arrow navigation not working 
+
+-------------------------------------
+
+Inline Row views????
+
+- add BMNode.inlineLevelHint
+- have BMNodeView.visibleNodes looks at inlineLevelHint
+- add BMNode.subitemsFlattenedToLevel(n)
+
+
+- want to be able to go from, say, json doc structure to inlined doc e.g. Io guide
+- what do we need for that?
+- InlinedContainerRowView
+- Document (inline container), Section (inline container), Header, Text, Media, References, Links
+
+issues:
+- need to be able to option-click inspect
+- need within-row selection protocol
+- should 
+
+-------------------------------
+| InlinedContainerRowView
+|  subviews
+|
+|
+
+- we want to be able to use existing drag and drop between parts of the hierarcy
+- what if document not presented subnode hierarchy as flat list of rows <<<<
+- these rows have drag UI that supports inserting at a level, perhaps by how far inset they are?
+-- two types of rows: grouping rows and and content rows? which have different drop interpretation behaviors
+---- content rows always inserted under level of first preceeding grouping row
+---- grouping row needs some sort of guideline highlight with snap for drop level?
+---- or force UI into non-inline mode for editing and all problems solved except naturalness? 
+- maybe after insert, top node figures out and assigns indent level?
+- UI to move indent level?
+
+- would also like to keep way of browsing document with normal node structure on small displays
+- would need to deal with stack view expectations around node parent chain 
+
+
+PathView:
+- example on wide display:
+
+	< Io / docs / guide
+
+or in single column display:
+
+	< guide 
+
+at top level:
+
+	Io
+
+also (if view wide and tall enough):
+
+	Io
+	/ docs / guide
+
+
 
 Sites:
 - Start converting Io and Dekorte sites to JSON?
@@ -7,6 +67,13 @@ Sites:
 
 Browser:
 - need back arrow - add new Browser class with header, footer, stack view in middle - room for shelf?
+-- should this be implemented as separate header footer view?
+--- pros: (for no BrowserView)
+---- reuse options menus, resizing, reorg of StackView, allow sub paths views??
+--- cons:
+----- still need footer view for some UIs?
+
+
 - need special highlight for end node
 - make return act like click if whole column is selected (so we can add node with keyboard?)
 -- how to add node from keyboard in non empty column?

@@ -4,5 +4,6 @@
     "BrowserRowNote.js",
     "BrowserRowSubtitle.js",
     "BrowserRowTitle.js",
-    "BMTextNodeRowView.js"
+    "BMTextNodeRowView.js",
+    "BreadCrumbRowView.js"
 ]

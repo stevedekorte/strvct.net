@@ -46,7 +46,7 @@
         this.setDescription("Item or service description")
 
 
-        //this.setImagesNode(BMNode.clone().setViewClassName("ImageView").setSubnodeProto("ImageNode"))
+        //this.setImagesNode(BMNode.clone().setNodeViewClassName("ImageView").setSubnodeProto("ImageNode"))
         this.setImageDataUrl(null) 
         
         this.setObjMsg(BMObjectMessage.clone())

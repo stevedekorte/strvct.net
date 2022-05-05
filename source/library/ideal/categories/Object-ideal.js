@@ -111,6 +111,9 @@ const classSlots = {
     },
 
     getClassNamed: function(aName) {
+        if (Type.isNullOrUndefined(aName)) {
+            return undefined
+        }
         return getGlobalThis()[aName]
     },
 

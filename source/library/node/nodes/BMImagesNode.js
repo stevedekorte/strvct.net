@@ -14,7 +14,7 @@
     init () {
         super.init()
 
-        this.setViewClassName("ImageView")
+        this.setNodeViewClassName("ImageView")
         this.setSubnodeProto("ImageNode")
         
         this.setNodeCanEditTitle(true)

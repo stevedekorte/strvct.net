@@ -37,14 +37,14 @@
     }
 
     setupSubnodes () {
-        const viewClasses = DomView.descendantClasses()
+        const nodeViewClasses = DomView.descendantClasses()
 
-        viewClasses = viewClasses.select((viewClass) => {
-            return viewClass.hasOwnProperty("styles")
-        }).select((viewClass) => { return !viewClass.styles().isEmpty() })
+        nodeViewClasses = nodeViewClasses.select((nodeViewClass) => {
+            return nodeViewClass.hasOwnProperty("styles")
+        }).select((nodeViewClass) => { return !nodeViewClass.styles().isEmpty() })
 
-        //console.log("viewClasses:", viewClasses)
-        const themeClasses = viewClasses.map((childProto) => {
+        //console.log("nodeViewClasses:", nodeViewClasses)
+        const themeClasses = nodeViewClasses.map((childProto) => {
             return BMThemeFolder.clone().setTitle(childProto.type());
         })
 

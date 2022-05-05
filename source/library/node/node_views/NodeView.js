@@ -10,6 +10,7 @@
     
     initPrototype () {
         this.newSlot("node", null) //.setDuplicateOp("duplicate")
+        this.newSlot("defaultSubviewProto", null)
         this.newSlot("overrideSubviewProto", null)
         this.newSlot("nodeObservation", null)
         this.newSlot("isInspecting", false)
@@ -80,6 +81,7 @@
     }
     
     subviewProto () {
+        debugger;
         //console.log("looking for subviewProto")
         if (this.node()) {
             const vc = this.node().nodeRowViewClass()
@@ -100,7 +102,7 @@
     updateSubnodeToSubviewMap () {
         // TODO: make this more efficient with add/remove hooks
         const dict = {}
-        this.subviews().forEach( sv => {
+        this.subviews().forEach(sv => {
             if (sv.node) { 
                 dict.atPut(sv.node(), sv) 
             } 
@@ -113,7 +115,11 @@
         let proto = this.overrideSubviewProto()
 		
         if (!proto) {
-		    proto = aSubnode.viewClass()
+		    proto = aSubnode.nodeViewClass()
+        }
+
+        if (!proto) {
+            proto = this.defaultSubviewProto()
         }
 				
         return proto      
@@ -125,12 +131,10 @@
         }
 
         //console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
-        
         const proto = this.subviewProtoForSubnode(aSubnode)
 		
         if (!proto) {
-            debugger;
-            aSubnode.viewClass()
+            aSubnode.nodeViewClass()
             throw new Error("no subviewProto for subnode " + aSubnode.typeId())
         }
 		
@@ -140,6 +144,22 @@
     updateSubviews () {
         // for subclasses to override
         return this
+    }
+
+    flattenedSubnodes (depth) {
+        if (Type.isUndefined(depth)) {
+            depth = 0
+        }
+        const subnodes = this.node().subnodes()
+        const flattened = []
+        subnodes.forEach(subnode => {
+            flattened.push(subnode)
+            if (depth > 0) {
+                subnode.subnodes().forEach(sub => flattened.push(sub))
+            }
+        })
+
+        return flattened
     }
     
     visibleSubnodes () {

@@ -143,7 +143,8 @@
 
         // view settings
 
-        this.newSlot("viewClassName", null)
+        this.newSlot("nodeViewClassName", null)
+        this.newSlot("nodeRowViewClassName", null)
         this.newSlot("nodeThumbnailUrl", null)
         this.newSlot("nodeCanEditTitle", false).setDuplicateOp("copyValue")
 
@@ -247,6 +248,7 @@
     }
 
     nodeOrientation () {
+        //return "down"
         return this.nodeIsVertical() ? "right" : "down" 
     }
 
@@ -481,59 +483,44 @@
         return this.title()
     }
 
-    // --- viewClassName ---
+    // --- nodeViewClass and nodeRowViewClass ---
     
-    
-    viewClassName () {
-        if (!this._viewClassName) {
+    /*
+    nodeViewClassName () {
+        if (!this._nodeViewClassName) {
             return (this.type() + "View" )
         }
         
-        return this._viewClassName
+        return this._nodeViewClassName
     }
+    */ 
     
-    viewClass () {
-        let proto = null;
-        const name = this.viewClassName()
-        if (name) {
-            proto = Object.getClassNamed(name)
-        }
+    nodeViewClass () {
+        const name = this.nodeViewClassName()
 
-        if (!proto) {
-            const sansName = name.sansPrefix("BM")
-            if (sansName) {
-                proto = Object.getClassNamed(sansName)
+        if (name) {
+            const proto = Object.getClassNamed(name)
+            if (proto) {
+                return proto
             }
         }
-        /*
-
-        // we can't do this becuase "this.type()" will be the top type, not the
-        // lookup context type
-
-        if (this.type() !== "BMNode") {
-            console.log("this.type(): ", this.type())
-            console.log("this.superClass().type(): ", this.superClass().type())
-
-            //console.log("super.viewClass: ", super.viewClass)
-            proto = super.viewClass()
-        }
-
-        return proto
-        */
         
-	  	return this.firstAncestorWithMatchingPostfixClass("View") 
+	  	return this.firstAncestorClassWithPostfix("View") 
     }
 
     // --- nodeRowViewClass ---
-    
-    /*
-    rowNode () {
-        return this
-    }
-    */
 
-    nodeRowViewClass () {   
-	  	return this.firstAncestorWithMatchingPostfixClass("RowView")
+    nodeRowViewClass () {  
+        const name = this.nodeRowViewClassName()
+
+        if (name) {
+            const proto = Object.getClassNamed(name)
+            if (proto) {
+                return proto
+            }
+        }
+
+	  	return this.firstAncestorClassWithPostfix("RowView")
     }
 
     // --- subnodes ----------------------------------------
@@ -1417,30 +1404,6 @@
 
 }.initThisClass());
 
-
-
-
-// ------------------
-
-// super test
-
-class FooBar {
-    viewClass () {
-        return 1   
-    }
-}
-
-class FooBar2 extends FooBar {
-}
-
-class FooBar3 extends FooBar2 {
-    viewClass () {
-        return super.viewClass() 
-    }
-}
-
-var fooBar = new FooBar2()
-console.log("fooBar.viewClass() = ", fooBar.viewClass())
 
 
 

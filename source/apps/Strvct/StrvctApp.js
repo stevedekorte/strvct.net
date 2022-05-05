@@ -38,8 +38,7 @@
         this.setupModel()
 
         const b = BrowserView.clone()
-        debugger;
-        b.setNode(this.rootNode())
+        b.setRootNode(this.rootNode())
         this.setBrowser(b)
         this.documentBodyView().addSubview(b)
 

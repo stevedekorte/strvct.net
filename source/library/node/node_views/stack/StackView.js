@@ -63,7 +63,7 @@
     initPrototype () {
         this.newSlot("navView", null)
         this.newSlot("otherView", null)
-        this.newSlot("direction", "right").setDoesHookSetter(true) // valid values: left, right, up, down
+        this.newSlot("direction", "down").setDoesHookSetter(true) // valid values: left, right, up, down
     }
 
     init () {
@@ -158,15 +158,41 @@
         const d = this.direction()
         const nv = this.navView()
         if (d === "right") {
-            this.setFlexDirection("row")
-            //this.navView().setIsVertical(false)
-
+            this.makeOrientationRight()
         } else if (d == "down") {
-            this.setFlexDirection("column")
-            //this.navView().setIsVertical(true)
+            this.makeOrientationLeft()
+        } else {
+            throw new Error("unimplmented direction '" + d + "'")
         }
         this.navView().syncOrientation()
     }
+
+    makeOrientationRight () {
+        this.setFlexDirection("row")
+        return this
+    }
+
+    makeOrientationLeft () {
+        this.setFlexDirection("column")
+        return this
+    }
+
+    /*
+    verifyOrientation () {
+        const d = this.direction()
+        if (d == "right")
+    }
+    */
+    
+    /*
+    setFlexDirection (v) {
+        if (this.flexDirection() === "column" && v == "row") {
+            debugger; // why are we switching back to row?
+        }
+        super.setFlexDirection(v)
+        return this
+    }
+    */
 
     setNode (aNode) {
         super.setNode(aNode)
@@ -213,13 +239,26 @@
         return this.otherView().subviews().first()
     }
 
+    // notifications
+
+    selectedNodePathArray () {
+        return this.stackViewSubchain().map(sv => sv.node())
+    }
+
     didChangeNavSelection () {
         console.log(this.node().title() + " didChangeNavSelection")
-        //debugger;
+        this.topStackView().didChangeChildNavSelectionIn(this);
         //this.syncFromNavSelection()
         this.scheduleMethod("syncFromNode")
         return true
     }
+
+    
+    didChangeChildNavSelectionIn (activeStackView) {
+        const note = BMNotificationCenter.shared().newNote().setSender(this).setName("onStackViewPathChange").post()
+    }
+    
+    // ----------------
 
     syncFromNavSelection () {
         // update otherViewContent view to match selected ite,
@@ -248,11 +287,20 @@
     // stack view chain
 
     previousStackView () {
-        // stackView -> otherView -> stackView
-        const p = this.parentView()
+        // this stackView -> otherView -> previousStackView
+        const otherView = this.parentView()
+        if (otherView) {
+            const previousStackView = otherView.parentView()
+            if (previousStackView && previousStackView.previousStackView) {
+                //if (previousStackView.isSubclassOf(StackView)) {
+                return previousStackView
+            }
+        }
+        /*
         if (p && p.previousStackView) {
             return p.parentView()
         }
+        */
         return null
     }
 
@@ -268,7 +316,7 @@
         return p
     }
 
-    // compaction
+    // compaction (adjust number of visible stack areas to fit top stack view)
 
     updateCompactionChain () {
         this.updateCompaction() 

@@ -4,8 +4,8 @@
     "HeaderFooterView.js",
     "ImageWellView.js",
     "ImageView.js",
+    "stack/_imports.json",
     "browser/_imports.json",
-    "field_views/_imports.json",
-    "stack/_imports.json"
+    "field_views/_imports.json"
 ]
 

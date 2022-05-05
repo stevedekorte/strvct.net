@@ -395,11 +395,11 @@
             return this
         }
 
-        const d = this.stackView().direction()
+        const d = this.stackView().direction() //
         if (d === "right") {
             this.makeOrientationRight()
         } else if (d === "down") {
-            this.makeOrientationDown() 
+            this.makeOrientationDown()
         }
         return this
     }
@@ -417,7 +417,10 @@
 
     makeOrientationDown () { 
         this.setDisplay("inline-block")  
-        this.setWidth("170px")
+        //this.setWidth("170px")
+        this.setWidth("100%") // want 100% if single item, like breadcrumb
+        // otherwise, the stack view should figure out the widths using one of
+        // several policy options?
         //this.setHeight("fit-content")
         this.setHeight("100%")
         //this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
