@@ -906,8 +906,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackView.js",
-    "size": 11924,
-    "hash": "l9Z9DP8GeBSJvqah+ecKmMr8DUbES+w4xLLavyK0LWA="
+    "size": 12188,
+    "hash": "ynGH01y7yE5Q/4uHDGvp9SnluGIbyR/WtfrsaWk7SHI="
   },
   {
     "path": "source/library/node/node_views/stack/StackNavView.js",
@@ -921,8 +921,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackItemSetView.js",
-    "size": 47597,
-    "hash": "3YhI8pCxjcFmYHqO3YBkt0qZiJ0AniC/gtzDCtCaFyM="
+    "size": 47675,
+    "hash": "mJSmiqw3RGhFZYtEt5QTBIBlARHLUAWxB9Ia67JX/i4="
   },
   {
     "path": "source/library/node/node_views/browser/_css.css",
@@ -931,8 +931,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/row/BrowserRow.js",
-    "size": 28882,
-    "hash": "2MuaT/a/kZWp/xO2Q4YExj2pjAStELzmmudqi4xSuOA="
+    "size": 29034,
+    "hash": "GuSa6IxBk12rPNQnhzxsJbYfA1xtSm3AaxvKL1vjhWE="
   },
   {
     "path": "source/library/node/node_views/browser/row/BrowserTitledRow.js",
@@ -961,13 +961,13 @@
   },
   {
     "path": "source/library/node/node_views/browser/row/BreadCrumbRowView.js",
-    "size": 1778,
-    "hash": "o8d32cK2r1QVPRMhMQvPB8OG4OxRaGRkguqgT1Gldwg="
+    "size": 3411,
+    "hash": "m1e/etApaTH2QFZe5c4QpMXvqL1tjyCO5Z7pYLH8sFA="
   },
   {
     "path": "source/library/node/node_views/browser/BrowserView.js",
-    "size": 994,
-    "hash": "eS/oh0eJdtRnLrrvmh9ZK7I0C7R1qfW6VbE3S9K561o="
+    "size": 1030,
+    "hash": "eEDSEMYhfV1MVniSoxOV5ZBynvAxMPNrpififW2e5i8="
   },
   {
     "path": "source/library/node/node_views/browser/BrowserHeader.js",

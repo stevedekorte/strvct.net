@@ -592,6 +592,7 @@
         //const isAltTap = keyModifiers.contains("Alternate");
     
         //if (keyModifiers.length) {
+            // TODO: abstract this to DomView or GestureRecognizer?
             const methodName = "just" + keyModifiers.join("") + "Tap"
             //this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
@@ -629,6 +630,7 @@
             }
 
             if (this.isFocused() && node.nodeUrlLink) {
+                // TODO: move to specialized view (something like UrlLinkRowView?) 
                 if (!BMKeyboard.shared().hasKeysDown()) {
                     const url = node.nodeUrlLink()
                     window.open(url, "_blank")

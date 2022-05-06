@@ -246,16 +246,27 @@
     }
 
     didChangeNavSelection () {
-        console.log(this.node().title() + " didChangeNavSelection")
-        this.topStackView().didChangeChildNavSelectionIn(this);
         //this.syncFromNavSelection()
         this.scheduleMethod("syncFromNode")
+        this.topStackView().scheduleMethod("postDidFocusItem")
         return true
     }
 
-    
-    didChangeChildNavSelectionIn (activeStackView) {
-        const note = BMNotificationCenter.shared().newNote().setSender(this).setName("onStackViewPathChange").post()
+    selectedPathString () {
+        return this.selectedNodePathArray().map(node => node.title()).join("/")
+    }
+
+    // --- selected path changes ---
+
+    postDidFocusItem () {
+        //debugger;
+
+        console.log("StackView.didFocusItem(" + this.node().title() + ") selectedPathString: '" + this.selectedPathString() + "'")
+        this.stackViewSubchain()
+
+        const note = BMNotificationCenter.shared().newNote().setSender(this)
+        note.setName("onStackViewPathChange")
+        note.post()
     }
     
     // ----------------

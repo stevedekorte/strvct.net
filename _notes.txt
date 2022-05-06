@@ -1,6 +1,11 @@
 
 
-- up/left back arrow navigation not working 
+- switch didChangeNavSelection triggering path change to focus item or something
+- work on sizing down navigation to fit item heights?
+
+- need to separate tap event from tap action in BrowserRow so user input can trigger actions we don't want otherwise?
+- rename "Row" to "Item"?
+- rename BrowserRow.column to "itemSet?"
 
 -------------------------------------
 

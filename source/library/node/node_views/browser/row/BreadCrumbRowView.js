@@ -11,10 +11,14 @@
     initPrototype () {
         this.newSlot("path", null)
         this.newSlot("textView", null)
+        this.newSlot("separatorString", ">")
+        this.newSlot("onStackViewPathChangeObs", null)
     }
 
     init () {
         super.init()
+
+        this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this))
 
         const cv = this.contentView()
         cv.setMinHeight("3em")
@@ -50,28 +54,83 @@
         this.updateSubviews()
         this.setIsSelectable(true)
 
-        this._obs = BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this).watch()
-
         return this
+    }
+
+    didChangeParentView () {
+        super.didChangeParentView()
+        const obs = this.onStackViewPathChangeObs()
+        obs.stopWatching()
+        if (this.parentView()) {
+            obs.setTarget(this.topStackView())
+            obs.watch()
+        }
+        this.syncPathToStack()
+        return this
+    }
+
+    topStackView () {
+        return this.parentView().stackView().topStackView()
     }
 
     onStackViewPathChange (aNote) {
-        const stackView = aNote.sender()
-        const nodes = stackView.selectedNodePathArray()
-        nodes.shift()
-        const path = nodes.map(node => node.title()).join(" / ")
-        this.textView().setString(path)
+        this.syncPathToStack()
     }
 
-    updateSubviews () {
-        super.updateSubviews()
-        return this
+    pathNodes () {
+        if (this.topStackView()) {
+            const nodes = this.topStackView().selectedNodePathArray()
+            nodes.shift()
+            return nodes
+        }
+        return []
+    }
+
+    syncPathToStack () {
+        const nodes = this.pathNodes()
+        const path = nodes.map(node => node.title()).join(" > ")
+        console.log("BreadCrumbRowView.onStackViewPathChange path = '" + path + "'")
+        this.textView().setString(path)
+        console.log("--------------------")
+    }
+
+    buttonForName (aName) {
+        const v = DomFlexView.clone()
+        v.setDisplay("inline-block")
+        v.setInnerHtml(name)
+        v.setTarget(this)
+        v.setAction("onClickPathComponent")
+        return sv
+    }
+
+    newSeparatorView () {
+        const v = DomFlexView.clone()
+        v.setDisplay("inline-block")
+        v.setPaddingLeft("1em")
+        v.setPaddingRight("1em")
+        v.setInnerHtml(this.separatorString())
+        return v
+    }
+
+    setupForPathArray (pathArray) {
+        this.removeAllSubviews()
+        for (i = 0; i < pathArray.length; i++) {
+            const name = pathArray[i]
+            this.addSubview(this.buttonForName(name))
+            if (i <= pathArray.length - 1) {
+                this.addSubview(this.newSeparatorView())
+            }
+        }
+    }
+
+    onClickPathComponent (aPathComponentView) {
+
     }
     
     // ---
 
     desiredWidth () {
-        return 10000 //this.calcWidth()
+        return Number.MAX_VALUE //this.calcWidth()
     }
 
     

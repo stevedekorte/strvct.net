@@ -238,9 +238,11 @@
     // --- row tapping ---
 
     didTapItem (anItem) {
+        //debugger;
         anItem.select()
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus()
+            // anItem seems to already be focused somehow
         }
         this.unselectAllRowsExcept(anItem)
         this.unselectRowsInNextColumn()
