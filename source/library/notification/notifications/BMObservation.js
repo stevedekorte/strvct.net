@@ -95,6 +95,10 @@
         return this
     }
 
+    isWatching () {
+        return this.center().hasObservation(this)
+    }
+
     stopWatching () {
         this.center().removeObservation(this)
         //this.target().onStopObserving()

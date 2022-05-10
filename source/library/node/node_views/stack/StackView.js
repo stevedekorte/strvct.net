@@ -64,6 +64,7 @@
         this.newSlot("navView", null)
         this.newSlot("otherView", null)
         this.newSlot("direction", "down").setDoesHookSetter(true) // valid values: left, right, up, down
+        this.newSlot("lastPathString", null)
     }
 
     init () {
@@ -241,14 +242,41 @@
 
     // notifications
 
+    requestSelectedNodePathArray (pathArray) {
+        const node = pathArray.shift()
+
+        if (node !== this.node()) {
+            this.setNode(node)
+            this.syncFromNavSelection()
+            // should we verify if node is a subitem
+        } else if (pathArray.length === 0) { 
+            //console.log("unselect items after path: ", this.pathString())
+            // no selections left so unselect next
+            this.navView().itemSetView().unselectAllRows()
+            this.syncFromNavSelection()
+            return this
+        }
+
+        const childStack = this.nextStackView()
+        if (childStack) {
+            childStack.requestSelectedNodePathArray(pathArray)
+        }
+        return this
+    }
+
     selectedNodePathArray () {
         return this.stackViewSubchain().map(sv => sv.node())
     }
 
     didChangeNavSelection () {
+        const currentPathString = this.pathString()
+        // TODO: change to node matching - path isn't unique and names can change
+        if (this.lastPathString() !== currentPathString) {
+            this.setLastPathString(currentPathString)
+            this.topStackView().scheduleMethod("postDidFocusItem")
+        }
         //this.syncFromNavSelection()
         this.scheduleMethod("syncFromNode")
-        this.topStackView().scheduleMethod("postDidFocusItem")
         return true
     }
 
@@ -256,17 +284,19 @@
         return this.selectedNodePathArray().map(node => node.title()).join("/")
     }
 
+    pathString () {
+        return this.stackViewSuperChain().reverse().map(sv => sv.node().title()).join("/")
+    }
+
     // --- selected path changes ---
 
     postDidFocusItem () {
-        //debugger;
-
-        console.log("StackView.didFocusItem(" + this.node().title() + ") selectedPathString: '" + this.selectedPathString() + "'")
-        this.stackViewSubchain()
-
+        //console.log("StackView.didFocusItem(" + this.node().title() + ") selectedPathString: '" + this.selectedPathString() + "'")
+        //this.stackViewSubchain()
         const note = BMNotificationCenter.shared().newNote().setSender(this)
         note.setName("onStackViewPathChange")
         note.post()
+        return this
     }
     
     // ----------------
@@ -279,7 +309,7 @@
         }
         */
 
-        console.log("StackView " + this.node().title() + " syncFromNavSelection")
+        //console.log("StackView " + this.node().title() + " syncFromNavSelection")
         const itemView = this.navView().itemSetView().selectedRow()
         if (itemView && itemView.nodeRowLink()) {
             const oNode = itemView.nodeRowLink()
@@ -315,7 +345,7 @@
         return null
     }
 
-    nextStackView( ) {
+    nextStackView () {
         return this.otherView().subviews().first()
     }
 
@@ -327,7 +357,7 @@
         return p
     }
 
-    // compaction (adjust number of visible stack areas to fit top stack view)
+    // --- compaction (adjusts number of visible stack areas to fit top stack view)
 
     updateCompactionChain () {
         this.updateCompaction() 
@@ -360,8 +390,10 @@
     }
     */
 
+
+
     stackViewSuperChain () {
-        // returns list of self and StackViews above self
+        // returns list of self and StackViews above
         const chain = []
         let current = this
         while (current) {
@@ -377,7 +409,7 @@
     }
 
     stackViewSubchain () {
-        // returns all self and StackViews below self
+        // returns self and all StackViews below 
         const chain = []
         let current = this
         while (current) {
@@ -387,14 +419,14 @@
         return chain
     }
 
-    sumOfNavWidths () {
+    sumOfNavWidths () { // used for compacting
         let w = 0
         const views = this.stackViewSubchain()
-        for (let i = 0; i < views.length; i++) {
+        for (let i = 0; i < views.length; i++) { // use loop so we can break
             const sv = views[i]
             /*
             if (sv.direction() !== this.direction()) {
-                break
+                break 
             }
             */
             if (sv.navView().isVertical()) {

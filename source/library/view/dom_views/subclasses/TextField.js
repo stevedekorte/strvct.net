@@ -346,7 +346,7 @@
         }
         
         if (this.doesClearOnReturn()) {
-            this.setInnerHTML("")
+            this.setInnerHtml("")
             //this.focusAfterDelay(.125) // hack to get focus back after chat view scrolling - TODO: fix this
         }
 
@@ -359,7 +359,7 @@
     }
 	
     formatValue () {
-	    const oldValue = this.innerHTML()
+	    const oldValue = this.innerHtml()
 	    let newValue = this.innerText() // removes returns
         
         if (this.doesTrim()) {
@@ -374,11 +374,11 @@
         if (newValue !== oldValue) {
             this.debugLog("formatValue newValue !== oldValue")
             this.debugLog(" newValue: [" + newValue + "]")
-            this.setInnerHTML(newValue)
+            this.setInnerHtml(newValue)
             this.didEdit()
         }
-	    //console.trace(this.type() + " formatValue '" + oldValue + "' -> '" + this.innerHTML() + "'")
-        //this.debugLog(" after formatValue: '" + this.innerHTML() + "'")
+	    //console.trace(this.type() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
+        //this.debugLog(" after formatValue: '" + this.innerHtml() + "'")
         return this
     }
     

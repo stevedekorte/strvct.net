@@ -67,7 +67,7 @@
         this.setTextOverflow("ellipsis")
         this.setPadding("1px")
         this.setOverflow("hidden")
-        v.setInnerHTML("")
+        v.setInnerHtml("")
         v.setUserSelect("none")
         return v
     }
@@ -131,7 +131,7 @@
         
         if (node && this.browser()) {
             if (this.shouldShowTitle()) {
-    		    this.titleView().setInnerHTML(node.nodeHeaderTitle())
+    		    this.titleView().setInnerHtml(node.nodeHeaderTitle())
 	        } 
             this.titleView().setDisplayIsHidden(!this.shouldShowTitle())
             this.backArrowView().setDisplayIsHidden(!this.doesShowBackArrow())

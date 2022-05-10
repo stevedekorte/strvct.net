@@ -95,13 +95,15 @@
         
         this.addGestureRecognizer(LongPressGestureRecognizer.clone()) // for long press & pan reordering
         this.addGestureRecognizer(SlideGestureRecognizer.clone()) // for slide delete
-        this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
+        //this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
+        this.addDefaultTapGesture()
+        //this.defaultTapGesture().setShouldRequestActivation(true) // test to avoid tapping button within row and row
+
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width?
         //this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
 
         this.setIsRegisteredForKeyboard(true)
         this.setIsDebugging(true)
-
         return this
     }
 
@@ -158,7 +160,8 @@
         this.setBorderBottom(this._beforeEdgePanBorderBottom)
     }
 
-    // -- contentView -- a special subview within the BrowserRow for it's content
+    // -- contentView -- 
+    // a special subview within the BrowserRow for it's content
     // we route style methods to it
 
     setupRowContentView () {
@@ -395,7 +398,8 @@
             return this
         }
 
-        const d = this.stackView().direction() //
+        const d = this.stackView().direction()
+
         if (d === "right") {
             this.makeOrientationRight()
         } else if (d === "down") {
@@ -405,9 +409,13 @@
     }
 
     makeOrientationRight () {  //stackview is right (other view is on the right and nav is top to bottom)
+        this.debugLog("makeOrientationRight")
+
         this.setDisplay("inline-block")  
         this.setWidth("100%")
-        this.setHeight("fit-content")
+        //this.setWidth("fit-content")
+        //this.setHeight("fit-content")
+        //this.setHeight(this.parentView().desiredHeight())
         //this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
 
         //this.setBorderRight("1px solid rgba(255, 0, 0, 1)")
@@ -416,13 +424,18 @@
     }
 
     makeOrientationDown () { 
-        this.setDisplay("inline-block")  
+        this.debugLog("makeOrientationDown")
+
+        this.setDisplay("inline-block")
+        //this.setWidth("fit-content")
         //this.setWidth("170px")
-        this.setWidth("100%") // want 100% if single item, like breadcrumb
+        this.setWidth(null)
+        this.setMinAndMaxWidth(170)
+        //this.setWidth("100%") // want 100% if single item, like breadcrumb
         // otherwise, the stack view should figure out the widths using one of
         // several policy options?
         //this.setHeight("fit-content")
-        this.setHeight("100%")
+        //this.setHeight("100%")
         //this.setBorderRight("1px solid rgba(255, 255, 255, 0.3)")
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
 
@@ -431,7 +444,7 @@
             const node = this.stackView().node()
             if (node) {
                 const h = node.nodeMinRowHeight()
-                console.log("node " + this.node().title() + " height " + h)
+                //console.log("node " + this.node().title() + " height " + h)
                 if (h) {
                     this.setMinAndMaxHeight(h)
                     this.contentView().setMinAndMaxHeight(h)
@@ -657,7 +670,6 @@
         this.toggleSelection()
     }
 
-    
     // -------------------
 
     /*
@@ -845,7 +857,8 @@
         return this.closeButtonView() && this.closeButtonView().target() != null
     }
 
-    // tap hold
+    // --- tap hold ---
+    // TODO: move to GestureRecognizer or DomView?
 
     acceptsLongPress () {
         if (!this.column()) {

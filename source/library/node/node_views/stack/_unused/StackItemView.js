@@ -106,7 +106,7 @@
 
     syncFromNode () {
         //this.syncOrientation()
-        this.setInnerHTML(this.node().title())
+        this.setInnerHtml(this.node().title())
         return this
     }
 

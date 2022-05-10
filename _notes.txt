@@ -1,9 +1,34 @@
 
 
-- switch didChangeNavSelection triggering path change to focus item or something
-- work on sizing down navigation to fit item heights?
+can't edit folder names - possible double tap issue?
 
-- need to separate tap event from tap action in BrowserRow so user input can trigger actions we don't want otherwise?
+cleanup:
+- BrowserRow
+-- move isTapLongPress to a new GestureRecognizer or into DomView?
+-- move key modifiers in onTapComplete to GestureRecognizer?
+--- rename justTap/justShiftTap/etc to onTap/onShiftTap? Or should diff prefix be used for internally sent events? onLocalTap?
+
+- change column() to stackItemSet() or itemSet()?
+
+- is prepareToRetire being called when appropriate?
+
+
+bread crumbs:
+- ensure crumb view is rendered at start/appDidInit
+- disable tap gesture on breadcrumb view
+- implement clicks on crumbs
+
+
+- contract bread crumbs to fit breadcrumb width
+- add back arrow when needed
+- option to have title above path
+
+- expand first visible column to fit width of display when too small to fit next 2 columns?
+
+
+- buttons in path view not getting tap gesture first
+-- how do we sort the order of gestures? 
+
 - rename "Row" to "Item"?
 - rename BrowserRow.column to "itemSet?"
 

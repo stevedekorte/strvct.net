@@ -5,7 +5,8 @@
 
     Base view class. Wraps a dom element.
 
-    TODO: add dict[propertyName] -> validValueSet and check css values when set
+    TODO: add dict[propertyName] -> validValueSet and check css values when set?
+
 */
 
 (class DomView extends ProtoClass {
@@ -1370,8 +1371,12 @@
 
     // alignment
 
+    validTextAlignValues () {
+        return [null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"]
+    }
+
     setTextAlign (v) {
-        assert([null, "left", "right", "center", "justify", "justify-all", "start", "end", "match-parent", "initial", "inherit", "unset"].contains(v))
+        assert(this.validTextAlignValues().contains(v))
         this.setCssAttribute("text-align", v)
         return this
     }
@@ -1837,21 +1842,21 @@
     // calculated CSS size (outside of parent view)
 
     calcCssWidth () {
-        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.divClassName(), this.innerHTML()).width;
+        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.divClassName(), this.innerHtml()).width;
     }
 
     calcCssHeight () {
-        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.element(), this.innerHTML()).height;
+        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.element(), this.innerHtml()).height;
     }
 
     // calculated size (within parent view)
 
     calcWidth () {
-        return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHTML()).width;
+        return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHtml()).width;
     }
 
     calcHeight () {
-        return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHTML()).height;
+        return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHtml()).height;
     }
 
     // width
@@ -1860,6 +1865,10 @@
         assert(Type.isString(v) || Type.isNull(v))
         this.setCssAttribute("width", v, () => { this.didChangeWidth() })
         return this
+    }
+
+    widthString () {
+        return this.getCssAttribute("width")
     }
 
     setWidth (s) {
@@ -2123,6 +2132,7 @@
     }
 
     setHeightPercentage (aNumber) {
+        // NOTE: %s don't work unless same parent view dimension is defined
         const newValue = this.percentageNumberToString(aNumber)
         this.setHeightString(newValue)
         return this
@@ -2678,7 +2688,7 @@
 
     // --- inner html ---
 
-    setInnerHTML (v) {
+    setInnerHtml (v) {
         const oldValue = this.element().innerHTML
 
         if (v === null) {
@@ -2707,20 +2717,20 @@
         return this
     }
 
-    innerHTML () {
+    innerHtml () {
         return this.element().innerHTML
     }
 
     setString (v) {
-        return this.setInnerHTML(v)
+        return this.setInnerHtml(v)
     }
 
     string () {
-        return this.innerHTML()
+        return this.innerHtml()
     }
 
     loremIpsum (maxWordCount) {
-        this.setInnerHTML("".loremIpsum(10, 40))
+        this.setInnerHtml("".loremIpsum(10, 40))
         return this
     }
 
@@ -2838,7 +2848,9 @@
     }
 
     setIsRegisteredForClicks (aBool) {
-        this.mouseListener().setIsListening(aBool)
+
+        //this.mouseListener().setIsListening(aBool)
+        this.setHasDefaultTapGesture(aBool) // use tap gesture instead of mouse click
 
         if (aBool) {
             this.makeCursorPointer()
@@ -2866,10 +2878,17 @@
     }
 
     onClick (event) {
+        debugger;
         this.debugLog(".onClick()")
         this.sendActionToTarget()
         event.stopPropagation()
         return false
+    }
+
+    onTapComplete (aGesture) {
+        this.debugLog(".onTapComplete()")
+        this.sendActionToTarget()
+        return this
     }
 
     sendActionToTarget () {
@@ -3233,9 +3252,20 @@
 
     // default tap gesture
 
+    setHasDefaultTapGesture (aBool) {
+        if (aBool) {
+            this.addDefaultTapGesture()
+        } else {
+            this.removeDefaultTapGesture()
+        }
+        return this
+    }
+
     addDefaultTapGesture () {
         if (!this.defaultTapGesture()) {
-            this.setDefaultTapGesture( this.addGestureRecognizer(TapGestureRecognizer.clone()) )
+            const g = this.addGestureRecognizer(TapGestureRecognizer.clone())
+            g.setShouldRequestActivation(true) // TODO: this is usually what we want?
+            this.setDefaultTapGesture(g)
         }
         return this.defaultTapGesture()
     }
@@ -3321,6 +3351,7 @@
         this.gestureRecognizers().forEach((gr) => {
             //if (gr.type() !== aGesture.type()) {
             if (gr !== aGesture) {
+                //this.debugLog("cancelling gesture ", gr.type())
                 gr.cancel()
             }
         })
@@ -4553,7 +4584,7 @@
     htmlDuplicateView () {
         const v = DomView.clone()
         v.setFrameInParent(this.frameInParentView())
-        v.setInnerHTML(this.innerHTML())
+        v.setInnerHtml(this.innerHtml())
         return v
     }
 

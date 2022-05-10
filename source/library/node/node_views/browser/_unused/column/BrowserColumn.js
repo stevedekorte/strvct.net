@@ -323,7 +323,7 @@
     selectedRowTitle () {
         const row = this.selectedRow()
         if (row) { 
-            return row.title().innerHTML() 
+            return row.title().innerHtml() 
         }
         return null
     }
@@ -508,7 +508,7 @@
             if (row) {
                 // there's a row for the lastSelectedNode, so let's select it
                 if (!row.isSelected()) {
-                    //this.log("selecting row titled '" + row.title().innerHTML() + "'")
+                    //this.log("selecting row titled '" + row.title().innerHtml() + "'")
                     row.setIsSelected(true)
                     //this.didClickRow(row)
                     this.unselectAllRowsExcept(row)
@@ -520,7 +520,7 @@
                     // otherwise, select close to last selected index
                     const i = Math.min(selectedIndex, this.rows().length - 1)
                     row = this.rows().at(i)
-                    //this.log("selecting row titled '" + row.title().innerHTML() + "'")
+                    //this.log("selecting row titled '" + row.title().innerHtml() + "'")
                     row.requestSelection()
                     /*
                     row.setIsSelected(true)

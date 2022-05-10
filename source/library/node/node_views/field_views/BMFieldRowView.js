@@ -148,7 +148,7 @@
         const v = DomView.clone().setDivClassName("BMFieldRowViewErrorView")
         v.setUserSelect("text")
         v.setSpellCheck(false)
-        //v.setInnerHTML("error")
+        //v.setInnerHtml("error")
         v.setColor("red")
         v.setPaddingBottom("0em")
         this.setErrorView(v)
@@ -241,7 +241,7 @@
         const node = this.node()
         const keyView = this.keyView()
 
-        keyView.setInnerHTML(this.visibleKey())
+        keyView.setInnerHtml(this.visibleKey())
         keyView.setIsVisible(node.keyIsVisible())
         keyView.setDisplayIsHidden(!node.keyIsVisible())
         keyView.setIsEditable(node.keyIsEditable())
@@ -285,7 +285,7 @@
         if (node.valueError()) {
             valueView.setColor(this.errorColor())
             errorView.setColor(this.errorColor())
-            errorView.setInnerHTML(node.valueError())
+            errorView.setInnerHtml(node.valueError())
             errorView.fadeInHeightToDisplayBlock(15)
             //valueView.setToolTip(node.valueError())
         } else {
@@ -302,10 +302,10 @@
         
         if (this.visibleNote()) {
             noteView.unhideDisplay()
-            noteView.setInnerHTML(this.visibleNote())
+            noteView.setInnerHtml(this.visibleNote())
         } else {
             noteView.hideDisplay()
-            noteView.setInnerHTML("")
+            noteView.setInnerHtml("")
         }
     }
 

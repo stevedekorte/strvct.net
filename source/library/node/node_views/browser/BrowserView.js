@@ -22,7 +22,7 @@
 
         const top = BMNode.clone()
         top.setNodeMinRowHeight(55)
-        top.setTitle("browser root node")
+        top.setTitle("browser")
         top.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
         this.setNode(top)
         //this.syncFromNode()

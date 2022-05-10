@@ -81,7 +81,7 @@
 
     setSvgString (s) {
         this._svgString = s
-        this.setInnerHTML(s)
+        this.setInnerHtml(s)
         this.updateAppearance()
         /*
         const style = this.svgElement().style

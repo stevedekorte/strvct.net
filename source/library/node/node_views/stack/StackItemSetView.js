@@ -73,7 +73,7 @@
         return this
     }
 
-    makeOrientationRight () {
+    makeOrientationRight () { // left to right columns, top to bottom items?
         //this.setFlexDirection("column")
         this.setMinAndMaxWidth("100%")
         this.setMinHeight("100%")
@@ -81,9 +81,11 @@
         //this.setFlexBasis("300px")
         //this.setMinAndMaxWidth("300px")
         //this.setMinAndMaxHeight(null)
+        
+        this.debugLog("makeOrientationRight on ", this.node() ? this.node().title() : null)
     }
 
-    makeOrientationDown () {
+    makeOrientationDown () { // top to buttom columns, left to right items?
         //this.setFlexDirection("row")
         //this.setMinAndMaxWidth("fit-content")
         this.setMinAndMaxWidth("100%")
@@ -91,6 +93,14 @@
         //this.setMinAndMaxWidth(null)
         //this.setMinAndMaxHeight("50px")   
         //this.setFlexBasis("300px")
+
+        this.debugLog("makeOrientationDown on ", this.node() ? this.node().title() : null)
+
+        this.rows().forEach(item => {
+            //item.setWidth("fit-content")
+            item.setHeight(this.desiredHeight())
+            console.log("    prepare for down orientation on subview ", item.node().title())
+        })
     }
 
     syncFromNode () {
@@ -117,8 +127,6 @@
         return this
     }
 
-
-
     /*
     didSelectItem (itemView) {
         console.log(this.typeId() + " didSelectItem")
@@ -133,14 +141,6 @@
         return false
     }
     */
-
-    // from column
-
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-    // -----------------------------------------------------------------------------------------------------------------
-
 
     onFocus () {
         return super.onFocus()
@@ -278,9 +278,7 @@
     }
 
     // ------------------
-    
-    // --- ---
-    
+        
     unselectAllRowsExcept (selectedRow) {
         const rows = this.rows()
 
@@ -431,7 +429,7 @@
     selectedRowTitle () {
         const row = this.selectedRow()
         if (row) { 
-            return row.title().innerHTML() 
+            return row.title().innerHtml() 
         }
         return null
     }

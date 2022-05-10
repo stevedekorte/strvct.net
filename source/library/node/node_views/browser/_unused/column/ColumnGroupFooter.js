@@ -59,7 +59,7 @@
     }
 
     didInput (aView) {
-        this.setInput(aView.innerHTML())
+        this.setInput(aView.innerHtml())
         return this
     }
     

@@ -72,7 +72,7 @@
         const node = this.node()
         if (node) {
             //this.debugLog(" updateSubviews node = " + node.typeId() + " content = ", this.node().content())
-            this.titleView().setInnerHTML(node.title())
+            this.titleView().setInnerHtml(node.title())
 		
             if (this.message().wasSentByMe()) {
                 this.styleAsSent()

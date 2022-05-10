@@ -161,9 +161,9 @@
         let did = node.perform("did" + name.capitalized())
 
         if (count) {
-            countView.setInnerHTML(count)
+            countView.setInnerHtml(count)
         } else {
-            countView.setInnerHTML("")
+            countView.setInnerHtml("")
         }
 
         if (did) {
@@ -181,15 +181,15 @@
         let node = this.node()
 
         if (node) {
-            this.titleBarTextView().setInnerHTML(node.senderName())
-            this.dateView().setInnerHTML(node.ageDescription())
+            this.titleBarTextView().setInnerHtml(node.senderName())
+            this.dateView().setInnerHtml(node.ageDescription())
 
             this.showButtonNamed("reply")
             this.showButtonNamed("repost")
             this.showButtonNamed("like")
 
         } else {
-            this.titleBarTextView().setInnerHTML("[no node]")
+            this.titleBarTextView().setInnerHtml("[no node]")
         }
 
         return this
@@ -213,7 +213,7 @@
 
     syncToNode () {
         //console.log("syncToNode")
-        this.node().setContent(this.textView().innerHTML())
+        this.node().setContent(this.textView().innerHtml())
         //his.node().tellParentNodes("onDidEditNode", this.node())
         this.node().scheduleSyncToStore() // TODO: this should be handled by the node
         return this

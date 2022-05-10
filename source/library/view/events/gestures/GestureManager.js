@@ -14,6 +14,10 @@
 
         GestureManager.shared().setIsPaused(true)
 
+    NOTES:
+
+    If a decendant view requests control, it can steal it.
+
 */
 
 (class GestureManager extends ProtoClass {
@@ -58,13 +62,20 @@
         }
 
         assert(aGesture)
+        const ag = this.activeGesture()
+
+        if (!ag) {
+            this.acceptGesture(aGesture)
+            return true
+        }
+
         //this.releaseActiveGestureIfInactive()
-        if(aGesture === this.activeGesture()) {
-            console.warn("attempt to activeate an already active gesture ", aGesture.typeId())
+        if (aGesture === ag) { // error
+            console.warn("request to activate an already active gesture ", aGesture.typeId())
             return false
         }
 
-        const ag = this.activeGesture()
+        // see if active gesture has lower priority
         if (ag) {
             // allow child views to steal the active gesture
             const childViewIsRequesting = ag.viewTarget().hasSubviewDescendant(aGesture.viewTarget())
@@ -74,13 +85,8 @@
             }
         }
 
-        if (!ag) {
-            this.acceptGesture(aGesture)
-            return true
-        } else {
-            this.rejectGesture(aGesture)
-        }
-
+        // already have active gesture, so reject this request
+        this.rejectGesture(aGesture)
         return false
     }
 

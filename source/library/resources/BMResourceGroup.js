@@ -35,7 +35,7 @@
     }
 
     appDidInit () {
-        console.log(this.type() + " appDidInit")
+        //console.log(this.type() + " appDidInit")
         this.setupSubnodes()
         return this
     }

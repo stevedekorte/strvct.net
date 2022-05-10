@@ -26,7 +26,7 @@
         //this.setPadding("1em")
         this.setFontSize("1.6em")
         this.setFontWeight("bold")
-        //this.setInnerHTML("Io")
+        //this.setInnerHtml("Io")
         return this
     }
     

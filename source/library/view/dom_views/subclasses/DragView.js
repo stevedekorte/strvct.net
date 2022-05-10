@@ -260,7 +260,7 @@
     setupSingleItemView () {
         const aView = this.item()
         this.setFrameInDocument(aView.frameInDocument())
-        this.setInnerHTML(aView.innerHTML())
+        this.setInnerHtml(aView.innerHtml())
         //const clonedElement = aView.element().cloneNode(true);
         this.setOverflow("visible")
     }

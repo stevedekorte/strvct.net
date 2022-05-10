@@ -30,7 +30,7 @@
         this.setFontSize("1.6em")
         this.setFontWeight("bold")
     
-        this.setInnerHTML("test header")
+        this.setInnerHtml("test header")
         return this
     }
     

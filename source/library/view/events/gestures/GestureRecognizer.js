@@ -3,11 +3,15 @@
 /*
     GestureRecognizer
 
-    Listens for events and uses logic to detect gestures, 
-    coordinate which gestures are active with a GestureManager,
-    and send delegate messages for gesture state changes. This class supports general
-    gesture logic & helper methods, and is intended to be sublclassed to implement
-    particular gesture types. See SlideGestureRecognizer, for an example subclass.
+    This class:
+     - listens for events 
+     - uses logic to detect gestures
+     - coordinates which gestures are active with a GestureManager
+     - sends delegate messages for gesture state changes
+    
+    This class supports general gesture logic & helper methods, 
+    and is intended to be sublclassed to implement particular gesture types. 
+    See SlideGestureRecognizer, for an example subclass.
 
     Event Listeners
 
@@ -30,7 +34,7 @@
     Holding the SHIFT key and click-dragging the mouse can be used to simulate 2 finger 
     gestures on non-touch devices.
 
-    Marked event semantics:
+    State to track event semantics:
 
         downEvent - set onDownEvent *if* number of touchs is in correct range
         beginEvent - set when sending begin message - typically in onMove: 
@@ -49,6 +53,11 @@
         html * { touch-action: none; }
 
     TODO: move visualizer to separate class?
+
+    QUESTIONS:
+    If a view has the active gesture control, and a decendent view requests becoming the active
+    gesture, the GestureManager will detect this and let the child steal control.
+    
 */
 
 (class GestureRecognizer extends ProtoClass {
@@ -733,7 +742,7 @@
         v.setPosition("absolute")
         v.setTextAlign("center")
         v.setZIndex(10000)
-        v.setInnerHTML(this.type())
+        v.setInnerHtml(this.type())
         v.setPxFontSize(10)
         v.setColor("white")
         return v
@@ -777,7 +786,7 @@
             const ny = point.y() - v.clientHeight()/2;
             v.setLeftPx(nx);
             v.setTopPx(ny);
-            v.setInnerHTML(this.titleForFingerNumber(count))
+            v.setInnerHtml(this.titleForFingerNumber(count))
             v.setBorder("1px dashed white")
             if(this.isPressing()) {
                 v.setBorder("1px solid white")

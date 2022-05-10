@@ -76,7 +76,7 @@
 
         // placeholder
         this.setPlaceHolderView(this.rightView().addSubview(TextField.clone().setDivClassName("BMPostDraftRowPlaceHolderView")))
-        this.placeHolderView().setInnerHTML("What's happening?")
+        this.placeHolderView().setInnerHtml("What's happening?")
                 
         // content view
         this.setTextContentView(this.rightView().addSubview(TextField.clone().setDivClassName("BMPostDraftRowContentView")))
@@ -95,7 +95,7 @@
         
         this.setBottomView(this.addContentSubview(DomView.clone().setDivClassName("BMPostDraftRowBottomView")))
         this.setSendButton(this.bottomView().addSubview(DomView.clone().setDivClassName("BMPostDraftRowSendButton")))
-        this.sendButton().setInnerHTML("Post")
+        this.sendButton().setInnerHtml("Post")
         this.sendButton().setTarget(this).setAction("post")
 
         this.setupTextContentView()
@@ -144,11 +144,11 @@
         
         if (node && this.textContentView()) {
             /*
-            const placeText = this.textContentView().innerHTML().length ? "" : "What's happening?"    
-            this.placeHolderView().setInnerHTML(placeText)
+            const placeText = this.textContentView().innerHtml().length ? "" : "What's happening?"    
+            this.placeHolderView().setInnerHtml(placeText)
             */
 
-            const opacity = this.textContentView().innerHTML().length ? 0 : 1
+            const opacity = this.textContentView().innerHtml().length ? 0 : 1
             this.placeHolderView().setOpacity(opacity)
         }
 
@@ -174,7 +174,7 @@
     
     syncToNode () {   
         //console.log("syncToNode")
-        this.node().setContent(this.textContentView().innerHTML())
+        this.node().setContent(this.textContentView().innerHtml())
         //this.node().tellParentNodes("onDidEditNode", this.node())  
         this.node().scheduleSyncToStore()
         return this

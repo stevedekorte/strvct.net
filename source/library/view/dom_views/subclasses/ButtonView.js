@@ -41,6 +41,7 @@
         this.newSlot("titleView", null)
         this.newSlot("isEnabled", true)
         this.newSlot("iconView", null)
+        this.newSlot("info", null)
     }
 
     init () {
@@ -95,6 +96,10 @@
     }
 
     setTitle (s) {
+        if (s === "" || Type.isNullOrUndefined(s)) { 
+            s = "&nbsp;" // to avoid weird html layout issues
+        }
+
         this.titleView().setValue(s)
         //this.titleView().setDisplayIsHidden(!s)
         return this

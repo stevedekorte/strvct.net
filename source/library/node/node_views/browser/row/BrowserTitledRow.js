@@ -16,6 +16,10 @@
         this.newSlot("thumbnailView", null)
     }
 
+    static titleLeftPadding () {
+        return "1.5em"
+    }
+
     init () {
         super.init()
 
@@ -26,7 +30,7 @@
         lv.setPaddingTop("0.7em")
         lv.setPaddingBottom("0.7em")
 
-        lv.setPaddingLeft("1.5em")
+        lv.setPaddingLeft(this.thisClass().titleLeftPadding())
         lv.setPaddingRight("1em")
 
         lv.setDisplay("flex")
@@ -163,7 +167,7 @@
 
     showNoteView () {
         this.noteView().unhideDisplay()   
-        this.noteView().setInnerHTML(this.node().note())
+        this.noteView().setInnerHtml(this.node().note())
     }
 
     hideNoteView () {
@@ -256,7 +260,7 @@
 
         /*
         const icon = this.noteSvgIconForName("right-gray")
-        nv.setInnerHTML("")
+        nv.setInnerHtml("")
         nv.removeAllSubviews()
         nv.addSubview(icon)
         */

@@ -291,12 +291,12 @@
     // value
     
     setValue (newValue) {
-        this.setInnerHTML(newValue)			
+        this.setInnerHtml(newValue)			
         return this
     }
     
     value () {
-        return this.innerHTML()
+        return this.innerHtml()
     }
 
     // ---
