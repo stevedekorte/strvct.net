@@ -262,6 +262,8 @@
 Object.defineSlots(ProtoClass.prototype, {
 
     scheduleMethod: function(methodName, priority) {
+        // send at end of event loop
+        // methods with the same name and target will only be sent once
         SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority)
         return this
     }

@@ -65,10 +65,13 @@
         this.newSlot("otherView", null)
         this.newSlot("direction", "down").setDoesHookSetter(true) // valid values: left, right, up, down
         this.newSlot("lastPathString", null)
+        this.newSlot("onStackViewPathChangeNote", null)
     }
 
     init () {
         super.init()
+        this.setOnStackViewPathChangeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("onStackViewPathChange"))
+        
         this.setDisplay("flex")
         this.setPosition("relative")
         this.setWidth("100%")
@@ -241,8 +244,12 @@
     }
 
     // notifications
+    
+    itemSetView () {
+        return this.navView().itemSetView()
+    }
 
-    requestSelectedNodePathArray (pathArray) {
+    selectNodePathArray (pathArray) {
         const node = pathArray.shift()
 
         if (node !== this.node()) {
@@ -252,14 +259,17 @@
         } else if (pathArray.length === 0) { 
             //console.log("unselect items after path: ", this.pathString())
             // no selections left so unselect next
-            this.navView().itemSetView().unselectAllRows()
+            this.itemSetView().unselectAllRows()
             this.syncFromNavSelection()
             return this
         }
 
+        //debugger;
+        this.itemSetView().selectRowWithNode(node)
+
         const childStack = this.nextStackView()
         if (childStack) {
-            childStack.requestSelectedNodePathArray(pathArray)
+            childStack.selectNodePathArray(pathArray)
         }
         return this
     }
@@ -268,13 +278,25 @@
         return this.stackViewSubchain().map(sv => sv.node())
     }
 
-    didChangeNavSelection () {
-        const currentPathString = this.pathString()
-        // TODO: change to node matching - path isn't unique and names can change
+    topDidChangeNavSelection () {
+        console.log("topDidChangeNavSelection")
+        //debugger;
+        if (this !== this.topStackView()) {
+            debugger;
+            return this
+        }
+
+        const currentPathString = this.selectedPathString()
+        // TODO: change to node matching as path isn't unique and names can change
         if (this.lastPathString() !== currentPathString) {
             this.setLastPathString(currentPathString)
-            this.topStackView().scheduleMethod("postDidFocusItem")
+            this.didChangePath()
         }
+        return this
+    }
+
+    didChangeNavSelection () {
+        this.topStackView().topDidChangeNavSelection()
         //this.syncFromNavSelection()
         this.scheduleMethod("syncFromNode")
         return true
@@ -290,12 +312,8 @@
 
     // --- selected path changes ---
 
-    postDidFocusItem () {
-        //console.log("StackView.didFocusItem(" + this.node().title() + ") selectedPathString: '" + this.selectedPathString() + "'")
-        //this.stackViewSubchain()
-        const note = BMNotificationCenter.shared().newNote().setSender(this)
-        note.setName("onStackViewPathChange")
-        note.post()
+    didChangePath () {
+        this.onStackViewPathChangeNote().post()
         return this
     }
     

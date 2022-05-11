@@ -16,7 +16,7 @@
         this.newSlot("animatesCollapse", true)
     }
 
-    targetWidth() {
+    targetWidth () {
         if (this.node()) {
             const w = Math.max(0, this.node().nodeMinRowWidth())
             if (w) {
@@ -36,7 +36,7 @@
         return 64
     }
 
-    init() {
+    init () {
         super.init()
         this.setDisplay("block")
         this.setPosition("relative")
@@ -71,11 +71,11 @@
         return this
     }
 
-    isVertical() {
+    isVertical () {
         return this.stackView().direction() === "right"
     }
 
-    syncOrientation() {
+    syncOrientation () {
         if (this.isVertical()) {
             this.makeOrientationRight()
         } else {
@@ -108,13 +108,13 @@
         //this.setBoxShadow("inset 0 -10px 40px #222")
     }
 
-    setNode(aNode) {
+    setNode (aNode) {
         super.setNode(aNode)
         this.itemSetView().setNode(aNode)
         return this
     }
 
-    syncFromNode() {
+    syncFromNode () {
         this.syncOrientation()
         //this.itemSetView().syncFromNode()
         this.applyStyles()
@@ -139,7 +139,7 @@
         return this
     }
 
-    applyStyles() {
+    applyStyles () {
         super.applyStyles()
         const themeClass = this.currentThemeClass()
         if (themeClass) {
@@ -161,7 +161,7 @@
 
     // --- collpase / uncollapse ---
 
-    collapse() {
+    collapse () {
         if (!this.isCollapsed()) {
             this.hideDisplay()
             //this.setMinAndMaxWidth(0)
@@ -175,7 +175,7 @@
         }
     }
 
-    uncollapse() {
+    uncollapse () {
         if (this.isCollapsed()) {
             this.unhideDisplay()
             //this.setMinAndMaxWidth(this.targetWidth() + "px")
@@ -186,12 +186,12 @@
 
     // --- right edge gesture ---
 
-    onRightEdgePanBegin(aGesture) {
+    onRightEdgePanBegin (aGesture) {
         this._beforeEdgePanBorderRight = this.borderRight()
         this.setBorderRight("1px dashed red")
     }
 
-    onRightEdgePanMove(aGesture) {
+    onRightEdgePanMove (aGesture) {
         const p = aGesture.currentPosition() // position in document coords
         const f = this.frameInDocument()
         const nw = Math.max(10, p.x() - f.x())
@@ -202,7 +202,7 @@
         return this
     }
 
-    onRightEdgePanComplete(aGesture) {
+    onRightEdgePanComplete (aGesture) {
         this.onRightEdgePanMove(aGesture)
         this.setBorderRight(this._beforeEdgePanBorderRight)
         this._beforeEdgePanBorderBottom = null
@@ -212,14 +212,14 @@
     // --- bottom edge gesture ---
 
 
-    onBottomEdgePanBegin(aGesture) {
+    onBottomEdgePanBegin (aGesture) {
         this._beforeEdgePanBorderBottom = this.borderBottom()
         this.setBorderBottom("1px dashed red")
         //this.setTransition("min-height 0s, max-height 0s")
         this.hideTransition()
     }
 
-    onBottomEdgePanMove(aGesture) {
+    onBottomEdgePanMove (aGesture) {
         const p = aGesture.currentPosition() // position in document coords
         const f = this.frameInDocument()
         const newHeight = Math.max(10, p.y() - f.y())
@@ -229,7 +229,7 @@
         return this
     }
 
-    onBottomEdgePanComplete(aGesture) {
+    onBottomEdgePanComplete (aGesture) {
         this.onBottomEdgePanMove(aGesture)
         this.setBorderBottom(this._beforeEdgePanBorderBottom)
         this._beforeEdgePanBorderBottom = null

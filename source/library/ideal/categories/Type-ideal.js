@@ -152,6 +152,10 @@ getGlobalThis().Type = {
         return this.isUndefined(value) || this.isNull(value)
     },
 
+    isNaN: function(value) {
+        return isNaN(value)
+    },
+
     isNumber: function(value) {
         return typeof(value) === "number"
     },

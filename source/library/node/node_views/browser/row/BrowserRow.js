@@ -409,7 +409,7 @@
     }
 
     makeOrientationRight () {  //stackview is right (other view is on the right and nav is top to bottom)
-        this.debugLog("makeOrientationRight")
+        //this.debugLog("makeOrientationRight")
 
         this.setDisplay("inline-block")  
         this.setWidth("100%")
@@ -424,7 +424,7 @@
     }
 
     makeOrientationDown () { 
-        this.debugLog("makeOrientationDown")
+        //this.debugLog("makeOrientationDown")
 
         this.setDisplay("inline-block")
         //this.setWidth("fit-content")

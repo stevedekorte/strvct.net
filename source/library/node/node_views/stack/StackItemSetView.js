@@ -114,7 +114,7 @@
         */
 
         if (this.selectedRows().length === 0) {
-            this.didChangeNavSelection() // TODO: is this right?
+            //this.didChangeNavSelection() // TODO: is this right?
         }
         return this
     }
@@ -237,6 +237,14 @@
 
     // --- row tapping ---
 
+    selectNode (aNode) {
+        const sv = this.subviewForSubnode(aNode)
+        if (sv) {
+            this.didTapItem(sv)
+        }
+        return this
+    }
+
     didTapItem (anItem) {
         //debugger;
         anItem.select()
@@ -246,7 +254,7 @@
         }
         this.unselectAllRowsExcept(anItem)
         this.unselectRowsInNextColumn()
-        this.didChangeNavSelection() // this may already have been sent
+        //this.didChangeNavSelection() // this may already have been sent
     }
     
     didShiftTapItem (anItem) {
@@ -518,8 +526,9 @@
     }
 
     didChangeNavSelection () {
-        if (this.stackView()) {
-            this.stackView().didChangeNavSelection()
+        const sv = this.stackView()
+        if (sv) {
+            sv.didChangeNavSelection()
         }
         return this
     }
@@ -793,7 +802,8 @@
             pc.didTapItem(newSelectedRow)
         	this.selectPreviousColumn()
 
-            //pc.didChangeNavSelection()
+            //debugger;
+            pc.didChangeNavSelection()
         }
         return this
     }

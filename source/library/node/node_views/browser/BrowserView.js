@@ -14,12 +14,11 @@
 (class BrowserView extends StackView {
     
     initPrototype () {
-        
+        this.newSlot("baseNode", null)
     }
 
     init () {
         super.init()
-
         const top = BMNode.clone()
         top.setNodeMinRowHeight(55)
         top.setTitle("browser")
@@ -31,11 +30,18 @@
         return this
     }
 
-    setRootNode (aNode) {
+    setBaseNode (aNode) {
+        this._baseNode = aNode
         aNode.setNodeRowViewClassName("BreadCrumbRowView")
         aNode.setTitle("test")
-
         this.node().addSubnode(aNode)
+        this.syncFromNode()
+        this.scheduleMethod("moveToBase")
+        return this
+    }
+
+    moveToBase () {
+        this.selectNodePathArray([this.node(), this.baseNode()])
         return this
     }
 

@@ -1,5 +1,13 @@
 
 
+Crumb:
+- remove /s when removing preceeding node?
+- add back arrow when any crumbs are hidden
+--- back arrow press should 
+    - go to node before first shown?
+    - go one node back from current node? similar to back arrow
+
+
 can't edit folder names - possible double tap issue?
 
 cleanup:
@@ -7,9 +15,9 @@ cleanup:
 -- move isTapLongPress to a new GestureRecognizer or into DomView?
 -- move key modifiers in onTapComplete to GestureRecognizer?
 --- rename justTap/justShiftTap/etc to onTap/onShiftTap? Or should diff prefix be used for internally sent events? onLocalTap?
-
 - change column() to stackItemSet() or itemSet()?
 
+general:
 - is prepareToRetire being called when appropriate?
 
 

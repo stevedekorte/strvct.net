@@ -1842,20 +1842,32 @@
     // calculated CSS size (outside of parent view)
 
     calcCssWidth () {
+        if (this.display() === "none") {
+            return 0
+        }
         return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.divClassName(), this.innerHtml()).width;
     }
 
     calcCssHeight () {
+        if (this.display() === "none") {
+            return 0
+        }
         return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.element(), this.innerHtml()).height;
     }
 
     // calculated size (within parent view)
 
     calcWidth () {
+        if (this.display() === "none") {
+            return 0
+        }
         return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHtml()).width;
     }
 
     calcHeight () {
+        if (this.display() === "none") {
+            return 0
+        }
         return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHtml()).height;
     }
 

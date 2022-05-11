@@ -37,10 +37,10 @@
         this.setupTheme()
         this.setupModel()
 
-        const b = BrowserView.clone()
-        b.setRootNode(this.rootNode())
-        this.setBrowser(b)
-        this.documentBodyView().addSubview(b)
+        const browser = BrowserView.clone()
+        browser.setBaseNode(this.rootNode())
+        this.setBrowser(browser)
+        this.documentBodyView().addSubview(browser)
 
         /*
         const v = StackView.clone() //.setDirection("down")

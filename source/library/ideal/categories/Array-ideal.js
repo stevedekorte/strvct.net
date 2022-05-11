@@ -690,6 +690,23 @@ Object.defineSlots(Array.prototype, {
         return this;
     },
 
+    joinWithFunc: function (aFunc) {
+        // not a mutator
+        // like join, but calls aFunc with the array and index as arguments
+        // to get each new item to insert between array items
+        const joined = []
+        for (let i = 0; i < this.length; i ++) {
+            const v = this[i]
+            joined.push(v)
+            if (i < this.length - 1) {
+                const separator = aFunc(this, i)
+                joined.push(separator)
+            }
+        }
+        return joined
+    },
+
+    /*
     wrap: function (obj) {
         if (obj === null || obj === undefined) {
             return [];
@@ -701,6 +718,7 @@ Object.defineSlots(Array.prototype, {
             return [obj];
         }
     },
+    */
 
     itemsBefore: function (item) {
         const index = this.indexOf(item);
