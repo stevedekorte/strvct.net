@@ -71,6 +71,9 @@
             tv.flexCenterContent()
             tv.setTextAlign("center")
             tv.setMinHeight("1em")
+            tv.setWhiteSpace("nowrap")
+            tv.setTextOverflow("ellipsis")
+
             
         }
 

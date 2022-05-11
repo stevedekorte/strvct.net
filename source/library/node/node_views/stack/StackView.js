@@ -279,7 +279,7 @@
     }
 
     topDidChangeNavSelection () {
-        console.log("topDidChangeNavSelection")
+        //console.log("topDidChangeNavSelection")
         //debugger;
         if (this !== this.topStackView()) {
             debugger;

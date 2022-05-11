@@ -27,13 +27,6 @@
         return this
     }
 
-/*
-    onTapComplete (aGesture) {
-        console.log(this.type() + " onTapComplete")
-        //debugger;
-        return super.onTapComplete(aGesture)
-    }
-*/
     watchTopStackView () {
         const obs = this.onStackViewPathChangeObs()
         if (!obs.isWatching()) {
@@ -64,11 +57,6 @@
         return this.parentView() ? this.parentView().stackView().topStackView() : null
     }
 
-    onStackViewPathChange (aNote) {
-        //debugger;
-        this.syncPathToStack()
-    }
-
     pathNodes () {
         if (this.topStackView()) {
             const nodes = this.topStackView().selectedNodePathArray()
@@ -90,6 +78,19 @@
 
     // --- events ---
 
+    /*
+    onTapComplete (aGesture) {
+        console.log(this.type() + " onTapComplete")
+        //debugger;
+        return super.onTapComplete(aGesture)
+    }
+    */
+
+    onStackViewPathChange (aNote) {
+        //debugger;
+        this.syncPathToStack()
+    }
+
     onClickPathComponent (aPathComponentView) {
         const nodePathArray = aPathComponentView.info()
         if (nodePathArray.length === 0) {
@@ -103,6 +104,17 @@
     onDocumentResize (event) {
         this.updateCompaction()
         return this
+    }
+
+    onClickBackButton (backButton) {
+        const crumb = this.lastHiddenCrumb()
+        if (crumb) {
+            crumb.sendActionToTarget()
+        }
+    }
+
+    lastHiddenCrumb () {
+        return this.subviews().reversed().detect(sv => sv._isCrumb && sv.isDisplayHidden())
     }
     
     // --- path component views --- 
@@ -126,6 +138,18 @@
         v.setTitle(aName)
         v.setTarget(this)
         v.setAction("onClickPathComponent")
+        v._isCrumb = true
+        return v
+    }
+
+    newBackButton () {
+        const v = this.newUnpaddedButton()
+        //v.setTitle("&lt;")
+        v.setTitle("&#8592;")
+        v.titleView().setPaddingLeft("0em")
+        v.titleView().setPaddingRight("0.5em")
+        v.setTarget(this)
+        v.setAction("onClickBackButton")
         return v
     }
 
@@ -147,12 +171,14 @@
 
     newPathComponentViews () {
         const pathNodes = this.pathNodes()
-        return pathNodes.map((node, i, pathNodes) => this.crumbViewForNode(node, i, pathNodes))
+        const views = pathNodes.map((node, i, pathNodes) => this.crumbViewForNode(node, i, pathNodes))
+        return views
     }
 
     setupPathViews () {
         const views = this.newPathComponentViews()
         const separatedViews = views.joinWithFunc((view, index) => this.newSeparatorView())
+        separatedViews.unshift(this.newBackButton())
         this.removeAllSubviews()
         this.addSubviews(separatedViews)
         this.updateCompaction()
@@ -173,18 +199,33 @@
     }
 
     updateCompaction () {
+        const padding = 20
         const maxWidth =  this.frameInDocument().width()
         //console.log("maxWidth: ", maxWidth)
         const views = this.subviews()
         views.forEach(view => view.unhideDisplay())
 
-        for (let i = 0; i < views.length; i++) {
+        let didHide = false // to track if we'll need a back button
+        for (let i = 1; i < views.length -1; i++) {
             const view = views[i]
-            const sum = this.sumOfPathWidths()
+            const sum = this.sumOfPathWidths() + padding
             //console.log("sum: ", this.sumOfPathWidths())
-            if (sum > maxWidth) {
+            const isSeparator = view.title() === "/"
+            if (isSeparator && views[i-1].isDisplayHidden()) {
                 view.hideDisplay()
             }
+            if (sum > maxWidth) {
+                view.hideDisplay()
+                didHide = true
+            } else {
+                break;
+            }
+        }
+
+        if (!didHide) {
+            // if we hid anything, we need a back button
+            const backButton = this.subviews().first()
+            backButton.hideDisplay()
         }
     }
 
