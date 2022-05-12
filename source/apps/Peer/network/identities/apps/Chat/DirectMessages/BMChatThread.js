@@ -94,7 +94,7 @@
 	
     addMessage (msg) {	
         //console.log(this.nodePathString() + " addMessage " + msg.typeId())
-	    if(this.addSubnodeIfAbsent(msg)) {
+	    if (this.addSubnodeIfAbsent(msg)) {
 	    	this.postShouldFocusSubnode(msg)
         }
 	    return this

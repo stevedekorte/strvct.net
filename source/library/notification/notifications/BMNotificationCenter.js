@@ -142,7 +142,7 @@
             let stillHasMatchingTargetId = false
 
             const filtered = this.observations().filter((obs) => {
-                if(obs.isEqual(anObservation)) {
+                if (obs.isEqual(anObservation)) {
                     if (obs.targetId() === targetId) {
                         removedMatchingTargetId = true
                     }
@@ -157,7 +157,7 @@
 
             if (removedMatchingTargetId && !stillHasMatchingTargetId) {
                 const target = this.targetForTargetId(targetId) // looks through obs listeners 
-                if(target && target.onNoObservers) {
+                if (target && target.onNoObservers) {
                     target.onNoObservers(this)
                 }
             }

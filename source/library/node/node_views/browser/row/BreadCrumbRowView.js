@@ -27,14 +27,32 @@
         return this
     }
 
+    topStackView () {
+        return this.parentView() ? this.parentView().stackView().topStackView() : null
+    }
+
+    targetStackView () {
+        const nc = this.column().nextColumn()
+        if (nc) {
+            //debugger;
+            const sv = nc.stackView()
+            return sv
+        }
+        return null
+    }
+
+
+
     watchTopStackView () {
         const obs = this.onStackViewPathChangeObs()
         if (!obs.isWatching()) {
-            //obs.stopWatching()
-            if (this.parentView()) {
-                obs.setTarget(this.topStackView())
-                //debugger;
+            const target = this.topStackView()
+            if (target) {
+                obs.setTarget(target)
                 obs.watch()
+            } else {
+                //debugger;
+                obs.stopWatching()
             }
         }
     }
@@ -45,21 +63,10 @@
         this.setWidth("100%")
         return this
     }
-
-    didChangeParentView () {  // hook this to do the initial setup
-        super.didChangeParentView()
-        this.watchTopStackView()
-        this.syncPathToStack()
-        return this
-    }
-    
-    topStackView () {
-        return this.parentView() ? this.parentView().stackView().topStackView() : null
-    }
-
+  
     pathNodes () {
-        if (this.topStackView()) {
-            const nodes = this.topStackView().selectedNodePathArray()
+        if (this.targetStackView()) {
+            const nodes = this.targetStackView().selectedNodePathArray()
             return nodes
         }
         return []
@@ -77,6 +84,13 @@
     }
 
     // --- events ---
+
+    didChangeParentView () {  // hook this to do the initial setup
+        super.didChangeParentView()
+        this.watchTopStackView()
+        this.syncPathToStack()
+        return this
+    }
 
     /*
     onTapComplete (aGesture) {
@@ -96,7 +110,9 @@
         if (nodePathArray.length === 0) {
             debugger;
         }
-        this.topStackView().selectNodePathArray(nodePathArray)
+        console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
+        debugger;
+        this.stackView().selectNodePathArray(nodePathArray)
         this.setupPathViews() // needed or does the StackView send a note?
         return this
     }

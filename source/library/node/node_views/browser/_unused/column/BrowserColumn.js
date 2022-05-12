@@ -915,7 +915,7 @@
     // previous column
 	
     previousColumn () {
-        if(!this.browser()) {
+        if (!this.browser()) {
             return null
         }
         const i = this.columnIndex()
@@ -1396,7 +1396,7 @@
 
        if (dragView.isMoveOp()) {
             itemViews.reversed().forEach(itemView => {
-                if(itemView.onDragRequestRemove && itemView.onDragRequestRemove()) {
+                if (itemView.onDragRequestRemove && itemView.onDragRequestRemove()) {
                     this.node().addSubnodeAt(itemView.node(), insertIndex)
                 }
             })

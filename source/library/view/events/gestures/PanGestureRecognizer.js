@@ -70,7 +70,7 @@
             return;
         }
 
-        if(this.requestActivationIfNeeded()) {
+        if (this.requestActivationIfNeeded()) {
             this.sendBeginMessage() // begin
         } else {
             if (this.isDebugging()) {

@@ -247,7 +247,7 @@
         if (!this.allowsKeyboardKeys()) {
             if (BMKeyboard.shared().hasKeysDown()) {
                 // make exception for shift key since we use it to emulate multi-touch
-                if(BMKeyboard.shared().shiftKey().isOnlyKeyDown()) {
+                if (BMKeyboard.shared().shiftKey().isOnlyKeyDown()) {
                     return true
                 }
                 return false
@@ -788,7 +788,7 @@
             v.setTopPx(ny);
             v.setInnerHtml(this.titleForFingerNumber(count))
             v.setBorder("1px dashed white")
-            if(this.isPressing()) {
+            if (this.isPressing()) {
                 v.setBorder("1px solid white")
                 v.setColor("white")
             } else {

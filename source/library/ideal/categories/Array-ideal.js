@@ -789,7 +789,7 @@ Object.defineSlots(Array.prototype, {
         visited.add(this)
         */
 
-        if(array.length === undefined) {
+        if (array.length === undefined) {
             return false;
         }
     

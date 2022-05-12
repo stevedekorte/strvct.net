@@ -79,7 +79,7 @@
     }
 
     didInit () {
-        if(this.hasDoneInit()) {
+        if (this.hasDoneInit()) {
             return
         }
 

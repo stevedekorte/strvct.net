@@ -738,7 +738,7 @@
 
     // --- arrow keys ---
 
-    onUpArrowKeyUp (event) {
+    onUpArrowKeyDown (event) {
         if (!this.canNavigate()) { 
             return 
         }
@@ -751,7 +751,7 @@
         return false
     }
 	
-    onDownArrowKeyUp (event) {
+    onDownArrowKeyDown (event) {
         if (!this.canNavigate()) { 
             return 
         }
@@ -765,7 +765,7 @@
     }
 
 	
-    onLeftArrowKeyUp (event) {
+    onLeftArrowKeyDown (event) {
         if (!this.canNavigate()) { 
             return this
         }	
@@ -776,7 +776,7 @@
         }
     }
 	
-    onRightArrowKeyUp (event) {
+    onRightArrowKeyDown (event) {
         if (!this.canNavigate()) { 
             return this
         }	
@@ -989,11 +989,6 @@
             return nsv.navView().itemSetView()
         }
         return null
-        /*
-        const i = this.columnIndex()
-        const nextColumn = this.browser().columns()[i+1]
-        return nextColumn
-        */
     }
 
     focus () {

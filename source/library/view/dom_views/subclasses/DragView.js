@@ -374,7 +374,7 @@
 
         const destView = this.firstAcceptingDropTarget()
         
-        if(!destView) {
+        if (!destView) {
             this.onPanCancelled(aGesture)
             return;
         }

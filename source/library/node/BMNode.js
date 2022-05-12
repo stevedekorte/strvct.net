@@ -597,7 +597,7 @@
 
     addLinkSubnode (aNode) {
         /*
-        if(aNode.parentNode()) {
+        if (aNode.parentNode()) {
             console.warn("adding a link subnode to a node with no parent (yet)")
         }
         */
@@ -617,7 +617,7 @@
     }
     
     addSubnodeIfAbsent (aSubnode) {
-        if(!this.hasSubnode(aSubnode)) {
+        if (!this.hasSubnode(aSubnode)) {
             this.addSubnode(aSubnode)
             return true
         }

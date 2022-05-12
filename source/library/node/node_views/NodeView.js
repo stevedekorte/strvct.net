@@ -192,7 +192,7 @@
                 subview = this.newSubviewForSubnode(subnode)
             }
             
-            if(Type.isNull(subview)) {
+            if (Type.isNull(subview)) {
                 throw new Error("null subview")
             }
             

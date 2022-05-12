@@ -13,14 +13,14 @@ Error.stackTraceLimit = 100 // looks like default on Chrome is 10?
 Object.defineSlots(Error, {
 
     assert: function(v) {
-        if(!Boolean(v)) {
+        if (!Boolean(v)) {
             throw new Error("assert failed - false value")
         }
         return v
     },
 
     assertDefined: function(v) {
-        if(v === undefined) {
+        if (v === undefined) {
             throw new Error("assert failed - undefined value")
         }
         return v

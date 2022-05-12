@@ -88,7 +88,7 @@
             }
 
             if (!this.isActive() && this.hasMovedEnough()) {
-                if(this.requestActivationIfNeeded()) {
+                if (this.requestActivationIfNeeded()) {
                     //this.setIsActive(true)
                     this.sendBeginMessage() // being
                 }

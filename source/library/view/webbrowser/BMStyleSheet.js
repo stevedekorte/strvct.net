@@ -33,7 +33,7 @@
         // Change it if it exists
         for(let i = 0; i < sheet.cssRules.length; i++) {
             const rule = sheet.cssRules[i];
-            if(rule.selectorText === selector) {
+            if (rule.selectorText === selector) {
                 rule.style[property] = value;
                 return this;
             }

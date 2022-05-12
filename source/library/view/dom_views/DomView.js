@@ -3453,22 +3453,20 @@
 
     onKeyDown (event) {
         //BMKeyboard.shared().showEvent(event)
+        const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
 
-        let methodName = BMKeyboard.shared().downMethodNameForEvent(event)
-
-        //console.log("event.repeat = ", event.repeat)
-        //console.log(" onKeyDown ", methodName)
+        console.log("event.repeat = ", event.repeat)
+        console.log(" onKeyDown ", methodName)
         
-        if (!event.repeat) {
-            return this.invokeMethodNameForEvent(methodName, event)
-        } else {
-            //const upMethodName = BMKeyboard.shared().upMethodNameForEvent(event)
-            //this.invokeMethodNameForEvent(upMethodName, event)
-            //this.forceRedisplay()
+        const result = this.invokeMethodNameForEvent(methodName, event)
+
+        /*
+        if (event.repeat) { // should this be a different method name?
+            this.forceRedisplay() // can't tell if this works without disabling color transitions on rows
         }
-        
+        */
 
-        return true
+        return result
     }
 
     forceRedisplay() {
@@ -3497,10 +3495,12 @@
         return true
     }
 
-    onKeyPress (event) {
-        // console.log("onKeyPress")
+    /*
+    onKeyPress (event) { // no longer used or registered
+        console.log("onKeyPress")
         return true
     }
+    */
 
     onKeyUp (event) {
         let shouldPropogate = true
@@ -3510,12 +3510,12 @@
         //console.log("methodName: ", methodName)
         this.invokeMethodNameForEvent(methodName, event)
 
-        this.didEdit()
+        this.didEdit() // TODO: should this be conditional?
         return shouldPropogate
     }
 
     didEdit () {
-        this.debugLog(" didEdit")
+        this.debugLog("didEdit")
         this.tellParentViews("onDidEdit", this)
         return this
     }
@@ -3530,7 +3530,7 @@
         // need to implement this on key down to prevent browser from handling tab?
         //this.debugLog(" onTabKeyDown ", event._id)
 
-        if(this.selectNextKeyView()) {
+        if (this.selectNextKeyView()) {
             //event.stopImmediatePropagation() // prevent other listeners from getting this event
             //console.log("stopImmediatePropagation ")
         }
@@ -3843,14 +3843,14 @@
     setCaretPosition (caretPos) {
         const elem = this.element();
 
-        if(elem != null) {
-            if(elem.createTextRange) {
+        if (elem != null) {
+            if (elem.createTextRange) {
                 const range = elem.createTextRange();
                 range.move("character", caretPos);
                 range.select();
             }
             else {
-                if(elem.selectionStart) {
+                if (elem.selectionStart) {
                     elem.focus();
                     elem.setSelectionRange(caretPos, caretPos);
                 } else {

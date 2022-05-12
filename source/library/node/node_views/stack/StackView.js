@@ -70,7 +70,6 @@
 
     init () {
         super.init()
-        this.setOnStackViewPathChangeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("onStackViewPathChange"))
         
         this.setDisplay("flex")
         this.setPosition("relative")
@@ -96,6 +95,7 @@
         this.setIsRegisteredForDocumentResize(true)
         //this.addGestureRecognizer(LeftEdgePanGestureRecognizer.clone()) 
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
+        this.setOnStackViewPathChangeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("onStackViewPathChange"))
 
         this.syncOrientation()
         return this

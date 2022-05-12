@@ -149,7 +149,7 @@ const bitcore = require("bitcore-lib")
     decryptJson (encryptedData) {
 	    // TODO: use sessionKeys
         if (this.isValid()) {
-            if(!encryptedData) {
+            if (!encryptedData) {
                 throw new Error("encryptedData is null")
             }
             const decryptedData = this.localIdentity().decryptMessageFromSenderPublicKeyString(encryptedData, this.publicKeyString())

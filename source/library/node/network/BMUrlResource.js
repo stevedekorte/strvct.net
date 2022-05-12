@@ -238,7 +238,7 @@
     }
 
     asJson () {
-        if(this.dataUrl().isJson() ) {
+        if (this.dataUrl().isJson() ) {
             return JSON.parse(this.decodedData())
         }
         return undefined

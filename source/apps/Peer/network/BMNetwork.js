@@ -232,7 +232,7 @@
             this._idsBloomFilter.addEntry(id.publicKeyString());
 			
             /*
-			if(oldFilter) {
+			if (oldFilter) {
 				const f1 = oldFilter.serialized()
 				const f2 = this._idsBloomFilter.serialized()
 				console.log("--f1: " + f1)

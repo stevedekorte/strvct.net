@@ -71,7 +71,7 @@ console.log(test)
 let d = Reflect.getOwnPropertyDescriptor(test, "_foo")
 console.log(d)
 
-if(d.enumerable) {
+if (d.enumerable) {
     console.log("is enumerable")
 } else {
     console.log("is not enumberable")

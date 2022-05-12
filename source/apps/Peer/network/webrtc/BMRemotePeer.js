@@ -39,7 +39,7 @@
     }
     
     log (s) {
-        if(this.isDebugging()) {
+        if (this.isDebugging()) {
         	console.log(this.fullShortId() + " " + s)
         }
         return this

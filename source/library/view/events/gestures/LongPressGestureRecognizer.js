@@ -70,7 +70,7 @@
     onLongPress () {
         this.setTimeoutId(null)
 
-        if(this.currentEventIsOnTargetView()) {
+        if (this.currentEventIsOnTargetView()) {
             if (this.requestActivationIfNeeded()) {
                 this.sendCompleteMessage()
                 this.didFinish()
@@ -99,7 +99,7 @@
         super.onMove(event)
     
         if (this.hasTimer()) { // TODO: also check move distance?
-            if(this.currentEventIsOnTargetView()) {
+            if (this.currentEventIsOnTargetView()) {
                 this.setCurrentEvent(event)
             } else {
                 this.cancel()

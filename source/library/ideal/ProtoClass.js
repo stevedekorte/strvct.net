@@ -118,7 +118,7 @@
     }
     
     static defineClassGlobally () {
-        if(Type.isUndefined(getGlobalThis()[this.type()])) {
+        if (Type.isUndefined(getGlobalThis()[this.type()])) {
             getGlobalThis()[this.type()] = this
             //console.log(this.type() + ".initThisClass()")
         } else {
@@ -428,7 +428,7 @@
     */
 
     hasOwnSlotObject (slotName) {
-        if( !Type.isUndefined(this.allSlots()[slotName]) ) {
+        if ( !Type.isUndefined(this.allSlots()[slotName]) ) {
             return true
         }
         return false
@@ -449,7 +449,7 @@
             //console.log(msg) 
         }
 
-        if(this.hasOwnSlotObject(slotName)) {
+        if (this.hasOwnSlotObject(slotName)) {
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
             console.log(msg)
             throw new Error(msg)
@@ -459,7 +459,7 @@
 
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
         const oldSlot = this.allSlots()[slotName]
-        if(Type.isUndefined(oldSlot)) {
+        if (Type.isUndefined(oldSlot)) {
             const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
             console.log(msg)
             this.allSlots()

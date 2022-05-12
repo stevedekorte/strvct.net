@@ -40,7 +40,7 @@
 				
         // remove peers not in ids
         this.subnodes().forEach((peer) => {
-            if(!ids.contains(peer.hash())) {
+            if (!ids.contains(peer.hash())) {
                 if (!peer.isConnected()) {
                     this.removeSubnode(peer)
                 }

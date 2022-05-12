@@ -266,7 +266,7 @@
         }
         */
 
-        if(!this.hasActiveObject(anObject)) {
+        if (!this.hasActiveObject(anObject)) {
             anObject.addMutationObserver(this)
             this.activeObjects().atPut(anObject.puuid(), anObject)
             //this.addDirtyObject(anObject)

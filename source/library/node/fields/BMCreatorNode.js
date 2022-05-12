@@ -80,7 +80,6 @@
         this.addSubnodes(newSubnodes)
     }
 
-
    didChoose (actionNode) {
         const obj = actionNode.info()
         const newNode = obj.nodeCreate()

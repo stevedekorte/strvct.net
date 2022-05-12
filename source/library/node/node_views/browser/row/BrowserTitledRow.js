@@ -270,7 +270,7 @@
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")
 
-        if(this.titleView().isEditable()) {
+        if (this.titleView().isEditable()) {
             this.titleView().activate()
             event.stopPropagation()
         } else if (this.subtitleView().isEditable()) {

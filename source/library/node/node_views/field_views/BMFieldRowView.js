@@ -365,7 +365,7 @@
     
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")
-        if(this.valueView().activate) {
+        if (this.valueView().activate) {
             this.valueView().activate()
         }
         return this

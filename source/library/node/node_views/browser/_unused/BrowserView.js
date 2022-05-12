@@ -210,7 +210,7 @@
     onRightEdgePanBegin (aGesture) {
         // TODO: animate this until complete
         //console.log("onRightEdgePanBegin")
-        //if(this.isSingleColumn()) {
+        //if (this.isSingleColumn()) {
         const column = this.selectedColumn()
         if (column) {
             column.moveRight()
@@ -447,7 +447,7 @@
     clearColumnsGroupsAfter (selectedCg) {
         const cgs = this.columnGroups()
         const index = cgs.indexOf(selectedCg)
-        if(index === -1) {
+        if (index === -1) {
             console.warn(this.type() + " WARNING attempt to clearColumnsGroupsAfter " + selectedCg.debugTypeId() + " not in browser")
             this.show()
             return

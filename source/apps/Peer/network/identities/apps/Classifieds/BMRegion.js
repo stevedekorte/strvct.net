@@ -94,7 +94,7 @@
     }
 
     prepareToAccess () {
-        if(this._lazyChildrenDict != null) {
+        if (this._lazyChildrenDict != null) {
             this.debugLog(" " + this.title() + " lazy load")
             let ld = this._lazyChildrenDict
             this._lazyChildrenDict = null

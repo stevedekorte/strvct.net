@@ -1,14 +1,22 @@
 
-
-Crumb:
-- remove /s when removing preceeding node?
-- add back arrow when any crumbs are hidden
---- back arrow press should 
-    - go to node before first shown?
-    - go one node back from current node? similar to back arrow
+- expand first visible column to fit width of display when too small to fit next 2 columns?
 
 
-can't edit folder names - possible double tap issue?
+- full width title view
+-- part of browser view?
+-- have bread crumb view only apply to subnode path
+
+bug: not clearing next column when removing item that selected it
+
+
+----------------------------------------------
+
+- rename "Row" to "Item"?
+- rename BrowserRow.column to "itemSet?"
+
+
+BMFolderView?
+- can't edit folder names - possible double tap issue?
 
 cleanup:
 - BrowserRow
@@ -19,30 +27,12 @@ cleanup:
 
 general:
 - is prepareToRetire being called when appropriate?
+--- does the DOM handle handler removal automatically? Probably not as this objects have lots of external refs
 
-
-bread crumbs:
-- ensure crumb view is rendered at start/appDidInit
-- disable tap gesture on breadcrumb view
-- implement clicks on crumbs
-
-
-- contract bread crumbs to fit breadcrumb width
-- add back arrow when needed
-- option to have title above path
-
-- expand first visible column to fit width of display when too small to fit next 2 columns?
-
-
-- buttons in path view not getting tap gesture first
--- how do we sort the order of gestures? 
-
-- rename "Row" to "Item"?
-- rename BrowserRow.column to "itemSet?"
 
 -------------------------------------
 
-Inline Row views????
+Inline Row views? for Document style rendering
 
 - add BMNode.inlineLevelHint
 - have BMNodeView.visibleNodes looks at inlineLevelHint
