@@ -232,8 +232,10 @@ class ResourceManager {
     evalJsEntry (entry) {
         const value = this.camValueForEntry(entry)
         //console.log("eval: " +  entry.path)
-        const sourceUrl = "\n//# sourceURL=" + entry.path + " \n"
+        //const sourceUrl = "\n//# sourceURL=" + entry.path + " \n"
+        const sourceUrl = "\n//# sourceURL=/" + entry.path + " \n"
         const debugCode = value + sourceUrl
+		console.log("sourceUrl: [" +  sourceUrl + "]")
         //this.onProgress(entry.path)
         eval(debugCode)
         return this

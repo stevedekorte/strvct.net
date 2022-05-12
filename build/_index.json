@@ -10,29 +10,9 @@
     "hash": "Ui3RFlLjqUn5Uh6gVmwgQ0oJjMVdkSeNbt7ilSGpyeI="
   },
   {
-    "path": "external-libs/bit-buffer/bit-buffer.js",
-    "size": 12383,
-    "hash": "hTZ8pSvl6MW42jo6GskYUg5S5y0Kv73HuvqBF/I9n48="
-  },
-  {
     "path": "external-libs/json-stable-stringify/json-stable-stringify.js",
     "size": 2943,
     "hash": "cBE/CwFXAXjlgqj3um2U01LtSGv1fZZsWM8mQOTqMXg="
-  },
-  {
-    "path": "external-libs/simple-peer/simplepeer.min.js",
-    "size": 88939,
-    "hash": "diBSzpURaXONPmX2XFVhsyYK9+7Smsl2dgBAN1vPVUg="
-  },
-  {
-    "path": "external-libs/jsbloom/bloom.js",
-    "size": 15645,
-    "hash": "/Hzly7ZEsSWVW0B6gukF+wg4oINLEP46giCpZonaAfc="
-  },
-  {
-    "path": "external-libs/jsbloom/_init.js",
-    "size": 1268,
-    "hash": "4D2u5OencIuJYYfLi6GIKzfk7CEroBMUqzLHJwQd20o="
   },
   {
     "path": "external-libs/pako/pako.js",
