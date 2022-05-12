@@ -3,6 +3,16 @@
 /*
     
     BrowserTitledRow
+
+    Adds a few subviews for typical row functionality:
+
+        - titleView
+        - subtitleView
+        - noteView
+        - noteIconView
+        - thumbnailView
+
+    Most of these can easily be disabled, if not needed.
     
 */
 
@@ -117,7 +127,6 @@
 
         return false
     }
-    
 
     syncSelected () {
         const b = this.isSelected()
@@ -202,10 +211,7 @@
         /*
         const tw = this.titleView().calcCssWidth()
         const sw = this.subtitleView().calcCssWidth()
-        let w = tw
-        if (sw > w) {
-            w = sw
-        }
+        let w = Math.max(sw, tw)
         //console.log("calcCssWidth of row title '" + this.node().title() + "' = " + w)
         return w + 50
         */
@@ -280,6 +286,5 @@
             super.onEnterKeyUp(event)
         }        
     }
-
     
 }.initThisClass());

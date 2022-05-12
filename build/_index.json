@@ -136,8 +136,8 @@
   },
   {
     "path": "source/library/ideal/Documentation.js",
-    "size": 3274,
-    "hash": "iykTZyCUZwQfjFFrPhlJlnUKUOCpmLMRfK7v8vF5uJw="
+    "size": 3278,
+    "hash": "kPn7UW3zsV1Tx01gnbgwkggIAJhSp8AuItoCOxYaezg="
   },
   {
     "path": "source/library/ideal/array/HookedArray.js",
@@ -256,8 +256,8 @@
   },
   {
     "path": "source/library/view/geometry/Rectangle.js",
-    "size": 3547,
-    "hash": "0+Tm9L3hYPv5af/5tvC7+cCGN13e/HAuq1vtg1dMkuA="
+    "size": 3632,
+    "hash": "azSSkZEMSIPmv1taXMtp/ZDVOLPAtylyGUPXo8lqEXk="
   },
   {
     "path": "source/library/view/geometry/Transform.js",
@@ -931,13 +931,13 @@
   },
   {
     "path": "source/library/node/node_views/browser/row/BrowserRow.js",
-    "size": 29556,
-    "hash": "isL5zLb7/qsIKA0rGg0sqeGBa6Dvk9J4YD2nvJcX2q4="
+    "size": 29746,
+    "hash": "Ct2UkdEc5wua52LguseXFzSEulOOCOO0KvH3GjhkaJ8="
   },
   {
     "path": "source/library/node/node_views/browser/row/BrowserTitledRow.js",
-    "size": 7622,
-    "hash": "b5yHwxf/12zGJpRpyWkXN73y1eo5TFrPgGbBs2CJe+s="
+    "size": 7803,
+    "hash": "BaOG0xMCq0fVD5lsNtCNCPe85y9DlIg2BeCNGnhS4wk="
   },
   {
     "path": "source/library/node/node_views/browser/row/BrowserRowNote.js",
@@ -963,6 +963,11 @@
     "path": "source/library/node/node_views/browser/row/BreadCrumbRowView.js",
     "size": 6892,
     "hash": "HSUl0NQKt9/JBFCctNjlpOTyj7oyobS6a9wW7vpIIAE="
+  },
+  {
+    "path": "source/library/node/node_views/browser/row/HeaderRowView.js",
+    "size": 6884,
+    "hash": "dD7YWD0JJmPvBzMLIYQsuVn4t1mpgx5fG8ZH240gUPg="
   },
   {
     "path": "source/library/node/node_views/browser/BrowserView.js",

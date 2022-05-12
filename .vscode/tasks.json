@@ -23,7 +23,9 @@
             },
             "presentation": {
                 "reveal": "silent",
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true,
+                "close": true,
             },
             "problemMatcher": []
         },

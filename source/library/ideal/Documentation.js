@@ -15,7 +15,7 @@
 
     }
 
-    init() {
+    init () {
         super.init()
     }
 
@@ -23,7 +23,7 @@
         return ProtoClass.allClasses()
     }
 
-    methodsDocsForClass(aClass) {
+    methodsDocsForClass (aClass) {
         const methods = []
         Object.getOwnPropertyNames(aClass).forEach((methodName) => {
             const v = aClass[methodName]
@@ -40,7 +40,7 @@
         return methods
     }
 
-    asJson() {
+    asJson () {
         const classes = []
         this.classes().forEach((aClass) => {
             const classDict = {}
@@ -56,7 +56,7 @@
         return classes
     }
 
-    show() {
+    show () {
         const classes = this.asJson()
         const lines = []
         classes.forEach((aClass) => {

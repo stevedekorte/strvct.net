@@ -158,14 +158,16 @@
     }
 
     makeBoundsOfPoints (points) {
-        let minX = points[0].x()
-        let maxX = points[0].x()
-        let minY = points[0].y()
-        let maxY = points[0].y()
-        points.forEach((p) => {
+        const firstPoint = points[0]
+        let minX = firstPoint.x()
+        let maxX = firstPoint.x()
+        let minY = firstPoint.y()
+        let maxY = firstPoint.y()
+        points.forEach(p => {
             const x = p.x()
             const y = p.y()
 
+            // faster than using Math.min/max
             if (x < minX) {
                 minX = x
             } else if (x > maxX) {

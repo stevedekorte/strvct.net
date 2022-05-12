@@ -4,12 +4,15 @@
     
     BrowserRow
 
-    Base row view.  
+    Base row view. This is a sort of empty canvas for subclasses to put subviews in.
+    It just supports the features we want on all rows, such as:
     
-    Features:
-    - applying styles to match state
-    - supports slide-to-delete and pan-to-reorder gestures.
-    - right side delete button
+        - selection
+        - applying styles to match state
+        - slide-to-delete gesture
+        - long-press + pan-to-reorder gesture
+        - dragging
+        - close/delete button on right side
     
     NOTES
     
