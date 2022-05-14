@@ -9,7 +9,7 @@
 
 (class BMBooleanField extends BMField {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     

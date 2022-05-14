@@ -18,12 +18,12 @@
 
 (class EdgePanGestureRecognizer extends PanGestureRecognizer {
 
-    initPrototype() {
+    initPrototype () {
         this.newSlot("edgeName", null)
         this.newSlot("maxStartDistance", 15)
     }
 
-    init() {
+    init () {
         super.init()
         this.setListenerClasses(this.defaultListenerClasses())
         this.setMinDistToBegin(5)
@@ -31,7 +31,7 @@
         return this
     }
 
-    start() {
+    start () {
         return super.start()
     }
 
@@ -56,7 +56,7 @@
     */
 
     /*
-    onDown(event) {
+    onDown (event) {
         super.onDown(event)
 
         if (this.isReadyToBegin()) {
@@ -68,12 +68,12 @@
     */
 
 
-    isReadyToBegin() {
+    isReadyToBegin () {
         return this.hasOkFingerCount() &&
             this.distanceFromEdge() <= this.maxStartDistance();
     }
 
-    distanceFromEdge() {
+    distanceFromEdge () {
         const name = this.edgeName()
         //assert(name)
         const d = this.currentEdgeDistances()[name]
@@ -84,11 +84,11 @@
 
     // -------------
 
-    maxEdgeDistance() {
+    maxEdgeDistance () {
         return 100000
     }
 
-    currentEdgeDistances() {
+    currentEdgeDistances () {
         const max = this.maxEdgeDistance()
         const points = this.allPoints() // event points are in document coordinates
         const vt = this.viewTarget()

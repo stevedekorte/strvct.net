@@ -1,4 +1,0 @@
-[
-    "BrowserView.js",
-    "BrowserHeader.js"
-]

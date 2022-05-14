@@ -37,7 +37,7 @@ const nodePath = require('path');
 		}
 	}
 
-	run() {
+	run () {
 		/*
 		require("../source/boot/ResourceManager.js")
 		//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))

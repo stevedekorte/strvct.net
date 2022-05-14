@@ -11,7 +11,7 @@
 */
 
 (class BMTextNode extends BMStorableNode {
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
 

@@ -17,7 +17,7 @@ for(i = 0; i < 1000; i ++) {
 */
 
 /*
-App.runTests = function() {
+App.runTests = function () {
 	var PlainText = "hello world"
 	
 	var msg = { 
@@ -244,7 +244,7 @@ console.log("hash = [" + hash + "]")
 */
 
 /*
-function TestsRun() {
+function TestsRun () {
     // wait until an ECIES javascript library that works in the browser is available
     TestSHA();
     TestElGamalEncryptDecrypt();
@@ -252,14 +252,14 @@ function TestsRun() {
     TestSerializedKeys();
 }
 
-function TestSHA() {
+function TestSHA () {
     var shaBits = sjcl.hash.sha256.hash("test");
     var shaHex = sjcl.codec.hex.fromBits(shaBits);
     assert(shaHex === "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08")		        
     console.log("TestSHA passed")
 }
 
-function TestElGamalEncryptDecrypt() {
+function TestElGamalEncryptDecrypt () {
     var pair = sjcl.ecc.elGamal.generateKeys(256)
     var inputPlainText = "Hello World!"
     
@@ -271,7 +271,7 @@ function TestElGamalEncryptDecrypt() {
     console.log("TestSig TestElGamalEncryptDecrypt")
 }
 
-function TestSig() {
+function TestSig () {
     // Must be ECDSA!
     var pair = sjcl.ecc.ecdsa.generateKeys(256)
     var inputPlainText = "Hello World!"
@@ -285,7 +285,7 @@ function TestSig() {
     console.log("TestSig passed")
 }
 
-function TestSig2() {
+function TestSig2 () {
     // Must be ECDSA!
     var pair = sjcl.ecc.ecdsa.generateKeys(256)
     var inputPlainText = "Hello World!"
@@ -303,7 +303,7 @@ function TestSig2() {
 }
 
 
-function TestSerializedKeys() {
+function TestSerializedKeys () {
     var pair = sjcl.ecc.elGamal.generateKeys(256);
     var pub = pair.pub.get();
     var sec = pair.sec.get();
@@ -334,6 +334,7 @@ function TestSerializedKeys() {
     console.log("unserializedSec: [", unserializedSec, "]")
     //assert( unserializedSec.equals(sec) )         
 }
-*/
 
 console.log("--- test end ---")
+*/
+

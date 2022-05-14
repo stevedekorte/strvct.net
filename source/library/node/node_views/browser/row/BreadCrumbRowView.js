@@ -10,7 +10,6 @@
     
     initPrototype () {
         this.newSlot("path", null)
-        this.newSlot("textView", null)
         this.newSlot("separatorString", "/")
         this.newSlot("onStackViewPathChangeObs", null)
     }
@@ -20,7 +19,7 @@
         this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this))
         this.setPaddingLeft("1.5em") // BrowserTitledRow.titleLeftPadding()
         this.setWidth("100%")
-        this.updateSubviews()
+        //this.updateSubviews()
         this.setIsSelectable(true)
         this.setIsRegisteredForDocumentResize(true)
         //this.setBorder("1px dashed rgba(255, 255, 0, .1)")
@@ -40,8 +39,6 @@
         }
         return null
     }
-
-
 
     watchTopStackView () {
         const obs = this.onStackViewPathChangeObs()
@@ -85,10 +82,12 @@
 
     // --- events ---
 
-    didChangeParentView () {  // hook this to do the initial setup
-        super.didChangeParentView()
-        this.watchTopStackView()
-        this.syncPathToStack()
+    didUpdateSlotParentView (oldValue, newValue) {  // hook this to do the initial setup
+        super.didUpdateSlotParentView(oldValue, newValue)
+        if (this.parentView()) {
+            this.watchTopStackView()
+            this.syncPathToStack()
+        }
         return this
     }
 
@@ -111,7 +110,6 @@
             debugger;
         }
         console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
-        debugger;
         this.stackView().selectNodePathArray(nodePathArray)
         this.setupPathViews() // needed or does the StackView send a note?
         return this
@@ -195,8 +193,8 @@
         const views = this.newPathComponentViews()
         const separatedViews = views.joinWithFunc((view, index) => this.newSeparatorView())
         separatedViews.unshift(this.newBackButton())
-        this.removeAllSubviews()
-        this.addSubviews(separatedViews)
+        this.contentView().removeAllSubviews()
+        this.contentView().addSubviews(separatedViews)
         this.updateCompaction()
     }
 
@@ -221,7 +219,7 @@
         const views = this.subviews()
         views.forEach(view => view.unhideDisplay())
 
-        let didHide = false // to track if we'll need a back button
+        let didHide = false // to track if we need back button
         for (let i = 1; i < views.length -1; i++) {
             const view = views[i]
             const sum = this.sumOfPathWidths() + padding
@@ -248,7 +246,7 @@
     // ---
 
     desiredWidth () {
-        return Number.MAX_VALUE //this.calcWidth()
+        return Number.MAX_VALUE
     }
 
 }.initThisClass());

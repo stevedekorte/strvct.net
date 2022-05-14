@@ -84,12 +84,12 @@ Object.defineSlots(BMNode.prototype, {
         SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
     },
 
-    scheduleDidLoadFromStore: function() {
+    scheduleDidLoadFromStore: function () {
         SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
     },
 
     /*
-    didLoadFromStore: function() {
+    didLoadFromStore: function () {
         // Object.didLoadFromStore handles this
     },
     */

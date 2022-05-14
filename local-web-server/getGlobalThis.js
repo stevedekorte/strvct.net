@@ -4,7 +4,7 @@
 // A single function to access globals that works
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
-function getGlobalThis() {
+function getGlobalThis () {
 	if (typeof(globalThis) !== 'undefined') {
         return globalThis;
     }

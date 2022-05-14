@@ -10,7 +10,7 @@
 
 (class BMLinkNode extends BMSummaryNode {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
 

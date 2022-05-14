@@ -138,7 +138,7 @@
             throw new Error("no subviewProto for subnode " + aSubnode.typeId())
         }
 		
-        return proto.clone().setNode(aSubnode) //.setParentView(this)
+        return proto.clone().setNode(aSubnode)
     }
 
     updateSubviews () {

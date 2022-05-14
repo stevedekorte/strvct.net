@@ -54,7 +54,7 @@
         //setTimeout( () => this.showClasses(), 1)
     }
 
-    showClasses() {
+    showClasses () {
         debugger;
         const s = ProtoClass.subclassesDescription()
         console.log(s)

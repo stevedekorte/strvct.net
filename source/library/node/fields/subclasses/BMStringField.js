@@ -8,7 +8,7 @@
         
 (class BMStringField extends BMField {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
 

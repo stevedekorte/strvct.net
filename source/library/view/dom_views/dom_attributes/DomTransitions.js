@@ -30,12 +30,12 @@
         this.newSlot("domView", null)
     }
 
-    init() {
+    init () {
         super.init()
         this.setProperties({})
     }
 
-    at(aName) {
+    at (aName) {
         const d = this.properties()
         if (!d.hasOwnProperty(name)) {
             d[name] = DomTransition.clone().setProperty(aName).setTransitions(this)
@@ -43,21 +43,21 @@
         return d[name]
     }
 
-    propertiesAsList() {
+    propertiesAsList () {
         return Object.values(this.properties())
     }
 
-    asString() {
+    asString () {
         return this.propertiesAsList().map(t => t.asString()).join(", ")
     }
 
-    syncToDomView() {
+    syncToDomView () {
         //this.debugLog(".setTransition('" + this.asString() + "')")
         this.domView().setTransition(this.asString())
         return this
     }
 
-    syncFromDomView() {
+    syncFromDomView () {
         this.setProperties({})
 
         const s = this.domView().transition()

@@ -35,15 +35,15 @@
         return shouldPropogate
     }
 
-    isUp() {
+    isUp () {
         return !this.isDown()
     }
 
-    isOnlyKeyDown() {
+    isOnlyKeyDown () {
         return this.isDown() && this.keyboard().currentlyDownKeys().length
     }
 
-    isAlphabetical(event) {
+    isAlphabetical (event) {
         const c = this.code()
         return c >= 65 && c <= 90
     }

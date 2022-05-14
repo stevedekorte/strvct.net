@@ -8,7 +8,7 @@
 
 (class BMBlob extends BMNode {
 
-    initPrototype() {
+    initPrototype () {
 
         {
             const slot = this.newSlot("name", null)
@@ -53,7 +53,7 @@
         }
     }
 
-    init() {
+    init () {
         super.init()
         this.setNodeMinWidth(600)
         this.setShouldStore(true)
@@ -66,12 +66,12 @@
         return new Date().getTime() - this.lastModifiedTime() 
     }
 
-    prepareForFirstAccess() {
+    prepareForFirstAccess () {
         super.prepareForFirstAccess()
         this.setupValueField()
     }
 
-    setupValueField() {
+    setupValueField () {
         const field = BMTextAreaField.clone().setKey("value")
         field.setValueMethod("value")
         field.setValueIsEditable(false)
@@ -98,7 +98,7 @@
 
     // key
 
-    hash() {
+    hash () {
         return this.name() // for subnode lookup
     }
 

@@ -12,7 +12,7 @@
 (class ProtoClass extends Object { 
 
     /*
-    static newUniqueInstanceId() {
+    static newUniqueInstanceId () {
         const uuid_a = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
         const uuid_b = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
         return uuid_a + uuid_b
@@ -90,7 +90,7 @@
         return this.getClassVariable("_isSingleton", false)
     }
 
-    static singleton() {
+    static singleton () {
         assert(this.isSingleton())
         return this.shared()
     }
@@ -201,17 +201,17 @@
     }
     */
 
-    static isSubclassOf(aClass) {
+    static isSubclassOf (aClass) {
         return this.ancestorClassesIncludingSelf().contains(aClass)
     }
 
-    static ancestorClassesIncludingSelf() {
+    static ancestorClassesIncludingSelf () {
         const results = this.ancestorClasses().shallowCopy()
         results.atInsert(0, this)
         return results
     }
 
-    static ancestorClasses() {
+    static ancestorClasses () {
         const v = this.getClassVariable("_ancestorClasses")
         assert(v)
         return v

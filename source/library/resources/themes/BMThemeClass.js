@@ -62,7 +62,7 @@
         return this.firstSubnodeWithTitle("selected")
     }
 
-    setupAsDefault() {
+    setupAsDefault () {
         this.setTitle("DefaultThemeClass")
         this.setupSubnodes()
         this.subnodes().forEach(sn => sn.didInit())

@@ -8,7 +8,7 @@
 
 (class StackNavView extends NodeView {
 
-    initPrototype() {
+    initPrototype () {
         this.newSlot("stackView", null)
         this.newSlot("scrollView", null) // contains column is middleView
         this.newSlot("itemSetView", null) // is inside scrollView
@@ -84,7 +84,7 @@
         return this
     }
 
-    borderColor() {
+    borderColor () {
         return "rgba(255, 255, 255, 0.3)"
     }
 

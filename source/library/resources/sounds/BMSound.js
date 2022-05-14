@@ -12,7 +12,7 @@
     
     // --- mime types ---
 
-    static supportedMimeTypes() {
+    static supportedMimeTypes () {
         return new Set(["audio/ogg", "audio/wave", "audio/mp3"])
     }
 

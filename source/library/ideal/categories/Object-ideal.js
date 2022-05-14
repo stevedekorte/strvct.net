@@ -221,6 +221,7 @@ const prototypeSlots = {
         //Object.defineSlot(this, "_hasRetired", false) 
         Object.defineSlot(this, "_mutationObservers", null) 
         Object.defineSlot(this, "_shouldStore", true)
+        Object.defineSlot(this, "_isObjectRetired", false)
     },
 
     clone: function () {
@@ -453,11 +454,22 @@ const prototypeSlots = {
         // for subclasses to override
     },
 
+    // --- retiring object ---
+
+    assertNotRetired: function () {
+        if (this._isObjectRetired) {
+            throw new Error("object already retired")
+        }
+    },
+
     prepareToRetire: function() {
+        this.assertNotRetired()
         // called by user code when it expect object to stop being used
         // provides opportunity to remove notification observers, event listeners, etc
         this.removeAllNotificationObservations()
         this.removeScheduledActions()
+        this._isObjectRetired = true
+        //console.log("Object retiring " + this.debugTypeId())
     },
 
     removeAllNotificationObservations: function() {

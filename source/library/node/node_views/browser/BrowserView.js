@@ -9,39 +9,63 @@
     To do this, we create a top wrapper node, which has one subnode which is the actual root node.
     Somehow we will set the root node row view to display the path selected in the UI...
     
+
+    browserNode:
+        subnodes:
+            headerNode -> HeaderRowView 
+            subnodes:
+                appRootNode -> BreadCrumbRowView 
+
+
 */
 
 (class BrowserView extends StackView {
     
     initPrototype () {
+        this.newSlot("headerNode", null)
         this.newSlot("baseNode", null)
     }
 
+
     init () {
         super.init()
-        const top = BMNode.clone()
-        top.setNodeMinRowHeight(55)
-        top.setTitle("browser")
-        top.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
-        this.setNode(top)
-        //this.syncFromNode()
-        //assert(this.direction() === "down")
-        //console.log("browser direction: ", this.direction())
+        this.setupBrowserNode()
+        this.setupHeaderNode()
         return this
     }
 
-    setBaseNode (aNode) {
-        this._baseNode = aNode
-        aNode.setNodeRowViewClassName("BreadCrumbRowView")
-        aNode.setTitle("test")
-        this.node().addSubnode(aNode)
+    setupBrowserNode () {
+        const node = BMNode.clone()
+        node.setNodeMinRowHeight(55)
+        node.setTitle("browser")
+        node.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
+        this.setNode(node)
+        return this
+    }
+
+    setupHeaderNode () {
+        const node = BMNode.clone()
+        //node.setNodeRowViewClassName("HeaderRowView")
+        node.setNodeMinRowHeight(55)
+        node.setTitle("header")
+        node.setNodeIsVertical(false) 
+        this.setHeaderNode(node)
+        this.node().addSubnode(node)
+        return this
+    }
+
+    didUpdateSlotBaseNode (oldValue, newValue) {
+        newValue.setNodeRowViewClassName("BreadCrumbRowView")
+        newValue.setTitle("breadcrumb")
+        this.headerNode().removeAllSubnodes()
+        this.headerNode().addSubnode(newValue)
         this.syncFromNode()
         this.scheduleMethod("moveToBase")
         return this
     }
 
     moveToBase () {
-        this.selectNodePathArray([this.node(), this.baseNode()])
+        this.selectNodePathArray([this.node(), this.headerNode(), this.baseNode()])
         return this
     }
 

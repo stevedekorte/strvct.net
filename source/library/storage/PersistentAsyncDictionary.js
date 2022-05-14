@@ -24,7 +24,7 @@
         this.newSlot("idb", null)
     }
 
-    init() {
+    init () {
         super.init()
         this.setIdb(IndexedDBFolder.clone())
         //this.setIsDebugging(true)

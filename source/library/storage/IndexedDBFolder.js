@@ -7,7 +7,7 @@
 */
 
 (class IndexedDBFolder extends ProtoClass {
-    initPrototype() {
+    initPrototype () {
         this.newSlot("path", "/")
         this.newSlot("pathSeparator", "/") // path should end with pathSeparator
         this.newSlot("db", null)
@@ -15,24 +15,24 @@
         this.newSlot("isGranted", false)
     }
 
-    init() {
+    init () {
         super.init()
         //this.requestPersistenceIfNeeded()
         this.setIsDebugging(false)
     }
 
-    hasIndexedDB() {
+    hasIndexedDB () {
         return "indexedDB" in window;
     }
 
-    requestPersistenceIfNeeded() {
+    requestPersistenceIfNeeded () {
         if (!IndexedDBFolder.didRequestPersistence()) {
             this.requestPersistence()
         }
         return this
     }
 
-    requestPersistence() {
+    requestPersistence () {
         if (navigator.storage && navigator.storage.persist) {
             navigator.storage.persist().then((granted) => {
                 this.setIsGranted(granted)
@@ -49,11 +49,11 @@
         return this
     }
 
-    storeName() {
+    storeName () {
         return this.path()
     }
 
-    root() {
+    root () {
         if (!IndexedDBFolder._root) {
             IndexedDBFolder._root = IndexedDBFolder.clone()
             // IndexedDBFolder._root.rootShow()
@@ -61,11 +61,11 @@
         return IndexedDBFolder._root
     }
 
-    isOpen() {
+    isOpen () {
         return (this.db() !== null)
     }
 
-    asyncOpenIfNeeded(callback, errorCallback) {
+    asyncOpenIfNeeded (callback, errorCallback) {
         if (!this.isOpen()) {
             this.asyncOpen(callback, errorCallback)
         } else {
@@ -73,7 +73,7 @@
         }
     }
 
-    asyncOpen(successCallback, errorCallback) {
+    asyncOpen (successCallback, errorCallback) {
 
         if (!this.hasIndexedDB()) {
             errorCallback("IndexedDB unavailable on this client.")
@@ -127,14 +127,14 @@
         objectStore.createIndex("key", "key", { unique: true });
     }
 
-    onOpenSuccess(event, successCallback, errorCallback) {
+    onOpenSuccess (event, successCallback, errorCallback) {
         this.setDb(event.target.result)
         if (successCallback) {
             successCallback()
         }
     }
 
-    close() {
+    close () {
         if (this.isOpen()) {
             this.db().close()
             this.setIsOpen(false)
@@ -145,13 +145,13 @@
 
     // paths
 
-    folderAt(pathComponent) {
+    folderAt (pathComponent) {
         assert(!pathComponent.contains(this.pathSeparator()))
         const db = IndexedDBFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator())
         return db
     }
 
-    pathForKey(key) {
+    pathForKey (key) {
         //assert(!key.contains(this.pathSeparator()))
         return this.path() + key
     }
@@ -212,7 +212,7 @@
     }
     
 
-    asyncAllKeys(callback) {
+    asyncAllKeys (callback) {
         const keys = []
         const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
 
@@ -232,7 +232,7 @@
         }
     }
 
-    asyncForeachKey(callback) {
+    asyncForeachKey (callback) {
         const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
 
         cursorRequest.onsuccess = (event) => {
@@ -251,7 +251,7 @@
     }
 
 
-    asyncAsJson(callback) {
+    asyncAsJson (callback) {
         //console.log("asyncAsJson start")
         const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
         const dict = {}
@@ -274,7 +274,7 @@
         }
     }
 
-    show() {
+    show () {
         this.asyncAsJson((json) => {
             this.debugLog(" " + this.path() + " = " + JSON.stringify(json, null, 2))
         })
@@ -282,7 +282,7 @@
 
     // removing
 
-    asyncClear(callback, errorCallback) {
+    asyncClear (callback, errorCallback) {
         const transaction = this.db().transaction([this.storeName()], "readwrite");
 
         transaction.onerror = function (event) {
@@ -307,7 +307,7 @@
         };
     }
 
-    asyncDelete() {
+    asyncDelete () {
         const request = window.indexedDB.deleteDatabase(this.storeName())
 
         request.onerror = (event) => {
@@ -324,7 +324,7 @@
 
     // test
 
-    test() {
+    test () {
         const folder = IndexedDBFolder.clone()
         folder.asyncOpen(() => {
             folder.atPut("test", "x")
@@ -340,7 +340,7 @@
 
     }
 
-    newTx() {
+    newTx () {
         return IndexedDBTx.clone().setDbFolder(this)
     }
 }.initThisClass());

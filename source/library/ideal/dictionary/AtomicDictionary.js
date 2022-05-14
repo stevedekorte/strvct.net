@@ -49,7 +49,7 @@ getGlobalThis().ideal.AtomicDictionary = class AtomicDictionary extends ideal.Di
         return this
     }
 
-    revert() {
+    revert () {
         this.assertInTx()
         // replace dict with old version
         this.setJsDict(this.oldVersion()) 

@@ -94,7 +94,7 @@
         this.newSlot("nameIndex", null) // dict of dicts
     }
 
-    init() {
+    init () {
         super.init()
         this.setObservations([]);
         this.setNotifications([]);
@@ -307,11 +307,11 @@
         console.log(this.observersDescription())
     }
 
-    notesDescription() {
+    notesDescription () {
         return this.notifications().map(note => "    " + note.description()).join("\n")
     }
 
-    observersDescription() {
+    observersDescription () {
         return this.observations() .map(obs => "    " + obs.description()).join("\n") 
     }
     

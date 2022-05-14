@@ -8,7 +8,7 @@
 
 (class MimeExtensions extends Base {
 
-	constructor() {
+	constructor () {
 		super()
 		this.setup()
 	}
@@ -29,7 +29,7 @@
 		return matchingExtensions.map(ext => ext.slice(1))
 	}
 
-	setup() {
+	setup () {
 		this._fileExtensionToMimeTypeDict = {
 			".123": "application/vnd.lotus-1-2-3",
 			".3dml": "text/vnd.in3d.3dml",

@@ -36,7 +36,7 @@
         this.setStatusLog(BMNode.clone().setTitle("log").setNodeMinWidth(300))
         this.addSubnode(this.statusLog())
         this.statusLog().addAction("deleteAll")
-        this.statusLog().deleteAll = function() {
+        this.statusLog().deleteAll = function () {
             this.removeAllSubnodes()
         }
         

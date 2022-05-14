@@ -47,7 +47,7 @@ const zlib = require("zlib");
 
 
 class IndexBuilder { 
-    constructor() {
+    constructor () {
         this._paths = [] 
     }
 

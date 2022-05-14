@@ -10,7 +10,7 @@
         
 (class BMTimeNode extends BMSummaryNode {
       
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
 

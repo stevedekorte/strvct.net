@@ -29,7 +29,7 @@ if (!String.prototype.capitalized) {
         return this
     }
     
-    static shared() {
+    static shared () {
         if (!this._shared) {
             this._shared = this.clone()
         }
@@ -44,13 +44,13 @@ if (!String.prototype.capitalized) {
         return this.constructor.name
     }
 
-    static clone() {
+    static clone () {
         const obj = new this()
         //obj.init()
         return obj
     }
     
-    init() {
+    init () {
         // subclasses should override to initialize
     }
 

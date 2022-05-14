@@ -39,7 +39,7 @@
         this.newSlot("changedKeys", null)
     }
 
-    init() {
+    init () {
         super.init()
         this.setIsOpen(false)
         this.setChangedKeys(new Set())
@@ -109,7 +109,7 @@
 		
     // transactions
 
-    begin() {
+    begin () {
         this.debugLog(this.type() + " begin ---")
         this.assertOpen()
         super.begin()
@@ -118,7 +118,7 @@
         return this
     }
 
-    revert() {
+    revert () {
         super.revert()
         this.changedKeys().clear()
         return this

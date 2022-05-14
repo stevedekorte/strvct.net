@@ -24,7 +24,7 @@
 
     // css
 
-    cssString() {
+    cssString () {
         // NOTE: multiple transform one line directives are applied from right to left
         const s = 
           this.scale().asCssScale3dString() + " " 
@@ -35,7 +35,7 @@
 
     // operations
 
-    copy() {
+    copy () {
         const t = Transform.clone()
         t.position().copy(this.position())
         t.rotation().copy(this.rotation())
@@ -44,7 +44,7 @@
     }
 
 
-    addInPlace(otherTransform) {
+    addInPlace (otherTransform) {
         this.position().addInPlace(otherTransform.position())
         this.rotation().addInPlace(otherTransform.rotation())
         this.scale().addInPlace(otherTransform.scale())
@@ -52,7 +52,7 @@
     }
 
     /*
-    add(aTransform) {
+    add (aTransform) {
         const t = this.copy()
         t.position().addInPlace(aTransform.position())
         t.rotation().addInPlace(aTransform.rotation())
@@ -61,7 +61,7 @@
     }
 
 
-    subtract(aTransform) {
+    subtract (aTransform) {
         const t = this.copy()
         t.position().subtractInPlace(aTransform.position())
         t.rotation().subtractInPlace(aTransform.rotation())

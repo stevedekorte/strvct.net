@@ -8,7 +8,7 @@
 
 (class BMUrlField extends BMField {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
 

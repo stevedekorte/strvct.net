@@ -19,7 +19,7 @@
         this.setupAsDefault() 
     }
 
-    setupAsDefault() {
+    setupAsDefault () {
         if (this.subnodes().length === 0) {
             this.setTitle("DefaultTheme")
             const defaultThemeClass = BMThemeClass.clone().setupAsDefault()

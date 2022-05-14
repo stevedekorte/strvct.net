@@ -34,26 +34,26 @@ if (!String.prototype.capitalized) {
 (class Base {
     // Base class with helpful methods for cloning and slot creation 
 
-    static isInBrowser() {
+    static isInBrowser () {
         return (typeof (document) !== 'undefined')
     }
 
-    isInBrowser() {
+    isInBrowser () {
         return (typeof (document) !== 'undefined')
     }
 
-    static shared() {
+    static shared () {
         if (!this._shared) {
             this._shared = this.clone()
         }
         return this._shared
     }
 
-    static type() {
+    static type () {
         return this.name
     }
 
-    static initThisClass() {
+    static initThisClass () {
         //console.log("this.classType() = ", this.classType())
         /*
         if (typeof(getGlobalThis()[this.type()]) !== "undefined") {
@@ -72,21 +72,21 @@ if (!String.prototype.capitalized) {
         return this
     }
 
-    static type() {
+    static type () {
         return this.name
     }
 
-    type() {
+    type () {
         return this.constructor.name
     }
 
-    static clone() {
+    static clone () {
         const obj = new this()
         obj.init()
         return obj
     }
 
-    init() {
+    init () {
         // subclasses should override to initialize
     }
 

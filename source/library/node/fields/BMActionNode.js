@@ -11,7 +11,7 @@
 
 (class BMActionNode extends BMStorableNode {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     

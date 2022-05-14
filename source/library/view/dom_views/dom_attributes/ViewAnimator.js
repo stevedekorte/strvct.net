@@ -18,40 +18,40 @@
         this.newSlot("view", null)
     }
 
-    init() {
+    init () {
         super.init()
     }
 
-    currentValue() {
+    currentValue () {
         const view = this.view()
         return view[this.viewProperty()].apply(view)
     }
 
-    start() {
+    start () {
         this.setStartValue(this.currentValue())
         this.setStartTime(new Date().getTime())
         this.nextFrame()
         return this
     }
 
-    timeRatioDone() {
+    timeRatioDone () {
         const now = new Date().getTime();
         return Math.min(1, ((now - this.startTime()) / this.duration()));
     }
 
-    setterName() {
+    setterName () {
         if (!this._setterName) {
             this._setterName = this.viewProperty().asSetter()
         }
         return this._setterName
     }
 
-    setValue(v) {
+    setValue (v) {
         view[this.setterName()].apply(view, [v])
         return this
     }
 
-    nextFrame() {
+    nextFrame () {
         const tr = this.timeRatioDone()
         const newValue = Math.ceil((this.timeRatioDone() * (this.currentValue() - this.startValue())) + this.startValue());
         this.setValue(newValue)
@@ -64,12 +64,12 @@
         return this
     }
 
-    didComplete() {
+    didComplete () {
 
     }
 
     /*
-    EasingsFunctions() {
+    EasingsFunctions () {
         linear(t) {
             return t;
         }

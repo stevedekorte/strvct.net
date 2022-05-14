@@ -99,7 +99,7 @@
         this.rows().forEach(item => {
             //item.setWidth("fit-content")
             item.setHeight(this.desiredHeight())
-            console.log("    prepare for down orientation on subview ", item.node().title())
+            //console.log("    prepare for down orientation on subview ", item.node().title())
         })
     }
 

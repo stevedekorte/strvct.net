@@ -19,7 +19,7 @@
         this.newSlot("isOneShot", false)
     }
 
-    init() {
+    init () {
         super.init()
         //this.setIsDebugging(true)
     }

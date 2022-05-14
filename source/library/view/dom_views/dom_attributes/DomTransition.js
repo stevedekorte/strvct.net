@@ -17,11 +17,11 @@
         this.newSlot("transitions", null)
     }
 
-    init() {
+    init () {
         super.init()
     }
 
-    updateDuration(s) {
+    updateDuration (s) {
         if (Type.isNumber(s)) {
             s = s + "s"
         }
@@ -30,19 +30,19 @@
         return this
     }
 
-    updateDelay(s) {
+    updateDelay (s) {
         this.setDelay(s)
         this.syncToDomView()
         return this
     }
 
-    updateTimingFunction(s) {
+    updateTimingFunction (s) {
         this.setTimingFunction(s)
         this.syncToDomView()
         return this
     }
 
-    durationString() {
+    durationString () {
         const v = this.duration()
         if (Type.isNumber(v)) {
             return v + "s"
@@ -50,7 +50,7 @@
         return v
     }
 
-    delayString() {
+    delayString () {
         const v = this.delay()
         if (Type.isNumber(v)) {
             return v + "s"
@@ -58,7 +58,7 @@
         return v
     }
 
-    asString() {
+    asString () {
         const parts = [
             this.property(),
             this.durationString(),
@@ -69,7 +69,7 @@
         return parts.join(" ")
     }
 
-    setFromString(aString) {
+    setFromString (aString) {
         const parts = aString.split(" ").select((part) => { return part !== "" })
 
         let v = parts.removeFirst()
@@ -94,7 +94,7 @@
         return this
     }
 
-    syncToDomView() {
+    syncToDomView () {
         this.transitions().syncToDomView()
         return this
     }

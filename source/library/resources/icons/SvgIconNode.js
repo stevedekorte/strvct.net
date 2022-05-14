@@ -9,17 +9,17 @@
 
 (class SvgIconNode extends BMResource {
 
-  static supportedExtensions() {
+  static supportedExtensions () {
     return ["svg"]
   }
 
-  initPrototype() {
+  initPrototype () {
     this.newSlot("svgString", null).setCanInspect(true).setSlotType("String").setLabel("SVG string")
     this.newSlot("error", null)
     //this.newSlot("path", null)
   }
 
-  load() {
+  load () {
     this.setTitle(this.path().lastPathComponent().sansExtension())
 
     const rootFolder = BMFileResources.shared().rootFolder()
@@ -34,19 +34,19 @@
     return this
   }
 
-  resourceFileLoaded(aNote) {
+  resourceFileLoaded (aNote) {
     const fileResource = aNote.sender()
     this.setSvgString(fileResource.data())
     this.postNoteNamed("resourceLoaded")
     return this
   }
 
-  svgIconView() {
+  svgIconView () {
     const icon = SvgIconView.clone().setSvgString(this.svgString())
     return icon
   }
 
-  noteIconName() {
+  noteIconName () {
     return this.title()
   }
 

@@ -13,16 +13,18 @@
         return false
     }
 
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     
     initPrototype () {
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     subtitle () {
         return "Array"

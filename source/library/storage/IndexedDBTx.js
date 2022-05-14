@@ -20,7 +20,7 @@
         this.newSlot("errorCallback", null)
     }
 
-    init() {
+    init () {
         super.init()
         this.setIsDebugging(false)
     }

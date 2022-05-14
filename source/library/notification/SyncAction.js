@@ -22,7 +22,7 @@
         this.newSlot("args", null)
     }
 
-    init() {
+    init () {
         super.init()
         //this.setIsDebugging(true)
     }

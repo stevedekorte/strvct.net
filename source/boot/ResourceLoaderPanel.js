@@ -180,7 +180,7 @@
         return this
     }
 
-    hide() {
+    hide () {
         this.mainElement().style.visibility = "hidden"
         //this.titleElement().style.visibility = "hidden"
     }
@@ -211,7 +211,7 @@
         this.handleError(event.detail.error)
     }
 
-    resourceLoaderDone(event) {
+    resourceLoaderDone (event) {
         //console.log(this.type() + " got resourceLoaderDone " + event.detail)
         this.stop()
     }

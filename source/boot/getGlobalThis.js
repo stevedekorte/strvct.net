@@ -5,7 +5,7 @@
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
 
-function getGlobalThis() {
+function getGlobalThis () {
 
 	const isDefined = function (v) {
 		return typeof(v) !== "undefined"

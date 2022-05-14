@@ -90,7 +90,7 @@
         return this
     }
 
-    setupKeyView() {
+    setupKeyView () {
         const v = TextField.clone().setDivClassName("BMFieldKeyView")
         v.setDisplay("inline-block")
         v.setOverflow("hidden")

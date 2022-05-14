@@ -721,7 +721,7 @@ getGlobalThis().ideal.Slot = class Slot {
 
     // --- should store on instance ---
 
-    shouldStoreSlotOnInstancePrivateName() {
+    shouldStoreSlotOnInstancePrivateName () {
         return "_shouldStoreSlot" + this.name().capitalized()
     }
 
@@ -747,16 +747,16 @@ getGlobalThis().ideal.Slot = class Slot {
 
 /*
 Object.defineSlots(Function.prototype, {
-    slot: function() {
+    slot: function () {
         return this._slot
     },
 
-    setSlot: function(aSlot) {
+    setSlot: function (aSlot) {
         this._slot = aSlot
         return this
     },
 
-    super: function() {
+    super: function () {
         return this
     },
 

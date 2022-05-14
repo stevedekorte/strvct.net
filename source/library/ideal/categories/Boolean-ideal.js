@@ -9,31 +9,31 @@
 
 Object.defineSlots(Boolean.prototype, {
 
-    duplicate: function() {
+    duplicate: function () {
         return this
     },
  
     // logic
 
-    negate: function() {
+    negate: function () {
         return !this
     },
 
-    and: function(v) {
+    and: function (v) {
         return this && v
     },
 
-    or: function(v) {
+    or: function (v) {
         return this || v
     },
 
-    xor: function(v) {
+    xor: function (v) {
         return ( this && !v ) || ( !this && v )
     },
 
     // control flow
 
-    ifTrue: function(aClosure) { // just a test
+    ifTrue: function (aClosure) { // just a test
         if (this) {
             return aClosure()
         }

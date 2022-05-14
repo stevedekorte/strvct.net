@@ -17,11 +17,11 @@
         this.newSlot("characterNumber", null)
     }
 
-    init() {
+    init () {
         super.init()
     }
 
-    fromLine(line) {
+    fromLine (line) {
         line = line.after("at ")
 
         if (line.contains("(")) {
@@ -47,11 +47,11 @@
         return this
     }
 
-    description() {
+    description () {
         return "  " + this.functionName() + "() line " + this.lineNumber()
     }
 
-    show() {
+    show () {
         console.log(this.description())
     }
 }.initThisClass());;
@@ -65,11 +65,11 @@
         this.newSlot("stackFrames", [])
     }
 
-    init() {
+    init () {
         super.init()
     }
 	
-    setError(error) {
+    setError (error) {
         this._error = error
 
         const lines = error.stack.split("\n")
@@ -83,26 +83,26 @@
         return this
     }
 
-    show() {
+    show () {
         console.log(this.type() + ": '" + this.error().message + "'")
         this.stackFrames().forEach(frame => frame.show())
     }
 
-    test() {
-        const f1 = function() {
+    test () {
+        const f1 = function () {
             try {
                 throw(new Error("test error"))
-            } catch(e) {
+            } catch (e) {
                 StackTrace.clone().setError(e).show()
             }
         }
         
-        const f2 = function() { f1() }
-        const f3 = function() { f2() }
+        const f2 = function () { f1() }
+        const f3 = function () { f2() }
         f3()        
     }
 
-}.initThisClass());;
+}.initThisClass());
 
 //StackTrace.clone().test()
 //console.log("Currently running script:", Error.callingScriptURL())

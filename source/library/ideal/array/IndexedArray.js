@@ -95,7 +95,7 @@
         return this
     }
 
-    hasIndexedItem(anObject) {
+    hasIndexedItem (anObject) {
         const key = this.indexKeyForItem(anObject)
         return !Type.isUndefined(this.itemForIndexKey(key))
     }

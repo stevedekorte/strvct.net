@@ -40,12 +40,12 @@ Object.defineSlots(Date.prototype, {
         return this.monthNames()[monthNumber];
     },
 
-    dateNumberName: function() {
+    dateNumberName: function () {
         const dayNumber = this.getDate()
         return dayNumber + dayNumber.ordinalSuffix()
     },
 
-    paddedNumber: function(n) {
+    paddedNumber: function (n) {
         const s = "" + n
         if (s.length === 1) { 
             return "0" + s
@@ -53,19 +53,19 @@ Object.defineSlots(Date.prototype, {
         return s
     },
 
-    zeroPaddedHours: function() {
+    zeroPaddedHours: function () {
         return this.paddedNumber(this.getHours())
     },
 
-    zeroPaddedMinutes: function() {
+    zeroPaddedMinutes: function () {
         return this.paddedNumber(this.getMinutes())
     },
 
-    zeroPaddedSeconds: function() {
+    zeroPaddedSeconds: function () {
         return this.paddedNumber(this.getSeconds())
     },
 
-    getTwelveHours: function() {
+    getTwelveHours: function () {
         let h = this.getHours()
         if (h > 12) { h -= 12 }
         if (h === 0) { h = 12 }

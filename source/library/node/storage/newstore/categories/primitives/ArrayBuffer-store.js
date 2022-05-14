@@ -24,7 +24,7 @@ Object.defineSlots(ArrayBuffer.prototype, {
         return this
     },
 
-    bytes: function() {
+    bytes: function () {
         const bytes = []
         for (let i = 0; i < this.byteLength; i++) {
             bytes.push(this[i])
@@ -32,14 +32,14 @@ Object.defineSlots(ArrayBuffer.prototype, {
         return bytes
     },
 
-    recordForStore: function(aStore) { // should only be called by Store
+    recordForStore: function (aStore) { // should only be called by Store
         return {
             type: "ArrayBuffer", //Type.typeName(this), 
             bytes: this.bytes(),
         }
     },
 
-    refsPidsForJsonStore: function(puuids = new Set()) {
+    refsPidsForJsonStore: function (puuids = new Set()) {
         return puuids
     },
 })

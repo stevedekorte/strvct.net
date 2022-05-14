@@ -25,11 +25,13 @@ TimePeriodFormatter
         this.newSlot("valueInSeconds", 0)
     }
 
-    init() {
-        super.init()
+    /*
+    init () {
+        return super.init()
     }
+    */
 
-    formattedValue() {
+    formattedValue () {
         const periods = {
             seconds: "s", 
             minutes: "m", 

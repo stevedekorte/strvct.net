@@ -41,11 +41,11 @@
 
 (class OrientGestureRecognizer extends GestureRecognizer {
 
-    initPrototype() {
+    initPrototype () {
 
     }
 
-    init() {
+    init () {
         super.init()
         this.setListenerClasses(this.defaultListenerClasses())
 
@@ -59,7 +59,7 @@
 
     // events
 
-    onDown(event) {
+    onDown (event) {
         super.onDown(event)
         //console.log(this.shortTypeId() + ".onDown() this.isPressing() = ", this.isPressing())
 
@@ -97,7 +97,7 @@
     }
     */
 
-    onMove(event) {
+    onMove (event) {
         super.onMove(event)
 
         if (this.isPressing()) {
@@ -124,7 +124,7 @@
 
     // -----------
 
-    onUp(event) {
+    onUp (event) {
         super.onUp(event)
 
         if (this.isPressing()) {
@@ -136,7 +136,7 @@
         }
     }
 
-    cancel() {
+    cancel () {
         if (this.isActive()) {
             this.sendCancelledMessage()
         }
@@ -144,7 +144,7 @@
         return this
     }
 
-    didFinish() {
+    didFinish () {
         super.didFinish()
         this.setIsPressing(false)
         this.deactivate()
@@ -154,71 +154,71 @@
 
     // points - move to GestureRecognizer?
 
-    downPoints() {
+    downPoints () {
         const p = this.pointsForEvent(this.downEvent())
         return [p[0], p[1]]
     }
 
-    activeForEvent(event) {
+    activeForEvent (event) {
         // looks for two points whose id matchs those of the two down points
         const points = this.pointsForEvent(event)
         const ids = this.downPoints().map(p => p.id())
         return points.select(p => ids.contains(p.id()))
     }
 
-    beginPoints() {
+    beginPoints () {
         return this.activeForEvent(this.beginEvent())
     }
 
-    lastPoints() {
+    lastPoints () {
         return this.activeForEvent(this.lastEvent())
     }
 
-    activePoints() { // current points that were in down points
+    activePoints () { // current points that were in down points
         return this.activeForEvent(this.currentEvent())
     }
 
     // position
 
-    centerForPoints(p) {
+    centerForPoints (p) {
         return p[0].midpointTo(p[1])
     }
 
-    downCenterPosition() {
+    downCenterPosition () {
         return this.centerForPoints(this.downPoints())
     }
 
-    beginCenterPosition() {
+    beginCenterPosition () {
         return this.centerForPoints(this.beginPoints())
     }
 
-    currentCenterPosition() {
+    currentCenterPosition () {
         return this.centerForPoints(this.activePoints())
     }
 
-    diffPosition() {
+    diffPosition () {
         return this.currentCenterPosition().subtract(this.beginCenterPosition())
     }
 
     // rotation
 
-    angleInDegreesForPoints(p) {
+    angleInDegreesForPoints (p) {
         return p[0].angleInDegreesTo(p[1])
     }
 
-    downAngleInDegress() {
+    downAngleInDegress () {
         return this.angleInDegreesForPoints(this.downPoints())
     }
 
-    beginAngleInDegress() {
+    beginAngleInDegress () {
         return this.angleInDegreesForPoints(this.beginPoints())
     }
 
-    activeAngleInDegress() {
+    activeAngleInDegress () {
         return this.angleInDegreesForPoints(this.activePoints())
     }
 
-    rotationInDegrees() {
+    rotationInDegrees () {
         // difference between initial angle between 1st two fingers down and their current angle
         const a1 = this.beginAngleInDegress();
         const a2 = this.activeAngleInDegress();
@@ -227,60 +227,60 @@
 
     // scale
 
-    spreadForPoints(p) {
+    spreadForPoints (p) {
         return p[0].distanceFrom(p[1])
     }
 
-    downSpread() {
+    downSpread () {
         // initial distance between first two fingers down
         return this.spreadForPoints(this.downPoints())
     }
 
-    beginSpread() {
+    beginSpread () {
         // initial distance between first two fingers down
         return this.spreadForPoints(this.beginPoints())
     }
 
-    currentSpread() {
+    currentSpread () {
         // current distance between first two fingers down
         return this.spreadForPoints(this.activePoints())
     }
 
-    spread() {
+    spread () {
         const s = this.currentSpread() - this.beginSpread();
         //console.log("spread = " + s + " = " + this.currentSpread() + " - " + this.beginSpread() )
         return s
     }
 
-    downSpreadX() {
+    downSpreadX () {
         const p = this.downPoints()
         return Math.abs(p[0].x() - p[1].x())
     }
 
-    downSpreadY() {
+    downSpreadY () {
         const p = this.downPoints()
         return Math.abs(p[0].y() - p[1].y())
     }
 
-    currentSpreadX() {
+    currentSpreadX () {
         const p = this.activePoints()
         return Math.abs(p[0].x() - p[1].x())
     }
 
-    currentSpreadY() {
+    currentSpreadY () {
         const p = this.activePoints()
         return Math.abs(p[0].y() - p[1].y())
     }
 
-    spreadX() {
+    spreadX () {
         return this.currentSpreadX() - this.downSpreadX()
     }
 
-    spreadY() {
+    spreadY () {
         return this.currentSpreadY() - this.downSpreadY()
     }
 
-    scale() {
+    scale () {
         const s = this.currentSpread() / this.beginSpread();
         //console.log("scale = " + s + " = " + this.currentSpread() + "/" + this.beginSpread() )
         return s
@@ -288,7 +288,7 @@
 
     // show
 
-    debugJson() {
+    debugJson () {
         const dp = this.diffPosition()
         return {
             id: this.typeId(),
@@ -299,7 +299,7 @@
         }
     }
 
-    show() {
+    show () {
         console.log(this.debugJson())
     }
 

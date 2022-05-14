@@ -10,7 +10,7 @@
 
 (class BMFolderNode extends BMSummaryNode {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     

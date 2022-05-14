@@ -5,7 +5,10 @@
     BrowserRow
 
     Base row view. This is a sort of empty canvas for subclasses to put subviews in.
-    It just supports the features we want on all rows, such as:
+    It's important that subviews are put within the contentView, as this is used
+    to support features like slide to delete.
+
+    BrowserRow supports row features such as:
     
         - selection
         - applying styles to match state
@@ -252,9 +255,9 @@
         return null
     }
 
-    didChangeParentView () {
-        super.didChangeParentView()
-        //SyncScheduler.shared().scheduleTargetAndMethod(this, "applyStyles", 0)
+    didUpdateSlotParentView (oldValue, newValue) {
+        super.didUpdateSlotParentView(oldValue, newValue)
+        //this.scheduleMethod("applyStyles")
         this.applyStyles()
         return this
     }
@@ -676,7 +679,7 @@
     // -------------------
 
     /*
-    unselectNextColumnRows() {
+    unselectNextColumnRows () {
         const c = this.column().nextColumn()
         if (c) {
             c.unselectAllRows()

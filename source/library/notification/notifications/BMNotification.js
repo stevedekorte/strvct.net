@@ -15,7 +15,7 @@
         this.newSlot("senderStack", null)
     }
 
-    init() {
+    init () {
         super.init()
     }
 

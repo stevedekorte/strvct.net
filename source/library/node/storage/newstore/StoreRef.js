@@ -9,7 +9,7 @@
 
 getGlobalThis().StoreRef = class StoreRef {
     
-    static clone() {
+    static clone () {
         const instance = new StoreRef()
         instance.init()
         return instance

@@ -6,6 +6,7 @@
 
     Loads build/_index.json and build/_cam.json.zip, then
     evals JS files in _index in order (adding sourceURL comment for debugger).
+	NOTE: sourceURL needs to begin with a / to work with VSCode.
 
     The loading begins on the window load event.
 
@@ -235,7 +236,7 @@ class ResourceManager {
         //const sourceUrl = "\n//# sourceURL=" + entry.path + " \n"
         const sourceUrl = "\n//# sourceURL=/" + entry.path + " \n"
         const debugCode = value + sourceUrl
-		console.log("sourceUrl: [" +  sourceUrl + "]")
+		//console.log("sourceUrl: [" +  sourceUrl + "]")
         //this.onProgress(entry.path)
         eval(debugCode)
         return this

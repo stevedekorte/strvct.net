@@ -8,7 +8,7 @@
         
 (class BMImageWellField extends BMField {
 
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     

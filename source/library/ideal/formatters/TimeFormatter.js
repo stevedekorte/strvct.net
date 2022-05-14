@@ -44,8 +44,8 @@ TimeFormatter
         this.newSlot("date", null) // a javascript Date object
     }
 
-    init() {
-        super.init()
+    init () {
+        return super.init()
     }
 
     paddedNumber (n, padLength) {
@@ -97,7 +97,7 @@ TimeFormatter
         return this.paddedNumber(this.date().getMilliseconds() % 1000)
     }
 
-    meridiemString() {
+    meridiemString () {
         let s = ""
         
         if (this.date().getHours() < 12) {
@@ -113,7 +113,7 @@ TimeFormatter
         return s
     }
 
-    formattedValue() {
+    formattedValue () {
         assert(this.date())
         let s = ""
 

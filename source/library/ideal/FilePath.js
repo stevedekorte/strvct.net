@@ -14,11 +14,11 @@ getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
         this.newSlot("pathString", null)
     }
 
-    static with(pathString) {
+    static with (pathString) {
         return FilePath.clone().setPathString(pathString)
     }
  
-    static pathSeparator() {
+    static pathSeparator () {
         return "/"
     }
 
@@ -45,7 +45,7 @@ getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
         return this.pathComponents().last();
     }
 
-    pathExtension() {
+    pathExtension () {
         const extension = this.pathString().split(".").last();
         return extension;
     }

@@ -1,3 +1,0 @@
-[
-    "BrowserHeader.js"
-]

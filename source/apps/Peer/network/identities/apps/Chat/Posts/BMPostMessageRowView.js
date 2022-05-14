@@ -100,13 +100,6 @@
         return this
     }
 
-    setParentView (aView) {
-        // what is this for?
-        super.setParentView(aView)
-        this.registerForVisibility()
-        return this
-    }
-
     /*
 	setupIconView () {
 		let iv = DomView.clone().setDivClassName("ShelfIconView")

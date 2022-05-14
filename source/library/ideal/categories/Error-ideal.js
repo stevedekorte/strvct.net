@@ -12,21 +12,21 @@ Error.stackTraceLimit = 100 // looks like default on Chrome is 10?
 
 Object.defineSlots(Error, {
 
-    assert: function(v) {
+    assert: function (v) {
         if (!Boolean(v)) {
             throw new Error("assert failed - false value")
         }
         return v
     },
 
-    assertDefined: function(v) {
+    assertDefined: function (v) {
         if (v === undefined) {
             throw new Error("assert failed - undefined value")
         }
         return v
     },
 
-    showCurrentStack: function() {
+    showCurrentStack: function () {
         const e = new Error()
         e.name = "STACK TRACE"
         e.message = ""
@@ -34,7 +34,7 @@ Object.defineSlots(Error, {
     },
 
 
-    assertThrows: function(func) {
+    assertThrows: function (func) {
         assert(Type.isFunction(func))
 
         let didThrow = false
@@ -53,7 +53,7 @@ Object.defineSlots(Error, {
         assert(didThrow)
     },
 
-    try: function(func) {
+    try: function (func) {
         try {
             func()
         } catch (error) {
@@ -71,7 +71,7 @@ Object.defineSlots(Error, {
 
 Object.defineSlots(Error.prototype, {
     
-    stackURLs: function(v) {
+    stackURLs: function (v) {
         let urls = this.stack.split("at")
         urls.removeFirst()
         urls = urls.map(url => {
@@ -122,7 +122,7 @@ Object.defineSlots(Error.prototype, {
         })
 		
         let s = firstLine + "\n"
-        const m = out.maxValue(function(entry) { return entry[0].length })
+        const m = out.maxValue(function (entry) { return entry[0].length })
         out.forEach(function (entry) {
             s += indent + entry[0] + " ".repeat(m + 1 - entry[0].length) + entry[1] + "\n"
         })

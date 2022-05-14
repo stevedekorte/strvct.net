@@ -54,7 +54,7 @@
 
     // --- attributes ---
 
-    duration() {
+    duration () {
         if (this.decodedBuffer()) {
             return this.decodedBuffer().duration
         }

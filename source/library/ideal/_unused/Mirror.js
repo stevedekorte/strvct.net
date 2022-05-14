@@ -16,7 +16,7 @@ getGlobalThis().ideal.Mirror = class FilePath extends ProtoClass {
 
 }
 
-Object.prototype.mirror = function() {
+Object.prototype.mirror = function () {
     let mirror = Object._mirrors.get(this)
 
     if (!mirror) {

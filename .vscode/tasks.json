@@ -4,33 +4,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build",
-            "dependsOn": [
-                "build _index.json & _cam.json",
-                "auto index resources"
-            ]
-        },
-
-        {
-            "label": "build _index.json & _cam.json",
-            "type": "shell",
-            "command": "node",
-            "args": [
-                "./source/boot/index-builder/ImportsIndexer.js"
-            ],
-            "options": {
-                "cwd": "${workspaceRoot}"
-            },
-            "presentation": {
-                "reveal": "silent",
-                "panel": "shared",
-                "clear": true,
-                "close": true,
-            },
-            "problemMatcher": []
-        },
-
-        {
             "label": "Run local node HTTPS server",
             "type": "shell",
             "command": "node",
@@ -50,6 +23,36 @@
         },
 
         {
+            "label": "Build",
+            "dependsOn": [
+                "build _index.json & _cam.json",
+                "auto index resources"
+            ]
+        },
+
+        {
+            "label": "build _index.json & _cam.json",
+            "type": "shell",
+            "command": "node",
+            "args": [
+                "./source/boot/index-builder/ImportsIndexer.js"
+            ],
+            "options": {
+                "cwd": "${workspaceRoot}",
+                "_runner": "terminal",
+                "isBackground": false,
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "shared",
+                "clear": true,
+                "close": true,
+            },
+            "problemMatcher": []
+        },
+
+
+        {
             "label": "auto index resources",
             "type": "shell",
             "command": "node",
@@ -60,7 +63,7 @@
             "options": {
                 "cwd": "${workspaceRoot}",
                 "_runner": "terminal",
-                "isBackground": "true",
+                "isBackground": false,
             },
             "presentation": {
                 "reveal": "silent",

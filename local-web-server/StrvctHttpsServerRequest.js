@@ -50,7 +50,7 @@ const nodePath = require('path');
 		return undefined
 	}
 
-	requestDescription() {
+	requestDescription () {
 		const request = this.request()
 		let s = ""
 		const keys = []
@@ -159,7 +159,7 @@ const nodePath = require('path');
 		this.response().end();
 	}
 
-	onQuery() {
+	onQuery () {
 		/*
 		how to handle non-file requests?
 		http://host/path?query

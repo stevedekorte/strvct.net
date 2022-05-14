@@ -8,7 +8,7 @@
 
 (class BMColorField extends BMField {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
     

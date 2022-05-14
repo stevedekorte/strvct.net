@@ -67,26 +67,42 @@
 
     // retiring
 
+    retireIfNoParent () {
+        if (!this.hasParentView()) {
+            this.prepareToRetire()
+        }
+        return this
+    }
+
     prepareToRetire () {
-        super.prepareToRetire()
+        //console.log("DomView retiring " + this.debugTypeId())
+
+        // if view has no parent at the end of event loop, 
+        // our policy is to retire the view
+
+        this.setIsRegisteredForVisibility(false) // this one isn't a listener
         
-        this.blur()
+        this.retireSubviewTree()
+        assert(!this.hasParentView())
+
+        // do this after removing subviews, just in case event where added by those changes
         this.removeAllGestureRecognizers()
         this.removeAllListeners()
         this.cancelAllTimeouts()
 
-        this.setIsRegisteredForVisibility(false) // this one isn't a listener
-        
+        /*
+        if (this.isFirstResponder()) {
+            this.blur() / is this needed?
+        }
+        */
         const e = this.element()
         if (e) {
             e._domView = null
+            this._element = null
         }
 
-        this.retireSubviewTree()
-        if (this.parentView()) {
-            this.removeFromParentView()
-        }
-        
+        super.prepareToRetire() // call on super
+
         return this
     }
 
@@ -97,11 +113,16 @@
     }
 
     retireSubviewTree () {
-        this.subviews().forEach(sv => {
-            sv.prepareToRetire()
+        // this should be called by:
+        //   scheduleMethod("retireIfNoParent") -> prepareToRetire()
+        // will this cause a SyncAction loop issue as this will result in adding:
+        //   scheduleMethod("retireIfNoParent")
+        // on subviews 
+        const subviews = this.subviews().slice()
+        this.removeAllSubviews()
+        subviews.forEach(sv => {
             sv.retireSubviewTree()
         })
-        //this.removeAllSubviews()
     }
 
     /*
@@ -407,7 +428,7 @@
 
     // word wrap
 
-    setWordWrap(v) {
+    setWordWrap (v) {
         assert([null, "normal", "break-word", "initial", "inherit"].contains(v))
         this.setCssAttribute("word-wrap", v)
         return this
@@ -1561,7 +1582,7 @@
 		return this
 	}
 	
-	unhideHeight() {
+	unhideHeight () {
 		if (!Type.isUndefined(this.hiddenMinHeight())) {
 			this.setMinHeight(this.hiddenMaxHeight())
 			this.setHiddenMinHeight(undefined)
@@ -2258,19 +2279,14 @@
 
     // --- parentView ---
 
-    setParentView (aView) {
-        if (this._parentView !== aView) {
-            this._parentView = aView
-            this.didChangeParentView()
-        }
-        return this
-    }
-
     hasParentView () {
         return Type.isNullOrUndefined(this.parentView()) === false
     }
 
-    didChangeParentView () {
+    didUpdateSlotParentView (oldValue, newValue) {
+        if (!this.hasParentView()) {
+            this.scheduleMethod("retireIfNoParent")
+        }
         return this
     }
 
@@ -2310,6 +2326,7 @@
     }
 
     addSubview (aSubview) {
+        this.assertNotRetired() // TODO: remove this sanity check after testing
         assert(!Type.isNullOrUndefined(aSubview)) 
         assert(!Type.isNullOrUndefined(aSubview.element())) 
 
@@ -2401,6 +2418,7 @@
         this.removeSubview(oldSubview)
         this.atInsertSubview(index, newSubview)
 
+        // TODO: remove this sanity check
         assert(this.indexOfSubview(newSubview) === index)
         assert(this.hasSubview(newSubview))
         assert(!this.hasSubview(oldSubview))
@@ -2622,31 +2640,39 @@
     removeSubview (aSubview) {
         //console.warn("WARNING: " + this.type() + " removeSubview " + aSubview.type())
 
+        // sanity check - make sure it's in our subview list
         if (!this.hasSubview(aSubview)) {
-            console.warn(this.type() + " removeSubview " + aSubview.typeId() + " failed - no child found among: ", this.subviews().map(view => view.typeId()))
-            Error.showCurrentStack()
+            const msg = this.type() + " removeSubview " + aSubview.typeId() + " failed - no child found among: " + this.subviews().map(view => view.typeId())
+            //Error.showCurrentStack()
+            throw new Error(msg)
             return aSubview
         }
 
+        if (aSubview.parentView() !== this) {
+            throw new Error("attempt to remove subview by a non parent")
+        }
+
+        // remove from subview list -  give subview a chance to deal with change
         this.willRemoveSubview(aSubview)
         aSubview.willRemove()
-
         this.subviews().remove(aSubview)
 
-        // sanity check 
 
         const e = aSubview.element()
-        if (this.hasChildElement(e)) {
+        if (this.hasChildElement(e)) { // sanity check - make we have child element 
             this.element().removeChild(e);
 
+            // sanity check - make sure element was removed
             if (this.hasChildElement(e)) {
-                console.warn("WARNING: " + this.type() + " removeSubview " + aSubview.type() + " failed - still has element after remove")
-                Error.showCurrentStack()
+                const msg = "WARNING: " + this.type() + " removeSubview " + aSubview.type() + " failed - still has element after remove"
+                //console.warn(msg)
+                //Error.showCurrentStack()
+                throw new Error(msg)
             }
         } else {
-            //console.warn("WARNING: " + this.type() + " removeSubview " + aSubview.type() + " parent element is missing this child element")
+            const msg = "WARNING: " + this.type() + " removeSubview " + aSubview.type() + " parent element is missing this child element"
+            throw new Error(msg)
         }
- 
 
         aSubview.setParentView(null)
         this.didChangeSubviewList()
@@ -3455,8 +3481,7 @@
         //BMKeyboard.shared().showEvent(event)
         const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
 
-        console.log("event.repeat = ", event.repeat)
-        console.log(" onKeyDown ", methodName)
+        //console.log(" onKeyDown ", methodName)
         
         const result = this.invokeMethodNameForEvent(methodName, event)
 
@@ -3469,7 +3494,7 @@
         return result
     }
 
-    forceRedisplay() {
+    forceRedisplay () {
         // NOTE: not sure this works
         const p = this.parentView()
         if (p) {
@@ -3510,7 +3535,7 @@
         //console.log("methodName: ", methodName)
         this.invokeMethodNameForEvent(methodName, event)
 
-        this.didEdit() // TODO: should this be conditional?
+        //this.didEdit() // TODO: should this be conditional?
         return shouldPropogate
     }
 
@@ -3683,7 +3708,7 @@
         return this
     }
 
-    saveSelection() {
+    saveSelection () {
         if (window.getSelection) {
             const sel = window.getSelection();
             if (sel.getRangeAt && sel.rangeCount) {
@@ -3695,7 +3720,7 @@
         return null;
     }
     
-    restoreSelection(range) {
+    restoreSelection (range) {
         if (range) {
             if (window.getSelection) {
                 const sel = window.getSelection();
@@ -3815,7 +3840,7 @@
 
     // untested
 
-    getCaretPosition() {
+    getCaretPosition () {
         const editableDiv = this.element()
         let caretPos = 0
         if (window.getSelection) {
@@ -4639,7 +4664,7 @@
         return u
     }
 
-    fixedFrameFittingSubviews() {
+    fixedFrameFittingSubviews () {
         let u = null
 
         this.subviews().forEach(sv => {

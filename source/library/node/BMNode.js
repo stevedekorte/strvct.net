@@ -36,7 +36,7 @@
 
 (class BMNode extends ProtoClass {
     
-    static availableAsNodePrimitive() {
+    static availableAsNodePrimitive () {
         return true
     }
 
@@ -317,7 +317,7 @@
         return this
     }
 
-    setupInspectorFromSlots() {
+    setupInspectorFromSlots () {
         const slots = this.thisPrototype().allSlots()
         slots.ownForEachKV((name, slot) => {
             const field = slot.newInspectorField()

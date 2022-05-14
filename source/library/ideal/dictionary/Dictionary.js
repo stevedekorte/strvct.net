@@ -15,7 +15,7 @@ getGlobalThis().ideal.Dictionary = class Dictionary extends ProtoClass {
         return this.clone().setJsDict(jsDict)
     }
 
-    initPrototype() {
+    initPrototype () {
         // don't call super as it's init was called when it was created
         this.newSlot("jsDict", null)
         this.newSlot("mutateClosure", null)
@@ -159,7 +159,7 @@ getGlobalThis().ideal.Dictionary = class Dictionary extends ProtoClass {
     }
 
     /*
-    has(k) {
+    has (k) {
         return this.jsDict().hasOwnProperty(k);
     }
     */

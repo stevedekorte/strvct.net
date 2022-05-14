@@ -2,7 +2,7 @@
 
 Object.defineSlots(Map, {
 
-    instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store
+    instanceFromRecordInStore: function (aRecord, aStore) { // should only be called by Store
         const obj = this.clone()
         //obj.loadFromRecord(aRecord, aStore)
         return obj
@@ -13,7 +13,7 @@ Object.defineSlots(Map, {
 
 Object.defineSlots(Map.prototype, {
 
-    loadFromRecord: function(aRecord, aStore) {
+    loadFromRecord: function (aRecord, aStore) {
 
         aRecord.entries.forEach((entry) => {
             const key = entry[0]
@@ -24,7 +24,7 @@ Object.defineSlots(Map.prototype, {
         return this
     },
 
-    recordForStore: function(aStore) { // should only be called by Store
+    recordForStore: function (aStore) { // should only be called by Store
         let iterator = this.entries();
         let entry = iterator.next().value
         const entries = []
@@ -41,11 +41,11 @@ Object.defineSlots(Map.prototype, {
         }
     },
 
-    shouldStore: function() {
+    shouldStore: function () {
         return true
     },
 
-    refsPidsForJsonStore: function(puuids = new Set()) {
+    refsPidsForJsonStore: function (puuids = new Set()) {
         this.forEach(v => { 
             if (!Type.isNull(v)) { 
                 v.refsPidsForJsonStore(puuids)

@@ -29,7 +29,7 @@
         return this
     }
 
-    postComplete() {
+    postComplete () {
         //this.completeNote().post()
         this.urlDelegate().performIfResponding("onUrlResourceComplete", this)
         return this

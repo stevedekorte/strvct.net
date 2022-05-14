@@ -84,7 +84,7 @@
 
 Object.defineSlots(Object.prototype, {
 
-    docs: function() {
+    docs: function () {
         if (!this._docs) {
             this._docs = {}
         }
@@ -104,7 +104,7 @@ Object.defineSlots(Object.prototype, {
 
 Object.defineSlots(Function.prototype, {
 
-    docs: function() {
+    docs: function () {
         if (!this._docs) {
             this._docs = {}
         }
@@ -119,7 +119,7 @@ Object.defineSlots(Function.prototype, {
         return this
     },
 
-    extractComments: function() {
+    extractComments: function () {
         const commentPattern = new RegExp("(\\/\\*([^*]|[\\r\\n]|(\\*+([^*\/]|[\\r\\n])))*\\*+\/)|(\/\/.*)", "g");
         return this.toString().match(commentPattern)
     },

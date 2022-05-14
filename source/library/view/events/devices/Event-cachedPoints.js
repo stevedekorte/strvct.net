@@ -11,19 +11,19 @@ if (!getGlobalThis().Event) {
 }
 
 Object.defineSlots(Event.prototype, {
-    hasCachedPoints: function() {
+    hasCachedPoints: function () {
         return this._cachedPoints !== undefined
     },
 
-    setCachedPoints: function(points) {
+    setCachedPoints: function (points) {
         this._cachedPoints = points
     },
 
-    cachedPoints: function() {
+    cachedPoints: function () {
         return this._cachedPoints
     },
     
-    pushCachedPoint: function(point) {
+    pushCachedPoint: function (point) {
         assert(this._cachedPoints)
         this._cachedPoints.push(point)
     }

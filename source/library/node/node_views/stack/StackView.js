@@ -221,7 +221,7 @@
         return this
     }
 
-    setOtherViewContent(v) {
+    setOtherViewContent (v) {
         const ov = this.otherView()
         ov.setFlexBasis(null)
         ov.setFlexGrow(1)

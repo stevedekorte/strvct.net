@@ -11,19 +11,19 @@ Object.defineSlots(Date, {
 
 Object.defineSlots(Date.prototype, {
 
-    loadFromRecord: function(aRecord, aStore) {
+    loadFromRecord: function (aRecord, aStore) {
         this.setTime(aRecord.time)
         return this
     },
 
-    recordForStore: function(aStore) { // should only be called by Store
+    recordForStore: function (aStore) { // should only be called by Store
         return {
             type: this.type(), 
             time: this.getTime() // toJSON is a standard library Date method
         }
     },
 
-    shouldStore: function() {
+    shouldStore: function () {
         return true
     },
 

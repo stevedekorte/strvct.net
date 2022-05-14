@@ -22,16 +22,16 @@
         this.newSlot("partNames", ["topLeft", "topRight", "bottomRight", "bottomLeft"])
     }
 
-    init() {
+    init () {
         super.init()
     }
 
-    clear() {
+    clear () {
         this.setAll(0)
         return this
     }
 
-    setAll(v) {
+    setAll (v) {
         if (!v) {
             v = 0
         }
@@ -42,19 +42,19 @@
         return this
     }
 
-    partSetters() {
+    partSetters () {
         return this.partNames().map(k => k.asSetter())
     }
 
-    partValues() {
+    partValues () {
         return this.partNames().map(k => this[k].apply(this))
     }
 
-    asString(aString) {
+    asString (aString) {
         return this.partValues().map(v => v + "px").join(" ")
     }
 
-    setFromString(aString) {
+    setFromString (aString) {
         const parts = aString.split(" ").select(part => part !== "")
 
         this.clear()
@@ -88,12 +88,12 @@
         return this
     }
 
-    syncToDomView() {
+    syncToDomView () {
         this.divView().setBorderRadius(this.asString())
         return this
     }
 
-    syncFromDomView() {
+    syncFromDomView () {
         const s = this.divView().borderRadius()
 
         if (s) {

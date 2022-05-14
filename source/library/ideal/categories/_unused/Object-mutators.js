@@ -1,15 +1,15 @@
 Object.defineSlots(Object.prototype, {
 
-    isMutator: function() {
+    isMutator: function () {
         return this.associationAt("_isMutator")
     },
 
-    setIsMutator: function(v) {
+    setIsMutator: function (v) {
         assert(Type.isBoolean(v))
         return this.associationAtPut("_isMutator", v)
     },
 
-    mutatorMethodNamesSet: function() {
+    mutatorMethodNamesSet: function () {
         const names = new Set()
         for (let k in this) {
             const v = this[k]

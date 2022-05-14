@@ -10,14 +10,14 @@
 */
 
 (class CrossTabLock extends ProtoClass {
-    init() {
+    init () {
         super.init()
         this.newSlot("lockName", "cross-tab-lock")
         this.newSlot("lockNumber", null)
         window.addEventListener("storage", () => this.localStorageChanged())
     }
 
-    currentLockNumber() {
+    currentLockNumber () {
         return localStorage.get(this.lockName());
     }
 
@@ -25,27 +25,27 @@
 
     }
 
-    someoneElseHasLock() {
+    someoneElseHasLock () {
 
     }
 
-    isLocked() {
+    isLocked () {
         return this.lockNumber() === this.currentLockNumber
     }
 
-    lock() {
+    lock () {
         if (!this.isLocked()) {
             localStorage.set(this.lockName(), new Date());
         }
     }
 
-    unlock() {
+    unlock () {
         if (this.isLocked()) {
             this.setLockNumber(null)
         }
     }
 
-    localStorageChanged(event) {
+    localStorageChanged (event) {
         if (event.key === this.lockName()) {
 
             if (this.isLocked()) {

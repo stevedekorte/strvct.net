@@ -57,7 +57,7 @@
        
    }
 
-    setupAsDefault() {
+    setupAsDefault () {
         this.setTitle("DefaultTheme")
         const defaultThemeClass = BMThemeClass.clone().setupAsDefault()
         this.addSubnode(defaultThemeClass)

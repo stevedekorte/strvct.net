@@ -31,23 +31,23 @@ Object.defineSlots(Array, {
 Object.defineSlots(Array.prototype, {
 
     /*
-    init: function() {
+    init: function () {
         Object.prototype.init.apply(this)
     },
     */
 
-    duplicate: function() {
+    duplicate: function () {
         return this.shallowCopy()
     },
 
-    clear: function() {
+    clear: function () {
         while (this.length) {
             this.pop()
         }
         return this
     },
 
-    copyFrom: function(anArray) {
+    copyFrom: function (anArray) {
         this.clear()
         anArray.forEach(v => this.push(v))
         return this
@@ -57,7 +57,7 @@ Object.defineSlots(Array.prototype, {
 
     // foreach key value (key being the index)
 
-    forEachKV: function(func) {
+    forEachKV: function (func) {
         let i = 0
         this.forEach((v) => {
             func(i, v)
@@ -65,7 +65,7 @@ Object.defineSlots(Array.prototype, {
         })
     },
 
-    reverseForEachKV: function(func) {
+    reverseForEachKV: function (func) {
         let i = 0
         this.forEach((v) => {
             func(i, v)
@@ -113,7 +113,7 @@ Object.defineSlots(Array.prototype, {
         return this
     },
 
-    atPut: function(index, v) {
+    atPut: function (index, v) {
         // we need to hook this since []= can't be hooked
         this.willMutate("atPut", v) 
         this[index] = v
@@ -200,7 +200,7 @@ Object.defineSlots(Array.prototype, {
         return null;
     },
 
-    shallowCopy: function() {
+    shallowCopy: function () {
         return this.slice()
     },
 
@@ -309,7 +309,7 @@ Object.defineSlots(Array.prototype, {
         return false;
     },
 
-    removeAll: function() {
+    removeAll: function () {
         while(this.length) {
             this.pop() // TODO: make more efficient?
         }
@@ -483,11 +483,11 @@ Object.defineSlots(Array.prototype, {
         return null;
     },
 
-    nullsRemoved: function() {
+    nullsRemoved: function () {
         return this.filter(v => !Type.isNull(v));
     },
 
-    reject: function(callback) {
+    reject: function (callback) {
         return this.filter(v => !callback(v))
     },
 
@@ -610,7 +610,7 @@ Object.defineSlots(Array.prototype, {
         return Array.from(new Set(this));
     },
 
-    asSet: function() {
+    asSet: function () {
         return new Set(this)
     },
 
@@ -635,7 +635,7 @@ Object.defineSlots(Array.prototype, {
         return this.first() !== "";
     },
 
-    filterInPlace: function(callback) {
+    filterInPlace: function (callback) {
         for (let i = this.length -1; i >= 0; i--) {
             const v = this.at(i);
             if (!callback(v)) {
@@ -840,7 +840,7 @@ Object.defineSlots(Array.prototype, {
     },
     
     /*
-    asImmutable: function() {
+    asImmutable: function () {
         // doesn't raise exception on write - they just fail silently - too dangerous to use
         //const obj = this.shallowCopy()
         //Object.freeze(obj)

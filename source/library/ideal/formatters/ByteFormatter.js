@@ -42,11 +42,11 @@
             "yottabytes"])
     }
 
-    init() {
+    init () {
         super.init()
     }
 
-    formattedValue() {
+    formattedValue () {
         const b = Math.floor(this.value());
         let postfix = this.usePostfix() ? "B" : "";
         let space = this.useSpace() ? " " : "";

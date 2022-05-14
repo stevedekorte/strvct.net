@@ -7,7 +7,7 @@
     using a (potentially different) method name. Subclasses override init to define the
     event set by calling this.addEventNameAndMethodName(...) for each event.
 
-    Example use:
+    Example use (of subclass):
 
     const mouseListener = MouseListener.clone().setListenTarget(element).setDelegate(anObject)
 
@@ -54,16 +54,6 @@
 
     listenTargetDescription () {
         return DomElement_description(this.listenTarget())
-
-        /*        
-        const type = typeof(this.listenTarget())
-        
-        if (type === "Element") { // right type?
-            return DomElement_description(this.listenTarget())
-        }
-        
-        return type
-        */
     }
 
     // --------------

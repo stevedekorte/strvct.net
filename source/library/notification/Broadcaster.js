@@ -38,7 +38,7 @@
         this.newSlot("nameToListenerSet", null)  // dict to set
     }
 
-    init() {
+    init () {
         super.init()
         this.setNameToListenerSet({})
     }
