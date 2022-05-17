@@ -1,5 +1,11 @@
 "use strict";
 
+/*
+
+    Some code for adding categories to all the typed array types. 
+
+*/
+
 Type.typedArrayTypeNames().forEach((name) => {
     const aClass = getGlobalThis()[name]
 
@@ -21,7 +27,7 @@ Type.typedArrayTypeNames().forEach((name) => {
 
 })
 
-Object.defineSlots(ArrayBuffer.prototype, {
+Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
     base64Encoded: function(aRecord, aStore) {
         return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
     },

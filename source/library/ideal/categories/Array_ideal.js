@@ -10,12 +10,11 @@
 
 (class Array_ideal extends Array {
 
-
-    static withArray(anArray) {
+    static withArray (anArray) {
         return this.clone().copyFrom(anArray)
     }
 
-    static fromIterator(iterator) {
+    static fromIterator (iterator) {
         const values = []
         let result = iterator.next()
         while (!result.done) {
@@ -31,18 +30,18 @@
      }
     */
 
-    duplicate() {
+    duplicate () {
         return this.shallowCopy()
     }
 
-    clear() {
+    clear () {
         while (this.length) {
             this.pop()
         }
         return this
     }
 
-    copyFrom(anArray) {
+    copyFrom (anArray) {
         this.clear()
         anArray.forEach(v => this.push(v))
         return this
@@ -52,7 +51,7 @@
 
     // foreach key value (key being the index)
 
-    forEachKV(func) {
+    forEachKV (func) {
         let i = 0
         this.forEach((v) => {
             func(i, v)
@@ -60,7 +59,7 @@
         })
     }
 
-    reverseForEachKV(func) {
+    reverseForEachKV (func) {
         let i = 0
         this.forEach((v) => {
             func(i, v)
@@ -68,11 +67,11 @@
         })
     }
 
-    isEmpty() {
+    isEmpty () {
         return this.length === 0;
     }
 
-    isEqual(otherArray) {
+    isEqual (otherArray) {
         if (this.length !== otherArray.length) {
             return false;
         }
@@ -87,11 +86,11 @@
         return true;
     }
 
-    size() {
+    size () {
         return this.length;
     }
 
-    at(index) {
+    at (index) {
         if (index < 0) {
             return this[this.length + index];
         }
@@ -99,7 +98,7 @@
         return this[index];
     }
 
-    removeAt(index) {
+    removeAt (index) {
         // we need to hook this since delete can't be hooked
         const v = this[index]
         this.willMutate("removeAt", v)
@@ -108,7 +107,7 @@
         return this
     }
 
-    atPut(index, v) {
+    atPut (index, v) {
         // we need to hook this since []= can't be hooked
         this.willMutate("atPut", v)
         this[index] = v
@@ -116,32 +115,32 @@
         return this
     }
 
-    first() {
+    first () {
         return this.at(0)
     }
 
-    second() {
+    second () {
         return this.at(1)
     }
 
-    rest() {
+    rest () {
         return this.slice(1);
     }
 
-    last() {
+    last () {
         return this.at(this.length - 1) // returns undefined for negative indexes
     }
 
-    contains(element) {
+    contains (element) {
         return this.indexOf(element) !== -1;
     }
 
-    containsAny(anArray) {
+    containsAny (anArray) {
         const match = anArray.detect(item => this.contains(item))
         return !Type.isNullOrUndefined(match)
     }
 
-    hasPrefix(otherArray) {
+    hasPrefix (otherArray) {
         if (this.length < otherArray.length) {
             return false;
         }
@@ -155,7 +154,7 @@
         return true;
     }
 
-    itemAfter(v) {
+    itemAfter (v) {
         let i = this.indexOf(v);
 
         if (i === -1) {
@@ -175,7 +174,7 @@
         return null;
     }
 
-    itemBefore(v) {
+    itemBefore (v) {
         let i = this.indexOf(v);
 
         if (i === -1) {
@@ -195,11 +194,11 @@
         return null;
     }
 
-    shallowCopy() {
+    shallowCopy () {
         return this.slice()
     }
 
-    copy(copyDict) {
+    copy (copyDict) {
         // since not every object will implement copy:
         // we need to have a check for it
         return this.slice().map((v) => {
@@ -211,7 +210,7 @@
         })
     }
 
-    split(subArrayCount) {
+    split (subArrayCount) {
         const subArrays = [];
         const subArraySize = Math.ceil(this.length / subArrayCount);
 
@@ -231,12 +230,12 @@
 
     // --- write operations ---
 
-    atInsert(i, e) {
+    atInsert (i, e) {
         this.splice(i, 0, e);
         return this
     }
 
-    atInsertItems(i, items) {
+    atInsertItems (i, items) {
         let n = i
         items.forEach(item => {
             this.atInsert(n, item)
@@ -245,22 +244,22 @@
         return this
     }
 
-    append() {
+    append () {
         this.appendItems.call(this, arguments);
         return this;
     }
 
-    appendItems(elements) {
+    appendItems (elements) {
         this.push.apply(this, elements);
         return this;
     }
 
-    appendItemsIfAbsent(elements) {
+    appendItemsIfAbsent (elements) {
         this.appendIfAbsent.apply(this, elements);
         return this;
     }
 
-    moveItemsToIndex(movedItems, anIndex) {
+    moveItemsToIndex (movedItems, anIndex) {
         const newArray = this.shallowCopy()
         let insertIndex = anIndex
 
@@ -288,12 +287,12 @@
         return this
     }
 
-    prepend(e) {
+    prepend (e) {
         this.unshift(e);
         return this;
     }
 
-    appendIfAbsent() {
+    appendIfAbsent () {
         this.slice.call(arguments).forEach((value) => {
             if (this.indexOf(value) === -1) {
                 this.push(value);
@@ -304,21 +303,21 @@
         return false;
     }
 
-    removeAll() {
+    removeAll () {
         while (this.length) {
             this.pop() // TODO: make more efficient?
         }
         return this
     }
 
-    removeAt(i) {
+    removeAt (i) {
         this.willMutate("removeAt")
         this.splice(i, 1);
         this.didMutate("removeAt")
         return this;
     }
 
-    remove(e) {
+    remove (e) {
         const i = this.indexOf(e);
         if (i !== -1) {
             this.removeAt(i);
@@ -326,32 +325,32 @@
         return this;
     }
 
-    emptiesRemoved() {
+    emptiesRemoved () {
         return this.filter(v => !Type.isNullOrUndefined(v))
     }
 
-    removeFirst() {
+    removeFirst () {
         // isMutator
         return this.shift();
     }
 
-    removeLast() {
+    removeLast () {
         // isMutator
         return this.pop();
     }
 
-    removeItems(elements) {
+    removeItems (elements) {
         // isMutator
         elements.forEach(e => this.remove(e));
         return this;
     }
 
-    empty() {
+    empty () {
         this.splice(0, this.length);
         return this;
     }
 
-    shuffle() {
+    shuffle () {
         let i = this.length;
 
         if (i === 0) {
@@ -369,7 +368,7 @@
         return this;
     }
 
-    atRandom() {
+    atRandom () {
         const i = Math.floor(Math.random() * this.length)
         return this.at(i);
     }
@@ -395,7 +394,7 @@
      }
     */
 
-    forEachPerformIfResponds(methodName, arg1, arg2, arg3) {
+    forEachPerformIfResponds (methodName, arg1, arg2, arg3) {
         this.forEach((item) => {
             if (item) {
                 const f = item[methodName]
@@ -407,7 +406,7 @@
         return this
     }
 
-    forEachPerform(methodName, arg1, arg2, arg3) {
+    forEachPerform (methodName, arg1, arg2, arg3) {
         this.forEach((item) => {
             if (item) {
                 const f = item[methodName]
@@ -421,7 +420,7 @@
         return this
     }
 
-    sortPerform(functionName) { // WARNING: sorts IN-PLACE
+    sortPerform (functionName) { // WARNING: sorts IN-PLACE
         const args = this.slice.call(arguments).slice(1);
         return this.sort(function (x, y) {
             const xRes = x[functionName].apply(x, args);
@@ -435,11 +434,11 @@
         });
     }
 
-    mapProperty(propertyName) {
+    mapProperty (propertyName) {
         return this.map(e => e[propertyName]);
     }
 
-    detect(callback) {
+    detect (callback) {
         for (let i = 0; i < this.length; i++) {
             const v = this.at(i)
             if (callback(v, i)) {
@@ -450,14 +449,14 @@
         return null; // or should this be undefined?
     }
 
-    detectPerform(functionName) {
+    detectPerform (functionName) {
         const args = this.slice.call(arguments).slice(1);
         return this.detect((value, index) => {
             return value[functionName].apply(value, args);
         });
     }
 
-    detectProperty(slotName, slotValue) {
+    detectProperty (slotName, slotValue) {
         for (let i = 0; i < this.length; i++) {
             const v = this.at(i)
             if (v[slotName] === slotValue) {
@@ -468,7 +467,7 @@
         return null;
     }
 
-    detectIndex(callback) {
+    detectIndex (callback) {
         for (let i = 0; i < this.length; i++) {
             if (callback(this.at(i), i)) {
                 return i;
@@ -478,17 +477,17 @@
         return null;
     }
 
-    nullsRemoved() {
+    nullsRemoved () {
         return this.filter(v => !Type.isNull(v));
     }
 
-    reject(callback) {
+    reject (callback) {
         return this.filter(v => !callback(v))
     }
 
     // max 
 
-    maxEntry(optionalCallback) {
+    maxEntry (optionalCallback) {
         // callback is optional
         const length = this.length;
         const mEntry = [undefined, undefined]
@@ -508,22 +507,22 @@
         return mEntry;
     }
 
-    maxIndex(optionalCallback) {
+    maxIndex (optionalCallback) {
         return this.maxEntry(optionalCallback)[0];
     }
 
-    maxValue(optionalCallback, theDefault) {
+    maxValue (optionalCallback, theDefault) {
         return this.maxEntry(optionalCallback)[1];
     }
 
-    maxItem(optionalCallback) {
+    maxItem (optionalCallback) {
         return this.at(this.maxIndex(optionalCallback));
     }
 
 
     // min
 
-    minEntry(optionalCallback) {
+    minEntry (optionalCallback) {
         // callback is optional
         const length = this.length;
         const mEntry = [undefined, undefined]
@@ -543,17 +542,17 @@
         return mEntry;
     }
 
-    minIndex(optionalCallback) {
+    minIndex (optionalCallback) {
         return this.maxEntry(optionalCallback)[0];
     }
 
-    minValue(optionalCallback) {
+    minValue (optionalCallback) {
         return this.minEntry(optionalCallback)[1];
     }
 
     // sum
 
-    sum(optionalCallback) {
+    sum (optionalCallback) {
         let sum = 0;
         const length = this.length;
 
@@ -569,7 +568,7 @@
         return sum;
     }
 
-    average() {
+    average () {
         if (this.length === 0) {
             return 0
         }
@@ -601,19 +600,19 @@
     */
 
 
-    unique() {
+    unique () {
         return Array.from(new Set(this));
     }
 
-    asSet() {
+    asSet () {
         return new Set(this)
     }
 
-    reversed() {
+    reversed () {
         return this.shallowCopy().reverse();
     }
 
-    asPath() {
+    asPath () {
         if (this.length === 1 && this.first() === "") {
             return "/";
         }
@@ -622,15 +621,15 @@
         }
     }
 
-    isAbsolutePath() {
+    isAbsolutePath () {
         return this.first() === "";
     }
 
-    isRelativePath() {
+    isRelativePath () {
         return this.first() !== "";
     }
 
-    filterInPlace(callback) {
+    filterInPlace (callback) {
         for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
             if (!callback(v)) {
@@ -640,11 +639,11 @@
         return this
     }
 
-    select(callback) {
+    select (callback) {
         return this.filter(callback)
     }
 
-    after(v) {
+    after (v) {
         const index = this.indexOf(v);
 
         if (index === -1) {
@@ -654,7 +653,7 @@
         return this.slice(index + 1);
     }
 
-    before(v) {
+    before (v) {
         const index = this.indexOf(v);
 
         if (index === -1) {
@@ -664,7 +663,7 @@
         return this.slice(0, index);
     }
 
-    replaceOccurancesOfWith(oldValue, newValue) {
+    replaceOccurancesOfWith (oldValue, newValue) {
         // isMutator
         for (let i = 0; i < this.length; i++) {
             if (this.at(i) === oldValue) {
@@ -674,7 +673,7 @@
         return this
     }
 
-    removeOccurancesOf(e) {
+    removeOccurancesOf (e) {
         // isMutator
         for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
@@ -685,7 +684,7 @@
         return this;
     }
 
-    joinWithFunc(aFunc) {
+    joinWithFunc (aFunc) {
         // not a mutator
         // like join, but calls aFunc with the array and index as arguments
         // to get each new item to insert between array items
@@ -715,7 +714,7 @@
      }
     */
 
-    itemsBefore(item) {
+    itemsBefore (item) {
         const index = this.indexOf(item);
         if (index !== -1) {
             return this.slice(0, index);
@@ -729,24 +728,24 @@
     const setUnion = (a, b) => new Set([...a, ...b]);
     */
 
-    union(other) {
+    union (other) {
         let r = this.concat(other).unique()
         return r;
     }
 
-    intersection(other) {
+    intersection (other) {
         const thisSet = new Set(this)
         return other.filter((v) => {
             return thisSet.has(v);
         });
     }
 
-    difference(other) {
+    difference (other) {
         const thisSet = new Set(this)
         return other.filter(v => !thisSet.has(v));
     }
 
-    symmetricDifference(other) {
+    symmetricDifference (other) {
         let all = this.concat(other)
         const thisSet = new Set(this)
         const otherSet = new Set(other)
@@ -771,7 +770,7 @@
 
     // --- equality ---
 
-    equals(array /*, visited = new Set()*/) {
+    equals (array /*, visited = new Set()*/) {
         // we want this to work on any object that confroms to the array protocol, 
         // not just objects of the same JS type
         // but how do we test for the [] accessor?
@@ -819,7 +818,7 @@
     }
 
 
-    containsEquals(b) {
+    containsEquals (b) {
         for (let i = 0, l = this.length; i < l; i++) {
             let a = this.at(i)
 

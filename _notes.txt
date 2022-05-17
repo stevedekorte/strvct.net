@@ -1,8 +1,4 @@
 
-ideal:
-- to help with search on "methodname ()"
--- convert categories to do something like:
--- e.g. define ArrayCategory class, on initClass, it copies slots into Array class and errors on overwrites?
 
 - expand first visible column to fit width of display when too small to fit next 2 columns?
 

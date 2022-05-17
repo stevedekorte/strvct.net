@@ -149,32 +149,32 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
 
 (class Object_ideal extends Object {
 
-    static clone() {
+    static clone () {
         const obj = new this()
         obj.init()
         return obj
     }
  
-    static type() {
+    static type () {
         return this.name
     }
  
-    static isClass() {
+    static isClass () {
         return true
     }
  
-    static getClassNamed(aName) {
+    static getClassNamed (aName) {
         if (Type.isNullOrUndefined(aName)) {
             return undefined
         }
         return getGlobalThis()[aName]
     }
  
-    static globals() {
+    static globals () {
         return getGlobalThis()
     }
  
-    static initThisClass() {
+    static initThisClass () {
         this.globals()[this.type()] = this
         //console.log("Prototype " + this.type() + " initThisClass")
         if (this.prototype.hasOwnProperty("initPrototype")) {
@@ -184,11 +184,11 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    static superClass() {
+    static superClass () {
         return this.__proto__
     }
  
-    static addToAllClasses() {
+    static addToAllClasses () {
         const allClassesSet = Object._allClassesSet
         if (allClassesSet.has(this)) {
             throw new Error("attempt to call initThisClass twice on the same class")
@@ -197,15 +197,15 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    static allSubclasses() {
+    static allSubclasses () {
         return this._allClassesSet.select(aClass => aClass.hasAncestorClass(this))
     }
  
-    static subclasses() {
+    static subclasses () {
         return this._allClassesSet.select(aClass => aClass.superClass() === this)
     }
  
-    static hasAncestorClass(aClass) {
+    static hasAncestorClass (aClass) {
         const sc = this.superClass()
  
         if (sc === aClass) {
@@ -219,23 +219,23 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return sc.hasAncestorClass(aClass)
     }
  
-    static eachSlot(obj, fn) {
+    static eachSlot (obj, fn) {
         Object.keys(obj).forEach(k => fn(k, obj[k]))
     }
  
-    static values(obj) {
+    static values (obj) {
         const values = [];
         obj.ownForEachKV((k, v) => values.push(v))
         return values;
     }
  
-    static asValueKeyDict(obj) {
+    static asValueKeyDict (obj) {
         const dict = {}
         obj.ownForEachKV((k, v) => dict[v] = k)
         return dict
     }
  
-    static isKindOf(aClass) {
+    static isKindOf (aClass) {
         //assert(this.isClass())
         //assert(aClass.isClass())
  
@@ -257,7 +257,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return false
     }
  
-    initPrototype() {
+    initPrototype () {
         Object.defineSlot(this, "_hasDoneInit", false)
         //Object.defineSlot(this, "_hasRetired", false) 
         Object.defineSlot(this, "_mutationObservers", null)
@@ -265,7 +265,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         Object.defineSlot(this, "_isObjectRetired", false)
     }
  
-    clone() {
+    clone () {
         const obj = new this()
         //let aClass = this.thisClass()
         //assert(aClass !== this)
@@ -273,48 +273,48 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return obj
     }
  
-    init() {
+    init () {
         this.scheduleDidInit()
     }
  
-    isPrototype() {
+    isPrototype () {
         return this.constructor.prototype === this
     }
  
-    isInstance() {
+    isInstance () {
         return !this.isPrototype()
     }
  
-    isClass() {
+    isClass () {
         return false
     }
  
-    thisClass() {
+    thisClass () {
         if (this.isPrototype()) {
             return this.constructor
         }
         return this.__proto__.constructor
     }
  
-    thisPrototype() {
+    thisPrototype () {
         assert(this.isInstance())
         const prototype = this.__proto__
         assert(prototype.isPrototype)
         return prototype
     }
  
-    type() {
+    type () {
         return this.constructor.name
     }
  
  
     // --- mutation ---
  
-    mutatorMethodNamesSet() {
+    mutatorMethodNamesSet () {
         throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class")
     }
  
-    setupMutatorHooks() {
+    setupMutatorHooks () {
         this.mutatorMethodNamesSet().forEach((slotName) => {
             const unhookedName = "unhooked_" + slotName
             const unhookedFunction = this[slotName]
@@ -341,17 +341,15 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         })
     }
  
-    willMutate() {
- 
+    willMutate () {
     }
  
-    didMutate() {
- 
+    didMutate () {
     }
  
     // -------------------
  
-    perform(methodName, arg1, arg2, arg3) {
+    perform (methodName, arg1, arg2, arg3) {
         const f = this[methodName]
         if (f) {
             return f.call(this, arg1, arg2, arg3)
@@ -359,7 +357,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         throw new Error(this.typeId() + " does not repsond to '" + methodName + "'")
     }
  
-    performIfResponding(methodName, arg1, arg2, arg3) {
+    performIfResponding (methodName, arg1, arg2, arg3) {
         const f = this[methodName]
         if (f) {
             return f.call(this, arg1, arg2, arg3)
@@ -368,30 +366,30 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
  
     // -------------------
  
-    shallowCopy() {
+    shallowCopy () {
         let copy = Object.assign({}, this);
         return copy
     }
  
-    at(key) {
+    at (key) {
         return this[key]
     }
  
-    atPut(key, value) {
+    atPut (key, value) {
         this[key] = value
         return this
     }
  
-    removeAt(key) {
+    removeAt (key) {
         delete this[key]
         return this
     }
  
-    ownKVMap(fn) {
+    ownKVMap (fn) {
         return Object.keys(this).map(k => fn(k, this[k]))
     }
  
-    ownForEachValue(fn) {
+    ownForEachValue (fn) {
         Object.keys(this).forEach(k => fn(this[k]))
         return this
     }
@@ -401,7 +399,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    ownForEachKV(fn) {
+    ownForEachKV (fn) {
         Object.keys(this).forEach(k => fn(k, this[k]))
         return this
     }
@@ -416,7 +414,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
     //    return m
     //}
  
-    isEqual(anObject) {
+    isEqual (anObject) {
         // compare like we would two dictionaries
         // only checks enumerable properties
         const keys = Object.keys(this)
@@ -429,14 +427,14 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return !foundInequality
     }
  
-    getOwnProperty(key) {
+    getOwnProperty (key) {
         if (this.hasOwnProperty(key)) {
             return this[key]
         }
         return undefined
     }
  
-    isKindOf(aClass) {
+    isKindOf (aClass) {
         //assert(!this.isClass())
         return this.thisClass().isKindOf(aClass)
     }
@@ -449,47 +447,47 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
     // when didInit is called by the ObjectStore after 
  
  
-    hasDoneInit() {
+    hasDoneInit () {
         return this.getOwnProperty("_hasDoneInit") === true
     }
  
-    setHasDoneInit(aBool) {
+    setHasDoneInit (aBool) {
         Object.defineSlot(this, "_hasDoneInit", aBool)
         return this
     }
  
-    didInit() {
+    didInit () {
         assert(!this.hasDoneInit())
         // for subclasses to override if needed
         this.setHasDoneInit(true)
     }
  
-    didLoadFromStore() {
+    didLoadFromStore () {
     }
  
-    scheduleDidInit() {
+    scheduleDidInit () {
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
         this.didInit()
     }
  
-    scheduleDidLoadFromStore() {
+    scheduleDidLoadFromStore () {
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
         this.didLoadFromStore()
     }
  
-    didLoadFromStore() {
+    didLoadFromStore () {
         // for subclasses to override
     }
  
     // --- retiring object ---
  
-    assertNotRetired() {
+    assertNotRetired () {
         if (this._isObjectRetired) {
             throw new Error("object already retired")
         }
     }
  
-    prepareToRetire() {
+    prepareToRetire () {
         this.assertNotRetired()
         // called by user code when it expect object to stop being used
         // provides opportunity to remove notification observers, event listeners, etc
@@ -499,13 +497,13 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         //console.log("Object retiring " + this.debugTypeId())
     }
  
-    removeAllNotificationObservations() {
+    removeAllNotificationObservations () {
         if (getGlobalThis()["BMNotificationCenter"]) {
             BMNotificationCenter.shared().removeObserver(this)
         }
     }
  
-    removeScheduledActions() {
+    removeScheduledActions () {
         if (getGlobalThis()["SyncScheduler"]) {
             SyncScheduler.shared().unscheduleTarget(this)
         }
@@ -513,7 +511,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
  
     // --- shouldStore ---
  
-    setShouldStore(aBool) {
+    setShouldStore (aBool) {
         if (aBool != this._shouldStore) {
             //this.willMutate("shouldStore")
             Object.defineSlot(this, "_shouldStore", aBool)
@@ -522,11 +520,11 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    shouldStore() {
+    shouldStore () {
         return this._shouldStore
     }
  
-    typeCategory() {
+    typeCategory () {
         if (this.isInstance()) {
             return "instance"
         } else if (this.isPrototype()) {
@@ -537,11 +535,11 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         throw new Error("unable to identify")
     }
  
-    fullTypeName() {
+    fullTypeName () {
         return this.type() + " " + this.typeCategory()
     }
  
-    slotValuePath(slotName, entries = []) {
+    slotValuePath (slotName, entries = []) {
         const entry = [this.fullTypeName(), this.getOwnProperty(slotName)]
         entries.push(entry)
  
@@ -554,7 +552,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return entries
     }
  
-    duplicate() {
+    duplicate () {
         assert(this.isInstance())
         const instance = this.thisClass().clone().copyFrom(this)
         instance.duplicateSlotValuesFrom(this) // TODO: what about lazy slots?
@@ -568,17 +566,17 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return instance
     }
  
-    copy() {
+    copy () {
         return this.duplicate()
     }
  
-    copyFrom(anObject) {
+    copyFrom (anObject) {
         // WARNING: subclasses will need to customize this
         this.duplicateSlotValuesFrom(anObject)
         return this
     }
  
-    duplicateSlotValuesFrom(otherObject) {
+    duplicateSlotValuesFrom (otherObject) {
         // TODO: add a type check of some kind?
  
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
@@ -596,7 +594,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    copySlotValuesFrom(otherObject) {
+    copySlotValuesFrom (otherObject) {
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().ownSlotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject)

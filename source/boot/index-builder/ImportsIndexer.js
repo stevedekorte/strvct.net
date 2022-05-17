@@ -193,5 +193,8 @@ class IndexBuilder {
     }
 }
 
-new IndexBuilder().run()
+new IndexBuilder().run();
+process.exitCode = 0
+//process.exit(); // vscode wants an explicit exit for prelaunch tasks
+
 

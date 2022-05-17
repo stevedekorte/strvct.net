@@ -12,7 +12,7 @@
 (class Date_ideal extends Date {
 
     /*
-    clone () {
+    static clone () {
         return new Date(this.getTime())
      }
     */

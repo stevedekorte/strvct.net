@@ -104,6 +104,9 @@ class Folder {
     }
 }
 
-const folder = new Folder()
-folder.setPath(dirPathCommandLineArg)
-folder.recursivelyCreateImports()
+const folder = new Folder();
+folder.setPath(dirPathCommandLineArg);
+folder.recursivelyCreateImports();
+process.exitCode = 0
+//process.exit(); // vscode wants an explicit exit for prelaunch tasks
+

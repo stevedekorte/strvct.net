@@ -10,18 +10,18 @@
 
 (class Object_mutation extends Object {
 
-    setMutationObservers(aSet) {
+    setMutationObservers (aSet) {
         if (!this._mutationObservers) {
             Object.defineSlot(this, "_mutationObservers", aSet)
         }
         return this
     }
 
-    mutationObservers() {
+    mutationObservers () {
         return this._mutationObservers
     }
 
-    addMutationObserver(anObserver) {
+    addMutationObserver (anObserver) {
         if (!this._mutationObservers) {
             this.setMutationObservers(new Set())
         }
@@ -30,7 +30,7 @@
         return this
     }
 
-    removeMutationObserver(anObserver) {
+    removeMutationObserver (anObserver) {
         assert(anObserver)
         this.mutationObservers().delete(anObserver)
         return this
@@ -38,7 +38,7 @@
 
     // ------
 
-    willMutate() {
+    willMutate () {
         /*
         if (this._mutationObservers) {
             this.mutationObservers().forEach(v => { 
@@ -48,7 +48,7 @@
         */
     }
 
-    didMutate() {
+    didMutate () {
         if (this._mutationObservers) {
             this.mutationObservers().forEach(v => {
                 v.onDidMutateObject(this)
