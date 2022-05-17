@@ -15,7 +15,6 @@
 (class BMStunServer extends BMFieldSetNode { 
     
     initPrototype () {
-
         this.newSlot("host", "").setShouldStoreSlot(true)
         this.newSlot("port", "").setShouldStoreSlot(true)
         //this.newSlot("credential", null).setShouldStoreSlot(true)

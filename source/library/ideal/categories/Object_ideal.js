@@ -54,7 +54,7 @@ Object.defineSlot = function (obj, slotName, slotValue) {
             if (objType) {
                 //  debugger;
                 slotValue.displayName = objType + "." + slotName
-                console.log("slotValue.displayName: ", slotValue.displayName)
+                //console.log("slotValue.displayName: ", slotValue.displayName)
             } else {
                 slotValue.displayName = slotName
             }
@@ -594,7 +594,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    copySlotValuesFrom (otherObject) {
+    copySlotValuesFrom(otherObject) {
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().ownSlotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject)

@@ -1,4 +1,15 @@
 
+/*
+
+    ResourceIndexer
+
+    Command line script to recursively walk directories and
+    generate a _imports.json file. These files are used by
+    ImportsIndexer to build and index and zip file containing
+    resources.
+
+*/
+
 const fs = require("fs")
 const nodePath = require("path")
 const args = process.argv
@@ -107,6 +118,7 @@ class Folder {
 const folder = new Folder();
 folder.setPath(dirPathCommandLineArg);
 folder.recursivelyCreateImports();
-process.exitCode = 0
-//process.exit(); // vscode wants an explicit exit for prelaunch tasks
+process.exitCode = 0 // vscode wants an explicit exit code for prelaunch tasks
+//process.exit(); // this may stop process before file ops complete
+
 

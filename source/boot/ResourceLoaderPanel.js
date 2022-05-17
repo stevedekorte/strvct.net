@@ -4,6 +4,8 @@
 
     ResourceLoaderPanel
 
+    NOTE: Not really used anymore, except for displaying load error.
+
     A simple full page panel that shows load progress and errors by
     watching for ResourceLoader and window events.
   

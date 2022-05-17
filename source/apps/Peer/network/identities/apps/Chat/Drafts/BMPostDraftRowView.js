@@ -11,7 +11,6 @@
 (class BMPostDraftRowView extends BrowserRow {
     
     initPrototype () {
-
         this.newSlot("topView", null)
         this.newSlot("leftView", null)
         this.newSlot("iconView", null)

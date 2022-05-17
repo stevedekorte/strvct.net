@@ -67,9 +67,3 @@ if (!getGlobalThis().Image) {
     }).initThisCategory();
 
 }
-
-
-
-
-
-

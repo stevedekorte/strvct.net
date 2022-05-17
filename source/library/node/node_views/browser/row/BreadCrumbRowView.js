@@ -17,7 +17,7 @@
     init () {
         super.init()
         this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this))
-        this.setPaddingLeft("1.5em") // BrowserTitledRow.titleLeftPadding()
+        this.contentView().setPaddingLeft("1.5em") // BrowserTitledRow.titleLeftPadding()
         this.setWidth("100%")
         //this.updateSubviews()
         this.setIsSelectable(true)
@@ -216,7 +216,7 @@
         const padding = 20
         const maxWidth =  this.frameInDocument().width()
         //console.log("maxWidth: ", maxWidth)
-        const views = this.subviews()
+        const views = this.contentView().subviews()
         views.forEach(view => view.unhideDisplay())
 
         let didHide = false // to track if we need back button
@@ -238,7 +238,7 @@
 
         if (!didHide) {
             // if we hid anything, we need a back button
-            const backButton = this.subviews().first()
+            const backButton = views.first()
             backButton.hideDisplay()
         }
     }

@@ -1,3 +1,5 @@
+// do these need to be var?
+
 var bitcore = require("bitcore-lib")
 var BitcoreMessage = require("bitcore-message");
 var ECIES = require("bitcore-ecies");

@@ -11,6 +11,7 @@ const nodePath = require('path');
 
 
 (class StrvctHttpsServer extends Base {
+	
 	initPrototype () {
 		this.newSlot("server", null);
 		this.newSlot("hostname", "localhost");
