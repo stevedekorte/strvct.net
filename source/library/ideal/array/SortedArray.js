@@ -24,7 +24,6 @@
 (class SortedArray extends IndexedArray {
 
     initPrototype () {
-
     }
 
     init () {
@@ -49,7 +48,6 @@
         return this._sortFunc
     }
 
-
     // sort
 
     didChangeSlotSortFunc (oldValue, newValue) {
@@ -66,7 +64,14 @@
     }
 
     needsResortOnForSlot (slotName) {
-        const nonOrderChangingSlots = ["sort", "pop", "shift", "removeAt", "remove", "removeAll"]
+        const nonOrderChangingSlots = [
+            "pop", 
+            "shift", 
+            "sort", 
+            "removeAt", 
+            "remove", 
+            "removeAll"
+        ]
         return !nonOrderChangingSlots.contains(slotName)
     }
 

@@ -2,39 +2,40 @@
 
 /*
 
-    Error-ideal
+    Error_ideal
 
     Some extra methods for the Javascript Error primitive.
 
 */
 
-Error.stackTraceLimit = 100 // looks like default on Chrome is 10?
+(class Error_ideal extends Error {
 
-Object.defineSlots(Error, {
+    static stackTraceLimit () {
+        return 100 // looks like default on Chrome is 10?
+    }
 
-    assert: function (v) {
+    static assert (v) {
         if (!Boolean(v)) {
             throw new Error("assert failed - false value")
         }
         return v
-    },
+    }
 
-    assertDefined: function (v) {
+    static assertDefined (v) {
         if (v === undefined) {
             throw new Error("assert failed - undefined value")
         }
         return v
-    },
+    }
 
-    showCurrentStack: function () {
+    static showCurrentStack () {
         const e = new Error()
         e.name = "STACK TRACE"
         e.message = ""
         console.log( e.stack );
-    },
+    }
 
-
-    assertThrows: function (func) {
+    static assertThrows (func) {
         assert(Type.isFunction(func))
 
         let didThrow = false
@@ -51,27 +52,23 @@ Object.defineSlots(Error, {
         }
 
         assert(didThrow)
-    },
+    }
 
-    try: function (func) {
+    static try (func) {
         try {
             func()
         } catch (error) {
             this.showError(error)
         }
-    },
+    }
 
-    callingScriptURL: function() {
+    static callingScriptURL () {
         const urls = new Error().stackURLs()
         return urls[1]
-    },
+    }
 
-})
-
-
-Object.defineSlots(Error.prototype, {
     
-    stackURLs: function (v) {
+    stackURLs (v) {
         let urls = this.stack.split("at")
         urls.removeFirst()
         urls = urls.map(url => {
@@ -88,11 +85,11 @@ Object.defineSlots(Error.prototype, {
             return parts.join(":")
         })
         return urls
-    },
+    }
 
     // ------------------------
 
-    description: function() {
+    description () {
         const error = this
         const lines = error.stack.split("\n")
         const firstLine = lines.removeFirst()
@@ -130,13 +127,13 @@ Object.defineSlots(Error.prototype, {
         //s = error.message + "\n" + s
         s = s.replaceAll("<br>", "\n")
         return s
-    },
+    }
 	
-    show: function() {
+    show () {
         console.warn(this.description())
-    },
+    }
 
-});
+}).initThisCategory();
 
 // --- helper functions ---
 

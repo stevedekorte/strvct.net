@@ -8,31 +8,23 @@ Type.typedArrayTypeNames().forEach((name) => {
         return
     }
 
-    // add some class methods
     /*
-    Object.defineSlots(aClass, {
-
+    Object.defineSlots(aClass, { // class methods
     })
     */
 
-    // add some object methods
-
-    Object.defineSlots(aClass.prototype, {
-
+    Object.defineSlots(aClass.prototype, { // instance methods
         base64Encoded: function(aRecord, aStore) {
             return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
         },
-
     })
 
 })
 
 Object.defineSlots(ArrayBuffer.prototype, {
-
     base64Encoded: function(aRecord, aStore) {
         return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
     },
-
 });
 
 //console.log("base64Encoded test:", new Uint32Array([1, 2, 3]).base64Encoded())

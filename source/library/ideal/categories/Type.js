@@ -47,9 +47,9 @@
 */
 
 
-getGlobalThis().Type = {
+getGlobalThis().Type = (class Type extends Object {
 
-    allTypeNames: function() {
+    static allTypeNames () {
         return [
             "Array",
             "Boolean",
@@ -74,9 +74,9 @@ getGlobalThis().Type = {
             "Undefined",
             "Object", // put object last so other types have preference
         ]
-    },
+    }
 
-    typedArrayTypeNames: function() {
+    static typedArrayTypeNames () {
         return [
             "Int8Array",
             "Uint8Array",
@@ -90,148 +90,148 @@ getGlobalThis().Type = {
             "BigInt64Array",
             "BigUint64Array",
         ]
-    },
+    }
 
-    isClass: function(v) {
+    static isClass (v) {
         const result = typeof(v) === "function"
             && /^class\s/.test(Function.prototype.toString.call(v));
 
         return result
-    },
+    }
 
-    isLiteral: function(v) {
+    static isLiteral (v) {
         return  Type.isString(v) ||
                 Type.isNumber(v) ||
                 Type.isBoolean(v) ||
                 Type.isNull(v) ||
                 Type.isUndefined(v);
-    },
+    }
 
-    isArray: function(value) {
+    static isArray (value) {
         return !Type.isNull(value) && 
                 Type.isObject(value) && 
                 value.__proto__ === ([]).__proto__ &&
                 !Type.isUndefined(value.length)
-    },
+    }
 
-    isSet: function(value) {
+    static isSet (value) {
         return !Type.isNull(value) && 
             Type.isObject(value) && 
             value.__proto__ === Set.prototype 
-    },
+    }
 
-    isMap: function(value) {
+    static isMap (value) {
         return !Type.isNull(value) && 
             Type.isObject(value) && 
             value.__proto__ === Map.prototype 
-    },  
+    }  
 
-    isIterator: function(value) {
+    static isIterator (value) {
         return !Type.isNull(value) && 
                 Type.isObject(value) && 
                 typeof(value[Symbol.iterator]) === "function";
-    },
+    }
 
-    isBoolean: function(value) {
+    static isBoolean (value) {
         return typeof(value) === "boolean"
-    },   
+    }   
 
-    isFunction: function(value) {
+    static isFunction (value) {
         return typeof(value) === "function"
-    },  
+    }  
 
-    isUndefined: function(value) {
+    static isUndefined (value) {
         return value === undefined // safe in modern browsers, even safe in older browsers if undefined is not redefined
-    },
+    }
 
-    isNull: function(value) {
+    static isNull (value) {
         return value === null
-    },
+    }
 
-    isNullOrUndefined: function(value) {
+    static isNullOrUndefined (value) {
         return this.isUndefined(value) || this.isNull(value)
-    },
+    }
 
-    isNaN: function(value) {
+    static isNaN (value) {
         return isNaN(value)
-    },
+    }
 
-    isNumber: function(value) {
+    static isNumber (value) {
         return typeof(value) === "number"
-    },
+    }
 
-    isObject: function(value) { 
+    static isObject (value) { 
         // WARNING: true for array and dictionary too!
         return typeof(value) === "object" 
-    },
+    }
 
-    isString: function(value) {
+    static isString (value) {
         return typeof(value) === "string"
-    }, 
+    } 
 
-    isSymbol: function(value) {
+    static isSymbol (value) {
         return typeof(value) === "symbol"
-    }, 
+    } 
 
     // typed arrays 
 
-    valueHasConstructor: function(v, constructor) {  // private
+    static valueHasConstructor (v, constructor) {  // private
         return !Type.isNullOrUndefined(v) && (Object.getPrototypeOf(v) === constructor.prototype);
-    },
+    }
 
-    isInt8Array: function(v) {
+    static isInt8Array (v) {
         return Type.valueHasConstructor(v, Int8Array);
-    },
+    }
 
-    isUint8Array: function(v) {
+    static isUint8Array (v) {
         return Type.valueHasConstructor(v, Uint8Array);
-    },
+    }
 
-    isUint8ClampedArray: function(v) {
+    static isUint8ClampedArray (v) {
         return Type.valueHasConstructor(v, Uint8ClampedArray);
-    },
+    }
 
-    isInt16Array: function(v) {
+    static isInt16Array (v) {
         return Type.valueHasConstructor(v, Int16Array);
-    },
+    }
 
-    isUint16Array: function(v) {
+    static isUint16Array (v) {
         return Type.valueHasConstructor(v, Uint16Array);
-    },
+    }
 
-    isInt32Array: function(v) {
+    static isInt32Array (v) {
         return Type.valueHasConstructor(v, Int32Array);
-    },
+    }
 
-    isUint32Array: function(v) {
+    static isUint32Array (v) {
         return Type.valueHasConstructor(v, Uint32Array);
-    },
+    }
     
-    isFloat32Array: function(v) {
+    static isFloat32Array (v) {
         return Type.valueHasConstructor(v, Float32Array);
-    },
+    }
 
-    isFloat64Array: function(v) {
+    static isFloat64Array (v) {
         return Type.valueHasConstructor(v, Float64Array);
-    },
+    }
 
-    isBigInt64Array: function(v) {
+    static isBigInt64Array (v) {
         return Type.valueHasConstructor(v, BigInt64Array);
-    },
+    }
 
-    isBigUint64Array: function(v) {
+    static isBigUint64Array (v) {
         return Type.valueHasConstructor(v, BigUint64Array);
-    },
+    }
 
     
-    isTypedArray: function(v) {
+    static isTypedArray (v) {
         return Type.valueHasConstructor(v, TypedArray);
-    },
+    }
     
 
     // type name
 
-    typeName: function(value) {
+    static typeName (value) {
         if (value === null) {
             return "Null"
         }
@@ -250,9 +250,9 @@ getGlobalThis().Type = {
             }
         }
         throw new Error("unable to identify type for value: ", value)
-    },
+    }
 
-    typeNamesForValue: function(value) {
+    static typeNamesForValue (value) {
         const matches = []
         const typeNames = this.allTypeNames()
         for (let i = 0; i < typeNames.length; i++) {
@@ -263,9 +263,9 @@ getGlobalThis().Type = {
             }
         }
         return matches
-    },
+    }
 
-    assertValueTypeNames: function(v, validTypeNames) {
+    static assertValueTypeNames (v, validTypeNames) {
         let doesMatch = true
         const foundTypeNames = this.typeNamesForValue(v)
         if (foundTypeNames.length === validTypeNames.length) {
@@ -282,22 +282,23 @@ getGlobalThis().Type = {
         if (!doesMatch) {
             throw new Error(JSON.stringify(validTypeNames) + " != " + JSON.stringify(foundTypeNames) )
         }
-    },
+    }
 
-    test: function() { // private
+    static test () { // private
         this.assertValueTypeNames(null, ["Null", "Object"])
         this.assertValueTypeNames(undefined, ["Undefined"])
         this.assertValueTypeNames("foo", ["String"])
         this.assertValueTypeNames(1, ["Number"])
         this.assertValueTypeNames([], ["Array", "Object"])
-        this.assertValueTypeNames({}, ["Object"])
+        this.assertValueTypeNames({} ["Object"])
         this.assertValueTypeNames(new Int8Array(), ["Int8Array", "Object"])
 
         // extras
         //assert(Type.isNullOrUndefined(undefined))
         //assert(Type.isNullOrUndefined(null))
-    },
+    }
 
-};
+});
+
 
 //Type.test()

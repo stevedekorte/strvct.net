@@ -2,19 +2,20 @@
 
 /*
 
-    Array-ideal
+    Array_ideal
 
     Some extra methods for the Javascript Array primitive.
 
 */
 
-Object.defineSlots(Array, {
+(class Array_ideal extends Array {
 
-    withArray: function(anArray) {
+
+    static withArray(anArray) {
         return this.clone().copyFrom(anArray)
-    },
+    }
 
-    fromIterator: function(iterator) {
+    static fromIterator(iterator) {
         const values = []
         let result = iterator.next()
         while (!result.done) {
@@ -22,133 +23,127 @@ Object.defineSlots(Array, {
             result = iterator.next()
         }
         return values
-    },
-    
-})
-
-// -----------------
-
-Object.defineSlots(Array.prototype, {
+    }
 
     /*
-    init: function () {
+    init () {
         Object.prototype.init.apply(this)
-    },
+     }
     */
 
-    duplicate: function () {
+    duplicate() {
         return this.shallowCopy()
-    },
+    }
 
-    clear: function () {
+    clear() {
         while (this.length) {
             this.pop()
         }
         return this
-    },
+    }
 
-    copyFrom: function (anArray) {
+    copyFrom(anArray) {
         this.clear()
         anArray.forEach(v => this.push(v))
         return this
-    },
+    }
 
     // --- read operations ---
 
     // foreach key value (key being the index)
 
-    forEachKV: function (func) {
+    forEachKV(func) {
         let i = 0
         this.forEach((v) => {
             func(i, v)
-            i ++
+            i++
         })
-    },
+    }
 
-    reverseForEachKV: function (func) {
+    reverseForEachKV(func) {
         let i = 0
         this.forEach((v) => {
             func(i, v)
-            i ++
+            i++
         })
-    },
-        
-    isEmpty: function () {
+    }
+
+    isEmpty() {
         return this.length === 0;
-    },
+    }
 
-    isEqual: function (otherArray) {
-        if (this.length !== otherArray.length) { 
-            return false; 
+    isEqual(otherArray) {
+        if (this.length !== otherArray.length) {
+            return false;
         }
 
         for (let i = 0; i < this.length; i++) {
             if (this[i] !== otherArray[i]) {
-            //if (this.at(i) !== otherArray.at(i)) {
+                //if (this.at(i) !== otherArray.at(i)) {
                 return false;
             }
         }
 
         return true;
-    },
+    }
 
-    size: function () {
+    size() {
         return this.length;
-    },
+    }
 
-    at: function (index) {
+    at(index) {
         if (index < 0) {
             return this[this.length + index];
         }
 
         return this[index];
-    },
+    }
 
-    removeAt (index) {
+    removeAt(index) {
         // we need to hook this since delete can't be hooked
         const v = this[index]
-        this.willMutate("removeAt", v) 
+        this.willMutate("removeAt", v)
         delete this[index]
         this.didMutate("removeAt", v)
         return this
-    },
+    }
 
-    atPut: function (index, v) {
+    atPut(index, v) {
         // we need to hook this since []= can't be hooked
-        this.willMutate("atPut", v) 
+        this.willMutate("atPut", v)
         this[index] = v
         this.didMutate("atPut", v)
         return this
-    },
+    }
 
-    first: function () {
+    first() {
         return this.at(0)
-    },
+    }
 
-    second: function () {
+    second() {
         return this.at(1)
-    },
+    }
 
-    rest: function () {
+    rest() {
         return this.slice(1);
-    },
+    }
 
-    last: function () {
+    last() {
         return this.at(this.length - 1) // returns undefined for negative indexes
-    },
+    }
 
-    contains: function (element) {
+    contains(element) {
         return this.indexOf(element) !== -1;
-    },
+    }
 
-    containsAny: function (anArray) {
+    containsAny(anArray) {
         const match = anArray.detect(item => this.contains(item))
         return !Type.isNullOrUndefined(match)
-    },
+    }
 
-    hasPrefix: function (otherArray) {
-        if (this.length < otherArray.length) { 
-            return false; 
+    hasPrefix(otherArray) {
+        if (this.length < otherArray.length) {
+            return false;
         }
 
         for (let i = 0; i < this.length; i++) {
@@ -158,9 +153,9 @@ Object.defineSlots(Array.prototype, {
         }
 
         return true;
-    },
+    }
 
-    itemAfter: function (v) {
+    itemAfter(v) {
         let i = this.indexOf(v);
 
         if (i === -1) {
@@ -173,14 +168,14 @@ Object.defineSlots(Array.prototype, {
             return null;
         }
 
-        if (this.at(i) !== undefined) { 
-            return this.at(i); 
+        if (this.at(i) !== undefined) {
+            return this.at(i);
         }
 
         return null;
-    },
+    }
 
-    itemBefore: function (v) {
+    itemBefore(v) {
         let i = this.indexOf(v);
 
         if (i === -1) {
@@ -193,18 +188,18 @@ Object.defineSlots(Array.prototype, {
             return null;
         }
 
-        if (this.at(i)) { 
-            return this.at(i) 
+        if (this.at(i)) {
+            return this.at(i)
         }
 
         return null;
-    },
+    }
 
-    shallowCopy: function () {
+    shallowCopy() {
         return this.slice()
-    },
+    }
 
-    copy: function (copyDict) {
+    copy(copyDict) {
         // since not every object will implement copy:
         // we need to have a check for it
         return this.slice().map((v) => {
@@ -214,9 +209,9 @@ Object.defineSlots(Array.prototype, {
                 return v
             }
         })
-    },
+    }
 
-    split: function (subArrayCount) {
+    split(subArrayCount) {
         const subArrays = [];
         const subArraySize = Math.ceil(this.length / subArrayCount);
 
@@ -232,44 +227,44 @@ Object.defineSlots(Array.prototype, {
         }
 
         return subArrays;
-    },
+    }
 
     // --- write operations ---
 
-    atInsert: function (i, e) {
+    atInsert(i, e) {
         this.splice(i, 0, e);
         return this
-    },
+    }
 
-    atInsertItems: function (i, items) {
+    atInsertItems(i, items) {
         let n = i
         items.forEach(item => {
-            this.atInsert(n, item) 
-            n ++
+            this.atInsert(n, item)
+            n++
         })
         return this
-    },
+    }
 
-    append: function () {
+    append() {
         this.appendItems.call(this, arguments);
         return this;
-    },
+    }
 
-    appendItems: function (elements) {
+    appendItems(elements) {
         this.push.apply(this, elements);
         return this;
-    },
+    }
 
-    appendItemsIfAbsent: function (elements) {
+    appendItemsIfAbsent(elements) {
         this.appendIfAbsent.apply(this, elements);
         return this;
-    },
+    }
 
-    moveItemsToIndex: function (movedItems, anIndex) {
+    moveItemsToIndex(movedItems, anIndex) {
         const newArray = this.shallowCopy()
         let insertIndex = anIndex
 
-        movedItems.forEach(item => assert(this.contains(item)) ) // sanity check
+        movedItems.forEach(item => assert(this.contains(item))) // sanity check
 
         //console.log("start: " + this.map(s => s.title()).join("-") + ".moveItemsToIndex("  + movedItems.map(s => s.title()).join("-") + ", " + anIndex + ")")
 
@@ -280,7 +275,7 @@ Object.defineSlots(Array.prototype, {
             }
 
             if (i < insertIndex) {
-                insertIndex --
+                insertIndex--
             }
             newArray.remove(item)
         })
@@ -291,14 +286,14 @@ Object.defineSlots(Array.prototype, {
 
         this.copyFrom(newArray)
         return this
-    },
+    }
 
-    prepend: function (e) {
+    prepend(e) {
         this.unshift(e);
         return this;
-    },
+    }
 
-    appendIfAbsent: function () {
+    appendIfAbsent() {
         this.slice.call(arguments).forEach((value) => {
             if (this.indexOf(value) === -1) {
                 this.push(value);
@@ -307,56 +302,56 @@ Object.defineSlots(Array.prototype, {
         })
 
         return false;
-    },
+    }
 
-    removeAll: function () {
-        while(this.length) {
+    removeAll() {
+        while (this.length) {
             this.pop() // TODO: make more efficient?
         }
         return this
-    },
+    }
 
-    removeAt: function (i) {
+    removeAt(i) {
         this.willMutate("removeAt")
         this.splice(i, 1);
         this.didMutate("removeAt")
         return this;
-    },
+    }
 
-    remove: function (e) {
+    remove(e) {
         const i = this.indexOf(e);
         if (i !== -1) {
             this.removeAt(i);
         }
         return this;
-    },
+    }
 
-    emptiesRemoved: function () {
-        return this.filter(v => !Type.isNullOrUndefined(v) )
-    },
+    emptiesRemoved() {
+        return this.filter(v => !Type.isNullOrUndefined(v))
+    }
 
-    removeFirst: function () {
+    removeFirst() {
         // isMutator
         return this.shift();
-    },
+    }
 
-    removeLast: function () {
+    removeLast() {
         // isMutator
         return this.pop();
-    },
+    }
 
-    removeItems: function (elements) {
+    removeItems(elements) {
         // isMutator
         elements.forEach(e => this.remove(e));
         return this;
-    },
+    }
 
-    empty: function () {
+    empty() {
         this.splice(0, this.length);
         return this;
-    },
+    }
 
-    shuffle: function () {
+    shuffle() {
         let i = this.length;
 
         if (i === 0) {
@@ -372,17 +367,17 @@ Object.defineSlots(Array.prototype, {
         }
 
         return this;
-    },
+    }
 
-    atRandom: function () {
-        const i = Math.floor( Math.random() * this.length )
+    atRandom() {
+        const i = Math.floor(Math.random() * this.length)
         return this.at(i);
-    },
+    }
 
     // --- enumeration ---
 
     /*
-    forEachCall: function (functionName) {
+    forEachCall (functionName) {
         const args = this.slice.call(arguments).slice(1);
         args.push(0);
         this.forEach((e, i) => {
@@ -397,22 +392,22 @@ Object.defineSlots(Array.prototype, {
             }
         });
         return this;
-    },
+     }
     */
 
-    forEachPerformIfResponds: function (methodName, arg1, arg2, arg3) {
+    forEachPerformIfResponds(methodName, arg1, arg2, arg3) {
         this.forEach((item) => {
             if (item) {
                 const f = item[methodName]
                 if (f) {
                     f.call(item, arg1, arg2, arg3)
-                } 
+                }
             }
         })
         return this
-    },
+    }
 
-    forEachPerform: function (methodName, arg1, arg2, arg3) {
+    forEachPerform(methodName, arg1, arg2, arg3) {
         this.forEach((item) => {
             if (item) {
                 const f = item[methodName]
@@ -424,9 +419,9 @@ Object.defineSlots(Array.prototype, {
             }
         })
         return this
-    },
+    }
 
-    sortPerform: function (functionName) { // WARNING: sorts IN-PLACE
+    sortPerform(functionName) { // WARNING: sorts IN-PLACE
         const args = this.slice.call(arguments).slice(1);
         return this.sort(function (x, y) {
             const xRes = x[functionName].apply(x, args);
@@ -438,13 +433,13 @@ Object.defineSlots(Array.prototype, {
             }
             return 0;
         });
-    },
+    }
 
-    mapProperty: function (propertyName) {
+    mapProperty(propertyName) {
         return this.map(e => e[propertyName]);
-    },
+    }
 
-    detect: function (callback) {
+    detect(callback) {
         for (let i = 0; i < this.length; i++) {
             const v = this.at(i)
             if (callback(v, i)) {
@@ -453,16 +448,16 @@ Object.defineSlots(Array.prototype, {
         }
 
         return null; // or should this be undefined?
-    },
+    }
 
-    detectPerform: function (functionName) {
+    detectPerform(functionName) {
         const args = this.slice.call(arguments).slice(1);
         return this.detect((value, index) => {
             return value[functionName].apply(value, args);
         });
-    },
+    }
 
-    detectProperty: function (slotName, slotValue) {
+    detectProperty(slotName, slotValue) {
         for (let i = 0; i < this.length; i++) {
             const v = this.at(i)
             if (v[slotName] === slotValue) {
@@ -471,9 +466,9 @@ Object.defineSlots(Array.prototype, {
         }
 
         return null;
-    },
+    }
 
-    detectIndex: function (callback) {
+    detectIndex(callback) {
         for (let i = 0; i < this.length; i++) {
             if (callback(this.at(i), i)) {
                 return i;
@@ -481,22 +476,22 @@ Object.defineSlots(Array.prototype, {
         }
 
         return null;
-    },
+    }
 
-    nullsRemoved: function () {
+    nullsRemoved() {
         return this.filter(v => !Type.isNull(v));
-    },
+    }
 
-    reject: function (callback) {
+    reject(callback) {
         return this.filter(v => !callback(v))
-    },
+    }
 
     // max 
 
-    maxEntry: function (optionalCallback) { 
+    maxEntry(optionalCallback) {
         // callback is optional
         const length = this.length;
-        const mEntry = [undefined, undefined] 
+        const mEntry = [undefined, undefined]
 
         for (let i = 0; i < length; i++) {
             let v = this.at(i);
@@ -511,27 +506,27 @@ Object.defineSlots(Array.prototype, {
         }
 
         return mEntry;
-    },
+    }
 
-    maxIndex: function (optionalCallback) {
+    maxIndex(optionalCallback) {
         return this.maxEntry(optionalCallback)[0];
-    },
+    }
 
-    maxValue: function (optionalCallback, theDefault) {
+    maxValue(optionalCallback, theDefault) {
         return this.maxEntry(optionalCallback)[1];
-    },
+    }
 
-    maxItem: function (optionalCallback) {
+    maxItem(optionalCallback) {
         return this.at(this.maxIndex(optionalCallback));
-    },
+    }
 
 
     // min
 
-    minEntry: function (optionalCallback) { 
+    minEntry(optionalCallback) {
         // callback is optional
         const length = this.length;
-        const mEntry = [undefined, undefined] 
+        const mEntry = [undefined, undefined]
 
         for (let i = 0; i < length; i++) {
             let v = this[i];
@@ -546,19 +541,19 @@ Object.defineSlots(Array.prototype, {
         }
 
         return mEntry;
-    },
+    }
 
-    minIndex: function (optionalCallback) {
+    minIndex(optionalCallback) {
         return this.maxEntry(optionalCallback)[0];
-    },
+    }
 
-    minValue: function (optionalCallback) {
+    minValue(optionalCallback) {
         return this.minEntry(optionalCallback)[1];
-    },
+    }
 
     // sum
 
-    sum: function (optionalCallback) {
+    sum(optionalCallback) {
         let sum = 0;
         const length = this.length;
 
@@ -572,17 +567,17 @@ Object.defineSlots(Array.prototype, {
         }
 
         return sum;
-    },
+    }
 
-    average: function () {
+    average() {
         if (this.length === 0) {
             return 0
         }
         return this.sum() / this.length;
-    },
+    }
 
     /*
-    flatten: function (maxDepth = 1) {
+    flatten (maxDepth = 1) {
         const result = [];
         let needsFlatten = true
         let depth = 0
@@ -602,74 +597,74 @@ Object.defineSlots(Array.prototype, {
             });
         }
         return result;
-    },
+     }
     */
 
 
-    unique: function () {
+    unique() {
         return Array.from(new Set(this));
-    },
+    }
 
-    asSet: function () {
+    asSet() {
         return new Set(this)
-    },
+    }
 
-    reversed: function () {
+    reversed() {
         return this.shallowCopy().reverse();
-    },
+    }
 
-    asPath: function () {
+    asPath() {
         if (this.length === 1 && this.first() === "") {
             return "/";
         }
         else {
             return this.join("/");
         }
-    },
+    }
 
-    isAbsolutePath: function () {
+    isAbsolutePath() {
         return this.first() === "";
-    },
+    }
 
-    isRelativePath: function () {
+    isRelativePath() {
         return this.first() !== "";
-    },
+    }
 
-    filterInPlace: function (callback) {
-        for (let i = this.length -1; i >= 0; i--) {
+    filterInPlace(callback) {
+        for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
             if (!callback(v)) {
                 this.removeAt(i)
             }
         }
         return this
-    },
+    }
 
-    select: function (callback) {
+    select(callback) {
         return this.filter(callback)
-    },
-    
-    after: function (v) {
+    }
+
+    after(v) {
         const index = this.indexOf(v);
-    
+
         if (index === -1) {
             return [];
         }
-    
+
         return this.slice(index + 1);
-    },
-    
-    before: function (v) {
+    }
+
+    before(v) {
         const index = this.indexOf(v);
-    
+
         if (index === -1) {
             return this.slice();
         }
-    
+
         return this.slice(0, index);
-    },
-    
-    replaceOccurancesOfWith: function (oldValue, newValue) {
+    }
+
+    replaceOccurancesOfWith(oldValue, newValue) {
         // isMutator
         for (let i = 0; i < this.length; i++) {
             if (this.at(i) === oldValue) {
@@ -677,25 +672,25 @@ Object.defineSlots(Array.prototype, {
             }
         }
         return this
-    },
-    
-    removeOccurancesOf: function (e) {
+    }
+
+    removeOccurancesOf(e) {
         // isMutator
-        for (let i = this.length -1; i >= 0; i--) {
+        for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
             if (v === e) {
                 this.removeAt(i)
             }
         }
         return this;
-    },
+    }
 
-    joinWithFunc: function (aFunc) {
+    joinWithFunc(aFunc) {
         // not a mutator
         // like join, but calls aFunc with the array and index as arguments
         // to get each new item to insert between array items
         const joined = []
-        for (let i = 0; i < this.length; i ++) {
+        for (let i = 0; i < this.length; i++) {
             const v = this[i]
             joined.push(v)
             if (i < this.length - 1) {
@@ -704,10 +699,10 @@ Object.defineSlots(Array.prototype, {
             }
         }
         return joined
-    },
+    }
 
     /*
-    wrap: function (obj) {
+    wrap (obj) {
         if (obj === null || obj === undefined) {
             return [];
         }
@@ -717,66 +712,66 @@ Object.defineSlots(Array.prototype, {
         else {
             return [obj];
         }
-    },
+     }
     */
 
-    itemsBefore: function (item) {
+    itemsBefore(item) {
         const index = this.indexOf(item);
         if (index !== -1) {
             return this.slice(0, index);
         }
         return this
-    },
+    }
 
     /*
     const setDifference = (a, b) => new Set([...a].filter(x => !b.has(x)));
     const setIntersection = (a, b) => new Set([...a].filter(x => b.has(x)));
     const setUnion = (a, b) => new Set([...a, ...b]);
     */
-    
-    union: function (other) {
+
+    union(other) {
         let r = this.concat(other).unique()
         return r;
-    },
+    }
 
-    intersection: function(other) {
+    intersection(other) {
         const thisSet = new Set(this)
-        return other.filter((v) => { 
-            return thisSet.has(v); 
+        return other.filter((v) => {
+            return thisSet.has(v);
         });
-    },
-    
-    difference: function (other) {
-        const thisSet = new Set(this)
-        return other.filter(v => !thisSet.has(v) );
-    },
+    }
 
-    symmetricDifference: function (other) {
+    difference(other) {
+        const thisSet = new Set(this)
+        return other.filter(v => !thisSet.has(v));
+    }
+
+    symmetricDifference(other) {
         let all = this.concat(other)
         const thisSet = new Set(this)
         const otherSet = new Set(other)
         return all.filter(v => !thisSet.has(v) || !otherSet.has(v));
-    },
+    }
 
     /*
-    intersectionWithSelector: function (a, methodName) {
+    intersectionWithSelector (a, methodName) {
         return this.select((e1) => { 
             return a.detect(e2 => e1[methodName].apply(e1) === e2[methodName].apply(e2)) !== null 
         })
-    },
-    
-    diffWithSelector: function (otherArray, methodName) {
+     }
+     
+    diffWithSelector (otherArray, methodName) {
         let thisIdSet = new Set(this.map(v => v[methodName].apply(v)))
         let otherIdSet = new Set(otherArray.map(v => v[methodName].apply(v)))
-
-        return otherArray.select(v => !idSet.has(v.id()) )
-    },
-    */
     
+        return otherArray.select(v => !idSet.has(v.id()) )
+     }
+    */
+
 
     // --- equality ---
 
-    equals: function (array /*, visited = new Set()*/) {
+    equals(array /*, visited = new Set()*/) {
         // we want this to work on any object that confroms to the array protocol, 
         // not just objects of the same JS type
         // but how do we test for the [] accessor?
@@ -792,16 +787,16 @@ Object.defineSlots(Array.prototype, {
         if (array.length === undefined) {
             return false;
         }
-    
+
         // compare lengths - can save a lot of time 
         if (this.length !== array.length) {
             return false;
         }
-    
+
         for (let i = 0, l = this.length; i < l; i++) {
             const a = this.at(i)
             const b = array.at(i)
-            
+
             // Check if we have nested arrays
             /*
                 if (this.at(i) instanceof Array && array[i] instanceof Array) {
@@ -810,8 +805,8 @@ Object.defineSlots(Array.prototype, {
                         return false;       
                 }     
             */
-    
-            
+
+
             if (a.equals && !a.equals(b, visited)) {
                 return false;
             } else if (a !== b) {
@@ -819,33 +814,33 @@ Object.defineSlots(Array.prototype, {
                 return false;
             }
         }
-        
+
         return true;
-    },
+    }
 
 
-    containsEquals: function (b) {
+    containsEquals(b) {
         for (let i = 0, l = this.length; i < l; i++) {
             let a = this.at(i)
 
             if (a.equals) {
                 if (!a.equals(b)) {
-                    return false;  
+                    return false;
                 }
-            } else if (a !== b) { 
-                return false;   
+            } else if (a !== b) {
+                return false;
             }
-        }    
+        }
         return true;
-    },
-    
+    }
+
     /*
-    asImmutable: function () {
+    asImmutable () {
         // doesn't raise exception on write - they just fail silently - too dangerous to use
         //const obj = this.shallowCopy()
         //Object.freeze(obj)
         //return obj
-    },
+     }
     */
-});
+}).initThisCategory();
 

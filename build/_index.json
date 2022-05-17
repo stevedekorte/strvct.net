@@ -26,8 +26,8 @@
   },
   {
     "path": "source/boot/Base.js",
-    "size": 3007,
-    "hash": "u7Fb/9BR7ztMSHHpiT0NN8/kfOm9R+up9HbQjbeW0ws="
+    "size": 2949,
+    "hash": "CjelGJovWj10KKOYTXU359fJPFOz5I5npj4WayEZIEc="
   },
   {
     "path": "source/library/ideal/categories/Mirror.js",
@@ -35,74 +35,74 @@
     "hash": "4oP18P3p/goG2L+awpSVRP/u7SRcfYutLMaH0geHKkQ="
   },
   {
-    "path": "source/library/ideal/categories/Type-ideal.js",
-    "size": 7587,
-    "hash": "/dbZYUg09Zw0OpujVZ3llyHXYXwB9rzEMV+tNavybCs="
+    "path": "source/library/ideal/categories/Type.js",
+    "size": 7510,
+    "hash": "7xaatDcMRs/2wesJI28THieGXQhpmqMeNROkMjSJYJ0="
   },
   {
-    "path": "source/library/ideal/categories/Object-ideal.js",
-    "size": 14850,
-    "hash": "k3tTEG0cDlQG9zfdJtdSRvTnN1Q34wV6Sl6A7JM/cw0="
+    "path": "source/library/ideal/categories/Object_ideal.js",
+    "size": 15838,
+    "hash": "wOOBu+aexb7HhR4+0n5SqDssQKuQrtgCkiFqHRy/s88="
   },
   {
-    "path": "source/library/ideal/categories/Object-puuid.js",
-    "size": 1833,
-    "hash": "bmwJyga2cRq81SaeA8jlUAgkgpWzflkH/yuv8TDpmCU="
+    "path": "source/library/ideal/categories/Object_puuid.js",
+    "size": 1816,
+    "hash": "qttF7a1MLmowHO2zAP31uspq5vJ4H+B4Wt6f1beZNIc="
   },
   {
-    "path": "source/library/ideal/categories/Object-mutation.js",
-    "size": 1184,
-    "hash": "PoR+99lvKtQE07Kr7x3rij9OdmJND8OlFx1q68FkzX4="
+    "path": "source/library/ideal/categories/Object_mutation.js",
+    "size": 1203,
+    "hash": "mSkXReDgYdiavPD46ToSyww9UvCwV2lobhUy3+Itx8c="
   },
   {
-    "path": "source/library/ideal/categories/Array-ideal.js",
-    "size": 20081,
-    "hash": "2kuZlJ5tah2Ls1ZFUXZvqipZC++K0JZcbE2qlqnr9xQ="
+    "path": "source/library/ideal/categories/Array_ideal.js",
+    "size": 18886,
+    "hash": "Hh7U/C75IMn4KhTz1T/C2UQ6M1FWrDf5Q11VxInePiU="
   },
   {
-    "path": "source/library/ideal/categories/Date-ideal.js",
-    "size": 1635,
-    "hash": "WGnDpBZ92Mm4RPHbmjsDLDCZ/s3V0evMJqlERypzt3Y="
+    "path": "source/library/ideal/categories/Date_ideal.js",
+    "size": 1535,
+    "hash": "d1E+piyr4SO8HOmwdPD3E1A57R7DFdlfClI6+ANzXiY="
   },
   {
-    "path": "source/library/ideal/categories/String-ideal.js",
-    "size": 14094,
-    "hash": "8fUlNNIbyZFLIldsQoJNxMyrTFiKulNovOZMVQ6L+ng="
+    "path": "source/library/ideal/categories/String_ideal.js",
+    "size": 13526,
+    "hash": "Emj3FprhyQKVQskNw9lJfGZlqHV7rwEX7KuKBM40E0I="
   },
   {
-    "path": "source/library/ideal/categories/Number-ideal.js",
-    "size": 2864,
-    "hash": "dcsR8DTVI5ofdG6MRaf0hwzhd7EFxw9nV5lscRra31M="
+    "path": "source/library/ideal/categories/Number_ideal.js",
+    "size": 2813,
+    "hash": "S+21wut5J6JSCFN+9ylVXgttmRWBQprWcZXpXUz3pk8="
   },
   {
-    "path": "source/library/ideal/categories/Boolean-ideal.js",
-    "size": 571,
-    "hash": "IjdiW/gyksizyQz0UB/X5LUkgDOc5AnKP4RAYk2Ek/I="
+    "path": "source/library/ideal/categories/Boolean_ideal.js",
+    "size": 1057,
+    "hash": "SkhlkliTxFyjfY4YbXXRvMZKX0UMXOhdCar16RVDX5w="
   },
   {
-    "path": "source/library/ideal/categories/Set-ideal.js",
-    "size": 2279,
-    "hash": "HKYE1LgJPoO9ARR/zSWNYdXQPXzvwL2kTewjqGIqb94="
+    "path": "source/library/ideal/categories/Set_ideal.js",
+    "size": 2160,
+    "hash": "gi/kNwQZ4B1ijbczsVAm46Kpa0FXClRlMXoP3fgZgLY="
   },
   {
-    "path": "source/library/ideal/categories/Error-ideal.js",
-    "size": 3692,
-    "hash": "dBleLoUYqgGUsMX2Z4vI/w3XtPtGNzmlSx6ReFSiw20="
+    "path": "source/library/ideal/categories/Error_ideal.js",
+    "size": 3649,
+    "hash": "kh0KJkWBMhLxAAxqeMUC36zOab/uE9rvGvIS3RUEq90="
   },
   {
-    "path": "source/library/ideal/categories/Function-ideal.js",
+    "path": "source/library/ideal/categories/Function_ideal.js",
     "size": 106,
-    "hash": "CIlVHb7L9tp5gELK+ERLBMmmGAPmEFatuXxPAstEcWk="
+    "hash": "W11gZ+lrfwg0tKEXlTwLljYejkAUdWeUBY+l7jj3kM0="
   },
   {
-    "path": "source/library/ideal/categories/Image-ideal.js",
-    "size": 1554,
-    "hash": "spArI5HVK1qD0euLj9dPIDtCYhNzBvh4T+YQCmM6dz0="
+    "path": "source/library/ideal/categories/Image_ideal.js",
+    "size": 1683,
+    "hash": "lG8mvpNMMzz7Fe/7w+fUjXhlv9ucXO8pkIJ+7h3s6ME="
   },
   {
     "path": "source/library/ideal/categories/TypedArray-ideal.js",
-    "size": 808,
-    "hash": "undJ5p9BNzWMBu7ZvX9xe/TpDWW6rgF/bsyrU5xBBG0="
+    "size": 778,
+    "hash": "eZSt3yT1dlNbTlWbxLPWAL3JAzYbTXRb34A/SCO61V4="
   },
   {
     "path": "source/library/ideal/Slot.js",
@@ -126,13 +126,13 @@
   },
   {
     "path": "source/library/ideal/array/HookedSet.js",
-    "size": 965,
-    "hash": "NETshysAR+g/99apyxWpcFKG+4zIBv4lshNmnOvWq+g="
+    "size": 964,
+    "hash": "pL42JjCtgL9qRw6xHL2o2UByaVMXMS6dRXVDV+pPPQo="
   },
   {
     "path": "source/library/ideal/array/HookedMap.js",
-    "size": 927,
-    "hash": "4Csmjpxu3DMuHThaunhCdGYoilDUwyjlHgyKQR5Ol1k="
+    "size": 1029,
+    "hash": "tsWbpSt8T6emUTpIy9HNjYhPhctssO4liziypnjYCpc="
   },
   {
     "path": "source/library/ideal/array/IndexedArray.js",
@@ -141,8 +141,8 @@
   },
   {
     "path": "source/library/ideal/array/SortedArray.js",
-    "size": 2037,
-    "hash": "M9cvLbN7eRvGbYyJU91zA0hKxQXzlpJYlmzZMj4FWs8="
+    "size": 2122,
+    "hash": "r2Lsie8T3fSCmSqxJxT8iakVfkxEYbvH2qJQnYdapz4="
   },
   {
     "path": "source/library/ideal/dictionary/Dictionary.js",

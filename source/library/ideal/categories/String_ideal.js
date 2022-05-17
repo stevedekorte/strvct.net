@@ -2,31 +2,31 @@
 
 /*
 
-    String-ideal
+    String_ideal
 
     Some extra methods for the Javascript String primitive.
 
 */
 
-Object.defineSlots(String.prototype, {
+(class String_ideal extends String {
     
-    shallowCopy: function() {
+    shallowCopy () {
         return this
-    },
+    }
 
-    duplicate: function() {
+    duplicate () {
         return this
-    },
+    }
     
-    isEmpty: function () {
+    isEmpty () {
         return this.length === 0;
-    },
+    }
 
-    size: function () {
+    size () {
         return this.length;
-    },
+    }
     
-    beginsWith: function (prefix) {
+    beginsWith (prefix) {
         if (!prefix || this.length < prefix.length) {
             return false;
         }
@@ -38,9 +38,9 @@ Object.defineSlots(String.prototype, {
         return true
         //return this.substr(0, prefix.length) === prefix // faster that indexOf as it 
         //return this.indexOf(prefix) === 0;
-    },
+    }
 
-    endsWith: function (suffix) {
+    endsWith (suffix) {
         if (!suffix || this.length < suffix.length) {
             return false;
         }
@@ -52,13 +52,13 @@ Object.defineSlots(String.prototype, {
         return true
         //const index = this.lastIndexOf(suffix);
         //return (index !== -1) && (this.lastIndexOf(suffix) === this.length - suffix.length);
-    },
+    }
 
-    contains: function (aString) {
+    contains (aString) {
         return this.indexOf(aString) !== -1;
-    },
+    }
 
-    before: function (aString) {
+    before (aString) {
         const index = this.indexOf(aString);
         
         if (index === -1) {
@@ -66,9 +66,9 @@ Object.defineSlots(String.prototype, {
         }
 
         return this.slice(0, index);
-    },
+    }
 
-    after: function (aString) {
+    after (aString) {
         const index = this.indexOf(aString);
 
         if (index === -1) {
@@ -76,9 +76,9 @@ Object.defineSlots(String.prototype, {
         }
         
         return this.slice(index + aString.length);
-    },
+    }
 
-    between: function (prefix, suffix) {
+    between (prefix, suffix) {
         const after = this.after(prefix);
         if (after != null) {
             const before = after.before(suffix);
@@ -92,68 +92,68 @@ Object.defineSlots(String.prototype, {
         else {
             return null;
         }
-    },
+    }
 
-    at: function (i) {
+    at (i) {
         return this.slice(i, i + 1);
-    },
+    }
 
-    first: function () {
+    first () {
         return this.slice(0, 1);
-    },
+    }
 
-    rest: function () {
+    rest () {
         return this.slice(1);
-    },
+    }
 
-    repeated: function (times) {
+    repeated (times) {
         let result = "";
         const aString = this;
         times.repeat(function () { result += aString });
         return result
-    },
+    }
 
-    sansPrefixes: function(aStringList) {
+    sansPrefixes (aStringList) {
         let result = this
         aStringList.forEach((s) => { result = result.sansPrefix(s) })
         return result
-    },
+    }
 
-    sansPrefix: function (prefix) {
+    sansPrefix (prefix) {
         return this.substring(this.beginsWith(prefix) ? prefix.length : 0);
-    },
+    }
 
-    sansSuffixes: function(aStringList) {
+    sansSuffixes (aStringList) {
         let result = this
         aStringList.forEach((s) => { result = result.sansSuffix(s) })
         return result
-    },
+    }
 
-    sansSuffix: function (suffix) {
+    sansSuffix (suffix) {
         if (this.endsWith(suffix)) {
             return this.substr(0, this.length - suffix.length);
         }
         else {
             return this;
         }
-    },
+    }
 
-    stripped: function () {
+    stripped () {
         return this.replace(/^\s\s*/, "").replace(/\s\s*$/, "");
-    },
+    }
 
-    uncapitalized: function () {
+    uncapitalized () {
         return this.replace(/\b[A-Z]/g, function (match) {
             return match.toLowerCase();
         });
-    },
+    }
 
-    asNumber: function () {
+    asNumber () {
         return Number(this);
-    },
+    }
 
     //move to libraries?
-    humanized: function () //someMethodName -> Some Method Name
+    humanized () //someMethodName -> Some Method Name
     {
         const words = [];
         let start = -1;
@@ -169,35 +169,35 @@ Object.defineSlots(String.prototype, {
         }
         words.append(capitalized.slice(start, i));
         return words.join(" ");
-    },
+    }
 
-    titleized: function () {
+    titleized () {
         return this.split(/\s+/).map(function (s) { return s.capitalized() }).join(" ");
-    },
+    }
 
-    base64Encoded: function () {
+    base64Encoded () {
         //return new Buffer(String(this), "utf8").toString("base64");
         return window.btoa(this);
-    },
+    }
 
-    base64UrlEncoded: function () {
+    base64UrlEncoded () {
         return this.base64Encoded().replace(/\+/g, "-").replace(/\//g, "_").replace(/=/g, ",");
-    },
+    }
 
-    base64Decoded: function () {
+    base64Decoded () {
         //return new Buffer(String(this), "base64").toString("utf8");
         return window.atob(this);
-    },
+    }
 
-    base64UrlDecoded: function () {
+    base64UrlDecoded () {
         return this.replace(/-/g, "+").replace(/_/g, "/").replace(/,/g, "=").base64Decoded();
-    },
+    }
 
-    stringCount: function (str) {
+    stringCount (str) {
         return this.split(str).length - 1;
-    },
+    }
 
-    lineCount: function () {
+    lineCount () {
         let count = 0
         for (let i = 0; i < this.length; i++) {
             const c = this.charAt(i)
@@ -206,23 +206,23 @@ Object.defineSlots(String.prototype, {
             }
         }
         return count
-    },
+    }
 
-    forEachCharacter: function(fn) {
+    forEachCharacter (fn) {
         for (let i = 0; i < this.length; i++) {
             const c = this.charAt(i)
             fn(c)
         }
-    },
+    }
 
-    forEachKV: function(fn) {
+    forEachKV (fn) {
         for (let i = 0; i < this.length; i++) {
             const c = this.charAt(i)
             fn(i, c)
         }
-    },
+    }
 
-    splitArray: function (splitters) {
+    splitArray (splitters) {
         let s = this
         const results = []
         splitters.forEach( (splitter) => {
@@ -235,11 +235,11 @@ Object.defineSlots(String.prototype, {
             }
         })
         return results
-    },
+    }
 
     // --- paths ---
 
-    pathComponents: function () {
+    pathComponents () {
         if (this === "/") {
             return [""];
         }
@@ -249,99 +249,99 @@ Object.defineSlots(String.prototype, {
         else {
             return this.split("/");
         }
-    },
+    }
 
-    sansLastPathComponent: function () {
+    sansLastPathComponent () {
         const c = this.pathComponents()
         c.removeLast();
         return c.join("/");
-    },
+    }
 
-    lastPathComponent: function () {
+    lastPathComponent () {
         //return this.pathComponents().last()
         const components = this.pathComponents()
         if (components.length) {
             return this.pathComponents().last();
         }
         return ""
-    },
+    }
 
-    fileName: function() {
+    fileName () {
         return this.lastPathComponent().sansExtension()
-    },
+    }
 
-    sansExtension: function () {
+    sansExtension () {
         const parts = this.split(".")
         if (parts.length > 1) {
             parts.pop()
         }
         return parts.join(".")
-    },
+    }
 
-    pathExtension: function() {
+    pathExtension () {
         const extension = this.split(".").last();
         return extension;
-    },
+    }
 
     // --- pad / strip -------
 
-    padLeft: function (length, padding) {
+    padLeft (length, padding) {
         let str = this;
         while (str.length < length) {
             str = padString + str;
         }
 
         return str.substring(0, length);
-    },
+    }
 
-    padRight: function (length, padding) {
+    padRight (length, padding) {
         let str = this;
         while (str.length < length) {
             str = str + padding;
         }
 
         return str.substring(0, length);
-    },
+    }
 
-    strip: function () {
+    strip () {
         return String(this).replace(/^\s+|\s+$/g, "");
-    },
+    }
 
-    asObject: function () {
+    asObject () {
         return JSON.parse(this);
-    },
+    }
 
-    capitalized: function () {
+    capitalized () {
         return this.replace(/\b[a-z]/g, function (match) {
             return match.toUpperCase();
         });
-    },
+    }
 
     /// String
 
-    asSetter: function () {
+    asSetter () {
         return "set" + this.capitalized();
-    },
+    }
 
-    firstCharacter: function () {
+    firstCharacter () {
         return this.slice(0);
-    },
+    }
 
-    lastCharacter: function () {
+    lastCharacter () {
         return this.slice(-1);
-    },
+    }
 
-    capitalizeWords: function () {
+    capitalizeWords () {
         return this.replace(/(?:^|\s)\S/g, function (a) {
             return a.toUpperCase();
         });
-    },
+    }
 
-    replaceAll: function (target, replacement) {
+    replaceAll (target, replacement) {
         return this.split(target).join(replacement);
-    },
+    }
 
-    loremIpsum: function (minWordCount, maxWordCount) {
+    loremIpsum (minWordCount, maxWordCount) {
         if (!minWordCount) { minWordCount = 10; }
         if (!maxWordCount) { maxWordCount = 40; }
 
@@ -366,9 +366,9 @@ Object.defineSlots(String.prototype, {
         }
 
         return ret + "."
-    },
+    }
 
-    escapeHtml: function () {
+    escapeHtml () {
         return this.replace(/[&<>"'\/]/g, function (s) {
             const entityMap = {
                 "&": "&amp;",
@@ -380,9 +380,9 @@ Object.defineSlots(String.prototype, {
             };
             return entityMap[s];
         });
-    },
+    }
 
-    GUID: function () {
+    GUID () {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)
                 .toString(16)
@@ -390,13 +390,13 @@ Object.defineSlots(String.prototype, {
         }
         return s4() + s4() + "-" + s4() + "-" + s4() + "-" +
             s4() + "-" + s4() + s4() + s4();
-    },
+    }
 
-    byteSizeDescription: function() {
+    byteSizeDescription () {
         return this.length.byteSizeDescription()
-    },
+    }
 
-    asyncSha256Digest: async function () {
+    async asyncSha256Digest () {
         // example use let digestHex = await "hello".asyncSha256DigestHex()
 
         // encode as UTF-8
@@ -417,14 +417,14 @@ Object.defineSlots(String.prototype, {
 
         return hashHex;
         */
-    },
+    }
 
-    stripHTML: function () {
+    stripHTML () {
         const doc = new DOMParser().parseFromString(this, 'text/html');
         return doc.body.textContent || "";
-    },
+    }
 
-});
+}).initThisCategory();
 
 /*
 async function test() {

@@ -8,48 +8,47 @@
 
 */
 
-Object.defineSlots(Set.prototype, {
-
-    shallowCopy: function() {
+(class Set_ideal extends Set {
+    shallowCopy () {
         return new Set(this.values())
-    },
+    }
 
-    keysArray: function() {
+    keysArray () {
         return Array.fromIterator(this.values())
-    },
+    }
 
-    valuesArray: function() {
+    valuesArray () {
         return this.keysArray()
-    },
+    }
 
-    detect: function(fn) {
+    detect (fn) {
         // TODO: optimize?
         return this.valuesArray().detect(fn)
-    },
+    }
 
-    select: function(fn) {
+    select (fn) {
         // TODO: optimize?
         return this.valuesArray().select(fn)
-    },
+    }
 
-    isSuperset: function(subset) {
+    isSuperset (subset) {
         for (let v of subset) {
             if (!this.has(v)) {
                 return false;
             }
         }
         return true;
-    },
+    }
     
-    union: function(setB) {
+    union (setB) {
         let _union = new Set(this);
         for (let v of setB) {
             _union.add(v);
         }
         return _union;
-    },
+    }
     
-    intersection: function(setB) {
+    intersection (setB) {
         let _intersection = new Set();
         for (let elem of setB) {
             if (this.has(elem)) {
@@ -57,9 +56,9 @@ Object.defineSlots(Set.prototype, {
             }
         }
         return _intersection;
-    },
+    }
     
-    symmetricDifference: function(setB) {
+    symmetricDifference (setB) {
         let _difference = new Set(this);
         for (let v of setB) {
             if (_difference.has(v)) {
@@ -69,28 +68,30 @@ Object.defineSlots(Set.prototype, {
             }
         }
         return _difference;
-    },
+    }
     
-    difference: function(setB) {
+    difference (setB) {
         let _difference = new Set(this);
         for (let v of setB) {
             _difference.delete(v);
         }
         return _difference;
-    },
+    }
 
-    map: function(func) {
+    map (func) {
         const result = new Set()
         this.forEach((v) => result.add(func(v)))
         return result
-    },
+    }
 
-    isEmpty: function(func) {
+    isEmpty (func) {
         return this.size == 0        
-    },
+    }
+
+}).initThisCategory();
 
     
-    /*
+/*
     //Examples
     let setA = new Set([1, 2, 3, 4])
     let setB = new Set([2, 3])
@@ -101,6 +102,4 @@ Object.defineSlots(Set.prototype, {
     setA.intersection(setC); // => Set [3, 4]
     setA.symmetricDifference(setC); // => Set [1, 2, 5, 6]
     setA.difference(setC); // => Set [1, 2]
-    */
-    
-});
+*/

@@ -4,7 +4,6 @@
 // ------------------------------------------------------------------
 
 Object.defineSlot = function (obj, slotName, slotValue) {
-    //if (!Object.hasOwnSlot(obj, slotName, slotValue)) {
     const descriptor = {
         configurable: true,
         enumerable: false,

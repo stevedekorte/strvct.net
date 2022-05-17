@@ -7,7 +7,7 @@
     A subclass of Set that maintains that hooks the base mutation methods.
 
     For this to work, you need to use method alternatives to the non-method
-    (operator) operations.
+    (operator) operation.
 
 */
 

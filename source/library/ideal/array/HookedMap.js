@@ -6,6 +6,8 @@
 
     A subclass of Map that maintains that hooks the base mutation methods.
 
+    (the JS Map object holds key-value pairs and remembers the original insertion order of the keys)
+
     For this to work, you need to use method alternatives to the non-method
     (operator) operations.
 
