@@ -383,17 +383,6 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         })
     }
  
-    /*
-    let this be defined in Object_mutation
-
-    willMutate () {
-        // def
-    }
- 
-    didMutate () {
-    }
-    */
- 
     // -------------------
  
     perform (methodName, arg1, arg2, arg3) {
@@ -414,7 +403,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
     // -------------------
  
     shallowCopy () {
-        let copy = Object.assign({}, this);
+        const copy = Object.assign({}, this);
         return copy
     }
  

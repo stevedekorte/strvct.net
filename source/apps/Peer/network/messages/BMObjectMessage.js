@@ -117,8 +117,8 @@ var BitcoreMessage = require("bitcore-message");
 
     theDictToHash () {
         const dict = this.msgDict()
-        delete dict.msgHash   // remove this slots as we are computing hash itself
-        delete dict.sig // remove this slot as signature is done on hash
+        dict.removeSlotAt("msgHash")   // remove this slots as we are computing hash itself
+        dict.removeSlotAt("sig") // remove this slot as signature is done on hash
         return dict
     }
     

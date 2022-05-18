@@ -202,7 +202,7 @@
         const h = msg.msgHash()
         
         // remove from the queue
-        //delete this._queue[h]
+        //this._queue.removeSlotAt(h)
         
         this.addMessage(msg)
     }

@@ -173,7 +173,7 @@
     receiveResponse (response) {
         const pendingMessage = this.pendingMessages()[response.id];
         if (pendingMessage) {
-            delete this.pendingMessages()[response.id];
+            this.pendingMessages().removeSlotAt(response.id);
             if (response.error) {
                 pendingMessage.reject(response.error);
             }
