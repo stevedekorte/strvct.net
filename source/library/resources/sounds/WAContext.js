@@ -10,28 +10,20 @@
 
 (class WAContext extends BMNode {
 
-    /*
     // in JS, do we need user input first to play audio?
     
     static initThisClass () {
         super.initThisClass()
         Broadcaster.shared().addListenerForName(this, "firstUserEvent")
-        this.firstUserEvent()
-
-                    //this.watchOnceForNote("firstUserEvent")
-
+        //this.watchOnceForNote("firstUserEvent")
         return this
     }
 
     static firstUserEvent (anEventListener) {
+        debugger;
         Broadcaster.shared().removeListenerForName(this, "firstUserEvent")
-        //if (anEventListener.isUserInput()) {
-            WAContext.shared().setupIfNeeded() // need user input to do this
-        //}
+        WAContext.shared().setupIfNeeded() // need user input to do this
     }
-    */
-
-
 
     initPrototype () {
         this.newSlot("audioContext", null)
@@ -53,6 +45,7 @@
     setupIfNeeded () {
         if (Type.isNull(this.audioContext())) {
             this.setAudioContext(new window.AudioContext())
+            //console.warn("can't get audio context until user gesture e.g. tap")
         }
         return this
     }
@@ -73,8 +66,6 @@
         super.prepareToAccess()
     }
     */
-
-
 
 }.initThisClass());
 

@@ -13,6 +13,7 @@
 
     will send onMouseDown(event), onMouseOver(event) etc to anObject when those events occur on the element.
     
+    TODO: abstraction for eventsDict
 */
 
 (class EventSetListener extends ProtoClass {
@@ -83,11 +84,12 @@
         return methodName + suffix
     }
 
-    addEventNameAndMethodName (eventName, methodName) {
+    addEventNameAndMethodName (eventName, methodName, isUserInteraction) {
         this.eventsDict().atSlotPut(eventName, { 
             methodName: methodName, 
             handlerFunc: null,
             useCapture: this.useCapture(),
+            isUserInteraction: isUserInteraction
         })
         return this
     }
@@ -129,6 +131,7 @@
         this.eventsDict().ownForEachKV((eventName, dict) => {
             const fullMethodName = this.fullMethodNameFor(dict.methodName)
             dict.handlerFunc = (event) => { 
+                event._isUserInteraction = dict.isUserInteraction
 
                 /*
                 if (!event._id) {
@@ -193,9 +196,13 @@
     }
 
     onAfterEvent (methodName, event) {
-        if (!this.hasReceivedEvent()) {
-            this.setHasReceivedEvent(true)
 
+        //console.log("event: ", methodName)
+        if (!this.hasReceivedEvent() && event._isUserInteraction) {
+            // In normal web use, thinds like WebAudio context can't be created until 
+            // we get first user interaction. So we send this event to let listeners know when
+            // those APIs can be used. Would help if JS sent a special event for this.
+            this.setHasReceivedEvent(true)
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
         }
 

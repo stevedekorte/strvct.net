@@ -31,8 +31,8 @@
         //this.addEventNameAndMethodName("mouseout",   "onMouseOut");   // triggered when mouse exits any child element        
         //this.addEventNameAndMethodName("mouseenter", "onMouseEnter"); // triggered when mouse enters any child element
 
-        this.addEventNameAndMethodName("click",    "onClick");
-        this.addEventNameAndMethodName("dblclick", "onDoubleClick"); // is this valid?
+        this.addEventNameAndMethodName("click",    "onClick", true);
+        this.addEventNameAndMethodName("dblclick", "onDoubleClick", true); // is this valid?
 
         this.addEventNameAndMethodName("contextmenu", "onContextMenu"); // occurs on right mouse click on element
         return this
