@@ -454,12 +454,14 @@
         return proto      
     }
 
-    setNode (aNode) {
-        if (this.node() !== aNode) {
-            super.setNode(aNode)
-            this.unselectAllRows() // move to didChangeNode
-            //"shouldFocusSubnode"
+    didChangeNode () {
+        super.didChangeNode()
+
+        if (this.node() && this.node().nodeRowsStartAtBottom()) {
+            setTimeout(() => { this.scrollToBottom() }, 0)
+            //this.row().last().scrollIntoView()
         }
+
         return this
     }
 
@@ -551,17 +553,6 @@
         return this
     }
 
-    didChangeNode () {
-        super.didChangeNode()
-
-        if (this.node() && this.node().nodeRowsStartAtBottom()) {
-            setTimeout(() => { this.scrollToBottom() }, 0)
-            //this.row().last().scrollIntoView()
-        }
-
-        return this
-    }
-    
     /*
     scheduleSyncFromNode () {
         //assert(this.browser().columns().contains(this))

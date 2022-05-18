@@ -2099,7 +2099,7 @@
         }
         this.setCssAttribute("max-width", v, () => { this.didChangeWidth() })
         this.setCssAttribute("min-width", v, () => { this.didChangeWidth() })
-        this.setCssAttribute("width", v, null)
+        this.setCssAttribute("width", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
         return this
     }
 
@@ -2109,7 +2109,7 @@
         }
         this.setCssAttribute("min-height", v, () => { this.didChangeHeight() })
         this.setCssAttribute("max-height", v, () => { this.didChangeHeight() })
-        this.setCssAttribute("height", v, null)
+        this.setCssAttribute("height", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
         return this
     }
 
@@ -2118,7 +2118,6 @@
         this.setMinAndMaxHeight(v)
         return this
     }
-
 
     percentageNumberToString (aNumber) {
         assert(Type.isNumber(aNumber) && (aNumber >= 0) && (aNumber <= 100))

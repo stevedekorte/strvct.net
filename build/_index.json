@@ -506,8 +506,8 @@
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
-    "size": 119488,
-    "hash": "hdCWzyQoYp5jQbNlDj7baZSx1aqD8rPqz5C5Xa5cYDY="
+    "size": 119657,
+    "hash": "fkHZfHoPbi4TVpIft3aXw9UIKJHiWCX8ENZwLQHEi4c="
   },
   {
     "path": "source/library/view/dom_views/DomFlexView.js",
@@ -886,8 +886,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackView.js",
-    "size": 13708,
-    "hash": "BO82nuXEdGxBaaafqSsg//Ygho17BZLbMdkT2R4vBtk="
+    "size": 13949,
+    "hash": "CtNdRuJc9DCQf5MerLQ4Fh9itTciH/DqpX5aONWgK7E="
   },
   {
     "path": "source/library/node/node_views/stack/StackNavView.js",
@@ -901,8 +901,8 @@
   },
   {
     "path": "source/library/node/node_views/stack/StackItemSetView.js",
-    "size": 47856,
-    "hash": "+zyFRyX9W1q5+q7pczfmamVZLoZK56eJl1Mq1/9OWNE="
+    "size": 47628,
+    "hash": "xiHYZXJIYC9aVw5ld+0q8YPxc0hk96bdcNmnYMnNE30="
   },
   {
     "path": "source/library/node/node_views/browser/_css.css",

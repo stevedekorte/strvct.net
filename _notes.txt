@@ -1,17 +1,16 @@
 
 
-
-- cleanup mutatorMethodNamesSet
--- move into categories? move all mutatorMethodNamesSet declarations into single file?
-
-- expand first visible column to fit width of display when too small to fit next 2 columns?
-
 - full width title view
--- part of browser view?
--- have bread crumb view only apply to subnode path
 
-bug: not clearing next column when removing item that selected it
+----------------------------------------------
 
+- feature: expand first visible column to fit width of display when too small to fit next 2 columns?
+- bug: not clearing next column when removing item that selected it
+
+----------------------------------------------
+
+- cleanup: mutatorMethodNamesSet
+-- move into categories? move all mutatorMethodNamesSet declarations into single file?
 
 ----------------------------------------------
 
@@ -34,7 +33,7 @@ general:
 --- does the DOM handle handler removal automatically? Probably not as this objects have lots of external refs
 
 
--------------------------------------
+----------------------------------------------
 
 Inline Row views? for Document style rendering
 

@@ -198,8 +198,16 @@
     }
     */
 
+    /*
     setNode (aNode) {
         super.setNode(aNode)
+        this.navView().setNode(this.node())
+        return this
+    }
+    */
+
+    didChangeNode () {
+        super.didChangeNode()
         this.navView().setNode(this.node())
         return this
     }
@@ -240,7 +248,7 @@
     }
 
     otherViewContent () {
-        return this.otherView().subviews().first()
+        return this.nextStackView()
     }
 
     // notifications
@@ -275,7 +283,12 @@
     }
 
     selectedNodePathArray () {
-        return this.stackViewSubchain().map(sv => sv.node())
+        return this.stackViewSubchain().map(sv => {
+            if (!sv.node()) {
+                debugger;
+            }
+            return sv.node()
+        })
     }
 
     topDidChangeNavSelection () {
@@ -303,7 +316,9 @@
     }
 
     selectedPathString () {
-        return this.selectedNodePathArray().map(node => node.title()).join("/")
+        return this.selectedNodePathArray().map(node => {
+            return node.title()
+        }).join("/")
     }
 
     pathString () {
@@ -430,9 +445,10 @@
         // returns self and all StackViews below 
         const chain = []
         let current = this
+
         while (current) {
             chain.push(current)
-            current = current.otherView().subviews().first()
+            current = current.nextStackView()
         }
         return chain
     }
