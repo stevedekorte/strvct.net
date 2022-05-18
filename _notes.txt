@@ -6,7 +6,6 @@
 
 - expand first visible column to fit width of display when too small to fit next 2 columns?
 
-
 - full width title view
 -- part of browser view?
 -- have bread crumb view only apply to subnode path

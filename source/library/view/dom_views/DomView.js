@@ -2099,6 +2099,7 @@
         }
         this.setCssAttribute("max-width", v, () => { this.didChangeWidth() })
         this.setCssAttribute("min-width", v, () => { this.didChangeWidth() })
+        this.setCssAttribute("width", v, null)
         return this
     }
 
@@ -2108,6 +2109,7 @@
         }
         this.setCssAttribute("min-height", v, () => { this.didChangeHeight() })
         this.setCssAttribute("max-height", v, () => { this.didChangeHeight() })
+        this.setCssAttribute("height", v, null)
         return this
     }
 

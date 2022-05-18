@@ -115,25 +115,15 @@ Object.defineSlotSafely = function(obj, slotName, slotValue) {
         console.log(msg)
         throw new Error(msg)
     } else {
-        const msg = nameForObj(obj) + "." + slotName + " DEFINED"
-        //debugger;
-        console.log(msg)
+        //const msg = nameForObj(obj) + "." + slotName + " DEFINED"
+        //console.log(msg)
         Object.defineSlot(obj, slotName, slotValue)
-
-        //console.log("String.prototype.endsWidth:", String.prototype.endsWidth) 
-        //console.log("obj.endsWidth:", obj.endsWidth) 
-
     }
 };
 
-//console.log("String.prototype.endsWidth:", String.prototype.endsWidth) 
-//debugger;
-
 Object.defineSlotsSafely = function (obj, dict) {
     Object.keys(dict).forEach((slotName) => {
-
         const slotValue = dict[slotName]
-
         Object.defineSlotSafely(obj, slotName, slotValue)
 
     })
