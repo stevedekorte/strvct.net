@@ -13,7 +13,7 @@
     }
 
     static canOpenMimeType (mimeType) {
-        return mimeType.beginsWith("text/plain")
+        return mimeType.startsWith("text/plain")
     }
 
     static openMimeChunk (dataChunk) {

@@ -123,7 +123,7 @@ const max3 = function(a, b, c) {
         const color = style.color;
         document.body.removeChild(div);
 
-        assert(color.beginsWith("rgb"))
+        assert(color.startsWith("rgb"))
         const inner = color.between("(", ")");
         const parts = inner.split(",");
         const numbers = parts.map((v) => parseInt(v));

@@ -7,7 +7,7 @@
     using a (potentially different) method name. Subclasses override init to define the
     event set by calling this.addEventNameAndMethodName(...) for each event.
 
-    Example use (of subclass):
+    Example use of:
 
     const mouseListener = MouseListener.clone().setListenTarget(element).setDelegate(anObject)
 
@@ -84,7 +84,7 @@
     }
 
     addEventNameAndMethodName (eventName, methodName) {
-        this.eventsDict().atPut(eventName, { 
+        this.eventsDict().atSlotPut(eventName, { 
             methodName: methodName, 
             handlerFunc: null,
             useCapture: this.useCapture(),

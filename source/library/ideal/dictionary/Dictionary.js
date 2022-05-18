@@ -169,7 +169,7 @@ getGlobalThis().ideal.Dictionary = class Dictionary extends ProtoClass {
     }
 
     removeAt (k) {
-        console.log(this.typeId() + " warning: using removeAt instead of removeKey")
+        console.warn(this.typeId() + " warning: removeAt is deprecated - use removeKey instead")
         return this.removeKey(k)
     }
 

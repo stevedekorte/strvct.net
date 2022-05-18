@@ -489,7 +489,7 @@
         slot.setOwner(this)
         slot.autoSetGetterSetterOwnership()
         slot.setupInOwner()
-        this.slots().atPut(slotName, slot)
+        this.slots().atSlotPut(slotName, slot)
         return slot
     }
 

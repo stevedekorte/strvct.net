@@ -10,7 +10,7 @@
     
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
-        return mimeType.beginsWith("image/")
+        return mimeType.startsWith("image/")
     }
 
     initPrototype () {

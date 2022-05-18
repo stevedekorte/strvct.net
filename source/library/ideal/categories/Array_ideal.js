@@ -90,7 +90,7 @@
         return this.length;
     }
 
-    at (index) {
+    atWrap (index) {
         if (index < 0) {
             return this[this.length + index];
         }

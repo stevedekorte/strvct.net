@@ -23,8 +23,8 @@
 (class GestureManager extends ProtoClass {
     
     initPrototype () {
-        this.newSlot("activeGesture", null)
-        this.newSlot("begunGestures", null)
+        this.newSlot("activeGesture", null) // aGesture
+        this.newSlot("begunGestures", null) // dict
         this.newSlot("isPaused", false) // used to pause gestures while editing text fields
     }
 
@@ -116,12 +116,12 @@
     }
 
     addBegunGesture (aGesture) {
-        this.begunGestures().atPut(aGesture.typeId(), aGesture)
+        this.begunGestures().atSlotPut(aGesture.typeId(), aGesture)
         return this
     }
 
     removeBegunGesture (aGesture) {
-        delete this.begunGestures().at(aGesture.typeId())
+        this.begunGestures().removeSlotAt(aGesture.typeId())
         return this
     }
 

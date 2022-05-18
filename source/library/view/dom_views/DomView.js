@@ -2129,7 +2129,7 @@
         }
 
         if (Type.isString(aNumber)) {
-            if (aNumber.beginsWith("calc") || aNumber.endsWith("px")) {
+            if (aNumber.startsWith("calc") || aNumber.endsWith("px")) {
                 return aNumber
             }
         }

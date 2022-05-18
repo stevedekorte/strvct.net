@@ -8,6 +8,7 @@
 
 */
 
+
 (class String_ideal extends String {
     
     shallowCopy () {
@@ -26,7 +27,7 @@
         return this.length;
     }
     
-    beginsWith (prefix) {
+    beginsWith (prefix) { // Javascript calls this "startsWith
         if (!prefix || this.length < prefix.length) {
             return false;
         }
@@ -40,6 +41,8 @@
         //return this.indexOf(prefix) === 0;
     }
 
+    /*
+    Javascript supports this method now
     endsWith (suffix) {
         if (!suffix || this.length < suffix.length) {
             return false;
@@ -53,6 +56,7 @@
         //const index = this.lastIndexOf(suffix);
         //return (index !== -1) && (this.lastIndexOf(suffix) === this.length - suffix.length);
     }
+    */
 
     contains (aString) {
         return this.indexOf(aString) !== -1;
@@ -94,9 +98,12 @@
         }
     }
 
+    /*
+    // JS implements this now
     at (i) {
         return this.slice(i, i + 1);
     }
+    */
 
     first () {
         return this.slice(0, 1);
@@ -120,7 +127,7 @@
     }
 
     sansPrefix (prefix) {
-        return this.substring(this.beginsWith(prefix) ? prefix.length : 0);
+        return this.substring(this.startsWith(prefix) ? prefix.length : 0);
     }
 
     sansSuffixes (aStringList) {
@@ -311,11 +318,13 @@
         return JSON.parse(this);
     }
 
+    /* JS implements this now
     capitalized () {
         return this.replace(/\b[a-z]/g, function (match) {
             return match.toUpperCase();
         });
     }
+    */
 
     /// String
 
@@ -337,9 +346,11 @@
         });
     }
 
+    /* JS has this now
     replaceAll (target, replacement) {
         return this.split(target).join(replacement);
     }
+    */
 
     loremIpsum (minWordCount, maxWordCount) {
         if (!minWordCount) { minWordCount = 10; }

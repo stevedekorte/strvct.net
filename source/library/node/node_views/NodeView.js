@@ -104,7 +104,7 @@
         const dict = {}
         this.subviews().forEach(sv => {
             if (sv.node) { 
-                dict.atPut(sv.node(), sv) 
+                dict.atSlotPut(sv.node(), sv) 
             } 
         })
         this._subnodeToSubview = dict

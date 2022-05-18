@@ -10,9 +10,12 @@
 
 (class Error_ideal extends Error {
 
+    /*
+    JS seems to have this slot
     static stackTraceLimit () {
         return 100 // looks like default on Chrome is 10?
     }
+    */
 
     static assert (v) {
         if (!Boolean(v)) {

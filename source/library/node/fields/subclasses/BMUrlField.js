@@ -13,7 +13,7 @@
     }
 
     static canOpenMimeType (mimeType) {
-        return mimeType.beginsWith("text/uri-list")
+        return mimeType.startsWith("text/uri-list")
     }
 
     static openMimeChunk (dataChunk) {

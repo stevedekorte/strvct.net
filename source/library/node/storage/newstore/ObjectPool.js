@@ -268,7 +268,7 @@
 
         if (!this.hasActiveObject(anObject)) {
             anObject.addMutationObserver(this)
-            this.activeObjects().atPut(anObject.puuid(), anObject)
+            this.activeObjects().atSlotPut(anObject.puuid(), anObject)
             //this.addDirtyObject(anObject)
         }
 

@@ -263,7 +263,7 @@
         this.setError(error)
 
         // special case
-        if (error && !error.message.beginsWith("Could not connect to peer")) {
+        if (error && !error.message.startsWith("Could not connect to peer")) {
 	        this.setStatus(error.message, error)	        
             this.log(this.type() + " onError: " + error);
             this.finish()

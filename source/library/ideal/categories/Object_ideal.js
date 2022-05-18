@@ -48,7 +48,7 @@ Object.defineSlot = function (obj, slotName, slotValue) {
             try {
                 objType = obj.type()
             } catch (e) {
-                console.log("can't get type on ", obj)
+                //console.warn("can't get type on ", obj)
             }
 
             if (objType) {
@@ -87,22 +87,60 @@ if (d.enumerable) {
 }
 */
 
-/*
-Object.defineSlotIfNeeded = function(obj, slotName, slotValue) {
-    if (this.hasOwnProperty(slotName)) {
-        this[slotName] = slotValue
-    } else {
-        Object.defineSlot(obj, slotName, slotValue)
-    }
-}
-*/
-
 Object.defineSlots = function (obj, dict) {
     Object.keys(dict).forEach((slotName) => {
         const slotValue = dict[slotName]
         Object.defineSlot(obj, slotName, slotValue)
     })
 };
+
+
+Object.defineSlotSafely = function(obj, slotName, slotValue) {
+    const nameForObj = function (obj) {
+        let name = "?" 
+        try {
+            if (obj.hasOwnProperty("name")) {
+                name = obj.name + ""
+            } else {
+                name = obj.constructor.name + ".prototype"
+            }
+        } catch (e) {
+            name = "[error getting name]"
+        }
+        return name
+    }
+
+    if (obj.hasOwnProperty(slotName)) {
+        const msg = nameForObj(obj) + "." + slotName + " slot already exists"
+        console.log(msg)
+        throw new Error(msg)
+    } else {
+        const msg = nameForObj(obj) + "." + slotName + " DEFINED"
+        //debugger;
+        console.log(msg)
+        Object.defineSlot(obj, slotName, slotValue)
+
+        //console.log("String.prototype.endsWidth:", String.prototype.endsWidth) 
+        //console.log("obj.endsWidth:", obj.endsWidth) 
+
+    }
+};
+
+//console.log("String.prototype.endsWidth:", String.prototype.endsWidth) 
+//debugger;
+
+Object.defineSlotsSafely = function (obj, dict) {
+    Object.keys(dict).forEach((slotName) => {
+
+        const slotValue = dict[slotName]
+
+        Object.defineSlotSafely(obj, slotName, slotValue)
+
+    })
+};
+
+
+
 
 Object.defineSlot(Object, "initThisCategory", function () {
     // This is a bit of a hack to implement class categories in Javascript
@@ -135,12 +173,12 @@ Object.defineSlot(Object, "initThisCategory", function () {
     delete classSlotsDict["length"] // FIXME: hack for collection types
     delete classSlotsDict["name"]
     delete classSlotsDict["prototype"]
-    Object.defineSlots(parent, classSlotsDict) // this should throw on collision?
+    Object.defineSlotsSafely(parent, classSlotsDict) // this should throw on collision?
 
     const instanceSlotsDict = getSlotsDictOn(this.prototype)
     delete instanceSlotsDict["constructor"]
     delete instanceSlotsDict["prototype"]
-    Object.defineSlots(parent.prototype, instanceSlotsDict) // this should throw on collision?
+    Object.defineSlotsSafely(parent.prototype, instanceSlotsDict) // this should throw on collision?
     return this
 });
 
@@ -223,11 +261,13 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         Object.keys(obj).forEach(k => fn(k, obj[k]))
     }
  
-    static values (obj) {
+    /*
+    static slotValues (obj) {
         const values = [];
         obj.ownForEachKV((k, v) => values.push(v))
         return values;
     }
+    */
  
     static asValueKeyDict (obj) {
         const dict = {}
@@ -265,6 +305,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         Object.defineSlot(this, "_isObjectRetired", false)
     }
  
+    /*
     clone () {
         const obj = new this()
         //let aClass = this.thisClass()
@@ -272,6 +313,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         //let obj = aClass.clone()
         return obj
     }
+    */
  
     init () {
         this.scheduleDidInit()
@@ -341,11 +383,16 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         })
     }
  
+    /*
+    let this be defined in Object_mutation
+
     willMutate () {
+        // def
     }
  
     didMutate () {
     }
+    */
  
     // -------------------
  
@@ -371,19 +418,24 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return copy
     }
  
-    at (key) {
+    
+    // normal at() etc names would conflict with Array etc
+
+    atSlot (key) {
         return this[key]
     }
  
-    atPut (key, value) {
+    atSlotPut (key, value) {
         this[key] = value
         return this
     }
  
-    removeAt (key) {
+    removeSlotAt (key) {
         delete this[key]
         return this
     }
+    
+    // ----
  
     ownKVMap (fn) {
         return Object.keys(this).map(k => fn(k, this[k]))
@@ -557,7 +609,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         const instance = this.thisClass().clone().copyFrom(this)
         instance.duplicateSlotValuesFrom(this) // TODO: what about lazy slots?
  
-        //const storeSlots = Object.values(this.allSlots()).filter(slot => slot.shouldStoreSlot())
+        //const storeSlots = Object.slotValues(this.allSlots()).filter(slot => slot.shouldStoreSlot())
         //storeSlots.forEach((slot) => {
         //    const v = slot.onInstanceGetValue(this)
         //    slot.onInstanceSetValue(instance, v)

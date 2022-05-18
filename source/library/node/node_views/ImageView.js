@@ -128,7 +128,7 @@
     }
     
     fetchDataURLFromSrc (src) {
-        if (src.beginsWith("data:")) {
+        if (src.startsWith("data:")) {
 	        this.setFromDataURL(src)
         } else {
             const img = new Image();
@@ -161,7 +161,7 @@
     setFromDataURL (dataURL) {
         //console.log("setFromDataURL: ", dataURL)
         assert(!Type.isNull(dataURL))
-        assert(dataURL.beginsWith("data:")) 
+        assert(dataURL.startsWith("data:")) 
 
         this.removeRawImageView()
         this.setDataURL(dataURL)
