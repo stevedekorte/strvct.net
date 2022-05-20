@@ -6,7 +6,7 @@
     
 */
 
-(class BMMinuteNode extends BMNode {
+(class BMMinuteNode extends BaseNode {
     
     initPrototype () {
         this.newSlot("value", 1)

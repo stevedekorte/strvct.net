@@ -25,7 +25,7 @@
         super.init()
         this.setNodeMinWidth(600)
         this.setDataUrl(BMDataUrl.clone())
-        //this.setCompleteNote(BMNotificationCenter.shared().newNote().setSender(this).setName("onUrlResourceComplete"))
+        //this.setCompleteNote(this.newNoteNamed("onUrlResourceComplete"))
         return this
     }
 

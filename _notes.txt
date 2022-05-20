@@ -1,6 +1,22 @@
 
+- break off titling to TitledNode?
 
-- full width title view
+- break off Node actions to ActableNode?
+
+- split off styling code from BMNode into subclass BMStyledNode
+-- should this be before or after BMStorableNode?
+-- should we support a initAsMixin? How does method overriding order work with Mixins? based on mix order?
+
+- StackNavView controls rendering borders 
+-- somehow allow node or subviews to request no border?
+--- nodeNavBorderHint?
+--- viewNoNavBorderHint?
+-- use _nodeColumnStyles?
+
+- think about generic way to attach view attributes (font, colors, padding, etc) to nodes
+-- support a shared style but allow user specific override?
+-- support inheritance?
+-- just use Theme/ElementType/SelectionMode? e.g. DarkTheme, Header1Type
 
 ----------------------------------------------
 

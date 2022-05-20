@@ -570,7 +570,7 @@ getGlobalThis().ideal.Slot = class Slot {
             const oldValue = this[privateName]
             if (oldValue !== newValue) {
                 this[privateName] = newValue
-                const didUpdateSlotNote = BMNotificationCenter.shared().newNote().setSender(this).setName(noteName)
+                const didUpdateSlotNote = this.newNoteNamed(noteName)
                 didUpdateSlotNote.post()
             }
             return this

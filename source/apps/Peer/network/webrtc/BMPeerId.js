@@ -8,7 +8,7 @@
 
 */
 
-(class BMPeerId extends BMNode {
+(class BMPeerId extends BaseNode {
     
     initPrototype () {
         this.newSlot("publicKeyString", null)

@@ -6,7 +6,7 @@
 
 */
 
-(class BMJsonResources extends BMNode {
+(class BMJsonResources extends BaseNode {
     
     static initThisClass () {
         super.initThisClass()

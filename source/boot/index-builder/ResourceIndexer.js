@@ -10,10 +10,11 @@
 
 */
 
-const fs = require("fs")
-const nodePath = require("path")
-const args = process.argv
-const dirPathCommandLineArg = args[2]
+const fs = require("fs");
+const nodePath = require("path");
+const process = require('process');
+const args = process.argv;
+const dirPathCommandLineArg = args[2];
 
 class Folder {
     init () {
@@ -118,7 +119,7 @@ class Folder {
 const folder = new Folder();
 folder.setPath(dirPathCommandLineArg);
 folder.recursivelyCreateImports();
-process.exitCode = 0 // vscode wants an explicit exit code for prelaunch tasks
+//process.exitCode = 0 // vscode wants an explicit exit code for prelaunch tasks
 //process.exit(); // this may stop process before file ops complete
 
 

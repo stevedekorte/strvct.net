@@ -6,7 +6,7 @@
     
 */
 
-(class BMYearNode extends BMNode {
+(class BMYearNode extends BaseNode {
     
     initPrototype () {
         this.newSlot("allowsMultiplePicks", false)

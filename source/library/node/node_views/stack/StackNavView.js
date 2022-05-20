@@ -84,16 +84,39 @@
         return this
     }
 
+    // --- border ---
+
     borderColor () {
         return "rgba(255, 255, 255, 0.3)"
     }
+
+    hasBorder () {
+        const node = this.node()
+        if (node) {
+            const hint = node.nodeNavBorderHint()
+            if (Type.isBoolean(hint)) {
+                return hint
+            }
+        }
+        return true
+    }
+
+    borderStyle () {
+        if (this.hasBorder()) {
+            return "1px solid " + this.borderColor()
+        }
+        return null
+    }
+
+    // ---
 
     makeOrientationRight () {
         this.setFlexDirection("column")
         this.setFlexBasis(this.targetWidth() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
-        this.setBorderRight("1px solid " + this.borderColor())
+        this.setBorderBottom(null)
+        this.setBorderRight(this.borderStyle())
         this.scrollView().setIsVertical(true)
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
     }
@@ -103,7 +126,8 @@
         this.setFlexBasis(this.targetHeight() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
-        this.setBorderBottom("1px solid " + this.borderColor())
+        this.setBorderRight(null)
+        this.setBorderBottom(this.borderStyle())
         this.scrollView().setIsVertical(false)
         //this.setBoxShadow("inset 0 -10px 40px #222")
     }

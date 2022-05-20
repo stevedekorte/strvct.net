@@ -6,7 +6,7 @@
 
 */
 
-(class BMResourceGroup extends BMNode {
+(class BMResourceGroup extends BaseNode {
     
     static initThisClass () {
         super.initThisClass()

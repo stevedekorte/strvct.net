@@ -8,7 +8,7 @@
 
 */
 
-(class BMSound extends BMNode {
+(class BMSound extends BaseNode {
     
     // --- mime types ---
 

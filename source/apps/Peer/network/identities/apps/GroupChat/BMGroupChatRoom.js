@@ -16,10 +16,10 @@
     init () {
         super.init()
 
-        this.setNotifications(BMNode.clone().setTitle("channels"))
+        this.setNotifications(BaseNode.clone().setTitle("channels"))
 	        this.addSubnode(this.notifications())
 
-        this.setMessages(BMNode.clone().setTitle("direct messages"))
+        this.setMessages(BaseNode.clone().setTitle("direct messages"))
 	        this.addSubnode(this.messages())
 
 	    }

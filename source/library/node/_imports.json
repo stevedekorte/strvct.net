@@ -1,7 +1,7 @@
 [
     "styles/_imports.json",
     "SubnodesArray.js",
-    "BMNode.js",
+    "base/_imports.json",
 	
     "storage/_imports.json",
     "nodes/_imports.json",

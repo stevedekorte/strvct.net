@@ -92,7 +92,7 @@
         this.setLoadingPids(new Set())
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
-        this.setNodeStoreDidOpenNote(BMNotificationCenter.shared().newNote().setSender(this).setName("nodeStoreDidOpen"))
+        this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"))
         this.setIsDebugging(false)
         return this
     }

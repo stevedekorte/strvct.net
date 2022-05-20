@@ -38,7 +38,7 @@ const bitcore = require("bitcore-lib")
         this.profile().fieldNamed("publicKeyString").setValueIsEditable(true)
 		
         this.setCanDelete(true)
-        this._didChangeIdentityNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentity").setInfo(this)
+        this._didChangeIdentityNote = this.newNoteNamed("didChangeIdentity").setInfo(this)
     }
     
     nodeThumbnailUrl () {

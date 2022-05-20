@@ -6,7 +6,7 @@
     
 */
 
-(class BMMonthNode extends BMNode {
+(class BMMonthNode extends BaseNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("month value starts with 1")

@@ -58,7 +58,7 @@
     Posting notifications:
 
         // post a notification
-        const note = BMNotificationCenter.shared().newNote().setSender(this).setName("hello").post()
+        const note = this.newNoteNamed("hello").post()
 
         // repost same notification
         note.post()

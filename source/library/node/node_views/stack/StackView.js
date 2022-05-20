@@ -95,7 +95,7 @@
         this.setIsRegisteredForDocumentResize(true)
         //this.addGestureRecognizer(LeftEdgePanGestureRecognizer.clone()) 
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
-        this.setOnStackViewPathChangeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("onStackViewPathChange"))
+        this.setOnStackViewPathChangeNote(this.newNoteNamed("onStackViewPathChange"))
 
         this.syncOrientation()
         return this
@@ -198,7 +198,7 @@
     }
     */
 
-    /*
+    /* TODO: remove this if no issues with using didChangeNode
     setNode (aNode) {
         super.setNode(aNode)
         this.navView().setNode(this.node())
@@ -422,8 +422,6 @@
         return current
     }
     */
-
-
 
     stackViewSuperChain () {
         // returns list of self and StackViews above

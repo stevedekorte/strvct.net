@@ -7,7 +7,7 @@
 
 */
 
-(class BMFontFamily extends BMNode {
+(class BMFontFamily extends BaseNode {
     
     initPrototype () {
         this.newSlot("name", null)

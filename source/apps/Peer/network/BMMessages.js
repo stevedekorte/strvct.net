@@ -26,7 +26,7 @@
         super.init()
 
         this.setTitle("Messages")
-        this.setChangeNote(BMNotificationCenter.shared().newNote().setSender(this).setName("newMessagesMessage"))
+        this.setChangeNote(this.newNoteNamed("newMessagesMessage"))
         this.setDeletedSet(BMStoredDatedSetNode.clone())
         this.setPlacedSet(BMStoredDatedSetNode.clone())
         

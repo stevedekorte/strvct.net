@@ -3,10 +3,15 @@
 /*
 
     BMStorableNode 
+
+    Thin subclass to:
+
+    - override some slots and mark them as shouldStore
+    - hook didUpdateSlot() to schedule scheduleSyncToStore if object and slot are marked as shouldStore
     
 */
 
-(class BMStorableNode extends BMNode {
+(class BMStorableNode extends StyledNode {
 
     initPrototype () {
         this.setShouldStore(true)
@@ -60,7 +65,7 @@
             this.scheduleSyncToStore()
         }
         
-        // TODO: add a switch for this feature
+        // TODO: HACK, add a switch for this feature
         // TODO: find a way to avoid this?
         if (newValue !== null && this._subnodes && this._subnodes.includes(oldValue)) { 
             newValue.setParentNode(this)

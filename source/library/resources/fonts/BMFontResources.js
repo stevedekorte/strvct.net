@@ -6,7 +6,7 @@
 
 */
 
-(class BMFontResources extends BMNode {
+(class BMFontResources extends BaseNode {
     
     static initThisClass () {
         super.initThisClass()

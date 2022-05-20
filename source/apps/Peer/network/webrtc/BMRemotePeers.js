@@ -6,7 +6,7 @@
 
 */
 
-(class BMRemotePeers extends BMNode {
+(class BMRemotePeers extends BaseNode {
     
     initPrototype () {
 

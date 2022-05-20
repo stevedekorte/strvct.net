@@ -50,8 +50,8 @@
         super.init()
         this.setTargetDifficulty(BMMessages.globalMinDifficulty())
         this.pickRandomPow()
-        this._updateNote = BMNotificationCenter.shared().newNote().setSender(this).setName("powUpdate")
-        this._doneNote = BMNotificationCenter.shared().newNote().setSender(this).setName("powDone")
+        this._updateNote = this.newNoteNamed("powUpdate")
+        this._doneNote = this.newNoteNamed("powDone")
     }
         
     pickRandomPow () {

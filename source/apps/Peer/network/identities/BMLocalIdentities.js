@@ -22,7 +22,7 @@
         this.setSubnodeProto(BMLocalIdentity)
         this.setNoteIsSubnodeCount(true)
         
-        this._didChangeIdentitiesNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentities")
+        this._didChangeIdentitiesNote = this.newNoteNamed("didChangeIdentities")
         this.setNodeMinWidth(240)
         this.setNodeCanReorderSubnodes(true)
     }

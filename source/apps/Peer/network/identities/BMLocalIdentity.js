@@ -46,7 +46,7 @@ var Buffer = bitcore.deps.Buffer;
         //console.log("is editable = ", this.profile().fieldNamed("publicKeyString").valueIsEditable())
         this.generatePrivateKey()
         this.setCanDelete(true)
-        this.setDidChangeIdentityNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeIdentity"))
+        this.setDidChangeIdentityNote(this.newNoteNamed("didChangeIdentity"))
 
         this.setNodeCanEditTitle(true)
     }

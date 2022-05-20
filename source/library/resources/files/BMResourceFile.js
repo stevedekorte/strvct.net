@@ -6,7 +6,7 @@
 
 */
 
-(class BMResourceFile extends BMNode {
+(class BMResourceFile extends BaseNode {
 
     initPrototype () {
         this.newSlot("path", ".")
@@ -30,8 +30,8 @@
         this.setNoteIsSubnodeCount(true)
 
         // notifications
-        this.setLoadNote(BMNotificationCenter.shared().newNote().setSender(this).setName("resourceFileLoaded"))
-        this.setLoadErrorNote(BMNotificationCenter.shared().newNote().setSender(this).setName("resourceFileLoadError"))
+        this.setLoadNote(this.newNoteNamed("resourceFileLoaded"))
+        this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"))
         return this
     }
 

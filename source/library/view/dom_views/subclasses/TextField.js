@@ -62,8 +62,8 @@
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
         this.formatValue()
 
-        //this.setDidTextInputNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextInput"))
-        //this.setDidTextEditNote(BMNotificationCenter.shared().newNote().setSender(this).setName("didTextEdit"))
+        //this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
+        //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
 
         //this.setIsDebugging(true)
         this.lockedStyleAttributeSet().add("backgroundColor")

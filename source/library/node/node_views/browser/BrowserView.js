@@ -35,7 +35,7 @@
     }
 
     setupBrowserNode () {
-        const node = BMNode.clone()
+        const node = BaseNode.clone()
         node.setNodeMinRowHeight(55)
         node.setTitle("browser")
         node.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
@@ -44,8 +44,8 @@
     }
 
     setupHeaderNode () {
-        const node = BMNode.clone()
-        //node.setNodeRowViewClassName("HeaderRowView")
+        const node = BaseNode.clone()
+        node.setNodeRowViewClassName("HeaderRowView")
         node.setNodeMinRowHeight(55)
         node.setTitle("header")
         node.setNodeIsVertical(false) 

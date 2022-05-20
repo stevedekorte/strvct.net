@@ -25,7 +25,17 @@
 */
 
 {
-    const classesToFix = [Array, Boolean, Date, Error, Image, Set, Map, Number, String]
+    const classesToFix = [
+        Array, 
+        Boolean, 
+        Date, 
+        Error, 
+        Image, 
+        Set, 
+        Map, 
+        Number, 
+        String
+    ]
     classesToFix.forEach(aClass => aClass.__proto__ = Object)
 }
 
@@ -133,9 +143,12 @@ Object.defineSlotsSafely = function (obj, dict) {
 
 
 Object.defineSlot(Object, "initThisCategory", function () {
+    // define this first, so we can use it to more cleanly define our
+    // Object categories.
+    //
     // This is a bit of a hack to implement class categories in Javascript
-
     // sanity check: check name to ensure we're only using this on a category
+
     const hasTwoPartName = this.name.split("_").length === 2
     if (!hasTwoPartName) {
         const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName-categoryName."
@@ -435,16 +448,6 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
-    //mapToArrayKV (fn) {
-    //    const m = []
-    //    Object.keys(this).forEach((k) => {
-    //        const v = this[k]
-    //        const r = fn(k, v)
-    //        m.push(r)
-    //    }); 
-    //    return m
-    //}
- 
     isEqual (anObject) {
         // compare like we would two dictionaries
         // only checks enumerable properties
@@ -508,36 +511,6 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
  
     didLoadFromStore () {
         // for subclasses to override
-    }
- 
-    // --- retiring object ---
- 
-    assertNotRetired () {
-        if (this._isObjectRetired) {
-            throw new Error("object already retired")
-        }
-    }
- 
-    prepareToRetire () {
-        this.assertNotRetired()
-        // called by user code when it expect object to stop being used
-        // provides opportunity to remove notification observers, event listeners, etc
-        this.removeAllNotificationObservations()
-        this.removeScheduledActions()
-        this._isObjectRetired = true
-        //console.log("Object retiring " + this.debugTypeId())
-    }
- 
-    removeAllNotificationObservations () {
-        if (getGlobalThis()["BMNotificationCenter"]) {
-            BMNotificationCenter.shared().removeObserver(this)
-        }
-    }
- 
-    removeScheduledActions () {
-        if (getGlobalThis()["SyncScheduler"]) {
-            SyncScheduler.shared().unscheduleTarget(this)
-        }
     }
  
     // --- shouldStore ---

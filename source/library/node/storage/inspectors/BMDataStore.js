@@ -8,7 +8,7 @@
     
 */
 
-(class BMDataStore extends BMNode {
+(class BMDataStore extends BaseNode {
     
     static initThisClass () {
         super.initThisClass()
@@ -60,7 +60,7 @@
     subnodeForClassName (aClassName) {
         let subnode = this.firstSubnodeWithTitle(aClassName)
         if (!subnode) {
-            subnode = BMNode.clone().setTitle(aClassName).setNoteIsSubnodeCount(true)
+            subnode = BaseNode.clone().setTitle(aClassName).setNoteIsSubnodeCount(true)
             this.justAddSubnode(subnode)
         }
         return subnode

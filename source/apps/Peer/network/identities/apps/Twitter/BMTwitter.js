@@ -22,22 +22,22 @@
         super.init()
         this.setTitle("Twitter")
         
-        this.setFeed(BMNode.clone())
+        this.setFeed(BaseNode.clone())
         this.addSubnode(this.feed().setTitle("feed"))
                 
-        this.setNotifications(BMNode.clone().setTitle("notifications"))
+        this.setNotifications(BaseNode.clone().setTitle("notifications"))
         this.addSubnode(this.notifications())
 
-        this.setMessages(BMNode.clone().setTitle("direct messages"))
+        this.setMessages(BaseNode.clone().setTitle("direct messages"))
         this.addSubnode(this.messages())
         
-        this.setProfile(BMNode.clone().setTitle("profile"))
+        this.setProfile(BaseNode.clone().setTitle("profile"))
         this.addSubnode(this.profile())
 
-        this.setFollowing(BMNode.clone().setTitle("following"))
+        this.setFollowing(BaseNode.clone().setTitle("following"))
         this.addSubnode(this.following())
         
-        this.setFollowers(BMNode.clone().setTitle("followers"))
+        this.setFollowers(BaseNode.clone().setTitle("followers"))
         this.addSubnode(this.followers())
     }
     

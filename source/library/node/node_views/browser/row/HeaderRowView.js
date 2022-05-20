@@ -6,29 +6,24 @@
     
 */
 
-(class HeaderRowView extends BrowserRow {
+(class HeaderRowView extends BrowserTitledRow {
     
     initPrototype () {
-        this.newSlot("path", null)
-        this.newSlot("textView", null)
     }
 
     init () {
         super.init()
-        this.setPaddingLeft("1.5em") // BrowserTitledRow.titleLeftPadding()
-        this.setWidth("100%")
-       // this.updateSubviews()
+        //this.contentView().setPaddingLeft("1.5em") // BrowserTitledRow.titleLeftPadding()
         this.setIsSelectable(true)
         //this.setBorder("1px dashed rgba(255, 255, 0, .1)")
         return this
     }
 
-
-    setHeight (v) {
-        if (v === "100%") {
-            debugger;
-        }
-        return super.setHeight(v)
+    makeOrientationDown () {
+        super.makeOrientationDown()
+        this.setMinAndMaxWidth(null)
+        this.setWidth("100%")
+        return this
     }
 
 }.initThisClass());

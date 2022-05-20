@@ -26,6 +26,13 @@
         return this
     }
 
+    makeOrientationDown () { // this is a special case where the item is full width
+        super.makeOrientationDown()
+        this.setMinAndMaxWidth(null)
+        this.setWidth("100%")
+        return this
+    }
+
     topStackView () {
         return this.parentView() ? this.parentView().stackView().topStackView() : null
     }
@@ -52,13 +59,6 @@
                 obs.stopWatching()
             }
         }
-    }
-
-    makeOrientationDown () { // this is a special case where the item is full width
-        super.makeOrientationDown()
-        this.setMinAndMaxWidth(null)
-        this.setWidth("100%")
-        return this
     }
   
     pathNodes () {

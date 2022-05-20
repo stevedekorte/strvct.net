@@ -8,7 +8,7 @@
 
 */
 
-(class WAContext extends BMNode {
+(class WAContext extends BaseNode {
 
     // in JS, do we need user input first to play audio?
     
@@ -20,7 +20,6 @@
     }
 
     static firstUserEvent (anEventListener) {
-        debugger;
         Broadcaster.shared().removeListenerForName(this, "firstUserEvent")
         WAContext.shared().setupIfNeeded() // need user input to do this
     }

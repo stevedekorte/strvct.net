@@ -78,7 +78,7 @@
     }
 
     onEnded (event) {
-        //const note = BMNotificationCenter.shared().newNote().setSender(this).setName("onEndedSound").post()
+        //const note = this.newNoteNamed("onEndedSound").post()
     }
 
     onError (event) {

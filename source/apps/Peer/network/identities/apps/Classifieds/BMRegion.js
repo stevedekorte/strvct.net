@@ -10,7 +10,7 @@
 */
 
 
-(class BMRegion extends BMNode {
+(class BMRegion extends BaseNode {
     
     initPrototype () {
         this.newSlot("lazyChildrenDict", null)

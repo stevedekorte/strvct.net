@@ -75,7 +75,7 @@
         this.setSubnodeClasses([BMStringField])
         //this.setupSubnodes()
 
-        //this._didChangeThemeNote = BMNotificationCenter.shared().newNote().setSender(this).setName("didChangeTheme")
+        //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
     didInit () {

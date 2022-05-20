@@ -6,7 +6,7 @@
     
 */
 
-(class BMDayNode extends BMNode {
+(class BMDayNode extends BaseNode {
     
     initPrototype () {
         this.newSlot("value", 1).setComment("day value starts with 1")

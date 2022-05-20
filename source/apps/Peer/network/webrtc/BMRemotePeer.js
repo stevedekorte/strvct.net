@@ -6,7 +6,7 @@
 
 */
 
-(class BMRemotePeer extends BMNode {
+(class BMRemotePeer extends BaseNode {
     
     initPrototype () {
         this.newSlot("conn", null)
@@ -21,7 +21,7 @@
         super.init()
         this.setTitle("Peer")
         
-        this.setMessages(BMNode.clone().setTitle("messages").setNoteIsSubnodeCount(true))
+        this.setMessages(BaseNode.clone().setTitle("messages").setNoteIsSubnodeCount(true))
         this.addSubnode(this.messages())
         this.setRemoteInventory({})
         this.setPeerId(BMPeerId.clone())

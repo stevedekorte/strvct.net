@@ -44,6 +44,7 @@ const nodePath = require("path");
 const fs = require("fs");
 const crypto = require("crypto");
 const zlib = require("zlib");
+const process = require('process');
 
 
 class IndexBuilder { 
@@ -194,7 +195,7 @@ class IndexBuilder {
 }
 
 new IndexBuilder().run();
-process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
+//process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
 //process.exit(); // this may stop process before file ops complete
 
 

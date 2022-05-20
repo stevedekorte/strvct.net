@@ -6,7 +6,7 @@
 
 */
 
-(class BMConnection extends BMNode {
+(class BMConnection extends BaseNode {
     
     initPrototype () {
         this.newSlot("connection", null)

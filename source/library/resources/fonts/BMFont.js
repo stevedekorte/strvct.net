@@ -8,7 +8,7 @@
 
 */
 
-(class BMFont extends BMNode {
+(class BMFont extends BaseNode {
     
     initPrototype () {
         this.newSlot("path", null)

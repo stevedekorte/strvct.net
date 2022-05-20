@@ -6,7 +6,7 @@
 
 */
 
-(class BMServerConnection extends BMNode {
+(class BMServerConnection extends BaseNode {
     
     initPrototype () {
         this.newSlot("server", null)
@@ -33,7 +33,7 @@
         this.setRemotePeers(BMRemotePeers.clone())
         this.addSubnode(this.remotePeers())
 
-        this.setStatusLog(BMNode.clone().setTitle("log").setNodeMinWidth(300))
+        this.setStatusLog(BaseNode.clone().setTitle("log").setNodeMinWidth(300))
         this.addSubnode(this.statusLog())
         this.statusLog().addAction("deleteAll")
         this.statusLog().deleteAll = function () {
@@ -42,7 +42,7 @@
         
         this.setTitle("Server Connection")
         this.setNoteIsSubnodeCount(false)
-        //this.setLog(BMNode.clone())
+        //this.setLog(BaseNode.clone())
 
         this.setSessionId(BMKeyPair.clone().generatePrivateKey())
         this.setPeerId(BMPeerId.clone())

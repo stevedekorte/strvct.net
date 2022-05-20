@@ -447,6 +447,7 @@
 
         
         if (this.stackView()) {
+            // apply node height hint
             const node = this.stackView().node()
             if (node) {
                 const h = node.nodeMinRowHeight()

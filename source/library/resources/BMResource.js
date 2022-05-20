@@ -6,7 +6,7 @@
 
 */
 
-(class BMResource extends BMNode {
+(class BMResource extends BaseNode {
     
     // --- mime types ---
 

@@ -6,7 +6,7 @@
 
 */
 
-(class BMBlob extends BMNode {
+(class BMBlob extends BaseNode {
 
     initPrototype () {
 
