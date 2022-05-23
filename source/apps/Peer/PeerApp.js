@@ -66,7 +66,7 @@
         //this.addLinkSubnode(this.localIdentities()).setTitle("Identities")
 
         // about 
-        this.setAbout(BMStorableNode.clone().setTitle("Settings").setSubtitle(null).setNodeMinWidth(250))
+        this.setAbout(BMStorableNode.clone().setTitle("Settings").setSubtitle(null))
         this.addSubnode(this.about())
 		
         // --- about subnodes --------------------

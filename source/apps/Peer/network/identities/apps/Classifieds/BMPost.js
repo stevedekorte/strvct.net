@@ -16,7 +16,6 @@
     init () {
         super.init()
         this.setCanDelete(true)
-        this.setNodeMinWidth(550)
         this.setTitle("Untitled")
         this.setPrice(0)
         this.setDescription("Description")

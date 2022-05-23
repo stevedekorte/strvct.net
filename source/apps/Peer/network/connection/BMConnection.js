@@ -21,7 +21,6 @@
         super.init()
 				
         this.setTitle("Connection")
-        this.setNodeMinWidth(200)
         
         const con = navigator.connection || navigator.mozConnection || navigator.webkitConnection
 

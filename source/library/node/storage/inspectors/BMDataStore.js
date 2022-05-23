@@ -23,7 +23,6 @@
     init () {
         super.init()
         this.setTitle("Storage")
-        this.setNodeMinWidth(300)
     }
 
     subtitle () {
@@ -76,7 +75,6 @@
         subnode.setSubtitle(size.byteSizeDescription())
 
         const classNode = this.subnodeForClassName(aRecord.type)
-        classNode.setNodeMinWidth(300)
         classNode.justAddSubnode(subnode)
 
         return this

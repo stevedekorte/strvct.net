@@ -30,9 +30,7 @@
         this.setDeletedSet(BMStoredDatedSetNode.clone())
         this.setPlacedSet(BMStoredDatedSetNode.clone())
         
-        this.setNoteIsSubnodeCount(true)
-        this.setNodeMinWidth(180)
-        
+        this.setNoteIsSubnodeCount(true)        
         this.createSubnodesIndex()
         this.setSubnodeProto(BMObjectMessage)
     }

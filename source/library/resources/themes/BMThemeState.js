@@ -71,7 +71,6 @@
         this.setShouldStoreSubnodes(true) 
         
         //this.setSubtitle("ThemeState")
-        this.setNodeMinWidth(200)
         this.setSubnodeClasses([BMStringField])
         //this.setupSubnodes()
 

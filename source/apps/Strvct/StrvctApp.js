@@ -87,7 +87,6 @@
     setupSettings () {
         // settings
         const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
-        settings.setNodeMinWidth(150)
         this.setSettings(settings)
         //this.removeOtherSubnodeWithSameTitle(settings)
 

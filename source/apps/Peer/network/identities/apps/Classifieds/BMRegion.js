@@ -19,7 +19,6 @@
 
     init () {
         super.init()
-        this.setNodeMinWidth(160)
         //this.setSubnodeProto(BMPost)
         this.setSubnodeSortFunc((a, b) => { return a.compare(b) })
     }

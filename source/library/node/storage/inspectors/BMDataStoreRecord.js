@@ -18,7 +18,6 @@
     init () {
         super.init()
         this.setCanDelete(false) // too dangerous
-        this.setNodeMinWidth(600)
     }
 
     prepareForFirstAccess () {

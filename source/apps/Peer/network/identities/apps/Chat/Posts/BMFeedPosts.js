@@ -20,7 +20,6 @@
 		
         this.setActions(["deleteAll"])
         this.setShouldStore(true)
-        this.setNodeMinWidth(450)
         this.setSubnodeProto(BMPostMessage)
         this.setNoteIsSubnodeCount(true)
 		

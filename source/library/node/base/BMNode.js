@@ -458,7 +458,6 @@
         return 0
     }
 
-
     // ---------------------------------------
     
     prepareForFirstAccess () {
@@ -497,7 +496,6 @@
         	console.log("[" +  this.nodePathString() + "] " + msg)
         }
     }
-    
 
     // --- post notifications ----------------------------------------
     

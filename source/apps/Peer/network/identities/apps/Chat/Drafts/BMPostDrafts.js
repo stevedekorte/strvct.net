@@ -17,7 +17,6 @@
         //this.setLinkProto(BMChatThread)
         this.setShouldStore(true)	
         this.setShouldStoreSubnodes(true)	
-        this.setNodeMinWidth(450)
         this.setSubnodeProto(BMPostDraft)
         this.addActions(["add"])
 

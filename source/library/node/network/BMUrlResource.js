@@ -23,7 +23,6 @@
 
     init () {
         super.init()
-        this.setNodeMinWidth(600)
         this.setDataUrl(BMDataUrl.clone())
         //this.setCompleteNote(this.newNoteNamed("onUrlResourceComplete"))
         return this

@@ -37,7 +37,6 @@
         this.addFieldNamed("linkedin").setValueMethod("linkedin").setValueIsEditable(true)
         this.addFieldNamed("instagram").setValueMethod("instagram").setValueIsEditable(true)
         */
-        this.setNodeMinWidth(600)
     }
 
     profileImageDataUrl () {

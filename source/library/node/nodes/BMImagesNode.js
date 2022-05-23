@@ -19,7 +19,6 @@
         
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
-        this.setNodeMinWidth(200)
         this.setTitle(null)
         this.setSubtitle(null)
         

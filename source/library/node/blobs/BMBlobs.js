@@ -33,7 +33,6 @@
     init () {
         super.init()
         this.setTitle("Blobs")
-        this.setNodeMinWidth(400)
         this.setNoteIsSubnodeCount(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)

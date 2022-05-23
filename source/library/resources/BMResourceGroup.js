@@ -22,7 +22,6 @@
     init () {
         super.init()
         this.setTitle(this.type())
-        this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         this.watchOnceForNote("appDidInit")
         this.setExtensions([]) 

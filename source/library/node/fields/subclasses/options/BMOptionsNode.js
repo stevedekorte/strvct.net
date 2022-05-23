@@ -24,7 +24,6 @@
 
         this.setCanDelete(true)
         this.setNodeCanInspect(true)
-        this.setNodeMinWidth(300)
 
         this.setKey("Options")
         this.setKeyIsVisible(true)

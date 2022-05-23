@@ -15,7 +15,6 @@
     init () {
         super.init()
         this.setTitle("FileResources")
-        this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         this.watchOnceForNote("appDidInit")
 

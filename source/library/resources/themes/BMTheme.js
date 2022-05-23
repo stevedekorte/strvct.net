@@ -14,19 +14,15 @@
 
     init () {
         super.init()
-
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
-
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled " + this.thisClass().visibleClassName())
         //this.setSubtitle("Theme")
-        this.setNodeMinWidth(270)
         this.setCanDelete(true)
         this.addAction("add")
         this.setSubnodeClasses([BMThemeLevel])
         this.setNodeCanReorderSubnodes(true)
-
         //this.setupSubnodes()
     }
 

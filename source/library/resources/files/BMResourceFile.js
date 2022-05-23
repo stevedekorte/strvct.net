@@ -26,7 +26,6 @@
     init () {
         super.init()
         this.setTitle("File")
-        this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
 
         // notifications

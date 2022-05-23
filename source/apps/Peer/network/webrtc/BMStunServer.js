@@ -25,7 +25,6 @@
         this.setShouldStoreSubnodes(true)
         this.setShouldStoreSubnodes(false)
         this.setCanDelete(true)
-        this.setNodeMinWidth(500)
     }
 
     init () {

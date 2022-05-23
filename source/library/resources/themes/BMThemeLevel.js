@@ -21,7 +21,6 @@
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled " + this.thisClass().visibleClassName())
         this.setNodeCanEditTitle(false)
-        this.setNodeMinWidth(200)
         this.setCanDelete(true)
         this.addAction("add")
         this.setSubnodeClasses([BMThemeFolder, BMThemeClass])

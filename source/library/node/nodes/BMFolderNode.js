@@ -25,7 +25,6 @@
         this.setNodeCanInspect(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
-        this.setNodeMinWidth(300)
 
         this.setTitle("title")
         this.setNodeCanEditTitle(true)

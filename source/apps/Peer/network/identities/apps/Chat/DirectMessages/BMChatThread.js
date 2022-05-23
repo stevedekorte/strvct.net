@@ -20,7 +20,6 @@
         this.setShouldStoreSubnodes(true)
         //this.addAction("add")
         this.addAction("deleteAll")
-        this.setNodeMinWidth(600)
         this.setNodeHasFooter(true)
         this.setNodeInputFieldMethod("setInputFieldValue")
         this.createSubnodesIndex()
@@ -53,7 +52,6 @@
         msg.sendToRemoteId(this.remoteIdentity())
 		
         this.addMessage(msg)
-		
 	    return this
     }
 	

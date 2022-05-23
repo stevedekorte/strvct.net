@@ -20,9 +20,7 @@
 
     init () {
         super.init()
-
         this.setTitle("Fonts")
-        this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         this.watchOnceForNote("appDidInit")
         return this

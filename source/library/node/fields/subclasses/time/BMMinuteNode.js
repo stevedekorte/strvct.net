@@ -16,7 +16,6 @@
         super.init()
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
-        this.setNodeMinWidth(300)
         this.setNodeCanEditTitle(false)
         this.setNodeCanReorderSubnodes(false)
     }

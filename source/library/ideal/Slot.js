@@ -27,11 +27,11 @@ getGlobalThis().ideal.Slot = class Slot {
     }
 
     setShouldStore (aBool) {
-        throw new Error("Slot.setShouldStore should not be called")
+        throw new Error("Slot.setShouldStore should not be called on Slot")
     }
 
     shouldStore () {
-        throw new Error("Slot.shouldStore should not be called")
+        throw new Error("Slot.shouldStore should not be called on Slot")
     }
 
     simpleNewSlot (slotName, initialValue) {
@@ -84,7 +84,7 @@ getGlobalThis().ideal.Slot = class Slot {
         this.simpleNewSlot("doesHookSetter", false) // if shouldStore, then auto post isDirty?
         //this.simpleNewSlot("doesPostSetter", false) // posts a didUpdateSlot<SlotName> note
 
-        // storrage related
+        // storage related
         this.simpleNewSlot("isLazy", false) // should hook getter
         this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
         this.simpleNewSlot("initProto", null) // clone this proto on init and set to initial value
@@ -104,8 +104,10 @@ getGlobalThis().ideal.Slot = class Slot {
         this.simpleNewSlot("comment", null)
         this.simpleNewSlot("isPrivate", false)
 
-         // a string value, eg: "Boolean", "String", "Number" - can be used to create inspector
+         // slotType is a string value, eg: "Boolean", "String", "Number", Action - can be used to find a class 
+         // to create an inspector node for the slotValue
          this.simpleNewSlot("slotType", null)
+
          this.simpleNewSlot("canInspect", false)
          this.simpleNewSlot("canEditInspection", true)
          this.simpleNewSlot("label", null) // visible label on inspector
@@ -113,7 +115,7 @@ getGlobalThis().ideal.Slot = class Slot {
          this.simpleNewSlot("validValuesClosure", null) 
          this.simpleNewSlot("allowsMultiplePicks", false)
 
-         this.simpleNewSlot("syncsToView", false)
+         this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
 
          this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
 

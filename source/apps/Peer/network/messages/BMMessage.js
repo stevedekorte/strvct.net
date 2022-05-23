@@ -23,7 +23,6 @@
     init () {
         super.init()
         this.setShouldStore(true)
-        this.setNodeMinWidth(650)
         //this.setNodeViewClassName("BMMessageView")
     }
 

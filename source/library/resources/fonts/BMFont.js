@@ -19,7 +19,6 @@
 
     init () {
         super.init()
-        this.setNodeMinWidth(270)
         this.setOptions({})  // example options { style: 'normal', weight: 700 }  
         //this.setIsDebugging(true)
     }

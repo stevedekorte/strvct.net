@@ -23,8 +23,6 @@
 
         this.setActions(["send"])
         this.setCanDelete(true)
-
-        this.setNodeMinWidth(600)
     }
 
     // sync

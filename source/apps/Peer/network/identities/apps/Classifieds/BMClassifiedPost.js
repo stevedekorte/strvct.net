@@ -27,7 +27,6 @@
     init () {
         super.init()
         this.setShouldStore(true)
-        //this.setNodeMinWidth(550)
         
         this.addField(BMStampField.clone().setKey("stamp").setValueMethod("stamp")).setValueIsEditable(false)
         this.addField(BMField.clone().setKey("path").setValueMethod("path")).setValueIsEditable(false)

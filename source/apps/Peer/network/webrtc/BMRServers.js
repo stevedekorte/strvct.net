@@ -17,7 +17,6 @@
         this.setShouldStore(true)
         this.setTitle("Rendezvous Servers")
         this.setNoteIsSubnodeCount(true)
-        this.setNodeMinWidth(300)
         this.setSubnodeProto(BMRServer)
         this.addAction("add")
     }

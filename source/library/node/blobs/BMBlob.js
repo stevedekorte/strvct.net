@@ -55,7 +55,6 @@
 
     init () {
         super.init()
-        this.setNodeMinWidth(600)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setCanDelete(true)

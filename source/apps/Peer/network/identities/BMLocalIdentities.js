@@ -23,7 +23,6 @@
         this.setNoteIsSubnodeCount(true)
         
         this._didChangeIdentitiesNote = this.newNoteNamed("didChangeIdentities")
-        this.setNodeMinWidth(240)
         this.setNodeCanReorderSubnodes(true)
     }
 

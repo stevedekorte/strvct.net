@@ -33,7 +33,6 @@
         super.init()
 		
         this.setTitle("Network")
-        this.setNodeMinWidth(250)
         
         this.setConnection(BMConnection.shared())
         this.addSubnode(this.connection())

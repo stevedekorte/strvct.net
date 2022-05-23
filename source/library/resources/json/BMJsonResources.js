@@ -21,7 +21,6 @@
     init () {
         super.init()
         this.setTitle("Json")
-        this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         //this.setSubnodeClasses([BMJsonResource])
         this.watchOnceForNote("appDidInit")

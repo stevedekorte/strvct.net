@@ -14,9 +14,7 @@
 
     init () {
         super.init()
-
         this.setTitle("BMFileSystemFolder")
-        this.setNodeMinWidth(270)
         this.setNoteIsSubnodeCount(true)
         //this.watchOnceForNote("appDidInit")
         return this

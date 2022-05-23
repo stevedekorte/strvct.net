@@ -126,6 +126,18 @@
 
     // --- cache ---
 
+    prepareToRetire () {
+        // Don't retire the view while we are caching it.
+        // Caching is only used during drag & drop now, 
+        // but might be used elsewhere in the future.
+        // TODO: When it is, maybe we should rename cache sto instanceCache and move to Object?
+        // TODO: should we pause events and observations while cached?
+        if (this.isCached()) {
+            return false;
+        }
+        return super.prepareToRetire()
+    }
+
     cacheId () {
         return this.node().typeId()
     }
@@ -141,6 +153,7 @@
 
     uncache () {
         this.thisClass().instanceCache().removeKey(this.cacheId())
+        this.retireIfNoParent()
         return this
     }
 

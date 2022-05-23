@@ -17,7 +17,6 @@
         this.setShouldStore(true)
         this.setTitle("STUN Servers")
         this.setNoteIsSubnodeCount(true)
-        this.setNodeMinWidth(270)
         this.addAction("add")
         this.setCanDelete(true)
         this.setSubnodeProto(BMStunServer)

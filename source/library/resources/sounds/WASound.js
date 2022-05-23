@@ -37,7 +37,6 @@
 
     init () {
         super.init()
-        this.setNodeMinWidth(270)
     }
 
     title () {

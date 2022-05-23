@@ -17,7 +17,6 @@
 
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
-        this.setNodeMinWidth(300)
 
         this.setTitle("a day")
         this.setNodeCanEditTitle(false)

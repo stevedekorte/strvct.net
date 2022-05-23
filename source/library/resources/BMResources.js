@@ -27,11 +27,8 @@
     init () {
         super.init()
         this.setShouldStore(false)
-
         this.setTitle("Resources")
         this.setSubtitle("")
-        this.setNodeMinWidth(200)
-
         this.setupSubnodes()
         //this.watchOnceForNote("appDidInit")
     }

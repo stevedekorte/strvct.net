@@ -17,8 +17,6 @@
         super.init()
 
         this.setCanDelete(true)
-        this.setNodeMinWidth(300)
-
         this.setNodeCanEditTitle(true)
 
         //this.setSubnodeProto(BMFolderNode)

@@ -25,7 +25,6 @@
         //this.setShouldStoreSubnodes(false)
         this._didChangeIdentitiesNote = this.newNoteNamed("didChangeIdentities")
         this.watchIdentity()
-        this.setNodeMinWidth(240)
     }
 
     didLoadFromStore () {

@@ -29,7 +29,7 @@
 
     nodeInspector () {
         if (!this._nodeInspector) {
-            this._nodeInspector = BaseNode.clone().setNodeMinWidth(150)
+            this._nodeInspector = BaseNode.clone()
             this.initNodeInspector()
         }
         return this._nodeInspector
@@ -67,7 +67,6 @@
             node = this.subnodeWithTitleIfAbsentInsertClosure(component, () => {
                 const node = Object.getClassNamed(pathSubnodeType).clone()
                 node.setTitle(component)
-                node.setNodeMinWidth(300)
                 return node
             })
         })

@@ -33,7 +33,7 @@
         this.setRemotePeers(BMRemotePeers.clone())
         this.addSubnode(this.remotePeers())
 
-        this.setStatusLog(BaseNode.clone().setTitle("log").setNodeMinWidth(300))
+        this.setStatusLog(BaseNode.clone().setTitle("log"))
         this.addSubnode(this.statusLog())
         this.statusLog().addAction("deleteAll")
         this.statusLog().deleteAll = function () {

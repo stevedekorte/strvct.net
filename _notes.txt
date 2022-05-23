@@ -1,10 +1,8 @@
 
-- break off titling to TitledNode?
 
-- break off Node actions to ActableNode?
+- move node actions into slot annotation?
 
-- split off styling code from BMNode into subclass BMStyledNode
--- should this be before or after BMStorableNode?
+
 -- should we support a initAsMixin? How does method overriding order work with Mixins? based on mix order?
 
 - StackNavView controls rendering borders 

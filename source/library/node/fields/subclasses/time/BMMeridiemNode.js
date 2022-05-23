@@ -19,7 +19,6 @@
 
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
-        this.setNodeMinWidth(300)
 
         this.setTitle("a month")
         this.setNodeCanEditTitle(true)
