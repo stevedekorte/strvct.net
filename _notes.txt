@@ -2,8 +2,10 @@
 
 - move node actions into slot annotation?
 
+- remove BMFieldSetNode and move addFieldNamed and addField use to addSlot with annotations
 
--- should we support a initAsMixin? How does method overriding order work with Mixins? based on mix order?
+
+-- should we support a Object.initAsMixin? How does method overriding order work with Mixins? based on mix order?
 
 - StackNavView controls rendering borders 
 -- somehow allow node or subviews to request no border?

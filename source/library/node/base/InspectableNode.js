@@ -76,10 +76,12 @@
 
     // --- fields ---
     
+    /*
     addLinkFieldForNode (aNode) {
         const field = BMLinkField.clone().setName(aNode.title()).setValue(aNode)
         return this.addStoredField(field)
     }
+    */
     
     addField (aField) {
         throw new Error("addField shouldn't be called - use BMFieldSetNode")
