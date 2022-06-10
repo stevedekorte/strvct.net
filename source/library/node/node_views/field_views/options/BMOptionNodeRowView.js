@@ -9,6 +9,7 @@
 
 (class BMOptionNodeRowView extends BrowserTitledRow {
     
+    /*
     initPrototype () {
 
     }
@@ -18,6 +19,7 @@
         //this.setHasSubtitle(true)
         return this
     }
+    */
 
     toggle () {
         this.node().toggle()

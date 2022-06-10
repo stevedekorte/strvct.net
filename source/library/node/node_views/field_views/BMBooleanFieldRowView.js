@@ -8,9 +8,10 @@
 
 (class BMBooleanFieldRowView extends BMFieldRowView {
     
+    /*
     initPrototype () {
-
     }
+    */
 
     init () {
         super.init()
@@ -23,11 +24,11 @@
         this.valueView().setPaddingBottom("0em")
 
         //this.contentView().debugBorders()
-        this.titlesSection().subviews().at(1).flexCenterContent()
+        this.kvSection().subviews().at(1).flexCenterContent()
         //this.contentView().setFlexDirection("column")
-        this.titlesSection().setFlexDirection("row").makeSubviewsReverseOrdered()
-        //this.titlesSection().subviews().forEach(sv => sv.setAlignItems("center"))
-        this.titlesSection().subviews().forEach(sv => sv.flexCenterContent())
+        this.kvSection().setFlexDirection("row").makeSubviewsReverseOrdered()
+        //this.kvSection().subviews().forEach(sv => sv.setAlignItems("center"))
+        this.kvSection().subviews().forEach(sv => sv.flexCenterContent())
         //this.keyView().parentView().swapSubviews(this.keyView(), this.valueView())
 
         this.setValueEditableBorder("none")

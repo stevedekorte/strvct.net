@@ -846,8 +846,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
-    "size": 1383,
-    "hash": "JdbOBkkGh5ah9DFT83GV26LE/U4XUuZD5nwZWi+w4hI="
+    "size": 1396,
+    "hash": "XOpNkEvCpDtgmILew/7byD+1tO5LKFMw4gGTzFh1Yfo="
   },
   {
     "path": "source/library/node/fields/subclasses/date/BMDateNode.js",
@@ -1001,23 +1001,23 @@
   },
   {
     "path": "source/library/node/node_views/field_views/BMFieldRowView.js",
-    "size": 11482,
-    "hash": "LzyE6O5sML57+sf6zkpLqUVIBTF2QcT27D3bIzkbNjU="
+    "size": 11459,
+    "hash": "tBvSLERJ5wRKDomKYwy5kFZB/7XdHTOBXV/cG94bDp0="
   },
   {
     "path": "source/library/node/node_views/field_views/BMActionNodeRowView.js",
-    "size": 1869,
-    "hash": "mbPyV5AaHtw4tYJx7pCmk0alcnQ/OsJ53rYZhBsbytA="
+    "size": 1857,
+    "hash": "zZw/iBrm40h8BJgUXwjbNr3OrmvqLVF3f1E3hcOvQcY="
   },
   {
     "path": "source/library/node/node_views/field_views/BMBooleanFieldRowView.js",
-    "size": 1336,
-    "hash": "ZbUbQOzJkMkVEQEA32ChmOta1rABmiBTjfAxcL0IlnQ="
+    "size": 1333,
+    "hash": "Oh3ugDVGyEzYzGemNI1yfD5pkt8EFZ4iNE19rWF8k/M="
   },
   {
     "path": "source/library/node/node_views/field_views/BMStringFieldRowView.js",
-    "size": 1209,
-    "hash": "1u3X9HTSYdaFCAgwyjNlJXiWSq9dsDGxzJjru4JMgnA="
+    "size": 1216,
+    "hash": "4QHBy5MxtlKec4+lTZ2yi7OQPtxlRdkWfGWNaoO1Jco="
   },
   {
     "path": "source/library/node/node_views/field_views/BMTextAreaFieldRowView.js",
@@ -1031,13 +1031,13 @@
   },
   {
     "path": "source/library/node/node_views/field_views/options/BMOptionsNodeRowView.js",
-    "size": 384,
-    "hash": "pG7z4lMquTuxcsBFGoVjcL57r1Ciy2SN/vZ6IMHEStQ="
+    "size": 398,
+    "hash": "1iqlFt1biGKr/3RGfrcvfsCgcDkjq53PQTR7Cmvns90="
   },
   {
     "path": "source/library/node/node_views/field_views/options/BMOptionNodeRowView.js",
-    "size": 1184,
-    "hash": "rq4ij3RkjjlYqdmayuOL0sPsePYWyQmbogNdYOfcatg="
+    "size": 1198,
+    "hash": "i2WuaT9zsefe4R2V9igXpQ5g4yP79V0+K5j+Zc+c1FU="
   },
   {
     "path": "source/library/node/node_views/field_views/BMPointerFieldRowView.js",

@@ -22,10 +22,11 @@
         this.setNodeCanEditTitle(true)
     }
 
+    /*
     init () {
         super.init()
     }
-
+    */
 
     didUpdateSlotIsPicked (oldValue, newValue) {
         if (this.parentNode()) {

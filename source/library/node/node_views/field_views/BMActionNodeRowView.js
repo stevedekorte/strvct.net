@@ -38,12 +38,12 @@
     updateSubviews () {	
         super.updateSubviews()
 		
+        const node = this.node()
         const bv = this.buttonView()
-        bv.setTitle(this.node().title())
-        
-        this.buttonView().setIsEditable(this.node().nodeCanEditTitle())
+        bv.setTitle(node.title())
+        bv.setIsEditable(node.nodeCanEditTitle())
 
-        if (this.node().isEnabled()) {
+        if (node.isEnabled()) {
             bv.setOpacity(1)	
         } else {
             bv.setOpacity(0.5)	

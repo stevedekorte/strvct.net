@@ -15,6 +15,7 @@
 
 (class BMOptionsNodeRowView extends BrowserTitledRow {
     
+    /*
     initPrototype () {
 
     }
@@ -23,5 +24,6 @@
         super.init()
         return this
     }
+    */
 	
 }.initThisClass());

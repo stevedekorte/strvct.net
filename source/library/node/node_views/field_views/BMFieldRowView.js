@@ -4,6 +4,8 @@
 
     BMFieldRowView
 
+    Row 
+
 */
 
 
@@ -13,7 +15,7 @@
         this.newSlot("allowsCursorNavigation", false)
         this.newSlot("vPadding",  "0.1em")
 
-        this.newSlot("titlesSection", null)
+        this.newSlot("kvSection", null)
         this.newSlot("keyViewContainer", null)
         this.newSlot("valueViewContainer", null)
 
@@ -63,14 +65,14 @@
         this.setTextAlign("left")
 
         {
-            this.setTitlesSection(this.contentView().newFlexSubview().setDivClassName("TitlesSection"))
-            this.titlesSection().setFlexDirection("column")
+            this.setKvSection(this.contentView().newFlexSubview().setDivClassName("KvSection"))
+            this.kvSection().setFlexDirection("column")
 
-            this.setKeyViewContainer(this.titlesSection().newFlexSubview().setDivClassName("KeyViewContainer"))
+            this.setKeyViewContainer(this.kvSection().newFlexSubview().setDivClassName("KeyViewContainer"))
             this.keyViewContainer().setAlignItems("flex-start")
             this.setupKeyView()
 
-            this.setValueViewContainer(this.titlesSection().newFlexSubview().setDivClassName("ValueViewContainer"))
+            this.setValueViewContainer(this.kvSection().newFlexSubview().setDivClassName("ValueViewContainer"))
             this.valueViewContainer().setAlignItems("flex-start")
             this.setupValueView()
 
@@ -86,7 +88,6 @@
             })
         }
 
-        
         return this
     }
 

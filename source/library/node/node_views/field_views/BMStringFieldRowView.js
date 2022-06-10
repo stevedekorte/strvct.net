@@ -8,16 +8,16 @@
 
 (class BMStringFieldRowView extends BMFieldRowView {
     
+    /*
     initPrototype () {
-
     }
 
     init () {
         super.init()
-        
         return this
     }
-
+    */
+   
     createValueView () {
         const v = TextField.clone()
         v.setDisplay("block")
