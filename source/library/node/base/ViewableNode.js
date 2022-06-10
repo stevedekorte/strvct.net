@@ -17,7 +17,7 @@
     
     initPrototype () {
         this.newSlot("nodeViewClassName", null)
-        this.newSlot("nodeRowViewClassName", null)
+        this.newSlot("nodeTileClassName", null)
         this.newSlot("nodeThumbnailUrl", null)
 
         {
@@ -93,7 +93,7 @@
         return this.nodeIsVertical() ? "right" : "down" 
     }
 
-     // --- nodeViewClass and nodeRowViewClass ---
+     // --- nodeViewClass and nodeTileClass ---
     
      nodeViewClass () {
         const name = this.nodeViewClassName()
@@ -108,10 +108,10 @@
 	  	return this.firstAncestorClassWithPostfix("View") 
     }
 
-    // --- nodeRowViewClass ---
+    // --- nodeTileClass ---
 
-    nodeRowViewClass () {  
-        const name = this.nodeRowViewClassName()
+    nodeTileClass () {  
+        const name = this.nodeTileClassName()
 
         if (name) {
             const proto = Object.getClassNamed(name)
@@ -120,7 +120,7 @@
             }
         }
 
-	  	return this.firstAncestorClassWithPostfix("RowView")
+	  	return this.firstAncestorClassWithPostfix("Tile")
     }
 
     onBrowserDropChunk (dataChunk) {

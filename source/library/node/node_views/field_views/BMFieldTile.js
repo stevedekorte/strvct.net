@@ -2,14 +2,18 @@
 
 /*
 
-    BMFieldRowView
+    BMFieldTile
 
-    Row 
+    Field views are rows that present nodes which have key/value pairs, 
+    such as those representing slots, or other named properties.
+
+    The idea is to use the field as the container, and then get
+    a custom value view to present in the value area. 
 
 */
 
 
-(class BMFieldRowView extends BrowserRow {
+(class BMFieldTile extends BrowserRow {
     
     initPrototype () {
         this.newSlot("allowsCursorNavigation", false)
@@ -128,7 +132,7 @@
     }
 
     setupNoteView () {
-        const v = DomView.clone().setDivClassName("BMFieldRowViewNoteView")
+        const v = DomView.clone().setDivClassName("BMFieldTileNoteView")
         v.setDisplay("block")
         v.setPosition("relative")
         v.setOverflow("hidden")
@@ -146,7 +150,7 @@
     }
 
     setupErrorView () {
-        const v = DomView.clone().setDivClassName("BMFieldRowViewErrorView")
+        const v = DomView.clone().setDivClassName("BMFieldTileErrorView")
         v.setUserSelect("text")
         v.setSpellCheck(false)
         //v.setInnerHtml("error")

@@ -650,7 +650,7 @@
             }
 
             if (this.isFocused() && node.nodeUrlLink) {
-                // TODO: move to specialized view (something like UrlLinkRowView?) 
+                // TODO: move to specialized view (something like UrlLinkTile?) 
                 if (!BMKeyboard.shared().hasKeysDown()) {
                     const url = node.nodeUrlLink()
                     window.open(url, "_blank")

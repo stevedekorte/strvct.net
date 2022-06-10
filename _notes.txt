@@ -1,5 +1,8 @@
 
 
+- bug with dragging a row to a parent node
+--- could prepareToRetire be removing the node ref?
+
 - Rename RowView to Tile.
 
 TODO:

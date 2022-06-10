@@ -2,11 +2,11 @@
 
 /*
 
-    BMBooleanFieldRowView
+    BMBooleanFieldTile
 
 */
 
-(class BMBooleanFieldRowView extends BMFieldRowView {
+(class BMBooleanFieldTile extends BMFieldTile {
     
     /*
     initPrototype () {

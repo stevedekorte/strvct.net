@@ -1,11 +1,11 @@
 [
     "_css.css",
-    "BMFieldRowView.js",
-    "BMActionNodeRowView.js",
-    "BMBooleanFieldRowView.js",
-    "BMStringFieldRowView.js",
-    "BMTextAreaFieldRowView.js",
-    "BMImageWellFieldRowView.js",
+    "BMFieldTile.js",
+    "BMActionNodeTile.js",
+    "BMBooleanFieldTile.js",
+    "BMStringFieldTile.js",
+    "BMTextAreaFieldTile.js",
+    "BMImageWellFieldTile.js",
     "options/_imports.json",
-    "BMPointerFieldRowView.js"
+    "BMPointerFieldTile.js"
 ]

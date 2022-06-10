@@ -3,6 +3,6 @@
     "BMChatThreads.js",
     "BMChatThread.js",
     "BMChatMessage.js",
-    "BMChatMessageRowView.js"
+    "BMChatMessageTile.js"
 ]
 

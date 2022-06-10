@@ -2,11 +2,11 @@
 
 /*
     
-    BreadCrumbRowView
+    BreadCrumbTile
     
 */
 
-(class BreadCrumbRowView extends BrowserRow {
+(class BreadCrumbTile extends BrowserRow {
     
     initPrototype () {
         this.newSlot("path", null)

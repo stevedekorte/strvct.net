@@ -2,11 +2,11 @@
 
 /*
 
-    BMStringFieldRowView
+    BMStringFieldTile
 
 */
 
-(class BMStringFieldRowView extends BMFieldRowView {
+(class BMStringFieldTile extends BMFieldTile {
     
     /*
     initPrototype () {
@@ -17,7 +17,7 @@
         return this
     }
     */
-   
+
     createValueView () {
         const v = TextField.clone()
         v.setDisplay("block")

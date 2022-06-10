@@ -2,12 +2,12 @@
 
 /*
 
-    BMTextAreaFieldRowView
+    BMTextAreaFieldTile
 
     
 */
 
-(class BMTextAreaFieldRowView extends BMFieldRowView {
+(class BMTextAreaFieldTile extends BMFieldTile {
     
     initPrototype () {
     }

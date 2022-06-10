@@ -2,11 +2,11 @@
 
 /*
 
-    BMActionNodeRowView
+    BMActionNodeTile
 
 */
 
-(class BMActionNodeRowView extends BrowserRow {
+(class BMActionNodeTile extends BrowserRow {
     
     initPrototype () {
         this.newSlot("buttonView", null)

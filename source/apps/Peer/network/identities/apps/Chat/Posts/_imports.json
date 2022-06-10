@@ -4,5 +4,5 @@
     "BMMyPosts.js",
     "BMPostMessage.js",
     "BMPostThread.js",
-    "BMPostMessageRowView.js"
+    "BMPostMessageTile.js"
 ]

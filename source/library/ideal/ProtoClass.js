@@ -612,7 +612,7 @@
     firstAncestorClassWithPostfix (aPostfix) {
         // not a great name but this walks back the ancestors (including self) and tries to find an
         // existing class with the same name as the ancestor + the given postfix
-        // useful for things like type + "View" or type + "RowView", etc
+        // useful for things like type + "View" or type + "Tile", etc
         //this.debugLog(" firstAncestorClassWithPostfix(" + aPostfix + ")")
         const classes = this.thisClass().ancestorClassesIncludingSelf()
         for (let i = 0; i < classes.length; i++) {

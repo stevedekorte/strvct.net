@@ -84,7 +84,7 @@
         debugger;
         //console.log("looking for subviewProto")
         if (this.node()) {
-            const vc = this.node().nodeRowViewClass()
+            const vc = this.node().nodeTileClass()
             if (vc) { 
                 return vc
             }

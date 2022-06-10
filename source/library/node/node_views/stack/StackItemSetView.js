@@ -445,7 +445,7 @@
     // --- sync -----------------------------
 
     subviewProtoForSubnode (aSubnode) {
-        let proto = aSubnode.nodeRowViewClass() // we need this to get row versions of view
+        let proto = aSubnode.nodeTileClass() // we need this to get row versions of view
 		
         if (!proto) {
             proto = this.defaultSubviewProto()

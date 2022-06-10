@@ -2,11 +2,11 @@
 
 /*
 
-    BMImageWellFieldRowView
+    BMImageWellFieldTile
 
 */
 
-(class BMImageWellFieldRowView extends BMFieldRowView {
+(class BMImageWellFieldTile extends BMFieldTile {
     
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?

@@ -12,9 +12,9 @@
 
     browserNode:
         subnodes:
-            headerNode -> HeaderRowView 
+            headerNode -> HeaderTile 
             subnodes:
-                appRootNode -> BreadCrumbRowView 
+                appRootNode -> BreadCrumbTile 
 
 
 */
@@ -45,7 +45,7 @@
 
     setupHeaderNode () {
         const node = BaseNode.clone()
-        node.setNodeRowViewClassName("HeaderRowView")
+        node.setNodeTileClassName("HeaderTile")
         node.setNodeMinRowHeight(55)
         node.setTitle("header")
         node.setNodeIsVertical(false) 
@@ -55,7 +55,7 @@
     }
 
     didUpdateSlotBaseNode (oldValue, newValue) {
-        newValue.setNodeRowViewClassName("BreadCrumbRowView")
+        newValue.setNodeTileClassName("BreadCrumbTile")
         newValue.setTitle("breadcrumb")
         this.headerNode().removeAllSubnodes()
         this.headerNode().addSubnode(newValue)

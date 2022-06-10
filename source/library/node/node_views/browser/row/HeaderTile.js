@@ -2,11 +2,11 @@
 
 /*
     
-    HeaderRowView
+    HeaderTile
     
 */
 
-(class HeaderRowView extends BrowserTitledRow {
+(class HeaderTile extends BrowserTitledRow {
     
     initPrototype () {
     }

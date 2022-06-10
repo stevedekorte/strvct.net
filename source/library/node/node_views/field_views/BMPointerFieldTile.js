@@ -2,11 +2,11 @@
 
 /*
 
-    BMPointerFieldRowView
+    BMPointerFieldTile
 
 */
 
-(class BMPointerFieldRowView extends BrowserTitledRow {
+(class BMPointerFieldTile extends BrowserTitledRow {
     
     initPrototype () {
 

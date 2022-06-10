@@ -2,12 +2,12 @@
 
 /*
 
-    BMOptionNodeRowView 
+    BMOptionNodeTile 
 
  
 */
 
-(class BMOptionNodeRowView extends BrowserTitledRow {
+(class BMOptionNodeTile extends BrowserTitledRow {
     
     /*
     initPrototype () {

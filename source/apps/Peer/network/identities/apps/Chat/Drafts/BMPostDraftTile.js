@@ -2,13 +2,13 @@
 
 /*
 
-    BMPostDraftRowView
+    BMPostDraftTile
 
 
 
 */
 
-(class BMPostDraftRowView extends BrowserRow {
+(class BMPostDraftTile extends BrowserRow {
     
     initPrototype () {
         this.newSlot("topView", null)

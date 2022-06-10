@@ -2,11 +2,11 @@
 
 /*
     
-    BMFontRowView
+    BMFontTile
     
 */
 
-(class BMFontRowView extends BrowserTitledRow {
+(class BMFontTile extends BrowserTitledRow {
     
     initPrototype () {
 

@@ -2,11 +2,11 @@
 
 /*
 
-    BMChatMessageRowView
+    BMChatMessageTile
 
 */
 
-(class BMChatMessageRowView extends BrowserTitledRow {
+(class BMChatMessageTile extends BrowserTitledRow {
     
     initPrototype () {
 

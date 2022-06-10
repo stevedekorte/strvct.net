@@ -2,11 +2,11 @@
 
 /*
     
-    BMTextNodeRowView
+    BMTextNodeTile
     
 */
 
-(class BMTextNodeRowView extends BrowserRow {
+(class BMTextNodeTile extends BrowserRow {
     
     initPrototype () {
         this.newSlot("textView", null)
