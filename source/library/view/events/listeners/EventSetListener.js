@@ -18,6 +18,13 @@
 
 (class EventSetListener extends ProtoClass {
     
+    static initThisClass () {
+        super.initThisClass()
+        this.setClassVariable("_eventLevelCount", 0)
+        this.setClassVariable("_hasReceivedEvent", false)
+        return this
+    }
+
     initPrototype () {
         this.newSlot("listenTarget", null)
         this.newSlot("delegate", null)
@@ -25,8 +32,40 @@
         this.newSlot("eventsDict", null).setComment("should only write from within class & subclasses")
         this.newSlot("useCapture", false).setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree")
         this.newSlot("methodSuffix", "")
-        this.newSlot("hasReceivedEvent", false)
+    }
 
+    static hasReceivedEvent () {
+        return this._hasReceivedEvent
+    }
+
+    static setHasReceivedEvent (aBool) {
+        assert(Type.isBoolean(aBool))
+        this._hasReceivedEvent = aBool
+        return this
+    }
+
+    static eventLevelCount () {
+        return this._eventLevelCount
+    }
+
+    static setEventLevelCount (n) {
+        assert(n > -1)
+        this._eventLevelCount = n
+        return this
+    }
+
+    static incrementEventLevelCount () {
+        if (this.eventLevelCount() > 0) {
+            console.warn("eventCountLevel = ", this.eventLevelCount())
+            debugger;
+        }
+        this.setEventLevelCount(this.eventLevelCount() + 1)
+        return this
+    }
+
+    static decrementEventLevelCount () {
+        this.setEventLevelCount(this.eventLevelCount() - 1)
+        return this
     }
 
     init () {
@@ -129,50 +168,9 @@
         this.assertHasListenTarget()
 
         this.eventsDict().ownForEachKV((eventName, dict) => {
-            const fullMethodName = this.fullMethodNameFor(dict.methodName)
-            dict.handlerFunc = (event) => { 
-                event._isUserInteraction = dict.isUserInteraction
-
-                /*
-                if (!event._id) {
-                    event._id = Math.floor(Math.random()*100000) // TODO: remove when not debugging
-                }
-                */
-
-                const delegate = this.delegate()
-                const method = delegate[fullMethodName]
-                
-                //console.log("fullMethodName = " + fullMethodName)
-
-                this.onBeforeEvent(fullMethodName, event)
-
-                //try {
-                let result = true
-                if (method) {
-                    result = method.apply(delegate, [event]); 
-
-                    if (this.isDebugging()) {
-                        console.log("sent: " + delegate.type() + "." + fullMethodName, "(" + event.type + ") and returned " + result)
-                    }
-
-                    if (result === false) {
-                        event.stopPropagation()
-                        event.preventDefault()
-                    }
-                } else {
-                    if (this.isDebugging()) {
-                        console.log(this.listenTargetDescription() + " MISSING method: " + delegate.type() + "." + fullMethodName, "(" + event.type + ")" )
-                    }
-                }
-
-                // } catch (e) {
-
-                //}
-
-                this.onAfterEvent(fullMethodName, event)
-
-                return result
-            }
+            dict.handlerFunc = (event) => {
+                return this.safeHandleEvent(event, dict)
+            };
             dict.useCapture = this.useCapture()
 
             if (this.isDebugging()) {
@@ -185,6 +183,74 @@
         return this
     }
 
+    safeHandleEvent (event, dict) {
+        let result = undefined
+        try { // ensure an exception doesn't cause us to skip the event level count decrement
+            this.thisClass().incrementEventLevelCount()
+            result = this.handleEvent(event, dict)
+            this.thisClass().decrementEventLevelCount()
+        } catch (e) {
+            this.thisClass().decrementEventLevelCount()
+            throw e
+        }
+
+        return result
+    }
+
+    handleEvent (event, dict) {
+        const fullMethodName = this.fullMethodNameFor(dict.methodName)
+        event._isUserInteraction = dict.isUserInteraction
+
+        /*
+        if (!event._id) {
+            event._id = Math.floor(Math.random()*100000) // TODO: remove when not debugging
+        }
+        */
+
+        const delegate = this.delegate()
+        const method = delegate[fullMethodName]
+        
+        //console.log("fullMethodName = " + fullMethodName)
+
+        /*
+        if (Type.isNullOrUndefined(delegate) || Type.isNullOrUndefined(method)) {
+            console.warn(" attempt to process '" + fullMethodName + "' event without a delegate")
+            return 
+        }
+        */
+
+        //try {
+        let result = true
+        if (method) {
+            this.onBeforeEvent(fullMethodName, event)
+
+            result = method.apply(delegate, [event]); 
+
+            if (this.isDebugging()) {
+                console.log("sent: " + delegate.type() + "." + fullMethodName, "(" + event.type + ") and returned " + result)
+            }
+
+            if (result === false) {
+                event.stopPropagation()
+                event.preventDefault()
+            }
+
+            this.onAfterEvent(fullMethodName, event)
+        } else {
+            if (this.isDebugging()) {
+                console.log(this.listenTargetDescription() + " MISSING method: " + delegate.type() + "." + fullMethodName, "(" + event.type + ")" )
+            }
+        }
+
+        // } catch (e) {
+
+        //}
+
+
+        return result
+    }
+
+
     onBeforeEvent (methodName, event) {
         /*
         const a = methodName.contains("Capture") ||  methodName.contains("Focus") || methodName.contains("Move") || methodName.contains("Leave") || methodName.contains("Enter") || methodName.contains("Over")
@@ -196,16 +262,21 @@
     }
 
     onAfterEvent (methodName, event) {
-
         //console.log("event: ", methodName)
-        if (!this.hasReceivedEvent() && event._isUserInteraction) {
-            // In normal web use, thinds like WebAudio context can't be created until 
+        if (!this.thisClass().hasReceivedEvent() && event._isUserInteraction) {
+            // In normal web use, things like WebAudio context can't be created until 
             // we get first user interaction. So we send this event to let listeners know when
             // those APIs can be used. Would help if JS sent a special event for this.
-            this.setHasReceivedEvent(true)
+            this.thisClass().setHasReceivedEvent(true)
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
         }
 
+        this.syncIfAppropriate()
+
+        return this
+    }
+
+    syncIfAppropriate () {
         if (getGlobalThis().SyncScheduler) {
             /*
                 run scheduled events here to ensure that a UI event won't occur
@@ -223,7 +294,16 @@
                 this.debugLog(" onAfterEvent " + methodName)
             }
             */
-            SyncScheduler.shared().fullSyncNow()
+           assert(this.thisClass().eventLevelCount() > 0)
+           if (this.thisClass().eventLevelCount() === 1) { 
+                // we check event level count to ensure that we only 
+                // sync when the stack fully unwinds back to the event loop.
+                // This is not the case for some events like onblur which can be triggered by
+                // removing a DOM element from a parent, and start an event callback before the
+                // current event stack has unwound.
+                console.log("--->>> sync scheduler running, eventLevelCount = " + this.thisClass().eventLevelCount())
+                SyncScheduler.shared().fullSyncNow()
+           }
         }
         return this
     }

@@ -51,7 +51,7 @@
 
         this.appDidInit()
 
-        //setTimeout( () => this.showClasses(), 1)
+        //this.addTimeout( () => this.showClasses(), 1)
     }
 
     showClasses () {

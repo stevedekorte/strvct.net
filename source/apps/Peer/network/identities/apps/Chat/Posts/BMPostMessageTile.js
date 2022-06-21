@@ -6,7 +6,7 @@
 
 */
 
-(class BMPostMessageTile extends BrowserRow {
+(class BMPostMessageTile extends Tile {
     
     initPrototype () {
         this.newSlot("leftView", null)
@@ -96,7 +96,7 @@
     }
 
     addCloseButton () {
-        // avoid adding normal BrowserRow closeButtonView
+        // avoid adding normal Tile closeButtonView
         return this
     }
 

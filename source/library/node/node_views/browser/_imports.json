@@ -1,6 +1,6 @@
 [
     "_css.css",
-    "row/_imports.json",
-    "BrowserView.js",
-    "BrowserHeader.js"
+    "stack/_imports.json",
+    "tiles/_imports.json",
+    "BrowserView.js"
 ]

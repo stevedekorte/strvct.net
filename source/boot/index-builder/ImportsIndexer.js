@@ -50,6 +50,17 @@ const process = require('process');
 class IndexBuilder { 
     constructor () {
         this._paths = [] 
+        this._isDebugging = true
+    }
+
+    isDebugging () {
+        return this._isDebugging
+    }
+
+    debugLog (s) {
+        if (this.isDebugging()) {
+            console.log(s)
+        }
     }
 
     paths () {
@@ -184,6 +195,9 @@ class IndexBuilder {
 
     compressCam () {
         const inputData = fs.readFileSync(this.outCamPath(),  "utf8")
+        
+        this.debugLog("ImportsIndexer writing '" + this.outCamPath() + "'")
+
         zlib.gzip(inputData, (error, zippedData) => {
             if (!error) {
                 fs.writeFileSync(this.outCamPath() + ".zip", zippedData)

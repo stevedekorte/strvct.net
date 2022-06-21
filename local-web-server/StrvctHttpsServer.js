@@ -50,10 +50,13 @@ const nodePath = require('path');
 		})
 		this._server.listen(this.port());
 
+		const sandboxPath =  process.cwd()
+		console.log("process.cwd(): '" + sandboxPath + "'")
 		console.log("listening on port " + this.port() + " - connect with https://" + this.hostname() + ":" + this.port() + "/index.html")
 	}
 
-	onRequest(request, response) {
+	onRequest (request, response) {
+		//console.log("got request ", request)
 		const r = new StrvctHttpsServerRequest()
 		r.setServer(this)
 		r.setRequest(request)
@@ -62,12 +65,13 @@ const nodePath = require('path');
 		r.process()
 	}
 
-	wait(ms) {
+	wait (ms) {
 		console.log("wait(" + ms + ")");
 		const start = Date.now();
 		while (Date.now() - start < ms) {
 			// do nothing
 		}
 	}
+
 }.initThisClass());
 

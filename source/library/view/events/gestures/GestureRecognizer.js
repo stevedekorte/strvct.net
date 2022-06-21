@@ -312,7 +312,7 @@
 
         // why do we do this with a delay?
         // is it needed now to prevent a move
-        setTimeout(() => { 
+        this.addTimeout(() => { 
             GestureManager.shared().removeBegunGesture(this)
             this.deactivate();
         }, 0)
@@ -833,7 +833,7 @@
             this._debugTimerId = null
         }
 
-        this._debugTimerId = setTimeout(() => { 
+        this._debugTimerId = this.addTimeout(() => { 
             this._debugTimerId = null
             this.updateDebugger() 
         }, 100);

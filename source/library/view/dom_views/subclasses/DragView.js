@@ -90,6 +90,7 @@
         this.newSlot("dragOperation", "move").setDoesHookSetter(true)
 
         this.newSlot("slideBackPeriod", 0.2) // seconds
+        this.newSlot("isClosed", false) 
     }
 
     didUpdateSlotDragOperation () {
@@ -115,6 +116,13 @@
         return this
     }
 
+    prepareToRetire () {
+        super.prepareToRetire()
+        console.log(this.debugTypeId() + " prepareToRetire() isClosed: " + this.isClosed())
+        debugger;
+        return this
+    }
+
     // operation type helpers
 
     isCopyOp () {
@@ -134,6 +142,14 @@
     }
 
     // ----
+
+    setItems (viewArray) {
+        //this._items.forEach(v => v.viewRelease())
+        this._items = viewArray
+        this._items.forEach(v => v.viewRetain())
+        console.log(this.type() + " setItems(" + JSON.stringify(viewArray.map(v => v.debugTypeId())) + ")")
+        return this
+    }
 
     setItem (aView) {
         this.setItems([aView])
@@ -235,7 +251,7 @@
         this.setMinAndMaxHeight(y)
         this.setOverflow("visible")
 
-        setTimeout(() => {
+        this.addTimeout(() => {
             this.subviews().forEach(v => v.setTopPx(v._targetTop))
         }, 1)
         */
@@ -476,6 +492,8 @@
         }
 
         if (receiver[methodName]) {
+            // this fails on onDragDestinationEnd method triggered by onMouseUpCapture
+            assert(!receiver.isObjectRetired()) // TODO: temp sanity check
             receiver[methodName].apply(receiver, [this])
         }
     }
@@ -491,9 +509,10 @@
 
         this.removePanStyle()
         DocumentBody.shared().removeSubview(this)
+        this.setItems([])
+        this.setIsClosed(true)
         return this
     }
-
 
     // --- drag style ---
 

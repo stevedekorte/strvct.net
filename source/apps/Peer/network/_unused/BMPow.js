@@ -131,7 +131,7 @@
             if (this.isFinding()) {
                 this.setStatus("generating level " + this.targetDifficulty() + " stamp... " + this.highlightString(this.estimatedPercentageDone() + "%"))               
                 this._updateNote.post()
-                setTimeout(() =>{ 
+                this.addTimeout(() =>{ 
                     this.PRIVATE_findPowLoop()
                 }, 100);
             } 

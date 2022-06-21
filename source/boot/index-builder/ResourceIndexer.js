@@ -19,6 +19,17 @@ const dirPathCommandLineArg = args[2];
 class Folder {
     init () {
         this._path = null
+        this._isDebugging = true
+    }
+
+    isDebugging () {
+        return this._isDebugging
+    }
+
+    debugLog (s) {
+        if (this.isDebugging()) {
+            console.log(s)
+        }
     }
 
     path () {

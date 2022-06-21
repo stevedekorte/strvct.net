@@ -23,9 +23,9 @@
         const obj = new this()
         obj.init()
         return obj
-   }
+    }
 
-   static minimalNewSlot (slotName, slotValue) {
+   static newClassSlot (slotName, slotValue) { 
         if (Object.getOwnPropertyDescriptor(slotName)) {
                 this[slotName] = slotValue
         } else {
@@ -35,7 +35,7 @@
                 value: slotValue,
                 writable: true,
             }
-            Object.defineProperty(obj, slotName, descriptor)
+            Object.defineProperty(this, slotName, descriptor)
         }
         return this
    }
@@ -444,10 +444,12 @@
     }
 
     newSlot (slotName, initialValue, allowOnInstance=false) {
+        /*
         if (Reflect.ownKeys(this).contains(slotName)) {
-            //const msg = "WARNING: " + this.type() + "." + slotName + " slot already exists"
-            //console.log(msg) 
+            const msg = "WARNING: " + this.type() + "." + slotName + " slot already exists"
+            throw new Error(msg)
         }
+        */
 
         if (this.hasOwnSlotObject(slotName)) {
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"

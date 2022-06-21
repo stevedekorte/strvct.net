@@ -1,4 +1,5 @@
 
+/*
 .BrowserDefaultHeader {
     position: absolute;
     top: 0px;
@@ -10,6 +11,7 @@
     font-style: bold;
 	z-index: 1;
 }
+*/
 
 .BrowserScrollView::-webkit-scrollbar { 
     display: none;  /*  removes scrollbars on Safari and Chrome */

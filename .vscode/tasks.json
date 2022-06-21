@@ -11,7 +11,7 @@
                 "local-web-server/main.js"
             ],
             "options": {
-                "cwd": "${workspaceRoot}",
+                "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
                 "isBackground": "true",
             },
@@ -26,7 +26,8 @@
             "label": "Build",
             "dependsOn": [
                 "build _index.json & _cam.json",
-                "auto index resources"
+                "auto index resources",
+                "show workspaceFolder"
             ]
         },
 
@@ -38,9 +39,9 @@
                 "./source/boot/index-builder/ImportsIndexer.js"
             ],
             "options": {
-                "cwd": "${workspaceRoot}",
+                "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
-                "isBackground": false,
+                "isBackground": "false",
             },
             "presentation": {
                 "reveal": "silent",
@@ -51,7 +52,6 @@
             "problemMatcher": []
         },
 
-
         {
             "label": "auto index resources",
             "type": "shell",
@@ -61,15 +61,24 @@
                 "./resources/icons"
             ],
             "options": {
-                "cwd": "${workspaceRoot}",
+                "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
-                "isBackground": false,
+                "isBackground": "false",
             },
             "presentation": {
                 "reveal": "silent",
                 "panel": "shared"
             },
             "problemMatcher": [],
+        },
+
+        {
+            "label": "show workspaceFolder",
+            "type": "shell",
+            "command": "echo", 
+            "args": [ 
+                "workspaceFolder is [${workspaceFolder}]"
+            ],
         }
 
     ]

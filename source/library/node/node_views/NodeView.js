@@ -24,10 +24,18 @@
         return this
     } //.setDocs("init", "initializes the object", "returns this"),
     
+    setParentView (v) {
+        if (Type.isNull(v)) {
+            console.log(this.debugTypeId() + " setParentView(null)")
+        }
+        return super.setParentView(v)
+    }
     
     prepareToRetire () {
+        console.log(this.debugTypeId() + " prepareToRetire *********")
         this.setNode(null)
         super.prepareToRetire()
+        return this
     }
 	
     setNode (aNode) {
@@ -46,6 +54,7 @@
     updateElementIdLabel () {
         const nodeId = this.node() ? this.node().debugTypeId() : "null"
         this.element().id = this.debugTypeId() + " for node " + nodeId
+        return this
     }
     
     didChangeNode () {

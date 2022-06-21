@@ -129,7 +129,7 @@
     
     startConnectTimeout () {
         const timeoutSeconds = 45
-        setTimeout(() => { 
+        this.addTimeout(() => { 
             if (!this.isConnected()) {
                 this.log(" connection timeout")
                 this.close()

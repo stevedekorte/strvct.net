@@ -1,0 +1,11 @@
+
+
+.BMFieldValueView br {
+    display: none;
+}
+
+.BMFieldValueView * {
+    display: inline;
+    white-space: nowrap;
+}
+

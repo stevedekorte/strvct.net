@@ -47,7 +47,7 @@
             this.stopTimer()
         }
 
-        const tid = setTimeout(() => { this.onLongPress() }, this.timePeriod());
+        const tid = this.addTimeout(() => { this.onLongPress() }, this.timePeriod());
         this.setTimeoutId(tid)
         this.startDocListeners() // didFinish will stop listing
         return this

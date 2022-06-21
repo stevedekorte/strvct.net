@@ -9,7 +9,7 @@
     happen at the end of an event loop, so a shared SyncScheduler instance is used to
     track which sync actions should be sent at the end of the event loop and only sends each one once. 
 
-    SyncScheduler should be used to replace most cases where setTimeout() would otherwise be used.
+    SyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
 
        example use:
     
@@ -26,7 +26,7 @@
 
         SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView", 1)
 
-    Higher orders will be performed *later* than lower ones. 
+    Higher priorities will be performed *later* than lower ones. 
 
     Some typical sync methods:
 
@@ -138,22 +138,50 @@
         return this.actions().values().select(action => action.target() === target)
     }
 
+    hasActionsForTarget (target) {
+        const match = this.actions().values().detect(action => action.target() === target)
+        return !Type.isNullOrUndefined(match)
+    }
+
     unscheduleTarget (target) {
-        this.actionsForTarget(target).forEach(action => {
-            this.actions().removeKey(action.actionsKey())
-        })
+        if (this.hasActionsForTarget(target)) {
+            console.log("unscheduling target " + target.debugTypeId())
+
+            if (this.isProcessing()) {
+                console.warn("WARNING: SynScheduler unscheduleTarget while processing actions set - will unschedule action")
+                //debugger;
+                //return this
+            }
+
+            this.actionsForTarget(target).forEach(action => {
+                this.removeActionKey(action.actionsKey())
+            })
+        }
+
+ 
+        assert(!this.hasActionsForTarget()) // todo: remove this sanity check
         return this
     }
 
     unscheduleTargetAndMethod (target, syncMethod) {
-        this.actions().removeKey(this.newActionForTargetAndMethod(target, syncMethod).actionsKey())
+        const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey()
+        this.removeActionKey(k)
+        return this
+    }
+
+    removeActionKey (k) {
+        const action = this.actions().at(k)
+        if (action) {
+            action.setIsUnscheduled(true)
+            this.actions().removeKey(k)
+        }
         return this
     }
 	
     setTimeoutIfNeeded () {
 	    if (!this.hasTimeout()) {
             this.setHasTimeout(true)
-	        setTimeout(() => { 
+	        this.addTimeout(() => { 
 	            this.setHasTimeout(false)
 	            this.processSets() 
 	        }, 1)
@@ -191,13 +219,17 @@
         this.clearActions()
  
         actions.forEach((action) => {
-            this.setCurrentAction(action)
-            //const actionError = action.tryToSend()
-            const actionError = action.send()
-            if (actionError) {
-                error = actionError
+            if (action.isUnscheduled()) {
+               debugger;
+            } else {
+                this.setCurrentAction(action)
+                //const actionError = action.tryToSend()
+                const actionError = action.send()
+                if (actionError) {
+                    error = actionError
+                }
+                this.setCurrentAction(null)
             }
-            this.setCurrentAction(null)
         })
         
         this.setCurrentAction(null)

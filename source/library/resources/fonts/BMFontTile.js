@@ -6,7 +6,7 @@
     
 */
 
-(class BMFontTile extends BrowserTitledRow {
+(class BMFontTile extends TitledTile {
     
     initPrototype () {
 

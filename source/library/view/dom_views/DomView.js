@@ -55,27 +55,55 @@
         this.newSlot("hiddenMinHeight", undefined)
         this.newSlot("hiddenMaxHeight", undefined)
         this.newSlot("hiddenTransitionValue", undefined)
+
+        this.newSlot("viewRetainCount", 0) // needed to avoid prepareToRetire on views during drag or cached
     }
 
     init () {
         super.init()
         this.setSubviews([])
-        this.setupElement()
         this.setEventListenersDict({})
+        this.setupElement()
         return this
     }
 
     // retiring
 
+    viewRelease () {
+        this.setViewRetainCount(this.viewRetainCount() - 1)
+        assert(this.viewRetainCount() > -1)
+        return this
+    }
+
+    viewRetain () {
+        this.setViewRetainCount(this.viewRetainCount() + 1)
+        return this
+    }
+
     retireIfNoParent () {
-        if (!this.hasParentView()) {
+        if (this.viewRetainCount() === 0 && !this.hasParentView()) {
+            if (SyncScheduler.shared().hasActionsForTarget(this)) {
+                debugger;
+            }
             this.prepareToRetire()
         }
         return this
     }
 
     prepareToRetire () {
-        //console.log("DomView retiring " + this.debugTypeId())
+        if (this._breakOnRetire) {
+            debugger;
+        }
+        this.setColor("yellow")
+        this.setBackgroundColor("blue")
+        
+        assert(!this.hasParentView())
+        assert(this.viewRetainCount() === 0)
+
+        if (this.debugTypeId() !== "crumbView") {
+            //debugger;
+            console.log(this.debugTypeId() + " prepareToRetire ------------")
+        }
 
         // if view has no parent at the end of event loop, 
         // our policy is to retire the view
@@ -83,18 +111,19 @@
         this.setIsRegisteredForVisibility(false) // this one isn't a listener
         
         this.retireSubviewTree()
-        assert(!this.hasParentView())
 
-        // do this after removing subviews, just in case event where added by those changes
+        // do this after removing subviews, just in case events where added by those changes
         this.removeAllGestureRecognizers()
         this.removeAllListeners()
         this.cancelAllTimeouts()
+        SyncScheduler.shared().unscheduleTarget(this)
 
         /*
         if (this.isFirstResponder()) {
             this.blur() / is this needed?
         }
         */
+        
         const e = this.element()
         if (e) {
             e._domView = null
@@ -102,6 +131,7 @@
         }
 
         super.prepareToRetire() // call on super
+
 
         return this
     }
@@ -125,48 +155,7 @@
         })
     }
 
-    /*
-        timeouts 
-        
-        Sometimes we can't use the SyncScheduler as we have to make sure 
-        something happens *after* the current event loop ends (and control is returned to the browser),
-        but scheduler runs while still in (but at the end of) the current event.
-        Also, we sometimes need timeout delays.
 
-    */
-
-    activeTimeoutIdSet () {
-        if (Type.isNullOrUndefined(this._activeTimeoutIdSet)) {
-            Object.defineSlot(this, "_activeTimeoutIdSet", new Set())
-        }
-        return this._activeTimeoutIdSet
-    }
-
-    addTimeout (aFunc, msDelay) {
-        const tids = this.activeTimeoutIdSet()
-        const tidInfo = {}
-        const tid = setTimeout(() => { 
-            tids.delete(tidInfo.tid) 
-            aFunc() 
-        }, msDelay)
-        tidInfo.tid = tid
-        this.activeTimeoutIdSet().add(tid)
-        return tid
-    }
-
-    cancelTimeoutId (tid) {
-        const tids = this.activeTimeoutIdSet()
-        tids.delete(tid)
-        clearTimeout(tid)
-        return this
-    }
-
-    cancelAllTimeouts () {
-        const tids = this.activeTimeoutIdSet()
-        tids.forEach(tid => clearTimeout(tid))
-        tids.clear()
-        return this
-    }
 
     // gestures
 
@@ -185,10 +174,30 @@
     }
 
     setElement (e) {
+        if (e === this._element) {
+            console.warn("attempt to set to same element")
+            return this
+        }
+
+        if (Type.isNullOrUndefined(e)) {
+            console.log(this.debugTypeId() + " setElement null")
+        }
+        
+        if (e) {
+            this.setIsRegisteredForFocus(false)
+        }
+
         this._element = e
-        this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0)
+        if (e) {
+            // use timer as focus listener can't be set up yet
+            this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
+        }
         e._domView = this // try to avoid depending on this as much as possible - keep refs to divViews, not elements
         return this
+    }
+
+    hasElement () {
+        return !Type.isNullOrUndefined(this._element)
     }
 
     createElement () {
@@ -2289,10 +2298,14 @@
     }
 
     didUpdateSlotParentView (oldValue, newValue) {
-        if (!this.hasParentView()) {
-            this.scheduleMethod("retireIfNoParent")
-        }
+        this.scheduleRetireIfNoParent()
         return this
+    }
+
+    scheduleRetireIfNoParent () {
+        if (!this.hasParentView()) {
+            this.scheduleMethod("retireIfNoParent", 1000)
+        }
     }
 
     // view chains
@@ -2333,7 +2346,7 @@
     addSubview (aSubview) {
         this.assertNotRetired() // TODO: remove this sanity check after testing
         assert(!Type.isNullOrUndefined(aSubview)) 
-        assert(!Type.isNullOrUndefined(aSubview.element())) 
+        assert(aSubview.hasElement()) 
 
         if (this.hasSubview(aSubview)) {
             throw new Error(this.type() + ".addSubview(" + aSubview.type() + ") attempt to add duplicate subview ")
@@ -2347,10 +2360,11 @@
         */
 
         this.willAddSubview(aSubview)
-        this.subviews().append(aSubview)
 
+        this.subviews().append(aSubview)
         this.element().appendChild(aSubview.element());
         aSubview.setParentView(this)
+
         this.didChangeSubviewList()
         return aSubview
     }
@@ -2660,12 +2674,19 @@
         // remove from subview list -  give subview a chance to deal with change
         this.willRemoveSubview(aSubview)
         aSubview.willRemove()
-        this.subviews().remove(aSubview)
 
+        this.justRemoveSubview(aSubview)
+
+        this.didChangeSubviewList()
+        return aSubview
+    }
+
+    justRemoveSubview (aSubview) { // PRIVATE
+        this.subviews().remove(aSubview)
 
         const e = aSubview.element()
         if (this.hasChildElement(e)) { // sanity check - make we have child element 
-            this.element().removeChild(e);
+            this.element().removeChild(e); // WARNING: this will trigger an immediate onBlur window event, which may cause sync actions
 
             // sanity check - make sure element was removed
             if (this.hasChildElement(e)) {
@@ -2680,17 +2701,25 @@
         }
 
         aSubview.setParentView(null)
-        this.didChangeSubviewList()
-        return aSubview
+
+        return this
     }
 
     removeAllSubviews () {
         //const sv = this.subviews().shallowCopy()
         //sv.forEach(subview => this.removeSubview(subview))
         while(this.subviews().length) {
-            this.removeSubview(this.subviews().last())
+            const sv = this.subviews().last()
+            
+            assert(!this.isObjectRetired()) // temp sanity check
+            assert(!Type.isNullOrUndefined(sv.element())) // temp sanity check
+
+            this.removeSubview(sv)
+            
+            assert(!this.isObjectRetired()) // temp sanity check
+            assert(!Type.isNullOrUndefined(sv.element())) // temp sanity check
         }
-        assert(this.subviews().length === 0)
+        assert(this.subviews().length === 0) // temp sanity check
         return this
     }
 
@@ -2823,6 +2852,11 @@
     // --- events --------------------------------------------------------------------
 
     // --- event listeners ---
+
+    hasListenerNamed (className) {
+        const dict = this.eventListenersDict()
+        return !Type.isUndefined(dict[className])
+    }
 
     listenerNamed (className) {
         const dict = this.eventListenersDict()
@@ -3609,6 +3643,9 @@
     }
 
     setIsRegisteredForFocus (aBool) {
+        if (aBool === false && !this.hasListenerNamed("FocusListener")) { // todo: clean this up
+            return
+        }
         this.focusListener().setIsListening(aBool)
         return this
     }

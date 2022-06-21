@@ -20,6 +20,7 @@
         this.newSlot("method", null)
         this.newSlot("order", 0)
         this.newSlot("args", null)
+        this.newSlot("isUnscheduled", false)
     }
 
     init () {

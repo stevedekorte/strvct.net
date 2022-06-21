@@ -1,6 +1,4 @@
 [
-    "BMStorableNode.js",
-    "BMStoredDatedSetNode.js",
-    "newstore/_imports.json",
-    "inspectors/_imports.json"
+    "base/_imports.json",
+    "nodes/_imports.json"
 ]

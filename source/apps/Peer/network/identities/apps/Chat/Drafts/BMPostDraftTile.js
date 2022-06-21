@@ -8,7 +8,7 @@
 
 */
 
-(class BMPostDraftTile extends BrowserRow {
+(class BMPostDraftTile extends Tile {
     
     initPrototype () {
         this.newSlot("topView", null)
@@ -47,7 +47,7 @@
         
         {
             const cb = this.closeButtonView()
-            cb.setDivClassName("BrowserRowCloseButtonTopRight")
+            cb.setDivClassName("TileCloseButtonTopRight")
             cb.setDisplay("inline-block")
             cb.setTopPx(0)
             cb.setRightPx(13)
@@ -197,7 +197,7 @@
     /*
     delete () {
         this.sendAllViewDecendants("setTransition", ["all 0.2s"])
-        setTimeout(() => { this.node().delete() })
+        this.addTimeout(() => { this.node().delete() })
         //this.delete()
         //this.node().delete()
         return this

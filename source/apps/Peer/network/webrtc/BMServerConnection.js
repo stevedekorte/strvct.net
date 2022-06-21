@@ -337,7 +337,7 @@
 	scheduleUpdatePeers () {
 		if (!this._hasScheduledUpdatePeers) {
 			this.__hasScheduledUpdatePeers = true
-			setTimeout(() => {
+			this.addTimeout(() => {
 				if (this.isConnected()) {
 					this.__hasScheduledUpdatePeers = false
 					this.updatePeers()

@@ -4,7 +4,7 @@
 
     PersistentAtomicDictionary
 
-    An atomic persistent dictionary implemented as 
+    An persistent atomic dictionary implemented as 
     a read & write cache on top of IndexedDB.
     
     On open, it reads the entire db into a dictionary

@@ -147,7 +147,7 @@
                 if (v !== null) {
                     const isLocked = aView.lockedStyleAttributeSet().has(name)
                     //console.log("apply style to " + aView.type())
-                    if (aView.type() === "BrowserRowTitle") {
+                    if (aView.type() === "TileTitleView") {
                         //console.log("ready")
                     }
                     if (!isLocked) {

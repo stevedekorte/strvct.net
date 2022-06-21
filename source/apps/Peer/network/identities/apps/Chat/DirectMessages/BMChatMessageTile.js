@@ -6,7 +6,7 @@
 
 */
 
-(class BMChatMessageTile extends BrowserTitledRow {
+(class BMChatMessageTile extends TitledTile {
     
     initPrototype () {
 

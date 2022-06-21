@@ -1,4 +1,14 @@
 
+- ensure onAfterEvent called even if there's an exception?
+
+- rename "rows" to "tiles" in Stack classes, etc
+
+- implement newClassSlot 
+
+TODO: remove remaining css files
+
+- remove FieldSetNode
+--- then fix import of     "BMDataStoreRecord.js"
 
 - bug with dragging a row to a parent node
 --- could prepareToRetire be removing the node ref?

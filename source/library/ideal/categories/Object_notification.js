@@ -1,4 +1,4 @@
-//"use strict";
+"use strict";
 
 /*
 
@@ -21,8 +21,21 @@
         // provides opportunity to remove notification observers, event listeners, etc
         this.removeAllNotificationObservations()
         this.removeScheduledActions()
-        this._isObjectRetired = true
+        this.setIsObjectRetired(true)
         //console.log("Object retiring " + this.debugTypeId())
+    }
+
+    setIsObjectRetired (aBool) {
+        this._isObjectRetired = aBool
+        return this
+    }
+
+    isObjectRetired () {
+        return this._isObjectRetired
+    }
+
+    assertNotRetired () {
+        assert(!this.isObjectRetired())
     }
  
     removeAllNotificationObservations () {

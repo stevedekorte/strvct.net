@@ -5,6 +5,7 @@
     "Object_notification.js",
     "Object_puuid.js",
     "Object_mutation.js",
+    "Object_timeouts.js",
     "Array_ideal.js",
     "Date_ideal.js",
     "String_ideal.js",

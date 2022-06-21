@@ -59,7 +59,7 @@
             this.stopTimer()
         }
 
-        const tid = setTimeout(() => { this.cancel() }, this.maxHoldPeriod());
+        const tid = this.addTimeout(() => { this.cancel() }, this.maxHoldPeriod());
         this.setTimeoutId(tid)
         return this
     }

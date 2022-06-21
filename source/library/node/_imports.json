@@ -1,12 +1,12 @@
 [
     "styles/_imports.json",
     "SubnodesArray.js",
-    "base/_imports.json",
+    "nodes/base/_imports.json",
 	
     "storage/_imports.json",
     "nodes/_imports.json",
     "fields/_imports.json",
-    "storage/inspectors/BMDataStoreRecord.js", 
+    "storage/nodes/inspectors/BMDataStoreRecord.js", 
     
     "node_views/_imports.json",
 

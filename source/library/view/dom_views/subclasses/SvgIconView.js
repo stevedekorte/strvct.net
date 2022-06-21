@@ -52,7 +52,8 @@
     }
 
     debugTypeId () {
-        super.debugTypeId() + "'" + this.iconName() 
+        const name = this.iconName()
+        return  super.debugTypeId() + (name ? " '" + name + "'" : "")
     }
 
     setIconName (name) {

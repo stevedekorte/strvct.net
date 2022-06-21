@@ -50,16 +50,14 @@
 
         {
             "type": "node",
-            "protocol": "inspector",
             "request": "launch",
             "name": "RUN node HTTPS server",
-            "cwd": "${workspaceFolder}/local-web-server",
+            "cwd": "${workspaceFolder}",
             "program": "${workspaceFolder}/local-web-server/main.js"
         },
 
         {
             "type": "node",
-            "protocol": "inspector",
             "request": "launch",
             "name": "RUN rendezvous server",
             "cwd": "${workspaceFolder}",
