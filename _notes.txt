@@ -1,3 +1,22 @@
+// move to event manager?
+-- sync only happens in user events atm?
+
+           if (EventManager.shared().eventLevelCount() === 1) { 
+                // we check event level count to ensure that we only 
+                // sync when the stack fully unwinds back to the event loop.
+                // This is not the case for some events like onblur which can be triggered by
+                // removing a DOM element from a parent, and start an event callback before the
+                // current event stack has unwound.
+                console.log("--->>> sync scheduler running, eventLevelCount = " + this.thisClass().eventLevelCount())
+                SyncScheduler.shared().fullSyncNow()
+           }
+
+
+- Object_timeouts
+-- make tids a dict and store timeout names
+-- move clearTimeout(trackedId) calls in objects to clearTimeoutName()?
+-- closely look at EventSet timeouts to make sure they don't send events to object after it is retired
+-- send a "willClearTimeout<Name>"?
 
 - ensure onAfterEvent called even if there's an exception?
 

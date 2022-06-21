@@ -1065,7 +1065,7 @@
     }
 
     cancelDropHoverTimeout () {
-        clearTimeout(this._dropHoverEnterTimeout)
+        this.clearTimeout(this._dropHoverEnterTimeout)
         this._dropHoverEnterTimeout = null
     }
 

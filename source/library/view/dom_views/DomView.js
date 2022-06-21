@@ -44,7 +44,6 @@
         this.newSlot("acceptsFirstResponder", false)
         this.newSlot("gestureRecognizers", null)
         this.newSlot("eventListenersDict", null)
-        //this.newSlot("activeTimeoutIdSet", null)
         this.newSlot("defaultTapGesture", null)
         this.newSlot("defaultDoubleTapGesture", null)
         this.newSlot("defaultPanGesture", null)

@@ -116,12 +116,14 @@
         return this
     }
 
+    /*
     prepareToRetire () {
         super.prepareToRetire()
         console.log(this.debugTypeId() + " prepareToRetire() isClosed: " + this.isClosed())
-        debugger;
+        //debugger;
         return this
     }
+    */
 
     // operation type helpers
 

@@ -829,7 +829,7 @@
 
     updateDebugTimer () {
         if (this._debugTimerId) {
-            clearTimeout(this._debugTimerId) 
+            this.clearTimeout(this._debugTimerId) 
             this._debugTimerId = null
         }
 

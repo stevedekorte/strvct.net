@@ -20,7 +20,6 @@
     
     static initThisClass () {
         super.initThisClass()
-        this.setClassVariable("_eventLevelCount", 0)
         this.setClassVariable("_hasReceivedEvent", false)
         return this
     }
@@ -41,30 +40,6 @@
     static setHasReceivedEvent (aBool) {
         assert(Type.isBoolean(aBool))
         this._hasReceivedEvent = aBool
-        return this
-    }
-
-    static eventLevelCount () {
-        return this._eventLevelCount
-    }
-
-    static setEventLevelCount (n) {
-        assert(n > -1)
-        this._eventLevelCount = n
-        return this
-    }
-
-    static incrementEventLevelCount () {
-        if (this.eventLevelCount() > 0) {
-            console.warn("eventCountLevel = ", this.eventLevelCount())
-            debugger;
-        }
-        this.setEventLevelCount(this.eventLevelCount() + 1)
-        return this
-    }
-
-    static decrementEventLevelCount () {
-        this.setEventLevelCount(this.eventLevelCount() - 1)
         return this
     }
 
@@ -185,15 +160,9 @@
 
     safeHandleEvent (event, dict) {
         let result = undefined
-        try { // ensure an exception doesn't cause us to skip the event level count decrement
-            this.thisClass().incrementEventLevelCount()
+        EventManager.shared().safeWrapEvent(() => { 
             result = this.handleEvent(event, dict)
-            this.thisClass().decrementEventLevelCount()
-        } catch (e) {
-            this.thisClass().decrementEventLevelCount()
-            throw e
-        }
-
+        })
         return result
     }
 
@@ -219,7 +188,6 @@
         }
         */
 
-        //try {
         let result = true
         if (method) {
             this.onBeforeEvent(fullMethodName, event)
@@ -241,11 +209,6 @@
                 console.log(this.listenTargetDescription() + " MISSING method: " + delegate.type() + "." + fullMethodName, "(" + event.type + ")" )
             }
         }
-
-        // } catch (e) {
-
-        //}
-
 
         return result
     }
@@ -270,43 +233,9 @@
             this.thisClass().setHasReceivedEvent(true)
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
         }
-
-        this.syncIfAppropriate()
-
         return this
     }
 
-    syncIfAppropriate () {
-        if (getGlobalThis().SyncScheduler) {
-            /*
-                run scheduled events here to ensure that a UI event won't occur
-                before sync as that could leave the node and view out of sync
-                e.g. 
-                - edit view #1
-                - sync to node
-                - node posts didUpdateNode
-                - edit view #2
-                - view get didUpdateNode and does syncFromNode which overwrites view state #2
-            */
-
-            /*
-            if (SyncScheduler.shared().actionCount()) {
-                this.debugLog(" onAfterEvent " + methodName)
-            }
-            */
-           assert(this.thisClass().eventLevelCount() > 0)
-           if (this.thisClass().eventLevelCount() === 1) { 
-                // we check event level count to ensure that we only 
-                // sync when the stack fully unwinds back to the event loop.
-                // This is not the case for some events like onblur which can be triggered by
-                // removing a DOM element from a parent, and start an event callback before the
-                // current event stack has unwound.
-                console.log("--->>> sync scheduler running, eventLevelCount = " + this.thisClass().eventLevelCount())
-                SyncScheduler.shared().fullSyncNow()
-           }
-        }
-        return this
-    }
 
     stop () {
         if (!this.isListening()) {

@@ -66,7 +66,7 @@
 
     stopTimer () {
         if (this.hasTimer()) {
-            clearTimeout(this.timeoutId());
+            this.clearTimeout(this.timeoutId());
             this.setTimeoutId(null)
             this.resetTapCount()
         }

@@ -19,43 +19,70 @@
 
             this.addTimeout(aFunc, ms) // returns timer id
 
+    TODO: decide if exception should be raised when cancelling timeout not in _activeTimeoutsDict
         
 */
 
 
 (class Object_timeouts extends Object {
 
-        activeTimeoutIdSet () {
-            if (Type.isNullOrUndefined(this._activeTimeoutIdSet)) {
-                Object.defineSlot(this, "_activeTimeoutIdSet", new Set())
+        activeTimeoutsDict () {
+            const slotName = "_activeTimeoutsDict"
+            if (Type.isNullOrUndefined(this[slotName])) {
+                Object.defineSlot(this, slotName, {})
             }
-            return this._activeTimeoutIdSet
+            return this[slotName]
         }
     
-        addTimeout (aFunc, msDelay) {
-            const tids = this.activeTimeoutIdSet()
-            const tidInfo = {} // to capture tid in closure
+        addTimeout (aFunc, msDelay, optionalName) {
+            const tids = this.activeTimeoutsDict()
+            const tidInfo = {} // so we can capture returned tid in timeout closure
             const tid = setTimeout(() => { 
-                tids.delete(tidInfo.tid) 
-                aFunc() // todo: put in EventManager wrapper
+                this.removeTimeoutId(tidInfo.tid)
+                //aFunc() // todo: put in EventManager wrapper
+                EventManager.shared().safeWrapEvent(aFunc)
             }, msDelay)
             tidInfo.tid = tid
-            this.activeTimeoutIdSet().add(tid)
+            this.activeTimeoutsDict()[tid] = optionalName
             return tid
         }
 
-        cancelTimeoutId (tid) {
-            const tids = this.activeTimeoutIdSet()
-            tids.delete(tid)
+        removeTimeoutId (tid) {
+            const tids = this.activeTimeoutsDict()
+            delete tids[tid]
+            return this
+        }
+
+        clearTimeout (tid) {
+            this.removeTimeoutId(tid)
             clearTimeout(tid)
+            return this
+        }
+
+        clearTimeoutNamed (name) {
+            const tid = this.timeoutForName(name)
+            this.clearTimeout(tid)
             return this
         }
     
         cancelAllTimeouts () {
-            const tids = this.activeTimeoutIdSet()
-            tids.forEach(tid => clearTimeout(tid))
-            tids.clear()
+            const tids = this.activeTimeoutsDict()
+            const keys = Reflect.ownKeys(tids)
+            keys.forEach(tid => this.cancelTimeoutId(tid))
             return this
+        }
+
+        timeoutForName (name) {
+            // could move to nameToTid dict, but probably not worth it given relatively (time) infrequent use
+            const tids = this.activeTimeoutsDict()
+            const keys = Reflect.ownKeys(tids)
+            for (let i = 0; i < keys.length; i ++) {
+                const k = keys[i]
+                if (tids[k] === name) {
+                    return k
+                }
+            }
+            return undefined
         }
 
 }).initThisCategory();

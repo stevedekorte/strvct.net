@@ -1,6 +1,7 @@
 [
     "EventSetListener.js",
-
+    "EventManager.js",
+    
     "ClipboardListener.js",
     "DocumentListener.js",
     "DragListener.js",
