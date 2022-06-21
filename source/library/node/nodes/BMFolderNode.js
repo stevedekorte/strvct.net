@@ -32,7 +32,7 @@
         this.setNodeCanReorderSubnodes(true)
 
         //this.setNodeColumnStyles(BMViewStyles.clone())
-        //this.setNodeRowStyles(BMViewStyles.clone())
+        //this.setNodeTileStyles(BMViewStyles.clone())
         //this.setNodeUsesColumnBackgroundColor(false)
 
         this.setNodeCanInspect(true) 

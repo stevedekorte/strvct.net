@@ -66,7 +66,7 @@
         if (ln) {
             return ln.subtitle()
         }
-        return "drop row to link"    
+        return "drop tile to link"    
     }
 
     /*
@@ -80,7 +80,7 @@
     */
 
     acceptedSubnodeTypes () { 
-        // TODO: have browser use nodeRowLink for this protocol?
+        // TODO: have browser use nodeTileLink for this protocol?
         return []
     }
     
@@ -93,11 +93,11 @@
     }
 
     noteIconName () {
-        //return this.nodeRowLink() ? "double right caret" : null
+        //return this.nodeTileLink() ? "double right caret" : null
         return null
     }
 
-    nodeRowLink () {
+    nodeTileLink () {
         return this.linkedNode()
     }
 

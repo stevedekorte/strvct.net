@@ -24,7 +24,7 @@
         this.setNodeInputFieldMethod("setInputFieldValue")
         this.createSubnodesIndex()
 
-        this.setNodeRowsStartAtBottom(true)
+        this.setNodeTilesStartAtBottom(true)
     }
 
     title () {

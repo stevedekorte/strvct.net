@@ -27,7 +27,7 @@
     init () {
         super.init()
         this.setContent("...".loremIpsum(4, 100))	
-        this.customizeNodeRowStyles().setToBlackOnWhite()
+        this.customizeNodeTileStyles().setToBlackOnWhite()
     }
 
     /*
@@ -129,19 +129,19 @@
     
     // link
     
-    nodeRowLink () {
-        if (this._nodeRowLink) {
-            return this._nodeRowLink
+    nodeTileLink () {
+        if (this._nodeTileLink) {
+            return this._nodeTileLink
         }
         
-        return this.postNodeRowLink()
+        return this.postNodeTileLink()
     }
     
-    avatarNodeRowLink () {
+    avatarNodeTileLink () {
         return this.senderId().profile()
     }
     
-    postNodeRowLink () {
+    postNodeTileLink () {
         return this.postThread()
     }
     

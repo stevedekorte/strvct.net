@@ -100,9 +100,9 @@
     init () {
         super.init()
         this.setShouldStore(true)
-        //this.setNodeRowStyles(BMViewStyles.shared().sharedBlackOnWhiteStyle())
-        //this.setNodeRowStyles(BMViewStyles.shared().sharedWhiteOnBlackStyle())
-        //this.customizeNodeRowStyles().setToBlackOnWhite()
+        //this.setNodeTileStyles(BMViewStyles.shared().sharedBlackOnWhiteStyle())
+        //this.setNodeTileStyles(BMViewStyles.shared().sharedWhiteOnBlackStyle())
+        //this.customizeNodeTileStyles().setToBlackOnWhite()
         return this
     }
 
@@ -243,7 +243,7 @@
         return true
     }
 	
-    nodeRowLink () {
+    nodeTileLink () {
         return null
     }
 

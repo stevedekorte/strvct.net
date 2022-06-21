@@ -99,10 +99,12 @@
         assert(!this.hasParentView())
         assert(this.viewRetainCount() === 0)
 
+        /*
         if (this.debugTypeId() !== "crumbView") {
             //debugger;
             console.log(this.debugTypeId() + " prepareToRetire ------------")
         }
+        */
 
         // if view has no parent at the end of event loop, 
         // our policy is to retire the view
@@ -1046,7 +1048,7 @@
         return this
     }
 
-    makeCursorRowResize () {
+    makeCursorTileResize () {
         this.setCursor("row-resize")
         return this
     }
@@ -1108,7 +1110,11 @@
 
     focusAfterDelay (seconds) {
         this.addTimeout(() => {
-            this.element().focus()
+            const e = this.element()
+            if (e) {
+                // in case element has retired during the timeout
+                e.focus()
+            }
         }, seconds * 1000)
         return this
     }
@@ -3525,7 +3531,7 @@
 
         /*
         if (event.repeat) { // should this be a different method name?
-            this.forceRedisplay() // can't tell if this works without disabling color transitions on rows
+            this.forceRedisplay() // can't tell if this works without disabling color transitions on tiles
         }
         */
 
@@ -4445,18 +4451,8 @@
         }
 
         const obs = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    //console.log("onVisibility!")
-                    if (this._endScrollIntoViewFunc) {
-                        this._endScrollIntoViewFunc()
-                        // hack around lack of end of scrollIntoView event 
-                        // needed to return focus that scrollIntoView grabs from other elements
-                    }
-
-                    this.onVisibility()
-                }
-            })
+            EventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer) })
+            //this.handleIntersection(entries, observer)
         }, intersectionObserverOptions)
 
         this.setIntersectionObserver(obs);
@@ -4464,6 +4460,20 @@
 
         this._isRegisteredForVisibility = true
         return this
+    }
+
+    handleIntersection (entries, observer) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                //console.log("onVisibility!")
+                if (this._endScrollIntoViewFunc) {
+                    this._endScrollIntoViewFunc()
+                    // hack around lack of end of scrollIntoView event 
+                    // needed to return focus that scrollIntoView grabs from other elements
+                }
+                this.onVisibility()
+            }
+        })
     }
 
     // centering

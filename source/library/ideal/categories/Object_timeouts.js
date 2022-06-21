@@ -68,7 +68,7 @@
         cancelAllTimeouts () {
             const tids = this.activeTimeoutsDict()
             const keys = Reflect.ownKeys(tids)
-            keys.forEach(tid => this.cancelTimeoutId(tid))
+            keys.forEach(tid => this.clearTimeout(tid))
             return this
         }
 

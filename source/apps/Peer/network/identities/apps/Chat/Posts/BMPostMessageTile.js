@@ -33,12 +33,12 @@
         //this.contentView()
 
         // left view
-        this.setLeftView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageRowLeftView")))
+        this.setLeftView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageTileLeftView")))
         this.setIconView(this.leftView().addSubview(ImageView.clone().setDivClassName("BMPostAvatarView")))
         this.iconView().setBackgroundSizeWH(64, 64).setTarget(this).setAction("clickedIconView")
 
         // middle view
-        this.setMiddleView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageRowMiddleView")))
+        this.setMiddleView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageTileMiddleView")))
 
         // title view
         this.setTitleBarView(this.middleView().addSubview(DomView.clone().setDivClassName("BMPostTitleBarView")))
@@ -77,7 +77,7 @@
         this.setLikeCountView(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileCountView")))
 
         // right view
-        //this.setRightView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageRowRightView")))
+        //this.setRightView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageTileRightView")))
 
 
         this.setupContentView()

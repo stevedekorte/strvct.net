@@ -30,19 +30,19 @@
             slot.setShouldStoreSlot(true)
         }
 
-        this.newSlot("nodeRowIsSelectable", true).setDuplicateOp("copyValue")
-        this.newSlot("nodeRowsStartAtBottom", false).setDuplicateOp("copyValue")
+        this.newSlot("nodeTileIsSelectable", true).setDuplicateOp("copyValue")
+        this.newSlot("nodeTilesStartAtBottom", false).setDuplicateOp("copyValue")
         this.newSlot("nodeNavBorderHint", true).setDuplicateOp("copyValue")
 
         {
-            const slot = this.newSlot("nodeMinRowHeight", 0)
+            const slot = this.newSlot("nodeMinTileHeight", 0)
             slot.setDuplicateOp("copyValue")
             slot.setShouldStoreSlot(true)
             slot.setInspectorPath("style")
         }
 
         {
-            const slot = this.newSlot("nodeMinRowWidth", 0)
+            const slot = this.newSlot("nodeMinTileWidth", 0)
             slot.setDuplicateOp("copyValue")
             slot.setShouldStoreSlot(true)
             slot.setInspectorPath("style")
@@ -58,7 +58,7 @@
 
         // column settings - TODO: auto adjust to fit?
 
-        //this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue") // no longer used - we calc sizes of rows instead
+        //this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue") // no longer used - we calc sizes of tiles instead
         
         {
             const slot = this.newSlot("nodeFillsRemainingWidth", false).setDuplicateOp("copyValue")
@@ -79,7 +79,7 @@
             slot.setInspectorPath("Layout")
         }
 
-        this.newSlot("nodeCanEditRowHeight", false).setDuplicateOp("copyValue") // TODO: change to NavHeight
+        this.newSlot("nodeCanEditTileHeight", false).setDuplicateOp("copyValue") // TODO: change to NavHeight
         this.newSlot("nodeCanEditColumnWidth", false).setDuplicateOp("copyValue") // TODO: change to NavWidth
                 
     }

@@ -4,7 +4,7 @@
     
     TitledTile
 
-    Adds a few subviews for typical row functionality:
+    Adds a few subviews for typical tile functionality:
 
         - titleView
         - subtitleView
@@ -212,7 +212,7 @@
         const tw = this.titleView().calcCssWidth()
         const sw = this.subtitleView().calcCssWidth()
         let w = Math.max(sw, tw)
-        //console.log("calcCssWidth of row title '" + this.node().title() + "' = " + w)
+        //console.log("calcCssWidth of tile title '" + this.node().title() + "' = " + w)
         return w + 50
         */
         return this.calcWidth()

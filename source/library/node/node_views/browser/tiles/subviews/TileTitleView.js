@@ -34,7 +34,7 @@
     }
 
     /*
-    row () {
+    tile () {
         return this.parentView().parentView()
     }
     */
@@ -42,8 +42,8 @@
     selectNextKeyView () {
         /*
         this.debugLog(".selectNextKeyView()")
-        const row = this.parentView().parentView();
-        const nextRow = this.row().column().selectNextRow()
+        const tile = this.parentView().parentView();
+        const nextTile = this.row().column().selectNextTile()
         */
         return true
     }

@@ -4,11 +4,11 @@
     
     Tile
 
-    Base row view. This is a sort of empty canvas for subclasses to put subviews in.
+    Base tile view. This is a sort of empty canvas for subclasses to put subviews in.
     It's important that subviews are put within the contentView, as this is used
     to support features like slide to delete.
 
-    Tile supports row features such as:
+    Tile supports tile features such as:
     
         - selection
         - applying styles to match state
@@ -19,9 +19,9 @@
     
     NOTES
     
-    Row styles lookup order:
+    Tile styles lookup order:
 
-        node -> (fallback to) -> row -> (fallback to) -> column
+        node -> (fallback to) -> tile -> (fallback to) -> column
 
     See lookedUpStyles method.
 
@@ -87,7 +87,7 @@
 
         this.turnOffUserSelect()
         this.setAcceptsFirstResponder(false)
-        this.setupRowContentView()
+        this.setupTileContentView()
 
         if (TouchScreen.shared().isSupported() || true) { // testing 
             //
@@ -103,7 +103,7 @@
         this.addGestureRecognizer(SlideGestureRecognizer.clone()) // for slide delete
         //this.addGestureRecognizer(TapGestureRecognizer.clone()) // for selection, and tap-longpress
         this.addDefaultTapGesture()
-        //this.defaultTapGesture().setShouldRequestActivation(true) // test to avoid tapping button within row and row
+        //this.defaultTapGesture().setShouldRequestActivation(true) // test to avoid tapping button within tile and row
 
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width?
         //this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
@@ -127,8 +127,8 @@
     // bottom edge pan 
 
     acceptsBottomEdgePan () {
-        if (this.node().nodeCanEditRowHeight) {
-            if (this.node().nodeCanEditRowHeight()) {
+        if (this.node().nodeCanEditTileHeight) {
+            if (this.node().nodeCanEditTileHeight()) {
                 return true
             }
         }
@@ -145,15 +145,15 @@
         const p = aGesture.currentPosition() // position in document coords
         const f = this.frameInDocument()
         const newHeight = p.y() - f.y()
-        const minHeight = this.node() ? this.node().nodeMinRowHeight() : 10;
+        const minHeight = this.node() ? this.node().nodeMinTileHeight() : 10;
         if (newHeight < 10) {
             newHeight = 10;
         }
-        this.node().setNodeMinRowHeight(newHeight)
+        this.node().setNodeMinTileHeight(newHeight)
         this.updateSubviews()
 
         /*
-            this.node().setNodeMinRowHeight(h)
+            this.node().setNodeMinTileHeight(h)
             this.updateSubviews()
             //this.setMinAndMaxHeight(newHeight) // what about contentView?
             //this.contentView().autoFitParentHeight()
@@ -170,7 +170,7 @@
     // a special subview within the Tile for it's content
     // we route style methods to it
 
-    setupRowContentView () {
+    setupTileContentView () {
         //const cv = DomView.clone().setDivClassName("TileContentView")
         const cv = DomFlexView.clone().setDivClassName("TileContentView")
         cv.setDisplay("flex")
@@ -251,7 +251,7 @@
 
     // node style dict
     
-    rowStyles () {
+    tileStyles () {
         return null
     }
 
@@ -266,28 +266,28 @@
         const debugStyles = false
 
         if (this.node()) {
-            const ns = this.node().nodeRowStyles()
+            const ns = this.node().nodeTileStyles()
             if (ns) {
                 if (debugStyles) {
-                    this.debugLog(" using nodeRowStyles")
+                    this.debugLog(" using nodeTileStyles")
                 }
                 return ns
             }
         }
 
-        const rs = this.rowStyles()
+        const rs = this.tileStyles()
         if (rs) {
             if (debugStyles) {
-                this.debugLog(" using rowStyles")
+                this.debugLog(" using tileStyles")
             }
             return rs
         }
 
-        if (this.column() && this.column().rowStyles) {
-            const cs = this.column().rowStyles()
+        if (this.column() && this.column().tileStyles) {
+            const cs = this.column().tileStyles()
             if (cs) {
                 if (debugStyles) {
-                    this.debugLog(" using column().rowStyles()")
+                    this.debugLog(" using column().tileStyles()")
                 }
                 return cs
             }
@@ -300,8 +300,8 @@
     }
 
     /*
-    currentRowStyle () {
-        const styles = this.node().nodeRowStyles()
+    currentTileStyle () {
+        const styles = this.node().nodeTileStyles()
         //styles.selected().set
         
         if (this.isSelected()) {
@@ -343,7 +343,7 @@
             }
 
             if (node) {
-                const h = node.nodeMinRowHeight()
+                const h = node.nodeMinTileHeight()
                 if (h) {
                     this.setMinAndMaxHeight(h) 
                     this.contentView().autoFitParentHeight()
@@ -354,13 +354,13 @@
         /*
         // take up full height if node asks for it
         const node = this.node()
-        if (node && node.nodeMinRowHeight()) {
+        if (node && node.nodeMinTileHeight()) {
             const e = this.element()
-            if (node.nodeMinRowHeight() === -1) {
+            if (node.nodeMinTileHeight() === -1) {
                 this.setHeight("auto")                
                 this.setPaddingBottom("calc(100% - 20px)")
             } else {
-                this.setHeight(this.pxNumberToString(node.nodeMinRowHeight()))
+                this.setHeight(this.pxNumberToString(node.nodeMinTileHeight()))
             }
         }
         */
@@ -450,7 +450,7 @@
             // apply node height hint
             const node = this.stackView().node()
             if (node) {
-                const h = node.nodeMinRowHeight()
+                const h = node.nodeMinTileHeight()
                 //console.log("node " + this.node().title() + " height " + h)
                 if (h) {
                     this.setMinAndMaxHeight(h)
@@ -681,10 +681,10 @@
     // -------------------
 
     /*
-    unselectNextColumnRows () {
+    unselectNextColumnTiles () {
         const c = this.column().nextColumn()
         if (c) {
-            c.unselectAllRows()
+            c.unselectAllTiles()
         }
         return this
     }
@@ -707,11 +707,11 @@
     // --- dragging key ---
 
     onMeta_a_KeyDown (event) {
-        // only select subnodes if this row can have them,
+        // only select subnodes if this tile can have them,
         // otherwise, like the column handle this event
         const c = this.column().nextColumn()
         if (c) {
-            c.selectAllRows()
+            c.selectAllTiles()
         }
         event.stopPropagation()
         return false 
@@ -874,7 +874,7 @@
         }
 
         if (this.column()) {
-            return this.column().canReorderRows()
+            return this.column().canReorderTiles()
         }
         return false
     }
@@ -911,11 +911,11 @@
         const isTapLongPress = this.isTapLongPress() // is tap-hold
 
         if (!this.isSelected()) {
-            this.column().unselectAllRowsExcept(this)
+            this.column().unselectAllTilesExcept(this)
         }
 
         this.select()
-        const dv = DragView.clone().setItems(this.column().selectedRows()).setSource(this.column())
+        const dv = DragView.clone().setItems(this.column().selectedTiles()).setSource(this.column())
 
         if (isTapLongPress) {
             dv.setDragOperation("copy")
@@ -942,13 +942,13 @@
 
     // -------------------------
     
-    nodeRowLink () {
+    nodeTileLink () {
         //this.debugLog(".visibleSubnodes() isInspecting:" + this.isInspecting())
         if (this.isInspecting()) {
             return  this.node().nodeInspector()
         }
 
-        return this.node().nodeRowLink()
+        return this.node().nodeTileLink()
     }
 
     /*
@@ -996,7 +996,7 @@
         return true
     }
 
-    // --- dropping destination protocol implemented to handle selecting/expanding row ---
+    // --- dropping destination protocol implemented to handle selecting/expanding tile ---
 
     acceptsDropHover (dragView) {
         return this.canDropSelect() || this.acceptsDropHoverComplete(dragView)
@@ -1015,10 +1015,10 @@
     onDragDestinationExit (dragView) {
         this.cancelDropHoverTimeout()
         //this.unselect()
-        //this.column().unselectAllRowsExcept(anItem)
+        //this.column().unselectAllTilesExcept(anItem)
     }
 
-    // --- dropping on row - usefull for LinkNode? ---
+    // --- dropping on tile - usefull for LinkNode? ---
 
     acceptsDropHoverComplete (dragView) {
         const node = this.node()

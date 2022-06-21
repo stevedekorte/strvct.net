@@ -96,7 +96,7 @@
         
         if (this._isEditable) {
             const g = this.addDefaultTapGesture()
-            g.setShouldRequestActivation(false) // so the row doesn't block the initial tap
+            g.setShouldRequestActivation(false) // so the tile doesn't block the initial tap
         } else {
             this.removeDefaultTapGesture()
         }

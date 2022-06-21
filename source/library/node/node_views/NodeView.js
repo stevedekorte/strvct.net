@@ -32,7 +32,7 @@
     }
     
     prepareToRetire () {
-        console.log(this.debugTypeId() + " prepareToRetire *********")
+        //console.log(this.debugTypeId() + " prepareToRetire *********")
         this.setNode(null)
         super.prepareToRetire()
         return this

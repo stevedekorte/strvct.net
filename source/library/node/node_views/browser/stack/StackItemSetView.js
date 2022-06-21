@@ -10,11 +10,11 @@
     
         
     initPrototype () {
-        this.newSlot("rows", null)
+        this.newSlot("tiles", null)
         this.newSlot("allowsCursorNavigation", true)
-        this.newSlot("defaultRowStyles", null)
-        this.newSlot("rowStyles", null)
-        this.newSlot("rowPlaceHolder", null)
+        this.newSlot("defaultTileStyles", null)
+        this.newSlot("tileStyles", null)
+        this.newSlot("tilePlaceHolder", null)
         this.newSlot("hasPausedSync", false)
         //this.newSlot("isColumnInspecting", false)
     }
@@ -38,11 +38,11 @@
         this.setAcceptsFirstResponder(true)
 
         this.setUserSelect("none")
-        this.addGestureRecognizer(PinchGestureRecognizer.clone()) // for pinch open to add row
-        this.addGestureRecognizer(TapGestureRecognizer.clone()) // for pinch open to add row
+        this.addGestureRecognizer(PinchGestureRecognizer.clone()) // for pinch open to add tile
+        this.addGestureRecognizer(TapGestureRecognizer.clone()) // for pinch open to add tile
 
-        this.setRowStyles(BMViewStyles.clone().setToWhiteOnBlack())
-        //this.rowStyles().selected().setBackgroundColor("red")
+        this.setTileStyles(BMViewStyles.clone().setToWhiteOnBlack())
+        //this.tileStyles().selected().setBackgroundColor("red")
 
         this.setIsRegisteredForBrowserDrop(true)
         
@@ -96,7 +96,7 @@
 
         this.debugLog("makeOrientationDown on ", this.node() ? this.node().title() : null)
 
-        this.rows().forEach(item => {
+        this.tiles().forEach(item => {
             //item.setWidth("fit-content")
             item.setHeight(this.desiredHeight())
             //console.log("    prepare for down orientation on subview ", item.node().title())
@@ -108,21 +108,21 @@
         super.syncFromNode() 
 
         /*
-        if (this.node().nodeMinRowHeight()) {
-            this.setMinAndMaxHeight(this.node().nodeMinRowHeight())
+        if (this.node().nodeMinTileHeight()) {
+            this.setMinAndMaxHeight(this.node().nodeMinTileHeight())
         }
         */
 
-        if (this.selectedRows().length === 0) {
+        if (this.selectedTiles().length === 0) {
             //this.didChangeNavSelection() // TODO: is this right?
         }
         return this
     }
 
-    unselectRowsInNextColumn () {
+    unselectTilesInNextColumn () {
         const c = this.nextColumn()
         if (c) {
-            c.unselectAllRows()
+            c.unselectAllTiles()
         }
         return this
     }
@@ -146,13 +146,13 @@
         return super.onFocus()
     }
 
-    setRowBackgroundColor (aColor) {
-        this.rowStyles().unselected().setBackgroundColor(aColor)
+    setTileBackgroundColor (aColor) {
+        this.tileStyles().unselected().setBackgroundColor(aColor)
         return this
     }
 
-    setRowSelectionColor (aColor) {
-        this.rowStyles().selected().setBackgroundColor(aColor)
+    setTileSelectionColor (aColor) {
+        this.tileStyles().selected().setBackgroundColor(aColor)
         return this
     }
 
@@ -174,17 +174,17 @@
         return this.parentView().parentView()
     }
 
-    // --- rows ---
+    // --- tiles ---
     
-    rows () {
+    tiles () {
         return this.subviews()
     }
 
-    addRow (v) {
+    addTile (v) {
         return this.addSubview(v)
     }
 
-    removeRow (v) {
+    removeTile (v) {
         return this.removeSubview(v)
     }
 
@@ -208,34 +208,34 @@
     }
 
     /*
-    darkenUnselectedRows () {
+    darkenUnselectedTiles () {
         const darkenOpacity = 0.5
-        this.rows().forEach((row) => {
-            if (row.isSelected()) {
-                row.setOpacity(1)
+        this.tiles().forEach(tile => {
+            if (tile.isSelected()) {
+                tile.setOpacity(1)
             } else {
-                row.setOpacity(darkenOpacity)
+                tile.setOpacity(darkenOpacity)
             }
         })
         return this
     }
 
-    undarkenAllRows () {
-        this.rows().forEach((row) => {
-            row.setOpacity(1)
+    undarkenAllTiles () {
+        this.tiles().forEach((tile) => {
+            tile.setOpacity(1)
         })
     }
     */
 
-    rowsWithNodes (nodeArray) {
-        return nodeArray.map(node => this.rowWithNode(node))
+    tilesWithNodes (nodeArray) {
+        return nodeArray.map(node => this.tileWithNode(node))
     }
 
-    rowWithNode (aNode) {
-        return this.rows().detect(row => row.node() === aNode)
+    tileWithNode (aNode) {
+        return this.tiles().detect(tile => tile.node() === aNode)
     }
 
-    // --- row tapping ---
+    // --- tile tapping ---
 
     selectNode (aNode) {
         const sv = this.subviewForSubnode(aNode)
@@ -252,26 +252,26 @@
             anItem.focus()
             // anItem seems to already be focused somehow
         }
-        this.unselectAllRowsExcept(anItem)
-        this.unselectRowsInNextColumn()
+        this.unselectAllTilesExcept(anItem)
+        this.unselectTilesInNextColumn()
         //this.didChangeNavSelection() // this may already have been sent
     }
     
     didShiftTapItem (anItem) {
-        let lastItem = this.lastSelectedRow()
+        let lastItem = this.lastSelectedTile()
 
         if (!lastItem) {
-            lastItem = this.rows().first()
+            lastItem = this.tiles().first()
         }
 
         if (lastItem) {
-            const r1 = this.indexOfRow(anItem)
-            const r2 = this.indexOfRow(lastItem)
+            const r1 = this.indexOfTile(anItem)
+            const r2 = this.indexOfTile(lastItem)
             assert(r1 !== -1 && r2 !== -1)
             const i1 = Math.min(r1, r2)
             const i2 = Math.max(r1, r2)
             for (let i = i1; i <= i2; i++) {
-                const item = this.rowAtIndex(i)
+                const item = this.tileAtIndex(i)
                 if (!item.isSelected()) {
                     item.select()
                 }
@@ -287,16 +287,16 @@
 
     // ------------------
         
-    unselectAllRowsExcept (selectedRow) {
-        const rows = this.rows()
+    unselectAllTilesExcept (selectedTile) {
+        const tiles = this.tiles()
 
-        // unselect all other rows
-        rows.forEach((row) => {
-            if (row !== selectedRow) {
-                if (row.unselect) {
-                    row.unselect()
+        // unselect all other tiles
+        tiles.forEach(tile => {
+            if (tile !== selectedTile) {
+                if (tile.unselect) {
+                    tile.unselect()
                 } else {
-                    //console.warn("=WARNING= " + this.typeId() + ".unselectAllRowsExcept() row " + row.typeId() + " missing unselect method")
+                    //console.warn("=WARNING= " + this.typeId() + ".unselectAllTilesExcept() tile " + tile.typeId() + " missing unselect method")
                 }
             }
         })
@@ -304,15 +304,15 @@
         return this
     }
 
-    unselectAllRowsExceptRows (rowsToSelect) {
-        const rows = this.rows()
+    unselectAllTilesExceptTiles (tilesToSelect) {
+        const tiles = this.tiles()
 
-        // unselect all other rows
-        rows.forEach((row) => {
-            if (rowsToSelect.contains(row)) {
-                row.performIfResponding("select") 
+        // unselect all other tiles
+        tiles.forEach(tile => {
+            if (tilesToSelect.contains(tile)) {
+                tile.performIfResponding("select") 
             } else {
-                row.performIfResponding("unselect") 
+                tile.performIfResponding("unselect") 
             }
         })
         
@@ -321,26 +321,26 @@
 
     // -----------------------------------------
 
-    indexOfRow (aRow) {
+    indexOfTile (aTile) {
         // we might want this to be based on flex view order instead, 
         // so best to keep it abstract
-        return this.indexOfSubview(aRow)
+        return this.indexOfSubview(aTile)
     }
 
-    rowAtIndex (anIndex) {
+    tileAtIndex (anIndex) {
         return this.subviews().at(anIndex)
     }
 
-    lastSelectedRow () {
-        return this.selectedRows().maxItem(row => row.lastSelectionDate().getTime())
+    lastSelectedTile () {
+        return this.selectedTiles().maxItem(tile => tile.lastSelectionDate().getTime())
     }
 
     /*
-    didSelectRow (aRow) {
+    didSelectTile (aTile) {
         this.didChangeNavSelection()
     }
 
-    didUnselectRow (aRow) {
+    didUnselectTile (aTile) {
         this.didChangeNavSelection()
 
     }
@@ -350,17 +350,17 @@
     // selection
 
     hasMultipleSelections () {
-        return this.selectedRows().length > 0
+        return this.selectedTiles().length > 0
     }
 
-    // selected rows
+    // selected tiles
 
-    selectedRows () {
-        return this.rows().filter(row => row.isSelected && row.isSelected())
+    selectedTiles () {
+        return this.tiles().filter(tile => tile.isSelected && tile.isSelected())
     }
 
-    selectedRow () {
-        const sr = this.selectedRows()
+    selectedTile () {
+        const sr = this.selectedTiles()
         if (sr.length === 1) {
             return sr.first()
         }
@@ -370,74 +370,74 @@
     // selected nodes
 
     selectedNodes () {
-        return this.selectedRows().map(row => row.node())
+        return this.selectedTiles().map(tile => tile.node())
     }
 
     selectedNode () {
-        const r = this.selectedRow()
+        const r = this.selectedTile()
         return r ? r.node() : null
     }
     
-    selectedRowIndex () { 
-        // returns -1 if no rows selected
-        return this.rows().indexOf(this.selectedRow())
+    selectedTileIndex () { 
+        // returns -1 if no tiles selected
+        return this.tiles().indexOf(this.selectedTile())
     }
 
-    // selecting rows
+    // selecting tiles
     
-    setSelectedRowIndex (index) {
-        const oldIndex = this.selectedRowIndex()
-        //console.log("this.setSelectedRowIndex(" + index + ") oldIndex=", oldIndex)
+    setSelectedTileIndex (index) {
+        const oldIndex = this.selectedTileIndex()
+        //console.log("this.setSelectedTileIndex(" + index + ") oldIndex=", oldIndex)
         if (index !== oldIndex) {
-            const rows = this.rows()
-            if (index >= 0 && index < rows.length) {
-                const row = rows[index]
-                this.didTapItem(row)
+            const tiles = this.tiles()
+            if (index >= 0 && index < tiles.length) {
+                const tile = tiles[index]
+                this.didTapItem(tile)
             }
         }
         return this
     }
   
-    indexOfRowWithNode (aNode) {
-        return this.rows().detectIndex(row => row.node() === aNode)
+    indexOfTileWithNode (aNode) {
+        return this.tiles().detectIndex(tile => tile.node() === aNode)
     }
 
-    selectAllRows () {
-        this.rows().forEachPerformIfResponds("select")
+    selectAllTiles () {
+        this.tiles().forEachPerformIfResponds("select")
         return this
     }
 
-    unselectAllRows () {
-        this.rows().forEachPerformIfResponds("unselect")
+    unselectAllTiles () {
+        this.tiles().forEachPerformIfResponds("unselect")
         return this
     }
 
-    rowWithNode (aNode) {
-        const row = this.rows().detect(row => row.node().nodeRowLink() === aNode)
-        return row
+    tileWithNode (aNode) {
+        const tile = this.tiles().detect(tile => tile.node().nodeTileLink() === aNode)
+        return tile
     }
 	
-    selectRowWithNode (aNode) {
-        //console.log(">>> column " + this.node().title() + " select row " + aNode.title())
-        const selectedRow = this.rowWithNode(aNode)
+    selectTileWithNode (aNode) {
+        //console.log(">>> column " + this.node().title() + " select tile " + aNode.title())
+        const selectedTile = this.tileWithNode(aNode)
 		
-        if (selectedRow) {
-            selectedRow.setIsSelected(true)
+        if (selectedTile) {
+            selectedTile.setIsSelected(true)
 			
-            this.rows().forEach((aRow) => {
-                if (aRow !== selectedRow) {
-                    aRow.unselect()
+            this.tiles().forEach((aTile) => {
+                if (aTile !== selectedTile) {
+                    aTile.unselect()
                 }
             })
         }
 
-        return selectedRow
+        return selectedTile
     }
     
-    selectedRowTitle () {
-        const row = this.selectedRow()
-        if (row) { 
-            return row.title().innerHtml() 
+    selectedTileTitle () {
+        const tile = this.selectedTile()
+        if (tile) { 
+            return tile.title().innerHtml() 
         }
         return null
     }
@@ -445,7 +445,7 @@
     // --- sync -----------------------------
 
     subviewProtoForSubnode (aSubnode) {
-        let proto = aSubnode.nodeTileClass() // we need this to get row versions of view
+        let proto = aSubnode.nodeTileClass() // we need this to get tile versions of view
 		
         if (!proto) {
             proto = this.defaultSubviewProto()
@@ -457,9 +457,9 @@
     didChangeNode () {
         super.didChangeNode()
 
-        if (this.node() && this.node().nodeRowsStartAtBottom()) {
+        if (this.node() && this.node().nodeTilesStartAtBottom()) {
             this.addTimeout(() => { this.scrollToBottom() }, 0)
-            //this.row().last().scrollIntoView()
+            //this.tile().last().scrollIntoView()
         }
 
         return this
@@ -470,7 +470,7 @@
         //return this.browser().columns().contains(this)
     }
 
-    shouldFocusAndExpandSubnode (aNote) { // focus & expand row
+    shouldFocusAndExpandSubnode (aNote) { // focus & expand tile
         if (!this.isInBrowser()) {
             return this
         }
@@ -484,7 +484,7 @@
         } 
 
         if (subview) {
-            this.selectRowWithNode(subnode)
+            this.selectTileWithNode(subnode)
             subview.scrollIntoView()
             subview.justTap()
             //this.didChangeNavSelection()
@@ -496,7 +496,7 @@
 	    return this 
     }
 
-    shouldFocusSubnode (aNote) { //  focus but don't expand row
+    shouldFocusSubnode (aNote) { //  focus but don't expand tile
 	    const subnode = aNote.info()
 
 	    let subview = this.subviewForNode(subnode)
@@ -507,10 +507,10 @@
         } 
 
         if (subview) {
-            this.selectRowWithNode(subnode)
+            this.selectTileWithNode(subnode)
             subview.scrollIntoView()
 
-            // just focus the row without expanding it
+            // just focus the tile without expanding it
             /*
             if (this.previousItemSet()) {
                 this.previousItemSet().didChangeNavSelection()
@@ -521,7 +521,7 @@
 		    //subview.dynamicScrollIntoView()
         } else {
             console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId())
-            //console.log("row nodes = ", this.rows().map(row => row.node().typeId()) )
+            //console.log("tile nodes = ", this.tiles().map(tile => tile.node().typeId()) )
 	    }
 
 	    return this 
@@ -544,7 +544,7 @@
     }
     
     scrollToBottom () {
-        const last = this.rows().last()
+        const last = this.tiles().last()
 
         if (last) { 
             last.scrollIntoView()
@@ -580,8 +580,8 @@
     showSelected () {
         /*
         TODO: add check if visible
-        if (this.selectedRow()) {
-            this.selectedRow().scrollIntoView()
+        if (this.selectedTile()) {
+            this.selectedTile().scrollIntoView()
         }
         */
         //this.didChangeNavSelection()
@@ -605,28 +605,28 @@
 
     onMeta_d_KeyDown (event) {
         console.log("duplicate selection down")
-        this.duplicateSelectedRows()
+        this.duplicateSelectedTiles()
         event.stopPropagation()
         event.preventDefault();
     }
 
-    duplicateSelectedRows () {
+    duplicateSelectedTiles () {
         const newNodes = []
 
-        this.selectedRows().forEach(row => {
-            const i = this.indexOfSubview(row)
-            const dupNode = row.node().duplicate()
+        this.selectedTiles().forEach(tile => {
+            const i = this.indexOfSubview(tile)
+            const dupNode = tile.node().duplicate()
             newNodes.push(dupNode)
             this.node().addSubnodeAt(dupNode, i+1)
         })
-        this.unselectAllRows()
+        this.unselectAllTiles()
         this.syncFromNodeNow()
 
-        // TODO: unselect current rows at browser level
+        // TODO: unselect current tiles at browser level
         newNodes.forEach(newNode => {
-            const newRow = this.rowWithNode(newNode)
-            if (newRow) {
-                newRow.select()
+            const newTile = this.tileWithNode(newNode)
+            if (newTile) {
+                newTile.select()
             }
         })
 
@@ -635,15 +635,15 @@
 
     onMeta_d_KeyUp (event) {
         console.log("duplicate selection up")
-        this.selectedRows().forEach()
+        this.selectedTiles().forEach()
         event.stopPropagation()
         event.preventDefault();
     }
 
     onShiftBackspaceKeyUp (event) {
         this.debugLog(this.type() + " for " + this.node().title() + " onShiftBackspaceKeyUp")
-        if (this.selectedRow()) { 
-            this.selectedRow().delete()
+        if (this.selectedTile()) { 
+            this.selectedTile().delete()
         }
         event.stopPropagation()
     }
@@ -671,14 +671,14 @@
 
     onAlternate_d_KeyUp (event) {
         //this.debugLog(" onMetaLeft_d_KeyUp")
-        this.duplicateSelectedRow()
+        this.duplicateSelectedTile()
         return false // stop propogation
     }
 
     // select all
 
     onMeta_a_KeyDown (event) {
-        this.selectAllRows()
+        this.selectAllTiles()
         event.stopPropagation()
         return false // stop propogation
     }
@@ -691,26 +691,26 @@
             return true
         }
         */
-        // see if the row that selected this column is being inspected
+        // see if the tile that selected this column is being inspected
         const prev = this.previousItemSet() 
         if (prev) {
-            const row = prev.selectedRow()
-            if (row) {
-                return row.isInspecting()
+            const tile = prev.selectedTile()
+            if (tile) {
+                return tile.isInspecting()
             }
         }
         return false
     }
 
-    duplicateSelectedRow () {
+    duplicateSelectedTile () {
         const node = this.node()
-        const row = this.selectedRow()
+        const tile = this.selectedTile()
         const canAdd = node.canSelfAddSubnode() 
-        if (row && canAdd) {
-            const canCopy = !Type.isNullOrUndefined(row.node().copy)
+        if (tile && canAdd) {
+            const canCopy = !Type.isNullOrUndefined(tile.node().copy)
             if (canCopy) { 
-                //this.debugLog(" duplicate selected row " + this.selectedRow().node().title())
-                const subnode = row.node()
+                //this.debugLog(" duplicate selected tile " + this.selectedTile().node().title())
+                const subnode = tile.node()
                 const newSubnode = subnode.copy()
                 const index = node.indexOfSubnode(subnode)
                 node.addSubnodeAt(newSubnode, index)
@@ -784,13 +784,13 @@
     moveLeft () {
         const pc = this.previousItemSet()	
         if (pc) {
-            if (this.selectedRow()) { 
-                this.selectedRow().unselect() 
+            if (this.selectedTile()) { 
+                this.selectedTile().unselect() 
             }
 			
-            const newSelectedRow = pc.selectedRow()
-            newSelectedRow.setShouldShowFlash(true).updateSubviews()
-            pc.didTapItem(newSelectedRow)
+            const newSelectedTile = pc.selectedTile()
+            newSelectedTile.setShouldShowFlash(true).updateSubviews()
+            pc.didTapItem(newSelectedTile)
         	this.selectPreviousColumn()
 
             //debugger;
@@ -805,13 +805,13 @@
     }
 
     moveUp () {
-        this.selectNextRow()
+        this.selectNextTile()
         this.showSelected()
         return this
     }
 
     moveDown () {
-        this.selectPreviousRow()
+        this.selectPreviousTile()
         this.showSelected()
         return this
     }
@@ -829,16 +829,16 @@
         //return true
     }
 	
-    // --- enter key begins row editing ---------------------------
+    // --- enter key begins tile editing ---------------------------
 	
     onEnterKeyUp (event) {        
         if (!this.canNavigate()) { 
             return this
         }
 	
-        const row = this.selectedRow()
-        if (row) { 
-		    row.onEnterKeyUp(event)
+        const tile = this.selectedTile()
+        if (tile) { 
+		    tile.onEnterKeyUp(event)
         }
 
         return false
@@ -847,18 +847,18 @@
     // --- keyboard controls, add and delete actions -----------------------------
 
     /*
-    deleteRow (aRow) {
-        let sNode = aRow.node()
+    deleteTile (aTile) {
+        let sNode = aTile.node()
         if (sNode && sNode.canDelete()) { 
 			sNode.performAction("delete") 
 		}
         return this
     }
 
-    deleteSelectedRows () {
-        this.selectedRows().forEach(r => this.deleteRow(r))
+    deleteSelectedTiles () {
+        this.selectedTiles().forEach(r => this.deleteTile(r))
 
-        if (this.rows().length === 0) {
+        if (this.tiles().length === 0) {
             this.selectPreviousColumn()
         }
     }
@@ -869,7 +869,7 @@
             return 
         }
 
-        //this.deleteSelectedRows()
+        //this.deleteSelectedTiles()
         return false
     }
 	
@@ -883,7 +883,7 @@
             const newNode = sNode.performAction("add") 
             this.selectNextColumn()
             if (this.nextColumn()) {
-                this.nextColumn().selectRowWithNode(newNode)
+                this.nextColumn().selectTileWithNode(newNode)
             }
         }
         return false		
@@ -929,45 +929,45 @@
         return this.parentViewsOfClass(StackView).length
     }
 
-    // nextRow
+    // nextTile
 
-    selectFirstRow () {
-        this.setSelectedRowIndex(0)
+    selectFirstTile () {
+        this.setSelectedTileIndex(0)
         return this
     }
 
-    firstRow () {
-        if (this.rows().length > 0) {
-            return this.rows()[0]
+    firstTile () {
+        if (this.tiles().length > 0) {
+            return this.tiles()[0]
         }
         return null
     }
 
-    nextRow () {
-        const si = this.selectedRowIndex()
-        if (si !== -1 && si < this.rows().length) {
-            const nextRow = this.rows()[si +1]
-            return nextRow
+    nextTile () {
+        const si = this.selectedTileIndex()
+        if (si !== -1 && si < this.tiles().length) {
+            const nextTile = this.tiles()[si +1]
+            return nextTile
         }
         return null
     }
 
-    selectNextRow () {
-        const si = this.selectedRowIndex()
+    selectNextTile () {
+        const si = this.selectedTileIndex()
         if (si === -1) {
-            this.setSelectedRowIndex(0)
+            this.setSelectedTileIndex(0)
         } else {
-            this.setSelectedRowIndex(si + 1)
+            this.setSelectedTileIndex(si + 1)
         }
         return this
     }
     
-    selectPreviousRow () {
-        const si = this.selectedRowIndex()
+    selectPreviousTile () {
+        const si = this.selectedTileIndex()
         if (si === -1) {
-            this.setSelectedRowIndex(0)
+            this.setSelectedTileIndex(0)
         } else {
-            this.setSelectedRowIndex(si - 1)
+            this.setSelectedTileIndex(si - 1)
         }
         return this
     }
@@ -985,12 +985,12 @@
     focus () {
         super.focus()
 		
-	    if (this.selectedRowIndex() === -1) {
-            const sr = this.rows().first()
+	    if (this.selectedTileIndex() === -1) {
+            const sr = this.tiles().first()
             if (sr) {
                 sr.setShouldShowFlash(true)
             }
-            this.setSelectedRowIndex(0)
+            this.setSelectedTileIndex(0)
         }
 
         //this.debugLog(" focus")
@@ -1003,7 +1003,7 @@
             this.blur()
             //console.log("nextColumn.focus()")
             /*
-            const sr = nextColumn.selectedRow()
+            const sr = nextColumn.selectedTile()
             if (sr) {
                 sr.setShouldShowFlash(true)
             }
@@ -1057,12 +1057,12 @@
         return this.browserPathString()
     }
 
-    maxRowWidth () {
-        if (this.rows().length === 0) {
+    maxTileWidth () {
+        if (this.tiles().length === 0) {
             return 0
         }
         
-        const maxWidth = this.rows().maxValue(row => row.desiredWidth())			
+        const maxWidth = this.tiles().maxValue(tile => tile.desiredWidth())			
         return maxWidth	
     }
 
@@ -1076,24 +1076,24 @@
     // reordering support
 
     /*
-    absolutePositionRows () {
+    absolutePositionTiles () {
         const ys = []
-        this.rows().forEach((row) => {
-            const y = row.relativePos().y()
+        this.tiles().forEach((tile) => {
+            const y = tile.relativePos().y()
             ys.append(y)
         })
 
         let i = 0
-        this.rows().forEach((row) => {
+        this.tiles().forEach((tile) => {
             const y = ys[i]
             i ++
-            row.unhideDisplay()
-            row.setPosition("absolute")
-            row.setTopPx(y)
-            row.setLeftPx(0)
-            row.setRightPx(null)
-            row.setBottomPx(null)
-            row.setWidthPercentage(100)
+            tile.unhideDisplay()
+            tile.setPosition("absolute")
+            tile.setTopPx(y)
+            tile.setLeftPx(0)
+            tile.setRightPx(null)
+            tile.setBottomPx(null)
+            tile.setWidthPercentage(100)
             //console.log("i" + i + " : y" + y)
         })
         
@@ -1103,24 +1103,24 @@
 
 
     /*
-    orderRows () {
-        const orderedRows = this.rows().shallowCopy().sortPerform("topPx")
+    orderTiles () {
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
 
-        this.rows().forEach((row) => {
-            row.setPosition("absolute")
-            row.unhideDisplay()
+        this.tiles().forEach((tile) => {
+            tile.setPosition("absolute")
+            tile.unhideDisplay()
         })
 
         this.removeAllSubviews()
-        this.addSubviews(orderedRows)
+        this.addSubviews(orderedTiles)
         return this
     }
     */
 
-    // -- stacking rows ---
+    // -- stacking tiles ---
 
     /*
-    Row methods:
+    Tile methods:
 
     makeAbsolutePositionAndSize () {
         const f = this.frameInParentView()
@@ -1143,7 +1143,7 @@
 
     flexDirectionLength () {
         const fd = this.parentView().flexDirection() 
-        // row is left to right
+        // tile is left to right
         if (Type.isNull(fd)) {
             fd = "row"
         }
@@ -1183,81 +1183,81 @@
         return this.stackView().direction() === "right"
     }
 
-    stackRows () {
-        this.assertRowsHaveParent()
+    stackTiles () {
+        this.assertTilesHaveParent()
 
         if (this.isVertical()) {
-            this.stackRowsVertically()
+            this.stackTilesVertically()
         } else {
-            this.stackRowsHorizontally()
+            this.stackTilesHorizontally()
         }
         return this
     }
 
-    unstackRows () {
-        this.assertRowsHaveParent()
+    unstackTiles () {
+        this.assertTilesHaveParent()
 
         if (this.isVertical()) {
-            this.unstackRowsVertically()
+            this.unstackTilesVertically()
         } else {
-            this.unstackRowsHorizontally()
+            this.unstackTilesHorizontally()
         }
         return this
     }
 
     // --------------
 
-    stackRowsVertically () {
-        // we don't need to order rows for 1st call of stackRows, 
-        // but we do when calling stackRows while moving a drop view around,
-        // so just always do it as top is null, and rows are already ordered the 1st time
+    stackTilesVertically () {
+        // we don't need to order tiles for 1st call of stackTiles, 
+        // but we do when calling stackTiles while moving a drop view around,
+        // so just always do it as top is null, and tiles are already ordered the 1st time
 
-        const orderedRows = this.rows().shallowCopy().sortPerform("topPx") 
-        const displayedRows = orderedRows.filter(r => !r.isDisplayHidden())
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx") 
+        const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden())
         let y = 0
         
-        displayedRows.forEach((row) => {
-            let h = row.computedHeight() 
-            if (row.position() !== "absolute") {
-                row.makeAbsolutePositionAndSize()
-                row.setLeftPx(0)
-                row.setOrder(null)
+        displayedTiles.forEach((tile) => {
+            let h = tile.computedHeight() 
+            if (tile.position() !== "absolute") {
+                tile.makeAbsolutePositionAndSize()
+                tile.setLeftPx(0)
+                tile.setOrder(null)
             }
-            row.setTopPx(y)
+            tile.setTopPx(y)
             y += h
         })
 
         return this
     }
 
-    assertRowsHaveElement () {
-        this.rows().forEach(row => { 
-            if (row.isObjectRetired()) {
-                console.log(row.debugTypeId() + " already retired")
+    assertTilesHaveElement () {
+        this.tiles().forEach(tile => { 
+            if (tile.isObjectRetired()) {
+                console.log(tile.debugTypeId() + " already retired")
                 assert(false)
             }
 
-            if (Type.isNullOrUndefined(row.element())) {
-                console.log(row.debugTypeId() + " missing element")
+            if (Type.isNullOrUndefined(tile.element())) {
+                console.log(tile.debugTypeId() + " missing element")
                 assert(false)
             }
         })
     }
 
-    assertRowsHaveParent () {
-        this.rows().forEach(row => { 
-            if (row.isObjectRetired()) {
-                console.log(row.debugTypeId() + " already retired")
+    assertTilesHaveParent () {
+        this.tiles().forEach(tile => { 
+            if (tile.isObjectRetired()) {
+                console.log(tile.debugTypeId() + " already retired")
                 assert(false)
             }
 
-            if (Type.isNullOrUndefined(row.parentView())) {
-                console.log(row.debugTypeId() + " missing parent view")
+            if (Type.isNullOrUndefined(tile.parentView())) {
+                console.log(tile.debugTypeId() + " missing parent view")
                 assert(false)
             }
 
-            if (Type.isNullOrUndefined(row.element())) {
-                console.log(row.debugTypeId() + " missing element")
+            if (Type.isNullOrUndefined(tile.element())) {
+                console.log(tile.debugTypeId() + " missing element")
                 assert(false)
             }
 
@@ -1265,133 +1265,133 @@
     }
 
     assertViewsValid (views) {
-        views.forEach(row => { 
-            if (row.isObjectRetired()) {
-                console.log(row.debugTypeId() + " already retired")
+        views.forEach(tile => { 
+            if (tile.isObjectRetired()) {
+                console.log(tile.debugTypeId() + " already retired")
                 assert(false)
             }
 
             /*
-            if (Type.isNullOrUndefined(row.parentView())) {
-                console.log(row.debugTypeId() + " missing parent view")
+            if (Type.isNullOrUndefined(tile.parentView())) {
+                console.log(tile.debugTypeId() + " missing parent view")
                 assert(false)
             }
             */
 
-            if (Type.isNullOrUndefined(row.element())) {
-                console.log(row.debugTypeId() + " missing element")
+            if (Type.isNullOrUndefined(tile.element())) {
+                console.log(tile.debugTypeId() + " missing element")
                 assert(false)
             }
         })
     }
 
-    unstackRowsVertically  () {
-        this.assertRowsHaveParent()
-        const orderedRows = this.rows().shallowCopy().sortPerform("topPx")
-        this.assertViewsValid(orderedRows)
+    unstackTilesVertically  () {
+        this.assertTilesHaveParent()
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
+        this.assertViewsValid(orderedTiles)
         
-        orderedRows.forEach(row => assert(row.hasElement()) ) // todo: temp test
+        orderedTiles.forEach(tile => assert(tile.hasElement()) ) // todo: temp test
 
-        orderedRows.forEachPerform("makeRelativePositionAndSize")
+        orderedTiles.forEachPerform("makeRelativePositionAndSize")
 
-        this.assertViewsValid(orderedRows)
+        this.assertViewsValid(orderedTiles)
         this.assertViewsValid(this.subviews())        
 
-        orderedRows.forEach(row => row._breakOnRetire = true)
-        //this.subviews().forEach(row => row._breakOnRetire = true)
+        orderedTiles.forEach(tile => tile._breakOnRetire = true)
+        //this.subviews().forEach(tile => tile._breakOnRetire = true)
         
         this.removeAllSubviews()
 
         this.assertViewsValid(this.subviews())
-        this.assertViewsValid(orderedRows)
+        this.assertViewsValid(orderedTiles)
 
-        this.addSubviews(orderedRows)
+        this.addSubviews(orderedTiles)
 
-        orderedRows.forEach(row => row._breakOnRetire = false)
+        orderedTiles.forEach(tile => tile._breakOnRetire = false)
 
         return this
     }
 
     // --------------
 
-    stackRowsHorizontally () {
-        const orderedRows = this.rows().shallowCopy().sortPerform("leftPx") 
-        const displayedRows = orderedRows.filter(r => !r.isDisplayHidden())
+    stackTilesHorizontally () {
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx") 
+        const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden())
         let x = 0
 
         /*
         let names = []
-        this.rows().forEach((row) => { 
-            if (row.node) { 
-                names.push(row.node().title() + " " + row.leftPx() + "px")
+        this.tiles().forEach((tile) => { 
+            if (tile.node) { 
+                names.push(tile.node().title() + " " + tile.leftPx() + "px")
             }
         })
         console.log("horizontal: ", names.join(", "))
         */
         
-        displayedRows.forEach((row) => {
-            let w = row.computedWidth() 
-            if (row.position() !== "absolute") {
-                row.makeAbsolutePositionAndSize()
-                row.setTopPx(0)
-                row.setOrder(null)
+        displayedTiles.forEach((tile) => {
+            let w = tile.computedWidth() 
+            if (tile.position() !== "absolute") {
+                tile.makeAbsolutePositionAndSize()
+                tile.setTopPx(0)
+                tile.setOrder(null)
             }
-            row.setLeftPx(x)
+            tile.setLeftPx(x)
             x += w
         })
 
         return this
     }
 
-    unstackRowsHorizontally () {
-        const orderedRows = this.rows().shallowCopy().sortPerform("leftPx")
-        orderedRows.forEachPerform("makeRelativePositionAndSize")
+    unstackTilesHorizontally () {
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("leftPx")
+        orderedTiles.forEachPerform("makeRelativePositionAndSize")
         this.removeAllSubviews()
-        this.addSubviews(orderedRows)
+        this.addSubviews(orderedTiles)
         return this
     }
 
     // --------------
 
-    canReorderRows () {
-        return this.node().nodeRowLink().nodeCanReorderSubnodes()
+    canReorderTiles () {
+        return this.node().nodeTileLink().nodeCanReorderSubnodes()
     }
 
-    didReorderRows () { 
+    didReorderTiles () { 
         if (!this.node() || !this.isInBrowser()) {
             return this
         }
         // TODO: make a more scaleable API
-        const subnodes = this.rows().map(row => row.node())
-        this.node().nodeRowLink().nodeReorderSudnodesTo(subnodes)
+        const subnodes = this.tiles().map(tile => tile.node())
+        this.node().nodeTileLink().nodeReorderSudnodesTo(subnodes)
         //this.node().nodeReorderSudnodesTo(subnodes)
         return this
     }
 
     // pinch
 
-    rowContainingPoint (aPoint) {
-        return this.rows().detect((row) => {
-            return row.frameInDocument().containsPoint(aPoint)
+    tileContainingPoint (aPoint) {
+        return this.tiles().detect((tile) => {
+            return tile.frameInDocument().containsPoint(aPoint)
         })
     }
 
 
-    onPinchBegin (aGesture) { // pinch apart to insert a new row
-        // TODO: move row specific code to Tile
+    onPinchBegin (aGesture) { // pinch apart to insert a new tile
+        // TODO: move tile specific code to Tile
 
         //this.debugLog(".onPinchBegin()")
 
         // - calc insert index
         const p = aGesture.beginCenterPosition()
-        const row = this.rowContainingPoint(p)
-        if (!row) {
-            // don't allow pinch if it's bellow all the rows
-            // use a tap gesture to create a row there instead?
+        const tile = this.tileContainingPoint(p)
+        if (!tile) {
+            // don't allow pinch if it's bellow all the tiles
+            // use a tap gesture to create a tile there instead?
             return this
         }
 
-        const insertIndex = this.rows().indexOf(row)
+        const insertIndex = this.tiles().indexOf(tile)
 
         //console.log("insertIndex: ", insertIndex)
 
@@ -1403,23 +1403,23 @@
             // can delete it if pinch doesn't complete with enough height
             this._temporaryPinchSubnode = newSubnode
 
-            // sync with node to add row view for it
+            // sync with node to add tile view for it
             this.syncFromNodeNow()
 
-            // find new row and prepare it
-            const newRow = this.subviewForNode(newSubnode)
-            newRow.setMinAndMaxHeight(0)
-            newRow.contentView().setMinAndMaxHeight(64)
-            newRow.setTransition("all 0.3s")
-            newRow.contentView().setTransition("all 0s")
-            newRow.setBackgroundColor("black")
+            // find new tile and prepare it
+            const newTile = this.subviewForNode(newSubnode)
+            newTile.setMinAndMaxHeight(0)
+            newTile.contentView().setMinAndMaxHeight(64)
+            newTile.setTransition("all 0.3s")
+            newTile.contentView().setTransition("all 0s")
+            newTile.setBackgroundColor("black")
 
-            // set new row view height to zero and 
+            // set new tile view height to zero and 
             const minHeight = Tile.defaultHeight()
-            const cv = newRow.contentView()
+            const cv = newTile.contentView()
             cv.setBackgroundColor(this.stackNavView().backgroundColor())
             cv.setMinAndMaxHeight(minHeight)
-            //newRow.scheduleSyncFromNode()
+            //newTile.scheduleSyncFromNode()
             //this._temporaryPinchSubnode.didUpdateNode()
         } else {
             //this.debugLog(".onPinchBegin() cancelling due to no add action")
@@ -1436,26 +1436,26 @@
             }
             //this.debugLog(".onPinchMove() s = ", s)
             const minHeight = Tile.defaultHeight()
-            const newRow = this.subviewForNode(this._temporaryPinchSubnode)
-            //newRow.setBackgroundColor("black")
-            newRow.setMinAndMaxHeight(s)
+            const newTile = this.subviewForNode(this._temporaryPinchSubnode)
+            //newTile.setBackgroundColor("black")
+            newTile.setMinAndMaxHeight(s)
             const t = Math.floor(s/2 - minHeight/2);
-            newRow.contentView().setTopPx(t)
+            newTile.contentView().setTopPx(t)
 
             const h = Tile.defaultHeight()
 
             if (s < h) {
                 const f = s/h;
                 const rot = Math.floor((1 - f) * 90);
-                newRow.setPerspective(1000)
-                newRow.setTransformOrigin(0)
-                //newRow.contentView().setTransformOriginPercentage(0)
-                newRow.contentView().setTransform("rotateX(" + rot + "deg)")
+                newTile.setPerspective(1000)
+                newTile.setTransformOrigin(0)
+                //newTile.contentView().setTransformOriginPercentage(0)
+                newTile.contentView().setTransform("rotateX(" + rot + "deg)")
                 const z = -100 * f;
-                //newRow.contentView().setTransform("translateZ(" + z + "dg)")
+                //newTile.contentView().setTransform("translateZ(" + z + "dg)")
             } else {
-                newRow.setPerspective(null)
-                newRow.contentView().setTransform(null)                
+                newTile.setPerspective(null)
+                newTile.contentView().setTransform(null)                
             }
         } else {
             console.warn(this.typeId() + ".onPinchMove() missing this._temporaryPinchSubnode")
@@ -1465,19 +1465,19 @@
 
     onPinchComplete (aGesture) {
         //this.debugLog(".onPinchCompleted()")
-        // if pinch is tall enough, keep new row
+        // if pinch is tall enough, keep new tile
 
         if (this._temporaryPinchSubnode) {
-            const newRow = this.subviewForNode(this._temporaryPinchSubnode)
+            const newTile = this.subviewForNode(this._temporaryPinchSubnode)
             const minHeight = Tile.defaultHeight()
-            if (newRow.clientHeight() < minHeight) {
-                this.removeRow(newRow)
+            if (newTile.clientHeight() < minHeight) {
+                this.removeTile(newTile)
             } else {
-                //newRow.contentView().setTransition("all 0.15s, height 0s")
-                //newRow.setTransition("all 0.3s, height 0s")
+                //newTile.contentView().setTransition("all 0.15s, height 0s")
+                //newTile.setTransition("all 0.3s, height 0s")
                 this.addTimeout(() => { 
-                    newRow.contentView().setTopPx(0)
-                    newRow.setMinAndMaxHeight(minHeight) 
+                    newTile.contentView().setTopPx(0)
+                    newTile.setMinAndMaxHeight(minHeight) 
                 }, 0)
             }
 
@@ -1494,15 +1494,15 @@
     }
 
     selectNextKeyView () {
-        const nextRow = this.nextRow()
-        if (nextRow) {
-            this.selectNextRow()
-            nextRow.becomeKeyView()
+        const nextTile = this.nextTile()
+        if (nextTile) {
+            this.selectNextTile()
+            nextTile.becomeKeyView()
         } else {
-            const firstRow = this.firstRow()
-            if (firstRow) {
-                this.selectFirstRow()
-                firstRow.becomeKeyView()
+            const firstTile = this.firstTile()
+            if (firstTile) {
+                this.selectFirstTile()
+                firstTile.becomeKeyView()
             }
         }
         return this
@@ -1533,22 +1533,22 @@
 
         }
 
-        this.rows().forEach(row => row.setTransition("all 0.3s"))
+        this.tiles().forEach(tile => tile.setTransition("all 0.3s"))
 
-        this.newRowPlaceHolder(dragView)
+        this.newTilePlaceHolder(dragView)
 
         /*
         if (dragView.isMoveOp()) {
             subview.hideForDrag()
-            this.moveSubviewToIndex(this.rowPlaceHolder(), index)
+            this.moveSubviewToIndex(this.tilePlaceHolder(), index)
         }
         */
 
-        this.moveSubviewToIndex(this.rowPlaceHolder(), index)
+        this.moveSubviewToIndex(this.tilePlaceHolder(), index)
 
         this.stackView().cache() // only needed for source column, since we might navigate while dragging
 
-        this.stackRows()
+        this.stackTiles()
         return this
     }
 
@@ -1559,7 +1559,7 @@
         })
         */
         this.onDragSourceDropped(dragView)
-        //this.removeRowPlaceHolder()
+        //this.removeTilePlaceHolder()
     }
 
     onDragSourceEnter (dragView) {
@@ -1568,26 +1568,26 @@
 
     onDragSourceHover (dragView) {
         this.onDragDestinationHover(dragView)
-        this.indexOfRowPlaceHolder()
+        this.indexOfTilePlaceHolder()
     }
 
     onDragSourceExit (dragView) {
         this.onDragDestinationHover(dragView)
     }
 
-    indexOfRowPlaceHolder () {
+    indexOfTilePlaceHolder () {
         const sortMethod = this.isVertical() ? "topPx" : "leftPx"
-        const orderedRows = this.rows().shallowCopy().sortPerform(sortMethod) 
-        const insertIndex = orderedRows.indexOf(this.rowPlaceHolder()) 
+        const orderedTiles = this.tiles().shallowCopy().sortPerform(sortMethod) 
+        const insertIndex = orderedTiles.indexOf(this.tilePlaceHolder()) 
         
-        //this.showRows(orderedRows)
+        //this.showTiles(orderedTiles)
         //console.log("hover insertIndex: ", insertIndex)
         
         return insertIndex
     }
 
-    showRows (rows) {
-        console.log("rows: ", rows.map(r => {
+    showTiles (tiles) {
+        console.log("tiles: ", tiles.map(r => {
             if (r.node) {
                 return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "")
             }
@@ -1607,7 +1607,7 @@
         console.log(this.debugTypeId() + " --- onDragSourceDropped ---")
         //debugger;
 
-        const insertIndex = this.indexOfRowPlaceHolder()
+        const insertIndex = this.indexOfTilePlaceHolder()
 
         let movedNodes = dragView.items().map(item => item.node())
         if (dragView.isMoveOp()) {
@@ -1619,12 +1619,12 @@
         }
         console.log(this.debugTypeId() + " --- unstacking ---")
 
-        this.unstackRows()
-        this.removeRowPlaceHolder()
+        this.unstackTiles()
+        this.removeTilePlaceHolder()
     
         //console.log("---")
         //this.showNodes(movedNodes)
-        //this.showRows(this.subviews())
+        //this.showTiles(this.subviews())
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
         //this.showNodes(newSubnodesOrder)
         
@@ -1644,8 +1644,8 @@
     }
 
     selectAndFocusNodes (nodes) {
-        const selectRows = this.rowsWithNodes(nodes)
-        this.unselectAllRowsExceptRows(selectRows)
+        const selectTiles = this.tilesWithNodes(nodes)
+        this.unselectAllTilesExceptTiles(selectTiles)
         if (nodes.length === 1) {
             const focusNode = nodes.first()
             focusNode.parentNode().postShouldFocusAndExpandSubnode(focusNode)
@@ -1654,7 +1654,7 @@
     }
 
     onDragDestinationDropped (dragView) {
-        const insertIndex = this.indexOfRowPlaceHolder()
+        const insertIndex = this.indexOfTilePlaceHolder()
 
         let movedNodes = dragView.items().map(item => item.node())
         if (dragView.isMoveOp()) {
@@ -1665,8 +1665,8 @@
             throw new Error("unhandled drag operation")
         }
 
-        this.unstackRows()
-        this.removeRowPlaceHolder()
+        this.unstackTiles()
+        this.removeTilePlaceHolder()
 
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
         assert(!newSubnodesOrder.containsAny(movedNodes))
@@ -1697,7 +1697,7 @@
             }
             
             const acceptsNode = node.acceptsAddingSubnode(dropNode)
-            const canReorder = this.canReorderRows()
+            const canReorder = this.canReorderTiles()
             //console.log(node.title() + " acceptsNode " + dropNode.title() + " " + acceptsNode)
             //console.log("parentNode " + node.parentNode().title())
             const result = acceptsNode && canReorder
@@ -1706,22 +1706,22 @@
         return false
     }
 
-    newRowPlaceHolder (dragView) {
-        this.debugLog("newRowPlaceHolder")
-        if (!this.rowPlaceHolder()) {
+    newTilePlaceHolder (dragView) {
+        this.debugLog("newTilePlaceHolder")
+        if (!this.tilePlaceHolder()) {
             const ph = DomView.clone().setDivClassName("TilePlaceHolder")
             ph.setBackgroundColor("black")
 
             //ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
             this.addSubview(ph)
-            this.setRowPlaceHolder(ph)
-            this.syncRowPlaceHolderSize(dragView)
+            this.setTilePlaceHolder(ph)
+            this.syncTilePlaceHolderSize(dragView)
         }
-        return this.rowPlaceHolder()
+        return this.tilePlaceHolder()
     }
 
-    syncRowPlaceHolderSize (dragView) {
-        const ph = this.rowPlaceHolder()
+    syncTilePlaceHolderSize (dragView) {
+        const ph = this.tilePlaceHolder()
 
         if (this.isVertical()) {
             ph.setMinAndMaxWidth(this.computedWidth())
@@ -1744,18 +1744,18 @@
         this.setHasPausedSync(true)
 
         // insert place holder view
-        if (!this.rowPlaceHolder()) {
-            this.newRowPlaceHolder(dragView)
-            this.rowPlaceHolder().setMinAndMaxHeight(dragView.computedHeight())
+        if (!this.tilePlaceHolder()) {
+            this.newTilePlaceHolder(dragView)
+            this.tilePlaceHolder().setMinAndMaxHeight(dragView.computedHeight())
             this.onDragDestinationHover(dragView)
         }
     }
 
     onDragDestinationHover (dragView) {
         // move place holder view
-        const ph = this.rowPlaceHolder()
+        const ph = this.tilePlaceHolder()
         if (ph) {
-            this.syncRowPlaceHolderSize(dragView)
+            this.syncTilePlaceHolderSize(dragView)
             const vp = this.viewPosForWindowPos(dragView.dropPoint())
             if (this.isVertical()) {
                 const h = dragView.computedHeight()
@@ -1768,7 +1768,7 @@
                 ph.setLeftPx(x)
             }
             //console.log("ph.top() = ", ph.top())
-            this.stackRows() // need to use this so we can animate the row movements
+            this.stackTiles() // need to use this so we can animate the tile movements
         }
     }
     
@@ -1785,29 +1785,29 @@
     }
 
     dropCompleteDocumentFrame () {
-        return this.rowPlaceHolder().frameInDocument()
+        return this.tilePlaceHolder().frameInDocument()
     }
 
 
-    removeRowPlaceHolder () {
-        this.debugLog("removeRowPlaceHolder")
+    removeTilePlaceHolder () {
+        this.debugLog("removeTilePlaceHolder")
 
-        const ph = this.rowPlaceHolder()
+        const ph = this.tilePlaceHolder()
         if (ph) {
-            //console.log("removeRowPlaceHolder")
+            //console.log("removeTilePlaceHolder")
             this.removeSubview(ph)
-            this.setRowPlaceHolder(null)
+            this.setTilePlaceHolder(null)
         }
     }
 
-    animateRemoveRowPlaceHolderAndThen (callback) {
-        this.debugLog("animateRemoveRowPlaceHolder")
+    animateRemoveTilePlaceHolderAndThen (callback) {
+        this.debugLog("animateRemoveTilePlaceHolder")
 
-        const ph = this.rowPlaceHolder()
+        const ph = this.tilePlaceHolder()
         if (ph) {
             ph.setMinAndMaxHeight(0)
             this.addTimeout(() => {
-                this.removeRowPlaceHolder()
+                this.removeTilePlaceHolder()
                 if (callback) { callback() }
             }, 1*1000)
         } else {
@@ -1817,18 +1817,18 @@
 
     endDropMode () {
         this.debugLog("endDropMode")
-        //this.unstackRows()
-        this.removeRowPlaceHolder()
-        this.unstackRows()
+        //this.unstackTiles()
+        this.removeTilePlaceHolder()
+        this.unstackTiles()
         this.setHasPausedSync(false)
-        this.didReorderRows()
+        this.didReorderTiles()
 
         /*
-        this.animateRemoveRowPlaceHolderAndThen(() => {
+        this.animateRemoveTilePlaceHolderAndThen(() => {
          this.debugLog("endDropMode")
-            this.unstackRows()
+            this.unstackTiles()
             this.setHasPausedSync(false)
-            this.didReorderRows()
+            this.didReorderTiles()
         })
         */
 
@@ -1836,20 +1836,20 @@
     }
 
     /*
-    rowIndexForViewportPoint (aPoint) {
-        if (this.rows().length === 0) {
+    tileIndexForViewportPoint (aPoint) {
+        if (this.tiles().length === 0) {
             return 0
         }
 
-        const row = this.rows().detect((row) => {
-            return row.frameInDocument().containsPoint(aPoint)
+        const tile = this.tiles().detect((tile) => {
+            return tile.frameInDocument().containsPoint(aPoint)
         })
 
-        if (row) {
-            return this.rows().indexOf(row)
+        if (tile) {
+            return this.tiles().indexOf(tile)
         }
 
-        return this.rows().length
+        return this.tiles().length
     }
     */
 

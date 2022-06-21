@@ -18,7 +18,7 @@
 
     targetWidth () {
         if (this.node()) {
-            const w = Math.max(0, this.node().nodeMinRowWidth())
+            const w = Math.max(0, this.node().nodeMinTileWidth())
             if (w) {
                 return w
             }
@@ -28,7 +28,7 @@
 
     targetHeight () {
         if (this.node()) {
-            const h = this.node().nodeMinRowHeight()
+            const h = this.node().nodeMinTileHeight()
             if (h) {
                 return h
             }
@@ -144,7 +144,7 @@
         this.applyStyles()
 
         if (this.isVertical()) {
-            const w = this.node().nodeMinRowWidth()
+            const w = this.node().nodeMinTileWidth()
             if (w && !Type.isNullOrUndefined(w)) {
                 this.setMinAndMaxWidth(w)
                 /*
@@ -154,7 +154,7 @@
                 */
             }
         } else {
-            const h = this.node().nodeMinRowHeight()
+            const h = this.node().nodeMinTileHeight()
             if (h && !Type.isNullOrUndefined(h)) {
                 this.setMinAndMaxHeight(h)
             }
@@ -220,7 +220,7 @@
         const f = this.frameInDocument()
         const nw = Math.max(10, p.x() - f.x())
         //console.log("nw = ", nw)
-        this.node().setNodeMinRowWidth(nw)
+        this.node().setNodeMinTileWidth(nw)
         this.scheduleSyncToNode()
 
         return this
@@ -248,7 +248,7 @@
         const f = this.frameInDocument()
         const newHeight = Math.max(10, p.y() - f.y())
         //console.log("node " + this.node().title() + " newHeight = ", newHeight)
-        this.node().setNodeMinRowHeight(newHeight)
+        this.node().setNodeMinTileHeight(newHeight)
         this.scheduleSyncToNode()
         return this
     }

@@ -7,21 +7,21 @@
     Represents the set of styles for a NodeView, e.g. selected, unselected.
 
     The basic idea is that both View and Nodes can own styles.
-    Views will use their own style (or the style of some parent such as a row using a column rowStyle),
+    Views will use their own style (or the style of some parent such as a tile using a column rowStyle),
     unless their node specifies a style, which overrides the view's own style.
 
     See DomStyledView and Tile to understand how Views lookup/access/change their style state.
 
     TODO: can we make view styles nodes? recursion?
 
-    rowStyles: 
+    tileStyles: 
     
-    Because rows need to be able to use the background and select colors of their columns,
+    Because tiles need to be able to use the background and select colors of their columns,
 
-    Row colors are looked up in:
+    Tile colors are looked up in:
     Tile.lookedUpStyles
 
-        which asks the node, then itself, then the columns for rowStyles()
+        which asks the node, then itself, then the columns for tileStyles()
         and uses the first non-null result .
 
  

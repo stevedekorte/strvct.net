@@ -71,8 +71,8 @@
         return null
     }
     
-    nodeRowLink () {
-        // used by UI row views to browse into next column
+    nodeTileLink () {
+        // used by UI tile views to browse into next column
         return this
     }
 

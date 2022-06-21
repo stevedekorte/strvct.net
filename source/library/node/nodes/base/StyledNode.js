@@ -16,7 +16,7 @@
         // view style overrides
 
         this.newSlot("nodeColumnStyles", null)
-        this.newSlot("nodeRowStyles", null)
+        this.newSlot("nodeTileStyles", null)
 
         {
             const slot = this.newSlot("themeClassName", "DefaultThemeClass")
@@ -35,25 +35,25 @@
         super.init()
         
         //this.setNodeColumnStyles(this.sharedNodeColumnStyles())
-        //this.setNodeRowStyles(this.sharedNodeRowStyles())
+        //this.setNodeTileStyles(this.sharedNodeTileStyles())
 
         this.setNodeColumnStyles(BMViewStyles.clone())
-        //this.setNodeRowStyles(BMViewStyles.clone())
+        //this.setNodeTileStyles(BMViewStyles.clone())
 
         return this
     }
 
-    customizeNodeRowStyles () {
-        if (!this.getOwnProperty("_nodeRowStyles")) {
+    customizeNodeTileStyles () {
+        if (!this.getOwnProperty("_nodeTileStyles")) {
             //const styles = BMViewStyles.shared().sharedWhiteOnBlackStyle().setIsMutable(false)
             // NOTE: We can't use the shared style because column bg colors change
 
             const styles = BMViewStyles.clone()
             styles.selected().setColor("white")
             styles.unselected().setColor("#aaa")
-            this._nodeRowStyles = styles
+            this._nodeTileStyles = styles
         }
-        return this._nodeRowStyles
+        return this._nodeTileStyles
     }
 
     sharedNodeColumnStyles () {
@@ -66,14 +66,14 @@
         return BMNode._nodeColumnStyles
     }
 
-    sharedNodeRowStyles () {
-        if (!BMNode._nodeRowStyles) {
+    sharedNodeTileStyles () {
+        if (!BMNode._nodeTileStyles) {
             const styles = BMViewStyles.clone()
-            BMNode._nodeRowStyles = styles
+            BMNode._nodeTileStyles = styles
             styles.selected().setColor("white")
             styles.unselected().setColor("#aaa")
         }
-        return BMNode._nodeRowStyles
+        return BMNode._nodeTileStyles
     }
 
     // column view style

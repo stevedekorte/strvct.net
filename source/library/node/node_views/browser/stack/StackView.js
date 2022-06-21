@@ -280,13 +280,13 @@
         } else if (pathArray.length === 0) { 
             //console.log("unselect items after path: ", this.pathString())
             // no selections left so unselect next
-            this.itemSetView().unselectAllRows()
+            this.itemSetView().unselectAllTiles()
             this.syncFromNavSelection()
             return this
         }
 
         //debugger;
-        this.itemSetView().selectRowWithNode(node)
+        this.itemSetView().selectTileWithNode(node)
 
         const childStack = this.nextStackView()
         if (childStack) {
@@ -356,9 +356,9 @@
         */
 
         //console.log("StackView " + this.node().title() + " syncFromNavSelection")
-        const itemView = this.navView().itemSetView().selectedRow()
-        if (itemView && itemView.nodeRowLink()) {
-            const oNode = itemView.nodeRowLink()
+        const itemView = this.navView().itemSetView().selectedTile()
+        if (itemView && itemView.nodeTileLink()) {
+            const oNode = itemView.nodeTileLink()
             const ovc = this.otherViewContent()
             if (!ovc || (ovc.node() !== oNode)) {
                 const ov = this.stackViewForNode(oNode)

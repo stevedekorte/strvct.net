@@ -66,7 +66,7 @@
     /*
 	
     fillBottomOfColumnIfAvailable () {
-        if (this.column().rows().last() === this) {
+        if (this.column().tiles().last() === this) {
             //this.debugLog(" update height")
             this.setMinAndMaxHeightPercentage(100)
             this.setFlexGrow(100)

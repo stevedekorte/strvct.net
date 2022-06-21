@@ -25,7 +25,7 @@
         this.newSlot("isEditable", false).setShouldStoreSlot(true)
         this.newSlot("target", null)
         this.setShouldStore(true)
-        this.setNodeRowIsSelectable(true)
+        this.setNodeTileIsSelectable(true)
         this.setNodeCanInspect(true)
     }
 

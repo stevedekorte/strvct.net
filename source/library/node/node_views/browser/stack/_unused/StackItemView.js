@@ -114,7 +114,7 @@
 
     }
 
-    unselectAllRowsExcept (item) {
+    unselectAllTilesExcept (item) {
         
     }
 

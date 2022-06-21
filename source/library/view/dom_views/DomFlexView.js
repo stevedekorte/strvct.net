@@ -60,8 +60,8 @@
     }
 
     /*
-    flexSplitIntoRowsNamed (nameList) {
-        this.flexSplitIntoRows(nameList.length)
+    flexSplitIntoTilesNamed (nameList) {
+        this.flexSplitIntoTiles(nameList.length)
         for (let i = 0; i < nameList.length; i++) {
             const name = nameList.at(i)
             const subview = this.subviews().at(i)
@@ -71,7 +71,7 @@
     }
     */
 
-    flexSplitIntoRows (count) {
+    flexSplitIntoTiles (count) {
         assert(this.canSplit()) // temporary
         this.setDisplay("flex")
         this.setFlexDirection("column")

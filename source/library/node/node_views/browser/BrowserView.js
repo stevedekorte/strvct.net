@@ -7,7 +7,7 @@
     A StackView with the top node used as a horizontal breadcrumb path node.
 
     To do this, we create a top wrapper node, which has one subnode which is the actual root node.
-    Somehow we will set the root node row view to display the path selected in the UI...
+    Somehow we will set the root node tile view to display the path selected in the UI...
     
 
     browserNode:
@@ -36,7 +36,7 @@
 
     setupBrowserNode () {
         const node = BaseNode.clone()
-        node.setNodeMinRowHeight(55)
+        node.setNodeMinTileHeight(55)
         node.setTitle("browser")
         node.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
         this.setNode(node)
@@ -46,7 +46,7 @@
     setupHeaderNode () {
         const node = BaseNode.clone()
         node.setNodeTileClassName("HeaderTile")
-        node.setNodeMinRowHeight(55)
+        node.setNodeMinTileHeight(55)
         node.setTitle("header")
         node.setNodeIsVertical(false) 
         this.setHeaderNode(node)

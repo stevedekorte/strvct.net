@@ -88,18 +88,18 @@
         return this.addSubnode(aField)
     }
         
-    nodeRowLink () {
-        // used by UI row views to browse into next column
+    nodeTileLink () {
+        // used by UI tile views to browse into next column
         return this
     }
 
-    // nodeRowLinkMethods
-    // used by UI row views to choose the node ref to use for the next column
-    // if returns null, the row won't open another column
+    // nodeTileLinkMethods
+    // used by UI tile views to choose the node ref to use for the next column
+    // if returns null, the tile won't open another column
     // 
     // The two typical use cases are :
     //
-    // 1) A pointer row which links to some other node.
+    // 1) A pointer tile which links to some other node.
     //
     // 2) A means to toggle between viewing the row's node or
     //    skipping to one of its subnodes. This allows a node
@@ -114,11 +114,11 @@
         return this
     }
 
-    nodeRowLinkMethods () {
+    nodeTileLinkMethods () {
         return ["thisNode"]
     }
 
-    defaultNodeRowLinkMethod () {
+    defaultNodeTileLinkMethod () {
 
     }
 

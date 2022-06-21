@@ -143,7 +143,7 @@
         v.titleView().setPaddingLeft("0em")
         v.titleView().setPaddingRight("0em")
         //v.setBorder("1px dashed rgba(255, 255, 255, .1)")
-        v.debugTypeId = function () { return "crumbView" }
+        //v.debugTypeId = function () { return "crumbView" }
         return v
 
     }

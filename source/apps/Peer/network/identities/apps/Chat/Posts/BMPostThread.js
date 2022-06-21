@@ -15,7 +15,7 @@
 
     init () {
         super.init()
-        this.customizeNodeRowStyles().setToBlackOnWhite()
+        this.customizeNodeTileStyles().setToBlackOnWhite()
     }
     
     title () {

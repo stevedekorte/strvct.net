@@ -21,7 +21,7 @@
         this.setValueIsEditable(false)
         this.setKeyIsVisible(true)
         this.setValueIsVisible(true)
-        this.setNodeRowIsSelectable(true)
+        this.setNodeTileIsSelectable(true)
     }
 
     /*
@@ -43,7 +43,7 @@
         return this.value().note()
     }
 	
-    nodeRowLink () {
+    nodeTileLink () {
         return this.value()
     }
 

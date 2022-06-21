@@ -60,40 +60,40 @@
             cb.setOpacity("0.4")
         }
 
-        this.setTopView(this.addContentSubview(DomView.clone().setDivClassName("BMPostDraftRowTopView")))
+        this.setTopView(this.addContentSubview(DomView.clone().setDivClassName("BMPostDraftTileTopView")))
 
         // left view
-        this.setLeftView(this.topView().addSubview(DomView.clone().setDivClassName("BMPostDraftRowLeftView")))
+        this.setLeftView(this.topView().addSubview(DomView.clone().setDivClassName("BMPostDraftTileLeftView")))
 
         // icon view
     	this.setIconView(this.leftView().addSubview(ImageView.clone().setDivClassName("BMPostAvatarView")))
         this.iconView().setBackgroundSizeWH(64, 64)     
 
         // right view
-        this.setRightView(this.topView().addSubview(DomView.clone().setDivClassName("BMPostDraftRowRightView")))
+        this.setRightView(this.topView().addSubview(DomView.clone().setDivClassName("BMPostDraftTileRightView")))
         
 
         // placeholder
-        this.setPlaceHolderView(this.rightView().addSubview(TextField.clone().setDivClassName("BMPostDraftRowPlaceHolderView")))
+        this.setPlaceHolderView(this.rightView().addSubview(TextField.clone().setDivClassName("BMPostDraftTilePlaceHolderView")))
         this.placeHolderView().setInnerHtml("What's happening?")
                 
         // content view
-        this.setTextContentView(this.rightView().addSubview(TextField.clone().setDivClassName("BMPostDraftRowContentView")))
+        this.setTextContentView(this.rightView().addSubview(TextField.clone().setDivClassName("BMPostDraftTileContentView")))
         this.textContentView().setIsEditable(true)
 
         this.closeButtonView().setBackgroundImageUrlPath(this.pathForIconName("close"))
         this.closeButtonView().setTopPx(15).setRightPx(15).setMinAndMaxWidth(10).setMinAndMaxHeight(10)
         // delete button
         /*
-        this.setDeleteButton(this.rightView().addSubview(DomView.clone().setDivClassName("BMPostDraftRowCloseButton")))
+        this.setDeleteButton(this.rightView().addSubview(DomView.clone().setDivClassName("BMPostDraftTileCloseButton")))
         this.deleteButton().setTarget(this).setAction("delete")
         //this.deleteButton().setBackgroundSizeWH(20, 20) 
         this.deleteButton().setBackgroundImageUrlPath(this.pathForIconName("close"))
         this.deleteButton().makeBackgroundContain().makeBackgroundCentered().makeBackgroundNoRepeat()  
         */  
         
-        this.setBottomView(this.addContentSubview(DomView.clone().setDivClassName("BMPostDraftRowBottomView")))
-        this.setSendButton(this.bottomView().addSubview(DomView.clone().setDivClassName("BMPostDraftRowSendButton")))
+        this.setBottomView(this.addContentSubview(DomView.clone().setDivClassName("BMPostDraftTileBottomView")))
+        this.setSendButton(this.bottomView().addSubview(DomView.clone().setDivClassName("BMPostDraftTileSendButton")))
         this.sendButton().setInnerHtml("Post")
         this.sendButton().setTarget(this).setAction("post")
 

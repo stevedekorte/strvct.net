@@ -111,7 +111,7 @@
     nodePathArrayForPathComponents (pathComponents, results = []) {
         results.push(this)
 
-        const link = this.nodeRowLink()
+        const link = this.nodeTileLink()
         if (link && link !== this) {
             return link.nodePathArrayForPathComponents(pathComponents) 
         }

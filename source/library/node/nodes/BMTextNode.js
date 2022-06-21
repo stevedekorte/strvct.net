@@ -48,7 +48,7 @@
         
         this.setNodeCanReorderSubnodes(true)
   
-        this.setNodeCanEditRowHeight(true)
+        this.setNodeCanEditTileHeight(true)
         this.setNodeCanEditColumnWidth(true)
     }
 

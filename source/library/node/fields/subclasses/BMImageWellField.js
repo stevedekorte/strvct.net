@@ -34,12 +34,12 @@
         this.newSlot("onlyShowsKeyWhenEmpty", false)
         this.newSlot("isEditable", true)
         
-        this.overrideSlot("nodeMinRowHeight").setShouldStoreSlot(true)
+        this.overrideSlot("nodeMinTileHeight").setShouldStoreSlot(true)
 
         this.setKey("Image title")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
-        this.setNodeCanEditRowHeight(true)
+        this.setNodeCanEditTileHeight(true)
     }
 
     init () {

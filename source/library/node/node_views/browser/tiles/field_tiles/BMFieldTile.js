@@ -4,7 +4,7 @@
 
     BMFieldTile
 
-    Field views are rows that present nodes which have key/value pairs, 
+    Field views are tiles that present nodes which have key/value pairs, 
     such as those representing slots, or other named properties.
 
     The idea is to use the field as the container, and then get
@@ -40,8 +40,8 @@
         this.newSlot("valueUneditableBorder", "none")
     }
 
-    setupRowContentView () {
-        super.setupRowContentView()
+    setupTileContentView () {
+        super.setupTileContentView()
 
         const cv = this.contentView()
         cv.setMinHeight("5em")
@@ -347,13 +347,13 @@
         /*
         const node = this.node()
 
-        if (node && node.nodeMinRowHeight()) {
-            if (node.nodeMinRowHeight() === -1) {
+        if (node && node.nodeMinTileHeight()) {
+            if (node.nodeMinTileHeight() === -1) {
                 this.setHeight("auto")
                 this.setPaddingBottom("calc(100% - 20px)")
 
             } else {
-                this.setHeight(this.pxNumberToString(node.nodeMinRowHeight()))
+                this.setHeight(this.pxNumberToString(node.nodeMinTileHeight()))
             }
         }
         */

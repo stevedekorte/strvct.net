@@ -18,7 +18,7 @@
         super.init()
     }
 	
-    nodeRowLink () {
+    nodeTileLink () {
         return null
     }
 	
