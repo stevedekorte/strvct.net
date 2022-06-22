@@ -146,7 +146,7 @@
     // ----
 
     setItems (viewArray) {
-        //this._items.forEach(v => v.viewRelease())
+        this._items.forEach(v => v.viewRelease())
         this._items = viewArray
         this._items.forEach(v => v.viewRetain())
         console.log(this.type() + " setItems(" + JSON.stringify(viewArray.map(v => v.debugTypeId())) + ")")
