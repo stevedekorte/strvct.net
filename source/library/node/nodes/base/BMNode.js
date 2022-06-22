@@ -171,6 +171,8 @@
     
     
     setParentNode (aNode) {
+        assert(aNode !== this) // sanity check
+
         if (aNode !== this._parentNode) { 
             if (this._parentNode && aNode) {
                 console.warn(this.type() + " setParentNode(" + aNode.type() + ")  already has parent " + this._parentNode.type())
@@ -434,9 +436,7 @@
             assert(this.parentNode() !== this)
             this.parentNode().didUpdateNode()
         }
-         
     }
-
 
     indexOfSubnode (aSubnode) {
         return this.subnodes().indexOf(aSubnode);
@@ -472,7 +472,6 @@
         }
     }
     
- 
     // --- parent chain notifications ---
     
     tellParentNodes (msg, aNode) {
@@ -656,11 +655,13 @@
         }
 
         this.watchSubnodes()
-        if (this._subnodes.contains(null)) {
+        if (this._subnodes.contains(null)) { // what would cause this?
+            //debugger;
+            console.warn("found null in subnodes: ")
             this._subnodes.filterInPlace(sn => !(sn === null) )
         }
         this._subnodes.forEach(sn => sn.setParentNode(this))
-        this.didChangeSubnodeList() // not handles automatically
+        this.didChangeSubnodeList() // not handled automatically
         return this
     }
     

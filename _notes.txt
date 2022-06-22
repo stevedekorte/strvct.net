@@ -1,23 +1,18 @@
 
+- consolidate viewRetainCount with stack cache?
 
 - timeouts
 -- move clearTimeout(trackedId) calls in objects to clearTimeoutName()?
 -- closely look at EventSet timeouts to make sure they don't send events to object after it is retired
 -- send a "willClearTimeout<Name>"?
 
-- rename "rows" to "tiles" in Stack classes, etc
-
-- implement newClassSlot 
+- implement newClassSlot (supporting getter and setter creation)
 
 TODO: remove remaining css files
 
 - remove FieldSetNode
 --- then fix import of     "BMDataStoreRecord.js"
 
-- bug with dragging a row to a parent node
---- could prepareToRetire be removing the node ref?
-
-- Rename RowView to Tile.
 
 TODO:
 - Fields have key and value, but these should be separated.

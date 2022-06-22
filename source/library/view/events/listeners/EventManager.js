@@ -122,7 +122,7 @@
                 // This is not the case for some events like onblur which can be triggered by
                 // removing a DOM element from a parent, and start an event callback before the
                 // current event stack has unwound.
-                console.log("--->>> fullSyncNow <<<---")
+                //console.log("--->>> fullSyncNow <<<---")
                 SyncScheduler.shared().fullSyncNow()
            }
         }

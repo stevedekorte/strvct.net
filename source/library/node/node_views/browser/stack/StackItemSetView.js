@@ -57,6 +57,29 @@
         //this.applyStyles()
     }
 
+    setTilePlaceHolder (ph) {
+        if (this._tilePlaceHolder !== ph) {
+            if (this._tilePlaceHolder) {
+                this._tilePlaceHolder.viewRelease()
+            }
+            this._tilePlaceHolder = ph
+            if (this._tilePlaceHolder) {
+                this._tilePlaceHolder.viewRetain()
+            }
+        }
+
+        return this
+    }
+
+    prepareToRetire () {
+        const ph = this.tilePlaceHolder()
+        if (ph) {
+            this.setTilePlaceHolder(null) // to viewRelease it
+        }
+        super.prepareToRetire()
+        return this
+    }
+
     stackView () {
         const scrollView = this.parentView()
         const navView = scrollView.parentView()
@@ -1512,7 +1535,7 @@
 
     onDragSourceBegin (dragView) {
         this.setHasPausedSync(true)
-        console.log(this.typeId() + " onDragSourceBegin")
+        //console.log(this.typeId() + " onDragSourceBegin")
         // ---
 
 
@@ -1686,7 +1709,7 @@
     // -- messages sent by DragView to the potential drop view, if not the source ---
 
     acceptsDropHover (dragView) {
-        return true 
+        //return true 
 
         const node = this.node()
         if (node) {
@@ -1795,7 +1818,9 @@
         const ph = this.tilePlaceHolder()
         if (ph) {
             //console.log("removeTilePlaceHolder")
-            this.removeSubview(ph)
+            if (this.hasSubview(ph)) {
+                this.removeSubview(ph)
+            }
             this.setTilePlaceHolder(null)
         }
     }

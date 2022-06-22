@@ -4,6 +4,16 @@
     DomView
 
     Base view class. Wraps a dom element.
+    
+    [IMPORTANT] Element Garbage Collection:
+    
+    If a DomView does not have a parentView set at the end of an event loop, 
+    it will call prepareToRetire and remove it's element and cancel any timers or events it's 
+    registered for. This is done to allow garage collection on elements as those subscriptions
+    would otherwise hold a reference to the element. 
+    
+    If you need to hold onto a parentless view between event loops, call viewRetain()
+    to retain it, and viewRelease() it when you no longer need it.
 
     TODO: add dict[propertyName] -> validValueSet and check css values when set?
 

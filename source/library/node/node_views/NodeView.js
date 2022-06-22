@@ -25,9 +25,11 @@
     } //.setDocs("init", "initializes the object", "returns this"),
     
     setParentView (v) {
+        /*
         if (Type.isNull(v)) {
             console.log(this.debugTypeId() + " setParentView(null)")
         }
+        */
         return super.setParentView(v)
     }
     
