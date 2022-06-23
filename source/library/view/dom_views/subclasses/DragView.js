@@ -149,7 +149,7 @@
         this._items.forEach(v => v.viewRelease())
         this._items = viewArray
         this._items.forEach(v => v.viewRetain())
-        console.log(this.type() + " setItems(" + JSON.stringify(viewArray.map(v => v.debugTypeId())) + ")")
+        //console.log(this.type() + " setItems(" + JSON.stringify(viewArray.map(v => v.debugTypeId())) + ")")
         return this
     }
 
@@ -187,8 +187,8 @@
             let dup = sv.htmlDuplicateView()
             this.addSubview(dup)
             assert(dup.hasFixedFrame())
-            console.log("item dup subview frameInDocument: " + dup.frameInDocument().asString())
-            console.log("item dup subview frameInParentView: " + dup.frameInParentView().asString())
+            //console.log("item dup subview frameInDocument: " + dup.frameInDocument().asString())
+            //console.log("item dup subview frameInParentView: " + dup.frameInParentView().asString())
         })
 
         const ff = this.fixedFrameFittingSubviews()

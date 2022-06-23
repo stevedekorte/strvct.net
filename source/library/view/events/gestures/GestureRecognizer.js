@@ -827,17 +827,17 @@
         }
     }
 
+    updateDebuggerTimeoutName () {
+        return "updateDebugger"
+    }
+
+    updateDebuggerTimeoutSeconds () {
+        return 0.1
+    }
+
     updateDebugTimer () {
-        if (this._debugTimerId) {
-            this.clearTimeout(this._debugTimerId) 
-            this._debugTimerId = null
-        }
-
-        this._debugTimerId = this.addTimeout(() => { 
-            this._debugTimerId = null
-            this.updateDebugger() 
-        }, 100);
-
+        const ms = this.updateDebuggerTimeoutSeconds() * 1000
+        this.addTimeout(() => this.updateDebugger(), ms, this.updateDebuggerTimeoutName())
         return this
     }
 
@@ -863,8 +863,7 @@
     }
 
     allDownPoints () { // TODO: some better abstraction for Touch+Mouse?
-        const points = this.allPoints().select(p => p.isDown())
-        return points
+        return this.allPoints().select(p => p.isDown())
     }
 
     shortTypeId () {

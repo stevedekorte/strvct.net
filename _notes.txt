@@ -1,8 +1,13 @@
 
+- complex draging around can cause drop on item with no element - caching failure?
+
+- remove FieldSetNode
+--- then fix import of     "BMDataStoreRecord.js"
+
+
 - consolidate viewRetainCount with stack cache?
 
 - timeouts
--- move clearTimeout(trackedId) calls in objects to clearTimeoutName()?
 -- closely look at EventSet timeouts to make sure they don't send events to object after it is retired
 -- send a "willClearTimeout<Name>"?
 
@@ -10,8 +15,7 @@
 
 TODO: remove remaining css files
 
-- remove FieldSetNode
---- then fix import of     "BMDataStoreRecord.js"
+
 
 
 TODO:

@@ -61,8 +61,8 @@
   },
   {
     "path": "source/library/ideal/categories/Object_timeouts.js",
-    "size": 2623,
-    "hash": "Qx5m67Qjzn2I1FMPma393Zye0FjfGVk+U0f/1kvbM9E="
+    "size": 3202,
+    "hash": "GzqsPexcuQ1WZmFRh/NRXrtz7jX7csuoAR29MfHGBEI="
   },
   {
     "path": "source/library/ideal/categories/Array_ideal.js",
@@ -386,13 +386,13 @@
   },
   {
     "path": "source/library/view/events/gestures/GestureRecognizer.js",
-    "size": 24182,
-    "hash": "BMTQADi2A0e+2apRTpposOvrBgjoZ6hlcOOpSc0pPPE="
+    "size": 24164,
+    "hash": "sziNNZLPoSG23filOrV1G9PzF4uLrvqyNEeJOZLJkNA="
   },
   {
     "path": "source/library/view/events/gestures/LongPressGestureRecognizer.js",
-    "size": 2986,
-    "hash": "umjPWh5mm78lvQ3K0Ke0NpVe2XpCWi1zhH2M7A+YSsw="
+    "size": 2985,
+    "hash": "v3PqqoJ1vfkQnyQfgAvgLvKx8NYoXz+/M/ly6GiuntQ="
   },
   {
     "path": "source/library/view/events/gestures/SlideGestureRecognizer.js",
@@ -401,8 +401,8 @@
   },
   {
     "path": "source/library/view/events/gestures/TapGestureRecognizer.js",
-    "size": 4306,
-    "hash": "Mqf8WQOKo4l/hjzjhlYk1F5G+imZrq7vhT5YQjThP8A="
+    "size": 4302,
+    "hash": "p0Z+fdb0rCAJDh5Kirp2vlDevQg6cB3a+fTekeRXjU0="
   },
   {
     "path": "source/library/view/events/gestures/OrientGestureRecognizer.js",
@@ -561,8 +561,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/DragView.js",
-    "size": 15784,
-    "hash": "vTE0KhpngDO1zOaSJiGWNhm8InwyjTX9oBYGQXeA7pQ="
+    "size": 15782,
+    "hash": "WCqBQkIso8rRSZR4jvXIt/OwC7g6qstZ7lGHkUt+dYY="
   },
   {
     "path": "source/library/view/dom_views/subclasses/PanelView.js",
@@ -926,8 +926,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 14470,
-    "hash": "HgeMyKXmClzBNSap4FGNkHj2JERC3/tLpEHfFXE6BIY="
+    "size": 14942,
+    "hash": "jsZDVFgiqTh9T02xw3THTgEhos9mZyuN5/ApJQs729E="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackNavView.js",
@@ -946,8 +946,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/tiles/Tile.js",
-    "size": 30005,
-    "hash": "9oPTQ+27qf48+hF38BT3AZ4Khqo3bhUDsviTsMmcCYs="
+    "size": 30021,
+    "hash": "KDSO9ych7IU5bKA0NvXxp+Zw9Ayja14ptHtfMvCM8+0="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/TitledTile.js",

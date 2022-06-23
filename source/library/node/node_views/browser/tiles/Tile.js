@@ -1056,17 +1056,18 @@
 
     // -----------------
 
+    dropHoverEnterTimeoutName () {
+        return "dropHoverEnter"
+    }
+
     setupDropHoverTimeout () {
-        const seconds = this.dropHoverDidTimeoutSeconds()
-        this._dropHoverEnterTimeout = this.addTimeout(
-            () => { this.dropHoverDidTimeout() }, 
-            seconds * 1000
-        )
+        const ms = this.dropHoverDidTimeoutSeconds() * 1000
+        this.addTimeout(() => this.dropHoverDidTimeout(), ms, this.dropHoverEnterTimeoutName())
     }
 
     cancelDropHoverTimeout () {
-        this.clearTimeout(this._dropHoverEnterTimeout)
-        this._dropHoverEnterTimeout = null
+        this.clearTimeoutNamed(this.dropHoverEnterTimeoutName())
+        return this
     }
 
     dropHoverDidTimeout () {

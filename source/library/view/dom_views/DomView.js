@@ -81,12 +81,21 @@
     viewRelease () {
         this.setViewRetainCount(this.viewRetainCount() - 1)
         assert(this.viewRetainCount() > -1)
+        if (this.viewRetainCount() === 0) {
+            this.scheduleRetireIfNoParent()
+        }
         return this
     }
 
     viewRetain () {
         this.setViewRetainCount(this.viewRetainCount() + 1)
         return this
+    }
+
+    scheduleRetireIfNoParent () {
+        if (!this.hasParentView()) {
+            this.scheduleMethod("retireIfNoParent", 1000)
+        }
     }
 
     retireIfNoParent () {
@@ -2317,11 +2326,6 @@
         return this
     }
 
-    scheduleRetireIfNoParent () {
-        if (!this.hasParentView()) {
-            this.scheduleMethod("retireIfNoParent", 1000)
-        }
-    }
 
     // view chains
 

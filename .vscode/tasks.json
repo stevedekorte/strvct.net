@@ -40,7 +40,7 @@
             "options": {
                 "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
-                "isBackground": "false",
+                "isBackground": "true",
             },
             "presentation": {
                 "reveal": "silent",
@@ -62,7 +62,7 @@
             "options": {
                 "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
-                "isBackground": "false",
+                "isBackground": "true",
             },
             "presentation": {
                 "reveal": "silent",

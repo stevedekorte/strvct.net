@@ -43,7 +43,7 @@
     // --- timer ---
 
     startTimer () {
-        if (this.timeoutId()) {
+        if (this.hasTimer()) {
             this.stopTimer()
         }
 

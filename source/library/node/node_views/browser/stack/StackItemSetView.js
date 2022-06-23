@@ -1627,7 +1627,7 @@
     }
 
     onDragSourceDropped (dragView) {
-        console.log(this.debugTypeId() + " --- onDragSourceDropped ---")
+        //console.log(this.debugTypeId() + " --- onDragSourceDropped ---")
         //debugger;
 
         const insertIndex = this.indexOfTilePlaceHolder()
@@ -1640,7 +1640,7 @@
         } else {
             throw new Error("unhandled drag operation")
         }
-        console.log(this.debugTypeId() + " --- unstacking ---")
+        //console.log(this.debugTypeId() + " --- unstacking ---")
 
         this.unstackTiles()
         this.removeTilePlaceHolder()

@@ -17,7 +17,12 @@
 
         with:
 
-            this.addTimeout(aFunc, ms) // returns timer id
+            this.addTimeout(aFunc, ms, optionalName) // returns timer id
+
+    Note:
+
+        If the optionalName argument is used, any active timer with the same name on this object will
+        be cleared first, and a new timeout with the name will be added.
 
     TODO: decide if exception should be raised when cancelling timeout not in _activeTimeoutsDict
         
@@ -35,6 +40,13 @@
         }
     
         addTimeout (aFunc, msDelay, optionalName) {
+            if (optionalName) {
+                // clear existing timeout with this name, if there is one
+                const tid = this.timeoutForName(optionalName)
+                if (tid) {
+                    this.clearTimeout(tid)
+                }
+            }
             const tids = this.activeTimeoutsDict()
             const tidInfo = {} // so we can capture returned tid in timeout closure
             const tid = setTimeout(() => { 
@@ -63,6 +75,10 @@
             const tid = this.timeoutForName(name)
             this.clearTimeout(tid)
             return this
+        }
+
+        hasTimeoutNamed (name) {
+            return !Type.isUndefined(this.timeoutForName(name))
         }
     
         cancelAllTimeouts () {

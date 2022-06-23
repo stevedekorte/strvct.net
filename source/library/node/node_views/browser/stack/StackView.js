@@ -139,6 +139,7 @@
     }
 
     cacheId () {
+        //return this.puuid()
         return this.node().typeId()
     }
 
@@ -158,7 +159,10 @@
     }
 
     stackViewForNode (aNode) {
-        let sv = this.thisClass().instanceCache().at(aNode.typeId(), this)
+        let sv = null
+        if (aNode) {
+            sv = this.thisClass().instanceCache().at(aNode.typeId(), this)
+        }
         if (!sv) {
             sv = StackView.clone().setNode(aNode)
         }
@@ -296,6 +300,22 @@
     }
 
     selectedNodePathArray () {
+        const parts = this.stackViewSubchain().shallowCopy()
+        
+        if (Type.isNullOrUndefined(parts.last().node())) {
+            //debugger;
+            parts.removeLast()
+        }
+
+        return parts.map(sv => {
+            if (!sv.node()) {
+                debugger;
+            }
+            return sv.node()
+        })
+    }
+    /*
+    selectedNodePathArray () {
         return this.stackViewSubchain().map(sv => {
             if (!sv.node()) {
                 debugger;
@@ -303,6 +323,7 @@
             return sv.node()
         })
     }
+    */
 
     topDidChangeNavSelection () {
         //console.log("topDidChangeNavSelection")
