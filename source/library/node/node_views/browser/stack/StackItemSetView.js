@@ -87,6 +87,7 @@
         return stackView
     }
 
+
     syncOrientation () {
         if (this.isVertical()) {
             this.makeOrientationRight()
@@ -1076,9 +1077,11 @@
     }
     */
 
+    /*
     logName () {
         return this.browserPathString()
     }
+    */
 
     maxTileWidth () {
         if (this.tiles().length === 0) {
@@ -1568,9 +1571,6 @@
         */
 
         this.moveSubviewToIndex(this.tilePlaceHolder(), index)
-
-        this.stackView().cache() // only needed for source column, since we might navigate while dragging
-
         this.stackTiles()
         return this
     }
@@ -1585,8 +1585,18 @@
         //this.removeTilePlaceHolder()
     }
 
+    setNode (aNode) {
+        if (this.node() && Type.isNull(aNode)) {
+            console.log(this.debugTypeId() + " setNode(null)")
+            //debugger;
+        }
+        super.setNode(aNode)
+        return this
+    }
+
     onDragSourceEnter (dragView) {
         this.onDragDestinationHover(dragView)
+        this.stackView().rootStackView().onStackChildDragSourceEnter(dragView)
     }
 
     onDragSourceHover (dragView) {
@@ -1702,7 +1712,6 @@
     }
 
     onDragSourceEnd (dragView) {
-        this.stackView().scheduleMethod("uncache")
         this.endDropMode()
     }
 

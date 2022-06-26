@@ -25,21 +25,6 @@
         return obj
     }
 
-   static newClassSlot (slotName, slotValue) { 
-        if (Object.getOwnPropertyDescriptor(slotName)) {
-                this[slotName] = slotValue
-        } else {
-            const descriptor = {
-                configurable: true,
-                enumerable: false,
-                value: slotValue,
-                writable: true,
-            }
-            Object.defineProperty(this, slotName, descriptor)
-        }
-        return this
-   }
-
    /* ------------------------------------------------ */
 
     static clone () {
@@ -63,6 +48,48 @@
 
     // --- class slots and variables ---
     
+
+    static newClassSlot (slotName, slotValue) { 
+        const ivarName = "_" + slotName
+
+        const hasSlot = !Type.isUndefined(Object.getOwnPropertyDescriptor(slotName))
+        assert(!hasSlot)
+
+        const hasIvar = !Type.isUndefined(Object.getOwnPropertyDescriptor(ivarName))
+        assert(!hasIvar)
+
+        // setup ivar
+        {
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: slotValue,
+                writable: true,
+            }
+            Object.defineProperty(this, ivarName, descriptor)
+        }
+
+        // setup getter
+        {
+            //const getterFunc = eval('function () { return this.' + ivarName + '; }');
+            const self = this
+            const getterFunc = () => { return self[ivarName]; };
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: getterFunc,
+                writable: true,
+            }
+            Object.defineProperty(this, slotName, descriptor)
+        }
+
+        return this
+   }
+   
+    static hasClassVariable (key) {
+        return this.hasOwnProperty(key)
+    }
+
     static getClassVariable (key, defaultValue) {
         if (!this.hasOwnProperty(key)) {
             if (Type.isFunction(defaultValue)) { 

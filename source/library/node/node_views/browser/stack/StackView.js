@@ -49,27 +49,19 @@
 
 (class StackView extends NodeView {
 
-    static instanceCache () {
-        // need to cache these so we can return to the state (e.g. selection, scroll point, etc) 
-        // we left off in when we changed the selected node
-        let v = this.getClassVariable("_instanceCache")
-        if (!v) {
-            v = Dictionary.clone()
-            this.setClassVariable("_instanceCache", v)
-        }
-        return v
-    }
-
     initPrototype () {
         this.newSlot("navView", null)
         this.newSlot("otherView", null)
         this.newSlot("direction", "down").setDoesHookSetter(true) // valid values: left, right, up, down
         this.newSlot("lastPathString", null)
         this.newSlot("onStackViewPathChangeNote", null)
+        this.newSlot("nodeToStackCache", null)
     }
 
     init () {
         super.init()
+
+        this.setNodeToStackCache(null)
         
         this.setDisplay("flex")
         this.setPosition("relative")
@@ -122,54 +114,20 @@
         return this
     }
 
-    // --- direction ---
-
-    // --- cache ---
+    // --- retire ---
 
     prepareToRetire () {
         // Don't retire the view while we are caching it.
         // Caching is only used during drag & drop now, 
         // but might be used elsewhere in the future.
-        // TODO: When it is, maybe we should rename cache sto instanceCache and move to Object?
         // TODO: should we pause events and observations while cached?
-        if (this.isCached()) {
+        if (this.hasCache()) {
             return false;
         }
         return super.prepareToRetire()
     }
 
-    cacheId () {
-        //return this.puuid()
-        return this.node().typeId()
-    }
-
-    isCached () {
-        return this.thisClass().instanceCache().hasKey(this.cacheId())
-    }
-
-    cache () {
-        this.thisClass().instanceCache().atPut(this.cacheId(), this)
-        return this
-    }
-
-    uncache () {
-        this.thisClass().instanceCache().removeKey(this.cacheId())
-        this.scheduleRetireIfNoParent()
-        return this
-    }
-
-    stackViewForNode (aNode) {
-        let sv = null
-        if (aNode) {
-            sv = this.thisClass().instanceCache().at(aNode.typeId(), this)
-        }
-        if (!sv) {
-            sv = StackView.clone().setNode(aNode)
-        }
-        return sv
-    }
-
-    // ---  ---
+    // --- direction ---
 
     didUpdateSlotDirection () {
         this.syncOrientation()
@@ -215,13 +173,15 @@
     }
     */
 
-    /* TODO: remove this if no issues with using didChangeNode
     setNode (aNode) {
-        super.setNode(aNode)
-        this.navView().setNode(this.node())
+        if (aNode !== this.node()) {
+            if (aNode && this.node() && this.previousStackView() && this.previousStackView().isCaching()) {
+                throw new Error("this might invalidate a cache")
+            }
+            super.setNode(aNode)
+        }
         return this
     }
-    */
 
     didChangeNode () {
         super.didChangeNode()
@@ -314,6 +274,7 @@
             return sv.node()
         })
     }
+
     /*
     selectedNodePathArray () {
         return this.stackViewSubchain().map(sv => {
@@ -328,7 +289,7 @@
     topDidChangeNavSelection () {
         //console.log("topDidChangeNavSelection")
         //debugger;
-        if (this !== this.topStackView()) {
+        if (this !== this.rootStackView()) {
             debugger;
             return this
         }
@@ -343,7 +304,7 @@
     }
 
     didChangeNavSelection () {
-        this.topStackView().topDidChangeNavSelection()
+        this.rootStackView().topDidChangeNavSelection()
         //this.syncFromNavSelection()
         this.scheduleMethod("syncFromNode")
         return true
@@ -382,7 +343,7 @@
             const oNode = itemView.nodeTileLink()
             const ovc = this.otherViewContent()
             if (!ovc || (ovc.node() !== oNode)) {
-                const ov = this.stackViewForNode(oNode)
+                const ov = this.otherViewForNode(oNode)
                 this.setOtherViewContent(ov)
             }
         } else {
@@ -416,7 +377,7 @@
         return this.otherView().subviews().first()
     }
 
-    topStackView () {
+    rootStackView () {
         let p = this
         while (p.previousStackView()) {
             p = p.previousStackView()
@@ -503,7 +464,7 @@
     }
 
     topViewWidth () {
-        return this.topStackView().frameInDocument().width()
+        return this.rootStackView().frameInDocument().width()
     }
 
     compactNavAsNeeded () {
@@ -525,5 +486,103 @@
         return false
     }
 
+    // --- caching during dragging ---
 
+    // dragging events to start/end caching
+
+    onStackChildDragSourceEnter (dragView) {
+        if (!this.isCaching()) {
+            console.log(this.debugTypeId() + " onStackChildDragSourceEnter")
+            this.watchOnceForNoteFrom("onDragViewClose", dragView)
+            this.beginCaching()
+        }
+    }
+
+    onDragViewClose (aNote) {
+        console.log(this.debugTypeId() + " onDragViewClose")
+        this.endCaching()
+    }
+
+    // begin / end caching
+
+    isCaching () {
+        return !Type.isNull(this.nodeToStackCache())
+    }
+
+    beginCaching () {
+        assert(!this.isCaching())
+        this.setNodeToStackCache(ideal.Dictionary.clone())
+
+        const ov = this.otherView()
+        if (ov && ov.cacheId) {
+            this.cacheView(ov)
+            ov.beginCaching()
+        }
+        return this
+    }
+
+    endCaching () {
+        assert(this.isCaching())
+        this.nodeToStackCache().values().forEach(sv => this.uncacheView(sv))
+        this.setNodeToStackCache(null)
+
+        const ov = this.otherView()
+        if (ov && ov.cacheId) {
+            this.uncacheView(ov)
+            ov.endCaching()
+        }
+        return this
+    }
+
+    // --- node to StackView cache ---
+
+    cacheId () {
+        return this.node().typeId()
+    }
+
+    hasCache () {
+        return !Type.isNull(this.nodeToStackCache())
+    }
+
+    cacheView (aView) {
+        const cache = this.nodeToStackCache()
+        const k = aView.cacheId()
+        if (!cache.hasKey(k)) {
+            cache.atPut(k, aView)
+            aView.viewRetain()
+        }
+        return this
+    }
+
+    uncacheView (stackView) {
+        const cache = this.nodeToStackCache()
+        const k = aView.cacheId()
+        if (cache.hasKey(k)) {
+            cache.removeKey(k)
+            aView.viewRelease() // will schedule prepareToRetireIfReady if retain count is zero
+        }
+        return this
+    }
+
+    cachedViewForNode (aNode) {
+        if (this.hasCache() && aNode) {
+            const k = aNode.typeId()
+            return this.nodeToStackCache().at(k, this)
+        }
+        return null
+    }
+
+    otherViewForNode (aNode) {
+        let sv = this.cachedViewForNode(aNode)
+
+        if (!sv) {
+            // what if node is null now and set *after* this?
+            // things like a path change can alter node?
+            sv = StackView.clone().setNode(aNode)
+        }
+
+        return sv
+    }
+
+        
 }.initThisClass());

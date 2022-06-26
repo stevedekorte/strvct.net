@@ -121,8 +121,8 @@
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
-    "size": 17956,
-    "hash": "RTkQrr7SleE0lgaidfHzAFyyCn2ziCQgj7iJIy57bN4="
+    "size": 18698,
+    "hash": "bF3wPX7RmwKmrNRL/se3q0lVCgmKs9/57vjY8wzAbds="
   },
   {
     "path": "source/library/ideal/Documentation.js",
@@ -521,8 +521,8 @@
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
-    "size": 121612,
-    "hash": "q4wSA4AhmxegwzJC2UMjUd0noF/iNVjHTmUYJZcKKoE="
+    "size": 122332,
+    "hash": "2DKt6hTpmBJ5jOw8BQbdZoEi0MFrXx1r8wM3gJeos+A="
   },
   {
     "path": "source/library/view/dom_views/DomFlexView.js",
@@ -561,8 +561,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/DragView.js",
-    "size": 15782,
-    "hash": "WCqBQkIso8rRSZR4jvXIt/OwC7g6qstZ7lGHkUt+dYY="
+    "size": 15975,
+    "hash": "jIdJCKQZXpjTcTwZOeeEoxMy98wGCG2vfA7LDJJyl/I="
   },
   {
     "path": "source/library/view/dom_views/subclasses/PanelView.js",
@@ -926,8 +926,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 14942,
-    "hash": "jsZDVFgiqTh9T02xw3THTgEhos9mZyuN5/ApJQs729E="
+    "size": 16387,
+    "hash": "JHWkJQkgsjTfqPP6vDUPPAfKcfuLv7CHTO6O07k0S8E="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackNavView.js",
@@ -941,8 +941,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackItemSetView.js",
-    "size": 51136,
-    "hash": "+eR7zdFnPc0HSnCp6jaSJvMIDGaXliik/HfCZvbencQ="
+    "size": 51299,
+    "hash": "TdZ/z+s+nDZNygn5I84J+1FugVVSCvQBDCJ0FEZKpGE="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/Tile.js",
@@ -961,8 +961,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/tiles/BreadCrumbTile.js",
-    "size": 6995,
-    "hash": "j131AEKH/eAvbC2qttMze3ynzq9vBIEbKxlkfa5RzPQ="
+    "size": 7000,
+    "hash": "1iuEALqvfRj7Ux1ZK1XgE6rpg3IAYp1DUAkxTfMdbhA="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/HeaderTile.js",

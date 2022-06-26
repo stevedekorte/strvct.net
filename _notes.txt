@@ -1,4 +1,35 @@
 
+WeakRef now possible to use for things like Storage cache / ObjectPool of puuid->instance?
+check out FinalizationRegistry
+
+IMPORTANT: once StackView node is set, we can't remove it?
+
+- rename topStackView to rootStackView
+
+
+- during drag hover, turn on cache mode for stackview hierarchy
+- Q: do we only need to cache drag source StackView? No, a parent might retire the tree
+--- don't need to deal with drop from desktop (dropListener protocol) as it doesn't support navigation (later could create drag view on entering window) 
+- on drag complete, end cache mode for stackview hierarchy
+- have each view cache it's own node-to-view
+- in order to check if being cached, stackview needs to ask parent, but may no longer be a subview - do we need an ownerSlot, or just use viewRetain instead?
+
+
+
+rename StackItemSetView to TilesView?
+rename Column in StackViews? but to what? not a Stack - maybe a nextItemSetView?
+
+add check in prepareToRetire to new canRetire method?
+
+StackView cache
+
+there may be multiple stackviews that have the same node
+so caching with the node as key doesn't work
+
+
+
+
+-----------
 - complex draging around can cause drop on item with no element - caching failure?
 
 - remove FieldSetNode

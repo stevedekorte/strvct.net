@@ -33,8 +33,8 @@
         return this
     }
 
-    topStackView () {
-        return this.parentView() ? this.parentView().stackView().topStackView() : null
+    rootStackView () {
+        return this.parentView() ? this.parentView().stackView().rootStackView() : null
     }
 
     targetStackView () {
@@ -47,10 +47,10 @@
         return null
     }
 
-    watchTopStackView () {
+    watchRootStackView () {
         const obs = this.onStackViewPathChangeObs()
         if (!obs.isWatching()) {
-            const target = this.topStackView()
+            const target = this.rootStackView()
             if (target) {
                 obs.setTarget(target)
                 obs.watch()
@@ -85,7 +85,7 @@
     didUpdateSlotParentView (oldValue, newValue) {  // hook this to do the initial setup
         super.didUpdateSlotParentView(oldValue, newValue)
         if (this.parentView()) {
-            this.watchTopStackView()
+            this.watchRootStackView()
             this.syncPathToStack()
         }
         return this

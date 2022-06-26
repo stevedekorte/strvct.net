@@ -79,12 +79,16 @@
     // retiring
 
     viewRelease () {
+        assert(this.viewRetainCount() > 0)
         this.setViewRetainCount(this.viewRetainCount() - 1)
-        assert(this.viewRetainCount() > -1)
-        if (this.viewRetainCount() === 0) {
-            this.scheduleRetireIfNoParent()
+        if (!this.isViewRetained()) {
+            this.scheduleRetireIfReady()
         }
         return this
+    }
+
+    isViewRetained () {
+        return this.viewRetainCount() !== 0
     }
 
     viewRetain () {
@@ -92,16 +96,31 @@
         return this
     }
 
-    scheduleRetireIfNoParent () {
+    scheduleRetireIfReady () {
         if (!this.hasParentView()) {
-            this.scheduleMethod("retireIfNoParent", 1000)
+            this.scheduleMethod("retireIfReady", 1000)
         }
     }
 
-    retireIfNoParent () {
-        if (this.viewRetainCount() === 0 && !this.hasParentView()) {
+    /*
+    canRetire () {
+        return false
+    }
+    */
+
+    canRetire () {
+        if (!this.isViewRetained() && !this.hasParentView()) {
+            //debugger;
+            return true
+        }
+        return false
+    }
+
+    retireIfReady () {
+        if (this.canRetire()) {
             if (SyncScheduler.shared().hasActionsForTarget(this)) {
                 debugger;
+                SyncScheduler.shared().hasActionsForTarget(this) // so we can step into this 
             }
             this.prepareToRetire()
         }
@@ -114,7 +133,15 @@
         }
         this.setColor("yellow")
         this.setBackgroundColor("blue")
-        
+
+
+        /*
+        // TEMP==============================================================================
+        console.log(this.debugTypeId() + " called prepareToRetire but skipping")
+        return 
+        // TEMP==============================================================================
+        */
+
         assert(!this.hasParentView())
         assert(this.viewRetainCount() === 0)
 
@@ -151,8 +178,6 @@
         }
 
         super.prepareToRetire() // call on super
-
-
         return this
     }
 
@@ -164,9 +189,9 @@
 
     retireSubviewTree () {
         // this should be called by:
-        //   scheduleMethod("retireIfNoParent") -> prepareToRetire()
+        //   scheduleRetireIfReady() -> prepareToRetire()
         // will this cause a SyncAction loop issue as this will result in adding:
-        //   scheduleMethod("retireIfNoParent")
+        //   scheduleMethod("retireIfReady")
         // on subviews 
         const subviews = this.subviews().slice()
         this.removeAllSubviews()
@@ -174,8 +199,6 @@
             sv.retireSubviewTree()
         })
     }
-
-
 
     // gestures
 
@@ -2322,10 +2345,9 @@
     }
 
     didUpdateSlotParentView (oldValue, newValue) {
-        this.scheduleRetireIfNoParent()
+        this.scheduleRetireIfReady()
         return this
     }
-
 
     // view chains
 

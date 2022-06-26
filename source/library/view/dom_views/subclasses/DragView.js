@@ -47,8 +47,12 @@
 
         Messages sent by Destination to item
 
-        onDragRequestRemove() // return true if approved
+            - onDragRequestRemove() // return true if approved
 
+        Notifications sent
+
+            - onDragViewOpen
+            - onDragViewClose
 
     Example use (from within a view to be dragged):
 
@@ -184,7 +188,7 @@
 
         // duplicate item subviews
         this.items().forEach(sv => {
-            let dup = sv.htmlDuplicateView()
+            const dup = sv.htmlDuplicateView()
             this.addSubview(dup)
             assert(dup.hasFixedFrame())
             //console.log("item dup subview frameInDocument: " + dup.frameInDocument().asString())
@@ -316,6 +320,7 @@
         DocumentBody.shared().addSubview(this)
         this.orderFront()
         this.onBegin()
+        this.postNoteNamed("onDragViewOpen")
         return this
     }
 
@@ -504,6 +509,7 @@
 
     close () {
         this.debugLog("close")
+        this.postNoteNamed("onDragViewClose")
         // handle calling this out of seqence?
 
         this.exitAllHovers()
@@ -513,6 +519,7 @@
         DocumentBody.shared().removeSubview(this)
         this.setItems([])
         this.setIsClosed(true)
+
         return this
     }
 
