@@ -52,8 +52,8 @@
         if (!obs.isWatching()) {
             const target = this.rootStackView()
             if (target) {
-                obs.setTarget(target)
-                obs.watch()
+                obs.setSender(target)
+                obs.startWatching()
             } else {
                 //debugger;
                 obs.stopWatching()

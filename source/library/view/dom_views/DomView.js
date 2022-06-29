@@ -118,10 +118,14 @@
 
     retireIfReady () {
         if (this.canRetire()) {
+            /*
             if (SyncScheduler.shared().hasActionsForTarget(this)) {
+                let actions = SyncScheduler.shared().actionsForTarget(this)
+                console.log(actions.map(a => a.actionsKey()))
                 debugger;
                 SyncScheduler.shared().hasActionsForTarget(this) // so we can step into this 
             }
+            */
             this.prepareToRetire()
         }
         return this
@@ -133,7 +137,6 @@
         }
         this.setColor("yellow")
         this.setBackgroundColor("blue")
-
 
         /*
         // TEMP==============================================================================
@@ -170,8 +173,9 @@
             this.blur() / is this needed?
         }
         */
-        
+
         const e = this.element()
+        e.style.transition = "all 0s" // probably not needed
         if (e) {
             e._domView = null
             this._element = null
@@ -182,7 +186,7 @@
     }
 
     removeAllListeners () {
-        this.eventListenersDict().ownForEachKV( (k, v) => { v.setIsListening(false) } )
+        this.eventListenersDict().ownForEachKV( (k, ev) => { ev.setIsListening(false) } )
         this.setEventListenersDict({})
         return this
     }

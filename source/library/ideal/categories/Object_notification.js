@@ -57,13 +57,13 @@
         obs.setName(aNoteName)
         obs.setObserver(this)
         obs.setIsOneShot(true)
-        obs.watch()
+        obs.startWatching()
         //this.debugLog(".watchOnceForNote('" + aNoteName + "')")
         return obs
     }
 
     watchOnceForNoteFrom (aNoteName, sender) {
-        return this.watchOnceForNote(aNoteName).setTarget(sender)
+        return this.watchOnceForNote(aNoteName).setSender(sender)
     }
 
     newNoteNamed (aNoteName) {

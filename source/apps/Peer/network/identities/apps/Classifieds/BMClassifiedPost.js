@@ -198,8 +198,8 @@
     // pow notifications
     
     watchPow () {
-        this._powDoneObs.watch()
-        this._powUpdateObs.watch()
+        this._powDoneObs.startWatching()
+        this._powUpdateObs.startWatching()
     }
     
     unwatchPow () {

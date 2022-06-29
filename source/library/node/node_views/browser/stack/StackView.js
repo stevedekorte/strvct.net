@@ -124,6 +124,7 @@
         if (this.hasCache()) {
             return false;
         }
+        debugger;
         return super.prepareToRetire()
     }
 
@@ -177,6 +178,9 @@
         if (aNode !== this.node()) {
             if (aNode && this.node() && this.previousStackView() && this.previousStackView().isCaching()) {
                 throw new Error("this might invalidate a cache")
+            }
+            if (aNode) {
+                this.__nodePathString = aNode.nodePathString()
             }
             super.setNode(aNode)
         }
@@ -511,6 +515,7 @@
 
     beginCaching () {
         assert(!this.isCaching())
+        console.log(this.debugTypeId() + " beginCaching -----------------")
         this.setNodeToStackCache(ideal.Dictionary.clone())
 
         const ov = this.otherView()
@@ -523,6 +528,8 @@
 
     endCaching () {
         assert(this.isCaching())
+        console.log(this.debugTypeId() + " endCaching -----------------")
+        debugger;
         this.nodeToStackCache().values().forEach(sv => this.uncacheView(sv))
         this.setNodeToStackCache(null)
 

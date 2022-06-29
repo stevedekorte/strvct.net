@@ -35,7 +35,7 @@
 
     watchIdentity () {
         if (!this._idObs) {
-	        this._idObs = BMNotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).watch()
+	        this._idObs = BMNotificationCenter.shared().newObservation().setName("didChangeIdentity").setObserver(this).startWatching()
         }
     }
 	

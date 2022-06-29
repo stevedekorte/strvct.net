@@ -69,7 +69,7 @@
     startWatchingNode () {
         if (this.node()) {
             //console.log("startWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
-            this.nodeObservation().setTarget(this.node()).watch()
+            this.nodeObservation().setSender(this.node()).startWatching()
             //this.node().onStartObserving()
         }
         return this
@@ -79,7 +79,7 @@
         if (this.node()) {
             //console.log("stopWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
             this.nodeObservation().stopWatching()
-            //this.nodeObservation().setTarget(null)
+            //this.nodeObservation().setSender(null)
             //this.node().onStopObserving()
         }
         return this

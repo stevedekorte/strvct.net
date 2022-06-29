@@ -66,7 +66,7 @@
         }
 
         /*
-        this.nodeStoreDidOpenObs().watch()
+        this.nodeStoreDidOpenObs().startWatching()
         this.defaultStore().setName(this.name())
 
         const errorCallback = (errorMessage) => {

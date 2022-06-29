@@ -346,12 +346,6 @@
         });
     }
 
-    /* JS has this now
-    replaceAll (target, replacement) {
-        return this.split(target).join(replacement);
-    }
-    */
-
     loremIpsum (minWordCount, maxWordCount) {
         if (!minWordCount) { minWordCount = 10; }
         if (!maxWordCount) { maxWordCount = 40; }

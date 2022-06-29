@@ -11,17 +11,17 @@
         
     Warning about Weak links: 
     
-        As Javascript doesn't support weak links, we need to be careful
+        As Javascript doesn't support weak links[*], we need to be careful
         about having observers tell the NotificationCenter when they 
         are done observing, otherwise, their Observation object will hold a reference to 
         the observer that will prevent it from being garbage collected, and the observer will continue
         to receive matching notifications. 
     
-    Weak links solution (for target/sender):
+    Weak links solution (for ender):
     
         Instead of passing an object reference for: 
         
-            BMObservation.setTargetId() and 
+            BMObservation.setSenderId() and 
             BMNotification.setSender()
         
         you can pass a typeId string/number for the object. e.g. ideal.js 
@@ -30,17 +30,18 @@
         This should work assuming:
             - notification receiver doesn't already have a reference to the sender
             - observer can remove it's observation appropriately
-        
+
+        *TODO: add finalization registry now that JS supports weak links
 
     Example use:
  
     Observing notifications:
 
-        // start watching for "changed" message from target object
-        this._obs = BMNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setTarget(target).watch()
+        // start watching for "changed" message from sender object
+        this._obs = BMNotificationCenter.shared().newObservation().setName("changed").setObserver(this).setSender(sender).startWatching()
     
-        // start watching for "changedStoredSlot" message from any target object
-        this._obs = BMNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).watch()
+        // start watching for "changedStoredSlot" message from any sender object
+        this._obs = BMNotificationCenter.shared().newObservation().setName("changedStoredSlot").setObserver(this).startWatching()
 
         // stop watching this observation
         this._obs.stopWatching()
@@ -53,7 +54,7 @@
 
     If the source object has an accessor for a notification it uses, we can do:
 
-        sourceObject.didLoadNote().newObservation().setObserver(this).watch()
+        sourceObject.didLoadNote().newObservation().setObserver(this).startWatching()
         
     Posting notifications:
 
@@ -67,7 +68,7 @@
 
         For use cases where the overhead of creating post objects would be costly, 
         it's possible to send a direct message to all name listeners without waiting
-        until the event loop to end. These will pass the target itself instead of a Notification object.
+        until the event loop to end. These will pass the sender itself instead of a Notification object.
 
         See Broadcaster class.
 
@@ -99,7 +100,6 @@
         this.setObservations([]);
         this.setNotifications([]);
         this.setNameIndex({});
-        //this.setIsDebugging(true)
     }
 
     // --- observations ----
@@ -119,13 +119,13 @@
         return BMObservation.clone().setCenter(this);
     }
 
-    hasObservationsForTargetId (targetId) {
-        const obs = this.observations().detect(obs => obs.targetId() === targetId)
+    hasObservationsForTargetId (senderId) {
+        const obs = this.observations().detect(obs => obs.senderId() === senderId)
         return !Type.isNullOrUndefined(obs)
     }
 
-    countOfObservationsForTargetId (targetId) {
-        const matches = this.observations().filter(obs => obs.targetId() === targetId)
+    countOfObservationsForTargetId (senderId) {
+        const matches = this.observations().filter(obs => obs.senderId() === senderId)
         return matches.length
     }
     
@@ -134,21 +134,21 @@
             const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
             this.setObservations(filtered)
         } else {
-            // If possible, we want to send onNoObservers listen targets when 
+            // If possible, we want to send onNoObservers listen senders when 
             // their last observer is removed, so track these
 
-            const targetId = anObservation.targetId()
+            const senderId = anObservation.senderId()
             let removedMatchingTargetId = false
             let stillHasMatchingTargetId = false
 
             const filtered = this.observations().filter((obs) => {
                 if (obs.isEqual(anObservation)) {
-                    if (obs.targetId() === targetId) {
+                    if (obs.senderId() === senderId) {
                         removedMatchingTargetId = true
                     }
                     return false
                 }
-                if (obs.targetId() === targetId) {
+                if (obs.senderId() === senderId) {
                     stillHasMatchingTargetId = true
                 }
                 return true
@@ -156,9 +156,9 @@
             this.setObservations(filtered)
 
             if (removedMatchingTargetId && !stillHasMatchingTargetId) {
-                const target = this.targetForTargetId(targetId) // looks through obs listeners 
-                if (target && target.onNoObservers) {
-                    target.onNoObservers(this)
+                const sender = this.senderForTargetId(senderId) // looks through obs listeners 
+                if (sender && sender.onNoObservers) {
+                    sender.onNoObservers(this)
                 }
             }
         }
@@ -166,18 +166,18 @@
         return this
     }
 
-    targetForTargetId (targetId) {
-        if (Type.isNullOrUndefined(targetId)) {
+    senderForTargetId (senderId) {
+        if (Type.isNullOrUndefined(senderId)) {
             return false
         }
 
-        // this only works if there's an observation whose observer is the target
-        // which works, for example, if the target is observing onNoObservers
+        // this only works if there's an observation whose observer is the sender
+        // which works, for example, if the sender is observing onNoObservers
 
-        const matchObservation = this.observations().detect(obs => obs.observerId() === targetId)
+        const matchObservation = this.observations().detect(obs => obs.observerId() === senderId)
         if (matchObservation) {
-            const target = matchObservation.observer()
-            return target
+            const sender = matchObservation.observer()
+            return sender
         }
         return null
     }

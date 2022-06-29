@@ -1,5 +1,8 @@
+- rename Observation setTarget -> setSender, watch -> startWatching
+
 
 WeakRef now possible to use for things like Storage cache / ObjectPool of puuid->instance?
+- use weak links for Notification observers, use finalization to remove observers?
 check out FinalizationRegistry
 
 IMPORTANT: once StackView node is set, we can't remove it?

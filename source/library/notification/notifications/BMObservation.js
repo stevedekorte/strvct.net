@@ -13,32 +13,75 @@
 (class BMObservation extends ProtoClass {
     initPrototype () {
         this.newSlot("center", null) // NotificationCenter that owns this
-        this.newSlot("targetId", null) // uniqueId string for target
+        this.newSlot("senderId", null) // uniqueId string for sender
+        //this.newSlot("senderWeakRef", null) // weakRef to sender
         this.newSlot("name", null)
         this.newSlot("observer", null)
         this.newSlot("isOneShot", false)
+
+        //this.newSlot("senderWeakRef", null) // WeakRef to sender
+        //this.newSlot("finalizationRegistry", null) // FinalizationRegistry
     }
 
     init () {
         super.init()
+        //const reg = new FinalizationRegistry(aSender => this.onFinalizeSender(aSender))
+        //this.setFinalizationRegistry(reg)
         //this.setIsDebugging(true)
     }
 
-    setTargetId (aString) {
+    /*
+    onFinalizeSender (aSender) {
+        this.stopWatching()
+        this.setSender(null)
+    }
+
+    sender () {
+        const ref = this.senderWeakRef()
+        return ref ? ref.deref() : null //returns undefined if sender was collected
+    }
+    */
+
+    setSenderId (aString) {
         assert(Type.isString(aString))
-        this._targetId = aString
+        this._senderId = aString
         return this
     }
 
-    setTarget (obj) {
-        this.setTargetId(obj ? obj.typeId() : null)
+    setSender (obj) {
+        //assert(Type.isNull(this.sender()))
+        if (obj) {
+            this.setSenderId(obj.typeId())
+        } else {
+            this.setSenderId(null)
+        }
+
+        /*
+        if (this.sender() !== obj) {
+
+            if (this.sender()) {
+                this.finalizationRegistry().unregister(this.sender())
+            }
+
+            if (Type.isNull(obj)) {
+                this.setSenderId(null)
+                this.setSenderWeakRef(null)
+            } else {
+                this.setSenderId(obj.typeId())
+                this.setSenderWeakRef(new WeakRef(obj))
+                this.finalizationRegistry().register(obj)
+            }
+        }
+        */
         return this
     }
 
     matchesNotification (note) {
-        const tid = this.targetId()
-        const matchesTarget = (tid === null) || (note.senderId() === tid) 
-        if (matchesTarget) {
+        const tid = this.senderId()
+        //const t = this.sender()
+        //const matchesSender = (t === null) || (note.sender() === t) 
+        const matchesSender = (tid === null) || (note.senderId() === tid) 
+        if (matchesSender) {
             const name = this.name()
             const matchesName = (note.name() === name) || (name === null)
             return matchesName
@@ -85,13 +128,13 @@
     isEqual (obs) {
         const sameName = this.name() === obs.name()
         const sameObserver = this.observer() === obs.observer()
-        const sameTargetId = this.targetId() === obs.targetId()
-        return sameName && sameObserver && sameTargetId
+        const sameSenderId = this.senderId() === obs.senderId()
+        return sameName && sameObserver && sameSenderId
     }
 
-    watch () {
+    startWatching () {
         this.center().addObservation(this)
-        //this.target().onStartObserving()
+        //this.sender().onStartObserving()
         return this
     }
 
@@ -101,12 +144,12 @@
 
     stopWatching () {
         this.center().removeObservation(this)
-        //this.target().onStopObserving()
+        //this.sender().onStopObserving()
         return this
     }
 
     description () {
-        return this.observer().typeId() + " listening to " + this.targetId() + " " + this.name()
+        return this.observer().typeId() + " listening to " + this.senderId() + " " + this.name()
     }
 
 }.initThisClass());

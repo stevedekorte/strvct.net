@@ -52,15 +52,26 @@
         return this
     }
 
+    /*
     didInit () {
         super.didInit()
         //this.applyStyles()
+    }
+    */
+
+    setParentView (v) {
+        if (this.parentView() && Type.isNull(v)) {
+         //   debugger;
+        }
+        super.setParentView(v)
+        return this
     }
 
     setTilePlaceHolder (ph) {
         if (this._tilePlaceHolder !== ph) {
             if (this._tilePlaceHolder) {
                 this._tilePlaceHolder.viewRelease()
+              //  debugger;
             }
             this._tilePlaceHolder = ph
             if (this._tilePlaceHolder) {

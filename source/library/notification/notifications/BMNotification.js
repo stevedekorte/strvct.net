@@ -81,7 +81,7 @@
             this avoids note name typos and helps runtime check/debug note name changes as note name isn't hardcoded as string in multiple places
             example use:
 
-                aFileLoader.doneNote().newObservation().setObserver(this).setIsOneShot(true).watch()
+                aFileLoader.doneNote().newObservation().setObserver(this).setIsOneShot(true).startWatching()
 
                 how about:
 
@@ -90,7 +90,7 @@
                 this.observeNote(aFileLoader.doneNote())
                 this.observeNoteOnce(aFileLoader.doneNote())
         */
-        return BMNotificationCenter.shared().newObservation().setName(this.name()).setTarget(this.sender())
+        return BMNotificationCenter.shared().newObservation().setName(this.name()).setSender(this.sender())
     }
 }.initThisClass());
 

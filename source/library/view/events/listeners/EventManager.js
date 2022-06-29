@@ -7,16 +7,16 @@
     
         - user events
         - timers
-        - other events (indexed db, etc)
+        - other events (indexed db, etc) - eventually
 
     We need this in other to:
     
-        - track the first user initiated event in order to wait 
-          to request things like audio input or audio output access
         - do sync operators at the end of an event callback.
 
-    Example use:
+        - track the first user initiated event in order to wait 
+          to request things like audio input or audio output access
 
+    Example use:
 
             EventManager.shared().safeWrapEvent(() => { ... })
 
@@ -29,22 +29,21 @@
         //this.newSlot("hasReceivedEvent", false) we only care about this for user events, but event manager handles timeouts too
     }
 
+    /*
     static setHasReceivedEvent (aBool) {
         assert(Type.isBoolean(aBool))
-        this._hasReceivedEvent = aBool
-
-        /*
-        if (!this.thisClass().hasReceivedEvent() && event._isUserInteraction) {
+        
+        if (aBool && !this._hasReceivedEvent && event._isUserInteraction) {
             // In normal web use, things like WebAudio context can't be created until 
             // we get first user interaction. So we send this event to let listeners know when
             // those APIs can be used. Would help if JS sent a special event for this.
-            this.thisClass().setHasReceivedEvent(true)
+            this._hasReceivedEvent = aBool
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
         }
-        */
-
+        
         return this
     }
+    */
 
     setEventLevelCount (n) {
         assert(n > -1)
