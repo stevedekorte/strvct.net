@@ -40,9 +40,15 @@
         return null
     }
 
+    isSetup () {
+        return !Type.isNull(this.audioContext())
+    }
+
     setupIfNeeded () {
-        if (Type.isNull(this.audioContext())) {
+        if (!this.isSetup()) {
+            //debugger;
             this.setAudioContext(new window.AudioContext())
+            Broadcaster.shared().broadcastNameAndArgument("didSetupWAContext", this)
             //console.warn("can't get audio context until user gesture e.g. tap")
         }
         return this

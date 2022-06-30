@@ -19,8 +19,8 @@
     }
 
     setupEventsDict () {
-        this.addEventNameAndMethodName("mousedown", "onMouseDown");
-        this.addEventNameAndMethodName("mouseup",   "onMouseUp");
+        this.addEventNameAndMethodName("mousedown", "onMouseDown", true);
+        this.addEventNameAndMethodName("mouseup",   "onMouseUp", true);
 
         this.addEventNameAndMethodName("mouseover",  "onMouseOver");  // triggered only when mouse enters element
         this.addEventNameAndMethodName("mouseleave", "onMouseLeave"); // triggered only when mouse exits element

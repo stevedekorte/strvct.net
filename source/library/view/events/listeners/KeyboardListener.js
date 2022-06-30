@@ -20,7 +20,7 @@
 
     setupEventsDict () {
         this.addEventNameAndMethodName("keyup", "onKeyUp");
-        this.addEventNameAndMethodName("keydown", "onKeyDown");
+        this.addEventNameAndMethodName("keydown", "onKeyDown", true);
         //this.addEventNameAndMethodName("keypress", "onKeyPress");
         //this.addEventNameAndMethodName("change", "onChange");
         //this.addEventNameAndMethodName("select", "onSelect");

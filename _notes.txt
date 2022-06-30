@@ -1,4 +1,4 @@
-- rename Observation setTarget -> setSender, watch -> startWatching
+- add abstraction for EventSetListener eventsDict
 
 
 WeakRef now possible to use for things like Storage cache / ObjectPool of puuid->instance?

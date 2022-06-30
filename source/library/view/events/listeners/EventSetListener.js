@@ -99,6 +99,7 @@
     }
 
     addEventNameAndMethodName (eventName, methodName, isUserInteraction) {
+        //console.log(eventName, " isUserInteraction:", isUserInteraction)
         this.eventsDict().atSlotPut(eventName, { 
             methodName: methodName, 
             handlerFunc: null,
@@ -225,8 +226,9 @@
     }
 
     onAfterEvent (methodName, event) {
-        //console.log("event: ", methodName)
+        //console.log("event: ", methodName, " event._isUserInteraction:", event._isUserInteraction)
         if (!this.thisClass().hasReceivedEvent() && event._isUserInteraction) {
+            //debugger;
             // In normal web use, things like WebAudio context can't be created until 
             // we get first user interaction. So we send this event to let listeners know when
             // those APIs can be used. Would help if JS sent a special event for this.

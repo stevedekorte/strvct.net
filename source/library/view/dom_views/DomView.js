@@ -135,8 +135,6 @@
         if (this._breakOnRetire) {
             debugger;
         }
-        this.setColor("yellow")
-        this.setBackgroundColor("blue")
 
         /*
         // TEMP==============================================================================

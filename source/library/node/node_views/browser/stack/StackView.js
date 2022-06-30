@@ -529,7 +529,6 @@
     endCaching () {
         assert(this.isCaching())
         console.log(this.debugTypeId() + " endCaching -----------------")
-        debugger;
         this.nodeToStackCache().values().forEach(sv => this.uncacheView(sv))
         this.setNodeToStackCache(null)
 

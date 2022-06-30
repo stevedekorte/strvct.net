@@ -20,7 +20,7 @@
         this.newSlot("request", null)
         //this.newSlot("path", null)
         this.newSlot("loadState", "unloaded") // "unloaded", "loading", "decoding", "loaded"
-        //this.newSlot("downloadBuffer", null)
+        this.newSlot("downloadedBuffer", null)
         this.newSlot("decodedBuffer", null)
         this.newSlot("source", null)
         this.newSlot("shouldPlayOnLoad", false)
@@ -106,12 +106,30 @@
 
     onLoad (event) {
         const request = event.currentTarget;
-        const downloadedBuffer = request.response;
-        //this.setDownloadedBuffer(downloadedBuffer) // array buffer
+        const downloadedBuffer = request.response;  // array buffer
 
-        this.audioCtx().decodeAudioData(downloadedBuffer,
-            (decodedBuffer) => { this.onDecode(decodedBuffer) },
-            (e) => { this.onDecodeError(e) }
+        if (WAContext.shared().isSetup()) {
+            this.decodeBuffer(downloadedBuffer)
+        } else {
+            this.setDownloadedBuffer(downloadedBuffer)
+            Broadcaster.shared().addListenerForName(this, "didSetupWAContext")
+            //console.warn(this.typeId() + " waiting for audio context to decode")
+        }
+    }
+
+    didSetupWAContext () {
+        //console.warn(this.typeId() + " " + this.path() + " got didSetupWAContext broadcast - can decode now")
+        Broadcaster.shared().removeListenerForName(this, "removeListenerForName")
+        if (this.downloadedBuffer()) {
+            this.decodeBuffer(this.downloadedBuffer())
+            this.setDownloadedBuffer(null)
+        }
+    }
+
+    decodeBuffer (aBuffer) {
+        this.audioCtx().decodeAudioData(aBuffer,
+            decodedBuffer => this.onDecode(decodedBuffer),
+            e => this.onDecodeError(e)
         );
         this.setLoadState("decoding")
     }
