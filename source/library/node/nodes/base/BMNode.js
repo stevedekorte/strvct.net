@@ -742,7 +742,7 @@
     }
 
     onStopObserving () {
-        const isStillObserved = BMNotificationCenter.shared().hasObservationsForTargetId(this.typeId())
+        const isStillObserved = BMNotificationCenter.shared().hasObservationsForSenderId(this.typeId())
         if (!isStillObserved) {
             this.onNoMoreObservers()
         }

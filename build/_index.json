@@ -206,8 +206,8 @@
   },
   {
     "path": "source/library/notification/notifications/BMNotificationCenter.js",
-    "size": 10936,
-    "hash": "P3KaFTHUk8ZWIkjefnSzaYiLwm7x7uO+KUWMiwG8vKw="
+    "size": 10950,
+    "hash": "Ky+46sZXSJ0mAz25cvyD3A1DGgxUJox+gpRft0hlXMM="
   },
   {
     "path": "source/library/notification/notifications/BMObservation.js",
@@ -306,8 +306,8 @@
   },
   {
     "path": "source/library/view/events/listeners/EventSetListener.js",
-    "size": 8322,
-    "hash": "hFmfejgCgmAQ2RaiWd2p+QMcmdWYGbO/UWCsEfmmXxE="
+    "size": 8324,
+    "hash": "goi4MChmwMztZDj4rPwipvOb7DvEa+r8DgoAsPzEVJg="
   },
   {
     "path": "source/library/view/events/listeners/EventManager.js",
@@ -602,7 +602,7 @@
   {
     "path": "source/library/node/nodes/base/BMNode.js",
     "size": 19231,
-    "hash": "9gW150vywdaqn0MSxK7Qeh1xzj9x+jAObOXsHpIoxdc="
+    "hash": "zRm6xCkhxDY8knJfVYZ4v61D0c35zVpdFSot/76KPFA="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
@@ -1131,13 +1131,13 @@
   },
   {
     "path": "source/library/resources/sounds/WASound.js",
-    "size": 4763,
-    "hash": "DvdGI6PpZueBiM2it05BCuXwTDLtUwOTf9Dm5LTh35Q="
+    "size": 4843,
+    "hash": "0fbeOw7M/SK6nRndcX2qJeDNqtmRGmaf5ftSrxFFKRA="
   },
   {
     "path": "source/library/resources/sounds/WAContext.js",
-    "size": 1507,
-    "hash": "NLWvi0VxRjeLsWzn64Dev19gPYqMCxMmakP/yTYjMvE="
+    "size": 1509,
+    "hash": "/1tOTT1gQ4fOYk9nFgodkN8ZSSWKJZwFBMLH0zU2KLI="
   },
   {
     "path": "source/library/resources/images/BMImage.js",

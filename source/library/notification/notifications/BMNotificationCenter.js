@@ -119,12 +119,12 @@
         return BMObservation.clone().setCenter(this);
     }
 
-    hasObservationsForTargetId (senderId) {
+    hasObservationsForSenderId (senderId) {
         const obs = this.observations().detect(obs => obs.senderId() === senderId)
         return !Type.isNullOrUndefined(obs)
     }
 
-    countOfObservationsForTargetId (senderId) {
+    countOfObservationsForSenderId (senderId) {
         const matches = this.observations().filter(obs => obs.senderId() === senderId)
         return matches.length
     }
@@ -138,25 +138,25 @@
             // their last observer is removed, so track these
 
             const senderId = anObservation.senderId()
-            let removedMatchingTargetId = false
-            let stillHasMatchingTargetId = false
+            let removedMatchingSenderId = false
+            let stillHasMatchingSenderId = false
 
             const filtered = this.observations().filter((obs) => {
                 if (obs.isEqual(anObservation)) {
                     if (obs.senderId() === senderId) {
-                        removedMatchingTargetId = true
+                        removedMatchingSenderId = true
                     }
                     return false
                 }
                 if (obs.senderId() === senderId) {
-                    stillHasMatchingTargetId = true
+                    stillHasMatchingSenderId = true
                 }
                 return true
             })
             this.setObservations(filtered)
 
-            if (removedMatchingTargetId && !stillHasMatchingTargetId) {
-                const sender = this.senderForTargetId(senderId) // looks through obs listeners 
+            if (removedMatchingSenderId && !stillHasMatchingSenderId) {
+                const sender = this.senderForSenderId(senderId) // looks through obs listeners 
                 if (sender && sender.onNoObservers) {
                     sender.onNoObservers(this)
                 }
@@ -166,7 +166,8 @@
         return this
     }
 
-    senderForTargetId (senderId) {
+    /*
+    senderForSenderId (senderId) {
         if (Type.isNullOrUndefined(senderId)) {
             return false
         }
@@ -181,6 +182,7 @@
         }
         return null
     }
+    */
     
     removeObserver (anObserver) {        
         const filtered = this.observations().filter(obs => obs.observer() !== anObserver)
