@@ -130,18 +130,18 @@
         if (this.doesMatchParentColor()) {
             if (this.parentView()) {
                 const color = this.parentView().getComputedCssAttribute("color")
-                Element_setStyleIncludingDecendants(e, "fill", color)
-                Element_setStyleIncludingDecendants(e, "stroke", color)
+                e.setStyleIncludingDecendants("fill", color)
+                e.setStyleIncludingDecendants("stroke", color)
             } else {
                 console.warn("missing svg parentView to match color to")
             }
         } else {
-            Element_setStyleIncludingDecendants(e, "fill", this.fillColor())
-            Element_setStyleIncludingDecendants(e, "stroke", this.strokeColor())
+            e.setStyleIncludingDecendants("fill", this.fillColor())
+            e.setStyleIncludingDecendants("stroke", this.strokeColor())
         }
 
-        Element_setStyleIncludingDecendants(e, "strokeWidth", this.strokeWidth().toString())
-        Element_setStyleIncludingDecendants(e, "transition", this.transition())
+        e.setStyleIncludingDecendants("strokeWidth", this.strokeWidth().toString())
+        e.setStyleIncludingDecendants("transition", this.transition())
 
         return this
     }

@@ -516,8 +516,8 @@
   },
   {
     "path": "source/library/view/dom_views/dom_helpers/DomElementHelpers.js",
-    "size": 2723,
-    "hash": "Jzhbz3EVR4xS+FW4FQzs4yzj3vQ6pcSfi/+or4+PbMU="
+    "size": 2660,
+    "hash": "B7am/hXZjj5jFDVFkjjF3UMWMor0gaq27XPVp7YcHBU="
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
@@ -571,8 +571,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/SvgIconView.js",
-    "size": 5215,
-    "hash": "NNvvKDhPJS/ISiDNckYDhw0d7IpinXs8CQMJ8pxa5ts="
+    "size": 5161,
+    "hash": "5dx/WBlUFC+RY5N4Qt8GXAlj/GkYSMBIeatiwIsGAJg="
   },
   {
     "path": "source/library/view/dom_views/subclasses/TextField.js",

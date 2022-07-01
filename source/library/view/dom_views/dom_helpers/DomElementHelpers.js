@@ -115,10 +115,8 @@ getGlobalThis().DomElement_description = function (element) {
 
     return s
 }
-*/
+
 getGlobalThis().Element_setStyleIncludingDecendants = function(e, k, v) {
-    e.setStyleIncludingDecendants(k, v) 
-    /*
     if (e.style) {
         e.style[k] = v
     }
@@ -127,6 +125,6 @@ getGlobalThis().Element_setStyleIncludingDecendants = function(e, k, v) {
         const child = e.childNodes[i]
         Element_setStyleIncludingDecendants(child, k, v)
     }
-    */
+    
 }
-
+*/
