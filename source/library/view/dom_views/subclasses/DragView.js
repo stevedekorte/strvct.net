@@ -116,7 +116,7 @@
         this.setOpacity(0.9)
         this.setInfo({})
 
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
         return this
     }
 

@@ -211,8 +211,8 @@
   },
   {
     "path": "source/library/notification/notifications/BMObservation.js",
-    "size": 5708,
-    "hash": "LmXp0NKUWHV6I60oxN0sQhotftG97uJKAgiDVyf6lnk="
+    "size": 5294,
+    "hash": "+HMA1dXDBfxjynNdn9qCQkFHpg7chTKawe6WMvMGD1c="
   },
   {
     "path": "source/library/notification/Broadcaster.js",
@@ -305,147 +305,147 @@
     "hash": "BEH5p6eHtMPRyknuaq3mpKGcfp88nncLM5W1vmrl3M8="
   },
   {
-    "path": "source/library/view/events/listeners/EventSetListener.js",
+    "path": "source/library/view/events/listening/EventSetListener.js",
     "size": 8315,
     "hash": "W+JSe2UWeRON9wtC42cxUYLHh+WKFjgD65z1oqdyPAY="
   },
   {
-    "path": "source/library/view/events/listeners/EventManager.js",
+    "path": "source/library/view/events/listening/EventManager.js",
     "size": 4296,
     "hash": "UoNn3DfJUvX+/Dx/8KBjH5b0wz7dJZeaQvWXrEUhMhg="
   },
   {
-    "path": "source/library/view/events/listeners/ClipboardListener.js",
+    "path": "source/library/view/events/listening/listeners/ClipboardListener.js",
     "size": 485,
     "hash": "7H8YS+b79Zc89z+MOKL8lUQjJcfMuwwNeNzoITwmCYw="
   },
   {
-    "path": "source/library/view/events/listeners/DocumentListener.js",
+    "path": "source/library/view/events/listening/listeners/DocumentListener.js",
     "size": 1150,
     "hash": "13WyTiC6SzCzE65I1MaPN6kQispcJfKVviecTUG8zhY="
   },
   {
-    "path": "source/library/view/events/listeners/DragListener.js",
+    "path": "source/library/view/events/listening/listeners/DragListener.js",
     "size": 756,
     "hash": "YKzCi/yLcXRCiBMTzUujcrfgf9cXyQc+WkY1YryfHsI="
   },
   {
-    "path": "source/library/view/events/listeners/DropListener.js",
+    "path": "source/library/view/events/listening/listeners/DropListener.js",
     "size": 1125,
     "hash": "PalXnG8dUg8E4PX9nrj1B5IzvYcyn/AugcOamJqRsl4="
   },
   {
-    "path": "source/library/view/events/listeners/FocusListener.js",
+    "path": "source/library/view/events/listening/listeners/FocusListener.js",
     "size": 547,
     "hash": "A3xH4bb8K5mSwQhJ+AXTNWFNOGGln0n12Aj+4cdrM5M="
   },
   {
-    "path": "source/library/view/events/listeners/KeyboardListener.js",
+    "path": "source/library/view/events/listening/listeners/KeyboardListener.js",
     "size": 672,
     "hash": "rnDy+1DccKCkEcs3bcDJlav81bg3Se88cBiGMOtiJfQ="
   },
   {
-    "path": "source/library/view/events/listeners/MouseListener.js",
+    "path": "source/library/view/events/listening/listeners/MouseListener.js",
     "size": 1349,
     "hash": "H10bWJkc2AxQNaNuEGBIZmMl4vu0+d/GTUUgtA/YwUY="
   },
   {
-    "path": "source/library/view/events/listeners/SelectListener.js",
+    "path": "source/library/view/events/listening/listeners/SelectListener.js",
     "size": 685,
     "hash": "Bj5Adee/Neu4DjKgV0ylz3cbOyBousIODyTCGd0EtEY="
   },
   {
-    "path": "source/library/view/events/listeners/TouchListener.js",
+    "path": "source/library/view/events/listening/listeners/TouchListener.js",
     "size": 587,
     "hash": "1pwhaI9U4Kb9I7CPNXlfY424DM+K4inKsqYXQFAWidU="
   },
   {
-    "path": "source/library/view/events/listeners/TransitionListener.js",
+    "path": "source/library/view/events/listening/listeners/TransitionListener.js",
     "size": 641,
     "hash": "qYRwOSvYe/eSF93/rEReUYglcKLhZq9SYGGFPiva3Oc="
   },
   {
-    "path": "source/library/view/events/listeners/GamePadListener.js",
+    "path": "source/library/view/events/listening/listeners/GamePadListener.js",
     "size": 475,
     "hash": "YHGujblEqp2dRQfqxLuCic5WQx4GNFfQlQcywYk5URY="
   },
   {
-    "path": "source/library/view/events/listeners/WebSocketListener.js",
+    "path": "source/library/view/events/listening/listeners/WebSocketListener.js",
     "size": 553,
     "hash": "ZUQq2n3Kc0cbMA2BkNnsVZ0KHGhXeCXrmlmYM2Q5ap4="
   },
   {
-    "path": "source/library/view/events/listeners/WheelListener.js",
+    "path": "source/library/view/events/listening/listeners/WheelListener.js",
     "size": 383,
     "hash": "68m4CVqRvbYuGICEtEiLg0HfhXLD5F8ILbkC9uKpL2g="
   },
   {
-    "path": "source/library/view/events/gestures/GestureManager.js",
+    "path": "source/library/view/events/gesturing/GestureManager.js",
     "size": 3713,
     "hash": "QJ7GDuUTDj8xnIiJdemAIlnmCfld5eofPwpBeF5FyOg="
   },
   {
-    "path": "source/library/view/events/gestures/GestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/GestureRecognizer.js",
     "size": 24164,
     "hash": "sziNNZLPoSG23filOrV1G9PzF4uLrvqyNEeJOZLJkNA="
   },
   {
-    "path": "source/library/view/events/gestures/LongPressGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/LongPressGestureRecognizer.js",
     "size": 2985,
     "hash": "v3PqqoJ1vfkQnyQfgAvgLvKx8NYoXz+/M/ly6GiuntQ="
   },
   {
-    "path": "source/library/view/events/gestures/SlideGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/SlideGestureRecognizer.js",
     "size": 4988,
     "hash": "joYWwIpuDJDd9ZR63nkQ/Uy53Fdx4O83VzDzu8wTyS8="
   },
   {
-    "path": "source/library/view/events/gestures/TapGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/TapGestureRecognizer.js",
     "size": 4302,
     "hash": "p0Z+fdb0rCAJDh5Kirp2vlDevQg6cB3a+fTekeRXjU0="
   },
   {
-    "path": "source/library/view/events/gestures/OrientGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/OrientGestureRecognizer.js",
     "size": 7745,
     "hash": "0gCcEDUthZw/1sndkXTM6fUBL0lmLG1XyAp90m3Svzw="
   },
   {
-    "path": "source/library/view/events/gestures/PanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/PanGestureRecognizer.js",
     "size": 3077,
     "hash": "PAX+TW7/jUx7hvNp0EAbhesYyH389Cc66nnCzOpbd18="
   },
   {
-    "path": "source/library/view/events/gestures/PinchGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/PinchGestureRecognizer.js",
     "size": 1065,
     "hash": "DstrFAiTBkaP87Xv12HlPsp2M1m8cimMFPPMSoAqTs8="
   },
   {
-    "path": "source/library/view/events/gestures/RotationGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/RotationGestureRecognizer.js",
     "size": 978,
     "hash": "x2xS4yfbkpOPcbe0Nylx3xF0MGvMI5oiw/9+FX+lr9g="
   },
   {
-    "path": "source/library/view/events/gestures/edges/EdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/EdgePanGestureRecognizer.js",
     "size": 2699,
     "hash": "AupxKPdfXmTz8SEVq3xTm8nw0PtjHwBxW42IBzgKYvM="
   },
   {
-    "path": "source/library/view/events/gestures/edges/TopEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/TopEdgePanGestureRecognizer.js",
     "size": 411,
     "hash": "jTVJV4Ot2euz67H1xbOq9mrBxTiKfIaYmUjECr37b10="
   },
   {
-    "path": "source/library/view/events/gestures/edges/BottomEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/BottomEdgePanGestureRecognizer.js",
     "size": 477,
     "hash": "UclPGDnvYwz83VJQ5uLmb1D7DZpPqHmb5/KMA+7ntK8="
   },
   {
-    "path": "source/library/view/events/gestures/edges/LeftEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/LeftEdgePanGestureRecognizer.js",
     "size": 418,
     "hash": "0ITx+u7sQnYJBrOwOKR6QdvDs+UJy421x8Fa6ESzNFk="
   },
   {
-    "path": "source/library/view/events/gestures/edges/RightEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/RightEdgePanGestureRecognizer.js",
     "size": 425,
     "hash": "GeWbkuqOZVvWItfjwtDwXrudQbDgTZNx1gqmH2MBsPk="
   },
@@ -561,8 +561,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/DragView.js",
-    "size": 15467,
-    "hash": "i5rWV+XWcE0ZBFDOqLMByn3ePFBLGj2SK4kXlFzpcYg="
+    "size": 15469,
+    "hash": "h0L630YbTeS8o94ux0NQWQ+WV+OwpBusZBnLySC1waE="
   },
   {
     "path": "source/library/view/dom_views/subclasses/PanelView.js",

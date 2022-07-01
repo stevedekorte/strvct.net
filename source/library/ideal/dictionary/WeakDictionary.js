@@ -22,88 +22,126 @@
 
 */
 
+const globalFinReg = new FinalizationRegistry(aClosure => aClosure()) 
+
 class WeakDictionary {
 
-    constructor () {
-      this._refs = {}
-      this._reg = new FinalizationRegistry(obj => this.onFinalizeValue(obj)) 
-    }
+  static finReg () {
 
-    onFinalizeValue (v) {
-      this.privateDeleteKeysWithValue(v)
-    }
+  }
 
-    privateDeleteKeysWithValue (v) {
-      const refs = this._refs
-      Object.keys(refs).forEach(k => {
-        if (refs[k].deref() === v) {
-          //console.log("deleting key '" + k + "' for finalized object") 
-          delete refs[k]
-        }})
-    }
+  constructor () {
+    this._refs = {}
+    this._reg = new FinalizationRegistry(k => this.onFinalizeKey(k)) 
+  }
 
-    has (k) {
-      const ref = this._refs[k]
-      if (ref) {
-        const v = ref.deref()
-        if (v === undefined) {
-          this.delete(k)
-          return false
-        }
-        return v
-      }
-      return undefined
+  onFinalizeKey (k) {
+    const refs = this._refs
+    delete refs[k]
+    if (k % 1000 === 0) {
+      console.log("finalized:" + k + " size: " + this.size())
     }
+  }
 
-    get (k) {
-      const ref = this._refs[k]
-      if (ref) {
-        const v = ref.deref()
-        if (v === undefined) {
-          this.delete(k)
-        }
-        return v
-      }
-      return undefined
-    }
-
-    set (k, v) {
+  has (k) {
+    const ref = this._refs[k]
+    if (ref) {
+      const v = ref.deref()
       if (v === undefined) {
         this.delete(k)
+        return false
+      }
+      return v
+    }
+    return undefined
+  }
+
+  get (k) {
+    const ref = this._refs[k]
+    if (ref) {
+      const v = ref.deref()
+      if (v === undefined) {
+        this.delete(k)
+      }
+      return v
+    }
+    return undefined
+  }
+
+  set (k, v) {
+    if (v === undefined) {
+      this.delete(k)
+      return
+    }
+
+    if (this.has(k)) {
+      if (v === this.get(k)) {
         return
       }
+      this.delete(k)
+    } 
+    this._refs[k] = new WeakRef(v)
+    //this._reg.register(v, k, v)
+    globalFinReg.register(v, () => { this.onFinalizeKey(k) }, v)
+  }
 
-      if (this.has(k)) {
-        if (v === this.get(k)) {
-          return
-        }
-        this.delete(k)
-      } 
-      this._refs[k] = new WeakRef(v)
-      this._reg.register(v)
-    }
-
-    delete (k) {
-      const ref = this._refs[k]
-      if (ref !== undefined) {
-        delete this._refs[k]
-        if (!this.hasValue(v)) {
-          this._reg.unregister(v)
-        }
+  delete (k) {
+    const ref = this._refs[k]
+    if (ref !== undefined) {
+      const v = ref.deref()
+      delete this._refs[k]
+      if (!this.hasValue(v)) {
+        //this._reg.unregister(v)
+        globalFinReg.unregister(v)
       }
     }
+  }
 
-    hasValue (v) {
-      return this.values().contains(v)
-    }
+  hasValue (v) {
+    return this.values().indexOf(v) !== -1
+  }
 
-    values () {
-      const weakValues = Object.values(this._refs)
-      const values = weakValues.map(ref => ref.deref())
-      return values.filter(v => v !== undefined)
-    }
+  values () {
+    const weakValues = Object.values(this._refs)
+    const values = weakValues.map(ref => ref.deref())
+    return values.filter(v => v !== undefined)
+  }
 
-    size () {
-      return this.values().length
-    }
+  size () {
+    return Object.values(this._refs).length
+    //return this.values().length
+  }
+
+
+  static selfTest () {
+    const wd = new WeakDictionary()
+    let count = 0
+    setInterval(() => {
+      const v = { k: count } // make sure it works with same value for multiple keys
+      for (let i = 0; i < 1000; i++) {
+        const k = count
+        if (count === 100000) {
+          console.log("------------")
+        }
+        if (count < 100000) {
+          if (count % 1000 === 0) {
+            console.log("adding:" + k + " size: " + wd.size())
+            //console.log("adding:" + k)
+          }
+          wd.set(k, v)
+        } else {
+          if (count % 1000 === 0) {
+            console.log("alloc:" + k + " size: " + wd.size())
+            if (wd.size() === 0) {
+              throw new Error("success")
+            }
+          }
+        }
+
+        count ++
+      }
+    }, 1)
+  }
 }
+
+WeakDictionary.selfTest()

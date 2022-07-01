@@ -10,6 +10,11 @@
 
 */
 
+getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => { 
+    debugger;
+    aClosure() 
+});
+
 (class BMObservation extends ProtoClass {
     initPrototype () {
         this.newSlot("center", null) // NotificationCenter that owns this
@@ -27,65 +32,56 @@
 
     // --- weak slots --- TODO: move to Object or Prototype
 
-    regNameForSlotName (slotName) {
-        const regName = "_" + slotName + "FinalizationReg";
-        return regName
-    }
-
-    onFinalizeWeakRefNamed (slotName, privateName, finalizedObj, regName) {
+    onFinalizeWeakRefNamed (slotName, privateName) {
+        debugger;
         const eventName = "onFinalize" + slotName.capitalized()
         if (this[eventName]) {
-            this[eventName].apply(this, [finalizedObj])
+            this[eventName].apply(this, [])
             this[privateName] = null
-            this[regName] = null
         }
     }
 
     newSimpleWeakSlot(slotName, initialValue) {
         // TODO: use a single finalization registery on Object class for all weak slots and pass heldValue of slot name?
         const privateName = "_" + slotName + "WeakRef";
-        const regName = this.regNameForSlotName(slotName)
-        const reg = new FinalizationRegistry(finalizedObj => this.onFinalizeWeakRefNamed(slotName, privateName, finalizedObj, regName))
 
         Object.defineSlot(this, privateName, initialValue)
-        Object.defineSlot(this, regName, reg)
-    
-            if (!this[slotName]) {
-                const simpleGetter = function () {
-                    const ref = this[privateName]
-                    return ref ? ref.deref() : null //returns undefined if sender was collected
-                }
-    
-                Object.defineSlot(this, slotName, simpleGetter)
+
+        if (!this[slotName]) {
+            const simpleGetter = function () {
+                const ref = this[privateName]
+                return ref ? ref.deref() : null //returns undefined if sender was collected
             }
-    
-            const setterName = "set" + slotName.capitalized()
-    
-            if (!this[setterName]) {
-                const simpleSetter = function (newValue) {
-                    const reg = this[regName]
-                    const ref = this[privateName]
-                    const oldValue = ref ? ref.deref() : null
 
-                    if (oldValue) {
-                        reg.unregister(oldValue)
-                    }
+            Object.defineSlot(this, slotName, simpleGetter)
+        }
 
-                    this[privateName] = new WeakRef(newValue);
+        const setterName = "set" + slotName.capitalized()
 
-                    if (newValue) {
-                        reg.register(newValue, privateName)
-                    }
+        if (!this[setterName]) {
+            const simpleSetter = function (newValue) {
+                const ref = this[privateName]
+                const oldValue = ref ? ref.deref() : null
 
-                    return this;
+                if (oldValue) {
+                    globalFinReg.unregister(oldValue)
                 }
-    
-                Object.defineSlot(this, setterName, simpleSetter)
+
+                this[privateName] = new WeakRef(newValue);
+
+                if (newValue) {
+                    globalFinReg.register(newValue, () => { debugger; this.onFinalizeWeakRefNamed(slotName, privateName) }, newValue)
+                }
+
+                return this;
             }
-    
-            //this._slotNames.add(slotName)
-            
-            return this;
+
+            Object.defineSlot(this, setterName, simpleSetter)
+        }
+
+        //this._slotNames.add(slotName)
+        
+        return this;
     }
 
     // --- sender ---
@@ -101,12 +97,12 @@
         return obj ? obj.typeId() : null
     }
 
-    onFinalizeSender (aSender) {
+    onFinalizeSender () {
         debugger;
         this.stopWatching()
     }
 
-    onFinalizeObserver (anObserver) {
+    onFinalizeObserver () {
         debugger;
         this.stopWatching()
     }

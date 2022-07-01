@@ -1,6 +1,4 @@
 [
-    "GestureManager.js",
-    "GestureRecognizer.js",
     "LongPressGestureRecognizer.js",
     "SlideGestureRecognizer.js",
     "TapGestureRecognizer.js",
