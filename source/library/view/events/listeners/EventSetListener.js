@@ -57,7 +57,7 @@
 
     /*
     view () {
-        return this.element()._domView
+        return this.element().domView()
     }
     */
 

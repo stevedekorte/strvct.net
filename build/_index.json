@@ -116,8 +116,8 @@
   },
   {
     "path": "source/library/ideal/Slot.js",
-    "size": 22944,
-    "hash": "7FOBdCCislX3cRHblg6WA7/cE6ibAMzPx+CP8HVUYeM="
+    "size": 23342,
+    "hash": "5+MiefUPbwLGLBUEv2qK/AgR8kqKdztp+7glpgUQrjs="
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
@@ -201,18 +201,18 @@
   },
   {
     "path": "source/library/notification/notifications/BMNotification.js",
-    "size": 2667,
-    "hash": "Oum5Q+mTqTTyJfXBCpw62N1ikZE/nEJHBDczKNI1xls="
+    "size": 2380,
+    "hash": "njFZNc3KNL1YedJfbBqqJ4OwGdEznIl5/X/RXif52jU="
   },
   {
     "path": "source/library/notification/notifications/BMNotificationCenter.js",
-    "size": 10950,
-    "hash": "Ky+46sZXSJ0mAz25cvyD3A1DGgxUJox+gpRft0hlXMM="
+    "size": 9220,
+    "hash": "28pDRKkO6IxNm0MRrLK/ApV0c0U/tOS6KySQvYoWrNo="
   },
   {
     "path": "source/library/notification/notifications/BMObservation.js",
-    "size": 4502,
-    "hash": "r2fW8riLCfKhWeZ42moGcmmXkEbiwDpUwXq0fNw6e5w="
+    "size": 5677,
+    "hash": "yhXJyMTIxQ0MrRp1vGdO/vh4Sry4N/Ld54zt2+gSQSA="
   },
   {
     "path": "source/library/notification/Broadcaster.js",
@@ -231,8 +231,8 @@
   },
   {
     "path": "source/library/storage/PersistentAtomicDictionary.js",
-    "size": 5509,
-    "hash": "u5YAkzRZfqVfAKGTYqdaSFXGPb3ntNos2JlsqQgHRv0="
+    "size": 5775,
+    "hash": "oTvVhiiQ+x9oIXBHPTBVseAR7y7UU0NK5IsZiw5i1vI="
   },
   {
     "path": "source/library/storage/PersistentAsyncDictionary.js",
@@ -261,8 +261,8 @@
   },
   {
     "path": "source/library/view/events/devices/EventPoint.js",
-    "size": 2072,
-    "hash": "xiy1CIugKk9mVTTh7Pl2oEoQeqiEL+U6K3WGueqR/Pg="
+    "size": 2073,
+    "hash": "dvMKsf9hU+2ILtvi4or0ZfUsYJHw1WxafKt4bVehcvk="
   },
   {
     "path": "source/library/view/events/devices/Device.js",
@@ -306,8 +306,8 @@
   },
   {
     "path": "source/library/view/events/listeners/EventSetListener.js",
-    "size": 8324,
-    "hash": "goi4MChmwMztZDj4rPwipvOb7DvEa+r8DgoAsPzEVJg="
+    "size": 8325,
+    "hash": "pydCYfD0pXCIOtLxY55/cTYtmL5B2/AG4942fqus7xw="
   },
   {
     "path": "source/library/view/events/listeners/EventManager.js",
@@ -456,8 +456,8 @@
   },
   {
     "path": "source/library/view/webbrowser/WebBrowserWindow.js",
-    "size": 4508,
-    "hash": "20sTPJtp4ReCgRvQbHUoJ+uYNJQ4jsRTT/WGv53vmjQ="
+    "size": 4510,
+    "hash": "1Xg/BsjBGCaa92zkBk4CMErgWFEJsN7gcInIuDHx0nM="
   },
   {
     "path": "source/library/view/webbrowser/WebBrowserNotifications.js",
@@ -516,13 +516,13 @@
   },
   {
     "path": "source/library/view/dom_views/dom_helpers/DomElementHelpers.js",
-    "size": 1186,
-    "hash": "I5vb8YSIZUKSQXfgIWtsU0Ksb9WKjfIsPGKeqeKtm1M="
+    "size": 1531,
+    "hash": "L6wDmuCcRhomd1T+Oo5c+q1OYi8HeM2U80AyYCcS1nA="
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
-    "size": 122482,
-    "hash": "PrgatwcrFuJdxxOthfT9yAu8fBbnm2eaHsnyX9AZQ2Q="
+    "size": 122420,
+    "hash": "67881YC7Ux5cmbK0U3od/iUCqIO1eCClTgOtayvnR+w="
   },
   {
     "path": "source/library/view/dom_views/DomFlexView.js",
@@ -551,8 +551,8 @@
   },
   {
     "path": "source/library/view/dom_views/subclasses/DocumentBody.js",
-    "size": 1904,
-    "hash": "xg4B0hoGfZ6IfRzNjLlFSeDTLkv9/vop/gAqkTuf9Z8="
+    "size": 1905,
+    "hash": "uN4fk+SYWIrd7/HrXth/BLq2cfjjmuoUsI5X4qvMe2s="
   },
   {
     "path": "source/library/view/dom_views/subclasses/DragBarView.js",
@@ -601,8 +601,8 @@
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 19231,
-    "hash": "zRm6xCkhxDY8knJfVYZ4v61D0c35zVpdFSot/76KPFA="
+    "size": 18838,
+    "hash": "HzVBEL1k7YKtrC5lQfxO5kLkOuoLLJbIxytA1soCBmY="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",

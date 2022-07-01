@@ -10,6 +10,23 @@
 
 */
 
+Object.defineSlots(Element.prototype, {
+
+    _domViewWeakRef: null,
+
+    setDomView: function (aView) {
+        this._domViewWeakRef = aView ? new WeakRef(aView) : null;
+        return this
+    },
+
+    domView: function () { 
+        const ref = this._domViewWeakRef;
+        const v = ref ? ref.deref() : undefined;
+        return v
+    }
+})
+
+
 getGlobalThis().DomElement_atInsertElement = function (el, index, child) {
     const children = el.children
     

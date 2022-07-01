@@ -13,77 +13,112 @@
 (class BMObservation extends ProtoClass {
     initPrototype () {
         this.newSlot("center", null) // NotificationCenter that owns this
-        this.newSlot("senderId", null) // uniqueId string for sender
-        //this.newSlot("senderWeakRef", null) // weakRef to sender
-        this.newSlot("name", null)
-        this.newSlot("observer", null)
-        this.newSlot("isOneShot", false)
+        this.newSlot("name", null) // String 
+        this.newSlot("isOneShot", false) // Boolean
 
-        //this.newSlot("senderWeakRef", null) // WeakRef to sender
-        //this.newSlot("finalizationRegistry", null) // FinalizationRegistry
+        this.newWeakSlot("observer", null) // WeakRef slot to observer
+        this.newWeakSlot("sender", null) // WeakRef to sender
     }
 
     init () {
         super.init()
-        //const reg = new FinalizationRegistry(aSender => this.onFinalizeSender(aSender))
-        //this.setFinalizationRegistry(reg)
         //this.setIsDebugging(true)
     }
 
-    /*
+    // --- weak slots --- TODO: move to Object or Prototype
+
+    regNameForSlotName (slotName) {
+        const regName = "_" + slotName + "FinalizationReg";
+        return regName
+    }
+
+    onFinalizeWeakRefNamed (slotName, privateName, finalizedObj, regName) {
+        const eventName = "onFinalize" + slotName.capitalized()
+        if (this[eventName]) {
+            this[eventName].apply(this, [finalizedObj])
+            this[privateName] = null
+            this[regName] = null
+        }
+    }
+
+    newWeakSlot(slotName, initialValue) {
+        // TODO: use a single finalization registery on Object class for all weak slots and pass heldValue of slot name?
+        const privateName = "_" + slotName + "WeakRef";
+        const regName = this.regNameForSlotName(slotName)
+        const reg = new FinalizationRegistry(finalizedObj => this.onFinalizeWeakRefNamed(slotName, privateName, finalizedObj, regName))
+
+        Object.defineSlot(this, privateName, initialValue)
+        Object.defineSlot(this, regName, reg)
+    
+            if (!this[slotName]) {
+                const simpleGetter = function () {
+                    const ref = this[privateName]
+                    return ref ? ref.deref() : null //returns undefined if sender was collected
+                }
+    
+                Object.defineSlot(this, slotName, simpleGetter)
+            }
+    
+            const setterName = "set" + slotName.capitalized()
+    
+            if (!this[setterName]) {
+                const simpleSetter = function (newValue) {
+                    const reg = this[regName]
+                    const ref = this[privateName]
+                    const oldValue = ref ? ref.deref() : null
+
+                    if (oldValue) {
+                        reg.unregister(oldValue)
+                    }
+
+                    this[privateName] = new WeakRef(newValue);
+
+                    if (newValue) {
+                        reg.register(newValue)
+                    }
+
+                    return this;
+                }
+    
+                Object.defineSlot(this, setterName, simpleSetter)
+            }
+    
+            //this._slotNames.add(slotName)
+            
+            return this;
+    }
+
+    // --- sender ---
+
+    senderId () { // TODO: remove if not needed
+        const obj = this.sender()
+        return obj ? obj.typeId() : null
+    }
+
+
+    observerId () { // TODO: remove if not needed
+        const obj = this.observer()
+        return obj ? obj.typeId() : null
+    }
+
     onFinalizeSender (aSender) {
+        debugger;
         this.stopWatching()
-        this.setSender(null)
     }
 
-    sender () {
-        const ref = this.senderWeakRef()
-        return ref ? ref.deref() : null //returns undefined if sender was collected
-    }
-    */
-
-    setSenderId (aString) {
-        assert(Type.isString(aString))
-        this._senderId = aString
-        return this
+    onFinalizeObserver (anObserver) {
+        debugger;
+        this.stopWatching()
     }
 
-    setSender (obj) {
-        //assert(Type.isNull(this.sender()))
-        if (obj) {
-            this.setSenderId(obj.typeId())
-        } else {
-            this.setSenderId(null)
-        }
-
-        /*
-        if (this.sender() !== obj) {
-
-            if (this.sender()) {
-                this.finalizationRegistry().unregister(this.sender())
-            }
-
-            if (Type.isNull(obj)) {
-                this.setSenderId(null)
-                this.setSenderWeakRef(null)
-            } else {
-                this.setSenderId(obj.typeId())
-                this.setSenderWeakRef(new WeakRef(obj))
-                this.finalizationRegistry().register(obj)
-            }
-        }
-        */
-        return this
-    }
+    // ---
 
     matchesNotification (note) {
-        const tid = this.senderId()
-        //const t = this.sender()
-        //const matchesSender = (t === null) || (note.sender() === t) 
-        const matchesSender = (tid === null) || (note.senderId() === tid) 
+        const sender = this.sender()
+        const matchesSender = (sender === null) || (sender === note.sender()) 
         if (matchesSender) {
             const name = this.name()
-            const matchesName = (note.name() === name) || (name === null)
+            const matchesName = (name === null) || (note.name() === name) 
             return matchesName
         }
         return false
@@ -111,9 +146,10 @@
             //console.log(this._observer + " received note " + note.name() + " from " + note.sender() )
         }
 
-        const method = this._observer[note.name()]
+        const obs = this.observer()
+        const method = obs[note.name()]
         if (method) {
-            method.apply(this._observer, [note])
+            method.apply(obs, [note])
         } else {
             if (this.isDebugging()) {
                 this.debugLog(" no method found for note name " + note.name())
@@ -128,7 +164,7 @@
     isEqual (obs) {
         const sameName = this.name() === obs.name()
         const sameObserver = this.observer() === obs.observer()
-        const sameSenderId = this.senderId() === obs.senderId()
+        const sameSenderId = this.sender() === obs.sender()
         return sameName && sameObserver && sameSenderId
     }
 

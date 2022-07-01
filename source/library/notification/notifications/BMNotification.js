@@ -15,9 +15,11 @@
         this.newSlot("senderStack", null)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     senderId () {
         return this.sender().typeId()
@@ -34,15 +36,8 @@
         if (this === obs) { 
             return true 
         }
-        
-        /*
-        const sameName = this.name() === obs.name() 
-        const sameSenderId = this.senderId() === obs.senderId() 
-        // TODO: testing equivalence of info?
-        return sameName && sameSenderId
-        */
-        // not sure if compiler is smart enough to skip 2nd part
-        return this.name() === obs.name()  && this.senderId() === obs.senderId() 
+
+        return (this.name() === obs.name()) && (this.sender() === obs.sender())
     }
 
     isPosted () {

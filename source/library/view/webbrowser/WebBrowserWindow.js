@@ -167,8 +167,8 @@
     
     activeDomView () {
         const e = document.activeElement
-        if (e && e._domView) {
-            return e._domView
+        if (e && e.domView()) {
+            return e.domView()
         }
         return null
     }

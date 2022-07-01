@@ -119,70 +119,21 @@
         return BMObservation.clone().setCenter(this);
     }
 
-    hasObservationsForSenderId (senderId) {
-        const obs = this.observations().detect(obs => obs.senderId() === senderId)
+    hasObservationsForSender (sender) {
+        const obs = this.observations().detect(obs => obs.sender() === sender)
         return !Type.isNullOrUndefined(obs)
     }
 
-    countOfObservationsForSenderId (senderId) {
-        const matches = this.observations().filter(obs => obs.senderId() === senderId)
-        return matches.length
+    observationsForSenderI (sender) {
+        const matches = this.observations().filter(obs => obs.sender() === sender)
+        return matches
     }
     
     removeObservation (anObservation) {
-        if (true) {
-            const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
-            this.setObservations(filtered)
-        } else {
-            // If possible, we want to send onNoObservers listen senders when 
-            // their last observer is removed, so track these
-
-            const senderId = anObservation.senderId()
-            let removedMatchingSenderId = false
-            let stillHasMatchingSenderId = false
-
-            const filtered = this.observations().filter((obs) => {
-                if (obs.isEqual(anObservation)) {
-                    if (obs.senderId() === senderId) {
-                        removedMatchingSenderId = true
-                    }
-                    return false
-                }
-                if (obs.senderId() === senderId) {
-                    stillHasMatchingSenderId = true
-                }
-                return true
-            })
-            this.setObservations(filtered)
-
-            if (removedMatchingSenderId && !stillHasMatchingSenderId) {
-                const sender = this.senderForSenderId(senderId) // looks through obs listeners 
-                if (sender && sender.onNoObservers) {
-                    sender.onNoObservers(this)
-                }
-            }
-        }
-
+        const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
+        this.setObservations(filtered)
         return this
     }
-
-    /*
-    senderForSenderId (senderId) {
-        if (Type.isNullOrUndefined(senderId)) {
-            return false
-        }
-
-        // this only works if there's an observation whose observer is the sender
-        // which works, for example, if the sender is observing onNoObservers
-
-        const matchObservation = this.observations().detect(obs => obs.observerId() === senderId)
-        if (matchObservation) {
-            const sender = matchObservation.observer()
-            return sender
-        }
-        return null
-    }
-    */
     
     removeObserver (anObserver) {        
         const filtered = this.observations().filter(obs => obs.observer() !== anObserver)

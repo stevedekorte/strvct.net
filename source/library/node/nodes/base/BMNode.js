@@ -733,26 +733,6 @@
         return this
     }
 
-    // tracking observer count 
-    // usefull for releasing inspectors when no longer needed
-
-    /*
-    onStartObserving () {
-
-    }
-
-    onStopObserving () {
-        const isStillObserved = BMNotificationCenter.shared().hasObservationsForSenderId(this.typeId())
-        if (!isStillObserved) {
-            this.onNoMoreObservers()
-        }
-    }
-
-    onNoMoreObservers () {
-
-    }
-    */
-
 
 }.initThisClass());
 

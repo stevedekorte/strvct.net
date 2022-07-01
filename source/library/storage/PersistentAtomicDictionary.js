@@ -109,6 +109,10 @@
 		
     // transactions
 
+    hasChanges () {
+        return this.changedKeys().size > 0
+    }
+
     begin () {
         this.debugLog(this.type() + " begin ---")
         this.assertOpen()
@@ -125,12 +129,23 @@
     }
 	
     commit () { // public
+        let count = 0
         this.debugLog(this.type() + " prepare commit ---")
 	    // push to indexedDB tx 
 	    // TODO: lock until IndexedDB's tx complete callback is received,
         // ::: super.commit() is at end of method
 
 	    this.assertInTx()
+        if (this.hasChanges()) {
+            //debugger;
+            count = this.private_CommitChanges()
+        }
+        super.commit()
+        this.changedKeys().clear()
+        return count
+    }
+
+    private_CommitChanges () {
 	    const tx = this.idb().newTx()
 	    tx.begin()
         tx.setIsDebugging(this.isDebugging())
@@ -164,9 +179,6 @@
         tx.commit() // TODO: lock until commit callback?
 		
         this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
-
-        super.commit()
-        this.changedKeys().clear()
         return count
     }
 	

@@ -5,6 +5,21 @@
 
     Slot
 
+    Abstraction for a slot on a prototype. 
+    An array of these are stored in each prototype.
+    
+    - stores slot related data, such as:
+        - default value
+        - cloning policy 
+        - persistent policy
+        - comment
+        - whether slot can be:
+            - edited
+            - inspected
+        - isPrivate
+        - slotType
+    - handles auto generating getter/setter
+
 */
 
 if (!getGlobalThis().ideal) {

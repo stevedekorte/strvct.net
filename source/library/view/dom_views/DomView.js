@@ -97,9 +97,11 @@
     }
 
     scheduleRetireIfReady () {
-        if (!this.hasParentView()) {
+        /*
+        if (this.canRetire()) {
             this.scheduleMethod("retireIfReady", 1000)
         }
+        */
     }
 
     /*
@@ -175,7 +177,7 @@
         const e = this.element()
         e.style.transition = "all 0s" // probably not needed
         if (e) {
-            e._domView = null
+            e.setDomView(null)
             this._element = null
         }
 
@@ -237,7 +239,9 @@
             // use timer as focus listener can't be set up yet
             this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
         }
-        e._domView = this // try to avoid depending on this as much as possible - keep refs to divViews, not elements
+        
+        e.setDomView(this)
+
         return this
     }
 
@@ -1141,7 +1145,7 @@
                     console.log("  -- taking focus from " + focusedView.typeId())
                 }
                 
-                //this.debugLog(".focus() " + document.activeElement._domView)
+                //this.debugLog(".focus() " + document.activeElement.domView())
                 this.addTimeout(() => { this.element().focus() }, 0)
             }
             */
