@@ -430,24 +430,49 @@
     "hash": "AupxKPdfXmTz8SEVq3xTm8nw0PtjHwBxW42IBzgKYvM="
   },
   {
-    "path": "source/library/view/events/gesturing/gestures/edges/TopEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/view/TopEdgePanGestureRecognizer.js",
     "size": 411,
     "hash": "jTVJV4Ot2euz67H1xbOq9mrBxTiKfIaYmUjECr37b10="
   },
   {
-    "path": "source/library/view/events/gesturing/gestures/edges/BottomEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/view/BottomEdgePanGestureRecognizer.js",
     "size": 477,
     "hash": "UclPGDnvYwz83VJQ5uLmb1D7DZpPqHmb5/KMA+7ntK8="
   },
   {
-    "path": "source/library/view/events/gesturing/gestures/edges/LeftEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/view/LeftEdgePanGestureRecognizer.js",
     "size": 418,
     "hash": "0ITx+u7sQnYJBrOwOKR6QdvDs+UJy421x8Fa6ESzNFk="
   },
   {
-    "path": "source/library/view/events/gesturing/gestures/edges/RightEdgePanGestureRecognizer.js",
+    "path": "source/library/view/events/gesturing/gestures/edges/view/RightEdgePanGestureRecognizer.js",
     "size": 425,
     "hash": "GeWbkuqOZVvWItfjwtDwXrudQbDgTZNx1gqmH2MBsPk="
+  },
+  {
+    "path": "source/library/view/events/gesturing/gestures/edges/screen/ScreenEdgePanGestureRecognizer.js",
+    "size": 2252,
+    "hash": "o1HPyTT1wqix9rsDhE9oarZkAIRxxMHqfNVaoxll+jc="
+  },
+  {
+    "path": "source/library/view/events/gesturing/gestures/edges/screen/sides/ScreenTopEdgePanGestureRecognizer.js",
+    "size": 452,
+    "hash": "wdRLp0En87azilgMpp//0yeo3/kMtfqwiFqyhNhlYJU="
+  },
+  {
+    "path": "source/library/view/events/gesturing/gestures/edges/screen/sides/ScreenBottomEdgePanGestureRecognizer.js",
+    "size": 474,
+    "hash": "KsO2EVRUOXCEIE8d8NU6yRwzx6qmVkJCW7dCBfSZ2PU="
+  },
+  {
+    "path": "source/library/view/events/gesturing/gestures/edges/screen/sides/ScreenLeftEdgePanGestureRecognizer.js",
+    "size": 460,
+    "hash": "3M1GInJ/1q0M3bTsy/lUu7eREhoIP/W7Nx2ifNLMuAs="
+  },
+  {
+    "path": "source/library/view/events/gesturing/gestures/edges/screen/sides/ScreenRightEdgePanGestureRecognizer.js",
+    "size": 467,
+    "hash": "mWTvr6q/sUSrmpKjU8oCTqe/ADizI7bLPrg5Jhouh3c="
   },
   {
     "path": "source/library/view/webbrowser/WebBrowserScreen.js",

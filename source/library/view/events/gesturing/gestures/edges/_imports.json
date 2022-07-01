@@ -1,8 +1,6 @@
 [
     "EdgePanGestureRecognizer.js",
-    "TopEdgePanGestureRecognizer.js",
-    "BottomEdgePanGestureRecognizer.js",
-    "LeftEdgePanGestureRecognizer.js",
-    "RightEdgePanGestureRecognizer.js"
+    "view/_imports.json",
+    "screen/_imports.json"
 ]
 
