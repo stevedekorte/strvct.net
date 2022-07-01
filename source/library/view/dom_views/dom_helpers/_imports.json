@@ -2,6 +2,6 @@
     "DomTextTapeMeasure.js",
     "DomCSSInspector.js",
     "CSSColor.js",
-    "DomElementHelpers.js"
+    "Node-helpers.js"
 ]
 

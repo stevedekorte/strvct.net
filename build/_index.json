@@ -515,9 +515,9 @@
     "hash": "6sKAKjJeQn8cu/BNnsz15VHUQgnWyPRI0+IYRlFOfag="
   },
   {
-    "path": "source/library/view/dom_views/dom_helpers/DomElementHelpers.js",
-    "size": 2660,
-    "hash": "B7am/hXZjj5jFDVFkjjF3UMWMor0gaq27XPVp7YcHBU="
+    "path": "source/library/view/dom_views/dom_helpers/Node-helpers.js",
+    "size": 1890,
+    "hash": "yerRFfiDP8Y9yius/TyY8QitEsbhdf+Jysd3c6l63s8="
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
