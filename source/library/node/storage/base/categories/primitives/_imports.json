@@ -1,10 +1,10 @@
 [
-    "Array-store.js",
-    "ArrayBuffer-store.js",
-    "Date-store.js",
-    "Map-store.js",
-    "Set-store.js",
-    "Object-store.js",
+    "Array_store.js",
+    "ArrayBuffer_store.js",
+    "Date_store.js",
+    "Map_store.js",
+    "Set_store.js",
+    "Object_store.js",
     "TypedArray-store.js",
     "literals/_imports.json"
 ]

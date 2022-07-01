@@ -41,8 +41,8 @@
   },
   {
     "path": "source/library/ideal/categories/Object_ideal.js",
-    "size": 15787,
-    "hash": "KxGxFndd1Mum4AAKpsy08C/8RnePXFa0nD5CIsxim70="
+    "size": 15196,
+    "hash": "8Li3tlNlh9MnV6sPRWEtS92rgm0Ne7k3IFwVSBmIp6k="
   },
   {
     "path": "source/library/ideal/categories/Object_notification.js",
@@ -660,64 +660,64 @@
     "hash": "3rV20JXb7dzOA6loWOtOee9rmTBBHDl8OoCrclbaN80="
   },
   {
-    "path": "source/library/node/storage/base/categories/ProtoClass-store.js",
-    "size": 1014,
-    "hash": "yeQ414nPB8JtVN5yXaE3kTuGcULm4CaWqXQAr6+1h2c="
+    "path": "source/library/node/storage/base/categories/ProtoClass_store.js",
+    "size": 987,
+    "hash": "A1GI0CmusG0RdF22hacisLjnkJaRv41rdRPXrs0bi7s="
   },
   {
-    "path": "source/library/node/storage/base/categories/BMNode-store.js",
-    "size": 3086,
-    "hash": "IhkiGX4b7Ul7brjUirwsOa+Lg0C9FKyh89DHU6np2k0="
+    "path": "source/library/node/storage/base/categories/BMNode_store.js",
+    "size": 3003,
+    "hash": "wQAP16ziELSIk4jGNpUT4IWoTpGoP7xDaIDGDYNFf2E="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/Array-store.js",
-    "size": 1328,
-    "hash": "E6e3m50ryrCh3KSDoqGVqd7BwSyR418dCPFWPutWc7o="
+    "path": "source/library/node/storage/base/categories/primitives/Array_store.js",
+    "size": 1294,
+    "hash": "G2R/1Zps0m7JYTzeDgiunGI1xAUYDv01PIpjyzFGMZw="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/ArrayBuffer-store.js",
-    "size": 1143,
-    "hash": "/Ef6WPrQzmP9PzRG0dGs/iW6NduJEv671H0O2BTlcv4="
+    "path": "source/library/node/storage/base/categories/primitives/ArrayBuffer_store.js",
+    "size": 1088,
+    "hash": "jBUmqEf9KO7MV7rz0Ke9wCWtU2M/BsSNqmKZBcFwKgY="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/Date-store.js",
-    "size": 762,
-    "hash": "CIes/NhZ7vEq0V6kxJqqlWBLQcYNwd63RHFkKcRGI0s="
+    "path": "source/library/node/storage/base/categories/primitives/Date_store.js",
+    "size": 702,
+    "hash": "M3ARVWOONN3FgPw3rzmSu1gNUHo2CMX6pShqRbe8Um4="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/Map-store.js",
-    "size": 1311,
-    "hash": "lefh5cPjB+2y6kHFzu3gqCp7mqWojnpDQCzGnc9tIz0="
+    "path": "source/library/node/storage/base/categories/primitives/Map_store.js",
+    "size": 1246,
+    "hash": "d4Smd3stkA1XdWSkEynfqjzsPKVtRNzSMq1NdHDefm4="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/Set-store.js",
-    "size": 1013,
-    "hash": "4o6HTvs5VTfjqAuF/w/PIZxYqUlesmXd85Mag4GJHaE="
+    "path": "source/library/node/storage/base/categories/primitives/Set_store.js",
+    "size": 955,
+    "hash": "fzYWZ94G0Ix+YjzBId1sEj1vt0L8jNEN4XnnysCY6g4="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/Object-store.js",
-    "size": 1503,
-    "hash": "aJZT/jUw2KC8IlZXh/KunF4aYD70twDKI85f7Fl4w3I="
+    "path": "source/library/node/storage/base/categories/primitives/Object_store.js",
+    "size": 1985,
+    "hash": "bkpGEDGLGf+s1kXaNJQ2e2beurCgv+iOoyvrtgU8b30="
   },
   {
     "path": "source/library/node/storage/base/categories/primitives/TypedArray-store.js",
-    "size": 1252,
-    "hash": "Uyte8u/5Fvyzfu4An3zhSubs/9Lc9hzFVIIxZr1IZtU="
+    "size": 2301,
+    "hash": "NjsaMR7hxFAMsgtQNiKre8t3wAJjXOPl96X/ZUGXWMY="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/literals/String-store.js",
-    "size": 147,
-    "hash": "91X2IDUAns8Dm2xw/PbezS6pmhgGli5pil+WNlJEd+o="
+    "path": "source/library/node/storage/base/categories/primitives/literals/String_store.js",
+    "size": 154,
+    "hash": "3Vd05gdb+91hYsWCHHxI47e5GRZNPzYo56rSEBx2c6k="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/literals/Boolean-store.js",
-    "size": 148,
-    "hash": "6hTzDZ/yclwTQhzlZ7rPFGTY4v2Oz1tBkaS4e8JTLgo="
+    "path": "source/library/node/storage/base/categories/primitives/literals/Boolean_store.js",
+    "size": 156,
+    "hash": "8Y1et9IdtY7wgwD9unxtenw1IqVD4nbUscJpPuiJB5s="
   },
   {
-    "path": "source/library/node/storage/base/categories/primitives/literals/Number-store.js",
-    "size": 147,
-    "hash": "rsYCjxEoAErydv0FlcxEAxh/9jb5eG3EldI3Vjq2Qw8="
+    "path": "source/library/node/storage/base/categories/primitives/literals/Number_store.js",
+    "size": 154,
+    "hash": "S1PCEqhM8ORZfNAvjt8vprDmiW0MN+7cHf4hFZpmpas="
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",

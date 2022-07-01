@@ -1,5 +1,5 @@
 [
-    "String-store.js",
-    "Boolean-store.js",
-    "Number-store.js"
+    "String_store.js",
+    "Boolean_store.js",
+    "Number_store.js"
 ]

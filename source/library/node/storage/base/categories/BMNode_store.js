@@ -1,21 +1,16 @@
 "use strict";
 
+(class BMNode_store extends BMNode {
 
-Object.defineSlots(BMNode, {
 
-    instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store    
+    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store    
         //const proto = Object.getClassNamed(aRecord.type)
         const obj = this.clone()
         //obj.loadFromRecord(aRecord, aStore)
         return obj
-    },
-
-})
-
-
-Object.defineSlots(BMNode.prototype, {
+    }
     
-    recordForStore: function(aStore) { // should only be called by Store
+    recordForStore (aStore) { // should only be called by Store
         const aRecord = {
             type: this.type(), 
             entries: [], 
@@ -31,9 +26,9 @@ Object.defineSlots(BMNode.prototype, {
         })
 
         return aRecord
-    },
+    }
 
-    lazyPids: function(puuids = new Set()) {
+    lazyPids (puuids = new Set()) {
         // when doing Store.collect() will need to check for lazy slot pids on active objects
         this.allSlots().ownForEachKV((slotName, slot) => {
             // only need to do this on unloaded store refs in instances
@@ -43,10 +38,9 @@ Object.defineSlots(BMNode.prototype, {
             }
         })
         return puuids
-    },
+    }
 
-
-    loadFromRecord: function(aRecord, aStore) {
+    loadFromRecord (aRecord, aStore) {
 
         aRecord.entries.forEach((entry) => {
             const k = entry[0]
@@ -76,22 +70,22 @@ Object.defineSlots(BMNode.prototype, {
 
         //this.didLoadFromStore() // done in ObjectPool.didInitLoadingPids() instead
         return this
-    },
+    }
 
-    scheduleDidInit: function () {
+    scheduleDidInit () {
         // Object scheduleDidInit just calls this.didInit()
         assert(!this.hasDoneInit())
         SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
-    },
+    }
 
-    scheduleDidLoadFromStore: function () {
+    scheduleDidLoadFromStore () {
         SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
-    },
+    }
 
     /*
-    didLoadFromStore: function () {
+    didLoadFromStore () {
         // Object.didLoadFromStore handles this
     },
     */
 
-})
+}).initThisCategory();

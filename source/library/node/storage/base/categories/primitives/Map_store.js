@@ -1,20 +1,15 @@
 "use strict";
 
-Object.defineSlots(Map, {
 
-    instanceFromRecordInStore: function (aRecord, aStore) { // should only be called by Store
+(class Map_store extends Map {
+
+    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
         const obj = this.clone()
         //obj.loadFromRecord(aRecord, aStore)
         return obj
-    },
+    }
 
-})
-
-
-Object.defineSlots(Map.prototype, {
-
-    loadFromRecord: function (aRecord, aStore) {
-
+    loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
             const key = entry[0]
             const value = aStore.unrefValue(entry[1])
@@ -22,9 +17,9 @@ Object.defineSlots(Map.prototype, {
         })
 
         return this
-    },
+    }
 
-    recordForStore: function (aStore) { // should only be called by Store
+    recordForStore (aStore) { // should only be called by Store
         let iterator = this.entries();
         let entry = iterator.next().value
         const entries = []
@@ -39,22 +34,22 @@ Object.defineSlots(Map.prototype, {
             type: this.type(), 
             entries: entries
         }
-    },
+    }
 
-    shouldStore: function () {
+    shouldStore () {
         return true
-    },
+    }
 
-    refsPidsForJsonStore: function (puuids = new Set()) {
+    refsPidsForJsonStore (puuids = new Set()) {
         this.forEach(v => { 
             if (!Type.isNull(v)) { 
                 v.refsPidsForJsonStore(puuids)
             } 
         })
         return puuids
-    },
-})
+    }
 
+}).initThisCategory();
 
 
 

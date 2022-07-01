@@ -34,7 +34,8 @@
         Set, 
         Map, 
         Number, 
-        String
+        String,
+        ArrayBuffer
     ]
     classesToFix.forEach(aClass => aClass.__proto__ = Object)
 }
@@ -496,38 +497,11 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         this.setHasDoneInit(true)
     }
  
-    didLoadFromStore () {
-    }
- 
     scheduleDidInit () {
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
         this.didInit()
     }
- 
-    scheduleDidLoadFromStore () {
-        //SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
-        this.didLoadFromStore()
-    }
- 
-    didLoadFromStore () {
-        // for subclasses to override
-    }
- 
-    // --- shouldStore ---
- 
-    setShouldStore (aBool) {
-        if (aBool != this._shouldStore) {
-            //this.willMutate("shouldStore")
-            Object.defineSlot(this, "_shouldStore", aBool)
-            //this.didMutate("shouldStore")
-        }
-        return this
-    }
- 
-    shouldStore () {
-        return this._shouldStore
-    }
- 
+
     typeCategory () {
         if (this.isInstance()) {
             return "instance"

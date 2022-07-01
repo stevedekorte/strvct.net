@@ -1,9 +1,9 @@
 "use strict";
 
 
-Object.defineSlots(ProtoClass, {
+(class ProtoClass_store extends ProtoClass {
 
-    instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store    
+    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store    
 
         throw new Error("unimplemented")
 
@@ -21,12 +21,9 @@ Object.defineSlots(ProtoClass, {
         
         return obj
         */
-    },
-})
+    }
 
-Object.defineSlots(ProtoClass.prototype, {
-
-    recordForStore: function(aStore) { // should only be called by Store
+    recordForStore (aStore) { // should only be called by Store
 
         throw new Error("unimplemented")
 
@@ -45,6 +42,6 @@ Object.defineSlots(ProtoClass.prototype, {
 
         return record
         */
-    },
+    }
 
-})
+}).initThisCategory();
