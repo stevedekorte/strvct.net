@@ -239,7 +239,7 @@
             // use timer as focus listener can't be set up yet
             this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
         }
-        
+
         e.setDomView(this)
 
         return this
@@ -2495,7 +2495,8 @@
         this.subviews().atInsert(anIndex, aSubview)
         assert(this.subviews()[anIndex] === aSubview)
 
-        DomElement_atInsertElement(this.element(), anIndex, aSubview.element())
+        this.element().atInsertElement(anIndex, aSubview.element())
+        //DomElement_atInsertElement(this.element(), anIndex, aSubview.element())
         assert(this.element().childNodes[anIndex] === aSubview.element())
 
         aSubview.setParentView(this) // TODO: unify with addSubview

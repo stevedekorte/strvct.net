@@ -306,8 +306,8 @@
   },
   {
     "path": "source/library/view/events/listeners/EventSetListener.js",
-    "size": 8325,
-    "hash": "pydCYfD0pXCIOtLxY55/cTYtmL5B2/AG4942fqus7xw="
+    "size": 8315,
+    "hash": "W+JSe2UWeRON9wtC42cxUYLHh+WKFjgD65z1oqdyPAY="
   },
   {
     "path": "source/library/view/events/listeners/EventManager.js",
@@ -516,13 +516,13 @@
   },
   {
     "path": "source/library/view/dom_views/dom_helpers/DomElementHelpers.js",
-    "size": 1531,
-    "hash": "L6wDmuCcRhomd1T+Oo5c+q1OYi8HeM2U80AyYCcS1nA="
+    "size": 2723,
+    "hash": "Jzhbz3EVR4xS+FW4FQzs4yzj3vQ6pcSfi/+or4+PbMU="
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
-    "size": 122420,
-    "hash": "67881YC7Ux5cmbK0U3od/iUCqIO1eCClTgOtayvnR+w="
+    "size": 122482,
+    "hash": "PQsBHyT0iiemzDM3LaefPjUoWXPnpDqmjk3czhVWU1I="
   },
   {
     "path": "source/library/view/dom_views/DomFlexView.js",

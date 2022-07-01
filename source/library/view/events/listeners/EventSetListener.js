@@ -68,7 +68,7 @@
     }
 
     listenTargetDescription () {
-        return DomElement_description(this.listenTarget())
+        return this.listenTarget().description()
     }
 
     // --------------
