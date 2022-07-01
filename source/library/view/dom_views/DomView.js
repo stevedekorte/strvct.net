@@ -5,16 +5,6 @@
 
     Base view class. Wraps a dom element.
     
-    [IMPORTANT] Element Garbage Collection:
-    
-    If a DomView does not have a parentView set at the end of an event loop, 
-    it will call prepareToRetire and remove it's element and cancel any timers or events it's 
-    registered for. This is done to allow garage collection on elements as those subscriptions
-    would otherwise hold a reference to the element. 
-    
-    If you need to hold onto a parentless view between event loops, call viewRetain()
-    to retain it, and viewRelease() it when you no longer need it.
-
     TODO: add dict[propertyName] -> validValueSet and check css values when set?
 
 */
@@ -64,8 +54,6 @@
         this.newSlot("hiddenMinHeight", undefined)
         this.newSlot("hiddenMaxHeight", undefined)
         this.newSlot("hiddenTransitionValue", undefined)
-
-        this.newSlot("viewRetainCount", 0) // needed to avoid prepareToRetire on views during drag or cached
     }
 
     init () {
@@ -78,89 +66,15 @@
 
     // retiring
 
-    viewRelease () {
-        assert(this.viewRetainCount() > 0)
-        this.setViewRetainCount(this.viewRetainCount() - 1)
-        if (!this.isViewRetained()) {
-            this.scheduleRetireIfReady()
-        }
-        return this
-    }
-
-    isViewRetained () {
-        return this.viewRetainCount() !== 0
-    }
-
-    viewRetain () {
-        this.setViewRetainCount(this.viewRetainCount() + 1)
-        return this
-    }
-
-    scheduleRetireIfReady () {
-        /*
-        if (this.canRetire()) {
-            this.scheduleMethod("retireIfReady", 1000)
-        }
-        */
-    }
-
-    /*
-    canRetire () {
-        return false
-    }
-    */
-
-    canRetire () {
-        if (!this.isViewRetained() && !this.hasParentView()) {
-            //debugger;
-            return true
-        }
-        return false
-    }
-
-    retireIfReady () {
-        if (this.canRetire()) {
-            /*
-            if (SyncScheduler.shared().hasActionsForTarget(this)) {
-                let actions = SyncScheduler.shared().actionsForTarget(this)
-                console.log(actions.map(a => a.actionsKey()))
-                debugger;
-                SyncScheduler.shared().hasActionsForTarget(this) // so we can step into this 
-            }
-            */
-            this.prepareToRetire()
-        }
-        return this
-    }
-
     prepareToRetire () {
-        if (this._breakOnRetire) {
-            debugger;
-        }
-
-        /*
-        // TEMP==============================================================================
-        console.log(this.debugTypeId() + " called prepareToRetire but skipping")
-        return 
-        // TEMP==============================================================================
-        */
-
         assert(!this.hasParentView())
-        assert(this.viewRetainCount() === 0)
-
-        /*
-        if (this.debugTypeId() !== "crumbView") {
-            //debugger;
-            console.log(this.debugTypeId() + " prepareToRetire ------------")
-        }
-        */
 
         // if view has no parent at the end of event loop, 
         // our policy is to retire the view
 
         this.setIsRegisteredForVisibility(false) // this one isn't a listener
         
-        this.retireSubviewTree()
+        //this.retireSubviewTree()
 
         // do this after removing subviews, just in case events where added by those changes
         this.removeAllGestureRecognizers()
@@ -185,12 +99,6 @@
         return this
     }
 
-    removeAllListeners () {
-        this.eventListenersDict().ownForEachKV( (k, ev) => { ev.setIsListening(false) } )
-        this.setEventListenersDict({})
-        return this
-    }
-
     retireSubviewTree () {
         // this should be called by:
         //   scheduleRetireIfReady() -> prepareToRetire()
@@ -202,6 +110,14 @@
         subviews.forEach(sv => {
             sv.retireSubviewTree()
         })
+    }
+
+    // ------------------------
+
+    removeAllListeners () {
+        this.eventListenersDict().ownForEachKV( (k, ev) => { ev.setIsListening(false) } )
+        this.setEventListenersDict({})
+        return this
     }
 
     // gestures
@@ -2350,10 +2266,11 @@
         return Type.isNullOrUndefined(this.parentView()) === false
     }
 
+    
     didUpdateSlotParentView (oldValue, newValue) {
-        this.scheduleRetireIfReady()
         return this
     }
+    
 
     // view chains
 
@@ -2758,14 +2675,7 @@
         //sv.forEach(subview => this.removeSubview(subview))
         while(this.subviews().length) {
             const sv = this.subviews().last()
-            
-            assert(!this.isObjectRetired()) // temp sanity check
-            assert(!Type.isNullOrUndefined(sv.element())) // temp sanity check
-
             this.removeSubview(sv)
-            
-            assert(!this.isObjectRetired()) // temp sanity check
-            assert(!Type.isNullOrUndefined(sv.element())) // temp sanity check
         }
         assert(this.subviews().length === 0) // temp sanity check
         return this

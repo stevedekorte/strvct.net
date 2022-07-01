@@ -16,8 +16,8 @@
         this.newSlot("name", null) // String 
         this.newSlot("isOneShot", false) // Boolean
 
-        this.newWeakSlot("observer", null) // WeakRef slot to observer
-        this.newWeakSlot("sender", null) // WeakRef to sender
+        this.newSimpleWeakSlot("observer", null) // WeakRef slot to observer
+        this.newSimpleWeakSlot("sender", null) // WeakRef to sender
     }
 
     init () {
@@ -41,7 +41,7 @@
         }
     }
 
-    newWeakSlot(slotName, initialValue) {
+    newSimpleWeakSlot(slotName, initialValue) {
         // TODO: use a single finalization registery on Object class for all weak slots and pass heldValue of slot name?
         const privateName = "_" + slotName + "WeakRef";
         const regName = this.regNameForSlotName(slotName)
@@ -74,7 +74,7 @@
                     this[privateName] = new WeakRef(newValue);
 
                     if (newValue) {
-                        reg.register(newValue)
+                        reg.register(newValue, privateName)
                     }
 
                     return this;

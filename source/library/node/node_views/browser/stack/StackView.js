@@ -114,20 +114,6 @@
         return this
     }
 
-    // --- retire ---
-
-    prepareToRetire () {
-        // Don't retire the view while we are caching it.
-        // Caching is only used during drag & drop now, 
-        // but might be used elsewhere in the future.
-        // TODO: should we pause events and observations while cached?
-        if (this.hasCache()) {
-            return false;
-        }
-        debugger;
-        return super.prepareToRetire()
-    }
-
     // --- direction ---
 
     didUpdateSlotDirection () {
@@ -555,7 +541,6 @@
         const k = aView.cacheId()
         if (!cache.hasKey(k)) {
             cache.atPut(k, aView)
-            aView.viewRetain()
         }
         return this
     }
@@ -565,7 +550,6 @@
         const k = aView.cacheId()
         if (cache.hasKey(k)) {
             cache.removeKey(k)
-            aView.viewRelease() // will schedule prepareToRetireIfReady if retain count is zero
         }
         return this
     }

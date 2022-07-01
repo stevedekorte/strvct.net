@@ -24,22 +24,7 @@
         return this
     } //.setDocs("init", "initializes the object", "returns this"),
     
-    setParentView (v) {
-        /*
-        if (Type.isNull(v)) {
-            console.log(this.debugTypeId() + " setParentView(null)")
-        }
-        */
-        return super.setParentView(v)
-    }
-    
-    prepareToRetire () {
-        //console.log(this.debugTypeId() + " prepareToRetire *********")
-        this.setNode(null)
-        super.prepareToRetire()
-        return this
-    }
-	
+
     setNode (aNode) {
         if (this._node !== aNode) {
             this.stopWatchingNode()

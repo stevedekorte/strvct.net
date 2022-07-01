@@ -120,15 +120,6 @@
         return this
     }
 
-    /*
-    prepareToRetire () {
-        super.prepareToRetire()
-        console.log(this.debugTypeId() + " prepareToRetire() isClosed: " + this.isClosed())
-        //debugger;
-        return this
-    }
-    */
-
     // operation type helpers
 
     isCopyOp () {
@@ -148,14 +139,6 @@
     }
 
     // ----
-
-    setItems (viewArray) {
-        this._items.forEach(v => v.viewRelease())
-        this._items = viewArray
-        this._items.forEach(v => v.viewRetain())
-        //console.log(this.type() + " setItems(" + JSON.stringify(viewArray.map(v => v.debugTypeId())) + ")")
-        return this
-    }
 
     setItem (aView) {
         this.setItems([aView])
@@ -452,7 +435,7 @@
         const hoveringViews = newViews.select(v => oldViews.contains(v))
 
         // if old view isn't in new ones, we must have exited it
-        const exitingViews = oldViews.select( v => !newViews.contains(v))
+        const exitingViews = oldViews.select(v => !newViews.contains(v))
  
         // onDragSourceEnter onDragDestinationEnter 
         enteringViews.forEach(aView => this.sendProtocolAction(aView, "Enter"))

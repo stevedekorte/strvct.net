@@ -129,10 +129,12 @@
         return this.type()
     }
 
+    /*
     prepareToRetire () {
         super.prepareToRetire() // will remove notification observations
         this._subnodes.removeMutationObserver(this)
     }
+    */
 
     nodeCreate () {
         // we implemnet this on BMNode class and prototype so 

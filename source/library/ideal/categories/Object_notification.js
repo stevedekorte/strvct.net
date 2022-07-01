@@ -9,6 +9,8 @@
 
 (class Object_notification extends Object {
  
+    // --- TODO: retired no longer used, but need to look into it more ---
+
     assertNotRetired () {
         if (this._isObjectRetired) {
             throw new Error("object already retired")
@@ -37,6 +39,8 @@
     assertNotRetired () {
         assert(!this.isObjectRetired())
     }
+
+    // -------------------------------------------------
  
     removeAllNotificationObservations () {
         if (getGlobalThis()["BMNotificationCenter"]) {

@@ -1,3 +1,5 @@
+- look into removeMutationObserver - do we need weakrefs?
+
 - add abstraction for EventSetListener eventsDict
 
 

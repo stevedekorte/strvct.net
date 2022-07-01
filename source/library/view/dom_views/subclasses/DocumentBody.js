@@ -68,7 +68,7 @@
         // associated with a DomView instance 
 
         while (e) {
-            const view = e._domView
+            const view = e.domView()
             if (view) {
                 return view
             }

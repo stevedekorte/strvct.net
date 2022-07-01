@@ -2,11 +2,14 @@
 
 /*
 
-  ProperWeakMap
+  WeakDictionary
 
-  Javascript's built in WeakMap doesn't support non-object types (such as strings/numbers/symbols)
-  to be used as keys, which make it unusable for most caching purposes. This class supports such
-  keys. It is implemented using WeakRef and FinalizationRegistry.
+  A dictionary with WeakRef values internally, but external API looks normal.
+  Unlike WeakMap, the keys can be symbols, and it's entries are enumerable.
+
+  All values should be objects.
+
+  It is implemented using WeakRef and FinalizationRegistry.
 
   Notes:
 
@@ -19,7 +22,7 @@
 
 */
 
-class ProperWeakMap {
+class WeakDictionary {
 
     constructor () {
       this._refs = {}

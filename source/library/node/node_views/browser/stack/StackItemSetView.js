@@ -59,45 +59,12 @@
     }
     */
 
-    setParentView (v) {
-        if (this.parentView() && Type.isNull(v)) {
-         //   debugger;
-        }
-        super.setParentView(v)
-        return this
-    }
-
-    setTilePlaceHolder (ph) {
-        if (this._tilePlaceHolder !== ph) {
-            if (this._tilePlaceHolder) {
-                this._tilePlaceHolder.viewRelease()
-              //  debugger;
-            }
-            this._tilePlaceHolder = ph
-            if (this._tilePlaceHolder) {
-                this._tilePlaceHolder.viewRetain()
-            }
-        }
-
-        return this
-    }
-
-    prepareToRetire () {
-        const ph = this.tilePlaceHolder()
-        if (ph) {
-            this.setTilePlaceHolder(null) // to viewRelease it
-        }
-        super.prepareToRetire()
-        return this
-    }
-
     stackView () {
         const scrollView = this.parentView()
         const navView = scrollView.parentView()
         const stackView = navView.parentView()
         return stackView
     }
-
 
     syncOrientation () {
         if (this.isVertical()) {
@@ -1221,7 +1188,7 @@
     }
 
     stackTiles () {
-        this.assertTilesHaveParent()
+        //this.assertTilesHaveParent()
 
         if (this.isVertical()) {
             this.stackTilesVertically()
@@ -1232,7 +1199,7 @@
     }
 
     unstackTiles () {
-        this.assertTilesHaveParent()
+        //this.assertTilesHaveParent()
 
         if (this.isVertical()) {
             this.unstackTilesVertically()
@@ -1267,13 +1234,9 @@
         return this
     }
 
+    /*
     assertTilesHaveElement () {
         this.tiles().forEach(tile => { 
-            if (tile.isObjectRetired()) {
-                console.log(tile.debugTypeId() + " already retired")
-                assert(false)
-            }
-
             if (Type.isNullOrUndefined(tile.element())) {
                 console.log(tile.debugTypeId() + " missing element")
                 assert(false)
@@ -1283,21 +1246,10 @@
 
     assertTilesHaveParent () {
         this.tiles().forEach(tile => { 
-            if (tile.isObjectRetired()) {
-                console.log(tile.debugTypeId() + " already retired")
-                assert(false)
-            }
-
             if (Type.isNullOrUndefined(tile.parentView())) {
                 console.log(tile.debugTypeId() + " missing parent view")
                 assert(false)
             }
-
-            if (Type.isNullOrUndefined(tile.element())) {
-                console.log(tile.debugTypeId() + " missing element")
-                assert(false)
-            }
-
         })
     }
 
@@ -1308,12 +1260,10 @@
                 assert(false)
             }
 
-            /*
-            if (Type.isNullOrUndefined(tile.parentView())) {
+           if (Type.isNullOrUndefined(tile.parentView())) {
                 console.log(tile.debugTypeId() + " missing parent view")
                 assert(false)
             }
-            */
 
             if (Type.isNullOrUndefined(tile.element())) {
                 console.log(tile.debugTypeId() + " missing element")
@@ -1321,30 +1271,25 @@
             }
         })
     }
+    */
 
     unstackTilesVertically  () {
-        this.assertTilesHaveParent()
+        //this.assertTilesHaveParent()
         const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
-        this.assertViewsValid(orderedTiles)
+        //this.assertViewsValid(orderedTiles)
         
         orderedTiles.forEach(tile => assert(tile.hasElement()) ) // todo: temp test
-
         orderedTiles.forEachPerform("makeRelativePositionAndSize")
 
-        this.assertViewsValid(orderedTiles)
-        this.assertViewsValid(this.subviews())        
-
-        orderedTiles.forEach(tile => tile._breakOnRetire = true)
-        //this.subviews().forEach(tile => tile._breakOnRetire = true)
+        //this.assertViewsValid(orderedTiles)
+        //this.assertViewsValid(this.subviews())        
         
         this.removeAllSubviews()
 
-        this.assertViewsValid(this.subviews())
-        this.assertViewsValid(orderedTiles)
+        //this.assertViewsValid(this.subviews())
+        //this.assertViewsValid(orderedTiles)
 
         this.addSubviews(orderedTiles)
-
-        orderedTiles.forEach(tile => tile._breakOnRetire = false)
 
         return this
     }
@@ -1412,7 +1357,6 @@
             return tile.frameInDocument().containsPoint(aPoint)
         })
     }
-
 
     onPinchBegin (aGesture) { // pinch apart to insert a new tile
         // TODO: move tile specific code to Tile
