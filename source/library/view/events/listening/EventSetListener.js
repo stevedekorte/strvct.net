@@ -111,15 +111,12 @@
         aListener.setListenTarget(this.listenTarget())
         aListener.setDelegate(this.delegate())
         aListener.setUseCapture(this.useCapture())
+        aListener.setIsDebugging(this.isDebugging())
         return this
     }
 
     syncToListeners () {
-        this.listeners().forEach(listener => {
-            listener.setListenTarget(this.listenTarget())
-            listener.setDelegate(this.delegate())
-            listener.setUseCapture(this.useCapture())
-        })
+        this.listeners().forEach(listener => this.syncToListener(listener))
         return this
     }
 

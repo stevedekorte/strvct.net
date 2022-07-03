@@ -15,6 +15,7 @@
 
     init () {
         super.init()
+        this.setIsDebugging(true)
         return this
     }
 
@@ -22,6 +23,7 @@
         this.addEventNameAndMethodName("animationend", "onAnimationEnd");
         this.addEventNameAndMethodName("animationiteration", "onAnimationIteration");
         this.addEventNameAndMethodName("animationstart", "onAnimationStart");
+        this.addEventNameAndMethodName("animationcancel", "onAnimationCancel");
         return this
     }
 

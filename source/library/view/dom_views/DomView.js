@@ -3,9 +3,12 @@
 /*
     DomView
 
-    Base view class. Wraps a dom element.
+    Base view class. Wraps a dom element. 
+    This is wrapped instead of a category or subclass of Element/etc because:
+      - The DOM doesn't play nicely with such extensions.
+      - Keep open possibility of being ability swap out DOM as a render/event layer 
     
-    TODO: add dict[propertyName] -> validValueSet and check css values when set?
+    TODO: add class variable validPropertyValues[propertyName] -> validValueSet and check css values if available?
 
 */
 
@@ -139,30 +142,28 @@
     setElement (e) {
         if (e === this._element) {
             console.warn("attempt to set to same element")
-            return this
-        }
+        } else {
+            if (Type.isNullOrUndefined(e)) {
+                console.warn(this.debugTypeId() + " setElement null")
+                debugger;
+            }
+            
+            if (this._element) {
+                this.setIsRegisteredForFocus(false)
+                //console.warn(this.debugTypeId() + " changing element from non null to non null")
+            }
 
-        if (Type.isNullOrUndefined(e)) {
-            console.log(this.debugTypeId() + " setElement null")
+            this._element = e
+            if (e) {
+                // use timer as focus listener can't be set up yet - why not?
+                this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
+            }
         }
-        
-        if (e) {
-            this.setIsRegisteredForFocus(false)
-        }
-
-        this._element = e
-        if (e) {
-            // use timer as focus listener can't be set up yet
-            this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
-        }
-
-        e.setDomView(this)
-
         return this
     }
 
     hasElement () {
-        return !Type.isNullOrUndefined(this._element)
+        return !Type.isNullOrUndefined(this.element())
     }
 
     createElement () {
@@ -2824,6 +2825,10 @@
             dict[className] = proto.clone().setListenTarget(this.element()).setDelegate(this)
         }
         return dict[className]
+    }
+
+    animationListener () {
+        return this.listenerNamed("AnimationListener")
     }
 
     clipboardListener () {

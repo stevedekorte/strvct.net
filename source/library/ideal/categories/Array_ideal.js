@@ -805,7 +805,6 @@
                 }     
             */
 
-
             if (a.equals && !a.equals(b, visited)) {
                 return false;
             } else if (a !== b) {

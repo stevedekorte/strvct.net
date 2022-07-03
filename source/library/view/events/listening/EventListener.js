@@ -28,11 +28,22 @@
     init () {
         super.init()
         this.setHandlerFunc(event => this.safeHandleEvent(event))
+        //this.setHandlerFunc(event => this.handleEvent(event))
         return this
     }
 
+    // NOTE: atm, we leave restarting the event listeners up to the event set so we don't do extra restart
+
     didUpdateSlotMethodName () {
-        this.setFullMethodName(this.calcFullMethodName())
+        this.recalcFullMethodName()
+    }
+
+    didUpdateSlotMethodSuffix () {
+        this.recalcFullMethodName()
+    }
+
+    didUpdateSlotUseCapture () {
+        this.recalcFullMethodName()
     }
 
     setListenTarget (t) {
@@ -47,21 +58,11 @@
         return this.listenTarget().description()
     }
 
-    // --------------
-
-    setUseCapture (v) {
-        this._useCapture = v ? true : false;
-        //this.setupListeners()
-
-        if (this.isListening()) {
-            this.stop()
-            this.start()
-        }
-
-        return this
-    }
-
     // ---
+
+    recalcFullMethodName () {
+        this.setFullMethodName(this.calcFullMethodName())
+    }
 
     calcFullMethodName () {
         let suffix = ""
@@ -90,15 +91,13 @@
     }
 
     start () {
-        if (this.isListening()) {
-            return this
+        if (!this.isListening()) {
+            this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
+
+            this._isListening = true; // can't use setter here as it would cause a loop
+            this.assertHasListenTarget()
+            this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
         }
-        this._isListening = true; // can't use setter here as it would cause a loop
-
-        this.assertHasListenTarget()
-
-        this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
-
         return this
     }
 
@@ -151,16 +150,14 @@
     }
 
     stop () {
-        if (!this.isListening()) {
-            return this
+        if (this.isListening()) {
+            this.assertHasListenTarget()
+
+            const t = this.listenTarget()
+            this.debugLog(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
+            t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
+            this._isListening = false; // can't use setter here as it would cause a loop
         }
-
-        this.assertHasListenTarget()
-
-        const t = this.listenTarget()
-        this.debugLog(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
-        t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
-        this._isListening = false; // can't use setter here as it would cause a loop
 
         return this
     }   

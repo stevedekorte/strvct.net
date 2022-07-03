@@ -66,8 +66,8 @@
   },
   {
     "path": "source/library/ideal/categories/Array_ideal.js",
-    "size": 18971,
-    "hash": "Rs6QHuQegzaOg7Qiu0tqwPqZqxvjULopOINI9uMFzwU="
+    "size": 18970,
+    "hash": "2L6vHuQV2ffVFDqvhoPyaL5cxL2B+7trflwHaRMZ+Dw="
   },
   {
     "path": "source/library/ideal/categories/Date_ideal.js",
@@ -311,13 +311,18 @@
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",
-    "size": 4204,
-    "hash": "uspIdilWMbAmHe1JWoVZb3AoGZYH39pCvLK2y5IpAII="
+    "size": 4602,
+    "hash": "XJPKy1/VxKCxSTGCoo4/VWSVPVwnI0T3RAbhRp4bxsg="
   },
   {
     "path": "source/library/view/events/listening/EventSetListener.js",
-    "size": 4042,
-    "hash": "DAmF1PaIdwCUVuMbUSRrK84EUaY/O7ClLl349vN2kxg="
+    "size": 3951,
+    "hash": "4hxRZ2veVOZIfHFIilCiis4/7gvwoW9bt/C68EzDWdk="
+  },
+  {
+    "path": "source/library/view/events/listening/listeners/AnimationListener.js",
+    "size": 661,
+    "hash": "Yil9B7ixycxYPq6J0naN6b9VbA3uxmhsHrdipi3Hk8U="
   },
   {
     "path": "source/library/view/events/listening/listeners/ClipboardListener.js",
@@ -551,8 +556,8 @@
   },
   {
     "path": "source/library/view/dom_views/DomView.js",
-    "size": 119624,
-    "hash": "TI3oLBG2J7eyThVC2Pvwj2gGv5j7d+GuO9y99aAAiUc="
+    "size": 120130,
+    "hash": "l+W9AK7gNPfM3HfDi0j2qsKLPMcIAUQ8jRhfqOUfc0o="
   },
   {
     "path": "source/library/view/dom_views/DomFlexView.js",
@@ -976,8 +981,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/tiles/Tile.js",
-    "size": 30021,
-    "hash": "KDSO9ych7IU5bKA0NvXxp+Zw9Ayja14ptHtfMvCM8+0="
+    "size": 30410,
+    "hash": "heVhL+vuIky7imSCLP6YkVHgUQoTPEeO5Gs2TyozQrA="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/TitledTile.js",

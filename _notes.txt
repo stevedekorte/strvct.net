@@ -1,16 +1,11 @@
 - BUG: option click not working properly - opens inspector after releasing option and clicking on subnodes view
-
+- BUG: deleting tile with open subtiles doesn't update other view
 - look into removeMutationObserver - do we need weakrefs?
-
-- add abstraction for EventSetListener eventsDict
 
 
 WeakRef now possible to use for things like Storage cache / ObjectPool of puuid->instance?
 - use weak links for Notification observers, use finalization to remove observers?
 check out FinalizationRegistry
-
-
-- rename topStackView to rootStackView
 
 
 - during drag hover, turn on cache mode for stackview hierarchy
@@ -19,7 +14,6 @@ check out FinalizationRegistry
 - on drag complete, end cache mode for stackview hierarchy
 - have each view cache it's own node-to-view
 - in order to check if being cached, stackview needs to ask parent, but may no longer be a subview - do we need an ownerSlot, or just use viewRetain instead?
-
 
 
 rename StackItemSetView to TilesView?

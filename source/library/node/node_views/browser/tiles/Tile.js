@@ -827,14 +827,25 @@
         const dt = 0.08 // seconds
         this.contentView().setTransition("right " + dt + "s")
         this.setTransition(this.transitionStyle())
-        
+        //this.contentView().animationListener().setDelegate(this).setMethodSuffix().setIsListening(true)
+
         this.addTimeout(() => {
             this.setTouchRight(this.clientWidth())
             this.addTimeout(() => {
                 this.cleanupSlide()
+                debugger;
                 this.delete()
             }, dt * 1000)
         }, 0)
+    }
+
+    onAnimationStart (event) {
+        console.log(this.debugTypeId() + " onAnimationStart")
+    }
+
+    onAnimationEnd (event) {
+        console.log(this.debugTypeId() + " onAnimationEnd")
+        this.contentView().animationListener().setIsListening(false)
     }
 
     slideBack () {

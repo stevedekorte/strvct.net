@@ -1,4 +1,5 @@
 [
+    "AnimationListener.js",
     "ClipboardListener.js",
     "DocumentListener.js",
     "DragListener.js",
