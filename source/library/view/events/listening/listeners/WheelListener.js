@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("wheel",   "onWheel");
         return this
     }

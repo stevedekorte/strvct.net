@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         // fired on draggable element
         this.addEventNameAndMethodName("dragstart", "onBrowserDragStart");
         this.addEventNameAndMethodName("drag",      "onBrowserDrag");

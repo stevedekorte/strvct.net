@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("open", "onOpen");
         this.addEventNameAndMethodName("close", "onClose");
         this.addEventNameAndMethodName("error", "onError");

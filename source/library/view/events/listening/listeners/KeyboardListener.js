@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("keyup", "onKeyUp");
         this.addEventNameAndMethodName("keydown", "onKeyDown", true);
         //this.addEventNameAndMethodName("keypress", "onKeyPress");

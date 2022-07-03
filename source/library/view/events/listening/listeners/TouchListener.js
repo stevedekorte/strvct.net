@@ -17,7 +17,7 @@
         return this
     } 
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("touchstart",  "onTouchStart", true);
         this.addEventNameAndMethodName("touchmove",   "onTouchMove");
         this.addEventNameAndMethodName("touchcancel", "onTouchCancel");

@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("blur", "onBlur");
         this.addEventNameAndMethodName("focus", "onFocus");
         this.addEventNameAndMethodName("focusin", "onFocusIn");

@@ -24,7 +24,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("selectstart", "onSelectStart");
         this.addEventNameAndMethodName("selectionchange", "onSelectionChange");
         return this

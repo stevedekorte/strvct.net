@@ -26,24 +26,20 @@
 
     initPrototype () {
         this.newSlot("eventLevelCount", 0)
-        //this.newSlot("hasReceivedEvent", false) we only care about this for user events, but event manager handles timeouts too
+        this.newSlot("hasReceivedUserEvent", false) // we only care about this for user events, but event manager handles timeouts too
     }
 
-    /*
-    static setHasReceivedEvent (aBool) {
-        assert(Type.isBoolean(aBool))
-        
-        if (aBool && !this._hasReceivedEvent && event._isUserInteraction) {
+    onReceivedUserEvent () { // sent by event listeners if event is user interaction (like click) that browser waits for to enable things like audio/video use
+        if (!this.hasReceivedUserEvent()) {
             // In normal web use, things like WebAudio context can't be created until 
             // we get first user interaction. So we send this event to let listeners know when
             // those APIs can be used. Would help if JS sent a special event for this.
-            this._hasReceivedEvent = aBool
+            this.setHasReceivedUserEvent(true)
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
         }
         
         return this
     }
-    */
 
     setEventLevelCount (n) {
         assert(n > -1)

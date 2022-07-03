@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("resize", "onDocumentResize");
 
         // not sure how to organize these other events yet

@@ -1,3 +1,5 @@
+- BUG: option click not working properly - opens inspector after releasing option and clicking on subnodes view
+
 - look into removeMutationObserver - do we need weakrefs?
 
 - add abstraction for EventSetListener eventsDict
@@ -7,7 +9,6 @@ WeakRef now possible to use for things like Storage cache / ObjectPool of puuid-
 - use weak links for Notification observers, use finalization to remove observers?
 check out FinalizationRegistry
 
-IMPORTANT: once StackView node is set, we can't remove it?
 
 - rename topStackView to rootStackView
 

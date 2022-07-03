@@ -1,3 +1,5 @@
+"use strict";
+
 Object.defineSlots(Object.prototype, {
 
     isMutator: function () {

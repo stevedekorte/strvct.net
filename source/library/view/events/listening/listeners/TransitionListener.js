@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("transitionrun", "onTransitionRun");
         this.addEventNameAndMethodName("transitionstart", "onTransitionStart");
         this.addEventNameAndMethodName("transitioncancel", "onTransitionCancel");

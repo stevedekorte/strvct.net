@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("copy", "onCopy");
         this.addEventNameAndMethodName("cut", "onCut");
         this.addEventNameAndMethodName("paste", "onPaste");

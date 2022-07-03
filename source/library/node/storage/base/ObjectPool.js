@@ -414,11 +414,14 @@
     // --- reading ---
 
     conversionDict () {
+        return {}
+        /*
         return { 
             "BMMenuNode" : "BMFolderNode",
             "KinsaResources" : "Kinsa",
             "BMCamStore" : "BMCams",
         }
+        */
         /*
         return {
             "BMThemeFolder" : "BMFolderNode",
@@ -717,7 +720,7 @@
     */
 
 /*
-    selfTestRoot () {
+    static selfTestRoot () {
         const aTypedArray = Float64Array.from([1.2, 3.4, 4.5])
         const aSet = new Set("sv1", "sv2")
         const aMap = new Map([ ["mk1", "mv1"], ["mk2", "mv2"] ])
@@ -726,7 +729,7 @@
         return a
     }
 
-    selfTest () {
+    static selfTest () {
         console.log(this.type() + " --- self test start --- ")
         const store = ObjectPool.clone()
         store.open()

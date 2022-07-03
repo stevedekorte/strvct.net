@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("mousedown", "onMouseDown", true);
         this.addEventNameAndMethodName("mouseup",   "onMouseUp", true);
 

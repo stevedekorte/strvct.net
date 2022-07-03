@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         this.addEventNameAndMethodName("gamepadconnected",   "onGamePadConnected");
         this.addEventNameAndMethodName("gamepaddisconnected", "onGamePadDisconnected");
         return this

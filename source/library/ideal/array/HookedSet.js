@@ -37,6 +37,7 @@
             gotWillMutate = true
         }
         a.didMutate = () => {
+            assert(gotWillMutate)
             gotDidMutate = true
         }
 
@@ -45,8 +46,10 @@
         assert(gotDidMutate)
 
         console.log(this.type() + " - passed self test")
-        return this
+        return true
     }
 
-}.initThisClass()); //.selfTest()
+}.initThisClass()); 
+
+//HookedSet.selfTest()
 

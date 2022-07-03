@@ -18,7 +18,7 @@
         return this
     }
 
-    setupEventsDict () {
+    setupListeners () {
         // fired on drop target
         this.addEventNameAndMethodName("dragover",  "onBrowserDragOver"); // must prevent default
         this.addEventNameAndMethodName("dragenter", "onBrowserDragEnter"); // must prevent default
@@ -39,9 +39,11 @@
         return this
     }
 
+    /*
     onBeforeEvent (methodName, event) {
         this.debugLog(() => { return " onBeforeEvent " + methodName })
         return this
     }
+    */
     
 }.initThisClass());
