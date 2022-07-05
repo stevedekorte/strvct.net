@@ -70,6 +70,7 @@
     // retiring
 
     prepareToRetire () {
+        debugger;
         assert(!this.hasParentView())
 
         // if view has no parent at the end of event loop, 
@@ -154,6 +155,7 @@
             }
 
             this._element = e
+            e.setDomView(this)
             if (e) {
                 // use timer as focus listener can't be set up yet - why not?
                 this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 

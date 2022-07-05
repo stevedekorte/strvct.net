@@ -62,6 +62,7 @@
             "animation-play-state"
         ])
         this.newSlot("propertySlotsDict", null)
+        this.propertySlotsDict() // cache it on the prototype
     }
 
     init () {
@@ -109,7 +110,7 @@
         const parts = k.split("-")
         parts.removeFirst() 
         const result = parts.map(p => p.capitalized()).join("").uncapitalized()
-        console.log("slotNameForPropertyName('" + k + "') -> '" + result + "'") 
+        //console.log("slotNameForPropertyName('" + k + "') -> '" + result + "'") 
         return result
     }
 

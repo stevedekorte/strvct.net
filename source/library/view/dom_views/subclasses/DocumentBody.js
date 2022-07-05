@@ -30,8 +30,8 @@
     }
     
     setupElement () {
-        document.body.setDomView(this)
-        //this._element = document.body
+        //document.body.setDomView(this)
+        this._element = document.body
         // get this from element override
         return this
     }
