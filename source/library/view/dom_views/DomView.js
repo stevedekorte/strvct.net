@@ -3990,6 +3990,8 @@
         return this
     }
 
+    // --- animation ---
+
     animateValue (targetFunc, valueFunc, setterFunc, duration) { // duration in milliseconds         
         console.log("]]]]]]]]]]]] " + this.typeId() + ".animateValue()")
         if (duration == null) {
@@ -4019,7 +4021,6 @@
         }
 
         window.requestAnimationFrame(step);
-
         return this
     }
 

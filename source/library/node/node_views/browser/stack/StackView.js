@@ -328,7 +328,8 @@
         */
 
         //console.log("StackView " + this.node().title() + " syncFromNavSelection")
-        const itemView = this.navView().itemSetView().selectedTile()
+        const itemView = this.navView().itemSetView().selectedTile() // this may get called before itemSetView has synced to current subnodes,
+        // in which case, the itemView may be about to be removed
         if (itemView && itemView.nodeTileLink()) {
             const oNode = itemView.nodeTileLink()
             const ovc = this.otherViewContent()

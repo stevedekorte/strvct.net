@@ -553,6 +553,7 @@
     delete () {
         //console.log("delete")
         if (this.canDelete()) {
+            this.removeFromParentView()
             this.node().delete()
 
             /*
@@ -833,12 +834,12 @@
             this.setTouchRight(this.clientWidth())
             this.addTimeout(() => {
                 this.cleanupSlide()
-                debugger;
                 this.delete()
             }, dt * 1000)
         }, 0)
     }
 
+    /*
     onAnimationStart (event) {
         console.log(this.debugTypeId() + " onAnimationStart")
     }
@@ -847,6 +848,7 @@
         console.log(this.debugTypeId() + " onAnimationEnd")
         this.contentView().animationListener().setIsListening(false)
     }
+    */
 
     slideBack () {
         this.disableColumnUntilTimeout(400)

@@ -2,5 +2,6 @@
     "DomTransition.js",
     "DomTransitions.js",
     "DomBorderRadius.js",
-    "ViewAnimator.js"
+    "ViewAnimator.js",
+    "CssAnimation.js"
 ]

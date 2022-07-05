@@ -311,8 +311,8 @@
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",
-    "size": 4602,
-    "hash": "XJPKy1/VxKCxSTGCoo4/VWSVPVwnI0T3RAbhRp4bxsg="
+    "size": 4475,
+    "hash": "ATsgTj3z3W7mLBVdt0I8zfzAMAZB0OcSwosxoLdAgos="
   },
   {
     "path": "source/library/view/events/listening/EventSetListener.js",
@@ -636,8 +636,8 @@
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 18852,
-    "hash": "5TM1Q+/4Bah9a1qcaSUTUZhn2mPYrUjnpIkomQbhHMQ="
+    "size": 18859,
+    "hash": "MmyH6S0yYO2eNH9KVbJAuJLUasjOFrKEcu9nhkMcfW0="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
@@ -961,8 +961,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 16111,
-    "hash": "jQGcRIMtHPjGnXJVBWGyHJSXxQ3vm8w99AjGRejrlII="
+    "size": 16251,
+    "hash": "gYaEQxpygUAsAxvusfoS2m9E0K2uHmjwFpZhqQ6x3Ug="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackNavView.js",
@@ -981,8 +981,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/tiles/Tile.js",
-    "size": 30410,
-    "hash": "heVhL+vuIky7imSCLP6YkVHgUQoTPEeO5Gs2TyozQrA="
+    "size": 30464,
+    "hash": "slY13X/6Ny7qvH1JQQVWiLrWKMSpR2KP7ERr9I8k3BY="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/TitledTile.js",

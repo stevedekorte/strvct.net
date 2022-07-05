@@ -550,8 +550,9 @@
     }
 
     removeFromParentNode () {
-        if (this.parentNode()) {
-            this.parentNode().removeSubnode(this)
+        const pn = this.parentNode()
+        if (pn) {
+            pn.removeSubnode(this)
         } else {
             throw new Error("missing parentNode")
         }
