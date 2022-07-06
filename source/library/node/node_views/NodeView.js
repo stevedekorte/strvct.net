@@ -192,6 +192,7 @@
                 throw new Error("null subview")
             }
             
+            assert(!newSubviews.contains(subview))
             newSubviews.push(subview)   
         })
         

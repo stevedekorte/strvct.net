@@ -166,7 +166,7 @@
                 throw new Error("this might invalidate a cache")
             }
             if (aNode) {
-                this.__nodePathString = aNode.nodePathString()
+                this._nodePathString = aNode.nodePathString()
             }
             super.setNode(aNode)
         }
@@ -225,6 +225,8 @@
     }
 
     selectNodePathArray (pathArray) {
+        //const p = pathArray.map(n => n.title()).join("/")
+        //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + p +") ")
         const node = pathArray.shift()
 
         if (node !== this.node()) {
@@ -236,23 +238,31 @@
             // no selections left so unselect next
             this.itemSetView().unselectAllTiles()
             this.syncFromNavSelection()
-            return this
+            return true
         }
 
         //debugger;
-        this.itemSetView().selectTileWithNode(node)
+        const selectedTile = this.itemSetView().selectTileWithNode(node)
+        if (!selectedTile) {
+            console.warn("no matching path")
+            return false
+        }
+
+        //this.syncFromNavSelection()
 
         const childStack = this.nextStackView()
         if (childStack) {
             childStack.selectNodePathArray(pathArray)
         }
-        return this
+        return true
     }
 
     selectedNodePathArray () {
-        const parts = this.stackViewSubchain().shallowCopy()
+        // grab the whole chain of stack view
+        const parts = this.stackViewSubchain().shallowCopy() 
         
-        if (Type.isNullOrUndefined(parts.last().node())) {
+        // last one might not have a node
+        while (parts.last() && Type.isNullOrUndefined(parts.last().node())) {
             //debugger;
             parts.removeLast()
         }

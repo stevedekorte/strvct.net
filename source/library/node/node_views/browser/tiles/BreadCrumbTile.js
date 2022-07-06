@@ -33,7 +33,7 @@
         return this
     }
 
-    rootStackView () {
+    rootStackView () { // move to Tile class?
         return this.parentView() ? this.parentView().stackView().rootStackView() : null
     }
 
@@ -109,8 +109,14 @@
         if (nodePathArray.length === 0) {
             debugger;
         }
-        console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
-        this.stackView().selectNodePathArray(nodePathArray)
+        //console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
+        //const ourPath = this.node().nodePath()
+        //console.log("our path: " + ourPath.map(n => n.title()).join("/"))
+        //debugger;
+
+        const t = this.targetStackView()
+        t.selectNodePathArray(nodePathArray)
+    //    debugger;
         this.setupPathViews() // needed or does the StackView send a note?
         return this
     }
@@ -179,7 +185,13 @@
     crumbViewForNode (node, i, pathNodes) {
         const name = node.title()
         const crumb = this.buttonForName(name)
-        const crumbNodePath = this.pathNodes().slice(0, i+1) // not efficient to get pathNodes
+        // not efficient to get pathNodes
+        // just get the path to the crumb node itself
+        console.log("pathNodes: " + pathNodes.map(n => n.title()).join("/"))
+        const crumbNodePath = pathNodes.slice(0, i+1) // we WANT our own crumbview node to be the first in this path
+        console.log("crumbNodePath [" + i + "]: " + crumbNodePath.map(n => n.title()).join("/"))
+
+        //debugger;
         crumb.setInfo(crumbNodePath)
         return crumb
     }
@@ -197,6 +209,7 @@
         this.contentView().removeAllSubviews()
         this.contentView().addSubviews(separatedViews)
         this.updateCompaction()
+        return this
     }
 
     widthOfViews (views) {

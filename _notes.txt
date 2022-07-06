@@ -1,3 +1,8 @@
+- OPTION CLICK not working
+- FIX bread crumb links
+
+- add some form of allowsDropSelection on Tile so tiles like crumbpath can avoid selection?
+
 rename StackItemSetView to TilesView?
 rename Column in StackViews? but to what? not a Stack - maybe a nextItemSetView?
 

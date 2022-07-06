@@ -214,12 +214,15 @@
     }
 	
     justAddSubnodeAt (aSubnode, anIndex) {
+        assert(!this.hasSubnode(aSubnode))
         this.subnodes().atInsert(anIndex, aSubnode)
         aSubnode.setParentNode(this)
         return aSubnode        
     }
 
     addSubnodeAt (aSubnode, anIndex) {
+        assert(!this.hasSubnode(aSubnode))
+
         assert(anIndex >= 0)
         this.justAddSubnodeAt(aSubnode, anIndex)
         //this.didChangeSubnodeList() // happens automatically from hooked array
@@ -227,6 +230,8 @@
     }
 
     replaceSubnodeWith (aSubnode, newSubnode) {
+        assert(!this.hasSubnode(newSubnode))
+
         const index = this.indexOfSubnode(aSubnode)
         assert(index !== -1)
         this.removeSubnode(aSubnode)
@@ -240,6 +245,7 @@
     }
 
     addSubnode (aSubnode) {
+        assert(!this.hasSubnode(aSubnode))
         return this.addSubnodeAt(aSubnode, this.subnodeCount())
     }
 
@@ -461,10 +467,6 @@
     }
 
     // ---------------------------------------
-    
-    prepareForFirstAccess () {
-        // subclasses can override 
-    }
 
     prepareToAccess () {
         // this should be called whenever subnodes need to be accessed
@@ -472,6 +474,10 @@
             this._didPrepareForFirstAccess = true
             this.prepareForFirstAccess()
         }
+    }
+
+    prepareForFirstAccess () {
+        // subclasses can override 
     }
     
     // --- parent chain notifications ---
@@ -511,7 +517,7 @@
         return this
     }
 
-    // ---------------------------------------------------------------
+    // -- adding subnodes by instantiating subnode class ----
     
     justAddAt (anIndex) {
         const classes = this.subnodeClasses().shallowCopy()
