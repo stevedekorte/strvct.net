@@ -187,9 +187,9 @@
         const crumb = this.buttonForName(name)
         // not efficient to get pathNodes
         // just get the path to the crumb node itself
-        console.log("pathNodes: " + pathNodes.map(n => n.title()).join("/"))
+        //console.log("pathNodes: " + pathNodes.map(n => n.title()).join("/"))
         const crumbNodePath = pathNodes.slice(0, i+1) // we WANT our own crumbview node to be the first in this path
-        console.log("crumbNodePath [" + i + "]: " + crumbNodePath.map(n => n.title()).join("/"))
+        //console.log("crumbNodePath [" + i + "]: " + crumbNodePath.map(n => n.title()).join("/"))
 
         //debugger;
         crumb.setInfo(crumbNodePath)

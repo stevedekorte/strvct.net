@@ -306,7 +306,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         //Object.defineSlot(this, "_hasRetired", false) 
         Object.defineSlot(this, "_mutationObservers", null)
         Object.defineSlot(this, "_shouldStore", true)
-        Object.defineSlot(this, "_isObjectRetired", false)
+        //Object.defineSlot(this, "_isObjectRetired", false)
     }
  
     /*

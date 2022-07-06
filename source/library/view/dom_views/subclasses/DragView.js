@@ -483,7 +483,6 @@
 
         if (receiver[methodName]) {
             // this fails on onDragDestinationEnd method triggered by onMouseUpCapture
-            assert(!receiver.isObjectRetired()) // TODO: temp sanity check
             receiver[methodName].apply(receiver, [this])
         }
     }

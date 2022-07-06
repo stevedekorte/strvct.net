@@ -11,13 +11,16 @@
  
     // --- TODO: retired no longer used, but need to look into it more ---
 
+    /*
     assertNotRetired () {
         if (this._isObjectRetired) {
             throw new Error("object already retired")
         }
     }
  
-    prepareToRetire () { // move this to Object_ideal and call willRetire if available and define that here?
+    prepareToRetire () { 
+        // NOTE: this isn't being used atm
+        // move this to Object_ideal and call willRetire if available and define that here?
         this.assertNotRetired()
         // called by user code when it expect object to stop being used
         // provides opportunity to remove notification observers, event listeners, etc
@@ -39,6 +42,7 @@
     assertNotRetired () {
         assert(!this.isObjectRetired())
     }
+    */
 
     // -------------------------------------------------
  

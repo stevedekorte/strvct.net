@@ -1,40 +1,19 @@
-- OPTION CLICK not working
-- FIX bread crumb links
+
+
+- new Folder tiles don't have editable titles?
+
+- break DomView into chain of subclasses or categories (like Node)
 
 - add some form of allowsDropSelection on Tile so tiles like crumbpath can avoid selection?
 
-rename StackItemSetView to TilesView?
-rename Column in StackViews? but to what? not a Stack - maybe a nextItemSetView?
+- rename StackItemSetView to TilesView?
+- rename Column in StackViews? but to what? not a Stack - maybe a nextItemSetView?
 
-
-- BUG: option click not working properly - opens inspector after releasing option and clicking on subnodes view
-- BUG: deleting tile with open subtiles doesn't update other view
 - look into removeMutationObserver - do we need weakrefs?
 
 - move animations to proper css animations so we get animation end events 
 
-WeakRef now possible to use for things like Storage cache / ObjectPool of puuid->instance?
-- use weak links for Notification observers, use finalization to remove observers?
-check out FinalizationRegistry
-
-
-- during drag hover, turn on cache mode for stackview hierarchy
-- Q: do we only need to cache drag source StackView? No, a parent might retire the tree
---- don't need to deal with drop from desktop (dropListener protocol) as it doesn't support navigation (later could create drag view on entering window) 
-- on drag complete, end cache mode for stackview hierarchy
-- have each view cache it's own node-to-view
-- in order to check if being cached, stackview needs to ask parent, but may no longer be a subview - do we need an ownerSlot, or just use viewRetain instead?
-
-
-
-
-add check in prepareToRetire to new canRetire method?
-
-StackView cache
-
-there may be multiple stackviews that have the same node
-so caching with the node as key doesn't work
-
+- RETIRE: prepareToRetire to new canRetire method?
 
 
 

@@ -69,6 +69,7 @@
 
     // retiring
 
+    /*
     prepareToRetire () {
         debugger;
         assert(!this.hasParentView())
@@ -86,11 +87,9 @@
         this.cancelAllTimeouts()
         SyncScheduler.shared().unscheduleTarget(this)
 
-        /*
-        if (this.isFirstResponder()) {
-            this.blur() / is this needed?
-        }
-        */
+        //if (this.isFirstResponder()) {
+        //    this.blur() / is this needed?
+        //}
 
         const e = this.element()
         e.style.transition = "all 0s" // probably not needed
@@ -115,6 +114,7 @@
             sv.retireSubviewTree()
         })
     }
+    */
 
     // ------------------------
 
@@ -2311,7 +2311,6 @@
     }
 
     addSubview (aSubview) {
-        this.assertNotRetired() // TODO: remove this sanity check after testing
         assert(!Type.isNullOrUndefined(aSubview)) 
         assert(aSubview.hasElement()) 
 
@@ -3401,6 +3400,9 @@
     }
 
     // --- mouse events ---
+    /*
+        NOTE: onTap... is now used instead?
+    */
 
     isRegisteredForMouse () {
         return this.mouseListener().isListening()

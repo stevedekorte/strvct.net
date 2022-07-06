@@ -249,7 +249,9 @@
 
     didTapItem (anItem) {
         //debugger;
-        anItem.select()
+        // if the item is already selected, this won't trigger a resync, so unselect first?
+        //anItem.unselect() 
+        anItem.select() 
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus()
             // anItem seems to already be focused somehow
@@ -1234,63 +1236,14 @@
         return this
     }
 
-    /*
-    assertTilesHaveElement () {
-        this.tiles().forEach(tile => { 
-            if (Type.isNullOrUndefined(tile.element())) {
-                console.log(tile.debugTypeId() + " missing element")
-                assert(false)
-            }
-        })
-    }
-
-    assertTilesHaveParent () {
-        this.tiles().forEach(tile => { 
-            if (Type.isNullOrUndefined(tile.parentView())) {
-                console.log(tile.debugTypeId() + " missing parent view")
-                assert(false)
-            }
-        })
-    }
-
-    assertViewsValid (views) {
-        views.forEach(tile => { 
-            if (tile.isObjectRetired()) {
-                console.log(tile.debugTypeId() + " already retired")
-                assert(false)
-            }
-
-           if (Type.isNullOrUndefined(tile.parentView())) {
-                console.log(tile.debugTypeId() + " missing parent view")
-                assert(false)
-            }
-
-            if (Type.isNullOrUndefined(tile.element())) {
-                console.log(tile.debugTypeId() + " missing element")
-                assert(false)
-            }
-        })
-    }
-    */
-
     unstackTilesVertically  () {
-        //this.assertTilesHaveParent()
         const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
-        //this.assertViewsValid(orderedTiles)
         
         orderedTiles.forEach(tile => assert(tile.hasElement()) ) // todo: temp test
         orderedTiles.forEachPerform("makeRelativePositionAndSize")
 
-        //this.assertViewsValid(orderedTiles)
-        //this.assertViewsValid(this.subviews())        
-        
         this.removeAllSubviews()
-
-        //this.assertViewsValid(this.subviews())
-        //this.assertViewsValid(orderedTiles)
-
         this.addSubviews(orderedTiles)
-
         return this
     }
 

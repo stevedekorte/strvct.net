@@ -616,6 +616,8 @@
         //if (keyModifiers.length) {
             // TODO: abstract this to DomView or GestureRecognizer?
             const methodName = "just" + keyModifiers.join("") + "Tap"
+            console.log(this.typeId() + " tap method " + methodName)
+
             //this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
                 this[methodName].apply(this)
@@ -670,6 +672,7 @@
         this.debugLog(".justInspect()")
         if (this.node().nodeCanInspect()) { 
             this.setIsInspecting(true)
+            this.unselect()
             this.column().didTapItem(this)
         }
     }
