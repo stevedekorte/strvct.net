@@ -185,7 +185,7 @@
     // colors
 
     currentBackgroundCssColor () {
-        const bg = this.columnGroup().computedBackgroundColor()
+        const bg = this.stackNavView().computedBackgroundColor()
         return CSSColor.clone().setCssColorString(bg)
     }
 

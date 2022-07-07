@@ -31,7 +31,7 @@
 (class TapGestureRecognizer extends GestureRecognizer {
     
     initPrototype () {
-        this.newSlot("maxHoldPeriod", 1000).setComment("milliseconds per tap")
+        this.newSlot("maxHoldPeriod", 1000).setComment("milliseconds per tap down hold")
         this.newSlot("timeoutId", null) // private
         this.newSlot("numberOfTapsRequired", 1)
         this.newSlot("numberOfFingersRequired", 1)
@@ -124,6 +124,12 @@
     }
 
     cancel () {
+        /*
+        if (this.isDebugging() && this.numberOfTapsRequired() === 2) {
+            debugger;
+        }
+        */
+
         if (this.hasTimer()) {
             this.stopTimer()
             this.sendCancelledMessage() // cancelled
@@ -146,14 +152,11 @@
         return this
     }
 
-    
     nameForCount (n) {
         if (n === 1) { return "Single" }
         if (n === 2) { return "Double" }
         if (n === 3) { return "Triple"; }
-        if (n === 4) { return "Quadruple"; }
-        if (n === 5) { return "Quintuple"; }
-        return "Many"
+        return n + "x"
     }
     beginMessageForCount (n) {
         return "on" + this.nameForCount(n) + "TapBegin"

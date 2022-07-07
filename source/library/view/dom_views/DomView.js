@@ -116,23 +116,6 @@
     }
     */
 
-    // ------------------------
-
-    removeAllListeners () {
-        this.eventListenersDict().ownForEachKV( (k, ev) => { ev.setIsListening(false) } )
-        this.setEventListenersDict({})
-        return this
-    }
-
-    // gestures
-
-    gestureRecognizers () {
-        if (this._gestureRecognizers == null) {
-            this._gestureRecognizers = []
-        }
-        return this._gestureRecognizers
-    }
-
     // element
 
     setDivId (aString) {
@@ -2813,6 +2796,24 @@
 
     // --- event listeners ---
 
+    // ------------------------
+
+    removeAllListeners () {
+        this.eventListenersDict().ownForEachKV( (k, ev) => { ev.setIsListening(false) } )
+        this.setEventListenersDict({})
+        return this
+    }
+
+    // gestures
+
+    gestureRecognizers () {
+        if (this._gestureRecognizers == null) {
+            this._gestureRecognizers = []
+        }
+        return this._gestureRecognizers
+    }
+    
+
     hasListenerNamed (className) {
         const dict = this.eventListenersDict()
         return !Type.isUndefined(dict[className])
@@ -2864,8 +2865,9 @@
         return this.listenerNamed("TouchListener")
     }
 
-    // ---
-
+    transitionListener () {
+        return this.listenerNamed("TransitionListener")
+    }
 
     // --- window resize events ---
 
@@ -3162,9 +3164,8 @@
         //console.log(this.divClassName() + " setContentEditable(" + aBool + ")")
         if (aBool) {
             this.makeCursorText()
-            //this.element().ondblclick = (event) => { this.selectAll();	}
         } else {
-            this.element().ondblclick = null
+            this.makeCursorDefault() // is this correct?
         }
 
         this.element().contentEditable = aBool ? "true" : "false"
@@ -3176,12 +3177,14 @@
         */
 
         //this.element().style.hideFocus = true
-        this.element().style.outline = "none"
+        this.element().style.outline = "none" // correct?
 
         this.setIsRegisteredForKeyboard(aBool)
 
         if (aBool) {
             this.turnOnUserSelect()
+        } else {
+            this.setUserSelect("auto")
         }
 
         this.setIsRegisteredForClipboard(aBool)
@@ -3326,7 +3329,13 @@
         tg.setNumberOfTapsRequired(2)
         tg.setNumberOfFingersRequired(1)
         tg.setGestureName("DoubleTap")
-        //tg.setCompleteMessage("onDoubleTapComplete")
+
+
+        // Do we want this, which allows single tap event and double tap, or do
+        // we want to wait to send single tap until double tap wait period expires?
+        tg.setShouldAcceptCancelRequest(false) // so single click doesn't cancel double click. 
+
+
         //tg.setIsDebugging(true)
         return tg
     }
@@ -3514,9 +3523,9 @@
     invokeMethodNameForEvent (methodName, event) {
         //this.debugLog(".invokeMethodNameForEvent('" + methodName + "')")
         if (this[methodName]) {
-            const stopProp = this[methodName].apply(this, [event])
-            //event.preventDefault()
-            if (stopProp === false) {
+            console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
+            const continueProp = this[methodName].apply(this, [event])
+            if (continueProp === false) {
                 //event.preventDefault()
                 event.stopPropagation()
                 return false

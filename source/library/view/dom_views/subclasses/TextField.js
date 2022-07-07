@@ -10,6 +10,9 @@
     Behavior:
     On Return/Enter key, it passes focus to the nextResponder/parent.
 
+    Notes:
+    To watch for changes during editable content editing, we could use:
+
 */
 
 (class TextField extends DomStyledView {
@@ -35,6 +38,7 @@
         this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)")
         this.newSlot("uneditableBorder", "none")
         this.newSlot("showsBorderWhenEditable", false)
+        this.newSlot("mutationObserver", null)
     }
 
     init () {
@@ -67,8 +71,77 @@
 
         //this.setIsDebugging(true)
         this.lockedStyleAttributeSet().add("backgroundColor")
+
         return this
     }
+
+    // --- mutation observer ---
+
+    startMutationObserver () {
+        if (!this.mutationObserver()) {
+            const config = { 
+                subtree: true,
+                childList: true, 
+                attributes: true, 
+                attributeOldValue: true, 
+                //characterDataOldValue: true,
+                characterData: true
+            };
+
+            const obs = new MutationObserver((mutationList, observer) => this.onDomMutation(mutationList, observer));
+            obs.observe(this.element(), config);
+            this.setMutationObserver(obs)
+        }
+        return this
+    }
+
+    stopMutationObserver () {
+        const obs = this.mutationObserver()
+        if (obs) {
+            obs.disconnect()
+            this.setMutationObserver(null)
+        }
+        return this
+    }
+
+    onDomMutation (mutationList, observer) {
+     //   console.log("onDomMutation --------------> ", mutationList)
+
+        for(const mutation of mutationList) {
+            if (mutation.type === 'characterData') {
+                this.onCharacterDataMutation(mutation)
+            }
+            /*
+            if (mutation.type === 'childList') {
+                console.log('A child node has been added or removed.');
+            }
+            else if (mutation.type === 'attributes') {
+                console.log('The ' + mutation.attributeName + ' attribute was modified.');
+            }
+            */
+        }
+    }
+
+    onCharacterDataMutation (mutation) {
+        console.log("onCharacterDataMutation --------------> ", mutation)
+    }
+
+    setContentEditable (aBool) {
+        super.setContentEditable(aBool)
+
+        if (aBool) {
+            this.startMutationObserver()
+        } else {
+            this.stopMutationObserver()
+        }
+
+        //this.debugLog(".setContentEditable(" + aBool + ") = ", this.contentEditable())
+        //this.setIsRegisteredForClicks(this.contentEditable())  // is this needed after move to tap?
+
+        return this
+    }
+
+    // ---
 
     setPaddingTop (v) {
         if (v === "0.6em") {
@@ -123,6 +196,7 @@
 
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {
+                //debugger;
                 this.addDefaultDoubleTapGesture()
                 this.setContentEditable(false)
             } else {
@@ -138,17 +212,13 @@
         return this
     }
 
-    /*
-    onDoubleTapRequestCancel (aGesture, requestingGesture) {
-        //return false
+    onDoubleTapCancelled (aGesture) {
+        console.log(this.value() + " onDoubleTapCancelled")
     }
 
-    onDoubleTapCancelled (aGesture) {
-        //console.log(this.value() + " onDoubleTapCancelled")
-    }
-    */
 
     onDoubleTapComplete (aGesture) {
+        //debugger;
         //console.log(this.value() + " onDoubleTapComplete")
         // make content editable and select text
         //this.debugLog(".onDoubleTapComplete()")
@@ -196,13 +266,6 @@
         super.setPxFontSize(aNumber)
         this.setMinAndMaxHeight(aNumber + 2) // make sure TextfField can fit font size
         this.didEdit()
-        return this
-    }
-
-    setContentEditable (aBool) {
-        super.setContentEditable(aBool)
-        //this.debugLog(".setContentEditable(" + aBool + ") = ", this.contentEditable())
-        //this.setIsRegisteredForClicks(this.contentEditable())  // is this needed after move to tap?
         return this
     }
 	
@@ -280,15 +343,7 @@
         }
         return this
     }
-    
-    onKeyUp (event) {
-        //this.debugLog(" onKeyUp ", event)
-        //this.adjustFontSizeWithKeyboard()
-        super.onKeyUp(event)
-        //this.debugLog(" onKeyUp value: [" + this.value() + "]")
-        this.didEdit()
-        return false
-    }
+
 
     onAlternateEnterKeyUp (event) {
         console.log(this.typeId() + " onAlternateEnterKeyDown")
@@ -302,14 +357,52 @@
         }   
     }
 
-    /*
+
     onKeyDown (event) {
         let result = super.onKeyDown(event)
-        console.log("event.keyCode = ", event.keyCode)
-        return result
+
+        console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
+        
+        /*
+        if (this.isContentEditable()) {
+            return false // stop propogation
+        }
+        */
+       //debugger;
+        return true
+    }
+
+        
+    /*
+    onKeyUp (event) {
+        //this.debugLog(" onKeyUp ", event)
+        //this.adjustFontSizeWithKeyboard()
+        super.onKeyUp(event)
+        //this.debugLog(" onKeyUp value: [" + this.value() + "]")
+        this.didEdit()
+        return false
     }
     */
+    
+    onKeyUp (event) {
+        let result = super.onKeyUp(event)
+        this.didEdit()
 
+        //event.preventDefault()
+       // return result
+
+        console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
+
+        /*
+        if (this.isContentEditable()) {
+            return false // stop propogation
+        }
+        */
+        //debugger;
+
+        return false
+    }
+    
     
     onEnterKeyDown (event) {    
         // insert 2 returns as cursor won't go to the second line with 1
@@ -320,10 +413,15 @@
     
 
     onEnterKeyUp (event) {
+        if (!this.isContentEditable()) {
+            return 
+        }
+        /*
         if (!this.doesInput()) {
             //this.insertEnterAtCursor()
             return
         }
+        */
 	    //this.debugLog(".onEnterKeyUp()")
 	    //this.didEdit()
 
@@ -354,7 +452,10 @@
             this.didTextInputNote().post()
         }
         
-        event.stopPropagation()
+        if (event) {
+            event.stopPropagation()
+        }
+
         return false
     }
 	

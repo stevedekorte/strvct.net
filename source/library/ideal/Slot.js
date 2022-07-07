@@ -51,9 +51,7 @@ getGlobalThis().ideal.Slot = class Slot {
 
     simpleNewSlot (slotName, initialValue) {
         const privateName = "_" + slotName;
-        //this[privateName] = initialValue;
         Object.defineSlot(this, privateName, initialValue)
-
 
         if (!this[slotName]) {
             const simpleGetter = function () {

@@ -5,6 +5,10 @@
 
     Listener for single event. Should only be used by EventSetListener class.
 
+    For full list of events, see:
+
+    https://developer.mozilla.org/en-US/docs/Web/Events
+
 */
 
 (class EventListener extends ProtoClass {
@@ -92,7 +96,7 @@
 
     start () {
         if (!this.isListening()) {
-            this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
+            //this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
 
             this._isListening = true; // can't use setter here as it would cause a loop
             this.assertHasListenTarget()
@@ -154,7 +158,7 @@
             this.assertHasListenTarget()
 
             const t = this.listenTarget()
-            this.debugLog(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
+            //this.debugLog(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
             t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
             this._isListening = false; // can't use setter here as it would cause a loop
         }

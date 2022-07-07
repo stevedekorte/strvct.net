@@ -12,6 +12,7 @@
     "TransitionListener.js",
     "GamePadListener.js",
     "WebSocketListener.js",
-    "WheelListener.js"
+    "WheelListener.js",
+    "SpeechListener.js"
 ]
 

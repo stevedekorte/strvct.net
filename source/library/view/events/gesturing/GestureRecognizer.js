@@ -109,6 +109,7 @@
         this.newSlot("allowsKeyboardKeys", false)
         this.newSlot("requiresKeyboardKeys", null)
         this.newSlot("shouldRequestActivation", true)
+        this.newSlot("shouldAcceptCancelRequest", true)
         this.newSlot("isActive", false) // only used if shouldRequestActivation === false
     }
 
@@ -638,7 +639,9 @@
     }
 
     requestCancel (byGesture) {
-        this.cancel()
+        if (this.shouldAcceptCancelRequest()) {
+            this.cancel()
+        }
         /*
         const shouldCancel = this.sendDelegateMessage(this.requestCancelMessage(), byGesture)
         //console.log("this.requestCancelMessage() =================== ", this.requestCancelMessage(), " -> ", shouldCancel)

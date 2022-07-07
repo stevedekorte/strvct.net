@@ -1,13 +1,14 @@
-
+- cleanup addEventNameAndMethodName
 
 - new Folder tiles don't have editable titles?
+== NOTES: NodeFolder has a TitledTile whose titleView requires a double tap to begin editing
+== onDoubleTapCancel is being called, appearently by a cancel request from another gesture 
+== looks like view has single tap and double tap listeners, and single tap cancels double tap
 
 - break DomView into chain of subclasses or categories (like Node)
 
-- add some form of allowsDropSelection on Tile so tiles like crumbpath can avoid selection?
-
 - rename StackItemSetView to TilesView?
-- rename Column in StackViews? but to what? not a Stack - maybe a nextItemSetView?
+- rename Column to tilesView
 
 - look into removeMutationObserver - do we need weakrefs?
 
@@ -16,10 +17,7 @@
 - RETIRE: prepareToRetire to new canRetire method?
 
 
-
 -----------
-- complex draging around can cause drop on item with no element - caching failure?
-
 - remove FieldSetNode
 --- then fix import of     "BMDataStoreRecord.js"
 
@@ -32,12 +30,9 @@
 
 - implement newClassSlot (supporting getter and setter creation)
 
-TODO: remove remaining css files
+- TODO: remove remaining css files
 
-
-
-
-TODO:
+----
 - Fields have key and value, but these should be separated.
 -- Still allow RowView class to be customized for value type
  

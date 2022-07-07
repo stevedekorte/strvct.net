@@ -245,8 +245,8 @@
         return this.parentView()
     }
     
-    columnGroup () {
-        return this.column().columnGroup()
+    stackNavView () {
+        return this.column().stackNavView()
     }
 
     // node style dict
@@ -616,8 +616,6 @@
         //if (keyModifiers.length) {
             // TODO: abstract this to DomView or GestureRecognizer?
             const methodName = "just" + keyModifiers.join("") + "Tap"
-            console.log(this.typeId() + " tap method " + methodName)
-
             //this.debugLog(" tap method " + methodName)
             if (this[methodName]) {
                 this[methodName].apply(this)
@@ -854,7 +852,7 @@
     */
 
     slideBack () {
-        this.disableColumnUntilTimeout(400)
+        //this.disableColumnUntilTimeout(400)
 
         this.contentView().setTransition("all 0.2s ease")
 
@@ -868,10 +866,12 @@
         }, 300)
     }
 
+    /*
     disableColumnUntilTimeout (ms) {
         //this.column().columnGroup().disablePointerEventsUntilTimeout(ms)
         //this.setPointerEvents("none")
     }
+    */
 
     didCompleteSlide () {
         this.cleanupSlide()

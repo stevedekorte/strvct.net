@@ -91,14 +91,6 @@
         return this
     }
 
-    /*
-    onTapComplete (aGesture) {
-        console.log(this.type() + " onTapComplete")
-        //debugger;
-        return super.onTapComplete(aGesture)
-    }
-    */
-
     onStackViewPathChange (aNote) {
         //debugger;
         this.syncPathToStack()

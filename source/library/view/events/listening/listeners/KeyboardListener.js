@@ -14,12 +14,12 @@
 
     init () {
         super.init()
-        //this.setIsDebugging(true)
+        this.setIsDebugging(true)
         return this
     }
 
     setupListeners () {
-        this.addEventNameAndMethodName("keyup", "onKeyUp");
+        this.addEventNameAndMethodName("keyup", "onKeyUp", true);
         this.addEventNameAndMethodName("keydown", "onKeyDown", true);
         //this.addEventNameAndMethodName("keypress", "onKeyPress");
         //this.addEventNameAndMethodName("change", "onChange");

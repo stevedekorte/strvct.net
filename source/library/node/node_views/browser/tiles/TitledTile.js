@@ -142,7 +142,8 @@
         const node = this.node()
 
         if (node) {
-            this.titleView().setIsEditable(node.nodeCanEditTitle() )
+            this.titleView().setIsEditable(node.nodeCanEditTitle())
+
             this.subtitleView().setIsEditable(node.nodeCanEditSubtitle())
             this.subtitleView().setDisplayIsHidden(!this.hasSubtitle())
     
@@ -222,7 +223,7 @@
 
     didInput () {
         // if text is blocked, sync browser?
-        this.browser().fitColumns()
+        //this.browser().fitColumns()
         this.scheduleSyncToNode()
     }
 

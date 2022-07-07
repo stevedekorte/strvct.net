@@ -59,12 +59,26 @@
     }
     */
 
-    stackView () {
-        const scrollView = this.parentView()
-        const navView = scrollView.parentView()
-        const stackView = navView.parentView()
-        return stackView
+    // --- helpers ---
+    // subview path: StackView -> StackNavView -> ScrollView -> StackItemSetView -> Tiles
+
+    browser () {
+        return this.stackView()
     }
+
+    scrollView () {
+        return this.parentView()
+    }
+
+    stackNavView () {
+        return this.scrollView().parentView()
+    }
+
+    stackView () {
+        return this.stackNavView().parentView()
+    }
+
+    // -- orientation --
 
     syncOrientation () {
         if (this.isVertical()) {
@@ -168,13 +182,7 @@
         return this.node() ? this.node().title() : ""
     }
 
-    browser () {
-        return this.stackNavView().browser()
-    }
-    
-    columnGroup () {
-        return this.parentView().parentView()
-    }
+
 
     // --- tiles ---
     
@@ -760,7 +768,7 @@
     }
 
 	
-    onLeftArrowKeyDown (event) {
+    onLeftArrowKeyUp (event) {
         if (!this.canNavigate()) { 
             return this
         }	
@@ -771,7 +779,7 @@
         }
     }
 	
-    onRightArrowKeyDown (event) {
+    onRightArrowKeyUp (event) {
         if (!this.canNavigate()) { 
             return this
         }	
