@@ -56,7 +56,7 @@
                 obs.startWatching()
             } else {
                 //debugger;
-                obs.stopWatching()
+                obs.stopWatching() // needed?
             }
         }
     }
@@ -190,6 +190,7 @@
 
     newPathComponentViews () {
         const pathNodes = this.pathNodes()
+        pathNodes.shift() // remove self from list
         const views = pathNodes.map((node, i, pathNodes) => this.crumbViewForNode(node, i, pathNodes))
         return views
     }

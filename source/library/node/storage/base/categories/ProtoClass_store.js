@@ -23,11 +23,11 @@
         */
     }
 
+    /*
     recordForStore (aStore) { // should only be called by Store
 
         throw new Error("unimplemented")
 
-        /*
         const record = {
             type: this.type(), 
             entries: [], 
@@ -41,7 +41,7 @@
         })
 
         return record
-        */
     }
+    */
 
 }).initThisCategory();

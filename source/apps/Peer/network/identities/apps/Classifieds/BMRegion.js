@@ -110,13 +110,6 @@
     }
 	
     add () {  
-        /*
-        let sell = BMSell.clone()
-        App.shared().sells().addSubnode(sell)
-        App.shared().browser().selectNode(sell)
-        let post = sell.post()
-        */
-
         let post = BMClassifiedPost.clone()
         post.setPath(this.postPathString())
         post.setIsEditable(true)

@@ -30,23 +30,96 @@ TimeFormatter
 
 (class TimeFormatter extends ProtoClass {
     initPrototype () {
-        this.newSlot("is24Hour", false)
-        this.newSlot("showsMeridiem", true)
-        this.newSlot("uppercaseMeridem", false)
-        this.newSlot("amString", "am")
-        this.newSlot("pmString", "pm")
-        this.newSlot("doesPadHours", false)
-        this.newSlot("showsHours", true)
-        this.newSlot("hourMinuteSpacer", ":")
-        this.newSlot("showsMinutes", true)
-        this.newSlot("showsSeconds", false)
-        this.newSlot("showsMilliseconds", false)
-        this.newSlot("date", null) // a javascript Date object
+        {
+            const slot = this.newSlot("is24Hour", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+
+        {
+            const slot = this.newSlot("showsMeridiem", true)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+
+        {
+            const slot = this.newSlot("uppercaseMeridem", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+            
+        {
+            const slot = this.newSlot("amString", "am")
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("String")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("pmString", "pm")
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("String")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("doesPadHours", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("showsHours", true)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("hourMinuteSpacer", ":")
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("String")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("showsMinutes", true)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("showsSeconds", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("showsMilliseconds", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+                
+        {
+            const slot = this.newSlot("date", null)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Date") // a javascript Date object
+            slot.setCanInspect(true)
+        }
     }
 
+    /*
     init () {
         return super.init()
     }
+    */
 
     paddedNumber (n, padLength) {
         if (!padLength) {

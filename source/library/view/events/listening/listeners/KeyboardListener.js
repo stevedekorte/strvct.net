@@ -19,8 +19,8 @@
     }
 
     setupListeners () {
-        this.addEventNameAndMethodName("keyup", "onKeyUp", true);
-        this.addEventNameAndMethodName("keydown", "onKeyDown", true);
+        this.addEventNameAndMethodName("keyup", "onKeyUp").setIsUserInteraction(true)
+        this.addEventNameAndMethodName("keydown", "onKeyDown").setIsUserInteraction(true)
         //this.addEventNameAndMethodName("keypress", "onKeyPress");
         //this.addEventNameAndMethodName("change", "onChange");
         //this.addEventNameAndMethodName("select", "onSelect");

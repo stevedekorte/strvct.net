@@ -17,7 +17,7 @@
 
         const cv = this.contentView()
         cv.setMinHeight("1em")
-        cv.setPadding("0em")
+        cv.setPadding("1em")
 
         const tv = TextField.clone()
         this.setTextView(tv)
@@ -29,6 +29,9 @@
         tv.setJustifyContent("center") // alignment perpendicutal to flex
         tv.setFlexDirection("column")
         tv.setWidth("100%")
+        tv.setMinHeight("1em")
+        tv.setPadding("1em")
+        tv.setIsEditable(true)
 
         tv.setUsesDoubleTapToEdit(true)
         tv.setOverflow("visible")
@@ -39,10 +42,12 @@
         return this
     }
 
+    /*
     updateSubviews () {
         super.updateSubviews()
         return this
     }
+    */
     
     // ---
 
@@ -53,13 +58,11 @@
     // --- edit ---
 
     didInput () {
-        this.browser().fitColumns()
         this.scheduleSyncToNode()
     }
 
     onDidEdit (aView) {
         super.onDidEdit() 
-        this.browser().fitColumns()
         return true // stop propogation
     }
 
@@ -68,7 +71,7 @@
     syncToNode () {   
         //console.log("syncToNode")
         const node = this.node()
-        node.setValue(tv.innerText())
+        node.setValue(this.textView().innerText())
         return this
     }
 
@@ -86,7 +89,7 @@
             return 
         }
         
-        tv.setString(node.value())
+        this.textView().setString(node.value())
 
         this.applyStyles()
         return this

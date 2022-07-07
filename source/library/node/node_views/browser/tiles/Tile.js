@@ -312,6 +312,12 @@
     }
     */
 
+    didUpdateSlotIsInspecting (oldValue, newValue) {
+        //super.didUpdateSlotIsSelected (oldValue, newValue)
+        this.itemSetView().didChangeNavSelection()
+        //this.updateSubviews()
+    }
+
    didUpdateSlotIsSelected (oldValue, newValue) {
         super.didUpdateSlotIsSelected (oldValue, newValue)
 
@@ -373,7 +379,6 @@
     // -------------
     
     onDidEdit (aView) {
-        //this.browser().fitColumns()
         this.scheduleSyncToNode() 
         return true // stop propogation
     }
@@ -555,24 +560,6 @@
         if (this.canDelete()) {
             this.removeFromParentView()
             this.node().delete()
-
-            /*
-            this.passFirstResponderToColumn()
-            this.setOpacity(0)
-            //this.setRightPx(-this.clientWidth())
-            this.setMinAndMaxHeight(0)
-            this.setIsDeleting(true)
-
-            if (this.isSelected()) {
-                // to make sure next column is cleared
-                this.setIsSelected(false)
-                //this.browser().scheduleSyncToNode()
-            }
-
-            this.addTimeout(() => {
-                this.node().performAction("delete")
-            }, 240)
-            */
         }
     }
 
@@ -669,8 +656,7 @@
     justAlternateTap () {
         this.debugLog(".justInspect()")
         if (this.node().nodeCanInspect()) { 
-            this.setIsInspecting(true)
-            this.unselect()
+            this.setIsInspecting(true) // will call didUpdateSlotIsInspecting and update nav
             this.column().didTapItem(this)
         }
     }

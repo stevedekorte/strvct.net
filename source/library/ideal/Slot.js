@@ -20,6 +20,9 @@
         - slotType
     - handles auto generating getter/setter
 
+    NOTE:
+
+        TODO: hooks code is a mess, need to cleanup and modularize
 */
 
 if (!getGlobalThis().ideal) {

@@ -116,8 +116,8 @@
   },
   {
     "path": "source/library/ideal/Slot.js",
-    "size": 23297,
-    "hash": "RgtSUJOFqXbEQyOaIkcYJi7Rhv4AagptQfOOrV+0NO0="
+    "size": 23375,
+    "hash": "XzcX3T0iAvjE11UtcjKWHyswWLi4vLOoUphV5+ZVeK8="
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
@@ -181,8 +181,8 @@
   },
   {
     "path": "source/library/ideal/formatters/TimeFormatter.js",
-    "size": 4053,
-    "hash": "S2TIz5++xeJafs4pYiaRdYESKoQeGIZ9zrz3DeaCNIk="
+    "size": 6084,
+    "hash": "B9BPxMvAsR0CldwLkRCacC1lfXpmVTRaaAW5baRPDsk="
   },
   {
     "path": "source/library/ideal/NamespaceSearch.js",
@@ -311,13 +311,13 @@
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",
-    "size": 4571,
-    "hash": "xt/inrO2uulxQR9Bwn4/otkdUI9F5Meh7v5sZQtRMJE="
+    "size": 4973,
+    "hash": "9jsGBobS1WZJrqDuZNe7OMs1tu2VSuE+KxUXt7ikCco="
   },
   {
     "path": "source/library/view/events/listening/EventSetListener.js",
-    "size": 3951,
-    "hash": "4hxRZ2veVOZIfHFIilCiis4/7gvwoW9bt/C68EzDWdk="
+    "size": 3990,
+    "hash": "3Bt51RRUOovbbcKmNH3CcEXXMa5Qj6Htol10nHu35JQ="
   },
   {
     "path": "source/library/view/events/listening/listeners/AnimationListener.js",
@@ -351,13 +351,13 @@
   },
   {
     "path": "source/library/view/events/listening/listeners/KeyboardListener.js",
-    "size": 675,
-    "hash": "20LDlF59TYrXF4WaEygVUQtL8XrzxDrtfoNX54QAADE="
+    "size": 715,
+    "hash": "QP7h+E2kmpYTqdXCiXvOrOs7Izf9r6fhTCmnM6OHC/U="
   },
   {
     "path": "source/library/view/events/listening/listeners/MouseListener.js",
-    "size": 1348,
-    "hash": "tEa0HSxPLRH2YMWWSkhMQzJVb7TwqoHCVnOK/ABdcUM="
+    "size": 1428,
+    "hash": "/ey/oEu8yBcL3CQR+SPSKRePN//+tWySfeORw7wHTSA="
   },
   {
     "path": "source/library/view/events/listening/listeners/SelectListener.js",
@@ -366,8 +366,8 @@
   },
   {
     "path": "source/library/view/events/listening/listeners/TouchListener.js",
-    "size": 586,
-    "hash": "x/yIcGgcTjZxGS/KPgOeznXDV1wEeNnHYOXVYtY+7ag="
+    "size": 606,
+    "hash": "BnXsXcfLRrdhbvfhE41j2cJK8Y1kY16MxSjMHi5GHNw="
   },
   {
     "path": "source/library/view/events/listening/listeners/TransitionListener.js",
@@ -681,8 +681,8 @@
   },
   {
     "path": "source/library/node/storage/base/categories/ProtoClass_store.js",
-    "size": 987,
-    "hash": "A1GI0CmusG0RdF22hacisLjnkJaRv41rdRPXrs0bi7s="
+    "size": 979,
+    "hash": "WnKZGZml8PevRin+PwEwfmM6oOCQH4we/wmj8XD3upg="
   },
   {
     "path": "source/library/node/storage/base/categories/BMNode_store.js",
@@ -986,28 +986,28 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackItemSetView.js",
-    "size": 48803,
-    "hash": "0ZaKEqpTu3oH4HvzspFfVudHwN3Otbx24k63uLJsNZ8="
+    "size": 47749,
+    "hash": "DXGvVfAA5EybXrWYdqp9f1WjqZoomqwUL638INt+4H4="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/Tile.js",
-    "size": 30484,
-    "hash": "vbBuld96/8HWeX00MK17gyNJ0nfts7asHCiOxywDjH0="
+    "size": 30129,
+    "hash": "07KQAY2ECaSHVNaBGdr3aHs37peSA/zY4lwEEWGcvUg="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/TitledTile.js",
-    "size": 7777,
-    "hash": "Awi7Q8fMLnp+XancCx75UdN99FDF7mfqXI4tX9UpBf0="
+    "size": 7570,
+    "hash": "DDlqoGmYbe7nzwxFArmyRgClp2OEejTzBop2IYva8yQ="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/BMTextNodeTile.js",
-    "size": 2789,
-    "hash": "ovSRqvRc6I0A62EzxW2Kyp5wqSiy+LRJSa2/KVk51T4="
+    "size": 2848,
+    "hash": "mft1SEQsbOZSmU+e8G6DB8p0q0iFRC/czwavXqZCY28="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/BreadCrumbTile.js",
-    "size": 7393,
-    "hash": "yXOdZJxc30/yIoUZFXTZYstX+T+IQvCp5Q0cTrqebuo="
+    "size": 7455,
+    "hash": "JSZfBdhEJ6Ds6kKr6bBZYe8gLBiK2R5SvZAQKHag9TU="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/HeaderTile.js",
@@ -1071,8 +1071,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/tiles/field_tiles/options/BMOptionNodeTile.js",
-    "size": 1186,
-    "hash": "FeEtYyNO/CL2ws6+RxOjGrncLhjdrLTq3mok0jabN7w="
+    "size": 640,
+    "hash": "KP4cmivatLrBDIgKTCOFVEYA9suELb4WBxTdRiTpISA="
   },
   {
     "path": "source/library/node/node_views/browser/tiles/field_tiles/BMPointerFieldTile.js",
@@ -1251,8 +1251,8 @@
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 5709,
-    "hash": "XfHwk4Ym4Llk5tBg9OS9oxIll0AujxIm/iKEm9G8ka0="
+    "size": 5030,
+    "hash": "bQ31X6FY8sshfrsadCc8l7z4esea+8ztq4f2qiTPKTs="
   },
   {
     "path": "source/apps/Strvct/_init.js",

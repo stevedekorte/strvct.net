@@ -91,15 +91,21 @@
     }
 
     assertHasListenTarget () {
-        return !Type.isNullOrUndefined(this.listenTarget())
+        assert(!Type.isNullOrUndefined(this.listenTarget()))
+    }
+
+    isValid () {
+        const hasListenTarget = !Type.isNullOrUndefined(this.listenTarget())
+        const hasEventName    = !Type.isNullOrUndefined(this.eventName())
+        const hasMethodName   = !Type.isNullOrUndefined(this.methodName())
+        return hasMethodName && hasEventName && hasListenTarget
     }
 
     start () {
         if (!this.isListening()) {
             //this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
-
+            assert(this.isValid())
             this._isListening = true; // can't use setter here as it would cause a loop
-            this.assertHasListenTarget()
             this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
         }
         return this
@@ -111,7 +117,7 @@
 
     handleEvent (event) {
         const fullMethodName = this.fullMethodName()
-        event._isUserInteraction = this.isUserInteraction()
+        //event._isUserInteraction = this.isUserInteraction() // unused
 
         const delegate = this.delegate()
         const method = delegate[fullMethodName]
@@ -129,7 +135,9 @@
 
             if (result === false) {
                 event.stopPropagation()
-                event.preventDefault()
+                if (event.cancelable) {
+                    event.preventDefault() // do we want this?
+                }
             }
 
             this.onAfterEvent(event)

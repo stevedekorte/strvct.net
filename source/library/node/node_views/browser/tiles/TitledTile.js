@@ -222,16 +222,11 @@
     // --- edit ---
 
     didInput () {
-        // if text is blocked, sync browser?
-        //this.browser().fitColumns()
         this.scheduleSyncToNode()
     }
 
     onDidEdit (aView) {
         super.onDidEdit() 
-        // need to broadcast recompact to all
-        //this.browser().fitColumns()
-        return true // stop propogation
     }
 
     // --- sync ---

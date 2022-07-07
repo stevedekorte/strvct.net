@@ -479,7 +479,6 @@
 
     isInBrowser () {
         return !Type.isNull(this.parentView())
-        //return this.browser().columns().contains(this)
     }
 
     shouldFocusAndExpandSubnode (aNote) { // focus & expand tile
@@ -502,7 +501,7 @@
             //this.didChangeNavSelection()
 		    //subview.dynamicScrollIntoView()
         } else {
-            console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())
+            console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())
 	    }
 
 	    return this 
@@ -532,7 +531,7 @@
             this.didChangeNavSelection()
 		    //subview.dynamicScrollIntoView()
         } else {
-            console.warn("BrowserColumn for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId())
+            console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId())
             //console.log("tile nodes = ", this.tiles().map(tile => tile.node().typeId()) )
 	    }
 
@@ -564,23 +563,6 @@
 
         return this
     }
-
-    /*
-    scheduleSyncFromNode () {
-        //assert(this.browser().columns().contains(this))
-
-        //console.log(this.type() + " " + this.node().title() + " .scheduleSyncFromNode()")
-        if (this.node() === null || !this.isInBrowser()) {
-            console.warn("WARNING: skipping BrowserColumn.scheduleSyncFromNode")
-            console.warn("  this.isInBrowser() = " , this.isInBrowser())
-            console.warn("  this.node() = " , this.node().debugTypeId())
-            return this
-        }
-        
- 	    super.scheduleSyncFromNode()
-	    return this
-    }
-    */
 	
     // --- keyboard controls, arrow navigation -----------------------------
 
@@ -1044,26 +1026,11 @@
             this.blur()
             prevColumn.focus()
             //this.didChangeNavSelection()
-            //this.browser().selectColumn(prevColumn)
         }
         return this
     }
 
     // paths
-    
-    /*
-    browserPathArray () {
-        let subviews = this.browser().columns().subviewsBefore(this)
-        subviews.push(this)
-        return subviews
-    }
-    
-    browserPathString () {
-        return this.browserPathArray().map(function (column) { 
-            return column.title()  // + ":" + column.node().type()
-        }).join("/")
-    }
-    */
 
     /*
     logName () {

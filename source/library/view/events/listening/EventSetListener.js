@@ -94,6 +94,7 @@
     }
 
     addEventNameAndMethodName (eventName, methodName, isUserInteraction) {
+        assert(!isUserInteraction)
         assert(!this.isListening()) // TODO: handle this later
         // TODO: make sure there's not already a listener for this eventName
 
@@ -104,7 +105,7 @@
         listener.setMethodName(methodName)
         listener.setIsUserInteraction(isUserInteraction)
         this.listeners().push(listener)
-        return this
+        return listener
     }
 
     syncToListener (aListener) {

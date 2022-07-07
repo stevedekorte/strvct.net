@@ -18,7 +18,7 @@
     } 
 
     setupListeners () {
-        this.addEventNameAndMethodName("touchstart",  "onTouchStart", true);
+        this.addEventNameAndMethodName("touchstart",  "onTouchStart").setIsUserInteraction(true)
         this.addEventNameAndMethodName("touchmove",   "onTouchMove");
         this.addEventNameAndMethodName("touchcancel", "onTouchCancel");
         this.addEventNameAndMethodName("touchend",    "onTouchEnd");

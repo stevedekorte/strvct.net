@@ -41,14 +41,6 @@
         browser.setBaseNode(this.rootNode())
         this.setBrowser(browser)
         this.documentBodyView().addSubview(browser)
-
-        /*
-        const v = StackView.clone() //.setDirection("down")
-        this.setStackView(v)
-        v.setNode(this.rootNode())
-        this.documentBodyView().addSubview(v)
-        */
-
         this.appDidInit()
 
         //this.addTimeout( () => this.showClasses(), 1)
@@ -108,30 +100,9 @@
 
     // --- setup views ---
     
-    /*
-    setupViews () { 
-        debugger;
-        this.setupBrowser()
-        //this.setupShelf()
-    }
-    */
-
     isBrowserCompatible () {
         return true
     }
-
-    /*
-    setupBrowser () {	
-        //console.log("App setupBrowser")
-        this.setBrowser(BrowserView.clone())
-        this.browser().hideAndFadeIn()
-        this.browser().setNode(this)
-        this.documentBodyView().addSubview(this.browser())
-        this.browser().syncFromNodeNow()
-        this.browser().syncFromHashPath()
-        return this
-    }
-    */
 
     appDidInit () {
         super.appDidInit()
