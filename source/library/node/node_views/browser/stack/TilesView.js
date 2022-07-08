@@ -2,13 +2,15 @@
 
 /*
     
-    StackItemSetView
+    TilesView
+
+    Contains array of Tile (and Tile decendant class) views.
+    Parent is a StackScrollView, whose parent is a NavView.
     
 */
 
-(class StackItemSetView extends NodeView {
+(class TilesView extends NodeView {
     
-        
     initPrototype () {
         this.newSlot("tiles", null)
         this.newSlot("allowsCursorNavigation", true)
@@ -60,23 +62,26 @@
     */
 
     // --- helpers ---
-    // subview path: StackView -> StackNavView -> ScrollView -> StackItemSetView -> Tiles
+    // subview path: StackView -> NavView -> ScrollView -> TilesView -> Tiles
 
-    browser () {
-        return this.stackView()
-    }
 
     scrollView () {
         return this.parentView()
     }
 
-    stackNavView () {
+    navView () {
         return this.scrollView().parentView()
     }
 
     stackView () {
-        return this.stackNavView().parentView()
+        return this.navView().parentView()
     }
+
+    /*
+    browser () {
+        return this.stackView()
+    }
+    */
 
     // -- orientation --
 
@@ -550,7 +555,7 @@
 	    //this.debugLog(".scrollToSubnode")
 	    const subview = this.subviewForNode(aSubnode)
 	    assert(subview)
-	    this.stackNavView().scrollView().setScrollTop(subview.offsetTop())
+	    this.navView().scrollView().setScrollTop(subview.offsetTop())
 	    return this 	    
     }
     
@@ -971,7 +976,7 @@
     nextColumn () {
         const nsv = this.stackView().nextStackView()
         if (nsv) {
-            return nsv.navView().itemSetView()
+            return nsv.navView().tilesView()
         }
         return null
     }
@@ -1013,7 +1018,7 @@
         if (this.stackView()) {
             const ps = this.stackView().previousStackView()
             if (ps) {
-                return ps.navView().itemSetView()
+                return ps.navView().tilesView()
             }
         }
         return null
@@ -1326,7 +1331,7 @@
             // set new tile view height to zero and 
             const minHeight = Tile.defaultHeight()
             const cv = newTile.contentView()
-            cv.setBackgroundColor(this.stackNavView().backgroundColor())
+            cv.setBackgroundColor(this.navView().backgroundColor())
             cv.setMinAndMaxHeight(minHeight)
             //newTile.scheduleSyncFromNode()
             //this._temporaryPinchSubnode.didUpdateNode()

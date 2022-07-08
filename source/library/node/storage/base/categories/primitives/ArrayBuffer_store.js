@@ -4,10 +4,9 @@
 (class ArrayBuffer_store extends ArrayBuffer {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
-        assert(aRecord.type === "ArrayBuffer")
+        //assert(aRecord.type === "ArrayBuffer")
         const bytes = aRecord.bytes
         const obj = new ArrayBuffer(bytes.length)
-        // loadFromRecord is called from the Store after puuid is set
         return obj
     }
 
@@ -28,14 +27,14 @@
         return bytes
     }
 
-    recordForStore  (aStore) { // should only be called by Store
+    recordForStore (aStore) { // should only be called by Store
         return {
             type: "ArrayBuffer", //Type.typeName(this), 
             bytes: this.bytes(),
         }
     }
 
-    refsPidsForJsonStore  (puuids = new Set()) {
+    refsPidsForJsonStore (puuids = new Set()) {
         return puuids
     }
     

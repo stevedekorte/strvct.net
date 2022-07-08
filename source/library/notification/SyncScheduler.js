@@ -54,6 +54,11 @@
 */
 
 (class SyncScheduler extends ProtoClass {
+
+    scheduleDidInit () {
+        // do nothing to avoid infinite loop
+    }
+
     initPrototype () {
         this.newSlot("actions", ideal.Dictionary.clone())
         //this.newSlot("syncSets", ideal.Dictionary.clone())

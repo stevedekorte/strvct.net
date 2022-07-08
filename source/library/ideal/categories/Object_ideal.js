@@ -54,10 +54,13 @@ Object.defineSlot = function (obj, slotName, slotValue) {
         }
 
         // this breaks on prototypes
+        /*
         if (typeof (slotValue) === "function") {
             let objType = null
             try {
-                objType = obj.type()
+                //if (obj.type) {
+                    objType = obj.type()
+                //}
             } catch (e) {
                 //console.warn("can't get type on ", obj)
             }
@@ -70,6 +73,7 @@ Object.defineSlot = function (obj, slotName, slotValue) {
                 slotValue.displayName = slotName
             }
         }
+        */
 
         Object.defineProperty(obj, slotName, descriptor)
     }
@@ -320,7 +324,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
     */
  
     init () {
-        this.scheduleDidInit()
+
     }
  
     isPrototype () {

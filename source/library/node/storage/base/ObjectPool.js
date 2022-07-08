@@ -4,18 +4,18 @@
 
     ObjectPool
 
-        For persisting a node tree to JSON and back.
-        Usefull for exporting nodes out the the app/browser
-        and into others.
+        For persisting a object tree to a JSON formatted representation and back.
+        Usefull for both persistence and exporting object out the the app/browser and onto desktop or other browsers.
 
-        JSON format:
+        An object pool can also be created by pointing at an object within another pool.
+
+        JSON format of pool:
 
             {
                 rootPid: "rootPid",
                 puuidToDict: {
-                    "objPid" : <nodeDict>
+                    "<objPid>" : <Record>
                 }
-
             }
 
         Example use:
@@ -26,27 +26,19 @@
             // converting json to a node
             const rootNode = ObjectPool.clone().fromJson(poolJson).root()
 
+        Notes:
 
-    Literal values can be directly stored in JSON such as:
+        Objects to be stored must implement:
 
-            String
-            Number
-            Boolean
-            null
+            // writing methods
+            puuid
+            recordForStore (aStore)
 
-    Others need to be encoded, such as:
+            // reading methods
+            static instanceFromRecordInStore (aRecord, aStore)
+            loadFromRecord (aRecord, aStore)
 
-            Array // need to check for references
-            a dictionary
-            Date
-
-            { __type__: "Array", v: [] }
-
-    And nodes need to be encoded references: 
-
-            BMNode
-
-    BMNode needs to be referenced by a puuid and the Store needs to know it needs to be written if not already present.
+        These are implemented on Object, and other primitives such as Array, Set, etc.
 
 */
 
@@ -78,7 +70,7 @@
         // Set of puuids
         this.newSlot("markedSet", null) 
 
-        // TODO: change name?
+        // TODO: change name? to objectPoolDidOpen
         this.newSlot("nodeStoreDidOpenNote", null)
 
         this.newSlot("isFinalizing", false)
@@ -158,6 +150,7 @@
     }
 
     readRoot () {
+        debugger;
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
             const rootRecord = this.recordForPid(this.rootKey())
@@ -296,8 +289,8 @@
     }
 
     onDidMutateObject (anObject) {
-        if (this.hasActiveObject(anObject)) {
-        //if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
+        //if (this.hasActiveObject(anObject)) {
+        if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
             this.addDirtyObject(anObject)
         }
     }
@@ -322,6 +315,7 @@
     }
 
     addDirtyObject (anObject) {
+    
         if (!this.hasActiveObject(anObject)) {
             console.log("looks like it hasn't been referenced yet")
             throw new Error("not referenced yet")
@@ -339,6 +333,9 @@
 
         if (!this.dirtyObjects().hasOwnProperty(puuid)) {
             this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
+            if (this.storingPids() && this.storingPids().has(puuid)) {
+                throw new Error("attempt to double store? did object change after store? is there a loop?")
+            }
             this.dirtyObjects()[puuid] = anObject
             this.scheduleStore()
         }
@@ -454,7 +451,6 @@
         obj.setPuuid(aRecord.id)
         this.addActiveObject(obj)
         obj.loadFromRecord(aRecord, this)
-
         return obj
     }
 

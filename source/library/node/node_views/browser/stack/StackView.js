@@ -9,18 +9,18 @@
     Overview of view structure:
 
         StackView contains:
-            navView, which is a StackNavView and contains:
-                scrollView, which is a StackScrollView and contains:
-                    itemSetView, which is a StackItemSetView contains array of: 
-                        Tiles(or subclass), (each of which contains a contentView, so things like slide-to-delete gestures work)
-            otherView, which is a DomFlexView whose content is used to display the selected ite, and can be set with setOtherViewContent()
+            |- navView, which is a NavView and contains:
+                |- scrollView, which is a StackScrollView and contains:
+                    |- tilesView, which is a TilesView contains array of: 
+                        |->> Tiles(or subclass), (each of which contains a contentView, so things like slide-to-delete gestures work)
+            |- otherView, which is a DomFlexView whose content is used to display the selected ite, and can be set with setOtherViewContent()
         
     
         There is also a "direction" attribute. If it's value is:
         - "right": the navView is on the left, and otherView is on the right, causing navigation to head towards the left
         - "down": the navView is on the top, and otherView is on the bottom, causing navigation to head downwards
 
-        Note: StackItemSetViews will ask their parent StackView about their direction setting to determine the orientation layout of their subviews
+        Note: TilesViews will ask their parent StackView about their direction setting to determine the orientation layout of their subviews
 
         The direction for child StackViews can be set individually, so for example, we could use a "down" direction for the 
         topmost StackView or first few levels (so there will be left to right navigation menus at the top level) 
@@ -94,7 +94,7 @@
     }
 
     setupNavView () {
-        const v = StackNavView.clone()
+        const v = NavView.clone()
         v.setStackView(this)
         this.setNavView(v)
         this.addSubview(v)
@@ -220,8 +220,8 @@
 
     // notifications
     
-    itemSetView () {
-        return this.navView().itemSetView()
+    tilesView () {
+        return this.navView().tilesView()
     }
 
     selectNodePathArray (pathArray) {
@@ -236,13 +236,13 @@
         } else if (pathArray.length === 0) { 
             //console.log("unselect items after path: ", this.pathString())
             // no selections left so unselect next
-            this.itemSetView().unselectAllTiles()
+            this.tilesView().unselectAllTiles()
             this.syncFromNavSelection()
             return true
         }
 
         //debugger;
-        const selectedTile = this.itemSetView().selectTileWithNode(node)
+        const selectedTile = this.tilesView().selectTileWithNode(node)
         if (!selectedTile) {
             console.warn("no matching path")
             return false
@@ -338,7 +338,7 @@
         */
 
         //console.log("StackView " + this.node().title() + " syncFromNavSelection")
-        const itemView = this.navView().itemSetView().selectedTile() // this may get called before itemSetView has synced to current subnodes,
+        const itemView = this.navView().tilesView().selectedTile() // this may get called before tilesView has synced to current subnodes,
         // in which case, the itemView may be about to be removed
         if (itemView && itemView.nodeTileLink()) {
             const oNode = itemView.nodeTileLink()

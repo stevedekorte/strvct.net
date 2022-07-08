@@ -17,7 +17,7 @@
 
     init () {
         super.init()
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
         return this
     }
 

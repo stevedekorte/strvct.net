@@ -174,30 +174,6 @@
         return parts.join(", ")
     }
 
-    /*
-    recordForStore (aStore) {
-        const r = super.recordForStore(aStore)
-        console.log(this.typeId() + " recordForStore : ", JSON.stringify(r, null, 2))
-        return r
-    }
-
-    loadFromRecord (aRecord, aStore) {
-        const result = super.loadFromRecord(aRecord, aStore)
-        console.log("after loadFromRecord:" + JSON.stringify(aRecord, null, 2))
-        return result
-    }
-
-    addMutationObserver (anObserver) {
-        //console.log(this.typeId() + ".addMutationObserver(" + anObserver.typeId() + ")")
-        return super.addMutationObserver(anObserver)
-    }
-
-    didMutate () {
-        //console.log("didMutate:" + this.description())
-        return super.didMutate()
-    }
-    */
-
 }.initThisClass());
 
 

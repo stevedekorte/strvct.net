@@ -2,16 +2,16 @@
 
 /*
     
-    StackNavView
+    NavView
     
 */
 
-(class StackNavView extends NodeView {
+(class NavView extends NodeView {
 
     initPrototype () {
         this.newSlot("stackView", null)
-        this.newSlot("scrollView", null) // contains column is middleView
-        this.newSlot("itemSetView", null) // is inside scrollView
+        this.newSlot("scrollView", null) // ScrollView fits NavView size, and contains TilesView which may be larger
+        this.newSlot("tilesView", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
         this.newSlot("animatesCollapse", true)
     }
@@ -61,8 +61,8 @@
         this.setScrollView(StackScrollView.clone())
         this.addSubview(this.scrollView())
 
-        this.setItemSetView(StackItemSetView.clone())
-        this.scrollView().addSubview(this.itemSetView())
+        this.setTilesView(TilesView.clone())
+        this.scrollView().addSubview(this.tilesView())
 
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width
         this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height
@@ -134,13 +134,13 @@
 
     setNode (aNode) {
         super.setNode(aNode)
-        this.itemSetView().setNode(aNode)
+        this.tilesView().setNode(aNode)
         return this
     }
 
     syncFromNode () {
         this.syncOrientation()
-        //this.itemSetView().syncFromNode()
+        //this.tilesView().syncFromNode()
         this.applyStyles()
 
         if (this.isVertical()) {

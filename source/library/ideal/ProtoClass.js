@@ -3,21 +3,14 @@
 /*
 
     ProtoClass
-
-    Base class to implement some things we're used to in Smalltalk/ObjC,
-    as well as Slot related methods.
+    
+    This is a place for base object features (Smalltalk like features) 
+    that we don't want to add to all Object (and Object decendants),
+    as we don't know how they might effect the rest of the system.
 
 */
 
-(class ProtoClass extends Object { 
-
-    /*
-    static newUniqueInstanceId () {
-        const uuid_a = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
-        const uuid_b = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
-        return uuid_a + uuid_b
-    }
-    */
+(class ProtoClass extends Object {
 
     static minimalClone () {
         const obj = new this()
@@ -582,6 +575,7 @@
 
     init () { 
         super.init()
+ 
         // subclasses should override to do initialization
         //assert(this.isInstance())
         const allSlots = this.__proto__.allSlots()

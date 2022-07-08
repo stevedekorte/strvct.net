@@ -123,7 +123,7 @@
     }
 
     onCharacterDataMutation (mutation) {
-        console.log("onCharacterDataMutation --------------> ", mutation)
+        //console.log("onCharacterDataMutation --------------> ", mutation)
     }
 
     setContentEditable (aBool) {
@@ -215,7 +215,6 @@
     onDoubleTapCancelled (aGesture) {
         console.log(this.value() + " onDoubleTapCancelled")
     }
-
 
     onDoubleTapComplete (aGesture) {
         //debugger;
@@ -406,7 +405,7 @@
     
     onEnterKeyDown (event) {    
         // insert 2 returns as cursor won't go to the second line with 1
-        document.execCommand('insertHTML', false, "\n\n");
+        //document.execCommand('insertHTML', false, "\n\n");
         // prevent the default behaviour of return key pressed
         return false;
     }

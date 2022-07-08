@@ -48,6 +48,9 @@
 
     init () {
         super.init()
+        if (this.shouldStore()) {
+            this.scheduleDidInit()
+        }
         // do we need to start observing subnodes?
         return this
     }
@@ -113,7 +116,7 @@
         return this._subnodes.length
     }
 
-    prepareForFirstAccess (aStore = this.defaultStore()) {
+    prepareForFirstAccess () {
         super.prepareForFirstAccess()
         return this
     }

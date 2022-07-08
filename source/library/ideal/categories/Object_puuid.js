@@ -4,6 +4,12 @@
 (class Object_puuid extends Object {
 
     /*
+    static newUniqueInstanceId () {
+        const uuid_a = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
+        const uuid_b = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
+        return uuid_a + uuid_b
+    }
+
     static newUuid () {
         return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
             let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -12,7 +18,8 @@
     }
     */
 
-    static newUuid () { // TODO: move this JS UUID when it's added to JS standard lib
+    static newUuid () { 
+        // TODO: move this JS UUID when it's added to JS standard lib
         const uuidPart = () => { 
             const bigFloat = Math.random() * Math.pow(10, 17)
             const bigInt = Math.floor(bigFloat)

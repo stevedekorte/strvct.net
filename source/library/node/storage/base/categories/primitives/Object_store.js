@@ -4,14 +4,10 @@
 (class Object_store extends Object {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
-        assert(aRecord.type === "Object")
-        const obj = {}
-        obj.loadFromRecord(aRecord, aStore)
-        return obj
+        return this.clone()
     }
 
     loadFromRecord (aRecord, aStore) {
-        assert(aRecord.type === "Object")
         aRecord.entries.forEach((entry) => {
             const k = entry[0]
             const v = entry[1]

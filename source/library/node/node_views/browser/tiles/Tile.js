@@ -171,7 +171,6 @@
     // we route style methods to it
 
     setupTileContentView () {
-        //const cv = DomView.clone().setDivClassName("TileContentView")
         const cv = DomFlexView.clone().setDivClassName("TileContentView")
         cv.setDisplay("flex")
         cv.setHeight("auto")
@@ -245,8 +244,8 @@
         return this.parentView()
     }
     
-    stackNavView () {
-        return this.column().stackNavView()
+    navView () {
+        return this.column().navView()
     }
 
     // node style dict
@@ -314,7 +313,7 @@
 
     didUpdateSlotIsInspecting (oldValue, newValue) {
         //super.didUpdateSlotIsSelected (oldValue, newValue)
-        this.itemSetView().didChangeNavSelection()
+        this.tilesView().didChangeNavSelection()
         //this.updateSubviews()
     }
 
@@ -328,7 +327,7 @@
             this.setLastSelectionDate(null)
         }
 
-        this.itemSetView().didChangeNavSelection()
+        this.tilesView().didChangeNavSelection()
         this.updateSubviews()
     }
     
@@ -392,12 +391,12 @@
         return this
     }
 
-    itemSetView () {
+    tilesView () {
         return this.parentView()
     }
 
     stackView () {
-        const scrollView = this.itemSetView().parentView()
+        const scrollView = this.tilesView().parentView()
         const navView = scrollView.parentView()
         const stackView = navView.parentView()
         return stackView
@@ -854,7 +853,7 @@
 
     /*
     disableColumnUntilTimeout (ms) {
-        //this.column().columnGroup().disablePointerEventsUntilTimeout(ms)
+        //this.navView().disablePointerEventsUntilTimeout(ms) 
         //this.setPointerEvents("none")
     }
     */

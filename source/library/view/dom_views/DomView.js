@@ -3418,7 +3418,7 @@
     }
 
     setIsRegisteredForMouse (aBool, useCapture) {
-        this.mouseListener().setUseCapture(useCapture).setIsListening(aBool) //.setIsDebugging(true)
+        this.mouseListener().setUseCapture(useCapture).setIsListening(aBool) 
         return this
     }
 

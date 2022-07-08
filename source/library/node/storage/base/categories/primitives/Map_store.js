@@ -3,12 +3,6 @@
 
 (class Map_store extends Map {
 
-    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
-        const obj = this.clone()
-        //obj.loadFromRecord(aRecord, aStore)
-        return obj
-    }
-
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
             const key = entry[0]

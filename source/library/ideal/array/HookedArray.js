@@ -5,7 +5,7 @@
     HookedArray
 
     A subclass of Array that maintains that hooks the base getters and setters.
-
+en
     For this to work, you need to use method alternative to the non-method
     array operations:
     
@@ -19,10 +19,31 @@
 
 */
 
+/*
+(class Array_mutator extends Array {
+    mutatorMethodNamesSet () {
+        // we can't hook []= or delete[] but we can hook these
+        // and use hooked methods instead of operators for those
+        return new Set([
+            "pop",
+            "push",
+            "reverse",
+            "shift",
+            "sort",
+            "splice",
+            "unshift"
+        ])
+    }
+}).initThisCategory();
+
+Array.prototype.setupMutatorHooks();
+*/
+
 (class HookedArray extends Array {
 
     initPrototype () {
         this.setupMutatorHooks()
+        //Array.prototype.setupMutatorHooks()
     }
 
     // ------------------------------
@@ -51,7 +72,7 @@
             "unshift"
         ])
     }
- 
+
 
     asReadOnlyShalowCopy () {
         const obj = this.thisClass().withArray(this)

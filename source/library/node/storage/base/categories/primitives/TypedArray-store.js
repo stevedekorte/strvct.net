@@ -47,17 +47,16 @@ Type.typedArrayTypeNames().forEach((name) => {
 })
 */
 
-const aClass = Int8Array.__proto__ // just using int array to get to abstract parent TypeArray class, as we can't use TypeArray name directly
+const typedArrayClass = Int8Array.__proto__ // just using int array to get to abstract parent TypeArray class, as we can't use TypeArray name directly
 
-Object.defineSlots(aClass, {
+Object.defineSlots(typedArrayClass, {
     instanceFromRecordInStore: function(aRecord, aStore) { // should only be called by Store
         const obj = new this.thisClass()(aRecord.length)
-        //obj.loadFromRecord(aRecord, aStore)
         return obj
     },
 })
 
-Object.defineSlots(aClass.prototype, {
+Object.defineSlots(typedArrayClass.prototype, {
 
     loadFromRecord: function(aRecord, aStore) {
         const values = aRecord.values
