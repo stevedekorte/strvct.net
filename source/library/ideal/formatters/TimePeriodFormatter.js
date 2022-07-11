@@ -23,6 +23,14 @@ TimePeriodFormatter
 (class TimePeriodFormatter extends ProtoClass {
     initPrototype () {
         this.newSlot("valueInSeconds", 0)
+        this.newSlot("periods", {
+            seconds: "s", 
+            minutes: "m", 
+            hours: "h", 
+            days: "d", 
+            months: "months", 
+            years: "years"
+        })
     }
 
     /*
@@ -32,14 +40,7 @@ TimePeriodFormatter
     */
 
     formattedValue () {
-        const periods = {
-            seconds: "s", 
-            minutes: "m", 
-            hours: "h", 
-            days: "d", 
-            months: "months", 
-            years: "years"
-        }
+        const periods = this.periods()
 
         const seconds = this.valueInSeconds()
         if (seconds === null) {

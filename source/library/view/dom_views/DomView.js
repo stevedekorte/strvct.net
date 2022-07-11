@@ -3523,7 +3523,7 @@
     invokeMethodNameForEvent (methodName, event) {
         //this.debugLog(".invokeMethodNameForEvent('" + methodName + "')")
         if (this[methodName]) {
-            console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
+            //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
             const continueProp = this[methodName].apply(this, [event])
             if (continueProp === false) {
                 //event.preventDefault()

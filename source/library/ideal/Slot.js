@@ -466,7 +466,7 @@ getGlobalThis().ideal.Slot = class Slot {
         const slot = this
         const willGetSlotName = this.willGetSlotName()
         const func = function () {
-            console.log(this.typeId() + "." + slot.name() + " replacing one-shot getter with direct getter")
+            //console.log(this.typeId() + "." + slot.name() + " replacing one-shot getter with direct getter")
             slot.makeDirectGetterOnInstance(this) // now, replace with direct getter after first call
             //this.willGetSlot(slot) // opportunity to replace value before first access
             if (this[willGetSlotName]) {
@@ -598,7 +598,6 @@ getGlobalThis().ideal.Slot = class Slot {
     }
     */
 
-    
     // call helpers
 
     onInstanceRawGetValue (anInstance) {
@@ -724,7 +723,7 @@ getGlobalThis().ideal.Slot = class Slot {
             */
 
             const setter = anInstance[this.setterName()]
-            setter.apply(anInstance, [obj])
+            setter.apply(anInstance, [obj]) // WARNING: this may mark objects as dirty
 
         } else {
             //console.warn(anInstance.typeId() + " unable to load storeRef - not found")

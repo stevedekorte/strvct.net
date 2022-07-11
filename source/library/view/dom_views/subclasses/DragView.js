@@ -498,7 +498,9 @@
         // TODO: animate move to end location before removing
 
         this.removePanStyle()
+        //debugger;
         DocumentBody.shared().removeSubview(this)
+        assert(Type.isNullOrUndefined(this.element().parentNode))
         this.setItems([])
         this.setIsClosed(true)
 

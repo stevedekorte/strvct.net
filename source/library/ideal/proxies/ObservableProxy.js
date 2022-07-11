@@ -14,8 +14,8 @@
 
     MOTIVATION:
 
-    The motivation for this class was as an access tripwires for lazy loading of
-    persistent objects.
+    The motivation for this class was originally as an access tripwire 
+    for lazy loading of persistent objects.
 
     POTENITAIL USES:
 
@@ -207,7 +207,7 @@
 
     // ---------------
 
-    selfTest () {
+    static selfTest () {
         const resultsDict = {}
 
         const noteNamesDict = ObservableProxy.clone().noteNamesDict()

@@ -1,3 +1,7 @@
+- BMNode: find way to ensure no duplicate subnodes?
+- add way to check if hooks have been set up when adding mutation observer
+- onInstanceLoadRef is triggering didUpdateSlot -> didMutate -> ObjectPool.onDidMutateObject
+-- make sure drag/drop/copy pools don't add themselves to mutation observers
 - cleanup addEventNameAndMethodName
 
 - new Folder tiles don't have editable titles?
@@ -12,9 +16,7 @@
 
 - look into removeMutationObserver - do we need weakrefs?
 
-- move animations to proper css animations so we get animation end events 
-
-- RETIRE: prepareToRetire to new canRetire method?
+- support css transition events to get callbacks for end of animations
 
 
 -----------

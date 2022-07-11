@@ -36,6 +36,7 @@
         a.willMutate = () => {
             gotWillMutate = true
         }
+        
         a.didMutate = () => {
             assert(gotWillMutate)
             gotDidMutate = true

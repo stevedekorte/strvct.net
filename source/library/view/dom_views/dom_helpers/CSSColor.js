@@ -2,7 +2,7 @@
 
 /*
     
-    CSSColor
+    CssColor
     
     Helpful for manipulating css colors.
 	
@@ -79,7 +79,7 @@ const max3 = function(a, b, c) {
 
 // ----------------------------------------------------------------------------------
 
-(class CSSColor extends ProtoClass {
+(class CssColor extends ProtoClass {
     
     initPrototype () {
         // values between 0.0 and 1.0
@@ -103,14 +103,14 @@ const max3 = function(a, b, c) {
     }
 
     copyFrom (aColor, copyDict) {
-        return CSSColor.clone().set(aColor.red(), aColor.green(), aColor.blue(), aColor.opacity())
+        return CssColor.clone().set(aColor.red(), aColor.green(), aColor.blue(), aColor.opacity())
     }
 
     static colorMapCache () {
-        if (!CSSColor._colorMapCache) {
-            CSSColor._colorMapCache = {}
+        if (!CssColor._colorMapCache) {
+            CssColor._colorMapCache = {}
         }
-        return CSSColor._colorMapCache
+        return CssColor._colorMapCache
     }
 
     justParseColorString (aColorString) { // private
@@ -144,7 +144,7 @@ const max3 = function(a, b, c) {
     }
 
     parseColorString (string) {
-        const cache = CSSColor.colorMapCache()
+        const cache = CssColor.colorMapCache()
         const cachedResult = cache.at(string)
         if (!Type.isUndefined(cachedResult)) {
             return cachedResult
@@ -242,7 +242,7 @@ const max3 = function(a, b, c) {
         const b = this.interpV1V2Ratio(b1, b2, v)
         const o = this.interpV1V2Ratio(o1, o2, v)
 
-        const result = CSSColor.clone().set(r, g, b, o)
+        const result = CssColor.clone().set(r, g, b, o)
         return result
     }
 
@@ -275,43 +275,43 @@ const max3 = function(a, b, c) {
     }
 
     whiteColor () {
-        return CSSColor.clone().set(1, 1, 1, 1)
+        return CssColor.clone().set(1, 1, 1, 1)
     }
 
     blackColor () {
-        return CSSColor.clone().set(0, 0, 0, 1)
+        return CssColor.clone().set(0, 0, 0, 1)
     }
 
     lightGrayColor () {
-        return CSSColor.clone().set(0.75, 0.75, 0.55, 1)
+        return CssColor.clone().set(0.75, 0.75, 0.55, 1)
     }
 
     grayColor () {
-        return CSSColor.clone().set(0.5, 0.5, 0.5, 1)
+        return CssColor.clone().set(0.5, 0.5, 0.5, 1)
     }
 
     darkGrayColor () {
-        return CSSColor.clone().set(0.25, 0.25, 0.25, 1)
+        return CssColor.clone().set(0.25, 0.25, 0.25, 1)
     }
 
     redColor () {
-        return CSSColor.clone().set(1, 0, 0, 1)
+        return CssColor.clone().set(1, 0, 0, 1)
     }
 
     greenColor () {
-        return CSSColor.clone().set(0, 1, 0, 1)
+        return CssColor.clone().set(0, 1, 0, 1)
     }
 
     blueColor () {
-        return CSSColor.clone().set(0, 0, 1, 1)
+        return CssColor.clone().set(0, 0, 1, 1)
     }
 
     yellowColor () {
-        return CSSColor.clone().set(1, 1, 0, 1)
+        return CssColor.clone().set(1, 1, 0, 1)
     }
 
     randomColor () {
-        return CSSColor.clone().randomize()
+        return CssColor.clone().randomize()
     }
 
     asDict255 () {
@@ -330,11 +330,11 @@ const max3 = function(a, b, c) {
         const temphsv = RGB2HSV(temprgb);
         temphsv.hue = HueShift(temphsv.hue, 180.0);
         temprgb = HSV2RGB(temphsv);
-        return CSSColor.clone().fromDict255(temprgb)
+        return CssColor.clone().fromDict255(temprgb)
     }
 
     contrastComplement (v) { // v should be a value in the range of 0.0 to 1.0
-        // returns another CSSColor object which is the same as the receiver but darkened
+        // returns another CssColor object which is the same as the receiver but darkened
         //
 
         const b = this.brightness() 

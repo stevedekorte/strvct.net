@@ -20,15 +20,42 @@
 	if aNumberOfBytes was 3,000,000, stringVersion would be 3 MB.
 	etc.
 
+    TODO: move to power notation after max order name exceeded
+
 */
 
 (class ByteFormatter extends ProtoClass {
     initPrototype () {
 
-        this.newSlot("value", 0)
-        this.newSlot("usePostfix", true)
-        this.newSlot("useSpace", false)
-        this.newSlot("useLongNames", false)
+        {
+            const slot = this.newSlot("value", 0)
+            slot.setShouldStoreSlot(false)
+            slot.setSlotType("Number")
+            slot.setCanInspect(false)
+        }
+
+        {
+            const slot = this.newSlot("usePostfix", true)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+
+        {
+            const slot = this.newSlot("useSpace", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+
+        {
+            const slot = this.newSlot("useLongNames", false)
+            slot.setShouldStoreSlot(true)
+            slot.setSlotType("Boolean")
+            slot.setCanInspect(true)
+        }
+
+
         this.newSlot("orderNamesShort", ["bytes", "k", "M", "G", "T", "P", "E", "Z", "Y"])
         this.newSlot("orderNamesLong", [
             "bytes", 

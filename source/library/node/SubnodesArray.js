@@ -10,5 +10,10 @@
 
 (class SubnodesArray extends SortedArray {
 
+    static from (oldArray) {
+        const newArray = this.clone()
+        oldArray.forEach(v => newArray.push(v)) // make sure any method hooks are called
+        return newArray
+    }
 
 }.initThisClass());

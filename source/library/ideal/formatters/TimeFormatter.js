@@ -31,6 +31,13 @@ TimeFormatter
 (class TimeFormatter extends ProtoClass {
     initPrototype () {
         {
+            const slot = this.newSlot("date", null) // temp value which will be formatted
+            slot.setShouldStoreSlot(false)
+            slot.setSlotType("Date") // a javascript Date object
+            slot.setCanInspect(true)
+        }
+
+        {
             const slot = this.newSlot("is24Hour", false)
             slot.setShouldStoreSlot(true)
             slot.setSlotType("Boolean")
@@ -107,12 +114,6 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
-        {
-            const slot = this.newSlot("date", null)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Date") // a javascript Date object
-            slot.setCanInspect(true)
-        }
     }
 
     /*

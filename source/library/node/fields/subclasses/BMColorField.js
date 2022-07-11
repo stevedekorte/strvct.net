@@ -58,11 +58,11 @@
         this.addActions(["add"])
     }
 
-    asCSSColor () {
-        return CSSColor.clone().set(this.red(), this.green(), this.blue(), this.alpha())
+    asCssColor () {
+        return CssColor.clone().set(this.red(), this.green(), this.blue(), this.alpha())
     }
 
-    fromCSSColor (aCSSColor) {
+    fromCssColor (aCssColor) {
         return this
     }
     

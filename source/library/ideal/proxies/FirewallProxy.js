@@ -5,7 +5,7 @@
     FirewallProxy
 
     Usefull for passing references to objects but limiting
-    how it can be access e.g. which methods can be called on it.
+    how it can be accessed e.g. which methods can be called on it.
 
     An example use case would be an immutable proxy for an array.
     So an object that owns the array can share an immutable proxy for it
@@ -99,7 +99,7 @@
         return Reflect.get(target, propertyName, target);
     }
 
-    selfTest () {
+    static selfTest () {
         // test array
         const array = ["a", "b", "c"]
         const ap = array.asReadOnly()

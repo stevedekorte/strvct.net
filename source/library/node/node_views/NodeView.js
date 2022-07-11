@@ -161,7 +161,7 @@
     visibleSubnodes () {
         return this.node().subnodes()
     }
-    
+
     syncFromNode () {
         let subnodesDidChange = false
         // override this method if the view manages it's own subviews
@@ -181,6 +181,8 @@
         // only replace subviews if sync requires it,
         // and reuse subviews for subnodes which are still present 
 
+        assert(!this.visibleSubnodes().hasDuplicates())
+        
         this.visibleSubnodes().forEach((subnode) => {
             let subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
             

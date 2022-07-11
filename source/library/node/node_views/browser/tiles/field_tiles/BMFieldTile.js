@@ -186,7 +186,7 @@
 
     currentBackgroundCssColor () {
         const bg = this.navView().computedBackgroundColor()
-        return CSSColor.clone().setCssColorString(bg)
+        return CssColor.clone().setCssColorString(bg)
     }
 
     valueBackgroundCssColor () {

@@ -2,6 +2,7 @@
     "categories/_imports.json",
     "Slot.js",
     "ProtoClass.js",
+    "proxies/_imports.json",
     "Documentation.js",
     "array/_imports.json",
     "dictionary/_imports.json",

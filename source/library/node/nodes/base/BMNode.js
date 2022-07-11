@@ -210,6 +210,7 @@
     }
 
     justAddSubnode (aSubnode) {
+        assert(!this.hasSubnode(aSubnode))
         return this.justAddSubnodeAt(aSubnode, this.subnodeCount())
     }
 	
@@ -446,6 +447,10 @@
         }
     }
 
+    hasDuplicateSubnodes () {
+        return this.subnodes().hasDuplicates()
+    }
+
     indexOfSubnode (aSubnode) {
         return this.subnodes().indexOf(aSubnode);
     }
@@ -648,6 +653,7 @@
 
     onDidMutateObject (anObject) {
         if (anObject === this._subnodes) {
+            assert(!this.subnodes().hasDuplicates())
             this.didChangeSubnodeList()
         }
     }
@@ -660,6 +666,19 @@
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
             oldValue.removeMutationObserver(this)
+        }
+
+        if (newValue.type() !== "SubnodesArray") {
+        //    debugger;
+            this._subnodes = SubnodesArray.from(newValue)
+            newValue.removeDuplicates()
+            newValue = this._subnodes
+            assert(newValue.type() === "SubnodesArray")
+        } else {
+            if(this.hasDuplicateSubnodes()) {
+                debugger;
+                newValue.removeDuplicates()
+            }
         }
 
         this.watchSubnodes()

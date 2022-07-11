@@ -1547,6 +1547,7 @@
         //this.showNodes(movedNodes)
         //this.showTiles(this.subviews())
         const newSubnodesOrder = this.subviews().map(sv => sv.node())
+        //debugger;
         //this.showNodes(newSubnodesOrder)
         
         this.node().removeSubnodes(movedNodes) // is this needed?

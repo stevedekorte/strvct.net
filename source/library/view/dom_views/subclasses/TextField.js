@@ -70,12 +70,12 @@
         //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
 
         //this.setIsDebugging(true)
-        this.lockedStyleAttributeSet().add("backgroundColor")
+        //this.lockedStyleAttributeSet().add("backgroundColor")
 
         return this
     }
 
-    // --- mutation observer ---
+    // --- sub-element mutation observer ---
 
     startMutationObserver () {
         if (!this.mutationObserver()) {
@@ -129,11 +129,13 @@
     setContentEditable (aBool) {
         super.setContentEditable(aBool)
 
+        /*
         if (aBool) {
             this.startMutationObserver()
         } else {
             this.stopMutationObserver()
         }
+        */
 
         //this.debugLog(".setContentEditable(" + aBool + ") = ", this.contentEditable())
         //this.setIsRegisteredForClicks(this.contentEditable())  // is this needed after move to tap?

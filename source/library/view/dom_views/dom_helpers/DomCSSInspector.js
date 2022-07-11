@@ -1,18 +1,18 @@
 "use strict";
 
 /*
-    DomCSSInspector
+    DomCssInspector
     Used to inspect class styles since css hides stylesheet.cssRules.
     
     example use:
-    const value = DomCSSInspector.shared().setDivClassName("..").cssStyle.fontFamily
+    const value = DomCssInspector.shared().setDivClassName("..").cssStyle.fontFamily
 
 */
 
-(class DomCSSInspector extends ProtoClass {
+(class DomCssInspector extends ProtoClass {
     
     initPrototype () {
-        this.newSlot("idName", "DomCSSInspector")
+        this.newSlot("idName", "DomCssInspector")
     }
 
     testElement () {

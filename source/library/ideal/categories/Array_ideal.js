@@ -132,13 +132,57 @@
     }
 
     contains (element) {
-        return this.indexOf(element) !== -1;
+        return this.includes(element)
+        //return this.indexOf(element) !== -1;
     }
 
     containsAny (anArray) {
         const match = anArray.detect(item => this.contains(item))
         return !Type.isNullOrUndefined(match)
     }
+
+    // --- duplicates ---
+
+    removeDuplicates () {
+        const u = this.unique()
+        if (this.length !== u.length) {
+            this.copyFrom(u)
+        }
+        return this
+    }
+
+    hasDuplicates () {
+        if (this.length > 100) {
+            return this.hasDuplicates_setImplementation()
+
+        } else {
+            return this.hasDuplicates_indexOfImplementation()
+        }
+    }
+
+    hasDuplicates_setImplementation() {
+        const set = new Set()
+        for (let i = 0; i < this.length - 1 /* skip last */; i++) {
+            const v = this[i]
+            if (set.has(v)) {
+                return true
+            } else {
+                set.add(v)
+            }
+        }
+        return false
+    }
+
+    hasDuplicates_indexOfImplementation () {
+        for (let i = 0; i < this.length - 1 /* skip last */; i++) {
+            if (this.indexOf(this[i], i + 1) !== -1) {
+                return true
+            }
+        }
+        return false
+    }
+
+    // ------------
 
     hasPrefix (otherArray) {
         if (this.length < otherArray.length) {
@@ -294,7 +338,7 @@
 
     appendIfAbsent () {
         this.slice.call(arguments).forEach((value) => {
-            if (this.indexOf(value) === -1) {
+            if (!this.contains(value)) {
                 this.push(value);
                 return true;
             }

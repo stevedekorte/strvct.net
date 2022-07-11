@@ -150,7 +150,6 @@
     }
 
     readRoot () {
-        debugger;
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
             const rootRecord = this.recordForPid(this.rootKey())
@@ -291,6 +290,7 @@
     onDidMutateObject (anObject) {
         //if (this.hasActiveObject(anObject)) {
         if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
+           // debugger;
             this.addDirtyObject(anObject)
         }
     }

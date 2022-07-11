@@ -40,8 +40,9 @@
 
     willMutate () {
         /*
-        if (this._mutationObservers) {
-            this.mutationObservers().forEach(v => { 
+        const mos = this._mutationObservers
+        if (mos) {
+            mos.forEach(v => { 
                 v.onWillMutateObject(this)
             })
         }
@@ -49,9 +50,10 @@
     }
 
     didMutate () {
-        if (this._mutationObservers) {
-            this.mutationObservers().forEach(v => {
-                v.onDidMutateObject(this)
+        const mos = this._mutationObservers
+        if (mos) {
+            mos.forEach(obs => {
+                obs.onDidMutateObject(this)
             })
         }
     }
