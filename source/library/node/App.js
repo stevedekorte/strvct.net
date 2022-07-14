@@ -13,37 +13,37 @@
 (class App extends BMStorableNode {
     
     static loadAndRunShared () {
-        const name = this.name
-        this.defaultStore().setName(name)
-        this.defaultStore().asyncOpen(() => { this.onLoadSuccess() }, (e) => { this.onLoadError(e) }) 
+        this.defaultStore().setName(this.type()) // name of the database
+        this.defaultStore().setDelegate(this).asyncOpen() 
     }
 
-    static onLoadSuccess () {
-        const name = this.name
-        this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
-        const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(name, this)
+    static deleteDefaultStore () {
+        this.defaultStore().deleteAll()
+    }
+
+    static onPoolOpenSuccess (aPool) {
+        debugger;
+        this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone()) // create the root object
+        //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
+        const app = this.clone()
         this.setShared(app)
         app.run()
     }
 
-    static onLoadError (errorMessage) {
+    static onPoolOpenFailure (aPool, error) {
+        console.log("ERROR: ", error)
+        debugger;
         //ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
     initPrototype () {
         this.newSlot("name", "App")
         this.newSlot("version", [0, 0])
-        //this.newSlot("nodeStoreDidOpenObs", null)
     }
 
     init () {
         super.init()
-
-        //Documentation.shared().show()
         //console.log(ProtoClass.subclassesDescription())
-
-        //this.setNodeStoreDidOpenObs(BMNotificationCenter.shared().newObservation())
-        //this.nodeStoreDidOpenObs().setName("nodeStoreDidOpen").setObserver(this).setTarget(this.defaultStore())
         this.setIsDebugging(true)
     }
 
@@ -65,20 +65,7 @@
             return this
         }
 
-        /*
-        this.nodeStoreDidOpenObs().startWatching()
-        this.defaultStore().setName(this.name())
-
-        const errorCallback = (errorMessage) => {
-            ResourceLoaderPanel.shared().setError(errorMessage)
-            return this
-        }
-        this.defaultStore().asyncOpen(null, errorCallback) 
-        this.nodeStoreDidOpen()
-        */
-
        this.setup()
-
     }
 
     /*
@@ -93,16 +80,7 @@
     }
     */
 
-    // 2. setup 
-
-    /*
-    nodeStoreDidOpen (aNote) {
-        console.log("App nodeStoreDidOpen <<<<<<<<<<<<<<<<<<")
-        this.nodeStoreDidOpenObs().stopWatching()
-        this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone())
-        this.setup()
-    }
-    */
+    // 2. setup
 
     setup () {
         return this        
@@ -122,7 +100,6 @@
     }
 	
     documentBodyView () {
-        //return DomView.documentBodyView()
         return WebBrowserWindow.shared().documentBody()
     }
 

@@ -7,6 +7,9 @@
         For persisting a object tree to a JSON formatted representation and back.
         Usefull for both persistence and exporting object out the the app/browser and onto desktop or other browsers.
 
+        This is a parent class for PersistentObjectPool, which just swaps out the recordDict AtomicDictionary, 
+        with a PersistentAtomicDictionary.
+
         An object pool can also be created by pointing at an object within another pool.
 
         JSON format of pool:
@@ -60,20 +63,28 @@
         // set - pids of objects that we're loading in this event loop
         this.newSlot("loadingPids", null)
 
-        // set - pids of objects that we're storing in this event loop
+        // Set - pids of objects that we're storing in this event loop
         this.newSlot("storingPids", null)
 
-        // WARNING: vulnerable to system time changes/differences
+        // Date - WARNING: vulnerable to system time changes/differences
         this.newSlot("lastSyncTime", null)
-        //isReadOnly: true,
+
+        //this.newSlot("isReadOnly", false)
 
         // Set of puuids
         this.newSlot("markedSet", null) 
 
-        // TODO: change name? to objectPoolDidOpen
+        // Notification - sent after pool opens - TODO: change name to objectPoolDidOpen?
         this.newSlot("nodeStoreDidOpenNote", null)
 
+        // set to true during method didInitLoadingPids() - used to ignore mutations during this period
         this.newSlot("isFinalizing", false)
+
+        // object to receive success and error callbacks, particularly for async methods
+        // in this way, we can more easily use the same code with both sync and async versions
+        this.newSlot("delegate", null) 
+
+        this.newSlot("error", null) // most recent error, if any
     }
 
     init () {
@@ -99,29 +110,57 @@
 
     // --- open ---
 
-    open () {
+    open () { // this class can also be used with synchronous AtomicDictionary
         this.recordsDict().setName(this.name())
         this.recordsDict().open()
-        this.onRecordsDictOpen()
+        this.onPoolOpenSuccess()
         return this
     }
 
-    asyncOpen (callback, errorCallback) {
+    asyncOpen (successCallback, errorCallback) { 
+        debugger;
         this.recordsDict().setName(this.name())
-        const successCallback = () => {
-            this.onRecordsDictOpen()
-            if (callback) {
-                callback()
+        this.recordsDict().asyncOpen(
+            () => this.onPoolOpenSuccess(), 
+            (error) => this.onPoolOpenFailure(error)
+        )
+        /*
+            this.recordsDict().asyncOpen(
+            () => { this.onPoolOpenSuccess(); successCallback() }, 
+            (error) => { this.onPoolOpenError(error); errorCallback(); }
+        )
+        */
+        return this
+    }
+
+    sendDelegate (methodName, argument) {
+        const d = this.delegate()
+        if (d) {
+            const m = d[methodName]
+            if (m) {
+                m.apply(d, this, argument)
             }
         }
-
-        this.recordsDict().asyncOpen(successCallback, errorCallback)
-        return this
     }
+
+    onPoolOpenSuccess () {
+        this.onRecordsDictOpen()
+        this.sendDelegate("onPoolOpenSuccess")
+    }
+
+    onPoolOpenFailure (error) {
+        this.sendDelegate("onPoolOpenFailure", error)
+    }
+
+    /*
+    postOpenNote () {
+        this.postNoteNamed("objectPoolDidOpen")
+    }
+    */
 
     onRecordsDictOpen () {
         this.collect()
-        this.readRoot()
+        //this.readRoot()
         this.nodeStoreDidOpenNote().post()
         return this
     }
@@ -156,12 +195,9 @@
             //console.log("rootRecord.subnodes: ", JSON.stringify(rootRecord, null, 2))
 
             const root = this.objectForPid(this.rootKey())
-            //root.thisPrototype().slotNamed("subnodes").setupInOwner()
-            //root.subnodes()
+
             this._rootObject = root
-            //let subnodes = root.subnodes()
-            //console.log("root subnodes.length = " + subnodes.length)
-            //this.setRootObject()
+            //this.setRootObject(root) // this is for setting up new root
         }
         return this.rootObject()
     }
@@ -185,7 +221,7 @@
         return this
     }
     
-    setRootObject (obj) {
+    setRootObject (obj) { // only used for setting up a new root object
         this.assertOpen()
         if (this._rootObject) {
             // can support this if we change all stored and
@@ -240,6 +276,7 @@
         }
 
         /*
+        // some old debugging code - leave here for now
         if (!anObject.isKindOf(ProtoClass) && !anObject.isKindOf(SubnodesArray)) {
         //if (["Object", "PersistentObjectPool", "Set", "Map"].contains(anObject.type())) {
             const msg = "can't store object of type '" + anObject.type() + "'"
@@ -275,8 +312,7 @@
     }
 
     removeMutationObservations () {
-        this.activeObjects().forEach(obj => obj.removeMutationObserver(this))
-        this.dirtyObjects().forEach(obj => obj.removeMutationObserver(this))
+        this.activeObjects().forEach(obj => obj.removeMutationObserver(this)) // activeObjects is super set of dirtyObjects
         return this
     }
 
@@ -492,6 +528,9 @@
         this.loadingPids().add(puuid)
         
         const aRecord = this.recordForPid(puuid)
+        if (Type.isUndefined(aRecord)) {
+            return undefined
+        }
         const loadedObj = this.objectForRecord(aRecord)
         return loadedObj
     }
@@ -692,6 +731,20 @@
             }
         })
         return deleteCount
+    }
+
+    deleteAll () {
+        assert(this.isOpen())
+        // assert not loading or storing?
+        const dict = this.recordsDict()
+        dict.begin()
+        dict.keys().forEach(pid => dict.removeKey(pid))
+        dict.commit()
+        return this
+    }
+
+    asyncClear (successCallback) {
+        this.recordsDict().asyncClear(successCallback)
     }
 
     // ---------------------------

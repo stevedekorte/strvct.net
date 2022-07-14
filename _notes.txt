@@ -1,6 +1,9 @@
 - move shouldStore to class?
 
-- can didInit and didLoadFromStore be merged?
+- don't use "root" pid as root object in pool, instead have a root key that returns the root pid 
+- don't store App in object pool (for now), instead have it set up and manage the root node
+
+--------------
 
 - BMNode: find way to ensure no duplicate subnodes?
 - add way to check if hooks have been set up when adding mutation observer

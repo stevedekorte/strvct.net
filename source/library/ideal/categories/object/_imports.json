@@ -1,0 +1,12 @@
+[
+    "Object-helpers.js",
+    "Object_copying.js",
+    "Object_class.js",
+    "Object_ideal.js",
+    "Object_init.js",
+    "Object_notification.js",
+    "Object_puuid.js",
+    "Object_mutation.js",
+    "Object_timeouts.js"
+]
+

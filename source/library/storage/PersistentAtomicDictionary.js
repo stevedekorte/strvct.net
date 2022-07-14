@@ -101,10 +101,10 @@
 	
     // ----
 		
-    asyncClear (callback) {
+    asyncClear (successCallback) {
         //throw new Error("PersistentAtomicDictionary clear")
         this.setJsDict({})
-        this.idb().asyncClear(callback) // TODO: lock until callback?
+        this.idb().asyncClear(successCallback) // TODO: lock until callback?
     }
 		
     // transactions
@@ -114,7 +114,7 @@
     }
 
     begin () {
-        this.debugLog(this.type() + " begin ---")
+        this.debugLog(() => this.type() + " begin ---")
         this.assertOpen()
         super.begin()
         assert(this.changedKeys().size === 0)
@@ -130,7 +130,7 @@
 	
     commit () { // public
         let count = 0
-        this.debugLog(this.type() + " prepare commit ---")
+        this.debugLog(() => this.type() + " prepare commit ---")
 	    // push to indexedDB tx 
 	    // TODO: lock until IndexedDB's tx complete callback is received,
         // ::: super.commit() is at end of method

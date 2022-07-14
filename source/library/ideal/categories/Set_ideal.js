@@ -10,7 +10,7 @@
 
 (class Set_ideal extends Set {
     shallowCopy () {
-        return new Set(this.values())
+        return new Set(this)
     }
 
     keysArray () {
@@ -22,16 +22,35 @@
     }
 
     detect (fn) {
-        // TODO: optimize?
-        return this.valuesArray().detect(fn)
+        for (let v of this) {
+            const r = fn(v)
+            if (r === true) {
+                return v;
+            }
+        }
+        return undefined
     }
 
     select (fn) {
-        // TODO: optimize?
+        // should this return a Set?
         return this.valuesArray().select(fn)
     }
 
-    isSuperset (subset) {
+    map (func) {
+        const result = new Set()
+        this.forEach((v) => result.add(func(v)))
+        return result
+    }
+
+    isSubsetOf (superSet) {
+        return superSet.isSupersetOf(this);
+    }
+
+    isSupersetOf (subset) {
+        if (this.size < subset.size) { // can't contain it with fewer keys
+            return false
+        }
+
         for (let v of subset) {
             if (!this.has(v)) {
                 return false;
@@ -78,12 +97,6 @@
         return _difference;
     }
 
-    map (func) {
-        const result = new Set()
-        this.forEach((v) => result.add(func(v)))
-        return result
-    }
-
     isEmpty (func) {
         return this.size == 0        
     }
@@ -97,7 +110,7 @@
     let setB = new Set([2, 3])
     let setC = new Set([3, 4, 5, 6])
     
-    setA.isSuperset(setB); // => true
+    setA.isSupersetOf(setB); // => true
     setA.union(setC); // => Set [1, 2, 3, 4, 5, 6]
     setA.intersection(setC); // => Set [3, 4]
     setA.symmetricDifference(setC); // => Set [1, 2, 5, 6]

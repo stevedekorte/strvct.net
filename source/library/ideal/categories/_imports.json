@@ -1,12 +1,7 @@
 [
     "Mirror.js",
     "Type.js",
-    "Object_ideal.js",
-    "Object_init.js",
-    "Object_notification.js",
-    "Object_puuid.js",
-    "Object_mutation.js",
-    "Object_timeouts.js",
+    "object/_imports.json",
     "Array_ideal.js",
     "Date_ideal.js",
     "String_ideal.js",

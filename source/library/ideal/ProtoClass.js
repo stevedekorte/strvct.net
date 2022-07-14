@@ -4,9 +4,9 @@
 
     ProtoClass
     
-    This is a place for base object features (Smalltalk like features) 
-    that we don't want to add to all Object (and Object decendants),
-    as we don't know how they might effect the rest of the system.
+    A place for adding Smalltalk like features to the base object
+    that we don't want to add to all Object (and Object decendants) yet,
+    as I'm not sure how they might effect the rest of the system.
 
 */
 
