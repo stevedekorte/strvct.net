@@ -16,9 +16,18 @@
 (class ViewableNode extends InspectableNode {
     
     initPrototype () {
-        this.newSlot("nodeViewClassName", null)
-        this.newSlot("nodeTileClassName", null)
-        this.newSlot("nodeThumbnailUrl", null)
+
+        {
+            const slot = this.newSlot("nodeViewClassName", null)
+        }
+
+        {
+            const slot = this.newSlot("nodeTileClassName", null)
+        }
+
+        {
+            const slot = this.newSlot("nodeThumbnailUrl", null)
+        }
 
         {
             const slot = this.newSlot("nodeIsVertical", true)
@@ -30,9 +39,20 @@
             slot.setShouldStoreSlot(true)
         }
 
-        this.newSlot("nodeTileIsSelectable", true).setDuplicateOp("copyValue")
-        this.newSlot("nodeTilesStartAtBottom", false).setDuplicateOp("copyValue")
-        this.newSlot("nodeNavBorderHint", true).setDuplicateOp("copyValue")
+        {
+            const slot = this.newSlot("nodeTileIsSelectable", true)
+            slot.setDuplicateOp("copyValue")
+        }
+
+        {
+            const slot = this.newSlot("nodeTilesStartAtBottom", false)
+            slot.setDuplicateOp("copyValue")
+        }
+
+        {
+            const slot = this.newSlot("nodeNavBorderHint", true)
+            slot.setDuplicateOp("copyValue")
+        }
 
         {
             const slot = this.newSlot("nodeMinTileHeight", 0)
@@ -50,11 +70,15 @@
 
         // html
 
-        this.newSlot("acceptsFileDrop", false)
+        {
+            const slot = this.newSlot("acceptsFileDrop", false)
+        }
 
         // input hook
 
-        this.newSlot("nodeInputFieldMethod", null)
+        {
+            const slot = this.newSlot("nodeInputFieldMethod", null)
+        }
 
         // column settings - TODO: auto adjust to fit?
 
@@ -79,8 +103,15 @@
             slot.setInspectorPath("Layout")
         }
 
-        this.newSlot("nodeCanEditTileHeight", false).setDuplicateOp("copyValue") // TODO: change to NavHeight
-        this.newSlot("nodeCanEditColumnWidth", false).setDuplicateOp("copyValue") // TODO: change to NavWidth
+        {
+            const slot = this.newSlot("nodeCanEditTileHeight", false)
+            slot.setDuplicateOp("copyValue") // TODO: change to NavHeight
+        }
+
+        {
+            const slot = this.newSlot("nodeCanEditColumnWidth", false)
+            slot.setDuplicateOp("copyValue") // TODO: change to NavWidth
+        }
                 
     }
 

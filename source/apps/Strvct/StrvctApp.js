@@ -56,14 +56,6 @@
 
 
     setupModel () {        
-        //console.log("App.setupModel rooObject.subnodes = ", root.subnodes().map(sn => sn.title()).join(",") )dfdfdfddfsdfsfdsdfsdsfdfsdfsfdsdsffdsfds
-        //root.removeAllSubnodes( 
-        {
-            this.rootNode().removeFirstSubnodeWithTitle("StrvctApp")
-            this.rootNode().removeFirstSubnodeWithTitle("Themes")
-            this.rootNode().scheduleMethod("scheduleSyncToStore")
-
-        }
         const notes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
         //notes.subnodes().forEach(sn => sn.setCanDelete(true))
         //notes.orderFirst()
@@ -91,7 +83,7 @@
     addSettingNameAndClass (aName, aClass) {
         const subnode = this.settings().subnodeWithTitleIfAbsentInsertProto(aName, aClass)
         this.settings().removeOtherSubnodeWithSameTitle(subnode)
-        const slot = this.thisPrototype().ownSlotNamed(aName)
+        const slot = this.thisPrototype().slotNamed(aName)
         if (slot) {
             slot.onInstanceSetValue(subnode) // or should we dynamically get these from the subnodes?
         }

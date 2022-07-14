@@ -32,7 +32,6 @@
         if (this.parentNode()) {
             this.parentNode().didToggleOption(this)
             this.didUpdateNode()
-            this.scheduleSyncToStore()
         }
     }
 

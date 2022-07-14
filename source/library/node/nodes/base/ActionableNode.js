@@ -13,13 +13,18 @@
 (class ActionableNode extends TitledNode {
     
     initPrototype () {
-        this.newSlot("actions", null).setInitProto(Array)
+        {
+            const slot = this.newSlot("actions", null)
+            slot.setInitProto(Array)
+        }
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
     
     // --- standard actions -----------------------------
     

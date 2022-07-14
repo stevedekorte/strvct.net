@@ -10,9 +10,21 @@
 (class BMStoredDatedSetNode extends BMStorableNode {
     
     initPrototype () {
-        this.newSlot("maxAgeInSeconds", 30*24*60*60).setShouldStoreSlot(true)
-        this.newSlot("autoCheckPeriod", 1*60*60).setShouldStoreSlot(true)
-        this.newSlot("dict", null).setShouldStoreSlot(true)
+        {
+            const slot = this.newSlot("maxAgeInSeconds", 30*24*60*60)
+            slot.setShouldStoreSlot(true)
+        }
+
+        {
+            const slot = this.newSlot("autoCheckPeriod", 1*60*60)
+            slot.setShouldStoreSlot(true)
+        }
+
+        {
+            const slot = this.newSlot("dict", null)
+            slot.setShouldStoreSlot(true)
+        }
+
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
     }
@@ -43,7 +55,6 @@
     addKey (h) {
         if (!this.dict().at(h)) {
             this.dict().atPut(h, Date.now())
-            this.scheduleSyncToStore()
         }
         return this
     }
@@ -55,7 +66,6 @@
     removeKey (h) {
         if (this.dict()[h]) {
             this.dict().removeAt(h)
-            this.scheduleSyncToStore()
         }
         return this
     }

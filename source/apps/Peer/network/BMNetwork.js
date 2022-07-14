@@ -54,10 +54,12 @@
         this.watchIdentities()
     }
 
+    /*
     didLoadFromStore () {
         super.didLoadFromStore()
-        //this.updateIdsBloomFilter()
+        this.updateIdsBloomFilter()
     }
+    */
 
     watchIdentities () {
         if (!this._idsObservation) {

@@ -15,9 +15,14 @@
     initPrototype () {
         // view style overrides
 
-        this.newSlot("nodeColumnStyles", null)
-        this.newSlot("nodeTileStyles", null)
+        {
+            const slot = this.newSlot("nodeColumnStyles", null)
+        }
 
+        {
+            const slot = this.newSlot("nodeTileStyles", null)
+        }
+        
         {
             const slot = this.newSlot("themeClassName", "DefaultThemeClass")
             slot.setShouldStoreSlot(true)

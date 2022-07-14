@@ -2,6 +2,7 @@
     "Mirror.js",
     "Type.js",
     "Object_ideal.js",
+    "Object_init.js",
     "Object_notification.js",
     "Object_puuid.js",
     "Object_mutation.js",

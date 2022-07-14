@@ -195,9 +195,12 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
 
 (class Object_ideal extends Object {
 
+    // --- class methods ---
+
     static clone () {
         const obj = new this()
         obj.init()
+        obj.afterInit()
         return obj
     }
  
@@ -289,7 +292,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
  
         if (this.name === "") {
             // anything touching the root "" class seems to crash Chrome,
-            // so let's be carefull to leave it along
+            // so let's be carefull to leave it alone
             return false
         }
  
@@ -304,27 +307,14 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
  
         return false
     }
+
+    // ---- prototype ---
  
     initPrototype () {
         Object.defineSlot(this, "_hasDoneInit", false)
-        //Object.defineSlot(this, "_hasRetired", false) 
+        Object.defineSlot(this, "_shouldScheduleDidInit", false)
         Object.defineSlot(this, "_mutationObservers", null)
         Object.defineSlot(this, "_shouldStore", true)
-        //Object.defineSlot(this, "_isObjectRetired", false)
-    }
- 
-    /*
-    clone () {
-        const obj = new this()
-        //let aClass = this.thisClass()
-        //assert(aClass !== this)
-        //let obj = aClass.clone()
-        return obj
-    }
-    */
- 
-    init () {
-
     }
  
     isPrototype () {
@@ -357,41 +347,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this.constructor.name
     }
  
- 
-    // --- mutation ---
- 
-    mutatorMethodNamesSet () {
-        throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class")
-    }
- 
-    setupMutatorHooks () {
-        this.mutatorMethodNamesSet().forEach((slotName) => {
-            const unhookedName = "unhooked_" + slotName
-            const unhookedFunction = this[slotName]
- 
-            Object.defineSlot(this, unhookedName, unhookedFunction)
- 
-            const hookedFunction = function () {
-                this.willMutate(slotName)
-                const result = this[unhookedName].apply(this, arguments)
-                this.didMutate(slotName)
- 
-                //let argsString = []
-                //for (let i=0; i < arguments.length; i++) {
-                //    if (i !== 0) { argsString += ", " }
-                //    argsString += String(arguments[i])
-                //}
-                //console.log("hooked Array " + slotName + "(" + argsString + ")") 
-                //console.log("result = " + result)
- 
-                return result
-            }
- 
-            Object.defineSlot(this, slotName, hookedFunction)
-        })
-    }
- 
-    // -------------------
+    // --- perform ---
  
     perform (methodName, arg1, arg2, arg3) {
         const f = this[methodName]
@@ -408,14 +364,8 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         }
     }
  
-    // -------------------
- 
-    shallowCopy () {
-        const copy = Object.assign({}, this);
-        return copy
-    }
- 
-    
+    // --- slots ---
+
     // normal at() etc names would conflict with Array etc
 
     atSlot (key) {
@@ -432,7 +382,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
     
-    // ----
+    // --- enumeration ---
  
     ownKVMap (fn) {
         return Object.keys(this).map(k => fn(k, this[k]))
@@ -453,6 +403,8 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         return this
     }
  
+    // --- equality ---
+    
     isEqual (anObject) {
         // compare like we would two dictionaries
         // only checks enumerable properties
@@ -477,34 +429,6 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         //assert(!this.isClass())
         return this.thisClass().isKindOf(aClass)
     }
- 
-    // --- didInit ---
-    //
-    //  we don't want to scheduleSyncToStore while the object is initializing
-    // (e.g. while it's being unserialized from a store)
-    // so only scheduleSyncToStore if hasDoneInit is true, and set it to true
-    // when didInit is called by the ObjectStore after 
- 
- 
-    hasDoneInit () {
-        return this.getOwnProperty("_hasDoneInit") === true
-    }
- 
-    setHasDoneInit (aBool) {
-        Object.defineSlot(this, "_hasDoneInit", aBool)
-        return this
-    }
- 
-    didInit () {
-        assert(!this.hasDoneInit())
-        // for subclasses to override if needed
-        this.setHasDoneInit(true)
-    }
- 
-    scheduleDidInit () {
-        //SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
-        this.didInit()
-    }
 
     typeCategory () {
         if (this.isInstance()) {
@@ -520,8 +444,10 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
     fullTypeName () {
         return this.type() + " " + this.typeCategory()
     }
+
+    // ----
  
-    slotValuePath (slotName, entries = []) {
+    slotValuePath (slotName, entries = []) { // for debugging serialization/deserialization
         const entry = [this.fullTypeName(), this.getOwnProperty(slotName)]
         entries.push(entry)
  
@@ -532,6 +458,13 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         }
  
         return entries
+    }
+
+    // --- copying ---
+
+    shallowCopy () {
+        const copy = Object.assign({}, this);
+        return copy
     }
  
     duplicate () {
@@ -562,7 +495,7 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
         // TODO: add a type check of some kind?
  
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
-            const otherSlot = otherObject.thisPrototype().ownSlotNamed(slotName)
+            const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
             const dop = otherSlot.duplicateOp()
  
@@ -578,13 +511,20 @@ Object.defineSlot(Object, "_allClassesSet", new Set());
  
     copySlotValuesFrom(otherObject) {
         this.thisPrototype().allSlots().ownForEachKV((slotName, mySlot) => {
-            const otherSlot = otherObject.thisPrototype().ownSlotNamed(slotName)
+            const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject)
             mySlot.onInstanceSetValue(this, v)
         })
         return this
     }
-    
+
+    // --- scheduling ---
+
+    scheduleMethod (methodName, priority) {
+        // send at end of event loop
+        // methods with the same name and target will only be sent once
+        return SyncScheduler.shared().scheduleTargetAndMethod(this, methodName, priority)
+    }
 
 }).initThisCategory();
 

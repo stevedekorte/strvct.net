@@ -29,20 +29,16 @@ if (!getGlobalThis().ideal) {
     getGlobalThis().ideal = {}
 }
 
-getGlobalThis().ideal.Slot = class Slot { 
+getGlobalThis().ideal.Slot = (class Slot extends Object { 
 
-    static clone () {
-        const obj = new this()
-        obj.init()
-        return obj
-    }
-
+    /*
     static initThisClass () { // can Object handle this now?
         if (this.prototype.hasOwnProperty("initPrototype")) {
             this.prototype.initPrototype.apply(this.prototype)
         }
         return this
     }
+    */
 
     setShouldStore (aBool) {
         throw new Error("Slot.setShouldStore should not be called on Slot")
@@ -52,7 +48,7 @@ getGlobalThis().ideal.Slot = class Slot {
         throw new Error("Slot.shouldStore should not be called on Slot")
     }
 
-    simpleNewSlot (slotName, initialValue) {
+    simpleNewSlot (slotName, initialValue) { // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
         const privateName = "_" + slotName;
         Object.defineSlot(this, privateName, initialValue)
 
@@ -757,7 +753,7 @@ getGlobalThis().ideal.Slot = class Slot {
         return aBool
     }
     
-}.initThisClass()
+}.initThisClass());
 
 
 // --- slot methods on Function -------------------------------------------------

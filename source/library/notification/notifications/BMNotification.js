@@ -8,10 +8,6 @@
 
 (class BMNotification extends ProtoClass {
 
-    scheduleDidInit () {
-        // not needed
-    }
-
     initPrototype () {
         this.newSlot("name", null)
         this.newSlot("sender", null)

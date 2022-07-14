@@ -7,16 +7,11 @@
 */
 
 
-getGlobalThis().StoreRef = class StoreRef {
-    
-    static clone () {
-        const instance = new StoreRef()
-        instance.init()
-        return instance
-    }
+(class StoreRef extends Object {
 
     init () {
-        Object.defineSlot(this, "_store", null)
+        super.init()
+        Object.defineSlot(this, "_store", null) // move to initPrototype?
     }
 
     setPid (aPid) {
@@ -45,5 +40,5 @@ getGlobalThis().StoreRef = class StoreRef {
         return this.store().refForPid(this.pid())
     }
     
-}
+}.initThisClass());
 

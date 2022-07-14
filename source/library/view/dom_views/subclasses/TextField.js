@@ -362,7 +362,7 @@
     onKeyDown (event) {
         let result = super.onKeyDown(event)
 
-        console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
+        //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
         
         /*
         if (this.isContentEditable()) {
@@ -392,7 +392,7 @@
         //event.preventDefault()
        // return result
 
-        console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
+        //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
 
         /*
         if (this.isContentEditable()) {

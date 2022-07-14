@@ -9,13 +9,15 @@
 (class BMImageNode extends BMStorableNode {
     
     initPrototype () {
-        this.newSlot("dataURL", null).setShouldStoreSlot(true)
-
+        {
+            const slot = this.newSlot("dataURL", null)
+            slot.setShouldStoreSlot(true)
+        }
+        
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
         this.setTitle("Untitled")
         this.setSubtitle(null)
-
         this.setCanDelete(true)
     }
 
@@ -26,7 +28,6 @@
     
     onDidEditNode () {
         this.debugLog(" onDidEditNode")
-        this.scheduleSyncToStore()
     }
     
 }.initThisClass());

@@ -208,7 +208,6 @@
         //console.log("syncToNode")
         this.node().setContent(this.textView().innerHtml())
         //his.node().tellParentNodes("onDidEditNode", this.node())
-        this.node().scheduleSyncToStore() // TODO: this should be handled by the node
         return this
     }
 

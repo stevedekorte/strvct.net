@@ -219,9 +219,7 @@
         return null
     }
 	
-    didUpdateView (aFieldView) {
-        this.scheduleSyncToStore()
-        
+    didUpdateView (aFieldView) {        
         let parentNode = this.parentNode()
         if (!parentNode) {
             parentNode = this.target()

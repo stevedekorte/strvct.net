@@ -68,10 +68,14 @@
     prepareToSyncToView () {
         // called after clicked
         if (!this.hasSubnodes()) {
-            for (let i = 0; i < 23; i++) {
-                const hour = BMHourNode.clone().setValue(i)
-                this.addSubnode(hour)
-            }
+            this.setupHourNodes()
+        }
+    }
+
+    setupHourNodes () {
+        for (let i = 0; i < 23; i++) {
+            const hour = BMHourNode.clone().setValue(i)
+            this.addSubnode(hour)
         }
     }
 

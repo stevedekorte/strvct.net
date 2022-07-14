@@ -31,7 +31,6 @@
 
     add () {
         const result = super.add()
-        this.scheduleSyncToStore()
         this.didUpdateNode()
         return result
     }

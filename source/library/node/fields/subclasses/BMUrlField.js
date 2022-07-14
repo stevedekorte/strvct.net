@@ -100,11 +100,6 @@
         return null
     }
 
-    didLoadFromStore () {
-        super.didLoadFromStore()
-        this.parseValue()
-    }
-
     didUpdateSlotValue () {
         this.parseValue()
     }

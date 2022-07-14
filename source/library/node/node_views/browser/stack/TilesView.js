@@ -54,13 +54,6 @@
         return this
     }
 
-    /*
-    didInit () {
-        super.didInit()
-        //this.applyStyles()
-    }
-    */
-
     // --- helpers ---
     // subview path: StackView -> NavView -> ScrollView -> TilesView -> Tiles
 

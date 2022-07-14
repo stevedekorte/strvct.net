@@ -15,12 +15,23 @@
     }
     
     initPrototype () {
-        this.newSlot("label", "").setShouldStoreSlot(true)
+        {
+            const slot = this.newSlot("label", "")
+            slot.setShouldStoreSlot(true)
+        }
 
-        this.newSlot("target", null)
-        this.newSlot("methodName", null)
-        this.newSlot("info", null)
+        {
+            const slot = this.newSlot("target", null)
+        }
 
+        {
+            const slot = this.newSlot("methodName", null)
+        }
+
+        {
+            const slot = this.newSlot("info", null)
+        }
+        
         this.setCanDelete(true)
         this.setNodeCanInspect(true)
         this.setShouldStore(true)

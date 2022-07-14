@@ -1,3 +1,7 @@
+- move shouldStore to class?
+
+- can didInit and didLoadFromStore be merged?
+
 - BMNode: find way to ensure no duplicate subnodes?
 - add way to check if hooks have been set up when adding mutation observer
 - onInstanceLoadRef is triggering didUpdateSlot -> didMutate -> ObjectPool.onDidMutateObject

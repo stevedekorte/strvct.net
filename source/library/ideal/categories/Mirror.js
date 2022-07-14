@@ -9,15 +9,6 @@ getGlobalThis().Mirror = class Mirror extends Object {
 	static reflectOn (aTarget) {
 		return this.clone().setTarget(aTarget)
 	}
-
-    static clone () {
-        const obj = new this()
-		obj.init()
-        return obj
-    }
-	
-	init () {
-	}
 	
 	// target 
 	

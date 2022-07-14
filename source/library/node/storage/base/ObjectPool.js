@@ -54,7 +54,7 @@
         // dict - objects known to the pool (previously loaded or referenced)
         this.newSlot("activeObjects", null) 
 
-        // dict - objects with mutations that need to be stored
+        // dict - subset of activeObjects containing objects with mutations that need to be stored
         this.newSlot("dirtyObjects", null)
 
         // set - pids of objects that we're loading in this event loop
@@ -63,7 +63,7 @@
         // set - pids of objects that we're storing in this event loop
         this.newSlot("storingPids", null)
 
-        // WARNING: vulnerable to system time changes
+        // WARNING: vulnerable to system time changes/differences
         this.newSlot("lastSyncTime", null)
         //isReadOnly: true,
 
@@ -156,7 +156,7 @@
             //console.log("rootRecord.subnodes: ", JSON.stringify(rootRecord, null, 2))
 
             const root = this.objectForPid(this.rootKey())
-            //root.thisPrototype().ownSlotNamed("subnodes").setupInOwner()
+            //root.thisPrototype().slotNamed("subnodes").setupInOwner()
             //root.subnodes()
             this._rootObject = root
             //let subnodes = root.subnodes()
@@ -267,6 +267,19 @@
         return true
     }
 
+    close () {
+        this.removeMutationObservations()
+        this.setActiveObjects({})
+        this.setDirtyObjects({})
+        return this
+    }
+
+    removeMutationObservations () {
+        this.activeObjects().forEach(obj => obj.removeMutationObserver(this))
+        this.dirtyObjects().forEach(obj => obj.removeMutationObserver(this))
+        return this
+    }
+
     hasDirtyObjects () {
         return Object.keys(this.dirtyObjects()).length !== 0
     }
@@ -288,9 +301,8 @@
     }
 
     onDidMutateObject (anObject) {
-        //if (this.hasActiveObject(anObject)) {
-        if (anObject.hasDoneInit() && this.hasActiveObject(anObject)) {
-           // debugger;
+        //if (anObject.hasDoneInit() && ) {
+        if (this.hasActiveObject(anObject) && !this.isLoadingObject(anObject)) {
             this.addDirtyObject(anObject)
         }
     }
@@ -305,7 +317,7 @@
         return false
     }
 
-    isLoadingObject (anObject) {
+    isLoadingObject (anObject) { // private
         if (this.loadingPids()) {
             if (this.loadingPids().has(puuid)) {
                 return true
@@ -314,8 +326,7 @@
         return false
     }
 
-    addDirtyObject (anObject) {
-    
+    addDirtyObject (anObject) { // private
         if (!this.hasActiveObject(anObject)) {
             console.log("looks like it hasn't been referenced yet")
             throw new Error("not referenced yet")
@@ -373,10 +384,14 @@
     }
 
     storeDirtyObjects () { // PRIVATE
+        // store the dirty objects, if they contain references objects unknown to pool,
+        // they'll be added as active + dirty objects which will be stored on next loop. 
+        // We continue until there are no dirty objects left.
+
         let totalStoreCount = 0
         this.setStoringPids(new Set())
 
-        while (true) {
+        while (true) { // easier to express clearly than do/while in this case
             let thisLoopStoreCount = 0
             const dirtyBucket = this.dirtyObjects()
             this.setDirtyObjects({})
@@ -391,17 +406,17 @@
                 }
 
                 this.storingPids().add(puuid)
-
                 this.storeObject(obj)
 
                 thisLoopStoreCount ++
             })
 
-            totalStoreCount += thisLoopStoreCount
-            //this.debugLog(() => "totalStoreCount: " + totalStoreCount)
             if (thisLoopStoreCount === 0) {
                 break
             }
+
+            totalStoreCount += thisLoopStoreCount
+            //this.debugLog(() => "totalStoreCount: " + totalStoreCount)
         }
 
         this.setStoringPids(null)
@@ -410,7 +425,7 @@
 
     // --- reading ---
 
-    conversionDict () {
+    classNameConversionDict () {
         return {}
         /*
         return { 
@@ -427,25 +442,26 @@
         */
     }
 
+    classForName (className) { 
+        const altClassName = this.classNameConversionDict()[className]
+
+        if (altClassName) {
+            return Object.getClassNamed(altClassName)
+        } 
+
+        return Object.getClassNamed(className)
+    }
+
     objectForRecord (aRecord) { // private
         const className = aRecord.type
-        
         //console.log("loading " + className + " " + aRecord.id)
-        
-        let aClass = Object.getClassNamed(className)
+        const aClass = this.classForName(className)
+
         if (!aClass) {
-            const altClassName = this.conversionDict()[className]
-
-            if (altClassName) {
-                aClass = Object.getClassNamed(altClassName)
-            }
-
-            if (!aClass) {
-                throw new Error("missing class '" + className + "'")
-            }
+            throw new Error("missing class '" + className + "'")
         }
         
-        assert(aRecord.id)
+        assert(!Type.isNullOrUndefined(aRecord.id))
         const obj = aClass.instanceFromRecordInStore(aRecord, this)
         assert(!this.hasActiveObject(obj))
         obj.setPuuid(aRecord.id)
@@ -458,13 +474,16 @@
         return this.activeObjects().getOwnProperty(puuid)
     }
 
-    objectForPid (puuid) { // private
+    objectForPid (puuid) { // PRIVATE (except also used by StoreRef)
         //console.log("objectForPid " + puuid)
 
+        // return active object for pid, if there is one
         const activeObj = this.activeObjectForPid(puuid)
         if (activeObj) {
             return activeObj
         }
+
+        // schedule didInitLoadingPids to occur at end of event loop 
 
         if (!this.isFinalizing() && this.loadingPids().size === 0) {
             SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids")
@@ -474,23 +493,20 @@
         
         const aRecord = this.recordForPid(puuid)
         const loadedObj = this.objectForRecord(aRecord)
-        if (loadedObj) {
-            loadedObj.scheduleDidLoadFromStore()
-        }
-
         return loadedObj
     }
 
     didInitLoadingPids () {
+        assert(!this.isFinalizing()) // sanity check
         this.setIsFinalizing(true)
-        while (!this.loadingPids().isEmpty()) {
+        while (!this.loadingPids().isEmpty()) { // while there are still loading pids
             const lastSet = this.loadingPids()
             this.setLoadingPids(new Set())
 
-            lastSet.forEach((loadedPid) => {
+            lastSet.forEach(loadedPid => { // sends didLoadFromStore to each matching object
                 const obj = this.activeObjectForPid(loadedPid)
                 if (obj.didLoadFromStore) {
-                    obj.didLoadFromStore()
+                    obj.didLoadFromStore() // should this be able to trigger an objectForPid() that would add to loadingPids?
                 }
             })
         }
@@ -578,12 +594,9 @@
         assert(obj.shouldStore())
 
         const puuid = obj.puuid()
-        if (Type.isUndefined(puuid)) {
-            obj.puuid()
-        }
-        assert(puuid)
-        let v = JSON.stringify(obj.recordForStore(this))
-        this.debugLog("store " + obj.puuid() + " <- " + v)
+        assert(!Type.isNullOrUndefined(puuid))
+        const v = JSON.stringify(obj.recordForStore(this))
+        this.debugLog(() => "store " + obj.puuid() + " <- " + v )
         this.recordsDict().atPut(puuid, v)
         return this
     }
@@ -605,7 +618,7 @@
         this.recordsDict().begin()
         this.flushIfNeeded() // store any dirty objects
 
-        this.debugLog("--- begin collect --- with " + this.recordsDict().keys().length + " pids")
+        this.debugLog(() => "--- begin collect --- with " + this.recordsDict().keys().length + " pids")
         this.setMarkedSet(new Set())
         this.markPid(this.rootKey())
         this.activeObjects().ownForEachKV((pid, obj) => this.markPid(pid))

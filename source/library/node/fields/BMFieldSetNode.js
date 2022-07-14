@@ -74,11 +74,6 @@
     }
     */
 
-    onDidEditNode () {
-        this.scheduleSyncToStore()
-        this.didUpdateNode()
-    }
-
     // --- validation ---
 
     validate () {

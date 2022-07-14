@@ -96,23 +96,55 @@
 
         // parent node, subnodes
 
-        this.newSlot("parentNode", null)
-        this.newSlot("nodeCanReorderSubnodes", false)
-        this.newSlot("subnodes", null).setInitProto(SubnodesArray).setDoesHookSetter(true)
-        this.newSlot("shouldStoreSubnodes", true).setDuplicateOp("duplicate") //.setShouldStore(true)
-        this.newSlot("subnodeClasses", []) //.setInitProto([]) // ui will present creator node if more than one option
+        {
+            const slot = this.newSlot("parentNode", null)
+        }
+
+        {
+            const slot = this.newSlot("nodeCanReorderSubnodes", false)
+        }
+
+        {
+            const slot = this.newSlot("subnodes", null)
+            slot.setInitProto(SubnodesArray)
+            slot.setDoesHookSetter(true)
+        }
+
+        {
+            const slot = this.newSlot("shouldStoreSubnodes", true)
+            slot.setDuplicateOp("duplicate") //.setShouldStore(true)
+        }
+
+        {
+            const slot = this.newSlot("subnodeClasses", []) //.setInitProto([]) // ui will present creator node if more than one option
+        }
 
         // notification notes
 
-        this.newSlot("didUpdateNodeNote", null) // private
-        this.newSlot("shouldFocusSubnodeNote", null) // private
-        this.newSlot("shouldFocusAndExpandSubnodeNote", null) // private
+        {
+            const slot = this.newSlot("didUpdateNodeNote", null) // private
+        }
+
+        {
+            const slot = this.newSlot("shouldFocusSubnodeNote", null) // private
+        }
+
+        {
+            const slot = this.newSlot("shouldFocusAndExpandSubnodeNote", null) // private
+
+        }
 
         // view related, but computed on node
 
-        this.newSlot("nodeVisibleClassName", null).setDuplicateOp("copyValue")
+        {
+            const slot = this.newSlot("nodeVisibleClassName", null)
+            slot.setDuplicateOp("copyValue")
+        }
 
-        this.newSlot("canDelete", false).setDuplicateOp("copyValue")
+        {
+            const slot = this.newSlot("canDelete", false)
+            slot.setDuplicateOp("copyValue")
+        }
     }
 
 

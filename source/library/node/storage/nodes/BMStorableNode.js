@@ -7,19 +7,32 @@
     Thin subclass to:
 
     - override some slots and mark them as shouldStore
-    - hook didUpdateSlot() to schedule scheduleSyncToStore if object and slot are marked as shouldStore
+    - hook didUpdateSlot() to didMutate so ObjectPool (if observing mutations) gets told it needs to store the change
     
 */
 
 (class BMStorableNode extends StyledNode {
 
+
     initPrototype () {
         this.setShouldStore(true)
+        this.setShouldScheduleDidInit(true)
         //this.setShouldStoreSubnodes(true)
 
-        this.overrideSlot("canDelete", false).setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
-        this.overrideSlot("title", null).setShouldStoreSlot(true)
-        this.overrideSlot("subtitle", "").setShouldStoreSlot(true)
+        {
+            const slot = this.overrideSlot("canDelete", false)
+            slot.setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
+        }
+
+        {
+            const slot = this.overrideSlot("title", null)
+            slot.setShouldStoreSlot(true)
+        }
+
+        {
+            const slot = this.overrideSlot("subtitle", "")
+            slot.setShouldStoreSlot(true)
+        }
 
         {
             const slot = this.overrideSlot("nodeFillsRemainingWidth", false)
@@ -42,15 +55,14 @@
             slot.setupInOwner()
         }
         
-        this.newSlot("lazySubnodeCount", null).setShouldStoreSlot(true)
+        {
+            const slot = this.newSlot("lazySubnodeCount", null)
+            slot.setShouldStoreSlot(true)
+        }
     }
 
-    init () {
-        super.init()
-        if (this.shouldStore()) {
-            this.scheduleDidInit()
-        }
-        // do we need to start observing subnodes?
+    didInit () {
+        super.didInit()
         return this
     }
 
@@ -64,7 +76,7 @@
 	    }
 	    
         if (aSlot.shouldStoreSlot()) { 
-            this.scheduleSyncToStore()
+            this.didMutate()
         }
         
         // TODO: HACK, add a switch for this feature

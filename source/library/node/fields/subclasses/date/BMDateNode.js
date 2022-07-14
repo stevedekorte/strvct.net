@@ -15,17 +15,50 @@
     }
     
     initPrototype () {        
-        this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
-        this.newSlot("year", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")
-        this.newSlot("month", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")
-        this.newSlot("day", null).setShouldStoreSlot(true).setDoesHookSetter(true).setDuplicateOp("copyValue")
+        {
+            const slot = this.overrideSlot("subnodes")
+            slot.setShouldStoreSlot(false)
+        }
 
-        const startYearSlot = this.newSlot("startYear", 2000).setShouldStoreSlot(true).setDoesHookSetter(true)
-        startYearSlot.setCanInspect(true).setSlotType("Number").setLabel("Start year")
+        {
+            const slot = this.newSlot("year", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+            slot.setDuplicateOp("copyValue")
+        }
 
-        const yearRangeSlot =  this.newSlot("yearRange", 20).setShouldStoreSlot(true).setDoesHookSetter(true)
-        yearRangeSlot.setCanInspect(true).setSlotType("Number").setLabel("Year range")
+        {
+            const slot = this.newSlot("month", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+            slot.setDuplicateOp("copyValue")
+        }
+
+        {
+            const slot = this.newSlot("day", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+            slot.setDuplicateOp("copyValue")
+        }
+
+        {
+            const slot = this.newSlot("startYear", 2000)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("Number")
+            slot.setLabel("Start year")
+        }
+
+        {
+            const slot = this.newSlot("yearRange", 20)
+            slot.setShouldStoreSlot(true)
+            slot.setDoesHookSetter(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("Number")
+            slot.setLabel("Year range")
+        }
     }
 
     init () {
@@ -79,7 +112,7 @@
 
     setupSubnodes () {
         this.removeAllSubnodes()
-        /*
+        
         const startYear = this.startYear()
         const range = this.yearRange()
 
@@ -89,8 +122,7 @@
             year.setCanDelete(false)
             years.push(year)
         }
-        //this.setSubnodes(years)
-        */
+        this.setSubnodes(years)
     }
 
     onTapOfDecendantNode (aNode) {
@@ -116,7 +148,7 @@
     }
 
     didUpdateSlotStartYear () {
-        if (!this.hasDoneInit()) {
+        if (!this.hasDoneInit()) { // so we ignore the initial setup as a change
             return
         }
 

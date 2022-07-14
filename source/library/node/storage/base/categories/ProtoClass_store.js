@@ -38,13 +38,15 @@
             const k = entry[0]
             const v = entry[1]
 
-            const slot = this.thisPrototype().ownSlotNamed(k)
+            const slot = this.thisPrototype().slotNamed(k)
+            // TODO: replace with slot.onInstanceSetValueFromEntry(this, entry, aStore)
 
             if (slot) {
-                if (!slot.hasSetterOnInstance(this)) {
+                    if (!slot.hasSetterOnInstance(this)) {
                     // looks like the schema has changed 
-                    // so schedule to store again, which will remove missing slot in the record
-                    this.scheduleSyncToStore()
+                    // TODO: add something the schedule a didMutate?
+                    console.warn("no setter for slot?")
+                    debugger;
                 } else {
                     if (slot.isLazy()) {
                         const pid = v["*"]
@@ -57,28 +59,20 @@
                         slot.onInstanceSetValue(this, unrefValue)
                     }
                 }
+            } else {
+                console.warn("loadFromRecord found missing slot '" + k + "' - did schema change?")
+                this.scheduleMethod("didMutate", 1000) // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete 
+                debugger;
             }
         })
 
-        //this.didLoadFromStore() // done in ObjectPool.didInitLoadingPids() instead
         return this
     }
 
-    scheduleDidInit () {
-        //console.log(this.typeId() + ".scheduleDidInit()")
-        // Object scheduleDidInit just calls this.didInit()
-        assert(!this.hasDoneInit())
-        //debugger;
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "didInit")
-    }
-
-    scheduleDidLoadFromStore () {
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
-    }
-
     /*
-    didLoadFromStore () {
-        // Object.didLoadFromStore handles this
+    didLoadFromStore (aStore) {
+        // called by ObjectPool.didInitLoadingPids() after all objects are deserialized
+        super.didLoadFromStore(aStore)
     }
     */
 

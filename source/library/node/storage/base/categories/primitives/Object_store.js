@@ -30,12 +30,6 @@
         }
     }
 
-    /*
-    shouldStore () {
-        return this._shouldStore
-    }
-    */
-
     refsPidsForJsonStore (puuids = new Set()) {
         if (this.hasOwnProperty("*")) {
             puuids.add(this["*"])
@@ -49,19 +43,12 @@
         return PersistentObjectPool.shared()
     }
 
-    scheduleSyncToStore (slotName) {
-        this.didMutate()
-    }
-
-    scheduleDidLoadFromStore () {
-        //SyncScheduler.shared().scheduleTargetAndMethod(this, "didLoadFromStore")
-        this.didLoadFromStore()
-    }
- 
     // ---
 
-    didLoadFromStore () {
-        // for subclasses to override
+    didLoadFromStore () { 
+        // See Object_init notes for docs on when/how to use this properly.
+        // Here for subclasses to override.
+        return this
     }
 
     // --- shouldStore ---

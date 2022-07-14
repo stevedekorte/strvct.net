@@ -22,7 +22,9 @@
 
     static clone () {
         if (this.isSingleton() && this.hasShared()) {
-            return this.shared()
+            // kinda weird dealing with shared in clone like this
+            // do we do this to deal with deserialization of singletons?
+            return this.shared() 
         }
 
         const obj = new this()
@@ -382,6 +384,24 @@
 
     // --- slots ---
 
+    slotNamed (slotName) {
+        assert(this.isPrototype())
+
+        const slot = this.ownSlotNamed(slotName)
+        
+        if (slot) {
+            return slot
+        }
+
+        // look in parent
+        const p = this.__proto__ 
+        if (p && p.ownSlotNamed) {
+            return p.slotNamed(slotName)
+        }
+
+        return null
+    }
+
     ownSlotNamed (slotName) {
         assert(this.isPrototype())
 
@@ -390,12 +410,6 @@
             return slots[slotName]
         }
         
-        // why call it "own" if we look in parent?
-        const p = this.__proto__ 
-        if (p && p.ownSlotNamed) {
-            return p.ownSlotNamed(slotName)
-        }
-
         return null
     }
 

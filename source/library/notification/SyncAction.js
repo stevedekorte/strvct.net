@@ -15,10 +15,6 @@
         return target.typeId() + "." + method
     }
 
-    scheduleDidInit () {
-        // do nothing to avoid infinite loop
-    }
-
     initPrototype () {
         this.newSlot("target", null)
         this.newSlot("method", null)

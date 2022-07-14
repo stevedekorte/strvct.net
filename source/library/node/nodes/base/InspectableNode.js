@@ -14,8 +14,14 @@
 (class InspectableNode extends ActionableNode {
 
     initPrototype () {
-        this.newSlot("nodeCanInspect", true).setDuplicateOp("copyValue")
-        this.newSlot("nodeInspector", null)
+        {
+            const slot = this.newSlot("nodeCanInspect", true)
+            slot.setDuplicateOp("copyValue")
+        }
+
+        {
+            const slot = this.newSlot("nodeInspector", null)
+        }
     }
 
     /*

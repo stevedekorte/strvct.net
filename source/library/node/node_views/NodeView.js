@@ -217,7 +217,6 @@
         const node = this.node()
         if (node) {
             node.didUpdateNode()
-            //node.scheduleSyncToStore()
         }
         return this
     }

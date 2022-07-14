@@ -25,7 +25,6 @@
         this.addAction("add")
         this.setSubnodeClasses([BMThemeState, BMThemeFolder])
         this.setNodeCanReorderSubnodes(true)
-
     }
 
     didInit () {
@@ -33,13 +32,6 @@
         //console.log(this.typeId() + " subnodes: ", this.subnodes())
         this.setupSubnodes()
     }
-
-    /*
-    didLoadFromStore () {
-        super.didLoadFromStore()
-        this.setupSubnodes()
-    }
-    */
 
     subnodeNames () {
         return BMThemeState.standardStateNames()

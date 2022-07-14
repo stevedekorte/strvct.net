@@ -168,7 +168,6 @@ var BitcoreMessage = require("bitcore-message");
     }
 	    
     send () {
-        this.scheduleSyncToStore()
         //console.log(">>> "+ this.typeId() + ".send() adding to network messages")
         this.network().messages().addMessage(this)
         return this

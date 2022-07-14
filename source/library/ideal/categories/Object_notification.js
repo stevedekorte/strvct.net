@@ -8,39 +8,13 @@
 
 
 (class Object_notification extends Object {
- 
-    // --- TODO: retired no longer used, but need to look into it more ---
 
     /*
-    assertNotRetired () {
-        if (this._isObjectRetired) {
-            throw new Error("object already retired")
-        }
-    }
- 
     prepareToRetire () { 
-        // NOTE: this isn't being used atm
-        // move this to Object_ideal and call willRetire if available and define that here?
+        // opportunity to remove notification observers, event listeners, etc
         this.assertNotRetired()
-        // called by user code when it expect object to stop being used
-        // provides opportunity to remove notification observers, event listeners, etc
         this.removeAllNotificationObservations()
         this.removeScheduledActions()
-        this.setIsObjectRetired(true)
-        //console.log("Object retiring " + this.debugTypeId())
-    }
-
-    setIsObjectRetired (aBool) {
-        this._isObjectRetired = aBool
-        return this
-    }
-
-    isObjectRetired () {
-        return this._isObjectRetired
-    }
-
-    assertNotRetired () {
-        assert(!this.isObjectRetired())
     }
     */
 

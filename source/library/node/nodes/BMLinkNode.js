@@ -15,10 +15,19 @@
     }
 
     initPrototype () {
-        this.newSlot("linkedNode", null).setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        {
+            const slot = this.newSlot("linkedNode", null)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("copyValue")
+        }
         
-        const dupSlot = this.newSlot("willDuplicateLinkedObject", false).setShouldStoreSlot(true)
-        dupSlot.setCanInspect(true).setSlotType("Boolean").setLabel("Will duplicate linked object")
+        {
+            const slot = this.newSlot("willDuplicateLinkedObject", false)
+            slot.setShouldStoreSlot(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("Will duplicate linked object")
+        }
 
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
@@ -30,9 +39,11 @@
         this.setNodeCanInspect(true) 
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     nodeAcceptsDrop (aNode) {
         return true
