@@ -12,16 +12,19 @@
 
 (class ProtoClass extends Object {
 
-    static minimalClone () {
+   // --- clone ---
+
+   /*
+   static minimalClone () { // used by deserializer?
         const obj = new this()
         obj.init()
         return obj
     }
-
-   /* ------------------------------------------------ */
+    */
 
     static clone () {
         if (this.isSingleton() && this.hasShared()) {
+            debugger;
             // kinda weird dealing with shared in clone like this
             // do we do this to deal with deserialization of singletons?
             return this.shared() 
@@ -37,53 +40,40 @@
         return obj
     }
 
-    initPrototype () { 
+    // --- shared ---
+
+    static hasShared () {
+        return !Type.isNullOrUndefined(this._shared)
+    }
+
+    static shared () {
+        if (!this.hasShared()) {
+            this.setShared(this.clone())
+        }
+        return this._shared
+    }
+
+    static setShared (v) {
+        this._shared = v
+        return this
+    }
+
+    // --- init ---
+
+    static initClass () {
+        //console.log(this.type() + " initThisClass")
+        Object.defineSlot(this, "_shared", undefined)
+        //this.newClassSlot("shared", undefined)
+        this.newClassSlot("isSingleton", false)
+        //this.newClassSlot("slots", false)
+        return this
+    }
+
+    initPrototype () {
         // subclasses should call this at end of their definition
     }
 
     // --- class slots and variables ---
-    
-
-    static newClassSlot (slotName, slotValue) { 
-        const ivarName = "_" + slotName
-
-        const hasSlot = !Type.isUndefined(Object.getOwnPropertyDescriptor(slotName))
-        assert(!hasSlot)
-
-        const hasIvar = !Type.isUndefined(Object.getOwnPropertyDescriptor(ivarName))
-        assert(!hasIvar)
-
-        // setup ivar
-        {
-            const descriptor = {
-                configurable: true,
-                enumerable: false,
-                value: slotValue,
-                writable: true,
-            }
-            Object.defineProperty(this, ivarName, descriptor)
-        }
-
-        // setup getter
-        {
-            //const getterFunc = eval('function () { return this.' + ivarName + '; }');
-            const self = this
-            const getterFunc = () => { return self[ivarName]; };
-            const descriptor = {
-                configurable: true,
-                enumerable: false,
-                value: getterFunc,
-                writable: true,
-            }
-            Object.defineProperty(this, slotName, descriptor)
-        }
-
-        return this
-   }
-   
-    static hasClassVariable (key) {
-        return this.hasOwnProperty(key)
-    }
 
     static getClassVariable (key, defaultValue) {
         if (!this.hasOwnProperty(key)) {
@@ -97,61 +87,6 @@
 
     static setClassVariable (key, value) {
         Object.defineSlot(this, key, value)
-        //this[key] = value
-        return this
-    }
-
-    // singleton
-
-    static setIsSingleton (aBool) {
-        this.setClassVariable("_isSingleton", aBool)
-        return this
-    }
-
-    static isSingleton () {
-        return this.getClassVariable("_isSingleton", false)
-    }
-
-    static singleton () {
-        assert(this.isSingleton())
-        return this.shared()
-    }
-
-    // shared
-
-    static hasShared () {
-        return !Type.isUndefined(this.getClassVariable("_shared"))
-    }
-
-    static shared () {
-        if (!this.getClassVariable("_shared")) {
-            this.setShared(this.clone())
-        }
-        return this.getClassVariable("_shared")
-    }
-
-    static setShared (anInstance) {
-        this.setClassVariable("_shared", anInstance)
-        return this
-    }
-
-    static allClasses () {
-        return this.getClassVariable("_allClasses", [Object])
-    }
-    
-    static defineClassGlobally () {
-        if (Type.isUndefined(getGlobalThis()[this.type()])) {
-            getGlobalThis()[this.type()] = this
-            //console.log(this.type() + ".initThisClass()")
-        } else {
-            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + this.type() + "']"
-            console.warn(msg)
-            throw new Error(msg)
-        }
-    }
-
-    static addChildClass (aClass) {
-        this._childClasses.add(aClass)
         return this
     }
 
@@ -166,40 +101,6 @@
         const index = parts.indexOf("library") 
         const afterLibrary = parts.slice(index+1)
         return afterLibrary.join("/")
-    }
-
-    static initThisClass () {
-        //console.log(this.type() + " initThisClass")
-        //this.setClassVariable("_classSrcPath", document.currentScript.src) // doesn't work with eval
-
-        this.setClassVariable("_childClasses", new Set())
-        this.setClassVariable("_ancestorClasses", this.findAncestorClasses())
-
-        const p = this.parentClass()
-        if (p && p.addChildClass) {
-            p.addChildClass(this)
-        }
-
-        if (this.prototype.hasOwnProperty("initPrototype")) {
-            // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            //this.prototype.initPrototype.apply(this.prototype)
-            this.prototype.initPrototype()
-        }
-
-        this.defineClassGlobally()
-        this.addToAllClasses()
-
-        return this
-    }
-
-    static parentClass () {
-        const p = this.__proto__
-
-        if (p && p.type) {
-            return p
-        }
-
-        return null
     }
 
     static ancestorClassesTypesIncludingSelf () {
@@ -233,41 +134,6 @@
         return results
     }
 
-    static ancestorClasses () {
-        const v = this.getClassVariable("_ancestorClasses")
-        assert(v)
-        return v
-    }
-
-    static findAncestorClasses () {
-        const results = []
-        let aClass = this.parentClass()
-        while (aClass && aClass.parentClass) {
-            results.push(aClass)
-            aClass = aClass.parentClass()
-        }
-        return results
-    }
-
-    /*
-    static ancestorClasses (results = []) {
-        const parent = this.parentClass()
-        if (parent && parent.ancestorClasses) {
-            //assert(!results.contains(parent))
-            results.push(parent)
-            parent.ancestorClasses(results)
-        }
-        return results
-    }
-    */
-
-    static childClasses () {
-        // TODO: if needed for performance, 
-        // - have each class cache a list of childClasses
-        // - use initClass method tell parent about new child class
-        return ProtoClass.allClasses().filter(aClass => aClass && aClass.parentClass && aClass.parentClass() === this)
-    }
-
     static descendantClasses (results = []) {
         const children = this.childClasses()
         children.forEach(child => {
@@ -285,10 +151,11 @@
         return this.thisClass().superClass()
     }
 
+    /*
     superPrototype () {
         return this.superClass().prototype
     }
-
+    */
 
     static subclassesDescription (level, traversed) {
 
@@ -434,6 +301,24 @@
         return allSlots
     }
 
+    /*
+    allSlotsRawValueMap () { // what about action slots?
+        const map = new Map()
+        this.allSlots().forEach((slot, slotName) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
+        return map
+    }
+
+    isEqual (anObject) {
+        // Should this test Type equality?
+        if (this.type() !== obj2.type()) {
+            return false
+        }
+        const sm1 = this.allSlotsRawValueMap()
+        const sm2 = anObject.allSlotsRawValueMap()
+        return sm1.isEqual(sm2)
+    }
+    */
+
     // stored slots
 
     /*
@@ -527,29 +412,6 @@
         slot.setupInOwner()
         this.slots().atSlotPut(slotName, slot)
         return slot
-    }
-
-    newSlots (slots) {
-        assert(this.isPrototype())
-        if (Object.keys(slots).length === 0) {
-            return this
-        }
-        let s = this.type() + ":\n"
-        Object.eachSlot(slots, (slotName, initialValue) => {
-            let initialValueString = initialValue
-            if (!Type.isLiteral(initialValueString)) {
-                initialValueString = "[insert]"
-            } else if (Type.isString(initialValueString)) {
-                initialValueString = "\"" + initialValueString + "\""
-            }
-            const line =  "     this.newSlot(\"" + slotName + "\", " + initialValueString + ")\n"
-            //console.log(line)
-            s += line
-            this.newSlot(slotName, initialValue);
-        });
-
-        console.log(s)
-        return this;
     }
 
     willGetSlot (aSlot) {

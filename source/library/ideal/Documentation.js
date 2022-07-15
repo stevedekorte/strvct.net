@@ -20,7 +20,7 @@
     }
 
     classes () {
-        return ProtoClass.allClasses()
+        return ProtoClass.allClassesSet().asArray()
     }
 
     methodsDocsForClass (aClass) {

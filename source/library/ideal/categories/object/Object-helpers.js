@@ -1,12 +1,6 @@
-//"use strict";
+"use strict";
 
-/*
 
-    Object-helpers
-    
-    Some functions to help us implement categories.
-
-*/
 
 
 /*
@@ -39,6 +33,13 @@
     classesToFix.forEach(aClass => aClass.__proto__ = Object)
 }
 
+/*
+
+    Object-helpers
+    
+    Some functions to help us implement categories.
+
+*/
 
 Object.defineSlot = function (obj, slotName, slotValue) {
     if (Object.getOwnPropertyDescriptor(slotName)) {
@@ -185,5 +186,3 @@ Object.defineSlot(Object, "initThisCategory", function () {
     Object.defineSlotsSafely(parent.prototype, instanceSlotsDict) // this should throw on collision?
     return this
 });
-
-Object.defineSlot(Object, "_allClassesSet", new Set());

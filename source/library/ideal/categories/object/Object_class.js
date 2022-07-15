@@ -34,19 +34,136 @@
         }
         return getGlobalThis()[aName]
     }
+
+    static parentClass () {
+        const p = this.__proto__
+
+        if (p && p.type) {
+            return p
+        }
+
+        return null
+    }
+
+    static addChildClass (aClass) {
+        this.childClasses().add(aClass)
+        return this
+    }
  
     static globals () {
         return getGlobalThis()
     }
+
+    static initClass () {
+        this.newClassSlot("allClassesSet", new Set())
+    }
  
-    static initThisClass () {
-        this.globals()[this.type()] = this
-        //console.log("Prototype " + this.type() + " initThisClass")
-        if (this.prototype.hasOwnProperty("initPrototype")) {
-            this.prototype.initPrototype.apply(this.prototype)
+    static findAncestorClasses () {
+        const results = []
+        let aClass = this.parentClass()
+        while (aClass && aClass.parentClass) {
+            results.push(aClass)
+            aClass = aClass.parentClass()
         }
+        return results
+    }
+
+
+    static newClassSlot (slotName, slotValue) { 
+        const ivarName = "_" + slotName
+        const assert = function (aBool) {
+            if (!aBool) {
+                throw new Error("failed assert")
+            }
+        }
+
+        // define ivar
+        {
+            const hasIvar = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, ivarName))
+            assert(!hasIvar)
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: slotValue,
+                writable: true,
+            }
+            Object.defineProperty(this, ivarName, descriptor)
+        }
+
+        // define getter
+        {
+            const hasGetter = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, slotName))
+            assert(!hasGetter)
+            //const getterFunc = eval('function () { return this.' + ivarName + '; }');
+            const getterFunc = function () { return this[ivarName]; };
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: getterFunc,
+                writable: true,
+            }
+            Object.defineProperty(this, slotName, descriptor)
+        }
+
+        // define setter
+        {
+
+            const setterName = "set" + slotName.capitalized()
+            const setterFunc = function (v) { this[ivarName] = v; return this };
+            const descriptor = {
+                configurable: true,
+                enumerable: false,
+                value: setterFunc,
+                writable: true,
+            }
+            Object.defineProperty(this, setterName, descriptor)
+        }
+
+        return this
+   }
+
+
+    static initThisClass () { // called on every class which we create
+        this.defineClassGlobally()
+
+        // setup ancestor list
+        // could become invalid if class structure dynamically changes
+        this.newClassSlot("ancestorClasses", this.findAncestorClasses()) 
+        this.newClassSlot("childClasses", new Set())
+
+        // add as class to parent
+        const p = this.parentClass()
+        if (p && p.addChildClass) {
+            p.addChildClass(this)
+        }
+
+        if (this.hasOwnProperty("initClass")) { 
+            // Only called if method defined on this class.
+            // This method should *not* call super.initClass().
+            this.initClass()
+        }
+
+        const proto = this.prototype
+        if (proto.hasOwnProperty("initPrototype")) {
+            // Only called if method defined on this class.
+            // This method should *not* call super.initPrototype()
+            proto.initPrototype()
+        }
+
         this.addToAllClasses()
         return this
+    }
+
+    static defineClassGlobally () {
+        const className = this.type()
+        if (Type.isUndefined(this.globals()[className])) {
+            this.globals()[className] = this
+            //console.log(this.type() + ".initThisClass()")
+        } else if (this.type() !== "Object") {
+            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + className + "']"
+            console.warn(msg)
+            throw new Error(msg)
+        }
     }
  
     static superClass () {
@@ -54,20 +171,20 @@
     }
  
     static addToAllClasses () {
-        const allClassesSet = Object._allClassesSet
-        if (allClassesSet.has(this)) {
-            throw new Error("attempt to call initThisClass twice on the same class")
+        console.log("addToAllClasses '" + this.type() + "'")
+        if (this.allClassesSet().has(this)) {
+            throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'")
         }
-        allClassesSet.add(this)
+        this.allClassesSet().add(this)
         return this
     }
  
     static allSubclasses () {
-        return this._allClassesSet.select(aClass => aClass.hasAncestorClass(this))
+        return this.allClassesSet().select(aClass => aClass.hasAncestorClass(this))
     }
  
     static subclasses () {
-        return this._allClassesSet.select(aClass => aClass.superClass() === this)
+        return this.allClassesSet().select(aClass => aClass.superClass() === this)
     }
  
     static hasAncestorClass (aClass) {
@@ -87,21 +204,7 @@
     static eachSlot (obj, fn) {
         Object.keys(obj).forEach(k => fn(k, obj[k]))
     }
- 
-    /*
-    static slotValues (obj) {
-        const values = [];
-        obj.ownForEachKV((k, v) => values.push(v))
-        return values;
-    }
-    */
- 
-    static asValueKeyDict (obj) {
-        const dict = {}
-        obj.ownForEachKV((k, v) => dict[v] = k)
-        return dict
-    }
- 
+
     static isKindOf (aClass) {
         //assert(this.isClass())
         //assert(aClass.isClass())

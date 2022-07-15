@@ -2,8 +2,8 @@
 
 /*
 
-    Set-ideal
-
+    Set_ideal
+    
     Some extra methods for the Javascript Set primitive.
 
 */

@@ -8,6 +8,7 @@
     "Number_ideal.js",
     "Boolean_ideal.js",
     "Set_ideal.js",
+    "Map_ideal.js",
     "Error_ideal.js",
     "Function_ideal.js",
     "Image_ideal.js",

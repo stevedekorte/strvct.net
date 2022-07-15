@@ -21,13 +21,6 @@
         assert(this.isInstance())
         const instance = this.thisClass().clone().copyFrom(this)
         instance.duplicateSlotValuesFrom(this) // TODO: what about lazy slots?
- 
-        //const storeSlots = Object.slotValues(this.allSlots()).filter(slot => slot.shouldStoreSlot())
-        //storeSlots.forEach((slot) => {
-        //    const v = slot.onInstanceGetValue(this)
-        //    slot.onInstanceSetValue(instance, v)
-        //})
- 
         return instance
     }
  

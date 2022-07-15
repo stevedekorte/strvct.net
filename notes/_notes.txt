@@ -1,9 +1,8 @@
-- move shouldStore to class?
+- remove getClassVariable/setClassVariable
+-  move shouldStore to class?
 
 - don't use "root" pid as root object in pool, instead have a root key that returns the root pid 
 - don't store App in object pool (for now), instead have it set up and manage the root node
-
---------------
 
 - BMNode: find way to ensure no duplicate subnodes?
 - add way to check if hooks have been set up when adding mutation observer
@@ -29,13 +28,6 @@
 -----------
 - remove FieldSetNode
 --- then fix import of     "BMDataStoreRecord.js"
-
-
-- consolidate viewRetainCount with stack cache?
-
-- timeouts
--- closely look at EventSet timeouts to make sure they don't send events to object after it is retired
--- send a "willClearTimeout<Name>"?
 
 - implement newClassSlot (supporting getter and setter creation)
 
@@ -98,12 +90,6 @@ cleanup:
 -- move isTapLongPress to a new GestureRecognizer or into DomView?
 -- move key modifiers in onTapComplete to GestureRecognizer?
 --- rename justTap/justShiftTap/etc to onTap/onShiftTap? Or should diff prefix be used for internally sent events? onLocalTap?
-- change column() to stackItemSet() or itemSet()?
-
-general:
-- is prepareToRetire being called when appropriate?
---- does the DOM handle handler removal automatically? Probably not as this objects have lots of external refs
-
 
 ----------------------------------------------
 
@@ -144,59 +130,14 @@ issues:
 - would need to deal with stack view expectations around node parent chain 
 
 
-PathView:
-- example on wide display:
-
-	< Io / docs / guide
-
-or in single column display:
-
-	< guide 
-
-at top level:
-
-	Io
-
-also (if view wide and tall enough):
-
-	Io
-	/ docs / guide
-
-
-
 Sites:
 - Start converting Io and Dekorte sites to JSON?
 
 
 Browser:
-- need back arrow - add new Browser class with header, footer, stack view in middle - room for shelf?
--- should this be implemented as separate header footer view?
---- pros: (for no BrowserView)
----- reuse options menus, resizing, reorg of StackView, allow sub paths views??
---- cons:
------ still need footer view for some UIs?
-
-
 - need special highlight for end node
 - make return act like click if whole column is selected (so we can add node with keyboard?)
 -- how to add node from keyboard in non empty column?
-
-Resources:
-- have it look for some file like _autoImport?
-- move BMResourceFile loading code to to parent BMResource?
-- Abstraction for ResourceEntry?
-
-
-Notifications:
-- clean up Notification posts/obs with new Node methods? (BMNotification instance).newObservation()
-
-
-	this.postNoteNamed("hello")
-        this.watchOnceForNote("hello")
-        this.watchOnceForNoteFrom("hello", sourceObject)
-        this.observeNote(aFileLoader.doneNote()) // still need to handle observation removal
-        this.observeNoteOnce(aFileLoader.doneNote()) 
-
 
 Misc:
 - use fixed width font on pre text nodes

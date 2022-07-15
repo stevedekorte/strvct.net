@@ -1,4 +1,19 @@
 
+--------------
+Struct todo:
+
+- expand to fix width of window when too small to display 2 columns
+  - MORE GENERAL: expand last column to fit remaining window space
+
+column colors
+detect if browser compatibility, show error if needed
+
+theme changes disappear on reload
+
+renaming root Notes causes new one to be created, need a separate identifier
+
+----------------
+
 TODO:	
 
 

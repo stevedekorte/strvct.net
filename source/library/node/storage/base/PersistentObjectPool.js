@@ -17,6 +17,7 @@
 
     init () {
         super.init()
+        debugger;
         this.setName("defaultDataStore")
         this.setRecordsDict(PersistentAtomicDictionary.clone())
         return this

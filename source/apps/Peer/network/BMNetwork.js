@@ -8,8 +8,7 @@
 
 (class BMNetwork extends BMFieldSetNode {
     
-    static initThisClass () {
-        super.initThisClass()
+    static initClass () {
         this.setIsSingleton(true)
 		return this
     }

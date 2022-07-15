@@ -21,10 +21,6 @@
 
 (class CssAnimation extends ProtoClass {
 
-    static initThisClass () {
-        super.initThisClass()
-        this.newClassSlot("insertedRuleNamesSet", new Set())
-    }
 
     static insertRuleForAnimation (cssAnimation) {
         const name = cssAnimation.ruleName()
@@ -35,6 +31,10 @@
             rules.add(name)
         }
         return this
+    }
+
+    static initClass () {
+        this.newClassSlot("insertedRuleNamesSet", new Set())
     }
 
     initPrototype () {

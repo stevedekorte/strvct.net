@@ -50,7 +50,6 @@
     }
 
     isKindOf (aClass) {
-        //assert(!this.isClass())
         return this.thisClass().isKindOf(aClass)
     }
 
@@ -130,14 +129,15 @@
     isEqual (anObject) {
         // compare like we would two dictionaries
         // only checks enumerable properties
+        // for ProtoClass, we'll compare slot values instead
         const keys = Object.keys(this)
         const otherKeys = Object.keys(anObject)
         if (keys.length !== otherKeys.length) {
             return false
         }
  
-        const foundInequality = keys.detect(k => this.getOwnProperty(k) !== anObject.getOwnProperty(k))
-        return !foundInequality
+        const firstKeyWithUnequalValue = keys.detect(k => this.getOwnProperty(k) !== anObject.getOwnProperty(k))
+        return !Type.isNullOrUndefined(firstKeyWithUnequalValue)
     }
  
     getOwnProperty (key) {

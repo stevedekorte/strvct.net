@@ -31,15 +31,6 @@ if (!getGlobalThis().ideal) {
 
 getGlobalThis().ideal.Slot = (class Slot extends Object { 
 
-    /*
-    static initThisClass () { // can Object handle this now?
-        if (this.prototype.hasOwnProperty("initPrototype")) {
-            this.prototype.initPrototype.apply(this.prototype)
-        }
-        return this
-    }
-    */
-
     setShouldStore (aBool) {
         throw new Error("Slot.setShouldStore should not be called on Slot")
     }

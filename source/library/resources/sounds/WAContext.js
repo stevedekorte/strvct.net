@@ -12,8 +12,7 @@
 
     // in JS, do we need user input first to play audio?
     
-    static initThisClass () {
-        super.initThisClass()
+    static initClass () {
         Broadcaster.shared().addListenerForName(this, "firstUserEvent")
         //this.watchOnceForNote("firstUserEvent")
         return this
