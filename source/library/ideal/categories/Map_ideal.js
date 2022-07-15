@@ -15,6 +15,14 @@
     }
     */
 
+    at (k) {
+        return this.get(k)
+    }
+    
+    atPut (k, v) {
+        return this.set(k, v)
+    }
+
     isEqual (aMap) {
         if (this.size !== aMap.size) {
             return false

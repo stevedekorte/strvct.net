@@ -144,6 +144,10 @@
         }
 
         const proto = this.prototype
+
+        //proto.justNewSlot("slots", new Map()) // each proto has it's own set of slots - us justNewSlot as newSlot needs to check the slots list
+        Object.defineSlot(proto, "_slots", {})
+
         if (proto.hasOwnProperty("initPrototype")) {
             // Only called if method defined on this class.
             // This method should *not* call super.initPrototype()
@@ -153,6 +157,12 @@
         this.addToAllClasses()
         return this
     }
+
+    
+    slots () {
+        return this._slots
+    }
+    
 
     static defineClassGlobally () {
         const className = this.type()
@@ -171,7 +181,7 @@
     }
  
     static addToAllClasses () {
-        console.log("addToAllClasses '" + this.type() + "'")
+        //console.log("addToAllClasses '" + this.type() + "'")
         if (this.allClassesSet().has(this)) {
             throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'")
         }

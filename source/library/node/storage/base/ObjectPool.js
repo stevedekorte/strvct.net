@@ -118,7 +118,6 @@
     }
 
     asyncOpen (successCallback, errorCallback) { 
-        debugger;
         this.recordsDict().setName(this.name())
         this.recordsDict().asyncOpen(
             () => this.onPoolOpenSuccess(), 

@@ -14,14 +14,6 @@
 
    // --- clone ---
 
-   /*
-   static minimalClone () { // used by deserializer?
-        const obj = new this()
-        obj.init()
-        return obj
-    }
-    */
-
     static clone () {
         if (this.isSingleton() && this.hasShared()) {
             debugger;
@@ -66,42 +58,12 @@
         //this.newClassSlot("shared", undefined)
         this.newClassSlot("isSingleton", false)
         //this.newClassSlot("slots", false)
+        this.newClassSlot("setterNameMap", new Map())
         return this
-    }
-
-    initPrototype () {
-        // subclasses should call this at end of their definition
     }
 
     // --- class slots and variables ---
 
-    static getClassVariable (key, defaultValue) {
-        if (!this.hasOwnProperty(key)) {
-            if (Type.isFunction(defaultValue)) { 
-                defaultValue = defaultValue()
-            }
-            this[key] = defaultValue
-        }
-        return this[key]
-    }
-
-    static setClassVariable (key, value) {
-        Object.defineSlot(this, key, value)
-        return this
-    }
-
-    static classModulePath () {   
-        const src = this.getClassVariable("_classSrcPath")
-        if (typeof(src) === "undefined") {
-            return "unknown path"
-        } 
-        const url = new URL(src);
-        const parts = url.pathname.split('/')
-        parts.pop()
-        const index = parts.indexOf("library") 
-        const afterLibrary = parts.slice(index+1)
-        return afterLibrary.join("/")
-    }
 
     static ancestorClassesTypesIncludingSelf () {
         return this.ancestorClassesIncludingSelf().map(c => c.type())
@@ -147,16 +109,6 @@
         return Object.getPrototypeOf(this)
     }
 
-    superClass () {
-        return this.thisClass().superClass()
-    }
-
-    /*
-    superPrototype () {
-        return this.superClass().prototype
-    }
-    */
-
     static subclassesDescription (level, traversed) {
 
         if (Type.isUndefined(level)) {
@@ -186,7 +138,6 @@
         if (level === 1) {
             //lines.append("----")
         }
-        //const path = "<div class=path>" + this.classModulePath().replaceAll("/", " ") + "</div>"
         const path = ""
         lines.append(prefix + spacer + this.type() + " " + path + postfix)
         const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()))
@@ -212,6 +163,24 @@
 
     // --- instance ---
 
+
+    initPrototype () {
+        this.newSlot("isDebugging", false)
+    }
+
+    /*
+    slots () {
+        if (this.isPrototype() && !this.hasOwnProperty("_slots")) { 
+            Object.defineSlot(this, "_slots", {})
+        }
+        return this._slots
+    }
+    */
+
+    superClass () {
+        return this.thisClass().superClass()
+    }
+
     thisPrototype () {
         assert(this.isInstance())
         const prototype = this.__proto__
@@ -221,10 +190,11 @@
 
     thisClass () {
         if (this.isPrototype()) {
+            // it's an prototype
             return this.constructor
         }
 
-        // it's an instance
+        // otherwise, it's an instance
         return this.__proto__.constructor
     }
 
@@ -282,13 +252,6 @@
 
     // slot objects
 
-    slots () {
-        if (!this.hasOwnProperty("_slots")) {
-            Object.defineSlot(this, "_slots", {})
-        }
-        return this._slots
-    }
-
     allSlots (allSlots = {}) {
         //assert(this.isPrototype())
 
@@ -319,39 +282,13 @@
     }
     */
 
-    // stored slots
-
-    /*
-    storedSlots () {
-        // TODO: use slot cache?
-        const slotsArray = Object.values(this.allSlots())
-        return slotsArray.filter(slot => slot.shouldStoreSlot())
-    }
-
-    storedSlotNamesSet () { 
-        const slotsArray = Object.values(this.allSlots())
-        return this.storedSlots().map(slot => slot.name()).asSet()
-    }
-    */
-
     // -------------------------------------
-
-    /*
-    hasOwnSlotGetter (slotName) {
-        return Reflect.ownKeys(this).contains(slotName)
-    }
-
-    hasOwnSlotSetter (slotName) {
-        return Reflect.ownKeys(this).contains(slotName.asSetter())
-    }
-    */
 
     hasOwnSlotObject (slotName) {
         if ( !Type.isUndefined(this.allSlots()[slotName]) ) {
             return true
         }
         return false
-        //return this.hasOwnSlotGetter(slotName) || this.hasOwnSlotSetter(slotName)
     }
     
     newSlotIfAbsent (slotName, initialValue) {
@@ -428,25 +365,6 @@
         if (aSlot.shouldStoreSlot()) {
             this.didMutate(aSlot.name())
         }
-        /*
-        // persistence system can hook this
-        const methodName = "didUpdateSlot" + aSlot.name().capitalized()
-        if (this[methodName]) {
-            this[methodName].apply(this, [oldValue, newValue])
-        }
-        */
-    }
-
-    setSlots (slots) {
-        Object.eachSlot(slots, (name, initialValue) => {
-            this.setSlot(name, initialValue);
-        });
-        return this;
-    }
-
-    setSlot (name, initialValue) {
-        this[name] = initialValue
-        return this
     }
 
     init () { 
@@ -488,18 +406,12 @@
         return this;
     }
 
-    setterNameMap () {
-        return this.thisClass().getClassVariable("_setterNameMap", {})
-    }
-
     setterNameForSlot (name) {
         // cache these as there aren't too many and it will avoid extra string operations
-        let setter = this.setterNameMap()[name]
-        if (!setter) {
-            setter = "set" + name.capitalized()
-            this.setterNameMap()[name] = setter
+        if (!m.has(name)) {
+            m.set(name, "set" + name.capitalized())
         }
-        return setter
+        return m.get(name)
     }
 
     toString () {
@@ -534,15 +446,6 @@
     }
 
     // debugging
-
-    setIsDebugging (aBool) {
-        Object.defineSlot(this, "_isDebugging", aBool)
-        return this
-    }
-
-    isDebugging () {
-        return this._isDebugging
-    }
 
     debugLog (s) {
         if (this.isDebugging()) {

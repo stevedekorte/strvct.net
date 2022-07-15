@@ -374,7 +374,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         const func = function () {
             return this[privateName]
         }
-        //func.setSlot(this)
         return func
     }
 
@@ -407,7 +406,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             this.willGetSlot(slot) // opportunity to replace value before first access
             return this[privateName]
         }
-        //func.setSlot(this)
         return func
     }
 

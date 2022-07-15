@@ -51,8 +51,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
-    "size": 5981,
-    "hash": "pxXm3ApqMiCfxQYTq7rCuF0uS7ls1uRaA4WVmjw8HaE="
+    "size": 6237,
+    "hash": "zeDClt4Mx4dQVsOvHv01+y5CCE3r1Ldv93ajEvVdmt4="
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
@@ -116,8 +116,8 @@
   },
   {
     "path": "source/library/ideal/categories/Map_ideal.js",
-    "size": 606,
-    "hash": "ezrCYgqDIPBMDeHkonVILukbQJpmpnmvrekqKfZj1Mk="
+    "size": 713,
+    "hash": "oTSMZtQY7tb1uYaGHl9VoFqRUbasdJtar4vpPLl8FlU="
   },
   {
     "path": "source/library/ideal/categories/Error_ideal.js",
@@ -141,13 +141,13 @@
   },
   {
     "path": "source/library/ideal/Slot.js",
-    "size": 23198,
-    "hash": "kmEW1dOGdeosA1qvtY1/JA4ZV8fsk8e8OATfULQGxH8="
+    "size": 23140,
+    "hash": "RTPZVlkjc9iZ4N8ktwBXq00nF91QB8uDUhifI7jc1ao="
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
-    "size": 14711,
-    "hash": "EokGb1IE2//QBmCRejaQjY+21Kr+hfeQg89AttvM1/0="
+    "size": 12134,
+    "hash": "xG+mTF/vcVPRXu2dTrGYJffjMpPRO2wlm7yrw5HXSKY="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -776,13 +776,13 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 24284,
-    "hash": "PgJpZOc5mKO/TxMbJyreVfcFbVhX/Mkyw9UmE8dUcC4="
+    "size": 24266,
+    "hash": "spMWt2AdoNjeNZMFASNGZDiwAQx2RrrfEvkgxeXa9QQ="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
-    "size": 1233,
-    "hash": "cNA6WxS8L1Z4qz+EpR6Jjx28Ek1+lf+RIjGKz6GUDKw="
+    "size": 1215,
+    "hash": "FG20x1wNnhsLy5iJ0CrX0Gtthp+w2feu1ueZ9B7ZIAM="
   },
   {
     "path": "source/library/node/storage/base/StoreRef.js",
