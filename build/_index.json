@@ -47,12 +47,12 @@
   {
     "path": "source/library/ideal/categories/object/Object_copying.js",
     "size": 1747,
-    "hash": "TulF2aeHkNJL8EWGX3clIqtgzzrax9lVVN8bC2WLMO0="
+    "hash": "d21v+t3Y/GQ05+6krwlPJwvweAuMCFRDxRe3M8PdiBM="
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
-    "size": 6232,
-    "hash": "8lk1x3ZJ2XnFAzOH1Yu3oStTDePqwl6RTZ0paj/5wcU="
+    "size": 6246,
+    "hash": "/9VqzniBX+HpkvI1i56ixo7RDHmuA/ywcRBDOxaC+IA="
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
@@ -116,8 +116,8 @@
   },
   {
     "path": "source/library/ideal/categories/Map_ideal.js",
-    "size": 972,
-    "hash": "gbRpg/lBCO2pWSBhCATwTEI50PUuWkrKhhLkxnLVT2U="
+    "size": 1111,
+    "hash": "K1t4v/IoByFUfaFncALTm7HYdOXzsaghr2bcGySbiW4="
   },
   {
     "path": "source/library/ideal/categories/Error_ideal.js",
@@ -141,13 +141,13 @@
   },
   {
     "path": "source/library/ideal/Slot.js",
-    "size": 23140,
-    "hash": "RTPZVlkjc9iZ4N8ktwBXq00nF91QB8uDUhifI7jc1ao="
+    "size": 23162,
+    "hash": "Sycs1fPTy00c/VheV/rZx/bkkRvBKJDO80sfD5uT9uc="
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
-    "size": 12090,
-    "hash": "glR4iIRX3xUTFYXfHsEfBbhlEC6gzA4vGLNfjaiUGAY="
+    "size": 11699,
+    "hash": "za/+ZA84yHLnTyTridEbnBskt26UmOvjj2fhpGla5l4="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -591,8 +591,8 @@
   },
   {
     "path": "source/library/view/dom_views/dom_helpers/CssColor.js",
-    "size": 8965,
-    "hash": "WCfLLmxERoYsz4STpboMbBb+psbiMAfirQ5dfCO5Wk8="
+    "size": 8880,
+    "hash": "lp3aWXDjP83DU35PugWHkhtzgo13MVe7BTne9lroCNw="
   },
   {
     "path": "source/library/view/dom_views/dom_helpers/Node-helpers.js",
@@ -696,8 +696,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 3344,
-    "hash": "pCf8msuxOX93xtIiv+pc+skLV8rLOydPDeKiJwcG/IE="
+    "size": 3341,
+    "hash": "uEOHLmPFbYSG/JDaesvsQcF8W5Eu02k57QHN2dulocs="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -716,8 +716,8 @@
   },
   {
     "path": "source/library/node/storage/base/categories/ProtoClass_store.js",
-    "size": 2905,
-    "hash": "k3Ap77tr+Kb6nZdcX0P849D6l1nTlKZ/UD54h0YZMds="
+    "size": 2892,
+    "hash": "g2LwuOWpfnEbWZkAVV7syHZHxQc4st8CEmA+OFIckR0="
   },
   {
     "path": "source/library/node/storage/base/categories/BMNode_store.js",
@@ -776,8 +776,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 24289,
-    "hash": "AaPLMKfu6er/4p+11Ygypl8l87hv80T+dcXigdO4RH8="
+    "size": 24286,
+    "hash": "haDgQd06z2oj2p0La5HaaiztP4HkfYNjUOgB1f+872M="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
@@ -1261,8 +1261,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 4658,
-    "hash": "1jf8RCskdzcQDStYikNmtZDNKfydtEBcHC/Vauxu3K4="
+    "size": 4649,
+    "hash": "TTsssWtiAA/2cjP1FsQFkluOASurzxUoYztjlIJDHN8="
   },
   {
     "path": "source/library/resources/themes/BMThemeFolder.js",

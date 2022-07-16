@@ -434,7 +434,7 @@
             const dirtyBucket = this.dirtyObjects()
             this.setDirtyObjects(new Map())
 
-            dirtyBucket.ownForEachKV((puuid, obj) => {
+            dirtyBucket.forEachKV((puuid, obj) => {
                 //console.log("  storing pid " + puuid)
 
                 if (this.storingPids().has(puuid)) {

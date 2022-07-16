@@ -9,7 +9,7 @@
             entries: [], 
         }
 
-        this.allSlots().ownForEachKV((slotName, slot) => {
+        this.allSlotsMap().forEachKV((slotName, slot) => {
             //if (slot.shouldStoreSlot()) {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this)
@@ -23,7 +23,7 @@
 
     lazyPids (puuids = new Set()) {
         // when doing Store.collect() will need to check for lazy slot pids on active objects
-        this.allSlots().ownForEachKV((slotName, slot) => {
+        this.allSlotsMap().forEachV(slot => {
             // only need to do this on unloaded store refs in instances
             const storeRef = slot.onInstanceGetValueRef(this)
             if (storeRef) {

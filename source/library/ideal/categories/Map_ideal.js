@@ -27,6 +27,14 @@
         this.forEach((v, k, self) => fn(k, v, self))
     }
 
+    forEachV (fn) {
+        this.forEach(v => fn(v))
+    }
+
+    mergeInto (aMap) {
+        this.forEachKV((k, v) => aMap.set(k, v))
+    }
+
     select (fn) {
         const m = new this()
         this.forEach((v, k) => {

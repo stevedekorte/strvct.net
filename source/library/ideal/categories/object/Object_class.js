@@ -146,7 +146,7 @@
         const proto = this.prototype
 
         //proto.justNewSlot("slots", new Map()) // each proto has it's own set of slots - us justNewSlot as newSlot needs to check the slots list
-        Object.defineSlot(proto, "_slots", {})
+        Object.defineSlot(proto, "_slotsMap", new Map)
 
         if (proto.hasOwnProperty("initPrototype")) {
             // Only called if method defined on this class.
@@ -159,8 +159,8 @@
     }
 
     
-    slots () {
-        return this._slots
+    slotsMap () {
+        return this._slotsMap
     }
 
     static defineClassGlobally () {

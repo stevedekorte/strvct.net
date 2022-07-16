@@ -167,15 +167,6 @@
         this.newSlot("isDebugging", false)
     }
 
-    /*
-    slots () {
-        if (this.isPrototype() && !this.hasOwnProperty("_slots")) { 
-            Object.defineSlot(this, "_slots", {})
-        }
-        return this._slots
-    }
-    */
-
     superClass () {
         return this.thisClass().superClass()
     }
@@ -241,9 +232,9 @@
     ownSlotNamed (slotName) {
         assert(this.isPrototype())
 
-        const slots = this.slots()
-        if (slots.hasOwnProperty(slotName)) {
-            return slots[slotName]
+        const slot = this.slotsMap().at(slotName)
+        if (slot) {
+            return slot
         }
         
         return null
@@ -251,22 +242,22 @@
 
     // slot objects
 
-    allSlots (allSlots = {}) {
+    allSlotsMap (m = new Map()) {
         //assert(this.isPrototype())
 
-        if (this.__proto__ && this.__proto__.allSlots) {
-            this.__proto__.allSlots(allSlots)
+        if (this.__proto__ && this.__proto__.allSlotsMap) {
+            this.__proto__.allSlotsMap(m)
         }
-
-        Object.assign(allSlots, this.slots()); // do this last so we override ancestor slots
-
-        return allSlots
+        
+        this.slotsMap().forEachKV((k, v) => m.set(k, v))
+        //this.slotsMap().mergeInto(m)
+        return m
     }
 
     /*
     allSlotsRawValueMap () { // what about action slots?
         const map = new Map()
-        this.allSlots().forEach((slot, slotName) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
+        this.allSlotsMap().forEachKV((slotName, slot) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
         return map
     }
 
@@ -282,16 +273,9 @@
     */
 
     // -------------------------------------
-
-    hasOwnSlotObject (slotName) {
-        if ( !Type.isUndefined(this.allSlots()[slotName]) ) {
-            return true
-        }
-        return false
-    }
     
     newSlotIfAbsent (slotName, initialValue) {
-        const slot = this.allSlots()[slotName]
+        const slot = this.allSlotsMap().get(slotName)
         if (slot) {
             return slot
         }
@@ -306,7 +290,7 @@
         }
         */
 
-        if (this.hasOwnSlotObject(slotName)) {
+        if (this.allSlotsMap().has(slotName)) {
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
             console.log(msg)
             throw new Error(msg)
@@ -315,11 +299,10 @@
     }
 
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
-        const oldSlot = this.allSlots()[slotName]
+        const oldSlot = this.allSlotsMap().get(slotName)
         if (Type.isUndefined(oldSlot)) {
             const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
             console.log(msg)
-            this.allSlots()
             throw new Error(msg)
         }
         const slot = this.justNewSlot(slotName, initialValue, allowOnInstance)
@@ -346,7 +329,7 @@
         slot.setOwner(this)
         slot.autoSetGetterSetterOwnership()
         slot.setupInOwner()
-        this.slots().atSlotPut(slotName, slot)
+        this.slotsMap().set(slotName, slot)
         return slot
     }
 
@@ -371,8 +354,8 @@
  
         // subclasses should override to do initialization
         //assert(this.isInstance())
-        const allSlots = this.__proto__.allSlots()
-        allSlots.ownForEachKV((slotName, slot) => slot.onInstanceInitSlot(this)) // TODO: use slot cache
+        const allSlots = this.__proto__.allSlotsMap()
+        allSlots.forEachV(slot => slot.onInstanceInitSlot(this)) // TODO: use slot cache
     }
 
     toString () {

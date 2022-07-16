@@ -87,11 +87,13 @@ const max3 = function(a, b, c) {
         this.newSlot("green", 0)
         this.newSlot("blue", 0)
         this.newSlot("opacity", 1)
+        this.newSlot("colorCacheMap", 1)
         //isMutable: true,
     }
     
     init () {
         super.init()
+        this.setColorCacheMap(new Map())
         return this
     }
 
@@ -104,13 +106,6 @@ const max3 = function(a, b, c) {
 
     copyFrom (aColor, copyDict) {
         return CssColor.clone().set(aColor.red(), aColor.green(), aColor.blue(), aColor.opacity())
-    }
-
-    static colorMapCache () {
-        if (!CssColor._colorMapCache) {
-            CssColor._colorMapCache = {}
-        }
-        return CssColor._colorMapCache
     }
 
     justParseColorString (aColorString) { // private
@@ -144,7 +139,7 @@ const max3 = function(a, b, c) {
     }
 
     parseColorString (string) {
-        const cache = CssColor.colorMapCache()
+        const cache = CssColor.colorCacheMap()
         const cachedResult = cache.at(string)
         if (!Type.isUndefined(cachedResult)) {
             return cachedResult

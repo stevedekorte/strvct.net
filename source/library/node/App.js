@@ -22,7 +22,7 @@
     }
 
     static onPoolOpenSuccess (aPool) {
-        debugger;
+        //debugger;
         this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone()) // create the root object
         //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
         const app = this.clone()
