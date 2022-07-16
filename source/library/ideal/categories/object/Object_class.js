@@ -162,7 +162,6 @@
     slots () {
         return this._slots
     }
-    
 
     static defineClassGlobally () {
         const className = this.type()

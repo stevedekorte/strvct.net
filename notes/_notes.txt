@@ -1,3 +1,5 @@
+- move ivar dicts in ObjectPool (and elsewhere to use Maps) - including Dictionary, AtomicDictionary, etc
+
 -  move shouldStore to class?
 
 - don't use "root" pid as root object in pool, instead have a root key that returns the root pid 

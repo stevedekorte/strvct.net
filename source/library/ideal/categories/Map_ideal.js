@@ -18,9 +18,23 @@
     at (k) {
         return this.get(k)
     }
-    
+
     atPut (k, v) {
         return this.set(k, v)
+    }
+
+    forEachKV (fn) {
+        this.forEach((v, k, self) => fn(k, v, self))
+    }
+
+    select (fn) {
+        const m = new this()
+        this.forEach((v, k) => {
+            if (fn(k, v)) {
+                m.set(k, v)
+            }
+        })
+        return m
     }
 
     isEqual (aMap) {
@@ -39,8 +53,8 @@
         return true
     }
 
-    isEmpty (func) {
-        return this.size == 0        
+    isEmpty () {
+        return this.size === 0        
     }
 
 }).initThisCategory();

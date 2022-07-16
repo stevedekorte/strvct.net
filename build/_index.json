@@ -51,8 +51,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
-    "size": 6237,
-    "hash": "zeDClt4Mx4dQVsOvHv01+y5CCE3r1Ldv93ajEvVdmt4="
+    "size": 6232,
+    "hash": "8lk1x3ZJ2XnFAzOH1Yu3oStTDePqwl6RTZ0paj/5wcU="
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
@@ -116,8 +116,8 @@
   },
   {
     "path": "source/library/ideal/categories/Map_ideal.js",
-    "size": 713,
-    "hash": "oTSMZtQY7tb1uYaGHl9VoFqRUbasdJtar4vpPLl8FlU="
+    "size": 972,
+    "hash": "gbRpg/lBCO2pWSBhCATwTEI50PUuWkrKhhLkxnLVT2U="
   },
   {
     "path": "source/library/ideal/categories/Error_ideal.js",
@@ -146,8 +146,8 @@
   },
   {
     "path": "source/library/ideal/ProtoClass.js",
-    "size": 12134,
-    "hash": "xG+mTF/vcVPRXu2dTrGYJffjMpPRO2wlm7yrw5HXSKY="
+    "size": 12090,
+    "hash": "glR4iIRX3xUTFYXfHsEfBbhlEC6gzA4vGLNfjaiUGAY="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -776,8 +776,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 24266,
-    "hash": "spMWt2AdoNjeNZMFASNGZDiwAQx2RrrfEvkgxeXa9QQ="
+    "size": 24289,
+    "hash": "AaPLMKfu6er/4p+11Ygypl8l87hv80T+dcXigdO4RH8="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",

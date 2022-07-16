@@ -54,13 +54,13 @@
         // AtomicDictionary
         this.newSlot("recordsDict", null) 
 
-        // dict - objects known to the pool (previously loaded or referenced)
+        // Map - objects known to the pool (previously loaded or referenced)
         this.newSlot("activeObjects", null) 
 
-        // dict - subset of activeObjects containing objects with mutations that need to be stored
+        // Map - subset of activeObjects containing objects with mutations that need to be stored
         this.newSlot("dirtyObjects", null)
 
-        // set - pids of objects that we're loading in this event loop
+        // Set - pids of objects that we're loading in this event loop
         this.newSlot("loadingPids", null)
 
         // Set - pids of objects that we're storing in this event loop
@@ -77,21 +77,22 @@
         // Notification - sent after pool opens - TODO: change name to objectPoolDidOpen?
         this.newSlot("nodeStoreDidOpenNote", null)
 
-        // set to true during method didInitLoadingPids() - used to ignore mutations during this period
+        // Bool - set to true during method didInitLoadingPids() - used to ignore mutations during this period
         this.newSlot("isFinalizing", false)
 
-        // object to receive success and error callbacks, particularly for async methods
+        // Object - object to receive success and error callbacks, particularly for async methods
         // in this way, we can more easily use the same code with both sync and async versions
         this.newSlot("delegate", null) 
 
+        // String or Error
         this.newSlot("error", null) // most recent error, if any
     }
 
     init () {
         super.init()
         this.setRecordsDict(ideal.AtomicDictionary.clone())
-        this.setActiveObjects({})
-        this.setDirtyObjects({})
+        this.setActiveObjects(new Map())
+        this.setDirtyObjects(new Map())
         this.setLoadingPids(new Set())
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
@@ -101,8 +102,8 @@
     }
 
     clearCache () {
-        this.setActiveObjects({})
-        this.setDirtyObjects({})
+        this.setActiveObjects(new Map())
+        this.setDirtyObjects(new Map())
         this.readRoot()
         //this.setRootObject(this.objectForPid(this.rootObject().puuid()))
         return this
@@ -204,8 +205,8 @@
     knowsObject (obj) { // private
         const puuid = obj.puuid()
         const foundIt = this.recordsDict().hasKey(puuid) ||
-            this.activeObjects().hasOwnProperty(puuid) ||
-            this.dirtyObjects().hasOwnProperty(puuid)
+            this.activeObjects().has(puuid) ||
+            this.dirtyObjects().has(puuid) // dirty objects check redundant with activeObjects?
         return foundIt
     }
 
@@ -213,12 +214,14 @@
         assert(this.isOpen())
     }
 
+    /*
     changeOldPidToNewPid (oldPid, newPid) {
         // flush and change pids on all activeObjects 
         // and pids and pidRefs in recordsDict 
         throw new Error("unimplemented")
         return this
     }
+    */
     
     setRootObject (obj) { // only used for setting up a new root object
         this.assertOpen()
@@ -253,7 +256,7 @@
 
     hasActiveObject (anObject) {
         const puuid = anObject.puuid()
-        return this.activeObjects().hasOwnProperty(puuid)
+        return this.activeObjects().has(puuid)
     }
     
     addActiveObject (anObject) {
@@ -296,7 +299,7 @@
 
         if (!this.hasActiveObject(anObject)) {
             anObject.addMutationObserver(this)
-            this.activeObjects().atSlotPut(anObject.puuid(), anObject)
+            this.activeObjects().set(anObject.puuid(), anObject)
             //this.addDirtyObject(anObject)
         }
 
@@ -305,24 +308,24 @@
 
     close () {
         this.removeMutationObservations()
-        this.setActiveObjects({})
-        this.setDirtyObjects({})
+        this.setActiveObjects(new Map())
+        this.setDirtyObjects(new Map())
         return this
     }
 
     removeMutationObservations () {
-        this.activeObjects().forEach(obj => obj.removeMutationObserver(this)) // activeObjects is super set of dirtyObjects
+        this.activeObjects().forEachKV((puuid, obj) => obj.removeMutationObserver(this)) // activeObjects is super set of dirtyObjects
         return this
     }
 
     hasDirtyObjects () {
-        return Object.keys(this.dirtyObjects()).length !== 0
+        return !this.dirtyObjects().isEmpty()
     }
 
     /*
     hasDirtyObject (anObject) {
         const puuid = anObject.puuid()
-        return this.dirtyObjects().hasOwnProperty(puuid)
+        return this.dirtyObjects().has(puuid)
     }
     */
 
@@ -377,12 +380,12 @@
             return this
         }
 
-        if (!this.dirtyObjects().hasOwnProperty(puuid)) {
+        if (!this.dirtyObjects().has(puuid)) {
             this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?")
             }
-            this.dirtyObjects()[puuid] = anObject
+            this.dirtyObjects().set(puuid, anObject)
             this.scheduleStore()
         }
 
@@ -429,7 +432,7 @@
         while (true) { // easier to express clearly than do/while in this case
             let thisLoopStoreCount = 0
             const dirtyBucket = this.dirtyObjects()
-            this.setDirtyObjects({})
+            this.setDirtyObjects(new Map())
 
             dirtyBucket.ownForEachKV((puuid, obj) => {
                 //console.log("  storing pid " + puuid)
@@ -460,28 +463,22 @@
 
     // --- reading ---
 
-    classNameConversionDict () {
-        return {}
+    classNameConversionMap () {
+        const m = new Map()
         /*
-        return { 
-            "BMMenuNode" : "BMFolderNode",
-            "KinsaResources" : "Kinsa",
-            "BMCamStore" : "BMCams",
-        }
+        m.set("BMMenuNode", "BMFolderNode")
+        m.set("KinsaResources", "Kinsa")
+        m.set("BMCamStore", "BMCams")
+        m.set("BMThemeFolder", "BMFolderNode")
+        m.set("BMThemeAttribute", "BMStringField")
         */
-        /*
-        return {
-            "BMThemeFolder" : "BMFolderNode",
-            "BMThemeAttribute" : "BMStringField",
-        }
-        */
+       return m;
     }
 
     classForName (className) { 
-        const altClassName = this.classNameConversionDict()[className]
-
-        if (altClassName) {
-            return Object.getClassNamed(altClassName)
+        const m = this.classNameConversionMap()
+        if (m.has(className)) {
+            return Object.getClassNamed(m.get(className))
         } 
 
         return Object.getClassNamed(className)
@@ -506,7 +503,7 @@
     }
 
     activeObjectForPid (puuid) {
-        return this.activeObjects().getOwnProperty(puuid)
+        return this.activeObjects().get(puuid)
     }
 
     objectForPid (puuid) { // PRIVATE (except also used by StoreRef)
@@ -559,7 +556,7 @@
 
     activeLazyPids () { // returns a set of pids
         const pids = new Set()
-        this.activeObjects().ownForEachKV((pid, obj) => {
+        this.activeObjects().forEachKV((pid, obj) => {
             if (obj.lazyPids) {
                 obj.lazyPids(pids)
             }
@@ -659,7 +656,7 @@
         this.debugLog(() => "--- begin collect --- with " + this.recordsDict().keys().length + " pids")
         this.setMarkedSet(new Set())
         this.markPid(this.rootKey())
-        this.activeObjects().ownForEachKV((pid, obj) => this.markPid(pid))
+        this.activeObjects().forEachKV((pid, obj) => this.markPid(pid))
         this.activeLazyPids().forEach(pid => this.markPid(pid))
         const deleteCount = this.sweep()
         this.setMarkedSet(null)
@@ -769,7 +766,7 @@
         const referencers = new Set()
         const pid = anObject.puuid()
 
-        this.activeObjects().forEach((obj) => {
+        this.activeObjects().forEachKV((pid, obj) => {
             const refPids = this.refSetForPuuid(obj.puuid())
             if (refPids.has(pid)) {
                 referencers.add(obj)

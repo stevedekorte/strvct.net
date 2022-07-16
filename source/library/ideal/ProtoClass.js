@@ -57,7 +57,6 @@
         Object.defineSlot(this, "_shared", undefined)
         //this.newClassSlot("shared", undefined)
         this.newClassSlot("isSingleton", false)
-        //this.newClassSlot("slots", false)
         this.newClassSlot("setterNameMap", new Map())
         return this
     }
