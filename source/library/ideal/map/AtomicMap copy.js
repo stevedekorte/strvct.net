@@ -10,19 +10,25 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     initPrototype () {
         this.newSlot("isInTx", false) // private method - Bool, true during a tx
-        this.newSlot("map", null) // private method - Map, contains current state of map
-        this.newSlot("snapshot", null) // private method - Map, contains shallow copy of map during tx, so we can revert to this if tx is cancelled
+        this.newSlot("snapshot", null) // private method - Map, contains state of map
+        this.newSlot("changes", null) // private method - Map, contains changes to map since begin tx 
         this.newSlot("isOpen", true) // private method
-        this.newSlot("changedKeys", null) // private method
         this.newSlot("keysAndValuesAreStrings", true) // private method - Bool, if true, runs assertString on all input keys and values
+    }
+
+    setSnapshot (v) {
+        this._snapshot = v
+        if (v) {
+            console.log("setSnapshot:" + v.type())
+        }
+      //  debugger;
+        return this
     }
 
     init () {
         super.init()
-        this.setMap(new Map())
-        this.setSnapshot(null)
-        this.setChangedKeys(null)
-        //this.setSnapshot(new Map())
+        this.setSnapshot(new Map())
+        //this.setChanges(new Map()) // set during tx
     }
 
     open () {
@@ -52,8 +58,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.debugLog(() => this.type() + " begin ---")
         this.assertAccessible()
         this.assertNotInTx()
-        this.setSnapshot(this.map().shallowCopy()) 
-        this.setChangedKeys(new Set())
+        this.setChanges(new Map()) 
         this.setIsInTx(true)
         return this
     }
@@ -61,8 +66,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     revert () {
         this.debugLog(() => this.type() + " revert ---")
         this.assertInTx()
-        this.setSnapshot(null)
-        this.setChangedKeys(new Set())
+        this.setChanges(null)
         this.setIsInTx(false)
         return this
     }
@@ -73,7 +77,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         if (this.hasChanges()) {
             this.applyChanges()
         }
-        this.setChangedKeys(new Set())
+        this.setChanges(null) 
         this.setIsInTx(false)
         return this
     }
@@ -81,13 +85,19 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     // --- changes ---
 
     hasChanges () {
-        return this.map().isEqual(this.snapshot())
-        //return this.changes() && this.changes().size > 0
+        return this.changes() && this.changes().size > 0
     }
 
     applyChanges () { // private - apply changes to snapshot
-        this.setMap(this.snapshot())
-        this.setSnapshot(null)
+        const snapshot = this.snapshot()
+        this.changes().forEachKV((k, v) => {
+            // treat undefined values as removes
+            if (Type.isUndefined(v)) {
+                snapshot.delete(k)
+            } else {
+                snapshot.set(k, v)
+            }
+        })
         return this
     }
 
@@ -101,47 +111,29 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 	    assert(!this.isInTx())
     }
 
-    // reads
-
- 
-    // --- keys ---
-
-    keysArray () {
-        return this.map().keysArray()
-    }
-
-    keysSet () {
-        return this.map().keysSet()
-    }
-
-    // --- values ---
-
-    valuesArray () {
-        return this.map().valuesArray()
-    }
-
-    valuesSet () {
-        return this.map().valuesSet()
-    }
-
-    // ---
+    // writes
 
     has (k) {
-        return this.map().has()
+        return this.hasKey(k)
     }
 
     hasKey (k) {
-        return this.map().hasKey(k)
+        const changes = this.changes()
+        if (changes.has(k)) {
+            if (Type.isUndefined(changes.get(k))) {
+                return false
+            }
+            return true
+        }
+        return this.snapshot().has(k)
     }
 
     at (k) {
-        return this.map().at(k)
-    }
-
-    // writes
-
-    set (k, v) {
-        return this.atPut(k, v)
+        const changes = this.changes()
+        if (changes.has(k)) {
+            return changes.get(k) // will return undefined if key removed (see removeKey)
+        }
+        return this.snapshot().get(k)
     }
 
     atPut (k, v) {
@@ -152,20 +144,18 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
         this.assertAccessible()
         this.assertInTx()
-        this.changedKeys().add(k)
-        this.map().set(k, v)
+        this.changes().set(k, v)
         return this
     }
 
     removeKey (k) {
-        this.changedKeys().add(k)
         if (this.keysAndValuesAreStrings()) {
             assert(Type.isString(k))
         }
 
         this.assertAccessible()
         this.assertInTx()
-        this.map().delete(k) 
+        this.changes().set(k, undefined) // our marker for removing a key
         return this
     }
 
@@ -174,33 +164,42 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     forEachKV (fn) {
         this.assertNotInTx() 
         this.assertAccessible()
-        this.map().forEach((v, k, self) => fn(k, v, self))
+        this.snapshot().forEach((v, k, self) => fn(k, v, self))
     }
 
     forEachK (fn) {
         this.assertNotInTx() 
         this.assertAccessible()
-        this.map().forEach((v, k) => fn(k))
+        this.snapshot().forEach((v, k) => fn(k))
     }
 
     forEachV (fn) {
         this.assertNotInTx() 
         this.assertAccessible()
-        this.map().forEach(v => fn(v))
+        this.snapshot().forEach(v => fn(v))
     }
 
     // read extras 
 
     keysArray () {
-        return this.map().keysArray();
+        if (this.isInTx()) {
+            return this.snapshot().keysArray()
+        }
+        this.assertNotInTx() // unless we want to calculate union w changes
+        this.assertAccessible()
+        return this.snapshot().keysArray();
     }
 	
     valuesArray () {
-        return this.map().valuesArray();
+        this.assertNotInTx() // unless we want to calculate union w changes
+        this.assertAccessible()
+        return this.snapshot().valuesArray();
     }
 
     count () { 
-        return this.map().size;
+        this.assertNotInTx() // unless we want to calculate union w changes
+        this.assertAccessible()
+        return this.snapshot().count();
     }	
 
     totalBytes () {
@@ -208,7 +207,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.assertAccessible()
         assert(this.keysAndValuesAreStrings())
         let byteCount = 0
-        this.map().ownForEachKV((k, v) => {
+        this.snapshot().ownForEachKV((k, v) => {
             byteCount += k.length + v.length
         })
         return byteCount

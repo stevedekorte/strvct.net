@@ -166,5 +166,5 @@ class UseableWeakMap {
   }
 };
 
-UseableWeakMap.selfTest()
+//UseableWeakMap.selfTest()
 

@@ -159,7 +159,7 @@
     }
 	
     allIdentitiesMap () { // only uses valid remote identities
-        const ids = ideal.Dictionary.clone()
+        const ids = new Map()
         this.localIdentities().subnodes().forEach((id) => { 
 		    ids.merge(id.allIdentitiesMap())
         })
@@ -172,7 +172,7 @@
     }
     
     allIdentityPublicKeyStrings () {
-	    return this.allIdentitiesMap().keys()
+	    return this.allIdentitiesMap().keysArray()
         //return this.allIdentities().map((id) => { return id.publicKeyString(); })
     }
 	

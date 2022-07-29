@@ -513,7 +513,7 @@
     beginCaching () {
         assert(!this.isCaching())
         console.log(this.debugTypeId() + " beginCaching -----------------")
-        this.setNodeToStackCache(ideal.Dictionary.clone())
+        this.setNodeToStackCache(new Map())
 
         const ov = this.otherView()
         if (ov && ov.cacheId) {

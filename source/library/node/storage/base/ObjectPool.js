@@ -7,8 +7,8 @@
         For persisting a object tree to a JSON formatted representation and back.
         Usefull for both persistence and exporting object out the the app/browser and onto desktop or other browsers.
 
-        This is a parent class for PersistentObjectPool, which just swaps out the recordDict AtomicDictionary, 
-        with a PersistentAtomicDictionary.
+        This is a parent class for PersistentObjectPool, which just swaps out the recordDict AtomicMap, 
+        with a PersistentAtomicMap.
 
         An object pool can also be created by pointing at an object within another pool.
 
@@ -51,8 +51,8 @@
         this.newSlot("name", "defaultDataStore")
         this.newSlot("rootObject", null)
 
-        // AtomicDictionary
-        this.newSlot("recordsDict", null) 
+        // AtomicMap
+        this.newSlot("recordsMap", null) 
 
         // Map - objects known to the pool (previously loaded or referenced)
         this.newSlot("activeObjects", null) 
@@ -86,11 +86,13 @@
 
         // String or Error
         this.newSlot("error", null) // most recent error, if any
+
+        this.newSlot("collectablePidSet", null) // used during collection to store keys before tx begins
     }
 
     init () {
         super.init()
-        this.setRecordsDict(ideal.AtomicDictionary.clone())
+        this.setRecordsMap(ideal.AtomicMap.clone())
         this.setActiveObjects(new Map())
         this.setDirtyObjects(new Map())
         this.setLoadingPids(new Set())
@@ -111,21 +113,21 @@
 
     // --- open ---
 
-    open () { // this class can also be used with synchronous AtomicDictionary
-        this.recordsDict().setName(this.name())
-        this.recordsDict().open()
+    open () { // this class can also be used with synchronous AtomicMap
+        this.recordsMap().setName(this.name())
+        this.recordsMap().open()
         this.onPoolOpenSuccess()
         return this
     }
 
     asyncOpen (successCallback, errorCallback) { 
-        this.recordsDict().setName(this.name())
-        this.recordsDict().asyncOpen(
+        this.recordsMap().setName(this.name())
+        this.recordsMap().asyncOpen(
             () => this.onPoolOpenSuccess(), 
             (error) => this.onPoolOpenFailure(error)
         )
         /*
-            this.recordsDict().asyncOpen(
+            this.recordsMap().asyncOpen(
             () => { this.onPoolOpenSuccess(); successCallback() }, 
             (error) => { this.onPoolOpenError(error); errorCallback(); }
         )
@@ -166,7 +168,7 @@
     }
 
     isOpen () {
-        return this.recordsDict().isOpen()
+        return this.recordsMap().isOpen()
     }
 
     // --- root ---
@@ -176,7 +178,7 @@
     }
 
     hasStoredRoot () {
-        return this.recordsDict().hasKey(this.rootKey())
+        return this.recordsMap().hasKey(this.rootKey())
     }
 
     rootOrIfAbsentFromClosure (aClosure) {
@@ -204,7 +206,7 @@
 
     knowsObject (obj) { // private
         const puuid = obj.puuid()
-        const foundIt = this.recordsDict().hasKey(puuid) ||
+        const foundIt = this.recordsMap().hasKey(puuid) ||
             this.activeObjects().has(puuid) ||
             this.dirtyObjects().has(puuid) // dirty objects check redundant with activeObjects?
         return foundIt
@@ -217,7 +219,7 @@
     /*
     changeOldPidToNewPid (oldPid, newPid) {
         // flush and change pids on all activeObjects 
-        // and pids and pidRefs in recordsDict 
+        // and pids and pidRefs in recordsMap 
         throw new Error("unimplemented")
         return this
     }
@@ -244,7 +246,7 @@
     // ---  ---
 
     asJson () {
-        return this.recordsDict().asJson()
+        return this.recordsMap().asJson()
     }
 
     updateLastSyncTime () {
@@ -276,26 +278,6 @@
             anObject.isKindOf(ProtoClass) 
             throw new Error(msg)
         }
-
-        /*
-        // some old debugging code - leave here for now
-        if (!anObject.isKindOf(ProtoClass) && !anObject.isKindOf(SubnodesArray)) {
-        //if (["Object", "PersistentObjectPool", "Set", "Map"].contains(anObject.type())) {
-            const msg = "can't store object of type '" + anObject.type() + "'"
-            console.log("---")
-            console.log(msg)
-            console.log("---")
-            //anObject.isKindOf(ProtoClass) 
-            Object.shouldStore() 
-            let path = anObject.slotValuePath("_shouldStore")
-            console.log("_shouldStore path:", JSON.stringify(path))
-            path = anObject.slotValuePath("shouldStore")
-            console.log("shouldStore path:", path)
-            anObject.shouldStore() 
-
-            throw new Error(msg)
-        }
-        */
 
         if (!this.hasActiveObject(anObject)) {
             anObject.addMutationObserver(this)
@@ -414,9 +396,9 @@
     commitStoreDirtyObjects () {
         if (this.hasDirtyObjects()) {
             this.debugLog("--- commitStoreDirtyObjects begin ---")
-            this.recordsDict().begin()
+            this.recordsMap().begin()
             const storeCount = this.storeDirtyObjects()
-            this.recordsDict().commit()
+            this.recordsMap().commit()
             this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects")
         }
     }
@@ -550,8 +532,18 @@
 
     //
 
+    headerKey () {
+        return "header" // no other key looks like this as they all use PUUID format
+    }
+
+    allPidsSet () {
+        const keySet = this.recordsMap().keySet()
+        keySet.delete(this.headerKey())
+        return keySet
+    }
+
     allPids () {
-        return this.recordsDict().keys()
+        return this.recordsMap().keysArray()
     }
 
     activeLazyPids () { // returns a set of pids
@@ -613,10 +605,10 @@
     // read a record
 
     recordForPid (puuid) { // private
-        if (!this.recordsDict().hasKey(puuid)) {
+        if (!this.recordsMap().hasKey(puuid)) {
             return undefined
         }
-        const jsonString = this.recordsDict().at(puuid)
+        const jsonString = this.recordsMap().at(puuid)
         assert(Type.isString(jsonString))
         const aRecord = JSON.parse(jsonString)
         aRecord.id = puuid
@@ -632,7 +624,7 @@
         assert(!Type.isNullOrUndefined(puuid))
         const v = JSON.stringify(obj.recordForStore(this))
         this.debugLog(() => "store " + obj.puuid() + " <- " + v )
-        this.recordsDict().atPut(puuid, v)
+        this.recordsMap().set(puuid, v)
         return this
     }
 
@@ -650,22 +642,23 @@
         // this is an on-disk collection
         // in-memory objects aren't considered
         // so we make sure they're flushed to the db first 
-        this.recordsDict().begin()
+        this.setCollectablePidSet(this.recordsMap().keysSet())
+        this.recordsMap().begin()
         this.flushIfNeeded() // store any dirty objects
 
-        this.debugLog(() => "--- begin collect --- with " + this.recordsDict().keys().length + " pids")
+        this.debugLog(() => "--- begin collect --- with " + this.recordsMap().count() + " pids")
         this.setMarkedSet(new Set())
         this.markPid(this.rootKey())
-        this.activeObjects().forEachKV((pid, obj) => this.markPid(pid))
-        this.activeLazyPids().forEach(pid => this.markPid(pid))
+        this.activeObjects().forEachK(pid => this.markPid(pid))
+        this.activeLazyPids().forEachK(pid => this.markPid(pid))
         const deleteCount = this.sweep()
         this.setMarkedSet(null)
 
-        this.recordsDict().commit()
+        this.recordsMap().commit()
         this.debugLog(() => "--- end collect --- collected " + deleteCount + " pids ---")
 
-        let remainingCount = this.recordsDict().size()
-        this.debugLog(() => " remaining keys after commit: " + remainingCount)
+        let remainingCount = this.recordsMap().count()
+        this.debugLog(() => " keys count after commit: " + remainingCount)
         return deleteCount
     }
 
@@ -714,15 +707,18 @@
     // ------------------------
 
     sweep () {
+        const unmarkedPidSet = this.collectablePidSet().difference(this.markedSet())
+
+
         // delete all unmarked records
         let deleteCount = 0
-        const recordsDict = this.recordsDict()
-        this.recordsDict().keys().forEach((pid) => {
+        const recordsMap = this.recordsMap()
+        recordsMap.keysArray().forEach(pid => {
             if (!this.markedSet().has(pid)) {
                 //this.debugLog("deletePid(" + pid + ")")
-                const count = recordsDict.keys().length
-                recordsDict.removeKey(pid)
-                assert(recordsDict.keys().length === count - 1)
+                const count = recordsMap.size
+                recordsMap.removeKey(pid)
+                assert(recordsMap.size === count - 1)
                 deleteCount ++
             }
         })
@@ -732,15 +728,15 @@
     deleteAll () {
         assert(this.isOpen())
         // assert not loading or storing?
-        const dict = this.recordsDict()
-        dict.begin()
-        dict.keys().forEach(pid => dict.removeKey(pid))
-        dict.commit()
+        const map = this.recordsMap()
+        map.begin()
+        map.forEachK(pid => dict.removeKey(pid))
+        map.commit()
         return this
     }
 
     asyncClear (successCallback) {
-        this.recordsDict().asyncClear(successCallback)
+        this.recordsMap().asyncClear(successCallback)
     }
 
     // ---------------------------
@@ -750,7 +746,7 @@
     }
 
     totalBytes () {
-        return this.recordsDict().totalBytes()
+        return this.recordsMap().totalBytes()
     }
 
     // ---------------------------

@@ -37,7 +37,7 @@
         this.setShouldStoreSubnodes(true)
         this.setNodeCanReorderSubnodes(true)
 
-        this.setStore(PersistentAsyncDictionary.clone().setName("BlobHashStore"))
+        this.setStore(PersistentAsyncMap.clone().setName("BlobHashStore"))
         this.store().asyncOpen(() => {
             //this.removeAllSubnodes()
             //this.camForValue("hello world") 

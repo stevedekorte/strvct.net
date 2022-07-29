@@ -161,7 +161,7 @@ const bitcore = require("bitcore-lib")
     }
 	
     allIdentitiesMap () { // only uses valid remote identities
-        const ids = ideal.Dictionary.clone()
+        const ids = new Map()
         ids.atPut(this.publicKeyString(), this)
         return ids
     }

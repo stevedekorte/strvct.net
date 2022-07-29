@@ -1,6 +1,6 @@
 [
     "IndexedDBFolder.js",
     "IndexedDBTx.js",
-    "PersistentAtomicDictionary.js",
-    "PersistentAsyncDictionary.js"
+    "PersistentAtomicMap.js",
+    "PersistentAsyncMap.js"
 ]

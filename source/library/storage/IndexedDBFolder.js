@@ -96,7 +96,6 @@
             this.onOpenError(event, successCallback, errorCallback)
         }
 
-
         return this
     }
 
@@ -211,10 +210,18 @@
         return this
     }
     
+    readOnlyCursorRequest () {
+        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
+        cursorRequest.onerror = (event) => {
+            this.debugLog("cursorRequest.onerror ", event)
+            throw newError("error requesting cursor")
+        }
+        return cursorRequest
+    }
 
     asyncAllKeys (callback) {
         const keys = []
-        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
+        const cursorRequest = this.readOnlyCursorRequest()
 
         cursorRequest.onsuccess = (event) => {
             const cursor = event.target.result
@@ -225,15 +232,10 @@
                 callback(keys)
             }
         }
-
-        cursorRequest.onerror = (event) => {
-            this.debugLog(" asyncAsJson cursorRequest.onerror ", event)
-            throw newError("error requesting cursor")
-        }
     }
 
     asyncForeachKey (callback) {
-        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
+        const cursorRequest = this.readOnlyCursorRequest()
 
         cursorRequest.onsuccess = (event) => {
             const cursor = event.target.result
@@ -243,40 +245,31 @@
                 cursor.continue()
             }
         }
-
-        cursorRequest.onerror = (event) => {
-            this.debugLog(" asyncAsJson cursorRequest.onerror ", event)
-            throw newError("error requesting cursor")
-        }
     }
 
 
-    asyncAsJson (callback) {
-        //console.log("asyncAsJson start")
-        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
-        const dict = {}
+    asyncAsMap (callback) {
+        const cursorRequest = this.readOnlyCursorRequest()
+        const map = new Map()
 
         cursorRequest.onsuccess = (event) => {
             const cursor = event.target.result;
 
             if (cursor) {
-                dict[cursor.value.key] = JSON.parse(cursor.value.value)
+                const k = cursor.value.key
+                const v = cursor.value.value
+                map.set(k, JSON.parse(v))
                 cursor.continue();
             } else {
-                //this.debugLog(" asyncAsJson returning dict ", JSON.stringify(dict))
-                callback(dict)
+                this.debugLog(" asyncAsMap returning map ", map.description())
+                callback(map)
             }
-        };
-
-        cursorRequest.onerror = (event) => {
-            this.debugLog(" asyncAsJson cursorRequest.onerror ", event)
-            throw newError("error requesting cursor")
         }
     }
 
     show () {
-        this.asyncAsJson((json) => {
-            this.debugLog(" " + this.path() + " = " + JSON.stringify(json, null, 2))
+        this.asyncAsMap((map) => {
+            this.debugLog(" " + this.path() + " = " + map.description())
         })
     }
 
@@ -329,8 +322,8 @@
         folder.asyncOpen(() => {
             folder.atPut("test", "x")
 
-            folder.asyncAsJson(function (dict) {
-                console.log("db dict = ", dict)
+            folder.asyncAsMap(function (map) {
+                console.log("db map = ", map)
             })
 
             folder.asyncAt("test", function (value) {

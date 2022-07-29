@@ -9,9 +9,24 @@
 */
 
 (class Set_ideal extends Set {
+
+    static fromIterator (iterator) {
+        const results = new this()
+        let entry = iterator.next()
+        while (!entry.done) {
+            const v = entry.value
+            results.add(v)
+            entry = iterator.next()
+        }
+        return results
+    }
+
+
     shallowCopy () {
         return new Set(this)
     }
+
+    // --- keys and values ---
 
     keysArray () {
         return Array.fromIterator(this.values())
@@ -20,6 +35,22 @@
     valuesArray () {
         return this.keysArray()
     }
+
+    // --- enumeration ---
+
+    forEachKV (fn) {
+        this.forEach((v, k, self) => fn(k, v, self))
+    }
+
+    forEachK (fn) {
+        this.forEach((v, k) => fn(k))
+    }
+
+    forEachV (fn) {
+        this.forEach(v => fn(v))
+    }
+
+    // --- detect, select, map ---
 
     detect (fn) {
         for (let v of this) {
@@ -77,7 +108,8 @@
         return _intersection;
     }
     
-    symmetricDifference (setB) {
+    symmetricDifference (setB) { 
+        // return values in self that are not in setB
         let _difference = new Set(this);
         for (let v of setB) {
             if (_difference.has(v)) {
@@ -89,7 +121,7 @@
         return _difference;
     }
     
-    difference (setB) {
+    difference (setB) { // return values in self that are not in setB
         let _difference = new Set(this);
         for (let v of setB) {
             _difference.delete(v);

@@ -15,13 +15,13 @@
     }
 
     static fromIterator (iterator) {
-        const values = []
-        let result = iterator.next()
-        while (!result.done) {
-            values.push(result.value)
-            result = iterator.next()
+        const results = []
+        let entry = iterator.next()
+        while (!entry.done) {
+            results.push(entry.value)
+            entry = iterator.next()
         }
-        return values
+        return results
     }
 
     /*

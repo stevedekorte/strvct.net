@@ -56,8 +56,7 @@
 (class SyncScheduler extends ProtoClass {
 
     initPrototype () {
-        this.newSlot("actions", ideal.Dictionary.clone())
-        //this.newSlot("syncSets", ideal.Dictionary.clone())
+        this.newSlot("actions", new Map())
         this.newSlot("hasTimeout", false)
         this.newSlot("isProcessing", false)
         this.newSlot("currentAction", null)
@@ -66,18 +65,6 @@
     init () {
         super.init()
     }
-    
-    /*
-    syncSet (syncMethod) {
-        const sets = this.syncSets()
-
-        if (!sets.at(syncMethod)) {
-            sets.atPut(syncMethod, ideal.Dictionary.clone())
-        }
-        
-        return sets.at(syncMethod)
-    }
-    */
 
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
@@ -190,14 +177,9 @@
 	    return this
     }
 	
-    clearActions () {
-	    this.setActions(ideal.Dictionary.clone())
-	    return this
-    }
-	
     orderedActions () {
         const sorter = function (a1, a2) { return a1.order() - a2.order() }
-        return this.actions().values().sort(sorter)
+        return this.actions().valuesArray().sort(sorter)
     }
 	
     processSets () {
@@ -217,7 +199,7 @@
         this.debugLog("Sync")
         
         const actions = this.orderedActions()
-        this.clearActions()
+        this.actions().clear()
  
         actions.forEach((action) => {
             if (action.isUnscheduled()) {
@@ -246,7 +228,7 @@
     }
 
     actionCount () {
-        return this.actions().keys().length
+        return this.actions().size
     }
 
     fullSyncNow () {

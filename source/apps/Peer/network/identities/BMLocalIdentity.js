@@ -129,7 +129,7 @@ var Buffer = bitcore.deps.Buffer;
     }
 	
     allIdentitiesMap () { // only uses valid remote identities
-        const ids = ideal.Dictionary.clone()
+        const ids = new Map()
         ids.atPut(this.publicKeyString(), this)
 		
         this.remoteIdentities().subnodes().forEach((rid) => { 

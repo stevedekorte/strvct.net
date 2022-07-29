@@ -56,7 +56,18 @@
         }
 
 
-        this.newSlot("orderNamesShort", ["bytes", "k", "M", "G", "T", "P", "E", "Z", "Y"])
+        this.newSlot("orderNamesShort", [
+            "bytes", 
+            "k", 
+            "M", 
+            "G", 
+            "T", 
+            "P", 
+            "E", 
+            "Z", 
+            "Y"
+        ])
+        
         this.newSlot("orderNamesLong", [
             "bytes", 
             "kilobytes", 
@@ -66,7 +77,8 @@
             "petabytes", 
             "exabytes", 
             "zettabytes", 
-            "yottabytes"])
+            "yottabytes"
+        ])
     }
 
     init () {
@@ -79,7 +91,7 @@
         let space = this.useSpace() ? " " : "";
 		
         const orderNames = this.useLongNames() ? this.orderNamesLong() : this.orderNamesShort();
-        let order = Math.floor(Math.log10(b)/3)
+        let order = b === 0 ? 0 : Math.floor(Math.log10(b)/3)
         order = Math.min(order, orderNames.length - 1)
         const orderName = orderNames[order]
 

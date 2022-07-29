@@ -28,8 +28,7 @@
     }
 	
     allIdentitiesMap () { // only uses valid remote identities
-        const ids = ideal.Dictionary.clone()
-        return ids
+        return new Map()
     }
 
 }.initThisClass());

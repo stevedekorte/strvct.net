@@ -4,7 +4,7 @@
 
     PersistentObjectPool
 
-        An ObjectPool that uses a PersistentAtomicDictionary
+        An ObjectPool that uses a PersistentAtomicMap
         to store it's records.
 
 */
@@ -18,7 +18,7 @@
     init () {
         super.init()
         this.setName("defaultDataStore")
-        this.setRecordsDict(PersistentAtomicDictionary.clone())
+        this.setRecordsMap(PersistentAtomicMap.clone())
         return this
     }
 

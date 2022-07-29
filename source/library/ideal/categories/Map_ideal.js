@@ -9,30 +9,82 @@
 */
 
 (class Map_ideal extends Map {
-    /*
     shallowCopy () {
         return new Map(this)
     }
-    */
+
+    count () {
+        return this.size
+    }
 
     at (k) {
         return this.get(k)
     }
 
-    atPut (k, v) {
-        return this.set(k, v)
+    atIfAbsentPut (k, v) {
+        if (!this.has(k)) {
+            this.set(k, v)
+        }
+        return this
     }
+
+    hasKey (k) {
+        return this.has(k)
+    }
+
+    atPut (k, v) {
+        this.set(k, v)
+        return this
+    }
+
+    removeKey (k) {
+        this.delete(k)
+        return this
+    }
+
+    // --- enumeration ---
 
     forEachKV (fn) {
         this.forEach((v, k, self) => fn(k, v, self))
+    }
+
+    forEachK (fn) {
+        this.forEach((v, k) => fn(k))
     }
 
     forEachV (fn) {
         this.forEach(v => fn(v))
     }
 
+    // --- keys ---
+
+    keysArray () {
+        return Array.fromIterator(this.keys())
+    }
+
+    keysSet () {
+        return Set.fromIterator(this.keys())
+    }
+
+    // --- values ---
+
+    valuesArray () {
+        return Array.fromIterator(this.values())
+    }
+
+    valuesSet () {
+        return Set.fromIterator(this.values())
+    }
+
+    // ---
+
     mergeInto (aMap) {
         this.forEachKV((k, v) => aMap.set(k, v))
+    }
+
+
+    merge (aMap) {
+        aMap.forEachKV((k, v) => this.set(k, v))
     }
 
     select (fn) {
@@ -63,6 +115,16 @@
 
     isEmpty () {
         return this.size === 0        
+    }
+
+    asDict () {
+        const dict = {}
+        this.forEachKV((k, v) => dict[k] = v)
+        return dict
+    }
+
+    description () {
+        return JSON.stringify(this.asDict(), null, 2) // may throw error if values aren't json compatible
     }
 
 }).initThisCategory();

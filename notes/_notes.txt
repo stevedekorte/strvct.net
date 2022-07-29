@@ -1,4 +1,6 @@
-- move ivar dicts in ObjectPool (and elsewhere to use Maps) - including Dictionary, AtomicDictionary, etc
+- break DomView into chain of subclasses or categories (like Node)
+
+
 
 -  move shouldStore to class?
 
@@ -8,7 +10,7 @@
 - BMNode: find way to ensure no duplicate subnodes?
 - add way to check if hooks have been set up when adding mutation observer
 - onInstanceLoadRef is triggering didUpdateSlot -> didMutate -> ObjectPool.onDidMutateObject
--- make sure drag/drop/copy pools don't add themselves to mutation observers
+-- make sure drag/drop/copy pools don't add themselves to mutation observers <-----------------------------
 - cleanup addEventNameAndMethodName
 
 - new Folder tiles don't have editable titles?
@@ -16,7 +18,6 @@
 == onDoubleTapCancel is being called, appearently by a cancel request from another gesture 
 == looks like view has single tap and double tap listeners, and single tap cancels double tap
 
-- break DomView into chain of subclasses or categories (like Node)
 
 - rename StackItemSetView to TilesView?
 - rename Column to tilesView

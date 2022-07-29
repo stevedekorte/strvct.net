@@ -5,7 +5,7 @@
     "proxies/_imports.json",
     "Documentation.js",
     "array/_imports.json",
-    "dictionary/_imports.json",
+    "map/_imports.json",
     "StackTrace.js",
     "formatters/_imports.json",
     "NamespaceSearch.js"

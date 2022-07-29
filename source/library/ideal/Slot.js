@@ -677,7 +677,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             const obj = this.initProto().clone()
             anInstance[this.privateName()] = obj
         } else if (this.initProto()) {
-            //debugger;
             const obj = this.initProto().clone()
             this.onInstanceSetValue(anInstance, obj)
         } else if (this.initValue()) {
