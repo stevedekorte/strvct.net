@@ -600,9 +600,19 @@
     "hash": "yerRFfiDP8Y9yius/TyY8QitEsbhdf+Jysd3c6l63s8="
   },
   {
+    "path": "source/library/view/dom/DomView/BaseDomView.js",
+    "size": 87969,
+    "hash": "ieGMuw2O5YldHxU1IelNc/MdCMypk8I42MfI6PvlhIE="
+  },
+  {
+    "path": "source/library/view/dom/DomView/CssDomView.js",
+    "size": 32503,
+    "hash": "7EvYsE/Sgn3MitE8njexSGUf5+cMUMGm0MJbyotFmmg="
+  },
+  {
     "path": "source/library/view/dom/DomView/DomView.js",
-    "size": 120171,
-    "hash": "wKyE3Gpv22JJpynRZDReBPpl5pYPBHw7vsyz1ttaEno="
+    "size": 281,
+    "hash": "2KJ9B8NJE7BxNc1/ZooG3T7eVMFdl1YLPzDotvlw71Y="
   },
   {
     "path": "source/library/view/dom/DomView/FlexDomView.js",

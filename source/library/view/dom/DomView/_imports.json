@@ -1,4 +1,6 @@
 [
+    "BaseDomView.js",
+    "CssDomView.js",
     "DomView.js",
     "FlexDomView.js",
     "StyledDomView.js",
