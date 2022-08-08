@@ -2,10 +2,17 @@
 
 - break DomView into chain of subclasses or categories (like Node)
 
+- rename _cam.json and _index.json to cam.json and index.json, etc
+
+- get rid of snake_case folder names - move to CamelCase or Cap Case?
+
+
+Orangize DomView:
+
 DomView - element, element attributes
-firstResponder
-subviews, synchronization?
-frame, viewport, position helpers?
+	firstResponder
+	subviews, synchronization?
+	frame, viewport, position helpers?
 
 CssDomView - css get/set attributes
 
@@ -19,7 +26,7 @@ DragAndDropDomView - drag and drop
 
 TabableDomView - nextKeyView tab
 
-EditableDomView - contentEditable, set caret methods, text selection, contentString
+EditableDomView - contentEditable, set caret methods, text selection, contentString, copy/paste (for text insert)?
 
 ScrollableDomView - scroll methods
 

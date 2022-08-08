@@ -19,7 +19,7 @@
 */
 
 
-(class SvgIconView extends DomFlexView {
+(class SvgIconView extends FlexDomView {
     
     initPrototype () {
         this.newSlot("doesMatchParentColor", false)

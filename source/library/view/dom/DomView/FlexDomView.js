@@ -1,12 +1,12 @@
 "use strict";
 
 /*
-    DomFlexView
+    FlexDomView
 
 
 */
 
-(class DomFlexView extends DomView {
+(class FlexDomView extends DomView {
     
     initPrototype () {
     }
@@ -36,7 +36,7 @@
     }
 
     newFlexSubview () {
-        const v = DomFlexView.clone()
+        const v = FlexDomView.clone()
         v.setDisplay("flex")
         v.setMinHeight("0em")
         v.setMinWidth("0em")

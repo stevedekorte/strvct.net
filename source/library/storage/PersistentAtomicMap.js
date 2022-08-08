@@ -76,12 +76,12 @@
             //console.log(this.debugTypeId() + " onOpen() --- loaded cache with " + this.recordsMap().count() + " keys")
             this.setMap(map)
             this.setIsOpen(true)
-            /*
+            
             if (callback) {
                 callback()
             }
-            */
-            this.verifySync(callback, errorCallback)
+            
+            //this.verifySync(callback, errorCallback)
         })
     }
 
@@ -132,7 +132,11 @@
         // indexeddb commits on next event loop automatically
         // this tx.commit() is just a sanity check -  marks the tx as committed so it raises exception 
         // if we attempt to write more to the same tx 
-		tx.setSucccessCallback(() => this.verifySync())
+        /*
+        if (this.isDebugging()) {
+		    tx.setSucccessCallback(() => this.verifySync())
+        }
+        */
         tx.commit() // TODO: lock until commit callback?
 
         super.applyChanges() // do this last as it will clear the snapshot

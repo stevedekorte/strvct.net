@@ -1,7 +1,7 @@
 "use strict";
 
 /*
-    DomStyledView
+    StyledDomView
 
    (one step towards eliminating the remaining css files)
 
@@ -10,7 +10,7 @@
 
     Overview:
 
-        DomStyledView
+        StyledDomView
           styles -> BMViewStyles
                         selected -> BMViewStyle
                         unselected -> BMViewStyle
@@ -31,7 +31,7 @@
 */
 
 
-(class DomStyledView extends DomFlexView {
+(class StyledDomView extends FlexDomView {
     
     initPrototype () {
         this.newSlot("styles", null)

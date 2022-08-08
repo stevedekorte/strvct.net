@@ -63,7 +63,7 @@
 
 */
 
-(class DragView extends DomStyledView {
+(class DragView extends StyledDomView {
     
     initPrototype () {
         // the view that will be dragged when operation is complete

@@ -156,7 +156,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
             assert(Type.isString(v))
         }
 
-        console.log(this.debugTypeId() + " atPut('" + k + "', <" + typeof(v) + "> '" + v + "')")
+        //console.log(this.debugTypeId() + " atPut('" + k + "', <" + typeof(v) + "> '" + v + "')")
         this.assertAccessible()
         this.assertInTx()
         this.changedKeySet().add(k)

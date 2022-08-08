@@ -13,7 +13,7 @@
                 |- scrollView, which is a StackScrollView and contains:
                     |- tilesView, which is a TilesView contains array of: 
                         |->> Tiles(or subclass), (each of which contains a contentView, so things like slide-to-delete gestures work)
-            |- otherView, which is a DomFlexView whose content is used to display the selected ite, and can be set with setOtherViewContent()
+            |- otherView, which is a FlexDomView whose content is used to display the selected ite, and can be set with setOtherViewContent()
         
     
         There is also a "direction" attribute. If it's value is:
@@ -102,7 +102,7 @@
     }
 
     setupOtherView () {
-        const v = DomFlexView.clone()
+        const v = FlexDomView.clone()
         v.setFlexGrow(1)
         v.setFlexShrink(1)
         v.setFlexDirection("column")

@@ -6,7 +6,7 @@
 
 */
 
-(class NodeView extends DomStyledView {
+(class NodeView extends StyledDomView {
     
     initPrototype () {
         this.newSlot("node", null) //.setDuplicateOp("duplicate")

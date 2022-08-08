@@ -15,7 +15,7 @@
 (class DomView extends ProtoClass {
     
     initPrototype () {
-        this.newSlot("divClassName", "")
+        this.newSlot("elementClassName", "")
         this.newSlot("elementType", "div")
         this.newSlot("element", null)
 
@@ -24,7 +24,7 @@
         this.newSlot("parentView", null)
         this.newSlot("subviews", null)
 
-        // target / action
+        // Targetable - target / action
 
         this.newSlot("target", null)
         this.newSlot("action", null)
@@ -33,14 +33,14 @@
         this.newSlot("validColor", null)
         this.newSlot("invalidColor", null)
 
-        // key views
+        // Tabable - key views
 
         this.newSlot("interceptsTab", true)
         this.newSlot("nextKeyView", null)
         this.newSlot("canMakeKey", true)
         this.newSlot("unfocusOnEnterKey", false)
 
-        // event handling
+        // Eventable - event handling
 
         this.newSlot("isRegisteredForVisibility", false)
         this.newSlot("intersectionObserver", null)
@@ -202,7 +202,7 @@
     /*    
     applyCSS (ruleName) {
         if (ruleName == null) { 
-            ruleName = this.divClassName()
+            ruleName = this.elementClassName()
         }
         CSS.ruleAt(ruleName).applyToElement(this.element())
         return this
@@ -1810,7 +1810,7 @@
         if (this.display() === "none") {
             return 0
         }
-        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.divClassName(), this.innerHtml()).width;
+        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.elementClassName(), this.innerHtml()).width;
     }
 
     calcCssHeight () {
@@ -2208,8 +2208,8 @@
     // --- div class name ---
 
     setElementClassName (aName) {
-        if (this._divClassName !== aName) {
-            this._divClassName = aName
+        if (this._elementClassName !== aName) {
+            this._elementClassName = aName
             if (this.element()) {
                 this.element().setAttribute("class", aName);
             }
@@ -2217,13 +2217,13 @@
         return this
     }
 
-    divClassName () {
+    elementClassName () {
         if (this.element()) {
             const className = this.element().getAttribute("class");
-            this._divClassName = className
+            this._elementClassName = className
             return className
         }
-        return this._divClassName
+        return this._elementClassName
     }
 
     // --- parentView ---
@@ -3142,7 +3142,7 @@
     // --- content editing ---
 
     setContentEditable (aBool) {
-        //console.log(this.divClassName() + " setContentEditable(" + aBool + ")")
+        //console.log(this.elementClassName() + " setContentEditable(" + aBool + ")")
         if (aBool) {
             this.makeCursorText()
         } else {
@@ -3617,7 +3617,7 @@
         return this
     }
 
-    // firstResponder
+    // --- firstResponder --- 
 
     isFirstResponder () {
         return document.activeElement === this.element()
@@ -3680,6 +3680,8 @@
         //this.debugLog(" onBlur")
         return true
     }
+
+    // ----
 
     innerText () {
         const e = this.element()
@@ -3812,6 +3814,8 @@
         return this
     }
 
+    // ------------
+
     replaceSelectedText (replacementText) {
         let range;
         if (window.getSelection) {
@@ -3865,20 +3869,20 @@
     }
 
     setCaretPosition (caretPos) {
-        const elem = this.element();
+        const e = this.element();
 
-        if (elem != null) {
-            if (elem.createTextRange) {
-                const range = elem.createTextRange();
+        if (e != null) {
+            if (e.createTextRange) {
+                const range = e.createTextRange();
                 range.move("character", caretPos);
                 range.select();
             }
             else {
-                if (elem.selectionStart) {
-                    elem.focus();
-                    elem.setSelectionRange(caretPos, caretPos);
+                if (e.selectionStart) {
+                    e.focus();
+                    e.setSelectionRange(caretPos, caretPos);
                 } else {
-                    elem.focus();
+                    e.focus();
                 }
             }
         }
@@ -3908,13 +3912,13 @@
         return this
     }
 
-    setContentAfterString (aString) {
-        this.setContentAfterOrBeforeString(aString, "after")
+    setContentAfterString (s) {
+        this.setContentAfterOrBeforeString(s, "after")
         return this
     }
 
-    setContentBeforeString (aString) {
-        this.setContentAfterOrBeforeString(aString, "before")
+    setContentBeforeString (s) {
+        this.setContentAfterOrBeforeString(s, "before")
         return this
     }
 
@@ -4047,8 +4051,6 @@
         this.addTimeout(() => {
             this.element().scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth", })
         }, 0)
-
-
 
         /*
         if (focusedView !== this) {

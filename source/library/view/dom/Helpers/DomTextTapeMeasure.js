@@ -8,7 +8,7 @@
     
     Example uses:
 
-            const size1 = DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.divClassName(), text);
+            const size1 = DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.elementClassName(), text);
             const h = size1.height;
 
             const size2 = DomTextTapeMeasure.shared().sizeOfElementWithText(domElement, text);
@@ -74,10 +74,10 @@
         return { width: width, height: height }
     }
 	
-    sizeOfCSSClassWithText (divClassName, text) { 
+    sizeOfCSSClassWithText (elementClassName, text) { 
         const e = this.testElement()
         this.clean()
-        e.className = divClassName
+        e.className = elementClassName
         e.innerHTML = text
 		
         const width = (e.clientWidth + 1) 

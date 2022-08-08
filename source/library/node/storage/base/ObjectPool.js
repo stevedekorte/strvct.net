@@ -99,7 +99,7 @@
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"))
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
         return this
     }
 
@@ -176,11 +176,9 @@
     }
 
     onRecordsDictOpen () {
-        //debugger;
-        this.show("ON OPEN")
+        //this.show("ON OPEN")
         this.collect()
-        this.show("AFTER COLLECT")
-        //this.readRoot()
+        //this.show("AFTER COLLECT")
         this.nodeStoreDidOpenNote().post()
         return this
     }
@@ -435,13 +433,13 @@
 
     commitStoreDirtyObjects () {
         if (this.hasDirtyObjects()) {
-            this.debugLog("--- commitStoreDirtyObjects begin ---")
+            //this.debugLog("--- commitStoreDirtyObjects begin ---")
             //debugger;
             this.recordsMap().begin()
             const storeCount = this.storeDirtyObjects()
             this.recordsMap().commit()
             this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects")
-            this.show("AFTER commitStoreDirtyObjects")
+            //this.show("AFTER commitStoreDirtyObjects")
         }
     }
 

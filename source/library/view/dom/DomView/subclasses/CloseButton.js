@@ -9,7 +9,7 @@
 
 */
 
-(class CloseButton extends DomFlexView {
+(class CloseButton extends FlexDomView {
     
     initPrototype () {
         this.newSlot("isEnabled", true)

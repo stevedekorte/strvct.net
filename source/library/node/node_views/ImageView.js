@@ -58,7 +58,7 @@
     }
 
     newImageViewContainer () {
-        const v = DomFlexView.clone().setElementClassName("ImageViewImageContainer")
+        const v = FlexDomView.clone().setElementClassName("ImageViewImageContainer")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setJustifyContent("center")
@@ -146,7 +146,7 @@
     }
 
     newRawImageViewForImage (image) {
-        const v = DomFlexView.clone().setElement(image).setElementClassName("RawImageView")
+        const v = FlexDomView.clone().setElement(image).setElementClassName("RawImageView")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setJustifyContent("center")

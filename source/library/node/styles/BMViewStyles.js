@@ -10,7 +10,7 @@
     Views will use their own style (or the style of some parent such as a tile using a column rowStyle),
     unless their node specifies a style, which overrides the view's own style.
 
-    See DomStyledView and Tile to understand how Views lookup/access/change their style state.
+    See StyledDomView and Tile to understand how Views lookup/access/change their style state.
 
     TODO: can we make view styles nodes? recursion?
 

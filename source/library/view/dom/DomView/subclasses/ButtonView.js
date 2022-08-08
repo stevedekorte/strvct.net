@@ -35,7 +35,7 @@
 
 */
 
-(class ButtonView extends DomFlexView {
+(class ButtonView extends FlexDomView {
     
     initPrototype () {
         this.newSlot("titleView", null)

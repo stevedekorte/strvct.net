@@ -171,7 +171,7 @@
     // we route style methods to it
 
     setupTileContentView () {
-        const cv = DomFlexView.clone().setElementClassName("TileContentView")
+        const cv = FlexDomView.clone().setElementClassName("TileContentView")
         cv.setDisplay("flex")
         cv.setHeight("auto")
         cv.setMinHeightPx(60)
