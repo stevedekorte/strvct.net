@@ -30,7 +30,7 @@
     }
     
     setupTitleView () {
-        this.titleView().insertDivClassName(this.type() + "Title")
+        this.titleView().insertElementClassName(this.type() + "Title")
         this.titleView().setWidth("auto")
         this.titleView().setMinWidth("50px")
         this.titleView().setMaxWidth("calc(100% - 100px)")

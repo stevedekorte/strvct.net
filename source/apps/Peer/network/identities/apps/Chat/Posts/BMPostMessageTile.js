@@ -33,51 +33,51 @@
         //this.contentView()
 
         // left view
-        this.setLeftView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageTileLeftView")))
-        this.setIconView(this.leftView().addSubview(ImageView.clone().setDivClassName("BMPostAvatarView")))
+        this.setLeftView(this.addContentSubview(DomView.clone().setElementClassName("BMPostMessageTileLeftView")))
+        this.setIconView(this.leftView().addSubview(ImageView.clone().setElementClassName("BMPostAvatarView")))
         this.iconView().setBackgroundSizeWH(64, 64).setTarget(this).setAction("clickedIconView")
 
         // middle view
-        this.setMiddleView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageTileMiddleView")))
+        this.setMiddleView(this.addContentSubview(DomView.clone().setElementClassName("BMPostMessageTileMiddleView")))
 
         // title view
-        this.setTitleBarView(this.middleView().addSubview(DomView.clone().setDivClassName("BMPostTitleBarView")))
+        this.setTitleBarView(this.middleView().addSubview(DomView.clone().setElementClassName("BMPostTitleBarView")))
 
-        this.setTitleBarTextView(this.titleBarView().addSubview(DomView.clone().setDivClassName("BMPostTitleBarTextView")))
-        this.setDateView(this.titleBarView().addSubview(DomView.clone().setDivClassName("BMPostDateView")))
+        this.setTitleBarTextView(this.titleBarView().addSubview(DomView.clone().setElementClassName("BMPostTitleBarTextView")))
+        this.setDateView(this.titleBarView().addSubview(DomView.clone().setElementClassName("BMPostDateView")))
 
         // content
-        this.setTextView(this.middleView().addSubview(TextField.clone().setDivClassName("BMPostMessageTileContent")))
+        this.setTextView(this.middleView().addSubview(TextField.clone().setElementClassName("BMPostMessageTileContent")))
 
         // bottom bar
-        this.setBottomBarView(this.middleView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileBottomBar")))
+        this.setBottomBarView(this.middleView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileBottomBar")))
 
         // reply
-        this.setReplyButton(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileReplyButton")))
+        this.setReplyButton(this.bottomBarView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileReplyButton")))
         this.replyButton().setTarget(this).setAction("reply")
         this.replyButton().setBackgroundImageUrlPath(this.pathForIconName("reply"))
         this.replyButton().makeBackgroundContain().makeBackgroundNoRepeat()
         this.replyButton().setToolTip("reply")
-        this.setReplyCountView(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileCountView")))
+        this.setReplyCountView(this.bottomBarView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileCountView")))
 
         // repost
-        this.setRepostButton(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileRepostButton")))
+        this.setRepostButton(this.bottomBarView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileRepostButton")))
         this.repostButton().setTarget(this).setAction("repost")
         this.repostButton().setBackgroundImageUrlPath(this.pathForIconName("repost"))
         this.repostButton().makeBackgroundContain().makeBackgroundNoRepeat()
         this.repostButton().setToolTip("repost")
-        this.setRepostCountView(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileCountView")))
+        this.setRepostCountView(this.bottomBarView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileCountView")))
 
         // like
-        this.setLikeButton(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileLikeButton")))
+        this.setLikeButton(this.bottomBarView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileLikeButton")))
         this.likeButton().setTarget(this).setAction("like")
         this.likeButton().setBackgroundImageUrlPath(this.pathForIconName("heart-black-filled"))
         this.likeButton().makeBackgroundContain().makeBackgroundNoRepeat()
         this.likeButton().setToolTip("like")
-        this.setLikeCountView(this.bottomBarView().addSubview(DomView.clone().setDivClassName("BMPostMessageTileCountView")))
+        this.setLikeCountView(this.bottomBarView().addSubview(DomView.clone().setElementClassName("BMPostMessageTileCountView")))
 
         // right view
-        //this.setRightView(this.addContentSubview(DomView.clone().setDivClassName("BMPostMessageTileRightView")))
+        //this.setRightView(this.addContentSubview(DomView.clone().setElementClassName("BMPostMessageTileRightView")))
 
 
         this.setupContentView()
@@ -102,7 +102,7 @@
 
     /*
 	setupIconView () {
-		let iv = DomView.clone().setDivClassName("ShelfIconView")
+		let iv = DomView.clone().setElementClassName("ShelfIconView")
 		this.setIconView(iv)
         this.leftView().addSubview(iv)
         

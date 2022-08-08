@@ -171,7 +171,7 @@
     // we route style methods to it
 
     setupTileContentView () {
-        const cv = DomFlexView.clone().setDivClassName("TileContentView")
+        const cv = DomFlexView.clone().setElementClassName("TileContentView")
         cv.setDisplay("flex")
         cv.setHeight("auto")
         cv.setMinHeightPx(60)
@@ -500,7 +500,7 @@
     addCloseButton () {
         if (this.closeButtonView() === null) {
 
-            const cb = DomView.clone().setDivClassName("TileCloseButton")
+            const cb = DomView.clone().setElementClassName("TileCloseButton")
             cb.setCssDict({
                 "display": "block",
                 "right": "20px",

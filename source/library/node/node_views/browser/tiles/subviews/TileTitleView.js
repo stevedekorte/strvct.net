@@ -5,7 +5,7 @@
 
     A title element in a Tile. 
 
-    Reasons not to just use setDivClassName() on a TextField instead:
+    Reasons not to just use setElementClassName() on a TextField instead:
     - to automatically get the full class hierarchy in the div name
     - a place to (potentially) override interaction behaviors
 

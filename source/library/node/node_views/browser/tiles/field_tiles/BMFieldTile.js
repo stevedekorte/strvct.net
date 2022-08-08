@@ -69,21 +69,21 @@
         this.setTextAlign("left")
 
         {
-            this.setKvSection(this.contentView().newFlexSubview().setDivClassName("KvSection"))
+            this.setKvSection(this.contentView().newFlexSubview().setElementClassName("KvSection"))
             this.kvSection().setFlexDirection("column")
 
-            this.setKeyViewContainer(this.kvSection().newFlexSubview().setDivClassName("KeyViewContainer"))
+            this.setKeyViewContainer(this.kvSection().newFlexSubview().setElementClassName("KeyViewContainer"))
             this.keyViewContainer().setAlignItems("flex-start")
             this.setupKeyView()
 
-            this.setValueViewContainer(this.kvSection().newFlexSubview().setDivClassName("ValueViewContainer"))
+            this.setValueViewContainer(this.kvSection().newFlexSubview().setElementClassName("ValueViewContainer"))
             this.valueViewContainer().setAlignItems("flex-start")
             this.setupValueView()
 
-            this.setNoteViewContainer(this.contentView().newFlexSubview().setDivClassName("NoteViewContainer"))
+            this.setNoteViewContainer(this.contentView().newFlexSubview().setElementClassName("NoteViewContainer"))
             this.setupNoteView()
 
-            this.setErrorViewContainer(this.contentView().newFlexSubview().setDivClassName("ErrorViewContainer"))
+            this.setErrorViewContainer(this.contentView().newFlexSubview().setElementClassName("ErrorViewContainer"))
             this.setupErrorView()
 
             this.contentView().subviews().forEach(subview => {
@@ -96,7 +96,7 @@
     }
 
     setupKeyView () {
-        const v = TextField.clone().setDivClassName("BMFieldKeyView")
+        const v = TextField.clone().setElementClassName("BMFieldKeyView")
         v.setDisplay("inline-block")
         v.setOverflow("hidden")
         v.setTextAlign("left")
@@ -132,7 +132,7 @@
     }
 
     setupNoteView () {
-        const v = DomView.clone().setDivClassName("BMFieldTileNoteViewView")
+        const v = DomView.clone().setElementClassName("BMFieldTileNoteViewView")
         v.setDisplay("block")
         v.setPosition("relative")
         v.setOverflow("hidden")
@@ -150,7 +150,7 @@
     }
 
     setupErrorView () {
-        const v = DomView.clone().setDivClassName("BMFieldTileErrorView")
+        const v = DomView.clone().setElementClassName("BMFieldTileErrorView")
         v.setUserSelect("text")
         v.setSpellCheck(false)
         //v.setInnerHtml("error")
@@ -162,7 +162,7 @@
     }
 
     createValueView () {
-        const v = TextField.clone().setDivClassName("BMFieldValueView")
+        const v = TextField.clone().setElementClassName("BMFieldValueView")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setWidth("100%")

@@ -45,7 +45,7 @@
         this.setOverflow("hidden")
 
         /*
-        const iconSetView = DomView.clone().setDivClassName("IconSetView")
+        const iconSetView = DomView.clone().setElementClassName("IconSetView")
         //this.setBorder("1px dashed white")
         iconSetView.setDisplay("flex")
         iconSetView.setPosition("relative")

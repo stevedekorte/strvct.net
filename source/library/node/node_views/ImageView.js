@@ -46,7 +46,7 @@
     }
 
     newCloseButtonView () {
-        const v = ButtonView.clone().setDivClassName("ImageCloseButton")
+        const v = ButtonView.clone().setElementClassName("ImageCloseButton")
         v.setDisplay("flex")
         v.setPosition("absolute")
         v.setTitleIsVisible(false)
@@ -58,7 +58,7 @@
     }
 
     newImageViewContainer () {
-        const v = DomFlexView.clone().setDivClassName("ImageViewImageContainer")
+        const v = DomFlexView.clone().setElementClassName("ImageViewImageContainer")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setJustifyContent("center")
@@ -146,7 +146,7 @@
     }
 
     newRawImageViewForImage (image) {
-        const v = DomFlexView.clone().setElement(image).setDivClassName("RawImageView")
+        const v = DomFlexView.clone().setElement(image).setElementClassName("RawImageView")
         v.setDisplay("flex")
         v.setPosition("relative")
         v.setJustifyContent("center")

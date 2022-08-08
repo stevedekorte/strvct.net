@@ -23,7 +23,7 @@
         this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px")
         this.valueView().setPaddingTop("0px").setPaddingBottom("0px")
 
-        //this.keyView().setDivClassName("BMImageWellKeyField")
+        //this.keyView().setElementClassName("BMImageWellKeyField")
         //this.valueView().setIsEditable(false)
         this.turnOffUserSelect()
         this.keyView().setTransition("all 0.3s")

@@ -22,7 +22,7 @@
         cv.setPaddingLeft("1em")
         cv.setPaddingRight("1em")
 		
-        const bv = ButtonView.clone().setDivClassName("BMActionNodeView")
+        const bv = ButtonView.clone().setElementClassName("BMActionNodeView")
         this.setButtonView(bv)
 	    bv.setTarget(this).setAction("didClickButton")
 	    bv.setTransition("all 0.3s")

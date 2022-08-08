@@ -18,7 +18,7 @@
     init () {
         super.init()
         this.setPosition("absolute")
-        this.setTitleView(TextField.clone().setDivClassName("PanelTitleView"))
+        this.setTitleView(TextField.clone().setElementClassName("PanelTitleView"))
         this.addSubview(this.titleView())
         this.titleView().setTextAlign("center")
         this.titleView().setHeight("3em")
@@ -27,7 +27,7 @@
         this.titleView().setValue("hello")
         this.titleView().setColor("white")
 
-        //this.setSubtitleView(TextField.clone().setDivClassName("PanelSubtitleView"))
+        //this.setSubtitleView(TextField.clone().setElementClassName("PanelSubtitleView"))
         //this.addSubview(this.subtitleView())
 
         this.setButton1(ButtonView.clone())

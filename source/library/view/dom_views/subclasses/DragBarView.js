@@ -26,7 +26,7 @@
 
         this.turnOffUserSelect()
 
-        this.setDivClassName("DragBarView")
+        this.setElementClassName("DragBarView")
         this.setDisplay("inline-block")
 
         this.setIsRegisteredForMouse(true)

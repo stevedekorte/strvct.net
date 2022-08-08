@@ -79,7 +79,7 @@
 
         this.setTitle("")
 
-        const icon = SvgIconView.clone() //.setDivClassName("RightActionView")
+        const icon = SvgIconView.clone() //.setElementClassName("RightActionView")
         icon.setMinAndMaxWidth(12)
         icon.setMinAndMaxHeight(15)
         icon.setFillColor("white")

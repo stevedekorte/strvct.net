@@ -1,13 +1,41 @@
 
--- move setEventListenersDict to map
--- move gestureRecognizers to map
+
 - break DomView into chain of subclasses or categories (like Node)
 
+DomView - element, element attributes
+firstResponder
+subviews, synchronization?
+frame, viewport, position helpers?
+
+CssDomView - css get/set attributes
+
+EventTargetDomView - listeners, copy/paste?, other events
+
+TouchableDomView - gestures 
+
+ActionableDomView - target/action
+
+DragAndDropDomView - drag and drop
+
+TabableDomView - nextKeyView tab
+
+EditableDomView - contentEditable, set caret methods, text selection, contentString
+
+ScrollableDomView - scroll methods
+
+VisibilityDomView - visibility events? or put in EventTargetDomView?
+
+
+
+
+
+
+
+-- move gestureRecognizers to map
 
 
 -  move shouldStore to class?
 
-- don't use "root" pid as root object in pool, instead have a root key that returns the root pid 
 - don't store App in object pool (for now), instead have it set up and manage the root node
 
 - BMNode: find way to ensure no duplicate subnodes?

@@ -1623,7 +1623,7 @@
     newTilePlaceHolder (dragView) {
         this.debugLog("newTilePlaceHolder")
         if (!this.tilePlaceHolder()) {
-            const ph = DomView.clone().setDivClassName("TilePlaceHolder")
+            const ph = DomView.clone().setElementClassName("TilePlaceHolder")
             ph.setBackgroundColor("black")
 
             //ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")

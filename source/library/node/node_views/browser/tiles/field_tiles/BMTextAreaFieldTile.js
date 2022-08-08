@@ -39,7 +39,7 @@
         }
         */
 
-        const v = TextField.clone().setDivClassName("BMTextAreaFieldValueView")
+        const v = TextField.clone().setElementClassName("BMTextAreaFieldValueView")
         v.setDisplay("block")
         v.setPosition("relative")
         v.setWordWrap("normal")

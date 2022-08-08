@@ -5,7 +5,7 @@
     Used to inspect class styles since css hides stylesheet.cssRules.
     
     example use:
-    const value = DomCssInspector.shared().setDivClassName("..").cssStyle.fontFamily
+    const value = DomCssInspector.shared().setElementClassName("..").cssStyle.fontFamily
 
 */
 
@@ -34,7 +34,7 @@
         return e
     }
 
-    setDivClassName (aName) {
+    setElementClassName (aName) {
         this.testElement().setAttribute("class", aName);
         return this
     }

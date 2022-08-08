@@ -71,7 +71,7 @@
         rv.setMinWidth("3em")
         rv.setJustifyContent("center")
 
-        const icon = SvgIconView.clone().setDivClassName("NoteIconView")
+        const icon = SvgIconView.clone().setElementClassName("NoteIconView")
         icon.setMinAndMaxWidth(12)
         icon.setMinAndMaxHeight(15)
         //icon.setFillColor("white")
@@ -86,7 +86,7 @@
 
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
-            const tv = DomView.clone().setDivClassName("TileThumbnailView")
+            const tv = DomView.clone().setElementClassName("TileThumbnailView")
             tv.setDisplay("block")
             tv.setLeftPx(10)
             tv.setTopPx(5)

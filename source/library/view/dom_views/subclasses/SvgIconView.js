@@ -35,7 +35,7 @@
         super.init()
         this.setDisplay("flex")
         this.setPosition("relative")
-        this.setDivClassName("SvgIconView")
+        this.setElementClassName("SvgIconView")
         this.turnOffUserSelect()
         this.setOverflow("hidden")
 

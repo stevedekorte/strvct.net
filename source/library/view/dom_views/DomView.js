@@ -45,7 +45,12 @@
         this.newSlot("isRegisteredForVisibility", false)
         this.newSlot("intersectionObserver", null)
         this.newSlot("acceptsFirstResponder", false)
-        this.newSlot("gestureRecognizers", null)
+
+        // Array - not a map as we might have multiple GRs of same type, but...
+        // would it be better to give GRs labels to use for map key?
+        // this could replace "default" gesture ivars?
+        this.newSlot("gestureRecognizers", null) 
+
         this.newSlot("eventListenersMap", null)
         this.newSlot("defaultTapGesture", null)
         this.newSlot("defaultDoubleTapGesture", null)
@@ -118,7 +123,7 @@
 
     // element
 
-    setDivId (aString) {
+    setElementId (aString) {
         this.element().id = aString
         return this
     }
@@ -159,8 +164,8 @@
     setupElement () {
         const e = this.createElement()
         this.setElement(e)
-        this.setDivId(this.typeId())
-        this.setupDivClassName()
+        this.setElementId(this.typeId())
+        this.setupElementClassName()
         return this
     }
 
@@ -170,52 +175,27 @@
         return escapedId
     }
 
-/*
-    setupDivClassNameOld () {
-        const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
-        const divName = ancestorNames.join(" ").strip()
-        this.setDivClassName(divName)
-        return this
-    }
-
-    insertDivClassName (aName) {
-        const names = this.divClassName().split(" ")
-        names.removeOccurancesOf(aName) // avoid duplicates
-        names.atInsert(0, aName)
-        this.setDivClassNames(names)
-        return this
-    }
-
-    removeDivClassName (aName) {
-        const names = this.divClassName().split(" ")
-        names.removeOccurancesOf(aName)
-        this.setDivClassNames(names)
-        return this
-    }
-*/
-
-
-    setupDivClassName () {
+    setupElementClassName () {
         const e = this.element()
         const ancestorNames = this.thisClass().ancestorClassesIncludingSelf().map(obj => obj.type())
         ancestorNames.forEach(name => e.classList.add(name))
         return this
     }
 
-    insertDivClassName (aName) {
+    insertElementClassName (aName) {
         const e = this.element()
         e.classList.add(aName)
         return this
     }
 
-    removeDivClassName (aName) {
+    removeElementClassName (aName) {
         const e = this.element()
         e.classList.remove(aName)
         return this
     }
 
-    setDivClassNames (names) {
-        this.setDivClassName(names.join(" "))
+    setElementClassNames (names) {
+        this.setElementClassName(names.join(" "))
         return this
     }
 
@@ -2227,7 +2207,7 @@
 
     // --- div class name ---
 
-    setDivClassName (aName) {
+    setElementClassName (aName) {
         if (this._divClassName !== aName) {
             this._divClassName = aName
             if (this.element()) {
@@ -3215,6 +3195,10 @@
         return this
     }
 
+    /*
+
+    // deprecated - GestureRecognizers are now used instead of direct touch events
+
     isRegisteredForTouch () {
         return this.touchListener().isListening()
     }
@@ -3230,36 +3214,22 @@
     }
 
     onTouchStart (event) {
-        //this.onPointsStart(points)
     }
 
     onTouchMove (event) {
-        //this.onPointsMove(points)
     }
 
     onTouchCancel (event) {
-        //this.onPointsCancel(points)
     }
 
     onTouchEnd (event) {
-        //this.onPointsEnd(points)
     }
+    */
 
-    /// GestureRecognizers
-
-    hasGestureType (typeName) {
-        return this.gesturesOfType(typeName).length > 0
-    }
+    // --- GestureRecognizers ---
 
     hasGestureRecognizer (gr) {
         return this.gestureRecognizers().contains(gr)
-    }
-
-    addGestureRecognizerIfAbsent (gr) {
-        if (!this.hasGestureRecognizer(gr)) {
-            this.addGestureRecognizer(gr)
-        }
-        return this
     }
 
     addGestureRecognizer (gr) {
@@ -3279,6 +3249,18 @@
         return this
     }
 
+    /*
+    hasGestureType (typeName) {
+        return this.gesturesOfType(typeName).length > 0
+    }
+
+    addGestureRecognizerIfAbsent (gr) {
+        if (!this.hasGestureRecognizer(gr)) {
+            this.addGestureRecognizer(gr)
+        }
+        return this
+    }
+    
     gesturesOfType (typeName) {
         return this.gestureRecognizers().select(gr => gr.type() == typeName)
     }
@@ -3289,6 +3271,7 @@
         }
         return this
     }
+    */
 
     removeAllGestureRecognizers () {
         this.gestureRecognizers().forEach(gr => this.removeGestureRecognizer(gr))
@@ -3331,12 +3314,9 @@
         tg.setNumberOfFingersRequired(1)
         tg.setGestureName("DoubleTap")
 
-
         // Do we want this, which allows single tap event and double tap, or do
         // we want to wait to send single tap until double tap wait period expires?
         tg.setShouldAcceptCancelRequest(false) // so single click doesn't cancel double click. 
-
-
         //tg.setIsDebugging(true)
         return tg
     }
@@ -3860,21 +3840,21 @@
     // untested
 
     getCaretPosition () {
-        const editableDiv = this.element()
+        const editableElement = this.element()
         let caretPos = 0
         if (window.getSelection) {
             const sel = window.getSelection();
             if (sel.rangeCount) {
                 const range = sel.getRangeAt(0);
-                if (range.commonAncestorContainer.parentNode == editableDiv) {
+                if (range.commonAncestorContainer.parentNode == editableElement) {
                     caretPos = range.endOffset;
                 }
             }
         } else if (document.selection && document.selection.createRange) {
             const range = document.selection.createRange();
-            if (range.parentElement() == editableDiv) {
+            if (range.parentElement() == editableElement) {
                 const tempEl = document.createElement("span");
-                editableDiv.insertBefore(tempEl, editableDiv.firstChild);
+                editableElement.insertBefore(tempEl, editableElement.firstChild);
                 const tempRange = range.duplicate();
                 tempRange.moveToElementText(tempEl);
                 tempRange.setEndPoint("EndToEnd", range);
@@ -4112,9 +4092,11 @@
     }
     */
 
+    /*
     mouseDownPos () {
         return this.viewPosForWindowPos(Mouse.shared().downPos())
     }
+    */
 
     // view position helpers ----
 
