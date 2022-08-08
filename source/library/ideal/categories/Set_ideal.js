@@ -21,6 +21,9 @@
         return results
     }
 
+    count () {
+        return this.size
+    }
 
     shallowCopy () {
         return new Set(this)

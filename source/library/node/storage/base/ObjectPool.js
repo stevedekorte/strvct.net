@@ -27,7 +27,7 @@
             const poolJson = ObjectPool.clone().setRoot(rootNode).asJson()
             
             // converting json to a node
-            const rootNode = ObjectPool.clone().fromJson(poolJson).root()
+            const rootObject = ObjectPool.clone().fromJson(poolJson).root()
 
         Notes:
 
@@ -99,7 +99,7 @@
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"))
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
         return this
     }
 
@@ -160,8 +160,26 @@
     }
     */
 
+    show (s) {
+        const comment = s ? " " + s + " " : ""
+        console.log("---" + comment + "---")
+        const max = 40
+        console.log(this.recordsMap().count() + " records: ")
+        this.recordsMap().forEachKV((k, v) => {
+            if (v.length > max) {
+                v = v.slice(0, max) + "..."
+            }
+            console.log("   '" + k + "': '" + v + "'")
+        })
+
+        console.log("------")
+    }
+
     onRecordsDictOpen () {
+        //debugger;
+        this.show("ON OPEN")
         this.collect()
+        this.show("AFTER COLLECT")
         //this.readRoot()
         this.nodeStoreDidOpenNote().post()
         return this
@@ -177,12 +195,31 @@
         return "root"
     }
 
+    setRootPid (pid) { 
+        // private - it's assumed we aren't already in storing-dirty-objects tx
+        const map = this.recordsMap()
+        if (map.at(this.rootKey()) !== pid) {
+            map.atPut(this.rootKey(), pid)
+            console.log("---- SET ROOT PID " + pid + " ----")
+            debugger;
+        }
+        assert(this.hasStoredRoot())
+        return this
+    }
+
+    rootPid () {
+        return this.recordsMap().at(this.rootKey())
+    }
+
     hasStoredRoot () {
         return this.recordsMap().hasKey(this.rootKey())
     }
 
     rootOrIfAbsentFromClosure (aClosure) {
-        if (!this.hasStoredRoot()) {
+        //debugger;
+        if (this.hasStoredRoot()) {
+            this.readRoot()
+        } else {
             const newRoot = aClosure()
             assert(newRoot)
             this.setRootObject(newRoot)
@@ -193,15 +230,13 @@
     readRoot () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
-            const rootRecord = this.recordForPid(this.rootKey())
-            //console.log("rootRecord.subnodes: ", JSON.stringify(rootRecord, null, 2))
-
-            const root = this.objectForPid(this.rootKey())
-
+            const root = this.objectForPid(this.rootPid())
+            assert(!Type.isNullOrUndefined(root))
             this._rootObject = root
             //this.setRootObject(root) // this is for setting up new root
+            return this.rootObject()
         }
-        return this.rootObject()
+        throw new Error("missing root object")
     }
 
     knowsObject (obj) { // private
@@ -235,11 +270,12 @@
 
         assert(!this.knowsObject(obj))
 
-        obj.setPuuid(this.rootKey())
+        //debugger;
+        //this.setRootPid(obj.puuid()) // this is set when the dirty root object is stored
         this._rootObject = obj
+        this.debugLog(" adding rootObject " + obj.debugTypeId())
         this.addActiveObject(obj)
         this.addDirtyObject(obj)
-        
         return this
     }
 
@@ -269,7 +305,7 @@
             console.log(msg)
             anObject.shouldStore()
             throw new Error(msg)
-        //return false
+            //return false
         }
 
         if (!anObject.isInstance()) {
@@ -279,7 +315,11 @@
             throw new Error(msg)
         }
 
+        //debugger;
+
         if (!this.hasActiveObject(anObject)) {
+            const title = anObject.title ? anObject.title() : "-";
+            //this.debugLog(() => anObject.debugTypeId() + ".addMutationObserver(" + this.debugTypeId() + " '" + title + "')")
             anObject.addMutationObserver(this)
             this.activeObjects().set(anObject.puuid(), anObject)
             //this.addDirtyObject(anObject)
@@ -363,7 +403,7 @@
         }
 
         if (!this.dirtyObjects().has(puuid)) {
-            this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
+            //this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?")
             }
@@ -396,10 +436,12 @@
     commitStoreDirtyObjects () {
         if (this.hasDirtyObjects()) {
             this.debugLog("--- commitStoreDirtyObjects begin ---")
+            //debugger;
             this.recordsMap().begin()
             const storeCount = this.storeDirtyObjects()
             this.recordsMap().commit()
             this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects")
+            this.show("AFTER commitStoreDirtyObjects")
         }
     }
 
@@ -426,6 +468,7 @@
                 }
 
                 this.storingPids().add(puuid)
+                //debugger;
                 this.storeObject(obj)
 
                 thisLoopStoreCount ++
@@ -499,7 +542,7 @@
 
         // schedule didInitLoadingPids to occur at end of event loop 
 
-        if (!this.isFinalizing() && this.loadingPids().size === 0) {
+        if (!this.isFinalizing() && this.loadingPids().count() === 0) {
             SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids")
         }
 
@@ -537,13 +580,15 @@
     }
 
     allPidsSet () {
-        const keySet = this.recordsMap().keySet()
+        const keySet = this.recordsMap().keysSet()
         keySet.delete(this.headerKey())
         return keySet
     }
 
     allPids () {
-        return this.recordsMap().keysArray()
+        const keys = this.recordsMap().keysArray()
+        keys.remove(this.rootKey())
+        return keys
     }
 
     activeLazyPids () { // returns a set of pids
@@ -596,8 +641,6 @@
             this.addActiveObject(v)
             this.addDirtyObject(v)
         }
-
-        this.addActiveObject(v)
         const ref = { "*": v.puuid() }
         return ref
     }
@@ -619,12 +662,16 @@
 
     storeObject (obj) {
         assert(obj.shouldStore())
-
         const puuid = obj.puuid()
         assert(!Type.isNullOrUndefined(puuid))
-        const v = JSON.stringify(obj.recordForStore(this))
-        this.debugLog(() => "store " + obj.puuid() + " <- " + v )
-        this.recordsMap().set(puuid, v)
+
+        if (obj === this.rootObject()) {
+            this.setRootPid(puuid)
+        }
+
+        const jsonString = JSON.stringify(obj.recordForStore(this))
+        //this.debugLog(() => "store " + obj.puuid() + " <- " + jsonString )
+        this.recordsMap().set(puuid, jsonString)
         return this
     }
 
@@ -639,16 +686,25 @@
     }
 
     collect () {
+        if (Type.isUndefined(this.rootPid())) {
+            console.log("---- NO ROOT PID FOR COLLECT - clearing! ----")
+            this.recordsMap().begin()
+            this.recordsMap().clear()
+            this.recordsMap().commit()
+            debugger;
+            return 0;
+        }
+        //debugger;
         // this is an on-disk collection
         // in-memory objects aren't considered
         // so we make sure they're flushed to the db first 
-        this.setCollectablePidSet(this.recordsMap().keysSet())
         this.recordsMap().begin()
         this.flushIfNeeded() // store any dirty objects
 
         this.debugLog(() => "--- begin collect --- with " + this.recordsMap().count() + " pids")
         this.setMarkedSet(new Set())
-        this.markPid(this.rootKey())
+        this.markedSet().add(this.rootKey()) // so rootKey->rootPid entry isn't swept
+        this.markPid(this.rootPid())
         this.activeObjects().forEachK(pid => this.markPid(pid))
         this.activeLazyPids().forEachK(pid => this.markPid(pid))
         const deleteCount = this.sweep()
@@ -707,8 +763,7 @@
     // ------------------------
 
     sweep () {
-        const unmarkedPidSet = this.collectablePidSet().difference(this.markedSet())
-
+        const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()) // allPids doesn't contain rootKey
 
         // delete all unmarked records
         let deleteCount = 0
@@ -716,9 +771,9 @@
         recordsMap.keysArray().forEach(pid => {
             if (!this.markedSet().has(pid)) {
                 //this.debugLog("deletePid(" + pid + ")")
-                const count = recordsMap.size
+                const count = recordsMap.count()
                 recordsMap.removeKey(pid)
-                assert(recordsMap.size === count - 1)
+                assert(recordsMap.count() === count - 1)
                 deleteCount ++
             }
         })

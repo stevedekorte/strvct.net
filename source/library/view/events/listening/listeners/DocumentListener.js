@@ -19,28 +19,23 @@
     }
 
     setupListeners () {
-        this.addEventNameAndMethodName("resize", "onDocumentResize");
+        // See: https://developer.chrome.com/blog/page-lifecycle-api/
 
-        // not sure how to organize these other events yet
+        this.addEventNameAndMethodName("visibilitychange", "onDocumentVisibilityChange");
 
-        //this.addEventNameAndMethodName("pagehide", "onPageHide");
-        //this.addEventNameAndMethodName("pageshow", "onPageShow");
+        this.addEventNameAndMethodName("freeze", "onDocumentFreeze"); // Document specific
+        this.addEventNameAndMethodName("resume", "onDocumentResume"); // Document specific
+        this.addEventNameAndMethodName("fullscreenerror", "onDocumentFullScreenError"); // Document specific
 
-        //this.addEventNameAndMethodName("submit", "onSumit");
-
-        //this.addEventNameAndMethodName("online", "onBrowserOnline");
-        //this.addEventNameAndMethodName("offline", "onBrowserOffline");
-
-        //this.addEventNameAndMethodName("error", "onBrowserResourceLoadError");
-
-        //this.addEventNameAndMethodName("fullscreenchange", "onBrowserFullScreenChange");
-        //this.addEventNameAndMethodName("fullscreenerror", "onBrowserFullScreenError");
+        // See: DOMElement requestFullscreen method
+        //this.addEventNameAndMethodName("fullscreenchange", "onBrowserFullScreenChange"); // Document specific
+        //this.addEventNameAndMethodName("fullscreenerror", "onBrowserFullScreenError"); // Document specific
 
         return this
     }
 
     listenTarget () {
-        return window // is this the best way to handle this?
+        return document // is this the best way to handle this?
     }
     
 }.initThisClass());

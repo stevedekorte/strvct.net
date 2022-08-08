@@ -185,8 +185,10 @@
     }
 
     rootNode () {
-        const root = this.defaultStore().rootObject()
-        root.setTitle("root")
+        //debugger;
+        const store = this.defaultStore()
+        const root = store.rootObject()
+        //root.setTitle("root")
         return root
     }
 

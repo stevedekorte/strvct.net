@@ -9,11 +9,11 @@
 getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     initPrototype () {
-        this.newSlot("isInTx", false) // private method - Bool, true during a tx
-        this.newSlot("map", null) // private method - Map, contains current state of map
-        this.newSlot("snapshot", null) // private method - Map, contains shallow copy of map during tx, so we can revert to this if tx is cancelled
-        this.newSlot("isOpen", true) // private method
-        this.newSlot("changedKeys", null) // private method
+        this.newSlot("isInTx", false) // public read, private write - Bool, true during a tx
+        this.newSlot("map", null) // public read, private write - Map, contains current state of map
+        this.newSlot("snapshot", null) // private - Map, contains shallow copy of map before tx which we can revert to if tx is cancelled
+        this.newSlot("isOpen", true) // public read, private write
+        this.newSlot("changedKeySet", null) // private method
         this.newSlot("keysAndValuesAreStrings", true) // private method - Bool, if true, runs assertString on all input keys and values
     }
 
@@ -21,7 +21,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         super.init()
         this.setMap(new Map())
         this.setSnapshot(null)
-        this.setChangedKeys(null)
+        this.setChangedKeySet(new Set())
         //this.setSnapshot(new Map())
     }
 
@@ -53,7 +53,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.assertAccessible()
         this.assertNotInTx()
         this.setSnapshot(this.map().shallowCopy()) 
-        this.setChangedKeys(new Set())
+        this.changedKeySet().clear()
         this.setIsInTx(true)
         return this
     }
@@ -61,8 +61,9 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     revert () {
         this.debugLog(() => this.type() + " revert ---")
         this.assertInTx()
+        this.setMap(this.snapshot())
         this.setSnapshot(null)
-        this.setChangedKeys(new Set())
+        this.changedKeySet().clear()
         this.setIsInTx(false)
         return this
     }
@@ -73,7 +74,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         if (this.hasChanges()) {
             this.applyChanges()
         }
-        this.setChangedKeys(new Set())
+        this.changedKeySet().clear()
         this.setIsInTx(false)
         return this
     }
@@ -81,12 +82,11 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     // --- changes ---
 
     hasChanges () {
+        return this.changedKeySet().size > 0
         return this.map().isEqual(this.snapshot())
-        //return this.changes() && this.changes().size > 0
     }
 
     applyChanges () { // private - apply changes to snapshot
-        this.setMap(this.snapshot())
         this.setSnapshot(null)
         return this
     }
@@ -127,7 +127,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     // ---
 
     has (k) {
-        return this.map().has()
+        return this.map().has(k)
     }
 
     hasKey (k) {
@@ -140,25 +140,33 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     // writes
 
+    clear () {
+        this.keysArray().forEach(k => this.removeKey(k))
+        return this
+    }
+
     set (k, v) {
         return this.atPut(k, v)
     }
 
     atPut (k, v) {
+        this.assertInTx()
         if (this.keysAndValuesAreStrings()) {
             assert(Type.isString(k))
             assert(Type.isString(v))
         }
 
+        console.log(this.debugTypeId() + " atPut('" + k + "', <" + typeof(v) + "> '" + v + "')")
         this.assertAccessible()
         this.assertInTx()
-        this.changedKeys().add(k)
+        this.changedKeySet().add(k)
         this.map().set(k, v)
         return this
     }
 
     removeKey (k) {
-        this.changedKeys().add(k)
+        this.assertInTx()
+        this.changedKeySet().add(k)
         if (this.keysAndValuesAreStrings()) {
             assert(Type.isString(k))
         }
@@ -212,6 +220,16 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
             byteCount += k.length + v.length
         })
         return byteCount
+    }
+
+    asJson () {
+        return this.map().asDict()
+    }
+
+    fromJson (json) {
+        this.map().clear()
+        this.map().fromDict(json)
+        return this
     }
 
     // test

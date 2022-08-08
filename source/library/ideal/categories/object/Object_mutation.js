@@ -85,6 +85,7 @@
     didMutate () {
         const mos = this._mutationObservers
         if (mos) {
+            //console.log("" + this.debugTypeId() + ".didMutate()")
             mos.forEach(obs => {
                 obs.onDidMutateObject(this)
             })

@@ -691,6 +691,7 @@
     }
 
     watchSubnodes () {
+   //     debugger;
         this._subnodes.addMutationObserver(this)
         return this
     }
@@ -708,7 +709,8 @@
             assert(newValue.type() === "SubnodesArray")
         } else {
             if(this.hasDuplicateSubnodes()) {
-                debugger;
+                console.warn(this.debugTypeId() + " hasDuplicateSubnodes")
+              //  debugger;
                 newValue.removeDuplicates()
             }
         }

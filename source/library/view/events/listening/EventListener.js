@@ -102,17 +102,31 @@
     }
 
     start () {
-        if (!this.isListening()) {
-            //this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
-            assert(this.isValid())
-            this._isListening = true; // can't use setter here as it would cause a loop
-            this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
+        if (this.delegateCanRespond()) {
+            if (!this.isListening()) {
+                //this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
+                assert(this.isValid())
+                this._isListening = true; // can't use setter here as it would cause a loop
+                this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
+            }
+        } else {
+            //console.log(this.delegate().debugTypeId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
+            //debugger;
         }
         return this
     }
 
     safeHandleEvent (event) {
         return EventManager.shared().safeWrapEvent(() =>  this.handleEvent(event))
+    }
+
+    delegateCanRespond () {
+        if (Type.isNullOrUndefined(this.delegate())) {
+            return false
+        }
+        const method = this.delegate()[this.fullMethodName()]
+        const canRespond = Type.isFunction(method)
+        return canRespond
     }
 
     handleEvent (event) {

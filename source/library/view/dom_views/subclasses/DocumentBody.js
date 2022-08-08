@@ -79,8 +79,8 @@
     }
 
     /*
-    onDocumentResize (event) {
-        super.onDocumentResize(event)
+    onWindowResize (event) {
+        super.onWindowResize(event)
     }
     */
    

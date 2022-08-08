@@ -191,7 +191,7 @@
         return this
     }
 
-    onDocumentResize (event) {
+    onWindowResize (event) {
         this.updateCompaction()
         return this
     }
@@ -526,7 +526,9 @@
     endCaching () {
         assert(this.isCaching())
         console.log(this.debugTypeId() + " endCaching -----------------")
-        this.nodeToStackCache().values().forEach(sv => this.uncacheView(sv))
+        //let values = this.nodeToStackCache().values()
+        //debugger;
+        this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv))
         this.setNodeToStackCache(null)
 
         const ov = this.otherView()

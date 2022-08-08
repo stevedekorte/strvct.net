@@ -197,7 +197,8 @@
             try {
                 if (!Type.isUndefined(request.result)) {
                     const entry = request.result
-                    const value = JSON.parse(entry.value)
+                    //const value = JSON.parse(entry.value)
+                    const value = entry.value
                     callback(value)
                 } else {
                     callback(undefined)
@@ -258,7 +259,9 @@
             if (cursor) {
                 const k = cursor.value.key
                 const v = cursor.value.value
-                map.set(k, JSON.parse(v))
+                //debugger;
+                //map.set(k, JSON.parse(v))
+                map.set(k, v)
                 cursor.continue();
             } else {
                 this.debugLog(" asyncAsMap returning map ", map.description())

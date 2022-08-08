@@ -5,6 +5,14 @@
 
     Listens to a set of web socket events.
 
+    NOTES:
+    
+    MessageEvent contains:
+    - data
+    - origin
+    - lastEventId 
+    - source 
+    - ports
 */
 
 (class WebSocketListener extends EventSetListener {

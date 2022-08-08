@@ -5,6 +5,12 @@
 
     Listens to a set of animation events.
 
+    See: https://developer.mozilla.org/en-US/docs/Web/API/AnimationEvent
+
+    AnimationEvent contains 
+    - animationName
+    - elapsedTime
+    - pseudoElement 
 */
 
 (class AnimationListener extends EventSetListener {

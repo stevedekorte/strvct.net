@@ -16,4 +16,8 @@
         return newArray
     }
 
+    shouldStore () {
+        return true
+    }
+
 }.initThisClass());

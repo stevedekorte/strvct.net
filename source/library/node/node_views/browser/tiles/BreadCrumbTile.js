@@ -113,7 +113,7 @@
         return this
     }
 
-    onDocumentResize (event) {
+    onWindowResize (event) {
         this.updateCompaction()
         return this
     }

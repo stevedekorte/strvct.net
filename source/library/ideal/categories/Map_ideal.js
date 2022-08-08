@@ -98,7 +98,7 @@
     }
 
     isEqual (aMap) {
-        if (this.size !== aMap.size) {
+        if (this.count() !== aMap.count()) {
             return false
         }
 
@@ -121,6 +121,12 @@
         const dict = {}
         this.forEachKV((k, v) => dict[k] = v)
         return dict
+    }
+    
+    fromDict (aDict) {
+        this.clear()
+        aDict.ownForEachKV((k, v) => this.set(k, v))
+        return this
     }
 
     description () {

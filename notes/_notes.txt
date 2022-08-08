@@ -1,3 +1,6 @@
+
+-- move setEventListenersDict to map
+-- move gestureRecognizers to map
 - break DomView into chain of subclasses or categories (like Node)
 
 

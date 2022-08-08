@@ -46,7 +46,7 @@
         this.newSlot("intersectionObserver", null)
         this.newSlot("acceptsFirstResponder", false)
         this.newSlot("gestureRecognizers", null)
-        this.newSlot("eventListenersDict", null)
+        this.newSlot("eventListenersMap", null)
         this.newSlot("defaultTapGesture", null)
         this.newSlot("defaultDoubleTapGesture", null)
         this.newSlot("defaultPanGesture", null)
@@ -62,7 +62,7 @@
     init () {
         super.init()
         this.setSubviews([])
-        this.setEventListenersDict({})
+        this.setEventListenersMap(new Map())
         this.setupElement()
         return this
     }
@@ -2794,16 +2794,6 @@
 
     // --- events --------------------------------------------------------------------
 
-    // --- event listeners ---
-
-    // ------------------------
-
-    removeAllListeners () {
-        this.eventListenersDict().ownForEachKV( (k, ev) => { ev.setIsListening(false) } )
-        this.setEventListenersDict({})
-        return this
-    }
-
     // gestures
 
     gestureRecognizers () {
@@ -2813,20 +2803,31 @@
         return this._gestureRecognizers
     }
     
+        
+    // --- event listeners ---
+
+    removeAllListeners () {
+        const map = this.eventListenersMap()
+        map.forEachKV( (k, listener) => { listener.setIsListening(false) } )
+        map.clear()
+        return this
+    }
+
 
     hasListenerNamed (className) {
-        const dict = this.eventListenersDict()
-        return !Type.isUndefined(dict[className])
+        const map = this.eventListenersMap()
+        return map.has(className)
     }
 
     listenerNamed (className) {
-        const dict = this.eventListenersDict()
-        if (!dict[className]) {
-            assert(className in window)
+        const map = this.eventListenersMap()
+        if (!map.has(className)) {
             const proto = Object.getClassNamed(className)
-            dict[className] = proto.clone().setListenTarget(this.element()).setDelegate(this)
+            assert(!Type.isNullOrUndefined(proto))
+            const instance = proto.clone().setListenTarget(this.element()).setDelegate(this)
+            map.set(className, instance)
         }
-        return dict[className]
+        return map.get(className)
     }
 
     animationListener () {
@@ -2880,7 +2881,7 @@
         return this
     }
 
-    onDocumentResize (event) {
+    onWindowResize (event) {
         return true
     }
 

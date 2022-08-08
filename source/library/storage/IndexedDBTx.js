@@ -115,7 +115,11 @@
 	    return this
     }
 	
-    entryForKeyAndValue (key, object) {
+    entryForKeyAndValue (key, value) {
+        assert(Type.isString(key))
+        assert(Type.isString(value))
+
+        /*
         if (Type.isNullOrUndefined(object)) {
             throw new Error(this.type() + ".entryForKeyAndValue('" + key + "', ...) can't add null value")
         }
@@ -124,8 +128,9 @@
         if (v === null) {
             throw new Error("can't add entry for null value")
         }
+        */
 		
-        return { key: key, value: v }
+        return { key: key, value: value }
     }
 	
     // --- operations ----
