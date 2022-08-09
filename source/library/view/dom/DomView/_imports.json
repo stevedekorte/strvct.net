@@ -1,7 +1,15 @@
 [
-    "BaseDomView.js",
+    "ElementDomView.js",
     "CssDomView.js",
+    "SubviewsDomView.js",
+    "ListenerDomView.js",
+    "VisibleDomView.js",
+    "GesturableDomView.js",
+    "ResponderDomView.js",
+    "ControlDomView.js",
     "DomView.js",
+    "DomView_animations.js",
+    "DomView_browserDragAndDrop.js",
     "FlexDomView.js",
     "StyledDomView.js",
     "subclasses/_imports.json"

@@ -837,7 +837,7 @@
     */
 
     slideBack () {
-        //this.disableColumnUntilTimeout(400)
+        this.disableTilesViewUntilTimeout(400)
 
         this.contentView().setTransition("all 0.2s ease")
 
@@ -851,12 +851,11 @@
         }, 300)
     }
 
-    /*
-    disableColumnUntilTimeout (ms) {
-        //this.navView().disablePointerEventsUntilTimeout(ms) 
-        //this.setPointerEvents("none")
+    
+    disableTilesViewUntilTimeout (ms) {
+        this.navView().disablePointerEventsUntilTimeout(ms) 
+        this.setPointerEvents("none")
     }
-    */
 
     didCompleteSlide () {
         this.cleanupSlide()

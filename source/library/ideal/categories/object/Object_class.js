@@ -13,29 +13,29 @@
 
     // --- class methods ---
 
-    static clone () {
+    static clone() {
         const obj = new this()
         obj.init()
         obj.afterInit()
         return obj
     }
- 
-    static type () {
+
+    static type() {
         return this.name
     }
- 
-    static isClass () {
+
+    static isClass() {
         return true
     }
- 
-    static getClassNamed (aName) {
+
+    static getClassNamed(aName) {
         if (Type.isNullOrUndefined(aName)) {
             return undefined
         }
         return getGlobalThis()[aName]
     }
 
-    static parentClass () {
+    static parentClass() {
         const p = this.__proto__
 
         if (p && p.type) {
@@ -45,20 +45,20 @@
         return null
     }
 
-    static addChildClass (aClass) {
+    static addChildClass(aClass) {
         this.childClasses().add(aClass)
         return this
     }
- 
-    static globals () {
+
+    static globals() {
         return getGlobalThis()
     }
 
-    static initClass () {
+    static initClass() {
         this.newClassSlot("allClassesSet", new Set())
     }
- 
-    static findAncestorClasses () {
+
+    static findAncestorClasses() {
         const results = []
         let aClass = this.parentClass()
         while (aClass && aClass.parentClass) {
@@ -69,7 +69,7 @@
     }
 
 
-    static newClassSlot (slotName, slotValue) { 
+    static newClassSlot(slotName, slotValue) {
         const ivarName = "_" + slotName
         const assert = function (aBool) {
             if (!aBool) {
@@ -120,15 +120,15 @@
         }
 
         return this
-   }
+    }
 
 
-    static initThisClass () { // called on every class which we create
+    static initThisClass() { // called on every class which we create
         this.defineClassGlobally()
 
         // setup ancestor list
         // could become invalid if class structure dynamically changes
-        this.newClassSlot("ancestorClasses", this.findAncestorClasses()) 
+        this.newClassSlot("ancestorClasses", this.findAncestorClasses())
         this.newClassSlot("childClasses", new Set())
 
         // add as class to parent
@@ -137,7 +137,7 @@
             p.addChildClass(this)
         }
 
-        if (this.hasOwnProperty("initClass")) { 
+        if (this.hasOwnProperty("initClass")) {
             // Only called if method defined on this class.
             // This method should *not* call super.initClass().
             this.initClass()
@@ -158,12 +158,12 @@
         return this
     }
 
-    
-    slotsMap () {
+
+    slotsMap() {
         return this._slotsMap
     }
 
-    static defineClassGlobally () {
+    static defineClassGlobally() {
         const className = this.type()
         if (Type.isUndefined(this.globals()[className])) {
             this.globals()[className] = this
@@ -174,12 +174,12 @@
             throw new Error(msg)
         }
     }
- 
-    static superClass () {
+
+    static superClass() {
         return this.__proto__
     }
- 
-    static addToAllClasses () {
+
+    static addToAllClasses() {
         //console.log("addToAllClasses '" + this.type() + "'")
         if (this.allClassesSet().has(this)) {
             throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'")
@@ -187,52 +187,52 @@
         this.allClassesSet().add(this)
         return this
     }
- 
-    static allSubclasses () {
+
+    static allSubclasses() {
         return this.allClassesSet().select(aClass => aClass.hasAncestorClass(this))
     }
- 
-    static subclasses () {
+
+    static subclasses() {
         return this.allClassesSet().select(aClass => aClass.superClass() === this)
     }
- 
-    static hasAncestorClass (aClass) {
+
+    static hasAncestorClass(aClass) {
         const sc = this.superClass()
- 
+
         if (sc === aClass) {
             return true
         }
- 
+
         if (sc === Object || !sc.hasAncestorClass) {
             return false
         }
- 
+
         return sc.hasAncestorClass(aClass)
     }
- 
-    static eachSlot (obj, fn) {
+
+    static eachSlot(obj, fn) {
         Object.keys(obj).forEach(k => fn(k, obj[k]))
     }
 
-    static isKindOf (aClass) {
+    static isKindOf(aClass) {
         //assert(this.isClass())
         //assert(aClass.isClass())
- 
+
         if (this.name === "") {
             // anything touching the root "" class seems to crash Chrome,
             // so let's be carefull to leave it alone
             return false
         }
- 
+
         if (this === aClass) {
             return true
         }
- 
+
         let proto = this.__proto__
         if (proto && proto.name !== "") {
             return proto.isKindOf.apply(proto, [aClass])
         }
- 
+
         return false
     }
 

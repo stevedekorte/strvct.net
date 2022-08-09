@@ -7,15 +7,17 @@
 
 */
 
-(class DomView extends ControlDomView {
+(class DomView extends CssDomView {
     
     initPrototype () {
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
 
 }.initThisClass());

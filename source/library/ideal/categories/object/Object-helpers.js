@@ -1,8 +1,5 @@
 "use strict";
 
-
-
-
 /*
     
     Weird JS things:
@@ -144,6 +141,7 @@ Object.defineSlotsSafely = function (obj, dict) {
     })
 };
 
+
 Object.defineSlot(Object, "initThisCategory", function () {
     // define this first, so we can use it to more cleanly define our
     // Object categories.
@@ -178,11 +176,15 @@ Object.defineSlot(Object, "initThisCategory", function () {
     delete classSlotsDict["length"] // FIXME: hack for collection types
     delete classSlotsDict["name"]
     delete classSlotsDict["prototype"]
-    Object.defineSlotsSafely(parent, classSlotsDict) // this should throw on collision?
+    Object.defineSlotsSafely(parent, classSlotsDict)
 
     const instanceSlotsDict = getSlotsDictOn(this.prototype)
     delete instanceSlotsDict["constructor"]
     delete instanceSlotsDict["prototype"]
-    Object.defineSlotsSafely(parent.prototype, instanceSlotsDict) // this should throw on collision?
+
+    Object.defineSlotsSafely(parent.prototype, instanceSlotsDict)
+
     return this
 });
+
+
