@@ -7,7 +7,7 @@
 
 */
 
-(class DomView extends ControlDomView {
+(class DomView extends EditableDomView {
     
     initPrototype () {
     }

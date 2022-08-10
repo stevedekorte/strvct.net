@@ -12,8 +12,10 @@
     initPrototype () {
         // css hidden values
         this.newSlot("hiddenDisplayValue", undefined)
+        /*
         this.newSlot("hiddenMinHeight", undefined)
         this.newSlot("hiddenMaxHeight", undefined)
+        */
         this.newSlot("hiddenTransitionValue", undefined)
     }
 
@@ -23,7 +25,6 @@
         return this
     }
     */
-
 
     // --- css ---
     
@@ -169,12 +170,25 @@
 
     // pointer events
 
+    pointerEventsValidValues () {
+        return [null, 
+            "auto", 
+            "none", 
+            "visiblePainted", 
+            "visibleFill", 
+            "visibleStroke", 
+            "visible", 
+            "painted", 
+            "fill", 
+            "stroke", 
+            "all", 
+            "inherit", 
+            "initial", 
+            "unset"]
+    }
+
     setPointerEvents (s) {
-        assert([null, 
-            "auto", "none", "visiblePainted", 
-            "visibleFill", "visibleStroke", "visible", 
-            "painted", "fill", "stroke", "all", 
-            "inherit", "initial", "unset"].contains(v))
+        assert(this.pointerEventsValidValues().contains(s))
         return this.setCssAttribute("pointer-events", s)
     }
 
@@ -184,8 +198,12 @@
 
     // transform
 
+    textTransformValidValues () {
+        return [null, "none", "capitalize", "uppercase", "lowercase", "initial", "inherit"]
+    }
+
     setTextTransform (v) {
-        assert([null, "none", "capitalize", "uppercase", "lowercase", "initial", "inherit"].contains(v))
+        assert(this.textTransformValidValues().contains(v))
         this.setCssAttribute("text-transform", v)
         return this
     }
@@ -196,8 +214,12 @@
 
     // word wrap
 
+    wordWrapValidValues () {
+        return [null, "normal", "break-word", "initial", "inherit"]
+    }
+
     setWordWrap (v) {
-        assert([null, "normal", "break-word", "initial", "inherit"].contains(v))
+        assert(this.wordWrapValidValues().contains(v))
         this.setCssAttribute("word-wrap", v)
         return this
     }
@@ -336,12 +358,10 @@
 
     setMargin (s) {
         this.setCssAttribute("margin", s)
-
         this.setMarginTop(null)
         this.setMarginBottom(null)
         this.setMarginLeft(null)
         this.setMarginRight(null)
-
         return this
     }
 
@@ -353,12 +373,10 @@
 
     setMarginPx (s) {
         this.setPxCssAttribute("margin", s)
-
         this.setMarginTop(null)
         this.setMarginBottom(null)
         this.setMarginLeft(null)
         this.setMarginRight(null)
-
         return this
     }
 
@@ -1270,6 +1288,8 @@
 
     // hide height
 
+
+    /*
     hideHeight () {
 		if (Type.isUndefined(this.hiddenMinHeight())) {
             this.setHiddenMinHeight(this.minHeight())
@@ -1290,6 +1310,7 @@
 		
 		return this
 	}
+    */
 
     // helper for hide/show display
 
@@ -1965,12 +1986,24 @@
         return this.element().innerHTML
     }
 
+    setInnerHtml (v) {
+        this.element().innerHTML = v
+        return this
+    }
+
     setString (v) {
         return this.setInnerHtml(v)
     }
 
     string () {
         return this.innerHtml()
+    }
+
+    // ----
+
+    innerText () {
+        const e = this.element()
+        return e.textContent || e.innerText || "";
     }
 
     // --- touch events ---
@@ -2275,9 +2308,33 @@
         return this
     }
 
-
     setVerticalAlign (s) {
         this.setCssAttribute("vertical-align", s)
+        return this
+    }
+
+    // --- css :after :before ---
+
+    setContentAfterOrBeforeString (aString, afterOrBefore) {
+        const uniqueClassName = "UniqueClass_" + this.puuid()
+        const e = this.element()
+        if (e.className.indexOf(uniqueClassName) === -1) {
+            const newRuleKey = "DomView" + uniqueClassName + ":" + afterOrBefore
+            const newRuleValue = "content: \"" + aString + "\;"
+            //console.log("newRule '" + newRuleKey + "', '" + newRuleValue + "'")
+            document.styleSheets[0].addRule(newRuleKey, newRuleValue);
+            e.className += " " + uniqueClassName
+        }
+        return this
+    }
+
+    setContentAfterString (s) {
+        this.setContentAfterOrBeforeString(s, "after")
+        return this
+    }
+
+    setContentBeforeString (s) {
+        this.setContentAfterOrBeforeString(s, "before")
         return this
     }
     

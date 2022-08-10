@@ -7,7 +7,7 @@
     
 */
 
-(class GesturableDomView extends ListenerDomView {
+(class GesturableDomView extends VisibleDomView {
     
     initPrototype () {
         // Array - not a map as we might have multiple GRs of same type, but...
@@ -30,7 +30,7 @@
     // gestures
 
     gestureRecognizers () {
-        if (this._gestureRecognizers == null) {
+        if (this._gestureRecognizers === null) {
             this._gestureRecognizers = []
         }
         return this._gestureRecognizers

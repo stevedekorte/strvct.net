@@ -22,20 +22,6 @@
         this.newSlot("elementClassName", "")
         this.newSlot("elementType", "div")
         this.newSlot("element", null)
-
-        // Editable
-
-        this.newSlot("showsHaloWhenEditable", false)
-        this.newSlot("tabCount", 0)
-        this.newSlot("validColor", null)
-        this.newSlot("invalidColor", null)
-
-        // Tabable - key views
-
-        this.newSlot("interceptsTab", true)
-        this.newSlot("nextKeyView", null)
-        this.newSlot("canMakeKey", true)
-        this.newSlot("unfocusOnEnterKey", false)
     }
 
     init () {

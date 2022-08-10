@@ -717,7 +717,7 @@
     }
     
     decendantReleasedFocus (aView) {
-        this.focus()
+        this.focus() // this doesn't seem right 
         return true
     }
 

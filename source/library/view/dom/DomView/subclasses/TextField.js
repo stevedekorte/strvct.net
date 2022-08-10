@@ -519,11 +519,6 @@
 
         return super.onClick(event)
     }
-
-    didEdit () {
-        super.didEdit()
-        return this
-    }
     
     setBorder (v) {
         /*

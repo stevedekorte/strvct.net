@@ -13,6 +13,7 @@
     "GamePadListener.js",
     "WebSocketListener.js",
     "WheelListener.js",
+    "WindowListener.js",
     "SpeechListener.js"
 ]
 

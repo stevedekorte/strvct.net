@@ -84,7 +84,7 @@
         this.setFlexShrink(0)
 
         // events
-        this.setIsRegisteredForDocumentResize(true)
+        this.setIsRegisteredForWindowResize(true)
         //this.addGestureRecognizer(LeftEdgePanGestureRecognizer.clone()) 
         //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
         this.setOnStackViewPathChangeNote(this.newNoteNamed("onStackViewPathChange"))

@@ -10,8 +10,6 @@
 (class SubviewsDomView extends CssDomView {
     
     initPrototype () {
-        // parent view and subviews
-
         this.newSlot("parentView", null)
         this.newSlot("subviews", null)
     }
@@ -21,7 +19,6 @@
         this.setSubviews([])
         return this
     }
-
 
     // --- parentView ---
 
@@ -34,28 +31,28 @@
         return this
     }
 
-        // --- subviews ---
+    // --- subviews ---
 
-        hasParentViewAncestor (aView) {
-            const pv = this.parentView()
-            
-            if (!pv) {
-                return false
-            }
-    
-            if (pv === aView) {
-                return true
-            }
-    
-            return pv.hasParentViewAncestor(aView)
+    hasParentViewAncestor (aView) {
+        const pv = this.parentView()
+        
+        if (!pv) {
+            return false
         }
-    
-        hasSubviewDescendant (aView) {
-            if (aView == this) {
-                return true
-            }
-            return this.subviews().detect(sv => sv.hasSubviewDescendant(aView))
+
+        if (pv === aView) {
+            return true
         }
+
+        return pv.hasParentViewAncestor(aView)
+    }
+
+    hasSubviewDescendant (aView) {
+        if (aView == this) {
+            return true
+        }
+        return this.subviews().detect(sv => sv.hasSubviewDescendant(aView))
+    }
     
     
     // view chains
@@ -244,8 +241,6 @@
 
         return this
     }
-
- 
 
     // -----------------------
 
@@ -492,8 +487,6 @@
         return this
     }
     */
-
-
 
     rootView () {
         const pv = this.parentView()

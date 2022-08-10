@@ -11,7 +11,6 @@
     
     initPrototype () {
         this.newSlot("eventListenersMap", null)
-
     }
 
     init () {
@@ -20,7 +19,7 @@
         return this
     }
 
-    // --- event listeners ---
+    // --- event listener management ---
 
     removeAllListeners () {
         const map = this.eventListenersMap()
@@ -45,12 +44,18 @@
         return map.get(className)
     }
 
+    // --- specific event listeners ---
+
     animationListener () {
         return this.listenerNamed("AnimationListener")
     }
 
     clipboardListener () {
         return this.listenerNamed("ClipboardListener")
+    }
+
+    windowListener () {
+        return this.listenerNamed("WindowListener") // listen target will be the window
     }
 
     documentListener () {
@@ -102,25 +107,28 @@
         return true
     }
 
-    // --- window resize events ---
+    // --- register window resize events ---
 
-    isRegisteredForDocumentResize () {
-        return this.documentListener().isListening()
+    isRegisteredForWindowResize () {
+        return this.windowListener().isListening()
     }
 
-    setIsRegisteredForDocumentResize (aBool) {
-        this.documentListener().setIsListening(aBool)
+    setIsRegisteredForWindowResize (aBool) {
+        this.windowListener().setIsListening(aBool)
         return this
     }
+
+    // --- handle window resize events ---
 
     onWindowResize (event) {
         return true
     }
 
-    // --- onClick event, target & action ---
+    // --- register onClick events ---
 
     isRegisteredForClicks () {
-        return this.mouseListener().isListening()
+        //return this.mouseListener().isListening()
+        return this.defaultTapGesture().isListening()
     }
 
     setIsRegisteredForClicks (aBool) {
@@ -147,6 +155,7 @@
     }
 
     setIsRegisteredForMouse (aBool, useCapture) {
+        debugger;
         this.mouseListener().setUseCapture(useCapture).setIsListening(aBool) 
         return this
     }
@@ -196,8 +205,8 @@
 
         const e = this.element()
         if (aBool) {
-            DomView._tabCount++
-            e.tabIndex = DomView._tabCount // need this in order for focus to work on BrowserColumn?
+            DomView.setTabCount(DomView.tabCount() + 1)
+            e.tabIndex = DomView.tabCount()  // need this in order for focus to work on BrowserColumn?
             //this.setCssAttribute("outline", "none"); // needed?
         } else {
             delete e.tabindex
@@ -206,27 +215,10 @@
         return this
     }
 
-    /*
-    onEnterKeyDown (event) {
-        this.debugLog(" onEnterKeyDown")
-        if (this.unfocusOnEnterKey() && this.isFocused()) {
-            this.debugLog(" releasing focus")
-            // this.releaseFocus() // TODO: implement something to pass focus up view chain to whoever wants it
-            //this.element().parentElement.focus()
-            if (this.parentView()) {
-                this.parentView().focus()
-            }
-        }
-        return this
-    }
-    */
-
     onKeyDown (event) {
         //BMKeyboard.shared().showEvent(event)
         const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
-
         //console.log(" onKeyDown ", methodName)
-        
         const result = this.invokeMethodNameForEvent(methodName, event)
 
         /*

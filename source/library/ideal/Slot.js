@@ -439,7 +439,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     makeOneShotHookedGetter () {
         assert(this.owner().isPrototype())
-        console.log(this.owner().type() + "." + this.name() + " setting up one-shot getter in prototype")
+        console.log("WARNING:", this.owner().type() + "." + this.name() + " setting up one-shot getter in prototype - may be bad for performance")
         //this.owner()[this.getterName()] = this.oneShotHookedGetter()
         Object.defineSlot(this.owner(), this.getterName(), this.oneShotHookedGetter())
         return this

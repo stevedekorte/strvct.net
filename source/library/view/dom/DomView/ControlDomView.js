@@ -3,7 +3,7 @@
 /*
     ControlDomView
 
-    Target/action state and behavior.
+    Target / action state and behavior.
 
 */
 

@@ -1,44 +1,14 @@
 
 
-- break DomView into chain of subclasses or categories (like Node)
+- BUG: Tiles require double tap/click to be selected?
 
 - rename _cam.json and _index.json to cam.json and index.json, etc
 
 - get rid of snake_case folder names - move to CamelCase or Cap Case?
 
 
-Orangize DomView:
 
-DomView - element, element attributes
-	firstResponder
-	subviews, synchronization?
-	frame, viewport, position helpers?
-
-CssDomView - css get/set attributes
-
-EventTargetDomView - listeners, copy/paste?, other events
-
-TouchableDomView - gestures 
-
-ActionableDomView - target/action
-
-DragAndDropDomView - drag and drop
-
-TabableDomView - nextKeyView tab
-
-EditableDomView - contentEditable, set caret methods, text selection, contentString, copy/paste (for text insert)?
-
-ScrollableDomView - scroll methods
-
-VisibilityDomView - visibility events? or put in EventTargetDomView?
-
-
-
-
-
-
-
--- move gestureRecognizers to map
+-- move gestureRecognizers to map?
 
 
 -  move shouldStore to class?
