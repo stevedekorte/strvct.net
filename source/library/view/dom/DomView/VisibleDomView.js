@@ -12,6 +12,7 @@
     initPrototype () {
         this.newSlot("isRegisteredForVisibility", false)
         this.newSlot("intersectionObserver", null)
+        this.newSlot("onVisibilityCallback", null)
     }
 
     /*
@@ -25,8 +26,18 @@
 
     onVisibility () {
         //this.debugLog(".onVisibility()")
+        const callback = this.onVisibilityCallback()
+        if (callback) {
+            callback()
+
+        }
+
         this.unregisterForVisibility()
         return true
+    }
+
+    isRegisteredForVisibility () {
+        return !Type.isNull(this.intersectionObserver())
     }
 
     setIsRegisteredForVisibility (aBool) {
@@ -50,20 +61,24 @@
         return this
     }
 
-    registerForVisibility () {
+    visibilityRoot () {
+        // our element must be a decendant of the visibility root element
+        let root = document.body
+
+        if (this.parentView()) {
+            root = this.parentView().parentView().element() // hack for tile in scroll view - TODO: make more general
+            //root = this.parentView().element()
+        }
+        return root
+    }
+
+    registerForVisibility () { // this is a oneShot event, as onVisibility() unregisters
         if (this.isRegisteredForVisibility()) {
             return this
         }
 
-        let root = document.body
-
-        if (this.parentView()) {
-            root = this.parentView().parentView().element() // hack for scroll view - TODO: make more general
-            //root = this.parentView().element()
-        }
-
         const intersectionObserverOptions = {
-            root: root, // watch for visibility in the viewport 
+            root: this.visibilityRoot(), // watch for visibility in the viewport 
             rootMargin: "0px",
             threshold: 1.0
         }
@@ -83,12 +98,10 @@
     handleIntersection (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
+                //  if (entries[0].intersectionRatio <= 0) return;
+
                 //console.log("onVisibility!")
-                if (this._endScrollIntoViewFunc) {
-                    this._endScrollIntoViewFunc()
-                    // hack around lack of end of scrollIntoView event 
-                    // needed to return focus that scrollIntoView grabs from other elements
-                }
+   
                 this.onVisibility()
             }
         })

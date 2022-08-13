@@ -14,6 +14,8 @@
         this.newSlot("tilesView", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
         this.newSlot("animatesCollapse", true)
+        this.newSlot("beforeEdgePanBorderBottom", null) // private
+        this.newSlot("beforeEdgePanBorderRight", null) // private
     }
 
     targetWidth () {
@@ -211,7 +213,7 @@
     // --- right edge gesture ---
 
     onRightEdgePanBegin (aGesture) {
-        this._beforeEdgePanBorderRight = this.borderRight()
+        this.setBeforeEdgePanBorderRight(this.borderRight())
         this.setBorderRight("1px dashed red")
     }
 
@@ -228,8 +230,8 @@
 
     onRightEdgePanComplete (aGesture) {
         this.onRightEdgePanMove(aGesture)
-        this.setBorderRight(this._beforeEdgePanBorderRight)
-        this._beforeEdgePanBorderBottom = null
+        this.setBorderRight(this.beforeEdgePanBorderRight())
+        this.setBeforeEdgePanBorderBottom(null)
         this.unhideTransition()
     }
 
@@ -237,7 +239,7 @@
 
 
     onBottomEdgePanBegin (aGesture) {
-        this._beforeEdgePanBorderBottom = this.borderBottom()
+        this.setBeforeEdgePanBorderBottom(this.borderBottom())
         this.setBorderBottom("1px dashed red")
         //this.setTransition("min-height 0s, max-height 0s")
         this.hideTransition()
@@ -255,8 +257,8 @@
 
     onBottomEdgePanComplete (aGesture) {
         this.onBottomEdgePanMove(aGesture)
-        this.setBorderBottom(this._beforeEdgePanBorderBottom)
-        this._beforeEdgePanBorderBottom = null
+        this.setBorderBottom(this.beforeEdgePanBorderBottom())
+        this.setBeforeEdgePanBorderBottom(null)
         this.unhideTransition()
     }
 

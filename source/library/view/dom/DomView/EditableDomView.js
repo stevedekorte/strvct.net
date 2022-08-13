@@ -10,8 +10,8 @@
 (class EditableDomView extends ControlDomView {
     
     initPrototype () {
-        this.newSlot("unfocusOnEnterKey", false)
-        this.newSlot("showsHaloWhenEditable", false)
+        //this.newSlot("unfocusOnEnterKey", false)
+        //this.newSlot("showsHaloWhenEditable", false)
     }
 
     /*
@@ -126,6 +126,7 @@
     // --- paste from clipboardListener ---
 
     onPaste (event) {
+        debugger;
         // prevent pasting text by default after event
         event.preventDefault();
 
@@ -140,12 +141,14 @@
         }
 
         if (html && html.trim().length !== 0) {
-            this.replaceSelectedText(htmlToPlainTextFunc(html))
+            const s = htmlToPlainTextFunc(html)
+            this.replaceSelectedText(s)
             return false; // prevent returning text in clipboard
         }
 
         if (text && text.trim().length !== 0) {
-            this.replaceSelectedText(htmlToPlainTextFunc(text))
+            const s = htmlToPlainTextFunc(text)
+            this.replaceSelectedText(s)
             return false; // prevent returning text in clipboard
         }
 

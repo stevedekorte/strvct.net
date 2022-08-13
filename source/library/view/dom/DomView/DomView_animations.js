@@ -84,24 +84,43 @@
     }
 
     scrollIntoView () {
+        // TODO: return immediately if already visible
+        if (this.isScrolledIntoView()) {
+            return false
+        }
+
         const focusedView = WebBrowserWindow.shared().activeDomView()
         //console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollIntoView() needsRefocus = ", focusedView !== this)
 
+        // if another view is focused, the scrolling will unfocus it, so we
+        // need a way to return focus after scrolling is complete
         if (focusedView && focusedView !== this) {
             //console.log("scrollIntoView - registerForVisibility")
             // this hack is needed to return focus that scrollIntoView grabs from other elements
             // need to do this before element().scrollIntoView appearently
             this.registerForVisibility()
-            this._endScrollIntoViewFunc = () => {
+            // hack around lack of end of scrollIntoView event 
+            // needed to return focus that scrollIntoView grabs from other elements
+            this.setOnVisibilityCallback(() => {
                 //console.log("_endScrollIntoViewFunc - returning focus")
                 //focusedView.focus()
                 // need delay to allow scroll to finish - hack - TODO: check for full visibility
                 focusedView.focusAfterDelay(0.2)
-            }
+            })
         }
+
         this.addTimeout(() => {
-            this.element().scrollIntoView({ block: "start", inline: "nearest", behavior: "smooth", })
+            // have browser do scroll
+            this.element().scrollIntoView({ 
+                block: "start", 
+                inline: "nearest", 
+                behavior: "smooth", 
+            })
         }, 0)
+
+        this.element().addEventListener('transitionend', (transitionEvent) => {
+            console.log("completed scrollIntoView transition?:", transitionEvent.propertyName)
+        });
 
         /*
         if (focusedView !== this) {
@@ -110,7 +129,7 @@
         */
         return this
     }
-
+    
     isScrolledIntoView () {
         const r = this.boundingClientRect()
         const isVisible = (r.top >= 0) && (r.bottom <= window.innerHeight);

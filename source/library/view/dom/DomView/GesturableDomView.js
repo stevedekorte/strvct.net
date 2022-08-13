@@ -15,6 +15,7 @@
         // this could replace "default" gesture ivars?
         this.newSlot("gestureRecognizers", null)
 
+        // default gestures with typical settings 
         this.newSlot("defaultTapGesture", null)
         this.newSlot("defaultDoubleTapGesture", null)
         this.newSlot("defaultPanGesture", null)
@@ -147,7 +148,7 @@
         return this
     }
 
-    // double tap gesture
+    // default double tap gesture
 
     newDoubleTapGestureRecognizer () { // private
         const tg = TapGestureRecognizer.clone()

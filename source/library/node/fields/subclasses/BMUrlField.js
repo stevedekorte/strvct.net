@@ -91,6 +91,10 @@
 
     urlFromValue () {
         const s = this.value()
+        if (s.trim() === "") {
+            return null
+        }
+        
         try {
             const url = new URL(s)
             return url

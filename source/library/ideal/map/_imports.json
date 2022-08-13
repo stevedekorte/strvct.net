@@ -1,6 +1,7 @@
 [
     "AtomicMap.js",
-    "UsableWeakMap.js"
+    "EnumerableWeakMap.js",
+    "EnumerableWeakSet.js"
 ]
 
 

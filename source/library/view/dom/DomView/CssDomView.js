@@ -17,6 +17,8 @@
         this.newSlot("hiddenMaxHeight", undefined)
         */
         this.newSlot("hiddenTransitionValue", undefined)
+        //this.newSlot("pushedAttributes", undefined)
+        this.newSlot("pushedSlotValues", undefined)
     }
 
     /*
@@ -26,7 +28,82 @@
     }
     */
 
-    // --- css ---
+    // --- push/pop slot values ---
+    // useful for pushing a css attribute using it's normal getter/setter methods
+
+    pushedSlotValues () {
+        if (Type.isUndefined(this._pushedSlotValues)) {
+            this._pushedSlotValues = new Map()
+        }
+        return this._pushedSlotValues
+    }
+
+    pushedSlotValuesAt (slotName) {
+        const p = this.pushedSlotValues()
+        if (!p.has(slotName)) {
+            p.set(slotName, [])
+        }
+        return p.get(slotName)
+    }
+
+    pushSlotValue (slotName, newValue) {
+        const stack = this.pushedSlotValuesAt(slotName)
+        const oldValue = this[slotName].apply(this)
+        stack.push(oldValue)
+        const setterName = "set" + slotName.capitalized()
+        this[setterName].apply(this, [newValue])
+        return this
+    }
+
+    popSlotValue (slotName) {
+        const a = this.pushedSlotValuesAt(slotName)
+        if (a.length === 0) {
+            throw new Error("attempt to pop empty slot value stack")
+        }
+        const oldValue = a.pop()
+        const setterName = "set" + slotName.capitalized()
+        this[setterName].apply(this, [oldValue])
+        return this
+    }
+
+    /*
+    // --- push and pop attribute stacks ---
+
+    pushedAttributes () {
+        if (Type.isUndefined(this._pushedAttributes)) {
+            this._pushedAttributes = new Map()
+        }
+        return this._pushedAttributes
+    }
+
+    pushedAttributesAt (name) {
+        const p = this.pushedAttributes()
+        if (!p.has(name)) {
+            p.set(name, [])
+        }
+        return p.get(name)
+    }
+
+    pushAttribute (name, newValue) {
+        const stack = this.pushedAttributesAt(name)
+        const oldValue = this.getCssAttribute(name)
+        stack.push(oldValue)
+        this.setCssAttribute(name, newValue) // NOTE: bypasses css change callbacks
+        return this
+    }
+
+    popAttribute (name) {
+        const a = this.pushedAttributesAt(name)
+        if (a.length === 0) {
+            throw new Error("attempt to pop empty css attribute stack")
+        }
+        const oldValue = a.pop()
+        this.setCssAttribute(name, oldValue) // NOTE: bypasses css change callbacks
+        return this
+    }
+    */
+
+    // ------------------------------
     
     /*    
     applyCSS (ruleName) {

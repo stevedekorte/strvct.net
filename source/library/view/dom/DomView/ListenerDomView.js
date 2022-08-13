@@ -217,6 +217,7 @@
 
     onKeyDown (event) {
         //BMKeyboard.shared().showEvent(event)
+        // expand the method name to include combinations of meta keys (e.g. shift, function, control, option, command, etc)
         const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
         //console.log(" onKeyDown ", methodName)
         const result = this.invokeMethodNameForEvent(methodName, event)

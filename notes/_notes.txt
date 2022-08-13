@@ -1,12 +1,10 @@
+look at: startMutationObserver
 
-
-- BUG: Tiles require double tap/click to be selected?
+- BUG: resizing columns
 
 - rename _cam.json and _index.json to cam.json and index.json, etc
 
 - get rid of snake_case folder names - move to CamelCase or Cap Case?
-
-
 
 -- move gestureRecognizers to map?
 
@@ -15,7 +13,6 @@
 
 - don't store App in object pool (for now), instead have it set up and manage the root node
 
-- BMNode: find way to ensure no duplicate subnodes?
 - add way to check if hooks have been set up when adding mutation observer
 - onInstanceLoadRef is triggering didUpdateSlot -> didMutate -> ObjectPool.onDidMutateObject
 -- make sure drag/drop/copy pools don't add themselves to mutation observers <-----------------------------

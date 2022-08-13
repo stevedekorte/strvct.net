@@ -215,7 +215,6 @@
         }
         */
 
-        //this.element().style.hideFocus = true
         this.element().style.outline = "none" // correct?
 
         this.setIsRegisteredForKeyboard(aBool)
@@ -226,7 +225,7 @@
             this.setUserSelect("auto")
         }
 
-        this.setIsRegisteredForClipboard(aBool)
+        this.setIsRegisteredForClipboard(aBool) // so we receive onPaste events from clipboard
 
         return this
     }
