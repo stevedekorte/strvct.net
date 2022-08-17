@@ -32,7 +32,7 @@
 		return this
     }
 
-    static initPrototype () {
+    static initPrototypeSlots () {
     }
 
     init () {

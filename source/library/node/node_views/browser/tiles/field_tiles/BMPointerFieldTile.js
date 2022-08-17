@@ -8,7 +8,7 @@
 
 (class BMPointerFieldTile extends TitledTile {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

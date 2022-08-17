@@ -8,7 +8,7 @@
 
 (class BMGroupChatChannel extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

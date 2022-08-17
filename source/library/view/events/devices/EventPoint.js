@@ -15,7 +15,7 @@
 */
 
 (class EventPoint extends Point {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("id", null)
         this.newSlot("state", null)
         this.newSlot("target", null)

@@ -30,7 +30,7 @@
 
 (class TapGestureRecognizer extends GestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("maxHoldPeriod", 1000).setComment("milliseconds per tap down hold")
         this.newSlot("timeoutId", null) // private
         this.newSlot("numberOfTapsRequired", 1)

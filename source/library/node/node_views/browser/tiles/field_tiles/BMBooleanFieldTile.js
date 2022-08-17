@@ -9,7 +9,7 @@
 (class BMBooleanFieldTile extends BMFieldTile {
     
     /*
-    initPrototype () {
+    initPrototypeSlots () {
     }
     */
 

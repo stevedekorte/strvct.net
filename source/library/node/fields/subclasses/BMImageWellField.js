@@ -30,14 +30,14 @@
         return newNode
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("onlyShowsKeyWhenEmpty", false)
         this.newSlot("isEditable", true)
         
         this.overrideSlot("nodeMinTileHeight").setShouldStoreSlot(true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setKey("Image title")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)

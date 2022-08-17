@@ -11,7 +11,7 @@
 */
 
 (class ImageWellView extends NodeView {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("imageView", null)
         this.newSlot("isEditable", true)
     }

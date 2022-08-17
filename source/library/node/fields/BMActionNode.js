@@ -15,7 +15,7 @@
         return true
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String").setLabel("Title")
 
         this.newSlot("methodName", null).setShouldStoreSlot(true)
@@ -25,7 +25,7 @@
         this.newSlot("target", null)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setNodeTileIsSelectable(true)
         this.setNodeCanInspect(true)

@@ -15,7 +15,7 @@
         return this
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("lastSyncTime", 0)
     }
 

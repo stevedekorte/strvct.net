@@ -11,7 +11,7 @@
 
 (class Mouse extends Device {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isDown", false)
         this.newSlot("downEvent", null)
         this.newSlot("currentEvent", null)

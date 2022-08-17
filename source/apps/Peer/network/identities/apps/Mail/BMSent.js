@@ -9,7 +9,7 @@
 
 (class BMSent extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -8,7 +8,7 @@
 
 (class BMBlacklist extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

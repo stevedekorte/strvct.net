@@ -13,7 +13,7 @@
 		return this
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("extensions", ["json"])
     }
 

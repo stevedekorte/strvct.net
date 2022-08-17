@@ -19,9 +19,14 @@ if (!String.prototype.capitalized) {
     }
 
     static initThisClass () {
+        
+        if (this.prototype.hasOwnProperty("initPrototypeSlots")) {
+            // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
+            this.prototype.initPrototypeSlots()
+        }
+
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            //this.prototype.initPrototype.apply(this.prototype)
             this.prototype.initPrototype()
         }
 

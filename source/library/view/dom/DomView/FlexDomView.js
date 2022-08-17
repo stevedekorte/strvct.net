@@ -8,7 +8,7 @@
 
 (class FlexDomView extends DomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

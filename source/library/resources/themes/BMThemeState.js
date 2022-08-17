@@ -42,7 +42,7 @@
         ]
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         /*
         {
             const slot = this.newSlot("color", "")

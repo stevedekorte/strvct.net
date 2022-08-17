@@ -83,7 +83,7 @@
 
     // ----
 
-    initPrototype () {
+    initPrototypeSlots () {
  
         {
             const slot = this.newSlot("nodeType", null)

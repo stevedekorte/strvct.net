@@ -10,7 +10,7 @@
 
 (class BMDataStoreRecord extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("key", null)
         this.newSlot("store", null)
     }

@@ -21,7 +21,7 @@ TimePeriodFormatter
 */
 
 (class TimePeriodFormatter extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("valueInSeconds", 0)
 
         // TODO: move periods to a Map

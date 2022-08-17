@@ -8,7 +8,7 @@
 
 (class BMRServers extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("maxConnections", 8)
     }
 

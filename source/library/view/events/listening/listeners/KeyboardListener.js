@@ -9,7 +9,7 @@
 
 (class KeyboardListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

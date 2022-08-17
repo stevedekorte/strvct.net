@@ -9,7 +9,7 @@
 
 (class BMClassifiedPosts extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

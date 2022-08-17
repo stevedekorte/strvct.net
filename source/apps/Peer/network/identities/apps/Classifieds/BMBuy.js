@@ -8,7 +8,7 @@
 
 (class BMBuy extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("post", null)
     }
 

@@ -8,7 +8,7 @@
 
 (class BMProfile extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "").setShouldStoreSlot(true)
         this.newSlot("publicKeyString", null).setShouldStoreSlot(true)
         this.newSlot("avatars", []).setShouldStoreSlot(true)

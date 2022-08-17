@@ -8,7 +8,7 @@
 
 (class TileNoteView extends TextField {
 
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

@@ -9,7 +9,7 @@
 
 (class WebBrowserNotification extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("title", "")
         this.newSlot("body", null)
         this.newSlot("icon", null).setComment("a url to an image")

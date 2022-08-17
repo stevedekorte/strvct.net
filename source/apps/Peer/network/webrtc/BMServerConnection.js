@@ -8,7 +8,7 @@
 
 (class BMServerConnection extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("server", null)
         this.newSlot("serverConn", null)
         this.newSlot("webSocketListener", null)

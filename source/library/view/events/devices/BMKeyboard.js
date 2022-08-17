@@ -33,7 +33,7 @@
 
 
 (class BMKeyboard extends Device {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
         this.newSlot("keyboardListener", null)
         this.newSlot("allModifierKeys", null)

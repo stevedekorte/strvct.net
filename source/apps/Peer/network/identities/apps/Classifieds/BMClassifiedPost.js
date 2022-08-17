@@ -8,7 +8,7 @@
 
 (class BMClassifiedPost extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         const thirtyDaysInMilliseconds = 30 * 24 * 60 * 60 * 1000
         this.newSlot("uuid", null).setShouldStoreSlot(true)
         this.newSlot("postPeriod", thirtyDaysInMilliseconds).setShouldStoreSlot(true)

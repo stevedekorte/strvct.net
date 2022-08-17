@@ -37,7 +37,7 @@
         this.newClassSlot("insertedRuleNamesSet", new Set())
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("view", null)
         this.newSlot("propertyName", "")
         this.newSlot("startValue", null)
@@ -64,7 +64,7 @@
         this.newSlot("propertySlotsDict", null) 
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.propertySlotsDict() // cache it on the prototype
     }
 

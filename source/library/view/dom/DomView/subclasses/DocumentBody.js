@@ -8,7 +8,7 @@
 
 (class DocumentBody extends DomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -28,7 +28,7 @@
 
 (class ScreenEdgePanGestureRecognizer extends PanGestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("edgeName", null)
         this.newSlot("maxStartDistance", 15)
     }

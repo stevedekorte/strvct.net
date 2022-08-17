@@ -8,7 +8,7 @@
 */
 
 (class Transform extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("position", null).setComment("in px units") 
         this.newSlot("rotation", null).setComment("in degrees units") 
         this.newSlot("scale", null)

@@ -16,7 +16,7 @@
 (class BMOptionsNodeTile extends TitledTile {
     
     /*
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

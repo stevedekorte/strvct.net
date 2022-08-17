@@ -11,7 +11,7 @@
 
 (class CloseButton extends FlexDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isEnabled", true)
         this.newSlot("iconView", null)
     }

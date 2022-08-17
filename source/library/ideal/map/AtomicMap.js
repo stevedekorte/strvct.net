@@ -8,7 +8,7 @@
 
 getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isInTx", false) // public read, private write - Bool, true during a tx
         this.newSlot("map", null) // public read, private write - Map, contains current state of map
         this.newSlot("snapshot", null) // private - Map, contains shallow copy of map before tx which we can revert to if tx is cancelled

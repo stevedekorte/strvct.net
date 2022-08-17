@@ -8,14 +8,14 @@
 
 (class BMAppMessage extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("senderId", null).setShouldStoreSlot(true)
         this.newSlot("receiverId", null).setShouldStoreSlot(true)
         this.newSlot("objMsg", null).setShouldStoreSlot(true)
         this.newSlot("hasRead", false)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
     }
 

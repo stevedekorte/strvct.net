@@ -9,7 +9,7 @@
 
 (class StrvctApp extends App {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // model
         this.newSlot("notes", null)
         this.newSlot("prototypes", null)

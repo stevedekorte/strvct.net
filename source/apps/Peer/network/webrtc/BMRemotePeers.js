@@ -8,7 +8,7 @@
 
 (class BMRemotePeers extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

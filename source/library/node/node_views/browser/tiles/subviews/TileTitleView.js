@@ -13,7 +13,7 @@
 
 (class TileTitleView extends TextField {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

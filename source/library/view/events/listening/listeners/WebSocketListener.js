@@ -17,7 +17,7 @@
 
 (class WebSocketListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -8,7 +8,7 @@
 
 (class BMImageResourcesNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

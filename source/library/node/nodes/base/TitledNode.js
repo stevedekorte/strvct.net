@@ -17,7 +17,7 @@
 
 (class TitledNode extends BMNode {
 
-    initPrototype () {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("title", null)

@@ -14,7 +14,7 @@
 (class BMStorableNode extends StyledNode {
 
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.setShouldStore(true)
         this.setShouldScheduleDidInit(true)
         //this.setShouldStoreSubnodes(true)

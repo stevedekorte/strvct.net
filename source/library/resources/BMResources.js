@@ -13,7 +13,7 @@
 		return this
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("themes", null)
         this.newSlot("fonts", null)
         this.newSlot("sounds", null)

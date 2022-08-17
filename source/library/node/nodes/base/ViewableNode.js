@@ -15,7 +15,7 @@
 
 (class ViewableNode extends InspectableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("nodeViewClassName", null)

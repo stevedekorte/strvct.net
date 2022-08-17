@@ -7,7 +7,7 @@
 */
 
 (class IndexedDBFolder extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", "/")
         this.newSlot("pathSeparator", "/") // path should end with pathSeparator
         this.newSlot("db", null)

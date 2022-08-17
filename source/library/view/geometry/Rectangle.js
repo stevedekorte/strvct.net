@@ -18,7 +18,7 @@
 */
 
 (class Rectangle extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("origin", null)
         this.newSlot("size", null)
     }

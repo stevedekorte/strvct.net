@@ -15,7 +15,7 @@
 
 (class AnimationListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

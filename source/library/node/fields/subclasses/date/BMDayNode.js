@@ -8,7 +8,7 @@
 
 (class BMDayNode extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("value", 1).setComment("day value starts with 1")
     }
 

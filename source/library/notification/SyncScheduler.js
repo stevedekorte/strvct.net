@@ -55,7 +55,7 @@
 
 (class SyncScheduler extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("actions", new Map())
         this.newSlot("hasTimeout", false)
         this.newSlot("isProcessing", false)

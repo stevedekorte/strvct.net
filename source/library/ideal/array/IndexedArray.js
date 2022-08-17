@@ -35,7 +35,7 @@
 
 (class IndexedArray extends HookedArray {
 
-    initPrototype () {
+    initPrototypeSlots () {
         /*
         this.newSlot("index", null)
         this.newSlot("indexClosure", null)

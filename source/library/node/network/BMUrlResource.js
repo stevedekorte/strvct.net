@@ -8,7 +8,7 @@
 
 (class BMUrlResource extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", "")
         this.newSlot("error", null).setSyncsToView(true)
         this.newSlot("status", null).setSyncsToView(true)

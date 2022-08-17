@@ -16,7 +16,7 @@
 
 (class BMActorNode extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("inbox", null).setInitProto(Array) // asyncMessageQueue
         this.newSlot("timeout", null) 
     }

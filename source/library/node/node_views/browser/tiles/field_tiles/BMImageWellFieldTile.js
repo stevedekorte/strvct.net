@@ -13,7 +13,7 @@
         return mimeType.startsWith("image/")
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

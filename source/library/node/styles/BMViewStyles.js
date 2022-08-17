@@ -30,7 +30,7 @@
 
 (class BMViewStyles extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "")
         this.newSlot("unselected", null)
         this.newSlot("selected", null) // aka focused

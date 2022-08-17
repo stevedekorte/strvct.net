@@ -14,7 +14,7 @@
 
 (class BMSummaryNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("nodeSummarySuffix", " ")
@@ -84,7 +84,7 @@
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 

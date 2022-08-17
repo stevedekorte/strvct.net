@@ -18,7 +18,7 @@
 
 (class PanGestureRecognizer extends GestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("minNumberOfFingersRequired", 1)
         this.newSlot("maxNumberOfFingersAllowed", 1)
         //downPositionInTarget: null,

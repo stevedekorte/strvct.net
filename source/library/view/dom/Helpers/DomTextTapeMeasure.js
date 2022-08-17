@@ -18,7 +18,7 @@
 
 (class DomTextTapeMeasure extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("idName", "DomTextTapeMeasure")
         this.newSlot("stylesToCopy", [
             "fontSize",

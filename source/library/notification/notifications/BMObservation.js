@@ -16,7 +16,7 @@ getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => {
 });
 
 (class BMObservation extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("name", null) // String 
         this.newSlot("isOneShot", false) // Boolean

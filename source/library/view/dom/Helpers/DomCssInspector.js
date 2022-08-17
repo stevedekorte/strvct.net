@@ -11,7 +11,7 @@
 
 (class DomCssInspector extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("idName", "DomCssInspector")
     }
 

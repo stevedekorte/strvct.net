@@ -29,7 +29,7 @@ TimeFormatter
 */
 
 (class TimeFormatter extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("date", null) // temp value which will be formatted
             slot.setShouldStoreSlot(false)

@@ -8,7 +8,7 @@
 
 (class BMBlacklistedContacts extends BMBlacklist {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

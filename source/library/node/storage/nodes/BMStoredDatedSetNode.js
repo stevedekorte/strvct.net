@@ -9,7 +9,7 @@
 
 (class BMStoredDatedSetNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("maxAgeInSeconds", 30*24*60*60)
             slot.setShouldStoreSlot(true)
@@ -26,7 +26,7 @@
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
     }

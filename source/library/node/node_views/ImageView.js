@@ -8,7 +8,7 @@
 
 (class ImageView extends NodeView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("imageContainer", null)
         this.newSlot("rawImageView", null)
         this.newSlot("closeButtonView", null)

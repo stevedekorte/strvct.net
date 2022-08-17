@@ -8,7 +8,7 @@
 
 (class BMRemotePeer extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("conn", null)
         this.newSlot("serverConnection", null)
         this.newSlot("messages", null)

@@ -8,14 +8,14 @@
 
 (class BMImageNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("dataURL", null)
             slot.setShouldStoreSlot(true)
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
         this.setTitle("Untitled")

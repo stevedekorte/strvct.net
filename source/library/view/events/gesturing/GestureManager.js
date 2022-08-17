@@ -22,7 +22,7 @@
 
 (class GestureManager extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("activeGesture", null) // aGesture
         this.newSlot("begunGestures", null) // dict
         this.newSlot("isPaused", false) // used to pause gestures while editing text fields

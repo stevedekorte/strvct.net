@@ -11,7 +11,7 @@
 
 (class TilesView extends NodeView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("tiles", null)
         this.newSlot("allowsCursorNavigation", true)
         this.newSlot("defaultTileStyles", null)

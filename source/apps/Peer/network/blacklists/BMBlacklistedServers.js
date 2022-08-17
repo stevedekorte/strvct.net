@@ -10,7 +10,7 @@
 
 (class BMBlacklistedServers extends BMBlacklist {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("ipsDict", null).setShouldStoreSlot(true)
     }
 

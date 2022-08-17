@@ -20,7 +20,7 @@ getGlobalThis().Mixin = class Mixin extends Object {
 		// apply initClass method to target class' prototype
 		// ...
 
-		// apply initPrototype method to target class' prototype
+		// apply initPrototypeSlots method to target class' prototype
 		//...
 
 		// NOTE: what about Mixin inheritance?

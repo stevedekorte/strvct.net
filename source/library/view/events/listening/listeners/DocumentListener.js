@@ -9,7 +9,7 @@
 
 (class DocumentListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

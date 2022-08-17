@@ -9,7 +9,7 @@
 
 (class GesturableDomView extends VisibleDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // Array - not a map as we might have multiple GRs of same type, but...
         // would it be better to give GRs labels to use for map key?
         // this could replace "default" gesture ivars?

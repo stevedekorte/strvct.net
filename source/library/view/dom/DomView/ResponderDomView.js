@@ -14,7 +14,7 @@
         this.newClassSlot("tabCount", 0)
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("acceptsFirstResponder", false)
 
         // browser looks at element.tabindex to find next element 

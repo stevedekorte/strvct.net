@@ -8,7 +8,7 @@
 
 (class HeaderFooterView extends NodeView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("headerClass", null)
         this.newSlot("headerView", null)
 
@@ -20,7 +20,7 @@
     }
 
     /*
-    initPrototypeObject () {
+    initPrototype () {
     }
 
     init () {

@@ -36,7 +36,7 @@
         //ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "App")
         this.newSlot("version", [0, 0])
     }

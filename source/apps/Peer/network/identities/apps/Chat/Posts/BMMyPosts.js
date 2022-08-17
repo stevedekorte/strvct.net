@@ -8,7 +8,7 @@
 
 (class BMMyPosts extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -18,7 +18,7 @@
 
 (class EventSetListener extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("listenTarget", null) // DOM Element (EventTarget)
         this.newSlot("delegate", null)
         this.newSlot("isListening", false)

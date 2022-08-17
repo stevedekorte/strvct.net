@@ -8,7 +8,7 @@
 
 (class KeyboardKey extends Device {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isDown", false)
         this.newSlot("code", null)
         this.newSlot("name", "")

@@ -31,12 +31,12 @@
         
 (class BMFieldSetNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("status", "")
         this.newSlot("isEditable", true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStoreSubnodes(false)
     }
 

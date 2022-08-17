@@ -8,7 +8,7 @@
 
 (class BMGroupConversation extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("remoteIdentity", null)
     }
 

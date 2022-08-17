@@ -25,7 +25,7 @@
 
 
 (class DomTransitions extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("properties", null)
         this.newSlot("domView", null)
     }

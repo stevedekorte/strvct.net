@@ -9,7 +9,7 @@
 
 (class BMLocalIdentities extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -23,7 +23,7 @@
         WAContext.shared().setupIfNeeded() // need user input to do this
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("audioContext", null)
     }
 

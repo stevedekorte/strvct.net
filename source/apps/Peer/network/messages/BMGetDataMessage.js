@@ -8,7 +8,7 @@
 
 (class BMGetDataMessage extends BMMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

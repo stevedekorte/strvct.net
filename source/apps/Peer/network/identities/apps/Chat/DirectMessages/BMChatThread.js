@@ -9,7 +9,7 @@
 
 (class BMChatThread extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("remoteIdentity", null).setShouldStoreSlot(true)
     }
 

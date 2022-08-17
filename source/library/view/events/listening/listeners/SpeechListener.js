@@ -9,7 +9,7 @@
 
 (class SpeechListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

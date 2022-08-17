@@ -10,7 +10,7 @@ const bitcore = require("bitcore-lib")
 
 (class BMRemoteIdentity extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "untitled").setShouldStoreSlot(true)
         this.newSlot("publicKeyString", "").setShouldStoreSlot(true)
 

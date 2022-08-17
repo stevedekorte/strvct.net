@@ -15,7 +15,7 @@
 
 (class ScreenTopEdgePanGestureRecognizer extends ScreenEdgePanGestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

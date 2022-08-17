@@ -47,7 +47,7 @@
 
 (class ObjectPool extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "defaultDataStore")
         this.newSlot("rootObject", null)
 

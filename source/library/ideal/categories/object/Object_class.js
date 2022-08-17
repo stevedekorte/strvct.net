@@ -148,17 +148,15 @@
         //proto.justNewSlot("slots", new Map()) // each proto has it's own set of slots - us justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(proto, "_slotsMap", new Map)
 
-        if (proto.hasOwnProperty("initPrototype")) {
+        if (proto.hasOwnProperty("initPrototypeSlots")) {
             // Only called if method defined on this class.
-            proto.initPrototype() // This method should NOT call super
+            proto.initPrototypeSlots() // This method should NOT call super
         }
 
-        if (proto.hasOwnProperty("initSlots")) {
-            proto.initSlots()
-        }
-        
-        if (proto.hasOwnProperty("initPrototypeObject")) {
-            proto.initPrototypeObject() // This method should NOT call super
+        proto.initSlots()
+
+        if (proto.hasOwnProperty("initPrototype")) {
+            proto.initPrototype() // This method should NOT call super
         }
 
         this.addToAllClasses()
@@ -169,7 +167,7 @@
         this.slotsMap().forEach(slot => slot.setupInOwner())
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         // called after setupInOwner is called on each slot
         // so we have a chance to initialize things after all slots are set up 
     }

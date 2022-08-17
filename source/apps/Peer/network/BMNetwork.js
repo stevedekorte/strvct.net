@@ -13,7 +13,7 @@
 		return this
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("servers", null)
         this.newSlot("stunServers", null)
         this.newSlot("messages", null)

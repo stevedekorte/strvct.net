@@ -8,7 +8,7 @@
 
 (class TileSubtitleView extends TextField {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

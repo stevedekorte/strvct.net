@@ -9,7 +9,7 @@
 
 (class GamePad extends Device {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("gamePadManager", null)
         this.newSlot("index", null)
         this.newSlot("id", null)

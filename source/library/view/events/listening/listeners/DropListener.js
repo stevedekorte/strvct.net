@@ -9,7 +9,7 @@
 
 (class DropListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

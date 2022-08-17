@@ -23,7 +23,7 @@
 
 (class FirewallProxy extends ObservableProxy {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("protectedTraps", null).setComment("a Set")
         this.newSlot("protectedMethods", null).setComment("a Set")
     }

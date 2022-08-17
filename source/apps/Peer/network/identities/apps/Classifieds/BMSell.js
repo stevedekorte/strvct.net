@@ -8,7 +8,7 @@
 
 (class BMSell extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("post", null)
         this.newSlot("hasSent", null).setShouldStoreSlot(true)
     }

@@ -8,7 +8,7 @@
 
 (class BMRemoteIdentities extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

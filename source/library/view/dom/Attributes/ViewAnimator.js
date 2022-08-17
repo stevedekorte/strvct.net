@@ -9,7 +9,7 @@
 */
 
 (class ViewAnimator extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("startValue", 0)
         this.newSlot("targetValue", 0)
         this.newSlot("viewProperty", "")

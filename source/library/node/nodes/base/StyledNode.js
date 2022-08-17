@@ -12,7 +12,7 @@
 
 (class StyledNode extends ViewableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // view style overrides
 
         {

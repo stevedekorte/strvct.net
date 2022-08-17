@@ -8,11 +8,11 @@
 
 (class BMPostDraft extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("content", null).setShouldStoreSlot(true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setCanDelete(true)
         //this.setContent("...".loremIpsum(40, 100))	
         this.setShouldStore(true)	

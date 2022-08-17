@@ -10,7 +10,7 @@
 
 (class BMFollowers extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

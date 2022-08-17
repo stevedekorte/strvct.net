@@ -9,7 +9,7 @@
 
 (class ControlDomView extends ResponderDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // Targetable - target / action
         this.newSlot("target", null)
         this.newSlot("action", null)

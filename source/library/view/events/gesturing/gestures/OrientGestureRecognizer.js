@@ -41,7 +41,7 @@
 
 (class OrientGestureRecognizer extends GestureRecognizer {
 
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

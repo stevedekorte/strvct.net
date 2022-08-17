@@ -8,7 +8,7 @@
 
 (class BMChatThreads extends BMContactLinks {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

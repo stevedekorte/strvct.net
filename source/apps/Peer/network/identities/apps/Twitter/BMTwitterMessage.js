@@ -9,7 +9,7 @@
 
 (class BMTwitterMessage extends BMAppMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -8,7 +8,7 @@
 
 (class BMStampField extends BMField {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

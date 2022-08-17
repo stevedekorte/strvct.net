@@ -11,7 +11,7 @@
 
 (class PersistentObjectPool extends ObjectPool {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

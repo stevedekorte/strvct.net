@@ -10,7 +10,7 @@
 
 (class WebDocument extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

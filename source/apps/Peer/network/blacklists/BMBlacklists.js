@@ -8,13 +8,13 @@
 
 (class BMBlacklists extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("servers", null).setShouldStoreSlot(true).setInitProto(BMBlacklistedServers)
         this.newSlot("peers", null).setShouldStoreSlot(true).setInitProto(BMBlacklistedPeers)
         this.newSlot("contacts", null).setShouldStoreSlot(true).setInitProto(BMBlacklistedContacts)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
     }

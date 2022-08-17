@@ -15,7 +15,7 @@
 
 (class HookedMap extends Map {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.setupMutatorHooks()
     }
 

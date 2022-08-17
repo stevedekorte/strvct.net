@@ -11,7 +11,7 @@
 
 (class BMRServer extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("serverConnection", null)
         this.newSlot("bloomDistance", null)
         this.newSlot("error", null)
@@ -24,7 +24,7 @@
         this.newSlot("isSecure", false).setShouldStoreSlot(true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setIsDebugging(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)

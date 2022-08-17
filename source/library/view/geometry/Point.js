@@ -11,7 +11,7 @@
 
 
 (class Point extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("x", 0)
         this.newSlot("y", 0)
         this.newSlot("z", 0)

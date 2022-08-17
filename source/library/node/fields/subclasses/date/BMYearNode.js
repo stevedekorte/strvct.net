@@ -8,7 +8,7 @@
 
 (class BMYearNode extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("allowsMultiplePicks", false)
         this.newSlot("value", 0)
     }

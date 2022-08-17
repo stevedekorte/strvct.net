@@ -10,7 +10,7 @@
 
 (class BMApps extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -8,7 +8,7 @@
 
 (class BMFontTile extends TitledTile {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

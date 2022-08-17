@@ -14,7 +14,7 @@
         return true
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("label", "")
             slot.setShouldStoreSlot(true)
@@ -33,7 +33,7 @@
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setCanDelete(true)
         this.setNodeCanInspect(true)
         this.setShouldStore(true)

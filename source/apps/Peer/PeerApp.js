@@ -10,7 +10,7 @@
 
 (class PeerApp extends App {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // model
         this.newSlot("about", null)
         this.newSlot("localIdentities", null)

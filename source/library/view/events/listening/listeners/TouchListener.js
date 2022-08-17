@@ -9,7 +9,7 @@
  
 (class TouchListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

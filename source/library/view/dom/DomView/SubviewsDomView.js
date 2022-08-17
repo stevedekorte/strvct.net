@@ -9,7 +9,7 @@
 
 (class SubviewsDomView extends CssDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("parentView", null)
         this.newSlot("subviews", null)
     }

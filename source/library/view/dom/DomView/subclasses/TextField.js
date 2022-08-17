@@ -17,7 +17,7 @@
 
 (class TextField extends StyledDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("selectedColor", null)
         this.newSlot("unselectedColor", null)
         this.newSlot("doesClearOnReturn", false)

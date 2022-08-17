@@ -17,8 +17,8 @@ getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
     static pathSeparator () {
         return "/"
     }
-    
-    initPrototype () {
+
+    initPrototypeSlots () {
         this.newSlot("pathString", null)
     }
 

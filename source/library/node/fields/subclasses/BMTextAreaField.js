@@ -25,7 +25,7 @@
         return newNode
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isMono", false)
     }
 

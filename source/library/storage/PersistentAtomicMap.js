@@ -33,7 +33,7 @@
 */
 
 (class PersistentAtomicMap extends ideal.AtomicMap {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "PersistentAtomicMap")
         this.newSlot("idb", null)
     }

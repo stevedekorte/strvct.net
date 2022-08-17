@@ -9,7 +9,7 @@
 */
 
 (class DomTransition extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("property", "")
         this.newSlot("duration", 0)
         this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)

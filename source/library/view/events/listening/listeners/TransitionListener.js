@@ -9,7 +9,7 @@
 
 (class TransitionListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

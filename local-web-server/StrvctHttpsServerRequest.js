@@ -10,7 +10,7 @@ const nodePath = require('path');
 
 (class StrvctHttpsServerRequest extends Base {
 	
-	initPrototype () {
+	initPrototypeSlots () {
 		this.newSlot("server", null)
 		this.newSlot("request", null)
 		this.newSlot("response", null)

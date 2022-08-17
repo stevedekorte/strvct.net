@@ -8,7 +8,7 @@
 
 (class BMFileResources extends BMResourceGroup {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("rootPath", ".")
     }
 

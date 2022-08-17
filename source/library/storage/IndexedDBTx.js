@@ -9,7 +9,7 @@
 */
 
 (class IndexedDBTx extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("dbFolder", null)
         this.newSlot("objectStore", null)
         this.newSlot("tx", null)

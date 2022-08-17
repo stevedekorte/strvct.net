@@ -12,7 +12,7 @@
         return true
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         const picksSlot = this.newSlot("allowsMultiplePicks", false)
         picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
         picksSlot.setShouldStoreSlot(true)
@@ -20,7 +20,7 @@
         this.overrideSlot("key", "").setShouldStoreSlot(true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 

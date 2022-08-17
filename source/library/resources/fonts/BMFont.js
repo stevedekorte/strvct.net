@@ -10,13 +10,13 @@
 
 (class BMFont extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", null)
         this.newSlot("name", null)
         this.newSlot("options", null)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setIsDebugging(false)
     }
 

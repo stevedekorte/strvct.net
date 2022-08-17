@@ -33,7 +33,7 @@
 
 (class StyledDomView extends FlexDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("styles", null)
         this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
         this.newSlot("lockedStyleAttributeSet", null)

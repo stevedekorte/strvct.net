@@ -31,7 +31,7 @@
 
 (class GamePadManager extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         //this.newSlot("gamePadListener", null)
         this.newSlot("gamePadsDict", null)
         this.newSlot("pollPeriod", 1000).setComment("milliseconds")

@@ -39,7 +39,7 @@
         return newNode
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         // scheme : // userinfo @host : port / path ? query # fragment
         this.newStringSlotNamed("href", "")
         

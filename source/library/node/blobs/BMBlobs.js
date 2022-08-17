@@ -25,7 +25,7 @@
 		return this
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("store", null)
     }
 

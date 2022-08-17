@@ -8,7 +8,7 @@
 
 (class NodeView extends StyledDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("node", null) //.setDuplicateOp("duplicate")
         this.newSlot("defaultSubviewProto", null)
         this.newSlot("overrideSubviewProto", null)

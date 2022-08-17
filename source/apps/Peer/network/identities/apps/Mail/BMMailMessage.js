@@ -9,7 +9,7 @@
 
 (class BMMailMessage extends BMAppMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

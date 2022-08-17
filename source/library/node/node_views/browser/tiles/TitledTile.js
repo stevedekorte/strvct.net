@@ -18,7 +18,7 @@
 
 (class TitledTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("titleView", null)
         this.newSlot("subtitleView", null)
         this.newSlot("noteView", null)

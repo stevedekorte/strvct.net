@@ -81,7 +81,7 @@ const max3 = function(a, b, c) {
 
 (class CssColor extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // values between 0.0 and 1.0
         this.newSlot("red", 0)
         this.newSlot("green", 0)

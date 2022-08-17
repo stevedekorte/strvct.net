@@ -21,7 +21,7 @@
 
 (class SvgIconView extends FlexDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("doesMatchParentColor", false)
         this.newSlot("svgString", "")
         this.newSlot("url", null)

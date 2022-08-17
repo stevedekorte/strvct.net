@@ -9,7 +9,7 @@
 
 (class BMTextAreaFieldTile extends BMFieldTile {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

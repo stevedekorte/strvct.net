@@ -8,7 +8,7 @@
 
 (class BMChannel extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "").setShouldStoreSlot(true)
     }
 

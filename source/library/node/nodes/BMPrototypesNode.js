@@ -10,7 +10,7 @@
 
 (class BMPrototypesNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

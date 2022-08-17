@@ -8,7 +8,7 @@
 
 (class BMThemeLevel extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

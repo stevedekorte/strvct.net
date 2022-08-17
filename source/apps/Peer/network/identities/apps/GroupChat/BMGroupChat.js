@@ -8,7 +8,7 @@
 
 (class BMGroupChat extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("channels", null)
         this.newSlot("directMessages", null)
         this.newSlot("profile", null)

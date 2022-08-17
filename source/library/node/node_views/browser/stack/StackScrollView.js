@@ -8,7 +8,7 @@
 
 (class StackScrollView extends DomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

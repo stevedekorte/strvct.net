@@ -8,7 +8,7 @@
 
 (class WebBrowserScreen extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

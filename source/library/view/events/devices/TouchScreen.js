@@ -11,7 +11,7 @@
 
 (class TouchScreen extends Device {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("currentEvent", null)
         this.newSlot("lastEvent", null)
         this.newSlot("touchListener", null)

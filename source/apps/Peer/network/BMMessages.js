@@ -9,7 +9,7 @@
 
 (class BMMessages extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("changeNote", null)
         this.newSlot("network", null)
         // TODO: deal with timeouts

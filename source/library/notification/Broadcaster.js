@@ -34,7 +34,7 @@
 */
 
 (class Broadcaster extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("nameToListenersMap", null)  // dict to set
     }
 

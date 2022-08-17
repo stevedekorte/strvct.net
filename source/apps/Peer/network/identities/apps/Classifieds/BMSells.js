@@ -8,7 +8,7 @@
 
 (class BMSells extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

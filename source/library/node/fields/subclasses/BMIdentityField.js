@@ -8,7 +8,7 @@
 
 (class BMIdentityField extends BMField {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

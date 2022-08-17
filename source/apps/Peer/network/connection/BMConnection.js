@@ -8,7 +8,7 @@
 
 (class BMConnection extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("connection", null)
         this.newSlot("lastConnectionType", null)
         this.newSlot("lastIsOnline", 0)

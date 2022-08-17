@@ -49,7 +49,7 @@
 
 (class StackView extends NodeView {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("navView", null)
         this.newSlot("otherView", null)
         this.newSlot("direction", "down").setDoesHookSetter(true) // valid values: left, right, up, down

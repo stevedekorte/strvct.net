@@ -16,7 +16,7 @@
 
 (class Devices extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         //this.newSlot("gamePadListener", null)
         this.newSlot("keyboard", null)
         this.newSlot("mouse", null)

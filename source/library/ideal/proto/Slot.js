@@ -68,7 +68,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this;
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         Object.defineSlot(this, "_slotNames", new Set())
         
         this.simpleNewSlot("owner", null) // typically a reference to a .prototype

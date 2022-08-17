@@ -12,7 +12,7 @@
         return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"]
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         //this.newSlot("path", "")
         this.newSlot("dataURL", "")
     }

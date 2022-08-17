@@ -11,7 +11,7 @@
 
 (class BMDataUrl extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("dataUrl", null) // for drop
         this.newSlot("transferMimeType", "DownloadURL") // for drag
         this.newSlot("fileName", "file.txt") // for drag

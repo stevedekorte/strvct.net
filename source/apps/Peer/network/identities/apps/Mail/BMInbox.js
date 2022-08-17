@@ -9,7 +9,7 @@
 
 (class BMInbox extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

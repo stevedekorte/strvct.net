@@ -18,7 +18,7 @@
         return DocumentBody.shared()
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("elementClassName", "")
         this.newSlot("elementType", "div")
         this.newSlot("element", null)

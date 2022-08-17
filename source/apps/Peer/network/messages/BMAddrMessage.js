@@ -8,7 +8,7 @@
 
 (class BMAddrMessage extends BMMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

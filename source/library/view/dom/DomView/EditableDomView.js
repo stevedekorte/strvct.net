@@ -9,7 +9,7 @@
 
 (class EditableDomView extends ControlDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         //this.newSlot("unfocusOnEnterKey", false)
         //this.newSlot("showsHaloWhenEditable", false)
     }

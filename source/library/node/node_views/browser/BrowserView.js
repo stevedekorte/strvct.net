@@ -21,7 +21,7 @@
 
 (class BrowserView extends StackView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("headerNode", null)
         this.newSlot("baseNode", null)
     }

@@ -9,7 +9,7 @@
         
 (class BMJsonNullField extends BMField {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

@@ -8,7 +8,7 @@
 
 (class BMRegions extends BMRegion {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

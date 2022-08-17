@@ -8,14 +8,14 @@
 
 (class BMChat extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("feedPosts", null).setShouldStoreSlot(true).setInitProto(BMFeedPosts)
         this.newSlot("myPosts", null).setShouldStoreSlot(true).setInitProto(BMMyPosts)
         this.newSlot("threads", null).setShouldStoreSlot(true).setInitProto(BMChatThreads)
         this.newSlot("drafts", null).setShouldStoreSlot(true).setInitProto(BMPostDrafts)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
     }

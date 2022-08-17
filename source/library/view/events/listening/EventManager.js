@@ -24,7 +24,7 @@
 
 (class EventManager extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("eventLevelCount", 0)
         this.newSlot("hasReceivedUserEvent", false) // we only care about this for user events, but event manager handles timeouts too
     }

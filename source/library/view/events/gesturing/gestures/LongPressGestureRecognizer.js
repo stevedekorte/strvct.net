@@ -24,7 +24,7 @@
 
 (class LongPressGestureRecognizer extends GestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("timePeriod", 500).setComment("milliseconds")
         this.newSlot("timeoutId", null).setIsPrivate(true)
     }

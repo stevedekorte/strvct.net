@@ -22,7 +22,7 @@
 
 (class BMPow extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("targetDifficulty", 15)
         this.newSlot("hash", null).setComment("hex string")
         //this.newSlot("pow", null).setComment("hex string")

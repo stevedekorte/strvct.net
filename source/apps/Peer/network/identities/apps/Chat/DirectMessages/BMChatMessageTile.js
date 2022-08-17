@@ -8,7 +8,7 @@
 
 (class BMChatMessageTile extends TitledTile {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

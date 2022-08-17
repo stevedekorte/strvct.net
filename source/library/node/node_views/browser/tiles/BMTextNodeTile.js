@@ -8,7 +8,7 @@
 
 (class BMTextNodeTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("textView", null)
     }
 

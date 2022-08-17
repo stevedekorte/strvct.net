@@ -9,7 +9,7 @@
 
 (class GamePadListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

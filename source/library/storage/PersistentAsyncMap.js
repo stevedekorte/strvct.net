@@ -19,7 +19,7 @@
 */
 
 (class PersistentAsyncMap extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "PersistentAsyncDictionary")
         this.newSlot("idb", null)
     }

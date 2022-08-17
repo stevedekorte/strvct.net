@@ -8,7 +8,7 @@
 
 (class BMBlob extends BaseNode {
 
-    initPrototype () {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("name", null)

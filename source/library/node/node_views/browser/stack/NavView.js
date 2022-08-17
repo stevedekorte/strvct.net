@@ -8,7 +8,7 @@
 
 (class NavView extends NodeView {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("stackView", null)
         this.newSlot("scrollView", null) // ScrollView fits NavView size, and contains TilesView which may be larger
         this.newSlot("tilesView", null) // is inside scrollView

@@ -14,7 +14,7 @@
         return true
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("linkedNode", null)
             slot.setShouldStoreSlot(true)
@@ -30,7 +30,7 @@
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setCanDelete(true)

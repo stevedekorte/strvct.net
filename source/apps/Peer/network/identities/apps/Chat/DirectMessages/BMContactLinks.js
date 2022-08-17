@@ -8,7 +8,7 @@
 
 (class BMContactLinks extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("linkProto", null)
     }
 

@@ -8,7 +8,7 @@
 
 (class BMPongMessage extends BMMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

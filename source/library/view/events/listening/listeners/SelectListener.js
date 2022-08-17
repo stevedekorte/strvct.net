@@ -9,7 +9,7 @@
 
 (class SelectListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

@@ -11,7 +11,7 @@
 
 (class StackFrame extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("functionName", null)
         this.newSlot("url", null)
         this.newSlot("lineNumber", null)
@@ -63,7 +63,7 @@
 // -----------------------------------------------------------------
 
 (class StackTrace extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("error", null)
         this.newSlot("stackFrames", [])
     }

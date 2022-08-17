@@ -15,7 +15,7 @@
         return target.typeId() + "." + method
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("target", null)
         this.newSlot("method", null)
         this.newSlot("order", 0)

@@ -8,7 +8,7 @@
 
 (class BMPingMessage extends BMMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

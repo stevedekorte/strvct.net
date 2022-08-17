@@ -9,7 +9,7 @@
 
 (class BMApplet extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

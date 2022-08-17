@@ -38,7 +38,7 @@
 
 (class ObservableProxy extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("observers", null)
         this.newSlot("target", null)
         this.newSlot("revocable", null)

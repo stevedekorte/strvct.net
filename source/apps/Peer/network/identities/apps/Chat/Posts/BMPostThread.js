@@ -9,7 +9,7 @@
 
 (class BMPostThread extends BMAppMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

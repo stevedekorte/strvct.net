@@ -9,7 +9,7 @@
 
 (class BMTwitter extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("feed", null)
         this.newSlot("notifications", null)
         this.newSlot("messages", null)

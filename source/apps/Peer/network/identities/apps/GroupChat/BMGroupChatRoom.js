@@ -9,7 +9,7 @@
 
 (class BMGroupChatRoom extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "Untitled")
     }
 

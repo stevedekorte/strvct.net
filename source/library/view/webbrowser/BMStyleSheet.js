@@ -10,7 +10,7 @@
 
 (class BMStyleSheet extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("sheetElement", null)
     }
 

@@ -8,7 +8,7 @@
 
 (class BMStunServers extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

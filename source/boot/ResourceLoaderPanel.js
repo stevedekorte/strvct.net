@@ -23,7 +23,7 @@
 
 (class ResourceLoaderPanel extends Base {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("mainElement", null)
         this.newSlot("middleElement", null)
         this.newSlot("iconElement", null)

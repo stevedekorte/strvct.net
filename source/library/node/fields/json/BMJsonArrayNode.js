@@ -17,7 +17,7 @@
         return true
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     /*

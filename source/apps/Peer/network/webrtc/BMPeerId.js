@@ -10,7 +10,7 @@
 
 (class BMPeerId extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("publicKeyString", null)
         this.newSlot("bloomFilter", null)
         this.newSlot("error", null)

@@ -13,7 +13,7 @@
 
 (class HookedSet extends Set {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.setupMutatorHooks()
     }
 

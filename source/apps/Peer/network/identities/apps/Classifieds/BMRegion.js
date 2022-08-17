@@ -12,7 +12,7 @@
 
 (class BMRegion extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("lazyChildrenDict", null)
         this.newSlot("allowsSubregions", true)
     }

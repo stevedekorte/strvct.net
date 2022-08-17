@@ -9,7 +9,7 @@
 
 (class FocusListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

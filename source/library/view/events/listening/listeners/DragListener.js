@@ -9,7 +9,7 @@
 
 (class DragListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

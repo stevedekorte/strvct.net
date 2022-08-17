@@ -9,11 +9,11 @@
 
 (class BMChatMessage extends BMAppMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("content", null).setShouldStoreSlot(true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setCanDelete(true)
     }
 

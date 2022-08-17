@@ -29,7 +29,7 @@
 
 (class Tile extends NodeView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isSelectable", true) //.setDuplicateOp("copyValue")
         this.newSlot("closeButtonView", null)
         this.newSlot("defaultHeight", 30)

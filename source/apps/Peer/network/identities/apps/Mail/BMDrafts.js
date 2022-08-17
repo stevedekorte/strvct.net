@@ -9,7 +9,7 @@
 
 (class BMDrafts extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

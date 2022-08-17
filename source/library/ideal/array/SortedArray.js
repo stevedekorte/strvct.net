@@ -23,7 +23,7 @@
 
 (class SortedArray extends IndexedArray {
 
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

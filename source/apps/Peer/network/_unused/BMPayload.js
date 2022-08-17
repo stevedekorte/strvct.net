@@ -50,7 +50,7 @@
 
 (class BMPayload extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("data", null)
         this.newSlot("error", null)
         this.newSlot("senderPublicKey", null)

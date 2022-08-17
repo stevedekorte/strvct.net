@@ -24,7 +24,7 @@
 
 (class PinchGestureRecognizer extends GestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

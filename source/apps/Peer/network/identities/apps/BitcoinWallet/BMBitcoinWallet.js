@@ -8,7 +8,7 @@
 
 (class BMBitcoinWallet extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

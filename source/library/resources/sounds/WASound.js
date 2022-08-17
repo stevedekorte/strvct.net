@@ -16,7 +16,7 @@
 
     // ---
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("request", null)
         //this.newSlot("path", null)
         this.newSlot("loadState", "unloaded") // "unloaded", "loading", "decoding", "loaded"

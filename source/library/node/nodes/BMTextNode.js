@@ -15,7 +15,7 @@
         return true
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         /*
         {
             const slot = this.newSlot("nodeUrlLink", "")
@@ -39,7 +39,7 @@
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setCanDelete(true)

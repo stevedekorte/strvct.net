@@ -14,7 +14,7 @@
         return true
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
         this.newSlot("hour", null).setShouldStoreSlot(true)
@@ -23,7 +23,7 @@
         this.newSlot("formatter", null).setShouldStoreSlot(true)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)

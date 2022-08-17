@@ -9,7 +9,7 @@
 
 (class WheelListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

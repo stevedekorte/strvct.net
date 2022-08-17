@@ -8,7 +8,7 @@
 
 (class BreadCrumbTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", null)
         this.newSlot("separatorString", "/")
         this.newSlot("onStackViewPathChangeObs", null)

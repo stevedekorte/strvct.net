@@ -10,7 +10,7 @@
 
 (class BMPostDraftTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("topView", null)
         this.newSlot("leftView", null)
         this.newSlot("iconView", null)

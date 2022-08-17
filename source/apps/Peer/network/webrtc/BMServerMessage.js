@@ -16,7 +16,7 @@
         this.newClassSlot("instanceCount", 0)
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("serverConnection", null)
         this.newSlot("id", null)
         this.newSlot("name", null)

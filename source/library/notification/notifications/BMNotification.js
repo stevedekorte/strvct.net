@@ -8,7 +8,7 @@
 
 (class BMNotification extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", null)
         this.newSlot("sender", null)
         this.newSlot("info", null)

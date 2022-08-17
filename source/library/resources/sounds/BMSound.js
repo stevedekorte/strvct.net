@@ -29,7 +29,7 @@
 
     // ---
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", null)
     }
 

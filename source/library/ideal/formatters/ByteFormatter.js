@@ -25,7 +25,7 @@
 */
 
 (class ByteFormatter extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
 
         {
             const slot = this.newSlot("value", 0)

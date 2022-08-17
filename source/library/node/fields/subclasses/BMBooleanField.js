@@ -13,7 +13,7 @@
         return true
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("unsetVisibleValue", "unset")
     }
 

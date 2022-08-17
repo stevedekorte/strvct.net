@@ -15,7 +15,7 @@
 
 (class BMFieldTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("allowsCursorNavigation", false)
         this.newSlot("vPadding",  "0.1em")
 

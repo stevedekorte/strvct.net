@@ -13,7 +13,7 @@
 
 
 (class DomBorderRadius extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("divView", null)
         this.newSlot("topLeft", 0)
         this.newSlot("topRight", 0)

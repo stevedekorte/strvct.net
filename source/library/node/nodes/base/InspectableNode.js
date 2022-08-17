@@ -13,7 +13,7 @@
 
 (class InspectableNode extends ActionableNode {
 
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("nodeCanInspect", true)
             slot.setDuplicateOp("copyValue")

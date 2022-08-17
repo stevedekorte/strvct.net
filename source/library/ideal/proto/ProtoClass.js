@@ -163,7 +163,7 @@
     // --- instance ---
 
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isDebugging", false)
         this.newSlot("lazyRefsMap", null)
     }

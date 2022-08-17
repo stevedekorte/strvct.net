@@ -36,7 +36,7 @@ var BitcoreMessage = require("bitcore-message");
 
 (class BMObjectMessage extends BMMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.overrideSlot("msgType", "object").setShouldStoreSlot(true)
         this.newSlot("encryptedData", null).setShouldStoreSlot(true)
         this.overrideSlot("data", null).setShouldStoreSlot(true)
@@ -47,7 +47,7 @@ var BitcoreMessage = require("bitcore-message");
         this.newSlot("msgHash", null)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setCanDelete(true)
         this.setShouldStoreSubnodes(false)
     }

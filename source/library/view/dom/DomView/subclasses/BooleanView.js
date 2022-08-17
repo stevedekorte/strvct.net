@@ -17,7 +17,7 @@
 
 (class BooleanView extends StyledDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("doesClearOnReturn", false)  // needed?
         this.newSlot("doesHoldFocusOnReturn", false)  // needed?
         this.newSlot("value", false)

@@ -12,7 +12,7 @@
 
 (class ActionableNode extends TitledNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("actions", null)
             slot.setInitProto(Array)

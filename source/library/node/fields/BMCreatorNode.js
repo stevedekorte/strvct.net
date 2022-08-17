@@ -10,7 +10,7 @@
         
 (class BMCreatorNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
         this.newSlot("typeChoices", []).setInitProto(Array)
     }

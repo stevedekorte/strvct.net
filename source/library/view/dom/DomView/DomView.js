@@ -9,7 +9,7 @@
 
 (class DomView extends EditableDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

@@ -20,7 +20,7 @@
 
 (class NamespaceSearch extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("visited", null)
         this.newSlot("matchingPaths", null)
         this.newSlot("slotMatchClosure", null)

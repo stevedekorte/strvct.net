@@ -9,7 +9,7 @@
 
 (class CssDomView extends ElementDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // css hidden values
         this.newSlot("hiddenDisplayValue", undefined)
         /*

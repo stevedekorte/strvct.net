@@ -22,7 +22,7 @@
 
 (class BMAudioPlayer extends DomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", "")
         this.newSlot("sourceElement", null)
     }

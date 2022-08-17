@@ -8,7 +8,7 @@
 
 (class BMPostMessageTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("leftView", null)
         this.newSlot("iconView", null)
         this.newSlot("middleView", null)

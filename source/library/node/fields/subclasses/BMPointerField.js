@@ -11,7 +11,7 @@
         
 (class BMPointerField extends BMField {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

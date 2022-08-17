@@ -65,7 +65,7 @@
 
 (class DragView extends StyledDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         // the view that will be dragged when operation is complete
         //this.newSlot("item", null)
 

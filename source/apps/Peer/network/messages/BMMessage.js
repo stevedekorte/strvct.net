@@ -13,7 +13,7 @@
 
 (class BMMessage extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("msgType", null)
         this.newSlot("data", null)
         this.newSlot("msgTypes", ["addr", "inv", "object", "ping", "pong", "getData"])

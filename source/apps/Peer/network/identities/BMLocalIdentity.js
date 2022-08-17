@@ -15,7 +15,7 @@ var Buffer = bitcore.deps.Buffer;
 
 (class BMLocalIdentity extends BMKeyPair {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.overrideSlot("name", "").setShouldStoreSlot(true)
         this.overrideSlot("privateKeyString", "").setShouldStoreSlot(true)
         this.newSlot("didChangeIdentityNote", null)
@@ -25,7 +25,7 @@ var Buffer = bitcore.deps.Buffer;
         this.newSlot("remoteIdentities", null).setShouldStoreSlot(true).setInitProto(BMRemoteIdentities)
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
     }
 

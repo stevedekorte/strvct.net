@@ -8,7 +8,7 @@
 
 (class BMFeedPosts extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("hasRead", true)
     }
 

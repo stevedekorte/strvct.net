@@ -9,7 +9,7 @@
 
 (class ClipboardListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

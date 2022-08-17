@@ -8,7 +8,7 @@
 
 (class BMHourNode extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("value", 0).setComment("0 to 23")
     }
 

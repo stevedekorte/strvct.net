@@ -8,7 +8,7 @@
 
 (class BMResourceFolder extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", null)
     }
 

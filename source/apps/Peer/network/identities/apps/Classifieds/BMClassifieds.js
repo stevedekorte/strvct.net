@@ -8,7 +8,7 @@
 
 (class BMClassifieds extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("regions", null)
         this.newSlot("sells", null)
     }

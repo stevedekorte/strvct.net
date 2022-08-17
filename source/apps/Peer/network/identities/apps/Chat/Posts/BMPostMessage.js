@@ -9,7 +9,7 @@
 
 (class BMPostMessage extends BMAppMessage {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("content", null).setShouldStoreSlot(true)
         this.overrideSlot("hasRead", false).setShouldStoreSlot(true)
         this.newSlot("replyCount", 0).setShouldStoreSlot(true)
@@ -22,7 +22,7 @@
         this.newSlot("postThread", null).setShouldStoreSlot(true)	
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setCanDelete(true)
         this.setShouldStore(true)
     }

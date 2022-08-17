@@ -8,7 +8,7 @@
 
 (class BMActionNodeTile extends Tile {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("buttonView", null)
     }
 

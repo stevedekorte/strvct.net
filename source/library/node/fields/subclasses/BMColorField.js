@@ -12,7 +12,7 @@
         return true
     }
     
-    initPrototype () {
+    initPrototypeSlots () {
         {
             const slot = this.newSlot("red", null)
             slot.setShouldStoreSlot(true)
@@ -46,7 +46,7 @@
         }
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
         this.setTitle("color")

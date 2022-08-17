@@ -9,7 +9,7 @@
 
 (class BMFollowingContact extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isFollowing", false).setShouldStoreSlot(true)
     }
 

@@ -41,7 +41,7 @@ Array.prototype.setupMutatorHooks();
 
 (class HookedArray extends Array {
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.setupMutatorHooks()
         //Array.prototype.setupMutatorHooks()
     }

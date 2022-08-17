@@ -22,7 +22,7 @@
 
 (class WebBrowserNotifications extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("permissionRequestResult", null)
         this.newSlot("waitingNote", null)
     }

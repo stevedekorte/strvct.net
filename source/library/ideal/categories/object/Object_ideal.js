@@ -12,7 +12,7 @@
 
     // ---- prototype ---
  
-    initPrototype () {
+    initPrototypeSlots () {
         Object.defineSlot(this, "_hasDoneInit", false)
         Object.defineSlot(this, "_shouldScheduleDidInit", false)
         Object.defineSlot(this, "_mutationObservers", null)

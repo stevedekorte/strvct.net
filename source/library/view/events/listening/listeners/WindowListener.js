@@ -9,7 +9,7 @@
 
 (class WindowListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

@@ -9,7 +9,7 @@
 
 (class BMMail extends BMApplet {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("feed", null)
         this.newSlot("drafts", null)
         this.newSlot("notifications", null)

@@ -10,7 +10,7 @@
 
 (class MouseListener extends EventSetListener {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

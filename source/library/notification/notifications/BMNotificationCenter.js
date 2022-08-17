@@ -86,7 +86,7 @@
 */
 
 (class BMNotificationCenter extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("observations", null) // array 
         this.newSlot("notifications", null) // array 
         this.newSlot("debugNoteName", "appDidInit")

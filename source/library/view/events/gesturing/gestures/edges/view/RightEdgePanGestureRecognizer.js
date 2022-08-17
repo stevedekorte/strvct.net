@@ -15,7 +15,7 @@
 
 (class RightEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

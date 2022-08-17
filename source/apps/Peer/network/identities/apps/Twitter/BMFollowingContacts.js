@@ -9,7 +9,7 @@
 
 (class BMFollowingContacts extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

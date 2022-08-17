@@ -8,7 +8,7 @@
 
 (class HeaderTile extends TitledTile {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

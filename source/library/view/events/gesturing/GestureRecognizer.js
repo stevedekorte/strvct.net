@@ -62,7 +62,7 @@
 
 (class GestureRecognizer extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("viewTarget", null)
         this.newSlot("shouldRemoveOnComplete", false)
 

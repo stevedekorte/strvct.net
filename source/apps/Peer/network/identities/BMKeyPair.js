@@ -13,7 +13,7 @@ var Buffer = bitcore.deps.Buffer;
 
 (class BMKeyPair extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "")
         this.newSlot("privateKeyString", "")
         this.newSlot("hasPrivateKey", true)

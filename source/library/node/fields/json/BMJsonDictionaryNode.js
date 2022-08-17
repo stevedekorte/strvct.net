@@ -13,7 +13,7 @@
         return false
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.setNodeCanEditTitle(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)

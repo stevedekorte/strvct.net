@@ -37,7 +37,7 @@
 
 (class ButtonView extends FlexDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("titleView", null)
         this.newSlot("isEnabled", true)
         this.newSlot("iconView", null)

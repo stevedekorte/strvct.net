@@ -7,7 +7,7 @@
 
 (class Device extends ProtoClass {
     
-    initPrototype () {
+    initPrototypeSlots () {
     }
 
     init () {

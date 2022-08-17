@@ -9,7 +9,7 @@
 
 (class BMBlacklistedPeers extends BMBlacklist {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

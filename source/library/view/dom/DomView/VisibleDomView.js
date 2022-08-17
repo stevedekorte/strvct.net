@@ -9,7 +9,7 @@
 
 (class VisibleDomView extends ListenerDomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isRegisteredForVisibility", false)
         this.newSlot("intersectionObserver", null)
         this.newSlot("onVisibilityCallback", null)

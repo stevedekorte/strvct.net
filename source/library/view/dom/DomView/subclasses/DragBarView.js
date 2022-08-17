@@ -9,7 +9,7 @@
 
 (class DragBarView extends DomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("isEnabled", true)
         this.newSlot("isHighlighted", false)
         this.newSlot("isDragging", false)

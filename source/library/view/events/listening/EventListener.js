@@ -13,7 +13,7 @@
 
 (class EventListener extends ProtoClass {
 
-    initPrototype () {
+    initPrototypeSlots () {
         //this.newSlot("listenerSet", null) // possible owner
 
         this.newSlot("listenTarget", null)

@@ -8,7 +8,7 @@
 
 (class BMPost extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("price", null).setShouldStoreSlot(true)
         this.newSlot("description", null).setShouldStoreSlot(true)
     }

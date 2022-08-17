@@ -41,7 +41,7 @@
 
     // ---
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("path", "")
         this.newSlot("isLoaded", false)
     }

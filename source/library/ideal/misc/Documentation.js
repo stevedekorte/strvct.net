@@ -11,7 +11,7 @@
 */
 
 (class Documentation extends ProtoClass {
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

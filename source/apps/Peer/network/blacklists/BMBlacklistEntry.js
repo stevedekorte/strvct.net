@@ -9,7 +9,7 @@
 
 (class BMBlacklistEntry extends BMFieldSetNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

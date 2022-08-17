@@ -35,7 +35,7 @@
         ]
     }
 
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", "")
 
         // use same names as css style, nulls aren't applied

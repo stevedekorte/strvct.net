@@ -10,13 +10,13 @@
         
 (class BMOptionNode extends BMStorableNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("label", "Option Title").setShouldStoreSlot(true).setDuplicateOp("copyValue")
         this.newSlot("value", null).setShouldStoreSlot(true).setDuplicateOp("copyValue")
         this.newSlot("isPicked", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
     }
 
-    initPrototypeObject () {
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)

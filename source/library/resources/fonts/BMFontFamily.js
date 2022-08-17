@@ -9,7 +9,7 @@
 
 (class BMFontFamily extends BaseNode {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("name", null)
         this.newSlot("fonts", null)
     }

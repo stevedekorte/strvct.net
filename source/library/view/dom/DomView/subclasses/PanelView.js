@@ -8,7 +8,7 @@
 
 (class PanelView extends DomView {
     
-    initPrototype () {
+    initPrototypeSlots () {
         this.newSlot("titleView", null)
         this.newSlot("subtitleView", null)
         this.newSlot("button1", null)

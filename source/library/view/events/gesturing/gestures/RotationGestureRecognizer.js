@@ -24,7 +24,7 @@
 
 (class RotationGestureRecognizer extends GestureRecognizer {
     
-    initPrototype () {
+    initPrototypeSlots () {
 
     }
 

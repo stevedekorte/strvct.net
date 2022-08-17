@@ -14,7 +14,7 @@
         return true
     }
     
-    initPrototype () {        
+    initPrototypeSlots () {        
 
         {
             const slot = this.overrideSlot("subnodes")
