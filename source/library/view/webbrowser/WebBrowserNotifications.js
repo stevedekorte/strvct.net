@@ -27,11 +27,13 @@
         this.newSlot("waitingNote", null)
     }
 
+    /*
     init () {
         super.init()
         //throw new Error("this class is meant to be used as singleton, for now")
         return this
     }
+    */
 
     hasPermission () {
         return this.permissionRequestResult() === "granted"

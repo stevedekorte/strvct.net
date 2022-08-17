@@ -10,10 +10,6 @@
 
 getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
 
-    init () {
-        this.newSlot("pathString", null)
-    }
-
     static with (pathString) {
         return FilePath.clone().setPathString(pathString)
     }
@@ -21,6 +17,16 @@ getGlobalThis().ideal.FilePath = class FilePath extends ProtoClass {
     static pathSeparator () {
         return "/"
     }
+    
+    initPrototype () {
+        this.newSlot("pathString", null)
+    }
+
+    /*
+    init () {
+        super.init()
+    }
+    */
 
     pathComponents () {
         const s = this.pathString()

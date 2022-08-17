@@ -61,7 +61,10 @@
             "animation-fill-mode",
             "animation-play-state"
         ])
-        this.newSlot("propertySlotsDict", null)
+        this.newSlot("propertySlotsDict", null) 
+    }
+
+    initPrototypeObject () {
         this.propertySlotsDict() // cache it on the prototype
     }
 

@@ -16,10 +16,12 @@
         this.newSlot("arguments", [])
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
     clear () {
         this.setMethod(null)

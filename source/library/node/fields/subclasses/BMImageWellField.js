@@ -35,7 +35,9 @@
         this.newSlot("isEditable", true)
         
         this.overrideSlot("nodeMinTileHeight").setShouldStoreSlot(true)
+    }
 
+    initPrototypeObject () {
         this.setKey("Image title")
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)

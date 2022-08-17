@@ -11,6 +11,9 @@
     
     initPrototype () {
         this.newSlot("content", null).setShouldStoreSlot(true)
+    }
+
+    initPrototypeObject () {
         this.setCanDelete(true)
     }
 

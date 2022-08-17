@@ -36,19 +36,26 @@
 (class IndexedArray extends HookedArray {
 
     initPrototype () {
+        /*
+        this.newSlot("index", null)
+        this.newSlot("indexClosure", null)
+        this.newSlot("needsReindex", false)
+        */
+
+        Object.defineSlot(this, "_index", null)
+        Object.defineSlot(this, "_indexClosure", null)
+        Object.defineSlot(this, "_needsReindex", false)
     }
 
     init () {
         super.init()
-        Object.defineSlot(this, "_index", {}) 
-        Object.defineSlot(this, "_indexClosure", null) 
-        Object.defineSlot(this, "_needsReindex", false) 
+        this.setIndex(new Map())
     }
 
     // index
 
-    setIndex (aDict) {
-        this._index = aDict
+    setIndex (aMap) {
+        this._index = aMap
         return this
     }
 
@@ -90,7 +97,7 @@
 
     reindex () {
         this.setNeedsReindex(false) // do this first to avoid infinite loop
-        this.setIndex({})
+        this._index.clear()
         this.forEach( v => this.addItemToIndex(v) )
         return this
     }
@@ -139,7 +146,7 @@
 
     itemForIndexKey (key) { // public
         //if (this.hasIndexKey(key)) {
-        return this.index().at(key)
+        return this.index().get(key)
         //}
     }
 
@@ -152,7 +159,7 @@
     // indexing - private
 
     hasIndexKey (key) { // private
-        return this._index.hasOwnProperty(key)
+        return this._index.has(key)
     }
 
     indexKeyForItem (v) { // private
@@ -163,13 +170,13 @@
     addItemToIndex (v) { // private
         const key = this.indexKeyForItem(v)
         assert(Type.isString(key))
-        this._index.atPut(key, v)
+        this._index.set(key, v)
         return this
     }
 
     removeItemFromIndex (v) { // private
         const key = this.indexKeyForItem(v)
-        this._index.removeAt(key)
+        this._index.delete(key)
         return this
     }
 
@@ -184,4 +191,6 @@
         return this
     }
 
-}.initThisClass()); //.selfTest()
+}.initThisClass()); 
+
+//IndexedArray.selfTest()

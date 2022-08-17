@@ -150,14 +150,29 @@
 
         if (proto.hasOwnProperty("initPrototype")) {
             // Only called if method defined on this class.
-            // This method should *not* call super.initPrototype()
-            proto.initPrototype()
+            proto.initPrototype() // This method should NOT call super
+        }
+
+        if (proto.hasOwnProperty("initSlots")) {
+            proto.initSlots()
+        }
+        
+        if (proto.hasOwnProperty("initPrototypeObject")) {
+            proto.initPrototypeObject() // This method should NOT call super
         }
 
         this.addToAllClasses()
         return this
     }
 
+    initSlots () {
+        this.slotsMap().forEach(slot => slot.setupInOwner())
+    }
+
+    initPrototypeObject () {
+        // called after setupInOwner is called on each slot
+        // so we have a chance to initialize things after all slots are set up 
+    }
 
     slotsMap () {
         return this._slotsMap

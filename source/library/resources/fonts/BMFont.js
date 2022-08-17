@@ -14,6 +14,9 @@
         this.newSlot("path", null)
         this.newSlot("name", null)
         this.newSlot("options", null)
+    }
+
+    initPrototypeObject () {
         this.setIsDebugging(false)
     }
 

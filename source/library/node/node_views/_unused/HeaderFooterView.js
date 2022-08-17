@@ -19,10 +19,15 @@
         this.newSlot("footerView", null)
     }
 
+    /*
+    initPrototypeObject () {
+    }
+
     init () {
         super.init()
         return this
-    } 
+    }
+    */
     
     setupHeaderMiddleFooterViews () {
 

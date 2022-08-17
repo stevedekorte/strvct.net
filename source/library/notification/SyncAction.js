@@ -23,10 +23,12 @@
         this.newSlot("isUnscheduled", false)
     }
 
+    /*
     init () {
         super.init()
         //this.setIsDebugging(true)
     }
+    */
 	
     tryToSend () {
         try {

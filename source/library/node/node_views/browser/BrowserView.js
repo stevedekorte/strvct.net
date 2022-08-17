@@ -26,7 +26,6 @@
         this.newSlot("baseNode", null)
     }
 
-
     init () {
         super.init()
         this.setupBrowserNode()

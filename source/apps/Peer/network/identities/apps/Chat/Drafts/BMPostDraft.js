@@ -10,6 +10,9 @@
     
     initPrototype () {
         this.newSlot("content", null).setShouldStoreSlot(true)
+    }
+
+    initPrototypeObject () {
         this.setCanDelete(true)
         //this.setContent("...".loremIpsum(40, 100))	
         this.setShouldStore(true)	

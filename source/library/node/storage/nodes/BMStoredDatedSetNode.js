@@ -24,7 +24,9 @@
             const slot = this.newSlot("dict", null)
             slot.setShouldStoreSlot(true)
         }
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
     }

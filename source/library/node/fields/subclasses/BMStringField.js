@@ -16,6 +16,10 @@
         this.newSlot("unsetVisibleValue", "")
     }
 
+    initPrototypeObject () {
+
+    }
+
     init () {
         super.init()
         this.setKey("String title")

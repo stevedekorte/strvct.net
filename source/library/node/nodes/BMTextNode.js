@@ -37,7 +37,9 @@
             slot.setSyncsToView(true)
             //slot.setInspectorPath("Style")
         }
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setCanDelete(true)

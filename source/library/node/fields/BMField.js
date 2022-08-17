@@ -13,8 +13,13 @@
 (class BMField extends BMSummaryNode {
     
     initPrototype () {
-        this.newSlot("isVisible", true)
-        this.newSlot("isEnabled", true)
+        {
+            const slot = this.newSlot("isVisible", true)
+        }
+
+        {
+            const slot = this.newSlot("isEnabled", true)
+        }
 
         // key
         {
@@ -90,21 +95,40 @@
             slot.setDuplicateOp("duplicate")
         }
 
-        this.newSlot("valueMethod", null).setDuplicateOp("duplicate")
-        this.newSlot("noteMethod", null)  // fetches note from a parent node method
-        this.newSlot("keyError", null).setSyncsToView(true)
-        this.newSlot("valueError", null).setSyncsToView(true)
-        this.newSlot("target", null)
+        {
+            const slot = this.newSlot("valueMethod", null).setDuplicateOp("duplicate")
+        }
+        
+        {
+            const slot = this.newSlot("noteMethod", null)  // fetches note from a parent node method
+        }
+        
+        {
+            const slot = this.newSlot("keyError", null).setSyncsToView(true)
+        }
+        
+        {
+            const slot = this.newSlot("valueError", null).setSyncsToView(true)
+        }
+        
+        {
+            const slot = this.newSlot("target", null)
+        }
     }
 
+    initPrototypeObject () {
+        this.setShouldStore(true)
+    }
+
+    /*
     init () {
         super.init()
-        this.setShouldStore(true)
         //this.setNodeTileStyles(BMViewStyles.shared().sharedBlackOnWhiteStyle())
         //this.setNodeTileStyles(BMViewStyles.shared().sharedWhiteOnBlackStyle())
         //this.customizeNodeTileStyles().setToBlackOnWhite()
         return this
     }
+    */
 
     didLoadFromStore () {
         super.didLoadFromStore()

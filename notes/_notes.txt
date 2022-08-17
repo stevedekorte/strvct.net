@@ -1,3 +1,7 @@
+RENAME: initPrototype -> initPrototypeSlots, initPrototypeObject -> initPrototype
+
+REMOVE: ProtoClass_weakSlots.js
+
 look at: startMutationObserver
 
 - CLEANUP SLOT object

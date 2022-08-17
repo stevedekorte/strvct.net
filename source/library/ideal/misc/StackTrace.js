@@ -10,6 +10,7 @@
 */
 
 (class StackFrame extends ProtoClass {
+
     initPrototype () {
         this.newSlot("functionName", null)
         this.newSlot("url", null)
@@ -17,9 +18,11 @@
         this.newSlot("characterNumber", null)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     fromLine (line) {
         line = line.after("at ")

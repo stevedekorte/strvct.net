@@ -44,17 +44,20 @@ var BitcoreMessage = require("bitcore-message");
         //this.newSlot("receiverPublicKeyString", null).setShouldStoreSlot(true)
         this.newSlot("timeStamp", null).setShouldStoreSlot(true)
         this.newSlot("signature", null).setShouldStoreSlot(true)
-
         this.newSlot("msgHash", null)
+    }
 
+    initPrototypeObject () {
         this.setCanDelete(true)
         this.setShouldStoreSubnodes(false)
     }
 
+    /*
     init () {
         super.init()
         //this.setMsgType("object")
     }
+    */
     
     duplicate () {
         const objMsg = BMObjectMessage.clone()

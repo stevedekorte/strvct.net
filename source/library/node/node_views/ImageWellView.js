@@ -16,7 +16,6 @@
         this.newSlot("isEditable", true)
     }
 
-
     init () {
         super.init()
         this.setDisplay("flex")

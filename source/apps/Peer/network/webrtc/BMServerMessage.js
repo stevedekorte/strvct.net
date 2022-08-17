@@ -9,10 +9,11 @@
 (class BMServerMessage extends ProtoClass {
 
     static incrementInstanceCount () {
-        if (Type.isUndefined(this._instanceCount)) {
-            Object.defineSlot(this, "_instanceCount", 0)
-        }
-        return this._instanceCount ++
+        return this.setInstanceCount(this.instanceCount() + 1)
+    }
+
+    static initClass () {
+        this.newClassSlot("instanceCount", 0)
     }
 
     initPrototype () {

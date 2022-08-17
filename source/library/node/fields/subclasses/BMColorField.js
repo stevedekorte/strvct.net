@@ -44,7 +44,9 @@
             slot.setCanInspect(true)
             slot.setSlotType("Number")
         }
+    }
 
+    initPrototypeObject () {
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
         this.setTitle("color")

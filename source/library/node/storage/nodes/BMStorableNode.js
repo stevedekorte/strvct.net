@@ -51,7 +51,6 @@
             slot.setInitProto(SubnodesArray)
 
             assert(slot.doesHookGetter())
-            slot.setupInOwner()
         }
         
         {

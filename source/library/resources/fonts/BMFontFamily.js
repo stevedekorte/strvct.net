@@ -14,9 +14,11 @@
         this.newSlot("fonts", null)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     title () {
         return this.name()

@@ -28,7 +28,9 @@
             slot.setSlotType("Boolean")
             slot.setLabel("Will duplicate linked object")
         }
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setCanDelete(true)

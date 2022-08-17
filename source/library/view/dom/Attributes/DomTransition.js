@@ -17,9 +17,11 @@
         this.newSlot("transitions", null)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     updateDuration (s) {
         if (Type.isNumber(s)) {

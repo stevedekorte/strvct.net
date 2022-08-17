@@ -20,7 +20,9 @@
         //this.newSlot("credential", null).setShouldStoreSlot(true)
         //this.newSlot("username", null).setShouldStoreSlot(true)
         this.newSlot("stunNote", "").setShouldStoreSlot(true)
-        
+    }
+
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setShouldStoreSubnodes(false)

@@ -35,12 +35,12 @@
 
 (class Broadcaster extends ProtoClass {
     initPrototype () {
-        this.newSlot("nameToListenerSet", null)  // dict to set
+        this.newSlot("nameToListenersMap", null)  // dict to set
     }
 
     init () {
         super.init()
-        this.setNameToListenerSet({})
+        this.setNameToListenersMap(new Map())
     }
 
     listenerSetForName (name) {
@@ -49,14 +49,12 @@
         // probably not inneficient since 
         // 1. we don't remove listeners often
         // 2. we don't have many names
-        const n2l = this.nameToListenerSet()
+        const n2l = this.nameToListenersMap()
 
-        let listenerSet = n2l[name]
-        if (!listenerSet) {
-            listenerSet = new Set()
-            n2l[name] = listenerSet
+        if (!n2l.has(name)) {
+            n2l.set(name, new Set())
         }
-        return listenerSet
+        return n2l.get(name)
     }
 	
     addListenerForName (aListener, name) {
@@ -70,17 +68,16 @@
     }
 
     broadcastNameAndArgument (methodName, anArgument) {
-        for (let it = this.listenerSetForName(methodName).values(), v= null; v=it.next().value; ) {
+        this.listenerSetForName(methodName).forEach(v => {
             v[methodName].apply(v, [anArgument])
-        }
+        })
         return this
     }
 
     clean () {
-        const n2l = this.nameToListenerSet()
-        Object.keys(n2l).forEach((name) => {
-            const listenerSet = n2l[name]
-            if (listenerSet.values().length === 0) {
+        const n2l = this.nameToListenersMap()
+        n2l.shallowCopy().forEachKV((name, listenerSet) => {
+            if (listenerSet.size === 0) {
                 n2l.delete(name)
             }
         })

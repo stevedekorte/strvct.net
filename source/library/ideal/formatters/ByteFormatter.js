@@ -55,35 +55,40 @@
             slot.setCanInspect(true)
         }
 
-
-        this.newSlot("orderNamesShort", [
-            "bytes", 
-            "k", 
-            "M", 
-            "G", 
-            "T", 
-            "P", 
-            "E", 
-            "Z", 
-            "Y"
-        ])
+        {
+            const slot = this.newSlot("orderNamesShort", [
+                "bytes", 
+                "k", 
+                "M", 
+                "G", 
+                "T", 
+                "P", 
+                "E", 
+                "Z", 
+                "Y"
+            ])
+        }
         
-        this.newSlot("orderNamesLong", [
-            "bytes", 
-            "kilobytes", 
-            "megabytes", 
-            "gigabytes", 
-            "terabytes", 
-            "petabytes", 
-            "exabytes", 
-            "zettabytes", 
-            "yottabytes"
-        ])
+        {
+            const slot = this.newSlot("orderNamesLong", [
+                "bytes", 
+                "kilobytes", 
+                "megabytes", 
+                "gigabytes", 
+                "terabytes", 
+                "petabytes", 
+                "exabytes", 
+                "zettabytes", 
+                "yottabytes"
+            ])
+        }
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     formattedValue () {
         const b = Math.floor(this.value());

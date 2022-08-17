@@ -46,9 +46,11 @@
         this.newSlot("isLoaded", false)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     title () {
         return this.name()

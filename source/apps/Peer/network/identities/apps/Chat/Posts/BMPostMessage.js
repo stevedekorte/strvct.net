@@ -19,9 +19,12 @@
         this.newSlot("didReply", false).setShouldStoreSlot(true)
         this.newSlot("didRepost", false).setShouldStoreSlot(true)
         this.newSlot("didLike", false).setShouldStoreSlot(true)
-        this.newSlot("postThread", null).setShouldStoreSlot(true)
+        this.newSlot("postThread", null).setShouldStoreSlot(true)	
+    }
+
+    initPrototypeObject () {
         this.setCanDelete(true)
-        this.setShouldStore(true)	
+        this.setShouldStore(true)
     }
 
     init () {

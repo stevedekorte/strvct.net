@@ -23,7 +23,9 @@ var Buffer = bitcore.deps.Buffer;
         this.newSlot("apps", null).setShouldStoreSlot(true).setInitProto(BMApps)
         this.newSlot("profile", null).setShouldStoreSlot(true).setInitProto(BMProfile)
         this.newSlot("remoteIdentities", null).setShouldStoreSlot(true).setInitProto(BMRemoteIdentities)
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
     }
 

@@ -22,9 +22,11 @@
         this.newSlot("partNames", ["topLeft", "topRight", "bottomRight", "bottomLeft"])
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     clear () {
         this.setAll(0)

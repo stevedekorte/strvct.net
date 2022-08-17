@@ -17,10 +17,12 @@
         this.newSlot("timeoutMs", 4000)
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
     tryToPost () {
         WebBrowserNotifications.postNote(this)

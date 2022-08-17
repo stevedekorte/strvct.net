@@ -13,7 +13,9 @@
             const slot = this.newSlot("dataURL", null)
             slot.setShouldStoreSlot(true)
         }
-        
+    }
+
+    initPrototypeObject () {
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
         this.setTitle("Untitled")

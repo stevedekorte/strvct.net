@@ -36,9 +36,12 @@
         this.newSlot("isEditable", true)
     }
 
+    initPrototypeObject () {
+        this.setShouldStoreSubnodes(false)
+    }
+
     init () {
         super.init()
-        this.setShouldStoreSubnodes(false)
     }
     
     didUpdateField (aField) {

@@ -23,7 +23,9 @@ TimePeriodFormatter
 (class TimePeriodFormatter extends ProtoClass {
     initPrototype () {
         this.newSlot("valueInSeconds", 0)
-        this.newSlot("periods", {
+
+        // TODO: move periods to a Map
+        this.newSlot("periods", { 
             seconds: "s", 
             minutes: "m", 
             hours: "h", 

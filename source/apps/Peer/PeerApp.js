@@ -11,7 +11,6 @@
 (class PeerApp extends App {
     
     initPrototype () {
-        
         // model
         this.newSlot("about", null)
         this.newSlot("localIdentities", null)

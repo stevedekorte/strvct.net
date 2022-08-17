@@ -13,7 +13,9 @@
         this.newSlot("myPosts", null).setShouldStoreSlot(true).setInitProto(BMMyPosts)
         this.newSlot("threads", null).setShouldStoreSlot(true).setInitProto(BMChatThreads)
         this.newSlot("drafts", null).setShouldStoreSlot(true).setInitProto(BMPostDrafts)
-    
+    }
+
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
     }

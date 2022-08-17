@@ -16,8 +16,10 @@
     }
 
     initPrototype () {
-        this.newSlot("unsetVisibleValue", "unset")
-
+        {
+            const slot = this.newSlot("unsetVisibleValue", "unset")
+        }
+        
         {
             const slot = this.newSlot("isInteger", false)
             slot.setDuplicateOp("copyValue")

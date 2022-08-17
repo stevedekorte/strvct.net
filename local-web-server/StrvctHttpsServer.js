@@ -18,17 +18,17 @@ const nodePath = require('path');
 		this.newSlot("port", 8000);
 	}
 
+	init () {
+		super.init()
+		return this
+	}
+
 	serverKeyPath () {
 		return nodePath.join(__dirname, 'keys/server.key')
 	}
 
 	serverCertPath () {
 		return nodePath.join(__dirname, 'keys/server.crt')
-	}
-
-	init () {
-		super.init()
-		return this
 	}
 
 	options () {

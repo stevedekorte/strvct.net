@@ -22,7 +22,7 @@
         this.setMessages(BaseNode.clone().setTitle("direct messages"))
 	        this.addSubnode(this.messages())
 
-	    }
+    }
 
     title () {
         return this.name()

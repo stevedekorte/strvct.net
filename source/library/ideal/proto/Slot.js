@@ -245,6 +245,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     // setup
 
     setupInOwner () {
+        this.autoSetGetterSetterOwnership()
         this.setupValue()
         this.setupGetter()
         this.setupSetter()
@@ -368,17 +369,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // --- StoreRefs for lazy slots ---
 
-    refPrivateName () {
-        return "_" + this.name() + "Ref"
-    }
-
-    onInstanceSetValueRef (anInstance, aRef) {        
-        Object.defineSlot(anInstance, this.refPrivateName(), aRef)
+    onInstanceSetValueRef (anInstance, aRef) {
+        anInstance.lazyRefsMap().set(this.name(), aRef) 
         return this
     }
 
-    onInstanceGetValueRef (anInstance, aRef) {        
-        return anInstance[this.refPrivateName()]
+    onInstanceGetValueRef (anInstance, aRef) {
+        return anInstance.lazyRefsMap().get(this.name()) 
     }
 
     copyValueFromInstanceTo (anInstance, otherInstance) {
@@ -400,8 +397,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     onInstanceInitSlot (anInstance) {
         const name = this.privateName()
         let defaultValue = anInstance[name]
-        // to ensure privateName isn't enumerable
-        Object.defineSlot(anInstance, name, defaultValue)
+        assert(Reflect.has(anInstance, name)) // make sure slot is defined - this is true even if it's value is undefined
+        //Object.defineSlot(anInstance, name, defaultValue)
 
         
         /*

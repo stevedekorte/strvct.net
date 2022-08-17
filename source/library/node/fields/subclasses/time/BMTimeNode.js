@@ -21,7 +21,9 @@
         this.newSlot("minute", null).setShouldStoreSlot(true)
         this.newSlot("timezone", null).setShouldStoreSlot(true)
         this.newSlot("formatter", null).setShouldStoreSlot(true)
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setNodeCanReorderSubnodes(false)

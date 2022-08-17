@@ -12,10 +12,12 @@
         this.newSlot("remoteIdentity", null)
     }
 
+    /*
     init () {
         super.init()
         return this
-    } 
+    }
+    */
 
     title () {
         this.remoteIdentity().title()

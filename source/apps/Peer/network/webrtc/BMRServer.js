@@ -22,7 +22,9 @@
         this.newSlot("port", 9000).setShouldStoreSlot(true)
         this.newSlot("path", "").setShouldStoreSlot(true)
         this.newSlot("isSecure", false).setShouldStoreSlot(true)
-        
+    }
+
+    initPrototypeObject () {
         this.setIsDebugging(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)

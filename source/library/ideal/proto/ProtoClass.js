@@ -165,6 +165,14 @@
 
     initPrototype () {
         this.newSlot("isDebugging", false)
+        this.newSlot("lazyRefsMap", null)
+    }
+
+    lazyRefsMap () {
+        if (!this._lazyRefsMap) {
+            this._lazyRefsMap = new Map()
+        }
+        return this._lazyRefsMap
     }
 
     superClass () {
@@ -327,8 +335,6 @@
 
         const slot = ideal.Slot.clone().setName(slotName).setInitValue(initialValue)
         slot.setOwner(this)
-        slot.autoSetGetterSetterOwnership()
-        slot.setupInOwner()
         this.slotsMap().set(slotName, slot)
         return slot
     }

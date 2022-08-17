@@ -13,6 +13,9 @@
         this.newSlot("receiverId", null).setShouldStoreSlot(true)
         this.newSlot("objMsg", null).setShouldStoreSlot(true)
         this.newSlot("hasRead", false)
+    }
+
+    initPrototypeObject () {
         this.setShouldStore(true)
     }
 

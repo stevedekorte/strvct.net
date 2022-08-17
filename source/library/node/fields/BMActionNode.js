@@ -16,7 +16,6 @@
     }
     
     initPrototype () {
-
         this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String").setLabel("Title")
 
         this.newSlot("methodName", null).setShouldStoreSlot(true)
@@ -24,6 +23,9 @@
         this.newSlot("isEnabled", true).setShouldStoreSlot(true)
         this.newSlot("isEditable", false).setShouldStoreSlot(true)
         this.newSlot("target", null)
+    }
+
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setNodeTileIsSelectable(true)
         this.setNodeCanInspect(true)

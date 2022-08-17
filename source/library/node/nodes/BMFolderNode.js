@@ -31,7 +31,9 @@
         {
             const slot = this.newSlot("info", null)
         }
-        
+    }
+
+    initPrototypeObject () {
         this.setCanDelete(true)
         this.setNodeCanInspect(true)
         this.setShouldStore(true)

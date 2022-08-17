@@ -62,9 +62,11 @@
         this.newSlot("currentAction", null)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)

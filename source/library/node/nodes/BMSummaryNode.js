@@ -82,7 +82,9 @@
             slot.setInspectorPath("Note")
             slot.setSyncsToView(true)
         }
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 

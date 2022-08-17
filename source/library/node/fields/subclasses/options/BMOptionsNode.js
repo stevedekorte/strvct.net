@@ -18,7 +18,9 @@
         picksSlot.setShouldStoreSlot(true)
 
         this.overrideSlot("key", "").setShouldStoreSlot(true)
+    }
 
+    initPrototypeObject () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
 

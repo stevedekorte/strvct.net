@@ -12,9 +12,11 @@
         this.newSlot("name", "").setShouldStoreSlot(true)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
     
     title () {
         return this.name()

@@ -18,9 +18,11 @@
         this.newSlot("view", null)
     }
 
+    /*
     init () {
         super.init()
     }
+    */
 
     currentValue () {
         const view = this.view()
