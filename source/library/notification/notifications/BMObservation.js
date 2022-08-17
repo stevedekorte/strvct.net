@@ -84,22 +84,27 @@ getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => {
         return this;
     }
 
-    // --- sender ---
+    // --- private helpers ---
 
-    senderId () { // TODO: remove if not needed
-        const obj = this.sender()
-        return obj ? obj.typeId() : null
+    valueId (v) { // private
+        return v ? v.typeId() : "undefined"
     }
 
+    // --- sender ---
 
-    observerId () { // TODO: remove if not needed
-        const obj = this.observer()
-        return obj ? obj.typeId() : null
+    senderId () { 
+        return this.valueId(this.sender())
     }
 
     onFinalizeSender () {
         debugger;
         this.stopWatching()
+    }
+
+    // --- observer --- 
+
+    observerId () { 
+        return this.valueId(this.observer())
     }
 
     onFinalizeObserver () {
@@ -143,6 +148,11 @@ getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => {
         }
 
         const obs = this.observer()
+        if (obs === undefined) { // observer may have been collected
+            console.log("OBSERVER COLLECTED ON: " + this.description())
+            this.stopWatching()
+            return
+        }
         const method = obs[note.name()]
         if (method) {
             method.apply(obs, [note])
@@ -180,8 +190,16 @@ getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => {
         return this
     }
 
+    /*
+    stopWatchingIfSenderOrObserverCollected () {
+        if (this.sender() === undefined || this.observer() === undefined) {
+            this.stopWatching()
+        }
+    }
+    */
+
     description () {
-        return this.observer().typeId() + " listening to " + this.senderId() + " " + this.name()
+        return this.observerId() + " listening to " + this.senderId() + " " + this.name()
     }
 
 }.initThisClass());

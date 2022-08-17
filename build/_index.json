@@ -51,8 +51,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
-    "size": 6202,
-    "hash": "YyvTSF85yiMDpzSx9TUUhlKNZI2S8wWjVtEvhvJ9xw4="
+    "size": 6222,
+    "hash": "5SPVGBPzcnMUohOXC/MrJ+lj0GtLPNhk2w8aSuCRp8M="
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
@@ -140,14 +140,14 @@
     "hash": "B97Wi1Y3MqKgexpVbT3u+pYBMAR5nWlhvxc05Vm1pHI="
   },
   {
-    "path": "source/library/ideal/Slot.js",
-    "size": 23181,
-    "hash": "anTAFQyLo9b+qmV+mpWT/EPFICej/zhzr1gDAzCy0Zs="
+    "path": "source/library/ideal/proto/Slot.js",
+    "size": 16024,
+    "hash": "bYAlUr3oWBDVCEqIcHwgvAytgpT+cVDtZgYsg7QIsQI="
   },
   {
-    "path": "source/library/ideal/ProtoClass.js",
-    "size": 11699,
-    "hash": "za/+ZA84yHLnTyTridEbnBskt26UmOvjj2fhpGla5l4="
+    "path": "source/library/ideal/proto/ProtoClass.js",
+    "size": 14281,
+    "hash": "l181xjd3ADWDibA/+BUxKOW1DO4p1hqlUT6pTFO/Hv8="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -158,11 +158,6 @@
     "path": "source/library/ideal/proxies/FirewallProxy.js",
     "size": 6092,
     "hash": "KW7ufZ2vW01qMGf5JeF5EjwSiAPijD/hH8hs7Op2DL4="
-  },
-  {
-    "path": "source/library/ideal/Documentation.js",
-    "size": 3294,
-    "hash": "/fnh+tjl6Y1fQRGw49RWYYwSQ43D9BTBKr6QPYrOOAE="
   },
   {
     "path": "source/library/ideal/array/HookedArray.js",
@@ -196,18 +191,13 @@
   },
   {
     "path": "source/library/ideal/map/EnumerableWeakMap.js",
-    "size": 2075,
-    "hash": "2toktdo/E1tLOZxh1Sj0rw1eXVaSvwguOO7WB2C9mE0="
+    "size": 2135,
+    "hash": "YUf8MstUai+92+39TIbmCYu7b4xyCoJJ3jpBMmwCpWo="
   },
   {
     "path": "source/library/ideal/map/EnumerableWeakSet.js",
-    "size": 1749,
-    "hash": "DT3ATMWNy+h1OYLEwLVKh/9bPOrqDUL3Iijr51ZZGnQ="
-  },
-  {
-    "path": "source/library/ideal/StackTrace.js",
-    "size": 2495,
-    "hash": "evr0wfI4Km+oeH/qI+KzS+fmE4T4/M0iu0f8C+LLnK4="
+    "size": 1796,
+    "hash": "5SsN3bGlGEBwsKO4rTslJHcmmlQ5B1kTErPhpPVPsvA="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -225,7 +215,17 @@
     "hash": "3OnTj9QCWdKr4EaBe4zpLyqd7ZC86PQG6X+XDSbS63Y="
   },
   {
-    "path": "source/library/ideal/NamespaceSearch.js",
+    "path": "source/library/ideal/misc/Documentation.js",
+    "size": 3294,
+    "hash": "/fnh+tjl6Y1fQRGw49RWYYwSQ43D9BTBKr6QPYrOOAE="
+  },
+  {
+    "path": "source/library/ideal/misc/StackTrace.js",
+    "size": 2495,
+    "hash": "evr0wfI4Km+oeH/qI+KzS+fmE4T4/M0iu0f8C+LLnK4="
+  },
+  {
+    "path": "source/library/ideal/misc/NamespaceSearch.js",
     "size": 3100,
     "hash": "LTT+XTdr0T5PJJlrsl0ZMUQPYygcFRGhRX7zDEzqG2A="
   },
@@ -251,8 +251,8 @@
   },
   {
     "path": "source/library/notification/notifications/BMObservation.js",
-    "size": 5294,
-    "hash": "+HMA1dXDBfxjynNdn9qCQkFHpg7chTKawe6WMvMGD1c="
+    "size": 5692,
+    "hash": "M73e6NGsXNyAJZWgVQNTA2ybeSZX1+B/srIx51st1ow="
   },
   {
     "path": "source/library/notification/Broadcaster.js",
@@ -856,8 +856,8 @@
   },
   {
     "path": "source/library/node/storage/nodes/BMStorableNode.js",
-    "size": 3551,
-    "hash": "bX18EaKEAFm+un7ujDIPQNvRtBMcITRy79yCp85TxzY="
+    "size": 3493,
+    "hash": "u9vta6w25x8tKHlny6qVijghbuVJe8Dz96NLhEosUtc="
   },
   {
     "path": "source/library/node/storage/nodes/BMStoredDatedSetNode.js",

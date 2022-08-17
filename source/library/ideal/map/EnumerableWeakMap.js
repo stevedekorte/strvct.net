@@ -17,6 +17,13 @@ class EnumerableWeakMap {
     this._refs = new Map()
   }
 
+  assertValidValue (v) {
+    if (v === undefined) {
+      throw new Error("values cannot be undefined as unref returns undefined after collection")
+      return
+    }
+  }
+
   clear () {
     this._refs.clear()
   }
@@ -41,10 +48,7 @@ class EnumerableWeakMap {
   }
 
   set (k, v) {
-    if (v === undefined) {
-      throw new Error("value cannot be undefined as weakref returns undefined after collection") 
-      return
-    }
+    this.assertValidValue(v)
 
     if (this.get(k) !== v) {
       this._refs.set(k, new WeakRef(v))
@@ -82,6 +86,10 @@ class EnumerableWeakMap {
     }
   }
 
+  count () {
+    return this._refs.size // due to nature of weakrefs, actual size may be lower than this when enumerated
+  }
+
   /*
   valuesSet () {
     return new Set(this._refs.values())
@@ -98,9 +106,7 @@ class EnumerableWeakMap {
   }
   */
 
-  size () {
-    return this._refs.size // due to nature of weakrefs, actual size may be lower than this when enumerated
-  }
+
 
 };
 

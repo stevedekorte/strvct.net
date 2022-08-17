@@ -1,5 +1,11 @@
 look at: startMutationObserver
 
+- CLEANUP SLOT object
+- move Observation newWeakSlot implementatiobn into Slot and ProtoClass 
+
+- remove makeOneShotHookedGetter and any other slot's which change on class or proto
+- FIX safeHookedGetter to not store isInGetterHook on slot
+
 - BUG: resizing columns
 
 - rename _cam.json and _index.json to cam.json and index.json, etc

@@ -8,17 +8,17 @@
   Unlike WeakSet, it's values are enumerable.
   
   Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
-  implement has(), delete() etc without enumerating weakrefs.
+  implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
 
 */
 
 class EnumerableWeakMap {
 
-  constructor() {
+  constructor () {
     this._refs = new EnumerableWeakMap()
   }
 
-  validateValue (v) {
+  assertValidValue (v) {
     if (v === undefined) {
       throw new Error("values cannot be undefined as unref returns undefined after collection")
       return
@@ -26,7 +26,7 @@ class EnumerableWeakMap {
   }
 
   add (v) {
-    this.validateValue(v)
+    this.assertValidValue(v)
 
     const refs = this._refs
     const pid = v.puuid()
@@ -42,7 +42,7 @@ class EnumerableWeakMap {
   }
 
   delete (v) {
-    this.validateValue(v)
+    this.assertValidValue(v)
 
     const hadValue = this.has(v)
     if (hadValue) {
@@ -52,7 +52,7 @@ class EnumerableWeakMap {
   }
 
   has (v) {
-    this.validateValue(v)
+    this.assertValidValue(v)
     return this._refs.has(v.puuid())
   }
 
@@ -64,8 +64,8 @@ class EnumerableWeakMap {
     return this.valuesArray()
   }
 
-  size () {
-    return this._refs.size // IMPORTANT: due to nature of WeakRefs, size may be smaller when actually used
+  count () {
+    return this._refs.count() // IMPORTANT: due to nature of WeakRefs, size may be smaller when actually used
   }
 
   forEach (fn) {
@@ -79,7 +79,7 @@ class EnumerableWeakMap {
   }
 
   clearCollected () {
-    this.forEach((v) => {}) // forEach will remove any stale weakrefs
+    this.forEach(v => {}) // forEach will remove any stale weakrefs
   }
 
   valuesSet () {

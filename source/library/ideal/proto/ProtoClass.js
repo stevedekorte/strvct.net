@@ -333,20 +333,120 @@
         return slot
     }
 
+    // --- weak slot ---
+
+    getWeakSlotValue (aSlot) {
+        const privateName = aSlot.privateName()  // fix this value
+        const weakRef = this[privateName]
+
+        if (weakRef) {
+            const v = weakRef.deref()
+            if (v === undefined) {
+                return null 
+                // return null so we know when undefined is returned, 
+                // that the slot has never been set
+            }
+            return v
+        }
+
+        return undefined
+    }
+
+    setWeakSlotValue (aSlot, newValue) {
+        const privateName = aSlot.privateName()  // fix this value
+        const weakRef = this[privateName]
+        const oldValue = weakRef ? weakRef.deref() : undefined;
+        //const oldValue = this.getWeakSlotValue(aSlot);
+        if (newValue !== oldValue) {
+            this[privateName] = new WeakRef(newValue)
+        }
+        return this
+    }
+
+    // --- base getter setter ---
+
+
+    baseGetSlotValue (aSlot) {
+        if (aSlot.isWeak()) {
+            return this.getWeakSlotValue(aSlot)
+        } else {
+            const privateName = aSlot.privateName() 
+            return this[privateName]
+        }
+    }
+
+    baseSetSlotValue (aSlot, newValue) {
+        const privateName = aSlot.privateName() 
+        if (aSlot.isWeak()) {
+            this.setWeakSlotValue(aSlot, newValue)
+        } else {
+            this[privateName] = newValue
+        }
+        this[privateName]
+        return this
+    }
+
+    // --- auto getter setter ---
+
+    getSlotValue (aSlot) { //testing this
+        const v = this.baseGetSlotValue(aSlot)
+
+        if (v === undefined) {
+            this.onUndefinedGetSlot(aSlot)
+        }
+
+        this.willGetSlot(aSlot)
+
+        return this.baseGetSlotValue(aSlot)
+    }
+
+    onUndefinedGetSlot (aSlot) {
+        // get undefined hook
+        // e.g.: slot "subnodes" -> onUndefinedGetSubnodes()
+
+        if (aSlot.isLazy()) {
+            aSlot.onInstanceLoadRef(this)
+        }
+
+        const undefHook = aSlot.methodForUndefinedGet()
+        const m = this[undefHook]
+        if (m) {
+            m.apply(this)
+        }
+    }
+
     willGetSlot (aSlot) {
-        // example: if the slot name is "subnodes",
-        // this will call this.willGetSlotSubnodes()
-        const s = aSlot.willGetSlotName()
+        // e.g.: slot "subnodes" -> willGetSlotSubnodes()
+        const s = aSlot.methodForWillGet()
         const f = this[s]
         if (f) {
             f.apply(this)
         }
     }
 
+    // --- setter ---
+
+    setSlotValue (aSlot, newValue) {
+        const oldValue = this.baseGetSlotValue(aSlot)
+        if (oldValue !== newValue) {
+            this.baseSetSlotValue(aSlot, newValue)
+            this.didUpdateSlot(aSlot, oldValue, newValue)
+        }
+        return this
+    }
+
+    // ----
+
     didUpdateSlot (aSlot, oldValue, newValue) {
+        const m = this[aSlot.methodForDidUpdate()]
+        if (m) {
+            m.apply(this, [oldValue, newValue])
+        }
+        /*
         if (aSlot.shouldStoreSlot()) {
             this.didMutate(aSlot.name())
         }
+        */
     }
 
     init () { 
@@ -389,11 +489,14 @@
     }
 
     setterNameForSlot (name) {
+        return "set" + name.capitalized()
+        /*
         // cache these as there aren't too many and it will avoid extra string operations
         if (!m.has(name)) {
             m.set(name, "set" + name.capitalized())
         }
         return m.get(name)
+        */
     }
 
     toString () {

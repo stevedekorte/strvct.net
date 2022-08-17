@@ -45,9 +45,8 @@
             const slot = this.overrideSlot("subnodes", null)
             //subnodesSlot.setOwnsSetter(true)
             slot.setShouldStoreSlot(true)
-            //slot.setDoesHookGetter(true) //node does this
             slot.setDoesHookGetter(true)
-            slot.setHookedGetterIsOneShot(true)
+            //slot.setHookedGetterIsOneShot(true)
             //slot.setIsLazy(true) // no point in using this until we have coroutines? blobs are already lazy?
             slot.setInitProto(SubnodesArray)
 

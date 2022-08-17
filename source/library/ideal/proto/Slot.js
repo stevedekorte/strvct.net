@@ -39,7 +39,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         throw new Error("Slot.shouldStore should not be called on Slot")
     }
 
-    simpleNewSlot (slotName, initialValue) { // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
+    simpleNewSlot (slotName, initialValue) { 
+        // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
         const privateName = "_" + slotName;
         Object.defineSlot(this, privateName, initialValue)
 
@@ -69,71 +70,61 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     initPrototype () {
         Object.defineSlot(this, "_slotNames", new Set())
-
-        //this._slotNames = new Set()
         
         this.simpleNewSlot("owner", null) // typically a reference to a .prototype
-        this.simpleNewSlot("name", false) 
+        this.simpleNewSlot("name", false)
         this.simpleNewSlot("initValue", null) // needed?
 
         // getter
-        this.simpleNewSlot("ownsGetter", true) 
+        this.simpleNewSlot("ownsGetter", true)
         this.simpleNewSlot("doesHookGetter", false)
-        this.simpleNewSlot("hookedGetterIsOneShot", true) 
-        this.simpleNewSlot("isInGetterHook", false) 
+        //this.simpleNewSlot("hookedGetterIsOneShot", false) 
+        //this.simpleNewSlot("isInGetterHook", false)
 
         // setter
         this.simpleNewSlot("ownsSetter", true) 
         this.simpleNewSlot("doesHookSetter", false) // if shouldStore, then auto post isDirty?
-        //this.simpleNewSlot("doesPostSetter", false) // posts a didUpdateSlot<SlotName> note
+        //this.simpleNewSlot("doesPostSetter", false) // posts a didUpdateSlot<SlotName> notification
 
         // storage related
-        this.simpleNewSlot("isLazy", false) // should hook getter
         this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
         this.simpleNewSlot("initProto", null) // clone this proto on init and set to initial value
         this.simpleNewSlot("valueClass", null) // declare the value should be a kind of valueClass
         this.simpleNewSlot("field", null)
+        this.simpleNewSlot("isLazy", false) // should hook getter
+        this.simpleNewSlot("isWeak", false) // should hook getter
 
         // slot hook names
-        this.simpleNewSlot("willGetSlotName", null)
-        //this.simpleNewSlot("willUpdateSlotName", null)
-        //this.simpleNewSlot("didUpdateSlotName", null)
+        this.simpleNewSlot("methodForWillGet", null)
+        this.simpleNewSlot("methodForWillUpdate", null)
+        this.simpleNewSlot("methodForDidUpdate", null)
+        this.simpleNewSlot("methodForUndefinedGet", null)
 
+        // debugging 
+        //this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
+        //this.simpleNewSlot("doesBreakInSetter", false) // uses "debugger;"
+
+        // copying behavior
         //this.simpleNewSlot("initOp", "copyValue")
         //this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"])) 
-
         this.simpleNewSlot("duplicateOp", "nop")
         this.simpleNewSlot("validDuplicateOps", new Set(["nop", "copyValue", "duplicate"])) 
         this.simpleNewSlot("comment", null)
         this.simpleNewSlot("isPrivate", false)
 
-         // slotType is a string value, eg: "Boolean", "String", "Number", Action - can be used to find a class 
-         // to create an inspector node for the slotValue
-         this.simpleNewSlot("slotType", null)
+        // inspector related
+        // slotType is a string value, eg: "Boolean", "String", "Number", Action - can be used to find a class 
+        // to create an inspector node for the slotValue
+        this.simpleNewSlot("slotType", null)
+        this.simpleNewSlot("canInspect", false)
+        this.simpleNewSlot("canEditInspection", true)
+        this.simpleNewSlot("label", null) // visible label on inspector
+        this.simpleNewSlot("validValues", null) // used for options field and validation
+        this.simpleNewSlot("validValuesClosure", null) 
+        this.simpleNewSlot("allowsMultiplePicks", false)
+        this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
 
-         this.simpleNewSlot("canInspect", false)
-         this.simpleNewSlot("canEditInspection", true)
-         this.simpleNewSlot("label", null) // visible label on inspector
-         this.simpleNewSlot("validValues", null) // used for options field and validation
-         this.simpleNewSlot("validValuesClosure", null) 
-         this.simpleNewSlot("allowsMultiplePicks", false)
-
-         this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
-
-         this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
-
-         // debugging 
-
-         this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
-         this.simpleNewSlot("doesBreakInSetter", false) // uses "debugger;"
-    }
-
-    setSyncsToView (aBool) {
-        this._syncsToView = aBool
-        if (aBool) {
-            this.setDoesHookSetter(true)
-        }
-        return this
+        this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
     }
 
     newInspectorField () {
@@ -171,10 +162,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return null
     }
 
-    init () {
-
-    }
-
     validDuplicateOps () {
         return new Set(["nop", "copyValue", "duplicate"])
     }
@@ -205,23 +192,18 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     */
 
     setName (aName) {
+        assert(Type.isString(aName) && aName.trim().length > 0)
         this._name = aName
-        this.didUpdateSlotName()
-        return this
-    }
-
-    didUpdateSlotName () {
-        const capName = this.name().capitalized()
-        this.setWillGetSlotName("willGetSlot" + capName)
-        /*
-        this.setDidUpdateSlotName("didUpdateSlot" + capName)
-        this.setWillUpdateSlotName("willUpdateSlot" + capName)
-        */
+        const n = this.name().capitalized()
+        this.setMethodForWillGet("willGetSlot" + n)
+        this.setMethodForDidUpdate("didUpdateSlot" + n)
+        this.setMethodForWillUpdate("willUpdateSlot" + n)
+        this.setMethodForUndefinedGet("onUndefinedGet" + n)
         return this
     }
 
     copyFrom (aSlot) {
-        this._slotNames.forEach((slotName) => {
+        this._slotNames.forEach(slotName => {
             const privateName = "_" + slotName;
             this[privateName] = aSlot[privateName]
             /*
@@ -234,17 +216,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     autoSetGetterSetterOwnership () {
-        //this.setOwnsGetter(true)
-        //this.setOwnsSetter(true)
-        
-        if (this.alreadyHasGetter()) {
-            //console.log(this.owner().type() + "." + this.getterName() + "() exists, so we won't override")
-        }
-        
-        if (this.alreadyHasSetter()) {
-            //console.log(this.owner().type() + "." + this.setterName() + "(v) exists, so we won't override")
-        }
-
         this.setOwnsGetter(!this.alreadyHasGetter())
         this.setOwnsSetter(!this.alreadyHasSetter())
         return this
@@ -266,29 +237,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this 
     }
 
-    setIsLazy (aBool) {
-        if (this._isLazy !== aBool) {
-            this._isLazy = aBool
-            this.setDoesHookSetter(true) 
-            this.setHookedGetterIsOneShot(aBool) // TODO: make these the same thing?
-            //this.onChangedAttribute()
-        }
-        return this
-    }
-
-    setShouldStoreSlot (aBool) {
-        if (this._shouldStoreSlot !== aBool) {
-            this._shouldStoreSlot = aBool
-            if (aBool) {
-                this.setDoesHookSetter(true) // TODO: is there a better way?
-            } else {
-                this.setIsLazy(false)
-            }
-            this.onChangedAttribute()
-        }
-        return this
-    }
-
     onChangedAttribute () {
         this.setupGetter()
         this.setupSetter()
@@ -305,7 +253,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     setupValue () {
         Object.defineSlot(this.owner(), this.privateName(), this.initValue())
-        //this.owner()[this.privateName()] = this.initValue()
         return this
     }
 
@@ -317,17 +264,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     setupGetter () {
         if (this.ownsGetter()) {
-            if (this.doesHookGetter()) {
-                if (this.isLazy()) {
-                    this.makeLazyGetter()
-                } else if (this.hookedGetterIsOneShot()) {
-                    this.makeOneShotHookedGetter()
-                } else {
-                    this.makeHookedGetter()
-                }
-            } else {
-                this.makeDirectGetter()
-            }
+            Object.defineSlot(this.owner(), this.getterName(), this.autoGetter())
         }
         return this
     }
@@ -338,16 +275,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     setupSetter () {
         if (this.ownsSetter()) {
-
-            this.makeHookedSetter()
-
-            /*
-            if (this.doesHookSetter()) {
-                this.makeHookedSetter()
-            } else {
-                this.makeDirectSetter()
-            }
-            */
+            Object.defineSlot(this.owner(), this.setterName(), this.autoSetter())
         }
     }
 
@@ -365,7 +293,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     makeDirectGetter () {
         Object.defineSlot(this.owner(), this.getterName(), this.directGetter())
-        //this.owner()[this.getterName()] = this.directGetter()
         return this
     }
 
@@ -379,110 +306,26 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // hooked getter
 
-    makeHookedGetter () {
-        //this.owner()[this.getterName()] = this.hookedGetter()
-        Object.defineSlot(this.owner(), this.getterName(), this.safeHookedGetter())
-        return this
-    }
-
-    makeLazyGetter () {
-        assert(this.doesHookGetter())
-        //this.owner()[this.getterName()] = this.hookedGetter()
-        Object.defineSlot(this.owner(), this.getterName(), this.lazyGetter())
-        return this
-    }
-
     makeDirectGetterOnInstance (anInstance) {
-        //anInstance[this.getterName()] = this.directGetter()
         Object.defineSlot(anInstance, this.getterName(), this.directGetter())
         return this   
     }
 
-    hookedGetter () {
-        const privateName = this.privateName()
-        const slotName = this.name()
+
+    // ----------------------------------------
+
+    autoGetter () {
         const slot = this
-        const func = function () {
-            this.willGetSlot(slot) // opportunity to replace value before first access
-            return this[privateName]
+        return function () { 
+            return this.getSlotValue(slot) 
         }
-        return func
     }
 
-    safeHookedGetter () {
-        const privateName = this.privateName()
-        const slotName = this.name()
-        // usefull for debugging infinite loops
+    autoSetter () {
         const slot = this
-        const func = function () {
-
-            if (slot.isInGetterHook()) { 
-                throw new Error("hooked getter infinite loop detected")
-            }
-
-            slot.setIsInGetterHook(true)
-            try {
-                this.willGetSlot(slot) 
-            } catch(e) {
-                slot.setIsInGetterHook(false)
-                throw e
-            } 
-            slot.setIsInGetterHook(false)
-
-            return this[privateName]
+        return function (newValue) { 
+            return this.setSlotValue(slot, newValue) 
         }
-        //func.setSlot(this)
-        return func
-    }
-
-    // one shot hooked getter
-
-    makeOneShotHookedGetter () {
-        assert(this.owner().isPrototype())
-        console.log("WARNING:", this.owner().type() + "." + this.name() + " setting up one-shot getter in prototype - may be bad for performance")
-        //this.owner()[this.getterName()] = this.oneShotHookedGetter()
-        Object.defineSlot(this.owner(), this.getterName(), this.oneShotHookedGetter())
-        return this
-    }
-
-    oneShotHookedGetter () {
-        const privateName = this.privateName()
-        const slotName = this.name()
-        const slot = this
-        const willGetSlotName = this.willGetSlotName()
-        const func = function () {
-            //console.log(this.typeId() + "." + slot.name() + " replacing one-shot getter with direct getter")
-            slot.makeDirectGetterOnInstance(this) // now, replace with direct getter after first call
-            //this.willGetSlot(slot) // opportunity to replace value before first access
-            if (this[willGetSlotName]) {
-                this[willGetSlotName].apply(this)
-            }
-            return this[privateName]
-        }
-        //func.setSlot(this)
-        return func
-    }
-
-    lazyGetter () {
-        const slot = this
-        const privateName = this.privateName()
-        const slotName = this.name()
-        const willGetSlotName = this.willGetSlotName()
-        const func = function () {
-            //console.log(this.typeId() + "." + slot.name() + " lazySlotGetter")
-            
-            slot.makeDirectGetterOnInstance(this) // now, replace with direct getter after first call
-            
-            slot.onInstanceLoadRef(this)
-
-            if (this[willGetSlotName]) {
-                this[willGetSlotName].apply(this)
-            }
-
-            return this[privateName]
-        }
-        //func.setSlot(this)
-        return func
     }
 
     // --- setter ---
@@ -496,92 +339,18 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     makeDirectSetter () {
-        //this.owner()[this.setterName()] = this.directSetter()
         Object.defineSlot(this.owner(), this.setterName(), this.directSetter())
         return this
     }
 
     directSetter () {
         const privateName = this.privateName()
-        const slot = this
-        const setterName = this.setterName()
         const func = function (newValue) {
             this[privateName] = newValue
             return this
         }
-        //func.setSlot(this)
         return func
     }
-
-    // hooked setter
-
-    makeHookedSetter () {
-        //this.owner()[this.setterName()] = this.hookedSetter()
-        Object.defineSlot(this.owner(), this.setterName(), this.hookedSetter())
-        Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter())
-        return this
-    }
-
-    /*
-    updateWithHookOnInstance (anInstance) {
-        const slotName = this.name()
-        const privateName = this.privateName()
-        const didUpdateSlotMethodName = "didUpdateSlot" + slotName.capitalized()
-        const oldValue = this[privateName]
-
-        this[privateName] = newValue
-        this.didUpdateSlot(slot, oldValue, newValue)
-        if (this[didUpdateSlotMethodName]) {
-            this[didUpdateSlotMethodName].apply(this, [oldValue, newValue])
-        }
-    }
-    */
-    
-    hookedSetter () {
-        const slot = this
-        const slotName = this.name()
-        const privateName = this.privateName()
-        const didUpdateSlotMethodName = "didUpdateSlot" + slotName.capitalized()
-        const func = function (newValue) {
-            const oldValue = this[privateName]
-            if (oldValue !== newValue) {
-                
-                this[privateName] = newValue
-                this.didUpdateSlot(slot, oldValue, newValue)
-
-                if (this[didUpdateSlotMethodName]) {
-                    this[didUpdateSlotMethodName].apply(this, [oldValue, newValue])
-                }
-
-                if (slot.syncsToView() && this.scheduleSyncToView) {
-                    this.scheduleSyncToView()
-                }
-
-            }
-            return this
-        }
-        //func.setSlot(this)
-        return func
-    }
-
-    /*
-    postingSetter () {
-        const slotName = this.name()
-        const privateName = this.privateName()
-        const noteName = "didUpdateSlot" + this.slotName().capitalized()
-        const func = function (newValue) {
-            const oldValue = this[privateName]
-            if (oldValue !== newValue) {
-                this[privateName] = newValue
-                const didUpdateSlotNote = this.newNoteNamed(noteName)
-                didUpdateSlotNote.post()
-            }
-            return this
-        }
-        //func.setSlot(this)
-        return func
-    }
-    */
 
     // call helpers
 
@@ -612,7 +381,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return anInstance[this.refPrivateName()]
     }
 
-    copyValueFromInstanceTo(anInstance, otherInstance) {
+    copyValueFromInstanceTo (anInstance, otherInstance) {
         if (this.isLazy()) {
             const valueRef = this.onInstanceGetValueRef(anInstance)
             if (valueRef) {
