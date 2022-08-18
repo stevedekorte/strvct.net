@@ -22,7 +22,7 @@
             return this.shared() 
         }
 
-        const obj = new this()
+        const obj = new this() 
         obj.init()
 
         if (this.isSingleton()) {
@@ -250,16 +250,47 @@
 
     // slot objects
 
+    forEachPrototype (fn) {
+        let proto = this
+        if(this.isInstance()) {
+            proto = this.__proto__
+        }
+
+        while (proto) {
+            fn(proto) 
+            //console.log("proto is ", proto.type())
+            if (proto === proto.__proto__) {
+                throw new Error("__proto__ loop detected in " + proto.type())
+                break;
+            } else {
+                proto = proto.__proto__
+            }
+        }
+    }
+
+    forEachSlot (fn) {
+        this.forEachPrototype(proto => {
+            if (Object.hasOwn(proto, "_slotsMap")) {
+                proto._slotsMap.forEachV(slot => fn(slot))
+            }
+        })
+    }
+
     allSlotsMap (m = new Map()) {
         //assert(this.isPrototype())
+        this.forEachSlot(slot => {
+            m.set(slot.name(), slot) 
+        })
+        return m
 
+        /*
         if (this.__proto__ && this.__proto__.allSlotsMap) {
             this.__proto__.allSlotsMap(m)
         }
         
         this.slotsMap().forEachKV((k, v) => m.set(k, v))
-        //this.slotsMap().mergeInto(m)
         return m
+        */
     }
 
     /*
@@ -339,32 +370,57 @@
         return slot
     }
 
+    newWeakSlot(slotName, initialValue) {
+        const slot = this.newSlot(slotName, initialValue)
+        slot.setIsWeak(true)
+        return slot;
+    }
+
+
     // --- weak slot ---
+
+    onFinalizedSlot (aSlot) {
+        this[aSlot.privateName()] = undefined
+
+        // only called on weak slot
+        const k = aSlot.methodForOnFinalized()
+        const m = this[k]
+        if (m) {
+            m.apply(this)
+        }
+    }
 
     getWeakSlotValue (aSlot) {
         const privateName = aSlot.privateName()  // fix this value
         const weakRef = this[privateName]
 
-        if (weakRef) {
-            const v = weakRef.deref()
-            if (v === undefined) {
-                return null 
-                // return null so we know when undefined is returned, 
-                // that the slot has never been set
-            }
-            return v
+        if (weakRef === null) {
+            return null
         }
 
-        return undefined
+        if (weakRef === undefined) {
+            return undefined
+        }
+
+        // if we got here, it's a weakref
+        const v = weakRef.deref()
+        if (v === undefined) {
+            // it must have been collected
+            this.onFinalizedSlot(aSlot)
+        }
+        return v
     }
 
     setWeakSlotValue (aSlot, newValue) {
         const privateName = aSlot.privateName()  // fix this value
-        const weakRef = this[privateName]
-        const oldValue = weakRef ? weakRef.deref() : undefined;
-        //const oldValue = this.getWeakSlotValue(aSlot);
+        const oldValue = this.getWeakSlotValue(aSlot) // doesn't trigger willGetSlot() but may call onFinalizedSlot()
+
         if (newValue !== oldValue) {
-            this[privateName] = new WeakRef(newValue)
+            if (newValue === null) {
+                this[privateName] = null
+            } else {
+                this[privateName] = new WeakRef(newValue)
+            }
         }
         return this
     }
@@ -397,15 +453,18 @@
     getSlotValue (aSlot) { //testing this
         const v = this.baseGetSlotValue(aSlot)
 
+        /*
         if (v === undefined) {
             this.onUndefinedGetSlot(aSlot)
         }
+        */
 
         this.willGetSlot(aSlot)
 
         return this.baseGetSlotValue(aSlot)
     }
 
+    /*
     onUndefinedGetSlot (aSlot) {
         // get undefined hook
         // e.g.: slot "subnodes" -> onUndefinedGetSubnodes()
@@ -420,7 +479,8 @@
             m.apply(this)
         }
     }
-
+    */
+   
     willGetSlot (aSlot) {
         // e.g.: slot "subnodes" -> willGetSlotSubnodes()
         const s = aSlot.methodForWillGet()

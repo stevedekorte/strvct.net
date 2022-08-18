@@ -26,7 +26,7 @@
 */
 
 if (!getGlobalThis().ideal) {
-    getGlobalThis().ideal = {}
+    getGlobalThis().ideal = {} 
 }
 
 getGlobalThis().ideal.Slot = (class Slot extends Object { 
@@ -99,6 +99,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("methodForWillUpdate", null)
         this.simpleNewSlot("methodForDidUpdate", null)
         this.simpleNewSlot("methodForUndefinedGet", null)
+        this.simpleNewSlot("methodForOnFinalized", null)
+        this.simpleNewSlot("privateName", null)
 
         // debugging 
         //this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
@@ -195,10 +197,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         assert(Type.isString(aName) && aName.trim().length > 0)
         this._name = aName
         const n = this.name().capitalized()
+        this.setPrivateName("_" + aName)
         this.setMethodForWillGet("willGetSlot" + n)
         this.setMethodForDidUpdate("didUpdateSlot" + n)
         this.setMethodForWillUpdate("willUpdateSlot" + n)
         this.setMethodForUndefinedGet("onUndefinedGet" + n)
+        this.setMethodForOnFinalized("onFinalizedSlot" + n)
         return this
     }
 
@@ -278,10 +282,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (this.ownsSetter()) {
             Object.defineSlot(this.owner(), this.setterName(), this.autoSetter())
         }
-    }
-
-    privateName () {
-        return "_" + this.name()
     }
 
     // --- getter ---
@@ -395,12 +395,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     // -----------------------------------------------------
 
     onInstanceInitSlot (anInstance) {
-        const name = this.privateName()
-        let defaultValue = anInstance[name]
-        assert(Reflect.has(anInstance, name)) // make sure slot is defined - this is true even if it's value is undefined
-        //Object.defineSlot(anInstance, name, defaultValue)
+        assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
+        let defaultValue = anInstance[this.privateName()]
 
-        
         /*
         const op = this.initOp()
         assert(this.validInitOps().contains(op)) // TODO: put on setter instead

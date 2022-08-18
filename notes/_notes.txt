@@ -1,3 +1,5 @@
+OPTIMIZE: replace uses of allSlotsMap with forEachSlot
+
 RENAME: initPrototype -> initPrototypeSlots, initPrototypeObject -> initPrototype
 
 REMOVE: ProtoClass_weakSlots.js

@@ -9,29 +9,15 @@
     It filters out duplicate notifications (posted on the same event loop) 
     and duplicate observations (same object registering the same observation again).
         
-    Warning about Weak links: 
-    
-        As Javascript doesn't support weak links[*], we need to be careful
-        about having observers tell the NotificationCenter when they 
-        are done observing, otherwise, their Observation object will hold a reference to 
-        the observer that will prevent it from being garbage collected, and the observer will continue
-        to receive matching notifications. 
-    
-    Weak links solution (for ender):
-    
-        Instead of passing an object reference for: 
-        
-            BMObservation.setSenderId() and 
-            BMNotification.setSender()
-        
-        you can pass a typeId string/number for the object. e.g. ideal.js 
-        assigns each instance a unique typeId.
-        
-        This should work assuming:
-            - notification receiver doesn't already have a reference to the sender
-            - observer can remove it's observation appropriately
+    WeakRefs: 
 
-        *TODO: add finalization registry now that JS supports weak links
+        The Observation class holds sender and observer references as weakrefs,
+        and when either is collected, it will automatically call Observation.stopWatching()
+        and remove itself from the NotificationCenter.
+
+        It's still good policy from an observer to explicilty call stopWatching as
+        soon as it no longer needs to observe, unless it wants to observer for it's entire
+        lifetime.
 
     Example use:
  
@@ -93,6 +79,7 @@
         this.newSlot("currentNote", null)
         this.newSlot("isProcessing", false)
         this.newSlot("nameIndex", null) // dict of dicts
+        this.newSlot("obsHighwaterCount", 100) // used
     }
 
     init () {
@@ -103,6 +90,22 @@
     }
 
     // --- observations ----
+
+    /*
+    cleanIfNeeded () {
+        if (this.observations().count() < this.obsHighwaterCount()) {
+            this.cleanObservations()
+            this.setObsHighwaterCount(this.observations().count() * 2)
+        }
+    }
+
+    cleanObservations () {
+        // remove observations whose senders or observers have been collected
+        this.observations().shallowCopy().forEach(obs => {
+            obs.clean()
+        })
+    }
+    */
     
     hasObservation (obs) {
         return this.observations().detect(ob => ob.isEqual(obs))
@@ -124,10 +127,12 @@
         return !Type.isNullOrUndefined(obs)
     }
 
-    observationsForSenderI (sender) {
+    /*
+    observationsForSender (sender) {
         const matches = this.observations().filter(obs => obs.sender() === sender)
         return matches
     }
+    */
     
     removeObservation (anObservation) {
         const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))

@@ -10,78 +10,30 @@
 
 */
 
-getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => { 
-    debugger;
-    aClosure() 
-});
-
 (class BMObservation extends ProtoClass {
     initPrototypeSlots () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("name", null) // String 
         this.newSlot("isOneShot", false) // Boolean
-
-        this.newSimpleWeakSlot("observer", null) // WeakRef slot to observer
-        this.newSimpleWeakSlot("sender", null) // WeakRef to sender
+        this.newWeakSlot("observer", null) // WeakRef slot to observer
+        this.newWeakSlot("sender", null) // WeakRef to sender
     }
 
     init () {
         super.init()
+        this.setSender(null)
+        this.setObserver(null)
         //this.setIsDebugging(true)
     }
 
-    // --- weak slots --- TODO: move to Object or Prototype
-
-    onFinalizeWeakRefNamed (slotName, privateName) {
+    onFinalizedSlotObserver () {
         debugger;
-        const eventName = "onFinalize" + slotName.capitalized()
-        if (this[eventName]) {
-            this[eventName].apply(this, [])
-            this[privateName] = null
-        }
+        this.scheduleMethod("stopWatching")
     }
 
-    newSimpleWeakSlot(slotName, initialValue) {
-        // TODO: use a single finalization registery on Object class for all weak slots and pass heldValue of slot name?
-        const privateName = "_" + slotName + "WeakRef";
-
-        Object.defineSlot(this, privateName, initialValue)
-
-        if (!this[slotName]) {
-            const simpleGetter = function () {
-                const ref = this[privateName]
-                return ref ? ref.deref() : null //returns undefined if sender was collected
-            }
-
-            Object.defineSlot(this, slotName, simpleGetter)
-        }
-
-        const setterName = "set" + slotName.capitalized()
-
-        if (!this[setterName]) {
-            const simpleSetter = function (newValue) {
-                const ref = this[privateName]
-                const oldValue = ref ? ref.deref() : null
-
-                if (oldValue) {
-                    globalFinReg.unregister(oldValue)
-                }
-
-                this[privateName] = new WeakRef(newValue);
-
-                if (newValue) {
-                    globalFinReg.register(newValue, () => { debugger; this.onFinalizeWeakRefNamed(slotName, privateName) }, newValue)
-                }
-
-                return this;
-            }
-
-            Object.defineSlot(this, setterName, simpleSetter)
-        }
-
-        //this._slotNames.add(slotName)
-        
-        return this;
+    onFinalizedSlotSender () {
+        debugger;
+        this.scheduleMethod("stopWatching")
     }
 
     // --- private helpers ---
@@ -96,20 +48,23 @@ getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => {
         return this.valueId(this.sender())
     }
 
-    onFinalizeSender () {
-        debugger;
-        this.stopWatching()
+    /*
+    senderOrObserverWasCollected () {
+        return this.observer() === undefined || this.sender() === undefined
     }
+
+    clean () {
+        if (this.senderOrObserverWasCollected()) {
+            debugger
+            this.stopWatching()
+        }
+    }
+    */
 
     // --- observer --- 
 
     observerId () { 
         return this.valueId(this.observer())
-    }
-
-    onFinalizeObserver () {
-        debugger;
-        this.stopWatching()
     }
 
     // ---
@@ -202,4 +157,13 @@ getGlobalThis().globalFinReg = new FinalizationRegistry(aClosure => {
         return this.observerId() + " listening to " + this.senderId() + " " + this.name()
     }
 
+    static testWeakRefs () {
+        const observer = new Object()
+        const sender = new Object()
+        const observation = BMNotificationCenter.shared().newObservation().setName("weakRefTest").setObserver(observer).setSender(sender).startWatching()
+        // let's see if this onFinalizedSlotObserver or onFinalizedSlotSender get called and it auto stops watching 
+    }
+
 }.initThisClass());
+
+//BMObservation.testWeakRefs()

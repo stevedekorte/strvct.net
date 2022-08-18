@@ -141,13 +141,13 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 16058,
-    "hash": "mhuB7goDfTQmqPPo8I9p4oMDiVXbhw1qo31J3G54Ax8="
+    "size": 16123,
+    "hash": "gOg01mjNPZWChgQClhN533Ae+k4GESaZ1+enSrkLYxY="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 14402,
-    "hash": "jKxFF7bSTLdxGWOGi//2G3Zmh40mommbYl2ed002qkY="
+    "size": 15729,
+    "hash": "eWax4oOasKCvqVcXoPma1ajHYsLSYCPe5KVqkTcmcmo="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -246,13 +246,13 @@
   },
   {
     "path": "source/library/notification/notifications/BMNotificationCenter.js",
-    "size": 9225,
-    "hash": "iiSgBz1jrQR8hjKmEbNQ3jeT+ZDQBSxWCQCwWEE/PTc="
+    "size": 9731,
+    "hash": "v8wNRyLKqXV9Tn0paE/82WtVAzzpR2/+EqJy2rubTxM="
   },
   {
     "path": "source/library/notification/notifications/BMObservation.js",
-    "size": 5697,
-    "hash": "6MjCpxJVH7WamKopJ10tiWzD/CNRTUsn8EXQaXJXnH4="
+    "size": 4654,
+    "hash": "Q9VDuGI2082c5cwWu48inPJQdi8CgDpwgAx0mc/KQEU="
   },
   {
     "path": "source/library/notification/Broadcaster.js",
@@ -586,8 +586,8 @@
   },
   {
     "path": "source/library/view/dom/Attributes/CssAnimation.js",
-    "size": 4541,
-    "hash": "yxvFlr0Bo5/aTYkgQ94s/ZsF7GLRsML2rQMvl6drygA="
+    "size": 4524,
+    "hash": "7pHMU4DLLu89lYiQJhMRA3id/mOKyaCths0d3tTmKVM="
   },
   {
     "path": "source/library/view/dom/Helpers/DomTextTapeMeasure.js",
