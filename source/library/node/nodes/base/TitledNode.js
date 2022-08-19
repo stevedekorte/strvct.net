@@ -285,9 +285,6 @@
         return this.title() + " " + this.subtitle()
     }
 
-    debugTypeId () {
-        return super.debugTypeId() + " '" + this.title() + "'"
-    }
     
 }.initThisClass());
 

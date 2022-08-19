@@ -12,10 +12,12 @@
     initPrototypeSlots () {
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
 
 }.initThisClass());

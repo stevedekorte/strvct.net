@@ -1,4 +1,6 @@
-"use strict";
+
+
+//"use strict"; // comment out temporarily in order to debug super call on category methods
 
 /*
     
@@ -163,26 +165,50 @@ Object.defineSlot(Object, "initThisCategory", function () {
         keys.forEach(k => {
             const v = obj[k]
             dict[k] = v
-            if (typeof (v) === "function") {
-                v._categoryName = this.name // add a comment for category source
+            /*
+            // this doesn't seem to get the correct .name(?)
+            if (typeof (v) === "function" && k !== "constructor") {
+                //v._categoryName = this.name // add a comment for category source 
             }
+            */
         })
         return dict
     }
 
+
+
     const parent = this.__proto__ //superClass()
 
+    // copy instance slots
+    const instanceSlotsDict = getSlotsDictOn(this.prototype)
+    delete instanceSlotsDict["constructor"]
+    delete instanceSlotsDict["prototype"]
+    Object.defineSlotsSafely(parent.prototype, instanceSlotsDict)
+
+    // copy class slots
     const classSlotsDict = getSlotsDictOn(this)
     delete classSlotsDict["length"] // FIXME: hack for collection types
     delete classSlotsDict["name"]
     delete classSlotsDict["prototype"]
     Object.defineSlotsSafely(parent, classSlotsDict)
 
-    const instanceSlotsDict = getSlotsDictOn(this.prototype)
-    delete instanceSlotsDict["constructor"]
-    delete instanceSlotsDict["prototype"]
+    /*
+    console.log("this.name = '" + this.name + "'")
+    console.log("this.__proto__.name = '" + this.__proto__.name + "'")
+    console.log("this.__proto__.__proto__.name = '" + this.__proto__.__proto__.name + "'")
+    */
+    
+    if (this.__proto__ !== Object) { // don't need to call super on base class
+        // fix super in instance methods
+        Object.setPrototypeOf(this.prototype, this.__proto__.__proto__.prototype); 
 
-    Object.defineSlotsSafely(parent.prototype, instanceSlotsDict)
+        // fix super in static/class methods
+        // need to do this *after* instance methods super fix as it changes __proto__
+        Object.setPrototypeOf(this, parent.__proto__); 
+
+        // related to super, see:
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/super
+    }
 
     return this
 });

@@ -1,3 +1,7 @@
+ISSUE: categories can't use super in methods as they point to the class instead of the super class
+
+
+
 OPTIMIZE: replace uses of allSlotsMap with forEachSlot
 
 RENAME: initPrototype -> initPrototypeSlots, initPrototypeObject -> initPrototype

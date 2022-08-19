@@ -113,10 +113,12 @@
         return this
     }
 
+    /*
     setNode (aNode) {
         super.setNode(aNode)
         return this
     }
+    */
 
     duplicate () {
         const dup = super.duplicate()
@@ -637,6 +639,7 @@
                 node.onRequestSelectionOfNode(this)
             }
 
+            /*
             if (this.isFocused() && node.nodeUrlLink) {
                 // TODO: move to specialized view (something like UrlLinkTile?) 
                 if (!BMKeyboard.shared().hasKeysDown()) {
@@ -644,6 +647,7 @@
                     window.open(url, "_blank")
                 }
             }
+            */
         }
     }
 

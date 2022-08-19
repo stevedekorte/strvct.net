@@ -1,6 +1,5 @@
 "use strict";
 
-
 /*
 
     Slot
@@ -201,9 +200,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.setMethodForWillGet("willGetSlot" + n)
         this.setMethodForDidUpdate("didUpdateSlot" + n)
         this.setMethodForWillUpdate("willUpdateSlot" + n)
-        this.setMethodForUndefinedGet("onUndefinedGet" + n)
-        this.setMethodForOnFinalized("onFinalizedSlot" + n)
-        return this
+        this.setMethodForUndefinedGet("onUndefinedGet" + n) // for lazy slots
+        this.setMethodForOnFinalized("onFinalizedSlot" + n) // for weak slots
+        return this 
     }
 
     copyFrom (aSlot) {
@@ -225,6 +224,20 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this
     }
 
+    hookNames () {
+        const hookMethodNames = this._slotNames.filter(n => n.beginsWith("methodFor"))
+        const hookNames = hookMethodNames.map(n => this[n].apply(this))
+        return hookNames
+    }
+
+    ownerImplemnentsdHooks () {
+        return true
+        /*
+        const slotsMap = this.owner().slotsMap() // TODO: this is slow
+        return this.hookNames().detect(hookName => slotsMap.has(hookName)) ? true : false
+        */
+    }
+
     setDoesHookSetter (aBool) {
         if (this._doesHookSetter !== aBool) {
             this._doesHookSetter = aBool
@@ -239,11 +252,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             this.setupSetter()
         }
         return this 
-    }
-
-    onChangedAttribute () {
-        this.setupGetter()
-        this.setupSetter()
     }
 
     // setup
@@ -264,23 +272,31 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     // getter
 
     alreadyHasGetter () {
-        return this.owner().hasOwnProperty(this.getterName())
+        return this.owner().hasOwnProperty(this.getterName()) // TODO: hasOwnProperty? 
     }
 
     setupGetter () {
         if (this.ownsGetter()) {
-            Object.defineSlot(this.owner(), this.getterName(), this.autoGetter())
+            if (this.ownerImplemnentsdHooks()) {
+                Object.defineSlot(this.owner(), this.getterName(), this.autoGetter())
+            } else {
+                this.makeDirectGetter()
+            }
         }
         return this
     }
 
     alreadyHasSetter () {
-        return this.owner().hasOwnProperty(this.setterName())
+        return this.owner().hasOwnProperty(this.setterName())  // TODO: hasOwnProperty? 
     }
 
     setupSetter () {
         if (this.ownsSetter()) {
-            Object.defineSlot(this.owner(), this.setterName(), this.autoSetter())
+            if (this.ownerImplemnentsdHooks()) {
+                Object.defineSlot(this.owner(), this.setterName(), this.autoSetter())
+            } else {
+                this.makeDirectSetter()
+            }
         }
     }
 
@@ -311,7 +327,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         Object.defineSlot(anInstance, this.getterName(), this.directGetter())
         return this   
     }
-
 
     // ----------------------------------------
 

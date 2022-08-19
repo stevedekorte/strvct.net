@@ -65,6 +65,10 @@
         return undefined
     }
 
+    filter (fn) {
+        return this.select(fn)
+    }
+    
     select (fn) {
         // should this return a Set?
         return this.valuesArray().select(fn)

@@ -228,10 +228,11 @@
         //const p = pathArray.map(n => n.title()).join("/")
         //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + p +") ")
         const node = pathArray.shift()
+        //this.syncFromNodeNow()
 
         if (node !== this.node()) {
-            this.setNode(node)
-            this.syncFromNavSelection()
+            //this.setNode(node)
+            //this.syncFromNavSelection()
             // should we verify if node is a subitem
         } else if (pathArray.length === 0) { 
             //console.log("unselect items after path: ", this.pathString())
@@ -241,9 +242,14 @@
             return true
         }
 
-        //debugger;
+        debugger;
+        console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes())
+        this.tilesView().syncFromNodeNow() //test
+        console.log("2 this.tilesView().subviews(): ", this.tilesView().subviews())
+
         const selectedTile = this.tilesView().selectTileWithNode(node)
         if (!selectedTile) {
+            debugger
             console.warn("no matching path")
             return false
         }

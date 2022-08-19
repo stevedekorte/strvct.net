@@ -1,0 +1,10 @@
+[
+    "TilesView.js",
+    "TilesView_dragViewProtocol.js",
+    "TilesView_selection.js",
+    "TilesView_orientation.js",
+    "TilesView_keyboard.js",
+    "TilesView_gestures.js",
+    "TilesView_helpers.js"
+]
+

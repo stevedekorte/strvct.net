@@ -54,17 +54,29 @@
     }
 
     didUpdateSlotBaseNode (oldValue, newValue) {
+        // baseNode is the ObjectPool rootNode
+        debugger
+        // tell the node to hint to UI to use BreadCrumbTile view to display itself
         newValue.setNodeTileClassName("BreadCrumbTile")
-        newValue.setTitle("breadcrumb")
+        newValue.setTitle("BreadCrumbTile")
+
+        // make sure it's the only thing under the header
         this.headerNode().removeAllSubnodes()
         this.headerNode().addSubnode(newValue)
+
+        // this should set up header view (and bread crumb view?)
         this.syncFromNode()
+        
+
+        // select the bread crumb tile
+        // this should cause it's child stack view to get rendered (Notes, Settings, Resources)
         this.scheduleMethod("moveToBase")
         return this
     }
 
     moveToBase () {
-        this.selectNodePathArray([this.node(), this.headerNode(), this.baseNode()])
+        //this.selectNodePathArray([this.node(), this.headerNode(), this.baseNode()])
+        this.selectNodePathArray([this.headerNode(), this.baseNode()])
         return this
     }
 
