@@ -10,6 +10,7 @@
     "MouseMoveListener.js",
     "SelectListener.js",
     "TouchListener.js",
+    "TouchMoveListener.js",
     "TransitionListener.js",
     "GamePadListener.js",
     "WebSocketListener.js",

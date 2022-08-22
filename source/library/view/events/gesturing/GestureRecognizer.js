@@ -72,7 +72,7 @@
         this.newSlot("viewListeners", null)
         this.newSlot("docListeners", null)
         this.newSlot("moveListeners", null)
-        this.newSlot("moveListenerClasses", ["MouseMoveListener"])
+        this.newSlot("moveListenerClasses", ["MouseMoveListener", "TouchMoveListener"])
         this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"])
 
         // events
@@ -130,7 +130,7 @@
         return this
     }
 
-    // -- special case for mouse move events ---
+    // -- special case for mouse and touch move events ---
 
     didUpdateSlotIsPressing (oldValue, newValue) {
         if (newValue === true) {

@@ -415,6 +415,11 @@
     "hash": "8OyK3t6bxzH5hvY6C6Xy6xabJLhwOjP+3znlGpcSSNs="
   },
   {
+    "path": "source/library/view/events/listening/listeners/TouchMoveListener.js",
+    "size": 436,
+    "hash": "yFVXLZyL+yco1JjlKIN+OkFiTZ9ZZTanlhwYLN8ilfk="
+  },
+  {
     "path": "source/library/view/events/listening/listeners/TransitionListener.js",
     "size": 645,
     "hash": "PA3BYHZwDYoPKv3qoPEqvZNJQ8rdcFv1Ts5/SO/b2oA="
@@ -451,8 +456,8 @@
   },
   {
     "path": "source/library/view/events/gesturing/GestureRecognizer.js",
-    "size": 25482,
-    "hash": "FOjIgiYUacKFTYxGOcsAEWRKOdXkU9LplZu5jT6uCK4="
+    "size": 25513,
+    "hash": "Zf07y9k8YUhpkUst5RHloKkMPhZX/fzTzB2S4/UfmGk="
   },
   {
     "path": "source/library/view/events/gesturing/gestures/LongPressGestureRecognizer.js",
