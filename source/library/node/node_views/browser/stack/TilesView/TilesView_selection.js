@@ -172,7 +172,9 @@
     // selected tiles
 
     selectedTiles () {
-        return this.tiles().filter(tile => tile.isSelected())
+        let tiles = this.tiles().filter(tile => tile.thisClass().isSubclassOf(Tile))
+        const selected = tiles.filter(tile => tile.isSelected())
+        return selected
     }
 
     selectedTile () {

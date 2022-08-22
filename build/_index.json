@@ -86,8 +86,8 @@
   },
   {
     "path": "source/library/ideal/categories/Array_ideal.js",
-    "size": 20001,
-    "hash": "9hieyCKmfMBECndrK46A/Lp3zzm5pFeM0EosivCTLvI="
+    "size": 20086,
+    "hash": "ZRyRoWnWTaT2XB86sZs64W+myn3UywW1ms8zafuKDJ0="
   },
   {
     "path": "source/library/ideal/categories/Date_ideal.js",
@@ -356,8 +356,8 @@
   },
   {
     "path": "source/library/view/events/listening/EventSetListener.js",
-    "size": 4112,
-    "hash": "+40q1jf5j9vM/YlgoLb2ZwOps4CqHOjQHdmmgKBUPJM="
+    "size": 4130,
+    "hash": "+nc7xUOATpzXrnObf52C2e0yEfSkFGwUFZIsaybM4kw="
   },
   {
     "path": "source/library/view/events/listening/listeners/AnimationListener.js",
@@ -396,13 +396,13 @@
   },
   {
     "path": "source/library/view/events/listening/listeners/MouseListener.js",
-    "size": 1433,
-    "hash": "nHl+U58pvWBUExxGLBwbhWQQNDp6yvXW6TqJ5PeT0L8="
+    "size": 1435,
+    "hash": "YrQ+MadI7HqkR0Tlh4cxsO7vvL1Pr4dhkN5D8UnUBik="
   },
   {
     "path": "source/library/view/events/listening/listeners/MouseMoveListener.js",
-    "size": 557,
-    "hash": "fdxKfxbeDovwVYx8dv0FetVyTuVJaaYMrlQufKsLXGg="
+    "size": 571,
+    "hash": "BRUMFlvgTuB43twO+NU4L975sGnR0+zwND+s12CgAnA="
   },
   {
     "path": "source/library/view/events/listening/listeners/SelectListener.js",
@@ -451,8 +451,8 @@
   },
   {
     "path": "source/library/view/events/gesturing/GestureRecognizer.js",
-    "size": 24287,
-    "hash": "Ka79ThLktXYa0QkUuv8rOkvtciGING/tSC7RbyOtm+c="
+    "size": 25482,
+    "hash": "FOjIgiYUacKFTYxGOcsAEWRKOdXkU9LplZu5jT6uCK4="
   },
   {
     "path": "source/library/view/events/gesturing/gestures/LongPressGestureRecognizer.js",
@@ -631,8 +631,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/ListenerDomView.js",
-    "size": 7359,
-    "hash": "WijE/T09YSonV5UEPgjM0HOhsiKv8gowNgvMCMHbGPI="
+    "size": 7448,
+    "hash": "tF3MEjd2hYPtJHQzMfrqfrZMWV1ckYSkVxRgTR2vHAU="
   },
   {
     "path": "source/library/view/dom/DomView/VisibleDomView.js",
@@ -1101,8 +1101,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_selection.js",
-    "size": 11583,
-    "hash": "ZAWVOPkh/ozFY5nSS4EK/fDZ/pJr91FIJ4we3j216kM="
+    "size": 11695,
+    "hash": "V6s3Q15cY/EAgBCqqjPnrxbr66qApmhecvgF/TxokMc="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_orientation.js",

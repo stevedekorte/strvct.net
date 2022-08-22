@@ -15,10 +15,12 @@
     initPrototypeSlots () {
     }
 
+    /*
     init () {
         super.init()
         return this
     }
+    */
 
     setupListeners () {
         this.addEventNameAndMethodName("mousemove", "onMouseMove");

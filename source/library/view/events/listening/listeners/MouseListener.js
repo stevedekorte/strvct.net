@@ -25,7 +25,7 @@
         this.addEventNameAndMethodName("mouseover",  "onMouseOver");  // triggered only when mouse enters element
         this.addEventNameAndMethodName("mouseleave", "onMouseLeave"); // triggered only when mouse exits element
 
-        this.addEventNameAndMethodName("mousemove", "onMouseMove");
+        //this.addEventNameAndMethodName("mousemove", "onMouseMove");
 
         // NOTE: don't see a good use case for these, so commenting out for now
         //this.addEventNameAndMethodName("mouseout",   "onMouseOut");   // triggered when mouse exits any child element        

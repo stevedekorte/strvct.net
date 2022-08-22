@@ -78,6 +78,10 @@
         return this.listenerNamed("MouseListener")
     }
 
+    mouseMoveListener () {
+        return this.listenerNamed("MouseMoveListener")
+    }
+
     keyboardListener () {
         return this.listenerNamed("KeyboardListener")
     }

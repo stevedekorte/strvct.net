@@ -71,6 +71,8 @@
         this.newSlot("listenerClasses", null)
         this.newSlot("viewListeners", null)
         this.newSlot("docListeners", null)
+        this.newSlot("moveListeners", null)
+        this.newSlot("moveListenerClasses", ["MouseMoveListener"])
         this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"])
 
         // events
@@ -102,7 +104,7 @@
 
         // begin pressing 
 
-        this.newSlot("isPressing", false)
+        this.newSlot("isPressing", false).setDoesHookSetter(true)
         this.newSlot("minFingersRequired", 2)
         this.newSlot("maxFingersAllowed", 4)
         this.newSlot("minDistToBegin", 10)
@@ -125,6 +127,46 @@
 
         //this.setIsDebugging(true)
         //this.setIsVisualDebugging(true)
+        return this
+    }
+
+    // -- special case for mouse move events ---
+
+    didUpdateSlotIsPressing (oldValue, newValue) {
+        if (newValue === true) {
+            this.startMoveListeners()
+        } else {
+            this.stopMoveListeners()
+        }
+    }
+
+    // --- move listeners ---
+
+    newMoveListeners () {
+        return this.moveListenerClasses().map((className) => {
+            const proto = Object.getClassNamed(className);
+            const listener = proto.clone();
+            listener.setDelegate(this);
+            return listener
+        })
+    }
+
+    stopMoveListeners () {
+        this.moveListeners().forEach(listener => listener.stop())
+        this.setMoveListeners([])
+        return this
+    }
+
+    startMoveListeners () {
+        this.stopViewListeners()
+
+        const listeners = this.newMoveListeners()
+        listeners.forEach(listener => {
+            listener.setListenTarget(this.viewTarget().element())
+            listener.start()
+            return listener
+        })
+        this.setMoveListeners(listeners)
         return this
     }
 

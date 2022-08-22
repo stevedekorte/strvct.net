@@ -51,6 +51,10 @@
 
     // foreach key value (key being the index)
 
+    forEachV (func) { // for compatibility
+        this.forEach(v => func(v))
+    }
+
     forEachKV (func) {
         let i = 0
         this.forEach((v) => {
