@@ -476,14 +476,6 @@
         return this.node().nodeTileLink()
     }
 
-    // focus
-
-    /*
-    onFocusIn () {
-        return super.onFocusIn()
-    }
-    */
-
     // --- helpers ---
 
     debugTypeId () {

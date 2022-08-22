@@ -31,9 +31,11 @@
     }
     */
 
+    /*
     onFocus () {
         return super.onFocus()
     }
+    */
 
     lastSelectedTile () {
         return this.selectedTiles().maxItem(tile => tile.lastSelectionDate().getTime())

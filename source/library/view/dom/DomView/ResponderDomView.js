@@ -33,6 +33,11 @@
 
     // --- focus ---
 
+    scheduleRegisterForFocus () {
+        this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
+    }
+
+
     hasFocusedDecendantView () {
         const focusedView = WebBrowserWindow.shared().activeDomView()
         if (focusedView) {

@@ -75,6 +75,12 @@
         return this
     }
 
+    setupElement () {
+        super.setupElement()
+        this.scheduleRegisterForFocus()
+        return this
+    }
+
     // --- sub-element mutation observer ---
 
     startMutationObserver () {

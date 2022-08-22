@@ -95,17 +95,23 @@
                 debugger;
             }
             
+            assert(!this._element) // element shouldn't change
+            /*
             if (this._element) {
                 this.setIsRegisteredForFocus(false)
                 //console.warn(this.debugTypeId() + " changing element from non null to non null")
+                this.unregisterForAllEvents()
             }
+            */
 
             this._element = e
             e.setDomView(this)
+            /*
             if (e) {
                 // use timer as focus listener can't be set up yet - why not?
                 this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
             }
+            */
         }
         return this
     }
