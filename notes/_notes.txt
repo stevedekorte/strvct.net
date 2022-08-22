@@ -1,5 +1,4 @@
-ISSUE: categories can't use super in methods as they point to the class instead of the super class
-
+OPTIMIZE: separate mouseListener and MouseMove listener as there are too many move events to have every view that can deal with gestures to follow them
 
 
 OPTIMIZE: replace uses of allSlotsMap with forEachSlot

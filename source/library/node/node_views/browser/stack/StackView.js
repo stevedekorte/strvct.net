@@ -224,7 +224,7 @@
         return this.navView().tilesView()
     }
 
-    selectNodePathArray (pathArray) {
+    selectNodePathArray (pathArray) {        
         //const p = pathArray.map(n => n.title()).join("/")
         //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + p +") ")
         const node = pathArray.shift()
@@ -242,22 +242,37 @@
             return true
         }
 
-        debugger;
+        /*
         console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes())
         this.tilesView().syncFromNodeNow() //test
         console.log("2 this.tilesView().subviews(): ", this.tilesView().subviews())
+        */
 
-        const selectedTile = this.tilesView().selectTileWithNode(node)
+        let selectedTile = this.tilesView().selectTileWithNode(node)
         if (!selectedTile) {
-            debugger
-            console.warn("no matching path")
+            if (this.tilesView().node().subnodes().contains(node)) {
+                console.warn("the tilesView node's subnodes contain the path node, but there's no matching view!")
+                console.log("will syncFromNodeNow and see if we can find it")
+                this.tilesView().syncFromNodeNow()
+                selectedTile = this.tilesView().selectTileWithNode(node)
+                if (!selectedTile) {
+                    debugger;
+                }
+
+            } else {            
+                console.warn("no matching path")
+                console.log("looking for node: ", node.debugTypeId())
+                const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId())
+                console.log("subnodes:" + JSON.stringify(subnodeIds) )
+                debugger
+            }
             return false
         }
 
         //this.syncFromNavSelection()
 
         const childStack = this.nextStackView()
-        if (childStack) {
+        if (childStack && pathArray.length) {
             childStack.selectNodePathArray(pathArray)
         }
         return true
@@ -475,17 +490,18 @@
     }
 
     compactNavAsNeeded () {
-        //console.log("StackView " + this.node().title() + " compactNavAsNeeded")
 
         if (this.direction() === "right") {
+            console.log("StackView " + this.node().title() + " compactNavAsNeeded")
+
             const maxWidth = this.topViewWidth()
             const sum = this.sumOfNavWidths()
 
             if (sum > maxWidth) {
-                //console.log(this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
+                console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
                 this.navView().collapse()
             } else {
-                //console.log(this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
+                console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
                 this.navView().uncollapse()
             }
         }

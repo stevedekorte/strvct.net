@@ -55,7 +55,6 @@
 
     didUpdateSlotBaseNode (oldValue, newValue) {
         // baseNode is the ObjectPool rootNode
-        debugger
         // tell the node to hint to UI to use BreadCrumbTile view to display itself
         newValue.setNodeTileClassName("BreadCrumbTile")
         newValue.setTitle("BreadCrumbTile")

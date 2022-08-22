@@ -81,7 +81,9 @@
         }
         this.unselectAllTilesExcept(anItem)
         this.unselectTilesInNextColumn()
-        //this.didChangeNavSelection() // this may already have been sent
+        //        this.tilesView().didChangeNavSelection()
+
+        this.didChangeNavSelection() // this may already have been sent - but only if selection bool changed
     }
     
     didShiftTapItem (anItem) {

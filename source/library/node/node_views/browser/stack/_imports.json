@@ -2,6 +2,7 @@
     "StackView.js",
     "NavView.js",
     "StackScrollView.js",
-    "TilesView/_imports.json"
+    "TilesView/_imports.json",
+    "Tile/_imports.json"
 ]
 

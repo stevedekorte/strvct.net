@@ -25,18 +25,18 @@
         this.newSlot("useCapture", false).setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree")
         this.newSlot("methodSuffix", "")
 
-        this.newSlot("listeners", null) // array of EventListeners
+        this.newSlot("listenersMap", null) // Map of eventName -> EventListener entries
     }
 
     init () {
         super.init()
-        this.setListeners([])
+        this.setListenersMap(new Map())
         this.setupListeners()
         return this
     }
 
     setupListeners () {
-
+        // subclasses override and set up event listeners by calling addEventNameAndMethodName()
     }
 
     /*
@@ -89,8 +89,8 @@
     }
 
     hasListenerForEventName (eventName) {
-        const match = this.listeners().detect(listener => listener.eventName() === eventName)
-        return !Type.isNullOrUndefined(match)
+        return this.listenersMap().has(eventName)
+
     }
 
     addEventNameAndMethodName (eventName, methodName, isUserInteraction) {
@@ -104,7 +104,7 @@
         listener.setEventName(eventName)
         listener.setMethodName(methodName)
         listener.setIsUserInteraction(isUserInteraction)
-        this.listeners().push(listener)
+        this.listenersMap().set(eventName, listener)
         return listener
     }
 
@@ -117,10 +117,13 @@
     }
 
     syncToListeners () {
-        this.listeners().forEach(listener => this.syncToListener(listener))
+        this.forEachListener(listener => this.syncToListener(listener))
         return this
     }
 
+    forEachListener (fn) {
+        this.listenersMap().forEachV(listener => fn(listener))
+    }
     // --- listening ---
 
     setIsListening (aBool) {
@@ -135,7 +138,7 @@
     start () {
         if (!this.isListening()) {
             this.syncToListeners()
-            this.listeners().forEach(listener => listener.start())
+            this.forEachListener(listener => listener.start())
             this._isListening = true; // can't use setter here as it would cause a loop
         }
         return this
@@ -143,7 +146,7 @@
 
     stop () {
         if (this.isListening()) {
-            this.listeners().forEach(listener => listener.stop())
+            this.forEachListener(listener => listener.stop())
             this._isListening = false; // can't use setter here as it would cause a loop
         }
         return this

@@ -1,6 +1,5 @@
 
-
-//"use strict"; // comment out temporarily in order to debug super call on category methods
+"use strict"; 
 
 /*
     

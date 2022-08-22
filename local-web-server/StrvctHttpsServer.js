@@ -51,8 +51,10 @@ const nodePath = require('path');
 		this._server.listen(this.port());
 
 		const sandboxPath =  process.cwd()
-		console.log("process.cwd(): '" + sandboxPath + "'")
-		console.log("listening on port " + this.port() + " - connect with https://" + this.hostname() + ":" + this.port() + "/index.html")
+		console.log(this.type() + ":")
+		console.log("  cwd: '" + sandboxPath + "'")
+		console.log("  port: " + this.port())
+		console.log("  url: " + "https://" + this.hostname() + ":" + this.port() + "/index.html")
 	}
 
 	onRequest (request, response) {

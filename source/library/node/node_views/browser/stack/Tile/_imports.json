@@ -1,5 +1,9 @@
 [
     "Tile.js",
+    "Tile_dragging.js",
+    "Tile_keyboard.js",
+    "Tile_gestures.js",
+    "Tile_styling.js",
     "TitledTile.js",
     "BMTextNodeTile.js",
     "BreadCrumbTile.js",

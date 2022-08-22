@@ -83,7 +83,6 @@
     // --- events ---
 
     didUpdateSlotParentView (oldValue, newValue) {  // hook this to do the initial setup
-        debugger
         super.didUpdateSlotParentView(oldValue, newValue)
         if (this.parentView()) {
             this.watchRootStackView()

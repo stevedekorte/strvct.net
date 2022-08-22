@@ -160,6 +160,9 @@
         return this
     }
 
+    /*
+    // avoid declaring these as it will cause all views registered for mouse events to register for mousemove
+
     onMouseMove (event) {
         return true
     }
@@ -175,6 +178,7 @@
     onMouseOver (event) {
         return true
     }
+    */
 
     onMouseDown (event) {
         const methodName = Mouse.shared().downMethodNameForEvent(event)
