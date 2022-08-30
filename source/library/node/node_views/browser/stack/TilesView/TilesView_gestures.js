@@ -52,6 +52,10 @@
     // --- pinch apart to create a tile ---
 
     tileContainingPoint (aPoint) {
+        // potentially faster:
+        //const topElement = document.elementFromPoint(aPoint.x(), aPoint.y())
+        // now see if topElement has this.element() as an ancestor
+
         return this.tiles().detect((tile) => {
             return tile.frameInDocument().containsPoint(aPoint)
         })

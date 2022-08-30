@@ -6,6 +6,7 @@
     "DragBarView.js",
     "DragView.js",
     "PanelView.js",
+    "SvgIconCache.js",
     "SvgIconView.js",
     "TextField.js"
 ]

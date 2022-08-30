@@ -46,6 +46,7 @@
     
     didChangeNode () {
         if (this.node()) {
+            //this.syncFromNode()
             this.scheduleSyncFromNode()
         }
         return this
@@ -305,6 +306,16 @@
         }
         super.resyncAllViews()
         return this
+    }
+
+    // --- debugging ---
+
+    nodeTitle () {
+        const node = this.node()
+        if (node) {
+            return node.title()
+        }
+        return null
     }
     
 }.initThisClass());

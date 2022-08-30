@@ -34,9 +34,15 @@
     // --- focus ---
 
     scheduleRegisterForFocus () {
-        this.addTimeout(() => { this.setIsRegisteredForFocus(true); }, 0) 
+        if (this.element().parentElement) {
+            this.setIsRegisteredForFocus(true);
+        } else {
+            // only need timeout when create dom element in same event?
+            this.addTimeout(() => { 
+                this.setIsRegisteredForFocus(true); 
+            }, 0) 
+        }
     }
-
 
     hasFocusedDecendantView () {
         const focusedView = WebBrowserWindow.shared().activeDomView()
@@ -65,6 +71,7 @@
             */
             //this.addTimeout(() => { this.element().focus() }, 0)
 
+            ThrashDetector.shared().didWrite("focus", this)
             this.element().focus()
         }
         return this

@@ -8,9 +8,7 @@
 
 (class TilesView_helpers extends TilesView {
     
-
-
-    // reordering support
+    // --- reordering support ---
 
     /*
     absolutePositionTiles () {

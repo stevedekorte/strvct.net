@@ -4,6 +4,7 @@
     "WebBrowserNotifications.js",
     "WebBrowserNotification.js",
     "WebDocument.js",
-    "BMStyleSheet.js"
+    "BMStyleSheet.js",
+    "ThrashDetector.js"
 ]
 

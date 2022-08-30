@@ -49,7 +49,7 @@
 
         const tid = this.addTimeout(() => { this.onLongPress() }, this.timePeriod());
         this.setTimeoutId(tid)
-        this.startDocListeners() // didFinish will stop listing
+        this.startDocListeners() // didFinish will stop listening
         return this
     }
 

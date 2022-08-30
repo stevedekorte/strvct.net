@@ -119,6 +119,8 @@
     }
 
     onDragDestinationDropped (dragView) {
+        debugger;
+        
         const insertIndex = this.indexOfTilePlaceHolder()
 
         let movedNodes = dragView.items().map(item => item.node())

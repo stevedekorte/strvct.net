@@ -79,6 +79,7 @@
         this.gestureRecognizers().append(gr)
         gr.setViewTarget(this)
         gr.start()
+        //console.log(this.typeId() + " addGestureRecognizer(" + gr.type() + ")")
         return gr
     }
 

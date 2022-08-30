@@ -82,6 +82,7 @@
     */
 
     safeWrapEvent (callback) {
+        ThrashDetector.shared().beginFrame()
         let result = undefined
         let eventCountBefore = this.eventLevelCount()
         this.incrementEventLevelCount()
@@ -89,6 +90,7 @@
         this.decrementEventLevelCount()
         assert(this.eventLevelCount() === eventCountBefore)
         this.syncIfAppropriate() // TODO: is this the best spot?
+        ThrashDetector.shared().endFrame()
         return result
     }
 

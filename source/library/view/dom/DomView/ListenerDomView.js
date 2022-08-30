@@ -149,7 +149,7 @@
     }
 
 
-    // --- mouse events ---
+    // --- registering for mouse events ---
     /*
         NOTE: onTap... is now used instead?
     */
@@ -163,6 +163,8 @@
         this.mouseListener().setUseCapture(useCapture).setIsListening(aBool) 
         return this
     }
+
+    // --- mouse events ---
 
     /*
     // avoid declaring these as it will cause all views registered for mouse events to register for mousemove
@@ -202,7 +204,7 @@
         return true
     }
 
-    // --- keyboard events ---
+    // --- registering for keyboard events ---
 
     isRegisteredForKeyboard () {
         return this.keyboardListener().isListening()
@@ -215,13 +217,15 @@
         if (aBool) {
             DomView.setTabCount(DomView.tabCount() + 1)
             e.tabIndex = DomView.tabCount()  // need this in order for focus to work on BrowserColumn?
-            //this.setCssAttribute("outline", "none"); // needed?
+            //this.setCssProperty("outline", "none"); // needed?
         } else {
             delete e.tabindex
         }
 
         return this
     }
+
+    // --- keyboard events ---
 
     onKeyDown (event) {
         //BMKeyboard.shared().showEvent(event)
@@ -239,7 +243,7 @@
         return result
     }
 
-    // --- focus and blur event handling ---
+    // --- registering for focus / blur events ---
 
     isRegisteredForFocus () {
         return this.focusListener().isListening()
@@ -253,7 +257,7 @@
         return this
     }
 
-    // --------------------------------------------------------
+    // --- focus events ---
 
     onFocusIn (event) {
         return true
@@ -279,7 +283,7 @@
         return true
     }
 
-    // ------------
+    // --- registering for clipboard events ---
 
     isRegisteredForClipboard () {
         return this.clipboardListener().isListening()

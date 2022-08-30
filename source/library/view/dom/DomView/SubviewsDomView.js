@@ -108,6 +108,7 @@
         this.willAddSubview(aSubview)
 
         this.subviews().append(aSubview)
+        ThrashDetector.shared().didWrite("appendChild", this)
         this.element().appendChild(aSubview.element());
         aSubview.setParentView(this)
 
@@ -194,8 +195,8 @@
         this.subviews().atInsert(anIndex, aSubview)
         assert(this.subviews()[anIndex] === aSubview)
 
+        ThrashDetector.shared().didWrite("atInsertElement", this)
         this.element().atInsertElement(anIndex, aSubview.element())
-        //DomElement_atInsertElement(this.element(), anIndex, aSubview.element())
         assert(this.element().childNodes[anIndex] === aSubview.element())
 
         aSubview.setParentView(this) // TODO: unify with addSubview
@@ -332,6 +333,7 @@
 
         const e = aSubview.element()
         if (this.hasChildElement(e)) { // sanity check - make we have child element 
+            ThrashDetector.shared().didWrite("removeChild", this)
             this.element().removeChild(e); // WARNING: this will trigger an immediate onBlur window event, which may cause sync actions
 
             // sanity check - make sure element was removed

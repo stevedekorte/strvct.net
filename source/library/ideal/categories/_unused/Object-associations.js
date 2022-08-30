@@ -14,7 +14,6 @@ Object.defineSlots(Object, {
 
 // ------------
 
-
 Object.defineSlots(Object.prototype, {
     
     associations: function () {

@@ -78,6 +78,7 @@
     }
 
     didInit () {
+        debugger;
         //console.log(this.typeId() + " subnodes: ", this.subnodes())
         super.didInit()
         this.setupSubnodes()

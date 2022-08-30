@@ -8,15 +8,14 @@
 
 (class TilesView_keyboard extends TilesView {
     
-
-    // --- keyboard controls, arrow navigation -----------------------------
+    // --- keyboard controls, arrow navigation ---
 
     canNavigate () {
         return this.allowsCursorNavigation() 
         //return this.allowsCursorNavigation() && this.isActiveElement()
     }
 
-    // --- controls --------------
+    // --- controls ---
 
     onMetaKeyDown (event) {
         console.log("new folder")
@@ -71,7 +70,7 @@
         }
     }
 
-    // duplicate
+    // --- duplicate ---
 
     onAlternate_d_KeyUp (event) {
         //this.debugLog(" onMetaLeft_d_KeyUp")
@@ -185,7 +184,7 @@
         return this
     }
 
-    // -----------------------------------------------
+    // --- escape ---
 
     onEscapeKeyDown (event) {
         //this.setIsColumnInspecting(false)
@@ -198,7 +197,7 @@
         //return true
     }
 	
-    // --- enter key begins tile editing ---------------------------
+    // --- enter key begins tile editing ---
 	
     onEnterKeyUp (event) {        
         if (!this.canNavigate()) { 
@@ -213,7 +212,7 @@
         return false
     }
 
-    // --- keyboard controls, add and delete actions -----------------------------
+    // --- keyboard controls, add and delete actions ---
 
     /*
     deleteTile (aTile) {

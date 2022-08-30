@@ -114,7 +114,7 @@ const max3 = function(a, b, c) {
         const div = document.createElement("div");
         document.body.appendChild(div);
         div.style.color = aColorString;
-        const style = window.getComputedStyle(div);
+        const style = window.getComputedStyle(div); debugger;
         const color = style.color;
         document.body.removeChild(div);
 

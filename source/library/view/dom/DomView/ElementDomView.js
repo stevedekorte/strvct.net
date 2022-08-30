@@ -82,8 +82,12 @@
     // --- element ---
 
     setElementId (aString) {
-        this.element().id = aString
+        this.setAttribute("id", aString)
         return this
+    }
+
+    elementId () {
+        return this.getAttribute("id")
     }
 
     setElement (e) {
@@ -95,14 +99,12 @@
                 debugger;
             }
             
-            assert(!this._element) // element shouldn't change
-            /*
+            //assert(!this._element) // element shouldn't change, if only to avoid dealing with listener issues
+            
             if (this._element) {
-                this.setIsRegisteredForFocus(false)
-                //console.warn(this.debugTypeId() + " changing element from non null to non null")
-                this.unregisterForAllEvents()
+                this.removeAllListeners()
             }
-            */
+            
 
             this._element = e
             e.setDomView(this)
@@ -128,13 +130,13 @@
     setupElement () {
         const e = this.createElement()
         this.setElement(e)
-        this.setElementId(this.typeId())
-        this.setupElementClassName()
+        this.setElementId(this.debugTypeId())
+        //this.setupElementClassName()
         return this
     }
 
     escapedElementId () {
-        const id = this.element().id
+        const id = this.elementId()
         const escapedId = id.replace(/[^a-z|\d]/gi, '\\$&');
         return escapedId
     }
@@ -169,7 +171,7 @@
         if (this._elementClassName !== aName) {
             this._elementClassName = aName
             if (this.element()) {
-                this.element().setAttribute("class", aName);
+                this.setAttribute("class", aName);
             }
         }
         return this
@@ -177,14 +179,12 @@
 
     elementClassName () {
         if (this.element()) {
-            const className = this.element().getAttribute("class");
+            const className = this.getAttribute("class");
             this._elementClassName = className
             return className
         }
         return this._elementClassName
     }
-
-
 
     loremIpsum (maxWordCount) {
         this.setInnerHtml("".loremIpsum(10, 40))
@@ -213,7 +213,7 @@
             this.makeCursorDefault() // is this correct?
         }
 
-        this.element().contentEditable = aBool ? "true" : "false"
+        this.setAttribute("contentEditable", aBool ? "true" : "false")
 
         /*
         if (this.showsHaloWhenEditable()) {
@@ -221,7 +221,7 @@
         }
         */
 
-        this.element().style.outline = "none" // correct?
+        this.setCssProperty("outline", "none")
 
         this.setIsRegisteredForKeyboard(aBool)
 
@@ -236,9 +236,10 @@
         return this
     }
 
-    isContentEditable () { // there's a separate method for contentEditable() that just accesses element attribute
+    isContentEditable () { 
+        // there's a separate method for contentEditable() that just accesses element attribute
         //const v = window.getComputedStyle(this.element(), null).getPropertyValue("contentEditable");
-        const s = this.element().contentEditable
+        const s = this.getAttribute("contentEditable")
         if (s === "inherit" && this.parentView()) {
             return this.parentView().isContentEditable()
         }
@@ -247,7 +248,7 @@
     }
 
     contentEditable () {
-        return this.element().contentEditable === "true"
+        return this.getAttribute("contentEditable") === "true"
     }
 
 

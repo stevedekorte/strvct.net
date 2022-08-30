@@ -28,6 +28,7 @@
         if (this.isSingleton()) {
             this.setShared(obj)
         }
+        obj.afterInit()
 
         return obj
     }

@@ -8,8 +8,6 @@
 
 (class TilesView_styling extends TilesView {
     
-    // --- styling ---
-
     setTileBackgroundColor (aColor) {
         this.tileStyles().unselected().setBackgroundColor(aColor)
         return this

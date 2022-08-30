@@ -44,12 +44,13 @@
 
         this.tiles().forEach(item => {
             //item.setWidth("fit-content")
-            item.setHeight(this.desiredHeight())
+            item.setHeight("fit-content")
+            //item.setHeight(this.desiredHeight()) // this could cause reflow, so let's avoid if we can
             //console.log("    prepare for down orientation on subview ", item.node().title())
         })
     }
 
-    // ---------------
+    // --- get orientation ---
 
     isVertical () {
         return this.stackView().direction() === "right"

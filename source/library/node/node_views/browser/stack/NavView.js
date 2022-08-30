@@ -19,13 +19,18 @@
     }
 
     targetWidth () {
+        const defaultWidth = 300
         if (this.node()) {
-            const w = Math.max(0, this.node().nodeMinTileWidth())
+            const minWidth = this.node().nodeMinTileWidth()
+            const maxWidth = 600
+            let w = defaultWidth
+            w = Math.max(defaultWidth, minWidth)
+            w = Math.min(w, maxWidth)
             if (w) {
                 return w
             }
         }
-        return 300
+        return defaultWidth
     }
 
     targetHeight () {
@@ -50,7 +55,6 @@
         //this.setTransition("opacity 0.5s ease-in-out")
         //this.setTransition("flex-basis 0.1s")
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
-
 
         /*
         this.setHeaderClass(ColumnGroupHeader)

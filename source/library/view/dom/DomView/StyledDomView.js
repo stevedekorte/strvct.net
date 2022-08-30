@@ -101,7 +101,7 @@
     }
 
     select () {
-        this.setIsSelected(true)		
+        this.setIsSelected(true)
         return this
     }
 
@@ -179,22 +179,29 @@
     }
 
     themeValueForAttribute (attributeName) {
+        /*
         const fullPath = this.themePathArray()
         fullPath.push(attributeName)
-        //console.log("fullPath = ", fullPath)
+        const fullPathString = fullPath.join(" / ")
+        //console.log("fullPath = ", fullPathString)
+        //debugger
 
         const theme = BMThemeResources.shared().activeTheme()
         const attribtueNode = theme ? theme.nodeAtSubpath(fullPath) : null
+        
         if (attribtueNode) {
             const value = attribtueNode.value()
             if (!value) {
-                //console.log("no color found for ", fullPath)
+                console.log("no color found for ", fullPathString)
                 return null
             }
+            console.log("theme: " + fullPathString + " = " + value)
             return value
         }
         //console.log("no color found for ", fullPath)
 
+        console.log("theme: " + fullPathString + " = null")
+        */
         return null
     }
 

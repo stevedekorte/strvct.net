@@ -252,7 +252,7 @@
     startDocListeners () {
         this.stopDocListeners()
 
-        const listeners = this.newListeners().map((listener) => {
+        const listeners = this.newListeners().map(listener => {
             listener.setUseCapture(true)
             //listener.setListenTarget(document.body)
             listener.setListenTarget(window)

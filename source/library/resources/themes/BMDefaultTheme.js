@@ -8,13 +8,20 @@
 
 (class BMDefaultTheme extends BMTheme {
     
+    /*
+    initPrototype () {
+        this.setShouldScheduleDidInit(true)
+    }
+    */
 
     init () {
-        super.init() 
+        this.setShouldScheduleDidInit(true)
+        super.init()
         return this
     }
 
     didInit () {
+        debugger;
         super.didInit()
         this.setupAsDefault() 
     }

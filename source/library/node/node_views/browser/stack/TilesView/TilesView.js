@@ -127,7 +127,7 @@
         return maxWidth	
     }
 	
-    // --- sync -----------------------------
+    // --- sync ---
 
     syncFromNode () {
         this.syncOrientation()
@@ -266,15 +266,16 @@
         return null
     }
 
-    // editing
+    // --- editing ---
 
     onDoubleClick (event) {
         //this.debugLog(".onDoubleClick()")
         return true
     }
 
-    // ----
+    // --- debugging ---
 
+    /*
     setNode (aNode) {
         if (this.node() && Type.isNull(aNode)) {
             console.log(this.debugTypeId() + " setNode(null)")
@@ -283,7 +284,7 @@
         super.setNode(aNode)
         return this
     }
-
+    */
 
     // --- browser drop ---
 

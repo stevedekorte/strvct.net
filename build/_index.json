@@ -61,8 +61,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_init.js",
-    "size": 2385,
-    "hash": "DBI1FjgSegmld9zQMpowea3OEUblhGQTGQU8IRqUhYs="
+    "size": 2423,
+    "hash": "j179//v2l8KSgy2itGp413dek1iKI4BXTe5nXQnTmeg="
   },
   {
     "path": "source/library/ideal/categories/object/Object_notification.js",
@@ -96,8 +96,8 @@
   },
   {
     "path": "source/library/ideal/categories/String_ideal.js",
-    "size": 13907,
-    "hash": "sFe6rAFffep8vq17PspPdexNbeto80G02ty9ZsaGGWQ="
+    "size": 13864,
+    "hash": "BKtSMZyWO+lCJH8Yv9RUGGmw3rJzsN86ifEK+biFjvw="
   },
   {
     "path": "source/library/ideal/categories/Number_ideal.js",
@@ -146,8 +146,8 @@
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 15722,
-    "hash": "iiTVvt4jzyOL1rNG8WMF4lHlEpfb00ZeEwZITugvFfA="
+    "size": 15746,
+    "hash": "p/3AjWp2SYvtyHMZ5K5owxw2Evi9fbXg/btqVBrDqWk="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -236,8 +236,8 @@
   },
   {
     "path": "source/library/notification/SyncScheduler.js",
-    "size": 8457,
-    "hash": "lTx56U0KxF2hJ34BC6R91n9ZxbFk6H1kjFyjYeH/Jhg="
+    "size": 8561,
+    "hash": "WDpnO7fjPUC2kV+p3TCQ3tdWHcWNRBB8iVkCfRu17Fo="
   },
   {
     "path": "source/library/notification/notifications/BMNotification.js",
@@ -321,8 +321,8 @@
   },
   {
     "path": "source/library/view/events/devices/Mouse.js",
-    "size": 3034,
-    "hash": "Qk1j9+vldqSaCgTQY6noD/E7F/BvPawPx9Mfu2NsnUs="
+    "size": 3512,
+    "hash": "TpAba6qmeK6z0zkJ4IoZxxFCOd5Qb5PkKAkjwuBRgeI="
   },
   {
     "path": "source/library/view/events/devices/TouchScreen.js",
@@ -346,8 +346,8 @@
   },
   {
     "path": "source/library/view/events/listening/EventManager.js",
-    "size": 4335,
-    "hash": "C49wtAjc7KGzer82UklIQDZIQDCxHO0Gpy8aaa61SIo="
+    "size": 4423,
+    "hash": "K3q6eodPDlXEOdKkHqKEUsMKZbi2Ee5qntmvAvl7D/g="
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",
@@ -456,13 +456,13 @@
   },
   {
     "path": "source/library/view/events/gesturing/GestureRecognizer.js",
-    "size": 25513,
-    "hash": "Zf07y9k8YUhpkUst5RHloKkMPhZX/fzTzB2S4/UfmGk="
+    "size": 25511,
+    "hash": "xpQstNPz+y/EkFUy7muiRq8i10ZlWRsSyDmC/rq1Khs="
   },
   {
     "path": "source/library/view/events/gesturing/gestures/LongPressGestureRecognizer.js",
-    "size": 2990,
-    "hash": "YjMykD/74uuZCXvV22kk6+ktKNOn5p09AXnzmHlV4wY="
+    "size": 2992,
+    "hash": "5x8PLh4TpTZYihP3p1I95HsXTU8TM3NC0k7FKULd7SY="
   },
   {
     "path": "source/library/view/events/gesturing/gestures/SlideGestureRecognizer.js",
@@ -575,6 +575,11 @@
     "hash": "FuRKhWg8HiYbrI9NRd9rIA6g2+5cBMFfOwfHTqLlzdw="
   },
   {
+    "path": "source/library/view/webbrowser/ThrashDetector.js",
+    "size": 18432,
+    "hash": "9wdNo9NjOGkHhOAXewNa1KBF741GDauFFLsxpFsZCtE="
+  },
+  {
     "path": "source/library/view/dom/Attributes/DomTransition.js",
     "size": 2073,
     "hash": "Hqi5yHhbsp5HCrsUmPNHAu+0bXH6ISUjY88jNQxr2cg="
@@ -601,8 +606,8 @@
   },
   {
     "path": "source/library/view/dom/Helpers/DomTextTapeMeasure.js",
-    "size": 2627,
-    "hash": "lNQ/3QqFhkMtQIHECkFRBS286bvIyZhLcIJLcKqa6+E="
+    "size": 3485,
+    "hash": "Xdm4PcGjB2LbVUr9K2dhbkL58EvzX96baXM0A1dCilM="
   },
   {
     "path": "source/library/view/dom/Helpers/DomCssInspector.js",
@@ -611,33 +616,33 @@
   },
   {
     "path": "source/library/view/dom/Helpers/CssColor.js",
-    "size": 8885,
-    "hash": "FVoFHyhl8MWkteQz9WeyZYpYtvSFQrFfTKyG8YwOqok="
+    "size": 8895,
+    "hash": "t7No5pGhKMbE7E7bYxJRnf377JzDmaQ+pXHSq9ePf1I="
   },
   {
     "path": "source/library/view/dom/Helpers/Node-helpers.js",
-    "size": 1890,
-    "hash": "yerRFfiDP8Y9yius/TyY8QitEsbhdf+Jysd3c6l63s8="
+    "size": 5224,
+    "hash": "s/A3+4So1qkxm5AEc/6x32DIMG70wQFmkshIVf4V+JI="
   },
   {
     "path": "source/library/view/dom/DomView/ElementDomView.js",
-    "size": 6890,
-    "hash": "1AeqENvJTvgqnaWw+f38Pu72omLc2AFLE5qAArN2lZQ="
+    "size": 6849,
+    "hash": "RRqjUhnwpKKrmaabrKRxHA7peUPjlM4z5xosyCwEDpA="
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
-    "size": 56184,
-    "hash": "Tf9WY+ahRwuvvbMvdDN+pVxuIzbqAOs2hBl9B344bUI="
+    "size": 60050,
+    "hash": "ECHWA6mkUFrHAbIXeeV58h949x32zTTC/S2nzA5Sj7A="
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
-    "size": 17798,
-    "hash": "noOlwOIS1l7Q2PV9aOSjxXJsrsc8EcFmQ+PfDBJwpks="
+    "size": 17910,
+    "hash": "fgm82olKjP4/liX8srBm2m9CtegAyZUAvw+RqKjl9uk="
   },
   {
     "path": "source/library/view/dom/DomView/ListenerDomView.js",
-    "size": 7448,
-    "hash": "tF3MEjd2hYPtJHQzMfrqfrZMWV1ckYSkVxRgTR2vHAU="
+    "size": 7538,
+    "hash": "/XWUkIQXKAyN4zRchGLzHbK+rSeddAxtx2GLK66z/GQ="
   },
   {
     "path": "source/library/view/dom/DomView/VisibleDomView.js",
@@ -646,13 +651,13 @@
   },
   {
     "path": "source/library/view/dom/DomView/GesturableDomView.js",
-    "size": 5871,
-    "hash": "3Tp61Ps5SmYKP2vYLeXgsWaUywjWdc1iXsUiuaiTpWc="
+    "size": 5953,
+    "hash": "AplKoRwVRulFT0YNxhZpj7O/hapcccnkd+SbmdryNQk="
   },
   {
     "path": "source/library/view/dom/DomView/ResponderDomView.js",
-    "size": 7524,
-    "hash": "mfBMtJy142DdYriHoQ9jcVwRuhvfVJkXh9v71AUsDy0="
+    "size": 7808,
+    "hash": "BVHTZP8EiIGSSHfX6/7Os4LROzCHpWdZx+CCW/fkMtY="
   },
   {
     "path": "source/library/view/dom/DomView/ControlDomView.js",
@@ -671,8 +676,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/DomView_animations.js",
-    "size": 8477,
-    "hash": "QS5cff09b8PV+7pZAP1PTJKAjYEA4Jyd6RsgZOd/dSM="
+    "size": 8537,
+    "hash": "LeZsGAiIn+q3KxPMqx+gf9rHWFcJpJbfMLwsgTUwUsc="
   },
   {
     "path": "source/library/view/dom/DomView/DomView_browserDragAndDrop.js",
@@ -686,13 +691,13 @@
   },
   {
     "path": "source/library/view/dom/DomView/StyledDomView.js",
-    "size": 5348,
-    "hash": "85DwPvt0HDMs1a1CA8XmdKha7E9KUW5cB/vav/GWoaY="
+    "size": 5586,
+    "hash": "ish1yWQvaFF9QRqovE8rFSEw6NftHBF1e9BRTbIlXEM="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/BooleanView.js",
-    "size": 4345,
-    "hash": "PdOYELI57+R6b3FM/HZ6NpGWcEeOG38Y2K06FxvUBuA="
+    "size": 4416,
+    "hash": "eT9IRkKiSqZRGSybseNelRfQZoYytUd10FUEwQE0lOY="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/ButtonView.js",
@@ -725,9 +730,14 @@
     "hash": "8/K7XVgfRS7ONAT4uyFLfjpdQKsFkEjWbBmIOE+i8H8="
   },
   {
+    "path": "source/library/view/dom/DomView/subclasses/SvgIconCache.js",
+    "size": 4510,
+    "hash": "57aLJkuyXB6Zz4jOp+pGe9y/WkoEthceGyA5jgqR4VI="
+  },
+  {
     "path": "source/library/view/dom/DomView/subclasses/SvgIconView.js",
-    "size": 5170,
-    "hash": "2E8fFSyhqhFljaBXw5p8S2Who2TdJhUOiBFlv67mhGU="
+    "size": 4769,
+    "hash": "IeLZLxdyctmJj3DOemT8aJ7MgeMS3Ma9AS9TZ+obCIw="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
@@ -1061,8 +1071,8 @@
   },
   {
     "path": "source/library/node/node_views/NodeView.js",
-    "size": 8343,
-    "hash": "xD2lKi7zGkQnY5I48Bimo0gonwh2mH9GbEF6xFG+BtA="
+    "size": 8544,
+    "hash": "BBg1Nc0qIjyacFkfONFe97Xdfq7hGL75xwiVWbOgHgY="
   },
   {
     "path": "source/library/node/node_views/ImageWellView.js",
@@ -1081,13 +1091,13 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 17843,
-    "hash": "yRPlnu+aCmKAjKe3vIiX3YBoKPq/LVykCtvGEJqPIb0="
+    "size": 18945,
+    "hash": "ZoRtZflxL+jTSrtOK2r001FIJCcNUXCNuzgaHMe7R/U="
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
-    "size": 7591,
-    "hash": "4xoQrdCnBnXyUBWEb8gLDr8lR2OA1Lqi/GhPXmvyJ18="
+    "size": 7779,
+    "hash": "kXfg4l/FPP+euV+Qp1vqdD62hTzHSiFaUaYEFTWxoM0="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackScrollView.js",
@@ -1096,43 +1106,43 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView.js",
-    "size": 7312,
-    "hash": "Er0MBN3WBUM3b9wMTIKNDZqQgDDfsuNeyxligSvovNs="
+    "size": 7320,
+    "hash": "vNQ3gwpYnJRb65EIJWH+reYbWh1dHcY3w94roldltWI="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_dragViewProtocol.js",
-    "size": 9741,
-    "hash": "mgj9TndH0ZrZMyFndEzr74i8XjqFV8TtYXFFaKzQRss="
+    "size": 9768,
+    "hash": "PqKcuKyRkvqM4zjsrZHSKhl7UGpOEMKgJC43xwSxE5E="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_selection.js",
-    "size": 11709,
-    "hash": "d4ScHCuRGzznPMlzqpoM9/qR6ErIm14kmfKeP4e2YYs="
+    "size": 11737,
+    "hash": "njsWUljIB+mOuTOrJ7ER70CcOM4Uks61GjWKDsoQkXo="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_orientation.js",
-    "size": 4497,
-    "hash": "WY3u2k5QZY8CdWUiPxBNy5jzXEMEQskvTYiCdhHj97U="
+    "size": 4602,
+    "hash": "TE+oth0ECXc2PGiD0U+/spDAv31OtLxQy3EpBipTxFc="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_keyboard.js",
-    "size": 5655,
-    "hash": "d1/6TYHvZDEI/Qbr+VbKBx2kv1ci//Yty8aH7zv/K18="
+    "size": 5542,
+    "hash": "jH/Uk3hgwdQPWSSKeRtiw8MXlVQx462Uf09GXj2AAUI="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_gestures.js",
-    "size": 6046,
-    "hash": "jFRo+mz2GjQb0syR/DuuYaXVuXHl+t20WZ8IGlu3cLk="
+    "size": 6224,
+    "hash": "zz+6tGXT+vpmAZb/lKfqDi1e7P4pXfwE0DR/MlIZKB0="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_helpers.js",
-    "size": 3493,
-    "hash": "ww4JaYOLqChcbEWTTtsdV8HBaasd/PiyVfBbZtwD0qc="
+    "size": 3499,
+    "hash": "qHX+554b+zJi/BIWRf7gYY7nJyO1vAcuPyMTATEmw4M="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile.js",
-    "size": 13740,
-    "hash": "0bnhE1kfbL6K7zRVZZ4ROe6jQANwMyEdT4TWA9GlCek="
+    "size": 13528,
+    "hash": "a8qb/+tW9tGorxW7jv59VWlCQHO5D5SCAkdSmSijK7Y="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_dragging.js",
@@ -1156,8 +1166,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/TitledTile.js",
-    "size": 7583,
-    "hash": "OTnmHX0zr735zcVkj7cILQGSqb51YKA5KqmhhFaWPfY="
+    "size": 7600,
+    "hash": "VSutdUPuuVji+2xKZ69qNle9KoVDrPyCIRp+wyMUTFo="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BMTextNodeTile.js",
@@ -1166,8 +1176,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbTile.js",
-    "size": 7456,
-    "hash": "rCXNJryltdxVa5EnOPhEaz7HLfW4ohX/UHov/IVnUcA="
+    "size": 7788,
+    "hash": "xCc9xSNo3odMuULGQO19S6iiPXQ3hwJhCszI1qBM0cc="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/HeaderTile.js",
@@ -1336,8 +1346,8 @@
   },
   {
     "path": "source/library/resources/sounds/WASound.js",
-    "size": 4848,
-    "hash": "ZUb1O1DK6thx/GJaWsYjMIwHpSlSNnYLFlQEs4yrnbI="
+    "size": 4830,
+    "hash": "XJqDeD50nTKTokAzyeilrvRZ3WmOFsZlM428rYBb2dY="
   },
   {
     "path": "source/library/resources/sounds/WAContext.js",
@@ -1361,8 +1371,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeResources.js",
-    "size": 1426,
-    "hash": "Z5NIDy5XNE3V69Y4Tt71/A8YZqeZawjuaYsGyZVegWQ="
+    "size": 1428,
+    "hash": "b8JCXNTIsW6kEkK8/l+fj9WXcrOhwGrzqcifxJOaaQo="
   },
   {
     "path": "source/library/resources/themes/BMTheme.js",
@@ -1371,8 +1381,8 @@
   },
   {
     "path": "source/library/resources/themes/BMDefaultTheme.js",
-    "size": 520,
-    "hash": "xvCHx423gHyCKPCw3tci2N6JzD1QSnRg3OFro6+0Wek="
+    "size": 668,
+    "hash": "MO/bpNa0MAG8LJw/aUfoAAT0/CVD9k2mXHK8OCpSHdo="
   },
   {
     "path": "source/library/resources/themes/BMThemeLevel.js",
@@ -1386,8 +1396,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 4654,
-    "hash": "hAk43NwmOa1hSsJtLOMEzDMIs61dlUbtxlIVuKtwRp8="
+    "size": 4672,
+    "hash": "QkXIFc0Tep8Bq75Jne3/pVMNI282Mnk5rvy3g3h/cok="
   },
   {
     "path": "source/library/resources/themes/BMThemeFolder.js",
@@ -1600,11 +1610,6 @@
     "hash": "jQS/Yh4ImvHby2UkoaWfzhyqiaQjqYK3xSRVSypSnMc="
   },
   {
-    "path": "resources/icons/add-user-white.svg",
-    "size": 1306,
-    "hash": "nDqDVCrAxT+TqdoAmkJ1ihE8wB4oA1VDk7Ei3TZpwEg="
-  },
-  {
     "path": "resources/icons/add-user.svg",
     "size": 1334,
     "hash": "G3vJmqMsDx44Xxm4u/ckVEADUy/ZFc9FVymcZshzqn8="
@@ -1615,32 +1620,22 @@
     "hash": "WlgZXuN8/N0m84AY8hOU4I4FXBv1oHaxEd87/C3o/cM="
   },
   {
-    "path": "resources/icons/appicon-black.svg",
+    "path": "resources/icons/appicon.svg",
     "size": 2037,
     "hash": "t+5OBBIgXy5OQEkIU6Ue0b1sze9Xjw2Ztu7BpwIaX+w="
   },
   {
-    "path": "resources/icons/appicon.svg",
-    "size": 2037,
-    "hash": "4pgco+Y0xjvhqaMznVFc8VPgbTIM0Ymt2fL4EBRAkdw="
-  },
-  {
-    "path": "resources/icons/at-white.svg",
+    "path": "resources/icons/at.svg",
     "size": 1706,
     "hash": "VpBTIxMt5RV0eGjsE/wvF+5kSnK8LHAxhqj/TiioOfg="
   },
   {
-    "path": "resources/icons/bell-white.svg",
+    "path": "resources/icons/bell.svg",
     "size": 1112,
     "hash": "n9qglpxMT12VEa23aKVoJBbVqo8/1kerFBAAWiLVDt4="
   },
   {
-    "path": "resources/icons/black-envelope.svg",
-    "size": 1174,
-    "hash": "r+DqtC+TmBfEaxgRMODDux9u4Y2sUK8fxyGA1jmn1Fk="
-  },
-  {
-    "path": "resources/icons/bubble-white.svg",
+    "path": "resources/icons/bubble.svg",
     "size": 1086,
     "hash": "hgnfaeTy3qL+zmYpWPVaPrBcLKc43XTBhPvJUF2lPP8="
   },
@@ -1680,11 +1675,6 @@
     "hash": "3K4gy979lDvZGFWOMyYLi5+CBbnAFZBQl29pX2wXiOk="
   },
   {
-    "path": "resources/icons/close-white.svg",
-    "size": 1017,
-    "hash": "/+K+twBekPBk/jm+UY0vKV8OIrOgPD4hzfiCPx6df68="
-  },
-  {
     "path": "resources/icons/close.svg",
     "size": 1197,
     "hash": "EiJrJ+lwJBvp+sDNzcq5JUq1fh1IOe9Mh16JpFdFtxM="
@@ -1710,11 +1700,6 @@
     "hash": "MBPZxqL9aF/vtTmhzgZedSAbrncX7ibco4qbSKIrUzo="
   },
   {
-    "path": "resources/icons/envelope-white.svg",
-    "size": 1117,
-    "hash": "y1egJBulKEvScnIY5VyBxZEZ7+VyvNCrpbKzJrXVVDY="
-  },
-  {
     "path": "resources/icons/envelope.svg",
     "size": 1174,
     "hash": "r+DqtC+TmBfEaxgRMODDux9u4Y2sUK8fxyGA1jmn1Fk="
@@ -1730,17 +1715,12 @@
     "hash": "2JN1P4ZuKhABMPWM5M72QxE2Gan/D13Vj33dDxnS4oA="
   },
   {
-    "path": "resources/icons/gear-filled-white.svg",
-    "size": 2513,
-    "hash": "FN76PIIF2wybwss/FWHtZGArF+CRxeYO500tUR2tBJk="
-  },
-  {
     "path": "resources/icons/gear-filled.svg",
     "size": 2553,
     "hash": "H8n6txSR8OPjJ1KSRmkSL/ezjOo1j+qbXwPeNzZ7Ukc="
   },
   {
-    "path": "resources/icons/gear-white.svg",
+    "path": "resources/icons/gear-outline.svg",
     "size": 4219,
     "hash": "9pQrK+g6wmWlCP+QYiSkQdQxlXc1csYc6fPx3aA/uQE="
   },
@@ -1760,27 +1740,22 @@
     "hash": "p5d73A4yhnjUsv+/myUy6WgFq8Uox7C7fkJvenIQqGo="
   },
   {
-    "path": "resources/icons/home-white.svg",
-    "size": 1517,
-    "hash": "SVLQqcIhLGtISndpQqIF3otJIv7oUELG+KkLhLgFLz4="
-  },
-  {
     "path": "resources/icons/home.svg",
     "size": 1535,
     "hash": "7etgdqxxML51v7HAti6CDpwAZD/yJI+MGe/icn9fJKM="
   },
   {
-    "path": "resources/icons/home2-white.svg",
+    "path": "resources/icons/home2.svg",
     "size": 827,
     "hash": "pY5Bn1S9kd4BKw2pnVoxfuouEjer4cA2MbpIhgHmHpQ="
   },
   {
-    "path": "resources/icons/home3-white.svg",
+    "path": "resources/icons/home3.svg",
     "size": 817,
     "hash": "wAqiec/gv57UAl5Y2oZKnHTwJbDTGuj1JN+xhFVNhG0="
   },
   {
-    "path": "resources/icons/home4-white.svg",
+    "path": "resources/icons/home4.svg",
     "size": 768,
     "hash": "mOsYdDpgGyHIR+1SlprovucszrXWRr23T0k2Y+9H57w="
   },
@@ -1790,29 +1765,19 @@
     "hash": "zugXvoo7bEkU3p7ud26HNVZq0Ue1+fKc/xRoSeo8rMo="
   },
   {
-    "path": "resources/icons/lightning-white.svg",
+    "path": "resources/icons/lightning.svg",
     "size": 1097,
     "hash": "byeFMX9KTSCAnseNPkR3YlDrK3oIu3A0v85/gCUQzVo="
   },
   {
-    "path": "resources/icons/lightning2-white.svg",
+    "path": "resources/icons/lightning2-outline.svg",
     "size": 1270,
     "hash": "TOWeXifWtkt3rb+SfZRdfOSgsnJ+MBAgVoJ3Huog8gc="
   },
   {
-    "path": "resources/icons/lightning3-white.svg",
-    "size": 812,
-    "hash": "1sBBvqKrOPKg7/8EYnUy7BuhC4xI6bx0lKNJSlH1yKY="
-  },
-  {
-    "path": "resources/icons/mail-white.svg",
+    "path": "resources/icons/mail.svg",
     "size": 944,
     "hash": "aM3a3nfJzTqL0mX2UjE/HTi9U7l4DeizjPX/sfjWtq8="
-  },
-  {
-    "path": "resources/icons/plus-white.svg",
-    "size": 532,
-    "hash": "/Ew5ZOaQohYdwbuVyPFIdwKysueH2qhwcKvKk4kTozc="
   },
   {
     "path": "resources/icons/plus.svg",
@@ -1825,14 +1790,14 @@
     "hash": "j3g12JFHuGBfh7lg6vO6rTxwDp2LHWNZKmZ6Y6bmSDU="
   },
   {
-    "path": "resources/icons/repost-white.svg",
+    "path": "resources/icons/repost-filled.svg",
     "size": 1625,
     "hash": "nycpp/f9Qm0wnDbcDA2ZfU2RxsmEw3E4EBoi4M0z+3s="
   },
   {
-    "path": "resources/icons/repost.svg",
-    "size": 600,
-    "hash": "iwFmBO7AAXEKXSATFccrq7uGynsVvAfAIONXmF21W54="
+    "path": "resources/icons/repost-outline.svg",
+    "size": 483,
+    "hash": "egYlDUNWyrcao5Pe9QuTMxf44YVTl8mwKlfK2Rkj82o="
   },
   {
     "path": "resources/icons/right-arrow.svg",
@@ -1845,11 +1810,6 @@
     "hash": "Q7VHsfJJaELaMtz3aphEYSpjqcJAhZXwXBe/tv7eW/E="
   },
   {
-    "path": "resources/icons/right-white.svg",
-    "size": 761,
-    "hash": "SVoQqxb3Ms7FIGSBK++vk20/2zBku2FVXY2gov6+3Mg="
-  },
-  {
     "path": "resources/icons/right.svg",
     "size": 444,
     "hash": "bVisyfTZx1jir+oA7NN9VSZOBIfMszIDHRiDw7yANKU="
@@ -1858,11 +1818,6 @@
     "path": "resources/icons/sandwich-menu.svg",
     "size": 1198,
     "hash": "49OXcpgTtJIVZxjzqWuYYuZkOJzxxGx+/ZG/Ml0F3Cc="
-  },
-  {
-    "path": "resources/icons/search-white.svg",
-    "size": 1220,
-    "hash": "pf8YUNABHNsgbf0NQqn6jGGYIrCuBzZ5i2t19T69g6Q="
   },
   {
     "path": "resources/icons/search.svg",
@@ -1905,29 +1860,14 @@
     "hash": "v7EiSrgGdKSh9heyWh/Bg/ms9rmUhxQ63ypiHsaJQqE="
   },
   {
-    "path": "resources/icons/user-white.svg",
-    "size": 1492,
-    "hash": "8z1w7HTqbp814SmfcFcyWneCXweZ1PExnjYUgcdckjU="
-  },
-  {
     "path": "resources/icons/user.svg",
     "size": 1059,
     "hash": "vNJ5AcoF0U/kTF1CyS5MSByyxqWPqyhKeKe3ZXG5Vo4="
   },
   {
-    "path": "resources/icons/users-white.svg",
-    "size": 1973,
-    "hash": "l4rQFVRTVlj6uxfzdUdN5P0tGx1/AZEp9znh6JX8oXo="
-  },
-  {
     "path": "resources/icons/users.svg",
     "size": 2007,
     "hash": "csIEoj2jXHTZtLQpfF6gPOPSXdrDvCz2lbBUaSZUTH0="
-  },
-  {
-    "path": "resources/icons/write-white.svg",
-    "size": 1072,
-    "hash": "plTcSUUTTMfejpps/uii+udMzReLmbHQBhCx5pCDYas="
   },
   {
     "path": "resources/icons/write.svg",

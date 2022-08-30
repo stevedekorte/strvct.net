@@ -21,12 +21,12 @@
         this.newSlot("pushedSlotValues", undefined)
     }
 
-    /*
+    
     init () {
         super.init()
+        //this.setDisplay("block")
         return this
     }
-    */
 
     // --- push/pop slot values ---
     // useful for pushing a css attribute using it's normal getter/setter methods
@@ -86,9 +86,9 @@
 
     pushAttribute (name, newValue) {
         const stack = this.pushedAttributesAt(name)
-        const oldValue = this.getCssAttribute(name)
+        const oldValue = this.getCssProperty(name)
         stack.push(oldValue)
-        this.setCssAttribute(name, newValue) // NOTE: bypasses css change callbacks
+        this.setCssProperty(name, newValue) // NOTE: bypasses css change callbacks
         return this
     }
 
@@ -98,7 +98,7 @@
             throw new Error("attempt to pop empty css attribute stack")
         }
         const oldValue = a.pop()
-        this.setCssAttribute(name, oldValue) // NOTE: bypasses css change callbacks
+        this.setCssProperty(name, oldValue) // NOTE: bypasses css change callbacks
         return this
     }
     */
@@ -141,27 +141,86 @@
     setCssDict (aDict) {
         Reflect.ownKeys(aDict).forEach((k) => {
             const v = aDict[k]
-            this.setCssAttribute(k, v)
+            this.setCssProperty(k, v)
         })
         return this
     }
 
-    setCssAttribute (key, newValue, didChangeCallbackFunc) {
+    // --- attributes ---
+
+    setAttribute (k, v) {
+        ThrashDetector.shared().didWrite(k, this)
+        this.element().setAttribute(k, v)
+        return this
+    }
+
+    getAttribute (k) {
+        ThrashDetector.shared().didRead(k, this)
+        const v = this.element().getAttribute(k)
+        if (v === null) {
+            let result = this.element()[k]
+            assert(result !== null)
+            //console.log("getAttribute('" + k + "') = ", v)
+            //console.log("element['" + k + "'] = ", result)
+            //console.log("-----------------------> getAttribute '" + k + "' ", result) 
+            //throw new Error("move this to another method")
+            return result
+        }
+        return v
+    }
+
+    removeAttribute (k) {
+        if (this.element().hasAttribute(k)) {
+            ThrashDetector.shared().didWrite(k, this)
+            this.element().removeAttribute(k)
+        }
+        return this
+    }
+
+    // --- css properties ---
+
+    setSpecialCssProperty (k, newValue) {
+        ThrashDetector.shared().didWrite(k, this)
+        this.cssStyle()[k] = newValue
+        return this
+    }
+
+    getSpecialCssProperty (k) {
+        ThrashDetector.shared().didRead(k, this)
+        return this.cssStyle()[k]
+    }
+
+    removeCssProperty (k) {
+        ThrashDetector.shared().didWrite(k, this)
+        this.element().style.removeProperty(k)
+        return this
+    }
+
+    setCssProperty (key, newValue, didChangeCallbackFunc) {
+
+        // sanity checks
+
         assert(Type.isString(key))
+
+        if (key[0] === "-") {
+            throw new Error("use setSpecialCssProperty instead")
+            //this.setSpecialCssProperty(key, newValue)
+            //return this
+        }
 
         const style = this.cssStyle()
         const doesSanityCheck = false
-        const oldValue = style[key]
+        const oldValue = style.getPropertyValue(key)
 
         if (String(oldValue) !== String(newValue)) {
             if (newValue == null) {
-                //console.log("deleting css key ", key)
-                //delete style[key]
-                style.removeProperty(key)
-                //console.log(this.cssStyle()[key])
+                this.removeCssProperty(key)
             } else {
-                style[key] = newValue
+                //style[key] = newValue
+                style.setProperty(key, newValue)
+                ThrashDetector.shared().didWrite(key, this)
 
+                /*
                 if (doesSanityCheck) {
                     // sanity check the result
                     // but ignore these keys as they have equivalent functional values 
@@ -179,15 +238,19 @@
                         "border-color": true
                     }
 
-                    const resultValue = style[key]
-                    if (!(key in ignoredKeys) && resultValue != newValue) {
-                        let msg = "DomView: style['" + key + "'] not set to expected value\n";
-                        msg += "     set: <" + typeof(newValue) + "> '" + newValue + "'\n";
-                        msg += "     got: <" + typeof(resultValue) + "> '" + resultValue + "'\n";
-                        console.warn(msg)
-                        //throw new Error(msg) 
+                    if (!(key in ignoredKeys)) {
+                        //const resultValue = style[key]
+                        const resultValue = style.getPropertyValue(key)
+                        if (resultValue != newValue) {
+                            let msg = "DomView: style['" + key + "'] not set to expected value\n";
+                            msg += "     set: <" + typeof(newValue) + "> '" + newValue + "'\n";
+                            msg += "     got: <" + typeof(resultValue) + "> '" + resultValue + "'\n";
+                            console.warn(msg)
+                            //throw new Error(msg) 
+                        }
                     }
                 }
+                */
             }
 
             if (didChangeCallbackFunc) {
@@ -198,22 +261,35 @@
         return this
     }
 
-    getCssAttribute (key, errorCheck) {
+    getCssProperty (key, errorCheck) {
+        /*
         if (errorCheck) {
-            throw new Error("getCssAttribute called with 2 arguments")
+            throw new Error("getCssProperty called with 2 arguments")
         }
-        return this.cssStyle()[key]
+        */
+
+        /*
+        if (key[0] === "-") {
+            throw new Error("use getSpecialCssProperty instead")
+            return this.getSpecialCssProperty(key)
+        }
+        */
+
+        ThrashDetector.shared().didRead(key, this)
+
+        //return this.cssStyle()[key]
+        return this.cssStyle().getPropertyValue(key)
     }
 
     // css px attributes
 
-    setPxCssAttribute (name, value, didChangeCallbackFunc) {
-        this.setCssAttribute(name, this.pxNumberToString(value), didChangeCallbackFunc)
+    setPxCssProperty (name, value, didChangeCallbackFunc) {
+        this.setCssProperty(name, this.pxNumberToString(value), didChangeCallbackFunc)
         return this
     }
 
-    getPxCssAttribute (name, errorCheck) {
-        const s = this.getCssAttribute(name, errorCheck)
+    getPxCssProperty (name, errorCheck) {
+        const s = this.getCssProperty(name, errorCheck)
         if (s.length) {
             return this.pxStringToNumber(s)
         }
@@ -222,12 +298,14 @@
 
     // computed style
 
-    getComputedCssAttribute (name, errorCheck) {
+    getComputedCssProperty (name, errorCheck) {
+        debugger; // getComputedStyle forces a layout - make sure it's needed 
         return window.getComputedStyle(this.element()).getPropertyValue(name)
     }
 
-    getComputedPxCssAttribute (name, errorCheck) {
-        const s = this.getComputedCssAttribute(name, errorCheck)
+    getComputedPxCssProperty (name, errorCheck) {
+        debugger; // getComputedCssProperty forces a reflow? - make sure it's needed 
+        const s = this.getComputedCssProperty(name, errorCheck)
         if (s.length) {
             return this.pxStringToNumber(s)
         }
@@ -237,12 +315,12 @@
     // --- css properties ---
 
     setPosition (s) {
-        this.setCssAttribute("position", s)
+        this.setCssProperty("position", s)
         return this
     }
 
     position () {
-        return this.getCssAttribute("position")
+        return this.getCssProperty("position")
     }
 
     // pointer events
@@ -266,11 +344,11 @@
 
     setPointerEvents (s) {
         assert(this.pointerEventsValidValues().contains(s))
-        return this.setCssAttribute("pointer-events", s)
+        return this.setCssProperty("pointer-events", s)
     }
 
     pointerEvents () {
-        return this.getCssAttribute("pointer-events")
+        return this.getCssProperty("pointer-events")
     }
 
     // transform
@@ -281,12 +359,12 @@
 
     setTextTransform (v) {
         assert(this.textTransformValidValues().contains(v))
-        this.setCssAttribute("text-transform", v)
+        this.setCssProperty("text-transform", v)
         return this
     }
 
     textTransform () {
-        return this.getCssAttribute("text-transform")
+        return this.getCssProperty("text-transform")
     }
 
     // word wrap
@@ -297,23 +375,23 @@
 
     setWordWrap (v) {
         assert(this.wordWrapValidValues().contains(v))
-        this.setCssAttribute("word-wrap", v)
+        this.setCssProperty("word-wrap", v)
         return this
     }
 
     wordWrap () {
-        return this.getCssAttribute("word-wrap")
+        return this.getCssProperty("word-wrap")
     }
 
     // zoom
 
     setZoom (s) {
-        this.setCssAttribute("zoom", s)
+        this.setCssProperty("zoom", s)
         return this
     }
 
     zoom () {
-        return this.getCssAttribute("zoom")
+        return this.getCssProperty("zoom")
     }
 
     zoomRatio () {
@@ -328,7 +406,7 @@
 
     setZoomPercentage (aNumber) {
         assert(Type.isNumber(aNumber))
-        this.setCssAttribute("zoom", aNumber + "%")
+        this.setCssProperty("zoom", aNumber + "%")
         return this
     }
 
@@ -336,12 +414,12 @@
 
     setFontFamily (s) {
         assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("font-family", s)
+        this.setCssProperty("font-family", s)
         return this
     }
 
     fontFamily () {
-        return this.getCssAttribute("font-family")
+        return this.getCssProperty("font-family")
     }
 
     // font weight
@@ -352,12 +430,12 @@
 
     setFontWeight (v) {
         //assert(this.fontWeightValidatorFunction()(v))
-        this.setCssAttribute("font-weight", v)
+        this.setCssProperty("font-weight", v)
         return this
     }
 
     fontWeight () {
-        return this.getCssAttribute("font-weight")
+        return this.getCssProperty("font-weight")
     }
 
     // font size
@@ -369,42 +447,42 @@
     }
 
     setFontSize (s) {
-        this.setCssAttribute("font-size", s)
+        this.setCssProperty("font-size", s)
         return this
     }
 
     fontSize () {
-        return this.getCssAttribute("font-size")
+        return this.getCssProperty("font-size")
     }
 
     computedFontSize () {
-        return this.getComputedCssAttribute("font-size")
+        return this.getComputedCssProperty("font-size")
     }
 
     // px font size
 
     setPxFontSize (s) {
-        this.setPxCssAttribute("font-size", s)
+        this.setPxCssProperty("font-size", s)
         return this
     }
 
     pxFontSize () {
-        return this.getPxCssAttribute("font-size")
+        return this.getPxCssProperty("font-size")
     }
 
     computedPxFontSize () {
-        return this.getComputedPxCssAttribute("font-size")
+        return this.getComputedPxCssProperty("font-size")
     }
 
     // text-shadow
 
     setTextShadow (s) {
-        this.setCssAttribute("text-shadow", s)
+        this.setCssProperty("text-shadow", s)
         return this
     }
 
     textShadow () {
-        return this.getCssAttribute("text-shadow")
+        return this.getCssProperty("text-shadow")
     }
 
     // ---
@@ -412,29 +490,29 @@
     // letter spacing
 
     setLetterSpacing (s) {
-        this.setCssAttribute("letter-spacing", s)
+        this.setCssProperty("letter-spacing", s)
         return this
     }
 
     letterSpacing () {
-        return this.getCssAttribute("letter-spacing")
+        return this.getCssProperty("letter-spacing")
     }
 
     computedLetterSpacing () {
-        return this.getComputedCssAttribute("letter-spacing")
+        return this.getComputedCssProperty("letter-spacing")
     }
 
     // margin
 
     setMarginString (s) {
-        this.setCssAttribute("margin", s)
+        this.setCssProperty("margin", s)
         return this
     }
 
     // margin
 
     setMargin (s) {
-        this.setCssAttribute("margin", s)
+        this.setCssProperty("margin", s)
         this.setMarginTop(null)
         this.setMarginBottom(null)
         this.setMarginLeft(null)
@@ -443,13 +521,13 @@
     }
 
     margin () {
-        return this.getCssAttribute("margin")
+        return this.getCssProperty("margin")
     }
 
     // margin px
 
     setMarginPx (s) {
-        this.setPxCssAttribute("margin", s)
+        this.setPxCssProperty("margin", s)
         this.setMarginTop(null)
         this.setMarginBottom(null)
         this.setMarginLeft(null)
@@ -458,16 +536,16 @@
     }
 
     marginPx () {
-        return this.getPxCssAttribute("margin")
+        return this.getPxCssProperty("margin")
     }
 
     // margin top
 
     setMarginTop (m) {
         if (Type.isNumber(m)) {
-            this.setPxCssAttribute("margin-top", m)
+            this.setPxCssProperty("margin-top", m)
         } else {
-            this.setCssAttribute("margin-top", m)
+            this.setCssProperty("margin-top", m)
         }
         return this
     }
@@ -476,9 +554,9 @@
 
     setMarginBottom (m) {
         if (Type.isNumber(m)) {
-            this.setPxCssAttribute("margin-bottom", m)
+            this.setPxCssProperty("margin-bottom", m)
         } else {
-            this.setCssAttribute("margin-bottom", m)
+            this.setCssProperty("margin-bottom", m)
         }
         return this
     }
@@ -487,9 +565,9 @@
 
     setMarginLeft (m) {
         if (Type.isNumber(m)) {
-            this.setPxCssAttribute("margin-left", m)
+            this.setPxCssProperty("margin-left", m)
         } else {
-            this.setCssAttribute("margin-left", m)
+            this.setCssProperty("margin-left", m)
         }
         return this
     }
@@ -497,23 +575,23 @@
     // margin right
 
     setMarginRight (m) {
-        this.setCssAttribute("margin-right", m)
+        this.setCssProperty("margin-right", m)
         return this
     }
 
     marginRight () {
-        return this.getCssAttribute("margin-right")
+        return this.getCssProperty("margin-right")
     }
 
     // margin right px
 
     setMarginRightPx (m) {
-        this.setPxCssAttribute("margin-right", m)
+        this.setPxCssProperty("margin-right", m)
         return this
     }
 
     marginRightPx () {
-        return this.getPxCssAttribute("margin-right")
+        return this.getPxCssProperty("margin-right")
     }
 
     // padding
@@ -524,140 +602,140 @@
         this.setPaddingBottom(null)
         this.setPaddingLeft(null)
         this.setPaddingRight(null)
-        this.setCssAttribute("padding", v)
+        this.setCssProperty("padding", v)
         return this
     }
     
     padding () {
-        return this.getCssAttribute("padding")
+        return this.getCssProperty("padding")
     }
 
     // top
 
     setPaddingTop (v) {
         assert(Type.isString(v) || Type.isNull(v))
-        this.setCssAttribute("padding-top", v)
+        this.setCssProperty("padding-top", v)
         return this
     }
 
     paddingTop () {
-        return this.getCssAttribute("padding-top")
+        return this.getCssProperty("padding-top")
     }
     // bottom
 
     setPaddingBottom (v) {
         assert(Type.isString(v) || Type.isNull(v))
-        this.setCssAttribute("padding-bottom", v)
+        this.setCssProperty("padding-bottom", v)
         return this
     }
 
     paddingBottom () {
-        return this.getCssAttribute("padding-bottom")
+        return this.getCssProperty("padding-bottom")
     }
 
     // left
 
     setPaddingLeft (v) {
         assert(Type.isString(v) || Type.isNull(v))
-        this.setCssAttribute("padding-left", v)
+        this.setCssProperty("padding-left", v)
         return this
     }
 
     paddingLeft () {
-        return this.getCssAttribute("padding-left")
+        return this.getCssProperty("padding-left")
     }
 
     // right
     
     setPaddingRight (v) {
         assert(Type.isString(v) || Type.isNull(v))
-        this.setCssAttribute("padding-right", v)
+        this.setCssProperty("padding-right", v)
         return this
     }
 
     paddingRight () {
-        return this.getCssAttribute("padding-right")
+        return this.getCssProperty("padding-right")
     }
 
     // padding px
 
     setPaddingPx (aNumber) {
-        this.setPxCssAttribute("padding", aNumber)
+        this.setPxCssProperty("padding", aNumber)
         return this
     }
 
     paddingPx () {
-        return this.getPxCssAttribute("padding")
+        return this.getPxCssProperty("padding")
     }
 
     // padding right px
 
     setPaddingRightPx (aNumber) {
-        this.setPxCssAttribute("padding-right", aNumber)
+        this.setPxCssProperty("padding-right", aNumber)
         return this
     }
 
     paddingRightPx () {
-        return this.getPxCssAttribute("padding-right")
+        return this.getPxCssProperty("padding-right")
     }
 
     // padding left px
 
     setPaddingLeftPx (aNumber) {
-        this.setPxCssAttribute("padding-left", aNumber)
+        this.setPxCssProperty("padding-left", aNumber)
         return this
     }
 
     paddingLeftPx () {
-        return this.getPxCssAttribute("padding-left")
+        return this.getPxCssProperty("padding-left")
     }
 
     // padding top px
 
     setPaddingTopPx (aNumber) {
-        this.setPxCssAttribute("padding-top", aNumber)
+        this.setPxCssProperty("padding-top", aNumber)
         return this
     }
 
     paddingTopPx () {
-        return this.getPxCssAttribute("padding-top")
+        return this.getPxCssProperty("padding-top")
     }
 
     // padding bottom px
 
     setPaddingBottomPx (aNumber) {
-        this.setPxCssAttribute("padding-bottom", aNumber)
+        this.setPxCssProperty("padding-bottom", aNumber)
         return this
     }
 
     paddingBottomPx () {
-        return this.getPxCssAttribute("padding-bottom")
+        return this.getPxCssProperty("padding-bottom")
     }
 
     // background color
 
     setBackgroundColor (v) {
-        this.setCssAttribute("background-color", v)
+        this.setCssProperty("background-color", v)
         return this
     }
 
     backgroundColor () {
-        return this.getCssAttribute("background-color")
+        return this.getCssProperty("background-color")
     }
 
     computedBackgroundColor () {
-        return this.getComputedCssAttribute("background-color")
+        return this.getComputedCssProperty("background-color")
     }
 
     // background image
 
     setBackgroundImage (v) {
-        this.setCssAttribute("background-image", v)
+        this.setCssProperty("background-image", v)
         return this
     }
 
     backgroundImage () {
-        return this.getCssAttribute("background-image")
+        return this.getCssProperty("background-image")
     }
 
     setBackgroundImageUrlPath (path) {
@@ -668,13 +746,13 @@
     // background size
 
     setBackgroundSizeWH (x, y) {
-        this.setCssAttribute("background-size", x + "px " + y + "px")
+        this.setCssProperty("background-size", x + "px " + y + "px")
         return this
     }
 
     setBackgroundSize (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("background-size", v)
+        this.setCssProperty("background-size", v)
         return this
     }
 
@@ -697,12 +775,12 @@
 
     setBackgroundRepeat (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("background-repeat", s)
+        this.setCssProperty("background-repeat", s)
         return this
     }
 
     backgroundRepeat () {
-        return this.getCssAttribute("background-repeat")
+        return this.getCssProperty("background-repeat")
     }
 
     // background position
@@ -713,12 +791,12 @@
     }
 
     setBackgroundPosition (s) {
-        this.setCssAttribute("background-position", s)
+        this.setCssProperty("background-position", s)
         return this
     }
 
     backgroundPosition () {
-        return this.getCssAttribute("background-position")
+        return this.getCssProperty("background-position")
     }
 
     // icons - TODO: find a better place for this
@@ -731,7 +809,7 @@
     // transition
 
     setTransition (s) {
-        this.setCssAttribute("transition", s)
+        this.setCssProperty("transition", s)
 
         if (this._transitions) {
             this.transitions().syncFromDomView()
@@ -741,7 +819,7 @@
     }
 
     transition () {
-        return this.getCssAttribute("transition")
+        return this.getCssProperty("transition")
     }
 
     // helper for hide/unhide transition
@@ -806,14 +884,14 @@
     // transforms
 
     setTransform (s) {
-        this.setCssAttribute("transform", s)
+        this.setCssProperty("transform", s)
         return this
     }
 
     setTransformOrigin (s) {
         //transform-origin: x-axis y-axis z-axis|initial|inherit;
         //const percentageString = this.percentageNumberToString(aNumber)
-        this.setCssAttribute("transform-origin", s)
+        this.setCssProperty("transform-origin", s)
         return this
     }
 
@@ -829,7 +907,7 @@
     // perspective
 
     setPerspective (n) {
-        this.setPxCssAttribute("perspective", n)
+        this.setPxCssProperty("perspective", n)
         return this
     }
 
@@ -841,34 +919,34 @@
 
     setOpacity (v) {
         //assert(this.opacityValidatorFunction()(v))
-        this.setCssAttribute("opacity", v)
+        this.setCssProperty("opacity", v)
         return this
     }
 
     opacity () {
-        return this.getCssAttribute("opacity")
+        return this.getCssProperty("opacity")
     }
 
     // z index 
 
     setZIndex (v) {
-        this.setCssAttribute("z-index", v)
+        this.setCssProperty("z-index", v)
         return this
     }
 
     zIndex () {
-        return this.getCssAttribute("z-index")
+        return this.getCssProperty("z-index")
     }
 
     // cursor 
 
     setCursor (s) {
-        this.setCssAttribute("cursor", s)
+        this.setCssProperty("cursor", s)
         return this
     }
 
     cursor () {
-        return this.getCssAttribute("cursor")
+        return this.getCssProperty("cursor")
     }
 
     makeCursorDefault () {
@@ -911,275 +989,275 @@
 
     setTop (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("top", v)
+        this.setCssProperty("top", v)
         return this
     }
 
     top () {
-        return this.getCssAttribute("top")
+        return this.getCssProperty("top")
     }
 
     // top px
 
     setTopPx (v) {
         assert(Type.isNull(v) || Type.isNumber(v))
-        this.setPxCssAttribute("top", v)
+        this.setPxCssProperty("top", v)
         return this
     }
 
     topPx () {
-        return this.getPxCssAttribute("top")
+        return this.getPxCssProperty("top")
     }
 
     // left
 
     setLeft (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("left", v)
+        this.setCssProperty("left", v)
         return this
     }
 
     left () {
-        return this.getCssAttribute("left")
+        return this.getCssProperty("left")
     }
 
     // left px
 
     setLeftPx (v) {
         assert(Type.isNull(v) || Type.isNumber(v))
-        this.setPxCssAttribute("left", v)
+        this.setPxCssProperty("left", v)
         return this
     }
 
     leftPx () {
-        return this.getPxCssAttribute("left")
+        return this.getPxCssProperty("left")
     }
 
     // right
 
     setRight (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("right", v)
+        this.setCssProperty("right", v)
         return this
     }
 
 
     right () {
-        return this.getCssAttribute("right")
+        return this.getCssProperty("right")
     }
 
     // right px
 
     setRightPx (v) {
         assert(Type.isNull(v) || Type.isNumber(v))
-        this.setPxCssAttribute("right", v)
+        this.setPxCssProperty("right", v)
         return this
     }
 
     rightPx () {
-        return this.getPxCssAttribute("right")
+        return this.getPxCssProperty("right")
     }
 
     // bottom
 
     setBottom (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("bottom", v)
+        this.setCssProperty("bottom", v)
         return this
     }
 
     bottom () {
-        return this.getCssAttribute("bottom")
+        return this.getCssProperty("bottom")
     }
 
     // bottom px
 
     setBottomPx (v) {
         assert(Type.isNull(v) || Type.isNumber(v))
-        this.setPxCssAttribute("bottom", v)
+        this.setPxCssProperty("bottom", v)
         return this
     }
 
     bottomPx () {
-        return this.getPxCssAttribute("bottom")
+        return this.getPxCssProperty("bottom")
     }
 
     // float
 
     setFloat (v) {
         assert([null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"].contains(v))
-        this.setCssAttribute("float", v)
+        this.setCssProperty("float", v)
         return this
     }
 
     float () {
-        return this.getCssAttribute("float")
+        return this.getCssProperty("float")
     }
 
     // box shadow
 
     setBoxShadow (s) {
         //this.debugLog(".setBoxShadow(" + s + ")")
-        this.setCssAttribute("box-shadow", s)
+        this.setCssProperty("box-shadow", s)
         return this
     }
 
     boxShadow () {
-        return this.getCssAttribute("box-shadow")
+        return this.getCssProperty("box-shadow")
     }
 
     // sizing
 
     setBoxSizing (s) {
         //this.setBoxSizing("border-box") content-box
-        return this.setCssAttribute("box-sizing", s)
+        return this.setCssProperty("box-sizing", s)
     }
 
     boxSizing () {
-        return this.getCssAttribute("box-sizing")
+        return this.getCssProperty("box-sizing")
     }
 
 
     // border 
 
     setBorder (s) {
-        this.setCssAttribute("border", s)
+        this.setCssProperty("border", s)
         return this
     }
 
     border () {
-        return this.getCssAttribute("border")
+        return this.getCssProperty("border")
     }
 
     // border style
 
     setBorderStyle (s) {
-        this.setCssAttribute("border-style", s)
+        this.setCssProperty("border-style", s)
         return this
     }
 
     borderStyle () {
-        return this.getCssAttribute("border-style")
+        return this.getCssProperty("border-style")
     }
 
     // border color
 
     setBorderColor (s) {
-        this.setCssAttribute("border-color", s)
+        this.setCssProperty("border-color", s)
         return this
     }
 
     borderColor () {
-        return this.getCssAttribute("border-color")
+        return this.getCssProperty("border-color")
     }
 
     // border top
 
     setBorderTop (s) {
-        this.setCssAttribute("border-top", s)
+        this.setCssProperty("border-top", s)
         return this
     }
 
     borderTop () {
-        return this.getCssAttribute("border-top")
+        return this.getCssProperty("border-top")
     }
 
     // border bottom
 
     setBorderBottom (s) {
-        this.setCssAttribute("border-bottom", s)
+        this.setCssProperty("border-bottom", s)
         return this
     }
 
     borderBottom () {
-        return this.getCssAttribute("border-bottom")
+        return this.getCssProperty("border-bottom")
     }
 
     // border left
 
     setBorderLeft (s) {
         //this.debugLog(" border-left set '", s, "'")
-        this.setCssAttribute("border-left", s)
+        this.setCssProperty("border-left", s)
         return this
     }
 
     borderLeft () {
-        return this.getCssAttribute("border-left")
+        return this.getCssProperty("border-left")
     }
 
     // border right
 
     setBorderRight (s) {
-        this.setCssAttribute("border-right", s)
+        this.setCssProperty("border-right", s)
         return this
     }
 
     borderRight () {
-        return this.getCssAttribute("border-right")
+        return this.getCssProperty("border-right")
     }
 
     borderRightPx () {
-        return this.getPxCssAttribute("border-right")
+        return this.getPxCssProperty("border-right")
     }
 
     // border radius
 
     setBorderRadius (v) {
         assert(Type.isNull(v) || Type.isString(v))
-        this.setCssAttribute("border-radius", v)
+        this.setCssProperty("border-radius", v)
         return this
     }
 
     borderRadius () {
-        return this.getCssAttribute("border-radius")
+        return this.getCssProperty("border-radius")
     }
 
     // border radius
 
     setBorderRadiusPx (v) {
         assert(Type.isNull(v) || Type.isNumber(v))
-        this.setPxCssAttribute("border-radius", v)
+        this.setPxCssProperty("border-radius", v)
         return this
     }
 
     borderRadiusPx () {
-        return this.getPxCssAttribute("border-radius")
+        return this.getPxCssProperty("border-radius")
     }
 
     // outline
 
     setOutline (s) {
         assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("outline", s)
+        this.setCssProperty("outline", s)
         return this
     }
 
     outline () {
-        return this.getCssAttribute("outline")
+        return this.getCssProperty("outline")
     }
 
     // px line height
 
     setPxLineHeight (aNumber) {
-        this.setPxCssAttribute("line-height", aNumber)
+        this.setPxCssProperty("line-height", aNumber)
         assert(this.lineHeight() === aNumber)
         return this
     }
 
     pxLineHeight () {
-        return this.getPxCssAttribute("line-height")
+        return this.getPxCssProperty("line-height")
     }
 
     // line height
 
     setLineHeight (aString) {
         assert(Type.isString(aString) || Type.isNull(aString))
-        this.setCssAttribute("line-height", aString)
+        this.setCssProperty("line-height", aString)
         return this
     }
 
     lineHeight () {
-        return this.getCssAttribute("line-height")
+        return this.getCssProperty("line-height")
     }
 
     // alignment
@@ -1190,117 +1268,117 @@
 
     setTextAlign (v) {
         assert(this.validTextAlignValues().contains(v))
-        this.setCssAttribute("text-align", v)
+        this.setCssProperty("text-align", v)
         return this
     }
 
     textAlign () {
-        return this.getCssAttribute("text-align")
+        return this.getCssProperty("text-align")
     }
 
     // clear
 
     setClear (v) {
         assert([null, "none", "left", "right", "both", "initial", "inherit"].contains(v))
-        this.setCssAttribute("clear", v)
+        this.setCssProperty("clear", v)
         return this
     }
 
     clear () {
-        return this.getCssAttribute("clear")
+        return this.getCssProperty("clear")
     }
 
     // flex 
 
     setFlex (v) {
         assert(Type.isString(v) || Type.isNull(v))
-        this.setCssAttribute("flex", v)
+        this.setCssProperty("flex", v)
         return this
     }
 
     flex () {
-        return this.getCssAttribute("flex")
+        return this.getCssProperty("flex")
     }
 
     // flex wrap
 
     setFlexWrap (v) {
         assert(["nowrap", "wrap", "wrap-reverse", "initial", "inherit"].contains(v))
-        this.setCssAttribute("flex-wrap", v)
+        this.setCssProperty("flex-wrap", v)
         return this
     }
 
     flex () {
-        return this.getCssAttribute("flex-wrap")
+        return this.getCssProperty("flex-wrap")
     }
 
     // flex order
 
     setOrder (v) {
         assert(Type.isNull(v) || Type.isNumber(v) || ["initial", "inherit"].contains(v))
-        this.setCssAttribute("order", v)
+        this.setCssProperty("order", v)
         return this
     }
 
     order () {
-        return this.getCssAttribute("order")
+        return this.getCssProperty("order")
     }
 
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
     setAlignItems (v) {
         assert([null, "flex-start", "center", "flex-end"].contains(v))
-        this.setCssAttribute("align-items", v)
+        this.setCssProperty("align-items", v)
         return this
     }
 
     alignItems () {
-        return this.getCssAttribute("align-items")
+        return this.getCssProperty("align-items")
     }
 
     // flex justify-content (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
     
     setJustifyContent (v) {
         assert([null, "flex-start", "center", "flex-end"].contains(v))
-        this.setCssAttribute("justify-content", v)
+        this.setCssProperty("justify-content", v)
         return this
     }
 
     justifyContent () {
-        return this.getCssAttribute("justify-content")
+        return this.getCssProperty("justify-content")
     }
 
     // flex direction - (row, column)
 
     setFlexDirection (v) {
-        this.setCssAttribute("flex-direction", v)
+        this.setCssProperty("flex-direction", v)
         return this
     }
 
     flexDirection () {
-        return this.getCssAttribute("flex-direction")
+        return this.getCssProperty("flex-direction")
     }
 
     // flex grow
 
     setFlexGrow (v) {
-        this.setCssAttribute("flex-grow", v)
+        this.setCssProperty("flex-grow", v)
         return this
     }
 
     flexGrow () {
-        return this.getCssAttribute("flex-grow")
+        return this.getCssProperty("flex-grow")
     }
 
     // flex shrink
 
     setFlexShrink (v) {
-        this.setCssAttribute("flex-shrink", v)
+        this.setCssProperty("flex-shrink", v)
         return this
     }
 
     flexShrink () {
-        return this.getCssAttribute("flex-shrink")
+        return this.getCssProperty("flex-shrink")
     }
 
     // flex basis
@@ -1309,58 +1387,58 @@
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
-        this.setCssAttribute("flex-basis", v)
+        this.setCssProperty("flex-basis", v)
         return this
     }
 
     flexBasis () {
-        return this.getCssAttribute("flex-basis")
+        return this.getCssProperty("flex-basis")
     }
 
     // color
 
     setColor (v) {
-        this.setCssAttribute("color", v)
+        this.setCssProperty("color", v)
         return this
     }
 
     color () {
-        return this.getCssAttribute("color")
+        return this.getCssProperty("color")
     }
 
     // filters
 
     setFilter (s) {
-        this.setCssAttribute("filter", s)
+        this.setCssProperty("filter", s)
         return this
     }
 
     filter () {
-        return this.getCssAttribute("filter")
+        return this.getCssProperty("filter")
     }
 
     // visibility
 
     setIsVisible (aBool) {
         const v = aBool ? "visible" : "hidden"
-        this.setCssAttribute("visibility", v)
+        this.setCssProperty("visibility", v)
         return this
     }
 
     isVisible () {
-        return this.getCssAttribute("visibility") !== "hidden";
+        return this.getCssProperty("visibility") !== "hidden";
     }
 
     // display
 
     setDisplay (s) {
         //assert(s in { "none", ...} );
-        this.setCssAttribute("display", s)
+        this.setCssProperty("display", s)
         return this
     }
 
     display () {
-        return this.getCssAttribute("display")
+        return this.getCssProperty("display")
     }
 
     // hide height
@@ -1429,23 +1507,23 @@
     // visibility
 
     setVisibility (s) {
-        this.setCssAttribute("visibility", s)
+        this.setCssProperty("visibility", s)
         return this
     }
 
     visibility () {
-        return this.getCssAttribute("visibility")
+        return this.getCssProperty("visibility")
     }
 
     // white space
 
     setWhiteSpace (s) {
-        this.setCssAttribute("white-space", s)
+        this.setCssProperty("white-space", s)
         return this
     }
 
     whiteSpace () {
-        return this.getCssAttribute("white-space")
+        return this.getCssProperty("white-space")
     }
 
 
@@ -1453,25 +1531,25 @@
 
     setWordBreak (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("word-break", s)
+        this.setCssProperty("word-break", s)
         return this
     }
 
     wordBreak () {
-        return this.getCssAttribute("word-break")
+        return this.getCssProperty("word-break")
     }
 
     // webkit specific
 
     setWebkitOverflowScrolling (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("-webkit-overflow-scrolling", s)
+        this.setSpecialCssProperty("-webkit-overflow-scrolling", s)
         assert(this.webkitOverflowScrolling() === s)
         return this
     }
 
     webkitOverflowScrolling () {
-        return this.getCssAttribute("-webkit-overflow-scrolling")
+        return this.getSpecialCssProperty("-webkit-overflow-scrolling")
     }
 
     // ms specific 
@@ -1479,13 +1557,13 @@
     setMsOverflowStyle (s) {
         /* -ms-overflow-style: none; removes scrollbars on IE 10+  */
         assert(Type.isString(s))
-        this.setCssAttribute("-ms-overflow-style", s)
+        this.setSpecialCssProperty("-ms-overflow-style", s)
         assert(this.msOverflowStyle() === s)
         return this
     }
 
     msOverflowStyle () {
-        return this.getCssAttribute("-ms-overflow-style")
+        return this.getSpecialCssProperty("-ms-overflow-style")
     }
 
 
@@ -1493,51 +1571,49 @@
 
     setOverflow (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("overflow", s)
+        this.setCssProperty("overflow", s)
         return this
     }
 
     overflow () {
-        return this.getCssAttribute("overflow")
+        return this.getCssProperty("overflow")
     }
 
     // overflow wrap
 
     setOverflowWrap (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("overflow-wrap", s)
+        this.setCssProperty("overflow-wrap", s)
         return this
     }
 
     overflowWrap () {
-        return this.getCssAttribute("overflow-wrap")
+        return this.getCssProperty("overflow-wrap")
     }
 
     // overflow x
 
     setOverflowX (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("overflow-x", s)
+        this.setCssProperty("overflow-x", s)
         return this
     }
 
     overflowX () {
-        return this.getCssAttribute("overflow-x")
+        return this.getCssProperty("overflow-x")
     }
 
     // overflow y
 
     setOverflowY (s) {
         assert(Type.isString(s))
-        this.setCssAttribute("overflow-y", s)
+        this.setCssProperty("overflow-y", s)
         return this
     }
 
     overflowY () {
-        return this.getCssAttribute("overflow-y")
+        return this.getCssProperty("overflow-y")
     }
-
-
 
     /*	
 
@@ -1567,12 +1643,12 @@
     */
 
     setTextOverflow (s) {
-        this.setCssAttribute("text-overflow", s)
+        this.setCssProperty("text-overflow", s)
         return this
     }
 
     textOverflow () {
-        return this.getCssAttribute("text-overflow")
+        return this.getCssProperty("text-overflow")
     }
 
 
@@ -1637,39 +1713,58 @@
     // width and height
 
     computedWidth () {
-        const w = this.getComputedPxCssAttribute("width")
+        const w = this.getComputedPxCssProperty("width")
         return w
     }
 
     computedHeight () {
-        const h = this.getComputedPxCssAttribute("height")
+        const h = this.getComputedPxCssProperty("height")
         return h
     }
 
     // desired size
 
     desiredWidth () {
-        return this.calcCssWidth()
+        return this.calcWidth()
     }
 
     desiredHeight () {
-        return this.calcCssHeight()
+        return this.calcHeight()
     }
 
-    // calculated CSS size (outside of parent view)
+    // calculated size (outside of parent view)
 
-    calcCssWidth () {
-        if (this.display() === "none") {
-            return 0
-        }
-        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.elementClassName(), this.innerHtml()).width;
-    }
+    calcSize () {
+        assert(this.parentView())
 
-    calcCssHeight () {
-        if (this.display() === "none") {
-            return 0
+        const e = this.element()
+        assert(e.parentNode)
+
+        ThrashDetector.shared().didRead("display", this).didRead("position", this).didRead("width", this)
+        const display = e.style.display
+        const position = e.style.position
+        const width = e.style.width
+
+        ThrashDetector.shared().didWrite("display", this).didWrite("position", this).didWrite("width", this)
+        e.style.display = "block"
+        e.style.position = "absolute"
+        e.style.width = "auto"
+
+        ThrashDetector.shared().didRead("clientWidth", this).didRead("clientHeight", this)
+        const w = (e.clientWidth + 1) 
+        const h = (e.clientHeight + 1) 
+        const size = { width: w, height: h }
+
+        ThrashDetector.shared().didWrite("display", this).didWrite("position", this).didWrite("width", this)
+        e.style.display = display
+        e.style.position = position
+        e.style.width = width
+
+        if (w === 1 && h === 1) {
+            assert(e.hasAncestor(document.body)) // client measurements will be zero if it's not in a document
         }
-        return DomTextTapeMeasure.shared().sizeOfCSSClassWithText(this.element(), this.innerHtml()).height;
+
+        return size
     }
 
     // calculated size (within parent view)
@@ -1678,26 +1773,28 @@
         if (this.display() === "none") {
             return 0
         }
-        return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHtml()).width;
+        //return DomTextTapeMeasure.shared().sizeOfElementWithHtmlString(this.element(), this.innerHtml()).width;
+        return this.calcSize().width
     }
 
     calcHeight () {
         if (this.display() === "none") {
             return 0
         }
-        return DomTextTapeMeasure.shared().sizeOfElementWithText(this.element(), this.innerHtml()).height;
+        //return DomTextTapeMeasure.shared().sizeOfElementWithHtmlString(this.element(), this.innerHtml()).height;
+        return this.calcSize().width
     }
 
     // width
 
     setWidthString (v) {
         assert(Type.isString(v) || Type.isNull(v))
-        this.setCssAttribute("width", v, () => { this.didChangeWidth() })
+        this.setCssProperty("width", v, () => { this.didChangeWidth() })
         return this
     }
 
     widthString () {
-        return this.getCssAttribute("width")
+        return this.getCssProperty("width")
     }
 
     setWidth (s) {
@@ -1707,14 +1804,14 @@
 
     setWidthPercentage (aNumber) {
         const newValue = this.percentageNumberToString(aNumber)
-        this.setCssAttribute("width", newValue, () => { this.didChangeWidth() })
+        this.setCssProperty("width", newValue, () => { this.didChangeWidth() })
         return this
     }
 
     /*
     hideScrollbar () {
         // need to do JS equivalent of: .class::-webkit-scrollbar { display: none; }
-	    // this.setCssAttribute("-webkit-scrollbar", { display: "none" }) // doesn't work
+	    // this.setCssProperty("-webkit-scrollbar", { display: "none" }) // doesn't work
 	    return this
     }
     */
@@ -1722,33 +1819,35 @@
     // clientX - includes padding but not scrollbar, border, or margin
 
     clientWidth () {
-        return this.element().clientWidth
+        //ThrashDetector.shared().didRead("clientWidth")
+        //return this.element().clientWidth
+        return this.getAttribute("clientWidth")
     }
 
     clientHeight () {
-        return this.element().clientHeight
+        return this.getAttribute("clientHeight")
     }
 
     // offsetX - includes borders, padding, scrollbar 
 
     offsetWidth () {
-        return this.element().offsetWidth
+        return this.getAttribute("offsetWidth")
     }
 
     offsetHeight () {
-        return this.element().offsetHeight
+        return this.getAttribute("offsetHeight")
     }
 
     // width px
 
     minWidthPx () {
-        const s = this.getCssAttribute("min-width")
+        const s = this.getCssProperty("min-width")
         // TODO: support em to px translation 
         return this.pxStringToNumber(s)
     }
 
     maxWidthPx () {
-        const w = this.getCssAttribute("max-width")
+        const w = this.getCssProperty("max-width")
         if (w === "") {
             return null
         }
@@ -1758,13 +1857,13 @@
     // height px
 
     minHeightPx () {
-        const s = this.getCssAttribute("min-height")
+        const s = this.getCssProperty("min-height")
         // TODO: support em to px translation 
         return this.pxStringToNumber(s)
     }
 
     maxHeightPx () {
-        const s = this.getCssAttribute("max-height")
+        const s = this.getCssProperty("max-height")
         if (s === "") {
             return null
         }
@@ -1781,7 +1880,7 @@
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
-        this.setCssAttribute("min-width", v, () => { this.didChangeWidth() })
+        this.setCssProperty("min-width", v, () => { this.didChangeWidth() })
         return this
     }
 
@@ -1833,12 +1932,12 @@
 
     fixedWidthPx () {
         if (this.displayIsFlex()) {
-            const w = this.getPxCssAttribute("flex-basis")
+            const w = this.getPxCssProperty("flex-basis")
             assert(Type.isNumber(w))
             return w
         } else {
-            const w1 = this.getPxCssAttribute("min-width")
-            const w2 = this.getPxCssAttribute("max-width")
+            const w1 = this.getPxCssProperty("min-width")
+            const w2 = this.getPxCssProperty("max-width")
             assert(Type.isNumber(w1) && w1 === w2)
             return w1
         }
@@ -1861,12 +1960,12 @@
 
     fixedHeightPx () {
         if (this.displayIsFlex()) {
-            const w = this.getPxCssAttribute("flex-basis")
+            const w = this.getPxCssProperty("flex-basis")
             assert(Type.isNumber(w))
             return w
         } else {
-            const w1 = this.getPxCssAttribute("min-width")
-            const w2 = this.getPxCssAttribute("max-width")
+            const w1 = this.getPxCssProperty("min-width")
+            const w2 = this.getPxCssProperty("max-width")
             assert(Type.isNumber(w1) && w1 === w2)
             return w1
         }
@@ -1885,7 +1984,7 @@
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
-        this.setCssAttribute("max-width", v, () => { this.didChangeWidth() })
+        this.setCssProperty("max-width", v, () => { this.didChangeWidth() })
         return this
     }
 
@@ -1893,10 +1992,10 @@
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
-        this.setCssAttribute("max-width", v, () => { this.didChangeWidth() })
-        this.setCssAttribute("min-width", v, () => { this.didChangeWidth() })
+        this.setCssProperty("max-width", v, () => { this.didChangeWidth() })
+        this.setCssProperty("min-width", v, () => { this.didChangeWidth() })
         if (!Type.isNull(v)) {
-            this.setCssAttribute("width", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
+            this.setCssProperty("width", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
         }
         return this
     }
@@ -1905,10 +2004,10 @@
         if (Type.isNumber(v)) {
             v = this.pxNumberToString(v)
         }
-        this.setCssAttribute("min-height", v, () => { this.didChangeHeight() })
-        this.setCssAttribute("max-height", v, () => { this.didChangeHeight() })
+        this.setCssProperty("min-height", v, () => { this.didChangeHeight() })
+        this.setCssProperty("max-height", v, () => { this.didChangeHeight() })
         if (!Type.isNull(v)) {
-            this.setCssAttribute("height", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
+            this.setCssProperty("height", v, null) // avoids weird behavior but not ideal if min and max settings change do diff values
         }
         return this
     }
@@ -1960,8 +2059,8 @@
 
     setMinAndMaxHeightPercentage (aNumber) {
         const newValue = this.percentageNumberToString(aNumber)
-        this.setCssAttribute("min-height", newValue, () => { this.didChangeHeight() })
-        this.setCssAttribute("max-height", newValue, () => { this.didChangeHeight() })
+        this.setCssProperty("min-height", newValue, () => { this.didChangeHeight() })
+        this.setCssProperty("max-height", newValue, () => { this.didChangeHeight() })
         return this
     }
 
@@ -1988,32 +2087,32 @@
     }
 
     maxHeight () {
-        return this.getCssAttribute("max-height")
+        return this.getCssProperty("max-height")
     }
 
     minHeight () {
-        return this.getCssAttribute("min-height")
+        return this.getCssProperty("min-height")
     }
 
     maxWidth () {
-        return this.getCssAttribute("max-width")
+        return this.getCssProperty("max-width")
     }
 
     minWidth () {
-        return this.getCssAttribute("min-width")
+        return this.getCssProperty("min-width")
     }
 
     setMinHeight (newValue) {
         assert(Type.isString(newValue) || Type.isNull(newValue))
         // <length> | <percentage> | auto | max-content | min-content | fit-content | fill-available
-        this.setCssAttribute("min-height", newValue, () => { this.didChangeHeight() })
+        this.setCssProperty("min-height", newValue, () => { this.didChangeHeight() })
         return this
     }
 
     setMaxHeight (newValue) {
         assert(Type.isString(newValue) || Type.isNull(newValue))
         // <length> | <percentage> | none | max-content | min-content | fit-content | fill-available
-        this.setCssAttribute("max-height", newValue, () => { this.didChangeHeight() })
+        this.setCssProperty("max-height", newValue, () => { this.didChangeHeight() })
         return this
     }
 
@@ -2049,12 +2148,12 @@
 
     setHeightString (s) {
         assert(Type.isString(s) || Type.isNull(s))
-        this.setCssAttribute("height", s, () => { this.didChangeHeight() })
+        this.setCssProperty("height", s, () => { this.didChangeHeight() })
         return this
     }
 
     height () {
-        return this.getCssAttribute("height")
+        return this.getCssProperty("height")
     }
 
     // --- innerHTML ---
@@ -2086,43 +2185,48 @@
     // --- touch events ---
 
     setTouchAction (s) {
-        this.setCssAttribute("-ms-touch-action", s) // needed?
-        this.setCssAttribute("touch-action", s)
+        this.setCssProperty("-ms-touch-action", s) // needed?
+        this.setCssProperty("touch-action", s)
         return this
     }
 
     // scroll top
 
     setScrollTop (v) {
-        this.element().scrollTop = v
+        this.setAttribute("scrollTop", v)
         return this
     }
 
     scrollTop () {
-        return this.element().scrollTop
+        return this.getAttribute("scrollTop")
     }
 
     // scroll width & scroll height
 
-    scrollWidth () {
-        return this.element().scrollWidth // a read-only value
+    scrollWidth () { 
+        // a read-only value
+        return this.getAttribute("scrollWidth")
     }
 
     scrollHeight () {
-        return this.element().scrollHeight // a read-only value
+        // a read-only value
+        return this.getAttribute("scrollHeight") 
     }
 
     // offset width & offset height
 
     offsetLeft () {
-        return this.element().offsetLeft // a read-only value
+        // a read-only value
+        return this.getAttribute("offsetLeft")
     }
 
     offsetTop () {
-        return this.element().offsetTop // a read-only value
+        // a read-only value
+        return this.getAttribute("offsetTop")
     }
 
     boundingClientRect () {
+        ThrashDetector.shared().didRead("boundingClientRect", this)
         return this.element().getBoundingClientRect()
     }
 
@@ -2170,12 +2274,12 @@
     }
 
     positionInViewport () {
-        const box = this.element().getBoundingClientRect();
+        const box = this.boundingClientRect();
         return Point.clone().set(Math.round(box.left), Math.round(box.top));
     }
 
     sizeInViewport () {
-        const box = this.element().getBoundingClientRect();
+        const box = this.boundingClientRect();
         return Point.clone().set(Math.round(box.width), Math.round(box.height));
     }
 
@@ -2195,6 +2299,11 @@
         const origin = this.positionInDocument()
         const size = this.size()
         const frame = Rectangle.clone().setOrigin(origin).setSize(size)
+
+        //const size = this.calcSize() // this.size()
+        //onst frame = Rectangle.clone().setOrigin(origin)
+        //frame.size().setX(size.width).setY(size.height)
+
         return frame
     }
 
@@ -2283,6 +2392,8 @@
     // ------------------------
 
     positionInDocument () {
+        ThrashDetector.shared().didRead("scrollTop", this).didRead("scrollLeft", this)
+
         const box = this.element().getBoundingClientRect();
 
         // return Point.clone().set(Math.round(box.left), Math.round(box.top));
@@ -2386,7 +2497,7 @@
     }
 
     setVerticalAlign (s) {
-        this.setCssAttribute("vertical-align", s)
+        this.setCssProperty("vertical-align", s)
         return this
     }
 

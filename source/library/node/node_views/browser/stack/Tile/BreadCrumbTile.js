@@ -198,6 +198,7 @@
     setupPathViews () {
         const views = this.newPathComponentViews()
         const separatedViews = views.joinWithFunc((view, index) => this.newSeparatorView())
+        separatedViews.unshift(this.newSeparatorView())
         separatedViews.unshift(this.newBackButton())
         this.contentView().removeAllSubviews()
         this.contentView().addSubviews(separatedViews)
@@ -206,22 +207,26 @@
     }
 
     widthOfViews (views) {
-        return views.sum(v => v.calcCssWidth())
+        return views.sum(v => v.calcWidth())
     }
 
     // --- 
 
     sumOfPathWidths () {
+        const rightMargin = 15
         return this.subviews().sum(view => { 
-            const w = view.display() === "none" ? 0 : view.calcCssWidth()
-            if (Type.isNaN(w)) { debugger; }
-            return w
+            const w = view.display() === "none" ? 0 : view.calcWidth()
+            if (Type.isNaN(w)) { 
+                debugger; 
+                throw new Error("invalid sum of widths")
+            }
+            return w + rightMargin
         })
     }
 
     updateCompaction () {
         const padding = 20
-        const maxWidth =  this.frameInDocument().width()
+        const maxWidth =  this.calcSize().width //this.frameInDocument().width()
         //console.log("maxWidth: ", maxWidth)
         const views = this.contentView().subviews()
         views.forEach(view => view.unhideDisplay())

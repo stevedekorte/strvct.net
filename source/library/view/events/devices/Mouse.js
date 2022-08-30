@@ -7,6 +7,12 @@
     Global shared instance that tracks current mouse state in window coordinates.
     Registers for capture mouse events on document.body.
 
+    NOTES
+
+    Doesn't deal with multi-button mouse input yet.
+    Not sure how multi-button mouse should be handled if we want code 
+    to be Mac, touch pad, and touch screen compatible.
+
 */
 
 (class Mouse extends Device {
@@ -17,6 +23,7 @@
         this.newSlot("currentEvent", null)
         this.newSlot("upEvent", null)
         this.newSlot("mouseListener", null)
+        this.newSlot("mouseMoveListener", null)
     }
 
     init () {
@@ -25,15 +32,20 @@
         return this
     }
 
+    /*
     setCurrentEvent (event) {
         this._currentEvent = event
         //Devices.shared().setCurrentEvent(event)
         return this
     }
+    */
 
     startListening () {
         this.setMouseListener(MouseListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
         this.mouseListener().setIsListening(true)
+
+        this.setMouseMoveListener(MouseMoveListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
+        this.mouseMoveListener().setIsListening(true)
         return this
     }
 
@@ -51,7 +63,7 @@
         return this.pointForEvent(this.upEvent())
     }
 
-    // events
+    // --- events --- follow down, up, and move events
 
     onMouseDownCapture (event) {
         this.setDownEvent(event)

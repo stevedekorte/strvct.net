@@ -153,6 +153,9 @@
         return this
     }
 
+    //        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
+
+
     unscheduleTargetAndMethod (target, syncMethod) {
         const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey()
         this.removeActionKey(k)

@@ -8,6 +8,8 @@
 
 (class TilesView_selection extends TilesView {
     
+    // --- column ---
+
     unselectTilesInNextColumn () {
         const c = this.nextColumn()
         if (c) {
@@ -31,17 +33,11 @@
     }
     */
 
-    /*
-    onFocus () {
-        return super.onFocus()
-    }
-    */
-
     lastSelectedTile () {
         return this.selectedTiles().maxItem(tile => tile.lastSelectionDate().getTime())
     }
 
-    // selection
+    // -- update isSelected ---
 	
     didUpdateSlotIsSelected (oldValue, newValue) {
         debugger;
@@ -61,7 +57,6 @@
         return this
     }
 
-
     // --- tile tapping ---
 
     selectNode (aNode) {
@@ -75,7 +70,8 @@
     didTapItem (anItem) {
         //debugger;
         // if the item is already selected, this won't trigger a resync, so unselect first?
-        //anItem.unselect() 
+        //anItem.unselect()
+        //debugger; 
         anItem.select() 
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus()
@@ -83,7 +79,7 @@
         }
         this.unselectAllTilesExcept(anItem)
         this.unselectTilesInNextColumn()
-        //        this.tilesView().didChangeNavSelection()
+        //this.tilesView().didChangeNavSelection()
 
         this.didChangeNavSelection() // this may already have been sent - but only if selection bool changed
     }
@@ -116,7 +112,7 @@
         anItem.toggleSelection()
     }
 
-    // ------------------
+    // --- unselecting tiles ---
         
     unselectAllTilesExcept (selectedTile) {
         const tiles = this.tiles()
@@ -150,8 +146,7 @@
         return this
     }
 
-    // -----------------------------------------
-
+    // --- selection ---
 
     /*
     didSelectTile (aTile) {
@@ -164,14 +159,11 @@
     }
     */
 
-  
-    // selection
-
     hasMultipleSelections () {
         return this.selectedTiles().length > 0
     }
 
-    // selected tiles
+    // --- selected tiles ---
 
     selectedTiles () {
         let tiles = this.tiles().filter(tile => tile.thisClass().isSubclassOf(Tile))
@@ -187,7 +179,7 @@
         return null
     }
 
-    // selected nodes
+    // --- selected nodes ---
 
     selectedNodes () {
         return this.selectedTiles().map(tile => tile.node())
@@ -203,7 +195,7 @@
         return this.tiles().indexOf(this.selectedTile())
     }
 
-    // selecting tiles
+    // --- selecting tiles ---
     
     setSelectedTileIndex (index) {
         const oldIndex = this.selectedTileIndex()
@@ -311,9 +303,9 @@
         return this
     }
 
-       // --- focus / selection ---
+    // --- focus / selection ---
     
-       isInBrowser () {
+    isInBrowser () {
         return !Type.isNull(this.parentView())
     }
 
@@ -382,6 +374,8 @@
         return this
     }
 	
+    // --- scrolling ---
+
     scrollToSubnode (aSubnode) {
 	    //this.debugLog(".scrollToSubnode")
 	    const subview = this.subviewForNode(aSubnode)
@@ -402,6 +396,7 @@
 
     // --------------
 
+    /*
     focus () {
         super.focus()
 		
@@ -416,6 +411,7 @@
         //this.debugLog(" focus")
         return this
     }
+    */
     
     selectNextColumn () {
         const nextColumn = this.nextColumn()
@@ -443,6 +439,8 @@
         }
         return this
     }
+
+    // --- select nodes ---
 
     selectAndFocusNodes (nodes) {
         const selectTiles = this.tilesWithNodes(nodes)

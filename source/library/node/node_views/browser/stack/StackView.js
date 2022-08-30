@@ -192,6 +192,12 @@
     }
 
     onWindowResize (event) {
+        /*
+        if (this.isRootStackView()) {
+            this.safeUpdateCompactionChain()
+        }
+        */
+        // TODO: change so only top stack view registers for resize
         this.updateCompaction()
         return this
     }
@@ -307,10 +313,15 @@
     }
     */
 
+    isRootStackView () {
+        return this === this.rootStackView()
+    }
+
     topDidChangeNavSelection () {
+        // broadcast path change to listeners, like bread crumb view
         //console.log("topDidChangeNavSelection")
         //debugger;
-        if (this !== this.rootStackView()) {
+        if (!this.rootStackView()) {
             debugger;
             return this
         }
@@ -327,7 +338,8 @@
     didChangeNavSelection () {
         this.rootStackView().topDidChangeNavSelection()
         //this.syncFromNavSelection()
-        this.scheduleMethod("syncFromNode")
+        this.syncFromNavSelection()
+        //this.scheduleSyncFromNode()
         return true
     }
 
@@ -350,19 +362,20 @@
     
     // ----------------
 
-    syncFromNavSelection () {
-        // update otherViewContent view to match selected ite,
-        /*
-        if (this.node().title() === "A") {
-            console.log(" --- A --- ")
-        }
-        */
+    scheduleSyncFromNode () {
+     //   debugger;
+        super.scheduleSyncFromNode()
+    }
 
-        //console.log("StackView " + this.node().title() + " syncFromNavSelection")
-        const itemView = this.navView().tilesView().selectedTile() // this may get called before tilesView has synced to current subnodes,
-        // in which case, the itemView may be about to be removed
-        if (itemView && itemView.nodeTileLink()) {
-            const oNode = itemView.nodeTileLink()
+    syncFromNavSelection () {
+        // update otherViewContent view to match selected tile
+
+        const tile = this.navView().tilesView().selectedTile() // this may get called before tilesView has synced to current subnodes,
+        //console.log("StackView syncFromNavSelection " + this.node().title() + " -> " + (tile ? tile.nodeTitle() : null))
+        //debugger;
+        // in which case, the tile may be about to be removed
+        if (tile && tile.nodeTileLink()) {
+            const oNode = tile.nodeTileLink()
             const ovc = this.otherViewContent()
             if (!ovc || (ovc.node() !== oNode)) {
                 const ov = this.otherViewForNode(oNode)
@@ -372,7 +385,7 @@
             this.clearOtherView()
         }
 
-        this.updateCompactionChain()
+        this.safeUpdateCompactionChain()
     }
 
     // stack view chain
@@ -408,6 +421,11 @@
     }
 
     // --- compaction (adjusts number of visible stack areas to fit top stack view)
+
+    safeUpdateCompactionChain () {
+        //this.bottomStackView().updateCompactionChain()
+        this.updateCompactionChain()
+    }
 
     updateCompactionChain () {
         this.updateCompaction() 
@@ -456,6 +474,18 @@
         return this.stackViewSuperChain().length - 1
     }
 
+    bottomStackView () {
+        let current = this
+
+        while (current) {
+            const next = current.nextStackView()
+            if (next) {
+                current = next
+            }
+        }
+        return current
+    }
+
     stackViewSubchain () {
         // returns self and all StackViews below 
         const chain = []
@@ -486,22 +516,29 @@
     }
 
     topViewWidth () {
-        return this.rootStackView().frameInDocument().width()
+        const view = this.rootStackView()
+        if (view.parentView() === DocumentBody.shared()) {
+            return window.innerWidth // assume it fills the window? what about margins, padding?
+        }
+        return view.size().width() // clientWidth works here, but maybe all cases
+        //return this.rootStackView().calcSize().width
     }
 
     compactNavAsNeeded () {
-
         if (this.direction() === "right") {
-            console.log("StackView " + this.node().title() + " compactNavAsNeeded")
+            //console.log("StackView " + this.node().title() + " compactNavAsNeeded")
 
             const maxWidth = this.topViewWidth()
             const sum = this.sumOfNavWidths()
 
             if (sum > maxWidth) {
-                console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
+                //console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
+                //debugger;
+                //this.topViewWidth()
+
                 this.navView().collapse()
             } else {
-                console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
+                //console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
                 this.navView().uncollapse()
             }
         }

@@ -71,7 +71,8 @@
         rv.setMinWidth("3em")
         rv.setJustifyContent("center")
 
-        const icon = SvgIconView.clone().setElementClassName("NoteIconView")
+        const icon = SvgIconView.clone()
+        //icon.setElementClassName("NoteIconView")
         icon.setMinAndMaxWidth(12)
         icon.setMinAndMaxHeight(15)
         //icon.setFillColor("white")
@@ -199,7 +200,7 @@
         v.setFillColor(color)
         v.setOpacity(0.95)
         //console.log( this.node().title() + " - " + color)
-        v.updateAppearance()
+        //v.updateAppearance()
     }
 
     hideNoteIconView () {
@@ -210,8 +211,8 @@
 
     desiredWidth () {
         /*
-        const tw = this.titleView().calcCssWidth()
-        const sw = this.subtitleView().calcCssWidth()
+        const tw = this.titleView().calcWidth()
+        const sw = this.subtitleView().calcWidth()
         let w = Math.max(sw, tw)
         //console.log("calcCssWidth of tile title '" + this.node().title() + "' = " + w)
         return w + 50

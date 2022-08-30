@@ -18,17 +18,23 @@
 
 */
 
-
 (class SvgIconView extends FlexDomView {
     
+    static initClass () {
+        this.newClassSlot("sharedSvgMap", new Map()) // svgStringHash -> hidden svg element defined in document
+		return this
+    }
+
     initPrototypeSlots () {
-        this.newSlot("doesMatchParentColor", false)
+        this.newSlot("svgElement", null)
         this.newSlot("svgString", "")
         this.newSlot("url", null)
         this.newSlot("iconName", null)
-        this.newSlot("strokeColor", "white")
-        this.newSlot("fillColor", "transparent")
-        this.newSlot("strokeWidth", 1)
+        
+        this.newSlot("doesMatchParentColor", false).setDoesHookSetter(true)
+        this.newSlot("strokeColor", "white").setDoesHookSetter(true)
+        this.newSlot("fillColor", "transparent").setDoesHookSetter(true)
+        this.newSlot("strokeWidth", 1).setDoesHookSetter(true)
     }
 
     init () {
@@ -46,8 +52,12 @@
         this.setPadding("0em")
         this.setMargin("0em")
         
-        this.setOverflow("hidden")
+        // /this.setOverflow("hidden")
+        this.setOverflow("visible")
         this.setTransition("all 0.2s")
+        //this.setBorder("1px yellow dashed")
+
+
         return this
     }
 
@@ -77,91 +87,75 @@
             this.hideDisplay()
         }
 
+        this.setElementId(this.debugTypeId() + " '" + this.svgId() + "'")
+
         return this
+    }
+
+    svgId () {
+        return "svgid-" + this.iconName() 
+        //return "svgid-" + this.svgString().hashCode()
     }
 
     setSvgString (s) {
         this._svgString = s
-        this.setInnerHtml(s)
-        this.updateAppearance()
-        /*
-        const style = this.svgElement().style
-        //this.svgElement().setAttribute("preserveAspectRatio", "xMidYMin slice")
 
-        if (Type.isUndefined(style)) {
-            console.warn("missing style on svgElement")
-        } else {
-            style.position = "absolute"
-            //style.top = "0em"
-            //style.left = "0em"
+        const e = SvgIconCache.shared().newLinkElementForSvgString(s)
+        // remove other children and add svg element
+        while (this.element().lastChild) {
+            this.element().removeChild(this.element().lastChild);
         }
-        */
+        this.element().appendChild(e)
+        this.setSvgElement(e)
+        //e.style.border = "1px blue dashed"
+
         return this
     }
 
-    svgElement () {
-        return this.element().childNodes[0]
-    }
-
-    // didUpdateSlot
+    // --- color ---
 
     setColor (aColor) {
         this.setFillColor(aColor)
         this.setStrokeColor(aColor)
         return this
     }
+        
+    // --- didUpdateSlot hooks ---
+
 
     didUpdateSlotFillColor (oldValue, newValue) {
-        this.updateAppearance()
+        this.setSpecialCssProperty("--fillColor", newValue)
     }
 
     didUpdateSlotStrokeColor (oldValue, newValue) {
-        this.updateAppearance()
+        this.setSpecialCssProperty("--strokeColor", newValue)
     }
 
-    // svg icon
+    didUpdateSlotStrokeWidth (oldValue, newValue) {
+        this.setSpecialCssProperty("--strokeWidth", newValue)
+    }
 
-    updateAppearance () {
-        // sent by superview when it changes or syncs to a node
-        // so we can update our appearance to match changes to the parent view's style
+    // --- variable maps ---
+    
+    variableAttributeMap () {
+        const m = new Map()
+        m.set("fill", "var(--fillColor)")
+        m.set("stroke", "var(--strokeColor)")
+        m.set("strokeWidth", "var(--strokeWidth)")
+        m.set("transition", "var(--transition)")
+        return m
+    }
 
-        const e = this.element()
-
-        if (this.doesMatchParentColor()) {
-            if (this.parentView()) {
-                const color = this.parentView().getComputedCssAttribute("color")
-                e.setStyleIncludingDecendants("fill", color)
-                e.setStyleIncludingDecendants("stroke", color)
-            } else {
-                console.warn("missing svg parentView to match color to")
-            }
-        } else {
-            e.setStyleIncludingDecendants("fill", this.fillColor())
-            e.setStyleIncludingDecendants("stroke", this.strokeColor())
-        }
-
-        e.setStyleIncludingDecendants("strokeWidth", this.strokeWidth().toString())
-        e.setStyleIncludingDecendants("transition", this.transition())
-
-        return this
+    parentVariableAttributeMap () {
+        const m = new Map()
+        m.set("fill", "var(--color)")
+        m.set("stroke", "var(--color)")
+        m.set("strokeWidth", "var(--strokeWidth)")
+        m.set("transition", "var(--transition)")
+        return m
     }
 
     /*
-    setupBackground () {
-        // can't use this because we can't walk and set the fill/stroke style on the svg elements 
-        // if it's a background image
-
-        const url = this.pathForIconName(this.iconName())
-
-        this.setBackgroundImageUrlPath(url)
-        this.setBackgroundSizeWH(16, 16) // use "contain" instead?
-        this.setBackgroundPosition("center")
-        this.makeBackgroundNoRepeat()
-        Element_setStyleIncludingDecendants(this.element(), "fill", "white")
-        Element_setStyleIncludingDecendants(this.element(), "stroke", "white")
-        Element_setStyleIncludingDecendants(this.element(), "color", "white")
-    }
-
     asyncLoad () {
         // can't do this on a file:// because of cross site request error
         const url = this.pathForIconName(this.iconName())

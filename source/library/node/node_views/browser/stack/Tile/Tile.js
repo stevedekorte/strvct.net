@@ -483,13 +483,4 @@
         return super.debugTypeId() + comment
     }
 
-    /*
-    show () {
-        const d = this.getComputedCssAttribute("display")
-        const p = this.getComputedCssAttribute("position")
-        console.log("row display:" + d + " position:" + p)
-    }
-    */
-
-
 }.initThisClass());

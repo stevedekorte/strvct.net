@@ -176,7 +176,6 @@
     // --- play ---
 
     play () {
-        debugger;
         const source = this.newAudioSource()
         source.start();
         return this

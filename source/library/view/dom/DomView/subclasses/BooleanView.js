@@ -149,7 +149,8 @@
         // sent by superview when it changes or syncs to a node
         // so we can update our appearance to match changes to the parent view's style
 
-        const color = this.getComputedCssAttribute("color")
+        //const color = this.getComputedCssProperty("color") // this can cause a reflow, so avoid it
+        const color = "white"
 
         this.outerCheckView().setStrokeColor(color)
         this.innerCheckView().setFillColor(this.value() ? color : "transparent")
