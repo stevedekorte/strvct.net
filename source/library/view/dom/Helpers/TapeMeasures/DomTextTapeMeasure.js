@@ -19,7 +19,8 @@
 (class DomTextTapeMeasure extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("idName", "DomTextTapeMeasure")
+        this.newSlot("idName", this.type())
+
         this.newSlot("stylesToCopy", [
             "fontSize",
             "fontStyle", 
@@ -29,6 +30,7 @@
             "textTransform", 
             "letterSpacing"
         ])
+        
         this.newSlot("cache", new Map())
         this.newSlot("cacheKeys", new Array())
         this.newSlot("maxCacheKeys", 100)
@@ -37,11 +39,6 @@
     testElement () {
         if (!this._testElement) {
             this._testElement = this.createTestElement()
-            /*
-            if (!document.getElementById(this.idName())) {
-                throw new Error("missing element '" + this.idName() + "'")
-            }
-            */
         }
         return this._testElement
     }
@@ -78,6 +75,7 @@
         }
 
         const e = this.testElement()
+        //e.cssText = element.cssText // this would force reflow?
 		
         this.stylesToCopy().forEach(function (styleName) {
             const v = element.style[styleName]
@@ -93,25 +91,6 @@
         const width = (e.clientWidth + 1) 
         const height = (e.clientHeight + 1) 
         this.clean()
-
-        const result = { width: width, height: height }
-        this.addToCache(text, result)
-        return result
-    }
-	
-    sizeOfCssClassWithHtmlString (elementClassName, text) { 
-        if (this.cache().has(text)) {
-            return this.cache().get(text)
-        }
-
-        const e = this.testElement()
-        this.clean()
-        e.className = elementClassName
-        e.innerHTML = text
-		
-        const width = (e.clientWidth + 1) 
-        const height = (e.clientHeight + 1) 
-        e.innerHTML = ""
 
         const result = { width: width, height: height }
         this.addToCache(text, result)

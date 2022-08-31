@@ -5,7 +5,18 @@
 
     Class to represent a 2d or 3d point, optionally with a time.
 
-    TODO: create a separate EventPoint class...
+    TODO: 
+        Move internal representation to array e.g.
+
+        this.newSlot("valueArray", new Array(0, 0, 0, 0))
+
+        x () {
+            return this._valueArray[0]
+        }
+
+        isEqual (other) {
+            return this._valueArray == other.valueArray()
+        }
 
 */
 
@@ -42,14 +53,20 @@
         this._t = p._t
         return this
     }
+
+    setXY (x, y) {
+        this._x = x;
+        this._y = y;
+        return this
+    }
     
     set (x, y, z, t) {
         this._x = x;
         this._y = y;
-        if (z || z === 0) {
+        if (Type.isNumber(z)) {
             this._z = z
         }
-        if (t || t === 0) {
+        if (Type.isNumber(t)) {
             this._t = t
         }
         return this

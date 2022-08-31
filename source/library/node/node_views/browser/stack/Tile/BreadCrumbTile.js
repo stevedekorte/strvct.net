@@ -226,7 +226,7 @@
 
     updateCompaction () {
         const padding = 20
-        const maxWidth =  this.calcSize().width //this.frameInDocument().width()
+        const maxWidth =  this.calcSize().width() //this.frameInDocument().width()
         //console.log("maxWidth: ", maxWidth)
         const views = this.contentView().subviews()
         views.forEach(view => view.unhideDisplay())

@@ -155,7 +155,7 @@
     }
 
     getAttribute (k) {
-        ThrashDetector.shared().didRead(k, this)
+        this.didDomRead(k, this)
         const v = this.element().getAttribute(k)
         if (v === null) {
             let result = this.element()[k]
@@ -181,12 +181,18 @@
 
     setSpecialCssProperty (k, newValue) {
         ThrashDetector.shared().didWrite(k, this)
+
+        assert(k[0] === "-" && !k.beginsWith("--")) // sanity check
+
         this.cssStyle()[k] = newValue
         return this
     }
 
     getSpecialCssProperty (k) {
-        ThrashDetector.shared().didRead(k, this)
+        this.didDomRead(k)
+
+        assert(k[0] === "-" && !k.beginsWith("--")) // sanity check
+
         return this.cssStyle()[k]
     }
 
@@ -199,11 +205,10 @@
     setCssProperty (key, newValue, didChangeCallbackFunc) {
 
         // sanity checks
-
         assert(Type.isString(key))
 
-        if (key[0] === "-") {
-            throw new Error("use setSpecialCssProperty instead")
+        if (key[0] === "-" && key[1] !== "-") { // no dash, and double dash are ok
+            throw new Error("use setSpecialCssProperty for single dash options")
             //this.setSpecialCssProperty(key, newValue)
             //return this
         }
@@ -275,7 +280,7 @@
         }
         */
 
-        ThrashDetector.shared().didRead(key, this)
+        this.didDomRead(key)
 
         //return this.cssStyle()[key]
         return this.cssStyle().getPropertyValue(key)
@@ -299,12 +304,12 @@
     // computed style
 
     getComputedCssProperty (name, errorCheck) {
-        debugger; // getComputedStyle forces a layout - make sure it's needed 
+        //debugger; // getComputedStyle forces a layout - make sure it's needed 
         return window.getComputedStyle(this.element()).getPropertyValue(name)
     }
 
     getComputedPxCssProperty (name, errorCheck) {
-        debugger; // getComputedCssProperty forces a reflow? - make sure it's needed 
+     //   debugger; // getComputedCssProperty forces a reflow? - make sure it's needed 
         const s = this.getComputedCssProperty(name, errorCheck)
         if (s.length) {
             return this.pxStringToNumber(s)
@@ -1713,13 +1718,13 @@
     // width and height
 
     computedWidth () {
-        const w = this.getComputedPxCssProperty("width")
-        return w
+        //return this.calcSize().width()
+        return this.getComputedPxCssProperty("width")
     }
 
     computedHeight () {
-        const h = this.getComputedPxCssProperty("height")
-        return h
+        //return this.calcSize().height()
+        return this.getComputedPxCssProperty("height")
     }
 
     // desired size
@@ -1740,22 +1745,34 @@
         const e = this.element()
         assert(e.parentNode)
 
-        ThrashDetector.shared().didRead("display", this).didRead("position", this).didRead("width", this)
+        // reads
+        this.didDomRead("display")
+        //this.didDomRead("position")
+        //this.didDomRead("width")
         const display = e.style.display
         const position = e.style.position
         const width = e.style.width
 
-        ThrashDetector.shared().didWrite("display", this).didWrite("position", this).didWrite("width", this)
+        // writes
+        this.didDomWrite("display")
+        //this.didDomWrite("position")
+        //this.didDomWrite("width")
         e.style.display = "block"
         e.style.position = "absolute"
         e.style.width = "auto"
 
-        ThrashDetector.shared().didRead("clientWidth", this).didRead("clientHeight", this)
+        // read calc
+        this.didDomRead("clientWidth")
+        //this.didDomRead("clientHeight")
         const w = (e.clientWidth + 1) 
         const h = (e.clientHeight + 1) 
-        const size = { width: w, height: h }
+        //const size = { width: w, height: h }
+        const size = Point.clone().setXY(w, h)
 
-        ThrashDetector.shared().didWrite("display", this).didWrite("position", this).didWrite("width", this)
+        // write
+        this.didDomWrite("display")
+        //this.didDomWrite("position")
+        //this.didDomWrite("width")
         e.style.display = display
         e.style.position = position
         e.style.width = width
@@ -1773,16 +1790,14 @@
         if (this.display() === "none") {
             return 0
         }
-        //return DomTextTapeMeasure.shared().sizeOfElementWithHtmlString(this.element(), this.innerHtml()).width;
-        return this.calcSize().width
+        return this.calcSize().width()
     }
 
     calcHeight () {
         if (this.display() === "none") {
             return 0
         }
-        //return DomTextTapeMeasure.shared().sizeOfElementWithHtmlString(this.element(), this.innerHtml()).height;
-        return this.calcSize().width
+        return this.calcSize().height()
     }
 
     // width
@@ -1819,8 +1834,6 @@
     // clientX - includes padding but not scrollbar, border, or margin
 
     clientWidth () {
-        //ThrashDetector.shared().didRead("clientWidth")
-        //return this.element().clientWidth
         return this.getAttribute("clientWidth")
     }
 
@@ -2226,7 +2239,7 @@
     }
 
     boundingClientRect () {
-        ThrashDetector.shared().didRead("boundingClientRect", this)
+        this.didDomRead("boundingClientRect")
         return this.element().getBoundingClientRect()
     }
 
@@ -2392,7 +2405,8 @@
     // ------------------------
 
     positionInDocument () {
-        ThrashDetector.shared().didRead("scrollTop", this).didRead("scrollLeft", this)
+        this.didDomRead("scrollTop")
+        //this.didDomRead("scrollLeft")
 
         const box = this.element().getBoundingClientRect();
 
@@ -2525,6 +2539,15 @@
         this.setContentAfterOrBeforeString(s, "before")
         return this
     }
-    
+
+    didDomRead (opName) {
+        ThrashDetector.shared().didRead(opName, this)
+        return this
+    }
+
+    didDomWrite (opName) {
+        ThrashDetector.shared().didWrite(opName, this)
+        return this
+    }
 
 }.initThisClass());

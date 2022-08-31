@@ -1,3 +1,10 @@
+FIX: close button on tile slide
+FIX: return bg color after slide
+FIX: bread crumb compaction funky
+FIX: bugs with dragging around tile to other folders and back before dropping?
+
+ADD: Slot doUpdateOnSlotInit option?
+
 FIX: app not working in safari - maybe because DB is not being set up properly
 
 FIX: double tapping to edit a title on a folder causes unwanted navigation changes that can move column

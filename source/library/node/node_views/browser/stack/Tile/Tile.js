@@ -353,7 +353,11 @@
     
     addCloseButton () {
         if (this.closeButtonView() === null) {
+            const cb = SvgIconView.clone().setIconName("close")
+            cb.setStrokeColor("white")
+            cb.setFillColor("white")
 
+            /*
             const cb = DomView.clone().setElementClassName("TileCloseButton")
             cb.setCssDict({
                 "display": "block",
@@ -377,13 +381,16 @@
             })
 
             cb.setPosition("absolute")
-            this.setCloseButtonView(cb)
-            this.contentView().addSubview(cb) 
-            
-            cb.setBackgroundImageUrlPath(this.pathForIconName("close-white"))
+
+            cb.setBackgroundImageUrlPath(this.pathForIconName("close"))
             cb.makeBackgroundContain()
             cb.makeBackgroundCentered()
             cb.makeBackgroundNoRepeat()  
+            */
+            this.setCloseButtonView(cb)
+            this.contentView().addSubview(cb) 
+            
+
             
             cb.setMinAndMaxWidthAndHeight(8)
             cb.setAction("delete")

@@ -33,7 +33,7 @@
         
         this.newSlot("doesMatchParentColor", false).setDoesHookSetter(true)
         this.newSlot("strokeColor", "white").setDoesHookSetter(true)
-        this.newSlot("fillColor", "transparent").setDoesHookSetter(true)
+        this.newSlot("fillColor", "white").setDoesHookSetter(true)
         this.newSlot("strokeWidth", 1).setDoesHookSetter(true)
     }
 
@@ -56,7 +56,7 @@
         this.setOverflow("visible")
         this.setTransition("all 0.2s")
         //this.setBorder("1px yellow dashed")
-
+        this.syncColors()
 
         return this
     }
@@ -122,17 +122,23 @@
         
     // --- didUpdateSlot hooks ---
 
+    syncColors () {
+        const style = this.element().style
+        style.setProperty("--fillColor", this.fillColor())
+        style.setProperty("--strokeColor", this.strokeColor())
+        style.setProperty("--strokeWidth", this.strokeWidth())
+    }
 
     didUpdateSlotFillColor (oldValue, newValue) {
-        this.setSpecialCssProperty("--fillColor", newValue)
+        this.setCssProperty("--fillColor", newValue)
     }
 
     didUpdateSlotStrokeColor (oldValue, newValue) {
-        this.setSpecialCssProperty("--strokeColor", newValue)
+        this.setCssProperty("--strokeColor", newValue)
     }
 
     didUpdateSlotStrokeWidth (oldValue, newValue) {
-        this.setSpecialCssProperty("--strokeWidth", newValue)
+        this.setCssProperty("--strokeWidth", newValue)
     }
 
     // --- variable maps ---

@@ -24,16 +24,20 @@
         //this.setDisplay("table") // to center svg
 
         const iv = SvgIconView.clone().setIconName("close")
+        iv.setColor("white")
+
+        iv.setMinAndMaxWidth(10)
+        iv.setMinAndMaxHeight(10)
+                
+        //iv.setWidth("fit-content")
+        //iv.setHeight("fit-content")
+
         iv.makeFlexAndCenterContent()
         //iv.setTopPx(0)
         //iv.setLeftPx(0)
-        
         //iv.setMarginBottom("1px") // TODO: fix the SVG for this icon so this isn't needed?
-        
-        iv.setWidth("fit-content")
-        iv.setHeight("fit-content")
-        iv.setStrokeColor("white")
-        iv.setFillColor("white")
+
+
         this.setIconView(iv)
         this.addSubview(iv)
 
@@ -59,7 +63,7 @@
     }
 
     syncEnabled () {
-        this.setDisplayIsHidden(!this.isEnabled())
+        //this.setDisplayIsHidden(!this.isEnabled())
         return this
     }
 

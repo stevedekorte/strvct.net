@@ -104,7 +104,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
                     return true
                 }
 
-                return this.parentNode.hasAncestor(fn)
+                return this.parentNode.hasAncestor(anElement)
             }
 
             return false

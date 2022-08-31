@@ -1,7 +1,7 @@
 [
-    "DomTextTapeMeasure.js",
     "DomCssInspector.js",
     "CssColor.js",
-    "Node-helpers.js"
+    "Node-helpers.js",
+    "TapeMeasures/_imports.json"
 ]
 

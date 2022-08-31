@@ -159,6 +159,8 @@
         const d = slideGesture.distance()
         const isReadyToDelete  = d >= this._slideDeleteOffset
 
+        this.element().style.backgroundColor = "transparent"
+
         if (isReadyToDelete) {
             this.finishSlideAndDelete()
         } else {

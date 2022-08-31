@@ -521,7 +521,7 @@
             return window.innerWidth // assume it fills the window? what about margins, padding?
         }
         return view.size().width() // clientWidth works here, but maybe all cases
-        //return this.rootStackView().calcSize().width
+        //return this.rootStackView().calcSize().width()
     }
 
     compactNavAsNeeded () {

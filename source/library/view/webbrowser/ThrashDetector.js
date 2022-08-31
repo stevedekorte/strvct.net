@@ -534,7 +534,7 @@
     */
 
     beginFrame () {
-        console.log("--- new frame ---")
+        //console.log("--- new frame ---")
         this.setNeedsReflow(false)
         this.setReflowCount(0)
         this.setTriggers([])

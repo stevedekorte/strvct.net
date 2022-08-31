@@ -23,7 +23,7 @@
     init () {
         super.init()
         this.setCanvas(document.createElement("canvas"))
-        this.setContext(canvas.getContext("2d"))
+        this.setContext(this.canvas().getContext("2d"))
         return this
     }
 
@@ -45,5 +45,5 @@
 	
 }.initThisClass());
 
-CanvasTextTapeMeasure.selfTest()
+//CanvasTextTapeMeasure.selfTest()
 
