@@ -2,11 +2,11 @@
 
 /*
     
-    BreadCrumbTile
+    BreadCrumbsTile
     
 */
 
-(class BreadCrumbTile extends Tile {
+(class BreadCrumbsTile extends Tile {
     
     initPrototypeSlots () {
         this.newSlot("path", null)

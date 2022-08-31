@@ -3,7 +3,7 @@ FIX: bugs with dragging around tile to other folders and back before dropping?
 
 ADD: Slot doUpdateOnSlotInit option?
 
-FIX: app not working in safari - maybe because DB is not being set up properly
+FIX: app not working in safari - DB is not set up properly?
 
 FIX: double tapping to edit a title on a folder causes unwanted navigation changes that can move column
      - make sure double tap timeout occurs before single tap event is allowed, if there is a double tap gesture recognizer listening?

@@ -14,7 +14,7 @@
         subnodes:
             headerNode -> HeaderTile 
             subnodes:
-                appRootNode -> BreadCrumbTile 
+                appRootNode -> BreadCrumbsTile 
 
 
 */
@@ -55,9 +55,9 @@
 
     didUpdateSlotBaseNode (oldValue, newValue) {
         // baseNode is the ObjectPool rootNode
-        // tell the node to hint to UI to use BreadCrumbTile view to display itself
-        newValue.setNodeTileClassName("BreadCrumbTile")
-        newValue.setTitle("BreadCrumbTile")
+        // tell the node to hint to UI to use BreadCrumbsTile view to display itself
+        newValue.setNodeTileClassName("BreadCrumbsTile")
+        newValue.setTitle("BreadCrumbsTile")
 
         // make sure it's the only thing under the header
         this.headerNode().removeAllSubnodes()
