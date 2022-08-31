@@ -425,6 +425,7 @@
             }
             */
             nextColumn.focus()
+            nextColumn.selectFirstTile()
         }
         return this
     }

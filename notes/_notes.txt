@@ -1,4 +1,4 @@
-FIX: bread crumb compaction funky
+FIX: right arrow key navigation TilesView? Tile?
 FIX: bugs with dragging around tile to other folders and back before dropping?
 
 ADD: Slot doUpdateOnSlotInit option?
