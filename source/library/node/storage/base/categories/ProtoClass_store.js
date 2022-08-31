@@ -9,7 +9,7 @@
             entries: [], 
         }
 
-        this.allSlotsMap().forEachKV((slotName, slot) => {
+        this.forEachSlotKV((slotName, slot) => {
             //if (slot.shouldStoreSlot()) {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this)

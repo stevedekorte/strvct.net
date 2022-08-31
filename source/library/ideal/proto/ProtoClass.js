@@ -269,6 +269,10 @@
         }
     }
 
+    forEachSlotKV (fn) {
+        this.forEachSlot(slot => fn(slot.name(), slot))
+    }
+
     forEachSlot (fn) {
         this.forEachPrototype(proto => {
             if (Object.hasOwn(proto, "_slotsMap")) {
@@ -283,21 +287,12 @@
             m.set(slot.name(), slot) 
         })
         return m
-
-        /*
-        if (this.__proto__ && this.__proto__.allSlotsMap) {
-            this.__proto__.allSlotsMap(m)
-        }
-        
-        this.slotsMap().forEachKV((k, v) => m.set(k, v))
-        return m
-        */
     }
 
     /*
     allSlotsRawValueMap () { // what about action slots?
         const map = new Map()
-        this.allSlotsMap().forEachKV((slotName, slot) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
+        this.forEachSlotKV((slotName, slot) => map.set(slot.name(), slot.onInstanceRawGetValue(this)))
         return map
     }
 

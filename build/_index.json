@@ -46,8 +46,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_copying.js",
-    "size": 1747,
-    "hash": "d21v+t3Y/GQ05+6krwlPJwvweAuMCFRDxRe3M8PdiBM="
+    "size": 1727,
+    "hash": "w47P1XwwIMeWhmT4hIk05+FBD2I72zVGMZIJhJAkC/8="
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
@@ -146,8 +146,8 @@
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 15746,
-    "hash": "p/3AjWp2SYvtyHMZ5K5owxw2Evi9fbXg/btqVBrDqWk="
+    "size": 15606,
+    "hash": "hQ7JfrFUo+TMDKsUP0GBLoe8x7zV+69RKTNh2stXSP0="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -806,8 +806,8 @@
   },
   {
     "path": "source/library/node/storage/base/categories/ProtoClass_store.js",
-    "size": 2892,
-    "hash": "g2LwuOWpfnEbWZkAVV7syHZHxQc4st8CEmA+OFIckR0="
+    "size": 2882,
+    "hash": "F0NE/2nTy735TNyopdKKS9gItVpa41g7tbfif832UYc="
   },
   {
     "path": "source/library/node/storage/base/categories/BMNode_store.js",
@@ -1161,8 +1161,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_gestures.js",
-    "size": 9358,
-    "hash": "M3z7tjUY8W/d+O8jdikPIXd/j1YJTvh3WurtpDMiXdY="
+    "size": 5556,
+    "hash": "fVVz6KroYU0+uYBrrchhkuUzL9q/+1xH9DPhZOWrFzM="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_slideGesture.js",

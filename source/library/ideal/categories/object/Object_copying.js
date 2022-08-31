@@ -37,7 +37,7 @@
     duplicateSlotValuesFrom (otherObject) {
         // TODO: add a type check of some kind?
  
-        this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
+        this.thisPrototype().forEachSlotKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
             const dop = otherSlot.duplicateOp()
@@ -53,7 +53,7 @@
     }
  
     copySlotValuesFrom (otherObject) {
-        this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
+        this.thisPrototype().forEachSlotKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
             const v = otherSlot.onInstanceGetValue(otherObject)
             mySlot.onInstanceSetValue(this, v)
