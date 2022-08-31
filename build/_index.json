@@ -1161,8 +1161,13 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_gestures.js",
-    "size": 9363,
-    "hash": "1cB3viVvm4caE6YLFLa8YafBLENqEaD1PATOLi+83Ig="
+    "size": 9358,
+    "hash": "M3z7tjUY8W/d+O8jdikPIXd/j1YJTvh3WurtpDMiXdY="
+  },
+  {
+    "path": "source/library/node/node_views/browser/stack/Tile/Tile_slideGesture.js",
+    "size": 3921,
+    "hash": "bqjTWRgf8u7sEVGIyWVZvKGlXWJCKVFuyTQ/+BWrGGg="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_styling.js",

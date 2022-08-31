@@ -3,6 +3,7 @@
     "Tile_dragging.js",
     "Tile_keyboard.js",
     "Tile_gestures.js",
+    "Tile_slideGesture.js",
     "Tile_styling.js",
     "TitledTile.js",
     "BMTextNodeTile.js",

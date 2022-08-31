@@ -1,5 +1,3 @@
-FIX: close button on tile slide
-FIX: return bg color after slide
 FIX: bread crumb compaction funky
 FIX: bugs with dragging around tile to other folders and back before dropping?
 
