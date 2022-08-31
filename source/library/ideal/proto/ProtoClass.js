@@ -608,6 +608,13 @@
         return this
     }
 
+    // --- other ---
+
+    freeze () {
+        Object.freeze(this)
+        return this
+    }
+
 }.initThisClass());
 
 

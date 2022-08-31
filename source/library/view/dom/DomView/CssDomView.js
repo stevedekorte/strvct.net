@@ -19,6 +19,7 @@
         this.newSlot("hiddenTransitionValue", undefined)
         //this.newSlot("pushedAttributes", undefined)
         this.newSlot("pushedSlotValues", undefined)
+        this.newSlot("cachedSize", null)
     }
 
     
@@ -1767,7 +1768,7 @@
         const w = (e.clientWidth + 1) 
         const h = (e.clientHeight + 1) 
         //const size = { width: w, height: h }
-        const size = Point.clone().setXY(w, h)
+        const size = Point.clone().setXY(w, h).freeze()
 
         // write
         this.didDomWrite("display")
@@ -1781,7 +1782,25 @@
             assert(e.hasAncestor(document.body)) // client measurements will be zero if it's not in a document
         }
 
+        this.setCachedSize(size)
         return size
+    }
+
+    cacheClientSize () {
+        if (this.display() === "none") {
+            return Point.clone().freeze()
+        }
+        
+        const e = this.element()
+        this.setCachedSize(Point.clone().setXY(e.clientWidth, e.clientHeight).freeze())
+        return this
+    }
+
+    cachedSize () {
+        if (this.display() === "none") {
+            return Point.clone().freeze()
+        }
+        return this._cachedSize
     }
 
     // calculated size (within parent view)

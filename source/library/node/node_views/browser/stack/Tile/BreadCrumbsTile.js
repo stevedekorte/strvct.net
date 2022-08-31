@@ -212,13 +212,18 @@
 
     // --- 
 
-    sumOfPathWidths () {
+    crumbViews () {
+        return this.contentView().subviews()
+    }
+
+    sumOfPathWidths () { // private - IMPORTANT: uses cachedSize
         const rightMargin = 15
-        return this.subviews().sum(view => { 
-            const w = view.display() === "none" ? 0 : view.calcWidth()
+        return this.crumbViews().sum(view => { 
+            //const w = view.calcWidth()
+            const w = view.cachedSize().width()
             if (Type.isNaN(w)) { 
                 debugger; 
-                throw new Error("invalid sum of widths")
+                throw new Error("invalid width value")
             }
             return w + rightMargin
         })
@@ -226,10 +231,12 @@
 
     updateCompaction () {
         const padding = 20
-        const maxWidth =  this.calcSize().width() //this.frameInDocument().width()
+        //const maxWidth =  this.calcSize().width() //this.frameInDocument().width()
+        const maxWidth = this.frameInDocument().width()
         //console.log("maxWidth: ", maxWidth)
-        const views = this.contentView().subviews()
+        const views = this.crumbViews()
         views.forEach(view => view.unhideDisplay())
+        views.forEach(view => view.cacheClientSize())
 
         let didHide = false // to track if we need back button
         for (let i = 1; i < views.length -1; i++) {

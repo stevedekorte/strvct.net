@@ -146,8 +146,8 @@
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 15606,
-    "hash": "hQ7JfrFUo+TMDKsUP0GBLoe8x7zV+69RKTNh2stXSP0="
+    "size": 15699,
+    "hash": "41tR23KqyBYOXmd55zv7vPnjCx+m1bk2wDGS9C6vi+M="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -576,8 +576,8 @@
   },
   {
     "path": "source/library/view/webbrowser/ThrashDetector.js",
-    "size": 18434,
-    "hash": "BVvbXY7ilJlpTcFIQVU2Odb6ceFSw0EToU2DuYkljJI="
+    "size": 18453,
+    "hash": "jW7H8lbmMWP4JF9azt9s5Igo3dvNTFh59tufB43OuYM="
   },
   {
     "path": "source/library/view/dom/Attributes/DomTransition.js",
@@ -636,8 +636,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
-    "size": 59751,
-    "hash": "5iV8eZLGe0spPJcq9eKRVNn0hs9KSUNm7n+wxocxkDk="
+    "size": 60261,
+    "hash": "GDrXislJp3353885XNZZQuNyQcMVoHpgm4XMRB3abJo="
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
@@ -1185,9 +1185,9 @@
     "hash": "Q+fXeWhPx5f2KvtvW0N7hUdfUgzjNC38oD2ZQ9ZGcsM="
   },
   {
-    "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbTile.js",
-    "size": 7664,
-    "hash": "pWW65DGCQJEsUnPm2pZXcfTIQf328HV6p4nlZmUgtyw="
+    "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbsTile.js",
+    "size": 7896,
+    "hash": "JUzxAeJpLfVchvxn+Jpc4tiKce0alKXX2DADqNWJbAk="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/HeaderTile.js",
@@ -1261,8 +1261,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/BrowserView.js",
-    "size": 2306,
-    "hash": "aOmTLLToKb1xB8qiimoalb7v/YOcPK/cwcaMIOpFM4I="
+    "size": 2310,
+    "hash": "D4kJ8bGOs0bgKup+SkfFdbypuEGYUitLZSjwz75pxuQ="
   },
   {
     "path": "source/library/node/blobs/BMBlob.js",

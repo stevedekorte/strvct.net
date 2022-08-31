@@ -551,7 +551,9 @@
                 if (optionalView) {
                     m = optionalView.debugTypeId() + " get " + opName
                 }
-                this.triggers().push(this.lastWrite() + " -> " + m)
+                const s = this.lastWrite() + " -> " + m
+                //console.log(s)
+                this.triggers().push(s)
                 this.onThrash()
             }
         } 
@@ -561,12 +563,12 @@
     didWrite (opName, optionalView) {
         if (!this.noReflowWriteOpSet().has(opName)) {
         //if (true || this.writeOpSet().has(opName)) {
-            //console.log(this.type() + ".didWrite('" + opName + "')")
             this.setNeedsReflow(true)
             let m = opName 
             if (optionalView) {
                 m = optionalView.debugTypeId() + " set " + opName
             }
+            //console.log(m)
             this.setLastWrite(m)
         //}
         }
