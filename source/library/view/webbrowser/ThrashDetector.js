@@ -562,7 +562,6 @@
 
     didWrite (opName, optionalView) {
         if (!this.noReflowWriteOpSet().has(opName)) {
-        //if (true || this.writeOpSet().has(opName)) {
             this.setNeedsReflow(true)
             let m = opName 
             if (optionalView) {
@@ -570,7 +569,6 @@
             }
             //console.log(m)
             this.setLastWrite(m)
-        //}
         }
         return this
     }

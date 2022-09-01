@@ -1,3 +1,4 @@
+
 FIX: persistance not working - maybe overwritten on restart?
 
 FIX: app not working in safari - DB is not set up properly?

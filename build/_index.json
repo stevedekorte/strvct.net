@@ -576,8 +576,8 @@
   },
   {
     "path": "source/library/view/webbrowser/ThrashDetector.js",
-    "size": 18453,
-    "hash": "jW7H8lbmMWP4JF9azt9s5Igo3dvNTFh59tufB43OuYM="
+    "size": 18386,
+    "hash": "GLatqz0CJ2HKtF47vyzxn9MhPO55Yb82yjJLJTXzBsw="
   },
   {
     "path": "source/library/view/dom/Attributes/DomTransition.js",
@@ -1096,8 +1096,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 19638,
-    "hash": "2VaJxDk9BEEdndC9XTCVmnfdkL4pOnVDniKlT1ZLANI="
+    "size": 19580,
+    "hash": "C1AZzhaa2AIDiChUMoDre73jemktxtfCbuVq45wAgQA="
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
@@ -1416,8 +1416,8 @@
   },
   {
     "path": "source/library/resources/icons/BMIconResources.js",
-    "size": 963,
-    "hash": "7r0JaPixbwUiHMz37w8oGG0cKPXgpismCQbZhAlES/A="
+    "size": 942,
+    "hash": "mOMjqIg8qcv0LEWgEX4k0/kqtW+DR3ItqBbezkT0hqI="
   },
   {
     "path": "source/library/resources/icons/SvgIconNode.js",
@@ -1796,8 +1796,8 @@
   },
   {
     "path": "resources/icons/reply.svg",
-    "size": 768,
-    "hash": "j3g12JFHuGBfh7lg6vO6rTxwDp2LHWNZKmZ6Y6bmSDU="
+    "size": 461,
+    "hash": "Pd3vFLqzxjMcqOyNvv81qzx5cRjemL2QzmvIT2Y6gI0="
   },
   {
     "path": "resources/icons/repost-filled.svg",
@@ -2001,8 +2001,8 @@
   },
   {
     "path": "resources/icons/core/repost.svg",
-    "size": 495,
-    "hash": "QZYabLbTLfH3T6NeIDwOWkXtLs3+QtLejIVPLklKXYs="
+    "size": 473,
+    "hash": "nnkSvKta7XNt/1q8JmsatzwP0WQmADIpzqSFbkjZuh8="
   },
   {
     "path": "resources/icons/core/right-arrow.svg",

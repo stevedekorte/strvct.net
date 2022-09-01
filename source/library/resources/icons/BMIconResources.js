@@ -13,7 +13,6 @@
 	init () {
 		super.init()
 		this.setTitle("Icons")
-		this.addIcon("empty", null)
 		return this
 	}
 
@@ -22,10 +21,12 @@
         this.setResourceClasses([SvgIconNode])
     }
 
+	/*
 	setupSubnodes () {
 		super.setupSubnodes()
 		return this
 	}
+	*/
 
 	// --- old code to add svg directly using a string ---
 

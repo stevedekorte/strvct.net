@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100%" height="100%" viewBox="0 0 100 100">
-	<path style="fill:#030104;" d="M24.9,66V39.9H35L17.5,20L0,39.9h10.1V70c0,5.523,4.476,10,10,10H65L52.195,66H24.9z M89.9,60.1V30 c0-5.523-4.477-10-10-10H35l12.804,14h27.295v26.1H65L82.5,80L100,60.1H89.9z" />
+	<path d="M24.9,66V39.9H35L17.5,20L0,39.9h10.1V70c0,5.523,4.476,10,10,10H65L52.195,66H24.9z M89.9,60.1V30 c0-5.523-4.477-10-10-10H35l12.804,14h27.295v26.1H65L82.5,80L100,60.1H89.9z" />
 </svg>
