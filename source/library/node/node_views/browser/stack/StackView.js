@@ -434,13 +434,7 @@
 
     updateCompaction () {
         this.compactNavAsNeeded()
-        /*
-        let pd = this.firstParentWithDifferentDirection()
-        if (pd) {
-            pd.compactNavAsNeeded()
-        }
-        */
-        return false
+        return this
     }
 
     /*
@@ -498,21 +492,42 @@
         return chain
     }
 
-    sumOfNavWidths () { // used for compacting
+    navViewSubchain () {
+        return this.stackViewSubchain().map(sv => sv.navView())
+    }
+
+    sumOfNavWidths () { 
+        // Returns sum of self and all preceeding vertical nav view widths.
+        // This is used for compacting
+        
+        // NOTES:
+        // - We assume no direct compaction of horizontal nav views (e.g. horizontal menus)
+        //  ** so we need to skip summing widths of horizontal nav views 
+        //     as well as compacting them 
+        // - Even if vertical and horizontal navs are interleaved, 
+        //   we treat all vertical nav view compactions 
+        //   as if they are part of the same Miller Column.
+
+        const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical())
+        const w = verticalNavViews.sum(nv => nv.targetWidth())
+        return w
+
+        /*
         let w = 0
         const views = this.stackViewSubchain()
         for (let i = 0; i < views.length; i++) { // use loop so we can break
             const sv = views[i]
-            /*
-            if (sv.direction() !== this.direction()) {
-                break 
-            }
-            */
+
+            //if (sv.direction() !== this.direction()) {
+            //    break 
+            //}
+
             if (sv.navView().isVertical()) {
                 w += sv.navView().targetWidth()
             }
         }
         return w
+        */
     }
 
     topViewWidth () {

@@ -1,9 +1,11 @@
-FIX: right arrow key navigation TilesView? Tile?
+FIX: persistance not working - maybe overwritten on restart?
+
+FIX: app not working in safari - DB is not set up properly?
+
 FIX: bugs with dragging around tile to other folders and back before dropping?
 
 ADD: Slot doUpdateOnSlotInit option?
 
-FIX: app not working in safari - DB is not set up properly?
 
 FIX: double tapping to edit a title on a folder causes unwanted navigation changes that can move column
      - make sure double tap timeout occurs before single tap event is allowed, if there is a double tap gesture recognizer listening?
@@ -11,10 +13,6 @@ FIX: double tapping to edit a title on a folder causes unwanted navigation chang
 OPTIMIZE: stop using associations for mutatorMethodNamesSet
 
 OPTIMIZE: replace uses of allSlotsMap with forEachSlot
-
-RENAME: initPrototype -> initPrototypeSlots, initPrototypeObject -> initPrototype
-
-REMOVE: ProtoClass_weakSlots.js
 
 look at: startMutationObserver
 
@@ -33,7 +31,7 @@ look at: startMutationObserver
 -- move gestureRecognizers to map?
 
 
--  move shouldStore to class?
+-  move shouldStore to class var?
 
 - don't store App in object pool (for now), instead have it set up and manage the root node
 

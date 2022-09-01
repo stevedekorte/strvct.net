@@ -1790,7 +1790,7 @@
         if (this.display() === "none") {
             return Point.clone().freeze()
         }
-        
+
         const e = this.element()
         this.setCachedSize(Point.clone().setXY(e.clientWidth, e.clientHeight).freeze())
         return this
@@ -2568,5 +2568,8 @@
         ThrashDetector.shared().didWrite(opName, this)
         return this
     }
+
+    // reflow thrash avoidance helpers
+
 
 }.initThisClass());
