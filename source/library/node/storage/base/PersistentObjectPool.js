@@ -44,12 +44,13 @@
         console.log("loadedNode = ", loadedNode)
         console.log(this.type() + " --- self test end --- ")
     }
+
+    static asyncSelfTest () {
+        // TODO: change to use a hasLoaded notification
+        this.addTimeout(() => PersistentObjectPool.selfTest(), 1000)
+    }
     
 }.initThisClass());
 
-
-//setTimeout(() => {
-//PersistentObjectPool.selfTest()
-//}, 1000)
 
 

@@ -15,6 +15,11 @@
     }
     
     setupMutatorHooks () {
+        // this is to be called on a prototype
+        // it copies each slot whose name is in mutatorMethodNamesSet
+        // to unhooked_<slotName>, and implements a slot which calls the
+        // unhooked version after calling this.willMutate(slotName)
+        
         this.mutatorMethodNamesSet().forEach((slotName) => {
             const unhookedName = "unhooked_" + slotName
             const unhookedFunction = this[slotName]
@@ -44,21 +49,18 @@
     // -----------------------------------------
 
     setMutationObservers (aSet) {
-        if (!this._mutationObservers) {
-            Object.defineSlot(this, "_mutationObservers", aSet)
-        }
+        this._mutationObservers = aSet
         return this
     }
 
     mutationObservers () {
+        if (!this._mutationObservers) {
+            this.setMutationObservers(new Set())
+        }
         return this._mutationObservers
     }
 
     addMutationObserver (anObserver) {
-        if (!this._mutationObservers) {
-            this.setMutationObservers(new Set())
-        }
-
         this.mutationObservers().add(anObserver)
         return this
     }

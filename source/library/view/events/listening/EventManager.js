@@ -90,6 +90,7 @@
         this.decrementEventLevelCount()
         assert(this.eventLevelCount() === eventCountBefore)
         this.syncIfAppropriate() // TODO: is this the best spot?
+        Perf.clearCalls()
         ThrashDetector.shared().endFrame()
         return result
     }

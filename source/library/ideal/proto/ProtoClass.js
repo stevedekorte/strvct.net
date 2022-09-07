@@ -58,7 +58,8 @@
         Object.defineSlot(this, "_shared", undefined)
         //this.newClassSlot("shared", undefined)
         this.newClassSlot("isSingleton", false)
-        this.newClassSlot("setterNameMap", new Map())
+        this.newClassSlot("setterNameMap", new Map()) // TODO: share this between all classes
+        this.newClassSlot("allProtoSlotsMap", new Map())
         return this
     }
 
@@ -149,24 +150,13 @@
         return lines.join("\n")
     }
 
-    static isClass () {
-        return true
-    }
-
-    static isInstance () {
-        return false
-    }
-
-    static isPrototype () {
-        return false
-    }
-
     // --- instance ---
 
 
     initPrototypeSlots () {
         this.newSlot("isDebugging", false)
         this.newSlot("lazyRefsMap", null)
+        Object.defineSlot(this, "_timeoutNameToIdMap", null)
     }
 
     lazyRefsMap () {
@@ -176,42 +166,7 @@
         return this._lazyRefsMap
     }
 
-    superClass () {
-        return this.thisClass().superClass()
-    }
 
-    thisPrototype () {
-        assert(this.isInstance())
-        const prototype = this.__proto__
-        assert(prototype.isPrototype)
-        return prototype
-    }
-
-    thisClass () {
-        if (this.isPrototype()) {
-            // it's an prototype
-            return this.constructor
-        }
-
-        // otherwise, it's an instance
-        return this.__proto__.constructor
-    }
-
-    isPrototype () {
-        return this.constructor.prototype === this 
-    }
-    
-    isInstance () {
-        return !this.isPrototype()
-    }
-
-    isClass () {
-        return false
-    }
-
-    type () {
-        return this.constructor.name
-    }
 
     setType (aString) {
         this.constructor.name = aString
@@ -251,43 +206,27 @@
 
     // slot objects
 
-    forEachPrototype (fn) {
-        let proto = this
-        if(this.isInstance()) {
-            proto = this.__proto__
-        }
 
-        while (proto) {
-            fn(proto) 
-            //console.log("proto is ", proto.type())
-            if (proto === proto.__proto__) {
-                throw new Error("__proto__ loop detected in " + proto.type())
-                break;
-            } else {
-                proto = proto.__proto__
-            }
-        }
+    getSlot (slotName) {
+        return this.allSlotsMap().get(slotName)
     }
 
-    forEachSlotKV (fn) {
-        this.forEachSlot(slot => fn(slot.name(), slot))
+    hasSlot (slotName) {
+        return this.getSlot(slotName) !== undefined
     }
 
-    forEachSlot (fn) {
-        this.forEachPrototype(proto => {
-            if (Object.hasOwn(proto, "_slotsMap")) {
-                proto._slotsMap.forEachV(slot => fn(slot))
+    detectSlot (fn) { // returns undefined if no match
+        // TODO: Optimize - this should stop search on match
+        let matchingSlot = undefined
+        this.forEachSlot(slot =>  {
+            if (matchingSlot === undefined && fn(slot)) {
+                matchingSlot = slot 
             }
         })
+        return matchingSlot
     }
 
-    allSlotsMap (m = new Map()) {
-        //assert(this.isPrototype())
-        this.forEachSlot(slot => {
-            m.set(slot.name(), slot) 
-        })
-        return m
-    }
+
 
     /*
     allSlotsRawValueMap () { // what about action slots?
@@ -308,9 +247,9 @@
     */
 
     // -------------------------------------
-    
+
     newSlotIfAbsent (slotName, initialValue) {
-        const slot = this.allSlotsMap().get(slotName)
+        const slot = this.getSlot(slotName)
         if (slot) {
             return slot
         }
@@ -325,7 +264,7 @@
         }
         */
 
-        if (this.allSlotsMap().has(slotName)) {
+        if (this.hasSlot(slotName)) {
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
             console.log(msg)
             throw new Error(msg)
@@ -334,7 +273,7 @@
     }
 
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
-        const oldSlot = this.allSlotsMap().get(slotName)
+        const oldSlot = this.getSlot(slotName)
         if (Type.isUndefined(oldSlot)) {
             const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
             console.log(msg)
@@ -363,15 +302,15 @@
         const slot = ideal.Slot.clone().setName(slotName).setInitValue(initialValue)
         slot.setOwner(this)
         this.slotsMap().set(slotName, slot)
+        this.allSlotsMap().set(slotName, slot)
         return slot
     }
 
-    newWeakSlot(slotName, initialValue) {
+    newWeakSlot (slotName, initialValue) {
         const slot = this.newSlot(slotName, initialValue)
         slot.setIsWeak(true)
         return slot;
     }
-
 
     // --- weak slot ---
 
@@ -513,11 +452,10 @@
 
     init () { 
         super.init()
- 
         // subclasses should override to do initialization
         //assert(this.isInstance())
-        const allSlots = this.__proto__.allSlotsMap()
-        allSlots.forEachV(slot => slot.onInstanceInitSlot(this)) // TODO: use slot cache
+        //this.thisPrototype() is same as this.__proto__
+        this.thisPrototype().allSlotsMap().forEachV(slot => slot.onInstanceInitSlot(this)) // TODO: use slot cache
     }
 
     toString () {

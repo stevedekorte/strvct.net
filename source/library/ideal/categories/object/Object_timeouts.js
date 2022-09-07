@@ -24,81 +24,85 @@
         If the optionalName argument is used, any active timer with the same name on this object will
         be cleared first, and a new timeout with the name will be added.
 
-    TODO: decide if exception should be raised when cancelling timeout not in _activeTimeoutsDict
+    TODO: decide if exception should be raised when cancelling timeout not in _timeoutNameToIdMap
         
 */
 
 
 (class Object_timeouts extends Object {
 
-        activeTimeoutsDict () {
-            const slotName = "_activeTimeoutsDict"
+        timeoutNameToIdMap () { // the name will be the timeoutId if no name is provided
+            const slotName = "_timeoutNameToIdMap"
             if (Type.isNullOrUndefined(this[slotName])) {
-                Object.defineSlot(this, slotName, {})
+                Object.defineSlot(this, slotName, new Map())
             }
             return this[slotName]
         }
     
-        addTimeout (aFunc, msDelay, optionalName) {
-            if (optionalName) {
+        addTimeout (aFunc, msDelay, optionalName) { 
+            // if no optionalName given, use the timeoutId for the name,
+            // as timeout ids should be unique
+            const tids = this.timeoutNameToIdMap()
+
+            if (optionalName && tids.has(optionalName)) {
                 // clear existing timeout with this name, if there is one
-                const tid = this.timeoutForName(optionalName)
-                if (tid) {
-                    this.clearTimeout(tid)
-                }
+                this.clearTimeoutNamed(optionalName)
             }
-            const tids = this.activeTimeoutsDict()
-            const tidInfo = {} // so we can capture returned tid in timeout closure
+
+            const tidInfo = new Array(2) // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
             const tid = setTimeout(() => { 
-                this.removeTimeoutId(tidInfo.tid)
-                //aFunc() // todo: put in EventManager wrapper
-                EventManager.shared().safeWrapEvent(aFunc)
+                this.removeTimeoutNamed(tidInfo[0])
+                const description = this.type() + " " + (optionalName ? optionalName : "unnamed timer")
+                Perf.timeCall(description, () => {
+                    EventManager.shared().safeWrapEvent(aFunc)
+                })
+
             }, msDelay)
-            tidInfo.tid = tid
-            this.activeTimeoutsDict()[tid] = optionalName
+            tidInfo[0] = optionalName ? optionalName : tid
+            tidInfo[1] = tid
+            this.timeoutNameToIdMap().set(optionalName, tid)
             return tid
         }
 
-        removeTimeoutId (tid) {
-            const tids = this.activeTimeoutsDict()
-            delete tids[tid]
+        removeTimeoutNamed (name) {
+            const tids = this.timeoutNameToIdMap()
+            tids.delete(name)
             return this
         }
 
-        clearTimeout (tid) {
-            this.removeTimeoutId(tid)
+        clearTimeout (tid) { 
+            // IMPORTANT: (for now) we assume a given timeouts is either referred to by name or tid, but not both
+            // in which case, if the tid is called here, it was used at the key in the timeoutNameToIdMap
+            this.removeTimeoutNamed(tid)
             clearTimeout(tid)
             return this
         }
 
         clearTimeoutNamed (name) {
-            const tid = this.timeoutForName(name)
-            this.clearTimeout(tid)
+            const tids = this.timeoutNameToIdMap()
+            if (tids.has(name)) {
+                const tid = tids.get(name)
+                this.clearTimeout(tid)
+            }
             return this
         }
 
         hasTimeoutNamed (name) {
-            return !Type.isUndefined(this.timeoutForName(name))
+            const tids = this.timeoutNameToIdMap()
+            return tids.has(name)
         }
     
         cancelAllTimeouts () {
-            const tids = this.activeTimeoutsDict()
-            const keys = Reflect.ownKeys(tids)
-            keys.forEach(tid => this.clearTimeout(tid))
+            const tids = this.timeoutNameToIdMap()
+            tids.forEachKV((name, tid) => this.clearTimeout(tid))
             return this
         }
 
+        /*
         timeoutForName (name) {
-            // could move to nameToTid dict, but probably not worth it given relatively (time) infrequent use
-            const tids = this.activeTimeoutsDict()
-            const keys = Reflect.ownKeys(tids)
-            for (let i = 0; i < keys.length; i ++) {
-                const k = keys[i]
-                if (tids[k] === name) {
-                    return k
-                }
-            }
-            return undefined
+            const tids = this.timeoutNameToIdMap()
+            return tids.get(name)
         }
+        */
 
 }).initThisCategory();

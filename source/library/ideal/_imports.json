@@ -5,7 +5,9 @@
     "array/_imports.json",
     "map/_imports.json",
     "formatters/_imports.json",
-    "misc/_imports.json"
+    "misc/_imports.json",
+    "Perf.js",
+    "PerfCall.js"
 ]
 
 

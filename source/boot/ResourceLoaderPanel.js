@@ -312,7 +312,7 @@
         if (e) {
             e.style.opacity = 0
         }
-        setTimeout(() => { this.close() }, 300)
+        setTimeout(() => this.close(), 300)
     }
 
     close () {

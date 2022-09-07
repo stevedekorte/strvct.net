@@ -42,11 +42,13 @@
     }
 	
     send () {
-        this.debugLog("   <- sending " + this.description())
+        this.debugLog(() => "   <- sending " + this.description())
         const t = this.target()
         const m = this.method()
         const a = this.args()
-        t[m].apply(t, a ? a : [])
+        Perf.timeCall(this.description(), () => {
+            t[m].apply(t, a ? a : [])
+        })
         return null
     }
 	
@@ -61,7 +63,7 @@
     }
 	
     description () {
-        const t = this.target() ? this.target().typeId() : "null"
+        const t = this.target() ? this.target().type() : "null"
         const o = this.order() === 0 ? "" : " order:" + this.order()
         return t + " " + this.method() + "" + o
     }

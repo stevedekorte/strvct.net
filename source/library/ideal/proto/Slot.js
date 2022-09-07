@@ -536,9 +536,5 @@ Object.defineSlots(Function.prototype, {
         return this
     },
 
-    super: function () {
-        return this
-    },
-
 })
 */

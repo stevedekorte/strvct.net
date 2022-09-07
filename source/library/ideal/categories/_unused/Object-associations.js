@@ -6,10 +6,9 @@
 
 */
 
+/*
 Object.defineSlots(Object, {
-
     _allAssociations: new WeakMap(),
-    
 })
 
 // ------------
@@ -36,4 +35,5 @@ Object.defineSlots(Object.prototype, {
     },
 
 })
+*/
 

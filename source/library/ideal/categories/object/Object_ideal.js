@@ -18,36 +18,6 @@
         Object.defineSlot(this, "_mutationObservers", null)
         Object.defineSlot(this, "_shouldStore", true)
     }
- 
-    isPrototype () {
-        return this.constructor.prototype === this
-    }
- 
-    isInstance () {
-        return !this.isPrototype()
-    }
- 
-    isClass () {
-        return false
-    }
- 
-    thisClass () {
-        if (this.isPrototype()) {
-            return this.constructor
-        }
-        return this.__proto__.constructor
-    }
- 
-    thisPrototype () {
-        assert(this.isInstance())
-        const prototype = this.__proto__
-        assert(prototype.isPrototype)
-        return prototype
-    }
- 
-    type () {
-        return this.constructor.name
-    }
 
     isKindOf (aClass) {
         return this.thisClass().isKindOf(aClass)

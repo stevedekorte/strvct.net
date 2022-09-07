@@ -85,9 +85,8 @@
     }
 
     /*
-        setupInspectorFromSlots() {
-        const slots = this.thisPrototype().allSlotsMap()
-        slots.forEachV(slot => {
+    setupInspectorFromSlots() {
+        this.thisPrototype().forEachSlot(slot => {
             const field = slot.newInspectorField()
             if (field) {
                 field.setTarget(this)

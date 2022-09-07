@@ -1,4 +1,17 @@
 
+#1::::::: cache allSlotsMap
+
+Perf.timeCall("subnode clone", () => {
+
+look at: startMutationObserver
+
+CLEAN: move LongPressGesture and TapGesture from setTimeoutId to 
+CLEAN: mutatorMethodNamesSet - move into type class categories, make class method?
+
+OPTIMIZE: stop using associations for mutatorMethodNamesSet
+
+
+INVESTIGATE: slow load speed when navigating to icon resources - is it just that it's a large list? 
 FIX: persistance not working - maybe overwritten on restart?
 
 FIX: app not working in safari - DB is not set up properly?
@@ -11,16 +24,11 @@ ADD: Slot doUpdateOnSlotInit option?
 FIX: double tapping to edit a title on a folder causes unwanted navigation changes that can move column
      - make sure double tap timeout occurs before single tap event is allowed, if there is a double tap gesture recognizer listening?
 
-OPTIMIZE: stop using associations for mutatorMethodNamesSet
 
-OPTIMIZE: replace uses of allSlotsMap with forEachSlot
+OPTIMIZE: detectSlot() - move to caching allSlotsMap on each class
+IMPORTANT: what happens with overridden slots when doing forEachSlot on things like slotInit??
 
-look at: startMutationObserver
 
-- CLEANUP SLOT object
-- move Observation newWeakSlot implementatiobn into Slot and ProtoClass 
-
-- remove makeOneShotHookedGetter and any other slot's which change on class or proto
 - FIX safeHookedGetter to not store isInGetterHook on slot
 
 - BUG: resizing columns
@@ -29,7 +37,7 @@ look at: startMutationObserver
 
 - get rid of snake_case folder names - move to CamelCase or Cap Case?
 
--- move gestureRecognizers to map?
+CLEAN: move gestureRecognizers to map?
 
 
 -  move shouldStore to class var?

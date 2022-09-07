@@ -13,15 +13,25 @@
 }
 */
 
+ /*  removes scrollbars on Safari and Chrome */
 .BrowserScrollView::-webkit-scrollbar { 
-    display: none;  /*  removes scrollbars on Safari and Chrome */
+    display: none; 
 }
 
 /* 
 notes on Scroll bars theme options
-::-webkit-scrollbar { width: 10px; } 
-::-webkit-scrollbar-track { background: #666; } 
-::-webkit-scrollbar-thumb { background-color: #f1f1f1; outline: 1px solid slategrey; } 
-::-webkit-scrollbar-thumb:hover { background: #b1b1b1; }
 */
+::-webkit-scrollbar {  display: none; width: 10px; } 
+/*
+::-webkit-scrollbar-button { display: none; }
+*/
+::-webkit-scrollbar-thumb { background-color: #aaa; outline: 1px solid #aaa; } 
+::-webkit-scrollbar-thumb:hover { background: #b1b1b1; }
+/*
+::-webkit-scrollbar-track { background: transparent; } 
+::-webkit-scrollbar-track-piece { background: transparent; }
+::-webkit-scrollbar-corner { background: transparent; }
+::-webkit-resizer { background: transparent; }
+*/
+
 

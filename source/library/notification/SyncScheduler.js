@@ -148,12 +148,11 @@
             })
         }
 
- 
         assert(!this.hasActionsForTarget()) // todo: remove this sanity check
         return this
     }
 
-    //        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
+    // return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
 
 
     unscheduleTargetAndMethod (target, syncMethod) {

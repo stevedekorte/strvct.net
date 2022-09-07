@@ -851,17 +851,14 @@
         console.log("loadedNode = ", loadedNode)
         console.log(this.type() + " --- self test end --- ")
     }
+
+    static asyncSelfTest () {
+        this.addtimeout(() => this.selfTest(), 1000)
+    }
     */
 
 }.initThisClass());
 
-
-// -------------------
-
-/*
-setTimeout(() => {
-    ObjectPool.selfTest()
-}, 1000)
-*/
+// ObjectPool.asyncSelfTest()
 
 

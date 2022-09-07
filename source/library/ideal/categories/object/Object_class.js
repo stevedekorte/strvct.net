@@ -11,6 +11,66 @@
 
 (class Object_class extends Object {
 
+    static isClass () {
+        return true
+    }
+
+    static isInstance () {
+        return false
+    }
+
+    static isPrototype () {
+        return false
+    }
+
+    type () {
+        return this.constructor.name
+    }
+
+    superClass () {
+        return this.thisClass().superClass()
+    }
+
+    thisClass () {
+        if (this.isPrototype()) {
+            // it's an prototype
+            return this.constructor
+        }
+
+        // otherwise, it's an instance
+        return this.__proto__.constructor
+    }
+
+    isInstance () {
+        return !this.isPrototype() && !this.isClass()
+    }
+
+    isPrototype () {
+        return this.constructor.prototype === this
+    }
+ 
+    isInstance () {
+        return !this.isPrototype()
+    }
+ 
+    isClass () {
+        return false
+    }
+ 
+    thisClass () {
+        if (this.isPrototype()) {
+            return this.constructor
+        }
+        return this.__proto__.constructor
+    }
+ 
+    thisPrototype () {
+        assert(this.isInstance())
+        const prototype = this.__proto__
+        assert(prototype.isPrototype)
+        return prototype
+    }
+
     // --- class methods ---
 
     static clone () {
@@ -122,7 +182,6 @@
         return this
     }
 
-
     static initThisClass () { // called on every class which we create
         this.defineClassGlobally()
 
@@ -143,29 +202,100 @@
             this.initClass()
         }
 
-        const proto = this.prototype
-
-        //proto.justNewSlot("slots", new Map()) // each proto has it's own set of slots - us justNewSlot as newSlot needs to check the slots list
-        Object.defineSlot(proto, "_slotsMap", new Map)
-
-        if (proto.hasOwnProperty("initPrototypeSlots")) {
-            // Only called if method defined on this class.
-            proto.initPrototypeSlots() // This method should NOT call super
-        }
-
-        proto.initSlots()
-
-        if (proto.hasOwnProperty("initPrototype")) {
-            proto.initPrototype() // This method should NOT call super
-        }
+        this.prototype.setupPrototype()
 
         this.addToAllClasses()
         return this
     }
 
+    setupPrototype () {
+        if (!this.isPrototype()) {
+            throw new Error("setupPrototype called on non-prototype")
+        }
+
+        //proto.justNewSlot("slots", new Map()) // each proto has it's own set of slots - us justNewSlot as newSlot needs to check the slots list
+        Object.defineSlot(this, "_slotsMap", new Map())
+        Object.defineSlot(this, "_allSlotsMap", new Map())
+        this.setupAllSlotsMap()
+
+        if (this.hasOwnProperty("initPrototypeSlots")) {
+            // Only called if method defined on this class.
+            this.initPrototypeSlots() // This method should NOT call super
+        }
+
+        this.initSlots()
+
+        if (this.hasOwnProperty("initPrototype")) {
+            this.initPrototype() // This method should NOT call super
+        }
+
+        return this
+    }
+
+
+    allSlotsMap () {
+        return this._allSlotsMap
+    }
+
+    setupAllSlotsMap () {
+        //debugger;
+        if (!this.isPrototype()) {
+            throw new Error("setupAllSlotsMap called on non-prototype")
+        }
+
+        const m = this.allSlotsMap()
+        console.log("*** " + this.type() + " setupAllSlotsMap")
+
+        //assert(this.isPrototype())
+        this.forEachSlot(slot => {
+            const k = slot.name()
+            if (!m.has(k)) { // to handle overrides
+                m.set(k, slot) 
+            }
+        })
+    }
+
+    forEachSlotKV (fn) {
+        this.forEachSlot(slot => fn(slot.name(), slot))
+    }
+
+    forEachPrototype (fn) { // starts with this, and follows tree upwards
+        let proto = this
+        if(this.isInstance()) {
+            proto = this.__proto__
+        }
+
+        while (proto) {
+            fn(proto) 
+            //console.log("proto is ", proto.type())
+            if (proto === proto.__proto__) {
+                throw new Error("__proto__ loop detected in " + proto.type())
+                break;
+            } else {
+                proto = proto.__proto__
+            }
+        }
+    }
+
+    forEachSlot (fn) {
+        this.forEachPrototype(proto => {
+            if (Object.hasOwn(proto, "_slotsMap")) {
+                proto._slotsMap.forEach((slot, key, map) => {
+                    fn(slot)
+                })
+            }
+        })
+    }
+
     initSlots () {
         this.slotsMap().forEach(slot => slot.setupInOwner())
     }
+
+    // ----------------------------------------
+
+
+    // ----------------------------------------
+
 
     initPrototype () {
         // called after setupInOwner is called on each slot

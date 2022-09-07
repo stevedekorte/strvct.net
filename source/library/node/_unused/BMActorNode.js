@@ -18,7 +18,7 @@
     
     initPrototypeSlots () {
         this.newSlot("inbox", null).setInitProto(Array) // asyncMessageQueue
-        this.newSlot("timeout", null) 
+        this.newSlot("timeoutId", null) 
     }
 
     init () {
@@ -47,8 +47,8 @@
     }
 
     runViaTimeout () {
-        const timeout = this.addTimeout(() => { this.run() }, 0)
-        this.setTimeout(timeout)
+        const tid = this.addTimeout(() => { this.run() }, 0)
+        this.setTimeoutId(tid)
         return this
     }
 

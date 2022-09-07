@@ -128,14 +128,22 @@
         }
 
         //console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
-        const proto = this.subviewProtoForSubnode(aSubnode)
+        let proto = Perf.timeCall("subviewProtoForSubnode", () => {
+            return this.subviewProtoForSubnode(aSubnode)
+        })
 		
         if (!proto) {
-            aSubnode.nodeViewClass()
+            debugger;
+            //aSubnode.nodeViewClass() // used to step into to debug
             throw new Error("no subviewProto for subnode " + aSubnode.typeId())
         }
-		
-        return proto.clone().setNode(aSubnode)
+
+        const instance = Perf.timeCall("subnode clone", () => {
+            //debugger;
+            return proto.clone()
+        })
+        instance.setNode(aSubnode)
+        return instance
     }
 
     updateSubviews () {
@@ -184,13 +192,22 @@
 
         assert(!this.visibleSubnodes().hasDuplicates())
         
+        //debugger;
+
         this.visibleSubnodes().forEach((subnode) => {
-            let subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
-            
+            let subview = undefined;
+
+            Perf.timeCall("subviewForNode", () => {
+                subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
+            })
+
             if (!subview) {
-                subview = this.newSubviewForSubnode(subnode)
+                Perf.timeCall("newSubviewForSubnode", () => {
+                    //debugger;
+                    subview = this.newSubviewForSubnode(subnode)
+                })
             }
-            
+
             if (Type.isNull(subview)) {
                 throw new Error("null subview")
             }
@@ -198,6 +215,9 @@
             assert(!newSubviews.contains(subview))
             newSubviews.push(subview)   
         })
+
+        //debugger;
+
         
         if (!newSubviews.isEqual(this.subviews())) {
             subnodesDidChange = true

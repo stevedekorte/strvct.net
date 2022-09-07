@@ -13,13 +13,16 @@
 
             const size2 = DomTextTapeMeasure.shared().sizeOfElementWithHtmlString(domElement, text);
             const w = size2.width;
+    
+    TODO: move to using separate document
 
 */
 
 (class DomTextTapeMeasure extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("idName", this.type())
+        this.newSlot("document", null)
+        this.newSlot("testElement", null)
 
         this.newSlot("stylesToCopy", [
             "fontSize",
@@ -35,6 +38,14 @@
         this.newSlot("cacheKeys", new Array())
         this.newSlot("maxCacheKeys", 100)
     }
+
+    document () {
+        // return document
+        if (!this._document) {
+            this.setDocument(new Document())
+        }
+        return this._document
+    }
 	
     testElement () {
         if (!this._testElement) {
@@ -45,14 +56,14 @@
 	
     createTestElement () {
         const e = document.createElement("div");
-	    e.setAttribute("id", this.idName());
+	    e.setAttribute("id", this.typeId());
         e.style.display = "block";
         e.style.position = "absolute";
         e.style.width = "auto";
         e.style.left = -1000;
         e.style.top  = -1000;
         e.style.visibility = "hidden";
-        document.body.appendChild(e);
+        this.document().body.appendChild(e);
         return e		
     }
 

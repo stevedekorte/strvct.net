@@ -1,5 +1,6 @@
 "use strict";
 
+/*
 Object.defineSlots(Object.prototype, {
 
     isMutator: function () {
@@ -24,3 +25,4 @@ Object.defineSlots(Object.prototype, {
         return names
     },
 })
+*/

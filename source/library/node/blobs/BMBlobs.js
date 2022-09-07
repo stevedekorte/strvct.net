@@ -90,12 +90,12 @@
         })
     }
 
-}.initThisClass());
+    static selfTest () {
+        this.addTimeout(() => {
+            const blob = BMBlobs.shared().blobForKey("http://test.com/")
+            blob.setValue("test content")
+            blob.asyncWrite()
+        })
+    }
 
-/*
-setTimeout(() => {
-    const blob = BMBlobs.shared().blobForKey("http://test.com/")
-    blob.setValue("test content")
-    blob.asyncWrite()
-})
-*/
+}.initThisClass());

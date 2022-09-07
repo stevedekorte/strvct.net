@@ -17,8 +17,7 @@
         const proxyRef = FirewallProxy.newProxyFor(array)
         proxyRef.observable().setProtectedMethodNames(new Set([...]))
         proxyRef.observable().setProtectedTrapNames(new Set([...]))
-        
-
+    
 */
 
 (class FirewallProxy extends ObservableProxy {
@@ -52,7 +51,6 @@
     }
 
     // need to hook GET so we return special functions to hook protected method calls
-
 
     postForTrap (trapName, propertyName) {
         // instead of posting to observers, 

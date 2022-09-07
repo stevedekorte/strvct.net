@@ -84,6 +84,7 @@
     // --- sub-element mutation observer ---
 
     startMutationObserver () {
+        debugger;
         if (!this.mutationObserver()) {
             const config = { 
                 subtree: true,

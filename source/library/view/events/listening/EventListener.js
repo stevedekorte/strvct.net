@@ -117,7 +117,22 @@
     }
 
     safeHandleEvent (event) {
-        return EventManager.shared().safeWrapEvent(() =>  this.handleEvent(event))
+        return EventManager.shared().safeWrapEvent(() => {
+
+            const e = event.currentTarget
+            let label = undefined
+            if (e.domView) {
+                label = e.domView().type()
+            } else {
+                label = e.constructor.name
+            }
+            const s = label + " " + event.type 
+
+            Perf.timeCall(s, 
+                () => {
+                    this.handleEvent(event)
+                })
+        })
     }
 
     delegateCanRespond () {

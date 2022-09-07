@@ -57,7 +57,8 @@
             "command": "node",
             "args": [
                 "./source/boot/index-builder/ResourceIndexer.js",
-                "./resources/icons"
+                "./resources/icons",
+                "./resources/sounds"
             ],
             "options": {
                 "cwd": "${workspaceFolder}",

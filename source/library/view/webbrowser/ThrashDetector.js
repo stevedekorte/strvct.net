@@ -524,6 +524,7 @@
         this.newSlot("reflowCount", false)
         this.newSlot("triggers", null)
         this.newSlot("lastWrite", null)
+        this.newSlot("enabled", false)
     }
 
     /*
@@ -578,10 +579,9 @@
     }
 
     endFrame () {
-        if (this.reflowCount()) {
+        if (this.enabled() && this.reflowCount()) {
             console.log(">>> " +  this.type() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), 2, 2))
         }
     }
 
-    
  }.initThisClass());
