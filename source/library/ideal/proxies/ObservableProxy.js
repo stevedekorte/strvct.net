@@ -114,7 +114,7 @@
                 if (this.isDebugging()) {
                     this.debugLog(" posting " + noteName)
                 }
-                obs[noteName].apply(obs, [this.target(), propertyName])
+                obs[noteName].call(obs, this.target(), propertyName)
             }
         })
         return true

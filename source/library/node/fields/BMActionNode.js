@@ -51,7 +51,7 @@
             const func = this.target()[this.methodName()]
             
             if (Type.isFunction(func)) {
-                func.apply(this.target(), [this])
+                func.call(this.target(), this)
             } else {
                 //this.setValueError("no method with this name")
                 console.warn("no method with this name")

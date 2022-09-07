@@ -156,7 +156,7 @@
         if (method) {
             this.onBeforeEvent(event)
 
-            result = method.apply(delegate, [event]); 
+            result = method.call(delegate, event); 
 
             if (this.isDebugging()) {
                 console.log("sent: " + delegate.type() + "." + fullMethodName, "(" + event.type + ") and returned " + result)

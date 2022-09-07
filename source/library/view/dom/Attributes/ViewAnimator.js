@@ -49,7 +49,7 @@
     }
 
     setValue (v) {
-        view[this.setterName()].apply(view, [v])
+        view[this.setterName()].call(view, v)
         return this
     }
 

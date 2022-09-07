@@ -71,7 +71,7 @@
             throw new Error("no target for action " + this.action())
         }
 
-        return method.apply(t, [this])
+        return method.call(t, this)
     }
 
     onDoubleClick (event) {

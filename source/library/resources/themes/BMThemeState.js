@@ -150,7 +150,7 @@
                         aView.performIfResponding(aView.setterNameForSlot(name), v)
                     }
                     //const setter = aView[aView.setterNameForSlot(name)]
-                    //aView[aView.setterNameForSlot(name)].apply(aView, [v])
+                    //aView[aView.setterNameForSlot(name)].call(aView, v)
                 }
                 /*
             } catch (e) {

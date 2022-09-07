@@ -165,7 +165,7 @@
         console.log("onBrowserDropFile => ", methodName)
 
         if (method) {
-            method.apply(this, [dataChunk])
+            method.call(this, dataChunk)
         }
     }
 

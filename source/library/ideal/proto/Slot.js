@@ -216,7 +216,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             /*
             const setterName = "set" + slotName.capitalized()
             const v = aSlot[slotName].apply(aSlot)
-            this[setterName].apply(this, [v])
+            this[setterName].call(this, v)
             */
         })
         return this
@@ -375,7 +375,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     onInstanceSetValue (anInstance, aValue) {
-        return anInstance[this.setterName()].apply(anInstance, [aValue])
+        return anInstance[this._setterName].call(anInstance, aValue)
     }
 
     // --- StoreRefs for lazy slots ---
@@ -407,7 +407,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     onInstanceInitSlot (anInstance) {
         //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
-        let defaultValue = anInstance[this.privateName()]
+        let defaultValue = anInstance[this._privateName]
 
         /*
         const op = this.initOp()
@@ -446,15 +446,15 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         opMethods[op].apply(this)
         */
 
-
+        const initProto = this._initProto
         if (this.isLazy()) {
-            const obj = this.initProto().clone()
-            anInstance[this.privateName()] = obj
-        } else if (this.initProto()) {
-            const obj = this.initProto().clone()
+            const obj = initProto.clone()
+            anInstance[this._privateName] = obj
+        } else if (initProto) {
+            const obj = initProto.clone()
             this.onInstanceSetValue(anInstance, obj)
-        } else if (this.initValue()) {
-            this.onInstanceSetValue(anInstance, this.initValue())
+        } else if (this._initValue) {
+            this.onInstanceSetValue(anInstance, this._initValue)
         }
 
         /*

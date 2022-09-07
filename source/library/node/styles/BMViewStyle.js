@@ -81,7 +81,7 @@
             }
             const v = getterMethod.apply(this)
             if (v != null) {
-                aView[aView.setterNameForSlot(name)].apply(aView, [v])
+                aView[aView.setterNameForSlot(name)].call(aView, v)
             }
         })
 		

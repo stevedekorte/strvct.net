@@ -245,7 +245,7 @@ getGlobalThis().Type = (class Type extends Object {
         for (let i = 0; i < typeNames.length; i++) {
             const typeName = typeNames[i]
             const methodName = "is" + typeName
-            if (this[methodName].apply(this, [value])) {
+            if (this[methodName].call(this, value)) {
                 return typeName
             }
         }

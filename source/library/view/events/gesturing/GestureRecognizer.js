@@ -383,7 +383,7 @@
         //try {
         if (vt) {
             if (vt[methodName]) {
-                result = vt[methodName].apply(vt, [this, argument])
+                result = vt[methodName].call(vt, this, argument)
             } else {
                 if (this.isDebugging()) {
                     console.log("gesture delegate missing method " + methodName)

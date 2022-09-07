@@ -110,7 +110,7 @@
         }
         const method = obs[note.name()]
         if (method) {
-            method.apply(obs, [note])
+            method.call(obs, note)
         } else {
             if (this.isDebugging()) {
                 this.debugLog(" no method found for note name " + note.name())

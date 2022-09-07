@@ -40,7 +40,7 @@
     }
 
     hasPuuid () {
-        return Object.prototype.hasOwnProperty.apply(this, ["_puuid"])
+        return Object.prototype.hasOwnProperty.call(this, "_puuid")
     }
 
     setPuuid (puuid) {

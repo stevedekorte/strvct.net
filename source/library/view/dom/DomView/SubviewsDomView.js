@@ -390,7 +390,7 @@
     tellParentViews (msg, aView) {
         const f = this[msg]
         if (f) {
-            const r = f.apply(this, [aView]) 
+            const r = f.call(this, aView) 
             if (r === true) {
                 return // stop propogation on first view returning non-false
             }

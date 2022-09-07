@@ -373,7 +373,7 @@
 
         let proto = this.__proto__
         if (proto && proto.name !== "") {
-            return proto.isKindOf.apply(proto, [aClass])
+            return proto.isKindOf.call(proto, aClass)
         }
 
         return false

@@ -52,7 +52,7 @@
         const oldValue = this[slotName].apply(this)
         stack.push(oldValue)
         const setterName = "set" + slotName.capitalized()
-        this[setterName].apply(this, [newValue])
+        this[setterName].call(this, newValue)
         return this
     }
 
@@ -63,7 +63,7 @@
         }
         const oldValue = a.pop()
         const setterName = "set" + slotName.capitalized()
-        this[setterName].apply(this, [oldValue])
+        this[setterName].call(this, oldValue)
         return this
     }
 

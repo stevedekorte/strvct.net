@@ -1,7 +1,5 @@
 
-#1::::::: cache allSlotsMap
-
-Perf.timeCall("subnode clone", () => {
+make gestureRecognizers a map instead of an array?
 
 look at: startMutationObserver
 

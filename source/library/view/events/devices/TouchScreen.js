@@ -162,7 +162,7 @@
     sendEventToView (eventName, event, aView) {
         // send to listeners instead?
         aView.gestureRecognizers().forEach((gr) => {
-            gr[eventName].apply(gr, [event])
+            gr[eventName].call(gr, event)
         })
         return this
     }

@@ -69,7 +69,7 @@
 
     broadcastNameAndArgument (methodName, anArgument) {
         this.listenerSetForName(methodName).forEach(v => {
-            v[methodName].apply(v, [anArgument])
+            v[methodName].call(v, anArgument)
         })
         return this
     }

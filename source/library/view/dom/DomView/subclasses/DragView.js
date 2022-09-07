@@ -483,7 +483,7 @@
 
         if (receiver[methodName]) {
             // this fails on onDragDestinationEnd method triggered by onMouseUpCapture
-            receiver[methodName].apply(receiver, [this])
+            receiver[methodName].call(receiver, this)
         }
     }
     

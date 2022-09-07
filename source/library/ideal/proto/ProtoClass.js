@@ -441,7 +441,7 @@
     didUpdateSlot (aSlot, oldValue, newValue) {
         const m = this[aSlot.methodForDidUpdate()]
         if (m) {
-            m.apply(this, [oldValue, newValue])
+            m.call(this, oldValue, newValue)
         }
         /*
         if (aSlot.shouldStoreSlot()) {
