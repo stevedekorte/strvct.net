@@ -6,8 +6,6 @@
 
 */
 
-
-
 (class PerfCall extends ProtoClass { 
 
     initPrototypeSlots () {

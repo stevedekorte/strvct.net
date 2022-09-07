@@ -455,7 +455,22 @@
         // subclasses should override to do initialization
         //assert(this.isInstance())
         //this.thisPrototype() is same as this.__proto__
-        this.thisPrototype().allSlotsMap().forEachV(slot => slot.onInstanceInitSlot(this)) // TODO: use slot cache
+        /*
+        if (this.thisClass() !== Perf && Perf.hasShared()) {
+            Perf.timeCall("allSlotsMap forEach", () => {
+                this.initializeSlots()
+            })
+        } else {
+            this.initializeSlots()
+        }
+        */
+
+        this.initializeSlots()
+
+    }
+
+    initializeSlots () {
+        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this)) 
     }
 
     toString () {

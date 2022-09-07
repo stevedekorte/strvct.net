@@ -72,6 +72,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         
         this.simpleNewSlot("owner", null) // typically a reference to a .prototype
         this.simpleNewSlot("name", false)
+        this.simpleNewSlot("setterName", null)
+        this.simpleNewSlot("directSetterName", null)
         this.simpleNewSlot("initValue", null) // needed?
 
         // getter
@@ -197,6 +199,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this._name = aName
         const n = this.name().capitalized()
         this.setPrivateName("_" + aName)
+        this.setSetterName("set" + aName.capitalized())
+        this.setDirectSetterName("directSet" + aName.capitalized())
         this.setMethodForWillGet("willGetSlot" + n)
         this.setMethodForDidUpdate("didUpdateSlot" + n)
         this.setMethodForWillUpdate("willUpdateSlot" + n)
@@ -346,14 +350,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // --- setter ---
 
-    setterName () {
-        return "set" + this.name().capitalized()
-    }
-
-    directSetterName () {
-        return "directSet" + this.name().capitalized()
-    }
-
     makeDirectSetter () {
         Object.defineSlot(this.owner(), this.setterName(), this.directSetter())
         return this
@@ -410,7 +406,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     // -----------------------------------------------------
 
     onInstanceInitSlot (anInstance) {
-        assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
+        //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
         let defaultValue = anInstance[this.privateName()]
 
         /*
@@ -458,9 +454,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             const obj = this.initProto().clone()
             this.onInstanceSetValue(anInstance, obj)
         } else if (this.initValue()) {
-            this.onInstanceSetValue(anInstance,this.initValue() )
+            this.onInstanceSetValue(anInstance, this.initValue())
         }
 
+        /*
         if (this.field()) {
             // duplicate the field instance owned by the slot,
             // add it as a subnode to the instance,
@@ -469,6 +466,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             anInstance.addSubnode(newField)
             newField.getValueFromTarget()
         }
+        */
     }
 
     onInstanceLoadRef (anInstance) {

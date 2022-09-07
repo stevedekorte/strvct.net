@@ -10,12 +10,21 @@
 
     At the end of the event loop, a report will be printed to the console of
     any labels who have cumulatively exceeded Perf.shared().minDt() in milliseconds.
-    
+
 */
 
 (class Perf extends ProtoClass { 
 
+    static timeCall (name, fn) {
+        //debugger;
+        return this.shared().timeCall(name, fn)
+    }
+
+    // --------
+
     initPrototypeSlots () {
+        this.newSlot("beginTime", null)
+        this.newSlot("endTime", null)
         this.newSlot("callStack", null)
         this.newSlot("minDt", 200) // in milliseconds
         this.newSlot("calls", null) // in milliseconds
@@ -28,8 +37,8 @@
         return this
     }
 
-    static timeCall (name, fn) {
-        return this.shared().timeCall(name, fn)
+    isInFrame () {
+        return this.beginTime() !== null
     }
 
     /*
@@ -39,6 +48,10 @@
     */
 
     timeCall (name, fn) {
+        if (!this.isInFrame()) {
+            return fn()
+        }
+
         assert(Type.isString(name))
 
         const call = PerfCall.clone()
@@ -72,7 +85,10 @@
             const sum = this.sumOfCallsNamed(name)
             const indent = this.callsNamed(name).first().indent()
 
-            return { description: "[timeCallSum " + count + " x] " + indent + "" + name + " - " + Math.floor(sum/10)/100 + "s", sum: sum }
+            return { 
+                description: "[timeCallSum " + count + "x] " + indent + "" + name + " - " + this.stringForTimeDelta(sum), 
+                sum: sum 
+            }
         }
         return null
     }
@@ -94,16 +110,31 @@
         }
     }
 
-    static clearCalls () {
-        this.shared().clearCalls()
-    }
-
     clearCalls () {
-        this.report()
         this.setCalls([])
         return this
     }
 
+    beginFrame () {
+        this.setBeginTime(performance.now())
+    }
+
+    endFrame () {
+        this.setEndTime(performance.now())
+        this.report()
+        this.clearCalls()
+    }
+
+    frameDt () {
+        return this.endTime() - this.beginTime()
+    }
+
+    stringForTimeDelta (dt) {
+        const s = Math.floor(dt/10)/100 + "s"
+        const ratio = dt/this.frameDt()
+        const p = Math.floor(ratio * 100) + " %"
+        return s + " - " + p
+    }
     
 }.initThisClass());
 

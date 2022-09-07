@@ -51,8 +51,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
-    "size": 9488,
-    "hash": "Z0LrvjvN7ZXbxDdfbbvMRk8edGjBd8Gt/iOLWLcGpVg="
+    "size": 9490,
+    "hash": "tCdZqFnmKq+E462nZVrumP7IIlyQveV1/lO7g0Nc+PQ="
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
@@ -141,13 +141,13 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 16777,
-    "hash": "cUWx5cxkVXEwVzQgyod+Jkk83jBwhhRTh8o2eYRW4Dw="
+    "size": 16861,
+    "hash": "VrIo62iyrj/PtxRErEesg197jl1OiT1oIVhI6LMT1tU="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 14594,
-    "hash": "RfYi6/8ZnGXmMUU3E6KyqtGQwETYZAe8jgjcQ9AWNtI="
+    "size": 14891,
+    "hash": "cJaeoqeRjvfNiN4T3Uq32xnmdxcxf2QS1kSZLxi/+q8="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -231,13 +231,13 @@
   },
   {
     "path": "source/library/ideal/Perf.js",
-    "size": 2587,
-    "hash": "ycYnc1bAu1MNU4n5o7lqbQwC1VvZsWqt4PLSukJymy0="
+    "size": 3249,
+    "hash": "eeOGHyDmIjemAAkNO6ILvZuc5FiojKR0LaeO9b3txCo="
   },
   {
     "path": "source/library/ideal/PerfCall.js",
-    "size": 1067,
-    "hash": "g2M0QeCKkchAEtvOd+r5i39H14toNq+fQpg+7hgJdjE="
+    "size": 1065,
+    "hash": "mqala+h4bKhjS2laM704S8oLSAQH5kD1Icxua69ZUig="
   },
   {
     "path": "source/library/notification/SyncAction.js",
@@ -356,8 +356,8 @@
   },
   {
     "path": "source/library/view/events/listening/EventManager.js",
-    "size": 4449,
-    "hash": "ZAFcGBRHvxK9+zWT7CK6Bvg0Li7Ox7Dk0zfGwFi3tcs="
+    "size": 4491,
+    "hash": "qiht8lxX9tZw1jA3HTVrWJFiXPMxzbZrDeuXGBnbexo="
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",

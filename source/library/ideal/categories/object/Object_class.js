@@ -244,7 +244,7 @@
         }
 
         const m = this.allSlotsMap()
-        console.log("*** " + this.type() + " setupAllSlotsMap")
+        //console.log("*** " + this.type() + " setupAllSlotsMap")
 
         //assert(this.isPrototype())
         this.forEachSlot(slot => {
