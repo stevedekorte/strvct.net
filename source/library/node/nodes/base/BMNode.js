@@ -709,7 +709,7 @@
             assert(newValue.type() === "SubnodesArray")
         } else {
             if(this.hasDuplicateSubnodes()) {
-                console.warn(this.debugTypeId() + " hasDuplicateSubnodes")
+                console.warn(this.debugTypeId() + " hasDuplicateSubnodes - removing duplicates and continuing")
               //  debugger;
                 newValue.removeDuplicates()
             }
@@ -718,7 +718,7 @@
         this.watchSubnodes()
         if (this._subnodes.contains(null)) { // what would cause this?
             //debugger;
-            console.warn("found null in subnodes: ")
+            console.warn("found null in subnodes array - removing")
             this._subnodes.filterInPlace(sn => !(sn === null) )
         }
         this._subnodes.forEach(sn => sn.setParentNode(this))

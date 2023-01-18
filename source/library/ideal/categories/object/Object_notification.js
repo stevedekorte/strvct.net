@@ -9,14 +9,12 @@
 
 (class Object_notification extends Object {
 
-    /*
     prepareToRetire () { 
         // opportunity to remove notification observers, event listeners, etc
-        this.assertNotRetired()
+        //this.assertNotRetired()
         this.removeAllNotificationObservations()
         this.removeScheduledActions()
     }
-    */
 
     // -------------------------------------------------
  

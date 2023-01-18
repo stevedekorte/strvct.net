@@ -46,7 +46,7 @@
     }
     
     post () {
-        if (true || this.center().isDebugging()) {
+        if (this.center().isDebugging()) {
             //console.log(typeof(this.senderId()) + "." + this.senderId() + " posting note " + this.name() + " and recording stack for debug")
             const e = new Error()
             e.name = "" //"Notification Post Stack"

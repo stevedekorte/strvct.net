@@ -128,21 +128,17 @@
         }
 
         //console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
-        let proto = Perf.timeCall("subviewProtoForSubnode", () => {
-            return this.subviewProtoForSubnode(aSubnode)
-        })
-		
+        const proto = this.subviewProtoForSubnode(aSubnode) // this is fast
+
         if (!proto) {
             debugger;
             //aSubnode.nodeViewClass() // used to step into to debug
             throw new Error("no subviewProto for subnode " + aSubnode.typeId())
         }
 
-        const instance = Perf.timeCall("subnode clone", () => {
-            //debugger;
-            return proto.clone()
-        })
-        instance.setNode(aSubnode)
+        const instance = proto.clone()
+
+        instance.setNode(aSubnode) // this is fast
         return instance
     }
 
@@ -194,30 +190,33 @@
         
         //debugger;
 
+
         this.visibleSubnodes().forEach((subnode) => {
             let subview = undefined;
 
-            Perf.timeCall("subviewForNode", () => {
-                subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
-            })
+            subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
 
             if (!subview) {
-                Perf.timeCall("newSubviewForSubnode", () => {
-                    //debugger;
-                    subview = this.newSubviewForSubnode(subnode)
-                })
+                subview = this.newSubviewForSubnode(subnode)
             }
 
             if (Type.isNull(subview)) {
                 throw new Error("null subview")
             }
             
-            assert(!newSubviews.contains(subview))
+            //assert(!newSubviews.contains(subview))
             newSubviews.push(subview)   
         })
 
-        //debugger;
+        /*
+        const oldSubviews = this.subviews().shallowCopy()
+        const removedSubviews = newSubviews.difference(oldSubviews)
+        removedSubviews.forEach(sv => {
+            sv.prepareToRetire()
+        })
+        */
 
+        //debugger;
         
         if (!newSubviews.isEqual(this.subviews())) {
             subnodesDidChange = true
@@ -232,6 +231,12 @@
         this.subviews().forEach(subview => subview.syncFromNodeNow())
 
         return subnodesDidChange
+    }
+
+    flipBorderColor () {
+        const coinFlip = (Math.floor(Math.random() * 10) % 2 === 0)
+        const color = coinFlip ? "red" : "blue"
+        this.element().style.border = "1px dashed " + color 
     }
     
     syncToNode () {

@@ -6,7 +6,6 @@ require("./StrvctHttpsServerRequest.js")
 
 const https = require('https');
 const fs = require('fs');
-//var vm = require('vm')
 const nodePath = require('path');
 
 

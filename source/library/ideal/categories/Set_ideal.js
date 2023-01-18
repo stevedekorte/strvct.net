@@ -116,7 +116,7 @@
     }
     
     symmetricDifference (setB) { 
-        // return values in self that are not in setB
+        // return values in self that are not in setB + values in setB not in self
         let _difference = new Set(this);
         for (let v of setB) {
             if (_difference.has(v)) {

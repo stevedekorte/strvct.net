@@ -32,9 +32,54 @@
 
     // retiring
 
+    gestureRecognizerListeners () {
+        const results = this.gestureRecognizers().map(gr => gr.allEventListeners()).flat()
+        results.forEach(result => {
+            assert(result.thisClass().isKindOf(EventListener))
+        })
+        return results
+    }
+
+    allEventListeners () {
+        const results = [this.eventListeners(), this.gestureRecognizerListeners()].flat()
+        /*
+        results.forEach(result => {
+            assert(result.thisClass().isKindOf(EventListener))
+        })
+        */
+        return results
+    }
+
+    fullActiveEventListenerCount () {
+        return this.allEventListeners().filter(v => v.isListening()).length
+    }
+
+    externalFullActiveEventListenerCount () {
+        return EventListener.activeListenersForOwner(this).length;
+    }
+
     /*
+    assertEventListenerCountsMatch () {
+        let internal = this.fullActiveEventListenerCount()
+        if (isNaN(internal)) {
+            debugger;
+            this.fullActiveEventListenerCount()
+        }
+        let external = this.externalFullActiveEventListenerCount()
+        if (internal !== external) {
+            console.log(this.typeId() + " internal: " + internal + " ", this.allEventListeners().filter(v => v.isListening()).map(v => v.fullMethodName()) )
+            console.log(this.typeId() + " external: " + external + " ", EventListener.activeListenersForOwner(this).map(v => v.fullMethodName()))
+            this.fullActiveEventListenerCount();
+            EventListener.activeListenersForOwner(this);
+            debugger;
+        }
+        //assert(internal === external)
+    }
+    */
+
     prepareToRetire () {
-        debugger;
+        //debugger;
+        //console.log(this.typeId() + " prepareToRetire")
         assert(!this.hasParentView())
 
         // if view has no parent at the end of event loop, 
@@ -42,27 +87,43 @@
 
         this.setIsRegisteredForVisibility(false) // this one isn't a listener
         
-        //this.retireSubviewTree()
+        this.retireSubviewTree()
 
         // do this after removing subviews, just in case events where added by those changes
         this.removeAllGestureRecognizers()
         this.removeAllListeners()
         this.cancelAllTimeouts()
+
+        //this.assertEventListenerCountsMatch()
+
+        if (this.externalFullActiveEventListenerCount()) {
+            console.warn(this.typeId() + " was unable to remove the following event listeners:")
+            EventListener.showActiveForOwner(this)
+            debugger
+        }
+
+        //assert(!EventListener.activeOwners().has(this))
+
         SyncScheduler.shared().unscheduleTarget(this)
 
         //if (this.isFirstResponder()) {
         //    this.blur() / is this needed?
         //}
 
+        this.detachFromElement()
+
+        super.prepareToRetire() // call on super
+        return this
+    }
+
+    detachFromElement () {
         const e = this.element()
-        e.style.transition = "all 0s" // probably not needed
+        //e.style.transition = "all 0s" // probably not needed
         if (e) {
             e.setDomView(null)
             this._element = null
         }
-
-        super.prepareToRetire() // call on super
-        return this
+        e.removeAllChildren()
     }
 
     retireSubviewTree () {
@@ -70,14 +131,13 @@
         //   scheduleRetireIfReady() -> prepareToRetire()
         // will this cause a SyncAction loop issue as this will result in adding:
         //   scheduleMethod("retireIfReady")
-        // on subviews 
-        const subviews = this.subviews().slice()
-        this.removeAllSubviews()
-        subviews.forEach(sv => {
-            sv.retireSubviewTree()
+        // on subviews, so we do it in a way that avoids this.
+
+        this.subviews().forEach(sv => {
+            sv.setParentView(null)
+            sv.prepareToRetire()
         })
     }
-    */
 
     // --- element ---
 

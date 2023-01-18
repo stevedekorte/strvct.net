@@ -46,9 +46,7 @@
         const t = this.target()
         const m = this.method()
         const a = this.args()
-        Perf.timeCall(this.description(), () => {
-            t[m].apply(t, a ? a : [])
-        })
+        t[m].apply(t, a ? a : [])
         return null
     }
 	

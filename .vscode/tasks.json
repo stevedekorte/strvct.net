@@ -24,10 +24,14 @@
 
         {
             "label": "Build",
+            "options": {
+                "isBackground": "false",
+            },
             "dependsOn": [
                 "build _index.json & _cam.json",
                 "auto index resources"
-            ]
+            ],
+            "dependsOrder": "sequence"
         },
 
         {
@@ -40,17 +44,18 @@
             "options": {
                 "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
-                "isBackground": "true",
+                "isBackground": "false",
             },
             "presentation": {
                 "reveal": "silent",
                 "panel": "shared",
                 "clear": true,
-                "close": true,
+                "close": true
             },
             "problemMatcher": []
         },
 
+        // produces _imports.json files in folders specified by arguments
         {
             "label": "auto index resources",
             "type": "shell",
@@ -63,11 +68,13 @@
             "options": {
                 "cwd": "${workspaceFolder}",
                 "_runner": "terminal",
-                "isBackground": "true",
+                "isBackground": "false",
             },
             "presentation": {
                 "reveal": "silent",
-                "panel": "shared"
+                "panel": "shared",
+                "clear": true,
+                "close": true
             },
             "problemMatcher": [],
         },

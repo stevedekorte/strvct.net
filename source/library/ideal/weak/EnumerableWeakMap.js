@@ -11,7 +11,7 @@
 
 */
 
-class EnumerableWeakMap {
+getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
 
   constructor() {
     this._refs = new Map()
@@ -39,7 +39,7 @@ class EnumerableWeakMap {
       // make sure it's not collected yet
       const v = wr.deref()
       if (v === undefined) {
-        this.delete(k)
+        refs.delete(k)
         return undefined
       }
       return v
@@ -57,7 +57,7 @@ class EnumerableWeakMap {
   }
 
   delete (k) {
-    const hasKey = this.has(k)
+    const hasKey = this.has(k) // this may delete it if weakref is stale
     if (hasKey) {
       this._refs.delete(k)
     }
@@ -65,6 +65,7 @@ class EnumerableWeakMap {
   }
 
   forEach (fn) { // fn (value, key, map)
+    // also removes collected keys
     const refs = this._refs
     let keysToRemove = null
     // fn(value, key, set)
@@ -86,8 +87,34 @@ class EnumerableWeakMap {
     }
   }
 
+  removeCollectedValues () {
+    const refs = this._refs
+    const keysToRemove = []
+    if (refs.size) {
+      refs.forEach((wr, k) => {
+        const v = wr.deref()
+        if (v === undefined) {
+          keysToRemove.push(k)
+        }
+      })
+    }
+    keysToRemove.forEach(k => refs.delete(k))
+  }
+
   count () {
-    return this._refs.size // due to nature of weakrefs, actual size may be lower than this when enumerated
+    this.removeCollectedValues()
+    // since weakrefs are only removed after a collection cycle, 
+    // actual size of reachable objects may be lower than this 
+    return this._refs.size 
+  }
+
+  keysArray () {
+    const keys = []
+    this.forEach((v, k) => {
+      keys.push(k)
+    })
+    return keys
+    //return this._refs.keysArray()
   }
 
   /*
@@ -105,10 +132,7 @@ class EnumerableWeakMap {
     return values.filter(v => v !== undefined)
   }
   */
-
-
-
-};
+});
 
 //EnumerableWeakMap.selfTest()
 

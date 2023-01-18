@@ -111,7 +111,7 @@
 
         this.addTimeout(() => {
             // have browser do scroll
-            ThrashDetector.shared().didOp("scrollIntoView")
+            //ThrashDetector.shared().didOp("scrollIntoView")
             this.element().scrollIntoView({ 
                 block: "start", 
                 inline: "nearest", 

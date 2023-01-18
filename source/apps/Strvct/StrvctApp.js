@@ -111,6 +111,7 @@
 
         this.setupNormalTheme()
         //this.setupVectorTheme()
+        //this.setupBlenderProTheme()
     }
 
     setupNormalTheme () {
@@ -118,10 +119,10 @@
         doc.setBackgroundColor("#191919")
         //doc.setFontFamily("Sans-Serif")
         //doc.setFontFamily("Electrolize-Regular")
-        //doc.setFontFamily("Helvetica")
+        doc.setFontFamily("Helvetica")
         //doc.setFontWeight("bold")
-        doc.setFontFamily("Helvetica Neue")
-        doc.setFontFamily("Helvetica LT W01 Condensed")
+        //doc.setFontFamily("Helvetica Neue")
+        //doc.setFontFamily("Helvetica LT W01 Condensed")
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")

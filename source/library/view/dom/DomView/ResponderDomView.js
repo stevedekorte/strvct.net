@@ -71,7 +71,7 @@
             */
             //this.addTimeout(() => { this.element().focus() }, 0)
 
-            ThrashDetector.shared().didWrite("focus", this)
+            //ThrashDetector.shared().didWrite("focus", this)
             this.element().focus()
         }
         return this
@@ -115,6 +115,7 @@
     // --- inner html ---
 
     setInnerHtml (v) {
+     //   debugger
         const oldValue = this.element().innerHTML
 
         if (v === null) {

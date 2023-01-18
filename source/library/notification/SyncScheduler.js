@@ -125,11 +125,11 @@
     }
     
     actionsForTarget (target) {
-        return this.actions().values().select(action => action.target() === target)
+        return this.actions().valuesArray().select(action => action.target() === target)
     }
 
     hasActionsForTarget (target) {
-        const match = this.actions().values().detect(action => action.target() === target)
+        const match = this.actions().valuesArray().detect(action => action.target() === target)
         return !Type.isNullOrUndefined(match)
     }
 

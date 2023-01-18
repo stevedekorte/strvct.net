@@ -29,7 +29,14 @@ if (getGlobalThis()["Node"]) { // DOM Node
 
         // --- children ---
 
-        moveChildrenTo (e) {
+        removeAllChildren: function () {
+            while (this.firstChild) {
+                this.removeChild(this.lastChild);
+            }
+            return this
+        },
+
+        moveChildrenTo: function (e) {
             while (this.firstChild) {
                 e.appendChild(this.firstChild);
             }

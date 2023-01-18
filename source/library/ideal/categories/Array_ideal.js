@@ -51,6 +51,16 @@
 
     // foreach key value (key being the index)
 
+    /*
+    strictForEach (func) {
+        addMutationObserver
+    }
+    */
+
+    safeForEach (func) {
+        this.shallowCopy().forEach(v => func(v))
+    }
+
     forEachV (func) { // for compatibility
         this.forEach(v => func(v))
     }
@@ -624,6 +634,7 @@
     }
 
     /*
+    JS now has Array "flat" method
     flatten (maxDepth = 1) {
         const result = [];
         let needsFlatten = true
@@ -781,19 +792,19 @@
         return r;
     }
 
-    intersection (other) {
+    intersection (other) { // returns all items that are present in both
         const thisSet = new Set(this)
         return other.filter((v) => {
             return thisSet.has(v);
         });
     }
 
-    difference (other) {
+    difference (other) { // returns items in other that are not in self
         const thisSet = new Set(this)
         return other.filter(v => !thisSet.has(v));
     }
 
-    symmetricDifference (other) {
+    symmetricDifference (other) { // returns items in either not present in the other
         let all = this.concat(other)
         const thisSet = new Set(this)
         const otherSet = new Set(other)

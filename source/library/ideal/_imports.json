@@ -1,4 +1,5 @@
 [
+    "weak/_imports.json",
     "categories/_imports.json",
     "proto/_imports.json",
     "proxies/_imports.json",
@@ -6,8 +7,7 @@
     "map/_imports.json",
     "formatters/_imports.json",
     "misc/_imports.json",
-    "Perf.js",
-    "PerfCall.js"
+    "performance/_imports.json"
 ]
 
 

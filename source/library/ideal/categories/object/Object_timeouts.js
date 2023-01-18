@@ -52,11 +52,7 @@
             const tidInfo = new Array(2) // will store [timeoutName, timeoutId] so we can capture returned tid in timeout closure
             const tid = setTimeout(() => { 
                 this.removeTimeoutNamed(tidInfo[0])
-                const description = this.type() + " " + (optionalName ? optionalName : "unnamed timer")
-                Perf.timeCall(description, () => {
-                    EventManager.shared().safeWrapEvent(aFunc)
-                })
-
+                EventManager.shared().safeWrapEvent(aFunc)
             }, msDelay)
             tidInfo[0] = optionalName ? optionalName : tid
             tidInfo[1] = tid

@@ -7,6 +7,10 @@
     Global shared instance that tracks current touch state in window coordinates.
     Registers for capture events on document.body.
 
+    Example use:
+
+        const hasTouch = TouchScreen.shared().isSupported()
+
 */
 
 (class TouchScreen extends Device {
@@ -15,10 +19,18 @@
         this.newSlot("currentEvent", null)
         this.newSlot("lastEvent", null)
         this.newSlot("touchListener", null)
+        this.newSlot("isSupported", null)
         //this.newSlot("isVisualDebugging", false)
     }
 
     isSupported () {
+        if (this._isSupported === null) {
+            this._isSupported = this.calcIsSupported()
+        }
+        return this._isSupported
+    }
+
+    calcIsSupported () {
         // return WebBrowserWindow.isTouchDevice()
         let result = false 
         if ("ontouchstart" in window) { 

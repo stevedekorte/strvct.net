@@ -21,9 +21,15 @@
 
     // --- event listener management ---
 
+    eventListeners () {
+        return this.eventListenersMap().valuesArray().map(v => v.allEventListeners()).flat()
+    }
+
     removeAllListeners () {
         const map = this.eventListenersMap()
-        map.forEachKV( (k, listener) => { listener.setIsListening(false) } )
+        map.forEachKV( (k, listener) => { 
+            listener.setIsListening(false) 
+        } )
         map.clear()
         return this
     }

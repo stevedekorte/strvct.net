@@ -11,7 +11,44 @@
 
 */
 
+let listenCount = 0;
+
 (class EventListener extends ProtoClass {
+
+    static initClass () {
+        this.newClassSlot("activeListeners", new Set()) // tmp debugging
+    }
+
+    static activeListenersForOwner (owner) { // tmp debugging
+        return this.activeListeners().filter(v => v.owner() === owner)
+    }
+
+    static activeOwners () { // tmp debugging
+        const owners = new Set()
+        this.activeListeners().forEach(v => owners.add(v.owner()))
+        return owners
+    }
+
+    static showActive () { // tmp debugging
+        const owners = this.activeOwners()
+        console.log("--- EventListener " + owners.size + " active owners ---")
+        /*
+        owners.forEach((owner) => {
+            const listeners = this.activeListenersForOwner(owner)
+
+            console.log("  " + owner.typeId() + ": " + listeners.length)
+            //this.showActiveForOwner(owner)
+        })
+        */
+        console.log("-------------------------------------")
+    }
+
+    static showActiveForOwner (owner) { // tmp debugging
+        const listeners = this.activeListenersForOwner(owner)
+        listeners.forEach(listener => {
+            console.log("    " + listener.delegate().typeId() + " " + listener.fullMethodName())
+        })
+    }
 
     initPrototypeSlots () {
         //this.newSlot("listenerSet", null) // possible owner
@@ -39,15 +76,15 @@
     // NOTE: atm, we leave restarting the event listeners up to the event set so we don't do extra restart
 
     didUpdateSlotMethodName () {
-        this.recalcFullMethodName()
+        this.clearFullMethodName()
     }
 
     didUpdateSlotMethodSuffix () {
-        this.recalcFullMethodName()
+        this.clearFullMethodName()
     }
 
     didUpdateSlotUseCapture () {
-        this.recalcFullMethodName()
+        this.clearFullMethodName()
     }
 
     setListenTarget (t) {
@@ -64,8 +101,8 @@
 
     // ---
 
-    recalcFullMethodName () {
-        this.setFullMethodName(this.calcFullMethodName())
+    clearFullMethodName () {
+        this.setFullMethodName(null)
     }
 
     calcFullMethodName () {
@@ -79,7 +116,14 @@
         return this.methodName() + suffix
     }
 
-    // ---
+    fullMethodName () {
+        if (!this._fullMethodName) {
+            this._fullMethodName = this.calcFullMethodName()
+        }
+        return this._fullMethodName
+    }
+
+    // ---------------------------------------------------------
 
     setIsListening (aBool) {
         if (aBool) {
@@ -100,10 +144,33 @@
         const hasMethodName   = !Type.isNullOrUndefined(this.methodName())
         return hasMethodName && hasEventName && hasListenTarget
     }
+    
+    // listener key
+
+    listenerKey () {
+        const key = this.owner().typeId() + " " + this.delegate().typeId() + " " + this.fullMethodName()
+        return key
+    }
+    
+    incrementListenCount () {
+        listenCount++
+        //EventListener.activeListeners().add(this)
+        //console.log(this.listenerKey() + " START")
+    }
+
+    decrementListenCount () {
+        listenCount--
+        //EventListener.activeListeners().delete(this)
+        //console.log(this.listenerKey() + " STOP")
+    }
+
+    // ---------------------------------------------------------
 
     start () {
         if (this.delegateCanRespond()) {
             if (!this.isListening()) {
+                this.incrementListenCount()
+
                 //this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
                 assert(this.isValid())
                 this._isListening = true; // can't use setter here as it would cause a loop
@@ -116,23 +183,52 @@
         return this
     }
 
+    owner () {
+        const d = this.delegate()
+        if (d.viewTarget) {
+            return d.viewTarget()
+        }
+        return d
+    }
+
+    ownerDescription () {
+        const d = this.delegate()
+        
+        if (d.viewTarget) {
+            //return d.viewTarget().debugTypeId() + "->" + d.type().before("GestureRecognizer") 
+            return d.viewTarget().typeId() + " ->" + d.type().before("GestureRecognizer") 
+        }
+
+        return d.typeId()
+    }
+
+    /*
+    descriptionForEvent (event) {
+        const e = event.currentTarget
+        let label = undefined
+        if (e.domView) {
+            label = e.domView().type()
+        } else {
+            label = e.constructor.name
+        }
+    }
+    */
+
     safeHandleEvent (event) {
-        return EventManager.shared().safeWrapEvent(() => {
-
-            const e = event.currentTarget
-            let label = undefined
-            if (e.domView) {
-                label = e.domView().type()
-            } else {
-                label = e.constructor.name
-            }
-            const s = label + " " + event.type 
-
-            Perf.timeCall(s, 
-                () => {
-                    this.handleEvent(event)
-                })
+        const result =  EventManager.shared().safeWrapEvent(() => {
+            this.handleEvent(event)
         })
+
+        /*
+        // tmp debugging code
+        if (this.methodName() === "onMouseDown") {
+            console.log("on event: ", this.listenerKey())
+            EventListener.showActive()
+            //MemoryUsage.shared().takeSnapshot()
+        }
+        */
+        
+        return result
     }
 
     delegateCanRespond () {
@@ -195,6 +291,9 @@
             this.assertHasListenTarget()
 
             const t = this.listenTarget()
+
+            this.decrementListenCount()
+
             //this.debugLog(() => this.delegate().typeId() + " will stop listening for " + this.methodName())
             t.removeEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
             this._isListening = false; // can't use setter here as it would cause a loop

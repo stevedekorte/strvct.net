@@ -429,7 +429,7 @@
         // convert bytes to hex string                  
         const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
 
-        var base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(hashBuffer)));
+        let base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(hashBuffer)));
 
         return hashHex;
         */

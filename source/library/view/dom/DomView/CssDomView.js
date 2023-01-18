@@ -150,7 +150,7 @@
     // --- attributes ---
 
     setAttribute (k, v) {
-        ThrashDetector.shared().didWrite(k, this)
+        //ThrashDetector.shared().didWrite(k, this)
         this.element().setAttribute(k, v)
         return this
     }
@@ -172,7 +172,7 @@
 
     removeAttribute (k) {
         if (this.element().hasAttribute(k)) {
-            ThrashDetector.shared().didWrite(k, this)
+            //ThrashDetector.shared().didWrite(k, this)
             this.element().removeAttribute(k)
         }
         return this
@@ -181,7 +181,7 @@
     // --- css properties ---
 
     setSpecialCssProperty (k, newValue) {
-        ThrashDetector.shared().didWrite(k, this)
+        //ThrashDetector.shared().didWrite(k, this)
 
         assert(k[0] === "-" && !k.beginsWith("--")) // sanity check
 
@@ -198,7 +198,7 @@
     }
 
     removeCssProperty (k) {
-        ThrashDetector.shared().didWrite(k, this)
+        //ThrashDetector.shared().didWrite(k, this)
         this.element().style.removeProperty(k)
         return this
     }
@@ -216,15 +216,16 @@
 
         const style = this.cssStyle()
         const doesSanityCheck = false
-        const oldValue = style.getPropertyValue(key)
+        //const oldValue = style.getPropertyValue(key)
 
-        if (String(oldValue) !== String(newValue)) {
-            if (newValue == null) {
+        //if (String(oldValue) !== String(newValue)) {
+        if (true) {
+                if (newValue == null) {
                 this.removeCssProperty(key)
             } else {
                 //style[key] = newValue
                 style.setProperty(key, newValue)
-                ThrashDetector.shared().didWrite(key, this)
+                //ThrashDetector.shared().didWrite(key, this)
 
                 /*
                 if (doesSanityCheck) {
@@ -2188,30 +2189,55 @@
         return this.getCssProperty("height")
     }
 
-    // --- innerHTML ---
-
-    innerHtml () {
-        return this.element().innerHTML
-    }
-
-    setInnerHtml (v) {
-        this.element().innerHTML = v
-        return this
-    }
+    // --- string ---
 
     setString (v) {
-        return this.setInnerHtml(v)
+        return this.setTextContent(v)
+        //return this.setInnerHtml(v)
     }
 
     string () {
-        return this.innerHtml()
+        return this.textContent()
+        //return this.innerHtml()
     }
 
-    // ----
+    // --- innerHTML ---
+
+    innerHtml () {
+        return this.getAttribute("innerHTML")
+        //return this.element().innerHTML
+    }
+
+    setInnerHtml (v) {
+        this.setAttribute("innerHTML", v)
+        //this.element().innerHTML = v
+        return this
+    }
+
+    // --- innerText ---
+
+    setInnerText (v) {
+        const e = this.element().innerText = v
+        return this
+    }
 
     innerText () {
         const e = this.element()
-        return e.textContent || e.innerText || "";
+        return e.innerText 
+        //return e.textContent || e.innerText || "";
+    }
+
+    // --- textContent ---
+
+    setTextContent (v) {
+        this.element().textContent = v
+        //this.setAttribute("textContent", v)
+        return this
+    }
+
+    textContent () {
+        return this.element().textContent
+        //return this.getAttribute("textContent")
     }
 
     // --- touch events ---
@@ -2560,12 +2586,12 @@
     }
 
     didDomRead (opName) {
-        ThrashDetector.shared().didRead(opName, this)
+        //ThrashDetector.shared().didRead(opName, this)
         return this
     }
 
     didDomWrite (opName) {
-        ThrashDetector.shared().didWrite(opName, this)
+        //ThrashDetector.shared().didWrite(opName, this)
         return this
     }
 

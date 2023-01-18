@@ -12,7 +12,7 @@
 
 */
 
-class EnumerableWeakMap {
+getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
 
   constructor () {
     this._refs = new EnumerableWeakMap()
@@ -31,7 +31,7 @@ class EnumerableWeakMap {
     const refs = this._refs
     const pid = v.puuid()
     if (!refs.has(pid)) {
-      refs.set(pid, new WeakRef(v))
+      refs.set(pid, v)
     }
 
     return this
@@ -94,7 +94,11 @@ class EnumerableWeakMap {
     return a
   }
 
-};
+  keysArray () {
+    return this._refs.keysArray()
+  }
+
+});
 
 //EnumerableWeakSet.selfTest()
 

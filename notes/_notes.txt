@@ -1,3 +1,12 @@
+look at EventSetListener resync - is it called too much?
+
+Check out MemLab npm
+"I learned recently that Edge has a "Detached Elements" panel that identifies leaked DOM elements and the code / object holding the reference."
+
+make separate WindowResize listener to reduce number of event listeners?
+make more subviews lazy? like icon view?
+
+----
 
 make gestureRecognizers a map instead of an array?
 

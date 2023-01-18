@@ -10,6 +10,9 @@
 
 */
 
+
+
+
 (class ProtoClass extends Object {
 
    // --- clone ---
@@ -29,6 +32,8 @@
             this.setShared(obj)
         }
         obj.afterInit()
+
+        //this.allInstancesWeakSet().add(obj)
 
         return obj
     }
@@ -53,13 +58,16 @@
 
     // --- init ---
 
-    static initClass () {
+    static initClass () { // called only once when class is created
+
         //console.log(this.type() + " initThisClass")
         Object.defineSlot(this, "_shared", undefined)
         //this.newClassSlot("shared", undefined)
         this.newClassSlot("isSingleton", false)
         this.newClassSlot("setterNameMap", new Map()) // TODO: share this between all classes
         this.newClassSlot("allProtoSlotsMap", new Map())
+
+        //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet())
         return this
     }
 
@@ -367,8 +375,9 @@
         if (aSlot.isWeak()) {
             return this.getWeakSlotValue(aSlot)
         } else {
-            const privateName = aSlot.privateName() 
-            return this[privateName]
+            //const privateName = aSlot.privateName() 
+            //return this[privateName]
+            return this[aSlot._privateName]
         }
     }
 
@@ -454,19 +463,7 @@
         super.init()
         // subclasses should override to do initialization
         //assert(this.isInstance())
-        //this.thisPrototype() is same as this.__proto__
-        /*
-        if (this.thisClass() !== Perf && Perf.hasShared()) {
-            Perf.timeCall("allSlotsMap forEach", () => {
-                this.initializeSlots()
-            })
-        } else {
-            this.initializeSlots()
-        }
-        */
-
         this.initializeSlots()
-
     }
 
     initializeSlots () {

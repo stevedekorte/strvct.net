@@ -64,7 +64,7 @@
 		
         //this.setUnfocusOnEnterKey(true)
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
-        this.formatValue()
+        //this.formatValue()
 
         //this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
         //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
@@ -77,7 +77,7 @@
 
     setupElement () {
         super.setupElement()
-        this.scheduleRegisterForFocus()
+        //this.scheduleRegisterForFocus() // TODO: make this lazy
         return this
     }
 
@@ -468,6 +468,8 @@
     }
 	
     formatValue () {
+        this.setTextContent(this.textContent()) // removes formatting?
+        /*
 	    const oldValue = this.innerHtml()
 	    let newValue = this.innerText() // removes returns
         
@@ -479,13 +481,13 @@
             //newValue.replaceAll("\n", "<br>")
         }
         
-        
         if (newValue !== oldValue) {
             this.debugLog("formatValue newValue !== oldValue")
             this.debugLog(" newValue: [" + newValue + "]")
             this.setInnerHtml(newValue)
             this.didEdit()
         }
+        */
 	    //console.trace(this.type() + " formatValue '" + oldValue + "' -> '" + this.innerHtml() + "'")
         //this.debugLog(" after formatValue: '" + this.innerHtml() + "'")
         return this

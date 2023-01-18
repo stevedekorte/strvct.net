@@ -45,6 +45,10 @@
     }
     */
 
+    allEventListeners () {
+        return this.listenersMap().valuesArray()
+    }
+
     /* --- updates --- */
 
     didUpdateSlotDelegate () {
@@ -90,7 +94,6 @@
 
     hasListenerForEventName (eventName) {
         return this.listenersMap().has(eventName)
-
     }
 
     addEventNameAndMethodName (eventName, methodName, isUserInteraction) {

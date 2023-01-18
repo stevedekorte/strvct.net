@@ -265,5 +265,11 @@
         this.setBeforeEdgePanBorderBottom(null)
         this.unhideTransition()
     }
+/*
+    removeAllGestureRecognizers () {
+        //debugger;
+        return super.removeAllGestureRecognizers()
+    }
+    */
 
 }.initThisClass());

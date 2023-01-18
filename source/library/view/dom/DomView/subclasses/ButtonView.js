@@ -100,7 +100,7 @@
 
     setTitle (s) {
         if (s === "" || Type.isNullOrUndefined(s)) { 
-            s = "&nbsp;" // to avoid weird html layout issues
+            s = " "; //"&nbsp;" // to avoid weird html layout issues
         }
 
         this.titleView().setValue(s)

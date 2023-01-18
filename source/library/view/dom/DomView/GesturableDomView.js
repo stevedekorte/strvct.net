@@ -13,7 +13,7 @@
         // Array - not a map as we might have multiple GRs of same type, but...
         // would it be better to give GRs labels to use for map key?
         // this could replace "default" gesture ivars?
-        this.newSlot("gestureRecognizers", null)
+        this.newSlot("gestureRecognizers", null) // array
 
         // default gestures with typical settings 
         this.newSlot("defaultTapGesture", null)
@@ -117,7 +117,11 @@
     */
 
     removeAllGestureRecognizers () {
-        this.gestureRecognizers().forEach(gr => this.removeGestureRecognizer(gr))
+        const grs = this.gestureRecognizers()
+        if (grs.length) {
+            //console.log(this.typeId() + " removeAllGestureRecognizers ", grs.length)
+            grs.shallowCopy().forEach(gr => this.removeGestureRecognizer(gr))
+        }
         return this
     }
 

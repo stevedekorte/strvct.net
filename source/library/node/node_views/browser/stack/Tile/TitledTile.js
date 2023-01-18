@@ -178,7 +178,8 @@
 
     showNoteView () {
         this.noteView().unhideDisplay()   
-        this.noteView().setInnerHtml(this.node().note())
+        //this.noteView().setInnerHtml(this.node().note())
+        this.noteView().setInnerText(this.node().note())
     }
 
     hideNoteView () {
@@ -283,5 +284,12 @@
             super.onEnterKeyUp(event)
         }        
     }
+
+    /*
+    removeAllGestureRecognizers () {
+        debugger;
+        return super.removeAllGestureRecognizers()
+    }
+    */
     
 }.initThisClass());

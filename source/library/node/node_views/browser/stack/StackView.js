@@ -207,6 +207,15 @@
         ov.setFlexBasis(null)
         ov.setFlexGrow(1)
         ov.setFlexShrink(1)
+        
+        /*
+        if (ov.subviews().length) {
+            const names = ov.subviews().map(ov => ov.typeId())
+            //console.log("removing subviews: ", names)
+            debugger;
+        }
+        */
+        
         ov.removeAllSubviews().addSubview(v)
         return this
     }
@@ -216,6 +225,15 @@
         ov.setFlexBasis("0px")
         ov.setFlexGrow(0)
         ov.setFlexShrink(0)
+
+        /*
+        if (ov.subviews().length) {
+            const names = ov.subviews().map(ov => ov.typeId())
+            //console.log("removing subviews: ", names)
+            //debugger;
+        }
+        */
+        
         ov.removeAllSubviews()
         return this
     }
@@ -230,23 +248,29 @@
         return this.navView().tilesView()
     }
 
-    selectNodePathArray (pathArray) {        
-        //const p = pathArray.map(n => n.title()).join("/")
-        //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + p +") ")
-        const node = pathArray.shift()
-        //this.syncFromNodeNow()
+    selectNodePathArray (nodePathArray) {  
+        if (nodePathArray.length === 0) { 
+            console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
 
-        if (node !== this.node()) {
-            //this.setNode(node)
-            //this.syncFromNavSelection()
-            // should we verify if node is a subitem
-        } else if (pathArray.length === 0) { 
             //console.log("unselect items after path: ", this.pathString())
             // no selections left so unselect next
             this.tilesView().unselectAllTiles()
             this.syncFromNavSelection()
             return true
         }
+
+
+        nodePathArray = nodePathArray.shallowCopy()
+        // the path should start with the node *after* this one
+        
+        //const p = nodePathArray.map(n => n.title()).join("/")
+        console.log("--- selectNodePathArray ---")
+        console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")")
+        const node = nodePathArray.shift() // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
+        console.warn("- popped '" + node.title() + "'")
+
+        //this.syncFromNodeNow()
+        assert(node !== this.node())
 
         /*
         console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes())
@@ -255,31 +279,36 @@
         */
 
         let selectedTile = this.tilesView().selectTileWithNode(node)
+
         if (!selectedTile) {
+            // if we didn't find the tile but the node is a subnode, sync the tilesView and look again
             if (this.tilesView().node().subnodes().contains(node)) {
-                console.warn("the tilesView node's subnodes contain the path node, but there's no matching view!")
-                console.log("will syncFromNodeNow and see if we can find it")
+                console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!")
+                console.log("- so syncFromNodeNow and see if we can find it")
                 this.tilesView().syncFromNodeNow()
                 selectedTile = this.tilesView().selectTileWithNode(node)
-                if (!selectedTile) {
-                    debugger;
-                }
-
-            } else {            
-                console.warn("no matching path")
-                console.log("looking for node: ", node.debugTypeId())
-                const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId())
-                console.log("subnodes:" + JSON.stringify(subnodeIds) )
-                debugger
+                assert(selectedTile)
             }
+        }
+
+        if (!selectedTile) { // INVALID PATH ERROR
+            console.log("- invalid path - can't find tile for node: " + node.title())
+
+            console.log("debug info:")
+            console.log("  looking for node: ", node.debugTypeId())
+            const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId())
+            console.log("  subnodes:" + JSON.stringify(subnodeIds) )
+
+            debugger;
             return false
         }
 
         //this.syncFromNavSelection()
+        console.log("- selectedTile '" + selectedTile.node().title() + "'")
 
         const childStack = this.nextStackView()
-        if (childStack && pathArray.length) {
-            childStack.selectNodePathArray(pathArray)
+        if (childStack) {
+            childStack.selectNodePathArray(nodePathArray)
         }
         return true
     }
@@ -600,7 +629,7 @@
     endCaching () {
         assert(this.isCaching())
         console.log(this.debugTypeId() + " endCaching -----------------")
-        //let values = this.nodeToStackCache().values()
+        //let values = this.nodeToStackCache().valuesArray()
         //debugger;
         this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv))
         this.setNodeToStackCache(null)
@@ -660,6 +689,5 @@
 
         return sv
     }
-
         
 }.initThisClass());

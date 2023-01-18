@@ -164,7 +164,7 @@
         const request = objectStore.openCursor(key)
 
         request.onsuccess = function(e) {
-          var cursor = e.target.result
+          const cursor = e.target.result
           if (cursor) { // key already exist
              callback(true)
           } else { // key not exist

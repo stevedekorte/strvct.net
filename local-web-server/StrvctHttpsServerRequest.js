@@ -5,7 +5,6 @@ require("./Base.js")
 require("./MimeExtensions.js")
 const fs = require('fs');
 const nodePath = require('path');
-//var vm = require('vm')
 
 
 (class StrvctHttpsServerRequest extends Base {
@@ -107,13 +106,17 @@ const nodePath = require('path');
 		// Ensure request is for a valid content type
 		// need this so client will accept our contentType response header
 
-		const contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
+		let contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
 
 		if (!contentType) {
+			contentType = MimeExtensions.shared().mimeTypeForPathExtension("txt")
+			console.log("  error: no known mime type for extension: '" + ext + "' so we'll assume " + contentType)
+			/*
 			this.response().writeHead(401, {})
 			this.response().end()
 			console.log("  error: no known mime type for extension: '" + ext + "'")
 			return
+			*/
 		}
 
 		// Ensure path is within sandbox

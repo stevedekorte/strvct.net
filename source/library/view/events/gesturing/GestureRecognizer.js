@@ -152,8 +152,10 @@
     }
 
     stopMoveListeners () {
-        this.moveListeners().forEach(listener => listener.stop())
-        this.setMoveListeners([])
+        if (this.moveListeners()) {
+            this.moveListeners().forEach(listener => listener.stop())
+            this.setMoveListeners([])
+        }
         return this
     }
 
@@ -217,6 +219,20 @@
     }
 
     // --- listeners ---
+
+    setListenerClasses (classNames) {
+        this._listenerClasses = classNames
+        this.filterListenerClassesForTouch()
+        return this
+    }
+
+    filterListenerClassesForTouch () {
+        // if we don't have a touch screen, avoid registering for touch events
+        if (!TouchScreen.shared().isSupported()) {
+            const results = this.listenerClasses().filter(name => !name.beginsWith("Touch"))
+            this._listenerClasses = results
+        }
+    }
 
     newListeners () {
         return this.listenerClasses().map((className) => {
@@ -319,7 +335,14 @@
     stop () {
         this.stopViewListeners()
         this.stopDocListeners()
+        this.stopMoveListeners() // is this correct?
         return this
+    }
+
+    allEventListeners () {
+        const mv = this.moveListeners() ? this.moveListeners() : []
+        const sets = [this.viewListeners(), this.docListeners(), mv].flat()
+        return sets.map(eventListenerSet => eventListenerSet.allEventListeners()).flat()
     }
 
     // active
