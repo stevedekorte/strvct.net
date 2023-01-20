@@ -14,6 +14,34 @@
 
 (class ElementDomView extends ProtoClass {
 
+    static initClass () {
+        this.newClassSlot("viewsWithoutParents", new Set()) // track these so we can retire them, but not during drag & drop 
+        this.newClassSlot("isPausingRetires", false) // when true, retireQueue is paused
+    }
+
+    static pauseRetires () {
+        this.setIsPausingRetires(true)
+    }
+
+    static unpauseRetires () {
+        this.setIsPausingRetires(false)
+    }
+
+    static retireParentlessViews () {
+        const parentless = this.viewsWithoutParents()
+
+        while (parentless.size) { // do this effective "pop" loop, so it's ok to delete items inside a prepareToRetire
+            if (this.isPausingRetires()) {
+                console.log("retireParentlessViews  isPausingRetires")
+                return
+            }
+
+            const view = parentless.pop();
+            view.prepareToRetire()
+            parentless.delete(view)
+        }
+    }
+
     static documentBodyView () {
         return DocumentBody.shared()
     }
@@ -79,7 +107,7 @@
 
     prepareToRetire () {
         //debugger;
-        //console.log(this.typeId() + " prepareToRetire")
+        console.log(this.typeId() + " prepareToRetire")
         assert(!this.hasParentView())
 
         // if view has no parent at the end of event loop, 
@@ -96,11 +124,13 @@
 
         //this.assertEventListenerCountsMatch()
 
+        /*
         if (this.externalFullActiveEventListenerCount()) {
             console.warn(this.typeId() + " was unable to remove the following event listeners:")
             EventListener.showActiveForOwner(this)
             debugger
         }
+        */
 
         //assert(!EventListener.activeOwners().has(this))
 

@@ -25,11 +25,32 @@
     hasParentView () {
         return Type.isNullOrUndefined(this.parentView()) === false
     }
-
     
     didUpdateSlotParentView (oldValue, newValue) {
+        const parentless = this.thisClass().viewsWithoutParents()
+
+        assert(oldValue !== newValue);
+
+        if (newValue) {
+            if (parentless.has(newValue)) {
+                console.log("removing " + this.typeId() + " from parentless")
+            }
+            parentless.delete(this)
+        } else if (Type.isNullOrUndefined(oldValue) && !Type.isNullOrUndefined(newValue)) {
+            if (parentless.size === 0) { // is this always correct?
+                this.scheduleMethod("retireParentlessViews")
+            }
+            console.log("adding " + this.typeId() + " to parentless")
+            parentless.add(this)
+        }
+
         return this
     }
+
+    retireParentlessViews () {
+        this.thisClass().retireParentlessViews()
+    }
+
 
     // --- subviews ---
 
@@ -350,7 +371,7 @@
         }
 
         aSubview.setParentView(null)
-        aSubview.scheduleMethod("prepareToRetireIfReady")
+        //aSubview.scheduleMethod("prepareToRetireIfReady")
         return this
     }
 

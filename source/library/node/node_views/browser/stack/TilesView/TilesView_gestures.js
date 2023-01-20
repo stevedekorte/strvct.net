@@ -11,7 +11,9 @@
     // --- tap ---
 
     onTapComplete (aGesture) {
-        console.log(this.typeId() + ".onTapComplete()")
+        console.log(this.typeId() + " " + this.node().title() + " .onTapComplete()")
+        console.log("shouldRequestActivation: ", aGesture.shouldRequestActivation())
+        
         if (this.node()) {
 
             // add a subnode if tapping on empty area
@@ -29,7 +31,7 @@
                 }
             }
         }
-        return this
+        return true
     }
 
     // --- reorder ---

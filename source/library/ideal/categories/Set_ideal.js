@@ -140,6 +140,12 @@
         return this.size == 0        
     }
 
+    pop () {
+        const iter = this.values();
+        const value = iter.next().value;
+        return value
+    }
+
 }).initThisCategory();
 
     

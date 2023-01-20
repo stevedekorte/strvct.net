@@ -4,7 +4,7 @@
     
     StackView
 
-    A view for from which a sort of generalized Miller Column system can be built.
+    A view from which of generalized (mixed vertical and horizontal) Miller Column system can be built.
     
     Overview of view structure:
 
@@ -44,6 +44,10 @@
         The relevant method is:
         StackView.updateCompactionChain()
     
+    Drag & Drop:
+
+        When dragging & dropping, hierarchy views for nodes are cached in order to make the drag & drop implementation
+        more manageable.
 
 */
 
@@ -250,24 +254,21 @@
 
     selectNodePathArray (nodePathArray) {  
         if (nodePathArray.length === 0) { 
-            console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
-
-            //console.log("unselect items after path: ", this.pathString())
+            //console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
             // no selections left so unselect next
             this.tilesView().unselectAllTiles()
             this.syncFromNavSelection()
             return true
         }
 
-
         nodePathArray = nodePathArray.shallowCopy()
         // the path should start with the node *after* this one
         
         //const p = nodePathArray.map(n => n.title()).join("/")
-        console.log("--- selectNodePathArray ---")
-        console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")")
+        //console.log("--- selectNodePathArray ---")
+        //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")")
         const node = nodePathArray.shift() // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
-        console.warn("- popped '" + node.title() + "'")
+        //console.warn("- popped '" + node.title() + "'")
 
         //this.syncFromNodeNow()
         assert(node !== this.node())
@@ -283,8 +284,8 @@
         if (!selectedTile) {
             // if we didn't find the tile but the node is a subnode, sync the tilesView and look again
             if (this.tilesView().node().subnodes().contains(node)) {
-                console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!")
-                console.log("- so syncFromNodeNow and see if we can find it")
+                //console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!")
+               // console.log("- so syncFromNodeNow and see if we can find it")
                 this.tilesView().syncFromNodeNow()
                 selectedTile = this.tilesView().selectTileWithNode(node)
                 assert(selectedTile)
@@ -304,7 +305,7 @@
         }
 
         //this.syncFromNavSelection()
-        console.log("- selectedTile '" + selectedTile.node().title() + "'")
+        //console.log("- selectedTile '" + selectedTile.node().title() + "'")
 
         const childStack = this.nextStackView()
         if (childStack) {

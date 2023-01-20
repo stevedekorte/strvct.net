@@ -148,7 +148,12 @@ let listenCount = 0;
     // listener key
 
     listenerKey () {
-        const key = this.owner().typeId() + " " + this.delegate().typeId() + " " + this.fullMethodName()
+        let key = null
+        if (this.owner().node) {
+             key = this.owner().typeId() + " " + this.owner().node().title() + " " + this.delegate().typeId() + " " + this.fullMethodName()
+        } else {
+            key = this.owner().typeId() + " " + this.delegate().typeId() + " " + this.fullMethodName()
+        }
         return key
     }
     
@@ -216,6 +221,13 @@ let listenCount = 0;
 
     safeHandleEvent (event) {
         const result =  EventManager.shared().safeWrapEvent(() => {
+            //if (this.methodName() === "onMouseDown") {
+            if (this.fullMethodName() === "onMouseDown") {
+                console.log("on event: ", this.listenerKey())
+                //EventListener.showActive()
+                //MemoryUsage.shared().takeSnapshot()
+            }
+
             this.handleEvent(event)
         })
 

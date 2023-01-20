@@ -62,6 +62,8 @@
         this.setLineHeight("1.15em")
         this.setMinHeight("1em")
 		
+        this.setIsRegisteredForFocus(true) // need this to call unpauseGestures when editing ends
+
         //this.setUnfocusOnEnterKey(true)
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
         //this.formatValue()
@@ -233,17 +235,23 @@
         if (this.contentEditable()) {
             return this
         }
+
+        
         this.setContentEditable(true)
         this.focus()
         this.selectAll()
         this.pauseGestures()
-        //this.focus()
+
         //this.setBorder("1px dashed white")
         return this
     }
 
     pauseGestures () {
         GestureManager.shared().setIsPaused(true) // so things like text selection don't trigger gestures
+    }
+
+    unpauseGestures () {
+        GestureManager.shared().setIsPaused(false) // so things like text selection don't trigger gestures
     }
 
     onFocusIn () {
@@ -257,17 +265,18 @@
     onFocusOut () {
         super.onFocusOut()
         //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
-        GestureManager.shared().setIsPaused(false)
+        this.unpauseGestures() // do we need to check for (!this.contentEditable())?
     }
 
     onBlur () {
-        //console.log(this.value() + " onBlur")
+        console.log(this.value() + " onBlur")
         super.onBlur()
         if (this.usesDoubleTapToEdit()) {
             this.setContentEditable(false)
             this.setBorder("none")
             this.turnOffUserSelect()
         }
+        this.unpauseGestures()
     }
 
     setPxFontSize (aNumber) {

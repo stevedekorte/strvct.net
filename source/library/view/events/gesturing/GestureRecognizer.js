@@ -9,19 +9,20 @@
      - coordinates which gestures are active with a GestureManager
      - sends delegate messages for gesture state changes
     
-    This class supports general gesture logic & helper methods, 
+    This class supports general gesture logic & helper methods
     and is intended to be sublclassed to implement particular gesture types. 
     See SlideGestureRecognizer, for an example subclass.
 
     Event Listeners
 
-    Listeners are typically on a particular view's element. document.body listeners
-    are usually added once the gesture has begun, in order to track events outside 
-    the element. The document listeners are then removed once the gesture has ended or cancelled.
+    Listeners are typically on a particular view's element. 
+    document.body listeners are usually added once the gesture has begun, 
+    in order to track events outside the element. 
+    The document listeners are then removed once the gesture has ended or cancelled.
 
     Delegate Messages
 
-    State change delegate messages are send to the viewTarget. These are typically:
+    State change delegate messages are sent to the viewTarget. These are typically:
     
         accepts<GestureType>(aGesture)
         on<GestureType>Begin(aGesture)

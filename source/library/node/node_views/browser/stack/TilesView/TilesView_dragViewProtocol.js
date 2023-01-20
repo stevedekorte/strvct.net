@@ -12,6 +12,8 @@
 
     onDragSourceBegin (dragView) {
         this.setHasPausedSync(true)
+        ElementDomView.pauseRetires()
+
         //console.log(this.typeId() + " onDragSourceBegin")
         // ---
 
@@ -119,7 +121,7 @@
     }
 
     onDragDestinationDropped (dragView) {
-        debugger;
+        //debugger;
         
         const insertIndex = this.indexOfTilePlaceHolder()
 
@@ -147,6 +149,7 @@
 
     onDragSourceEnd (dragView) {
         this.endDropMode()
+        ElementDomView.unpauseRetires()
     }
 
 

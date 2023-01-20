@@ -44,6 +44,7 @@
         //this.setIsDebugging(true) 
         this.resetTapCount()
         this.setShouldRequestActivation(false) // allow multiple tap targets?
+        this.setIsDebugging(true)
         return this
     }
 

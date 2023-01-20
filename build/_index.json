@@ -121,8 +121,8 @@
   },
   {
     "path": "source/library/ideal/categories/Set_ideal.js",
-    "size": 3265,
-    "hash": "fGYj7/rfbh/UMNQ7P1G2280LzwSstw/okdpkKMNUfSc="
+    "size": 3383,
+    "hash": "13BnXz67GahROK0qSoT9kP2E7MtRHD+yfvEIp74tamI="
   },
   {
     "path": "source/library/ideal/categories/Map_ideal.js",
@@ -351,8 +351,8 @@
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",
-    "size": 8633,
-    "hash": "hOZkRImwYGJwheWp3EonKCd+P18bYUJVT6HMVDNm5bk="
+    "size": 9146,
+    "hash": "zKpRIpJA35H0XsdnMCzkkUNZUHYanvRcgRRN0OBgOL8="
   },
   {
     "path": "source/library/view/events/listening/EventSetListener.js",
@@ -456,8 +456,8 @@
   },
   {
     "path": "source/library/view/events/gesturing/GestureRecognizer.js",
-    "size": 26358,
-    "hash": "fWu4VhXnuoIn9xckKbDcMfJqRav6iJIkW74eEyEqlkg="
+    "size": 26362,
+    "hash": "lgWNLmBt88zOTW88T3NfveR5dM8gtEZDQqQXSzGPorw="
   },
   {
     "path": "source/library/view/events/gesturing/gestures/LongPressGestureRecognizer.js",
@@ -471,8 +471,8 @@
   },
   {
     "path": "source/library/view/events/gesturing/gestures/TapGestureRecognizer.js",
-    "size": 4349,
-    "hash": "OyE73xu1R2ovOp1ThR8L71n6NJbPZ8o54OCJRwMgD8g="
+    "size": 4383,
+    "hash": "DxQ4ZkJOnWkMfFK9TIH3eHAs664YFCdl4RCj8HIXYXY="
   },
   {
     "path": "source/library/view/events/gesturing/gestures/OrientGestureRecognizer.js",
@@ -631,8 +631,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/ElementDomView.js",
-    "size": 8941,
-    "hash": "nzCqUHjvjT9YA7iKkY2x3JLiDycqgMX72YI1/AVwRfg="
+    "size": 9857,
+    "hash": "A6aUCJarfnPKoqxy+ArOMyDDBlaWVltDJXm7lEXjzeE="
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
@@ -641,8 +641,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
-    "size": 18148,
-    "hash": "KsK9wVQPBqOu9sEKKpCkJi2wr8V/sEVyOfueQPTuwDo="
+    "size": 18889,
+    "hash": "L0hLpxXKMoIIjNgdNI3PO7JWxnKtOsKdA1OLS5b6Txk="
   },
   {
     "path": "source/library/view/dom/DomView/ListenerDomView.js",
@@ -746,8 +746,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 14351,
-    "hash": "6KVVH6MkjvVsslgIgD8xUSzCikQgpXgNMYPptXmdpu8="
+    "size": 14586,
+    "hash": "4eMtQG1b9XexEAAkiZkS2Vie4IR0WmZDgwKHara0KJ4="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -786,8 +786,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 3308,
-    "hash": "YwChVe0PjlPzX7nTC/oFlJ7m9dZ7wKaSeg/bGGvFvDc="
+    "size": 3312,
+    "hash": "vSy54Pe+CWOp09k5KHp5wEKDST9C5d1NEs7QyTDQi0o="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -1076,8 +1076,8 @@
   },
   {
     "path": "source/library/node/node_views/NodeView.js",
-    "size": 9175,
-    "hash": "bB9EV2/WI40DhpNOTL/P9H/l+tLgXFBCU7uzLqi6pyc="
+    "size": 9216,
+    "hash": "XI4a/hABHT1oTk+p3Mo7VXrH0oe7eoG6MZ5kGP8z+dY="
   },
   {
     "path": "source/library/node/node_views/ImageWellView.js",
@@ -1096,8 +1096,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 20665,
-    "hash": "e8PaPEQX+Y2uP3NjD8YfaDq+E0VeVnvbXtMS1Uk9SjM="
+    "size": 20784,
+    "hash": "iPXyFqHE1FoF7o1af2A0VMNOupt/A8S7yDSULFROiJ8="
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
@@ -1116,8 +1116,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_dragViewProtocol.js",
-    "size": 9768,
-    "hash": "PqKcuKyRkvqM4zjsrZHSKhl7UGpOEMKgJC43xwSxE5E="
+    "size": 9849,
+    "hash": "2ccbjFQSbOsjUte2TSKYDYvJFn+ifglgzHm1PkBV+0A="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_selection.js",
@@ -1136,8 +1136,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_gestures.js",
-    "size": 6224,
-    "hash": "zz+6tGXT+vpmAZb/lKfqDi1e7P4pXfwE0DR/MlIZKB0="
+    "size": 6347,
+    "hash": "5VeOg9tsZ8nW3x97DrY+XogarF/tKu5dFX7Ix1yH4Eg="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_helpers.js",

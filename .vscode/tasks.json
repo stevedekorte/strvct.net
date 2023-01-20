@@ -31,7 +31,13 @@
                 "build _index.json & _cam.json",
                 "auto index resources"
             ],
-            "dependsOrder": "sequence"
+            "dependsOrder": "sequence",
+            "presentation": {
+                "reveal": "never",
+                "panel": "dedicated",
+                "clear": true,
+                "close": true
+            },
         },
 
         {
@@ -47,8 +53,8 @@
                 "isBackground": "false",
             },
             "presentation": {
-                "reveal": "silent",
-                "panel": "shared",
+                "reveal": "never",
+                "panel": "dedicated",
                 "clear": true,
                 "close": true
             },
@@ -71,8 +77,8 @@
                 "isBackground": "false",
             },
             "presentation": {
-                "reveal": "silent",
-                "panel": "shared",
+                "reveal": "never",
+                "panel": "dedicated",
                 "clear": true,
                 "close": true
             },
