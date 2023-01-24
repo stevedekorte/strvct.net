@@ -111,7 +111,7 @@
         //this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height?
 
         this.setIsRegisteredForKeyboard(true)
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

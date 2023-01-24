@@ -22,7 +22,7 @@
     init () {
         super.init()
         this.setEdgeName("bottom")
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
     

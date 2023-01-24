@@ -24,7 +24,7 @@
         super.init()
         this.setButtons([])
         this.setAxes([])
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

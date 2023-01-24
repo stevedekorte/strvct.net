@@ -53,7 +53,10 @@
 
         html * { touch-action: none; }
 
-    TODO: move visualizer to separate class?
+    TODO: 
+    
+    - rename methods to clearly identify Doc and View related methods
+    - move visualizer to separate class?
 
     QUESTIONS:
     If a view has the active gesture control, and a decendent view requests becoming the active
@@ -67,14 +70,21 @@
         this.newSlot("viewTarget", null)
         this.newSlot("shouldRemoveOnComplete", false)
 
-        // listeners
+        // listener classes
 
         this.newSlot("listenerClasses", null)
-        this.newSlot("viewListeners", null)
-        this.newSlot("docListeners", null)
-        this.newSlot("moveListeners", null)
         this.newSlot("moveListenerClasses", ["MouseMoveListener", "TouchMoveListener"])
         this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"])
+
+        // listeners
+
+        this.newSlot("viewListeners", null)
+        this.newSlot("docListeners", null)
+
+        // move listeners
+
+        this.newSlot("viewMoveListeners", null)
+        this.newSlot("docMoveListeners", null)
 
         // events
 
@@ -119,60 +129,24 @@
     init () {
         super.init()
         this.setListenerClasses([]) // subclasses override this in their
-        this.setDocListeners([])
+
         this.setViewListeners([])
+        this.setDocListeners([])
+
+        this.setViewMoveListeners([])
+        this.setDocMoveListeners([])
+
         //this.setGestureName(this.type().before("GestureRecognizer"))
         this.autoSetMessageNames()
         this.setIsEmulatingTouch(true)
         this.setFingerViewDict({})
 
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         //this.setIsVisualDebugging(true)
         return this
     }
 
-    // -- special case for mouse and touch move events ---
-
-    didUpdateSlotIsPressing (oldValue, newValue) {
-        if (newValue === true) {
-            this.startMoveListeners()
-        } else {
-            this.stopMoveListeners()
-        }
-    }
-
-    // --- move listeners ---
-
-    newMoveListeners () {
-        return this.moveListenerClasses().map((className) => {
-            const proto = Object.getClassNamed(className);
-            const listener = proto.clone();
-            listener.setDelegate(this);
-            return listener
-        })
-    }
-
-    stopMoveListeners () {
-        if (this.moveListeners()) {
-            this.moveListeners().forEach(listener => listener.stop())
-            this.setMoveListeners([])
-        }
-        return this
-    }
-
-    startMoveListeners () {
-        this.stopViewListeners()
-
-        const listeners = this.newMoveListeners()
-        listeners.forEach(listener => {
-            listener.setListenTarget(this.viewTarget().element())
-            listener.start()
-            return listener
-        })
-        this.setMoveListeners(listeners)
-        return this
-    }
-
+ 
     // -- event helpers --
 
     clearEvents () {
@@ -219,7 +193,7 @@
         //return points.detect(p1 => !view.containsPoint(p1)) === null
     }
 
-    // --- listeners ---
+    // --- listener classes ---
 
     setListenerClasses (classNames) {
         this._listenerClasses = classNames
@@ -235,8 +209,10 @@
         }
     }
 
-    newListeners () {
-        return this.listenerClasses().map((className) => {
+    // --- new listeners ---
+
+    newListenersForClasses (classesArray) {
+        return classesArray.map((className) => {
             const proto = Object.getClassNamed(className);
             const listener = proto.clone();
             listener.setDelegate(this);
@@ -244,23 +220,39 @@
         })
     }
 
+    startNewViewListenersForClasses (classesArray) {
+        const listeners = this.newListenersForClasses(classesArray)
+        listeners.forEach(listener => {
+            listener.setListenTarget(this.viewTarget().element())
+            listener.setIsDebugging(this.isDebugging())
+            listener.start()
+        })
+        return listeners
+    }
+    
+    startNewDocListenersForClasses (classesArray) {
+        const listeners = this.newListenersForClasses(classesArray)
+        listeners.forEach(listener => {
+            listener.setUseCapture(true)
+            listener.setListenTarget(window)
+            listener.setIsDebugging(this.isDebugging())
+            listener.start()
+        })
+        return listeners
+    }
+
     // --- view listeners ---
 
-    stopViewListeners () {
-        this.viewListeners().forEach(listener => listener.stop())
-        this.setViewListeners([])
+    startViewListeners () {
+        //debugger;
+        this.stopViewListeners()
+        this.setViewListeners(this.startNewViewListenersForClasses(this.listenerClasses()))
         return this
     }
 
-    startViewListeners () {
-        this.stopViewListeners()
-
-        const listeners = this.newListeners().map((listener) => {
-            listener.setListenTarget(this.viewTarget().element())
-            listener.start()
-            return listener
-        })
-        this.setViewListeners(listeners)
+    stopViewListeners () {
+        this.viewListeners().forEach(listener => listener.stop())
+        this.viewListeners().clear()
         return this
     }
 
@@ -268,24 +260,62 @@
 
     startDocListeners () {
         this.stopDocListeners()
-
-        const listeners = this.newListeners().map(listener => {
-            listener.setUseCapture(true)
-            //listener.setListenTarget(document.body)
-            listener.setListenTarget(window)
-            //listener.setIsDebugging(true)
-            listener.start()
-            return listener
-        })
-        this.setDocListeners(listeners)
+        this.setDocListeners(this.startNewDocListenersForClasses(this.listenerClasses()))
         return this
     }
 
     stopDocListeners () {
         this.docListeners().forEach(listener => listener.stop())
-        this.setDocListeners([])
+        this.docListeners().clear()
         return this
     }
+
+    // -- special case for mouse and touch move events ---
+
+    didUpdateSlotIsPressing (oldValue, newValue) {
+        if (newValue === true) {
+            this.startViewMoveListeners()
+            this.startDocMoveListeners() // is this correct?
+        } else {
+            this.stopViewMoveListeners()
+            this.stopDocMoveListeners() // is this correct?
+        }
+    }
+
+    // --- view move listeners ---
+
+    newMoveListeners () {
+        return this.listenersForClasses(this.moveListenerClasses())
+    }
+
+    stopViewMoveListeners () {
+        this.viewMoveListeners().forEach(listener => listener.stop())
+        this.viewMoveListeners().clear()
+        return this
+    }
+
+    startViewMoveListeners () {
+        //debugger;
+        this.stopViewMoveListeners()
+        this.setViewMoveListeners(this.startNewViewListenersForClasses(this.moveListenerClasses()))
+        return this
+    }
+
+    // --- doc move listeners ---
+
+    stopDocMoveListeners () {
+        this.docMoveListeners().forEach(listener => listener.stop())
+        this.docMoveListeners().clear()
+        return this
+    }
+
+    startDocMoveListeners () {
+        this.stopDocMoveListeners()
+        this.setDocMoveListeners(this.startNewDocListenersForClasses(this.moveListenerClasses()))
+        return this
+    }
+
+    // ---------------------
 
     // condition helpers
 
@@ -329,20 +359,20 @@
         this.startViewListeners()
         // We typically don't want to listen to document level events all the time.
         // Instead, some view events will start and stop the doc listeners.
-        //this.startDocListeners() 
+        //this.startViewMoveListeners() 
         return this
     }
 
     stop () {
         this.stopViewListeners()
         this.stopDocListeners()
-        this.stopMoveListeners() // is this correct?
+        this.stopViewMoveListeners() // is this correct?
+        this.stopDocMoveListeners() // is this correct?
         return this
     }
 
     allEventListeners () {
-        const mv = this.moveListeners() ? this.moveListeners() : []
-        const sets = [this.viewListeners(), this.docListeners(), mv].flat()
+        const sets = [this.viewListeners(), this.docListeners(), this.viewMoveListeners(), this.docMoveListeners()].flat()
         return sets.map(eventListenerSet => eventListenerSet.allEventListeners()).flat()
     }
 
@@ -514,7 +544,8 @@
         return this
     }
 
-    onMouseDown (event) {        
+    onMouseDown (event) {      
+        //debugger;  
         this.emulateDownIfNeeded(event)
         this.setDownEvent(event)
         this.onDown(event)

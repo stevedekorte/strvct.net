@@ -25,7 +25,7 @@
     }
 
     initPrototype () {
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setShouldStoreSubnodes(false)

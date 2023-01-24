@@ -31,7 +31,7 @@
         super.init()
         this.setProtectedTraps(this.defaultProtectedTraps().shallowCopy())
         this.setProtectedMethods(this.defaultProtectedMethods().shallowCopy())
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

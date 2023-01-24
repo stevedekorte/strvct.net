@@ -64,7 +64,7 @@
         super.init()
         this.setObservers([])
         this.setupNoteNames()
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

@@ -46,7 +46,8 @@
         return this.hasOkFingerCount();
     }
 
-    doPress (event) {
+    doPress (event) { 
+        this.debugLog("doPress")
         this.setIsPressing(true)
         this.setDownEvent(event)
         this.startDocListeners()
@@ -66,6 +67,8 @@
     }
 
     attemptBegin () {
+        this.debugLog("attemptBegin")
+
         if (!this.doesTargetAccept()) {
             return;
         }
@@ -79,16 +82,21 @@
         }
     }
 
+    onMouseMoveCapture (event) { // tmp for debugging dragview
+        this.debugLog("onMouseMoveCapture")
+        super.onMouseMoveCapture(event)
+    }
+
     onMove (event) {
         super.onMove(event)
 
         if (this.isPressing()) {
-            if (!this.isActive() && this.hasMovedEnough()) {
-                this.attemptBegin()
-            }
-        
             if (this.isActive()) {
                 this.sendMoveMessage() // move
+            } else {
+                if (this.hasMovedEnough()) {
+                    this.attemptBegin()
+                }
             }
         }
         return this

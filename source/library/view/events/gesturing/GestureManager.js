@@ -8,11 +8,12 @@
 
     To pause all gestures:
     
-        GestureManager.shared().setIsPaused(true)
+        GestureManager.shared().pause()
+        GestureManager.shared().unpause()
+    
+    or:
 
-    To unpause:
-
-        GestureManager.shared().setIsPaused(true)
+        GestureManager.shared().setIsPaused(aBool)
 
     NOTES:
 
@@ -38,9 +39,22 @@
         return this.activeGesture() && this.activeGesture().isActive()
     }
 
+    pause () {
+        this.setIsPaused(true)
+        return this
+    }
+
+    unpause () {
+        this.setIsPaused(false)
+        return this
+    }
+
     setIsPaused (aBool) {
         if (this._isPaused !== aBool) {
             this._isPaused = aBool
+
+            this.debugLog(this.type() + ".setIsPaused(" + aBool + ")")
+
             if (aBool) {
                 this.cancelAllGestures()
             }
@@ -57,6 +71,8 @@
     }
 
     requestActiveGesture (aGesture) { // sent by gestures themselves
+        this.debugLog("requestActiveGesture(" + aGesture.description() + ")")
+
         if (this.isPaused()) {
             return false
         }
@@ -71,7 +87,7 @@
 
         //this.releaseActiveGestureIfInactive()
         if (aGesture === ag) { // error
-            console.warn("request to activate an already active gesture ", aGesture.typeId())
+            console.warn("request to activate an already active gesture ", aGesture.description())
             return false
         }
 
@@ -85,6 +101,7 @@
             }
         }
 
+
         // already have active gesture, so reject this request
         this.rejectGesture(aGesture)
         return false
@@ -94,17 +111,13 @@
         aGesture.viewTarget().cancelAllGesturesExcept(aGesture)
         this.cancelBegunGesturesExcept(aGesture)
         this.setActiveGesture(aGesture)
-        if (this.isDebugging()) {
-            console.log(this.type() + " activating " + aGesture.description())
-        }
+        this.debugLog("acceptGesture(" + aGesture.description() + ")")
         return this
     }
 
     rejectGesture (aGesture) { // private method
-        if (this.isDebugging()) {
-            console.log(this.type() + " rejecting " + aGesture.description())
-            console.log(this.type() + " already active " + this.activeGesture().description())
-        }
+        this.debugLog("rejectGesture(" + aGesture.description() + ")")
+        this.debugLog("already active " + this.activeGesture().description())
         return this
     }
 
@@ -137,6 +150,11 @@
             }
         });
         return this
+    }
+
+    debugTypeId () {
+        const s = this.isPaused() ? "(paused)" : "(not paused)"
+        return super.debugTypeId() + s
     }
     
 }.initThisClass());

@@ -24,7 +24,6 @@
         return this
     } //.setDocs("init", "initializes the object", "returns this"),
     
-
     setNode (aNode) {
         if (this._node !== aNode) {
             this.stopWatchingNode()

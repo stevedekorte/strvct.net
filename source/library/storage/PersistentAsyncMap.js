@@ -27,7 +27,7 @@
     init () {
         super.init()
         this.setIdb(IndexedDBFolder.clone())
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
     
     // open

@@ -41,10 +41,10 @@
     init () {
         super.init()
         this.setListenerClasses(this.defaultListenerClasses())
-        //this.setIsDebugging(true) 
+        this.setIsDebugging(false) 
         this.resetTapCount()
         this.setShouldRequestActivation(false) // allow multiple tap targets?
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

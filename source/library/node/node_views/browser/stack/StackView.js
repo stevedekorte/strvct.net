@@ -46,8 +46,8 @@
     
     Drag & Drop:
 
-        When dragging & dropping, hierarchy views for nodes are cached in order to make the drag & drop implementation
-        more manageable.
+        When dragging & dropping, hierarchy views for nodes are cached (in nodeToStackCache) in order to make the drag & drop implementation
+        more manageable. For example, the source tilesView needs to remember where the dragged item was when returning to it.
 
 */
 
@@ -408,7 +408,7 @@
             const oNode = tile.nodeTileLink()
             const ovc = this.otherViewContent()
             if (!ovc || (ovc.node() !== oNode)) {
-                const ov = this.otherViewForNode(oNode)
+                const ov = this.otherViewContentForNode(oNode)
                 this.setOtherViewContent(ov)
             }
         } else {
@@ -599,13 +599,15 @@
         if (!this.isCaching()) {
             console.log(this.debugTypeId() + " onStackChildDragSourceEnter")
             this.watchOnceForNoteFrom("onDragViewClose", dragView)
-            this.beginCaching()
+            //this.beginCaching()
+            this.rootStackView().beginCaching()
         }
     }
 
     onDragViewClose (aNote) {
         console.log(this.debugTypeId() + " onDragViewClose")
-        this.endCaching()
+        //this.endCaching()
+        this.rootStackView().endCaching()
     }
 
     // begin / end caching
@@ -615,37 +617,40 @@
     }
 
     beginCaching () {
-        assert(!this.isCaching())
-        console.log(this.debugTypeId() + " beginCaching -----------------")
-        this.setNodeToStackCache(new Map())
+        // begins caching on all chained substacks
+        if(!this.isCaching()) {
+            //console.log(this.debugTypeId() + " beginCaching -----------------")
+            //debugger;
+            this.setNodeToStackCache(new Map())
 
-        const ov = this.otherView()
-        if (ov && ov.cacheId) {
-            this.cacheView(ov)
-            ov.beginCaching()
+            const ov = this.otherViewContent()
+            if (ov && ov.cacheId) {
+                this.cacheView(ov)
+                ov.beginCaching()
+            }
         }
         return this
     }
 
     endCaching () {
-        assert(this.isCaching())
-        console.log(this.debugTypeId() + " endCaching -----------------")
-        //let values = this.nodeToStackCache().valuesArray()
-        //debugger;
-        this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv))
-        this.setNodeToStackCache(null)
+        // ends caching on all chained substacks
+        if(this.isCaching()) {
+            //console.log(this.debugTypeId() + " endCaching -----------------")
+            //this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv))
+            this.setNodeToStackCache(null)
 
-        const ov = this.otherView()
-        if (ov && ov.cacheId) {
-            this.uncacheView(ov)
-            ov.endCaching()
+            const ov = this.otherViewContent()
+            if (ov && ov.cacheId) {
+                //this.uncacheView(ov)
+                ov.endCaching()
+            }
         }
         return this
     }
 
     // --- node to StackView cache ---
 
-    cacheId () {
+    cacheId () { // used atm in StackView cache
         return this.node().typeId()
     }
 
@@ -662,6 +667,7 @@
         return this
     }
 
+    /*
     uncacheView (stackView) {
         const cache = this.nodeToStackCache()
         const k = aView.cacheId()
@@ -670,6 +676,7 @@
         }
         return this
     }
+    */
 
     cachedViewForNode (aNode) {
         if (this.hasCache() && aNode) {
@@ -679,13 +686,16 @@
         return null
     }
 
-    otherViewForNode (aNode) {
+    otherViewContentForNode (aNode) {
         let sv = this.cachedViewForNode(aNode)
 
         if (!sv) {
             // what if node is null now and set *after* this?
             // things like a path change can alter node?
             sv = StackView.clone().setNode(aNode)
+            if (this.isCaching()) {
+                sv.beginCaching()
+            }
         }
 
         return sv

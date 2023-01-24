@@ -27,7 +27,7 @@
         super.init()
         this.setListenerClasses(this.defaultListenerClasses())
         this.setMinDistToBegin(5)
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

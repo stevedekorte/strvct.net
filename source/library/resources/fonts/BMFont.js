@@ -23,7 +23,7 @@
     init () {
         super.init()
         this.setOptions({})  // example options { style: 'normal', weight: 700 }  
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     title () {

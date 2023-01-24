@@ -116,7 +116,7 @@
         this.setOpacity(0.9)
         this.setInfo({})
 
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 
@@ -502,6 +502,8 @@
         assert(Type.isNullOrUndefined(this.element().parentNode)) // sanity check
         this.setItems([])
         this.setIsClosed(true)
+
+
         return this
     }
 

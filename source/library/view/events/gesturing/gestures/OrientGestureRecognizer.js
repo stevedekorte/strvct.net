@@ -53,7 +53,7 @@
         this.setMaxFingersAllowed(4)
         this.setMinDistToBegin(10)
 
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

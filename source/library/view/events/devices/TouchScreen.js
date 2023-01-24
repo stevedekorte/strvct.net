@@ -45,7 +45,7 @@
     init () {
         super.init()
         this.startListening()
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         if (this.isDebugging()) {
             this.debugLog(".init()")
         }

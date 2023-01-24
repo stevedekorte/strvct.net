@@ -35,7 +35,7 @@
         this.setMsOverflowStyle("none")
         this.setUserSelect("none")
 
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         this.setIsRegisteredForKeyboard(true)
         this.setAcceptsFirstResponder(true)
 

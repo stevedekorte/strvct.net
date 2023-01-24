@@ -176,10 +176,15 @@ let listenCount = 0;
             if (!this.isListening()) {
                 this.incrementListenCount()
 
-                //this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
+                this.debugLog(() => this.delegate().typeId() + " will start listening for " + this.eventName() + " -> " + this.methodName())
                 assert(this.isValid())
                 this._isListening = true; // can't use setter here as it would cause a loop
                 this.listenTarget().addEventListener(this.eventName(), this.handlerFunc(), this.useCapture());
+                /*
+                if (this.useCapture()) {
+                    debugger;
+                }
+                */
             }
         } else {
             //console.log(this.delegate().debugTypeId() + " doesn't respond to " + this.fullMethodName() + " so we won't listen for " + this.eventName())
@@ -221,24 +226,19 @@ let listenCount = 0;
 
     safeHandleEvent (event) {
         const result =  EventManager.shared().safeWrapEvent(() => {
+            //console.log("on event: ", this.listenerKey())
+
+            /*
             //if (this.methodName() === "onMouseDown") {
             if (this.fullMethodName() === "onMouseDown") {
                 console.log("on event: ", this.listenerKey())
                 //EventListener.showActive()
                 //MemoryUsage.shared().takeSnapshot()
             }
+            */
 
             this.handleEvent(event)
         })
-
-        /*
-        // tmp debugging code
-        if (this.methodName() === "onMouseDown") {
-            console.log("on event: ", this.listenerKey())
-            EventListener.showActive()
-            //MemoryUsage.shared().takeSnapshot()
-        }
-        */
         
         return result
     }

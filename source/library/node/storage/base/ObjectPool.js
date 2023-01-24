@@ -99,7 +99,7 @@
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"))
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         return this
     }
 

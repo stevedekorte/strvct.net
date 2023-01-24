@@ -12,7 +12,7 @@
 
     onDragSourceBegin (dragView) {
         this.setHasPausedSync(true)
-        ElementDomView.pauseRetires()
+        //ElementDomView.pauseRetires()
 
         //console.log(this.typeId() + " onDragSourceBegin")
         // ---
@@ -149,10 +149,8 @@
 
     onDragSourceEnd (dragView) {
         this.endDropMode()
-        ElementDomView.unpauseRetires()
+        //ElementDomView.unpauseRetires()
     }
-
-
 
     // -- messages sent by DragView to the potential drop view, if not the source ---
 

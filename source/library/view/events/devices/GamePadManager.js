@@ -39,7 +39,7 @@
 
     init () {
         super.init()
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         this.setGamePadsDict({})
         //this.startListening()
         this.startPollingIfSupported() // could delay this until connection if listen API is supported

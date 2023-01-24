@@ -23,7 +23,7 @@
         super.init()
         this.setSender(null)
         this.setObserver(null)
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     onFinalizedSlotObserver () {

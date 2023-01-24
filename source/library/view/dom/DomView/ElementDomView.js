@@ -14,6 +14,7 @@
 
 (class ElementDomView extends ProtoClass {
 
+    /*
     static initClass () {
         this.newClassSlot("viewsWithoutParents", new Set()) // track these so we can retire them, but not during drag & drop 
         this.newClassSlot("isPausingRetires", false) // when true, retireQueue is paused
@@ -28,6 +29,7 @@
     }
 
     static retireParentlessViews () {
+        debugger;
         const parentless = this.viewsWithoutParents()
 
         while (parentless.size) { // do this effective "pop" loop, so it's ok to delete items inside a prepareToRetire
@@ -41,6 +43,7 @@
             parentless.delete(view)
         }
     }
+    */
 
     static documentBodyView () {
         return DocumentBody.shared()

@@ -11,8 +11,7 @@
     // --- tap ---
 
     onTapComplete (aGesture) {
-        console.log(this.typeId() + " " + this.node().title() + " .onTapComplete()")
-        console.log("shouldRequestActivation: ", aGesture.shouldRequestActivation())
+        console.log(this.typeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
         
         if (this.node()) {
 

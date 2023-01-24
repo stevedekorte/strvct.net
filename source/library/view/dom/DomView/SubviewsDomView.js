@@ -27,6 +27,11 @@
     }
     
     didUpdateSlotParentView (oldValue, newValue) {
+        return this
+    }
+    
+    /*
+    didUpdateSlotParentView (oldValue, newValue) {
         const parentless = this.thisClass().viewsWithoutParents()
 
         assert(oldValue !== newValue);
@@ -51,6 +56,7 @@
         this.thisClass().retireParentlessViews()
     }
 
+    */
 
     // --- subviews ---
 
@@ -371,15 +377,7 @@
         }
 
         aSubview.setParentView(null)
-        //aSubview.scheduleMethod("prepareToRetireIfReady")
         return this
-    }
-
-    prepareToRetireIfReady () {
-        //console.log(this.typeId() + " prepareToRetireIfReady")
-        if (this.parentView() === null) {
-            this.prepareToRetire()
-        }
     }
 
     removeAllSubviews () {

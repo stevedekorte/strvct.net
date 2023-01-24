@@ -164,7 +164,6 @@
         // Do we want this, which allows single tap event and double tap, or do
         // we want to wait to send single tap until double tap wait period expires?
         tg.setShouldAcceptCancelRequest(false) // so single click doesn't cancel double click. 
-        //tg.setIsDebugging(true)
         return tg
     }
 

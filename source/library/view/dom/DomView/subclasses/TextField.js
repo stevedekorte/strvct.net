@@ -71,7 +71,7 @@
         //this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
         //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
 
-        //this.setIsDebugging(true)
+        this.setIsDebugging(false)
         //this.lockedStyleAttributeSet().add("backgroundColor")
 
         return this
@@ -247,11 +247,11 @@
     }
 
     pauseGestures () {
-        GestureManager.shared().setIsPaused(true) // so things like text selection don't trigger gestures
+        GestureManager.shared().pause() // so things like text selection don't trigger gestures
     }
 
     unpauseGestures () {
-        GestureManager.shared().setIsPaused(false) // so things like text selection don't trigger gestures
+        GestureManager.shared().unpause() // so things like text selection don't trigger gestures
     }
 
     onFocusIn () {
