@@ -9,7 +9,23 @@
 */
 
 (class DomTransition extends ProtoClass {
+    
+    static initClass () {
+        const globalValues = ["inherit", "initial", "revert", "revert-layer", "unset"].asSet();
+        this.newClassSlot("globalValues", globalValues)
+    }
+
+    static validPropertyValues () {
+        return [  "background-color",  "background-position",  "border-color",  "border-width",  "border-spacing",  
+        "bottom",  "color",  "font-size",  "font-weight",  "height",  "left",  "letter-spacing",  "line-height",  
+        "margin",  "margin-bottom",  "margin-left",  "margin-right",  "margin-top",  "max-height",  "max-width",  
+        "min-height",  "min-width",  "opacity",  "outline-color",  "outline-offset",  "outline-width",  "padding",  
+        "padding-bottom",  "padding-left",  "padding-right",  "padding-top",  "right",  "text-indent",  "text-shadow",  
+        "top",  "vertical-align",  "visibility",  "width",  "word-spacing",  "z-index"]
+    }
+
     initPrototypeSlots () {
+        this.newSlot("global", null)
         this.newSlot("property", "")
         this.newSlot("duration", 0)
         this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
@@ -22,6 +38,15 @@
         super.init()
     }
     */
+
+    clear () {
+        this.setGlobal(null)
+        this.setProperty(null)
+        this.setDuration(0)
+        this.setTimingFunction("")
+        this.setDelay(0)
+        return this
+    }
 
     updateDuration (s) {
         if (Type.isNumber(s)) {
@@ -61,25 +86,55 @@
     }
 
     asString () {
+        if (this.global()) {
+            return this.global()
+        }
+
         const parts = [
             this.property(),
             this.durationString(),
-            this.timingFunction(),
-            this.delayString(),
+            this.timingFunction()
+            //this.delayString(),
         ]
 
-        return parts.join(" ")
+        const s = parts.join(" ")
+        console.log(this.type() + " asString() = '" + s + "'")
+        return s
     }
 
     setFromString (aString) {
-        const parts = aString.split(" ").select((part) => { return part !== "" })
+        // ordering of parts: 
+        //   transition-property, 
+        //   transition-duration, 
+        //   transition-timing-function, 
+        //   transition-delay.
+        //
 
+        const startsWithNumber = function (s) {
+            if (s.length) {
+                const c = s[0]
+                return (c >= '0' && c <= '9');
+            }
+            return false
+        }
+
+        const parts = aString.split(" ").select(part => part !== "")
+
+        this.clear()
+
+        if (parts.length === 1 && this.thisClass().validGlobalValues().has(parts[0])) {
+            this.setGlobal(parts[0])
+            return this
+        }
+
+        debugger;
         let v = parts.removeFirst()
         assert(!Type.isNull(v))
         this.setProperty(v)
 
         v = parts.removeFirst()
         if (!Type.isNull(v)) {
+            assert(startsWithNumber(v))
             this.setDuration(v)
         }
 
@@ -90,6 +145,7 @@
 
         v = parts.removeFirst()
         if (!Type.isNull(v)) {
+            assert(startsWithNumber(v))
             this.setDelay(v)
         }
 
@@ -100,6 +156,7 @@
         this.transitions().syncToDomView()
         return this
     }
+
 }.initThisClass());
 
 

@@ -24,13 +24,11 @@
         text-align: center;
         vertical-align: center;
 
-        transition: all 0.1 ease;
     }
 
     .BMActionNodeView:hover {
         color: white;
         background-color: #888;
-        transition: opacity background-color 1s ease;
     }
 
 */

@@ -56,6 +56,10 @@
     }
 
     timeString () {
+        if (!this.formatter()) { //tmp hack to deal with bug
+            this.setFormatter(TimeFormatter.clone())
+        }
+
         return this.formatter().setDate(this.jsDate()).formattedValue()
     }
 

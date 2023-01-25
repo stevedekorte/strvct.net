@@ -815,10 +815,16 @@
 
     // transition
 
-    setTransition (s) {
+    justSetTransition (s) {
         this.setCssProperty("transition", s)
+        return this
+    }
+
+    setTransition (s) {
+        this.justSetTransition(s)
 
         if (this._transitions) {
+            //debugger;
             this.transitions().syncFromDomView()
         }
 

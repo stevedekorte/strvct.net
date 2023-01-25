@@ -21,4 +21,14 @@
         return this
     } 
     
+    setBackgroundColor (s) {
+        super.setBackgroundColor("tranparent")
+        return this
+    }
+
+    setTransition (s) {
+        //debugger;
+        return super.setTransition(s)
+    }
+
 }.initThisClass());

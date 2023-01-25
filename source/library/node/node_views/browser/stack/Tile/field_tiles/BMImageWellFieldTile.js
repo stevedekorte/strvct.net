@@ -26,7 +26,7 @@
         //this.keyView().setElementClassName("BMImageWellKeyField")
         //this.valueView().setIsEditable(false)
         this.turnOffUserSelect()
-        this.keyView().setTransition("all 0.3s")
+        this.keyView().setTransition("color 0.3s")
         //this.valueViewContainer().setPadding("0px")
         return this
     }

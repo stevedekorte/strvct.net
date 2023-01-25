@@ -52,8 +52,8 @@
     }
 
     syncToDomView () {
-        //this.debugLog(".setTransition('" + this.asString() + "')")
-        this.domView().setTransition(this.asString())
+        //console.log(".setTransition('" + this.asString() + "')")
+        this.domView().justSetTransition(this.asString())
         return this
     }
 

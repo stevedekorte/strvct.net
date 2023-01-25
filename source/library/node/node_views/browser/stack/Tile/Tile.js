@@ -6,7 +6,7 @@
 
     Base tile view. This is a sort of empty canvas for subclasses to put subviews in.
     It's important that subviews are put within the contentView, as this is used
-    to support features like slide to delete.
+    to support features like slide-to-delete.
 
     Tile supports tile features such as:
     
@@ -34,7 +34,7 @@
         this.newSlot("closeButtonView", null)
         this.newSlot("defaultHeight", 30)
         this.newSlot("restCloseButtonOpacity", 0.4)
-        this.newSlot("transitionStyle", "all 0.2s ease, width 0s, max-width 0s, min-width 0s")
+        this.newSlot("transitionStyle", "all 0s")
         this.newSlot("selectedFlashColor", "#ccc")
         this.newSlot("shouldShowFlash", false)
         this.newSlot("shouldCenterCloseButton", true)
@@ -71,9 +71,10 @@
 
         //this.setMinHeight("4em")
         //this.setColor("rbga(255, 255, 255, 0.5)")
-        this.setTransition("all 0s, top 0.3s, background-color .3s ease-out")
+        this.setTransition("all 0s")
         this.setOverflow("hidden")
         this.setWhiteSpace("nowrap")
+        //this.setTransitionStyle("all 0.0s ease, width 0s, max-width 0s, min-width 0s")
         
         /*
         this.setBorderStyle("solid")
@@ -144,7 +145,8 @@
 
         //cv.autoFitParentWidth().autoFitParentHeight() // can't do this since we need to float left for sliding
 
-        cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s, width 0s, min-width 0s, max-width 0s")
+        //cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s, width 0s, min-width 0s, max-width 0s")
+        cv.setTransition("all 0s")
         cv.setZIndex(2) // so it will be above other views like the slide delete button 
         this.setZIndex(1)
         this.setContentView(cv)
@@ -356,42 +358,8 @@
             const cb = SvgIconView.clone().setIconName("close")
             cb.setStrokeColor("white")
             cb.setFillColor("white")
-
-            /*
-            const cb = DomView.clone().setElementClassName("TileCloseButton")
-            cb.setCssDict({
-                "display": "block",
-                "right": "20px",
-                "top": "16px",
-                
-                "min-width": "20px",
-                "max-width": "20px",
-                "min-height": "20px",
-                "max-height": "20px",
-                
-                "font-size": "2em",
-                "line-height": "2em",
-                "font-weight": "normal",
-                "white-space": "nowrap",
-                "border": "0px dashed yellow",
-                "color": "rgba(255, 255, 255, 0.5)",
-                "margin": "0px",
-                "padding": "0px",
-                "padding-bottom": "10px",
-            })
-
-            cb.setPosition("absolute")
-
-            cb.setBackgroundImageUrlPath(this.pathForIconName("close"))
-            cb.makeBackgroundContain()
-            cb.makeBackgroundCentered()
-            cb.makeBackgroundNoRepeat()  
-            */
             this.setCloseButtonView(cb)
             this.contentView().addSubview(cb) 
-            
-
-            
             cb.setMinAndMaxWidthAndHeight(8)
             cb.setAction("delete")
             cb.setOpacity(0).setTransition(this.transitionStyle())

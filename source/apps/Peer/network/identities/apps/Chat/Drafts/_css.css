@@ -74,7 +74,6 @@
     height: calc(100% - 20px);
     color: #aaa;
     background-color: transparent;
-    transition: all 0.15s ease;
 }
 
 .BMPostDraftRowContentView {
@@ -164,8 +163,6 @@
     /*border: 0px solid #ccc;*/
     background-color: #000; 
     color: white;
-    
-    transition: all 0.15s ease;
 }
 
 .BMPostDraftRowSendButton:hover {

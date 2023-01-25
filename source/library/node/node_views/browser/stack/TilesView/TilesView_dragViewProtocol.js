@@ -35,7 +35,8 @@
 
         }
 
-        this.tiles().forEach(tile => tile.setTransition("all 0.3s"))
+        //this.tiles().forEach(tile => tile.setTransition("all 0.3s"))
+        this.tiles().forEach(tile => tile.setTransition("top 0.3s, left 0.3s"))
 
         this.newTilePlaceHolder(dragView)
 
@@ -178,12 +179,13 @@
     /// --- tile place holder ---
 
     newTilePlaceHolder (dragView) {
-        this.debugLog("newTilePlaceHolder")
+        //this.debugLog("newTilePlaceHolder")
         if (!this.tilePlaceHolder()) {
-            const ph = DomView.clone().setElementClassName("TilePlaceHolder")
+            const ph = DomView.clone().setElementClassName("TilePlaceHolder") // classname not for css rule, just a note for debugging
             ph.setBackgroundColor("black")
 
-            //ph.setTransition("top 0s, left 0.3s, max-height 1s, min-height 1s")
+            //ph.setTransition("top 0s, left 0s, max-height 1s, min-height 1s")
+            ph.setTransition("top 0s, left 0s")
             this.addSubview(ph)
             this.setTilePlaceHolder(ph)
             this.syncTilePlaceHolderSize(dragView)
@@ -193,17 +195,18 @@
 
     syncTilePlaceHolderSize (dragView) {
         const ph = this.tilePlaceHolder()
-
+        //const period = 0.1
         if (this.isVertical()) {
             ph.setMinAndMaxWidth(this.computedWidth())
             ph.setMinAndMaxHeight(dragView.minHeight())
-            ph.transitions().at("top").updateDuration(0)
-            ph.transitions().at("left").updateDuration(0.3)
+            //ph.setMinAndMaxHeight(dragView.maxHeightPx() + 1) // all tiles seem to shrink while dragging, not just place holder
+            //ph.transitions().at("top").updateDuration(0)
+            //ph.transitions().at("left").updateDuration(period)
         } else {
             ph.setMinAndMaxWidth(dragView.minWidth())
             ph.setMinAndMaxHeight(this.computedHeight())
-            ph.transitions().at("top").updateDuration(0.3)
-            ph.transitions().at("left").updateDuration(0)
+            //ph.transitions().at("top").updateDuration(period)
+            //ph.transitions().at("left").updateDuration(0)
         }
 
         return this

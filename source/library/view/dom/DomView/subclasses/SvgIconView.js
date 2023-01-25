@@ -54,7 +54,6 @@
         
         // /this.setOverflow("hidden")
         this.setOverflow("visible")
-        this.setTransition("all 0.2s")
         //this.setBorder("1px yellow dashed")
         this.syncColors()
 

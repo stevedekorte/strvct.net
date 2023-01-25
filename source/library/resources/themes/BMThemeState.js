@@ -77,9 +77,21 @@
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
+    scheduleDidInit () {
+        console.log(this.debugTypeId() + " scheduleDidInit")
+        //debugger;
+        super.scheduleDidInit()
+    }
+
     didInit () {
-        debugger;
-        //console.log(this.typeId() + " subnodes: ", this.subnodes())
+        if (this.hasDoneInit()) {
+            // hack to skip if already called from ThemeClass setupAsDefault 
+            console.log(this.typeId() + " didInit - already called so skipping")
+            return
+        }
+        //debugger;
+        assert(!this.hasDoneInit())
+        console.log(this.typeId() + " didInit setupSubnodes: ", this.subnodes().map(sb => sn.typeId()))
         super.didInit()
         this.setupSubnodes()
     }
@@ -127,7 +139,9 @@
         return this.thisClass().styleNames()
     }
 
-    applyToView (aView) {		
+    applyToView (aView) {
+        //aView.setTransition("all 0s") //////////////////////////// TEMPORARY
+
         this.styleNames().forEach( (name) => { 
             const getterMethod = this[name]
             if (!getterMethod) {

@@ -31,8 +31,6 @@
         this.setMaxHeight("fit-content")
 
         // trying to avoid height animation but this isn't working
-        this.setTransition("all 0.2s, height 0s")
-        //this.contentView().setTransition("all 0.2s, height 0s")
 
         // ------------------------------------------
         

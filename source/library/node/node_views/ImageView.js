@@ -22,7 +22,6 @@
         this.setPosition("relative")
         this.setJustifyContent("center")
         this.setAlignItems("center")
-        this.setTransition("all 0.5s")
         this.setOverflow("hidden")
         this.setWidth("auto")
         this.setHeight("auto")
@@ -41,7 +40,6 @@
         this.setIsEditable(false)
         this.dragUnhighlight()
         this.turnOffUserSelect()
-        this.setTransition("all 0.3s")
         return this
     }
 

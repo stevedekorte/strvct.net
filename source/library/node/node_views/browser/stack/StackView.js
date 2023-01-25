@@ -97,6 +97,14 @@
         return this
     }
 
+    /*
+    didUpdateSlotParentView (oldValue, newValue) { 
+        super.didUpdateSlotParentView(oldValue, newValue)
+        console.log(this.typeId() + ".didUpdateSlotParentView(", oldValue.typeId(), ",", newValue.typeId(), ")")
+        return this
+    }
+    */
+
     setupNavView () {
         const v = NavView.clone()
         v.setStackView(this)

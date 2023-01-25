@@ -21,7 +21,9 @@
     }
 
     didInit () {
-        debugger;
+        //debugger;
+        console.log(this.typeId() + " didInit")
+
         super.didInit()
         this.setupAsDefault() 
     }

@@ -72,7 +72,7 @@
     }
     
     scheduleDidInit () {
-        //console.log("Object " + this.debugTypeId() + " scheduleDidInit")
+        //console.log(this.typeId() + " " + this.debugTypeId() + " scheduleDidInit")
         assert(this.shouldScheduleDidInit())
         assert(!this.hasDoneInit())
         this.scheduleMethod("didInit") 

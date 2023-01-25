@@ -121,7 +121,7 @@
     slideBack () {
         this.disableTilesViewUntilTimeout(400)
 
-        this.contentView().setTransition("all 0.2s ease")
+        this.contentView().setTransition("left 0.2s ease, right 0.2s ease")
 
         this.addTimeout(() => {
             this.setTouchRight(0)

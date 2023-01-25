@@ -25,7 +25,6 @@
         const bv = ButtonView.clone().setElementClassName("BMActionNodeView")
         this.setButtonView(bv)
 	    bv.setTarget(this).setAction("didClickButton")
-	    bv.setTransition("all 0.3s")
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)")
 
         this.addContentSubview(this.buttonView())

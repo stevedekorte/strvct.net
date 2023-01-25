@@ -179,7 +179,7 @@
     }
 
     themeValueForAttribute (attributeName) {
-        /*
+        
         const fullPath = this.themePathArray()
         fullPath.push(attributeName)
         const fullPathString = fullPath.join(" / ")
@@ -195,13 +195,13 @@
                 console.log("no color found for ", fullPathString)
                 return null
             }
-            console.log("theme: " + fullPathString + " = " + value)
+            //console.log("theme: " + fullPathString + " = " + value)
             return value
         }
         //console.log("no color found for ", fullPath)
 
-        console.log("theme: " + fullPathString + " = null")
-        */
+        console.log("theme: no attribute node for '" + fullPathString + "'")
+        
         return null
     }
 
@@ -212,6 +212,8 @@
         if (v) {
             return v
         }
+        //console.log(this.typeId() + ".themeValueForAttribute('color') = ", v)
+        //debugger;
         return "yellow"
 
         //console.log("this.themeValueForAttribute('color') = ", this.themeValueForAttribute('color') )

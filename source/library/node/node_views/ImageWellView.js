@@ -33,7 +33,6 @@
         this.setIsRegisteredForBrowserDrop(true)
         this.dragUnhighlight()
         this.turnOffUserSelect()
-        this.setTransition("all 0.3s")
         this.autoFitParentWidth()
         this.autoFitChildHeight()
         this.setMinHeightPx(100)

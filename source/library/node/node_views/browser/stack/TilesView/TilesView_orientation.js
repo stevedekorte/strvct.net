@@ -87,20 +87,52 @@
         // but we do when calling stackTiles while moving a drop view around,
         // so just always do it as top is null, and tiles are already ordered the 1st time
 
-        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx") 
+        const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
         const displayedTiles = orderedTiles.filter(r => !r.isDisplayHidden())
         let y = 0
         
-        displayedTiles.forEach((tile) => {
+
+        const offsets = displayedTiles.map(tile => tile.offsetTop())
+        //console.log("---")
+
+        // NOTE: having issues getting absolute positions to match relative ones
+        // Why is getBoundingClientRect on tile always returning same top value as offsetParent.getBoundingClientRect ???
+
+        displayedTiles.forEachKV((i, tile) => {
+            //const oy = offsets[i]
+            /*
+            const dy = i === 0 ? 0 : offsets[i] - offsets[i-1]
+            const parentRect = tile.element().offsetParent.getBoundingClientRect()
+            const rect = tile.boundingClientRect()
+            let h = parentRect.top - rect.top
+            */
+
             let h = tile.computedHeight() 
-            if (tile.position() !== "absolute") {
+            //let h = tile.offsetHeight()
+
+            //console.log("h: " + h + " dy:" + dy)
+            //console.log("y: " + y + " oy:" + offsets[i])
+
+            if (tile.position() !== "absolute") { 
+                // they are all not absolute when first dragging in
+                // and stay absolute until unstack gets called at end of drag
                 tile.makeAbsolutePositionAndSize()
                 tile.setLeftPx(0)
                 tile.setOrder(null)
-            }
+            } 
+
+            /*
+            console.log("i:" + i)
+            console.log("   computedHeight:" + tile.computedHeight())
+            console.log("     offsetHeight:" + tile.offsetHeight())
+            console.log("           offset:" + oy)
+            console.log("                y:" + y)
+            */
+
             tile.setTopPx(y)
-            y += h
+            y += h + 2
         })
+        //console.log("---")
 
         return this
     }
@@ -109,7 +141,7 @@
         const orderedTiles = this.tiles().shallowCopy().sortPerform("topPx")
         
         orderedTiles.forEach(tile => assert(tile.hasElement()) ) // todo: temp test
-        orderedTiles.forEachPerform("makeRelativePositionAndSize")
+        orderedTiles.forEach(tile => tile.makeRelativePositionAndSize())
 
         this.removeAllSubviews()
         this.addSubviews(orderedTiles)

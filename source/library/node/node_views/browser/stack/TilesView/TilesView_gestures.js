@@ -11,7 +11,7 @@
     // --- tap ---
 
     onTapComplete (aGesture) {
-        console.log(this.typeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
+        //console.log(this.typeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
         
         if (this.node()) {
 
@@ -158,7 +158,6 @@
             if (newTile.clientHeight() < minHeight) {
                 this.removeTile(newTile)
             } else {
-                //newTile.contentView().setTransition("all 0.15s, height 0s")
                 //newTile.setTransition("all 0.3s, height 0s")
                 this.addTimeout(() => { 
                     newTile.contentView().setTopPx(0)

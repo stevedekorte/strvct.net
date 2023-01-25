@@ -196,7 +196,7 @@
 
     hideAndFadeIn () {
         this.setOpacity(0)
-        this.setTransition("all 0.5s")
+        //this.setTransition("all 0.5s")
         this.addTimeout(() => {
             this.setOpacity(1)
         }, 0)

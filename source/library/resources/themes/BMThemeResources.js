@@ -7,6 +7,9 @@
     hierarchy:
 
         BMThemeResources -> Theme -> ThemeClass -> ThemeState -> ThemeAttribute
+
+    example:
+    
         global           -> "Dark" -> "Field"   -> "active"   -> "opacity" : "0.5"
 
     Example use by views:

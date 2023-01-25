@@ -296,7 +296,12 @@
         } else {
             valueView.setBackgroundColor("transparent")
             valueView.setColor(color)
-            errorView.fadeOutHeightToDisplayNone()
+
+            if (errorView.display() !== "none") {
+                errorView.setDisplay("none")
+            }
+            //errorView.fadeOutHeightToDisplayNone()
+            
             //valueView.setToolTip("")
         }
     }
