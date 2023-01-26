@@ -83,6 +83,7 @@
     // 2. setup
 
     setup () {
+        this.setupDocTheme()
         return this        
     }
 
@@ -124,29 +125,19 @@
         console.log("Application '" + this.name() + "' version " + this.versionsString())
     }
 
-    setupTheme () {
+    setupDocTheme () {
         const doc = DocumentBody.shared()
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
-
         this.setupNormalTheme()
-        //this.setupVectorTheme()
     }
 
-    setupNormalTheme () {
+    setupNormalDocTheme () {
         const doc = DocumentBody.shared()
         doc.setBackgroundColor("#191919")
-        //doc.setFontFamily("Sans-Serif")
-        //doc.setFontFamily("Electrolize-Regular")
         doc.setFontFamily("Helvetica")
-        //doc.setFontWeight("bold")
-        //doc.setFontFamily("Helvetica Neue")
-        //doc.setFontFamily("San Francisco Display")
-        //doc.setFontFamily("PublicSans Light")
-        //doc.setFontFamily("OpenSans Regular")
         doc.setFontSizeAndLineHeight("15px")
         doc.setLetterSpacing("0.05em")
-        //doc.setTextTransform("uppercase")
    }
 
 }.initThisClass());

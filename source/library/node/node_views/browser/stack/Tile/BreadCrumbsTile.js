@@ -119,14 +119,27 @@
     }
 
     onClickBackButton (backButton) {
-        const crumb = this.lastHiddenCrumb()
+        //const crumb = this.lastHiddenCrumb()
+        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/")
+        const crumb = crumbs[crumbs.length - 2]
         if (crumb) {
+            console.log("select crumb: ", crumb.title())
             crumb.sendActionToTarget()
         }
     }
 
+    // crumb buttons
+
+    crumbs () {
+        return this.subviews().first().subviews()
+    }
+
+    hiddenCrumbs () {
+        return this.crumbs().detect(sv => sv._isCrumb && sv.isDisplayHidden())
+    }
+
     lastHiddenCrumb () {
-        return this.subviews().reversed().detect(sv => sv._isCrumb && sv.isDisplayHidden())
+        return this.hiddenCrumbs().last()
     }
     
     // --- path component views --- 
@@ -158,7 +171,8 @@
     newBackButton () {
         const v = this.newUnpaddedButton()
         //v.setTitle("&lt;")
-        v.setTitle("&#8592;")
+        v.setTitle("←")
+        //v.setTitle("&#8592;")
         v.titleView().setPaddingLeft("0em")
         v.titleView().setPaddingRight("0.5em")
         v.setTarget(this)

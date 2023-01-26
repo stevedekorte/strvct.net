@@ -21,7 +21,7 @@
         super.init()
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
-        //this.setValue(false)
+        this.setValue(false) // why was this commented out?
     }
 
     valueIsBool () {

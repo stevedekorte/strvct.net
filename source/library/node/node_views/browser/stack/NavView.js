@@ -52,6 +52,8 @@
         //this.setOpacity(0)
         this.setOverflow("hidden")
         this.setUserSelect("none")
+        //this.setTransition("opacity 0.5s ease-in-out")
+        //this.setTransition("flex-basis 0.1s")
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
 
         /*
@@ -243,6 +245,7 @@
     onBottomEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderBottom(this.borderBottom())
         this.setBorderBottom("1px dashed red")
+        //this.setTransition("min-height 0s, max-height 0s")
         this.hideTransition()
     }
 

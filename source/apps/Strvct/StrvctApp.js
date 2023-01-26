@@ -34,7 +34,7 @@
     } 
 
     setup () {
-        this.setupTheme()
+        super.setup()
         this.setupModel()
 
         const browser = BrowserView.clone()
@@ -76,7 +76,7 @@
 
         this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Storage", BMDataStore)
-        this.addSettingNameAndClass("Resources", BMResources)
+        //this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Blobs", BMBlobs)
     }
 
@@ -103,18 +103,17 @@
 
     // themes - temporary, until ThemesResources is ready
 
-    setupTheme () {
+    setupDocTheme () {
         const doc = DocumentBody.shared()
         doc.setHeight("100%") // trying to fix body not fitting window
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
-
-        this.setupNormalTheme()
+        this.setupNormalDocTheme()
         //this.setupVectorTheme()
         //this.setupBlenderProTheme()
     }
 
-    setupNormalTheme () {
+    setupNormalDocTheme () {
         const doc = DocumentBody.shared()
         doc.setBackgroundColor("#191919")
         //doc.setFontFamily("Sans-Serif")
@@ -131,7 +130,8 @@
         //doc.setTextTransform("uppercase")
    }
 
-    setupVectorTheme () {
+    /*
+    setupVectorDocTheme () {
         const doc = DocumentBody.shared()
         doc.setBackgroundColor("#191919")
         doc.setFontFamily("Hyperspace Bold")
@@ -145,18 +145,19 @@
         //DocumentBody.shared().setTextTransform("uppercase")
     }
 
-    setupBlenderProTheme () {
+    setupBlenderProDocTheme () {
         const doc = DocumentBody.shared()
         doc.setFontFamily("Blender Pro Book")
         doc.setFontSizeAndLineHeight("18px")
     }
 
-    setupLatoTheme () {
+    setupLatoDocTheme () {
         const doc = DocumentBody.shared()
         doc.setFontFamily("Lato Light")
         doc.setFontSizeAndLineHeight("16px")
         doc.setLetterSpacing("0.05em")
         doc.setTextShadow("0px 0px 0.5px rgba(255,255,255,0.7)")
     }
+    */
 
 }.initThisClass());

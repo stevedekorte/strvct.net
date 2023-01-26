@@ -224,6 +224,12 @@
     // --- fade + height animations ----
 
     fadeInHeightToDisplayBlock () {
+        this.setDisplay("block")
+        this.setOpacity(1)
+        this.setMinHeight("100%")
+        this.setMaxHeight("100%")
+        return this
+/*
         this.setMinHeight("100%")
         this.setMaxHeight("100%")
         const targetHeight = this.calcHeight()
@@ -241,6 +247,7 @@
             this.setOpacity(1)
             this.setMinAndMaxHeight(targetHeight)
         }, 0)
+        */
         return this
     }
 

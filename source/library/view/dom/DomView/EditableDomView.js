@@ -126,7 +126,7 @@
     // --- paste from clipboardListener ---
 
     onPaste (event) {
-        debugger;
+        //debugger;
         // prevent pasting text by default after event
         event.preventDefault();
 

@@ -72,6 +72,16 @@
         return style
     }
     */
+
+    recursivelyApplyStyles () {
+        this.applyStyles()
+        this.allSubviewsRecursively().forEach(view => {
+            if (view.applyStyles) {
+                view.applyStyles()
+            }
+        })
+        return this
+    }
 	
     applyStyles () {
         //const style = this.currentStyle()

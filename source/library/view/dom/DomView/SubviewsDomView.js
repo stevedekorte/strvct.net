@@ -80,7 +80,14 @@
         }
         return this.subviews().detect(sv => sv.hasSubviewDescendant(aView))
     }
-    
+
+    allSubviewsRecursively (allViews = new Set()) {
+        allViews.add(this)
+        this.subviews().forEach(view => {
+            view.allSubviewsRecursively(allViews)
+        })
+        return allViews
+    }
     
     // view chains
 
@@ -100,7 +107,6 @@
     }
 
     // --- subviews ---
-
 
     subviewCount () {
         return this.subviews().length

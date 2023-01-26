@@ -291,7 +291,7 @@
             valueView.setColor(this.errorColor())
             errorView.setColor(this.errorColor())
             errorView.setInnerHtml(node.valueError())
-            errorView.fadeInHeightToDisplayBlock(15)
+            errorView.fadeInHeightToDisplayBlock()
             //valueView.setToolTip(node.valueError())
         } else {
             valueView.setBackgroundColor("transparent")

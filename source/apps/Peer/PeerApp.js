@@ -41,7 +41,7 @@
     }
 
     setup () {
-        this.setupTheme()
+        this.setupDocTheme()
         this.setupModel()
 
         const v = StackView.clone() //.setDirection("down")
