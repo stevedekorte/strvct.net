@@ -3,7 +3,7 @@
 /*
     StyledDomView
 
-   (one step towards eliminating the remaining css files)
+    (a step towards eliminating the remaining css files)
 
     A base view to handle styles in a uniform way. 
     Holds an instance of BMViewStyles which holds a set of BMViewStyle instances, one for each style.
@@ -84,6 +84,9 @@
     }
 	
     applyStyles () {
+        // we default to using the current theme, but 
+        // we need to give view a chance to override style
+        // also, NodeView should override this method to give node a chance to override style
         //const style = this.currentStyle()
         //style.applyToView(this)	
         const state = this.currentThemeState()
@@ -177,19 +180,27 @@
         return themeClass
     }
 
+    currentThemeStateName () {
+        let stateName = this.isSelected() ? "selected" : "unselected"
+        if (this.hasFocus()) {
+            stateName = "active"
+        }
+        return stateName
+    }
+
     currentThemeState () {
         const tc = this.currentThemeClass() 
         let state = null
         if (tc) {
-            let stateName = this.isSelected() ? "selected" : "unselected"
+            let stateName = this.currentThemeStateName()
             const state = tc.firstSubnodeWithTitle(stateName)
+            assert(state)
             return state
         }
         return null
     }
 
     themeValueForAttribute (attributeName) {
-        
         const fullPath = this.themePathArray()
         fullPath.push(attributeName)
         const fullPathString = fullPath.join(" / ")

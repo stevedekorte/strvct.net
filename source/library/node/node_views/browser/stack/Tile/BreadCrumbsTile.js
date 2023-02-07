@@ -3,6 +3,15 @@
 /*
     
     BreadCrumbsTile
+
+    View for a typical bread crumbs path e.g.:
+
+        a / b / c / d
+
+    Supports compacting path to fit in view size (using back arrow) as needed.
+
+    Registers for onStackViewPathChange notifications (sent by top StackView) to auto update path.
+    TODO: register *only* for our own top stack view.
     
 */
 
@@ -120,15 +129,22 @@
 
     onClickBackButton (backButton) {
         //const crumb = this.lastHiddenCrumb()
-        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/")
-        const crumb = crumbs[crumbs.length - 2]
+        const crumb = this.previousCrumb()
         if (crumb) {
-            console.log("select crumb: ", crumb.title())
+            //console.log("select crumb: ", crumb.title())
             crumb.sendActionToTarget()
         }
     }
 
     // crumb buttons
+
+    previousCrumb () {
+        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/") // previous crumb
+        if (crumbs.length > 1) {
+            return crumbs[crumbs.length - 2]
+        }
+        return null
+    }
 
     crumbs () {
         return this.subviews().first().subviews()

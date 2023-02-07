@@ -10,19 +10,19 @@
 (class StrvctApp extends App {
     
     initPrototypeSlots () {
-        // model
-        this.newSlot("notes", null)
-        this.newSlot("prototypes", null)
-        this.newSlot("settings", null)
-        this.newSlot("resources", null)
-        this.newSlot("dataStore", null)
+        // model meta data
+        //this.newSlot("settings", null).setShouldStore(false)
+        //this.newSlot("resources", null)
+        //this.newSlot("prototypes", null)
+
+        // model data
+        //this.newSlot("notes", null)
 
         // view
         this.newSlot("browser", null)
-        this.newSlot("stackView", null)
-
-        //breakThisApp()
     }
+
+    // ---
 
     init () {
         super.init()
@@ -38,7 +38,8 @@
         this.setupModel()
 
         const browser = BrowserView.clone()
-        browser.setBaseNode(this.rootNode())
+        this.rootNode().setTitle("root node")
+        browser.setBreadCrumbsNode(this.rootNode())
         this.setBrowser(browser)
         this.documentBodyView().addSubview(browser)
         this.appDidInit()
@@ -54,47 +55,23 @@
 
     // --- setup model ---
 
-
     setupModel () {        
         const notes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
         //notes.subnodes().forEach(sn => sn.setCanDelete(true))
         //notes.orderFirst()
-        this.setNotes(notes)
+        //this.setNotes(notes)
 
         const prototypes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
-        this.setPrototypes(notes)
+        //this.setPrototypes(prototypes)
 
-        this.setupSettings()
+        // settings
+        const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
+        //this.setSettings(settings)
+        //debugger;
         return this
     }
 
-    setupSettings () {
-        // settings
-        const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMStorableNode)
-        this.setSettings(settings)
-        //this.removeOtherSubnodeWithSameTitle(settings)
-
-        this.addSettingNameAndClass("Resources", BMResources)
-        this.addSettingNameAndClass("Storage", BMDataStore)
-        //this.addSettingNameAndClass("Resources", BMResources)
-        this.addSettingNameAndClass("Blobs", BMBlobs)
-    }
-
-    addSettingNameAndClass (aName, aClass) {
-        const subnode = this.settings().subnodeWithTitleIfAbsentInsertProto(aName, aClass)
-        this.settings().removeOtherSubnodeWithSameTitle(subnode)
-        const slot = this.thisPrototype().slotNamed(aName)
-        if (slot) {
-            slot.onInstanceSetValue(subnode) // or should we dynamically get these from the subnodes?
-        }
-        return subnode
-    }
-
     // --- setup views ---
-    
-    isBrowserCompatible () {
-        return true
-    }
 
     appDidInit () {
         super.appDidInit()
@@ -125,7 +102,7 @@
         //doc.setFontFamily("San Francisco Display")
         //doc.setFontFamily("PublicSans Light")
         //doc.setFontFamily("OpenSans Regular")
-        doc.setFontSizeAndLineHeight("14px")
+        doc.setFontSizeAndLineHeight("16px")
         //doc.setLetterSpacing("0.05em")
         //doc.setTextTransform("uppercase")
    }

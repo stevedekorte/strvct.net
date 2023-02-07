@@ -37,6 +37,7 @@
 
         // watch only for first note named "appDidInit"
         this.watchOnceForNote("appDidInit")
+        // WARNING: in this case, if app has already done init, this will never be called!
 
     If the source object has an accessor for a notification it uses, we can do:
 

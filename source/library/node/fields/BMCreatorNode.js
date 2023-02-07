@@ -52,10 +52,13 @@
     }
 
     protoObjects () {
+        return []
+        /*
         const app = this.rootNode()
         const protosNode = app.firstSubnodeWithTitle("Prototypes")
         const protos = protosNode.subnodes()
         return protos
+        */
     }
 
     setupSubnodes () {

@@ -4,6 +4,10 @@
 
     BMResourceFolder
 
+    An abstraction for an individual file folder.
+
+    BMFileResources will setup all BMResourceFolders.
+
 */
 
 (class BMResourceFolder extends BaseNode {
@@ -17,6 +21,7 @@
         this.setTitle("BMFileSystemFolder")
         this.setNoteIsSubnodeCount(true)
         //this.watchOnceForNote("appDidInit")
+        //this.registerForAppDidInit()
         return this
     }
 
@@ -29,7 +34,6 @@
     }
 
     setupSubnodes () {
-        //this.resourcePaths().forEach(path => this.addFontWithPath(path))
         return this
     }
 

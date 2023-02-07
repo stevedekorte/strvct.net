@@ -228,7 +228,7 @@
     readRoot () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
-            const root = this.objectForPid(this.rootPid())
+            const root = this.objectForPid(this.rootPid()) // this call will actually internally set this._rootObject as we may need it while loading the root's refs
             assert(!Type.isNullOrUndefined(root))
             this._rootObject = root
             //this.setRootObject(root) // this is for setting up new root
@@ -300,10 +300,10 @@
 
         if (!anObject.shouldStore()) {
             const msg = "attempt to addActiveObject '" + anObject.type() + "' but shouldStore is false"
-            console.log(msg)
+            console.warn(msg)
             anObject.shouldStore()
-            throw new Error(msg)
-            //return false
+            //throw new Error(msg)
+            return false
         }
 
         if (!anObject.isInstance()) {
@@ -490,10 +490,6 @@
         const m = new Map()
         /*
         m.set("BMMenuNode", "BMFolderNode")
-        m.set("KinsaResources", "Kinsa")
-        m.set("BMCamStore", "BMCams")
-        m.set("BMThemeFolder", "BMFolderNode")
-        m.set("BMThemeAttribute", "BMStringField")
         */
        return m;
     }
@@ -521,6 +517,10 @@
         assert(!this.hasActiveObject(obj))
         obj.setPuuid(aRecord.id)
         this.addActiveObject(obj)
+        if (obj.puuid() === this.rootPid()) {
+            this._rootObject = obj; // bit of a hack to make sure root ref is set before we load root contents
+            // might want to split this method into one to get ref and another to load contents instead
+        }
         obj.loadFromRecord(aRecord, this)
         return obj
     }
@@ -563,7 +563,11 @@
 
             lastSet.forEach(loadedPid => { // sends didLoadFromStore to each matching object
                 const obj = this.activeObjectForPid(loadedPid)
-                if (obj.didLoadFromStore) {
+                if (Type.isUndefined(obj)) {
+                    const errorMsg = "missing activeObjectForPid " + loadedPid
+                    console.warn(errorMsg)
+                    //throw new Error(errorMsg)
+                } else if (obj.didLoadFromStore) {
                     obj.didLoadFromStore() // should this be able to trigger an objectForPid() that would add to loadingPids?
                 }
             })

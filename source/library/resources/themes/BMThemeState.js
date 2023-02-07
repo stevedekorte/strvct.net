@@ -14,8 +14,8 @@
         return [
             "unselected", 
             "selected", 
-            //"active", 
-            //"disabled"
+            "active", 
+            "disabled"
         ]
     }
 

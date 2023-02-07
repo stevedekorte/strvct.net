@@ -19,7 +19,7 @@
 
     static clone () {
         if (this.isSingleton() && this.hasShared()) {
-            debugger;
+         //   debugger;
             // kinda weird dealing with shared in clone like this
             // do we do this to deal with deserialization of singletons?
             return this.shared() 
@@ -40,8 +40,12 @@
 
     // --- shared ---
 
+    static sharedContext () {
+        return this
+    }
+
     static hasShared () {
-        return !Type.isNullOrUndefined(this._shared)
+        return !Type.isNullOrUndefined(this.sharedContext()._shared)
     }
 
     static shared () {
@@ -52,7 +56,7 @@
     }
 
     static setShared (v) {
-        this._shared = v
+        this.sharedContext()._shared = v
         return this
     }
 

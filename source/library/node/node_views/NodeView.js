@@ -39,7 +39,7 @@
 
     updateElementIdLabel () {
         const node = this.node()
-        const nodeId = node ? node.debugTypeId() + " " + node.title() : "null"
+        const nodeId = node ? node.debugTypeId() : "null"
         this.element().id = this.debugTypeId() + " for node " + nodeId 
         return this
     }

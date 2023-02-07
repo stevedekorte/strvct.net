@@ -15,6 +15,7 @@
     }
     
     initPrototypeSlots () {
+        // These slots are useful for implementing menus 
         {
             const slot = this.newSlot("label", "")
             slot.setShouldStoreSlot(true)
@@ -43,10 +44,6 @@
         this.setNodeCanEditTitle(true)
         
         this.setNodeCanReorderSubnodes(true)
-
-        //this.setNodeColumnStyles(BMViewStyles.clone())
-        //this.setNodeTileStyles(BMViewStyles.clone())
-        //this.setNodeUsesColumnBackgroundColor(false)
 
         this.setNodeCanInspect(true) 
         //this.setNoteIconName("right-arrow")

@@ -71,6 +71,8 @@
     }
 
     lookedUpStyles () {
+        debugger;
+        
         const debugStyles = false
 
         if (this.node()) {

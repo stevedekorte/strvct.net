@@ -16,17 +16,14 @@
         super.init()
         this.setTitle("FileResources")
         this.setNoteIsSubnodeCount(true)
-        this.watchOnceForNote("appDidInit")
-
-        this.setupSubnodes()
+        this.registerForAppDidInit()
         //this.onFinishInit()
         return this
     }
 
     appDidInit () {
         //this.debugLog(".appDidInit()")
-        //this.setupSubnodes()
-   
+        this.setupSubnodes()
         return this
     }
     

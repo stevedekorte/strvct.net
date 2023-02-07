@@ -28,7 +28,7 @@
         this.setShouldStore(false)
         this.setTitle("Resources")
         this.setSubtitle("")
-        this.setupSubnodes()
+        this.setupSubnodes() // don't need to wait for appDidInit?
         //this.watchOnceForNote("appDidInit")
     }
 

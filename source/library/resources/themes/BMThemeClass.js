@@ -14,7 +14,6 @@
 
     init () {
         super.init()
-
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true) 
         
@@ -68,7 +67,7 @@
         {
             const selected = this.selectedThemeState()
             selected.setThemeAttribute("color", "white")
-            selected.setThemeAttribute("backgroundColor", "#333")
+            selected.setThemeAttribute("backgroundColor", "#222")
             selected.setThemeAttribute("fontWeight", "normal")
         }
 

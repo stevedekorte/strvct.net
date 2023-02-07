@@ -21,7 +21,7 @@
         super.init()
         this.setTitle("Fonts")
         this.setNoteIsSubnodeCount(true)
-        this.watchOnceForNote("appDidInit")
+        this.registerForAppDidInit()
         return this
     }
 

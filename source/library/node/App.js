@@ -3,15 +3,29 @@
 /*
     App 
     
-    A shared instance that represents the application. For your application, 
-    create a subclass called App and implement a custom setup method.
+    A shared instance that represents the application. 
 
-    Handles starting up persistence system.
+    Handles:
+    - starting up persistence system
+    - setting up user interface, if any
+
+    For your application, create a subclass if needed.
 
 */
 
 (class App extends BMStorableNode {
     
+    // --- shared ---
+    // We override sharedContext so all subclasses use the same shared value
+    // and anyone can call App.shared() to access it
+
+    static sharedContext () {
+        return App
+    }
+
+    // --- store ---
+    // we open store from app class since we might want to load app instance from store
+
     static loadAndRunShared () {
         this.defaultStore().setName(this.type()) // name of the database
         this.defaultStore().setDelegate(this).asyncOpen() 
@@ -22,7 +36,6 @@
     }
 
     static onPoolOpenSuccess (aPool) {
-        //debugger;
         this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone()) // create the root object
         //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
         const app = this.clone()
@@ -31,14 +44,17 @@
     }
 
     static onPoolOpenFailure (aPool, error) {
-        console.log("ERROR: ", error)
+        console.warn("ERROR: ", error)
         debugger;
         //ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
+    // ------
+
     initPrototypeSlots () {
         this.newSlot("name", "App")
         this.newSlot("version", [0, 0])
+        this.newSlot("hasDoneAppInit", false)
     }
 
     init () {
@@ -90,6 +106,7 @@
     appDidInit () {
         this.showVersion()
 
+        this.setHasDoneAppInit(true)
         this.postNoteNamed("appDidInit")
 
         if (this.runTests) {

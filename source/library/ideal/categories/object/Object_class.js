@@ -213,10 +213,16 @@
             throw new Error("setupPrototype called on non-prototype")
         }
 
-        //proto.justNewSlot("slots", new Map()) // each proto has it's own set of slots - us justNewSlot as newSlot needs to check the slots list
+        /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(this, "_slotsMap", new Map())
         Object.defineSlot(this, "_allSlotsMap", new Map())
         this.setupAllSlotsMap()
+
+        // We need to separate initPrototypeSlots, initSlots, initPrototype as
+        // initializing some slots may depend on others already existing.
+        
+        // Slot init ordering may be important as well and why slots should be stored in 
+        // an array with a name->slot map used as an index.
 
         if (this.hasOwnProperty("initPrototypeSlots")) {
             // Only called if method defined on this class.

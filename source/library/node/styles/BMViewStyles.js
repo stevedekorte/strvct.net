@@ -12,19 +12,22 @@
 
     See StyledDomView and Tile to understand how Views lookup/access/change their style state.
 
-    TODO: can we make view styles nodes? recursion?
+    TODO: 
+        - can we make view styles nodes? recursion?
+        - should there be a inheritance ordering of styles? e.g.
+            disabled <- unselected <- selected <-(inherits from)- focused
+
 
     tileStyles: 
     
-    Because tiles need to be able to use the background and select colors of their columns,
-
+    Because tiles need to be able to use the background and select colors of their columns, 
     Tile colors are looked up in:
-    Tile.lookedUpStyles
+    
+        Tile.lookedUpStyles
 
-        which asks the node, then itself, then the columns for tileStyles()
-        and uses the first non-null result .
+    which asks the node, then itself, then the columns for tileStyles()
+    and uses the first non-null result .
 
- 
 */
 
 
@@ -32,20 +35,22 @@
     
     initPrototypeSlots () {
         this.newSlot("name", "")
+
+        this.newSlot("disabled", null)
         this.newSlot("unselected", null)
         this.newSlot("selected", null) // aka focused
-        this.newSlot("disabled", null)
-        //hover: null, 
-        //enabled: null,
-        //error: null,
+        this.newSlot("active", null) // should this be called "active" or "focused"?
+        //this.newSlot("error", null)
+        //this.newSlot("hover", null)
         this.newSlot("isMutable", true)
     }
 
     init () {
         super.init()
+        this.setDisabled(BMViewStyle.clone())
         this.setSelected(BMViewStyle.clone())
         this.setUnselected(BMViewStyle.clone())
-        this.setDisabled(BMViewStyle.clone())
+        this.setActive(BMViewStyle.clone())
         //this.setHover(BMViewStyle.clone())
         return this
     }
@@ -59,6 +64,8 @@
     }
 
     sharedBlackOnWhiteStyle () {
+        debugger;
+
         if (!BMViewStyles._sharedBlackOnWhiteStyle) {
             const vs = BMViewStyles.clone()
             vs.setToBlackOnWhite()
@@ -70,6 +77,8 @@
     }
 
     sharedWhiteOnBlackStyle () {
+        debugger;
+
         //return this.sharedBlackOnWhiteStyle()
         if (!BMViewStyles._sharedWhiteOnBlackStyle) {
             BMViewStyles._sharedWhiteOnBlackStyle = BMViewStyles.clone().setToWhiteOnBlack().setIsMutable(false).setName("WhiteOnBlack")
@@ -78,6 +87,8 @@
     }
 
     setToBlackOnWhite () {
+        debugger;
+
         assert(this.isMutable())
         this.unselected().setColor("black")
         this.unselected().setBackgroundColor("white")
@@ -97,6 +108,8 @@
     }
 
     setToWhiteOnBlack () {
+        //debugger;
+
         assert(this.isMutable())
         this.unselected().setColor("#ccc")
         this.unselected().setBackgroundColor("#191919")
@@ -105,6 +118,10 @@
         this.selected().setColor("white")
         this.selected().setBackgroundColor("#333") // change for column?
         this.selected().setBorderBottom("none")
+
+        this.active().setColor("white")
+        this.active().setBackgroundColor("#444") // change for column?
+        this.active().setBorderBottom("none")
 
         /*
         this.disabled().setColor("#aaa")
@@ -127,6 +144,7 @@
     */
     
     copyFrom (styles, copyDict) {
+        debugger;
         assert(this.isMutable())
         this.selected().copyFrom(styles.selected(), copyDict)
         this.unselected().copyFrom(styles.unselected(), copyDict)
@@ -134,12 +152,14 @@
     }
     
     setBackgroundColor (c) {
+        debugger;
         this.selected().setBackgroundColor(c)
         this.unselected().setBackgroundColor(c)
         return this        
     }
     
     setColor (c) {
+        debugger;
         this.selected().setColor(c)
         this.unselected().setColor(c)
         return this        

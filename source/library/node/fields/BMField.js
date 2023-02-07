@@ -120,16 +120,6 @@
         this.setShouldStore(true)
     }
 
-    /*
-    init () {
-        super.init()
-        //this.setNodeTileStyles(BMViewStyles.shared().sharedBlackOnWhiteStyle())
-        //this.setNodeTileStyles(BMViewStyles.shared().sharedWhiteOnBlackStyle())
-        //this.customizeNodeTileStyles().setToBlackOnWhite()
-        return this
-    }
-    */
-
     didLoadFromStore () {
         super.didLoadFromStore()
         this.validate()

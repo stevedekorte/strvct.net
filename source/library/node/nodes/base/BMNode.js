@@ -147,7 +147,6 @@
         }
     }
 
-
     init () {
         super.init()
         this.setDidUpdateNodeNote(this.newNoteNamed("didUpdateNode"))
@@ -155,6 +154,21 @@
         this.setShouldFocusAndExpandSubnodeNote(this.newNoteNamed("shouldFocusAndExpandSubnode"))
         this.watchSubnodes()
         return this
+    }
+
+    registerForAppDidInit () {
+        // need this in case app has already done init,
+        // or if appDidInit notification itself inited objects
+        // who register for appDidInit
+        // TODO: generalize this for all notifications somehow
+        // maybe register for note with object directly
+        
+        //debugger;
+        if (App.shared().hasDoneAppInit()) {
+            this.appDidInit()
+        } else {
+            this.watchOnceForNote("appDidInit")
+        }
     }
 
     nodeType () {
@@ -190,7 +204,6 @@
         return this.puuid()
     }
 
-
     // -----------------------
     
     nodeVisibleClassName () {
@@ -209,7 +222,8 @@
 
         if (aNode !== this._parentNode) { 
             if (this._parentNode && aNode) {
-                console.warn(this.type() + " setParentNode(" + aNode.type() + ")  already has parent " + this._parentNode.type())
+                console.warn(this.debugTypeId() + " setParentNode(" + aNode.debugTypeId() + ")  already has parent " + this._parentNode.debugTypeId())
+                //debugger;
             }
             
             const oldNode = this._parentNode
@@ -793,6 +807,10 @@
     onTapOfNode () {
         this.tellParentNodes("onTapOfDecendantNode", this)
         return this
+    }
+
+    debugTypeId () {
+        return this.typeId() + " '" + this.title() + "'"
     }
 
 

@@ -304,6 +304,8 @@ class ResourceManager {
     }
 
     resourceEntriesWithExtensions (extensions) {
+		//const extSet = extensions.asSet()
+        //return this._index.filter(entry => extSet.has(this.extForPath(entry.path)))
         return this._index.filter(entry => extensions.indexOf(this.extForPath(entry.path)) !== -1)
     }
 

@@ -22,18 +22,17 @@
         super.init()
         this.setTitle(this.type())
         this.setNoteIsSubnodeCount(true)
-        this.watchOnceForNote("appDidInit")
         this.setExtensions([]) 
         this.setResourceClasses([])
         this.setup()
+        this.registerForAppDidInit()
     }
 
     setup () {
-        // subclasses need to use this to set ResourceClasses
+        // subclasses should override this to set ResourceClasses
     }
 
     appDidInit () {
-        //console.log(this.type() + " appDidInit")
         this.setupSubnodes()
         return this
     }

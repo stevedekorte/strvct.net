@@ -65,28 +65,37 @@
         return  super.debugTypeId() + (name ? " '" + name + "'" : "")
     }
 
-    setIconName (name) {
-        this._iconName = name
+    clear () {
+        this.setSvgString(null)
+        this.hideDisplay()
+    }
 
-        if (name) {
-            const iconNode = BMIconResources.shared().firstSubnodeWithTitle(name)
+    setIconName (name) {
+        if (this._iconName !== name) {
+            this._iconName = name
+
+            if (name === null) {
+                this.clear()
+                return this
+            }
+
+            const icons = BMIconResources.shared()
+            const iconNode = icons.firstSubnodeWithTitle(name)
 
             if (iconNode) {
                 this.setSvgString(iconNode.svgString())
                 this.unhideDisplay()
             } else {
-                this.setSvgString(null)
                 const error = "can't find icon '" + name + "'"
                 console.log(error)
                 debugger;
                 //throw new Error(error) 
+                this.clear()
+                return this
             }
-        } else {
-            this.setSvgString(null)
-            this.hideDisplay()
-        }
 
-        this.setElementId(this.debugTypeId() + " '" + this.svgId() + "'")
+            this.setElementId(this.debugTypeId() + " '" + this.svgId() + "'")
+        }
 
         return this
     }
@@ -99,14 +108,18 @@
     setSvgString (s) {
         this._svgString = s
 
-        const e = SvgIconCache.shared().newLinkElementForSvgString(s)
-        // remove other children and add svg element
-        while (this.element().lastChild) {
-            this.element().removeChild(this.element().lastChild);
+        if (s) {
+            // remove and old svg element
+            while (this.element().lastChild) {
+                this.element().removeChild(this.element().lastChild);
+            }
+
+            // add svg element
+            const e = SvgIconCache.shared().newLinkElementForSvgString(s)
+            this.element().appendChild(e)
+            this.setSvgElement(e)
+            //e.style.border = "1px blue dashed"
         }
-        this.element().appendChild(e)
-        this.setSvgElement(e)
-        //e.style.border = "1px blue dashed"
 
         return this
     }

@@ -375,7 +375,11 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     onInstanceSetValue (anInstance, aValue) {
-        return anInstance[this._setterName].call(anInstance, aValue)
+        const m = anInstance[this._setterName];
+        if (Type.isUndefined(m)) {
+            throw new Error(anInstance.type() + " is missing setter '" + this._setterName + "'")
+        }
+        return m.call(anInstance, aValue)
     }
 
     // --- StoreRefs for lazy slots ---

@@ -192,17 +192,26 @@
         return root
     }
 
-    rootSubnodeWithTitleForProto(aString, aProto) {
+    rootSubnodeWithTitleForProto (aString, aProto) {
         return this.rootNode().subnodeWithTitleIfAbsentInsertProto(aString, aProto)
     }
 
-    subnodeWithTitleIfAbsentInsertProto(aString, aProto) {
+    subnodeWithTitleIfAbsentInsertProto (aString, aProto) {
         let subnode = this.firstSubnodeWithTitle(aString)
 
         if (subnode) {
             if (subnode.type() !== aProto.type()) {
                 const newSubnode = aProto.clone()
-                newSubnode.copyFrom(subnode)
+                try {
+                    //newSubnode.copyFrom(subnode, true)
+                    newSubnode.copyFromAndIgnoreMissingSlots(subnode)
+                } catch (error) {
+                    if (error instanceof MissingSlotError) {
+                        debugger;
+                    } else {
+                        throw error
+                    }
+                }
                 // TODO: Do we need to replace all references in pool and reload?
                 this.replaceSubnodeWith(subnode, newSubnode)
                 this.removeOtherSubnodeWithSameTitle(newSubnode)

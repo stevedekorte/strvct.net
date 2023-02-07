@@ -80,8 +80,10 @@
 
     // -------------------------
 
-    listenForAppdidInit () {
+    /*
+    listenForAppDidInit () {
         this.watchOnceForNote("appDidInit")
     }
+    */
 
 }).initThisCategory();

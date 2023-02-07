@@ -10,20 +10,54 @@
     Somehow we will set the root node tile view to display the path selected in the UI...
     
 
-    browserNode:
-        subnodes:
-            headerNode -> HeaderTile 
-            subnodes:
-                appRootNode -> BreadCrumbsTile 
+    AppLauncher - sets up database, may read App object from database or create if db is empty?
 
 
+    Nodes: ---------------> Views:
+
+    browserNode             BrowserView
+      appRootNode             HeaderTile 
+        settingsNode (OPTION hidden) 
+        topContentNode          BreadCrumbsTile
+            about
+            guide
+               index
+               content
+                 intro
+                   overview
+                   perspectiv
+                   goals
+            tuturial
+            reference
+            binaries
+            source
+            twitter
+            links
+            repl
+            
+
+    Ideas:
+
+        - need way to read/write local changes (with permission) to server
+        
+    Questions:
+
+    - Should headerNode be the AppNode, so we can option click it to inspect it and map app name to header?
+    - Which node should be root node of storage pool?
+    -- does App own the pool, or does pool own the app?
+    -- should there be a RootPoolNode class that helps manage the pool or help expose management and info to the UI? 
+
+    Todo:
+
+        Make moveToBase() more generic
 */
 
 (class BrowserView extends StackView {
     
     initPrototypeSlots () {
-        this.newSlot("headerNode", null)
-        this.newSlot("baseNode", null)
+        // broswerNode is this view's node()
+        this.newSlot("headerNode", null) // top header
+        this.newSlot("breadCrumbsNode", null) // breadcrumbs
     }
 
     init () {
@@ -42,27 +76,20 @@
         return this
     }
 
-
-    newSettingsNode () {
-        const node = BaseNode.clone()
-        node.setNodeMinTileHeight(55)
-        node.setTitle("Settings")
-        //node.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
-        return node
-    }
-
     setupHeaderNode () {
         const node = BaseNode.clone()
         node.setNodeTileClassName("HeaderTile")
         node.setNodeMinTileHeight(55)
-        node.setTitle("header")
+        node.setTitle("Header Tile")
         node.setNodeIsVertical(false) 
         this.setHeaderNode(node)
         this.node().addSubnode(node)
         return this
     }
 
-    didUpdateSlotBaseNode (oldValue, newValue) {
+    didUpdateSlotBreadCrumbsNode (oldValue, newValue) {
+        //debugger;
+
         // baseNode is the ObjectPool rootNode
         // tell the node to hint to UI to use BreadCrumbsTile view to display itself
         newValue.setNodeTileClassName("BreadCrumbsTile")
@@ -71,12 +98,11 @@
         // make sure it's the only thing under the header
         this.headerNode().removeAllSubnodes()
         this.headerNode().addSubnode(newValue)
-        this.headerNode().addSubnode(this.newSettingsNode())
+        //this.headerNode().addSubnode(this.newSettingsNode())
 
         // this should set up header view (and bread crumb view?)
         this.syncFromNode()
         
-
         // select the bread crumb tile
         // this should cause it's child stack view to get rendered (Notes, Settings, Resources)
         this.scheduleMethod("moveToBase")
@@ -85,7 +111,8 @@
 
     moveToBase () {
         //this.selectNodePathArray([this.node(), this.headerNode(), this.baseNode()])
-        this.selectNodePathArray([this.headerNode(), this.baseNode()])
+        this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
+       // debugger;
         return this
     }
 
