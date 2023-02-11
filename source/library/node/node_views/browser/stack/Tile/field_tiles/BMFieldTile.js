@@ -271,8 +271,7 @@
 
         } else {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
-            //valueView.setColor(this.uneditableColor())
-            valueView.setColor(this.styles().disabled().color())
+            valueView.setColor(this.uneditableColor())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
             valueView.setBorder(this.valueUneditableBorder())
             valueView.setPaddingLeft("0em").setPaddingRight("0em")

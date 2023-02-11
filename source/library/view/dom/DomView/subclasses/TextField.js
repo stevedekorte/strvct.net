@@ -326,7 +326,7 @@
         }
 
         const oldValue = this.string()
-        //let newValue = this.visibleValue()
+        //let oldValue = this.visibleValue()
         if (oldValue !== newValue) {
 
             if (this.isFocused()) {
@@ -340,13 +340,12 @@
                 super.setString(newValue)
             }
             
-            
-            this.debugLog(" setString(")
+            /*
+            console.log(" setString(")
             console.log("    old: '" + oldValue + "'")
             console.log("    new: '" + newValue + "'")
             console.log("---")
-            
-            
+            */            
         }
         return this
     }
@@ -373,7 +372,6 @@
         }
         return this
     }
-
 
     onAlternateEnterKeyUp (event) {
         console.log(this.typeId() + " onAlternateEnterKeyDown")

@@ -51,8 +51,6 @@
 
         //console.log(this.debugTypeId() + " justTap")
         if (this.isSelectable()) {
-            //this.select()
-
             const node = this.node()
             if (node) {
                 node.onTapOfNode()
@@ -138,7 +136,7 @@
             this.column().unselectAllTilesExcept(this)
         }
 
-        this.select()
+        this.activate()
         const dv = DragView.clone().setItems(this.column().selectedTiles()).setSource(this.column())
 
         if (isTapLongPress) {

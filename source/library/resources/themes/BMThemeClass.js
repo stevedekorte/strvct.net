@@ -7,90 +7,137 @@
 */
 
 (class BMThemeClass extends BMStorableNode {
-    
-    initPrototypeSlots () {
+  initPrototypeSlots () {
+  }
 
-    }
+  init () {
+    super.init();
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(true);
 
-    init () {
-        super.init()
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true) 
-        
-        this.setNodeCanEditTitle(true)
-        this.setTitle("Untitled " + this.thisClass().visibleClassName())
-        //this.setSubtitle("ThemeClass")
-        this.setCanDelete(true)
-        this.addAction("add")
-        this.setSubnodeClasses([BMThemeState, BMThemeFolder])
-        this.setNodeCanReorderSubnodes(true)
-    }
+    this.setNodeCanEditTitle(true);
+    this.setTitle("Untitled " + this.thisClass().visibleClassName());
+    //this.setSubtitle("ThemeClass")
+    this.setCanDelete(true);
+    this.addAction("add");
+    this.setSubnodeClasses([BMThemeState, BMThemeFolder]);
+    this.setNodeCanReorderSubnodes(true);
+  }
 
-    didInit () {
-        super.didInit()
-        //console.log(this.typeId() + " subnodes: ", this.subnodes())
-        this.setupSubnodes()
-    }
+  didInit () {
+    super.didInit();
+    //console.log(this.typeId() + " subnodes: ", this.subnodes())
+    this.setupSubnodes();
+  }
 
-    subnodeNames () {
-        return BMThemeState.standardStateNames()
-    }
+  subnodeNames () {
+    return BMThemeState.standardStateNames();
+  }
 
-    setupSubnodes () {
-        const subnodeClass = this.subnodeClasses().first()
-        this.subnodeNames().forEach(name => {
-            const subnode = this.subnodeWithTitleIfAbsentInsertProto(name, subnodeClass)
-            
-        })
-    }
+  setupSubnodes () {
+    const subnodeClass = this.subnodeClasses().first();
+    this.subnodeNames().forEach((name) => {
+      const subnode = this.subnodeWithTitleIfAbsentInsertProto(
+        name,
+        subnodeClass
+      );
+    });
+  }
 
-    unselectedThemeState () {
-        return this.firstSubnodeWithTitle("unselected")
-    }
+  // --- states ---
 
-    selectedThemeState () {
-        return this.firstSubnodeWithTitle("selected")
-    }
+  activeThemeState () {
+    return this.firstSubnodeWithTitle("active");
+  }
 
-    setupAsDefault () {
-        this.setTitle("DefaultThemeClass")
-        this.setupSubnodes()
-        this.subnodes().forEach(sn => sn.didInit())
+  unselectedThemeState () {
+    return this.firstSubnodeWithTitle("unselected");
+  }
 
-        {
-            const unselected = this.unselectedThemeState()
-            unselected.setThemeAttribute("color", "#bbb")
-            unselected.setThemeAttribute("backgroundColor", "transparent")
-            unselected.setThemeAttribute("fontWeight", "normal")
-        }
+  selectedThemeState () {
+    return this.firstSubnodeWithTitle("selected");
+  }
 
-        {
-            const selected = this.selectedThemeState()
-            selected.setThemeAttribute("color", "white")
-            selected.setThemeAttribute("backgroundColor", "#222")
-            selected.setThemeAttribute("fontWeight", "normal")
-        }
+  disabledThemeState () {
+    return this.firstSubnodeWithTitle("disabled");
+  }
 
-        {
-            const columns = BMThemeFolder.clone().setTitle("columns")
-            this.addSubnode(columns)
+  // --- default ---
 
-            const colors = [
-                [60, 60, 60],
-                [48, 48, 48],
-                [32, 32, 32],
-                [26, 26, 26],
-                [16, 16, 16],
-            ]
+  setupAsDefault() {
+    this.setTitle("DefaultThemeClass");
+    this.setupSubnodes();
+    this.subnodes().forEach((sn) => sn.didInit());
 
-            colors.forEach(c => {
-                const cssColorString = "rgb(" + c.join(",") + ")"
-                const field = BMStringField.clone().setKey("backgroundColor").setValue(cssColorString)
-                columns.addSubnode(field)
-            })
-        }
+    this.setupActiveDefault();
+    this.setupUnselectedDefault();
+    this.setupSelectedDefault();
+    this.setupDisabledDefault();
 
-        return this
-   }
+    //this.setupColumnsDefault()
+    return this;
+  }
 
+  // --- default states ---
+
+  setupActiveDefault () {
+    const state = this.activeThemeState();
+    state.setThemeAttribute("color", "white");
+    state.setThemeAttribute("backgroundColor", "#333");
+    //state.setThemeAttribute("fontWeight", "normal");
+  }
+
+  setupUnselectedDefault () {
+    const state = this.unselectedThemeState();
+    state.setThemeAttribute("color", "#bbb");
+    state.setThemeAttribute("backgroundColor", "transparent");
+    //state.setThemeAttribute("fontWeight", "normal");
+  }
+
+  setupSelectedDefault () {
+    const state = this.selectedThemeState();
+    state.setThemeAttribute("color", "white");
+    state.setThemeAttribute("backgroundColor", "#222");
+    //state.setThemeAttribute("fontWeight", "normal");
+    state.setThemeAttribute("opacity", "1");
+  }
+
+  setupDisabledDefault () {
+    const state = this.disabledThemeState();
+    state.setThemeAttribute("color", "#ccc");
+    state.setThemeAttribute("backgroundColor", "transparent");
+    //state.setThemeAttribute("fontWeight", "normal");
+    state.setThemeAttribute("opacity", "0.5");
+  }
+
+  setupColumnsDefault () {
+    const columns = BMThemeFolder.clone().setTitle("columns");
+    this.addSubnode(columns);
+
+    const colors = [
+      [60, 60, 60],
+      [48, 48, 48],
+      [32, 32, 32],
+      [26, 26, 26],
+      [16, 16, 16],
+    ];
+
+    colors.forEach((c) => {
+      const cssColorString = "rgb(" + c.join(",") + ")";
+      const field = BMStringField.clone()
+        .setKey("backgroundColor")
+        .setValue(cssColorString);
+      columns.addSubnode(field);
+    });
+  }
+
+  // -- accessors ---
+
+  themeAttributeNamed(name) {
+    return this.firstSubnodeWithTitle(name);
+  }
+
+  themeSubclassNamed(name) {
+    return this.firstSubnodeWithTitle(name);
+  }
 }.initThisClass());

@@ -46,6 +46,7 @@
     init () {
         super.init()
         this.setLockedStyleAttributeSet(new Set())
+        Broadcaster.shared().addListenerForName(this, "onActivateView") // NOTE: do we want *every* view to do this 
         return this
     }
 
@@ -87,7 +88,28 @@
         return this
     }
 
-    // select
+    // --- activate ---
+
+    didUpdateSlotIsActive (oldValue, newValue) {
+        // sent by hooked setter
+        this.applyStyles()
+        return this
+    }
+
+    activate () {
+        this.select()
+        this.setIsActive(true)
+        Broadcaster.shared().broadcastNameAndArgument("onActivateView", this)
+    }
+
+    onActivateView (aView) {
+        if (aView !== this & this.isActive()) {
+            this.setIsActive(false)
+            this.applyStyles()
+        }
+    }
+
+    // --- select ---
 
     didUpdateSlotIsSelected (oldValue, newValue) {
         // sent by hooked setter
@@ -155,18 +177,20 @@
     }
 
     currentThemeStateName () {
-        let stateName = this.isSelected() ? "selected" : "unselected"
-        if (this.hasFocus()) { // this.isActive()
+        let stateName = "unselected"
+
+        if (this.isDisabled()) {
+            stateName = "disabled" // should this mix with selected?
+        }
+
+        if (this.isSelected()) {
+            stateName = "selected"
+        }
+
+        if (this.isActive()) {
             stateName = "active"
         }
 
-        /*
-        if (this.isEditable()) {
-            return "editable" //["selected", "active", "editable", "disabled"]
-        }
-
-        return "disabled"
-        */
         return stateName
     }
 

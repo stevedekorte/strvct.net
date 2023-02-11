@@ -696,8 +696,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/StyledDomView.js",
-    "size": 5904,
-    "hash": "Hh8g6rMXQnOw9l9yTKXtns23+lUcvjDrqSM9qlOm+C8="
+    "size": 6477,
+    "hash": "SV0utrlnabQDU95+in3icddKb3H+YHXRJ4/MZH0JPjE="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/BooleanView.js",
@@ -1111,8 +1111,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_selection.js",
-    "size": 11778,
-    "hash": "ejsAhUiqB8ZraNQvdDuje4z/AMf1ThXCC8j/+dZsW+0="
+    "size": 11782,
+    "hash": "A233CaOFhNi9Oy84tYpkLiPMOhlUFU8zjWg8SO/lJmQ="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_orientation.js",
@@ -1151,8 +1151,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_gestures.js",
-    "size": 5556,
-    "hash": "fVVz6KroYU0+uYBrrchhkuUzL9q/+1xH9DPhZOWrFzM="
+    "size": 5529,
+    "hash": "qUQ6z9Hgmf9/mrDryjlpmDO8iFkAhmpKCfCBjVngnUU="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_slideGesture.js",
@@ -1206,8 +1206,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMFieldTile.js",
-    "size": 11891,
-    "hash": "4TTAuDuPH+iGd0s2IEnD7OOfgq7YkrO7TLfkOnx61mo="
+    "size": 11824,
+    "hash": "EM15dawxDENaXNFAxMOTSmSWPaTFFgbyhPrJso2AddM="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMActionNodeTile.js",
@@ -1221,8 +1221,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMStringFieldTile.js",
-    "size": 1209,
-    "hash": "bMogrM+59kBIF2K7h7MTSJqL7CIKCF9rujcW4dydh+g="
+    "size": 1223,
+    "hash": "ZTNDktMZoPwliQ4mgLnZp1JO1EvVc5FVV3UD5SZgHW8="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMTextAreaFieldTile.js",
@@ -1376,8 +1376,8 @@
   },
   {
     "path": "source/library/resources/themes/BMTheme.js",
-    "size": 1514,
-    "hash": "cS2RRomAPDv9WvS66Gh+d0xxc0lc/NFH83OWMkw+vNI="
+    "size": 1537,
+    "hash": "YRntHTK0yzo8slpNnqMX9Q4bDUPIlxuvUnPwywWYa0o="
   },
   {
     "path": "source/library/resources/themes/BMDefaultTheme.js",
@@ -1391,8 +1391,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeClass.js",
-    "size": 2550,
-    "hash": "+hsLAubzjmTZCUuKpY68e00nxkYuqoWwXl1AKZgjnDw="
+    "size": 3438,
+    "hash": "9nkHwigHd+vZSQmWAXEMM6hY8pC0ymfOQmKoQAG34C8="
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",

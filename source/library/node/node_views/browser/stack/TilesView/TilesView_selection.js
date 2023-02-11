@@ -72,7 +72,7 @@
         // if the item is already selected, this won't trigger a resync, so unselect first?
         //anItem.unselect()
         //debugger; 
-        anItem.select() 
+        anItem.activate() 
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus()
             // anItem seems to already be focused somehow
@@ -100,7 +100,7 @@
             for (let i = i1; i <= i2; i++) {
                 const item = this.tileAtIndex(i)
                 if (!item.isSelected()) {
-                    item.select()
+                    item.activate()
                 }
             }
         }

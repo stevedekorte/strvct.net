@@ -7,25 +7,24 @@
 */
 
 (class BMTheme extends BMStorableNode {
-    
-    initPrototypeSlots () {
-    }
+  initPrototypeSlots() {}
 
-    init () {
-        super.init()
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-        this.setNodeCanEditTitle(true)
-        this.setTitle("Untitled " + this.thisClass().visibleClassName())
-        //this.setSubtitle("Theme")
-        this.setCanDelete(true)
-        this.addAction("add")
-        this.setSubnodeClasses([BMThemeLevel])
-        this.setNodeCanReorderSubnodes(true)
-        //this.setupSubnodes()
-    }
+  init() {
+    super.init();
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(true);
+    this.setNodeCanEditTitle(true);
+    this.setTitle("Untitled " + this.thisClass().visibleClassName());
+    //this.setSubtitle("Theme")
+    this.setCanDelete(true);
+    this.addAction("add");
+    //this.setSubnodeClasses([BMThemeLevel]);
+    this.setSubnodeClasses([BMThemeClass, BMThemeFolder]);
+    this.setNodeCanReorderSubnodes(true);
+    //this.setupSubnodes()
+  }
 
-    /*
+  /*
     didLoadFromStore () {
         super.didLoadFromStore()
         this.setupSubnodes()
@@ -48,15 +47,15 @@
     }
     */
 
-   atPath (aPath) {
-       debugger;
-   }
+  setupAsDefault() {
+    this.setTitle("DefaultTheme");
+    const defaultThemeClass = BMThemeClass.clone().setupAsDefault();
+    this.addSubnode(defaultThemeClass);
+    return this;
+  }
 
-    setupAsDefault () {
-        this.setTitle("DefaultTheme")
-        const defaultThemeClass = BMThemeClass.clone().setupAsDefault()
-        this.addSubnode(defaultThemeClass)
-        return this
-   }
+  themeClassNamed (name) {
+    return this.firstSubnodeWithTitle(name)
+  }
 
 }.initThisClass());

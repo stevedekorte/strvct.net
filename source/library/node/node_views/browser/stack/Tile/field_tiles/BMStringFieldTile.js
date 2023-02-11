@@ -32,6 +32,7 @@
         return v
     }
 
+    /*
     syncValueFromNode () {
         super.syncValueFromNode()
         
@@ -48,5 +49,6 @@
             valueView.setPaddingLeft("0em").setPaddingRight("0em")
         }
     }
+    */
     
 }.initThisClass());
