@@ -20,7 +20,6 @@
 
     init () {
         super.init()
-        this.customizeNodeTileStyles().setToBlackOnWhite()
     }
 	
     nodeTileLink () {

@@ -45,6 +45,7 @@
     }
 
     init () {
+        debugger;
         super.init()
         return this
     }
@@ -72,6 +73,7 @@
     }
 	
     applyToView (aView) {		
+        debugger;
         this.styleNames().forEach( (name) => { 
             const getterMethod = this[name]
             if (!getterMethod) {

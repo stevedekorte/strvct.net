@@ -16,7 +16,7 @@
         super.init()
         this.setTitle("FileResources")
         this.setNoteIsSubnodeCount(true)
-        this.registerForAppDidInit()
+        //this.registerForAppDidInit() // BMResourceGroup does this
         //this.onFinishInit()
         return this
     }
@@ -28,6 +28,8 @@
     }
     
     setupSubnodes () {
+        assert(this.subnodes().length === 0)
+        //debugger;
         const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
         this.addSubnode(rootFolder)
         const allPaths = ResourceManager.shared().resourceFilePaths()

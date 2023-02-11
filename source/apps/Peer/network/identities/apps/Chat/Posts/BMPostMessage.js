@@ -30,7 +30,6 @@
     init () {
         super.init()
         this.setContent("...".loremIpsum(4, 100))	
-        this.customizeNodeTileStyles().setToBlackOnWhite()
     }
 
     /*

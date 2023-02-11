@@ -132,7 +132,7 @@
     }
 
     onCharacterDataMutation (mutation) {
-        //console.log("onCharacterDataMutation --------------> ", mutation)
+        console.log("onCharacterDataMutation --------------> ", mutation)
     }
 
     setContentEditable (aBool) {
@@ -297,6 +297,14 @@
 	
     // ------------------
 
+    setInnerHtml (s) {
+        return super.setInnerHtml(s)
+    }
+
+    setInnerText (s) {
+        return super.setInnerText(s)
+    }
+
     setValue (newValue) {
         return this.setString(newValue)
     }
@@ -308,8 +316,13 @@
 
     
     setString (newValue) {
+
         if (Type.isNullOrUndefined(newValue)) {
             newValue = ""
+        }
+
+        if (!Type.isString(newValue)) {
+            newValue = newValue.toString()
         }
 
         const oldValue = this.string()
@@ -327,12 +340,12 @@
                 super.setString(newValue)
             }
             
-            /*
+            
             this.debugLog(" setString(")
             console.log("    old: '" + oldValue + "'")
             console.log("    new: '" + newValue + "'")
             console.log("---")
-            */
+            
             
         }
         return this

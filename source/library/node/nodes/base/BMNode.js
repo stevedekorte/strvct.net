@@ -783,15 +783,12 @@
     hasSubnodeWithHash (h) {
 	    return this.lazyIndexedSubnodes().hasIndexKey(h)
     }
-    
-
 	
     // visibility
 	
     nodeBecameVisible () {
 	    return this
     }
-
 
     // -- view selection request events ---
 

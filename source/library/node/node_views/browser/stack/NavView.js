@@ -169,13 +169,25 @@
         return this
     }
 
+    /*
     applyStyles () {
         super.applyStyles()
+        
+        if (this.isVertical()) {
+            this.applyColumnStyle()
+        }
+        return this
+    }
+    */
+
+    applyColumnStyle () {
+        this.setBorder("")
         const themeClass = this.currentThemeClass()
         if (themeClass) {
             const columns = themeClass.firstSubnodeWithTitle("columns")
+            //debugger;
             if (columns) {
-                const colorFields = columns.subnodes().select(sn => sn.thisClass().isSubclassOf("BMStringField") || sn.type() === "BMField")
+                const colorFields = columns.subnodes().select(sn => sn.thisClass().isSubclassOf(Object.getClassNamed("BMStringField")) || sn.type() === "BMField")
                 const count = colorFields.length
                 if (count) {
                     let i = this.stackView().stackViewDepth()
@@ -186,7 +198,6 @@
                 }
             }
         }
-        return this
     }
 
     // --- collpase / uncollapse ---

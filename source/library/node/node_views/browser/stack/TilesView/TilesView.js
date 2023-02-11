@@ -14,8 +14,6 @@
     initPrototypeSlots () {
         this.newSlot("tiles", null)
         this.newSlot("allowsCursorNavigation", true)
-        this.newSlot("defaultTileStyles", null)
-        this.newSlot("tileStyles", null)
         this.newSlot("tilePlaceHolder", null)
         this.newSlot("hasPausedSync", false)
         //this.newSlot("isColumnInspecting", false)
@@ -43,14 +41,10 @@
         this.addGestureRecognizer(PinchGestureRecognizer.clone()) // for pinch open to add tile
         this.addGestureRecognizer(TapGestureRecognizer.clone()) // for pinch open to add tile
 
-        this.setTileStyles(BMViewStyles.clone().setToWhiteOnBlack())
-        //this.tileStyles().selected().setBackgroundColor("red")
-
         this.setIsRegisteredForBrowserDrop(true)
         
         //this.setBorder("1px dashed red")
         this.setDefaultSubviewProto(TitledTile)
-
         return this
     }
 

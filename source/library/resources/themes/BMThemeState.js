@@ -91,7 +91,7 @@
         }
         //debugger;
         assert(!this.hasDoneInit())
-        console.log(this.typeId() + " didInit setupSubnodes: ", this.subnodes().map(sn => sn.typeId()))
+        //console.log(this.typeId() + " didInit setupSubnodes: ", this.subnodes().map(sn => sn.typeId()))
         super.didInit()
         this.setupSubnodes()
     }

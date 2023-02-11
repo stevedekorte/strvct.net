@@ -133,6 +133,7 @@
         if (isFocused) {
             this.blur()
             const savedSelection = this.saveSelection()
+            //console.log("savedSelection:", savedSelection)
             this.element().innerHTML = v
             savedSelection.collapse()
             this.restoreSelection(savedSelection)

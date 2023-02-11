@@ -73,7 +73,7 @@
 
         // placeholder
         this.setPlaceHolderView(this.rightView().addSubview(TextField.clone().setElementClassName("BMPostDraftTilePlaceHolderView")))
-        this.placeHolderView().setInnerHtml("What's happening?")
+        this.placeHolderView().setString("What's happening?")
                 
         // content view
         this.setTextContentView(this.rightView().addSubview(TextField.clone().setElementClassName("BMPostDraftTileContentView")))
@@ -99,8 +99,6 @@
         this.updateSubviews()
         this.setIsSelectable(true)
 		
-        //this.styles().setToBlackOnWhite()
-
         this.closeButtonView().orderFront()
 
         //this.sendAllViewDecendants("setTransition", ["all 0s"])

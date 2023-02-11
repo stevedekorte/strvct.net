@@ -9,7 +9,6 @@
 (class BMTheme extends BMStorableNode {
     
     initPrototypeSlots () {
-
     }
 
     init () {
@@ -50,7 +49,7 @@
     */
 
    atPath (aPath) {
-       
+       debugger;
    }
 
     setupAsDefault () {

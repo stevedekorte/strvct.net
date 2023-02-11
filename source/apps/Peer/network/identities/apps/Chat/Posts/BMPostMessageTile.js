@@ -84,9 +84,6 @@
         this.updateSubviews()
         this.setIsSelectable(true)
 
-        //this.styles().setToBlackOnWhite()		
-        // console.log(" =======> " + this.typeId() + " this.styles().selected().backgroundColor() = ", this.styles().selected().backgroundColor())
-
         return this
     }
 
@@ -134,7 +131,7 @@
     }
 
     setupContentView () {
-        let tv = this.textView()
+        const tv = this.textView()
         tv.setMinWidth(50)
         //tv.setPosition("relative")
         tv.setMarginRightPx(0)
@@ -147,16 +144,16 @@
 
     showButtonNamed (name) {
         // TODO: abstract this into something like a PostAttributeButton 
-        let node = this.node()
-        let countView = this.perform(name + "CountView")
-        let button = this.perform(name + "Button")
-        let count = node.perform(name + "Count")
-        let did = node.perform("did" + name.capitalized())
+        const node = this.node()
+        const countView = this.perform(name + "CountView")
+        const button = this.perform(name + "Button")
+        const count = node.perform(name + "Count")
+        const did = node.perform("did" + name.capitalized())
 
         if (count) {
-            countView.setInnerHtml(count)
+            countView.setString(count)
         } else {
-            countView.setInnerHtml("")
+            countView.setString("")
         }
 
         if (did) {
@@ -174,15 +171,15 @@
         let node = this.node()
 
         if (node) {
-            this.titleBarTextView().setInnerHtml(node.senderName())
-            this.dateView().setInnerHtml(node.ageDescription())
+            this.titleBarTextView().setString(node.senderName())
+            this.dateView().setString(node.ageDescription())
 
             this.showButtonNamed("reply")
             this.showButtonNamed("repost")
             this.showButtonNamed("like")
 
         } else {
-            this.titleBarTextView().setInnerHtml("[no node]")
+            this.titleBarTextView().setString("[no node]")
         }
 
         return this

@@ -100,6 +100,7 @@
     */
 
     static isSubclassOf (aClass) {
+        assert(aClass.isClass())
         return this.ancestorClassesIncludingSelf().contains(aClass)
     }
 

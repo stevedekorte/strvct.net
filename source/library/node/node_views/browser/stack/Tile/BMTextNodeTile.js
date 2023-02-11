@@ -74,15 +74,7 @@
         node.setValue(this.textView().innerText())
         return this
     }
-
-    themeClassName () {
-        const node = this.node()
-        if (node && node.themeClassName) {
-            return node.themeClassName()
-        }
-        return super.themeClassName()
-    }
-
+    
     syncFromNode () {
         const node = this.node()
         if (!node) {
@@ -95,11 +87,27 @@
         return this
     }
 
+    // --- theme ---
+
+    themeClassName () {
+        const node = this.node()
+        if (node && node.themeClassName) {
+            return node.themeClassName()
+        }
+        return super.themeClassName()
+    }
+
     applyStyles () {
         // TODO: add method on View to grab these values 
         // - maybe with optional prefix for item class/name?
 
-        //console.log("themePathArray = ", this.themePathArray())
+        /*
+        const state = this.currentThemeState()
+        if (state) {
+            state.applyToView(this.textView())
+        }
+        */
+
         
         const theme = (key) => this.themeValueForAttribute(key);
         const tv = this.textView();

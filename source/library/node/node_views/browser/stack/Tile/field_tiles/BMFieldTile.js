@@ -238,7 +238,6 @@
         this.syncValueFromNode()
         this.syncErrorFromNode()
         this.syncNoteFromNode()
-        
         return this
     }
 
@@ -246,7 +245,7 @@
         const node = this.node()
         const keyView = this.keyView()
 
-        keyView.setInnerHtml(this.visibleKey())
+        keyView.setString(this.visibleKey()) // setString only applies if value changed
         keyView.setIsVisible(node.keyIsVisible())
         keyView.setDisplayIsHidden(!node.keyIsVisible())
         keyView.setIsEditable(node.keyIsEditable())

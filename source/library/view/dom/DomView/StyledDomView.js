@@ -27,6 +27,8 @@
 
     - unselected
     - selected
+    - active 
+    - disabled
 
 */
 
@@ -36,6 +38,8 @@
     initPrototypeSlots () {
         this.newSlot("styles", null)
         this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
+        this.newSlot("isActive", false).setOwnsSetter(true).setDoesHookSetter(true)
+        this.newSlot("isDisabled", false).setOwnsSetter(true).setDoesHookSetter(true)
         this.newSlot("lockedStyleAttributeSet", null)
     }
 
@@ -60,19 +64,6 @@
     }
 
     /*
-    currentStyle () {
-        let style = null
-        if (this.isSelected()) {
-            style = this.styles().selected()
-            //this.debugLog(".applyStyles() selected ", style.description())
-        } else {
-            style = this.styles().unselected()
-            //this.debugLog(".applyStyles() unselected ", style.description())
-        }
-        return style
-    }
-    */
-
     recursivelyApplyStyles () {
         this.applyStyles()
         this.allSubviewsRecursively().forEach(view => {
@@ -82,13 +73,13 @@
         })
         return this
     }
+    */
 	
     applyStyles () {
         // we default to using the current theme, but 
         // we need to give view a chance to override style
         // also, NodeView should override this method to give node a chance to override style
-        //const style = this.currentStyle()
-        //style.applyToView(this)	
+
         const state = this.currentThemeState()
         if (state) {
             state.applyToView(this)
@@ -131,30 +122,13 @@
         return null
     }
 
-    themeStateName () {
-        //const states = []
-        /*
-        if (this.isActive()) {
-            return "active"
-        }
-        */
-
-        if (this.isSelected()) {
-            return "selected"
-        }
-
-        return "unselected"
-
-        /*
-        if (this.isEditable()) {
-            return "editable" //["selected", "active", "editable", "disabled"]
-        }
-
-        return "disabled"
-        */
-    }
-
     themePathArray () {
+        // using this is problematic as we may want to make the path 
+        // dependent of complex things e.g. if the themeClassName isn't
+        // found, we will default to DefaultThemeClass - or we may want
+        // to continue the search for a themeClass by walking up the View's
+        // class hierarchy names
+
         const path = []
 
         const themeClassName = this.themeClassName()
@@ -164,7 +138,7 @@
             path.push("DefaultThemeClass")
         }
 
-        const stateName = this.themeStateName() 
+        const stateName = this.currentThemeStateName() 
         path.push(stateName)
 
         return path
@@ -182,9 +156,17 @@
 
     currentThemeStateName () {
         let stateName = this.isSelected() ? "selected" : "unselected"
-        if (this.hasFocus()) {
+        if (this.hasFocus()) { // this.isActive()
             stateName = "active"
         }
+
+        /*
+        if (this.isEditable()) {
+            return "editable" //["selected", "active", "editable", "disabled"]
+        }
+
+        return "disabled"
+        */
         return stateName
     }
 
@@ -200,29 +182,26 @@
         return null
     }
 
+    themePathString () {
+        return this.themePathArray().join(" / ")
+    }
+
     themeValueForAttribute (attributeName) {
-        const fullPath = this.themePathArray()
-        fullPath.push(attributeName)
-        const fullPathString = fullPath.join(" / ")
-        //console.log("fullPath = ", fullPathString)
-        //debugger
-
-        const theme = BMThemeResources.shared().activeTheme()
-        const attribtueNode = theme ? theme.nodeAtSubpath(fullPath) : null
-        
-        if (attribtueNode) {
-            const value = attribtueNode.value()
-            if (!value) {
-                console.log("no color found for ", fullPathString)
-                return null
+        const stateNode = this.currentThemeState()
+        if (stateNode) {
+            const attribtueNode = stateNode.firstSubnodeWithTitle(attributeName)
+            if (attribtueNode) {
+                const value = attribtueNode.value()
+                if (!value) {
+                    console.log("no color found for ", this.themePathString() + " / " + attributeName)
+                    return null
+                }
+                //console.log("theme: " + fullPathString + " = " + value)
+                return value
             }
-            //console.log("theme: " + fullPathString + " = " + value)
-            return value
         }
-        //console.log("no color found for ", fullPath)
 
-        console.log("theme: no attribute node for '" + fullPathString + "'")
-        
+        //console.log("no attribute node found for ", this.themePathString() + " / " + attributeName)
         return null
     }
 
@@ -236,9 +215,6 @@
         //console.log(this.typeId() + ".themeValueForAttribute('color') = ", v)
         //debugger;
         return "yellow"
-
-        //console.log("this.themeValueForAttribute('color') = ", this.themeValueForAttribute('color') )
-        //return this.currentStyle().color()
     }
 
     currentBgColor () {
@@ -247,8 +223,6 @@
             return v
         }
         return "orange"
-
-        //return this.currentStyle().backgroundColor()
     }
 	
 }.initThisClass());

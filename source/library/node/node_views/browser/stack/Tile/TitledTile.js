@@ -171,6 +171,12 @@
             this.subtitleView().setDisplayIsHidden(true)
         }
 
+        const state = this.currentThemeState()
+        if (state) {
+            state.applyToView(this.titleView())
+            state.applyToView(this.subtitleView())
+        }
+
         return this
     }
 
@@ -178,8 +184,7 @@
 
     showNoteView () {
         this.noteView().unhideDisplay()   
-        //this.noteView().setInnerHtml(this.node().note())
-        this.noteView().setInnerText(this.node().note())
+        this.noteView().setString(this.node().note())
     }
 
     hideNoteView () {
@@ -254,6 +259,7 @@
     // arrow
     
     makeNoteRightArrow () {
+        debugger;
         const nv = this.noteView()
         
         nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"))        
@@ -261,13 +267,6 @@
         
         nv.setMinAndMaxWidth(10)
         nv.setMinAndMaxHeight(10)
-
-        /*
-        const icon = this.noteSvgIconForName("right-gray")
-        nv.setInnerHtml("")
-        nv.removeAllSubviews()
-        nv.addSubview(icon)
-        */
         return this		
     }
 

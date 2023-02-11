@@ -83,7 +83,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         //this.simpleNewSlot("isInGetterHook", false)
 
         // setter
-        this.simpleNewSlot("ownsSetter", true) 
+        this.simpleNewSlot("ownsSetter", true) // if true, we'll create the setter
         this.simpleNewSlot("doesHookSetter", false) // if shouldStore, then auto post isDirty?
         //this.simpleNewSlot("doesPostSetter", false) // posts a didUpdateSlot<SlotName> notification
 

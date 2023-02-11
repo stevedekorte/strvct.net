@@ -4,6 +4,16 @@
 
     BMViewStyles
 
+    NOTE:::::::::::::::::::::::::::::::::::::::::::::
+
+
+    This is deprecated. 
+
+    See BMThemeState.applyToView(aView) instead
+
+
+    NOTE:::::::::::::::::::::::::::::::::::::::::::::
+
     Represents the set of styles for a NodeView, e.g. selected, unselected.
 
     The basic idea is that both View and Nodes can own styles.
@@ -46,6 +56,7 @@
     }
 
     init () {
+        debugger;
         super.init()
         this.setDisabled(BMViewStyle.clone())
         this.setSelected(BMViewStyle.clone())
