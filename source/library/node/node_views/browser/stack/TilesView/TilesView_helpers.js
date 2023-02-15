@@ -131,19 +131,13 @@
         return this
     }
 
-    nodeDescription () {
-        const node = this.node()
-        if (node) {
-            return node.debugTypeId()
-        }
-        return null
-    }
-
+    // --- helpers ---
+/*
     debugTypeId () {
-        //return this.nodeDescription()
-        return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription()
+        const comment = " '" + (this.node() ? this.node().title() : "untitled node") + "'"
+        return super.debugTypeId() + comment
     }
-    
+*/
 
     // paths
 

@@ -135,7 +135,8 @@
         let end = this.nodeSummarySuffixOut()
 
         if (this.hasNewlineAferSummary()) {
-            end = "<br>"
+            //end = "<br>"
+            end = "\n"
         }
 
         if (f === "key") { 

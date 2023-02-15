@@ -38,9 +38,7 @@
     }
 
     updateElementIdLabel () {
-        const node = this.node()
-        const nodeId = node ? node.debugTypeId() : "null"
-        this.element().id = this.debugTypeId() + " for node " + nodeId 
+        this.element().id = this.debugTypeId()
         return this
     }
     
@@ -343,4 +341,30 @@
         return null
     }
     
+    // --- helpers ---
+
+    nodeDescription () {
+        const node = this.node()
+        if (node) {
+            return node.debugTypeId()
+        }
+        return null
+    }
+
+    nodeId () {
+        const node = this.node()
+        const nodeId = node ? node.debugTypeId() : "null"
+        return nodeId
+    }
+
+    debugTypeId () {
+        //return this.nodeDescription()
+        //return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription() + " theme:" + this.themeClassName()
+
+        let s = "view:'" + this.typeId() + "'"
+        s += " node:'" + this.nodeId() + "'"
+        s += " themeClass:'" +this.themeClassName() + "'"
+        return s
+    }
+
 }.initThisClass());

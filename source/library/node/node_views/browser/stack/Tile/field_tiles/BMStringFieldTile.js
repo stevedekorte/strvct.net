@@ -31,24 +31,5 @@
         v.setBorderRadius("0.2em")
         return v
     }
-
-    /*
-    syncValueFromNode () {
-        super.syncValueFromNode()
-        
-        const node = this.node()
-        const valueView = this.valueView()
-
-        if (node.valueIsEditable()) {
-            valueView.setColor(this.currentColor())
-            valueView.setBorder(this.valueEditableBorder())
-            valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em")
-        } else {
-            valueView.setColor(this.styles().disabled().color())
-            valueView.setBorder(this.valueUneditableBorder())
-            valueView.setPaddingLeft("0em").setPaddingRight("0em")
-        }
-    }
-    */
     
 }.initThisClass());

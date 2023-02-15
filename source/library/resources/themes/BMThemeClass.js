@@ -8,6 +8,12 @@
 
 (class BMThemeClass extends BMStorableNode {
   initPrototypeSlots () {
+      this.newSlot("standardStateNames", [
+        "disabled",
+        "unselected", 
+        "selected", 
+        "active"
+      ]);
   }
 
   init () {
@@ -31,7 +37,7 @@
   }
 
   subnodeNames () {
-    return BMThemeState.standardStateNames();
+    return this.standardStateNames();
   }
 
   setupSubnodes () {
@@ -131,7 +137,7 @@
     });
   }
 
-  // -- accessors ---
+  // -- heplers ---
 
   themeAttributeNamed(name) {
     return this.firstSubnodeWithTitle(name);

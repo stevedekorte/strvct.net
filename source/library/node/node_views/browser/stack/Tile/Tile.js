@@ -38,6 +38,7 @@
         this.newSlot("selectedFlashColor", "#ccc")
         this.newSlot("shouldShowFlash", false)
         this.newSlot("shouldCenterCloseButton", true)
+
         this.newSlot("contentView", null)
     
         this.newSlot("slideDeleteOffset", 0)
@@ -45,6 +46,24 @@
         this.newSlot("isDeleting", false)
         this.newSlot("lastTapDate", null)
         this.newSlot("lastSelectionDate", null)
+    }
+
+    applyStyles () {
+        // we default to using the current theme, but 
+        // we need to give view a chance to override style
+        // also, NodeView should override this method to give node a chance to override style
+
+        const state = this.currentThemeState()
+        if (state) {
+            /*
+            if (this.thisClass() === BreadCrumbsTile) {
+                debugger;
+            }
+            */
+            state.applyBorderStylesToView(this) // apply only border styles
+            state.applyNonBorderStylesToView(this.contentView()) // apply non border styles
+        }
+        return this
     }
 
     /*
@@ -58,6 +77,9 @@
 
     init () {
         super.init()
+
+        this.setThemeClassName("Tile")
+
         this.setDisplay("inline-block")
         this.setPosition("relative") // so absolute position on close button works
         //this.setFlexGrow(0)
@@ -449,13 +471,6 @@
         }
 
         return this.node().nodeTileLink()
-    }
-
-    // --- helpers ---
-
-    debugTypeId () {
-        const comment = " '" + (this.node() ? this.node().title() : "untitled node") + "'"
-        return super.debugTypeId() + comment
     }
 
 }.initThisClass());

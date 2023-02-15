@@ -25,13 +25,13 @@
 
     init () {
         super.init()
+        this.setThemeClassName("BreadCrumbsTile")
         this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this))
         this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding()
         this.setWidth("100%")
         //this.updateSubviews()
         this.setIsSelectable(true)
         this.setIsRegisteredForWindowResize(true)
-        //this.setBorder("1px dashed rgba(255, 255, 0, .1)")
         return this
     }
 
@@ -169,7 +169,6 @@
         v.setPaddingRight("0em")
         v.titleView().setPaddingLeft("0em")
         v.titleView().setPaddingRight("0em")
-        //v.setBorder("1px dashed rgba(255, 255, 255, .1)")
         //v.debugTypeId = function () { return "crumbView" }
         return v
 

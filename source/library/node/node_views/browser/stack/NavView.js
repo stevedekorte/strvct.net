@@ -109,7 +109,7 @@
 
     borderStyle () {
         if (this.hasBorder()) {
-            return "1px solid " + this.borderColor()
+            return "0px solid " + this.borderColor() + " inset"
         }
         return null
     }
@@ -178,7 +178,6 @@
         }
         return this
     }
-    */
 
     applyColumnStyle () {
         this.setBorder("")
@@ -199,6 +198,7 @@
             }
         }
     }
+    */
 
     // --- collpase / uncollapse ---
 
@@ -227,9 +227,13 @@
 
     // --- right edge gesture ---
 
+    edgeMoveBorderStyle () {
+        return "1px rgba(255, 255, 255, 0.5) inset"
+    }
+
     onRightEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderRight(this.borderRight())
-        this.setBorderRight("1px dashed red")
+        this.setBorderRight(this.edgeMoveBorderStyle())
     }
 
     onRightEdgePanMove (aGesture) {
@@ -239,7 +243,6 @@
         //console.log("nw = ", nw)
         this.node().setNodeMinTileWidth(nw)
         this.scheduleSyncToNode()
-
         return this
     }
 
@@ -252,10 +255,9 @@
 
     // --- bottom edge gesture ---
 
-
     onBottomEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderBottom(this.borderBottom())
-        this.setBorderBottom("1px dashed red")
+        this.setBorderBottom(this.edgeMoveBorderStyle())
         //this.setTransition("min-height 0s, max-height 0s")
         this.hideTransition()
     }
@@ -264,7 +266,7 @@
         const p = aGesture.currentPosition() // position in document coords
         const f = this.frameInDocument()
         const newHeight = Math.max(10, p.y() - f.y())
-        //console.log("node " + this.node().title() + " newHeight = ", newHeight)
+        console.log("node " + this.node().title() + " newHeight = ", newHeight)
         this.node().setNodeMinTileHeight(newHeight)
         this.scheduleSyncToNode()
         return this

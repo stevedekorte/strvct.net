@@ -36,7 +36,7 @@
 (class StyledDomView extends FlexDomView {
     
     initPrototypeSlots () {
-        this.newSlot("styles", null)
+        this.newSlot("themeClassName", null)
         this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
         this.newSlot("isActive", false).setOwnsSetter(true).setDoesHookSetter(true)
         this.newSlot("isDisabled", false).setOwnsSetter(true).setDoesHookSetter(true)
@@ -51,18 +51,6 @@
     }
 
     // styles
-
-    lookedUpStyles () {
-        return null
-    }
-	
-    styles () { 
-        // since not all views use them, do lazy style setup 
-        if (!this._styles) {
-            this.setStyles(BMViewStyles.clone()) 
-        }
-        return this._styles
-    }
 
     /*
     recursivelyApplyStyles () {
@@ -139,10 +127,6 @@
     }
 
     // -----------------------------------------
-
-    themeClassName () {
-        return null
-    }
 
     themePathArray () {
         // using this is problematic as we may want to make the path 
@@ -238,7 +222,8 @@
         }
         //console.log(this.typeId() + ".themeValueForAttribute('color') = ", v)
         //debugger;
-        return "yellow"
+        return "inherit"
+        //return "yellow"
     }
 
     currentBgColor () {
@@ -246,7 +231,8 @@
         if (v) {
             return v
         }
-        return "orange"
+        return "inherit"
+        //return "orange"
     }
 	
 }.initThisClass());

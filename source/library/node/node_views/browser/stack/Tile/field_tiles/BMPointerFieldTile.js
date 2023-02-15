@@ -17,12 +17,6 @@
 
         this.makeNoteRightArrow()
 		
-        this.styles().unselected().setColor("#888")
-        this.styles().unselected().setBackgroundColor("white")
-
-        this.styles().selected().setColor("#888")
-        this.styles().selected().setBackgroundColor("#eee")
-		
         return this
     }
 

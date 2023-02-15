@@ -27,7 +27,17 @@
     }
 
     static titleLeftPadding () {
-        return "1.5em"
+        return "30px"
+    }
+
+    topContentArea () {
+        let lv = this.contentView().subviews().at(0)
+        return lv
+    }
+
+    bottomContentArea () {
+        let lv = this.contentView().subviews().at(1)
+        return lv
     }
 
     init () {
@@ -35,11 +45,10 @@
 
         this.contentView().setMinHeight("5em")
         this.contentView().flexSplitIntoColumns(2)
-        let lv = this.contentView().subviews().at(0)
+        let lv = this.topContentArea()
 
         lv.setPaddingTop("0.7em")
         lv.setPaddingBottom("0.7em")
-
         lv.setPaddingLeft(this.thisClass().titleLeftPadding())
         lv.setPaddingRight("1em")
 
@@ -52,6 +61,7 @@
         const tv = TileTitleView.clone()
         lv.addSubview(tv)
         this.setTitleView(tv)
+        tv.setThemeClassName("TileTitle")
         tv.setUsesDoubleTapToEdit(true)
         tv.setOverflow("visible")
         tv.setPaddingLeft("0em")
@@ -59,12 +69,13 @@
         const st = TileSubtitleView.clone()
         lv.addSubview(st)
         this.setSubtitleView(st)
+        st.setThemeClassName("TileSubtitle")
         st.setPaddingLeft("0em")
         st.setPaddingTop("0em")
         st.setOpacity(0.6)
 
 
-        const rv = this.contentView().subviews().at(1)
+        const rv = this.bottomContentArea()
         rv.setDisplay("flex")
         rv.setAlignItems("center")
         this.setNoteView(rv.addSubview(TileNoteView.clone()))
@@ -76,7 +87,7 @@
         icon.setMinAndMaxWidth(12)
         icon.setMinAndMaxHeight(15)
         //icon.setFillColor("white")
-        icon.setStrokeColor("white")
+        icon.setStrokeColor("white") // use currentColor?
         icon.setOpacity(0.2)
         this.setNoteIconView(rv.addSubview(icon))
         
@@ -168,14 +179,16 @@
         } else {
             this.titleView().setIsEditable(false)
             this.subtitleView().setIsEditable(false)
-            this.subtitleView().setDisplayIsHidden(true)
+            this.subtitleView().setDisplayIsHidden(true) 
         }
 
+        /*
         const state = this.currentThemeState()
         if (state) {
             state.applyToView(this.titleView())
             state.applyToView(this.subtitleView())
         }
+        */
 
         return this
     }
@@ -201,7 +214,9 @@
             //v.setDoesMatchParentColor(true)
 
         }
-        const color = this.currentColor()
+        //const color = this.currentColor()
+        const color = this.getComputedCssProperty("color")
+
         v.setColor(color)
         v.setFillColor(color)
         v.setOpacity(0.95)

@@ -24,29 +24,6 @@
     //this.setupSubnodes()
   }
 
-  /*
-    didLoadFromStore () {
-        super.didLoadFromStore()
-        this.setupSubnodes()
-    }
-
-    setupSubnodes () {
-        const nodeViewClasses = DomView.descendantClasses()
-
-        nodeViewClasses = nodeViewClasses.select((nodeViewClass) => {
-            return nodeViewClass.hasOwnProperty("styles")
-        }).select((nodeViewClass) => { return !nodeViewClass.styles().isEmpty() })
-
-        //console.log("nodeViewClasses:", nodeViewClasses)
-        const themeClasses = nodeViewClasses.map((childProto) => {
-            return BMThemeFolder.clone().setTitle(childProto.type());
-        })
-
-        this.copySubnodes(themeClasses);
-        return this
-    }
-    */
-
   setupAsDefault() {
     this.setTitle("DefaultTheme");
     const defaultThemeClass = BMThemeClass.clone().setupAsDefault();

@@ -276,6 +276,15 @@
         return aSubnode
     }
 
+    subnodeBefore (aSubnode) {
+        const index = this.indexOfSubnode(aSubnode)
+        assert(index !== -1)
+        if (index > 0) {
+            return this.subnodes().at(index - 1)
+        }
+        return null
+    }
+
     replaceSubnodeWith (aSubnode, newSubnode) {
         assert(!this.hasSubnode(newSubnode))
 
