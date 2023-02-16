@@ -97,6 +97,9 @@
 
     setupKeyView () {
         const v = TextField.clone().setElementClassName("BMFieldKeyView")
+        if (!v.themeClassName()) {
+            v.setThemeClassName("FieldKey")
+        }
         v.setDisplay("inline-block")
         v.setOverflow("hidden")
         v.setTextAlign("left")
@@ -118,6 +121,9 @@
 
     setupValueView () {
         const v = this.createValueView()
+        if (!v.themeClassName()) {
+            v.setThemeClassName("FieldValue")
+        }
         v.setUserSelect("text")   // should the value view handle this?
         v.setSpellCheck(false)   // should the value view handle this?
         //v.setPaddingTop(this.vPadding())
@@ -344,9 +350,18 @@
         return true
     }
 
+    /*
+    syncSelected () {
+        //this.keyView().syncStateFrom(this)
+        //this.valueView().syncStateFrom(this)
+        return this
+    }
+    */
+
     updateSubviews () {
         super.updateSubviews()
-        
+        //this.syncSelected()
+
         /*
         const node = this.node()
 
@@ -364,12 +379,12 @@
         return this
     }
 
-    /*
     applyStyles () {
         super.applyStyles()
+        //this.keyView().applyStyles()
+        //this.valueView().applyStyles()
         return this
     }
-    */
     
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")

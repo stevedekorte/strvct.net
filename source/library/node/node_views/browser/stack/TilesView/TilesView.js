@@ -133,9 +133,11 @@
         }
         */
 
+        /*
         if (this.selectedTiles().length === 0) {
             //this.didChangeNavSelection() // TODO: is this right?
         }
+        */
         return this
     }
 
@@ -290,5 +292,12 @@
         }
         this.scheduleSyncFromNode()
     }
+
+    /*
+    scheduleSyncFromNode () {
+        console.warn(this.typeId() + " scheduleSyncFromNode")
+        return super.scheduleSyncFromNode()
+    }
+    */
     
 }.initThisClass());

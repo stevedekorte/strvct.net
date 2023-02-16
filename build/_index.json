@@ -236,8 +236,8 @@
   },
   {
     "path": "source/library/notification/SyncScheduler.js",
-    "size": 8562,
-    "hash": "AnLk1tQ+DQwT6tbMMw2EClyaZCIGEfkfy0psbQeopqQ="
+    "size": 8573,
+    "hash": "cj7889DBx0V6k2u3W5v6e4vz+wKEv/dHLGgHnuVT8Vk="
   },
   {
     "path": "source/library/notification/notifications/BMNotification.js",
@@ -696,8 +696,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/StyledDomView.js",
-    "size": 6233,
-    "hash": "oWbhwr5Hz4fQTy5mbzRtU7ZJsgudcrORD8P07gA3r4s="
+    "size": 6378,
+    "hash": "TIFfk742fY0Oin9QAyqQDXQ+Rp5veb74tVHW5glct6Y="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/BooleanView.js",
@@ -746,8 +746,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 14843,
-    "hash": "AEYT1KUvw6zYV3NKrVOkg9kMXIaGQrYdipLYiuUIrJ4="
+    "size": 15290,
+    "hash": "tO/ajya9RALvV8eoKkHmCE84ku5GnbKFNe1lA/hmm1g="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -1101,8 +1101,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView.js",
-    "size": 7094,
-    "hash": "xOhbmNQD+ASc3wJoGlyT9U+OJE/c9OYe7RfLtlEIygc="
+    "size": 7273,
+    "hash": "upIbQpnRDIklQEwpidFNlqQWY0Z0kNlvaVMupEiQFis="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_dragViewProtocol.js",
@@ -1166,13 +1166,13 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/TitledTile.js",
-    "size": 8118,
-    "hash": "yIxVWgAiG0mt48LNTweWmjDy29LJ5KHE/tJKJpeMs+A="
+    "size": 8277,
+    "hash": "9nW90aLLtKK8TI/OlcAL65+tZAD3SL5kdwhHVRqT8V8="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BMTextNodeTile.js",
-    "size": 2961,
-    "hash": "FCE4Vli0Th5dWwoezvcwQTWQtnS1xZ+6a3m0wa7cokA="
+    "size": 3019,
+    "hash": "/0wTI41n5Ka1mmFAbjTM/MRtIdRYWhJueRwOwLF1V58="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbsTile.js",
@@ -1206,8 +1206,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMFieldTile.js",
-    "size": 11824,
-    "hash": "EM15dawxDENaXNFAxMOTSmSWPaTFFgbyhPrJso2AddM="
+    "size": 12247,
+    "hash": "zt5ejFYxMEk44nbP+LT5g+d4Zk3E3I+bIQEOomvK0ek="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMActionNodeTile.js",
@@ -1396,8 +1396,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 7110,
-    "hash": "ReYoDWt/6lxhB0GVe4KB6JSYFfeWJI1oqfpeoGhSbRA="
+    "size": 7160,
+    "hash": "0L6YFuS58tR9mHfxEvOQzAV1t98ppw6SxDfgqeTGirU="
   },
   {
     "path": "source/library/resources/themes/BMThemeFolder.js",

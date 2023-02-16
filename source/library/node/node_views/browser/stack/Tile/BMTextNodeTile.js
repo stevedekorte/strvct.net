@@ -90,6 +90,7 @@
     // --- theme ---
 
     themeClassName () {
+        // search up the nodes to find a theme class name
         const node = this.node()
         if (node && node.themeClassName) {
             return node.themeClassName()

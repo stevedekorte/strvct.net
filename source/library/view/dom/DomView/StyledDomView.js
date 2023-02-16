@@ -50,6 +50,12 @@
         return this
     }
 
+    syncStateFrom (aView) {
+        this.setIsSelected(aView.isSelected())
+        this.setIsActive(aView.isActive())
+        return this
+    }
+
     // styles
 
     /*

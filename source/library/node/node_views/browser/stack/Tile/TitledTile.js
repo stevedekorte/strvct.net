@@ -142,9 +142,14 @@
 
     syncSelected () {
         const b = this.isSelected()
+        this.titleView().syncStateFrom(this)
+        this.subtitleView().syncStateFrom(this)
+        this.noteView().syncStateFrom(this)
+        /*
         this.titleView().setIsSelected(b)
         this.subtitleView().setIsSelected(b)
         this.noteView().setIsSelected(b)
+        */
         return this
     }
 

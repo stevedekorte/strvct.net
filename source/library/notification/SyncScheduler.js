@@ -87,12 +87,12 @@
             if (syncMethod !== "processPostQueue") {
                 if (this.currentAction() && this.currentAction().equals(newAction)) {
                     const error = [
-                        this.typeId(), "LOOP DETECTED: ",
-                        "  scheduleTargetAndMethod: \n", newAction.description(),
-                        "  while processing: ", this.currentAction().description()
-                    ]
-                    console.log(error.join())
-                    throw new Error(error.join())
+                        this.type() + " LOOP DETECTED: ",
+                        "  scheduleTargetAndMethod: (" + newAction.description() + ")",
+                        "  while processing: (" + this.currentAction().description() + ")"
+                    ].join("\n")
+                    console.log(error)
+                    throw new Error(error)
                 }
             }
 

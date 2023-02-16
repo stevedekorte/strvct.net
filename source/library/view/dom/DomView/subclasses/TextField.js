@@ -527,6 +527,26 @@
     
     */
 
+    setThemeClassName (aName) {
+        if (this.themeClassName() === "FieldKey") {
+            debugger;
+        }
+
+        super.setThemeClassName(aName)
+        if (aName === "FieldKey") {
+            assert(this.themeClassName() === "FieldKey")
+        }
+         return this
+    }
+
+    applyStyles () {
+        if (this.themeClassName() === "FieldKey") {
+            debugger;
+        }
+        super.applyStyles()
+        return this
+    }
+
     activate () {
         if (this.usesDoubleTapToEdit()) {
             this.onDoubleTapComplete()

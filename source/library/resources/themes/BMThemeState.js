@@ -32,8 +32,6 @@
             "borderRight", 
             "borderTop", 
             "borderBottom",
-            "borderWidth", 
-            "borderColor", 
             "borderRadius"
         ];
 
@@ -208,8 +206,10 @@
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
                 const v = this.getCachedStyleValueNamed(name)
+                //if (aView.type() === "HeaderTile" && name === "fontSize") {
+                    //console.log( aView.type() + " style " + name + " set to " + v)
+                //}
                 aView.performIfResponding(aView.setterNameForSlot(name), v)
-                //console.log( aView.type() + " style " + name + " set to " + v)
             } else {
                 console.log("style " + name + " locked on view " + aView.type())
             }
@@ -245,8 +245,8 @@
 
     didUpdateSlot (aSlot, oldValue, newValue) {
         if (this.hasDoneInit()) {
-            DocumentBody.shared().resyncAllViews() // this will apply any new styles
             if (aSlot.name() !== "styleCacheMap") { // hack
+                DocumentBody.shared().resyncAllViews() // this will apply any new styles
                 //this.scheduleMethod("clearStyleCache") 
                 this.scheduleCacheClears()
             }
