@@ -8,48 +8,140 @@
 
 */
 
-(class BMThemeState extends BMStorableNode {
+(class BMThemeState extends BMThemeFolder {
     
-    initPrototypeSlots () {
-
-        const styleNames = [
-            "color", 
+    static styleNames () {
+        return [
+            "color", // start with ["#000", "#111", "#222", "#333", "#444", .. to #fff by X
             "backgroundColor", 
-            "opacity", 
+            "opacity", // 0 to 1 by 0.1
 
             "fontFamily",
-            "fontWeight",
-            "fontSize",
-            "lineHeight",
-            "letterSpacing",
+            //"font-variant", // normal, small-caps
+            //"fontStyle", // normal, italic, oblique
+            "fontWeight", // normal, bold, lighter, bolder, 100-900 by 100
+            "fontSize", // 3px to 50px by 1px
 
-            "paddingLeft", 
+            "lineHeight", // 0.8em to 3em by 0.1em
+            "letterSpacing", // 0.1 em to 2em by 0.1em
+
+            "paddingLeft", // 0px to 100px by 1px
             "paddingRight", 
             "paddingTop", 
             "paddingBottom",
 
-            "borderLeft", 
+            // for border we need to support 
+            // left, right, top, bottom
+            // border-style
+            // border-width
+            // border-radius
+            "borderLeft", // 0px to 100px by 1px 
             "borderRight", 
             "borderTop", 
             "borderBottom",
             "borderRadius"
         ];
+    }
 
+    static validColors () {
+        return ["inherit", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
+    }
+
+    initPrototypeSlots () {
+        const styleNames = this.thisClass().styleNames()
         this.newSlot("styleNames", styleNames);
         this.newSlot("borderStyleNames", styleNames.select(name => name.beginsWith("border"))); // cached for efficiency
         this.newSlot("nonBorderStyleNames", styleNames.select(name => !name.beginsWith("border"))); // cached for efficiency
         this.newSlot("styleCacheMap", null);
 
-        /*
+        const styleSlots = []
+        this.newSlot("styleSlots", styleSlots)
+
         {
             const slot = this.newSlot("color", "")
+            //slot.setComment("style")
+            slot.setLabel("color")
             slot.setShouldStoreSlot(true)
             slot.setDuplicateOp("duplicate")
             slot.setSlotType("String")
-            slot.setLabel("color")
+            slot.setValidValues(this.thisClass().validColors())
+            styleSlots.push(slot)
+        }
+
+        {
+            const slot = this.newSlot("backgroundColor", "")
+            slot.setLabel("background color")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            slot.setValidValues(this.thisClass().validColors())
+            styleSlots.push(slot)
+        }
+
+        {
+            const slot = this.newSlot("opacity", "1")
+            slot.setLabel("opacity")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            slot.setValidValues(["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
+            styleSlots.push(slot)
+        }
+
+        {
+            const slot = this.newSlot("fontFamily", "")
+            slot.setLabel("font family")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            styleSlots.push(slot)
+        }
+
+
+        /*
+        // weight and style don't work with some good fonts like
+        // helvetica as it uses a different font for each,
+        // so hold off on these until we have a UI to manage this stuff
+        
+        {
+            const slot = this.newSlot("fontWeight", "")
+            slot.setLabel("font weight")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            slot.setValidValues(["inherit", "normal", "bold"])
+            styleSlots.push(slot)
+        }
+
+        {
+            const slot = this.newSlot("fontStyle", "")
+            slot.setLabel("font style")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            slot.setValidValues(["inherit", "normal", "italic", "oblique"])
+            styleSlots.push(slot)
         }
         */
 
+        {
+            const slot = this.newSlot("fontSize", "")
+            slot.setLabel("font size")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setSlotType("String")
+            const fontSizes = ["inherit"]
+            for (let i = 6; i < 41; i ++) {
+                fontSizes.push(i + "px")
+            }
+            slot.setValidValues(fontSizes)
+            styleSlots.push(slot)
+        }
+
+
+        
+
+        /*
         styleNames.forEach(styleName => {
             const slot = this.newSlot(styleName, "")
             slot.setShouldStoreSlot(true)
@@ -59,6 +151,7 @@
             slot.setLabel(styleName)
             //slot.setInspectorPath("Key")
         })
+        */
     }
 
     init () {
@@ -66,10 +159,10 @@
 
         this.setStyleCacheMap(null) // null is used to indicate cache needs to be built when accessed
         this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true) 
+        this.setShouldStoreSubnodes(false) 
         
-        //this.setSubtitle("ThemeState")
-        this.setSubnodeClasses([BMStringField])
+        this.setSubtitle("state")
+        //this.setSubnodeClasses([BMStringField])
         //this.setupSubnodes()
 
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
@@ -111,7 +204,8 @@
     */
 
     setThemeAttribute (key, value) {
-        this.firstSubnodeWithTitle(key).setValue(value)
+        this[key.asSetter()].apply(this, [value])
+        //this.firstSubnodeWithTitle(key).setValue(value)
         return this
     }
 
@@ -119,10 +213,40 @@
         return this
     }
 
+    /*
     subnodeNames () {
-        return this.styleNames()
+        return this.styleNames() // faster
+    }
+    */
+
+    // prepareForAccess
+    prepareForFirstAccess () {
+        if (this.subnodes().length) {
+            this.subnodes().forEach(field => {
+                if (field.pickSubnodesMatchingValue) {
+                    field.pickSubnodesMatchingValue() 
+                }
+            })
+        }
     }
 
+    setupSubnodes () {
+        // need to do this here because the fonts typically aren't loaded until after this prototype is initialized
+        this.thisPrototype().slotNamed("fontFamily").setValidValues(BMResources.shared().fonts().allFontNames())    
+
+        this.removeAllSubnodes()
+        this.styleSlots().forEach(slot => {
+            const name = slot.name()
+            const field = slot.newInspectorField()
+            field.setTarget(this)
+            //field.setValue(this[name].apply(this))
+            field.setNodeCanEditTitle(false)
+            //field.getValueFromTarget()
+            this.addSubnode(field)
+        })
+    }
+
+    /*
     setupSubnodes () {
         const subnodeClass = this.subnodeClasses().first()
         this.subnodes() // needed? is this it trigger first access?
@@ -131,8 +255,24 @@
             subnode.setKey(name) 
             subnode.setTarget(this)
             subnode.setValueMethod(name)
+            subnode.setKeyIsEditable(false)
         })
+
+        {
+            const title = "Font Family"
+            //const options = BMResources.shared().fonts().newFontOptions()
+            const options = this.subnodeWithTitleIfAbsentInsertProto(title, BMOptionsNode)
+            options.setNodeSubtitleIsChildrenSummary(true)
+            options.setTitle(title)
+            options.setNodeCanEditTitle(false)
+            options.setOptionsSource(BMResources.shared().fonts())
+            options.setOptionsSourceMethod("allFontNames")
+            options.subnodes().forEach(option => {
+                option.setNodeCanEditTitle(false)
+            })
+        }
     }
+    */
 
     // --- style cache ---
 
@@ -176,16 +316,19 @@
     getStyleValueNamed (name) {
         const getterMethod = this[name]
 
-        if (!getterMethod) {
+        let v = null
+
+        if (getterMethod) {
+            v = getterMethod.apply(this)
+            if (v === "") { 
+                v = null
+            }
+        } else {
             const errorMsg = "missing getter method: " + this.type() + "." + name + "()"
             console.warn(errorMsg)
-            throw new Error(errorMsg)
+            //throw new Error(errorMsg)
         }
 
-        let v = getterMethod.apply(this)
-        if (v === "") { 
-            v = null
-        }
 
         if (v == null) {
             const parent = this.parentThemeState()
@@ -206,9 +349,6 @@
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
                 const v = this.getCachedStyleValueNamed(name)
-                //if (aView.type() === "HeaderTile" && name === "fontSize") {
-                    //console.log( aView.type() + " style " + name + " set to " + v)
-                //}
                 aView.performIfResponding(aView.setterNameForSlot(name), v)
             } else {
                 console.log("style " + name + " locked on view " + aView.type())
@@ -247,7 +387,6 @@
         if (this.hasDoneInit()) {
             if (aSlot.name() !== "styleCacheMap") { // hack
                 DocumentBody.shared().resyncAllViews() // this will apply any new styles
-                //this.scheduleMethod("clearStyleCache") 
                 this.scheduleCacheClears()
             }
         }
@@ -255,11 +394,25 @@
     }
 
     scheduleCacheClears () {
+        // need to clear our sibling caches as there is inheritance between states,
+        // so our change may invalidate attributes of states that inherit from us
         this.parentNode().subnodes().forEach(sn => sn.scheduleMethod("clearStyleCache"))
     }
     
     didReorderParentSubnodes () {
         this.scheduleMethod("clearStyleCache")
+    }
+
+    styleMap () {
+        const map = new Map()
+        const title = this.title()
+        this.styleNames().forEach(name => { 
+            //const v = this.getCachedStyleValueNamed(name)
+            const v = this.getStyleValueNamed(name)
+            map.set(title + ". " + name, v)
+            // these look like: disabled.backgroundColor: "black"
+        })
+        return map
     }
 
 }.initThisClass());

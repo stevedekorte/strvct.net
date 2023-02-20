@@ -30,6 +30,12 @@
     }
     */
 
+    justSetIsPicked (aBool) {
+        assert(Type.isBoolean(aBool))
+        this._isPicked = aBool
+        return this
+    }
+
     didUpdateSlotIsPicked (oldValue, newValue) {
         if (this.parentNode()) {
             this.parentNode().didToggleOption(this)

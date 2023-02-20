@@ -106,8 +106,8 @@
   },
   {
     "path": "source/library/ideal/categories/String_ideal.js",
-    "size": 13864,
-    "hash": "1kjLNW/i5XkKJRm/fhDAgQ6bUlmqxEj4RcYwwQpAls0="
+    "size": 15004,
+    "hash": "71SKTuMvR0NPv5QmbHNAbscVct6dd+Fh2jcvQt7CBaA="
   },
   {
     "path": "source/library/ideal/categories/Number_ideal.js",
@@ -151,8 +151,8 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 17068,
-    "hash": "uNPVy6eTIGj/Nuv7VPZ07PNm1ovXTGAMzcUCmwgPocY="
+    "size": 17137,
+    "hash": "gY5q34j6gYrfLkyfLIjoj16eeJGhhRkag+vbz/2XRsg="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
@@ -196,8 +196,8 @@
   },
   {
     "path": "source/library/ideal/map/AtomicMap.js",
-    "size": 5383,
-    "hash": "yxv+pWwhSirTsc/+lM7mt37bpkuqsepCqo4wVsk2l7o="
+    "size": 6015,
+    "hash": "RHn0s0ae5T3vBLwAM2d1MQwEpwilI12P2I6fSag3UTE="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -616,8 +616,8 @@
   },
   {
     "path": "source/library/view/dom/Helpers/Node-helpers.js",
-    "size": 5420,
-    "hash": "imt/HgoNvU+h2cQ/00pGSbcSlSwR+F8B9+OSZw0wrEg="
+    "size": 5424,
+    "hash": "RQ3x+G8mNb5ylq6DDNtZBeYCajOZYIqvyiMFvAUtBfg="
   },
   {
     "path": "source/library/view/dom/Helpers/TapeMeasures/CanvasTextTapeMeasure.js",
@@ -631,8 +631,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/ElementDomView.js",
-    "size": 9889,
-    "hash": "kxucOv69WmmkQwh5tFZoUbDX3kscLYrKrpVODCd9MGc="
+    "size": 9887,
+    "hash": "M74QkTO8NwCbGDViVT7BEiefUiyEWlz6pM7D+h78dPw="
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
@@ -641,8 +641,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
-    "size": 18941,
-    "hash": "VAoFLwihkbgCIvldv1PK6HzY+fg4OBFzY/7R0IoCzh4="
+    "size": 19379,
+    "hash": "pMgNuCwm5zrvo+3W9uetTIAXz1+KqyeN/IwPCrp0JDg="
   },
   {
     "path": "source/library/view/dom/DomView/ListenerDomView.js",
@@ -676,8 +676,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/DomView.js",
-    "size": 305,
-    "hash": "S3iW32R7SEJjpBOk2Bg29Nsv9G6HvNN5SUmXrlAEBlI="
+    "size": 304,
+    "hash": "/fI/UxuiFgStPwA1eIYv21NPPNGgax+CmPdJ9WZDfoU="
   },
   {
     "path": "source/library/view/dom/DomView/DomView_animations.js",
@@ -696,8 +696,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/StyledDomView.js",
-    "size": 6378,
-    "hash": "TIFfk742fY0Oin9QAyqQDXQ+Rp5veb74tVHW5glct6Y="
+    "size": 7183,
+    "hash": "myyvgKVmRh+zGqmXJWbg3mu3Ji+Lld2L3U0kbomGPk8="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/BooleanView.js",
@@ -746,8 +746,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 15290,
-    "hash": "tO/ajya9RALvV8eoKkHmCE84ku5GnbKFNe1lA/hmm1g="
+    "size": 15312,
+    "hash": "l3PypioDuBtQ5dNn+Rus+HG1EHEvADd6A75Gp5b4PoI="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -776,8 +776,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 3312,
-    "hash": "vSy54Pe+CWOp09k5KHp5wEKDST9C5d1NEs7QyTDQi0o="
+    "size": 3387,
+    "hash": "mH7VOJ0o3uKMXbxEMgjv9gR8B5YJq45HJDqXFIYW19Q="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -856,8 +856,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 26256,
-    "hash": "nae//ptMFaHUQVJc2f9M1agOXzePbBG9Mq6LYnjM6fc="
+    "size": 26367,
+    "hash": "PSXEhVfEFY6qx4Yo2POkGRUn5HCGU9l243hh+rdMC1A="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
@@ -1006,13 +1006,13 @@
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
-    "size": 2904,
-    "hash": "VANRc05beKGf/LFjupRamlNZCBx2n8y1q1j7H6bNHFg="
+    "size": 4525,
+    "hash": "QJPcOT1XSonTbtoTBwqgn8wwTkiJvT992CyfGb7v5M4="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
-    "size": 1391,
-    "hash": "Bp/Dqkrb6zcA/uzVOi5EM5VkY+oE8mhOoAJu6Ywgl6o="
+    "size": 1517,
+    "hash": "q+GYYT3W2pfFpdgfdGJYT5RA0uv0YR0m53EAec75gWc="
   },
   {
     "path": "source/library/node/fields/subclasses/date/BMDateNode.js",
@@ -1066,8 +1066,8 @@
   },
   {
     "path": "source/library/node/node_views/NodeView.js",
-    "size": 9752,
-    "hash": "uf8tu9yL402UJPO7G5MyxKnyiJk68Q/jIvZ2gG9KSWA="
+    "size": 9888,
+    "hash": "AN2SflQeDA8matMmQJrl7RCVUZNvZynNw08txVvoIzw="
   },
   {
     "path": "source/library/node/node_views/ImageWellView.js",
@@ -1091,8 +1091,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
-    "size": 8226,
-    "hash": "3bl5WHyjj23RNNo7R7476NAY2B17/UnNipfNdG8RUJ0="
+    "size": 8228,
+    "hash": "VcYHffdIeMvT1w/lup9NB8Nmdd0q9yVD/kGONMsl5Cs="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackScrollView.js",
@@ -1166,8 +1166,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/TitledTile.js",
-    "size": 8277,
-    "hash": "9nW90aLLtKK8TI/OlcAL65+tZAD3SL5kdwhHVRqT8V8="
+    "size": 8315,
+    "hash": "Bq4Gh5lEn/rVlYtiBPthMef6flVX6atL/Y1KeciRLo4="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BMTextNodeTile.js",
@@ -1206,8 +1206,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMFieldTile.js",
-    "size": 12247,
-    "hash": "zt5ejFYxMEk44nbP+LT5g+d4Zk3E3I+bIQEOomvK0ek="
+    "size": 12280,
+    "hash": "ZfX/6dit0XoZjzwg9RgNI5tNe9r7ulHXRWzOmXmpWR0="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMActionNodeTile.js",
@@ -1311,8 +1311,8 @@
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
-    "size": 1830,
-    "hash": "Espuj5RI3AOm+RCpQoqktpE8OEbvWBVQ6zrsZEYm/v4="
+    "size": 2471,
+    "hash": "FqI/zPskzRnCnw5QNTE1Jh81Q6LHJZJxEtRwcK4rkL8="
   },
   {
     "path": "source/library/resources/fonts/BMFontFamily.js",
@@ -1375,9 +1375,14 @@
     "hash": "gCnUk1dlmFZrzLZtwOGzroYrE0yGdjevHH8ntTqOojg="
   },
   {
+    "path": "source/library/resources/themes/BMThemeFolder.js",
+    "size": 934,
+    "hash": "spZPbXJONnFYKeHPZ+RrkBFYQsDKRSEGYSDjFyR5/i8="
+  },
+  {
     "path": "source/library/resources/themes/BMTheme.js",
-    "size": 858,
-    "hash": "IJB7n+DhOSKcmUjkEDMUUgYSz/+9yjhnrrRGY1sxBio="
+    "size": 917,
+    "hash": "r/AkGUQpFxZxAV3+vTJMO6xbbiW4Ti4xhpPwtaTgp9k="
   },
   {
     "path": "source/library/resources/themes/BMDefaultTheme.js",
@@ -1385,24 +1390,24 @@
     "hash": "N/S00Ik3xf3pMy7bpiKIPCWZ20R0xdCysKIJAatE714="
   },
   {
-    "path": "source/library/resources/themes/BMThemeLevel.js",
-    "size": 1137,
-    "hash": "0Sa49fBffYUHqCrdXmStK8K0yqHJ9Vl6pVgxDC5pNqA="
-  },
-  {
     "path": "source/library/resources/themes/BMThemeClass.js",
-    "size": 3562,
-    "hash": "QLtGUNLA4Rr50+ibLu7ET7NB5l8vbOzvKH4/ek9LsoQ="
+    "size": 3808,
+    "hash": "xlqIhudN6ASS0ANnwxSm1LYHcksXZoMh3EiVVuoUrL0="
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 7160,
-    "hash": "0L6YFuS58tR9mHfxEvOQzAV1t98ppw6SxDfgqeTGirU="
+    "size": 12651,
+    "hash": "fWjiRyPfBsfaettZLISpYmhe5EgM4SoY272lKOulUUI="
   },
   {
-    "path": "source/library/resources/themes/BMThemeFolder.js",
-    "size": 589,
-    "hash": "E28eGEUbyC43pw8P0rA3oUwZ5Vmzlh0Dp7FJbjy2dao="
+    "path": "source/library/resources/themes/BMThemeLevelClass.js",
+    "size": 1162,
+    "hash": "gWY0ZzCRH29SwndZ2DWQnx31AmhupXHWq6SmvISd+cM="
+  },
+  {
+    "path": "source/library/resources/themes/BMThemeLeveledFolder.js",
+    "size": 714,
+    "hash": "cGfi3WV1Kqkn5Jt1yHsjAZmQ44XJ25X/aYgDZw77mg8="
   },
   {
     "path": "source/library/resources/icons/BMIconResources.js",
@@ -1435,6 +1440,16 @@
     "hash": "cPcFquCLISIA5i8dUyyxPra7XU+jRBmM0Mkh1GgPtN8="
   },
   {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Neue.woff2",
+    "size": 19540,
+    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Neue Bold.woff2",
+    "size": 19284,
+    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
+  },
+  {
     "path": "resources/fonts/Helvetica/fonts/Helvetica.woff2",
     "size": 19540,
     "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
@@ -1443,6 +1458,126 @@
     "path": "resources/fonts/Helvetica/fonts/Helvetica Bold.woff2",
     "size": 19284,
     "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light.woff2",
+    "size": 17636,
+    "hash": "2Yo9dfn69uSllWaAVkEHUIsS5GLdMYNy2ZJCXt0glQ4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Oblique.woff2",
+    "size": 18324,
+    "hash": "ag5Wk1GTC2MREiOnugQou0QaT3UwFp4V7SEScEX9hDw="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Roman.woff2",
+    "size": 19540,
+    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Obliqu1489444.woff2",
+    "size": 20472,
+    "hash": "KQbIVtSMwRgtVGJv2LAFqFwzrtD5C1g2XkPnAAVsNQs="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold.woff2",
+    "size": 19284,
+    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold O1489460.woff2",
+    "size": 20112,
+    "hash": "9YQU1vu1v9zhRorMwyRH7fL9QsUSSnuMjcFdGemcgk4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black.woff2",
+    "size": 18088,
+    "hash": "nPl6A9W2+KyIgR7h7hmyAxLZjw/5igvrF4Vs34YDf3Y="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Oblique.woff2",
+    "size": 18796,
+    "hash": "w7bFJxlUPRks3w7JYzBIOeGiLXkLwFIAXtXoYtMkVQ4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Cond.woff2",
+    "size": 17952,
+    "hash": "qoh++iK/opE5oVrDs8Aqavq3sfFU1GGmGINVWbP0dVM="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Cn Obl.woff2",
+    "size": 19124,
+    "hash": "Wdlj69vhLVw9GhcL30BDbpYo/0q1GX+n1VZg5jEJdUA="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Condensed.woff2",
+    "size": 18148,
+    "hash": "XPLi6eYI1S57B6sratgoANS2uKw8f8WsVApAeoqEbP0="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Condensed Obl.woff2",
+    "size": 19192,
+    "hash": "nG/bswgnp1/8LaiBQDwfCtF5YRAU1FZaNeCnB6o+yAI="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Cond.woff2",
+    "size": 18704,
+    "hash": "IbEiYQP8kt3yxAsJo94jUprAm9MYHnKIwfjMOX8t4Us="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Cond Obl.woff2",
+    "size": 19812,
+    "hash": "kXNEAT/mltRctzj+Lmko8G5IHsreMgVIHu0ADonU9+w="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Cond.woff2",
+    "size": 17980,
+    "hash": "dy9m05wySomBFDLPZyGsPrMEx245DZjbyOMuh82mJos="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Cn Obl.woff2",
+    "size": 19264,
+    "hash": "VKdy2sPIOYv64kOnSuY8dK4iwuKcf30B6jh5sI6OuPE="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Compressed.woff2",
+    "size": 17984,
+    "hash": "8guf9Rx9fcAOiLtaOT579kJSOhelEsPSnKWzBi2dkVs="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 X Compressed.woff2",
+    "size": 17088,
+    "hash": "lFCCLzBw50JW88uPrR8kC3ltMgJVJJ4TOWMjCXa1UDc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Ult Comp.woff2",
+    "size": 17792,
+    "hash": "CkU5CX24SXNg8WYQ9WFJJkVwQsS9znvw2vlPCrxmsYM="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Inserat LT W01 Rg.woff2",
+    "size": 18844,
+    "hash": "YsPuUqRHoqKzI0MQOUZgISq/92nY8FHQimFUK8pAISc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Narrow.woff2",
+    "size": 17836,
+    "hash": "asm+E++nde6lPycCwB6xCQrxA0JhkuVQPLKk/D4UhGQ="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Narrow Obl.woff2",
+    "size": 18876,
+    "hash": "eW2Y6nc3CuXsP9HhqfCp0XMyoo1jQxJ4pATxWCdVlEQ="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Narrow.woff2",
+    "size": 20596,
+    "hash": "VT9Pf4O+tCO7larrK7wx1GPq2IyrvxUXptmvv2sjyA8="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Nr Obl.woff2",
+    "size": 21556,
+    "hash": "0rCiSP1mkKxQiNjbe02kgTURywKGj/5HoPadmmH9oCI="
   },
   {
     "path": "resources/sounds/beep_06.wav",

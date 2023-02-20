@@ -140,7 +140,7 @@
         return false
     }
 
-    syncSelected () {
+    syncStylesToSubviews () {
         const b = this.isSelected()
         this.titleView().syncStateFrom(this)
         this.subtitleView().syncStateFrom(this)
@@ -160,12 +160,9 @@
 
         if (node) {
             this.titleView().setIsEditable(node.nodeCanEditTitle())
-
             this.subtitleView().setIsEditable(node.nodeCanEditSubtitle())
             this.subtitleView().setDisplayIsHidden(!this.hasSubtitle())
     
-            this.syncSelected()
-
             if (node) {
                 const imageUrl = node.nodeThumbnailUrl()
                 if (imageUrl) {
@@ -186,6 +183,9 @@
             this.subtitleView().setIsEditable(false)
             this.subtitleView().setDisplayIsHidden(true) 
         }
+
+        this.syncStylesToSubviews()
+        this.applyStyles()
 
         /*
         const state = this.currentThemeState()

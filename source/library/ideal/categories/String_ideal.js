@@ -8,6 +8,7 @@
 
 */
 
+String.prototype._setterCacheMap = new Map();
 
 (class String_ideal extends String {
     
@@ -329,7 +330,19 @@
     /// String
 
     asSetter () {
-        return "set" + this.capitalized();
+        const cache = this.thisPrototype()._setterCacheMap 
+        let result = cache[this]
+        if (!result) {
+             result = "set" + this.capitalized()
+             cache.set(this, result)
+             // test for highwater mark
+             if (cache.size > 50000) {
+                console.warn("setter cache is getting big! clearing...")
+                cache.clear()
+             }
+        }
+        return result
+        //return "set" + this.capitalized();
     }
 
     firstCharacter () {
@@ -397,8 +410,27 @@
             s4() + "-" + s4() + s4() + s4();
     }
 
+    byteLength () {
+        // returns the byte length of an utf8 string
+        // from: https://stackoverflow.com/questions/5515869/string-length-in-bytes-in-javascript
+        let s = this.length;
+        for (let i = this.length - 1; i >= 0; i--) {
+            const code = this.charCodeAt(i);
+            if (code > 0x7f && code <= 0x7ff) {
+                s ++;
+            } else if (code > 0x7ff && code <= 0xffff) { 
+                s += 2;
+            }
+            if (code >= 0xDC00 && code <= 0xDFFF) {
+                i--; //trail surrogate
+            }
+        }
+        return s;
+    }
+
     byteSizeDescription () {
-        return this.length.byteSizeDescription()
+        return this.byteLength().byteSizeDescription()
+        //return this.length.byteSizeDescription()
     }
 
     hashCode () {

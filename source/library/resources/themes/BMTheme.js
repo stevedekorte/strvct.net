@@ -6,25 +6,28 @@
 
 */
 
-(class BMTheme extends BMStorableNode {
-  initPrototypeSlots() {}
+(class BMTheme extends BMThemeFolder {
+  
+  initPrototypeSlots() {
+  }
 
-  init() {
+  init () {
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setNodeCanEditTitle(true);
     this.setTitle("Untitled " + this.thisClass().visibleClassName());
+    this.setSubtitle("theme")
     //this.setSubtitle("Theme")
     this.setCanDelete(true);
     this.addAction("add");
     //this.setSubnodeClasses([BMThemeLevel]);
-    this.setSubnodeClasses([BMThemeClass, BMThemeFolder]);
+    this.setSubnodeClasses([BMThemeClass, BMThemeFolder, BMThemeLeveledFolder]);
     this.setNodeCanReorderSubnodes(true);
     //this.setupSubnodes()
   }
 
-  setupAsDefault() {
+  setupAsDefault () {
     this.setTitle("DefaultTheme");
     const defaultThemeClass = BMThemeClass.clone().setupAsDefault();
     this.addSubnode(defaultThemeClass);

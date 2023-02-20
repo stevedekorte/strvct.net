@@ -48,11 +48,13 @@
 
     setupInspectorFromSlots () {
         this.thisPrototype().allSlotsMap().forEachV(slot => {
-            const field = slot.newInspectorField()
-            if (field) {
-                field.setTarget(this)
-                const node = this.nodeInspector().createNodePath(slot.inspectorPath())
-                node.addSubnode(field)
+            if (slot.canInspect()) {
+                const field = slot.newInspectorField()
+                if (field) {
+                    field.setTarget(this)
+                    const node = this.nodeInspector().createNodePath(slot.inspectorPath())
+                    node.addSubnode(field)
+                }
             }
         })
         return this

@@ -509,7 +509,11 @@
         const aClass = this.classForName(className)
 
         if (!aClass) {
-            throw new Error("missing class '" + className + "'")
+            const error = "missing class '" + className + "'"
+            console.warn(error)
+            //throw new Error(error)
+            debugger
+            return null
         }
         
         assert(!Type.isNullOrUndefined(aRecord.id))

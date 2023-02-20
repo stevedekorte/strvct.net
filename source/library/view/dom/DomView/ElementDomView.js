@@ -344,6 +344,4 @@
         return this.getAttribute("contentEditable") === "true"
     }
 
-
-
 }.initThisClass());

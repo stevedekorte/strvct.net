@@ -266,7 +266,7 @@
         const p = aGesture.currentPosition() // position in document coords
         const f = this.frameInDocument()
         const newHeight = Math.max(10, p.y() - f.y())
-        console.log("node " + this.node().title() + " newHeight = ", newHeight)
+        //console.log("node " + this.node().title() + " newHeight = ", newHeight)
         this.node().setNodeMinTileHeight(newHeight)
         this.scheduleSyncToNode()
         return this

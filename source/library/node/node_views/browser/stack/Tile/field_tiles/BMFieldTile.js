@@ -350,17 +350,16 @@
         return true
     }
 
-    /*
-    syncSelected () {
-        //this.keyView().syncStateFrom(this)
-        //this.valueView().syncStateFrom(this)
+    syncStylesToSubviews () {
+        super.syncStylesToSubviews()
+        this.keyView().syncStateFrom(this)
+        this.valueView().syncStateFrom(this)
         return this
     }
-    */
 
     updateSubviews () {
         super.updateSubviews()
-        //this.syncSelected()
+        this.syncStylesToSubviews()
 
         /*
         const node = this.node()

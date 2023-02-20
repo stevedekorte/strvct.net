@@ -13,11 +13,31 @@
     }
 
     initPrototypeSlots () {
-        const picksSlot = this.newSlot("allowsMultiplePicks", false)
-        picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
-        picksSlot.setShouldStoreSlot(true)
+        {
+            const picksSlot = this.newSlot("allowsMultiplePicks", false)
+            picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
+            picksSlot.setShouldStoreSlot(true)
+        }
 
         this.overrideSlot("key", "").setShouldStoreSlot(true)
+
+        this.newSlot("optionsSource", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")
+        this.newSlot("optionsSourceMethod", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")
+    }
+
+    prepareToAccess () {
+        super.prepareToAccess()
+        if (this.subnodes().length === 0) {
+            // as this might be expensive, we should lazy load it first time
+            // and maybe 1) have some sort of change timestamp to check next time it's visible
+            // and/or 2) have a way of getting notifications for changes when possible?
+            const source = this.optionsSource()
+            const method = this.optionsSourceMethod()
+            if (source && method) {
+                const values = source[method].apply(source)
+                this.setValidValues(values)
+            }
+        }
     }
 
     initPrototype () {
@@ -61,7 +81,7 @@
     childrenSummary () {
         const picked = this.pickedSubnodes()
         if (picked.length === 0) {
-            return "None"
+            return "No selection"
         }
         return picked.map(subnode => subnode.summary()).join("")
     }
@@ -104,22 +124,44 @@
         return this.subnodes().select(subnode => subnode.isPicked())
     }
 
+    // syncing
+
+    pickSubnodesMatchingValue () {
+        const v = this.value()
+        this.subnodes().forEach(option => {
+            if (Type.isArray(v)) {
+                option.justSetIsPicked(v.contains(option.value()))
+            } else {
+                option.justSetIsPicked(v == option.value())
+            }
+        })
+    }
+
     acceptedSubnodeTypes () {
         return [BMOptionNode.type()]
     }
 
-    setValidValues (values) {        
-        const options = values.map(v => BMOptionNode.clone().setTitle(v).setValue(v))
-        this.addSubnodes(options)
-        //this.copySubnodes(options)
+    setValidValues (values) {
+        if (!this.validValues().equals(values)) {
+            this.removeAllSubnodes()     
+            const options = values.map(v => {
+                const optionNode = BMOptionNode.clone().setTitle(v).setValue(v)
+                if (v == this.value()) {
+                    optionNode.justSetIsPicked(true)
+                }
+                //optionNode.setIsPicked(v == this.value())
+                optionNode.setNodeCanEditTitle(false)
+                return optionNode
+            })
+            this.addSubnodes(options)
+            //this.copySubnodes(options)
+        }
         return this
     }
 	
-    /*
     validValues () {
         return this.subnodes().map(sn => sn.value())
     }
-    */
     
     nodeTileLink () {
         // used by UI tile views to browse into next column

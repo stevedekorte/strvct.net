@@ -2,16 +2,17 @@
 
 /*
 
-    BMThemeLevel
+    BMThemeLevelClass
 
 */
 
-(class BMThemeLevel extends BMStorableNode {
+(class BMThemeLevelClass extends BMThemeClass {
     
     initPrototypeSlots () {
 
     }
 
+    /*
     init () {
         super.init()
 
@@ -26,6 +27,7 @@
         this.setSubnodeClasses([BMThemeFolder, BMThemeClass])
         this.setNodeCanReorderSubnodes(true)
     }
+    */
 
     updateTitle () {
         const pn = this.parentNode()
@@ -37,19 +39,18 @@
         }
     }
 
-    
+    /*
     didUpdateSlotParentNode (oldValue, newValue) {
         super.didUpdateSlotParentNode(oldValue, newValue)
         this.updateTitle()
         return this
     }
-    
 
     didReorderParentSubnodes () {
         super.didReorderParentSubnodes()
         this.updateTitle()
         return this
     }
-
+    */
 
 }.initThisClass());

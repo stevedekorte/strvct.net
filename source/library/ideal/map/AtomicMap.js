@@ -15,6 +15,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.newSlot("isOpen", true) // public read, private write
         this.newSlot("changedKeySet", null) // private method
         this.newSlot("keysAndValuesAreStrings", true) // private method - Bool, if true, runs assertString on all input keys and values
+        this.newSlot("totalBytesCache", null) // private
     }
 
     init () {
@@ -76,6 +77,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         }
         this.changedKeySet().clear()
         this.setIsInTx(false)
+        this.clearTotalBytesCache()
         return this
     }
 
@@ -173,7 +175,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
         this.assertAccessible()
         this.assertInTx()
-        this.map().delete(k) 
+        this.map().delete(k)
         return this
     }
 
@@ -211,14 +213,32 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         return this.map().size;
     }	
 
+    clearTotalBytesCache () {
+        this.setTotalBytesCache(null)
+        return this
+    }
+
+    /*
+    String.prototype.lengthInBytes = function () {
+        return (new TextEncoder().encode(this)).length
+    }
+    */
+
     totalBytes () {
+        const cachedResult = this.totalBytesCache()
+        if (!Type.isNull(cachedResult)) {
+            return cachedResult
+        }
+
         this.assertNotInTx()
         this.assertAccessible()
         assert(this.keysAndValuesAreStrings())
         let byteCount = 0
-        this.map().ownForEachKV((k, v) => {
-            byteCount += k.length + v.length
+        this.map().forEachKV((k, v) => {
+            byteCount += k.length + v.length // not correct for unicode, but fast and good enough for now
+            //byteCount += k.byteLength() + v.byteLength() // correct, but slow
         })
+        this.setTotalBytesCache(byteCount)
         return byteCount
     }
 

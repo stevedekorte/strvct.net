@@ -56,6 +56,26 @@
         return this
     }
 
+    // theme path
+
+    themeClassNamePath () {
+        // search up the view ancestors and compose a path
+        if (this.themeClassName()) {
+            const path = [this.themeClassName()]
+            this.forEachAncestorView(view => {
+                if (view.themeClassName) {
+                    const k = view.themeClassName()
+                    if (k) {
+                        path.push(k)
+                    }
+                }
+            })
+            path.reverse()
+            return path
+        }
+        return null
+    }
+
     // styles
 
     /*
@@ -87,6 +107,7 @@
     didUpdateSlotIsActive (oldValue, newValue) {
         // sent by hooked setter
         this.applyStyles()
+        this.updateSubviews()
         return this
     }
 
@@ -108,6 +129,7 @@
     didUpdateSlotIsSelected (oldValue, newValue) {
         // sent by hooked setter
         this.applyStyles()
+        this.updateSubviews()
         return this
     }
 
@@ -239,6 +261,17 @@
         }
         return "inherit"
         //return "orange"
+    }
+
+    resyncAllViews () {
+        this.syncStylesToSubviews()
+        this.applyStyles()
+        super.resyncAllViews()
+        return this
+    }
+
+    syncStylesToSubviews () {
+        return this
     }
 	
 }.initThisClass());

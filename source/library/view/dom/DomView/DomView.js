@@ -19,5 +19,4 @@
     }
     */
 
-
 }.initThisClass());

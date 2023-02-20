@@ -4,6 +4,8 @@
 
     BMFontResources
 
+    BMResources.shared().fonts().newFontOptions()
+
 */
 
 (class BMFontResources extends BaseNode {
@@ -83,7 +85,27 @@
         return family
     }
 
+    allFonts () {
+        const fonts = []
+        this.subnodes().forEach(fontFamily => {
+            fontFamily.subnodes().forEach(font => fonts.push(font))
+        })
+        return fonts
+    }
 
+    allFontNames () {
+        return this.allFonts().map(font => font.title())
+    }
+
+    newFontOptions () {
+        const options = BMOptionsNode.clone()
+        this.allFonts().forEach(font => {
+            const name = font.title()
+            const option = BMOptionNode.clone().setLabel(name).setValue(name)
+            options.addSubnode(option)
+        })
+        return options
+    }
 
 
 }.initThisClass());

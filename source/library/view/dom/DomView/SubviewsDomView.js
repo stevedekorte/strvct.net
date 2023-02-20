@@ -91,7 +91,16 @@
     
     // view chains
 
-    parentViewChain () {
+    forEachAncestorView (fn) { // should we call this ancestorViews?
+        // returned list in order of very top parent first
+        let p = this.parentView()
+        while (p) {
+            fn(p)
+            p = p.parentView()
+        }
+    }
+
+    parentViewChain () { // should we call this ancestorViews?
         // returned list in order of very top parent first
         const chain = []
         let p = this.parentView()
@@ -708,7 +717,12 @@
 
     // ----
 
+    updateSubviews () {
+
+    }
+
     resyncAllViews () {
+        this.updateSubviews() // NodeView already does this when it schedules syncFromNode, so don't call from NodeView
         this.subviews().forEach(sv => sv.resyncAllViews())
         return this
     }

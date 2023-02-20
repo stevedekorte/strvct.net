@@ -6,7 +6,7 @@
 
 */
 
-(class BMThemeClass extends BMStorableNode {
+(class BMThemeClass extends BMThemeFolder {
   initPrototypeSlots () {
       this.newSlot("standardStateNames", [
         "disabled",
@@ -23,15 +23,27 @@
 
     this.setNodeCanEditTitle(true);
     this.setTitle("Untitled " + this.thisClass().visibleClassName());
-    //this.setSubtitle("ThemeClass")
+    this.setSubtitle("class")
     this.setCanDelete(true);
     this.addAction("add");
     this.setSubnodeClasses([BMThemeState, BMThemeFolder]);
     this.setNodeCanReorderSubnodes(true);
   }
 
+  /*
+  setSubtitle (s) {
+    if (this.subtitle() && (s === "" || s === null)) {
+      debugger;
+    }
+    super.setSubtitle(s)
+    return this
+  }
+  */
+
   didInit () {
     super.didInit();
+    this.setSubtitle("class")
+
     //console.log(this.typeId() + " subnodes: ", this.subnodes())
     this.setupSubnodes();
   }
@@ -88,6 +100,8 @@
 
   setupActiveDefault () {
     const state = this.activeThemeState();
+    //state.setColor("white")
+    //state.setBackgroundColor("#333")
     state.setThemeAttribute("color", "white");
     state.setThemeAttribute("backgroundColor", "#333");
     //state.setThemeAttribute("fontWeight", "normal");
@@ -146,4 +160,5 @@
   themeSubclassNamed(name) {
     return this.firstSubnodeWithTitle(name);
   }
+
 }.initThisClass());

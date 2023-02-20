@@ -327,7 +327,8 @@
         if (!this.hasScheduleSyncToNode()) {
             this.scheduleSyncFromNode()
         }
-        super.resyncAllViews()
+        this.subviews().forEach(sv => sv.resyncAllViews())
+        //super.resyncAllViews() // skip this as it calls updateSubviews, but we'll do that in syncFromNode
         return this
     }
 

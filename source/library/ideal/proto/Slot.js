@@ -132,7 +132,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     newInspectorField () {
         const slotType = this.slotType() 
-        if (slotType && this.canInspect()) {
+        if (slotType /*&& this.canInspect()*/) {
             let fieldName = "BM" + slotType + "Field"
             if (this.validValues() || this.validValuesClosure()) {
                 fieldName = "BMOptionsNode"
@@ -154,6 +154,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 if (this.validValues()) {
                     field.setValidValues(this.validValues())
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks())
+                    field.setNodeSubtitleIsChildrenSummary(true)
                 } else if (this.validValuesClosure()) {
                     const vv = this.validValuesClosure()()
                     field.setValidValues(vv)

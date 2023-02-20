@@ -99,19 +99,21 @@ if (getGlobalThis()["Node"]) { // DOM Node
         },
 
         forEachAncestor: function (fn) {
-            if (this.parentNode) {
-                fn(this.parentNode)
-                this.parentNode.forEachAncestor(fn)
+            const pn = this.parentNode()
+            if (pn) {
+                fn(pn)
+                pn.forEachAncestor(fn)
             }
         },
 
         hasAncestor: function (anElement) {
-            if (this.parentNode) {
-                if (this.parentNode === anElement) {
+            const pn = this.parentNode()
+            if (pn) {
+                if (pn === anElement) {
                     return true
                 }
 
-                return this.parentNode.hasAncestor(anElement)
+                return pn.hasAncestor(anElement)
             }
 
             return false

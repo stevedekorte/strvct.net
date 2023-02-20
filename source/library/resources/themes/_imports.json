@@ -1,9 +1,10 @@
 [
     "BMThemeResources.js",
+    "BMThemeFolder.js",
     "BMTheme.js",
     "BMDefaultTheme.js",
-    "BMThemeLevel.js",
     "BMThemeClass.js",
     "BMThemeState.js",
-    "BMThemeFolder.js"
+    "BMThemeLevelClass.js",
+    "BMThemeLeveledFolder.js"
 ]
