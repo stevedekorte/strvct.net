@@ -216,7 +216,6 @@
 
     // --- subnodes ----------------------------------------
     
-    
     setParentNode (aNode) {
         assert(aNode !== this) // sanity check
 
@@ -366,6 +365,23 @@
         return !Type.isNullOrUndefined(match)
     }
 
+    forEachSubnodeRecursively (fn) {
+        this.subnodes().forEach(sn => {
+            fn(sn)
+            sn.forEachSubnodeRecursively(fn)
+        })
+    }
+
+    selectSubnodesRecursively (fn) {
+        const results = []
+        this.forEachSubnodeRecursively(subnode => {
+            if (fn(subnode)) {
+                results.push(subnode)
+            }
+        })
+        return results
+    }
+
     // --------
 	
     isEqual (aNode) {
@@ -480,7 +496,6 @@
     
     // --- update / sync system ----------------------------
     
-
     didUpdateNode () {
         if (!this.hasDoneInit()) {
             return

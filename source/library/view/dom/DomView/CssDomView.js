@@ -1175,6 +1175,21 @@
         return this.getCssProperty("border-top")
     }
 
+    setBorderTopStyle (s) {
+        this.setCssProperty("border-top-style", s)
+        return this
+    }
+
+    setBorderTopWidth (s) {
+        this.setCssProperty("border-top-width", s)
+        return this
+    }
+
+    setBorderTopColor (s) {
+        this.setCssProperty("border-top-color", s)
+        return this
+    }
+
     // border bottom
 
     setBorderBottom (s) {
@@ -1184,6 +1199,21 @@
 
     borderBottom () {
         return this.getCssProperty("border-bottom")
+    }
+
+    setBorderBottomStyle (s) {
+        this.setCssProperty("border-bottom-style", s)
+        return this
+    }
+
+    setBorderBottomWidth (s) {
+        this.setCssProperty("border-bottom-width", s)
+        return this
+    }
+
+    setBorderBottomColor (s) {
+        this.setCssProperty("border-bottom-color", s)
+        return this
     }
 
     // border left
@@ -1196,6 +1226,21 @@
 
     borderLeft () {
         return this.getCssProperty("border-left")
+    }
+
+    setBorderLeftStyle (s) {
+        this.setCssProperty("border-left-style", s)
+        return this
+    }
+
+    setBorderLeftWidth (s) {
+        this.setCssProperty("border-left-width", s)
+        return this
+    }
+
+    setBorderLeftColor (s) {
+        this.setCssProperty("border-left-color", s)
+        return this
     }
 
     // border right
@@ -1212,6 +1257,22 @@
     borderRightPx () {
         return this.getPxCssProperty("border-right")
     }
+
+    setBorderRightStyle (s) {
+        this.setCssProperty("border-right-style", s)
+        return this
+    }
+
+    setBorderRightWidth (s) {
+        this.setCssProperty("border-right-width", s)
+        return this
+    }
+
+    setBorderRightColor (s) {
+        this.setCssProperty("border-right-color", s)
+        return this
+    }
+
 
     // border radius
 

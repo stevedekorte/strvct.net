@@ -146,6 +146,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 field.setValueMethod(this.name())
                 field.setValueIsEditable(this.canEditInspection())
                 field.setCanDelete(false)
+                //assert(!field.canSelfAddSubnode())
 
                 if (this.label()) {
                     field.setKey(this.label())

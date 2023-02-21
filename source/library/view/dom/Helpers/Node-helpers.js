@@ -190,7 +190,7 @@ if (getGlobalThis()["Node"]) { // DOM Node
         },
 
         containsPointXY: function (x, y) {
-            // this assumes ancestors geogrphically contain descendant elements
+            // this assumes ancestors geographically contain descendant elements
             // which isn't always the case, but document.elementFromPoint might typically clip 
             // subviews such that this is usually true
             const topElement = document.elementFromPoint(x, y)

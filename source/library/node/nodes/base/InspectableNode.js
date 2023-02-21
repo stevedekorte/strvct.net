@@ -52,8 +52,8 @@
                 const field = slot.newInspectorField()
                 if (field) {
                     field.setTarget(this)
-                    const node = this.nodeInspector().createNodePath(slot.inspectorPath())
-                    node.addSubnode(field)
+                    const pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
+                    pathNodes.last().addSubnode(field)
                 }
             }
         })
@@ -63,22 +63,29 @@
     // --- helpful for setting up inspector paths ---
 
     createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
-        let node = this
+        const pathNodes = [this]
 
-        if (!aPath) {
-            return node
+        if (aPath) {
+            const components = aPath.split("/")
+            let node = this
+
+            components.forEach(component => {
+                node = node.subnodeWithTitleIfAbsentInsertClosure(component, () => {
+                    //debugger
+                    const nodeClass = Object.getClassNamed(pathSubnodeType)
+                    const newNode = nodeClass.clone()
+                    newNode.setNodeCanReorderSubnodes(false) // should this be here?
+                    newNode.setTitle(component)
+                    newNode.removeAction("add")
+                    //console.log("newNode.actions():", newNode.actions())
+                    //debugger
+                    return newNode
+                })
+                pathNodes.push(node)
+            })
         }
 
-        const components = aPath.split("/")
-        components.forEach(component => {
-            node = this.subnodeWithTitleIfAbsentInsertClosure(component, () => {
-                const node = Object.getClassNamed(pathSubnodeType).clone()
-                node.setTitle(component)
-                return node
-            })
-        })
-
-        return node
+        return pathNodes
     }
 
     // --- fields ---

@@ -163,6 +163,7 @@
     newUnpaddedButton () {
         const v = ButtonView.clone()
         v.setDisplay("inline-block")
+        v.titleView().setOverflow("visible")
         v.setHeightPercentage(100)
         v.setWidth("fit-content")
         v.setPaddingLeft("0em")

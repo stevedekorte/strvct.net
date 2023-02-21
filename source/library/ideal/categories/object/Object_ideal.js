@@ -142,3 +142,4 @@
 
 }).initThisCategory();
 
+Object.prototype.initPrototypeSlots()

@@ -67,6 +67,7 @@
     }
     
     setHasDoneInit (aBool) {
+        assert(this._hasDoneInit === false)
         this._hasDoneInit = aBool
         return this
     }

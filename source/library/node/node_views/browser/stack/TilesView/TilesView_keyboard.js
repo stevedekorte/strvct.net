@@ -95,9 +95,33 @@
         // paste?
     }
 
+    // --- shift arrow keys ---
+
+    /*
+    activateSelectedTile () {
+        const tile = this.selectedTile()
+        if (tile && tile.activate) {
+            tile.activate()
+        }
+        return this
+    }
+
+    onShiftUpArrowKeyDown (event) {
+        const result = this.onUpArrowKeyDown(event)
+        this.activateSelectedTile()
+        return result 
+    }
+
+    onShiftDownArrowKeyDown (event) {
+        const result =  this.onDownArrowKeyDown(event)
+        this.activateSelectedTile()
+        return result
+    }
+    */
+
     // --- arrow keys ---
 
-    onUpArrowKeyDown (event) {
+    onUpArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
             return 
         }
@@ -110,7 +134,7 @@
         return false
     }
 	
-    onDownArrowKeyDown (event) {
+    onDownArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
             return 
         }
@@ -122,7 +146,6 @@
         }
         return false
     }
-
 	
     onLeftArrowKeyUp (event) {
         if (!this.canNavigate()) { 
@@ -204,6 +227,8 @@
             return this
         }
 	
+        // carefull - if Tile is registered fro keyboard,
+        // this may cause onEnterKeyUp to be sent twice
         const tile = this.selectedTile()
         if (tile) { 
 		    tile.onEnterKeyUp(event)

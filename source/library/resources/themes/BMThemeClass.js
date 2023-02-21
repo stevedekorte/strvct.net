@@ -28,6 +28,7 @@
     this.addAction("add");
     this.setSubnodeClasses([BMThemeState, BMThemeFolder]);
     this.setNodeCanReorderSubnodes(true);
+    this.removeAction("add")
   }
 
   /*
@@ -43,6 +44,7 @@
   didInit () {
     super.didInit();
     this.setSubtitle("class")
+    //this.removeAction("add")
 
     //console.log(this.typeId() + " subnodes: ", this.subnodes())
     this.setupSubnodes();

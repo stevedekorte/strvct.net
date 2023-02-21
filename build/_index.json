@@ -66,13 +66,13 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
-    "size": 3563,
-    "hash": "a1PHSTxx3SENsEfRWLzZ/KpTgRrauKbesjJlm5awLfU="
+    "size": 3601,
+    "hash": "MgHtYtkNqOC0JLxtLvaeMHxGCjYlrnST0WDyDHs/bsE="
   },
   {
     "path": "source/library/ideal/categories/object/Object_init.js",
-    "size": 2447,
-    "hash": "o9m7AgUN5JxfAaiIqrncQRFX4t/Xq2Ddd+4m+Kien7k="
+    "size": 2491,
+    "hash": "HkDyd4f9I5+Q0xzKxnU2gJAsIS+G58QpmhqQAy/F3/8="
   },
   {
     "path": "source/library/ideal/categories/object/Object_notification.js",
@@ -151,8 +151,8 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 17137,
-    "hash": "gY5q34j6gYrfLkyfLIjoj16eeJGhhRkag+vbz/2XRsg="
+    "size": 17190,
+    "hash": "x+vCX5mhXJUogHvCEgr3OuRV135dvfUVt4pHDpSl3K8="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
@@ -616,8 +616,8 @@
   },
   {
     "path": "source/library/view/dom/Helpers/Node-helpers.js",
-    "size": 5424,
-    "hash": "RQ3x+G8mNb5ylq6DDNtZBeYCajOZYIqvyiMFvAUtBfg="
+    "size": 5425,
+    "hash": "4x1LDSvw5YMBH4tC5YlSoEKIV72isvztJ+SB+sM98dU="
   },
   {
     "path": "source/library/view/dom/Helpers/TapeMeasures/CanvasTextTapeMeasure.js",
@@ -636,8 +636,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
-    "size": 61059,
-    "hash": "2ppisIsOzJZTCY1p7T3lpIQQtoHyKiRkUYD10oFVcEI="
+    "size": 62368,
+    "hash": "m9vJAY4/pSKePYTIAYq7kZn3aSb8rPfRw5oHNMOGFF0="
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
@@ -761,8 +761,8 @@
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 21085,
-    "hash": "lD67WwKtMpD4jlnT2Etq0e99WFp070fRa7oL+MaGdPc="
+    "size": 21478,
+    "hash": "5cMkOln/ZAL0/C59/wV05mSV2cbUIup3uVdOYgNbQ5w="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
@@ -776,8 +776,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 3387,
-    "hash": "mH7VOJ0o3uKMXbxEMgjv9gR8B5YJq45HJDqXFIYW19Q="
+    "size": 3817,
+    "hash": "8uKosHaBux2tCJDE285FTe0kkxosihNxPGl/u//oRhw="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -886,8 +886,8 @@
   },
   {
     "path": "source/library/node/nodes/BMSummaryNode.js",
-    "size": 4475,
-    "hash": "yQHRxPGnmA4CcGRUvcNHSwF6QKDhJLYzH6SS1JqK9bQ="
+    "size": 4564,
+    "hash": "cPHxCICuxKPcCms8n7KUhIgkPCrfSy3lanmVGPu0JZw="
   },
   {
     "path": "source/library/node/nodes/BMFolderNode.js",
@@ -1121,8 +1121,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_keyboard.js",
-    "size": 5542,
-    "hash": "jH/Uk3hgwdQPWSSKeRtiw8MXlVQx462Uf09GXj2AAUI="
+    "size": 6235,
+    "hash": "yPfWkUYsN1qoiTH+Py6AW5M2wFs8SOF5zGLeDwRTkKI="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_gestures.js",
@@ -1176,8 +1176,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbsTile.js",
-    "size": 8647,
-    "hash": "bvoPIOQrbBq9ZUfCN4Iequib+RNcQSb5jJ06Gfsvb6Y="
+    "size": 8692,
+    "hash": "BH5WyPpAKIcJ8eS3TrYh1DDwAhDBTgpgnpH5VNMCCX4="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/HeaderTile.js",
@@ -1241,8 +1241,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/options/BMOptionNodeTile.js",
-    "size": 645,
-    "hash": "XceZZHlHXtjeY07xgcWWVNwxQjgGxJKXhXm667owst8="
+    "size": 952,
+    "hash": "RKybzS8HhCnOMLHz1cMZbkV1PlNF2HuwMbeEN/879Hw="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMPointerFieldTile.js",
@@ -1391,13 +1391,13 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeClass.js",
-    "size": 3808,
-    "hash": "xlqIhudN6ASS0ANnwxSm1LYHcksXZoMh3EiVVuoUrL0="
+    "size": 3868,
+    "hash": "AUNcH4uMF4R0psRLLYkNpPVGfbVsQltFiCy0/uF4woM="
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 12651,
-    "hash": "fWjiRyPfBsfaettZLISpYmhe5EgM4SoY272lKOulUUI="
+    "size": 12926,
+    "hash": "ziY2QpvEdPy3ZK4OWdXYlOWIYWV40ZZb2PRyKqsDA4Q="
   },
   {
     "path": "source/library/resources/themes/BMThemeLevelClass.js",
@@ -1440,19 +1440,14 @@
     "hash": "cPcFquCLISIA5i8dUyyxPra7XU+jRBmM0Mkh1GgPtN8="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Neue.woff2",
-    "size": 19540,
-    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Neue Bold.woff2",
-    "size": 19284,
-    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
-  },
-  {
     "path": "resources/fonts/Helvetica/fonts/Helvetica.woff2",
     "size": 19540,
     "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Oblique.woff2",
+    "size": 20472,
+    "hash": "KQbIVtSMwRgtVGJv2LAFqFwzrtD5C1g2XkPnAAVsNQs="
   },
   {
     "path": "resources/fonts/Helvetica/fonts/Helvetica Bold.woff2",
@@ -1460,124 +1455,94 @@
     "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light.woff2",
-    "size": 17636,
-    "hash": "2Yo9dfn69uSllWaAVkEHUIsS5GLdMYNy2ZJCXt0glQ4="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Oblique.woff2",
-    "size": 18324,
-    "hash": "ag5Wk1GTC2MREiOnugQou0QaT3UwFp4V7SEScEX9hDw="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Roman.woff2",
-    "size": 19540,
-    "hash": "MLewRf1nK279xgPEbwU7wGIFMDbGpWSlcNTObtMdbQk="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Obliqu1489444.woff2",
-    "size": 20472,
-    "hash": "KQbIVtSMwRgtVGJv2LAFqFwzrtD5C1g2XkPnAAVsNQs="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold.woff2",
-    "size": 19284,
-    "hash": "W7zLecghXOswHafS8d/DqHf2sODsp5CrMUj2a3xJXEc="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold O1489460.woff2",
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Oblique.woff2",
     "size": 20112,
     "hash": "9YQU1vu1v9zhRorMwyRH7fL9QsUSSnuMjcFdGemcgk4="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black.woff2",
-    "size": 18088,
-    "hash": "nPl6A9W2+KyIgR7h7hmyAxLZjw/5igvrF4Vs34YDf3Y="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Oblique.woff2",
-    "size": 18796,
-    "hash": "w7bFJxlUPRks3w7JYzBIOeGiLXkLwFIAXtXoYtMkVQ4="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Cond.woff2",
-    "size": 17952,
-    "hash": "qoh++iK/opE5oVrDs8Aqavq3sfFU1GGmGINVWbP0dVM="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Light Cn Obl.woff2",
-    "size": 19124,
-    "hash": "Wdlj69vhLVw9GhcL30BDbpYo/0q1GX+n1VZg5jEJdUA="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Condensed.woff2",
-    "size": 18148,
-    "hash": "XPLi6eYI1S57B6sratgoANS2uKw8f8WsVApAeoqEbP0="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Condensed Obl.woff2",
-    "size": 19192,
-    "hash": "nG/bswgnp1/8LaiBQDwfCtF5YRAU1FZaNeCnB6o+yAI="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Cond.woff2",
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Condensed.woff2",
     "size": 18704,
     "hash": "IbEiYQP8kt3yxAsJo94jUprAm9MYHnKIwfjMOX8t4Us="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Cond Obl.woff2",
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Condensed Oblique.woff2",
     "size": 19812,
     "hash": "kXNEAT/mltRctzj+Lmko8G5IHsreMgVIHu0ADonU9+w="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Cond.woff2",
-    "size": 17980,
-    "hash": "dy9m05wySomBFDLPZyGsPrMEx245DZjbyOMuh82mJos="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Black Cn Obl.woff2",
-    "size": 19264,
-    "hash": "VKdy2sPIOYv64kOnSuY8dK4iwuKcf30B6jh5sI6OuPE="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Compressed.woff2",
-    "size": 17984,
-    "hash": "8guf9Rx9fcAOiLtaOT579kJSOhelEsPSnKWzBi2dkVs="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 X Compressed.woff2",
-    "size": 17088,
-    "hash": "lFCCLzBw50JW88uPrR8kC3ltMgJVJJ4TOWMjCXa1UDc="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Ult Comp.woff2",
-    "size": 17792,
-    "hash": "CkU5CX24SXNg8WYQ9WFJJkVwQsS9znvw2vlPCrxmsYM="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Inserat LT W01 Rg.woff2",
-    "size": 18844,
-    "hash": "YsPuUqRHoqKzI0MQOUZgISq/92nY8FHQimFUK8pAISc="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Narrow.woff2",
-    "size": 17836,
-    "hash": "asm+E++nde6lPycCwB6xCQrxA0JhkuVQPLKk/D4UhGQ="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Narrow Obl.woff2",
-    "size": 18876,
-    "hash": "eW2Y6nc3CuXsP9HhqfCp0XMyoo1jQxJ4pATxWCdVlEQ="
-  },
-  {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Narrow.woff2",
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Narrow.woff2",
     "size": 20596,
     "hash": "VT9Pf4O+tCO7larrK7wx1GPq2IyrvxUXptmvv2sjyA8="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica LT W01 Bold Nr Obl.woff2",
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Narrow Oblique.woff2",
     "size": 21556,
     "hash": "0rCiSP1mkKxQiNjbe02kgTURywKGj/5HoPadmmH9oCI="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Black.woff2",
+    "size": 18088,
+    "hash": "nPl6A9W2+KyIgR7h7hmyAxLZjw/5igvrF4Vs34YDf3Y="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Black Oblique.woff2",
+    "size": 18796,
+    "hash": "w7bFJxlUPRks3w7JYzBIOeGiLXkLwFIAXtXoYtMkVQ4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Black Condensed.woff2",
+    "size": 17980,
+    "hash": "dy9m05wySomBFDLPZyGsPrMEx245DZjbyOMuh82mJos="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Black Condensed Oblique.woff2",
+    "size": 19264,
+    "hash": "VKdy2sPIOYv64kOnSuY8dK4iwuKcf30B6jh5sI6OuPE="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Light.woff2",
+    "size": 17636,
+    "hash": "2Yo9dfn69uSllWaAVkEHUIsS5GLdMYNy2ZJCXt0glQ4="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Light Oblique.woff2",
+    "size": 18324,
+    "hash": "ag5Wk1GTC2MREiOnugQou0QaT3UwFp4V7SEScEX9hDw="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Light Condensed.woff2",
+    "size": 17952,
+    "hash": "qoh++iK/opE5oVrDs8Aqavq3sfFU1GGmGINVWbP0dVM="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Light Condensed Oblique.woff2",
+    "size": 19124,
+    "hash": "Wdlj69vhLVw9GhcL30BDbpYo/0q1GX+n1VZg5jEJdUA="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Condensed.woff2",
+    "size": 18148,
+    "hash": "XPLi6eYI1S57B6sratgoANS2uKw8f8WsVApAeoqEbP0="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Condensed Oblique.woff2",
+    "size": 19192,
+    "hash": "nG/bswgnp1/8LaiBQDwfCtF5YRAU1FZaNeCnB6o+yAI="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Inserat Regular.woff2",
+    "size": 18844,
+    "hash": "YsPuUqRHoqKzI0MQOUZgISq/92nY8FHQimFUK8pAISc="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Narrow.woff2",
+    "size": 17836,
+    "hash": "asm+E++nde6lPycCwB6xCQrxA0JhkuVQPLKk/D4UhGQ="
+  },
+  {
+    "path": "resources/fonts/Helvetica/fonts/Helvetica Narrow Oblique.woff2",
+    "size": 18876,
+    "hash": "eW2Y6nc3CuXsP9HhqfCp0XMyoo1jQxJ4pATxWCdVlEQ="
   },
   {
     "path": "resources/sounds/beep_06.wav",

@@ -23,8 +23,9 @@
             "fontSize", // 3px to 50px by 1px
 
             "lineHeight", // 0.8em to 3em by 0.1em
-            "letterSpacing", // 0.1 em to 2em by 0.1em
+            "letterSpacing" // 0.1 em to 2em by 0.1em
 
+            /*
             "paddingLeft", // 0px to 100px by 1px
             "paddingRight", 
             "paddingTop", 
@@ -40,131 +41,152 @@
             "borderTop", 
             "borderBottom",
             "borderRadius"
+            */
         ];
     }
 
+    static validLetterSpacingValues () {
+        const values = []
+        for (let i = 0; i < 0.51; i += 0.01) {
+            const s = (i + "").slice(0, 4)
+            values.push(s + "em")
+        }
+        return values
+    }
+
+    static validLineHeightValues () {
+        const values = []
+        for (let i = 1; i < 3; i += 0.1) {
+            const s = (i + "").slice(0, 3)
+            values.push(s + "em")
+        }
+        return values
+    }
+
     static validColors () {
-        return ["inherit", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
+        return ["#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
+    }
+
+    static validPaddingValues () {
+        const values = []
+        for (let i = 0; i < 41; i ++) {
+            values.push(i + "px")
+        }
+        return values
+    }
+
+    static validBorderWidthValues () {
+        const values = []
+        for (let i = 0; i < 10; i ++) {
+            values.push(i + "px")
+        }
+        return values
+    }
+
+    static validBorderStyleValues () {
+        return ["none", "dotted", "dashed", "solid", "groove", "inset"]
+    }
+
+    static validFontSizes () {
+        const values = []
+        for (let i = 6; i < 41; i ++) {
+            values.push(i + "px")
+        }
+        return values
     }
 
     initPrototypeSlots () {
-        const styleNames = this.thisClass().styleNames()
-        this.newSlot("styleNames", styleNames);
-        this.newSlot("borderStyleNames", styleNames.select(name => name.beginsWith("border"))); // cached for efficiency
-        this.newSlot("nonBorderStyleNames", styleNames.select(name => !name.beginsWith("border"))); // cached for efficiency
-        this.newSlot("styleCacheMap", null);
-
         const styleSlots = []
         this.newSlot("styleSlots", styleSlots)
 
-        {
-            const slot = this.newSlot("color", "")
-            //slot.setComment("style")
-            slot.setLabel("color")
+        // -----------------
+
+        const addSlot = (name, path, label, values) => {
+            const slot = this.newSlot(name, "")
+            slot.setInspectorPath(path)
+            slot.setLabel(label)
             slot.setShouldStoreSlot(true)
             slot.setDuplicateOp("duplicate")
             slot.setSlotType("String")
-            slot.setValidValues(this.thisClass().validColors())
+            slot.setValidValues(values)
             styleSlots.push(slot)
         }
 
-        {
-            const slot = this.newSlot("backgroundColor", "")
-            slot.setLabel("background color")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
-            slot.setValidValues(this.thisClass().validColors())
-            styleSlots.push(slot)
-        }
+        // --- colors ---
 
-        {
-            const slot = this.newSlot("opacity", "1")
-            slot.setLabel("opacity")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
-            slot.setValidValues(["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
-            styleSlots.push(slot)
-        }
+        addSlot("color", "colors", "color", this.thisClass().validColors())
+        addSlot("backgroundColor", "colors", "background", this.thisClass().validColors())
+        addSlot("opacity", "colors", "opacity", ["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
 
-        {
-            const slot = this.newSlot("fontFamily", "")
-            slot.setLabel("font family")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
-            styleSlots.push(slot)
-        }
+        // --- font ---
 
+        addSlot("fontFamily", "font", "family", [])
+        addSlot("fontSize", "font", "size", this.thisClass().validFontSizes())
 
-        /*
         // weight and style don't work with some good fonts like
         // helvetica as it uses a different font for each,
         // so hold off on these until we have a UI to manage this stuff
+        //addSlot("fontWeight", "font", "weight", ["inherit", "normal", "bold"])
+        //addSlot("fontStyle", "font", "style", ["inherit", "normal", "italic", "oblique"])
+
+        addSlot("letterSpacing", "font", "letter spacing", this.thisClass().validLetterSpacingValues())
+        addSlot("lineHeight", "font", "line height", this.thisClass().validLineHeightValues())
+
+
+        // --- padding ---
+
+        {
+            const paddings = this.thisClass().validPaddingValues()
+            addSlot("paddingLeft", "padding", "left", paddings)
+            addSlot("paddingRight", "padding", "right", paddings)
+            addSlot("paddingTop", "padding", "top", paddings)
+            addSlot("paddingBottom", "padding", "bottom", paddings)
+        }
+
+        // --- border ---
         
         {
-            const slot = this.newSlot("fontWeight", "")
-            slot.setLabel("font weight")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
-            slot.setValidValues(["inherit", "normal", "bold"])
-            styleSlots.push(slot)
+            const styles = this.thisClass().validBorderStyleValues()
+            addSlot("borderLeftStyle", "border/left", "style", styles)
+            addSlot("borderRightStyle", "border/right", "style", styles)
+            addSlot("borderTopStyle", "border/top", "style", styles)
+            addSlot("borderBottomStyle", "border/bottom", "style", styles)
+
+            const widths = this.thisClass().validBorderWidthValues()
+            addSlot("borderLeftWidth", "border/left", "width", widths)
+            addSlot("borderRightWidth", "border/right", "width", widths)
+            addSlot("borderTopWidth", "border/top", "width", widths)
+            addSlot("borderBottomWidth", "border/bottom", "width", widths)
+
+            const colors = this.thisClass().validColors()
+            addSlot("borderLeftColor", "border/left", "color", colors)
+            addSlot("borderRightColor", "border/right", "color", colors)
+            addSlot("borderTopColor", "border/top", "color", colors)
+            addSlot("borderBottomColor", "border/bottom", "color", colors)
+
+            const radii = this.thisClass().validBorderWidthValues()
+            addSlot("borderLeftRadius", "border/left", "radius", radii)
+            addSlot("borderRightRadius", "border/right", "radius", radii)
+            addSlot("borderTopRadius", "border/top", "radius", radii)
+            addSlot("borderBottomRadius", "border/bottom", "radius", radii)
         }
 
-        {
-            const slot = this.newSlot("fontStyle", "")
-            slot.setLabel("font style")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
-            slot.setValidValues(["inherit", "normal", "italic", "oblique"])
-            styleSlots.push(slot)
-        }
-        */
+        // ---------------------
 
-        {
-            const slot = this.newSlot("fontSize", "")
-            slot.setLabel("font size")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("String")
-            const fontSizes = ["inherit"]
-            for (let i = 6; i < 41; i ++) {
-                fontSizes.push(i + "px")
-            }
-            slot.setValidValues(fontSizes)
-            styleSlots.push(slot)
-        }
-
-
-        
-
-        /*
-        styleNames.forEach(styleName => {
-            const slot = this.newSlot(styleName, "")
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("duplicate")
-            //slot.setCanInspect(true)
-            slot.setSlotType("String")
-            slot.setLabel(styleName)
-            //slot.setInspectorPath("Key")
-        })
-        */
+        this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border"))); // cached for efficiency
+        this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !slot.name().beginsWith("border"))); // cached for efficiency
+        this.newSlot("styleCacheMap", null);
     }
 
     init () {
         super.init()
-
         this.setStyleCacheMap(null) // null is used to indicate cache needs to be built when accessed
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false) 
-        
+        this.removeAction("add")
         this.setSubtitle("state")
         //this.setSubnodeClasses([BMStringField])
         //this.setupSubnodes()
-
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
@@ -189,20 +211,6 @@
         this.setupSubnodes()
     }
 
-    /*
-    setupInspectorFromSlots() {
-        this.thisPrototype().forEachSlot(slot => {
-            const field = slot.newInspectorField()
-            if (field) {
-                field.setTarget(this)
-                let node = this.nodeInspector().createNodePath(slot.inspectorPath())
-                node.addSubnode(field)
-            }
-        })
-        return this
-    }    
-    */
-
     setThemeAttribute (key, value) {
         this[key.asSetter()].apply(this, [value])
         //this.firstSubnodeWithTitle(key).setValue(value)
@@ -213,16 +221,11 @@
         return this
     }
 
-    /*
-    subnodeNames () {
-        return this.styleNames() // faster
-    }
-    */
-
     // prepareForAccess
     prepareForFirstAccess () {
-        if (this.subnodes().length) {
-            this.subnodes().forEach(field => {
+        const fields = this.getFields()
+        if (fields.length) {
+            fields.forEach(field => {
                 if (field.pickSubnodesMatchingValue) {
                     field.pickSubnodesMatchingValue() 
                 }
@@ -230,49 +233,35 @@
         }
     }
 
+    getFields () {
+        return this.selectSubnodesRecursively(sn => {
+            return sn.thisClass().isKindOf(BMField)
+        })
+    }
+
     setupSubnodes () {
-        // need to do this here because the fonts typically aren't loaded until after this prototype is initialized
+        this.removeAllSubnodes()
+
+        // need this because the fonts typically aren't loaded until after this prototype is initialized
         this.thisPrototype().slotNamed("fontFamily").setValidValues(BMResources.shared().fonts().allFontNames())    
 
-        this.removeAllSubnodes()
         this.styleSlots().forEach(slot => {
             const name = slot.name()
             const field = slot.newInspectorField()
             field.setTarget(this)
-            //field.setValue(this[name].apply(this))
             field.setNodeCanEditTitle(false)
-            //field.getValueFromTarget()
-            this.addSubnode(field)
+            field.setNodeCanReorderSubnodes(false)
+            //debugger
+            const pathNodes = this.createNodePath(slot.inspectorPath())
+            const node = pathNodes.last()
+            if (node !== this) {
+                node.setNodeSubtitleIsChildrenSummary(true)
+            }
+            field.setSummaryFormat("key value")
+            field.setHasNewlineAferSummary(true)
+            node.addSubnode(field)
         })
     }
-
-    /*
-    setupSubnodes () {
-        const subnodeClass = this.subnodeClasses().first()
-        this.subnodes() // needed? is this it trigger first access?
-        this.subnodeNames().forEach(name => {
-            const subnode = this.subnodeWithTitleIfAbsentInsertProto(name, subnodeClass)
-            subnode.setKey(name) 
-            subnode.setTarget(this)
-            subnode.setValueMethod(name)
-            subnode.setKeyIsEditable(false)
-        })
-
-        {
-            const title = "Font Family"
-            //const options = BMResources.shared().fonts().newFontOptions()
-            const options = this.subnodeWithTitleIfAbsentInsertProto(title, BMOptionsNode)
-            options.setNodeSubtitleIsChildrenSummary(true)
-            options.setTitle(title)
-            options.setNodeCanEditTitle(false)
-            options.setOptionsSource(BMResources.shared().fonts())
-            options.setOptionsSourceMethod("allFontNames")
-            options.subnodes().forEach(option => {
-                option.setNodeCanEditTitle(false)
-            })
-        }
-    }
-    */
 
     // --- style cache ---
 
@@ -295,7 +284,8 @@
 
     computeStyleCacheMap () {
         const map = new Map()
-        this.styleNames().forEach(name => { 
+        this.styleSlots().forEach(slot => { 
+            const name = slot.name()
             const v = this.getStyleValueNamed(name)
             map.set(name, v)
         })
@@ -312,7 +302,6 @@
         return this.themeClass().subnodeBefore(this)
     }
 
-
     getStyleValueNamed (name) {
         const getterMethod = this[name]
 
@@ -320,7 +309,7 @@
 
         if (getterMethod) {
             v = getterMethod.apply(this)
-            if (v === "") { 
+            if (v === "" || v === "inherit") { 
                 v = null
             }
         } else {
@@ -328,7 +317,6 @@
             console.warn(errorMsg)
             //throw new Error(errorMsg)
         }
-
 
         if (v == null) {
             const parent = this.parentThemeState()
@@ -342,10 +330,12 @@
 
     // --- apply styles ---
 
-    applyStyleNamesToView (styleNames, aView) {
+
+    applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
         
-        styleNames.forEach(name => { 
+        styleSlots.forEach(slot => { 
+            const name = slot.name()
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
                 const v = this.getCachedStyleValueNamed(name)
@@ -358,19 +348,19 @@
     }
 
     applyToView (aView) {
-        this.applyStyleNamesToView(this.styleNames(), aView)
+        this.applyStyleSlotsToView(this.styleSlots(), aView)
         return this
     }
 
     // --- apply style subsets ---
 
     applyNonBorderStylesToView (aView) {
-        this.applyStyleNamesToView(this.nonBorderStyleNames(), aView)
+        this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView)
         return this
     }
 
     applyBorderStylesToView (aView) {
-        this.applyStyleNamesToView(this.borderStyleNames(), aView)
+        this.applyStyleSlotsToView(this.borderStyleSlots(), aView)
         return this
     }
 
@@ -406,7 +396,8 @@
     styleMap () {
         const map = new Map()
         const title = this.title()
-        this.styleNames().forEach(name => { 
+        this.styleSlots().forEach(slot => { 
+            const name = slot.name()
             //const v = this.getCachedStyleValueNamed(name)
             const v = this.getStyleValueNamed(name)
             map.set(title + ". " + name, v)
