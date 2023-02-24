@@ -21,17 +21,4 @@
         this.setResourceClasses([BMURLImage])
     }
 
-    /*
-    setupSubnodes () {
-        this.resourcePaths().forEach(path => this.addImageWithPath(path))
-        return this
-    }
-
-    addImageWithPath (aPath) {
-        const image = this.justAdd()
-        image.setPath(aPath)
-        return this
-    }
-    */
-
 }.initThisClass());

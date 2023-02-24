@@ -66,7 +66,6 @@
         return this
     }
 	
-	
     iceDict () {
         let url = "stun:" + this.host()
         if (this.port() !== null && this.port() !== "") {

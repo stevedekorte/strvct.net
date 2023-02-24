@@ -20,7 +20,6 @@
         super.init()
         this.setTitle("BMFileSystemFolder")
         this.setNoteIsSubnodeCount(true)
-        //this.watchOnceForNote("appDidInit")
         //this.registerForAppDidInit()
         return this
     }

@@ -114,10 +114,15 @@
         return this.parentNode().store()
     }
 
-    async asyncWriteValue () {
+    asyncWriteValue () {
         const v = this.value()
-        const digest = await v.asyncSha256Digest()
-        const h = digest.base64Encoded()
+        const digest = v.asyncSha256Digest((digestBuffer) => {
+            const h = digestBuffer.base64Encoded()
+            this.asyncWriteValueWithHash(v, h)
+        })
+    }
+
+    asyncWriteValueWithHash (v, h) {
         this.setValueHash(h)
 
         assert(this.isValid())

@@ -21,14 +21,6 @@
         this.setResourceClasses([SvgIconNode])
     }
 
-	/*
-	setupSubnodes () {
-		debugger;
-		super.setupSubnodes()
-		return this
-	}
-	*/
-
 	// --- old code to add svg directly using a string ---
 
     addIcon (aName, svgString) {

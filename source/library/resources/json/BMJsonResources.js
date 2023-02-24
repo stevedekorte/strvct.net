@@ -6,7 +6,7 @@
 
 */
 
-(class BMJsonResources extends BaseNode {
+(class BMJsonResources extends BMResourceGroup {
     
     static initClass () {
         this.setIsSingleton(true)
@@ -14,45 +14,37 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("extensions", ["json"])
     }
 
     init () {
         super.init()
         this.setTitle("Json")
         this.setNoteIsSubnodeCount(true)
-        //this.setSubnodeClasses([BMJsonResource])
-        this.watchOnceForNote("appDidInit")
+        this.setSubnodeClasses([BMJsonResource])
         return this
     }
-    
-    /*
-    prepareForFirstAccess () {
-         super.prepareForFirstAccess()
-       this.setupSubnodes()
-        return this
-    }
-    */
 
-    resourcePaths () {
+    /*
+    resourcePaths () { //in BMResourceGroup
         return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
     }
     
-    appDidInit () {
+    appDidInit () {  //in BMResourceGroup
         this.setupSubnodes()
         return this
     }
 
-    setupSubnodes () {
+    setupSubnodes () {  //in BMResourceGroup
         this.resourcePaths().forEach(path => this.addResourceWithPath(path))
         return this
     }
 
-    addResourceWithPath (aPath) {
+    addResourceWithPath (aPath) {  //in BMResourceGroup
         const resource = this.justAdd()
         resource.setPath(aPath)
         return this
     }
+    */
 
 }.initThisClass());
 

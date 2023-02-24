@@ -1,5 +1,6 @@
 [
     "BMBlob.js",
-    "BMBlobs.js"
+    "BMBlobs.js",
+    "BMNetCache.js"
 ]
 

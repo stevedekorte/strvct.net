@@ -4,10 +4,14 @@
 
     BMUrlResource
 
+    Example use:
+
+    BMUrlResource.clone().setPath(url).setUrlDelegate(this).
+
 */
 
 (class BMUrlResource extends BMStorableNode {
-    
+
     initPrototypeSlots () {
         this.newSlot("path", "")
         this.newSlot("error", null).setSyncsToView(true)
@@ -15,7 +19,7 @@
         this.newSlot("dataUrl", null)
         //this.newSlot("rawData", null).setSyncsToView(true)
         this.newSlot("decodedData", null).setSyncsToView(true)
-        this.newSlot("timeoutInterval", 24*60*60*1000).setSyncsToView(true)
+        this.newSlot("timeoutInterval", 24 * 60 * 60 * 1000).setSyncsToView(true)
         //this.newSlot("decodedJson", null).setSyncsToView(true)
         //this.newSlot("completeNote", null).setSyncsToView(true)
         this.newSlot("urlDelegate", null)

@@ -10,10 +10,15 @@
 
 (class BMFont extends BaseNode {
     
+    static supportedExtensions () {
+        return ["ttf", "woff", "woff2"]
+    }
+
     initPrototypeSlots () {
         this.newSlot("path", null)
         this.newSlot("name", null)
         this.newSlot("options", null)
+        this.newSlot("data", null)
     }
 
     initPrototype () {
@@ -23,7 +28,7 @@
     init () {
         super.init()
         this.setOptions({})  // example options { style: 'normal', weight: 700 }  
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
     }
 
     title () {
@@ -40,7 +45,38 @@
 
     // loading 
 
+    loadData () {
+        const req = new XMLHttpRequest();
+        req.open("GET", this.path(), true);
+        req.responseType = "arraybuffer";
+        
+        req.onload = (event) => {
+          const arrayBuffer = req.response; // Note: not req.responseText
+          if (arrayBuffer) {
+            this.onLoadData(arrayBuffer)
+          }
+        };
+        
+        req.send(null);
+    }
+
+    onLoadData (arrayBuffer) {
+        const aFontFace = new FontFace(this.name(), arrayBuffer, this.options()); 
+        aFontFace.load().then((loadedFace) => {
+            this.didLoad()
+            assert(loadedFace === aFontFace)
+            document.fonts.add(loadedFace)
+        }).catch((error) => {
+            this.onLoadError(error)
+        });
+    }
+
     load () {
+        this.loadData()
+        return this
+    }
+
+    OLD_load () {
         if (!getGlobalThis()["FontFace"]) {
             console.warn("this browser is missing FontFace class")
             return this

@@ -2,7 +2,7 @@
 
 /*
 
-    BMSoundResources
+    BMResourceGroup
 
 */
 
@@ -14,7 +14,6 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("extensions", [])
         this.newSlot("resourceClasses", [])
     }
 
@@ -22,7 +21,6 @@
         super.init()
         this.setTitle(this.type())
         this.setNoteIsSubnodeCount(true)
-        this.setExtensions([]) 
         this.setResourceClasses([])
         this.setup()
         this.registerForAppDidInit()

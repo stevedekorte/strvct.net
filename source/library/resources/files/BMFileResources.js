@@ -32,13 +32,18 @@
         //debugger;
         const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
         this.addSubnode(rootFolder)
-        const allPaths = ResourceManager.shared().resourceFilePaths()
-        allPaths.forEach(aPath => {
+
+        const entries = ResourceManager.shared().entries()
+        //const allPaths = ResourceManager.shared().resourceFilePaths()
+        entries.forEach(entry => {
+            const aPath = entry.path
             const pathArray = aPath.split("/")
             while (pathArray.first() === ".") {
                 pathArray.shift()
             }
             const file = rootFolder.addRelativeResourcePathArray(pathArray)
+            file.setResourceHash(entry.hash)
+            file.setResourceSize(entry.size)
             if (!file) {
                 throw new Error("no file added")
             }

@@ -444,14 +444,14 @@ String.prototype._setterCacheMap = new Map();
         return hash;
     }
 
-    async asyncSha256Digest () {
-        // example use let digestHex = await "hello".asyncSha256DigestHex()
+    asyncSha256Digest (callback) {
+        // example use: "hello".asyncSha256DigestHex((hashBuffer) => {...})
 
         // encode as UTF-8
         const msgBuffer = new TextEncoder('utf-8').encode(this);                    
     
         // hash the message
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        crypto.subtle.digest('SHA-256', msgBuffer).then((hashBuffer) => callback(hashBuffer));
 
         return hashBuffer
         /*
@@ -473,16 +473,6 @@ String.prototype._setterCacheMap = new Map();
     }
 
 }).initThisCategory();
-
-/*
-async function test() {
-    let text = 'An obscure body in the S-K System, your majesty. The inhabitants refer to it as the planet Earth.';
-    let digestHex = await text.sha256Hex()
-    console.log(digestHex);
-}
-
-test()
-*/
 
 
 

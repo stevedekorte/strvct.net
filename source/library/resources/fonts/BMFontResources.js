@@ -8,7 +8,7 @@
 
 */
 
-(class BMFontResources extends BaseNode {
+(class BMFontResources extends BMResourceGroup {
     
     static initClass () {
         this.setIsSingleton(true)
@@ -16,33 +16,22 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("extensions", ["ttf", "woff", "woff2"])
+        //this.newSlot("extensions", ["ttf", "woff", "woff2"])
     }
 
     init () {
         super.init()
         this.setTitle("Fonts")
-        this.setNoteIsSubnodeCount(true)
-        this.registerForAppDidInit()
+        //this.setExtensions(["ttf", "woff", "woff2"])
         return this
     }
 
-    appDidInit () {
-        //this.debugLog(".appDidInit()")
-        this.setupSubnodes()
-        return this
+    setup () {
+        // subclasses need to use this to set ResourceClasses
+        this.setResourceClasses([BMFont])
     }
 
-    resourcePaths () {
-        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
-    }
-
-    setupSubnodes () {
-        this.resourcePaths().forEach(path => this.addFontWithPath(path))
-        return this
-    }
-
-    addFontWithPath (aPath) {
+    addResourceWithPath (aPath) {
         const components = aPath.split("/")
 
         // verify path is in expected format 
@@ -106,6 +95,5 @@
         })
         return options
     }
-
 
 }.initThisClass());

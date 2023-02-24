@@ -19,12 +19,9 @@
     initPrototypeSlots () {
         this.newSlot("request", null)
         //this.newSlot("path", null)
-        this.newSlot("loadState", "unloaded") // "unloaded", "loading", "decoding", "loaded"
-        this.newSlot("downloadedBuffer", null)
         this.newSlot("decodedBuffer", null)
         this.newSlot("source", null)
         this.newSlot("shouldPlayOnLoad", false)
-        this.newSlot("error", false)
         //this.newSlot("downloadError", false)
         //this.newSlot("decodeError", false)
 
@@ -41,10 +38,6 @@
 
     title () {
         return this.name() 
-    }
-
-    subtitle () {
-        return this.path().pathExtension() + ", " + this.loadState()
     }
 
     name () {
@@ -73,6 +66,7 @@
         }
         return 0
     }
+    /*
 
     // --- load ---
 
@@ -99,30 +93,44 @@
         console.log(this.type() + " onLoadError ", error, " " + this.path())
         this.setError(error)
     }
+*/
+    // ---
 
     audioCtx () {
         return WAContext.shared().setupIfNeeded().audioContext()
     }
 
+    /*
     onLoad (event) {
         const request = event.currentTarget;
         const downloadedBuffer = request.response;  // array buffer
+        this.setData(downloadedBuffer)
+    }
+    */
 
+    setData (data) {
+        this._data = data
+        if (data) {
+            this.prepareToDecode()
+        }
+        return this
+    }
+
+    prepareToDecode () {
         if (WAContext.shared().isSetup()) {
-            this.decodeBuffer(downloadedBuffer)
+            this.decodeBuffer(this.data())
         } else {
-            this.setDownloadedBuffer(downloadedBuffer)
             Broadcaster.shared().addListenerForName(this, "didSetupWAContext")
-            //console.warn(this.typeId() + " waiting for audio context to decode")
+            console.warn(this.typeId() + " waiting for audio context to decode")
         }
     }
 
     didSetupWAContext () {
         //console.warn(this.typeId() + " " + this.path() + " got didSetupWAContext broadcast - can decode now")
         Broadcaster.shared().removeListenerForName(this, "removeListenerForName")
-        if (this.downloadedBuffer()) {
-            this.decodeBuffer(this.downloadedBuffer())
-            this.setDownloadedBuffer(null)
+        if (this.data()) {
+            this.decodeBuffer(this.data())
+            this.setData(null) // so we only decode once
         }
     }
 

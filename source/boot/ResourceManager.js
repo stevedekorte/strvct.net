@@ -12,6 +12,11 @@
 
     Should also post events to load panel.
 
+	Some files in the index will not be in the cam and are left for the app
+	to load over the network (lazily) and perhaps cache using indexeddb. 
+	As the index contains a hash of the file, we can easily check to see if we
+	already have the file cached.
+
 */
 
 class BootResource {
@@ -299,6 +304,11 @@ class ResourceManager {
 
     // --- public API ---
 
+	entries () {
+		// each entry contains a path, size, and hash (base base64 encoded string of sha256)
+		return this._index
+	}
+
     resourceFilePaths () {
         return this._index.map(entry => entry.path)
     }
@@ -312,6 +322,7 @@ class ResourceManager {
     resourceFilePathsWithExtensions (extensions) {
         return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
     }
+
 }
 
 // ---------------------------------------------------------------------------------------------

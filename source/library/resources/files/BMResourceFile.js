@@ -21,6 +21,9 @@
         this.newSlot("isLoaded", false)
         this.newSlot("loadNote", null) 
         this.newSlot("loadErrorNote", null) 
+
+        this.newSlot("resourceHash", null) 
+        this.newSlot("resourceSize", null) 
     }
 
     init () {
@@ -47,10 +50,12 @@
         return this
     }
 
+    /*
     asObject () {
         const sound = BMSoundResources.shared().resources().detect(r => r.path() == this.path())
         return sound
     }
+    */
 
     // move this loading code to parent BMResource?
 
@@ -69,25 +74,34 @@
     }
 
     load () {
-        let path = this.path().sansPrefix("./")
+        const path = this.path().sansPrefix("./")
         const camValue = ResourceManager.shared().camValueForPath(path)
         if (camValue) {
-            //console.log("loaded via cam for path: ", path)
+            console.log("loaded via cam for path: ", path)
             this.setData(camValue)
             this.postLoad()
-            return this
+        } else {
+            this.loadFromUrl()
         }
-        this.loadFromUrl()
         return this
     }
 
+    loadRequestType () {
+        return "arraybuffer"
+        //return 'application/json'; // need to change for binary files?
+    }
+
     loadFromUrl () {
+        debugger;
         console.log("loaded via url fetch for path: ", this.path())
 
         const path = this.path()
         const request = new XMLHttpRequest();
         request.open('GET', path, true);
-        //request.responseType = 'application/json'; // need to change for binary files?
+        if (this.loadRequestType()) {
+            request.responseType = this.loadRequestType();
+        }
+
         request.onload  = (event) => { this.onUrlLoad(event) }
         request.onerror = (event) => { this.onUrlLoadError(event) }
         request.send();

@@ -15,7 +15,6 @@
 
   initPrototypeSlots () {
     this.newSlot("svgString", null).setCanInspect(true).setSlotType("String").setLabel("SVG string")
-    this.newSlot("error", null)
     //this.newSlot("path", null)
   }
 
