@@ -365,6 +365,9 @@
         let s = "view:'" + this.typeId() + "'"
         s += " node:'" + this.nodeId() + "'"
         s += " themeClass:'" +this.themeClassName() + "'"
+        if (this.node()) {
+            s += " nodeTileClassName:'" + this.node().nodeTileClassName() + "'"
+        }
         return s
     }
 

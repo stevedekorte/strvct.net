@@ -52,33 +52,35 @@
         return this
     }
 
-    asyncOpen (callback, errorCallback) {
-        this.idb().setPath(this.name())
-        this.idb().asyncOpenIfNeeded( () => this.onOpen(callback), errorCallback )
+    asyncOpen (resolve, reject) {
+        if (!this.isOpen()) {
+            this.idb().setPath(this.name())
+        }
+        this.idb().asyncOpenIfNeeded( () => this.onOpen(resolve, reject), reject ) // it can deal with multiple calls while it's opening
         return this
     }
 	
-    onOpen (callback, errorCallback) {
+    onOpen (resolve, reject) {
         // load the cache
         this.debugLog(" onOpen() - loading cache")
         
         if (false) {
             debugger;
-            this.asyncClear(() => this.loadMap(callback, errorCallback))
+            this.asyncClear(() => this.loadMap(resolve, reject))
         } else {
-            this.loadMap(callback, errorCallback)
+            this.loadMap(resolve, reject)
         }
     }
 
-    loadMap (callback, errorCallback) {
+    loadMap (resolve, reject) {
         this.idb().asyncAsMap(map => {
             assert(!Type.isNull(map))
             //console.log(this.debugTypeId() + " onOpen() --- loaded cache with " + this.recordsMap().count() + " keys")
             this.setMap(map)
             this.setIsOpen(true)
             
-            if (callback) {
-                callback()
+            if (resolve) {
+                resolve()
             }
             
             //this.verifySync(callback, errorCallback)
@@ -97,11 +99,11 @@
 	
     // ---- clear --- 
 		
-    asyncClear (successCallback) {
+    asyncClear (resolve) {
         debugger;
         this.idb().asyncClear(() => {
             this.map().clear()            
-            successCallback()
+            resolve()
         }) // TODO: lock until callback?
     }
 		
@@ -147,7 +149,7 @@
 	
     // --- helpers ---
 
-    verifySync (callback, errorCallback) {
+    verifySync (resolve, reject) {
         const currentMap = this.map().shallowCopy()
 
         this.idb().asyncAsMap(map => {	 
@@ -156,11 +158,11 @@
                 //this.idb().show()
                 //console.log("syncdb idb json: ", JSON.stringify(map.asDict(), null, 2))
                 throw new Error(his.debugTypeId() + ".verifySync() FAILED")
-                errorCallback()
+                reject()
             }
             console.log(this.debugTypeId() + ".verifySync() SUCCEEDED")
-            if (callback) {
-                callback()
+            if (resolve) {
+                resolve()
             }
         })
     }

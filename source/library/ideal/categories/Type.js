@@ -173,6 +173,10 @@ getGlobalThis().Type = (class Type extends Object {
         return typeof(value) === "symbol"
     } 
 
+    static isArrayBuffer (value) {
+        return Type.valueHasConstructor(value, ArrayBuffer);
+    }
+
     // typed arrays 
 
     static valueHasConstructor (v, constructor) {  // private

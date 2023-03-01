@@ -41,11 +41,10 @@
 
     newTx () {
         assert(Type.isNullOrUndefined(this.tx()))
-        const tx = this.db().transaction(this.storeName(), "readwrite")        
-        //tx.onerror = (event) => { this.onTxError(event) }
-        //tx.onsuccess = (event) => { this.onTxSuccess(event) }
+        const options = { "durability": "strict" }
+        const tx = this.db().transaction(this.storeName(), "readwrite", options)
 
-        tx.onerror = (event) => { this.onTxError(event) }
+        tx.onerror    = (event) => { this.onTxError(event) }
         tx.oncomplete = (event) => { this.onTxSuccess(event) }
 
         this.setTx(tx)
@@ -117,7 +116,7 @@
 	
     entryForKeyAndValue (key, value) {
         assert(Type.isString(key))
-        assert(Type.isString(value))
+        assert(Type.isString(value) || Type.isArrayBuffer(value))
 
         /*
         if (Type.isNullOrUndefined(object)) {
@@ -152,7 +151,7 @@
         //assert(!this.hasKey(key))
 
         assert(Type.isString(key))
-        assert(Type.isString(object))
+        assert(Type.isString(object) || Type.isArrayBuffer(object))
         this.assertNotCommitted()
         
         this.debugLog(() => " add " + key + "'" + object + "'")
@@ -176,7 +175,7 @@
         //assert(!this.hasKey(key))
 
         assert(Type.isString(key))
-        assert(Type.isString(object))
+        assert(Type.isString(object) || Type.isArrayBuffer(object))
 	    this.assertNotCommitted()
 
         this.debugLog(() => " atUpdate " + key)

@@ -14,7 +14,7 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("themes", null)
+        //this.newSlot("themes", null)
         this.newSlot("fonts", null)
         this.newSlot("sounds", null)
         this.newSlot("images", null)
@@ -33,11 +33,15 @@
     }
 
     setupSubnodes () {
-        const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources)
-        themes.setNodeCanReorderSubnodes(true)
+        //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources)
+        //themes.setNodeCanReorderSubnodes(true)
         //this.addSubnode(themes)
-        let link = this.addLinkSubnode(themes)
+        //let link = this.addLinkSubnode(themes)
+        //this.setThemes(themes)
         //console.log("themes link = ", link.debugTypeId())
+
+        this.setFiles(BMFileResources.shared())
+        this.addSubnode(this.files())
 
         this.setFonts(BMFontResources.shared())
         this.addSubnode(this.fonts())
@@ -53,9 +57,6 @@
 
         this.setJson(BMJsonResources.shared())
         this.addSubnode(this.json())
-
-        this.setFiles(BMFileResources.shared())
-        this.addSubnode(this.files())
 
         return this
     }
@@ -75,5 +76,29 @@
         return this
     }
     */
+
+    resourceClassesForFileExtension (extension) {
+        return this.subnodes().forEach(sn => sn.resourceClassesForFileExtension(extension)).flatten()
+    }
+
+    resourceClassForFileExtension (extension) {
+        return this.resourceClassesForFileExtension(extension).first()
+    }
+
+    resourceForPath (aPath) {
+        const rClass = this.resourceClassForFileExtension(aPath.pathExtension())
+        /*
+        if (!rClass) {
+            // do we want this behavior?
+            // What's the typical use case for this method
+            rClass = BMFileResource; 
+        }
+        */
+        if (rClass) {
+            const aResource = rClass.clone().setPath(aPath).load()
+            return aResource
+        }
+        return null
+    }
 
 }.initThisClass());

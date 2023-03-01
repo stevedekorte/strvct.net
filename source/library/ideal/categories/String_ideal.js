@@ -444,27 +444,11 @@ String.prototype._setterCacheMap = new Map();
         return hash;
     }
 
-    asyncSha256Digest (callback) {
+    asyncSha256Digest (resolve, reject) {
         // example use: "hello".asyncSha256DigestHex((hashBuffer) => {...})
-
-        // encode as UTF-8
-        const msgBuffer = new TextEncoder('utf-8').encode(this);                    
-    
-        // hash the message
-        crypto.subtle.digest('SHA-256', msgBuffer).then((hashBuffer) => callback(hashBuffer));
-
-        return hashBuffer
-        /*
-        // convert ArrayBuffer to Array
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-    
-        // convert bytes to hex string                  
-        const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
-
-        let base64String = btoa(String.fromCharCode.apply(null, new Uint8Array(hashBuffer)));
-
-        return hashHex;
-        */
+        const uint8Array = new TextEncoder("utf-8").encode(this);    
+        const arrayBuffer =  uint8Array.buffer;            
+        crypto.subtle.digest("SHA-256", inputBuffer).then((hashBuffer) => resolve(hashBuffer), reject);
     }
 
     stripHTML () {

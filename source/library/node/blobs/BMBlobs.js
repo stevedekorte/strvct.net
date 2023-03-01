@@ -52,23 +52,46 @@
         this.setNodeCanReorderSubnodes(true)
 
         this.setStore(PersistentAsyncMap.clone().setName("BlobHashStore"))
-        this.store().asyncOpen(() => {
-            //this.removeAllSubnodes()
-            this.collectGarbage()
-        })
-
         return this
     }
 
+    didInit () {
+     //   debugger;
+        this.store().asyncOpen(() => {
+            //this.removeAllSubnodes()
+            //this.collectGarbage()
+            //debugger
+            this.postNoteNamed("blobsDidOpen")
+        })
+    }
+
+    // --- lookup blob by name ---
+
     blobWithName (aName) {
-        return this.subnodeWithHash(aName)
+        return this.subnodes().detect(sn => sn.title() === aName)
+        //return this.subnodeWithTitle(aName)
     }
 
     hasBlobWithName (aName) {
         return !Type.isNullOrUndefined(this.blobWithName(aName))
     }
 
+    // --- lookup blob by hash ---
+
+    hasBlobWithValueHash (h) {
+        return !Type.isNullOrUndefined(this.blobWithValueHash(h))
+    }
+
+    blobWithValueHash (h) {
+        //debugger
+        return this.subnodes().detect(sn => sn.valueHash() === h) /// <------------------------------ TEMPORARY
+        //return this.subnodeWithHash(h)
+    }
+
+    // create blob
+    
     createBlobWithNameAndValue (aName, aValue) {
+        //debugger
         const oldBlob = this.blobWithName(aName)
         if (oldBlob) {
             oldBlob.setValue(aValue)

@@ -13,10 +13,14 @@
         this.newSlot("db", null)
         this.newSlot("didRequestPersistence", false)
         this.newSlot("isGranted", false)
+
+        this.newSlot("isOpening", false)
+        this.newSlot("onOpenPromises", null)
     }
 
     init () {
         super.init()
+        this.setOnOpenPromises([])
         //this.requestPersistenceIfNeeded()
         this.setIsDebugging(false)
     }
@@ -65,18 +69,44 @@
         return (this.db() !== null)
     }
 
-    asyncOpenIfNeeded (callback, errorCallback) {
-        if (!this.isOpen()) {
-            this.asyncOpen(callback, errorCallback)
+    asyncOpenIfNeeded (resolve, reject) {
+        if (this.isOpen()) {
+            resolve()
         } else {
-            callback()
+            if (!this.isOpening()) {
+                this.asyncOpen(() => this.onResolveOpen(), (error) => this.onRejectOpen(error))
+            }
+            this.onOpenPromises().push([resolve, reject])
         }
     }
 
-    asyncOpen (successCallback, errorCallback) {
+    onResolveOpen () {
+        this.onOpenPromises().forEach(entry => entry[0]())
+        this.onOpenPromises().clear()
+    }
 
+    onRejectReject (error) {
+        this.onOpenPromises().forEach(entry => entry[1](error))
+        this.onOpenPromises().clear()
+    }
+
+    /*
+    asyncOpenIfNeeded (resolve, reject) {
+        if (!this.isOpen()) {
+            this.asyncOpen(resolve, reject)
+        } else {
+            resolve()
+        }
+    }
+    */
+
+    asyncOpen (resolve, reject) {
+        assert(!this.isOpen())
+
+        this.setIsOpening(true)
+        
         if (!this.hasIndexedDB()) {
-            errorCallback("IndexedDB unavailable on this client.")
+            reject("IndexedDB unavailable on this client.")
             return
         }
 
@@ -85,33 +115,33 @@
         const request = window.indexedDB.open(this.path(), 2);
 
         request.onsuccess = (event) => {
-            this.onOpenSuccess(event, successCallback, errorCallback)
+            this.onOpenSuccess(event, resolve, reject)
         }
 
         request.onupgradeneeded = (event) => {
-            this.onOpenUpgradeNeeded(event, successCallback, errorCallback)
+            this.onOpenUpgradeNeeded(event, resolve, reject)
         }
 
         request.onerror = (event) => {
-            this.onOpenError(event, successCallback, errorCallback)
+            this.onOpenError(event, resolve, reject)
         }
 
         return this
     }
 
-    onOpenError (event, successCallback, errorCallback) {
+    onOpenError (event, resolve, reject) {
         let message = event.message
         if (!message) {
             message = "Unable to open IndexedDB.<br>May not work on Brave Browser."
             this.debugLog(" open db error: ", event);
         }
 
-        if (errorCallback) {
-            errorCallback(message)
+        if (reject) {
+            reject(message)
         }
     }
 
-    onOpenUpgradeNeeded (event, successCallback, errorCallback) {
+    onOpenUpgradeNeeded (event, resolve, reject) {
         this.debugLog(" onupgradeneeded - likely setting up local database for the first time")
 
         const db = event.target.result;
@@ -126,10 +156,10 @@
         objectStore.createIndex("key", "key", { unique: true });
     }
 
-    onOpenSuccess (event, successCallback, errorCallback) {
+    onOpenSuccess (event, resolve, reject) {
         this.setDb(event.target.result)
-        if (successCallback) {
-            successCallback()
+        if (resolve) {
+            resolve()
         }
     }
 
@@ -157,7 +187,7 @@
 
     // reading
 
-    asyncHasKey (key, callback) {
+    asyncHasKey (key, resolve, reject) {
         const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
         //const keyRangeValue = IDBKeyRange.bound(key, key)
         //const request = objectStore.openCursor(keyRangeValue)
@@ -166,18 +196,16 @@
         request.onsuccess = function(e) {
           const cursor = e.target.result
           if (cursor) { // key already exist
-             callback(true)
+            resolve(true)
           } else { // key not exist
-            callback(false)
+            resolve(false)
           }
         }
 
-        /*
         request.onerror = (event) => {
             console.log("asyncAt('" + key + "') onerror", event.target.error)
-            callback(undefined)
+            reject(event)
         }
-        */
     }
     
     asyncAt (key, callback) {
@@ -278,13 +306,13 @@
 
     // removing
 
-    asyncClear (callback, errorCallback) {
+    asyncClear (callback, reject) {
         const transaction = this.db().transaction([this.storeName()], "readwrite");
 
         transaction.onerror = function (event) {
-            if (errorCallback) {
+            if (reject) {
                 console.log("db clear error")
-                errorCallback(event)
+                reject(event)
             }
         };
 

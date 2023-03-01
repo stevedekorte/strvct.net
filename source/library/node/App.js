@@ -36,11 +36,18 @@
     }
 
     static onPoolOpenSuccess (aPool) {
-        this.defaultStore().rootOrIfAbsentFromClosure(() => BMStorableNode.clone()) // create the root object
+        //this.deleteDefaultStore()
+        //return 
+
+        this.defaultStore().rootOrIfAbsentFromClosure(() => this.rootNodeProto().clone()) // create the root object
         //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
         const app = this.clone()
         this.setShared(app)
         app.run()
+    }
+
+    static rootNodeProto () {
+        return BMStorableNode
     }
 
     static onPoolOpenFailure (aPool, error) {
@@ -116,19 +123,21 @@
         //Documentation.shared().show()
         //this.registerServiceWorker() // not working yet
     }
-	
-    documentBodyView () {
-        return WebBrowserWindow.shared().documentBody()
-    }
+
+    // window and document 
 
     mainWindow () {
-        return Window
+        return WebBrowserWindow.shared()
+    }
+
+    documentBodyView () {
+        return this.mainWindow().documentBody()
     }
 
     setName (aString) {
         this._name = aString
         this.setTitle(aString)
-        WebBrowserWindow.shared().setTitle(aString)
+        this.mainWindow().setTitle(aString)
         return this
     }
     
@@ -142,15 +151,19 @@
         console.log("Application '" + this.name() + "' version " + this.versionsString())
     }
 
+    // document theme
+
     setupDocTheme () {
-        const doc = DocumentBody.shared()
+        //const doc = DocumentBody.shared()
+        const doc = this.documentBodyView()
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
         this.setupNormalTheme()
     }
 
     setupNormalDocTheme () {
-        const doc = DocumentBody.shared()
+        //const doc = DocumentBody.shared()
+        const doc = this.documentBodyView()
         doc.setBackgroundColor("#191919")
         doc.setFontFamily("Helvetica")
         doc.setFontSizeAndLineHeight("15px")

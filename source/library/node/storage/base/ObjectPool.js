@@ -120,7 +120,7 @@
         return this
     }
 
-    asyncOpen (successCallback, errorCallback) { 
+    asyncOpen (resolve, reject) { 
         this.recordsMap().setName(this.name())
         this.recordsMap().asyncOpen(
             () => this.onPoolOpenSuccess(), 
@@ -128,8 +128,8 @@
         )
         /*
             this.recordsMap().asyncOpen(
-            () => { this.onPoolOpenSuccess(); successCallback() }, 
-            (error) => { this.onPoolOpenError(error); errorCallback(); }
+            () => { this.onPoolOpenSuccess(); resolve() }, 
+            (error) => { this.onPoolOpenError(error); reject(error); }
         )
         */
         return this
@@ -199,7 +199,7 @@
         if (map.at(this.rootKey()) !== pid) {
             map.atPut(this.rootKey(), pid)
             console.log("---- SET ROOT PID " + pid + " ----")
-            debugger;
+            //debugger;
         }
         assert(this.hasStoredRoot())
         return this
@@ -791,13 +791,13 @@
         // assert not loading or storing?
         const map = this.recordsMap()
         map.begin()
-        map.forEachK(pid => dict.removeKey(pid))
+        map.forEachK(pid => map.removeKey(pid)) // the remove applies to the changeSet
         map.commit()
         return this
     }
 
-    asyncClear (successCallback) {
-        this.recordsMap().asyncClear(successCallback)
+    asyncClear (resolve, reject) {
+        this.recordsMap().asyncClear(resolve, reject)
     }
 
     // ---------------------------

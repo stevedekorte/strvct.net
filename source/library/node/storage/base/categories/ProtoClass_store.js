@@ -48,13 +48,14 @@
                     console.warn("no setter for slot?")
                     debugger;
                 } else {
-                    if (slot.isLazy()) {
+                    /*if (slot.isLazy()) {
                         const pid = v["*"]
                         assert(pid)
                         const storeRef = StoreRef.clone().setPid(pid).setStore(aStore)
                         //console.log(this.typeId() + "." + slot.name() + " [" + this.title() + "] - setting up storeRef ")
                         slot.onInstanceSetValueRef(this, storeRef)
-                    } else {
+                    } else */
+                    {
                         const unrefValue = aStore.unrefValue(v)
                         slot.onInstanceSetValue(this, unrefValue)
                     }

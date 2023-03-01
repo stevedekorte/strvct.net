@@ -47,7 +47,7 @@
             slot.setShouldStoreSlot(true)
             slot.setDoesHookGetter(true)
             //slot.setHookedGetterIsOneShot(true)
-            //slot.setIsLazy(true) // no point in using this until we have coroutines? blobs are already lazy?
+            //slot.setIsLazy(true) // no point in using this until we have coroutines?
             slot.setInitProto(SubnodesArray)
 
             assert(slot.doesHookGetter())

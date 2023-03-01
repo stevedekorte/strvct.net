@@ -9,14 +9,26 @@
 
 (class StrvctApp extends App {
     
-    initPrototypeSlots () {
-        // model meta data
-        //this.newSlot("settings", null).setShouldStore(false)
-        //this.newSlot("resources", null)
-        //this.newSlot("prototypes", null)
 
-        // model data
-        //this.newSlot("notes", null)
+    static rootNodeProto () {
+        return RootContentNode
+    }
+
+    initPrototypeSlots () {
+
+        /*
+        {
+            const slot = this.newSlot("rootContentNode", null)
+            slot.setShouldStoreSlot(false)
+            slot.setCanInspect(true)
+        }
+        */
+
+        // for now, we won't store this object in order to avoid some
+        // chicken and egg problems
+
+        this.setShouldStore(false)
+        this.setShouldStoreSubnodes(false)
 
         // view
         this.newSlot("browser", null)
@@ -30,19 +42,25 @@
         this.setVersion([0, 0, 0, 0])
         this.setNodeCanReorderSubnodes(true)
         this.addAction("add")
+
+        //this.setBlobs(BMBlobs.shared())
+
+        this.watchOnceForNote("blobsDidOpen")
         return this
-    } 
+    }
 
     setup () {
         super.setup()
         this.setupModel()
-
+        BMResources.shared()
+        
         const browser = BrowserView.clone()
         this.rootNode().setTitle("root node")
-        browser.setBreadCrumbsNode(this.rootNode())
+        browser.setNode(this.rootNode())
+        browser.syncFromNode()
+
         this.setBrowser(browser)
         this.documentBodyView().addSubview(browser)
-        this.appDidInit()
 
         //this.addTimeout( () => this.showClasses(), 1)
     }
@@ -55,27 +73,37 @@
 
     // --- setup model ---
 
-    setupModel () {        
-        const notes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
+    setupModel () {
+        //debugger;
+        //this.rootNode().removeAllSubnodes()
+
+        //const notes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
         //notes.subnodes().forEach(sn => sn.setCanDelete(true))
         //notes.orderFirst()
         //this.setNotes(notes)
 
-        const prototypes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
+        //const prototypes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
         //this.setPrototypes(prototypes)
 
         // settings
-        const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
+        //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
         //this.setSettings(settings)
         //debugger;
         return this
     }
 
+    blobsDidOpen () {
+        //debugger;
+        // called by BMBlobs object owned by Settings
+        //setTimeout(() => this.appDidInit(), 0)
+        this.appDidInit()
+    }
+
     // --- setup views ---
 
     appDidInit () {
+        //this.rootNode().removeFirstSubnodeWithTitle("Themes")
         super.appDidInit()
-        this.rootNode().removeFirstSubnodeWithTitle("Themes")
     }
 
     // themes - temporary, until ThemesResources is ready

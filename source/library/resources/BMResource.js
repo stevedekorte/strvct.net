@@ -8,11 +8,11 @@
 
 (class BMResource extends BaseNode {
     
-    // --- mime types ---
+    // --- supported mime types ---
 
-    /*
     static supportedMimeTypes () {
-        return new Set(["audio/ogg", "audio/wave", "audio/mp3"])
+        throw new Error("subclasses should override this method")
+        return new Set()
     }
 
     static canOpenMimeType (mimeType) {
@@ -20,18 +20,17 @@
     }
 
     static openMimeChunk (dataChunk) {
-        const aNode = this.clone()
+         throw new Error("subclasses should override this method")
+        //const aNode = this.clone()
         //setValue(dataChunk)
-        console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)
-        return aNode
+        //console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)
+        //return aNode
     }
 
-    static supportedExtensions () {
-        return this.supportedMimeTypes().map(mimeType => MimeExtensions.shared().pathExtensionsForMimeType(mimeType)).flat()
-    }
-    */
+    // --- supported extension types ---
 
     static supportedExtensions () {
+        throw new Error("subclasses should override this method")
         return []
     }
 
@@ -72,6 +71,37 @@
         return this.path().lastPathComponent().sansExtension()
     }
 
+    // --- resource file ---
+
+    resourceFile () {
+        const rootFolder = BMFileResources.shared().rootFolder()
+        const fileResource = rootFolder.nodeAtSubpathString(this.path())
+        return fileResource
+    }
+
+    loadFileResource () {
+        this.setTitle(this.path().lastPathComponent().sansExtension())
+        
+        const resourceFile = this.resourceFile()
+        if (!resourceFile) {
+          const error = "no index for file resource at path '" + this.path() + "'"
+          this.setError(error)
+          throw new Error(error)
+        }
+        this.watchOnceForNoteFrom("fileResouceLoaded", resourceFile)
+        resourceFile.load()
+        return this
+    }
+    
+    fileResouceLoaded (aNote) {
+        const fileResource = aNote.sender()
+        this.setData(fileResource.data())
+        this.postNoteNamed("resourceLoaded")
+        this.setLoadState("loaded")
+        this.didLoad()
+        return this
+    }
+
     // --- load ---
 
     loadIfNeeded () {
@@ -82,6 +112,13 @@
     }
 
     load () {
+        this.loadFileResource()
+        return this
+    }
+
+    /*
+    load () {
+        debugger;
         this.setLoadState("loading")
         const rq = new XMLHttpRequest();
         rq.open('GET', this.path(), true);
@@ -132,6 +169,7 @@
         console.log(this.type() + " onLoadError ", error, " " + this.path())
         this.setError(error)
     }
+    */
     
     didLoad () {
         this.setIsLoaded(true)

@@ -56,17 +56,18 @@
     
     initPrototypeSlots () {
         // broswerNode is this view's node()
-        this.newSlot("headerNode", null) // top header
-        this.newSlot("breadCrumbsNode", null) // breadcrumbs
+        //this.newSlot("headerNode", null) // top header
+        //this.newSlot("breadCrumbsNode", null) // breadcrumbs
     }
 
     init () {
         super.init()
-        this.setupBrowserNode()
-        this.setupHeaderNode()
+        //this.setupBrowserNode()
+        //this.setupHeaderNode()
         return this
     }
 
+    /*
     setupBrowserNode () {
         const node = BaseNode.clone()
         node.setNodeMinTileHeight(55)
@@ -90,7 +91,6 @@
     didUpdateSlotBreadCrumbsNode (oldValue, newValue) {
         //debugger;
 
-        // baseNode is the ObjectPool rootNode
         // tell the node to hint to UI to use BreadCrumbsTile view to display itself
         newValue.setNodeTileClassName("BreadCrumbsTile")
         newValue.setTitle("BreadCrumbsTile")
@@ -108,10 +108,10 @@
         this.scheduleMethod("moveToBase")
         return this
     }
+    */
 
     moveToBase () {
-        //this.selectNodePathArray([this.node(), this.headerNode(), this.baseNode()])
-        this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
+        //this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
        // debugger;
         return this
     }

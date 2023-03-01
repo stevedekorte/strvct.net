@@ -544,7 +544,7 @@
     // ---------------------------------------
 
     prepareToAccess () {
-        // this should be called whenever subnodes need to be accessed
+        // this should be called whenever subnodes need to be accessed? See willGetSlotSubnodes
         if (!this._didPrepareForFirstAccess) {
             this._didPrepareForFirstAccess = true
             this.prepareForFirstAccess()
@@ -554,6 +554,13 @@
     prepareForFirstAccess () {
         // subclasses can override 
     }
+
+    /*
+    willGetSlotSubnodes () {
+        debugger
+        this.prepareToAccess() // infinite loop?
+    }
+    */
     
     // --- parent chain notifications ---
     

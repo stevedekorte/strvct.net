@@ -23,6 +23,11 @@
 
         {
             const slot = this.newSlot("nodeTileClassName", null)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("tile class name")
+            slot.setSlotType("String")
+            slot.setShouldStoreSlot(true)
         }
 
         {
@@ -129,12 +134,17 @@
     
      nodeViewClass () {
         const name = this.nodeViewClassName()
+        if (this.title() === "BreadCrumbsNode") {
+            debugger;
+        }
 
         if (name) {
             const proto = Object.getClassNamed(name)
             if (proto) {
                 return proto
             }
+            console.warn("no class found for nodeViewClassName:'" + name + "'")
+            debugger
         }
         
 	  	return this.firstAncestorClassWithPostfix("View") 
@@ -143,6 +153,8 @@
     // --- nodeTileClass ---
 
     nodeTileClass () {  
+        // This is used (instead of nodeViewClass) by TilesView to 
+        // get it's subnode's views. Other views (typically) use nodeViewClass.
         const name = this.nodeTileClassName()
 
         if (name) {
@@ -150,6 +162,8 @@
             if (proto) {
                 return proto
             }
+            console.warn("no class found for nodeTileClassName:'" + name + "'")
+            throw new Error("no class found for nodeTileClassName:'" + name + "'")
         }
 
 	  	return this.firstAncestorClassWithPostfix("Tile")

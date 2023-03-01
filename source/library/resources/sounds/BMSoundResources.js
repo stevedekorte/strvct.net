@@ -18,11 +18,6 @@
         this.setResourceClasses([WASound])
     }
 
-    addSoundWithPath (aPath) {
-        this.addResourceWithPath(aPath)
-        return this
-    }
-
     addSound (aSound) {
         this.addResource(aSound)
         return this

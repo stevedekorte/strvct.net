@@ -138,9 +138,8 @@ class IndexBuilder {
     }
 
     hashForString (data) {
-        const secret = ""
-        const sha256Hasher = crypto.createHmac("sha256", secret);
-        const hash = sha256Hasher.update(data).digest("base64");
+        //crypto.subtle.digest("SHA-256", this).then(resolve, reject)
+        const hash = crypto.createHash('sha256').update(data).digest("base64");
         return hash
     }
 
@@ -151,7 +150,7 @@ class IndexBuilder {
             throw new Error("missing path '" + path + "'")    
         }
 
-        const data = fs.readFileSync(fullPath,  "utf8")
+        const data = fs.readFileSync(fullPath)
         const size = fs.statSync(fullPath).size
         const hash = this.hashForString(data)
 

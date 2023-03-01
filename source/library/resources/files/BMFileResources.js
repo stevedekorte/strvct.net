@@ -10,6 +10,7 @@
     
     initPrototypeSlots () {
         this.newSlot("rootPath", ".")
+        this.newSlot("hasSetupSubnodes", false)
     }
 
     init () {
@@ -23,35 +24,46 @@
 
     appDidInit () {
         //this.debugLog(".appDidInit()")
-        this.setupSubnodes()
+        //this.setupSubnodes()
         return this
     }
-    
-    setupSubnodes () {
-        assert(this.subnodes().length === 0)
-        //debugger;
-        const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
-        this.addSubnode(rootFolder)
 
-        const entries = ResourceManager.shared().entries()
-        //const allPaths = ResourceManager.shared().resourceFilePaths()
-        entries.forEach(entry => {
-            const aPath = entry.path
-            const pathArray = aPath.split("/")
-            while (pathArray.first() === ".") {
-                pathArray.shift()
-            }
-            const file = rootFolder.addRelativeResourcePathArray(pathArray)
-            file.setResourceHash(entry.hash)
-            file.setResourceSize(entry.size)
-            if (!file) {
-                throw new Error("no file added")
-            }
-        }) // will find path to last folder and insert resource
+    /*
+    prepareForFirstAccess () {
+        debugger;
+        this.setupSubnodesIfNeeded()
+        return this
+    }
+    */
+    
+    setupSubnodesIfNeeded () {
+        if (!this.hasSetupSubnodes()) {
+            const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
+            this.addSubnode(rootFolder)
+
+            const entries = ResourceManager.shared().entries()
+            //const allPaths = ResourceManager.shared().resourceFilePaths()
+            entries.forEach(entry => {
+                const aPath = entry.path
+                const pathArray = aPath.split("/")
+                while (pathArray.first() === ".") {
+                    pathArray.shift()
+                }
+                const file = rootFolder.addRelativeResourcePathArray(pathArray)
+                file.setResourceHash(entry.hash)
+                file.setResourceSize(entry.size)
+                if (!file) {
+                    throw new Error("no file added")
+                }
+            }) // will find path to last folder and insert resource
+            this.setHasSetupSubnodes(true)
+        }
         return this
     }
 
     rootFolder () {
+        this.setupSubnodesIfNeeded()
+        //debugger
         return this.subnodes().first()
     }
 

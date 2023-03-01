@@ -8,17 +8,16 @@
 
 */
 
-(class BMFont extends BaseNode {
+(class BMFont extends BMResource {
     
     static supportedExtensions () {
         return ["ttf", "woff", "woff2"]
     }
 
     initPrototypeSlots () {
-        this.newSlot("path", null)
         this.newSlot("name", null)
         this.newSlot("options", null)
-        this.newSlot("data", null)
+        this.newSlot("fontFace", null) // reference to browser FontFace object
     }
 
     initPrototype () {
@@ -28,7 +27,6 @@
     init () {
         super.init()
         this.setOptions({})  // example options { style: 'normal', weight: 700 }  
-        this.setIsDebugging(true)
     }
 
     title () {
@@ -45,63 +43,31 @@
 
     // loading 
 
-    loadData () {
-        const req = new XMLHttpRequest();
-        req.open("GET", this.path(), true);
-        req.responseType = "arraybuffer";
-        
-        req.onload = (event) => {
-          const arrayBuffer = req.response; // Note: not req.responseText
-          if (arrayBuffer) {
-            this.onLoadData(arrayBuffer)
-          }
-        };
-        
-        req.send(null);
-    }
-
-    onLoadData (arrayBuffer) {
-        const aFontFace = new FontFace(this.name(), arrayBuffer, this.options()); 
-        aFontFace.load().then((loadedFace) => {
-            this.didLoad()
-            assert(loadedFace === aFontFace)
-            document.fonts.add(loadedFace)
-        }).catch((error) => {
-            this.onLoadError(error)
-        });
-    }
-
-    load () {
-        this.loadData()
-        return this
-    }
-
-    OLD_load () {
-        if (!getGlobalThis()["FontFace"]) {
-            console.warn("this browser is missing FontFace class")
-            return this
-        }
-
-        const urlString = "url('" + this.path() + "')"
-        const aFontFace = new FontFace(this.name(), urlString, this.options()); 
-        
-        aFontFace.load().then((loadedFace) => {
-            this.didLoad()
-            assert(loadedFace === aFontFace)
-            document.fonts.add(loadedFace)
-        }).catch((error) => {
-            this.onLoadError(error)
-        });
-
-        return this
-    }
-
     didLoad () {
+        super.didLoad()
+        this.loadFontFromData()
         if (this.isDebugging()) {
-            this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'")
+            //this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'")
+            //debugger;
             //this.debugLog(".didLoad('" + this.name() + "')")
         }
         return this
+    }
+
+    loadFontFromData () {
+        const aFontFace = new FontFace(this.name(), this.data(), this.options()); 
+        this.setFontFace(aFontFace)
+
+        aFontFace.load().then((loadedFace) => {
+            // can probably do this in the background, 
+            // but it's nice to know when it's complete
+           // this.didLoad()
+            assert(loadedFace === aFontFace)
+            document.fonts.add(loadedFace)
+            //console.log("added font to document: ", this.name())
+        }).catch((error) => {
+            this.onLoadError(error)
+        });
     }
 
     onLoadError (error) {

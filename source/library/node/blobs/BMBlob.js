@@ -79,8 +79,11 @@
         field.getValueFromTarget()
         this.addSubnode(field)
 
-        this.asyncReadValue()
+        this.asyncReadValue(() => { this.didReadValue() })
         this.scheduleSyncToView()
+    }
+
+    didReadValue () {
     }
 
     title () {
@@ -98,7 +101,7 @@
     // key
 
     hash () {
-        return this.name() // for subnode lookup
+        return this.valueHash() // for subnode lookup
     }
 
     didUpdateSlotValue (oldValue, newValue) {
@@ -115,10 +118,22 @@
     }
 
     asyncWriteValue () {
+        //const v = "abc" 
         const v = this.value()
-        const digest = v.asyncSha256Digest((digestBuffer) => {
+        // what about number or null values
+        // const digestPromise = 
+        v.asyncSha256Digest((digestBuffer) => {
             const h = digestBuffer.base64Encoded()
+            if (this.valueHash()) {
+                console.log("valueSize:" + this.valueSize())
+                console.log("     size:" + v.byteLength)
+                console.log("valueHash:" + this.valueHash())
+                console.log("     hash:" + h)
+                assert(this.valueHash() === h)
+            }
             this.asyncWriteValueWithHash(v, h)
+        }, (error) => {
+            throw new Error("sha256 failed")    
         })
     }
 
@@ -127,11 +142,18 @@
 
         assert(this.isValid())
 
-        const success = () => {
-            //console.log("did write hash/value pair: " + this.description())
+        const resolve = () => {
+            console.log("did write hash/value pair: " + this.description())
         }
 
-        this.store().asyncAtPut(h, v, success, null)
+        const reject = (error) => {
+            console.log("error writing hash/value pair: " + this.description())
+            debugger
+        }
+
+        this.store().asyncOpen(() => {
+            this.store().asyncAtPut(h, v, resolve, reject)
+        }, reject)
     }
 
     asyncReadValue (resolve, reject) {
@@ -179,6 +201,24 @@
         return parts.join(", ")
     }
 
+    static testHash () {
+        // code from nodejs
+        // crypto.createHash('sha256').update(Buffer.from("abc", "utf8")).digest("base64")
+        const nodejsHash = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
+
+        const enc = new TextEncoder(); // always utf-8
+        const uint8Array = enc.encode("abc");
+        const arrayBuffer = uint8Array.buffer
+        arrayBuffer.asyncSha256Digest((digestBuffer) => {
+            const h = digestBuffer.base64Encoded()
+            assert(h === nodejsHash)
+            console.log("hashes match!")
+            debugger;
+        })
+    }
+
 }.initThisClass());
 
 
+
+//BMBlob.testHash()

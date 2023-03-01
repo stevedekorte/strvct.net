@@ -47,6 +47,7 @@
     }
     */
 
+    /*
     load () {
         if (this.isDebugging()) {
             this.debugLog(".loadDataURL() " + this.path())
@@ -82,18 +83,31 @@
     }
 
     didFetchDataUrl (dataURL) {
+        //<img [src]="sanitize('data:image/jpg;base64, ' " + arrayBuffer.base64Encoded())">
+
         this.setDataURL(dataURL);
-        
-        /*
+        return this
+    }
+    */
+
+    didLoad () {
+        super.didLoad()
+        debugger;
+        this.setDataUrl(this.data())
+        return this
+    }
+
+    /*
+    // this code should be on UI side
+
+    canvasForImage () {
         // now just to show that passing to a canvas doesn't hold the same results
         const canvas = document.createElement("canvas");
         canvas.width = myImage.naturalWidth;
         canvas.height = myImage.naturalHeight;
         canvas.getContext("2d").drawImage(myImage, 0, 0);
-        */
-
-        return this
     }
+    */
 
 }.initThisClass());
 

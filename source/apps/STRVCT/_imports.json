@@ -1,5 +1,6 @@
 [
     "BMSettingsNode.js",
+    "RootContentNode.js",
     "StrvctApp.js",
     "_init.js"
 ]

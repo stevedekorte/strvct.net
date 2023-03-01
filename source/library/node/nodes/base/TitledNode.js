@@ -197,7 +197,7 @@
     }
 
     subnodeWithTitleIfAbsentInsertProto (aString, aProto) {
-        let subnode = this.firstSubnodeWithTitle(aString)
+        const subnode = this.firstSubnodeWithTitle(aString)
 
         if (subnode) {
             if (subnode.type() !== aProto.type()) {
@@ -262,9 +262,7 @@
         if (!subnode && aClosure) {
             subnode = aClosure()
             subnode.setTitle(aString)
-            if (subnode.type() === "BMThemeResources") {
-                console.log("debug")
-            }
+
             this.addSubnode(subnode)
         }
 

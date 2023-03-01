@@ -91,8 +91,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
         this.simpleNewSlot("initProto", null) // clone this proto on init and set to initial value
         this.simpleNewSlot("valueClass", null) // declare the value should be a kind of valueClass
-        this.simpleNewSlot("field", null)
-        this.simpleNewSlot("isLazy", false) // should hook getter
+        //this.simpleNewSlot("field", null)
+        //this.simpleNewSlot("isLazy", false) // should hook getter
         this.simpleNewSlot("isWeak", false) // should hook getter
 
         // slot hook names
@@ -396,6 +396,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     copyValueFromInstanceTo (anInstance, otherInstance) {
+        /*
         if (this.isLazy()) {
             const valueRef = this.onInstanceGetValueRef(anInstance)
             if (valueRef) {
@@ -403,6 +404,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 return this
             }
         }
+        */
 
         const v = this.onInstanceGetValue(anInstance)
         this.onInstanceSetValue(otherInstance, v)
@@ -453,10 +455,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         */
 
         const initProto = this._initProto
+        /*
         if (this.isLazy()) {
             const obj = initProto.clone()
             anInstance[this._privateName] = obj
-        } else if (initProto) {
+        } else */ 
+        if (initProto) {
             const obj = initProto.clone()
             this.onInstanceSetValue(anInstance, obj)
         } else if (this._initValue) {

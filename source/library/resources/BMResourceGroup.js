@@ -60,7 +60,8 @@
 
     resourceForPath (aPath) {
         const rClass = this.resourceClassForFileExtension(aPath.pathExtension())
-        const aResource = rClass.clone().setPath(aPath).load()
+        const aResource = rClass.clone().setPath(aPath)
+        aResource.load()
         return aResource
     }
 

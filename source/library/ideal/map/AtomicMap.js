@@ -39,9 +39,9 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         assert(this.isOpen())
     }
 
-    asyncOpen (callback) {
+    asyncOpen (resolve, reject) {
         this.open()
-        callback()
+        resolve()
     }
 
     close () {
@@ -188,7 +188,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     forEachK (fn) {
-        this.assertNotInTx() 
+        //this.assertNotInTx()  // why is this needed?
         this.assertAccessible()
         this.map().forEach((v, k) => fn(k))
     }

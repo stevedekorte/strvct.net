@@ -66,34 +66,7 @@
         }
         return 0
     }
-    /*
 
-    // --- load ---
-
-    loadIfNeeded () {
-        if (this.loadState() === "unloaded") {
-            this.load()
-        }
-        return this
-    }
-
-    load () {
-        this.setLoadState("loading")
-
-        const request = new XMLHttpRequest();
-        request.open('GET', this.path(), true);
-        request.responseType = 'arraybuffer';
-        request.onload = (event) => { this.onLoad(event) }
-        request.onerror = (event) => { this.onLoadError(event) }
-        request.send();
-        return this
-    }
-
-    onLoadError (event) {
-        console.log(this.type() + " onLoadError ", error, " " + this.path())
-        this.setError(error)
-    }
-*/
     // ---
 
     audioCtx () {
@@ -108,11 +81,8 @@
     }
     */
 
-    setData (data) {
-        this._data = data
-        if (data) {
-            this.prepareToDecode()
-        }
+    didLoad () {
+        this.prepareToDecode()
         return this
     }
 
@@ -121,7 +91,7 @@
             this.decodeBuffer(this.data())
         } else {
             Broadcaster.shared().addListenerForName(this, "didSetupWAContext")
-            console.warn(this.typeId() + " waiting for audio context to decode")
+            //console.warn(this.typeId() + " waiting for audio context to decode")
         }
     }
 
@@ -135,6 +105,7 @@
     }
 
     decodeBuffer (aBuffer) {
+        assert(!Type.isNullOrUndefined(aBuffer))
         this.audioCtx().decodeAudioData(aBuffer,
             decodedBuffer => this.onDecode(decodedBuffer),
             e => this.onDecodeError(e)
@@ -145,13 +116,14 @@
     // --- decode ---
 
     onDecode (decodedBuffer) {
+        assert(!Type.isNullOrUndefined(decodedBuffer))
         this.setDecodedBuffer(decodedBuffer)
         this.setLoadState("loaded")
         //console.log(this.type() + " didDecode " + this.path())
         if (this.shouldPlayOnLoad()) {
             this.play()
         }
-        this.didLoad()
+        //this.didLoad()
     }
 
     onDecodeError (e) {

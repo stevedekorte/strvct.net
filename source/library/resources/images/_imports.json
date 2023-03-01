@@ -1,5 +1,6 @@
 [
     "BMImage.js",
     "BMURLImage.js",
-    "BMImageResources.js"
+    "BMImageResources.js",
+    "BMImageTile.js"
 ]

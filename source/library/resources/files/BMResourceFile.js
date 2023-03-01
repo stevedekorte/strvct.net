@@ -9,8 +9,10 @@
 (class BMResourceFile extends BaseNode {
 
     initPrototypeSlots () {
-        this.newSlot("path", ".")
-        
+        this.newSlot("path", ".") // path from _index.json entry
+        this.newSlot("resourceHash", null) // hash from _index.json entry
+        this.newSlot("resourceSize", null) // size from _index.json entry
+
         this.newSlot("data", null)
         this.newSlot("encoding", "utf8")
         this.newSlot("request", null) // this set back to null after request is successfully completed
@@ -21,9 +23,6 @@
         this.newSlot("isLoaded", false)
         this.newSlot("loadNote", null) 
         this.newSlot("loadErrorNote", null) 
-
-        this.newSlot("resourceHash", null) 
-        this.newSlot("resourceSize", null) 
     }
 
     init () {
@@ -32,7 +31,7 @@
         this.setNoteIsSubnodeCount(true)
 
         // notifications
-        this.setLoadNote(this.newNoteNamed("resourceFileLoaded"))
+        this.setLoadNote(this.newNoteNamed("fileResouceLoaded"))
         this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"))
         return this
     }
@@ -74,17 +73,75 @@
     }
 
     load () {
-        const path = this.path().sansPrefix("./")
-        const camValue = ResourceManager.shared().camValueForPath(path)
-        if (camValue) {
-            console.log("loaded via cam for path: ", path)
-            this.setData(camValue)
+        if (this.data()) {
             this.postLoad()
+            return this
+        }
+
+        if (this.camData()) {
+            this.loadFromCamData()
+        } else if (this.hasCachedBlob()) {
+            this.asyncLoadCachedBlob()
         } else {
             this.loadFromUrl()
         }
         return this
     }
+
+    // --- load data from cam ---
+
+    camPath () {
+        return this.path().sansPrefix("./")
+    }
+
+    camData () {
+        const data = ResourceManager.shared().camValueForPath(this.camPath())
+        return data
+    }
+
+    loadFromCamData () {
+        this.setData(this.camData())
+        console.log("loaded via cam for path: ", this.camPath())
+        this.postLoad()
+    }
+
+    // --- load data from cached blob ---
+
+    hasCachedBlob () {
+        const h = this.resourceHash()
+        //debugger;
+        const b = h && BMBlobs.shared().hasBlobWithValueHash(h)
+        console.log("has cache for " + this.path() + ":" + b)
+        return b
+    }
+
+    asyncLoadCachedBlob () {        
+        assert(this.hasCachedBlob())
+
+        const h = this.resourceHash()
+        const blob = BMBlobs.shared().blobWithValueHash(h)   
+        blob.asyncReadValue(() => this.onReadCachedBlob(blob), () => this.onErrorReadingCachedBlob(blob))
+        console.log("reading from blob cache... " + h + " " + this.path())
+    }
+
+    onReadCachedBlob (blob) {
+        console.log("success reading blob " + blob.name() + " for " + this.path())
+        //debugger;
+        if (Type.isUndefined(blob.value())) {
+            console.log("found undefined reading blob " + blob.name() + " for " + this.path())
+
+            this.loadFromUrl()
+        } else {
+            this.setData(blob.value())
+            this.postLoad()
+        }
+    }
+
+    onErrorReadingCachedBlob (blob) {
+        console.log("error reading blob " + blob.name() + " for " + this.path())
+    }
+
+    // --- load data from url ---
 
     loadRequestType () {
         return "arraybuffer"
@@ -92,32 +149,66 @@
     }
 
     loadFromUrl () {
-        debugger;
-        console.log("loaded via url fetch for path: ", this.path())
+        console.log("loading via url fetch for path: ", this.path())
 
         const path = this.path()
-        const request = new XMLHttpRequest();
-        request.open('GET', path, true);
+        const rq = new XMLHttpRequest();
+        rq.open('GET', path, true);
         if (this.loadRequestType()) {
-            request.responseType = this.loadRequestType();
+            rq.responseType = this.loadRequestType();
         }
 
-        request.onload  = (event) => { this.onUrlLoad(event) }
-        request.onerror = (event) => { this.onUrlLoadError(event) }
-        request.send();
-        this.setRequest(request)
+        rq.onload  = (event) => { this.onUrlLoad(event) }
+        rq.onerror = (event) => { this.onUrlLoadError(event) }
+
+/*        
+        rq.onload      = (event) => { this.onRequestLoad(event) }
+        rq.onerror     = (event) => { this.onRequestError(event) }
+        rq.onabort     = (event) => { this.onRequestAbort(event) }
+        rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
+        rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
+        rq.onprogress  = (event) => { this.onRequestProgress(event) }
+        rq.ontimeout   = (event) => { this.onRequestTimeout(event) }
+*/
+
+        rq.send();
+        this.setRequest(rq)
         return this
     }
 
     onUrlLoad () {
+        console.log("onUrlLoad " + this.path())
         const data = this.request().response
         this.setData(data)
         this.postLoad()
         this.setIsLoading(false)
+        
+        const h = this.resourceHash()
+        if (h) {
+            console.log("writing to blob cache... " + h + " " + this.path())
+
+            const blob = BMBlobs.shared().createBlobWithNameAndValue(h, this.data())
+
+            /*
+            const buffer = this.data()
+            const str = new TextDecoder().decode(buffer);
+            console.log("path: '" + this.path() + "'")
+            console.log("size: '" + buffer.byteLength + "'")
+            console.log("hash: '" + h + "'")
+            console.log("type: '" + typeof(buffer) + "'")
+            console.log("slice: '" + str.slice(0, 6) + "'")
+            debugger;
+            */
+
+            blob.setName(this.path())
+            blob.setValueHash(this.resourceHash())
+            blob.setValueSize(this.resourceSize())
+        }
         return this
     }
 
     onUrlLoadError (event) {
+        console.log("onUrlLoadError " + this.path())
         this.setError(event.error)
         this.postLoadError()
         this.setIsLoading(false)
@@ -133,5 +224,49 @@
         this.loadErrorNote().post()
         return this
     }
+
+    /*
+    
+    onRequestAbort (event) {
+        this.setLoadState("aborted")
+    }
+
+    onRequestLoadEnd (event) {
+    }
+
+    onRequestLoadStart (event) {
+        this.setLoadState("started")
+    }
+
+    onRequestProgress (event) {
+        if (event.lengthComputable) {
+            const p = Math.floor(100 * (event.loaded / event.total))/100
+            this.setLoadState(p + "% of " + event.total.byteSizeDescription())
+        } else {
+            this.setLoadState("loading (" +  event.loaded.byteSizeDescription() + " so far)")
+        }
+    }
+
+    onRequestTimeout (event) {
+        this.setLoadState("timeout")
+    }
+
+    onRequestLoad (event) {
+        const request = event.currentTarget;
+        const downloadedBuffer = request.response;  // may be array buffer, blob, or string, depending on request type
+        this.setData(downloadedBuffer)
+        //this.didLoad()
+    }
+
+    onRequestError (event) {
+        console.log(this.type() + " onLoadError ", error, " " + this.path())
+        this.setError(error)
+    }
+    
+    didLoad () {
+        this.setIsLoaded(true)
+        this.postNoteNamed("didLoad")
+    }
+*/
 
 }.initThisClass());

@@ -68,6 +68,10 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
                 } else if (dop === "duplicate" && v && v.duplicate) {
                     const dup = v.duplicate()
                     mySlot.onInstanceSetValue(this, dup)
+                } else if (dop === "nop") {
+                    // nop
+                } else {
+                    throw new Error("unsupported slot duplicate operation: '" +  dop + "'")
                 }
             } else if (!ingoreMissingSlots) {
                 throw new MissingSlotError()
