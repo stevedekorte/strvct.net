@@ -9,7 +9,6 @@
 
 (class StrvctApp extends App {
     
-
     static rootNodeProto () {
         return RootContentNode
     }
@@ -166,3 +165,5 @@
     */
 
 }.initThisClass());
+
+

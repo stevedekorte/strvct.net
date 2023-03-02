@@ -8,7 +8,7 @@
 
 (class BMTheme extends BMThemeFolder {
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
   init () {

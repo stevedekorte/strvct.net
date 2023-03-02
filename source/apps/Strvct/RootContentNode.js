@@ -20,7 +20,7 @@
 
 */
 
-(class RootContentNode extends App {
+(class RootContentNode extends BMFolderNode {
     
     initPrototypeSlots () {
 
@@ -73,17 +73,16 @@
 
     init () {
         super.init()
-        this.setName("Root Content Node")
+        this.setTitle("Root Content Node")
         this.setNodeCanReorderSubnodes(true)
         //this.addAction("add")
-
         this.setNodeMinTileHeight(55)
-        this.setTitle("browser")
         this.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
         return this
     }
 
     didInit () {
+        super.didInit()
         // This didInit *may not execute before* the didInit of other nodes such as the header and breadcrumbs.
         //debugger;
 
@@ -108,50 +107,62 @@
     // header
 
     setupHeaderNode () {
-        const node = this.subnodeWithTitleIfAbsentInsertClosure("HeaderNode", () => {
-            return this.newHeaderNode()
-        })
+       // this.removeAllSubnodes()
+        //debugger;
 
-        node.setNodeTileClassName("HeaderTile")
-        node.setNodeMinTileHeight(55)
-        node.setTitle("HeaderNode")
-        node.setNodeIsVertical(false) 
-        
+        if (this.subnodes().length > 1) {
+            this.removeAllSubnodes()
+        }
+
+        let node = this.subnodes().first()
+
+        if (!node) {
+            node = this.newHeaderNode()
+            this.addSubnode(node)
+        }
+
+        node.setNodeCanEditTitle(true)
+
         this.setHeaderNode(node)
     }
 
     newHeaderNode () {
-        const node = BaseNode.clone() // FolderNode?
+        const node = BMFolderNode.clone() // FolderNode?
         node.setNodeTileClassName("HeaderTile")
         node.setNodeMinTileHeight(55)
-        node.setTitle("HeaderNode")
+        node.setTitle("my header")
+        node.setNodeCanEditTitle(true)
         node.setNodeIsVertical(false) 
+        node.setCanDelete(false)
         return node
     }
 
     // bread crumbs
 
     setupBreadCrumbsNode () {
-        const node = this.headerNode().subnodeWithTitleIfAbsentInsertClosure("BreadCrumbsNode", () => {
-            return this.newBreadCrumbsNode()
-        })
-        assert(node.nodeTileClassName() === "BreadCrumbsTile")
+        //debugger
+        const root = this.headerNode()
 
-        //debugger;
-        //console.log("1 node.nodeTileClassName(): ", node.nodeTileClassName())
-        node.setNodeTileClassName("BreadCrumbsTile")
-        //console.log("2 node.nodeTileClassName(): ", node.nodeTileClassName())
-        node.setNodeTileClassName = function () {
-            throw new Error("why is this changing?")
+        if (root.subnodes().length > 1) {
+            this.removeAllSubnodes()
         }
 
-        assert(node.nodeTileClassName() === "BreadCrumbsTile")
+        let node = root.subnodes().first()
+
+        if (!node) {
+            node = this.newBreadCrumbsNode()
+            root.addSubnode(node)
+        }
+        node.setNodeIsVertical(true) 
+
+        //debugger;
         this.setBreadCrumbsNode(node)
     }
 
     newBreadCrumbsNode () {
         const node = BMFolderNode.clone()
         node.setNodeTileClassName("BreadCrumbsTile")
+        node.setCanDelete(false)
         return node
     }
 

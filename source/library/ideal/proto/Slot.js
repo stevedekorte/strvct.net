@@ -255,7 +255,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 } 
                 // this.setOwnsSetter(true)
             }
-            this.setupSetter()
+            //this.setupSetter()
         }
         return this 
     }
@@ -303,6 +303,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             } else {
                 this.makeDirectSetter()
             }
+            //Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter())
         }
     }
 

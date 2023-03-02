@@ -31,11 +31,13 @@
             slot.setLabel("value")
             slot.setSlotType("String")
             slot.setInspectorPath("Subtitle")
+            slot.setShouldStoreSlot(true)
         }
 
         {
             const slot = this.newSlot("note", null)
             slot.setDuplicateOp("copyValue")
+            slot.setShouldStoreSlot(true)
         }
 
         {
@@ -51,6 +53,7 @@
         {
             const slot = this.newSlot("nodeCanEditTitle", false)
             slot.setDuplicateOp("copyValue")
+            slot.setShouldStoreSlot(true)
         }
 
         {
@@ -60,16 +63,19 @@
             slot.setLabel("editable")
             slot.setSlotType("Boolean")
             slot.setInspectorPath("Subtitle")
+            slot.setShouldStoreSlot(true)
         }
 
         {
             const slot = this.newSlot("subtitleIsSubnodeCount", false)
             slot.setDuplicateOp("copyValue")
+            slot.setShouldStoreSlot(true)
         }
 
         {
             const slot = this.newSlot("noteIsSubnodeCount", false)
             slot.setDuplicateOp("copyValue")
+            slot.setShouldStoreSlot(true)
         }
 
     }

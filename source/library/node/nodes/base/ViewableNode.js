@@ -134,17 +134,13 @@
     
      nodeViewClass () {
         const name = this.nodeViewClassName()
-        if (this.title() === "BreadCrumbsNode") {
-            debugger;
-        }
-
         if (name) {
             const proto = Object.getClassNamed(name)
             if (proto) {
                 return proto
             }
             console.warn("no class found for nodeViewClassName:'" + name + "'")
-            debugger
+            debugger 
         }
         
 	  	return this.firstAncestorClassWithPostfix("View") 
@@ -163,7 +159,6 @@
                 return proto
             }
             console.warn("no class found for nodeTileClassName:'" + name + "'")
-            throw new Error("no class found for nodeTileClassName:'" + name + "'")
         }
 
 	  	return this.firstAncestorClassWithPostfix("Tile")
@@ -179,11 +174,9 @@
 
             if (canUseNodes.length === 1) {
                 const match = canUseNodes.first()
-
                 const newNode = match.openMimeChunk(dataChunk)
                 this.addSubnode(newNode)
 
-                
                 //if (this.acceptsAddingSubnode(match)) {
                 //    this.addSubnode(match)
                 //}

@@ -697,7 +697,7 @@
             this.recordsMap().begin()
             this.recordsMap().clear()
             this.recordsMap().commit()
-            debugger;
+            //debugger;
             return 0;
         }
         //debugger;
@@ -786,7 +786,7 @@
         return deleteCount
     }
 
-    deleteAll () {
+    deleteAll (resolve, reject) {
         assert(this.isOpen())
         // assert not loading or storing?
         const map = this.recordsMap()

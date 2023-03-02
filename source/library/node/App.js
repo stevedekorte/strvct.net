@@ -31,13 +31,16 @@
         this.defaultStore().setDelegate(this).asyncOpen() 
     }
 
-    static deleteDefaultStore () {
-        this.defaultStore().deleteAll()
+    static deleteDefaultStore (resolve, reject) {
+        this.defaultStore().deleteAll(resolve, reject)
     }
 
     static onPoolOpenSuccess (aPool) {
-        //this.deleteDefaultStore()
-        //return 
+        if (false) {
+            this.deleteDefaultStore(); 
+            console.warn("DELETING STORE")
+            return 
+        }
 
         this.defaultStore().rootOrIfAbsentFromClosure(() => this.rootNodeProto().clone()) // create the root object
         //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)

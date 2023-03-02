@@ -90,7 +90,6 @@
             slot.setCanInspect(true)
             slot.setLabel("type")
             slot.setSlotType("String")
-            //slot.setInspectorPath("Subtitle")
             slot.setCanEditInspection(false)
         }
 

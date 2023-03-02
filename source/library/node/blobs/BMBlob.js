@@ -139,6 +139,10 @@
 
     asyncWriteValueWithHash (v, h) {
         this.setValueHash(h)
+        
+        if (Type.isArrayBuffer(value)) {
+            assert(value.byteLength)
+        }
 
         assert(this.isValid())
 
