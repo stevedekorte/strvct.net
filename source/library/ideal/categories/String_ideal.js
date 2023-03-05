@@ -444,11 +444,10 @@ String.prototype._setterCacheMap = new Map();
         return hash;
     }
 
-    asyncSha256Digest (resolve, reject) {
-        // example use: "hello".asyncSha256DigestHex((hashBuffer) => {...})
+    promiseSha256Digest () {
+        // example use: "hello".promiseSha256Digest().then((hashBuffer) => {...})
         const uint8Array = new TextEncoder("utf-8").encode(this);    
-        const arrayBuffer =  uint8Array.buffer;            
-        crypto.subtle.digest("SHA-256", inputBuffer).then((hashBuffer) => resolve(hashBuffer), reject);
+        return crypto.subtle.digest("SHA-256", uint8Array.buffer)
     }
 
     stripHTML () {

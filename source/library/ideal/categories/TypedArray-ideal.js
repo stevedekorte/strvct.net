@@ -28,12 +28,12 @@ Type.typedArrayTypeNames().forEach((name) => {
 })
 
 Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
-    base64Encoded: function(aRecord, aStore) {
+    base64Encoded: function (aRecord, aStore) {
         return btoa(String.fromCharCode.apply(null, new Uint8Array(this)));
     },
 
-    asyncSha256Digest: function (resolve, reject) {
-        crypto.subtle.digest("SHA-256", this).then(resolve, reject)
+    promiseSha256Digest: function () {
+        return crypto.subtle.digest("SHA-256", this)
      }
 });
 

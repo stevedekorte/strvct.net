@@ -173,22 +173,4 @@
         return m
     }
 
-    /*
-    asyncLoad () {
-        // can't do this on a file:// because of cross site request error
-        const url = this.pathForIconName(this.iconName())
-        const rawFile = new XMLHttpRequest();
-        rawFile.open("GET", url, false);
-        rawFile.onreadystatechange = function () {
-            if (rawFile.readyState === 4) {
-                if (rawFile.status === 200 || rawFile.status === 0) {
-                    const data = rawFile.responseText;
-                    this.setSvgString(data)
-                }
-            }
-        }
-        rawFile.send(null);
-    }
-    */
-
 }.initThisClass());

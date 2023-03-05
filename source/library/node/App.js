@@ -28,20 +28,21 @@
 
     static loadAndRunShared () {
         this.defaultStore().setName(this.type()) // name of the database
-        this.defaultStore().setDelegate(this).asyncOpen() 
+        //this.defaultStore().promiseOpen().then(() => { this.promiseDeleteDefaultStore() })
+        this.defaultStore().promiseOpen().then(() => { 
+            this.onPoolOpenSuccess(this.defaultStore()) 
+        }).catch((error) => {
+            console.warn("ERROR: ", error)
+            debugger;
+            //ResourceLoaderPanel.shared().setError(errorMessage)
+        })
     }
 
-    static deleteDefaultStore (resolve, reject) {
-        this.defaultStore().deleteAll(resolve, reject)
+    static promiseDeleteDefaultStore () {
+        return this.defaultStore().promiseDeleteAll()
     }
 
     static onPoolOpenSuccess (aPool) {
-        if (false) {
-            this.deleteDefaultStore(); 
-            console.warn("DELETING STORE")
-            return 
-        }
-
         this.defaultStore().rootOrIfAbsentFromClosure(() => this.rootNodeProto().clone()) // create the root object
         //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
         const app = this.clone()
@@ -51,12 +52,6 @@
 
     static rootNodeProto () {
         return BMStorableNode
-    }
-
-    static onPoolOpenFailure (aPool, error) {
-        console.warn("ERROR: ", error)
-        debugger;
-        //ResourceLoaderPanel.shared().setError(errorMessage)
     }
 
     // ------

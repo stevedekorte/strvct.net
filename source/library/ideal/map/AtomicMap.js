@@ -39,9 +39,11 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         assert(this.isOpen())
     }
 
-    asyncOpen (resolve, reject) {
-        this.open()
-        resolve()
+    promiseOpen () {
+        return new Promise((resolve, reject) => {
+            this.open()
+            resolve()
+        })
     }
 
     close () {
@@ -50,7 +52,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     begin () {
-        this.debugLog(() => this.type() + " begin ---")
+        this.debugLog(() => " begin ---")
         this.assertAccessible()
         this.assertNotInTx()
         this.setSnapshot(this.map().shallowCopy()) 
@@ -60,7 +62,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     revert () {
-        this.debugLog(() => this.type() + " revert ---")
+        this.debugLog(() => " revert ---")
         this.assertInTx()
         this.setMap(this.snapshot())
         this.setSnapshot(null)
@@ -69,16 +71,17 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         return this
     }
 
-    commit () {
-        this.debugLog(() => this.type() + " prepare commit ---")
+    promiseCommit () {
+        let promise = null;
+        this.debugLog(() => " prepare commit ---")
         this.assertInTx()
         if (this.hasChanges()) {
-            this.applyChanges()
+            promise = this.promiseApplyChanges()
         }
         this.changedKeySet().clear()
         this.setIsInTx(false)
         this.clearTotalBytesCache()
-        return this
+        return promise
     }
 
     // --- changes ---
@@ -259,16 +262,22 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
         m.begin()
         m.atPut("foo", "bar")
-        m.commit()
+        m.promiseCommit().then(() => {
 
-        assert(m.count() === 1)
-        assert(m.Array()[0] === "foo")
+            assert(m.count() === 1)
+            assert(m.Array()[0] === "foo")
 
-        m.begin()
-        m.removeAt("foo")
-        m.commit()
+        }).then(() => {
 
-        assert(m.count() === 0)
+            m.begin()
+            m.removeAt("foo")
+            return m.promiseCommit()
+
+        }).then(() => {
+
+            assert(m.count() === 0)
+
+        })
 
         return this
     }

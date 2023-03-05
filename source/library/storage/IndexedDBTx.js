@@ -9,6 +9,7 @@
 */
 
 (class IndexedDBTx extends ProtoClass {
+
     initPrototypeSlots () {
         this.newSlot("dbFolder", null)
         this.newSlot("objectStore", null)
@@ -16,13 +17,17 @@
         this.newSlot("requests", [])
         this.newSlot("isCommitted", false)
         this.newSlot("txRequestStack", null)
-        this.newSlot("succcessCallback", null)
-        this.newSlot("errorCallback", null)
+        this.newSlot("options", { "durability": "strict" })
+        this.newSlot("txId", null)
     }
 
     init () {
         super.init()
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
+    }
+
+    isDebugging () {
+        return true
     }
 
     db () {
@@ -41,17 +46,18 @@
 
     newTx () {
         assert(Type.isNullOrUndefined(this.tx()))
-        const options = { "durability": "strict" }
-        const tx = this.db().transaction(this.storeName(), "readwrite", options)
-
-        tx.onerror    = (event) => { this.onTxError(event) }
-        tx.oncomplete = (event) => { this.onTxSuccess(event) }
-
+        const tx = this.db().transaction(this.storeName(), "readwrite", this.options())
+        tx.onerror    = (error) => { 
+            debugger
+            throw new Error(error) 
+        }
         this.setTx(tx)
         return tx
     }
 
     begin () {
+        this.debugLog("BEGIN ")
+        //this.debugLog("BEGIN " + this.txId())
 	    this.assertNotCommitted()
         this.setTxRequestStack(this.isDebugging() ? new Error().stack : null)
 	    const tx = this.newTx()
@@ -66,34 +72,37 @@
             console.log("error stack ", rs)
         }
     }
-
-    onTxError (event) {
-        this.showTxRequestStack()
-        throw new Error("tx error " + event.target.error)
-    }
-
-    onTxSuccess (event) {
-        const f = this.succcessCallback()
-        if (f) {
-            f()
-        }
-    }
 	
     abort () {
 	    this.assertNotCommitted()
-	    this.tx().abort()
+	    this.tx().abort() // how does this get rejected?
 	    return this
     }
-	
-    commit () {
-        this.assertNotCommitted()
-        this.setIsCommitted(true)
-        if (!Type.isUndefined(this.tx().commit)) {
-            this.tx().commit()
-        } else {
-            console.log("WARNING: no IDBTransation.commit method found for this browser")
-        }
-	    return this
+
+    promiseCommit () {
+        this.debugLog("promiseCommit ")
+
+        return new Promise((resolve, reject) => {
+            this.assertNotCommitted()
+            this.setIsCommitted(true)
+            const tx = this.tx()
+
+            if (Type.isUndefined(tx.commit)) {
+                reject(new Error("WARNING: no IDBTransation.commit method found for this browser"))
+            } else {
+                tx.oncomplete = (event) => { 
+                    this.debugLog(" COMMIT COMPLETE")
+                    //debugger
+                    resolve(event) 
+                }
+                tx.onerror    = (error) => { 
+                    debugger; 
+                    reject(error)
+                }
+                this.debugLog(" COMMITTING")
+                tx.commit()
+            }
+        })
     }
 	
     // --- helpers ---
@@ -103,8 +112,8 @@
 
         const requestStack = this.isDebugging() ? new Error().stack : null
         aRequest.onerror = (event) => {
-		    const fullDescription = "writing key '" + aRequest._key + "' on objectStore '" + this.storeName() + "' error: '" + event.target.error + "'"
-		    console.warn(fullDescription)
+		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "' error: '" + event.target.error + "'"
+		    this.debugLog(fullDescription)
 		    if (requestStack) { 
                 console.log("error stack ", requestStack)
             }
@@ -147,14 +156,16 @@
     }
     */
 	
-    atAdd (key, object) { 
+    atAdd (key, object) {
+        //debugger
         //assert(!this.hasKey(key))
 
         assert(Type.isString(key))
         assert(Type.isString(object) || Type.isArrayBuffer(object))
         this.assertNotCommitted()
         
-        this.debugLog(() => " add " + key + "'" + object + "'")
+        //this.debugLog(() => " add " + key + " '" + object + "'")
+        this.debugLog(() => " ADD " + key + " '...'")
 
         const entry = this.entryForKeyAndValue(key, object)
         const request = this.objectStore().add(entry);
@@ -172,13 +183,15 @@
     }
 
     atUpdate (key, object) {
+       // debugger
+
         //assert(!this.hasKey(key))
 
         assert(Type.isString(key))
         assert(Type.isString(object) || Type.isArrayBuffer(object))
 	    this.assertNotCommitted()
 
-        this.debugLog(() => " atUpdate " + key)
+        this.debugLog(() => " UPDATE " + key)
 
         const entry = this.entryForKeyAndValue(key, object)
         const request = this.objectStore().put(entry);
@@ -189,15 +202,21 @@
     }
     
     removeAt (key) {
+ //       debugger
+
 	    this.assertNotCommitted()
 
-        this.debugLog(() => " removeAt " + key)
+        this.debugLog(() => " REMOVE " + key)
 
         const request = this.objectStore().delete(key);
         request._action = "remove"
         request._key = key
         this.pushRequest(request)
         return this
+    }
+
+    debugTypeId () {
+        return this.dbFolder().debugTypeId() + " " + this.txId() //super.debugTypeId()
     }
     
 }.initThisClass());

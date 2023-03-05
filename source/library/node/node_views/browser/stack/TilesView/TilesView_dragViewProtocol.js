@@ -287,7 +287,7 @@
         }
     }
 
-    animateRemoveTilePlaceHolderAndThen (callback) {
+    animateRemoveTilePlaceHolderAndThen (resolve) {
         this.debugLog("animateRemoveTilePlaceHolder")
 
         const ph = this.tilePlaceHolder()
@@ -295,10 +295,10 @@
             ph.setMinAndMaxHeight(0)
             this.addTimeout(() => {
                 this.removeTilePlaceHolder()
-                if (callback) { callback() }
+                if (resolve) { resolve() }
             }, 1*1000)
         } else {
-            if (callback) { callback() }
+            if (resolve) { resolve() }
         }
     }
 

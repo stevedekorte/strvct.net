@@ -24,13 +24,13 @@
     }
 
     open () {
-        throw new Error(this.type() + " synchronous open not available - use asyncOpen()")
+        throw new Error(this.type() + " synchronous open not available - use promiseOpen()")
     }
 
-    selfTest () {
+    promiseSelfTest () {
         console.log(this.type() + " --- self test start --- ")
         const store = this.thisClass().clone()
-        store.asyncOpen(() => this.selfTestOnStore(store))
+        return store.promiseOpen().then(() => this.selfTestOnStore(store))
     }
 
     selfTestOnStore (store) {
@@ -45,9 +45,10 @@
         console.log(this.type() + " --- self test end --- ")
     }
 
-    static asyncSelfTest () {
-        // TODO: change to use a hasLoaded notification
-        this.addTimeout(() => PersistentObjectPool.selfTest(), 1000)
+    static promiseSelfTest () {
+        return new Promise((resolve, reject) => {
+            this.addTimeout(() => { return PersistentObjectPool.promiseSelfTest() }, 1000)
+        })
     }
     
 }.initThisClass());

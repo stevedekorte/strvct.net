@@ -80,10 +80,6 @@
         // Bool - set to true during method didInitLoadingPids() - used to ignore mutations during this period
         this.newSlot("isFinalizing", false)
 
-        // Object - object to receive success and error callbacks, particularly for async methods
-        // in this way, we can more easily use the same code with both sync and async versions
-        this.newSlot("delegate", null) 
-
         // String or Error
         this.newSlot("error", null) // most recent error, if any
 
@@ -99,7 +95,7 @@
         this.setLastSyncTime(null)
         this.setMarkedSet(null)
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"))
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
         return this
     }
 
@@ -120,38 +116,26 @@
         return this
     }
 
-    asyncOpen (resolve, reject) { 
-        this.recordsMap().setName(this.name())
-        this.recordsMap().asyncOpen(
-            () => this.onPoolOpenSuccess(), 
-            (error) => this.onPoolOpenFailure(error)
-        )
-        /*
-            this.recordsMap().asyncOpen(
-            () => { this.onPoolOpenSuccess(); resolve() }, 
-            (error) => { this.onPoolOpenError(error); reject(error); }
-        )
-        */
-        return this
-    }
-
-    sendDelegate (methodName, argument) {
-        const d = this.delegate()
-        if (d) {
-            const m = d[methodName]
-            if (m) {
-                m.apply(d, this, argument)
-            }
-        }
+    promiseOpen () { 
+        const map = this.recordsMap()
+        map.setName(this.name())
+        return map.promiseOpen().then(() => {
+            this.onPoolOpenSuccess()
+        }).catch((error) => {
+            this.onPoolOpenFailure(error)
+        })
     }
 
     onPoolOpenSuccess () {
+        //debugger
+        // here so subclasses can easily hook
         this.onRecordsDictOpen()
-        this.sendDelegate("onPoolOpenSuccess")
     }
 
     onPoolOpenFailure (error) {
-        this.sendDelegate("onPoolOpenFailure", error)
+        debugger
+        // here so subclasses can easily hook
+        throw error
     }
 
     /*
@@ -176,8 +160,9 @@
     }
 
     onRecordsDictOpen () {
+        //debugger
         //this.show("ON OPEN")
-        this.collect()
+        this.promiseCollect()
         //this.show("AFTER COLLECT")
         this.nodeStoreDidOpenNote().post()
         return this
@@ -218,6 +203,7 @@
         if (this.hasStoredRoot()) {
             this.readRoot()
         } else {
+         //   debugger
             const newRoot = aClosure()
             assert(newRoot)
             this.setRootObject(newRoot)
@@ -437,7 +423,7 @@
             //debugger;
             this.recordsMap().begin()
             const storeCount = this.storeDirtyObjects()
-            this.recordsMap().commit()
+            this.recordsMap().promiseCommit()
             this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects")
             //this.show("AFTER commitStoreDirtyObjects")
         }
@@ -691,12 +677,13 @@
         return this
     }
 
-    collect () {
+    promiseCollect () {
         if (Type.isUndefined(this.rootPid())) {
             console.log("---- NO ROOT PID FOR COLLECT - clearing! ----")
+            //debugger
             this.recordsMap().begin()
             this.recordsMap().clear()
-            this.recordsMap().commit()
+            this.recordsMap().promiseCommit()
             //debugger;
             return 0;
         }
@@ -716,12 +703,12 @@
         const deleteCount = this.sweep()
         this.setMarkedSet(null)
 
-        this.recordsMap().commit()
+        const promise = this.recordsMap().promiseCommit()
         this.debugLog(() => "--- end collect --- collected " + deleteCount + " pids ---")
 
-        let remainingCount = this.recordsMap().count()
+        const remainingCount = this.recordsMap().count()
         this.debugLog(() => " keys count after commit: " + remainingCount)
-        return deleteCount
+        return promise
     }
 
     markPid (pid) { // private
@@ -786,18 +773,17 @@
         return deleteCount
     }
 
-    deleteAll (resolve, reject) {
+    promiseDeleteAll () {
         assert(this.isOpen())
         // assert not loading or storing?
         const map = this.recordsMap()
         map.begin()
         map.forEachK(pid => map.removeKey(pid)) // the remove applies to the changeSet
-        map.commit()
-        return this
+        return map.promiseCommit()
     }
 
-    asyncClear (resolve, reject) {
-        this.recordsMap().asyncClear(resolve, reject)
+    promiseClear () {
+        return this.recordsMap().promiseClear(resolve, reject)
     }
 
     // ---------------------------
@@ -834,7 +820,7 @@
     }
     */
 
-/*
+    /*
     static selfTestRoot () {
         const aTypedArray = Float64Array.from([1.2, 3.4, 4.5])
         const aSet = new Set("sv1", "sv2")
@@ -853,20 +839,15 @@
         store.flushIfNeeded()
         console.log("store:", store.asJson())
         console.log(" --- ")
-        store.collect()
+        store.promiseCollect()
         store.clearCache()
         const loadedNode = store.rootObject()
         console.log("loadedNode = ", loadedNode)
         console.log(this.type() + " --- self test end --- ")
     }
-
-    static asyncSelfTest () {
-        this.addtimeout(() => this.selfTest(), 1000)
-    }
     */
 
 }.initThisClass());
 
-// ObjectPool.asyncSelfTest()
 
 

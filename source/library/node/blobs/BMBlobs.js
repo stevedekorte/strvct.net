@@ -4,6 +4,8 @@
 
     BMBlobs
 
+    Async storage for larger values.
+
     Motivation:
     Due to indexeddb only having an async API, we have to load the app's store 
     entirely into memory in order to be able to synchronously read it. 
@@ -50,19 +52,25 @@
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setNodeCanReorderSubnodes(true)
-
         this.setStore(PersistentAsyncMap.clone().setName("BlobHashStore"))
         return this
     }
 
     didInit () {
-     //   debugger;
-        this.store().asyncOpen(() => {
+        /*
+        this.store().promiseOpen().then(() => {
             //this.removeAllSubnodes()
             //this.collectGarbage()
             //debugger
             this.postNoteNamed("blobsDidOpen")
         })
+
+        */
+    }
+
+    promiseOpen () {
+        debugger
+        return this.store().promiseOpen()
     }
 
     // --- lookup blob by name ---
@@ -118,11 +126,13 @@
         // remove store entries which are not referenced by a Blob subnode valueHash
         const subnodeHashes = this.subnodes().map(sn => sn.valueHash()).asSet()
         const store = this.store()
-        store.asyncAllKeys((storedHashes) => {
+
+        //store.promiseClear()
+        store.promiseAllKeys().then((storedHashes) => {
             storedHashes.forEach((h) => {
                 if (!subnodeHashes.has(h)) {
                     this.debugLog("collecting unreferenced blob hash:", h)
-                    store.asyncRemoveKey(h)
+                    store.promiseRemoveKey(h)
                 }
             })
         })
@@ -132,7 +142,7 @@
         this.addTimeout(() => {
             const blob = BMBlobs.shared().blobForKey("http://test.com/")
             blob.setValue("test content")
-            blob.asyncWrite()
+            blob.promiseWrite()
         })
     }
 

@@ -110,17 +110,19 @@
     }
 
     load () {
-        if (this.loadIfCached()) {
-            return this
+        if (this.isCached()) {
+            return this.promiseLoadFromCache()
         }
         this.justLoad()
         return this
     }
 
-    loadIfCached () {        
+    isCached () {
+        return BMBlobs.shared().hasBlobWithName(this.path())
+    }
+
+    promiseLoadFromCache () {        
         const blobs = BMBlobs.shared()
-        const isCached = blobs.hasBlobWithName(this.path())
-        if (isCached) {
             const blob = blobs.blobWithName(this.path())
             if (blob.age() < this.timeoutInterval()) {
                 this.setStatus("reading from cache...")
@@ -134,11 +136,10 @@
                     this.justLoad() 
                 }
                 
-                blob.asyncReadValue(resolve, reject)
+                blob.promiseReadValue().then(resolve, reject)
                 return this
             }
             return true
-        }
         return false
     }
 

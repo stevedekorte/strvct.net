@@ -79,7 +79,7 @@
         field.getValueFromTarget()
         this.addSubnode(field)
 
-        this.asyncReadValue(() => { this.didReadValue() })
+        this.promiseReadValue().then(() => { this.didReadValue() })
         this.scheduleSyncToView()
     }
 
@@ -108,7 +108,7 @@
         if (newValue) {
             this.setValueSize(newValue.length)
             this.setLastModifiedTime(new Date().getTime())
-            this.asyncWriteValue()
+            this.promiseWriteValue()
         }
         return this
     }
@@ -117,27 +117,18 @@
         return this.parentNode().store()
     }
 
-    asyncWriteValue () {
-        //const v = "abc" 
+    promiseWriteValue () {
+        // what about number or null values?
         const v = this.value()
-        // what about number or null values
-        // const digestPromise = 
-        v.asyncSha256Digest((digestBuffer) => {
+        assert(Type.isArrayBuffer(v) || Type.isString(v))
+
+        return v.promiseSha256Digest().then((digestBuffer) => {
             const h = digestBuffer.base64Encoded()
-            if (this.valueHash()) {
-                console.log("valueSize:" + this.valueSize())
-                console.log("     size:" + v.byteLength)
-                console.log("valueHash:" + this.valueHash())
-                console.log("     hash:" + h)
-                assert(this.valueHash() === h)
-            }
-            this.asyncWriteValueWithHash(v, h)
-        }, (error) => {
-            throw new Error("sha256 failed")    
+            return this.promiseWriteValueWithHash(v, h)
         })
     }
 
-    asyncWriteValueWithHash (v, h) {
+    promiseWriteValueWithHash (v, h) {
         this.setValueHash(h)
         
         if (Type.isArrayBuffer(value)) {
@@ -146,34 +137,31 @@
 
         assert(this.isValid())
 
-        const resolve = () => {
+        const resolveAtPut = () => {
             console.log("did write hash/value pair: " + this.description())
         }
 
-        const reject = (error) => {
+        const rejectAtPut = (error) => {
             console.log("error writing hash/value pair: " + this.description())
             debugger
         }
 
-        this.store().asyncOpen(() => {
-            this.store().asyncAtPut(h, v, resolve, reject)
-        }, reject)
+        return this.store().promiseOpen().then(() => {
+            return this.store().promiseAtPut(h, v).then(resolveAtPut, rejectAtPut)
+        })
     }
 
-    asyncReadValue (resolve, reject) {
+    promiseReadValue () {
         if (this.value()) {
             resolve()
         }
 
         assert(this.isValid())
 
-        this.store().asyncAt(this.valueHash(), (value) => {
+        return this.store().promiseAt(this.valueHash()).then((value) => {
             this._value = value
             this.didUpdateNode()
-            if (resolve) {
-                resolve()    
-            }     
-        }, reject)
+        })
     }
 
     isValid () {
@@ -205,21 +193,22 @@
         return parts.join(", ")
     }
 
+    /*
     static testHash () {
         // code from nodejs
         // crypto.createHash('sha256').update(Buffer.from("abc", "utf8")).digest("base64")
         const nodejsHash = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
-
         const enc = new TextEncoder(); // always utf-8
         const uint8Array = enc.encode("abc");
         const arrayBuffer = uint8Array.buffer
-        arrayBuffer.asyncSha256Digest((digestBuffer) => {
+        arrayBuffer.promiseSha256Digest((digestBuffer) => {
             const h = digestBuffer.base64Encoded()
             assert(h === nodejsHash)
             console.log("hashes match!")
             debugger;
         })
     }
+    */
 
 }.initThisClass());
 

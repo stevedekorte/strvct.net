@@ -496,10 +496,10 @@
         return this.map(e => e[propertyName]);
     }
 
-    detect (callback) {
+    detect (func) {
         for (let i = 0; i < this.length; i++) {
             const v = this.at(i)
-            if (callback(v, i)) {
+            if (func(v, i)) {
                 return v;
             }
         }
@@ -525,9 +525,9 @@
         return null;
     }
 
-    detectIndex (callback) {
+    detectIndex (func) {
         for (let i = 0; i < this.length; i++) {
-            if (callback(this.at(i), i)) {
+            if (func(this.at(i), i)) {
                 return i;
             }
         }
@@ -539,21 +539,20 @@
         return this.filter(v => !Type.isNull(v));
     }
 
-    reject (callback) {
-        return this.filter(v => !callback(v))
+    reject (func) {
+        return this.filter(v => !func(v))
     }
 
     // max 
 
-    maxEntry (optionalCallback) {
-        // callback is optional
+    maxEntry (optionalFunc) {
         const length = this.length;
         const mEntry = [undefined, undefined]
 
         for (let i = 0; i < length; i++) {
             let v = this.at(i);
-            if (optionalCallback) {
-                v = optionalCallback(v);
+            if (optionalFunc) {
+                v = optionalFunc(v);
             }
 
             if (mEntry[1] === undefined || v > mEntry[1]) {
@@ -565,30 +564,29 @@
         return mEntry;
     }
 
-    maxIndex (optionalCallback) {
-        return this.maxEntry(optionalCallback)[0];
+    maxIndex (optionalFunc) {
+        return this.maxEntry(optionalFunc)[0];
     }
 
-    maxValue (optionalCallback, theDefault) {
-        return this.maxEntry(optionalCallback)[1];
+    maxValue (optionalFunc, theDefault) {
+        return this.maxEntry(optionalFunc)[1];
     }
 
-    maxItem (optionalCallback) {
-        return this.at(this.maxIndex(optionalCallback));
+    maxItem (optionalFunc) {
+        return this.at(this.maxIndex(optionalFunc));
     }
 
 
     // min
 
-    minEntry (optionalCallback) {
-        // callback is optional
+    minEntry (optionalFunc) {
         const length = this.length;
         const mEntry = [undefined, undefined]
 
         for (let i = 0; i < length; i++) {
             let v = this[i];
-            if (optionalCallback) {
-                v = optionalCallback(v);
+            if (optionalFunc) {
+                v = optionalFunc(v);
             }
 
             if (mEntry[1] === undefined || v < mEntry[1]) {
@@ -600,24 +598,24 @@
         return mEntry;
     }
 
-    minIndex (optionalCallback) {
-        return this.maxEntry(optionalCallback)[0];
+    minIndex (optionalFunc) {
+        return this.maxEntry(optionalFunc)[0];
     }
 
-    minValue (optionalCallback) {
-        return this.minEntry(optionalCallback)[1];
+    minValue (optionalFunc) {
+        return this.minEntry(optionalFunc)[1];
     }
 
     // sum
 
-    sum (optionalCallback) {
+    sum (optionalFunc) {
         let sum = 0;
         const length = this.length;
 
         for (let i = 0; i < length; i++) {
             let v = this.at(i);
-            if (optionalCallback) {
-                v = optionalCallback(v);
+            if (optionalFunc) {
+                v = optionalFunc(v);
             }
 
             sum = sum + v;
@@ -688,18 +686,18 @@
         return this.first() !== "";
     }
 
-    filterInPlace (callback) {
+    filterInPlace (func) {
         for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
-            if (!callback(v)) {
+            if (!func(v)) {
                 this.removeAt(i)
             }
         }
         return this
     }
 
-    select (callback) {
-        return this.filter(callback)
+    select (func) {
+        return this.filter(func)
     }
 
     after (v) {

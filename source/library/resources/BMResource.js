@@ -73,28 +73,25 @@
 
     // --- resource file ---
 
-    resourceFile () {
+    fileResource () {
         const rootFolder = BMFileResources.shared().rootFolder()
         const fileResource = rootFolder.nodeAtSubpathString(this.path())
         return fileResource
     }
 
-    loadFileResource () {
+    promiseLoadFileResource () {
         this.setTitle(this.path().lastPathComponent().sansExtension())
         
-        const resourceFile = this.resourceFile()
-        if (!resourceFile) {
+        const fileResource = this.fileResource()
+        if (!fileResource) {
           const error = "no index for file resource at path '" + this.path() + "'"
           this.setError(error)
           throw new Error(error)
         }
-        this.watchOnceForNoteFrom("fileResouceLoaded", resourceFile)
-        resourceFile.load()
-        return this
+        return fileResource.promiseLoad().then(() => { this.onFileResourceLoaded(fileResource) })
     }
     
-    fileResouceLoaded (aNote) {
-        const fileResource = aNote.sender()
+    onFileResourceLoaded (fileResource) {
         this.setData(fileResource.data())
         this.postNoteNamed("resourceLoaded")
         this.setLoadState("loaded")
@@ -112,7 +109,7 @@
     }
 
     load () {
-        this.loadFileResource()
+        this.promiseLoadFileResource()
         return this
     }
 

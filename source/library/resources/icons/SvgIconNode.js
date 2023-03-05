@@ -22,11 +22,6 @@
     }
   }
 
-  load () {
-    this.loadFileResource() 
-    return this
-  }
-
   didLoad () {
     super.didLoad()
     this.setSvgString(this.data())

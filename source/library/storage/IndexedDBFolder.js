@@ -14,15 +14,20 @@
         this.newSlot("didRequestPersistence", false)
         this.newSlot("isGranted", false)
 
-        this.newSlot("isOpening", false)
-        this.newSlot("onOpenPromises", null)
+        this.newSlot("promiseForOpen", null) // has a value while opening. Returns this value while opening so multiple requests queue for open
+        this.newSlot("promiseForCommit", null) 
     }
 
     init () {
         super.init()
-        this.setOnOpenPromises([])
         //this.requestPersistenceIfNeeded()
         this.setIsDebugging(false)
+    }
+
+    setPath (aString) {
+        assert(!this.isOpen())
+        this._path = aString
+        return this
     }
 
     hasIndexedDB () {
@@ -69,98 +74,132 @@
         return (this.db() !== null)
     }
 
-    asyncOpenIfNeeded (resolve, reject) {
-        if (this.isOpen()) {
-            resolve()
-        } else {
-            if (!this.isOpening()) {
-                this.asyncOpen(() => this.onResolveOpen(), (error) => this.onRejectOpen(error))
+    promiseOpen () {
+        return new Promise((resolve, reject) => {
+            if(this.isOpen()) {
+                resolve()
+                return
             }
-            this.onOpenPromises().push([resolve, reject])
-        }
+            
+            if (!this.hasIndexedDB()) {
+                reject("IndexedDB unavailable on this client.")
+                return
+            }
+
+            if (this.path() === "BlobHashStore") {
+                debugger
+            }
+
+            this.debugLog(() => { "promiseOpen '" + this.path() + "'" })
+            //debugger;
+
+            const version = 2 // can't be zero
+            console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
+            const request = window.indexedDB.open(this.path(), version);
+
+            request.onsuccess = (event) => {
+                //debugger;
+                this.clearPromiseForOpen()
+                this.onOpenSuccess(event)
+                resolve()
+            }
+
+            request.onupgradeneeded = (event) => {
+                //debugger;
+                this.clearPromiseForOpen()
+                return this.promiseOnOpenUpgradeNeeded(event)
+            }
+
+            request.onerror = (event) => {
+                debugger;
+
+                this.clearPromiseForOpen()
+                this.onOpenError(event)
+                reject()
+            }
+        })
     }
 
-    onResolveOpen () {
-        this.onOpenPromises().forEach(entry => entry[0]())
-        this.onOpenPromises().clear()
+    promiseOpenFull () {
+        if (!this.promiseForOpen()) {
+            debugger
+            this._promiseForOpen = new Promise((resolve, reject) => {
+                if(this.isOpen()) {
+                    resolve()
+                    return
+                }
+                
+                if (!this.hasIndexedDB()) {
+                    reject("IndexedDB unavailable on this client.")
+                    return
+                }
+
+                this.debugLog(() => { "promiseOpen '" + this.path() + "'" })
+                debugger;
+
+                const version = 2 // can't be zero
+                const request = window.indexedDB.open(this.path(), version);
+
+                request.onsuccess = (event) => {
+                    debugger;
+                    this.clearPromiseForOpen()
+                    this.onOpenSuccess(event)
+                    resolve()
+                }
+
+                request.onupgradeneeded = (event) => {
+                    debugger;
+
+                    this.clearPromiseForOpen()
+                    return this.promiseOnOpenUpgradeNeeded(event)
+                }
+
+                request.onerror = (event) => {
+                    debugger;
+
+                    this.clearPromiseForOpen()
+                    this.onOpenError(event)
+                    reject()
+                }
+            })
+        }
+        debugger
+        return this.promiseForOpen()
     }
 
-    onRejectReject (error) {
-        this.onOpenPromises().forEach(entry => entry[1](error))
-        this.onOpenPromises().clear()
-    }
-
-    /*
-    asyncOpenIfNeeded (resolve, reject) {
-        if (!this.isOpen()) {
-            this.asyncOpen(resolve, reject)
-        } else {
-            resolve()
-        }
-    }
-    */
-
-    asyncOpen (resolve, reject) {
-        assert(!this.isOpen())
-
-        this.setIsOpening(true)
-        
-        if (!this.hasIndexedDB()) {
-            reject("IndexedDB unavailable on this client.")
-            return
-        }
-
-        this.debugLog(() => { "asyncOpen '" + this.path() + "'" })
-
-        const request = window.indexedDB.open(this.path(), 2);
-
-        request.onsuccess = (event) => {
-            this.onOpenSuccess(event, resolve, reject)
-        }
-
-        request.onupgradeneeded = (event) => {
-            this.onOpenUpgradeNeeded(event, resolve, reject)
-        }
-
-        request.onerror = (event) => {
-            this.onOpenError(event, resolve, reject)
-        }
-
+    clearPromiseForOpen () {
+        this.setPromiseForOpen(null)
         return this
     }
 
-    onOpenError (event, resolve, reject) {
+    onOpenError (event) {
         let message = event.message
         if (!message) {
             message = "Unable to open IndexedDB.<br>May not work on Brave Browser."
             this.debugLog(" open db error: ", event);
         }
-
-        if (reject) {
-            reject(message)
-        }
     }
 
-    onOpenUpgradeNeeded (event, resolve, reject) {
-        this.debugLog(" onupgradeneeded - likely setting up local database for the first time")
+    promiseOnOpenUpgradeNeeded (event) {
+        return new Promise((resolve, reject) => {
+            this.debugLog(" onupgradeneeded - likely setting up local database for the first time")
 
-        const db = event.target.result;
+            const db = event.target.result;
 
-        db.onerror = function (event) {
-            console.log("db error ", event)
-        };
+            db.onerror = (event) => {
+                console.log("db error ", event)
+            };
 
-        this.setDb(db)
+            this.setDb(db)
 
-        const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);
-        objectStore.createIndex("key", "key", { unique: true });
-    }
-
-    onOpenSuccess (event, resolve, reject) {
-        this.setDb(event.target.result)
-        if (resolve) {
+            const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);
+            const idbIndex = objectStore.createIndex("key", "key", { unique: true });
             resolve()
-        }
+        })
+    }
+
+    onOpenSuccess (event) {
+        this.setDb(event.target.result)
     }
 
     close () {
@@ -187,184 +226,187 @@
 
     // reading
 
-    asyncHasKey (key, resolve, reject) {
-        const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
-        //const keyRangeValue = IDBKeyRange.bound(key, key)
-        //const request = objectStore.openCursor(keyRangeValue)
-        const request = objectStore.openCursor(key)
+    promiseHasKey (key) {
+        return new Promise((resolve, reject) => {
+            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+            //const keyRangeValue = IDBKeyRange.bound(key, key)
+            //const request = objectStore.openCursor(keyRangeValue)
+            const request = objectStore.openCursor(key)
 
-        request.onsuccess = function(e) {
-          const cursor = e.target.result
-          if (cursor) { // key already exist
-            resolve(true)
-          } else { // key not exist
-            resolve(false)
-          }
-        }
-
-        request.onerror = (event) => {
-            console.log("asyncAt('" + key + "') onerror", event.target.error)
-            reject(event)
-        }
-    }
-    
-    asyncAt (key, callback) {
-        //console.log("asyncAt ", key)
-        const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
-        const request = objectStore.get(key);
-
-        const stack = "(stack recording disabled)" //new Error().stack
-        
-        request.onerror = (event) => {
-            console.log("asyncAt('" + key + "') onerror", event.target.error)
-            callback(undefined)
-        }
-        
-        request.onsuccess = (event) => {
-            // request.result is undefined if value not in DB
-            try {
-                if (!Type.isUndefined(request.result)) {
-                    const entry = request.result
-                    //const value = JSON.parse(entry.value)
-                    const value = entry.value
-                    callback(value)
-                } else {
-                    callback(undefined)
+            request.onsuccess = (evente) => {
+                const cursor = event.target.result
+                if (cursor) { // key already exists
+                    resolve(true)
+                } else { // key does not exist
+                    resolve(false)
                 }
-            } catch (e) {
-                this.debugLog(" asyncAt('" +  key + "') caught stack ", stack)
             }
-        }
-        
-        return this
+
+            request.onerror = (event) => {
+                console.log("promiseAt('" + key + "') onerror", event.target.error)
+                reject(event)
+            }
+        })
     }
     
-    readOnlyCursorRequest () {
-        const cursorRequest = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName()).openCursor()
-        cursorRequest.onerror = (event) => {
-            this.debugLog("cursorRequest.onerror ", event)
-            throw newError("error requesting cursor")
-        }
-        return cursorRequest
+    promiseAt (key) {
+        return new Promise((resolve, reject) => {
+            //console.log("promiseAt ", key)
+            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+            const request = objectStore.get(key);
+            const stack = "(stack recording disabled)" //new Error().stack
+
+            request.onsuccess = (event) => {
+                // request.result is undefined if value not in DB
+                try {
+                    if (!Type.isUndefined(request.result)) {
+                        const entry = request.result
+                        const value = entry.value
+                        resolve(value)
+                    } else {
+                        resolve(undefined)
+                    }
+                } catch (e) {
+                    this.debugLog(" promiseAt('" +  key + "') caught stack ", stack)
+                }
+            }
+            
+            request.onerror = (event) => {
+                console.log("promiseAt('" + key + "') onerror", event.target.error)
+                resolve(undefined)
+            }
+            
+        })
     }
 
-    asyncAllKeys (callback) {
-        const keys = []
-        const cursorRequest = this.readOnlyCursorRequest()
+    /*
 
-        cursorRequest.onsuccess = (event) => {
+    promiseReadOnlyCursorRequest () {
+        return new Promise((resolve, reject) => {
+            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+            const idbRequest = objectStore.openCursor()
+            idbRequest.onsuccess = (event) => {
+                resolve(event)
+            }
+            idbRequest.onerror = (event) => {
+                reject(event)
+            }
+        })
+    }
+
+
+    promiseForeachKey (aBlock) {
+        return this.promiseReadOnlyCursorRequest().then((event) => {
             const cursor = event.target.result
             if (cursor) {
-                keys.push(cursor.value.key)
-                cursor.continue()
+                aBlock(cursor.value.key)
+                cursor.continue() // this calls open resolve function again
             } else {
-                callback(keys)
+                resolve()
             }
-        }
+        })
     }
+    */
 
-    asyncForeachKey (callback) {
-        const cursorRequest = this.readOnlyCursorRequest()
 
-        cursorRequest.onsuccess = (event) => {
-            const cursor = event.target.result
-            if (cursor) {
-                const key = cursor.value.key
-                callback(key)
-                cursor.continue()
+    promiseAsMap () {
+        return new Promise((resolve, reject) => {
+            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+            const idbRequest = objectStore.getAll()
+
+            idbRequest.onsuccess = (event) => {
+                const results = event.target.result
+                const map = new Map()
+                results.forEach(result => {
+                    map.set(result.key, result.value)
+                })
+                resolve(map)
             }
-        }
-    }
 
-
-    asyncAsMap (callback) {
-        const cursorRequest = this.readOnlyCursorRequest()
-        const map = new Map()
-
-        cursorRequest.onsuccess = (event) => {
-            const cursor = event.target.result;
-
-            if (cursor) {
-                const k = cursor.value.key
-                const v = cursor.value.value
-                //debugger;
-                //map.set(k, JSON.parse(v))
-                map.set(k, v)
-                cursor.continue();
-            } else {
-                this.debugLog(" asyncAsMap returning map ", map.description())
-                callback(map)
+            idbRequest.onerror = (event) => {
+                reject(event)
             }
-        }
+        })
     }
 
     show () {
-        this.asyncAsMap((map) => {
+        this.promiseAsMap().then((map) => {
             this.debugLog(" " + this.path() + " = " + map.description())
         })
     }
 
     // removing
 
-    asyncClear (callback, reject) {
-        const transaction = this.db().transaction([this.storeName()], "readwrite");
+    promiseClear () {
+        return new Promise((resolve, reject) => {
 
-        transaction.onerror = function (event) {
-            if (reject) {
+            // setup transaction 
+            const transaction = this.db().transaction([this.storeName()], "readwrite");
+
+            transaction.onerror = (event) => {
+                console.log("db clear tx error")
+                reject(event)
+            };
+
+            transaction.oncomplete = (event) => {
+                console.log("db clear tx completed")
+                resolve(event)
+            }
+
+            // setup clear request
+            const objectStore = transaction.objectStore(this.storeName());
+            const request = objectStore.clear();
+
+            request.onsuccess = (event) => {
+                console.log("db clear request success")
+                //resolve(event) // we use tx oncomplete (see above code in this method) instead
+            };
+
+            request.onerror = (event) => {
                 console.log("db clear error")
                 reject(event)
-            }
-        };
+            };
 
-        transaction.oncomplete = function (event) {
-            console.log("db clear completed")
-        }
-
-        const objectStore = transaction.objectStore(this.storeName());
-        const request = objectStore.clear();
-
-        request.onsuccess = function (event) {
-            if (callback) {
-                console.log("db clear request success")
-                callback(event)
-            }
-        };
+        })
     }
 
-    asyncDelete () {
-        const request = window.indexedDB.deleteDatabase(this.storeName())
+    promiseDelete () {
+        return new Promise((resolve, reject) => {
+            const request = window.indexedDB.deleteDatabase(this.storeName())
 
-        request.onerror = (event) => {
-            this.debugLog("Error deleting '" + this.storeName() + "'");
-        }
+            request.onerror = (error) => {
+                this.debugLog("Error deleting '" + this.storeName() + "'");
+                reject(error)
+            }
 
-        request.onsuccess = (event) => {
-            this.debugLog(" deleted successfully '" + this.storeName() + "'");
-        }
+            request.onsuccess = (event) => {
+                this.debugLog(" deleted successfully '" + this.storeName() + "'");
+                resolve(event)
+            }
 
-        this.setDb(null)
-        return this
+            this.setDb(null)
+        })
     }
 
     // test
 
     test () {
         const folder = IndexedDBFolder.clone()
-        folder.asyncOpen(() => {
-            folder.atPut("test", "x")
-
-            folder.asyncAsMap(function (map) {
-                console.log("db map = ", map)
-            })
-
-            folder.asyncAt("test", function (value) {
-                console.log("read ", value)
-            })
+        folder.promiseOpen().then(() => {
+            return folder.promiseAtPut("test", "x")
+        }).then(() => {
+            folder.promiseAsMap().then((map) => { console.log("db map = ", map) })
+        }).then(() => {
+            folder.promiseAt("test", (v) => { console.log("read ", v) })
         })
-
     }
 
     newTx () {
         return IndexedDBTx.clone().setDbFolder(this)
     }
+
+    debugTypeId () {
+        return super.debugTypeId() + " '" + this.path() + "'"
+    }
+
 }.initThisClass());

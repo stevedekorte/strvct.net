@@ -17,12 +17,15 @@
         this.newSlot("encoding", "utf8")
         this.newSlot("request", null) // this set back to null after request is successfully completed
         this.newSlot("error", null) 
-        this.newSlot("isLoading", null) // true while async reading from URL request or indexedDB
+        this.newSlot("promiseForLoad", null) // holds promise used for reading from URL request or indexedDB
 
         // notifications
+        this.newSlot("isLoading", false)
         this.newSlot("isLoaded", false)
+        this.newSlot("loadState", null) 
         this.newSlot("loadNote", null) 
         this.newSlot("loadErrorNote", null) 
+        this.newSlot("usesBlobCache", false)
     }
 
     init () {
@@ -62,30 +65,41 @@
         return this.data() !== null
     }
 
-    loadIfNeeded () { 
-        /* sender should subscribe to loadNote and loadErrorNote */
-
-        if (!this.isLoading() && !this.hasData()) {
-            this.setIsLoading(true)
-            this.load() 
+    promiseLoad () { 
+        if (!this.promiseForLoad()) {
+            this.setPromiseForLoad(new Promise((resolve, reject) => {
+                if (!this.isLoading() && !this.hasData()) {
+                    this.setIsLoading(true)
+                    return this.promiseLoadNow().then(() => { 
+                        this.setIsLoading(false) 
+                    }).catch((error) => {
+                        this.setIsLoading(false)
+                        throw error
+                    })
+                }
+            }))
         }
-        return this
+
+        return this.promiseForLoad()
     }
 
-    load () {
-        if (this.data()) {
-            this.postLoad()
-            return this
-        }
+    promiseLoadNow () {
+        return new Promise((resolve, reject) => {
+            if (this.hasData()) {
+                this.postLoad()
+                resolve()
+                return this
+            }
 
-        if (this.camData()) {
-            this.loadFromCamData()
-        } else if (this.hasCachedBlob()) {
-            this.asyncLoadCachedBlob()
-        } else {
-            this.loadFromUrl()
-        }
-        return this
+            if (this.camData()) {
+                this.loadFromCamData()
+                resolve()
+            } else if (this.usesBlobCache() && this.hasCachedBlob()) {
+                return this.promiseLoadCachedBlob()
+            } else {
+                return this.promiseLoadFromUrl()
+            }
+        })
     }
 
     // --- load data from cam ---
@@ -95,13 +109,12 @@
     }
 
     camData () {
-        const data = ResourceManager.shared().camValueForPath(this.camPath())
-        return data
+        return ResourceManager.shared().camValueForPath(this.camPath())
     }
 
     loadFromCamData () {
         this.setData(this.camData())
-        console.log("loaded via cam for path: ", this.camPath())
+        //console.log("loaded via cam for path: ", this.camPath())
         this.postLoad()
     }
 
@@ -115,13 +128,12 @@
         return b
     }
 
-    asyncLoadCachedBlob () {        
+    promiseLoadCachedBlob () {        
         assert(this.hasCachedBlob())
-
         const h = this.resourceHash()
         const blob = BMBlobs.shared().blobWithValueHash(h)   
-        blob.asyncReadValue(() => this.onReadCachedBlob(blob), () => this.onErrorReadingCachedBlob(blob))
         console.log("reading from blob cache... " + h + " " + this.path())
+        return blob.promiseReadValue().then(() => this.onReadCachedBlob(blob), () => this.onErrorReadingCachedBlob(blob))
     }
 
     onReadCachedBlob (blob) {
@@ -129,7 +141,6 @@
         //debugger;
         if (Type.isUndefined(blob.value())) {
             console.log("found undefined reading blob " + blob.name() + " for " + this.path())
-
             this.loadFromUrl()
         } else {
             this.setData(blob.value())
@@ -148,43 +159,57 @@
         //return 'application/json'; // need to change for binary files?
     }
 
-    loadFromUrl () {
-        console.log("loading via url fetch for path: ", this.path())
+    promiseLoadFromUrl () {
+        //console.log("loading via url fetch for path: ", this.path())
 
-        const path = this.path()
-        const rq = new XMLHttpRequest();
-        rq.open('GET', path, true);
-        if (this.loadRequestType()) {
-            rq.responseType = this.loadRequestType();
-        }
+        return new Promise((resolve, reject) => {
+            const path = this.path()
+            const rq = new XMLHttpRequest();
+            rq.open('GET', path, true);
+            if (this.loadRequestType()) {
+                rq.responseType = this.loadRequestType();
+            }
 
-        rq.onload  = (event) => { this.onUrlLoad(event) }
-        rq.onerror = (event) => { this.onUrlLoadError(event) }
+            rq.onload  = (event) => { 
+                this.onUrlLoad(event); 
+                resolve() 
+            }
 
-/*        
-        rq.onload      = (event) => { this.onRequestLoad(event) }
-        rq.onerror     = (event) => { this.onRequestError(event) }
-        rq.onabort     = (event) => { this.onRequestAbort(event) }
-        rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
-        rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
-        rq.onprogress  = (event) => { this.onRequestProgress(event) }
-        rq.ontimeout   = (event) => { this.onRequestTimeout(event) }
-*/
+            rq.onerror = (event) => { 
+                this.onRequestError(event); 
+                reject() 
+            }
 
-        rq.send();
-        this.setRequest(rq)
-        return this
+            /*        
+            rq.onload      = (event) => { this.onRequestLoad(event) }
+            rq.onabort     = (event) => { this.onRequestAbort(event) }
+            rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
+            rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
+            */
+
+            rq.onprogress  = (event) => { 
+                this.onRequestProgress(event) 
+            }
+
+            rq.ontimeout   = (event) => { 
+                this.onRequestTimeout(event);
+                reject() 
+            }
+
+            this.setRequest(rq)
+            rq.send();
+        })
     }
 
     onUrlLoad () {
-        console.log("onUrlLoad " + this.path())
+        //console.log("onUrlLoad " + this.path())
         const data = this.request().response
         this.setData(data)
         this.postLoad()
         this.setIsLoading(false)
         
         const h = this.resourceHash()
-        if (h) {
+        if (h && this.usesBlobCache()) {
             console.log("writing to blob cache... " + h + " " + this.path())
 
             const blob = BMBlobs.shared().createBlobWithNameAndValue(h, this.data())
@@ -207,8 +232,8 @@
         return this
     }
 
-    onUrlLoadError (event) {
-        console.log("onUrlLoadError " + this.path())
+    onRequestError (event) {
+        console.log("onRequestError " + this.path())
         this.setError(event.error)
         this.postLoadError()
         this.setIsLoading(false)
@@ -226,7 +251,6 @@
     }
 
     /*
-    
     onRequestAbort (event) {
         this.setLoadState("aborted")
     }
@@ -237,6 +261,7 @@
     onRequestLoadStart (event) {
         this.setLoadState("started")
     }
+    */
 
     onRequestProgress (event) {
         if (event.lengthComputable) {
@@ -251,6 +276,7 @@
         this.setLoadState("timeout")
     }
 
+    /*
     onRequestLoad (event) {
         const request = event.currentTarget;
         const downloadedBuffer = request.response;  // may be array buffer, blob, or string, depending on request type
@@ -267,6 +293,6 @@
         this.setIsLoaded(true)
         this.postNoteNamed("didLoad")
     }
-*/
+    */
 
 }.initThisClass());

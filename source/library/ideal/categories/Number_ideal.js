@@ -57,9 +57,9 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         return this;
     }
 
-    repeat (callback) {
+    repeat (func) {
         for (let i = 0; i < this; i++) {
-            if (callback(i) === false) {
+            if (func(i) === false) {
                 return this;
             }
         }

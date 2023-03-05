@@ -41,10 +41,6 @@
         this.setVersion([0, 0, 0, 0])
         this.setNodeCanReorderSubnodes(true)
         this.addAction("add")
-
-        //this.setBlobs(BMBlobs.shared())
-
-        this.watchOnceForNote("blobsDidOpen")
         return this
     }
 
@@ -73,29 +69,16 @@
     // --- setup model ---
 
     setupModel () {
-        //debugger;
-        //this.rootNode().removeAllSubnodes()
-
-        //const notes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Notes", BMFolderNode)
-        //notes.subnodes().forEach(sn => sn.setCanDelete(true))
-        //notes.orderFirst()
-        //this.setNotes(notes)
-
-        //const prototypes = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Prototypes", BMPrototypesNode)
-        //this.setPrototypes(prototypes)
-
+        if (false) {
+            BMBlobs.shared().promiseOpen().then(() => this.appDidInit())
+        } else {
+            this.appDidInit()
+        }
         // settings
         //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
         //this.setSettings(settings)
         //debugger;
         return this
-    }
-
-    blobsDidOpen () {
-        //debugger;
-        // called by BMBlobs object owned by Settings
-        //setTimeout(() => this.appDidInit(), 0)
-        this.appDidInit()
     }
 
     // --- setup views ---

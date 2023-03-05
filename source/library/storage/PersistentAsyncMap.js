@@ -8,13 +8,14 @@
 
     Public methods:
 
-        asyncOpen(resolve, errorCallback) 
+        promiseOpen() 
         close()
-        asyncClear(resolve)
-        asyncHasKey(key, resolve)  // resolve passes true or false
-        asyncAt(key, resolve) // resolve passes value or undefined
-        asyncAtPut(key, value, resolve, reject) 
-        asyncRemoveKey(key, resolve, reject)
+        promiseClear()
+        promiseAllKeys()
+        promiseHasKey(key)  // resolve passes true or false
+        promiseAt(key) // resolve passes value or undefined
+        promiseAtPut(key, value) 
+        promiseRemoveKey(key)
         
 */
 
@@ -54,44 +55,22 @@
         return this
     }
 
-    /*
     promiseOpen () {
         if (!this.isOpen()) {
             this.idb().setPath(this.name())
         }
-
-        const promise = new Promise((resolve, reject) => { 
-
+        return this.idb().promiseOpen().then(() => {
+            return this.promiseOnOpen() 
         })
-
-        this.idb().asyncOpenIfNeeded( () => {
-            this.onOpen() 
-            promise.resolve()
-        }, (error) => { promise.reject(error) } )
-
-        const po = this.idb().promiseOpenIfNeeded()
-        po.then(() => { this.onOpen() }, (error) => { promise.reject(error) })
-        return po
-    }
-    */
-
-    asyncOpen (resolve, reject) {
-        if (!this.isOpen()) {
-            this.idb().setPath(this.name())
-        }
-        this.idb().asyncOpenIfNeeded( () => {
-            this.onOpen() 
-            resolve()
-        }, reject )
-        return this
     }
 	
-    onOpen () {
-        /*
-        if (false) {
-            this.asyncClear(callback)
-        }
-        */
+    promiseOnOpen () {
+        return new Promise((resolve, reject) => {
+            if (false) {
+                return this.promiseClear()
+            } 
+            resolve()
+        })
     }
 	
     assertOpen () {
@@ -100,89 +79,62 @@
     }
 	
     // ---- operations ---
-		
-    asyncClear (resolve, reject) {
-        this.idb().asyncClear(resolve, reject) 
+
+    promiseClear () {
+        return this.idb().promiseClear() 
     }
 
-    asyncAllKeys (resolve, reject) {
-        this.idb().asyncAllKeys(resolve, reject) 
+    promiseAllKeys () {
+        return this.idb().promiseAllKeys()
     }
 
-    asyncHasKey (key, resolve, reject) { // resolve passes true or false
-        this.idb().asyncHasKey(key, resolve, reject) 
+    promiseHasKey (key) { // resolve passes true or false
+        return this.idb().promiseHasKey(key) 
     }
 
-    /*
-    async asyncHasKey (key) {
-        return new Promise((resolve, reject) => {
-            this.idb().hasKey(key, resolve) 
-        })
-    }
-    */
-
-    asyncAt (key, resolve, reject) { // resolve passes value or undefined
-        assert(!Type.isNullOrUndefined(resolve))
-        this.idb().asyncAt(key, resolve, reject)
+    promiseAt (key) { // resolve passes value or undefined
+        return this.idb().promiseAt(key)
     }
 
-    asyncAtPut (key, value, resolve, reject) {
+    promiseAtPut (key, value) {
         if (Type.isArrayBuffer(value)) {
             assert(value.byteLength)
         }
-        //debugger
+
         this.assertOpen()
-        this.asyncHasKey(key, (hasKey) => {
+
+        return this.promiseHasKey(key, (hasKey) => {
             if (hasKey) {
-                this.asyncUpdate(key, value, resolve, reject)
+                return this.promiseUpdate(key, value, resolve, reject)
             } else {
-                this.asyncAdd(key, value, resolve, reject)
+                return this.promiseAdd(key, value, resolve, reject)
             }
-        }, reject)
-    }
-
-    asyncUpdate (key, value, resolve, reject) { // private
-	    const tx = this.idb().newTx()
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        tx.setSucccessCallback(resolve)
-        tx.setErrorCallback(reject)
-        tx.atUpdate(key, value)
-        tx.commit() 
-    }
-
-    asyncAdd (key, value, resolve, reject) { // private
-	    const tx = this.idb().newTx()
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        tx.setSucccessCallback(resolve)
-        tx.setErrorCallback(reject)
-        tx.atAdd(key, value)
-        tx.commit() 
-    }
-
-    asyncRemoveKey (key, resolve, reject) {
-	    const tx = this.idb().newTx()
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        tx.setSucccessCallback(resolve)
-        tx.setErrorCallback(reject)
-        tx.removeAt(key)
-        tx.commit() 
-    }
-/*
-    promiseRemoveKey (key, resolve, reject) {
-        return new Promise(() => {
-	    const tx = this.idb().newTx()
-            tx.begin()
-            tx.setIsDebugging(this.isDebugging())
-            tx.setSucccessCallback(resolve)
-            tx.setErrorCallback(reject)
-            tx.removeAt(key)
-            tx.commit() 
         })
     }
-*/
+
+    promiseUpdate (key, value) { // private
+	    const tx = this.idb().newTx()
+	    tx.begin()
+        tx.setIsDebugging(this.isDebugging())
+        tx.atUpdate(key, value)
+        return tx.promiseCommit() 
+    }
+
+    promiseAdd (key, value) { // private
+	    const tx = this.idb().newTx()
+	    tx.begin()
+        tx.setIsDebugging(this.isDebugging())
+        tx.atAdd(key, value)
+        return tx.promiseCommit() 
+    }
+
+    promiseRemoveKey (key) {
+	    const tx = this.idb().newTx()
+	    tx.begin()
+        tx.setIsDebugging(this.isDebugging())
+        tx.removeAt(key)
+        return tx.promiseCommit() 
+    }
 
 }.initThisClass());
 
