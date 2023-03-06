@@ -17,7 +17,7 @@
         this.newSlot("promiseForPersistence", null)
 
         this.newSlot("promiseForOpen", null) // has a value while opening. Returns this value while opening so multiple requests queue for open
-        this.newSlot("promiseForCommit", null) 
+        this.newSlot("lastTx", null) 
     }
 
     init () {
@@ -75,16 +75,6 @@
     storeName () {
         return this.path()
     }
-
-    /*
-    root () {
-        if (!IndexedDBFolder._root) {
-            IndexedDBFolder._root = IndexedDBFolder.clone()
-            // IndexedDBFolder._root.rootShow()
-        }
-        return IndexedDBFolder._root
-    }
-    */
 
     isOpen () {
         return (this.db() !== null)
@@ -179,16 +169,65 @@
         return this.path() + key
     }
 
+    // private helpers
+
+    readOnlyObjectStore () { // private
+        const tx = this.db().transaction([this.storeName()], "readonly");
+
+        tx.onerror = (event) => {
+            const m = "readOnlyObjectStore tx error"
+            console.error(m)
+            throw new Error(m)
+        };
+
+        /*
+        tx.oncomplete = (event) => {
+            console.log("readOnlyObjectStore tx completed")
+        }
+        */
+
+        const objectStore = tx.objectStore(this.storeName())
+        return objectStore
+    }
+
+    readWriteObjectStore () { // private
+        const tx = this.db().transaction([this.storeName()], "readwrite");
+        
+        tx.onerror = (event) => {
+            const m = "readWriteObjectStore tx error"
+            console.error(m)
+            throw new Error(m)
+        };
+
+        /*
+        tx.oncomplete = (event) => {
+            //console.log("readWriteObjectStore tx completed")
+        }
+        */
+
+        const objectStore = tx.objectStore(this.storeName())
+        return objectStore
+    }
+
     // reading
 
     promiseHasKey (key) {
         return new Promise((resolve, reject) => {
-            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
-            //const keyRangeValue = IDBKeyRange.bound(key, key)
+            this.promiseAt(key).then((value) => {
+                const hasKey = !Type.isUndefined(value)
+                resolve(hasKey)
+            })
+        })
+
+        /*
+        return new Promise((resolve, reject) => {
+            const objectStore = this.readOnlyObjectStore()
+            //const keyRangeValue = IDBKeyRange.bound(k1, k2)
             //const request = objectStore.openCursor(keyRangeValue)
             const request = objectStore.openCursor(key)
+            const stack = this.currentStack()
 
-            request.onsuccess = (evente) => {
+            request.onsuccess = (event) => {
                 const cursor = event.target.result
                 if (cursor) { // key already exists
                     resolve(true)
@@ -198,18 +237,24 @@
             }
 
             request.onerror = (event) => {
-                console.log("promiseAt('" + key + "') onerror", event.target.error)
+                console.log("promiseAt('" + key + "') onerror", event.target.error, " stack: ", stack)
                 reject(event)
             }
         })
+        */
+    }
+
+    currentStack () {
+        const stack = this.isDebugging() ? new Error().stack : "(call IndexedDBFolder.setIsDebugging(true) to get a stack recording)" 
+        return stack
     }
     
     promiseAt (key) {
         return new Promise((resolve, reject) => {
             //console.log("promiseAt ", key)
-            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+            const objectStore = this.readOnlyObjectStore()
             const request = objectStore.get(key);
-            const stack = "(stack recording disabled)" //new Error().stack
+            const stack = this.currentStack()
 
             request.onsuccess = (event) => {
                 // request.result is undefined if value not in DB
@@ -234,11 +279,30 @@
         })
     }
 
+    promiseCount () {
+        return new Promise((resolve, reject) => {
+            //console.log("promiseAt ", key)
+            const objectStore = this.readOnlyObjectStore()
+            const request = objectStore.count();
+            const stack = this.currentStack()
+
+            request.onsuccess = (event) => {
+                const count = request.result
+                resolve(count)
+            }
+            
+            request.onerror = (event) => {
+                console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack)
+                reject(event)
+            }
+        })
+    }
+
     /*
 
     promiseReadOnlyCursorRequest () {
         return new Promise((resolve, reject) => {
-            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
+            const objectStore = this.readOnlyObjectStore()
             const idbRequest = objectStore.openCursor()
             idbRequest.onsuccess = (event) => {
                 resolve(event)
@@ -263,13 +327,13 @@
     }
     */
 
-
     promiseAsMap () {
         return new Promise((resolve, reject) => {
-            const objectStore = this.db().transaction(this.storeName(), "readonly").objectStore(this.storeName())
-            const idbRequest = objectStore.getAll()
+            const objectStore = this.readOnlyObjectStore()
+            const request = objectStore.getAll()
+            const stack = this.currentStack()
 
-            idbRequest.onsuccess = (event) => {
+            request.onsuccess = (event) => {
                 const results = event.target.result
                 const map = new Map()
                 results.forEach(result => {
@@ -278,7 +342,7 @@
                 resolve(map)
             }
 
-            idbRequest.onerror = (event) => {
+            request.onerror = (event) => {
                 reject(event)
             }
         })
@@ -294,34 +358,19 @@
 
     promiseClear () {
         return new Promise((resolve, reject) => {
-
-            // setup transaction 
-            const transaction = this.db().transaction([this.storeName()], "readwrite");
-
-            transaction.onerror = (event) => {
-                console.log("db clear tx error")
-                reject(event)
-            };
-
-            transaction.oncomplete = (event) => {
-                console.log("db clear tx completed")
-                resolve(event)
-            }
-
-            // setup clear request
-            const objectStore = transaction.objectStore(this.storeName());
+            const objectStore = this.readWriteObjectStore();
             const request = objectStore.clear();
+            const stack = this.currentStack()
 
             request.onsuccess = (event) => {
                 console.log("db clear request success")
-                //resolve(event) // we use tx oncomplete (see above code in this method) instead
+                resolve(event) // we use tx oncomplete (see above code in this method) instead
             };
 
             request.onerror = (event) => {
                 console.log("db clear error")
                 reject(event)
             };
-
         })
     }
 
@@ -346,7 +395,15 @@
     }
 
     newTx () {
-        return IndexedDBTx.clone().setDbFolder(this)
+        if (this.lastTx()) {
+            // technically, it's ok to have multiple unfinished txs, 
+            // but AFAIK I don't use them at the moment, 
+            // so this is a sanity check for now 
+            assert(this.lastTx().isFinished())
+        }
+        const newTx = IndexedDBTx.clone().setDbFolder(this)
+        this.setLastTx(newTx)
+        return newTx
     }
 
     debugTypeId () {

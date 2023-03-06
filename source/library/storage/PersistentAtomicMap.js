@@ -43,7 +43,7 @@
         super.init()
         this.setIsOpen(false)
         this.setIdb(IndexedDBFolder.clone())
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
         this.setName("PersistentAtomicMap")
     }
 
@@ -67,19 +67,18 @@
     }
 
     promiseOpen () {
+        this.debugLog(() => "promiseOnOpen() '" + this.name() + "'")
         return this.idb().promiseOpen().then(() => { return this.promiseOnOpen()}) // it can deal with multiple calls while it's opening
     }
 	
     promiseOnOpen () {
-        //debugger;
-        console.log(this.typeId() + " promiseOnOpen '" + this.name() + "'")
-        this.debugLog(" onOpen() - loading cache")
-        
         if (false) {
             debugger;
+            this.debugLog("onOpen() - CLEARING BEFORE OPEN")
             return this.promiseClear().then(() => this.promiseLoadMap())
         } 
 
+        this.debugLog("onOpen() - loading cache")
         return this.promiseLoadMap()
     }
 
@@ -88,7 +87,7 @@
             assert(!Type.isNull(map))
             //console.log(this.debugTypeId() + " onOpen() --- loaded cache with " + this.recordsMap().count() + " keys")
             this.setMap(map)
-            console.log("map keys:", map.keysArray())
+            //console.log("map keys:", map.keysArray())
             this.setIsOpen(true)
             //this.verifySync(callback, errorCallback)
         })
@@ -131,10 +130,8 @@
 	    tx.begin()
         tx.setIsDebugging(this.isDebugging())
         
-        //debugger
         this.changedKeySet().forEachK((k) => {
             const v = this.at(k)
-            //debugger;
             if (!this.has(k)) {
                 tx.removeAt(k)
             } else {
@@ -147,33 +144,33 @@
             }
         })
 		
-        //debugger
-
         super.applyChanges() // do this last as it will clear the snapshot
 		
         this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
 
         // indexeddb commits on next event loop automatically
         // tx is marked as committed and will throw exception on further writes
-        return tx.promiseCommit() //.then(() => this.verifySync())
+
+        if (this.isDebugging()) {
+            return tx.promiseCommit().then(() => this.promiseVerifySync())
+        } else {
+            return tx.promiseCommit()
+        }
     }
 	
     // --- helpers ---
 
-    verifySync (resolve, reject) {
+    promiseVerifySync () {
         const currentMap = this.map().shallowCopy()
 
-        this.idb().promiseAsMap().then(map => {	 
+        return this.idb().promiseAsMap().then(map => {	 
             const isSynced = map.isEqual(currentMap) // works if keys and values are strings
-            if (!isSynced) {
+            if (isSynced) {
+                this.debugLog(".verifySync() SUCCEEDED")
+            } else {
                 //this.idb().show()
                 //console.log("syncdb idb json: ", JSON.stringify(map.asDict(), null, 2))
                 throw new Error(his.debugTypeId() + ".verifySync() FAILED")
-                reject()
-            }
-            console.log(this.debugTypeId() + ".verifySync() SUCCEEDED")
-            if (resolve) {
-                resolve()
             }
         })
     }

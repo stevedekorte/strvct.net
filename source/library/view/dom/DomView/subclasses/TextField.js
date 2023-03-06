@@ -74,7 +74,6 @@
 
         this.setIsDebugging(false)
         //this.lockedStyleAttributeSet().add("backgroundColor")
-
         return this
     }
 
@@ -385,19 +384,20 @@
         }   
     }
 
-
     onKeyDown (event) {
         let result = super.onKeyDown(event)
-        const returnKeyCode = 13
+        //const returnKeyCode = 13
+        const keyName = BMKeyboard.shared().keyForEvent(event)
 
         console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
 
-        if (!this.isMultiline() && event.keyCode === returnKeyCode) {
-            console.log("blocking return key")
+        //if (!this.isMultiline() && event.keyCode === returnKeyCode) {
+        if (!this.isMultiline() && keyName === "Enter") {
+                // block return key down if it's a single line text field
+            // this still seems to allow return up key event
             event.preventDefault()
         }
 
-        
         /*
         if (this.isContentEditable()) {
             return false // stop propogation

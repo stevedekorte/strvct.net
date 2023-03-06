@@ -261,18 +261,18 @@
   },
   {
     "path": "source/library/storage/IndexedDBFolder.js",
-    "size": 10687,
-    "hash": "nKGw9piP+WCN9XtqWtg/KNiC5SEjF1MP5vQkgYOLhu0="
+    "size": 12279,
+    "hash": "16i9TkCv6hFlSbVQ7j78zRfkrYt3O/k2w1dCs0bzl3c="
   },
   {
     "path": "source/library/storage/IndexedDBTx.js",
-    "size": 5348,
-    "hash": "59thqvLuVkt6fI83aUa498rE616O7X4kYclx2RBME4o="
+    "size": 5302,
+    "hash": "HN8/86Ia+6OFjFr5GBSDZcdTh319ZRBb2CUBCBKk0bc="
   },
   {
     "path": "source/library/storage/PersistentAtomicMap.js",
-    "size": 5167,
-    "hash": "5fs/iGd4XlxjNY37NiTnDX8bA6A+WjoMeR393BWgLOE="
+    "size": 5151,
+    "hash": "ecmpaPlh+RP3XoMZBukPY+b/SLTG3K29bB4JZXzXyoQ="
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
@@ -316,8 +316,8 @@
   },
   {
     "path": "source/library/view/events/devices/BMKeyboard.js",
-    "size": 14201,
-    "hash": "7q8pgNyPXuLD4mmag6TvmTCjj+vBeE3Ev7TlUlZvo+o="
+    "size": 14382,
+    "hash": "6HstZdlI5tEt+bz4jGnm+RzG4QuFzjWdomZCDKEnEP0="
   },
   {
     "path": "source/library/view/events/devices/Mouse.js",
@@ -746,8 +746,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 15549,
-    "hash": "UaFugKRcF3+FQwBtmhNKRTEumQLcK8wrf2VS1Kdk2Tg="
+    "size": 15751,
+    "hash": "tv+sWubReA10GbUj3tn6E4iOp9PwJQCYiJXA+K+XdIw="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",

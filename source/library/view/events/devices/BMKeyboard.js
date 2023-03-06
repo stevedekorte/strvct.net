@@ -1,6 +1,7 @@
 "use strict";
 
 /*
+
     Keyboard
 
     Global shared instance that tracks current keyboard state.
@@ -29,6 +30,11 @@
                 meta-o
 
 
+    Notes:
+
+        Newer JS browser APIs might have better ways to do 
+        key code to name mappings. TODO: look into whether this is well supported across browsers. 
+        
 */
 
 
@@ -104,7 +110,6 @@
         const name = this.nameForKeyCode(event.keyCode)
         return this.allModifierNames().contains(name)
     }
-
 
     keyCodesToNamesDict () {
         return {

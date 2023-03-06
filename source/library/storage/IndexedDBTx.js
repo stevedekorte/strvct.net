@@ -24,11 +24,7 @@
 
     init () {
         super.init()
-        this.setIsDebugging(true)
-    }
-
-    isDebugging () {
-        return true
+        this.setIsDebugging(false)
     }
 
     db () {
@@ -70,7 +66,7 @@
     showTxRequestStack () {
         const rs = this.txRequestStack()
         if (rs) { 
-            console.log("error stack ", rs)
+            console.error("error stack ", rs)
         }
     }
 	
@@ -122,7 +118,7 @@
 		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "' error: '" + event.target.error + "'"
 		    this.debugLog(fullDescription)
 		    if (requestStack) { 
-                console.log("error stack ", requestStack)
+                console.error("error stack ", requestStack)
             }
 		  	throw new Error(fullDescription)
         }
@@ -155,7 +151,7 @@
         this.assertNotCommitted()
         
         //this.debugLog(() => " add " + key + " '" + object + "'")
-        this.debugLog(() => " ADD " + key + " '...'")
+        this.debugLog(() => "ADD " + key + " '...'")
 
         const entry = this.entryForKeyAndValue(key, value)
         const request = this.objectStore().add(entry);
@@ -172,7 +168,7 @@
         assert(Type.isString(value) || Type.isArrayBuffer(value))
 	    this.assertNotCommitted()
 
-        this.debugLog(() => " UPDATE " + key)
+        this.debugLog(() => "UPDATE " + key)
 
         const entry = this.entryForKeyAndValue(key, value)
         const request = this.objectStore().put(entry);
@@ -185,7 +181,7 @@
     removeAt (key) {
 	    this.assertNotCommitted()
 
-        this.debugLog(() => " REMOVE " + key)
+        this.debugLog(() => "REMOVE " + key)
 
         const request = this.objectStore().delete(key);
         request._action = "remove"
