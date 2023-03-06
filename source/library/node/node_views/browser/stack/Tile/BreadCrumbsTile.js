@@ -91,6 +91,16 @@
 
     // --- events ---
 
+    /*
+    onMouseDown (event) {
+        const result = super.onMouseDown(event)
+        const t = this.targetStackView()
+        t.selectNodePathArray([])
+        this.setupPathViews() // needed or does the StackView send a note?
+        return result
+    }
+    */
+
     didUpdateSlotParentView (oldValue, newValue) {  // hook this to do the initial setup
         super.didUpdateSlotParentView(oldValue, newValue)
         if (this.parentView()) {
@@ -110,7 +120,7 @@
         if (nodePathArray.length === 0) {
             debugger;
         }
-        //console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
+        console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
         //const ourPath = this.node().nodePath()
         //console.log("our path: " + ourPath.map(n => n.title()).join("/"))
         //debugger;

@@ -11,8 +11,10 @@
         this.newSlot("path", "/")
         this.newSlot("pathSeparator", "/") // path should end with pathSeparator
         this.newSlot("db", null)
-        this.newSlot("didRequestPersistence", false)
-        this.newSlot("isGranted", false)
+
+        // requesting persistence
+        this.newSlot("hasPermission", false)
+        this.newSlot("promiseForPersistence", null)
 
         this.newSlot("promiseForOpen", null) // has a value while opening. Returns this value while opening so multiple requests queue for open
         this.newSlot("promiseForCommit", null) 
@@ -20,7 +22,6 @@
 
     init () {
         super.init()
-        //this.requestPersistenceIfNeeded()
         this.setIsDebugging(false)
     }
 
@@ -34,34 +35,48 @@
         return "indexedDB" in window;
     }
 
-    requestPersistenceIfNeeded () {
-        if (!IndexedDBFolder.didRequestPersistence()) {
-            this.requestPersistence()
-        }
-        return this
+    /*
+    promiseHasIndexedDB () {
+        if (this.hasIndexedDB()) {
+            return Promise.resolve()
+        } 
+        return Promise.reject(new Error("IndexedDB unavailable on this client."))
+    }
+    */
+
+    hasStorageApi () {
+        return navigator.storage && navigator.storage.persist
     }
 
-    requestPersistence () {
-        if (navigator.storage && navigator.storage.persist) {
-            navigator.storage.persist().then((granted) => {
-                this.setIsGranted(granted)
-                if (granted) {
-                    alert("Storage will not be cleared except by explicit user action");
-                } else {
-                    alert("Storage may be cleared by the UA under storage pressure.");
-                }
-            })
+    promisePersistence () {
+        if (!this.promiseForPersistence()) {
+            this.setPromiseForPersistence(this.newPromisePersistence())
+        }
+        return this.promiseForPersistence()
+    }
+
+    newPromisePersistence () {
+        if (!this.hasStorageApi()) {
+            return Promise.reject(new Error("Missing navigator.storage API."))
         }
 
-        IndexedDBFolder.setDidRequestPersistence(true)
-
-        return this
+        return navigator.storage.persist().then((granted) => {
+            this.setHasPermission(granted)
+            if (granted) {
+                console.log("Storage will not be cleared except by explicit user action.");
+                resolve(true)
+            } else {
+                console.warn("Storage may be cleared by the UA under storage pressure.");
+                reject(false)
+            }
+        })
     }
 
     storeName () {
         return this.path()
     }
 
+    /*
     root () {
         if (!IndexedDBFolder._root) {
             IndexedDBFolder._root = IndexedDBFolder.clone()
@@ -69,107 +84,50 @@
         }
         return IndexedDBFolder._root
     }
+    */
 
     isOpen () {
         return (this.db() !== null)
     }
 
     promiseOpen () {
+        if (!this.promiseForOpen()) {
+            this.setPromiseForOpen(this.newPromiseOpen())
+        }
+        return this.promiseForOpen()
+    }
+
+    newPromiseOpen () {
+        assert(this.hasIndexedDB())
+
         return new Promise((resolve, reject) => {
             if(this.isOpen()) {
                 resolve()
                 return
             }
-            
-            if (!this.hasIndexedDB()) {
-                reject("IndexedDB unavailable on this client.")
-                return
-            }
-
-            if (this.path() === "BlobHashStore") {
-                debugger
-            }
-
-            this.debugLog(() => { "promiseOpen '" + this.path() + "'" })
-            //debugger;
 
             const version = 2 // can't be zero
-            console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
+            //console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
             const request = window.indexedDB.open(this.path(), version);
 
             request.onsuccess = (event) => {
                 //debugger;
-                this.clearPromiseForOpen()
-                this.onOpenSuccess(event)
+                this.setDb(event.target.result)
                 resolve()
             }
 
             request.onupgradeneeded = (event) => {
                 //debugger;
-                this.clearPromiseForOpen()
-                return this.promiseOnOpenUpgradeNeeded(event)
+                resolve(this.promiseOnOpenUpgradeNeeded(event))
             }
 
-            request.onerror = (event) => {
+            request.onerror = (error) => {
                 debugger;
-
-                this.clearPromiseForOpen()
+                this.debugLog(" open db error: ", event);
                 this.onOpenError(event)
-                reject()
+                reject(error)
             }
         })
-    }
-
-    promiseOpenFull () {
-        if (!this.promiseForOpen()) {
-            debugger
-            this._promiseForOpen = new Promise((resolve, reject) => {
-                if(this.isOpen()) {
-                    resolve()
-                    return
-                }
-                
-                if (!this.hasIndexedDB()) {
-                    reject("IndexedDB unavailable on this client.")
-                    return
-                }
-
-                this.debugLog(() => { "promiseOpen '" + this.path() + "'" })
-                debugger;
-
-                const version = 2 // can't be zero
-                const request = window.indexedDB.open(this.path(), version);
-
-                request.onsuccess = (event) => {
-                    debugger;
-                    this.clearPromiseForOpen()
-                    this.onOpenSuccess(event)
-                    resolve()
-                }
-
-                request.onupgradeneeded = (event) => {
-                    debugger;
-
-                    this.clearPromiseForOpen()
-                    return this.promiseOnOpenUpgradeNeeded(event)
-                }
-
-                request.onerror = (event) => {
-                    debugger;
-
-                    this.clearPromiseForOpen()
-                    this.onOpenError(event)
-                    reject()
-                }
-            })
-        }
-        debugger
-        return this.promiseForOpen()
-    }
-
-    clearPromiseForOpen () {
-        this.setPromiseForOpen(null)
-        return this
     }
 
     onOpenError (event) {
@@ -198,15 +156,12 @@
         })
     }
 
-    onOpenSuccess (event) {
-        this.setDb(event.target.result)
-    }
-
     close () {
         if (this.isOpen()) {
             this.db().close()
             this.setIsOpen(false)
             this.setDb(null)
+            this.setPromiseForOpen(null)
         }
         return this
     }
@@ -371,6 +326,8 @@
     }
 
     promiseDelete () {
+        assert(!this.isOpen())
+
         return new Promise((resolve, reject) => {
             const request = window.indexedDB.deleteDatabase(this.storeName())
 
@@ -388,9 +345,17 @@
         })
     }
 
+    newTx () {
+        return IndexedDBTx.clone().setDbFolder(this)
+    }
+
+    debugTypeId () {
+        return super.debugTypeId() + " '" + this.path() + "'"
+    }
+
     // test
 
-    test () {
+    static selfTest () {
         const folder = IndexedDBFolder.clone()
         folder.promiseOpen().then(() => {
             return folder.promiseAtPut("test", "x")
@@ -399,14 +364,6 @@
         }).then(() => {
             folder.promiseAt("test", (v) => { console.log("read ", v) })
         })
-    }
-
-    newTx () {
-        return IndexedDBTx.clone().setDbFolder(this)
-    }
-
-    debugTypeId () {
-        return super.debugTypeId() + " '" + this.path() + "'"
     }
 
 }.initThisClass());

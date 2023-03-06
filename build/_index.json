@@ -261,13 +261,13 @@
   },
   {
     "path": "source/library/storage/IndexedDBFolder.js",
-    "size": 11986,
-    "hash": "O5UL6BdN4u1ma3WC6E9nJG/55+WOcANVjauDBDtvwy0="
+    "size": 10687,
+    "hash": "nKGw9piP+WCN9XtqWtg/KNiC5SEjF1MP5vQkgYOLhu0="
   },
   {
     "path": "source/library/storage/IndexedDBTx.js",
-    "size": 5807,
-    "hash": "Cjqh616e3g4M+A2ZfgJ8YLzT+2nqr0LduwHLQhZMP9g="
+    "size": 5348,
+    "hash": "59thqvLuVkt6fI83aUa498rE616O7X4kYclx2RBME4o="
   },
   {
     "path": "source/library/storage/PersistentAtomicMap.js",
@@ -276,8 +276,8 @@
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
-    "size": 3454,
-    "hash": "vpGaaLTrEGrl0AJWAZBPatFg+E5tc3K1/D/vY3HgTuo="
+    "size": 3052,
+    "hash": "OYBAnmeKaF3xIjwL7nzmxQl9UK/B58+H+4hljGumYXs="
   },
   {
     "path": "source/library/view/geometry/Point.js",
@@ -746,8 +746,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 15312,
-    "hash": "38Cicdbc5GkZOUtS5w8jMkY27iJo/CXA60rbtFMZLQ0="
+    "size": 15549,
+    "hash": "UaFugKRcF3+FQwBtmhNKRTEumQLcK8wrf2VS1Kdk2Tg="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -1176,8 +1176,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbsTile.js",
-    "size": 8692,
-    "hash": "lWHCMHE2OcNpH2cEnmgAq3Fo8lX/l0he9Lw2xM7GdZY="
+    "size": 8957,
+    "hash": "ZCa8eLc0mR77PjOVHLAcVOYbcmI7RPQAiU+pMfn+O3Q="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/HeaderTile.js",

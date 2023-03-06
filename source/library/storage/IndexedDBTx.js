@@ -16,6 +16,7 @@
         this.newSlot("tx", null)
         this.newSlot("requests", [])
         this.newSlot("isCommitted", false)
+        this.newSlot("isAborted", false)
         this.newSlot("txRequestStack", null)
         this.newSlot("options", { "durability": "strict" })
         this.newSlot("txId", null)
@@ -76,7 +77,12 @@
     abort () {
 	    this.assertNotCommitted()
 	    this.tx().abort() // how does this get rejected?
+        this.setIsAborted(true)
 	    return this
+    }
+
+    isFinished () {
+        return this.isAborted() || this.isCommitted()
     }
 
     promiseCommit () {
@@ -95,7 +101,7 @@
                     //debugger
                     resolve(event) 
                 }
-                tx.onerror    = (error) => { 
+                tx.onerror = (error) => { 
                     debugger; 
                     reject(error)
                 }
@@ -110,7 +116,8 @@
     pushRequest (aRequest) {
 	    this.assertNotCommitted()
 
-        const requestStack = this.isDebugging() ? new Error().stack : null
+        const requestStack = this.isDebugging() ? new Error().stack : null;
+
         aRequest.onerror = (event) => {
 		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "' error: '" + event.target.error + "'"
 		    this.debugLog(fullDescription)
@@ -119,81 +126,55 @@
             }
 		  	throw new Error(fullDescription)
         }
-	    this.requests().push(aRequest)
+
+        /*
+        aRequest.onsuccess = (event) => {
+            // report the success of the request (this does not mean the item
+            // has been stored successfully in the DB - for that you need transaction.onsuccess)
+        }
+        */
+
+        this.requests().push(aRequest)
 	    return this
     }
 	
     entryForKeyAndValue (key, value) {
         assert(Type.isString(key))
         assert(Type.isString(value) || Type.isArrayBuffer(value))
-
-        /*
-        if (Type.isNullOrUndefined(object)) {
-            throw new Error(this.type() + ".entryForKeyAndValue('" + key + "', ...) can't add null value")
-        }
-		
-        const v = JSON.stringify(object)
-        if (v === null) {
-            throw new Error("can't add entry for null value")
-        }
-        */
-		
         return { key: key, value: value }
     }
 	
     // --- operations ----
-
-    /*
-    atPut (key, object) {
-	    this.assertNotCommitted()
-
-        if (this.hasKey(key)) {
-            this.atUpdate(key, object)
-        } else {
-            this.atAdd(key, object)
-        }
-        return this
-    }
-    */
 	
-    atAdd (key, object) {
+    atAdd (key, value) {
         //debugger
         //assert(!this.hasKey(key))
 
         assert(Type.isString(key))
-        assert(Type.isString(object) || Type.isArrayBuffer(object))
+        assert(Type.isString(value) || Type.isArrayBuffer(value))
         this.assertNotCommitted()
         
         //this.debugLog(() => " add " + key + " '" + object + "'")
         this.debugLog(() => " ADD " + key + " '...'")
 
-        const entry = this.entryForKeyAndValue(key, object)
+        const entry = this.entryForKeyAndValue(key, value)
         const request = this.objectStore().add(entry);
         request._action = "add"
         request._key = key 
-        /*
-        request.onsuccess = function(event) {
-            // report the success of the request (this does not mean the item
-            // has been stored successfully in the DB - for that you need transaction.onsuccess)
-
-        }
-        */
         this.pushRequest(request)
         return this
     }
 
-    atUpdate (key, object) {
-       // debugger
-
+    atUpdate (key, value) {
         //assert(!this.hasKey(key))
 
         assert(Type.isString(key))
-        assert(Type.isString(object) || Type.isArrayBuffer(object))
+        assert(Type.isString(value) || Type.isArrayBuffer(value))
 	    this.assertNotCommitted()
 
         this.debugLog(() => " UPDATE " + key)
 
-        const entry = this.entryForKeyAndValue(key, object)
+        const entry = this.entryForKeyAndValue(key, value)
         const request = this.objectStore().put(entry);
         request._action = "put"
         request._key = key
@@ -202,8 +183,6 @@
     }
     
     removeAt (key) {
- //       debugger
-
 	    this.assertNotCommitted()
 
         this.debugLog(() => " REMOVE " + key)

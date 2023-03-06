@@ -39,6 +39,7 @@
         this.newSlot("uneditableBorder", "none")
         this.newSlot("showsBorderWhenEditable", false)
         this.newSlot("mutationObserver", null)
+        this.newSlot("isMultiline", false)
     }
 
     init () {
@@ -316,7 +317,6 @@
 
     
     setString (newValue) {
-
         if (Type.isNullOrUndefined(newValue)) {
             newValue = ""
         }
@@ -388,8 +388,15 @@
 
     onKeyDown (event) {
         let result = super.onKeyDown(event)
+        const returnKeyCode = 13
 
-        //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
+        console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
+
+        if (!this.isMultiline() && event.keyCode === returnKeyCode) {
+            console.log("blocking return key")
+            event.preventDefault()
+        }
+
         
         /*
         if (this.isContentEditable()) {

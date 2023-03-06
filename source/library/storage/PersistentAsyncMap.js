@@ -137,26 +137,3 @@
     }
 
 }.initThisClass());
-
-/*
-debugger;
-function promiseOpen2 () {
-    return new Promise((resolve, reject) => { 
-        //setTimeout(resolve, 10)
-        resolve()
-        //reject(new Error("boom!"))
-    })
-}
-
-function promiseOpen1 () {
-    return promiseOpen2().then(() => { console.log("onOpen") })
-}
-
-promiseOpen1().then(() => {
-    console.log("done")
-}, (error) => {
-    console.log("got error:", error)
-})
-
-debugger;
-*/
