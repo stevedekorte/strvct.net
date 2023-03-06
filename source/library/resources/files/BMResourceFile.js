@@ -133,12 +133,12 @@
         assert(this.hasCachedBlob())
         const h = this.resourceHash()
         const blob = BMBlobs.shared().blobWithValueHash(h)   
-        console.log("reading from blob cache... " + h + " " + this.path())
+        this.debugLog(() => "reading from blob cache... " + h + " " + this.path())
         return blob.promiseReadValue().then(() => this.onReadCachedBlob(blob), () => this.onErrorReadingCachedBlob(blob))
     }
 
     onReadCachedBlob (blob) {
-        console.log("success reading blob " + blob.name() + " for " + this.path())
+        this.debugLog(() => "success reading blob " + blob.name() + " for " + this.path())
         //debugger;
         if (Type.isUndefined(blob.value())) {
             console.log("found undefined reading blob " + blob.name() + " for " + this.path())

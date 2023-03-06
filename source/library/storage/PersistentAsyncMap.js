@@ -14,7 +14,7 @@
         promiseAllKeys()
         promiseHasKey(key)  // resolve passes true or false
         promiseAt(key) // resolve passes value or undefined
-        promiseAtPut(key, value) 
+        promiseAtPut(key, value) // if value is undefined, key is deleted
         promiseRemoveKey(key)
 
     Notes:

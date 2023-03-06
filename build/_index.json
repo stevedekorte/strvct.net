@@ -276,8 +276,8 @@
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
-    "size": 3491,
-    "hash": "SodD28JJu0KiqzhXmEBZ6oI5wtWQxG8WnuQ8DDPbfzA="
+    "size": 3531,
+    "hash": "/Q1TerX7pk/ykim6sPqseZMrvvFnSA+N0JJ4hCOBWRE="
   },
   {
     "path": "source/library/view/geometry/Point.js",
@@ -747,7 +747,7 @@
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
     "size": 15751,
-    "hash": "tv+sWubReA10GbUj3tn6E4iOp9PwJQCYiJXA+K+XdIw="
+    "hash": "NZPbh7Apd6ISIHOg+7t2Gh5w9Y54w+zKn4xl8howKag="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -1301,8 +1301,8 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 8323,
-    "hash": "Qy6UYb58sJWZKkWBH3PGWFexNFPQNXJO+ruO8ywOIHs="
+    "size": 8339,
+    "hash": "euYkOuRIb7UNOIwYJuQkuV5onoGDFcgMLEaRs26BThM="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
