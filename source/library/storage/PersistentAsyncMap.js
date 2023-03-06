@@ -16,6 +16,13 @@
         promiseAt(key) // resolve passes value or undefined
         promiseAtPut(key, value) 
         promiseRemoveKey(key)
+
+    Notes:
+
+    To avoid having to wait for opening all async maps at the top level,
+    promiseOpen() is implicitly called for all other APIs.
+
+    Writing an undefined value will remove the key.
         
 */
 
@@ -65,12 +72,7 @@
     }
 	
     promiseOnOpen () {
-        return new Promise((resolve, reject) => {
-            if (false) {
-                return this.promiseClear()
-            } 
-            resolve()
-        })
+        //return this.promiseClear()
     }
 	
     assertOpen () {
@@ -81,34 +83,40 @@
     // ---- operations ---
 
     promiseClear () {
-        return this.idb().promiseClear() 
+        return this.promiseOpen().then(() => {
+            return this.idb().promiseClear()
+        })
     }
 
     promiseAllKeys () {
-        return this.idb().promiseAllKeys()
+        return this.promiseOpen().then(() => {
+            return this.idb().promiseAllKeys()
+        })
     }
 
     promiseHasKey (key) { // resolve passes true or false
-        return this.idb().promiseHasKey(key) 
+        return this.promiseOpen().then(() => {
+            return this.idb().promiseHasKey(key)
+        })
     }
 
     promiseAt (key) { // resolve passes value or undefined
-        return this.idb().promiseAt(key)
+        return this.promiseOpen().then(() => {
+            return this.idb().promiseAt(key)
+        })
     }
 
     promiseAtPut (key, value) {
-        if (Type.isArrayBuffer(value)) {
-            assert(value.byteLength)
-        }
-
-        this.assertOpen()
-
-        return this.promiseHasKey(key, (hasKey) => {
-            if (hasKey) {
-                return this.promiseUpdate(key, value, resolve, reject)
-            } else {
-                return this.promiseAdd(key, value, resolve, reject)
-            }
+        return this.promiseOpen().then(() => {
+            return this.promiseHasKey(key, (hasKey) => {
+                if (Type.isUndefined(key)) {
+                    return this.promiseRemoveAt(key)
+                } else if (hasKey) {
+                    return this.promiseUpdate(key, value)
+                } else {
+                    return this.promiseAdd(key, value)
+                }
+            })
         })
     }
 
@@ -128,12 +136,14 @@
         return tx.promiseCommit() 
     }
 
-    promiseRemoveKey (key) {
-	    const tx = this.idb().newTx()
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        tx.removeAt(key)
-        return tx.promiseCommit() 
+    promiseRemoveAt (key) {
+        return this.promiseOpen().then(() => {
+            const tx = this.idb().newTx()
+            tx.begin()
+            tx.setIsDebugging(this.isDebugging())
+            tx.removeAt(key)
+            return tx.promiseCommit() 
+        })
     }
 
 }.initThisClass());

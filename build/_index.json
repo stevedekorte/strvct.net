@@ -276,8 +276,8 @@
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
-    "size": 3052,
-    "hash": "OYBAnmeKaF3xIjwL7nzmxQl9UK/B58+H+4hljGumYXs="
+    "size": 3491,
+    "hash": "SodD28JJu0KiqzhXmEBZ6oI5wtWQxG8WnuQ8DDPbfzA="
   },
   {
     "path": "source/library/view/geometry/Point.js",
@@ -1271,8 +1271,8 @@
   },
   {
     "path": "source/library/resources/BMResource.js",
-    "size": 4637,
-    "hash": "c6FEcqjQCwvWPOpiHNzCmnFVN8y70YaIScOEsEYz+SM="
+    "size": 2886,
+    "hash": "Io28yMx/NbzN/rW2f2bM9THrB1Z9f5DoeqUYCghreJI="
   },
   {
     "path": "source/library/resources/BMResources.js",
@@ -1301,8 +1301,8 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 8437,
-    "hash": "tbzFXp7mcmh8vF/GZ8SFzDiOMDgmnCAFAQb+qsmRpig="
+    "size": 8323,
+    "hash": "Qy6UYb58sJWZKkWBH3PGWFexNFPQNXJO+ruO8ywOIHs="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
@@ -1336,8 +1336,8 @@
   },
   {
     "path": "source/library/resources/sounds/WAContext.js",
-    "size": 1480,
-    "hash": "oR2kFswlE4sIPT41n8rE+B4imNxhKUD5waR1MjjoRK4="
+    "size": 1793,
+    "hash": "59sMUGXKcHFBuiVubcfMEYVEvdTIp6budi9gYRCY4UM="
   },
   {
     "path": "source/library/resources/images/BMImage.js",

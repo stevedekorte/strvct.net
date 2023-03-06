@@ -4,7 +4,13 @@
 
     WAContext
 
-   WebAudioContext
+    A WebAudioContext wrapper. 
+    This is used with WASound for decoding and playing sounds.
+
+    Notes:
+
+    Browsers don't allow sounds to be played until a user interacts (using certain events) with the page.
+    So this class registers to listen for "firstUserEvent", and sets up the WebAudioContext after when it's received.
 
 */
 

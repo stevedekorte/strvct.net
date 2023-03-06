@@ -112,61 +112,6 @@
         this.promiseLoadFileResource()
         return this
     }
-
-    /*
-    load () {
-        debugger;
-        this.setLoadState("loading")
-        const rq = new XMLHttpRequest();
-        rq.open('GET', this.path(), true);
-        rq.responseType = 'arraybuffer';
-        rq.onload      = (event) => { this.onRequestLoad(event) }
-        rq.onerror     = (event) => { this.onRequestError(event) }
-        rq.onabort     = (event) => { this.onRequestAbort(event) }
-        rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
-        rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
-        rq.onprogress  = (event) => { this.onRequestProgress(event) }
-        rq.ontimeout   = (event) => { this.onRequestTimeout(event) }
-        rq.send();
-        return this
-    }
-
-    onRequestAbort (event) {
-        this.setLoadState("aborted")
-    }
-
-    onRequestLoadEnd (event) {
-    }
-
-    onRequestLoadStart (event) {
-        this.setLoadState("started")
-    }
-
-    onRequestProgress (event) {
-        if (event.lengthComputable) {
-            const p = Math.floor(100 * (event.loaded / event.total))/100
-            this.setLoadState(p + "% of " + event.total.byteSizeDescription())
-        } else {
-            this.setLoadState("loading (" +  event.loaded.byteSizeDescription() + " so far)")
-        }
-    }
-
-    onRequestTimeout (event) {
-        this.setLoadState("timeout")
-    }
-
-    onRequestLoad (event) {
-        const request = event.currentTarget;
-        const downloadedBuffer = request.response;  // may be array buffer, blob, or string, depending on request type
-        this.setData(downloadedBuffer)
-        //this.didLoad()
-    }
-
-    onRequestError (event) {
-        console.log(this.type() + " onLoadError ", error, " " + this.path())
-        this.setError(error)
-    }
-    */
     
     didLoad () {
         this.setIsLoaded(true)

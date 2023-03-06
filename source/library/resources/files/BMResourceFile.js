@@ -25,7 +25,7 @@
         this.newSlot("loadState", null) 
         this.newSlot("loadNote", null) 
         this.newSlot("loadErrorNote", null) 
-        this.newSlot("usesBlobCache", false)
+        this.newSlot("usesBlobCache", true)
     }
 
     init () {
@@ -124,7 +124,8 @@
         const h = this.resourceHash()
         //debugger;
         const b = h && BMBlobs.shared().hasBlobWithValueHash(h)
-        console.log("has cache for " + this.path() + ":" + b)
+        //console.log("has cache for " + this.path() + ":" + b)
+        //debugger;
         return b
     }
 
@@ -141,7 +142,7 @@
         //debugger;
         if (Type.isUndefined(blob.value())) {
             console.log("found undefined reading blob " + blob.name() + " for " + this.path())
-            this.loadFromUrl()
+            this.promiseLoadFromUrl()
         } else {
             this.setData(blob.value())
             this.postLoad()
@@ -212,8 +213,6 @@
         if (h && this.usesBlobCache()) {
             console.log("writing to blob cache... " + h + " " + this.path())
 
-            const blob = BMBlobs.shared().createBlobWithNameAndValue(h, this.data())
-
             /*
             const buffer = this.data()
             const str = new TextDecoder().decode(buffer);
@@ -225,6 +224,7 @@
             debugger;
             */
 
+            const blob = BMBlobs.shared().createBlobWithNameAndValue(h, this.data())
             blob.setName(this.path())
             blob.setValueHash(this.resourceHash())
             blob.setValueSize(this.resourceSize())
@@ -284,10 +284,6 @@
         //this.didLoad()
     }
 
-    onRequestError (event) {
-        console.log(this.type() + " onLoadError ", error, " " + this.path())
-        this.setError(error)
-    }
     
     didLoad () {
         this.setIsLoaded(true)
