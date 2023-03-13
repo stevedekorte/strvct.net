@@ -25,7 +25,7 @@
         this.newSlot("loadState", null) 
         this.newSlot("loadNote", null) 
         this.newSlot("loadErrorNote", null) 
-        this.newSlot("usesBlobCache", true)
+        this.newSlot("usesBlobCache", false)
     }
 
     init () {

@@ -131,8 +131,8 @@
     promiseWriteValueWithHash (v, h) {
         this.setValueHash(h)
         
-        if (Type.isArrayBuffer(value)) {
-            assert(value.byteLength)
+        if (Type.isArrayBuffer(v)) {
+            assert(v.byteLength)
         }
 
         assert(this.isValid())

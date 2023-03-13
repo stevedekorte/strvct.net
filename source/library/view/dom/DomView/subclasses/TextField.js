@@ -8,10 +8,9 @@
     For multi-line text, use TextArea.
     
     Behavior:
-    On Return/Enter key, it passes focus to the nextResponder/parent.
+    (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent. 
 
     Notes:
-    To watch for changes during editable content editing, we could use:
 
 */
 
@@ -27,7 +26,6 @@
         this.newSlot("didTextEditNote", null)
         this.newSlot("doesInput", false)
         this.newSlot("allowsSetStringWhileFocused", false)
-        //this.newSlot("hasBackground", false)
 
         // has to start false for proper state setup
         this.newSlot("usesDoubleTapToEdit", false) 
@@ -388,12 +386,11 @@
         let result = super.onKeyDown(event)
         const returnKeyCode = 13
         //const keyName = BMKeyboard.shared().keyForEvent(event)
-
-        console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
+        //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
 
         if (!this.isMultiline() && event.keyCode === returnKeyCode) {
         //if (!this.isMultiline() && keyName === "Enter") {
-                // block return key down if it's a single line text field
+            // block return key down if it's a single line text field
             // this still seems to allow return up key event
             event.preventDefault()
         }
@@ -406,18 +403,6 @@
        //debugger;
         return true
     }
-
-        
-    /*
-    onKeyUp (event) {
-        //this.debugLog(" onKeyUp ", event)
-        //this.adjustFontSizeWithKeyboard()
-        super.onKeyUp(event)
-        //this.debugLog(" onKeyUp value: [" + this.value() + "]")
-        this.didEdit()
-        return false
-    }
-    */
     
     onKeyUp (event) {
         let result = super.onKeyUp(event)
@@ -427,13 +412,13 @@
        // return result
 
         //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
+        //this.debugLog(" onKeyUp value: [" + this.value() + "]")
 
         /*
         if (this.isContentEditable()) {
             return false // stop propogation
         }
         */
-        //debugger;
 
         return false
     }
@@ -441,16 +426,16 @@
     
     onEnterKeyDown (event) {    
         // insert 2 returns as cursor won't go to the second line with 1
-        //document.execCommand('insertHTML', false, "\n\n");
+        // document.execCommand('insertHTML', false, "\n\n");
         // prevent the default behaviour of return key pressed
         return false;
     }
-    
 
     onEnterKeyUp (event) {
         if (!this.isContentEditable()) {
             return 
         }
+
         /*
         if (!this.doesInput()) {
             //this.insertEnterAtCursor()
@@ -531,7 +516,6 @@
         }
         return this
     }
-    
     */
 
     setThemeClassName (aName) {

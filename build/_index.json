@@ -26,8 +26,8 @@
   },
   {
     "path": "source/boot/Base.js",
-    "size": 2949,
-    "hash": "I4nt0QakXfVqEJ+SBZ+LK6b9762m1HdKeXWPovcow4Q="
+    "size": 3196,
+    "hash": "W+mG7bHq4N8MtFbiueAcQEkeNIzlqRdIh2roeyPTr+8="
   },
   {
     "path": "source/library/ideal/weak/EnumerableWeakMap.js",
@@ -260,24 +260,14 @@
     "hash": "hmq6CPirZ3mopNM6IcqMia49P4dESAy91XT5mSm1/yw="
   },
   {
-    "path": "source/library/storage/IndexedDBFolder.js",
-    "size": 12279,
-    "hash": "16i9TkCv6hFlSbVQ7j78zRfkrYt3O/k2w1dCs0bzl3c="
-  },
-  {
-    "path": "source/library/storage/IndexedDBTx.js",
-    "size": 5302,
-    "hash": "HN8/86Ia+6OFjFr5GBSDZcdTh319ZRBb2CUBCBKk0bc="
-  },
-  {
     "path": "source/library/storage/PersistentAtomicMap.js",
-    "size": 5151,
-    "hash": "ecmpaPlh+RP3XoMZBukPY+b/SLTG3K29bB4JZXzXyoQ="
+    "size": 5311,
+    "hash": "nUkNitppsBQRjZAvpjRkqBg/MaHmJwVW8S3eV/M42mA="
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
-    "size": 3531,
-    "hash": "/Q1TerX7pk/ykim6sPqseZMrvvFnSA+N0JJ4hCOBWRE="
+    "size": 2674,
+    "hash": "Xs93YnS3leO0g1bf2hNaUgT48APdUM3ovkJ2fpkNKOI="
   },
   {
     "path": "source/library/view/geometry/Point.js",
@@ -746,8 +736,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 15751,
-    "hash": "NZPbh7Apd6ISIHOg+7t2Gh5w9Y54w+zKn4xl8howKag="
+    "size": 15410,
+    "hash": "9lUto7kjIJN6Oyeo9PwCPON9WLxD5rao69o7Muwq1MY="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -1256,8 +1246,8 @@
   },
   {
     "path": "source/library/node/blobs/BMBlob.js",
-    "size": 5301,
-    "hash": "A0FDOBBUmFK0VOzIYTBfzDONx0rZtHE70G0Ygka1tVk="
+    "size": 5293,
+    "hash": "LSfAz0KX08K9LEnLQ6yK/NWWo8Yt9JljRHLbItx7pLg="
   },
   {
     "path": "source/library/node/blobs/BMBlobs.js",
@@ -1266,8 +1256,8 @@
   },
   {
     "path": "source/library/node/App.js",
-    "size": 4298,
-    "hash": "bHS8x/d9NPC5DyVHQZvZw4sabxu3a1go2m4OHjra/uY="
+    "size": 4300,
+    "hash": "uvV7yM2vtTsOLGzHjB1Tf6wFuX5sC3BGsz8lF/JJ/Xw="
   },
   {
     "path": "source/library/resources/BMResource.js",
@@ -1301,8 +1291,8 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 8339,
-    "hash": "euYkOuRIb7UNOIwYJuQkuV5onoGDFcgMLEaRs26BThM="
+    "size": 8340,
+    "hash": "iqsWaisSBBGkcLyIED6qhUy+qfwne9D+EFJ41Yn9oFk="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",

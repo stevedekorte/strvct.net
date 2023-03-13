@@ -1,0 +1,133 @@
+"use strict";
+
+/* 
+
+    HashCache (not to be confused with "Hash Cash")
+    
+    An key/value db where the keys are hashes of the values.
+    There are APIs to help with using as a url load cache.
+
+*/
+
+(class HashCache extends Base {
+    initPrototypeSlots () {
+        this.newSlot("idb", null)
+    }
+
+    init () {
+        super.init()
+        this.setIdb(IndexedDBFolder.clone())
+        this.setIsDebugging(false)
+        //this.idb().setIsDebugging(true)
+        this.setPath("sharedtHashCache")
+    }
+
+    setPath (aString) {
+        this.idb().setPath(aString)
+        return this
+    }
+
+    promiseHasHash (hash) {
+        return this.idb().promiseHasKey(hash)
+    }
+
+    promiseCount () {
+        return this.idb().promiseCount()
+    }
+
+    promiseContentForHashOrUrl (hash, url) {
+        if (hash) {
+            return this.idb().promiseAt(hash).then((dataFromDb) => {
+                // if we have the value, return it
+                if (typeof(dataFromDb) !== "undefined") {
+                    return Promise.resolve(dataFromDb)
+                }
+                // otherwise load it from url, store it, and then return it
+                return this.promiseLoadUrlAndWriteToHash(url, hash)
+            })
+        } else {
+            // if you want to create a key, use the promiseHashKeyForData() API
+            // TODO add a data write API so we don't compute hash twice
+            return Promise.reject(new Error("this API requires a hash"))
+            //  load it from url, store it, and then return it
+            //return this.promiseLoadUrlAndWriteToHash(url, hash)
+        }
+    }
+
+    promiseLoadUrlAndWriteToHash (url, hash) {
+        return promiseLoadUrl(url).then((data) => {
+            this.promiseAtPut(hash, data).then(() => {
+                return Promise.resolve(data)
+            })
+        })
+    }
+
+    promiseAtPut (hash, data) {
+
+        // sanity check
+        if (typeof(data) === "string") {
+            assert(data.length !== 0)
+        } else {
+            assert(data.byteLength !== 0)
+        }
+        //debugger;
+        return this.promiseHasHash(hash).then((hasHash) => {
+            if (hasHash) {
+                // we have this key so no point in writing (as same key always means same value)
+                return Promise.resolve()
+            }
+
+            // verify key before writing
+            return this.promiseHashKeyForData(data).then((dataHash) => {
+                if (hash === dataHash) {
+                    //console.log("HachCache atPut ", hash)
+                    return this.idb().promiseAtPut(hash, data)
+                }
+                debugger
+                return Promise.reject(new Error("hash key does not match hash of value"))
+            })
+        })
+    }
+
+    promiseHashKeyForData (data) {
+        if (typeof(data) === "string") {
+            data = new TextEncoder("utf-8").encode(data);    
+        }
+
+        return crypto.subtle.digest("SHA-256", data).then((hashArrayBuffer) => {
+            const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)))
+            return Promise.resolve(hashString)
+        })
+    }
+
+    promiseClear () {
+        return this.idb().promiseClear()
+    }
+
+    removeInvalidRecords () {
+        this.idb().promiseAllKeys().then((keys) => {
+            let promise = null
+            keys.forEach((key) => {
+                if (!promise) {
+                    promise = this.promiseVerifyOrDeleteKey(key)
+                } else {
+                    promise = promise.then(() => this.promiseVerifyOrDeleteKey(key))
+                }
+            })
+        })
+    }
+
+    promiseVerifyOrDeleteKey (key) {
+        return this.idb().promiseAt(key).then((value) => {
+            return this.promiseHashKeyForData(value).then((hashKey) => {
+                if (key !== hashKey) {
+                    return this.idb().promiseRemoveAt(key)
+                } else {
+                    return Promise.resolve()
+                }
+            })
+        })
+    }
+
+
+}.initThisClass());

@@ -126,36 +126,38 @@
 
     promiseApplyChanges () { // private -- apply changes to idb, super call will apply to map
         const count = this.changedKeySet().size
-	    const tx = this.idb().newTx().setTxId(this.newTxId())
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        
-        this.changedKeySet().forEachK((k) => {
-            const v = this.at(k)
-            if (!this.has(k)) {
-                tx.removeAt(k)
-            } else {
-                const isUpdate = this.snapshot().has(k)
-                if (isUpdate) {
-                    tx.atUpdate(k, v)
+	    this.idb().promiseNewTx().then((tx) => {
+            tx.setTxId(this.newTxId())
+            tx.begin()
+            tx.setIsDebugging(this.isDebugging())
+            
+            this.changedKeySet().forEachK((k) => {
+                const v = this.at(k)
+                if (!this.has(k)) {
+                    tx.removeAt(k)
                 } else {
-                    tx.atAdd(k, v)
-                }                
+                    const isUpdate = this.snapshot().has(k)
+                    if (isUpdate) {
+                        tx.atUpdate(k, v)
+                    } else {
+                        tx.atAdd(k, v)
+                    }                
+                }
+            })
+            
+            super.applyChanges() // do this last as it will clear the snapshot
+            
+            this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
+
+            // indexeddb commits on next event loop automatically
+            // tx is marked as committed and will throw exception on further writes
+
+            if (this.isDebugging()) {
+                return tx.promiseCommit().then(() => this.promiseVerifySync())
+            } else {
+                return tx.promiseCommit()
             }
         })
-		
-        super.applyChanges() // do this last as it will clear the snapshot
-		
-        this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
-
-        // indexeddb commits on next event loop automatically
-        // tx is marked as committed and will throw exception on further writes
-
-        if (this.isDebugging()) {
-            return tx.promiseCommit().then(() => this.promiseVerifySync())
-        } else {
-            return tx.promiseCommit()
-        }
     }
 	
     // --- helpers ---

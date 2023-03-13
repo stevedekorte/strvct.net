@@ -135,7 +135,7 @@
     setName (aString) {
         this._name = aString
         this.setTitle(aString)
-        this.mainWindow().setTitle(aString)
+        //this.mainWindow().setTitle(aString)
         return this
     }
     

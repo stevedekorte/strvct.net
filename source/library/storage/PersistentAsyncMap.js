@@ -108,41 +108,13 @@
 
     promiseAtPut (key, value) {
         return this.promiseOpen().then(() => {
-            return this.promiseHasKey(key, (hasKey) => {
-                if (Type.isUndefined(key)) {
-                    return this.promiseRemoveAt(key)
-                } else if (hasKey) {
-                    return this.promiseUpdate(key, value)
-                } else {
-                    return this.promiseAdd(key, value)
-                }
-            })
+            return this.idb().promiseAtPut(key, value)
         })
-    }
-
-    promiseUpdate (key, value) { // private
-	    const tx = this.idb().newTx()
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        tx.atUpdate(key, value)
-        return tx.promiseCommit() 
-    }
-
-    promiseAdd (key, value) { // private
-	    const tx = this.idb().newTx()
-	    tx.begin()
-        tx.setIsDebugging(this.isDebugging())
-        tx.atAdd(key, value)
-        return tx.promiseCommit() 
     }
 
     promiseRemoveAt (key) {
         return this.promiseOpen().then(() => {
-            const tx = this.idb().newTx()
-            tx.begin()
-            tx.setIsDebugging(this.isDebugging())
-            tx.removeAt(key)
-            return tx.promiseCommit() 
+            return this.idb().promiseRemoveAt(key, value)
         })
     }
 

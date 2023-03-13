@@ -6,7 +6,18 @@
     Command line script to recursively walk directories and
     generate a _imports.json file. These files are used by
     ImportsIndexer to build and index and zip file containing
-    resources.
+    resources. 
+
+    Generally, this is only used for data resources like:
+    - fonts
+    - images
+    - svg icons
+    - sounds
+    - json data files 
+    - etc
+
+    which don't need to be loaded immediately, and whose load order 
+    isn't critical (unlike load&eval on JS source files).
 
 */
 
@@ -103,9 +114,11 @@ class Folder {
         return this
     }
 
+    /*
     writeImportFile () {
         this.setImportsArray(this.resourceFileNames())
     }
+    */
 
     writeRecursiveImportFile () {
         const fileNames = this.resourceFileNames()

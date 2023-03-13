@@ -75,6 +75,8 @@ class IndexBuilder {
         this.writeIndex()
         this.writeCam()
         this.compressCam()
+        //this.writePackage()
+        process.exitCode = 0  // vscode wants an explicit exit for prelaunch tasks
     }
 
     // --- imports ---
@@ -130,14 +132,18 @@ class IndexBuilder {
         return nodePath.join(this.buildFolderPath(), this.indexFileName())
     }
 
+    computeIndex () {
+        return this.paths().map(path => this.indexEntryForPath(path))
+    }
+
     writeIndex () {
         const outPath = this.outIndexPath()
-        const index = this.paths().map(path => this.indexEntryForPath(path))
+        const index = this.computeIndex()
         const data = JSON.stringify(index, 2, 2)
         fs.writeFileSync(outPath, data, "utf8")
     }
 
-    hashForString (data) {
+    hashForData (data) {
         //crypto.subtle.digest("SHA-256", this).then(resolve, reject)
         const hash = crypto.createHash('sha256').update(data).digest("base64");
         return hash
@@ -152,13 +158,14 @@ class IndexBuilder {
 
         const data = fs.readFileSync(fullPath)
         const size = fs.statSync(fullPath).size
-        const hash = this.hashForString(data)
+        const hash = this.hashForData(data)
 
         const entry = {
             path: path,
             size: size,
             hash: hash
         }
+
         return entry
     }
 
@@ -172,15 +179,20 @@ class IndexBuilder {
         return nodePath.join(this.buildFolderPath(), this.camFileName())
     }
 
-    writeCam () {
+    computeCam () {
         const paths = this.pathsWithExtensions(["js", "css", "svg"])
         const cam = {}
         paths.forEach(path => {
             const fullPath = nodePath.join(process.cwd(), path)
             const value = fs.readFileSync(fullPath,  "utf8") // TODO: encode this in case it's binary?
-            const hash = this.hashForString(value)
+            const hash = this.hashForData(value)
             cam[hash] = value
         })
+        return cam
+    }
+
+    writeCam () {
+        const cam = this.computeCam()
         const data = JSON.stringify(cam, 2, 2)
         fs.writeFileSync(this.outCamPath(), data, "utf8")
     }
@@ -192,18 +204,53 @@ class IndexBuilder {
         })
     }
 
+    compressedCamPath () {
+        return this.outCamPath() + ".zip"
+    }
+
     compressCam () {
-        const inputData = fs.readFileSync(this.outCamPath(),  "utf8")
-        
-        this.debugLog("ImportsIndexer writing '" + this.outCamPath() + "'")
+        this.compressPath(this.outCamPath())
+    }
+
+    // --- package ---
+
+    /*
+    outPackagePath () {
+        return nodePath.join(this.buildFolderPath(), "_package.json")
+    }
+
+    writePackage () {
+        const outPath = this.outPackagePath()
+        const dict = {}
+        dict._cam = this.computeCam()
+        dict._index = this.computeIndex()
+        const outString = JSON.stringify(dict, 2, 2)
+        fs.writeFileSync(outPath, outString, "utf8")
+        this.compressPath(outPath)
+    }
+    */
+
+    // --- helpers ---
+
+    compressPath (path) {
+        const outPath = path + ".zip"
+        const inputData = fs.readFileSync(path,  "utf8")
 
         zlib.gzip(inputData, (error, zippedData) => {
             if (!error) {
-                fs.writeFileSync(this.outCamPath() + ".zip", zippedData)
+                fs.writeFileSync(outPath, zippedData)
+                this.hashPath(outPath)
             } else {
                 throw new Error(error)
             }
         });
+    }
+
+    hashPath (path) {
+        const outPath = path + ".hash"
+        const inputData = fs.readFileSync(path)
+        const hash = this.hashForData(inputData)
+        fs.writeFileSync(outPath, hash)
     }
 }
 

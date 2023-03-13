@@ -16,7 +16,6 @@ Object.defineSlot = function (obj, slotName, slotValue) {
     }
     
     Object.defineProperty(obj, slotName, descriptor)
-    //}
 }
 
 if (!String.prototype.capitalized) {
@@ -53,21 +52,18 @@ if (!String.prototype.capitalized) {
     }
 
     static initThisClass () {
-        //console.log("this.classType() = ", this.classType())
-        /*
-        if (typeof(getGlobalThis()[this.type()]) !== "undefined") {
-            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + this.type() + "']"
-            console.warn(msg)
-            throw new Error(msg)
-        }*/
-
-        getGlobalThis()[this.type()] = this
+        
+        if (this.prototype.hasOwnProperty("initPrototypeSlots")) {
+            // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
+            this.prototype.initPrototypeSlots()
+        }
 
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            //this.prototype.initPrototype.apply(this.prototype)
             this.prototype.initPrototype()
         }
+
+        getGlobalThis()[this.type()] = this
         return this
     }
 
@@ -85,11 +81,15 @@ if (!String.prototype.capitalized) {
         return obj
     }
 
+    initPrototype () {
+        this.newSlot("isDebugging", false)
+    }
+
     init () {
         // subclasses should override to initialize
     }
 
-    newSlot(slotName, initialValue) {
+    newSlot (slotName, initialValue) {
         if (typeof (slotName) !== "string") {
             throw new Error("slot name must be a string");
         }
@@ -119,6 +119,20 @@ if (!String.prototype.capitalized) {
         return this;
     }
 
+    debugLog (s) {
+        if (this.isDebugging()) {
+            if (typeof(s) === "function") {
+                s = s()
+            }
+            console.log(s)
+        }
+    }
 
 }.initThisClass());
 
+getGlobalThis().assert = function (v) {
+    if (!Boolean(v)) {
+        throw new Error("assert failed - false value")
+    }
+    return v
+}
