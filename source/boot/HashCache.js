@@ -40,9 +40,13 @@
             if (typeof(v) === "string") {
                 assert(v.length !== 0)
             } else {
-                assert(valvue.byteLength !== 0)
+                assert(v.byteLength !== 0)
             }
         }
+    }
+
+    promiseHasKey (key) {
+        return this.idb().promiseHasKey(key)
     }
 
     promiseContentForHashOrUrl (hash, url) {
@@ -77,6 +81,10 @@
                 })
             }
         })
+    }
+
+    promiseAt (hash) {
+        return this.idb().promiseAt(hash)
     }
 
     promiseAtPut (hash, data) {

@@ -19,6 +19,42 @@
 
 */
 
+// A single function to access globals that works
+// in the browser (which uses 'window') and on node.js (which uses 'global')
+
+function getGlobalThis () {
+	const isDef = function (v) {
+		return typeof(v) !== "undefined"
+	}
+
+	if (isDef(globalThis)) {
+        return globalThis;
+    }
+
+	if (isDef(self)) {
+        return self;
+    }
+
+	if (isDef(window)) {
+		window.global = window;
+		return window;
+	}
+
+	if (isDef(global)) {
+		global.window = global;
+		return global;
+	}
+
+	// Note: this might still return the wrong result!
+	if (isDef(this)) {
+        return this;
+    }
+    
+	throw new Error("Unable to locate global `this`");
+  };
+
+  getGlobalThis().getGlobalThis = getGlobalThis;
+
 // --- eval source url --------------------------------
 
 function evalStringFromSourceUrl (codeString, path) {
@@ -76,7 +112,7 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
 
 // --- Array promises --------------
 
-Object.defineSlot(Array.prototype, "promiseForEach", function (aBlock) {
+Object.defineSlot(Array.prototype, "promiseSerialForEach", function (aBlock) {
     let promise = null
     this.forEach((v) => {
         if (promise) {
@@ -130,23 +166,70 @@ class UrlResource {
         return this._path
     }
 
+    setResourceHash (h) {
+        this._resourceHash = h
+        return this
+    }
+
+    resourceHash () {
+        return this._resourceHash
+    }
+
     promiseLoad () {
+        const h = this.resourceHash() 
+        if (h && getGlobalThis().HashCache) {
+            const hc = HashCache.shared()
+            return hc.promiseHasKey(h).then((hasKey) => {
+                if (hasKey) {
+                    // if hashcache is available and hash data, use it
+                    return hc.promiseAt(h).then((data) => {
+                        this._data = data
+                        return Promise.resolve(this)
+                    })
+                } else {
+                    // otherwise, load normally and cache result
+                    return this.promiseJustLoad().then(() => {
+                        hc.promiseAtPut(h, this.data()).then(() => {
+                            return Promise.resolve(this)
+                        })
+                    })
+                }
+            })
+        } else {
+            return this.promiseJustLoad()
+        }
+    }
+
+    promiseJustLoad () {
+        //debugger
         return URL.with(this.path()).promiseLoad().then((data) => {
-            this._data = data
-            this.constructor._bytesLoaded += data.byteLength
-            this.constructor._urlsLoaded += 1
+            //debugger
+            this._data = data;
+            this.constructor._bytesLoaded += data.byteLength;
+            this.constructor._urlsLoaded += 1;
             return Promise.resolve(this)
         }).catch((error) => {
+            debugger
             this._error = error
             throw error
         })
     }
 
     promiseLoadAndEval () {
+        console.log("promiseLoadAndEval " + this.path())
+        //debugger
         return this.promiseLoad().then(() => {
-            this.evalDataAsJS()
+            this.eval()
             return Promise.resolve(this)
         })
+    }
+
+    eval () {
+        if (this.pathExtension() === "js") {
+            this.evalDataAsJS()
+        } else if (this.pathExtension() === "css") {
+            this.evalDataAsCss()
+        }
     }
 
     evalDataAsJS () {
@@ -157,7 +240,7 @@ class UrlResource {
 
     evalDataAsCss () {
         const cssString = this.dataAsText(); // default decoding is to utf8
-        const sourceUrl = "\n\n//# sourceURL=" + entry.path + " \n"
+        const sourceUrl = "\n\n//# sourceURL=" + this.path() + " \n"
         const debugCssString = cssString + sourceUrl
         //console.log("eval css: " +  entry.path)
         const element = document.createElement('style');
@@ -171,15 +254,19 @@ class UrlResource {
     }
 
     dataAsText () {
-        return new TextDecoder().decode(this.data()); // default decoding is to utf8
+        const data = this.data()
+        if (typeof(data) === "string") {
+            return data
+        }
+        return new TextDecoder().decode(data); // default decoding is to utf8
     }
 
-    pathSuffix () {
+    pathExtension () {
         return this.path().split(".").pop()
     }
 
     isZipFile () {
-        return this.pathSuffix() === "zip"
+        return this.pathExtension() === "zip"
     }
 
     dataAsJson () {
@@ -215,7 +302,7 @@ class ResourceManager {
 
     init () {
         this._index = null
-        this._cam = null
+        this._indexResources = null
         this._idb = null
         this._evalCount = 0
 		this._doneTime = null
@@ -223,36 +310,62 @@ class ResourceManager {
         return this
     }
 
-    hashCache () {
-        return HashCache.shared()
-    }
-
     run () {
         this.onProgress("", 0)
 
         // load the boot resource index and start loading/evaling js files
         this.promiseLoadIndex().then(() => {
-            this.eval()
+            this.evalIndexResources()
         })
 
         return this
     }
 
-    // --- loading ---
+    // --- load index ---
 
     promiseLoadIndex () {
         const path = "build/_index.json"
         return UrlResource.with(path).promiseLoad().then((resource) => {
+            //debugger
             this._index = resource.dataAsJson()
+            this._indexResources = this._index.map((entry) => {
+                return UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash)
+            })
+            return Promise.resolve(this)
         })
+    }
+
+    indexResources () {
+        return this._indexResources
+    }
+
+    // --- load cam ---
+
+    promiseLoadCamIfNeeded () {
+        // if hashCache is empty, load the compressed cam and add it to the cache first
+        // as this will be much faster than loading the files individually
+
+        //return this.hashCache().promiseClear().then(() => {
+            return HashCache.shared().promiseCount().then((count) => {
+                if (!count) {
+                    return this.promiseLoadCam()
+                }
+                return Promise.resolve()
+            })
+        //})
     }
 
     promiseLoadCam () {
         // cache the promise so if we call this multiple times we don't load it again
         if (!this._promiseForLoadCam) {
             const path = "build/_cam.json.zip"
-            this._promiseForLoadCam = UrlResource.with(path).promiseLoad().then((resource) => {
-                this._cam = resource.dataAsJson()
+            this._promiseForLoadCam = UrlResource.clone().setPath(path).promiseLoad().then((resource) => {
+                const cam = resource.dataAsJson()
+                // this._cam = cam
+                return Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel?
+                    const v = cam[k]
+                    return this.hashCache().promiseAtPut(k, v)
+                })
             })
         }
         return this._promiseForLoadCam
@@ -266,7 +379,7 @@ class ResourceManager {
     }
 
     entryForPath (path) {
-        return this._index.detect(entry => entry.path === path)
+        return this._index.find(entry => entry.path === path)
     }
 
     jsEntries () {
@@ -277,41 +390,48 @@ class ResourceManager {
         return this._index.filter(entry => this.extForPath(entry.path) === "css")
     }
 
+    // --- index resources ---
+
+    resourceForPath (path) {
+        return this.indexResources().find(r => r.path() === path)
+    }
+
+    resourcesWithExtension (ext) {
+        return this.indexResources().filter(r => r.pathExtension() === ext)
+    }
+
+    jsResources () {
+        return this.resourcesWithExtension("js")
+    }
+
+    cssResources () {
+        return this.resourcesWithExtension("css")
+    }
+
     // --- eval ---
 
-    promiseCacheCam () {
-        return this.promiseLoadCam().then(() => {
-            return Reflect.ownKeys(this._cam).promiseForEach((key) => {
-                const value = this._cam[key]
-                return this.hashCache().promiseAtPut(key, value)
-            })
-        })
-    }
-
-    promiseLoadCamIfNeeded () {
-        // if hashCache is empty, load the compressed cam and add it to the cache first
-        // as this will be much faster than loading the files individually
-
-        //return this.hashCache().promiseClear().then(() => {
-            return this.hashCache().promiseCount().then((count) => {
-                if (!count) {
-                    return this.promiseCacheCam()
-                }
-                this._cam = new Map()
-                return Promise.resolve()
-            })
-        //})
-    }
-
+    /*
     eval () {
         this.promiseLoadCamIfNeeded().then(() => {
-            this.evalEntries()
+            this.evalIndexResources()
         })
     }
 
+
+    */
+
+
+    evalIndexResources () {
+        //debugger
+        this.cssResources().promiseSerialForEach(r => r.promiseLoadAndEval()).then(() => {
+            return this.jsResources().promiseSerialForEach(r => r.promiseLoadAndEval()) 
+        }).then(() => this.onDone())
+    }
+
+    /*
     evalEntries () {
-        this.cssEntries().promiseForEach(entry => this.promiseEvalCssEntry(entry)).then(() => {
-            return this.jsEntries().promiseForEach(entry => this.promiseEvalJsEntry(entry))
+        this.cssEntries().promiseSerialForEach(entry => this.promiseEvalCssEntry(entry)).then(() => {
+            return this.jsEntries().promiseSerialForEach(entry => this.promiseEvalJsEntry(entry))
         }).then(() => this.onDone())
     }
 
@@ -325,6 +445,7 @@ class ResourceManager {
             evalStringFromSourceUrl(value, entry.path) 
         })
     }
+
     
     promiseEvalCssEntry (entry) {
         if (this.isInBrowser()) {
@@ -344,33 +465,6 @@ class ResourceManager {
             })
         }
         return Promise.resolve()
-    }
-
-    // --- cam ---
-
-    /*
-    camValueForPath (path) {
-        const entry = this.entryForPath(path)
-        if (entry) {
-            const value = this._cam[entry.hash]
-            return value
-        }
-        return undefined
-    }
-
-    camValueForEntry (entry) {
-        const value = this._cam[entry.hash]
-        if (!value) {
-            throw new Error("missing cam value for entry: " + JSON.stringify(entry))
-        }
-        return value
-    }
-    */
-
-    /*
-    evalWithRequire () {
-        this.files().forEach(file => require(file))
-        return this
     }
     */
 
@@ -442,12 +536,12 @@ const urls = [
     "source/boot/Base.js",
     "source/boot/IndexedDBFolder.js",
     "source/boot/IndexedDBTx.js",
-    "source/boot/pako.js",
-    "source/boot/HashCache.js"
+    "source/boot/HashCache.js", // important that this be after IndexedDBFolder/Tx so it can be used
+    "source/boot/pako.js" // this could be loaded lazily?
 ]
 
 /*
-urls.promiseForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
+urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
     ResourceManager.shared().run()
 })
 */

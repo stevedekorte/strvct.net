@@ -4,33 +4,31 @@
 // A single function to access globals that works
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
-
 function getGlobalThis () {
-
-	const isDefined = function (v) {
+	const isDef = function (v) {
 		return typeof(v) !== "undefined"
 	}
 
-	if (isDefined(globalThis)) {
+	if (isDef(globalThis)) {
         return globalThis;
     }
 
-	if (isDefined(self)) {
+	if (isDef(self)) {
         return self;
     }
 
-	if (isDefined(window)) {
+	if (isDef(window)) {
 		window.global = window;
 		return window;
 	}
 
-	if (isDefined(global)) {
+	if (isDef(global)) {
 		global.window = global;
 		return global;
 	}
 
 	// Note: this might still return the wrong result!
-	if (isDefined(this)) {
+	if (isDef(this)) {
         return this;
     }
     

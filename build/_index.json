@@ -21,8 +21,8 @@
   },
   {
     "path": "source/boot/getGlobalThis.js",
-    "size": 723,
-    "hash": "B7f9wua8VlO7KYuXdd82CetNi1jTZ22s6Op+eunEBEE="
+    "size": 697,
+    "hash": "yzuvmZqGZXdrRcR8q/s01nRc52gV18pbOZOR/K+DHRw="
   },
   {
     "path": "source/boot/Base.js",
@@ -170,27 +170,27 @@
     "hash": "k7WiqSyeOlq94l9Jy5fUyaxEPLe5gywc/vBvwxP7+CE="
   },
   {
-    "path": "source/library/ideal/array/HookedArray.js",
+    "path": "source/library/ideal/collections/HookedArray.js",
     "size": 2699,
     "hash": "noDKWt1MlgQBzDNInm9BYT7Iqsupq3hVnqsAvrOAY6U="
   },
   {
-    "path": "source/library/ideal/array/HookedSet.js",
+    "path": "source/library/ideal/collections/HookedSet.js",
     "size": 1023,
     "hash": "34Q2BLdgUhRl23vNfVIOxDh8EU7ZoVIZ2fHT8AOuGt8="
   },
   {
-    "path": "source/library/ideal/array/HookedMap.js",
+    "path": "source/library/ideal/collections/HookedMap.js",
     "size": 1034,
     "hash": "nijAfdEXvqWFYhP47h3wgPbrH52pMYiB1zOOkh1pRsM="
   },
   {
-    "path": "source/library/ideal/array/IndexedArray.js",
+    "path": "source/library/ideal/collections/IndexedArray.js",
     "size": 5130,
     "hash": "ol5j0GpF5Uot7ZZvM9aGN9okQ/9Q+CB8QbJg4GKCYts="
   },
   {
-    "path": "source/library/ideal/array/SortedArray.js",
+    "path": "source/library/ideal/collections/SortedArray.js",
     "size": 2127,
     "hash": "2VzHmW/EdsRy1FF0J20Rc4vm8yg8Wx356zKhUtRwG+o="
   },
