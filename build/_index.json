@@ -266,8 +266,8 @@
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
-    "size": 2674,
-    "hash": "Xs93YnS3leO0g1bf2hNaUgT48APdUM3ovkJ2fpkNKOI="
+    "size": 2676,
+    "hash": "de+BhygUzwEta6lJmiuGy8yJh//mh6ALhuI/+V2FA+o="
   },
   {
     "path": "source/library/view/geometry/Point.js",
@@ -1291,8 +1291,8 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 8340,
-    "hash": "iqsWaisSBBGkcLyIED6qhUy+qfwne9D+EFJ41Yn9oFk="
+    "size": 8705,
+    "hash": "pd2gsY+PcWEnt98lpiE9ZbOasrFNdkYi6Il2WiZtlb8="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
@@ -1421,8 +1421,8 @@
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 3971,
-    "hash": "75HZIG0M0QODeuV/O9dRERyziBirpoyzKjDd0WYwbc0="
+    "size": 4014,
+    "hash": "L9c+yLARTQUHj04jP8tGVwwKF9Fr0FaQhbln4LAAA2g="
   },
   {
     "path": "source/apps/Strvct/_init.js",

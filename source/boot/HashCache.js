@@ -35,11 +35,22 @@
         return this.idb().promiseCount()
     }
 
+    assertValidValue (v) {
+        if (typeof(v) !== "undefined") {
+            if (typeof(v) === "string") {
+                assert(v.length !== 0)
+            } else {
+                assert(valvue.byteLength !== 0)
+            }
+        }
+    }
+
     promiseContentForHashOrUrl (hash, url) {
         if (hash) {
             return this.idb().promiseAt(hash).then((dataFromDb) => {
-                // if we have the value, return it
-                if (typeof(dataFromDb) !== "undefined") {
+                if (typeof(v) !== "undefined") {
+                    // if we have the value, return it
+                    this.assertValidValue(dataFromDb)
                     return Promise.resolve(dataFromDb)
                 }
                 // otherwise load it from url, store it, and then return it
@@ -55,22 +66,22 @@
     }
 
     promiseLoadUrlAndWriteToHash (url, hash) {
-        return promiseLoadUrl(url).then((data) => {
-            this.promiseAtPut(hash, data).then(() => {
-                return Promise.resolve(data)
-            })
+        return UrlResource.with(url).promiseLoad().then((resource) => {
+            const data = resource.data()
+            if (data === undefined) {
+                throw new Error("unable to load url: '" + url + "'")
+            } else {
+                console.log("HashCache loaded url: '" + url + "'")
+                return this.promiseAtPut(hash, data).then(() => {
+                    return Promise.resolve(data)
+                })
+            }
         })
     }
 
     promiseAtPut (hash, data) {
+        this.assertValidValue(data)
 
-        // sanity check
-        if (typeof(data) === "string") {
-            assert(data.length !== 0)
-        } else {
-            assert(data.byteLength !== 0)
-        }
-        //debugger;
         return this.promiseHasHash(hash).then((hasHash) => {
             if (hasHash) {
                 // we have this key so no point in writing (as same key always means same value)
@@ -104,6 +115,8 @@
         return this.idb().promiseClear()
     }
 
+    // --- collect invalid records ---
+
     removeInvalidRecords () {
         this.idb().promiseAllKeys().then((keys) => {
             let promise = null
@@ -128,6 +141,5 @@
             })
         })
     }
-
 
 }.initThisClass());

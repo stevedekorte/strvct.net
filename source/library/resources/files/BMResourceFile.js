@@ -67,7 +67,19 @@
 
     promiseLoad () { 
         if (!this.promiseForLoad()) {
-            this.setPromiseForLoad(new Promise((resolve, reject) => {
+            const promise = HashCache.shared().promiseContentForHashOrUrl(this.resourceHash(), this.path()).then((value) => {
+                this._data = value
+            })
+            this.setPromiseForLoad(promise)
+        }
+        return this.promiseForLoad()
+    }
+
+    /*
+    promiseLoad () { 
+        if (!this.promiseForLoad()) {
+            this.setPromiseForLoad(
+                new Promise((resolve, reject) => {
                 if (!this.isLoading() && !this.hasData()) {
                     this.setIsLoading(true)
                     return this.promiseLoadNow().then(() => { 
@@ -101,6 +113,7 @@
             }
         })
     }
+    */
 
     // --- load data from cam ---
 

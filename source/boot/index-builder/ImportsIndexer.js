@@ -141,12 +141,7 @@ class IndexBuilder {
         const index = this.computeIndex()
         const data = JSON.stringify(index, 2, 2)
         fs.writeFileSync(outPath, data, "utf8")
-    }
-
-    hashForData (data) {
-        //crypto.subtle.digest("SHA-256", this).then(resolve, reject)
-        const hash = crypto.createHash('sha256').update(data).digest("base64");
-        return hash
+        this.writeHashForPath(outPath)
     }
 
     indexEntryForPath (path) {
@@ -239,14 +234,20 @@ class IndexBuilder {
         zlib.gzip(inputData, (error, zippedData) => {
             if (!error) {
                 fs.writeFileSync(outPath, zippedData)
-                this.hashPath(outPath)
+                this.writeHashForPath(outPath)
             } else {
                 throw new Error(error)
             }
         });
     }
 
-    hashPath (path) {
+    hashForData (data) {
+        //crypto.subtle.digest("SHA-256", this).then(resolve, reject)
+        const hash = crypto.createHash('sha256').update(data).digest("base64");
+        return hash
+    }
+
+    writeHashForPath (path) {
         const outPath = path + ".hash"
         const inputData = fs.readFileSync(path)
         const hash = this.hashForData(inputData)

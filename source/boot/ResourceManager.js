@@ -19,34 +19,51 @@
 
 */
 
-// -----------------------------------
-
+// --- eval source url --------------------------------
 
 function evalStringFromSourceUrl (codeString, path) {
     const sourceUrl = "\n//# sourceURL=/" + path + " \n";
     const debugCode = codeString + sourceUrl;
-    //console.log("eval " + path);
-    if(path.indexOf("PersistentAtomicMap") !== -1) {
-        console.log("eval " + path);
-    }
     eval(debugCode);
-    if(path.indexOf("PersistentAtomicMap") !== -1) {
-        console.log("done eval " + path);
-        assert(getGlobalThis().PersistentAtomicMap)
-    }
 }
 
-function promiseLoadUrl (path) {
+// --- Object defineSlot ---
+
+Object.defineSlot = function (obj, slotName, slotValue) {
+    const descriptor = {
+        configurable: true,
+        enumerable: false,
+        value: slotValue,
+        writable: true,
+    }
+
+    if (typeof(slotValue) === "function") {
+        slotValue.displayName = slotName
+    }
+    
+    Object.defineProperty(obj, slotName, descriptor)
+}
+
+// --- URL promises -------------
+
+URL.with = function (path) {
+    return new URL(path, new URL(window.location.href))
+}
+
+Object.defineSlot(URL.prototype, "promiseLoad", function () {
+    const path = this.href
+    console.log("loading ", path)
     return new Promise((resolve, reject) => {
-        //debugger
         const rq = new XMLHttpRequest();
         rq.responseType = "arraybuffer";
         rq.open('GET', path, true);
 
         rq.onload  = (event) => { 
             if (rq.status >= 400 && rq.status <= 599) {
-                reject(new Error(request.status + " " + rq.statusText + " error loading " + this.fullPath() + " "))
+                reject(new Error(request.status + " " + rq.statusText + " error loading " + path + " "))
             }
+            this.response = rq.response
+            console.log("loaded ", path)
             resolve(rq.response) 
         }
 
@@ -55,35 +72,50 @@ function promiseLoadUrl (path) {
         }
         rq.send()
     })
-}
+})
 
-function promiseLoadAndEvalUrl (path) {
-    return promiseLoadUrl(path).then((arrrayBuffer) => {
-        const jsCode = new TextDecoder().decode(arrrayBuffer); // default decoding is to utf8
-        evalStringFromSourceUrl(jsCode, path)
-    })
-}
+// --- Array promises --------------
 
-function promiseLoadAndEvalUrls (urlStrings) {
+Object.defineSlot(Array.prototype, "promiseForEach", function (aBlock) {
     let promise = null
-    urlStrings.forEach((url) => {
+    this.forEach((v) => {
         if (promise) {
             promise = promise.then(() => { 
-                return promiseLoadAndEvalUrl(url) 
+                return aBlock(v) 
             })
         } else {
-            promise = promiseLoadAndEvalUrl(url)
+            promise = aBlock(v)
         }
     })
     return promise
-}
+})
+
+Object.defineSlot(Array.prototype, "promiseParallelMap", function (aBlock) {
+    const promises = this.map((v) => aBlock(v))
+    return Promise.all(promises) // passes results to then()
+})
 
 // -----------------------------------
 
-class BootResource {
+
+class UrlResource {
+
+    static _bytesLoaded = 0;
+    static _urlsLoaded = 0;
+
+    static with (url) {
+        return this.clone().setPath(url)
+    }
+
+    static clone () {
+        const instance = new this()
+        instance.init()
+        return instance
+    }
 	
     init () {
         this._path = null
+        this._resourceHash = null
         this._request = null
         this._data = null
         return this
@@ -98,38 +130,48 @@ class BootResource {
         return this._path
     }
 
-    /*
-    promiseLoadData () {
-        return new Promise((resolve, reject) => {
-            this.promiseLoad().then((resource) =>resolve(resource.data()), reject)
-        })
-    }
-    */
-
     promiseLoad () {
-        return new Promise((resolve, reject) => {
-            return promiseLoadUrl(this.path()).then(
-                (data) => {
-                    this._data = data
-                    resolve(this)
-                },
-                (error) => { 
-                    this._error = error
-                    reject(error) 
-                }
-            )
+        return URL.with(this.path()).promiseLoad().then((data) => {
+            this._data = data
+            this.constructor._bytesLoaded += data.byteLength
+            this.constructor._urlsLoaded += 1
+            return Promise.resolve(this)
+        }).catch((error) => {
+            this._error = error
+            throw error
         })
     }
 
-    onLoadError (event) {
-        const request = this._request; // is event or error passed?
-        console.log(this.type() + " onLoadError ", error, " " + this.fullPath())
-        this.setError(error)
-        throw new Error("error loading " + this.fullPath())
+    promiseLoadAndEval () {
+        return this.promiseLoad().then(() => {
+            this.evalDataAsJS()
+            return Promise.resolve(this)
+        })
+    }
+
+    evalDataAsJS () {
+        console.log("UrlResource eval ", this.path())
+        evalStringFromSourceUrl(this.dataAsText(), this.path())
+        return this
+    }
+
+    evalDataAsCss () {
+        const cssString = this.dataAsText(); // default decoding is to utf8
+        const sourceUrl = "\n\n//# sourceURL=" + entry.path + " \n"
+        const debugCssString = cssString + sourceUrl
+        //console.log("eval css: " +  entry.path)
+        const element = document.createElement('style');
+        element.type = 'text/css';
+        element.appendChild(document.createTextNode(debugCssString))
+        document.head.appendChild(element);
     }
 
     data () {
         return this._data;
+    }
+
+    dataAsText () {
+        return new TextDecoder().decode(this.data()); // default decoding is to utf8
     }
 
     pathSuffix () {
@@ -178,7 +220,6 @@ class ResourceManager {
         this._evalCount = 0
 		this._doneTime = null
         this._promiseForLoadCam = null
-        getGlobalThis().promiseLoadUrl = promiseLoadUrl
         return this
     }
 
@@ -201,7 +242,7 @@ class ResourceManager {
 
     promiseLoadIndex () {
         const path = "build/_index.json"
-        return new BootResource().init().setPath(path).promiseLoad().then((resource) => {
+        return UrlResource.with(path).promiseLoad().then((resource) => {
             this._index = resource.dataAsJson()
         })
     }
@@ -210,8 +251,7 @@ class ResourceManager {
         // cache the promise so if we call this multiple times we don't load it again
         if (!this._promiseForLoadCam) {
             const path = "build/_cam.json.zip"
-            this._promiseForLoadCam = new BootResource().init().setPath(path).promiseLoad().then((resource) => {
-                //debugger
+            this._promiseForLoadCam = UrlResource.with(path).promiseLoad().then((resource) => {
                 this._cam = resource.dataAsJson()
             })
         }
@@ -240,42 +280,21 @@ class ResourceManager {
     // --- eval ---
 
     promiseCacheCam () {
-        const cache = this.hashCache()
-        //debugger;
         return this.promiseLoadCam().then(() => {
-            let promise = null
-            //debugger;
-            Reflect.ownKeys(this._cam).forEach((key) => {
+            return Reflect.ownKeys(this._cam).promiseForEach((key) => {
                 const value = this._cam[key]
-                //this.hashCache().promiseAtPut(key, value)
-                
-                if (promise) {
-                    //assert(cache.idb().lastTx().isFinished())
-                    promise = promise.then(()=> {
-                        return cache.promiseAtPut(key, value).then(() => {
-                            //console.log("ResourceManager committed did put ", key)
-                            return Promise.resolve()
-                        })
-                    })
-                } else {
-                    //console.log("ResourceManager hashCache promiseAtPut ", key)
-                    promise = cache.promiseAtPut(key, value).then(() => {
-                        //console.log("ResourceManager FIRST committed did put ", key)
-                        return Promise.resolve()
-                    })
-                }
-            
+                return this.hashCache().promiseAtPut(key, value)
             })
-            return promise
         })
     }
 
     promiseLoadCamIfNeeded () {
+        // if hashCache is empty, load the compressed cam and add it to the cache first
+        // as this will be much faster than loading the files individually
+
         //return this.hashCache().promiseClear().then(() => {
             return this.hashCache().promiseCount().then((count) => {
                 if (!count) {
-                    // if hashCache is empty, load the compressed cam and add it to the cache first
-                    // as this will be much faster than loading the files individually
                     return this.promiseCacheCam()
                 }
                 this._cam = new Map()
@@ -285,54 +304,51 @@ class ResourceManager {
     }
 
     eval () {
-        // see if the cache has anything in it
         this.promiseLoadCamIfNeeded().then(() => {
             this.evalEntries()
         })
     }
 
     evalEntries () {
-        //this.cssEntries().forEach(entry => this.evalCssEntry(entry))
-        //this.jsEntries().forEach(entry => this.evalJsEntry(entry))
-        this._evalEntryStack = this.jsEntries()
-        this.evalNextEntry()
+        this.cssEntries().promiseForEach(entry => this.promiseEvalCssEntry(entry)).then(() => {
+            return this.jsEntries().promiseForEach(entry => this.promiseEvalJsEntry(entry))
+        }).then(() => this.onDone())
     }
 
-    evalNextEntry () {
-        const entry = this._evalEntryStack.shift()
-        //console.log("evalNextEntry ", entry)
-        const hashCache = this.hashCache()
-        if (entry) {
-            hashCache.promiseContentForHashOrUrl(entry.hash, entry.path).then((value) => {
+    promiseEvalJsEntry (entry) {
+        return this.hashCache().promiseContentForHashOrUrl(entry.hash, entry.path).then((value) => {
+            if (typeof(value) !== "string") {
+                value = new TextDecoder().decode(value); // default decoding is to utf8
+            }
+            //.log("eval js " + entry.path)
+            assert(value.length !== 0)
+            evalStringFromSourceUrl(value, entry.path) 
+        })
+    }
+    
+    promiseEvalCssEntry (entry) {
+        if (this.isInBrowser()) {
+            return this.hashCache().promiseContentForHashOrUrl(entry.hash, entry.path).then((value) => {
+                //console.log("eval css", entry.path)
                 if (typeof(value) !== "string") {
                     value = new TextDecoder().decode(value); // default decoding is to utf8
                 }
-                //console.log("evalNextEntry " + entry.path + " size:" + value.length)
-                assert(value.length !== 0)
-                evalStringFromSourceUrl(value, entry.path) 
-                this.evalNextEntry()
+                const cssString = value
+                const sourceUrl = "\n\n//# sourceURL=" + entry.path + " \n"
+                const debugCssString = cssString + sourceUrl
+                //console.log("eval css: " +  entry.path)
+                const element = document.createElement('style');
+                element.type = 'text/css';
+                element.appendChild(document.createTextNode(debugCssString))
+                document.head.appendChild(element);
             })
-        } else {
-            this.onDone()
         }
-    }
-    
-    evalCssEntry (entry) {
-        if (this.isInBrowser()) {
-            const cssString = this.camValueForEntry(entry) 
-            const sourceUrl = "\n\n//# sourceURL=" + entry.path + " \n"
-            const debugCssString = cssString + sourceUrl
-            //console.log("eval css: " +  entry.path)
-            const element = document.createElement('style');
-            element.type = 'text/css';
-            element.appendChild(document.createTextNode(debugCssString))
-            document.head.appendChild(element);
-        }
-        return this
+        return Promise.resolve()
     }
 
     // --- cam ---
 
+    /*
     camValueForPath (path) {
         const entry = this.entryForPath(path)
         if (entry) {
@@ -349,6 +365,7 @@ class ResourceManager {
         }
         return value
     }
+    */
 
     /*
     evalWithRequire () {
@@ -391,7 +408,7 @@ class ResourceManager {
 
     onDone () {
 		const page_load_time = new Date().getTime() - performance.timing.navigationStart;
-		window.document.title = "" + (page_load_time/1000) + "s load time"
+		window.document.title = "" + Math.round(page_load_time/100)/10 + "s, " + Math.round(UrlResource._bytesLoaded/1000) + "k, " +  UrlResource._urlsLoaded + " files"
 		//this.postEvent("resourceLoaderDone", {}) 
     }
 
@@ -429,6 +446,15 @@ const urls = [
     "source/boot/HashCache.js"
 ]
 
-promiseLoadAndEvalUrls(urls).then(() => {
+/*
+urls.promiseForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
     ResourceManager.shared().run()
 })
+*/
+
+
+urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loadedResources) => {
+    loadedResources.forEach(resource => resource.evalDataAsJS())
+    ResourceManager.shared().run()
+})
+

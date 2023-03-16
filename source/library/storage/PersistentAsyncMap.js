@@ -2,7 +2,7 @@
 
 /*
 
-    PersistentAsyncMap
+    PersistentAsyncMap  
 
     An async Map wrapper for IndexedDB.
 

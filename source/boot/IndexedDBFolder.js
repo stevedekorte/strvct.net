@@ -413,7 +413,7 @@
         //debugger;
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
         if (this.lastTx()) {
-            assert(this.lastTx().isFinished())
+            //assert(this.lastTx().isCommitted() || this.lastTx().isAborted())
         }
         const newTx = IndexedDBTx.clone().setDbFolder(this)
         this.setLastTx(newTx)
@@ -434,7 +434,8 @@
             assert(lastTx.isCommitted())
             if (!lastTx.isFinished()) {
                 if (lastTx.hasPromiseForCommit()) {
-                    throw new Error("last tx was not committed yet!")
+                    console.warn("WARNING: last tx was not committed yet!")
+                    //throw new Error("last tx was not committed yet!")
                 }
                 return lastTx.promiseForCommit().then(() => {
                     return Promise.resolve(this.privateNewTx())

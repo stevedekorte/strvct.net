@@ -115,6 +115,7 @@
         doc.setFontSizeAndLineHeight("16px")
         //doc.setLetterSpacing("0.05em")
         //doc.setTextTransform("uppercase")
+        //doc.setBorder("1px dashed #aaa")
    }
 
     /*
