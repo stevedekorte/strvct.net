@@ -125,51 +125,61 @@
         return s
     }
 
-    promiseApplyChanges () { // private -- apply changes to idb, super call will apply to map
+    applyChangesToTx (tx) {
+        //debugger
         assert(!this.isApplying())
         this.setIsApplying(true)
-        const count = this.changedKeySet().size
-        debugger
-        console.log(this.name() + " --- promiseApplyChanges ---")
-        const promise = this.idb().promiseNewTx()
-	    return promise.then((tx) => {
-            debugger
-            tx.setTxId(this.newTxId())
-            tx.setIsDebugging(this.isDebugging())
-            tx.begin()
-            this.changedKeySet().forEachK((k) => {
-                const v = this.at(k)
-                if (!this.has(k)) {
-                    tx.removeAt(k)
-                } else {
-                    const isUpdate = this.snapshot().has(k)
-                    if (isUpdate) {
-                        tx.atUpdate(k, v)
-                    } else {
-                        tx.atAdd(k, v)
-                    }                
-                }
-            })
-            
-            super.applyChanges() // do this last as it will clear the snapshot
-            
-            this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
 
-            // indexeddb commits on next event loop automatically
-            // tx is marked as committed and will throw exception on further writes
-
-            /*
-            if (this.isDebugging()) {
-                return tx.promiseCommit().then(() => this.promiseVerifySync())
+        tx.setTxId(this.newTxId())
+        tx.setIsDebugging(this.isDebugging())
+        tx.begin()
+        this.changedKeySet().forEachK((k) => {
+            const v = this.at(k)
+            if (!this.has(k)) {
+                tx.removeAt(k)
             } else {
-                return tx.promiseCommit()
+                const isUpdate = this.snapshot().has(k)
+                if (isUpdate) {
+                    tx.atUpdate(k, v)
+                } else {
+                    tx.atAdd(k, v)
+                }                
             }
-            */
-
-            this.setIsApplying(true)
-
-            return tx.promiseCommit()
         })
+        
+        super.applyChanges() // do this last as it will clear the snapshot
+        
+        this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
+
+        // indexeddb commits on next event loop automatically
+        // tx is marked as committed and will throw exception on further writes
+
+        /*
+        if (this.isDebugging()) {
+            return tx.promiseCommit().then(() => this.promiseVerifySync())
+        } else {
+            return tx.promiseCommit()
+        }
+        */
+        this.setIsApplying(false)
+
+    }
+
+    promiseApplyChanges () { // private -- apply changes to idb, super call will apply to map
+        console.log(this.name() + " --- promiseApplyChanges ---")
+        //debugger
+        const count = this.changedKeySet().size
+
+        if (true) {
+            const tx = this.idb().privateNewTx()
+            this.applyChangesToTx(tx)
+            return tx.promiseCommit()
+        } else {
+            return this.idb().promiseNewTx().then((tx) => {
+                this.applyChangesToTx(tx)
+                return tx.promiseCommit()
+            })
+        }
     }
 	
     // --- helpers ---

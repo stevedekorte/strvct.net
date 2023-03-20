@@ -412,6 +412,7 @@
     }
 
     promiseNewTx () {
+        assert(this.isOpen())
         //debugger;
         console.log(this.path() + " promiseNewTx")
         const lastTx = this.lastTx()

@@ -196,8 +196,8 @@
   },
   {
     "path": "source/library/ideal/map/AtomicMap.js",
-    "size": 6300,
-    "hash": "JBfTyJcVPMkQW24Zkgl5jWBwnFKJ65zDe6gobt03Kog="
+    "size": 6351,
+    "hash": "BTF9DWz7RXlEiJxARjYh4C0dtZjl6GFwLlM+I5lIxxs="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -261,8 +261,8 @@
   },
   {
     "path": "source/library/storage/PersistentAtomicMap.js",
-    "size": 5658,
-    "hash": "aFTYqLc0dNeuuigy3Yai6cOer+y3mu+sup0DMlqvxlw="
+    "size": 5772,
+    "hash": "qCNAeOHNIRcJWxTT5sM3XYfz3xpYXwfZIP/595m1TbU="
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
@@ -1261,8 +1261,8 @@
   },
   {
     "path": "source/library/resources/BMResource.js",
-    "size": 3271,
-    "hash": "AR4bkPbji+boxW9zKpVd8JlalhGXtB+KAPavNSjTXt8="
+    "size": 3278,
+    "hash": "KH2MRhpgU5FuYbKxVLKhsaxTxjDHAzylPJoeo2PtFi0="
   },
   {
     "path": "source/library/resources/BMResources.js",
@@ -1331,8 +1331,8 @@
   },
   {
     "path": "source/library/resources/images/BMImage.js",
-    "size": 2413,
-    "hash": "swOu7Z4ENYtfDs6VJznjbjuvrzKiQ737X8EMWj1Gs6U="
+    "size": 1100,
+    "hash": "ZsRfnU8txhtUsLeq4yy5zpRK/TyxfWT9fr1TRSwDhu8="
   },
   {
     "path": "source/library/resources/images/BMURLImage.js",
@@ -1341,8 +1341,8 @@
   },
   {
     "path": "source/library/resources/images/BMImageResources.js",
-    "size": 390,
-    "hash": "bvzDspzPi9k3AVuSbPHivm7jubeO3o03C+TSgIZU0vE="
+    "size": 389,
+    "hash": "g+VUzmQgB5dOZ/EqNZB5kn+p4DT0G5mUrP8ZSH+6qHE="
   },
   {
     "path": "source/library/resources/images/BMImageTile.js",
@@ -1396,8 +1396,8 @@
   },
   {
     "path": "source/library/resources/icons/SvgIconNode.js",
-    "size": 718,
-    "hash": "PjfFctReznv9zG/xbFT4Ymfmrfgs6imI+xillyhccfs="
+    "size": 738,
+    "hash": "kLpImuu3NNZiauvIYJ1gfU9l+ej6UVDs+/Esukg1708="
   },
   {
     "path": "source/library/resources/json/BMJsonResource.js",

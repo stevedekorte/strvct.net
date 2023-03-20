@@ -19,7 +19,7 @@
         this.setIdb(IndexedDBFolder.clone())
         this.setIsDebugging(false)
         //this.idb().setIsDebugging(true)
-        this.setPath("sharedtHashCache")
+        this.setPath("sharedHashCache")
     }
 
     setPath (aString) {

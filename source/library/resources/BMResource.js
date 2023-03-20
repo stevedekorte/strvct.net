@@ -119,7 +119,7 @@
 
     promiseLoadUrlResource () {
         return this.urlResource().promiseLoad().then(urlResource => {
-            this.setData(urlResource.data())
+            this.setData(this.urlResource().data())
             this.postNoteNamed("resourceLoaded")
             this.setLoadState("loaded")
             this.didLoad()

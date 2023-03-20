@@ -24,7 +24,7 @@
 
   didLoad () {
     super.didLoad()
-    this.setSvgString(this.data())
+    this.setSvgString(this.urlResource().dataAsText())
     return this
   }
 

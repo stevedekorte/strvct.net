@@ -8,7 +8,6 @@
 
 (class BMImageResources extends BMResourceGroup {
     
-
     init () {
         super.init()
         this.setTitle("Images")

@@ -30,66 +30,6 @@
         return this.path().pathExtension()
     }
 
-    /*
-    setPath (aPath) {
-        if (this._path !== aPath) {
-            this._path = aPath
-            this.loadDataURL()
-        }
-        return this
-    }
-    */
-
-    /*
-    loadIfNeeded () {
-        this.load()
-        return this
-    }
-    */
-
-    /*
-    load () {
-        if (this.isDebugging()) {
-            this.debugLog(".loadDataURL() " + this.path())
-        }
-
-        const request = new XMLHttpRequest();
-        request.open("get", this.path());
-        request.responseType = "blob";
-        request.onload = () => { this.loadedRequest(request) };
-        request.send();
-        return this
-    }
-
-    loadedRequest (request) {
-        if (this.isDebugging()) {
-            this.debugLog(".loadedRequest() ", request)
-        }
-
-        const fileReader = new FileReader();
-
-        fileReader.onload = () => {
-            const dataURL = fileReader.result
-            this.setDataURL(dataURL);
-
-            if (this.isDebugging()) {
-                this.debugLog(" setDataURL() ", dataURL)
-            }
-
-        };
-
-        fileReader.readAsDataURL(request.response);
-        return this
-    }
-
-    didFetchDataUrl (dataURL) {
-        //<img [src]="sanitize('data:image/jpg;base64, ' " + arrayBuffer.base64Encoded())">
-
-        this.setDataURL(dataURL);
-        return this
-    }
-    */
-
     didLoad () {
         super.didLoad()
         debugger;

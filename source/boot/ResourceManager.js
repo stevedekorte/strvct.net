@@ -180,8 +180,11 @@ class UrlResource {
     }
 
     promiseLoad () {
+        // load unzipper if needed
         if (this.isZipFile()) {
-            return this.promiseLoadUnzip().then(() => { return this.promiseLoad_2() })
+            return this.promiseLoadUnzipIfNeeded().then(() => { 
+                return this.promiseLoad_2()
+            })
         }
         return this.promiseLoad_2()
     }
@@ -265,7 +268,7 @@ class UrlResource {
     }
 
     dataAsText () {
-        const data = this.data()
+        let data = this.data()
         if (typeof(data) === "string") {
             return data
         }
@@ -291,9 +294,9 @@ class UrlResource {
         return pako.inflate(this.data());
     }
 
-    promiseLoadUnzip () {
+    promiseLoadUnzipIfNeeded () {
         if (!getGlobalThis().pako) {
-            return UrlResource.clone.setPath("source/boot/pako.js").promiseLoadAndEval()
+            return UrlResource.clone().setPath("source/boot/pako.js").promiseLoadAndEval()
         }
         return Promise.resolve()
     }
@@ -381,7 +384,7 @@ class ResourceManager {
                 // this._cam = cam
                 return Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel?
                     const v = cam[k]
-                    return this.hashCache().promiseAtPut(k, v)
+                    return HashCache.shared().promiseAtPut(k, v)
                 })
             })
         }
