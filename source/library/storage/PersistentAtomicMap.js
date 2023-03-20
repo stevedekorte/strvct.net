@@ -37,6 +37,7 @@
         this.newSlot("name", null)
         this.newSlot("idb", null)
         this.newSlot("txCount", 0)
+        this.newSlot("isApplying", false)
     }
 
     init () {
@@ -125,12 +126,17 @@
     }
 
     promiseApplyChanges () { // private -- apply changes to idb, super call will apply to map
+        assert(!this.isApplying())
+        this.setIsApplying(true)
         const count = this.changedKeySet().size
-	    this.idb().promiseNewTx().then((tx) => {
+        debugger
+        console.log(this.name() + " --- promiseApplyChanges ---")
+        const promise = this.idb().promiseNewTx()
+	    return promise.then((tx) => {
+            debugger
             tx.setTxId(this.newTxId())
-            tx.begin()
             tx.setIsDebugging(this.isDebugging())
-            
+            tx.begin()
             this.changedKeySet().forEachK((k) => {
                 const v = this.at(k)
                 if (!this.has(k)) {
@@ -152,11 +158,17 @@
             // indexeddb commits on next event loop automatically
             // tx is marked as committed and will throw exception on further writes
 
+            /*
             if (this.isDebugging()) {
                 return tx.promiseCommit().then(() => this.promiseVerifySync())
             } else {
                 return tx.promiseCommit()
             }
+            */
+
+            this.setIsApplying(true)
+
+            return tx.promiseCommit()
         })
     }
 	

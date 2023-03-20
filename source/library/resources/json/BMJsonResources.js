@@ -24,28 +24,6 @@
         return this
     }
 
-    /*
-    resourcePaths () { //in BMResourceGroup
-        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
-    }
-    
-    appDidInit () {  //in BMResourceGroup
-        this.setupSubnodes()
-        return this
-    }
-
-    setupSubnodes () {  //in BMResourceGroup
-        this.resourcePaths().forEach(path => this.addResourceWithPath(path))
-        return this
-    }
-
-    addResourceWithPath (aPath) {  //in BMResourceGroup
-        const resource = this.justAdd()
-        resource.setPath(aPath)
-        return this
-    }
-    */
-
 }.initThisClass());
 
 

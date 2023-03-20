@@ -50,6 +50,7 @@
     }
 
     promiseContentForHashOrUrl (hash, url) {
+        //debugger
         if (hash) {
             return this.idb().promiseAt(hash).then((dataFromDb) => {
                 if (typeof(v) !== "undefined") {
@@ -57,6 +58,8 @@
                     this.assertValidValue(dataFromDb)
                     return Promise.resolve(dataFromDb)
                 }
+                //debugger
+                console.log("no hachcache key '" + hash + "' '" + url + "'")
                 // otherwise load it from url, store it, and then return it
                 return this.promiseLoadUrlAndWriteToHash(url, hash)
             })
@@ -72,10 +75,12 @@
     promiseLoadUrlAndWriteToHash (url, hash) {
         return UrlResource.with(url).promiseLoad().then((resource) => {
             const data = resource.data()
+            debugger
             if (data === undefined) {
                 throw new Error("unable to load url: '" + url + "'")
             } else {
                 console.log("HashCache loaded url: '" + url + "'")
+                debugger
                 return this.promiseAtPut(hash, data).then(() => {
                     return Promise.resolve(data)
                 })

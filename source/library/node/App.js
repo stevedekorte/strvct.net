@@ -13,7 +13,7 @@
 
 */
 
-(class App extends BMStorableNode {
+(class App extends TitledNode {
     
     // --- shared ---
     // We override sharedContext so all subclasses use the same shared value
@@ -28,7 +28,9 @@
 
     static loadAndRunShared () {
         this.defaultStore().setName(this.type()) // name of the database
-        //this.defaultStore().promiseOpen().then(() => { this.promiseDeleteDefaultStore() })
+        //this.defaultStore().promiseOpen().then(() => { this.cfcx() })
+        //return 
+
         this.defaultStore().promiseOpen().then(() => { 
             this.onPoolOpenSuccess(this.defaultStore()) 
         }).catch((error) => {

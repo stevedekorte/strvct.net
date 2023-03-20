@@ -22,8 +22,69 @@
         this.newSlot("options", { "durability": "strict" })
         this.newSlot("txId", null)
         this.newSlot("promiseForCommit", null)
+        this.newSlot("promiseForFinished", null)
+        this.newSlot("resolveFunc", null)
+        this.newSlot("rejectFunc", null)
     }
 
+    setIsComplete (aBool) {
+        if (this._isComplete) {
+            assert(aBool == true) // no turning back on complete!
+        }
+
+        this._isComplete = aBool
+
+        if (aBool) {
+            this.markResolved()
+        }
+
+        return this
+    }
+
+    setIsAborted (aBool) {
+        if (this._isAborted) {
+            assert(aBool == true) // no turning back on complete!
+        }
+
+        this._isAborted = aBool
+
+        if (aBool) {
+            this.markResolved()
+        }
+
+        return this
+    }
+
+    markRejected (error) {
+        const f = this.rejectFunc()
+        if (f) {
+            f(error)
+        }
+        return this
+    }
+
+    markResolved () {
+        const f = this.resolveFunc()
+        if (f) {
+            f()
+        }
+        return this
+    }
+
+    promiseForFinished () {
+        if (!this._promiseForFinished) {
+            this._promiseForFinished = new Promise((resolve, reject) => {
+                this.setResolveFunc(resolve)
+                this.setRejectFunc(reject)
+            })
+        }
+        return this._promiseForFinished
+    }
+
+    isDebugging () {
+        return true
+    }
+    
     init () {
         super.init()
         //this.setIsDebugging(true) // this will be overwritten by db with it's own isDebugging setting
@@ -55,7 +116,8 @@
     }
 
     begin () {
-        this.debugLog("BEGIN ")
+        this.debugLog(this.dbFolder().path() + " TX BEGIN ")
+     //   debugger;
         //this.debugLog("BEGIN " + this.txId())
 	    this.assertNotCommitted()
         //this.setTxRequestStack(this.isDebugging() ? new Error().stack : null)
@@ -81,9 +143,10 @@
     }
 
     description () {
-        let s = "tx:\n"
+        let s = "db: " + this.dbFolder().path() + " tx:\n"
         this.requests().forEach(rq => {
-            s += "    " + rq._action + "' key:'" + rq._key + "\n"
+            //s += "    " + rq._action + "' key:'" + rq._key + "\n"
+            s += "    " + JSON.stringify({ action: rq._action, key: rq._key, value: rq._value })
         })
         return s
     }
@@ -101,12 +164,11 @@
         return this.isAborted() || this.isCompleted()
     }
 
-    hasPromiseForCommit () {
-        return this.promiseForCommit() !== null
-    }
-
     promiseCommit () {
+        this.debugLog(this.dbFolder().path() + " TX COMMIT ")
+
         this.assertNotCommitted()
+        this.setIsCommitted(true)
 
         this.setPromiseForCommit(new Promise((resolve, reject) => {
             const tx = this.tx()
@@ -119,16 +181,17 @@
             }
 
             tx.onerror = (error) => { 
-                debugger; 
+                debugger;
+                this.markRejected(error)
                 reject(error)
             }
 
             this.debugLog(" COMMITTING")
-            this.setIsCommitted(true)
             tx.commit()
         }))
 
-        return this.promiseForCommit()
+        //return this.promiseForCommit()
+        return this.promiseForFinished()
     }
 	
     // --- helpers ---
@@ -188,6 +251,7 @@
         const request = this.objectStore().add(entry);
         request._action = "add"
         request._key = key 
+        request._value = value 
         this.pushRequest(request)
         return this
     }
@@ -202,6 +266,7 @@
         const request = this.objectStore().put(entry);
         request._action = "put"
         request._key = key
+        request._value = value 
         this.pushRequest(request)
         return this
     }

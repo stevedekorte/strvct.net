@@ -66,6 +66,11 @@
     }
 
     promiseLoad () { 
+        return this.urlResource().promiseLoad().then(r => {
+            this._data = r.data()
+        })
+
+        /*
         if (!this.promiseForLoad()) {
             const promise = HashCache.shared().promiseContentForHashOrUrl(this.resourceHash(), this.path()).then((value) => {
                 this._data = value
@@ -73,6 +78,7 @@
             this.setPromiseForLoad(promise)
         }
         return this.promiseForLoad()
+        */
     }
 
     /*

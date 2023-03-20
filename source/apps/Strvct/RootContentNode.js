@@ -23,50 +23,7 @@
 (class RootContentNode extends BMFolderNode {
     
     initPrototypeSlots () {
-
-        {
-            const slot = this.newSlot("blobs", null)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-        }
-
-        {
-            const slot = this.newSlot("themes", null)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-        }        
-        
-        {
-            const slot = this.newSlot("prototypes", null)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-        }
-
-        {
-            const slot = this.newSlot("settings", null)
-            slot.setShouldStoreSlot(false)
-            slot.setCanInspect(true)
-        }
-
-        /*
-        {
-            const slot = this.newSlot("settings", true)
-            slot.setShouldStoreSlot(false)
-            //slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
-        }
-
-
-        {
-            const slot = this.newSlot("breadCrumbs", true)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-        }
-        */
-
         this.newSlot("headerNode", null)
-        this.newSlot("breadCrumbsNode", null)
-
     }
 
     // ---
@@ -86,30 +43,14 @@
         // This didInit *may not execute before* the didInit of other nodes such as the header and breadcrumbs.
         //debugger;
 
-        if (!this.blobs()) {
-            this.setBlobs(BMBlobs.shared())
-        }
-
-        if (!this.themes()) {
-            this.setThemes(BMThemeResources.shared())
-        }
-
-        if (!this.prototypes()) {
-            this.setPrototypes(BMPrototypesNode.shared())
-        }        
-
         // subnodes
         this.setupHeaderNode()
-        this.setupBreadCrumbsNode()
         return this
     }
 
     // header
 
     setupHeaderNode () {
-       // this.removeAllSubnodes()
-        //debugger;
-
         if (this.subnodes().length > 1) {
             this.removeAllSubnodes()
         }
@@ -121,13 +62,11 @@
             this.addSubnode(node)
         }
 
-        node.setNodeCanEditTitle(true)
-
         this.setHeaderNode(node)
     }
 
     newHeaderNode () {
-        const node = BMFolderNode.clone() // FolderNode?
+        const node = HeaderNode.clone() // FolderNode?
         node.setNodeTileClassName("HeaderTile")
         node.setNodeMinTileHeight(55)
         node.setTitle("my header")
@@ -137,33 +76,5 @@
         return node
     }
 
-    // bread crumbs
-
-    setupBreadCrumbsNode () {
-        //debugger
-        const root = this.headerNode()
-
-        if (root.subnodes().length > 1) {
-            this.removeAllSubnodes()
-        }
-
-        let node = root.subnodes().first()
-
-        if (!node) {
-            node = this.newBreadCrumbsNode()
-            root.addSubnode(node)
-        }
-        node.setNodeIsVertical(true) 
-
-        //debugger;
-        this.setBreadCrumbsNode(node)
-    }
-
-    newBreadCrumbsNode () {
-        const node = BMFolderNode.clone()
-        node.setNodeTileClassName("BreadCrumbsTile")
-        node.setCanDelete(false)
-        return node
-    }
 
 }.initThisClass());

@@ -72,15 +72,17 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     promiseCommit () {
-        let promise = null;
+        let promise = Promise.resolve();
         this.debugLog(() => " prepare commit ---")
         this.assertInTx()
         if (this.hasChanges()) {
             promise = this.promiseApplyChanges()
         }
-        this.changedKeySet().clear()
-        this.setIsInTx(false)
-        this.clearTotalBytesCache()
+        promise.then(() => {
+            this.changedKeySet().clear()
+            this.clearTotalBytesCache()
+            this.setIsInTx(false)
+        })
         return promise
     }
 

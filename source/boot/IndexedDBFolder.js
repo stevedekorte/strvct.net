@@ -359,6 +359,7 @@
     // removing
 
     promiseClear () {
+        debugger;
         return this.promiseOpen().then(() => {
             return new Promise((resolve, reject) => {
                 const objectStore = this.readWriteObjectStore();
@@ -380,6 +381,7 @@
     }
 
     promiseDelete () {
+        debugger
         assert(!this.isOpen())
 
         return new Promise((resolve, reject) => {
@@ -409,6 +411,31 @@
         assert(isOk)
     }
 
+    promiseNewTx () {
+        //debugger;
+        console.log(this.path() + " promiseNewTx")
+        const lastTx = this.lastTx()
+        if (lastTx) {
+            // technically, it's ok to have multiple unfinished txs, 
+            // but AFAIK I don't use them at the moment, 
+            // so this is a sanity check for now 
+
+            if (!lastTx.isFinished()) {
+                if (!lastTx.isCommitted()) {
+                    console.warn("WARNING: last tx was not committed yet!")
+                    console.log("last tx:")
+                    lastTx.show()
+                    
+                } 
+
+                return lastTx.promiseForFinished().then(() => {
+                    return Promise.resolve(this.privateNewTx())
+                })
+            }
+        }
+        return Promise.resolve(this.privateNewTx())
+    }
+
     privateNewTx () {
         //debugger;
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
@@ -420,30 +447,6 @@
         return newTx
     }
 
-    promiseNewTx () {
-        const lastTx = this.lastTx()
-        if (lastTx) {
-            // technically, it's ok to have multiple unfinished txs, 
-            // but AFAIK I don't use them at the moment, 
-            // so this is a sanity check for now 
-            if (!lastTx.isCommitted()) {
-                console.log("last tx:")
-                debugger;
-                lastTx.show()
-            }
-            assert(lastTx.isCommitted())
-            if (!lastTx.isFinished()) {
-                if (lastTx.hasPromiseForCommit()) {
-                    console.warn("WARNING: last tx was not committed yet!")
-                    //throw new Error("last tx was not committed yet!")
-                }
-                return lastTx.promiseForCommit().then(() => {
-                    return Promise.resolve(this.privateNewTx())
-                })
-            }
-        }
-        return Promise.resolve(this.privateNewTx())
-    }
 
     debugTypeId () {
         return super.debugTypeId() + " '" + this.path() + "'"
@@ -464,18 +467,18 @@
                     return this.promiseAdd(key, value)
                 }
             })
+        })//.then(() => this.promiseAssertKeyHasValue(key, value))
+    }
+
+    promiseAssertKeyHasValue (key, value) {
+        return this.promiseHasKey(key).then((hasKey) => {
+            if (!hasKey) {
+                debugger;
+                return Promise.reject(new Error("failed assert"))
+            } else {
+                return Promise.resolve()
+            }
         })
-        /*.then(() => {
-            // verify atPut
-            return this.promiseHasKey(key).then((hasKey) => {
-                if (!hasKey) {
-                    debugger;
-                } else {
-                    return Promise.resolve()
-                }
-            })
-        })
-        */
     }
 
     promiseUpdate (key, value) { // private

@@ -25,7 +25,7 @@
             const slot = this.newSlot("nodeTileClassName", null)
             slot.setDuplicateOp("copyValue")
             slot.setCanInspect(true)
-            slot.setLabel("tile class name")
+            slot.setLabel("Tile Class Name")
             slot.setSlotType("String")
             slot.setShouldStoreSlot(true)
         }

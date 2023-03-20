@@ -44,18 +44,31 @@
         return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
     }
 
+    urlResources () {
+        return ResourceManager.shared().urlResourcesWithExtensions(this.extensions())
+    }
+
     setupSubnodes () {
-        this.resourcePaths().forEach(path => this.addResourceWithPath(path))
+        this.urlResources().forEach(r => {
+            const rClass = this.resourceClassForFileExtension(r.pathExtension())
+            const aResource = rClass.clone().setPath(r.path())
+            aResource.setUrlResource(r)
+            //console.log("setup node '" + r.resourceHash() + "' '" + r.path() + "'")
+            aResource.load()
+            this.addResource(aResource)
+        })
+
+        //this.resourcePaths().forEach(path => this.addResourceWithPath(path))
         return this
     }
 
-    resourceClassesForFileExtension (extension) {
-        extension = extension.toLowerCase()
-        return this.resourceClasses().select(rClass => rClass.canHandleExtension(extension))
+    resourceClassesForFileExtension (ext) {
+        const extension = ext.toLowerCase()
+        return this.resourceClasses().select(rClass => rClass.canHandleExtension(ext))
     }
 
-    resourceClassForFileExtension (extension) {
-        return this.resourceClassesForFileExtension(extension).first()
+    resourceClassForFileExtension (ext) {
+        return this.resourceClassesForFileExtension(ext).first()
     }
 
     resourceForPath (aPath) {

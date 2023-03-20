@@ -406,6 +406,7 @@
         assert(this.isOpen())
         const scheduler = SyncScheduler.shared()
         const methodName = "commitStoreDirtyObjects"
+        console.log("--- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
                 //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null)
@@ -419,6 +420,8 @@
 
     commitStoreDirtyObjects () {
         if (this.hasDirtyObjects()) {
+            console.log("--- commitStoreDirtyObjects ---")
+
             //this.debugLog("--- commitStoreDirtyObjects begin ---")
             //debugger;
             this.recordsMap().begin()
@@ -778,7 +781,10 @@
         // assert not loading or storing?
         const map = this.recordsMap()
         map.begin()
-        map.forEachK(pid => map.removeKey(pid)) // the remove applies to the changeSet
+        map.forEachK(pid => {
+            map.removeKey(pid)
+        }) // the remove applies to the changeSet
+        debugger
         return map.promiseCommit()
     }
 

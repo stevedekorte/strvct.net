@@ -88,7 +88,7 @@ URL.with = function (path) {
 
 Object.defineSlot(URL.prototype, "promiseLoad", function () {
     const path = this.href
-    console.log("loading ", path)
+    //console.log("loading ", path)
     return new Promise((resolve, reject) => {
         const rq = new XMLHttpRequest();
         rq.responseType = "arraybuffer";
@@ -166,6 +166,10 @@ class UrlResource {
         return this._path
     }
 
+    pathExtension () {
+        return this.path().split(".").pop()
+    }
+
     setResourceHash (h) {
         this._resourceHash = h
         return this
@@ -176,6 +180,13 @@ class UrlResource {
     }
 
     promiseLoad () {
+        if (this.isZipFile()) {
+            return this.promiseLoadUnzip().then(() => { return this.promiseLoad_2() })
+        }
+        return this.promiseLoad_2()
+    }
+
+    promiseLoad_2 () {
         const h = this.resourceHash() 
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared()
@@ -216,7 +227,7 @@ class UrlResource {
     }
 
     promiseLoadAndEval () {
-        console.log("promiseLoadAndEval " + this.path())
+        //console.log("promiseLoadAndEval " + this.path())
         //debugger
         return this.promiseLoad().then(() => {
             this.eval()
@@ -233,7 +244,7 @@ class UrlResource {
     }
 
     evalDataAsJS () {
-        console.log("UrlResource eval ", this.path())
+        //console.log("UrlResource eval ", this.path())
         evalStringFromSourceUrl(this.dataAsText(), this.path())
         return this
     }
@@ -258,30 +269,33 @@ class UrlResource {
         if (typeof(data) === "string") {
             return data
         }
+
+        if (this.isZipFile()) {
+            data = this.unzippedData()
+        } 
+
         return new TextDecoder().decode(data); // default decoding is to utf8
     }
 
-    pathExtension () {
-        return this.path().split(".").pop()
+    dataAsJson () {
+        return JSON.parse(this.dataAsText())
     }
+
+    // --- zip ---
 
     isZipFile () {
         return this.pathExtension() === "zip"
     }
 
-    dataAsJson () {
-        let data = this.data()
-        if (this.isZipFile()) {
-            data = this.unzippedString()
-        } else {
-            data = new TextDecoder().decode(data); // default decoding is to utf8
-        }
-        return JSON.parse(data)
+    unzippedData () {
+        return pako.inflate(this.data());
     }
 
-    unzippedString () {
-        const outData = pako.inflate(this.data());
-        return new TextDecoder().decode(outData);
+    promiseLoadUnzip () {
+        if (!getGlobalThis().pako) {
+            return UrlResource.clone.setPath("source/boot/pako.js").promiseLoadAndEval()
+        }
+        return Promise.resolve()
     }
 }
 
@@ -315,7 +329,9 @@ class ResourceManager {
 
         // load the boot resource index and start loading/evaling js files
         this.promiseLoadIndex().then(() => {
-            this.evalIndexResources()
+            return this.promiseLoadCamIfNeeded().then(() => {
+                this.evalIndexResources()
+            })
         })
 
         return this
@@ -344,9 +360,10 @@ class ResourceManager {
     promiseLoadCamIfNeeded () {
         // if hashCache is empty, load the compressed cam and add it to the cache first
         // as this will be much faster than loading the files individually
-
+        //debugger
         //return this.hashCache().promiseClear().then(() => {
             return HashCache.shared().promiseCount().then((count) => {
+                console.log("hashcache count: ", count)
                 if (!count) {
                     return this.promiseLoadCam()
                 }
@@ -371,25 +388,6 @@ class ResourceManager {
         return this._promiseForLoadCam
     }
 
-    // --- index entries ---
-
-    extForPath (path) {
-        const parts = path.split(".")
-        return parts.length ? parts[parts.length -1] : undefined
-    }
-
-    entryForPath (path) {
-        return this._index.find(entry => entry.path === path)
-    }
-
-    jsEntries () {
-        return this._index.filter(entry => this.extForPath(entry.path) === "js")
-    }
-
-    cssEntries () {
-        return this._index.filter(entry => this.extForPath(entry.path) === "css")
-    }
-
     // --- index resources ---
 
     resourceForPath (path) {
@@ -410,63 +408,12 @@ class ResourceManager {
 
     // --- eval ---
 
-    /*
-    eval () {
-        this.promiseLoadCamIfNeeded().then(() => {
-            this.evalIndexResources()
-        })
-    }
-
-
-    */
-
-
     evalIndexResources () {
         //debugger
         this.cssResources().promiseSerialForEach(r => r.promiseLoadAndEval()).then(() => {
             return this.jsResources().promiseSerialForEach(r => r.promiseLoadAndEval()) 
         }).then(() => this.onDone())
     }
-
-    /*
-    evalEntries () {
-        this.cssEntries().promiseSerialForEach(entry => this.promiseEvalCssEntry(entry)).then(() => {
-            return this.jsEntries().promiseSerialForEach(entry => this.promiseEvalJsEntry(entry))
-        }).then(() => this.onDone())
-    }
-
-    promiseEvalJsEntry (entry) {
-        return this.hashCache().promiseContentForHashOrUrl(entry.hash, entry.path).then((value) => {
-            if (typeof(value) !== "string") {
-                value = new TextDecoder().decode(value); // default decoding is to utf8
-            }
-            //.log("eval js " + entry.path)
-            assert(value.length !== 0)
-            evalStringFromSourceUrl(value, entry.path) 
-        })
-    }
-
-    
-    promiseEvalCssEntry (entry) {
-        if (this.isInBrowser()) {
-            return this.hashCache().promiseContentForHashOrUrl(entry.hash, entry.path).then((value) => {
-                //console.log("eval css", entry.path)
-                if (typeof(value) !== "string") {
-                    value = new TextDecoder().decode(value); // default decoding is to utf8
-                }
-                const cssString = value
-                const sourceUrl = "\n\n//# sourceURL=" + entry.path + " \n"
-                const debugCssString = cssString + sourceUrl
-                //console.log("eval css: " +  entry.path)
-                const element = document.createElement('style');
-                element.type = 'text/css';
-                element.appendChild(document.createTextNode(debugCssString))
-                document.head.appendChild(element);
-            })
-        }
-        return Promise.resolve()
-    }
-    */
 
     // --- browser specific ---
 
@@ -517,14 +464,30 @@ class ResourceManager {
         return this._index.map(entry => entry.path)
     }
 
-    resourceEntriesWithExtensions (extensions) {
-		//const extSet = extensions.asSet()
-        //return this._index.filter(entry => extSet.has(this.extForPath(entry.path)))
-        return this._index.filter(entry => extensions.indexOf(this.extForPath(entry.path)) !== -1)
+    // --- index entries ---
+
+    /*
+    extForPath (path) {
+        const parts = path.split(".")
+        return parts.length ? parts[parts.length -1] : undefined
     }
+    */
+
+    urlResourcesWithExtensions (extensions) {
+		const extSet = extensions.asSet()
+        return this.indexResources().filter(r => extSet.has(r.pathExtension()))
+    }
+        
+    /*
+    resourceEntriesWithExtensions (extensions) {
+		const extSet = extensions.asSet()
+        return this._index.filter(entry => extSet.has(this.extForPath(entry.path)))
+    }
+    */
 
     resourceFilePathsWithExtensions (extensions) {
-        return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
+        return this.urlResourcesWithExtensions(extensions).map(r => r.path())
+        //return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
     }
 
 }
@@ -532,12 +495,12 @@ class ResourceManager {
 // ---------------------------------------------------------------------------------------------
 
 const urls = [
-    "source/boot/getGlobalThis.js",
+    //"source/boot/getGlobalThis.js",
     "source/boot/Base.js",
     "source/boot/IndexedDBFolder.js",
     "source/boot/IndexedDBTx.js",
-    "source/boot/HashCache.js", // important that this be after IndexedDBFolder/Tx so it can be used
-    "source/boot/pako.js" // this could be loaded lazily?
+    "source/boot/HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
+    //"source/boot/pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
 ]
 
 /*

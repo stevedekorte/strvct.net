@@ -47,6 +47,7 @@
         this.newSlot("loadState", "unloaded") // "unloaded", "loading", "decoding", "loaded"
         this.newSlot("loadProgress", null) // null or a number 0 to 100
         this.newSlot("isLoaded", false)
+        this.newSlot("urlResource", null)
     }
 
     /*
@@ -73,13 +74,14 @@
 
     // --- resource file ---
 
+    /*
     fileResource () {
         const rootFolder = BMFileResources.shared().rootFolder()
         const fileResource = rootFolder.nodeAtSubpathString(this.path())
         return fileResource
     }
 
-    promiseLoadFileResource () {
+    promiseLoadFileResource () {        
         this.setTitle(this.path().lastPathComponent().sansExtension())
         
         const fileResource = this.fileResource()
@@ -98,6 +100,7 @@
         this.didLoad()
         return this
     }
+    */
 
     // --- load ---
 
@@ -109,8 +112,18 @@
     }
 
     load () {
-        this.promiseLoadFileResource()
+        this.promiseLoadUrlResource()
+        //this.promiseLoadFileResource()
         return this
+    }
+
+    promiseLoadUrlResource () {
+        return this.urlResource().promiseLoad().then(urlResource => {
+            this.setData(urlResource.data())
+            this.postNoteNamed("resourceLoaded")
+            this.setLoadState("loaded")
+            this.didLoad()
+        })
     }
     
     didLoad () {

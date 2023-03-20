@@ -54,6 +54,11 @@
                     field.setTarget(this)
                     const pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
                     pathNodes.last().addSubnode(field)
+                } else {
+                    const node = slot.onInstanceGetValue(this)
+                    const linkNode = BMLinkNode.clone().setLinkedNode(node)
+                    const pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
+                    pathNodes.last().addSubnode(linkNode)
                 }
             }
         })
