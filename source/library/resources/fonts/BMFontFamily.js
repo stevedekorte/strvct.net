@@ -30,11 +30,19 @@
     }
     */
 
-    addFontWithPath (aPath) {
-        const font = BMFont.clone().setPath(aPath)
+    addFont (aFont) {
+        //debugger
+        this.addSubnode(aFont)
+        return this
+    }
+
+    /*
+    addFontWithResource (aResource) {
+        const font = BMFont.clone().setResource(aResource)
         font.load()
         this.addSubnode(font)
         return this
     }
+    */
 
 }.initThisClass());

@@ -396,7 +396,6 @@
 
         if (!this.dirtyObjects().has(puuid)) {
             this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
-            debugger
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?")
             }

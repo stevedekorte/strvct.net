@@ -85,7 +85,7 @@
   // --- default ---
 
   setupAsDefault() {
-    this.setTitle("DefaultThemeClass");
+    this.setTitle("Tile");
     this.setupSubnodes();
     this.subnodes().forEach((sn) => sn.didInit());
 
@@ -121,15 +121,13 @@
     state.setThemeAttribute("color", "white");
     state.setThemeAttribute("backgroundColor", "#222");
     //state.setThemeAttribute("fontWeight", "normal");
-    state.setThemeAttribute("opacity", "1");
   }
 
   setupDisabledDefault () {
     const state = this.disabledThemeState();
     state.setThemeAttribute("color", "#ccc");
-    state.setThemeAttribute("backgroundColor", "transparent");
+    //state.setThemeAttribute("backgroundColor", "transparent");
     //state.setThemeAttribute("fontWeight", "normal");
-    state.setThemeAttribute("opacity", "0.5");
   }
 
   setupColumnsDefault () {

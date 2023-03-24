@@ -159,12 +159,21 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks())
                     field.setNodeSubtitleIsChildrenSummary(true)
                 } else if (this.validValuesClosure()) {
-                    const vv = this.validValuesClosure()()
-                    field.setValidValues(vv)
+                    field.setValidValuesClosure(this.validValuesClosure())
                     field.setAllowsMultiplePicks(this.allowsMultiplePicks())
+                    field.setNodeSubtitleIsChildrenSummary(true)
                 }
                 return field
             }
+        }
+        return null
+    }
+
+    computedValidValues () {
+        if (this.validValues()) {
+            return this.validValues()
+        } else if (this.validValuesClosure()) {
+            return this.validValuesClosure()()
         }
         return null
     }

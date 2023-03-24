@@ -13,6 +13,7 @@
     }
 
     initPrototypeSlots () {
+
         {
             const picksSlot = this.newSlot("allowsMultiplePicks", false)
             picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
@@ -21,24 +22,12 @@
 
         this.overrideSlot("key", "").setShouldStoreSlot(true)
 
-        this.newSlot("optionsSource", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")
-        this.newSlot("optionsSourceMethod", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")
+        //this.newSlot("optionsSource", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")  // this could be stored...
+        //this.newSlot("optionsSourceMethod", null).setShouldStoreSlot(false).setDuplicateOp("copyValue") // this could be stored...
+        this.newSlot("validValues", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")
+        this.newSlot("validValuesClosure", null).setShouldStoreSlot(false).setDuplicateOp("copyValue") // this can't be stored
     }
 
-    prepareToAccess () {
-        super.prepareToAccess()
-        if (this.subnodes().length === 0) {
-            // as this might be expensive, we should lazy load it first time
-            // and maybe 1) have some sort of change timestamp to check next time it's visible
-            // and/or 2) have a way of getting notifications for changes when possible?
-            const source = this.optionsSource()
-            const method = this.optionsSourceMethod()
-            if (source && method) {
-                const values = source[method].apply(source)
-                this.setValidValues(values)
-            }
-        }
-    }
 
     initPrototype () {
         this.setShouldStore(true)
@@ -141,6 +130,10 @@
         return [BMOptionNode.type()]
     }
 
+    // IMPORTANT: we want to use valid values this way so we can edit the subnodes from the UI
+    // to change the valid value set
+
+    /*
     setValidValues (values) {
         if (!this.validValues().equals(values)) {
             this.removeAllSubnodes()     
@@ -162,9 +155,72 @@
     validValues () {
         return this.subnodes().map(sn => sn.value())
     }
+    */
     
     nodeTileLink () {
         // used by UI tile views to browse into next column
+        return this
+    }
+
+    /*
+    prepareForFirstAccess () {
+        debugger
+        super.prepareForFirstAccess()
+        this.setupSubnodes()
+    }
+    */
+
+    prepareToAccess () {
+        //debugger
+        super.prepareToAccess()
+        if (this.subnodes().length === 0) {
+            this.setupSubnodes()
+        }
+    }
+
+    validValuesFromSource () {
+        // as this might be expensive, we should lazy load it first time
+        // and maybe 1) have some sort of change timestamp to check next time it's visible
+        // and/or 2) have a way of getting notifications for changes when possible?
+        const source = this.optionsSource()
+        const method = this.optionsSourceMethod()
+        if (source && method) {
+            const values = source[method].apply(source)
+            return values
+        }
+        return []
+    }
+
+    computedValidValues () {
+        if (this.validValues()) {
+            return this.validValues()
+        } else if (this.validValuesClosure()) {
+            return this.validValuesClosure()()
+        }
+        return []
+    }
+
+    validValuesFromSubnodes () {
+        return this.subnodes().map(sn => sn.value())
+    }
+
+    setupSubnodes () {
+        const values = this.computedValidValues()
+        //debugger
+        if (!this.validValuesFromSubnodes().equals(values)) {
+            this.removeAllSubnodes()     
+            const options = values.map(v => {
+                const optionNode = BMOptionNode.clone().setTitle(v).setValue(v)
+                if (v == this.value()) {
+                    optionNode.justSetIsPicked(true)
+                }
+                //optionNode.setIsPicked(v == this.value())
+                optionNode.setNodeCanEditTitle(false)
+                return optionNode
+            })
+            this.addSubnodes(options)
+            //this.copySubnodes(options)
+        }
         return this
     }
     

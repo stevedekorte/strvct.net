@@ -84,7 +84,7 @@
     }
 
     static validBorderStyleValues () {
-        return ["none", "dotted", "dashed", "solid", "groove", "inset"]
+    return ["none", "dotted", "dashed", "solid", /*"groove", "inset"*/]
     }
 
     static validFontSizes () {
@@ -120,7 +120,7 @@
 
         // --- font ---
 
-        addSlot("fontFamily", "font", "family", [])
+        addSlot("fontFamily", "font", "family", null)
         addSlot("fontSize", "font", "size", this.thisClass().validFontSizes())
 
         // weight and style don't work with some good fonts like
@@ -263,10 +263,14 @@
         this.removeAllSubnodes()
 
         // need this because the fonts typically aren't loaded until after this prototype is initialized
-        this.thisPrototype().slotNamed("fontFamily").setValidValues(BMResources.shared().fonts().allFontNames())    
+        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure(() => { 
+            //debugger;
+            return BMResources.shared().fonts().allFontNames() 
+        })   
 
         this.styleSlots().forEach(slot => {
             const name = slot.name()
+
             const field = slot.newInspectorField()
             field.setShouldStore(false)
             field.setShouldStoreSubnodes(false) 
@@ -274,15 +278,27 @@
             field.setTarget(this)
             field.setNodeCanEditTitle(false)
             field.setNodeCanReorderSubnodes(false)
+            field.setSummaryFormat("key value")
+            field.setHasNewlineAferSummary(true)
+            field.removeAction("add")
+            field.setCanDelete(false)
+
             //debugger
             const pathNodes = this.createNodePath(slot.inspectorPath())
+            pathNodes.forEach(node => {
+                if (node !== this) {
+                    node.setNodeSubtitleIsChildrenSummary(true)
+                }
+            })
+
+            /*
             const node = pathNodes.last()
             if (node !== this) {
                 node.setNodeSubtitleIsChildrenSummary(true)
             }
-            field.setSummaryFormat("key value")
-            field.setHasNewlineAferSummary(true)
-            node.addSubnode(field)
+            */
+
+            pathNodes.last().addSubnode(field)
         })
     }
 

@@ -49,6 +49,7 @@
     }
 
     setupSubnodes () {
+        //debugger
         this.urlResources().forEach(r => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension())
             const aResource = rClass.clone().setPath(r.path())
@@ -78,11 +79,13 @@
         return aResource
     }
 
+    /*
     addResourceWithPath (aPath) {
         const aResource = this.resourceForPath(aPath)
         this.addResource(aResource)
         return this
     }
+    */
 
     addResource (aResource) {
         this.addSubnode(aResource)

@@ -31,9 +31,17 @@
         this.setResourceClasses([BMFont])
     }
 
-    addResourceWithPath (aPath) {
+    addResource (aResource) {
+        //debugger
+        const aPath = aResource.path()
         const components = aPath.split("/")
 
+        const fontFileName = components.pop()
+        const fontsFolderName = components.pop()
+        const familyName = components.pop()
+        assert(fontsFolderName === "fonts")
+
+        /*
         // verify path is in expected format 
         if (components.first() === ".") {
             components.removeFirst()
@@ -46,8 +54,10 @@
         assert(fonts === "fonts")
 
         const familyName = components.removeFirst()
+        */
+
         const family = this.fontFamilyNamed(familyName) 
-        family.addFontWithPath(aPath)
+        family.addFont(aResource)
 
         return this
     }
