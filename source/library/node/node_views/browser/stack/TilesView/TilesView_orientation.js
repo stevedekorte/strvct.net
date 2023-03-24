@@ -20,7 +20,7 @@
     }
 
     makeOrientationRight () { // left to right columns, top to bottom items?
-        //this.setFlexDirection("column")
+        this.setFlexDirection("column") //  need to use flex to avoid gaps in rows despite 0 marins
         this.setMinAndMaxWidth("100%")
         this.setMinHeight("100%")
         //this.setMaxHeight("fit-content")
@@ -32,7 +32,7 @@
     }
 
     makeOrientationDown () { // top to bottom columns, left to right items?
-        //this.setFlexDirection("row")
+        this.setFlexDirection("row")
         //this.setMinAndMaxWidth("fit-content")
         this.setMinAndMaxWidth("100%")
         this.setMinAndMaxHeight("100%")

@@ -21,7 +21,10 @@
 
     init () {
         super.init()
-        this.setDisplay("block")
+        //this.setDisplay("block") // if block is used, there with be gaps between rows despite 0 margins!
+        this.setDisplay("flex")
+
+
         this.setPosition("relative")
         //this.setFlexBasis("fit-content")
         //this.setFlexGrow(0)
@@ -124,7 +127,7 @@
     // --- sync ---
 
     syncFromNode () {
-        this.syncOrientation()
+        this.syncOrientation() // implemented in Tiles_orientation.js
         super.syncFromNode() 
 
         /*

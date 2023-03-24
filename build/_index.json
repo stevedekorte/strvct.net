@@ -1,8 +1,8 @@
 [
   {
     "path": "_css.css",
-    "size": 1573,
-    "hash": "xobl1OO5XUSQbp1wm7/qDIgnIcPLj1Yv7ySZ/NM94Aw="
+    "size": 1376,
+    "hash": "VtJJL6gJRKip6jxLc9q21jcWvgu/z6ACOAyHv71TKwI="
   },
   {
     "path": "external-libs/js-sha256/src/sha256.js",
@@ -626,8 +626,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
-    "size": 62368,
-    "hash": "2AgQnP/tRONhGigM9wnB3TssFhJp5QydeUo4dVfvoY8="
+    "size": 62380,
+    "hash": "ROIbme2K4N1heCWnv85fMXi+LX+gz9MkzYuuJWmRick="
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
@@ -996,8 +996,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
-    "size": 6185,
-    "hash": "mjjevhEHMAE3Jii+sItXSMO0dat42o71aHEHcJF3ZTc="
+    "size": 6187,
+    "hash": "1eRW5hxKWz4DQPyOOVyDFFso2yl2gHkODNWPAUgg15k="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
@@ -1091,8 +1091,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView.js",
-    "size": 7273,
-    "hash": "SCN/Ube5vAq6RYSUn0YMYrzxlIqTmZNgHawdK2VeMvw="
+    "size": 7420,
+    "hash": "kncQVnTWk/UFYs2r0bRGi21YnT3SinApZYeWp/hkLlA="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_dragViewProtocol.js",
@@ -1106,8 +1106,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_orientation.js",
-    "size": 5866,
-    "hash": "/JrS5CH7i2U4HWp+DNlNoH51kGf/aRkifcJ2SRsKOkk="
+    "size": 5922,
+    "hash": "xjzN+Xi8o0/16VSHbdsxpQIevVwEoH7fOY8DGtFrGyc="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_keyboard.js",
@@ -1376,8 +1376,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 14025,
-    "hash": "plkzcqHyp3Cq+j4Wvs4qBE7fvStK0DGWpbi20pjaVkA="
+    "size": 14027,
+    "hash": "jYSspWaE2otAhVfLeqgdJGXFSpCazenN2QxOwXRS9D4="
   },
   {
     "path": "source/library/resources/themes/BMThemeLevelClass.js",

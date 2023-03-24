@@ -102,15 +102,11 @@
             }
 
             // verify key before writing
-            //debugger;
             return this.promiseHashKeyForData(data).then((dataHash) => {
-                //debugger;
-
                 if (hash === dataHash) {
                     console.log("HachCache atPut ", hash)
                     return this.idb().promiseAtPut(hash, data)
                 }
-                debugger
                 return Promise.reject(new Error("hash key does not match hash of value"))
             })
         })

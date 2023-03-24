@@ -1,5 +1,4 @@
-html,
-body {
+html, body {
     position: absolute;
     overflow: hidden;
 
@@ -20,24 +19,14 @@ body {
     zoom: 100%;
 
     font-size: 16px;
-    text-size-adjust: 100%;
 
-    -webkit-font-smoothing: antialiased;
-
-    /*
-    text-size-adjust: none; 
-    -ms-text-size-adjust: none;
-    -moz-text-size-adjust: none;
-    -webkit-text-size-adjust: none;
-    */
+    /* font smoothing */
+    -webkit-font-smoothing: subpixel-antialiased;
+    font-smooth: always;
 
     /* text-size-adjust fixes issue with contenteditable fonts being tiny */
-    /*
-    text-size-adjust: 100%; 
-    -ms-text-size-adjust: 100%; 
-    -moz-text-size-adjust: 100%; 
-    -webkit-text-size-adjust: 100%;
-    */
+    text-size-adjust: 100%;
+
 
     /* disable pinch-zoom browser action, but still available to JS */
     touch-action: none;
@@ -64,6 +53,7 @@ html * {
 
 html * {
     box-sizing: border-box;
+    /*box-sizing: content-box;*/
 }
 
 /* avoid outlines */

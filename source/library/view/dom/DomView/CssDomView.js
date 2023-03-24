@@ -1122,7 +1122,7 @@
     // sizing
 
     setBoxSizing (s) {
-        //this.setBoxSizing("border-box") content-box
+        // valid values: ["inherit", "content-box", "border-box"]
         return this.setCssProperty("box-sizing", s)
     }
 
