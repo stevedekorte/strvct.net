@@ -52,6 +52,7 @@
 
     setupHeaderNode () {
         if (this.subnodes().length > 1) {
+            debugger;
             this.removeAllSubnodes()
         }
 
@@ -66,6 +67,7 @@
     }
 
     newHeaderNode () {
+        debugger;
         const node = HeaderNode.clone() // FolderNode?
         node.setNodeTileClassName("HeaderTile")
         node.setNodeMinTileHeight(55)

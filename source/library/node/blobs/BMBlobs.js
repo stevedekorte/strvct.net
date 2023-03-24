@@ -77,7 +77,7 @@
 
     blobWithName (aName) {
         return this.subnodes().detect(sn => sn.title() === aName)
-        //return this.subnodeWithTitle(aName)
+        //return this.firstSubnodeWithTitle(aName)
     }
 
     hasBlobWithName (aName) {

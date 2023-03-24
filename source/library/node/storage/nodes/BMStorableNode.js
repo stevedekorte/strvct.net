@@ -53,10 +53,12 @@
             assert(slot.doesHookGetter())
         }
         
+        /*
         {
             const slot = this.newSlot("lazySubnodeCount", null)
-            slot.setShouldStoreSlot(true)
+            slot.setShouldStoreSlot(false)
         }
+        */
     }
 
     didInit () {
@@ -74,6 +76,7 @@
 	    }
 	    
         if (aSlot.shouldStoreSlot()) { 
+            //this.didMutate(aSlot.name())
             this.didMutate()
         }
         
@@ -94,15 +97,17 @@
     }
     */
 
+    /*
     updateLazySubnodeCount () {
         if (this._subnodes) {
             this.setLazySubnodeCount(this.subnodes().length)
         }
     }
+    */
 
     didChangeSubnodeList () {
         super.didChangeSubnodeList()
-        this.updateLazySubnodeCount()
+        //this.updateLazySubnodeCount()
         return this
     }
 

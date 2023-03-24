@@ -338,8 +338,15 @@
         //this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
 
         //this.setBorderRight("1px solid rgba(255, 0, 0, 1)")
+        this.setMinAndMaxWidth(null) // new
         this.setMinAndMaxHeight(null)
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
+
+        /*
+        if (this.contentView()) {
+            this.contentView().setMinAndMaxHeight(null)
+        }
+        */
     }
 
     makeOrientationDown () { 
@@ -349,7 +356,8 @@
         //this.setWidth("fit-content")
         //this.setWidth("170px")
         this.setWidth(null)
-        this.setMinAndMaxWidth(170)
+        this.setMinAndMaxWidth("100%")
+        //this.setMinAndMaxWHeight(null) // new
         //this.setWidth("100%") // want 100% if single item, like breadcrumb
         // otherwise, the stack view should figure out the widths using one of
         // several policy options?

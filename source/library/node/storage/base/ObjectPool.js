@@ -99,6 +99,14 @@
         return this
     }
 
+    setIsDebugging (b) {
+        if (b === false && this.isDebugging() === true) {
+            debugger;
+        }
+        super.setIsDebugging(b)
+        return this
+    }
+
     clearCache () {
         this.setActiveObjects(new Map())
         this.setDirtyObjects(new Map())
@@ -216,7 +224,7 @@
         if (this.hasStoredRoot()) {
             const root = this.objectForPid(this.rootPid()) // this call will actually internally set this._rootObject as we may need it while loading the root's refs
             assert(!Type.isNullOrUndefined(root))
-            this._rootObject = root
+            //this._rootObject = root
             //this.setRootObject(root) // this is for setting up new root
             return this.rootObject()
         }
@@ -363,7 +371,7 @@
 
     isLoadingObject (anObject) { // private
         if (this.loadingPids()) {
-            if (this.loadingPids().has(puuid)) {
+            if (this.loadingPids().has(anObject.puuid())) {
                 return true
             }
         }
@@ -387,7 +395,8 @@
         }
 
         if (!this.dirtyObjects().has(puuid)) {
-            //this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
+            this.debugLog(() => "addDirtyObject(" + anObject.typeId() + ")" )
+            debugger
             if (this.storingPids() && this.storingPids().has(puuid)) {
                 throw new Error("attempt to double store? did object change after store? is there a loop?")
             }
@@ -428,6 +437,9 @@
             const storeCount = this.storeDirtyObjects()
             this.recordsMap().promiseCommit()
             this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects")
+            this.debugLog("--- commitStoreDirtyObjects total objects: " + this.recordsMap().count())
+
+
             //this.show("AFTER commitStoreDirtyObjects")
         }
     }
@@ -664,8 +676,9 @@
             this.setRootPid(puuid)
         }
 
-        const jsonString = JSON.stringify(obj.recordForStore(this))
-        //this.debugLog(() => "store " + obj.puuid() + " <- " + jsonString )
+        const record = obj.recordForStore(this)
+        const jsonString = JSON.stringify(record)
+        this.debugLog(() => "store " + puuid + " <- " + record.type )
         this.recordsMap().set(puuid, jsonString)
         return this
     }
@@ -694,6 +707,7 @@
         // this is an on-disk collection
         // in-memory objects aren't considered
         // so we make sure they're flushed to the db first 
+        //debugger
         this.recordsMap().begin()
         this.flushIfNeeded() // store any dirty objects
 
@@ -706,11 +720,12 @@
         const deleteCount = this.sweep()
         this.setMarkedSet(null)
 
+        this.debugLog(() => "--- end collect --- collecting " + deleteCount + " pids ---")
+       // debugger
         const promise = this.recordsMap().promiseCommit()
-        this.debugLog(() => "--- end collect --- collected " + deleteCount + " pids ---")
 
         const remainingCount = this.recordsMap().count()
-        this.debugLog(() => " keys count after commit: " + remainingCount)
+        this.debugLog(() => " ---- keys count after commit: " + remainingCount + " ---")
         return promise
     }
 
@@ -719,7 +734,8 @@
         if (!this.markedSet().has(pid)) {
             this.markedSet().add(pid)
             const refPids = this.refSetForPuuid(pid)
-            //this.debugLog(() => "markPid " + pid + " w refs " + JSON.stringify(refPids))
+        //    debugger
+            //this.debugLog(() => "markPid " + pid + " w refs " + JSON.stringify(refPids.asArray()))
             refPids.forEach(refPid => this.markPid(refPid))
             return true
         }
@@ -766,7 +782,7 @@
         const recordsMap = this.recordsMap()
         recordsMap.keysArray().forEach(pid => {
             if (!this.markedSet().has(pid)) {
-                //this.debugLog("deletePid(" + pid + ")")
+                this.debugLog("--- sweeping --- deletePid(" + pid + ") " + JSON.stringify(recordsMap.at(pid)))
                 const count = recordsMap.count()
                 recordsMap.removeKey(pid)
                 assert(recordsMap.count() === count - 1)

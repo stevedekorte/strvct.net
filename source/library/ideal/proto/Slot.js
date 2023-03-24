@@ -72,9 +72,19 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         
         this.simpleNewSlot("owner", null) // typically a reference to a .prototype
         this.simpleNewSlot("name", false)
+        this.simpleNewSlot("privateName", null)
         this.simpleNewSlot("setterName", null)
         this.simpleNewSlot("directSetterName", null)
         this.simpleNewSlot("initValue", null) // needed?
+
+        // slot hook names
+        this.simpleNewSlot("methodForWillGet", null)
+        this.simpleNewSlot("methodForWillUpdate", null)
+        this.simpleNewSlot("methodForDidUpdate", null)
+        this.simpleNewSlot("methodForUndefinedGet", null)
+        this.simpleNewSlot("methodForOnFinalized", null)
+        this.simpleNewSlot("methodForShouldStoreSlot", null)
+        //this.simpleNewSlot("methodNameCache", null)
 
         // getter
         this.simpleNewSlot("ownsGetter", true)
@@ -94,14 +104,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         //this.simpleNewSlot("field", null)
         //this.simpleNewSlot("isLazy", false) // should hook getter
         this.simpleNewSlot("isWeak", false) // should hook getter
-
-        // slot hook names
-        this.simpleNewSlot("methodForWillGet", null)
-        this.simpleNewSlot("methodForWillUpdate", null)
-        this.simpleNewSlot("methodForDidUpdate", null)
-        this.simpleNewSlot("methodForUndefinedGet", null)
-        this.simpleNewSlot("methodForOnFinalized", null)
-        this.simpleNewSlot("privateName", null)
 
         // debugging 
         //this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
@@ -201,15 +203,48 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this._name = aName
         const n = this.name().capitalized()
         this.setPrivateName("_" + aName)
-        this.setSetterName("set" + aName.capitalized())
-        this.setDirectSetterName("directSet" + aName.capitalized())
+        this.setSetterName("set" + n)
+
+        //this.updateCachedMethodNames()
+
+        this.setDirectSetterName("directSet" + n) // -> getCachedMethodNameFor("directSet")
         this.setMethodForWillGet("willGetSlot" + n)
         this.setMethodForDidUpdate("didUpdateSlot" + n)
         this.setMethodForWillUpdate("willUpdateSlot" + n)
         this.setMethodForUndefinedGet("onUndefinedGet" + n) // for lazy slots
         this.setMethodForOnFinalized("onFinalizedSlot" + n) // for weak slots
+        this.setMethodForShouldStoreSlot("shouldStoreSlot" + n) // for weak slots
         return this 
     }
+
+    // --- method name cache ---
+
+    /*
+    addCachedMethodName (k) {
+        this.methodNameCache().set(k, k + this.name().capitalized())
+        return this
+    }
+
+    updateCachedMethodNames () {
+        this.addCachedMethodName("directSet" )
+        this.addCachedMethodName("willGetSlot")
+        this.addCachedMethodName("didUpdateSlot")
+        this.addCachedMethodName("willUpdateSlot")
+        this.addCachedMethodName("onUndefinedGet") // for lazy slots
+        this.addCachedMethodName("onFinalizedSlot") // for weak slots
+        this.addCachedMethodName("shouldStoreSlot") // for weak slots
+    }
+
+    getCachedMethodNameFor (k) {
+        const result = this.methodNameCache().set(k, v)
+        if(typeof(result) === "string") {
+            throw new Error("missing method name cache for '" + k + "'")
+        }
+        return result
+    }
+    */
+
+    // ---
 
     copyFrom (aSlot) {
         this._slotNames.forEach(slotName => {
@@ -510,24 +545,25 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // --- should store on instance ---
 
-    shouldStoreSlotOnInstancePrivateName () {
-        return "_shouldStoreSlot" + this.name().capitalized()
-    }
-
     shouldStoreSlotOnInstance (anInstance) {
-        const k = this.shouldStoreSlotOnInstancePrivateName()
-        const v = anInstance[k]
-        if (Type.isUndefined(v)) {
-            return this.shouldStoreSlot()
+        const methodName = this.methodForShouldStoreSlot()
+        const method = anInstance[methodName]
+        if (method) {
+            const v = method.apply(anInstance)
+            if (Type.isBoolean(v)) { // allows instance to result null to use slot's own value
+                return v
+            }
         }
-        return v === true
+        return this.shouldStoreSlot()
     }
 
+    /*
     setShouldStoreSlotOnInstance (anInstance, aBool) {
         const k = this.shouldStoreSlotOnInstancePrivateName()
         Object.defineSlot(anInstance, k, aBool)
         return aBool
     }
+    */
     
 }.initThisClass());
 

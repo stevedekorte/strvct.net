@@ -22,7 +22,7 @@
 
     didInit () {
         //debugger;
-        console.log(this.typeId() + " didInit")
+        //console.log(this.typeId() + " didInit")
 
         super.didInit()
         this.setupAsDefault() 
@@ -30,6 +30,7 @@
 
     setupAsDefault () {
         if (this.subnodes().length === 0) {
+            debugger
             this.setTitle("DefaultTheme")
             const defaultThemeClass = BMThemeClass.clone().setupAsDefault()
             this.addSubnode(defaultThemeClass)

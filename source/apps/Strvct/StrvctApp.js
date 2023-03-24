@@ -86,6 +86,7 @@
     appDidInit () {
         //this.rootNode().removeFirstSubnodeWithTitle("Themes")
         super.appDidInit()
+
     }
 
     // themes - temporary, until ThemesResources is ready

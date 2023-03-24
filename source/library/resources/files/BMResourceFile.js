@@ -69,57 +69,7 @@
         return this.urlResource().promiseLoad().then(r => {
             this._data = r.data()
         })
-
-        /*
-        if (!this.promiseForLoad()) {
-            const promise = HashCache.shared().promiseContentForHashOrUrl(this.resourceHash(), this.path()).then((value) => {
-                this._data = value
-            })
-            this.setPromiseForLoad(promise)
-        }
-        return this.promiseForLoad()
-        */
     }
-
-    /*
-    promiseLoad () { 
-        if (!this.promiseForLoad()) {
-            this.setPromiseForLoad(
-                new Promise((resolve, reject) => {
-                if (!this.isLoading() && !this.hasData()) {
-                    this.setIsLoading(true)
-                    return this.promiseLoadNow().then(() => { 
-                        this.setIsLoading(false) 
-                    }).catch((error) => {
-                        this.setIsLoading(false)
-                        throw error
-                    })
-                }
-            }))
-        }
-
-        return this.promiseForLoad()
-    }
-
-    promiseLoadNow () {
-        return new Promise((resolve, reject) => {
-            if (this.hasData()) {
-                this.postLoad()
-                resolve()
-                return this
-            }
-
-            if (this.camData()) {
-                this.loadFromCamData()
-                resolve()
-            } else if (this.usesBlobCache() && this.hasCachedBlob()) {
-                return this.promiseLoadCachedBlob()
-            } else {
-                return this.promiseLoadFromUrl()
-            }
-        })
-    }
-    */
 
     // --- load data from cam ---
 

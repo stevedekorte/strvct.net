@@ -55,58 +55,35 @@
 (class BrowserView extends StackView {
     
     initPrototypeSlots () {
-        // broswerNode is this view's node()
-        //this.newSlot("headerNode", null) // top header
-        //this.newSlot("breadCrumbsNode", null) // breadcrumbs
     }
 
     init () {
         super.init()
-        //this.setupBrowserNode()
-        //this.setupHeaderNode()
         return this
     }
 
     /*
-    setupBrowserNode () {
-        const node = BaseNode.clone()
-        node.setNodeMinTileHeight(55)
-        node.setTitle("browser")
-        node.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
-        this.setNode(node)
-        return this
+    didInit () {
+        super.didInit()
+        this.scheduleMethod("pullPathFromUrlHash")
     }
 
-    setupHeaderNode () {
-        const node = BaseNode.clone()
-        node.setNodeTileClassName("HeaderTile")
-        node.setNodeMinTileHeight(55)
-        node.setTitle("Header Tile")
-        node.setNodeIsVertical(false) 
-        this.setHeaderNode(node)
-        this.node().addSubnode(node)
-        return this
+    pullPathFromUrlHash () {
+        const path = App.shared().mainWindow().urlHash()
+        if (path.length) {
+            this.setSelectedPathTitlesString(path)
+        }
     }
 
-    didUpdateSlotBreadCrumbsNode (oldValue, newValue) {
-        //debugger;
+    pushUrlHashFromPath () {
+        App.shared().mainWindow().setUrlHash(this.selectedPathTitlesString())
+    }
 
-        // tell the node to hint to UI to use BreadCrumbsTile view to display itself
-        newValue.setNodeTileClassName("BreadCrumbsTile")
-        newValue.setTitle("BreadCrumbsTile")
-
-        // make sure it's the only thing under the header
-        this.headerNode().removeAllSubnodes()
-        this.headerNode().addSubnode(newValue)
-        //this.headerNode().addSubnode(this.newSettingsNode())
-
-        // this should set up header view (and bread crumb view?)
-        this.syncFromNode()
-        
-        // select the bread crumb tile
-        // this should cause it's child stack view to get rendered (Notes, Settings, Resources)
-        this.scheduleMethod("moveToBase")
-        return this
+    topDidChangeNavSelection () {
+        console.log("topDidChangeNavSelection to '" + this.selectedPathTitlesString() + "'")
+        //debugger
+        super.topDidChangeNavSelection()
+        this.scheduleMethod("pushUrlHashFromPath")
     }
     */
 

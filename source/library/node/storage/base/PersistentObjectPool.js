@@ -19,7 +19,7 @@
         super.init()
         this.setName("defaultDataStore")
         this.setRecordsMap(PersistentAtomicMap.clone())
-        this.setIsDebugging(false)
+        //this.setIsDebugging(false)
         return this
     }
 

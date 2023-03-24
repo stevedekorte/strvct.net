@@ -364,7 +364,7 @@
             return this
         }
 
-        const currentPathString = this.selectedPathString()
+        const currentPathString = this.selectedPathTitlesString()
         // TODO: change to node matching as path isn't unique and names can change
         if (this.lastPathString() !== currentPathString) {
             this.setLastPathString(currentPathString)
@@ -381,11 +381,43 @@
         return true
     }
 
-    selectedPathString () {
-        return this.selectedNodePathArray().map(node => {
-            return node.title()
-        }).join("/")
+    // --- set path titles ----
+
+    setSelectedPathTitlesArray (titles) {
+        let title = titles.shift()
+        const pathArray = []
+        let node = this.node()
+        while (title) {
+            node = node.firstSubnodeWithTitle(title)
+            pathArray.push(node)
+            title = titles.shift()
+        }
+        this.selectNodePathArray(pathArray)
+        return this
     }
+
+    setSelectedPathTitlesString (s) {
+        console.log("setSelectedPathTitlesString:'" + s + "'")
+        const titles = s.split("/")
+        this.setSelectedPathTitlesArray(titles)
+        return this
+    }
+
+    // --- get path titles ----
+
+    selectedPathTitlesArray () {
+        const titles = this.selectedNodePathArray().map(node => {
+            return node.title()
+        })
+        titles.shift()
+        return titles
+    }
+
+    selectedPathTitlesString () {
+        return this.selectedPathTitlesArray().join("/")
+    }
+
+    // --- this view's path string ---
 
     pathString () {
         return this.stackViewSuperChain().reverse().map(sv => sv.node().title()).join("/")

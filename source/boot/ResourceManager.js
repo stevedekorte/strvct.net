@@ -100,10 +100,12 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
             }
             this.response = rq.response
             console.log("loaded ", path)
+            //debugger
             resolve(rq.response) 
         }
 
         rq.onerror = (event) => { 
+            console.log("error loading ", path)
             reject(undefined) 
         }
         rq.send()
@@ -202,8 +204,10 @@ class UrlResource {
                     })
                 } else {
                     // otherwise, load normally and cache result
+                    console.log("no cache for ", this.resourceHash() + " " + this.path())
                     return this.promiseJustLoad().then(() => {
                         hc.promiseAtPut(h, this.data()).then(() => {
+                            console.log("stored cache for ", this.resourceHash() + " " + this.path())
                             return Promise.resolve(this)
                         })
                     })

@@ -42,11 +42,23 @@ Array.prototype.setupMutatorHooks();
 (class HookedArray extends Array {
 
     initPrototypeSlots () {
+        //Object.defineSlot(this, "_allowsNulls", false)
+
         this.setupMutatorHooks()
         //Array.prototype.setupMutatorHooks()
     }
 
     // ------------------------------
+    
+    /*
+    willMutate (slotName, args) {
+        const result = super.willMutate(slotName, args)
+        if (this._allowsNulls === false) {
+            if (slotName === ... 
+        }
+        return result
+    }
+    */
 
     /*
     nonMutatorMethodNames () {

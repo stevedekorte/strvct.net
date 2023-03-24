@@ -39,6 +39,10 @@
         return this.keysArray()
     }
 
+    asArray () {
+        return this.keysArray()
+    }
+    
     // --- enumeration ---
 
     forEachKV (fn) {

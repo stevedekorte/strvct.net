@@ -182,9 +182,18 @@
         super.init()
         this.setStyleCacheMap(null) // null is used to indicate cache needs to be built when accessed
         this.setShouldStore(true)
+      //  debugger;
         this.setShouldStoreSubnodes(false) 
+
+        let slot = this.thisPrototype().slotNamed("subnodes")
+        if (slot.shouldStoreSlotOnInstance(this)) {
+            debugger;
+            let b = slot.shouldStoreSlotOnInstance(this)
+            assert(!b)
+        }
         this.removeAction("add")
         this.setSubtitle("state")
+
         //this.setSubnodeClasses([BMStringField])
         //this.setupSubnodes()
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
@@ -210,6 +219,17 @@
         super.didInit()
         this.setupSubnodes()
     }
+
+    /*
+    recordForStore (store) {
+        const result = super.recordForStore(store)
+        console.log(this.type() + " recordForStore: ", result)
+        //console.log("should store subnodes: ", this.thisPrototype().slotNamed("subnodes").shouldStoreSlot())
+        //assert(!this.thisPrototype().slotNamed("subnodes").shouldStoreSlot())
+    //    debugger;
+        return result
+    }
+    */
 
     setThemeAttribute (key, value) {
         this[key.asSetter()].apply(this, [value])
@@ -248,6 +268,9 @@
         this.styleSlots().forEach(slot => {
             const name = slot.name()
             const field = slot.newInspectorField()
+            field.setShouldStore(false)
+            field.setShouldStoreSubnodes(false) 
+
             field.setTarget(this)
             field.setNodeCanEditTitle(false)
             field.setNodeCanReorderSubnodes(false)

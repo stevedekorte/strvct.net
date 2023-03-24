@@ -24,7 +24,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.setSnapshot(null)
         this.setChangedKeySet(new Set())
         //this.setSnapshot(new Map())
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     open () {

@@ -201,7 +201,7 @@
     rootSubnodeWithTitleForProto (aString, aProto) {
         return this.rootNode().subnodeWithTitleIfAbsentInsertProto(aString, aProto)
     }
-
+    
     subnodeWithTitleIfAbsentInsertProto (aString, aProto) {
         const subnode = this.firstSubnodeWithTitle(aString)
 

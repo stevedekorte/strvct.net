@@ -30,7 +30,7 @@
 	}
 	
 	iconWithName (aName) {
-		const node = this.subnodeWithTitle(aName)
+		const node = this.firstSubnodeWithTitle(aName)
 		if (node) {
 			return node.svgIconView()
 		}

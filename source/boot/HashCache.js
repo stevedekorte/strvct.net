@@ -18,7 +18,7 @@
         super.init()
         this.setIdb(IndexedDBFolder.clone())
         this.setIsDebugging(false)
-        //this.idb().setIsDebugging(true)
+        this.idb().setIsDebugging(true)
         this.setPath("sharedHashCache")
     }
 
@@ -102,9 +102,12 @@
             }
 
             // verify key before writing
+            //debugger;
             return this.promiseHashKeyForData(data).then((dataHash) => {
+                //debugger;
+
                 if (hash === dataHash) {
-                    //console.log("HachCache atPut ", hash)
+                    console.log("HachCache atPut ", hash)
                     return this.idb().promiseAtPut(hash, data)
                 }
                 debugger
@@ -125,6 +128,7 @@
     }
 
     promiseClear () {
+        debugger
         return this.idb().promiseClear()
     }
 

@@ -24,6 +24,7 @@
 
   didLoad () {
     super.didLoad()
+    //debugger
     this.setSvgString(this.urlResource().dataAsText())
     return this
   }

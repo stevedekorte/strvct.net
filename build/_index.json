@@ -26,8 +26,8 @@
   },
   {
     "path": "source/boot/Base.js",
-    "size": 3196,
-    "hash": "W+mG7bHq4N8MtFbiueAcQEkeNIzlqRdIh2roeyPTr+8="
+    "size": 3653,
+    "hash": "7QTy9ER70DTi6V7WjCGcS9DxO2MWaZPwkpX0M/+jk30="
   },
   {
     "path": "source/library/ideal/weak/EnumerableWeakMap.js",
@@ -86,8 +86,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_mutation.js",
-    "size": 2648,
-    "hash": "0mjLdAKyUkcG+FEFJ7jIrhhWn23YQd3V34YqKh0aXaA="
+    "size": 2694,
+    "hash": "YDKRdNHbs0aOIgRdtJSzJB6ZdwwbEOr2smzhA3GYr2w="
   },
   {
     "path": "source/library/ideal/categories/object/Object_timeouts.js",
@@ -96,8 +96,8 @@
   },
   {
     "path": "source/library/ideal/categories/Array_ideal.js",
-    "size": 20244,
-    "hash": "uBw7zzzhiYanUcd9YXTIyYQ9iaYlBROmJqSTx7+SSwU="
+    "size": 20447,
+    "hash": "lQLNBF1W3B6TrvuXqAGpINre//4KXrwo2NRhQ1pvM2Q="
   },
   {
     "path": "source/library/ideal/categories/Date_ideal.js",
@@ -121,8 +121,8 @@
   },
   {
     "path": "source/library/ideal/categories/Set_ideal.js",
-    "size": 3383,
-    "hash": "zMFfpozriKe7Gp+vkyAc1d0v9G/YtcFc42Bf2fifbM4="
+    "size": 3443,
+    "hash": "rr7UinxYDKyt4NhhGuFMW03Dbr7lLfn3Zzm4xbADeUc="
   },
   {
     "path": "source/library/ideal/categories/Map_ideal.js",
@@ -151,8 +151,8 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 17333,
-    "hash": "0Lpc3fb2nKgFtThnT4IKX1tNIesQsYazOoq41y3gKhw="
+    "size": 18501,
+    "hash": "mCRbe8bLHDpW6kXi5kPf5Zda1CTt+t7LdwBNjbHMkEo="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
@@ -171,8 +171,8 @@
   },
   {
     "path": "source/library/ideal/collections/HookedArray.js",
-    "size": 2699,
-    "hash": "noDKWt1MlgQBzDNInm9BYT7Iqsupq3hVnqsAvrOAY6U="
+    "size": 2981,
+    "hash": "ehPbmzcETcspshW/lKXzxptLxqV/556hLAZ9gSB0Os0="
   },
   {
     "path": "source/library/ideal/collections/HookedSet.js",
@@ -196,8 +196,8 @@
   },
   {
     "path": "source/library/ideal/map/AtomicMap.js",
-    "size": 6351,
-    "hash": "BTF9DWz7RXlEiJxARjYh4C0dtZjl6GFwLlM+I5lIxxs="
+    "size": 6352,
+    "hash": "vygcSvJYmKiekZj2qzGSTuyeDrWVs5/xaj16tB8E2ls="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -751,13 +751,13 @@
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 21571,
-    "hash": "MWeQ+Em/IKogKkyue6RBoeJmvCcuV7iZw/EbaxJSjlg="
+    "size": 22282,
+    "hash": "KorilbHTUPjZmoSdkjlP+xHy+s//UMtZNp74HFgYRM4="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
-    "size": 8211,
-    "hash": "5saZb8sNzyYeV2v5iTrRwPFGM8bZhBRrFbXzJN7Ipxo="
+    "size": 8215,
+    "hash": "Q21S0WVSYOGD9LjyIBw4ZbfNLfeKVdzYw0FQl7se4i8="
   },
   {
     "path": "source/library/node/nodes/base/ActionableNode.js",
@@ -846,13 +846,13 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 25928,
-    "hash": "yYpyN0SniZl0xgI2N7xmiAlowOM6LL37XPqUMnInuVc="
+    "size": 26399,
+    "hash": "VJbKVvmw9KQUkDymK2qbTMk+OAhpBAgIZKglYCIiikY="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
-    "size": 1389,
-    "hash": "zBBKY+Lcp9UJQtRCt9t0EOr3uAFFDkGDBJ6uY/jLSJU="
+    "size": 1391,
+    "hash": "oneJgDs6tzZ9m7q5aW5w84oQtq7qYDeOUfCAp2fB46g="
   },
   {
     "path": "source/library/node/storage/base/StoreRef.js",
@@ -861,8 +861,8 @@
   },
   {
     "path": "source/library/node/storage/nodes/BMStorableNode.js",
-    "size": 3442,
-    "hash": "ZrHLd1mlC1gtVw2gQZeIuONdvrABGB0gsw1pl0ITOiM="
+    "size": 3524,
+    "hash": "rL0ozFOARWq/SnfkCgrrrpb2pVpU1I6CD3MqsSn/cWo="
   },
   {
     "path": "source/library/node/storage/nodes/BMStoredDatedSetNode.js",
@@ -1076,8 +1076,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackView.js",
-    "size": 21549,
-    "hash": "L1BHbVXLTVia99ZzynAi22Y6auITdmdB0FClZ9yQyvo="
+    "size": 22381,
+    "hash": "rJV5m0L12pcrBA7JlgwntJiDh0F7trQ6Uyb2NR/pjCI="
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
@@ -1126,8 +1126,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile.js",
-    "size": 13156,
-    "hash": "XnooyEqXkPoRAAr6EC/A6dPHypJ8YMHszcVCZA0GrPo="
+    "size": 13374,
+    "hash": "wvaS6ryGBeNsf2Wg8wG+JjGxKOyOgPTdNZCx/CJfiIE="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_dragging.js",
@@ -1241,8 +1241,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/BrowserView.js",
-    "size": 3404,
-    "hash": "2x3ynU7k/09o6KEuqcFgYc9UaUvWS5sQrc+rtVI4z5w="
+    "size": 2423,
+    "hash": "rpLzR4eXxkoKSDPxYzp/9F0LAZE87hCEUrAj9HKa6TQ="
   },
   {
     "path": "source/library/node/blobs/BMBlob.js",
@@ -1251,8 +1251,8 @@
   },
   {
     "path": "source/library/node/blobs/BMBlobs.js",
-    "size": 4257,
-    "hash": "s+MVoYYHZbLzE7hC5VSunsNrW0sGNtfrqkOhg0ZxVoM="
+    "size": 4262,
+    "hash": "YkmlVLtF4kfcevRPTVkd1TbgG6i+Wu/ZMuRsHPIt4NA="
   },
   {
     "path": "source/library/node/App.js",
@@ -1291,8 +1291,8 @@
   },
   {
     "path": "source/library/resources/files/BMResourceFile.js",
-    "size": 8833,
-    "hash": "Ve5X7nGIyRmFsCInJkZqF3fFUl+27d9gYgVdCL76I08="
+    "size": 7355,
+    "hash": "cL0CMdFTeb/RZd9POyLBiq5+cy5U3kWvCG7jwx+z274="
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
@@ -1366,8 +1366,8 @@
   },
   {
     "path": "source/library/resources/themes/BMDefaultTheme.js",
-    "size": 719,
-    "hash": "8wH5vaVKlsUx/8hSxPcwxwSpis6Afsa/gEgMMnVZkSw="
+    "size": 742,
+    "hash": "uEmyjulJHAexLkasUDHjhcNfzjQkqj4Py1IykbCGqog="
   },
   {
     "path": "source/library/resources/themes/BMThemeClass.js",
@@ -1376,8 +1376,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 12925,
-    "hash": "tyNZ2VdCXWL0tt6TooDjuG2mlEexcqIr4KXAA7SemR0="
+    "size": 13660,
+    "hash": "cDBPpIr1NjNPij87x6kc+5VlJlXBihYcWCKxnEHz5Ak="
   },
   {
     "path": "source/library/resources/themes/BMThemeLevelClass.js",
@@ -1391,13 +1391,13 @@
   },
   {
     "path": "source/library/resources/icons/BMIconResources.js",
-    "size": 865,
-    "hash": "zbUpaeF+VuVWgbPWlEnXfNGr+WYd7t2U/6OyCqvaEbQ="
+    "size": 870,
+    "hash": "FHznNKX5/e33m6d4jxL5uasAbXsgNthSc40LPF1/tSY="
   },
   {
     "path": "source/library/resources/icons/SvgIconNode.js",
-    "size": 738,
-    "hash": "kLpImuu3NNZiauvIYJ1gfU9l+ej6UVDs+/Esukg1708="
+    "size": 754,
+    "hash": "ttRu7xpJFF0nAoe8TBiBJxZHysaqOqrscVkwtdAfCyw="
   },
   {
     "path": "source/library/resources/json/BMJsonResource.js",
@@ -1416,18 +1416,18 @@
   },
   {
     "path": "source/apps/Strvct/HeaderNode.js",
-    "size": 2982,
-    "hash": "AVqhml46cQsnCxnPc6aBXJ7I3xyuMVGwAcTbRjYDQFw="
+    "size": 3052,
+    "hash": "82TBQfXNuROjCLm4uAC9zn6kEdjp8rGCg14mEpqkLsM="
   },
   {
     "path": "source/apps/Strvct/RootContentNode.js",
-    "size": 1902,
-    "hash": "pqLnJ+sElLGZeB+IH0urJ9sEZTNRQqShAS+tdIYnqA8="
+    "size": 1942,
+    "hash": "SoM8uJaTOHzZmsDAC9UT0jEntTOY1jyYMvxngciC/lk="
   },
   {
     "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 4016,
-    "hash": "8wmEr8rWUE1WmAd1Tyhe5iF2JoQzIvfhC1bsV9OM6+8="
+    "size": 4017,
+    "hash": "R1ydsLfzhFwQRFLgr3VKbWGiwU3LoBw/NexFqwSmax8="
   },
   {
     "path": "source/apps/Strvct/_init.js",

@@ -8,6 +8,8 @@
 
 */
 
+Object.defineSlot(Array.prototype, "_allowsNulls", false);
+
 (class Array_ideal extends Array {
 
     static withArray (anArray) {
@@ -124,6 +126,9 @@
     atPut (index, v) {
         // we need to hook this since []= can't be hooked
         this.willMutate("atPut", v)
+        if (v === null && !this._allowsNulls) {
+            throw new Error("attempt to add null to Array that does not allow them")
+        }
         this[index] = v
         this.didMutate("atPut", v)
         return this

@@ -86,15 +86,18 @@
         //debugger;
 
         if (!this.blobs()) {
-            this.setBlobs(BMBlobs.shared())
+            debugger;
+            //this.setBlobs(BMBlobs.shared())
         }
 
         if (!this.themes()) {
+            debugger;
             this.setThemes(BMThemeResources.shared())
         }
 
         if (!this.prototypes()) {
-            this.setPrototypes(BMPrototypesNode.shared())
+            debugger;
+            //this.setPrototypes(BMPrototypesNode.shared())
         }        
 
         // subnodes

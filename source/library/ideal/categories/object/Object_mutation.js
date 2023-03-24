@@ -13,6 +13,7 @@
     mutatorMethodNamesSet () {
         throw new Error("undefined mutatorMethodNamesSet on '" + this.type() + "' class")
     }
+
     
     setupMutatorHooks () {
         // this is to be called on a prototype
@@ -27,7 +28,7 @@
             Object.defineSlot(this, unhookedName, unhookedFunction)
     
             const hookedFunction = function () {
-                this.willMutate(slotName)
+                this.willMutate(slotName, arguments)
                 const result = this[unhookedName].apply(this, arguments)
                 this.didMutate(slotName)
     
@@ -84,12 +85,12 @@
         */
     }
 
-    didMutate () {
+    didMutate (optionalSlotName) {
         const mos = this._mutationObservers
         if (mos) {
             //console.log("" + this.debugTypeId() + ".didMutate()")
             mos.forEach(obs => {
-                obs.onDidMutateObject(this)
+                obs.onDidMutateObject(this, optionalSlotName)
             })
         }
     }

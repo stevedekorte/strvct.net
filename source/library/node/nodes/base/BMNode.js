@@ -110,7 +110,9 @@
         }
 
         {
-            const slot = this.newSlot("shouldStoreSubnodes", true)
+            // this allows us to effectively override the subnode's Slot's shouldStore property
+            // if null, it uses the subnode's Slot object's value
+            const slot = this.newSlot("shouldStoreSubnodes", null) 
             slot.setDuplicateOp("duplicate") //.setShouldStore(true)
         }
 
@@ -162,12 +164,17 @@
         // TODO: generalize this for all notifications somehow
         // maybe register for note with object directly
         
-        //debugger;
         if (App.shared().hasDoneAppInit()) {
             this.appDidInit()
         } else {
             this.watchOnceForNote("appDidInit")
         }
+    }
+
+    shouldStoreSlotSubnodes () {
+        // called by subnodes slot when persisting instance
+        //debugger
+        return this.shouldStoreSubnodes()
     }
 
     nodeType () {
@@ -259,6 +266,7 @@
     }
 	
     justAddSubnodeAt (aSubnode, anIndex) {
+        assert(aSubnode)
         assert(!this.hasSubnode(aSubnode))
         this.subnodes().atInsert(anIndex, aSubnode)
         aSubnode.setParentNode(this)
@@ -476,6 +484,7 @@
     }
 
     orderSubnodeFirst (aSubnode) {
+        assert(aSubnode)
         assert(this.hasSubnode(aSubnode))
         const subnodes = this.subnodes().shallowCopy()
         subnodes.remove(aSubnode)
@@ -729,7 +738,7 @@
 
     onDidMutateObject (anObject) {
         if (anObject === this._subnodes) {
-            assert(!this.subnodes().hasDuplicates())
+            //assert(!this.subnodes().hasDuplicates())
             this.didChangeSubnodeList()
         }
     }
@@ -740,21 +749,32 @@
         return this
     }
 
+    hasNullSubnodes () {
+        return this.subnodes().indexOf(null) !== -1
+    }
+
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
             oldValue.removeMutationObserver(this)
         }
 
         if (newValue.type() !== "SubnodesArray") {
-        //    debugger;
+            //debugger;
             this._subnodes = SubnodesArray.from(newValue)
             newValue.removeDuplicates()
             newValue = this._subnodes
             assert(newValue.type() === "SubnodesArray")
         } else {
+            
+            if (this.hasNullSubnodes()) {
+                console.warn(this.debugTypeId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes())
+                this.subnodes().removeOccurancesOf(null)
+                //debugger
+            }
+
             if(this.hasDuplicateSubnodes()) {
                 console.warn(this.debugTypeId() + " hasDuplicateSubnodes - removing duplicates and continuing")
-              //  debugger;
+                debugger
                 newValue.removeDuplicates()
             }
         }

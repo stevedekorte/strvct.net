@@ -15,6 +15,8 @@
             "name": "launch local HTTPS",
             "url": "https://localhost:8000/index.html",
             "webRoot": "${workspaceFolder}",
+            "runtimeExecutable": "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+
             "runtimeArgs": [
             ],
             "preLaunchTask": "Build",

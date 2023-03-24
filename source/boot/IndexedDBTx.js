@@ -25,6 +25,7 @@
         this.newSlot("promiseForFinished", null)
         this.newSlot("resolveFunc", null)
         this.newSlot("rejectFunc", null)
+        this.newSlot("timeoutInMs", 1000)
     }
 
     setIsComplete (aBool) {
@@ -87,7 +88,7 @@
     
     init () {
         super.init()
-        //this.setIsDebugging(true) // this will be overwritten by db with it's own isDebugging setting
+        //this.setIsDebugging(false) // this will be overwritten by db with it's own isDebugging setting
     }
 
     db () {
@@ -165,11 +166,6 @@
     }
 
     promiseCommit () {
-        this.debugLog(this.dbFolder().path() + " TX COMMIT ")
-
-        this.assertNotCommitted()
-        this.setIsCommitted(true)
-
         this.setPromiseForCommit(new Promise((resolve, reject) => {
             const tx = this.tx()
             
@@ -186,8 +182,11 @@
                 reject(error)
             }
 
+            //setTimeout(() => this.onTimeout(), this.timeoutInMs())
+
             this.debugLog(" COMMITTING")
             tx.commit()
+
         }))
 
         //return this.promiseForCommit()

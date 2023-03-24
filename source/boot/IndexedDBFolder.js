@@ -18,6 +18,7 @@
 
         this.newSlot("promiseForOpen", null) // has a value while opening. Returns this value while opening so multiple requests queue for open
         this.newSlot("lastTx", null) 
+        //this.newSlot("keyCacheSet", null) 
     }
 
     init () {
@@ -415,6 +416,7 @@
         assert(this.isOpen())
         //debugger;
         console.log(this.path() + " promiseNewTx")
+        /*
         const lastTx = this.lastTx()
         if (lastTx) {
             // technically, it's ok to have multiple unfinished txs, 
@@ -426,7 +428,6 @@
                     console.warn("WARNING: last tx was not committed yet!")
                     console.log("last tx:")
                     lastTx.show()
-                    
                 } 
 
                 return lastTx.promiseForFinished().then(() => {
@@ -434,6 +435,7 @@
                 })
             }
         }
+        */
         return Promise.resolve(this.privateNewTx())
     }
 
@@ -461,17 +463,21 @@
                 return this.promiseRemoveAt(key)
             }
 
+            console.log("idb promiseHasKey ", key)
             return this.promiseHasKey(key).then((hasKey) => {
                 if (hasKey) {
+                    console.log("idb YES hasKey promiseUpdate", key)
+
                     return this.promiseUpdate(key, value)
                 } else {
+                    console.log("idb NO hasKey promiseAdd", key)
                     return this.promiseAdd(key, value)
                 }
             })
-        })//.then(() => this.promiseAssertKeyHasValue(key, value))
+        })//.then(() => this.promiseAssertHasKey(key))
     }
 
-    promiseAssertKeyHasValue (key, value) {
+    promiseAssertHasKey (key) {
         return this.promiseHasKey(key).then((hasKey) => {
             if (!hasKey) {
                 debugger;
@@ -493,8 +499,10 @@
 
     promiseAdd (key, value) { // private
         return this.promiseNewTx().then((tx) => {
+            console.log("idb tx atAdd ", key)
             tx.begin()
-            tx.setIsDebugging(this.isDebugging())
+            //tx.setIsDebugging(this.isDebugging())
+            tx.setIsDebugging(true)
             tx.atAdd(key, value)
             return tx.promiseCommit() 
         })

@@ -119,6 +119,7 @@ if (!String.prototype.capitalized) {
         return this;
     }
 
+    /*
     debugLog (s) {
         if (this.isDebugging()) {
             if (typeof(s) === "function") {
@@ -126,6 +127,25 @@ if (!String.prototype.capitalized) {
             }
             console.log(s)
         }
+    }
+    */
+
+    debugTypeId () {
+        return this.type()
+    }
+
+    debugLog (s) {
+        if (this.isDebugging()) {
+            if (typeof(s) === "function") {
+                s = s()
+            }
+            if (arguments.length == 1) {
+                console.log(this.debugTypeId() + " " + s)
+            } else {
+                console.log(this.debugTypeId() + " ", arguments[0], arguments[1])
+            }
+        }
+        return this
     }
 
 }.initThisClass());
