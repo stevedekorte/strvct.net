@@ -27,6 +27,7 @@
     initPrototypeSlots () {
         this.newSlot("eventLevelCount", 0)
         this.newSlot("hasReceivedUserEvent", false) // we only care about this for user events, but event manager handles timeouts too
+        this.newSlot("beginUserEventDate", null)
     }
 
     onReceivedUserEvent () { // sent by event listeners if event is user interaction (like click) that browser waits for to enable things like audio/video use
@@ -87,7 +88,16 @@
         let result = undefined
         let eventCountBefore = this.eventLevelCount()
         this.incrementEventLevelCount()
+        const t1 = Date.now()
         result = callback()
+        const t2 = Date.now()
+        const dt = (t2-t1)
+        if (dt) {
+            const m = "" + dt + "ms"
+            App.shared().mainWindow().setTitle(m)
+            console.log(m)
+        }
+
         this.decrementEventLevelCount()
         assert(this.eventLevelCount() === eventCountBefore)
         this.syncIfAppropriate() // TODO: is this the best spot?
@@ -123,6 +133,15 @@
                 // current event stack has unwound.
                 //console.log("--->>> fullSyncNow <<<---")
                 SyncScheduler.shared().fullSyncNow()
+
+                /*
+                if (this.beginUserEventDate()) {
+                    const now = Date.now()
+                    const dt = now - this.beginUserEventDate()
+                    App.shared().mainWindow().setTitle("usr event dt:" + (dt) + "ms")
+                }
+                this.setBeginUserEventDate(null)
+                */
            }
         }
         return this

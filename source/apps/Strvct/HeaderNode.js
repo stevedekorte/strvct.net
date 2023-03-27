@@ -86,7 +86,7 @@
         //debugger;
 
         if (!this.blobs()) {
-            debugger;
+            //debugger;
             //this.setBlobs(BMBlobs.shared())
         }
 
@@ -96,7 +96,7 @@
         }
 
         if (!this.prototypes()) {
-            debugger;
+       //     debugger;
             //this.setPrototypes(BMPrototypesNode.shared())
         }        
 

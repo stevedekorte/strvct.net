@@ -336,8 +336,8 @@
   },
   {
     "path": "source/library/view/events/listening/EventManager.js",
-    "size": 4499,
-    "hash": "I2ZcI0ePmbjkGsTZ0Yc7CdufCgeOP7+NKaoGP/Vvcbg="
+    "size": 5125,
+    "hash": "92j56Ur+7mMAgh5ZnpgdL7XkD8z486yoDd/dmryZn4Q="
   },
   {
     "path": "source/library/view/events/listening/EventListener.js",
@@ -686,8 +686,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/StyledDomView.js",
-    "size": 7183,
-    "hash": "pNW0QLG8zFqT2LLXpL1JVWZwcK1U+9WOjWMaE9qQoMQ="
+    "size": 7098,
+    "hash": "oEXspn0yAYdG2lWfIVj3ylNLWiLGuoJ2gV69jrR/1Ww="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/BooleanView.js",
@@ -876,8 +876,8 @@
   },
   {
     "path": "source/library/node/nodes/BMSummaryNode.js",
-    "size": 4564,
-    "hash": "ZFCfTwRY3+C7yeNu/FfITJntNd1keu2juu5LAMQ8QG8="
+    "size": 5023,
+    "hash": "HzhBwUmcWhXCOUl2bJ1R70faWwN80uUFWxmWmPqTiRg="
   },
   {
     "path": "source/library/node/nodes/BMFolderNode.js",
@@ -996,8 +996,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
-    "size": 6187,
-    "hash": "1eRW5hxKWz4DQPyOOVyDFFso2yl2gHkODNWPAUgg15k="
+    "size": 6313,
+    "hash": "Dr55PG8ipAN9obyizMH5lmoq3ropgMA+3ewJUa0Df6o="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
@@ -1101,8 +1101,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_selection.js",
-    "size": 11782,
-    "hash": "raabuFsENuxIGvkcLHFwtn8mE9sYc8vShYVnzPGkESg="
+    "size": 12103,
+    "hash": "GekJk+VbXjNgrf/gKbTxTbpa5zUoIXTRR9tAjvaVz0o="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_orientation.js",
@@ -1111,8 +1111,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_keyboard.js",
-    "size": 6235,
-    "hash": "55WtMjE6Usr6akqlNL1u73hfDAiEl+icdRI0hliLJJE="
+    "size": 6923,
+    "hash": "fZo5gicONtIe2C5ra2NqqTQaGD/hLnjdzWMQIaaGHTE="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_gestures.js",
@@ -1126,8 +1126,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile.js",
-    "size": 13374,
-    "hash": "wvaS6ryGBeNsf2Wg8wG+JjGxKOyOgPTdNZCx/CJfiIE="
+    "size": 13443,
+    "hash": "cKDoPnsrp1HK3q/YWAkWjd3GYP88d/nb3B0qNDsqsig="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_dragging.js",
@@ -1156,8 +1156,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/TitledTile.js",
-    "size": 8315,
-    "hash": "3mA9sRnnbhkE0CnUifFj9js0OoMJfhX9YYGeWlZEOGw="
+    "size": 8288,
+    "hash": "aYxAxk401SzLW4uhBfxhZIUruMrKC5jbLgxW/SsFyK4="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BMTextNodeTile.js",
@@ -1181,8 +1181,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/subviews/TileSubtitleView.js",
-    "size": 536,
-    "hash": "8DH1E24FuYkmDzqINsvLXP7BG/SGi7dovsVPpn/0Azw="
+    "size": 570,
+    "hash": "PkqjAN45C71N6K2f+mCAQ0o53djlq+gpu6zhiEQdtUo="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/subviews/TileTitleView.js",
@@ -1376,8 +1376,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 14027,
-    "hash": "jYSspWaE2otAhVfLeqgdJGXFSpCazenN2QxOwXRS9D4="
+    "size": 13878,
+    "hash": "Q67GHeNiX3LUGUO3HmMUxj7vKLWS9kBZWZ4DSiEcoao="
   },
   {
     "path": "source/library/resources/themes/BMThemeLevelClass.js",
@@ -1416,8 +1416,8 @@
   },
   {
     "path": "source/apps/Strvct/HeaderNode.js",
-    "size": 3052,
-    "hash": "82TBQfXNuROjCLm4uAC9zn6kEdjp8rGCg14mEpqkLsM="
+    "size": 3056,
+    "hash": "1lZEqe/YG4NsbhbzkGXl5Inq53jdl5v3W8OuKKZlHZM="
   },
   {
     "path": "source/apps/Strvct/RootContentNode.js",

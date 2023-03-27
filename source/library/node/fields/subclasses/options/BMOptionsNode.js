@@ -133,6 +133,12 @@
     // IMPORTANT: we want to use valid values this way so we can edit the subnodes from the UI
     // to change the valid value set
 
+    didUpdateSlotValidValues (oldValue, newValue) {
+        if (newValue) {
+            this.setupSubnodes()
+        }
+    }
+
     /*
     setValidValues (values) {
         if (!this.validValues().equals(values)) {

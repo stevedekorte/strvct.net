@@ -44,7 +44,18 @@
             slot.setDuplicateOp("copyValue")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
-            slot.setLabel("has new line ending")
+            slot.setLabel("ends with new line")
+            slot.setInspectorPath("Summary")
+            slot.setSyncsToView(true)
+        }
+
+        {
+            const slot = this.newSlot("hasNewLineSeparator", false)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("new line separates key/value")
             slot.setInspectorPath("Summary")
             slot.setSyncsToView(true)
         }
@@ -152,14 +163,14 @@
             return v + end
         }
 
-        const j = " "
+        const kvSeparator = this.hasNewLineSeparator() ? "\n" : " "
 
         if (f === "key value") { 
-            return k + j + v + end
+            return k + kvSeparator + v + end
         }
 
         if (f === "value key") { 
-            return v + j + k + end
+            return v + kvSeparator + k + end
         }
 
         return ""

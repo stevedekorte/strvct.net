@@ -23,12 +23,6 @@
         event.preventDefault();
     }
 
-    onMeta_m_KeyDown (event) {
-        console.log("new folder")
-        event.stopPropagation()
-        event.preventDefault()
-    }
-
     onMeta_d_KeyDown (event) {
         console.log("duplicate selection down")
         this.duplicateSelectedTiles()
@@ -36,11 +30,11 @@
         event.preventDefault();
     }
 
-    onMeta_d_KeyUp (event) {
-        console.log("duplicate selection up")
-        this.selectedTiles().forEach()
+    onMeta_n_KeyDown (event) {
+        this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
+        this.addIfPossible()
         event.stopPropagation()
-        event.preventDefault();
+        event.preventDefault()
     }
 
     onShiftBackspaceKeyUp (event) {
@@ -51,11 +45,8 @@
         event.stopPropagation()
     }
 
-    onShiftPlusKeyUp (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
-        this.addIfPossible()
-        event.stopPropagation()
-    }
+
+
 
     addIfPossible () {
         const node = this.node()
@@ -83,7 +74,7 @@
     onMeta_a_KeyDown (event) {
         this.selectAllTiles()
         event.stopPropagation()
-        return false // stop propogation
+        event.preventDefault();
     }
 
 
@@ -119,7 +110,54 @@
     }
     */
 
-    // --- arrow keys ---
+    // --- shift arrow keys ---
+
+    onShiftUpArrowKeyDown (event) { // why down and not up?
+        if (!this.canNavigate()) { 
+            return 
+        }
+
+        if (this.isVertical()) {
+            this.selectFirstTile()
+        }
+        return false
+    }
+
+    onShiftDownArrowKeyDown (event) { // why down and not up?
+        if (!this.canNavigate()) { 
+            return 
+        }
+
+        if (this.isVertical()) {
+            this.selectLastTile()
+        } 
+        return false
+    }
+
+    onShiftLeftArrowKeyDown (event) { // why down and not up?
+        if (!this.canNavigate()) { 
+            return 
+        }
+
+        if (!this.isVertical()) {
+            this.selectFirstTile()
+        }
+        return false
+    }
+
+    onShiftRightArrowKeyDown (event) { // why down and not up?
+        if (!this.canNavigate()) { 
+            return 
+        }
+
+        if (!this.isVertical()) {
+            this.selectLastTile()
+        } 
+        return false
+    }
+
+
+    // --- normal arraow keys ---
 
     onUpArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 

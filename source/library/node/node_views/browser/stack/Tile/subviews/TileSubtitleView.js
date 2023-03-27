@@ -23,6 +23,7 @@
         this.setTextAlign("left")
         this.setOverflow("visible")
         this.setWordWrap("break-word")
+        this.setWhiteSpace("pre")
         return this
     }
 

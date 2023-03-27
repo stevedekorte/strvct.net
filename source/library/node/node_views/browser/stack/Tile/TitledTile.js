@@ -185,7 +185,6 @@
         }
 
         this.syncStylesToSubviews()
-        this.applyStyles()
 
         /*
         const state = this.currentThemeState()

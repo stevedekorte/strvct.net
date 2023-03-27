@@ -106,7 +106,6 @@
 
     didUpdateSlotIsActive (oldValue, newValue) {
         // sent by hooked setter
-        this.applyStyles()
         this.updateSubviews()
         return this
     }
@@ -120,7 +119,6 @@
     onActivateView (aView) {
         if (aView !== this & this.isActive()) {
             this.setIsActive(false)
-            this.applyStyles()
         }
     }
 
@@ -128,7 +126,6 @@
 
     didUpdateSlotIsSelected (oldValue, newValue) {
         // sent by hooked setter
-        this.applyStyles()
         this.updateSubviews()
         return this
     }

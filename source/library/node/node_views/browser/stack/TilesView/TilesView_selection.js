@@ -470,4 +470,20 @@
         return this
     }
 
+    // --- helpers ---
+
+    selectFirstTile () {
+        if (this.subviews().length) {
+            this.setSelectedTileIndex(0)
+        }
+        return this
+    }
+
+    selectLastTile () {
+        const count = this.subviews().length
+        if (count) {
+            this.setSelectedTileIndex(count - 1)
+        }
+    }
+
 }.initThisCategory());

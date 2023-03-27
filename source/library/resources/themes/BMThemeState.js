@@ -220,17 +220,6 @@
         this.setupSubnodes()
     }
 
-    /*
-    recordForStore (store) {
-        const result = super.recordForStore(store)
-        console.log(this.type() + " recordForStore: ", result)
-        //console.log("should store subnodes: ", this.thisPrototype().slotNamed("subnodes").shouldStoreSlot())
-        //assert(!this.thisPrototype().slotNamed("subnodes").shouldStoreSlot())
-    //    debugger;
-        return result
-    }
-    */
-
     setThemeAttribute (key, value) {
         this[key.asSetter()].apply(this, [value])
         //this.firstSubnodeWithTitle(key).setValue(value)
@@ -288,6 +277,10 @@
             pathNodes.forEach(node => {
                 if (node !== this) {
                     node.setNodeSubtitleIsChildrenSummary(true)
+                    node.setHasNewlineAferSummary(true)
+                    if (node !== pathNodes.last()) {
+                        node.setHasNewLineSeparator(true)
+                    }
                 }
             })
 
@@ -369,10 +362,9 @@
 
     // --- apply styles ---
 
-
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
-        
+        //console.log("applyStyleSlotsToView ", aView.debugTypeId())
         styleSlots.forEach(slot => { 
             const name = slot.name()
             const isLocked = lockedSet ? lockedSet.has(name) : false;
