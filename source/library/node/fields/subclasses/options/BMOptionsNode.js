@@ -84,7 +84,7 @@
             this.unpickSubnodesExcept(anOptionNode)
         }
 
-        let pickedValues = this.pickedSubnodes().map(s => s.value())
+        const pickedValues = this.pickedSubnodes().map(s => s.value())
         //this.setValue(pickedValues)
         
         if (pickedValues.length) {
@@ -110,6 +110,7 @@
     }
 
     pickedSubnodes () {
+        this.setupSubnodesIfEmpty()
         return this.subnodes().select(subnode => subnode.isPicked())
     }
 
@@ -168,21 +169,19 @@
         return this
     }
 
-    /*
     prepareForFirstAccess () {
-        debugger
+        //debugger
         super.prepareForFirstAccess()
-        this.setupSubnodes()
+        this.setupSubnodesIfEmpty()
     }
-    */
 
+    /*
     prepareToAccess () {
         //debugger
         super.prepareToAccess()
-        if (this.subnodes().length === 0) {
-            this.setupSubnodes()
-        }
+        this.setupSubnodesIfEmpty()
     }
+    */
 
     validValuesFromSource () {
         // as this might be expensive, we should lazy load it first time
@@ -208,6 +207,13 @@
 
     validValuesFromSubnodes () {
         return this.subnodes().map(sn => sn.value())
+    }
+
+    setupSubnodesIfEmpty () {
+        if (this.subnodes().length === 0) {
+            this.setupSubnodes()
+        }
+        return this
     }
 
     setupSubnodes () {

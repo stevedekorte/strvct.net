@@ -17,8 +17,35 @@
 
     // --- controls ---
 
+    /*
+    onShiftDeleteKeyUp (event) {
+        if (!this.canNavigate()) { 
+            return 
+        }
+
+        this.deleteSelectedTiles()
+        return false
+    }
+    */
+
+    onMetaBackspaceKeyDown (event) {
+        console.log("meta backspace")
+        this.onMetaDeleteKeyDown(event)
+    }
+
+    onMetaDeleteKeyDown (event) {
+        console.log("meta delete")
+        if (!this.canNavigate()) { 
+            return 
+        }
+
+        this.deleteSelectedTiles()
+        event.stopPropagation()
+        event.preventDefault();
+    }
+
     onMetaKeyDown (event) {
-        console.log("new folder")
+        // do we need to hook this to avoid meta being stolen by app? 
         event.stopPropagation()
         event.preventDefault();
     }
@@ -110,9 +137,9 @@
     }
     */
 
-    // --- shift arrow keys ---
+    // --- Alternate arrow keys ---
 
-    onShiftUpArrowKeyDown (event) { // why down and not up?
+    onAlternateUpArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
             return 
         }
@@ -123,7 +150,7 @@
         return false
     }
 
-    onShiftDownArrowKeyDown (event) { // why down and not up?
+    onAlternateDownArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
             return 
         }
@@ -134,7 +161,7 @@
         return false
     }
 
-    onShiftLeftArrowKeyDown (event) { // why down and not up?
+    onAlternateLeftArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
             return 
         }
@@ -145,7 +172,7 @@
         return false
     }
 
-    onShiftRightArrowKeyDown (event) { // why down and not up?
+    onAlternateRightArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
             return 
         }
@@ -157,7 +184,7 @@
     }
 
 
-    // --- normal arraow keys ---
+    // --- normal arrow keys ---
 
     onUpArrowKeyDown (event) { // why down and not up?
         if (!this.canNavigate()) { 
@@ -277,7 +304,6 @@
 
     // --- keyboard controls, add and delete actions ---
 
-    /*
     deleteTile (aTile) {
         let sNode = aTile.node()
         if (sNode && sNode.canDelete()) { 
@@ -292,16 +318,6 @@
         if (this.tiles().length === 0) {
             this.selectPreviousColumn()
         }
-    }
-    */
-
-    onShiftDeleteKeyUp (event) {
-        if (!this.canNavigate()) { 
-            return 
-        }
-
-        //this.deleteSelectedTiles()
-        return false
     }
 	
     onPlusKeyUp (event) {

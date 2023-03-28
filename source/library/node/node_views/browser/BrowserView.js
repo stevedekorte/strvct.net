@@ -62,11 +62,17 @@
         return this
     }
 
+    didInit () {
+        super.didInit()
+        this.scheduleMethod("moveToBase")
+    }
+
     /*
     didInit () {
         super.didInit()
         this.scheduleMethod("pullPathFromUrlHash")
     }
+
 
     pullPathFromUrlHash () {
         const path = App.shared().mainWindow().urlHash()
@@ -87,9 +93,16 @@
     }
     */
 
+    headerNode () {
+        return this.node().subnodes().first()
+    }
+
+    breadCrumbsNode () {
+        return this.headerNode().subnodes().first()
+    }
+
     moveToBase () {
-        //this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
-       // debugger;
+        this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
         return this
     }
 

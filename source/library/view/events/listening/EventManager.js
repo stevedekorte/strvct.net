@@ -88,15 +88,17 @@
         let result = undefined
         let eventCountBefore = this.eventLevelCount()
         this.incrementEventLevelCount()
-        const t1 = Date.now()
+        //const t1 = Date.now()
         result = callback()
-        const t2 = Date.now()
-        const dt = (t2-t1)
+        /*
+        //const t2 = Date.now()
+        //const dt = (t2-t1)
         if (dt) {
             const m = "" + dt + "ms"
             App.shared().mainWindow().setTitle(m)
             console.log(m)
         }
+        */
 
         this.decrementEventLevelCount()
         assert(this.eventLevelCount() === eventCountBefore)

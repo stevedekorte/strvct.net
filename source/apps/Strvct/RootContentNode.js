@@ -64,6 +64,9 @@
         }
 
         this.setHeaderNode(node)
+
+        this.setNodeCanReorderSubnodes(false)
+        node.setNodeCanReorderSubnodes(false)
     }
 
     newHeaderNode () {

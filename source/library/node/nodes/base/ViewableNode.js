@@ -20,7 +20,30 @@
         {
             const slot = this.newSlot("nodeViewClassName", null)
         }
+        
+    
+        {
+            const addSlot = (name, path, label, values) => {
+                const slot = this.newSlot(name, "")
+                slot.setInspectorPath(path)
+                slot.setLabel(label)
+                slot.setShouldStoreSlot(true)
+                slot.setDuplicateOp("duplicate")
+                slot.setSlotType("String")
+                slot.setValidValues(values)
+                slot.setCanInspect(true)
 
+                return slot
+            }
+            addSlot("nodeTileClassName", "", "Theme Class", null).setValidValuesClosure(() => { 
+                return BMThemeResources.shared().activeTheme().themeClassNames()
+            })   
+
+            //BMThemeResources.shared().activeTheme().newThemeClassOptions()
+        }
+        
+
+        /*
         {
             const slot = this.newSlot("nodeTileClassName", null)
             slot.setDuplicateOp("copyValue")
@@ -29,6 +52,7 @@
             slot.setSlotType("String")
             slot.setShouldStoreSlot(true)
         }
+        */
 
         {
             const slot = this.newSlot("nodeThumbnailUrl", null)
@@ -117,6 +141,8 @@
             const slot = this.newSlot("nodeCanEditColumnWidth", false)
             slot.setDuplicateOp("copyValue") // TODO: change to NavWidth
         }
+
+
                 
     }
 

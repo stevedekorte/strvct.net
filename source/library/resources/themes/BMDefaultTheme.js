@@ -30,7 +30,7 @@
 
     setupAsDefault () {
         if (this.subnodes().length === 0) {
-            debugger
+            //debugger
             this.setTitle("DefaultTheme")
             const defaultThemeClass = BMThemeClass.clone().setupAsDefault()
             this.addSubnode(defaultThemeClass)

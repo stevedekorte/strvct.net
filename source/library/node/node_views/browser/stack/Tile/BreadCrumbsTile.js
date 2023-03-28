@@ -29,6 +29,11 @@
         this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this))
         this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding()
         this.setWidth("100%")
+        // top left right bottom
+        this.setPaddingTop("0.7em")
+        this.setPaddingLeft("1em") 
+        this.setPaddingRight("0.7em")
+        this.setPaddingBottom("30px")
         //this.updateSubviews()
         this.setIsSelectable(true)
         this.setIsRegisteredForWindowResize(true)
@@ -47,11 +52,14 @@
     }
 
     targetStackView () {
-        const nc = this.column().nextColumn()
-        if (nc) {
-            //debugger;
-            const sv = nc.stackView()
-            return sv
+        const col = this.column()
+        if (col) {
+            const nc = col.nextColumn()
+            if (nc) {
+                //debugger;
+                const sv = nc.stackView()
+                return sv
+            }
         }
         return null
     }

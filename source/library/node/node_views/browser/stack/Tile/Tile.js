@@ -229,14 +229,14 @@
     didUpdateSlotIsSelected (oldValue, newValue) {
         super.didUpdateSlotIsSelected (oldValue, newValue)
 
-        /*
+        
         if (this.isSelected()) {
             this.setLastSelectionDate(Date.clone())
         } else {
-            this.setShouldShowFlash(true)
+            //this.setShouldShowFlash(true)
             this.setLastSelectionDate(null)
         }
-        */
+        
 
         this.tilesView().didChangeNavSelection()
         //this.updateSubviews()

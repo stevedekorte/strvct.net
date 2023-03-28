@@ -89,7 +89,7 @@
 
     static validFontSizes () {
         const values = []
-        for (let i = 6; i < 41; i ++) {
+        for (let i = 6; i < 80; i ++) {
             values.push(i + "px")
         }
         return values
@@ -142,6 +142,17 @@
             addSlot("paddingTop", "padding", "top", paddings)
             addSlot("paddingBottom", "padding", "bottom", paddings)
         }
+
+        // --- margin ---
+
+        {
+            const margins = this.thisClass().validPaddingValues()
+            addSlot("marginLeft", "margin", "left", margins)
+            addSlot("marginRight", "margin", "right", margins)
+            addSlot("marginTop", "margin", "top", margins)
+            addSlot("marginBottom", "margin", "bottom", margins)
+        }
+        
 
         // --- border ---
         

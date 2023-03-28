@@ -16,7 +16,6 @@
         //this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding()
         this.setIsSelectable(true)
         this.setThemeClassName("HeaderTile")
-
         return this
     }
 

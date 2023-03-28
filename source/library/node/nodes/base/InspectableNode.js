@@ -50,16 +50,24 @@
         this.thisPrototype().allSlotsMap().forEachV(slot => {
             if (slot.canInspect()) {
                 const field = slot.newInspectorField()
+                let pathNodes = null
+
                 if (field) {
                     field.setTarget(this)
-                    const pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
+                    field.setCanDelete(false) 
+                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
                     pathNodes.last().addSubnode(field)
                 } else {
                     const node = slot.onInstanceGetValue(this)
                     const linkNode = BMLinkNode.clone().setLinkedNode(node)
-                    const pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
+                    linkNode.setCanDelete(false) 
+                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
                     pathNodes.last().addSubnode(linkNode)
                 }
+
+                pathNodes.forEach(pathNode => { 
+                    pathNode.setCanDelete(false) 
+                })
             }
         })
         return this

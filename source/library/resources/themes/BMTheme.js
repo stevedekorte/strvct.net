@@ -4,6 +4,8 @@
 
     BMTheme
 
+
+    BMThemeResources.shared().activeTheme().newThemeClassOptions()
 */
 
 (class BMTheme extends BMThemeFolder {
@@ -37,5 +39,19 @@
   themeClassNamed (name) {
     return this.firstSubnodeWithTitle(name)
   }
+
+  themeClassNames () {
+    return this.subnodes().map(themeClass => themeClass.title())
+  }
+
+  newThemeClassOptions () {
+    const options = BMOptionsNode.clone()
+    this.subnodes().forEach(themeClass => {
+        const name = themeClass.title()
+        const option = BMOptionNode.clone().setLabel(name).setValue(name)
+        options.addSubnode(option)
+    })
+    return options
+}
 
 }.initThisClass());

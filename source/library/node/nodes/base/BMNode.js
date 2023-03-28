@@ -594,7 +594,7 @@
     }
 
     // --- post notifications ----------------------------------------
-    
+
     postShouldFocusSubnode (aSubnode) {
         assert(aSubnode)
         this.shouldFocusSubnodeNote().setInfo(aSubnode).post()
@@ -602,10 +602,12 @@
     }
 
     postShouldFocusAndExpandSubnode (aSubnode) {
+        //debugger
         assert(aSubnode)
         this.shouldFocusAndExpandSubnodeNote().setInfo(aSubnode).post()
         return this
     }
+
 
     // -- adding subnodes by instantiating subnode class ----
     
@@ -744,7 +746,6 @@
     }
 
     watchSubnodes () {
-   //     debugger;
         this._subnodes.addMutationObserver(this)
         return this
     }

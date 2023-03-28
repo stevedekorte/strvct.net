@@ -96,7 +96,6 @@
         }
 
         if (!this.prototypes()) {
-       //     debugger;
             //this.setPrototypes(BMPrototypesNode.shared())
         }        
 
@@ -123,6 +122,8 @@
         node.setNodeIsVertical(true) 
 
         this.setBreadCrumbsNode(node)
+
+        return this
     }
 
     newBreadCrumbsNode () {
@@ -130,6 +131,12 @@
         node.setNodeTileClassName("BreadCrumbsTile")
         node.setCanDelete(false)
         return node
+    }
+
+    onTapOfNode () {
+        super.onTapOfNode()
+        setTimeout(() => this.postShouldFocusAndExpandSubnode(this.breadCrumbsNode()), 0)
+
     }
 
 }.initThisClass());
