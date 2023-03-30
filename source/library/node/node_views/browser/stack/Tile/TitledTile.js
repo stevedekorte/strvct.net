@@ -42,15 +42,12 @@
 
     init () {
         super.init()
+        const cv = this.contentView()
 
-        this.contentView().setMinHeight("5em")
-        this.contentView().flexSplitIntoColumns(2)
-        let lv = this.topContentArea()
+        cv.setMinHeight("5em")
+        cv.flexSplitIntoColumns(2)
 
-        lv.setPaddingTop("0.7em")
-        lv.setPaddingBottom("0.7em")
-        lv.setPaddingLeft(this.thisClass().titleLeftPadding())
-        lv.setPaddingRight("1em")
+        const lv = this.topContentArea()
 
         lv.setDisplay("flex")
         lv.setFlex("10")
@@ -140,19 +137,6 @@
         return false
     }
 
-    syncStylesToSubviews () {
-        const b = this.isSelected()
-        this.titleView().syncStateFrom(this)
-        this.subtitleView().syncStateFrom(this)
-        this.noteView().syncStateFrom(this)
-        /*
-        this.titleView().setIsSelected(b)
-        this.subtitleView().setIsSelected(b)
-        this.noteView().setIsSelected(b)
-        */
-        return this
-    }
-
     updateSubviews () {
         super.updateSubviews()
 	
@@ -194,6 +178,19 @@
         }
         */
 
+        return this
+    }
+
+    syncStylesToSubviews () {
+        const b = this.isSelected()
+        this.titleView().syncStateFrom(this)
+        this.subtitleView().syncStateFrom(this)
+        this.noteView().syncStateFrom(this)
+        /*
+        this.titleView().setIsSelected(b)
+        this.subtitleView().setIsSelected(b)
+        this.noteView().setIsSelected(b)
+        */
         return this
     }
 

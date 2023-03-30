@@ -45,8 +45,8 @@
 
         const cv = this.contentView()
         cv.setMinHeight("5em")
-        cv.setPaddingTop("0.5em")
-        cv.setPaddingBottom("0.5em")
+        //cv.setPaddingTop("0.5em")
+        //cv.setPaddingBottom("0.5em")
         cv.setJustifyContent("center") // alignment perpendicular to flex
         cv.setFlexDirection("column")
         return this
@@ -86,10 +86,12 @@
             this.setErrorViewContainer(this.contentView().newFlexSubview().setElementClassName("ErrorViewContainer"))
             this.setupErrorView()
 
+            /*
             this.contentView().subviews().forEach(subview => {
                 subview.setPaddingLeft("1.5em")
                 subview.setPaddingRight("1em")
             })
+            */
         }
 
         return this
@@ -179,9 +181,11 @@
         v.setTextAlign("left")
         v.setOverflow("hidden")
         v.setWhiteSpace("nowrap")
+        /*
         v.setPaddingLeft("7px")
         v.setPaddingRight("4px")
         v.setPaddingBottom("5px")
+        */
         v.setColor("white")
         v.setBackgroundColor("transparent")
         //tf.setSelectAllOnDoubleClick(true)

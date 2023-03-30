@@ -107,6 +107,11 @@
     state.setThemeAttribute("color", "white");
     state.setThemeAttribute("backgroundColor", "#333");
     //state.setThemeAttribute("fontWeight", "normal");
+    state.setThemeAttribute("paddingLeft", "22px");
+    state.setThemeAttribute("paddingRight", "22px");
+    state.setThemeAttribute("paddingTop", "8px");
+    state.setThemeAttribute("paddingBottom", "8px");
+
   }
 
   setupUnselectedDefault () {

@@ -35,9 +35,10 @@
 
                 return slot
             }
-            addSlot("nodeTileClassName", "", "Theme Class", null).setValidValuesClosure(() => { 
-                return BMThemeResources.shared().activeTheme().themeClassNames()
-            })   
+            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure(() => { 
+                //return BMThemeResources.shared().activeTheme().themeClassNames()
+                return Tile.allSubclasses().map(aClass => aClass.type())
+            })
 
             //BMThemeResources.shared().activeTheme().newThemeClassOptions()
         }

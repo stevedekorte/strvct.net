@@ -184,8 +184,15 @@
 
         // ---------------------
 
-        this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border"))); // cached for efficiency
-        this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !slot.name().beginsWith("border"))); // cached for efficiency
+        /*
+            We want to apply:
+            - border and margin to Tile
+            - padding and others to TileContentView
+        */
+
+        //this.newSlot("paddingStyleSlots", styleSlots.select(slot => slot.name().beginsWith("padding"))); // cached for efficiency
+        this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border") || slot.name().beginsWith("margin"))); // cached for efficiency
+        this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !(slot.name().beginsWith("border") || slot.name().beginsWith("margin")))); // cached for efficiency
         this.newSlot("styleCacheMap", null);
     }
 

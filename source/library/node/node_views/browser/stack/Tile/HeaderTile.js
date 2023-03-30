@@ -13,7 +13,6 @@
 
     init () {
         super.init()
-        //this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding()
         this.setIsSelectable(true)
         this.setThemeClassName("HeaderTile")
         return this
@@ -25,5 +24,13 @@
         this.setWidth("100%")
         return this
     }
+
+    applyStyles () {
+        //debugger
+        super.applyStyles()
+
+        return this
+    }
+
 
 }.initThisClass());

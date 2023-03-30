@@ -36,6 +36,12 @@
         this.setMsOverflowStyle("none")
         this.setUserSelect("none")
 
+        /*
+        this.setMinAndMaxWidth("fit-content")
+        this.setMinAndMaxHeight("fit-content")
+        */
+        //this.setBorder("3px solid blue")
+
         this.setIsDebugging(false)
         this.setIsRegisteredForKeyboard(true)
         this.setAcceptsFirstResponder(true)
@@ -59,11 +65,19 @@
     }
 
     navView () {
-        return this.scrollView().parentView()
+        const sv = this.scrollView()
+        if (!sv) {
+            return null
+        }
+        return sv.parentView()
     }
 
     stackView () {
-        return this.navView().parentView()
+        const nv = this.navView()
+        if (!nv) {
+            return null
+        }
+        return nv.parentView()
     }
 
     /*

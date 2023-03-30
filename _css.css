@@ -1,4 +1,5 @@
 html, body {
+    display: flex;
     position: absolute;
     overflow: hidden;
 
@@ -36,28 +37,35 @@ html, body {
 }
 
 /* an attempt to deal with tiny fonts on mobile */
+/* NOTE: I've read use of * can slow down rendering, so try to avoid them and see if that helps */
 
+/*
 html * {
     min-height: 1px;
     max-height: 999999px;
     zoom: 100%;
 }
+*/
 
 /* to avoid slow/choppy handling of touchmove events */
 
-html * {
+* {
     touch-action: pan-y;
 }
 
 /* use border-box to make sure padding is included in dom width calculations */
 
-html * {
+* {
     box-sizing: border-box;
-    /*box-sizing: content-box;*/
+}
+
+* {
+    overflow: hidden;
 }
 
 /* avoid outlines */
 
+/*
 html * {
     outline: none;
     outline-style: none;
@@ -71,6 +79,28 @@ html * :focus {
 }
 
 html * :active {
+    outline: none;
+    outline-style: none;
+    -moz-outline-style: none;
+}
+
+*/
+
+/* --- */
+
+html {
+    outline: none;
+    outline-style: none;
+    -moz-outline-style: none;
+}
+
+* :focus {
+    outline: none;
+    outline-style: none;
+    -moz-outline-style: none;
+}
+
+html :active {
     outline: none;
     outline-style: none;
     -moz-outline-style: none;

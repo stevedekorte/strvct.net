@@ -17,7 +17,6 @@
 
         const cv = this.contentView()
         cv.setMinHeight("1em")
-        cv.setPadding("1em")
 
         const tv = TextField.clone()
         this.setTextView(tv)
@@ -30,24 +29,15 @@
         tv.setFlexDirection("column")
         tv.setWidth("100%")
         tv.setMinHeight("1em")
-        tv.setPadding("1em")
         tv.setIsEditable(true)
 
         tv.setUsesDoubleTapToEdit(true)
         tv.setOverflow("visible")
-        tv.setPaddingLeft("0em")
 
         this.updateSubviews()
         this.setIsSelectable(true)
         return this
     }
-
-    /*
-    updateSubviews () {
-        super.updateSubviews()
-        return this
-    }
-    */
     
     // ---
 
@@ -87,47 +77,4 @@
         return this
     }
 
-    // --- theme ---
-
-    themeClassName () {
-        // search up the nodes to find a theme class name
-        const node = this.node()
-        if (node && node.themeClassName) {
-            return node.themeClassName()
-        }
-        return super.themeClassName()
-    }
-
-    applyStyles () {
-        // TODO: add method on View to grab these values 
-        // - maybe with optional prefix for item class/name?
-
-        /*
-        const state = this.currentThemeState()
-        if (state) {
-            state.applyToView(this.textView())
-        }
-        */
-
-        
-        const theme = (key) => this.themeValueForAttribute(key);
-        const tv = this.textView();
-
-        tv.setColor(theme("color"))
-        tv.setBackgroundColor(theme("backgroundColor"))
-
-        tv.setFontSize(theme("fontSize"))
-        tv.setFontFamily(theme("fontFamily"))
-        tv.setFontWeight(theme("fontWeight"))
-
-        tv.setLetterSpacing(theme("letterSpacing"))
-        tv.setLineHeight(theme("lineHeight"))
-        tv.setTextTransform(theme("textTransform"))
-
-        tv.setPaddingLeft(theme("paddingLeft"))
-        tv.setPaddingRight(theme("paddingRight"))
-        tv.setPaddingTop(theme("paddingTop"))
-        tv.setPaddingBottom(theme("paddingBottom"))
-    }
-    
 }.initThisClass());

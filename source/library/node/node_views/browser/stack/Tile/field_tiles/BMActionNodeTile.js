@@ -17,10 +17,6 @@
 
         const cv = this.contentView()
         cv.flexCenterContent()
-        cv.setPaddingTop("0.5em")
-        cv.setPaddingBottom("0.5em")
-        cv.setPaddingLeft("1em")
-        cv.setPaddingRight("1em")
 		
         const bv = ButtonView.clone().setElementClassName("BMActionNodeView")
         this.setButtonView(bv)

@@ -368,6 +368,10 @@
         if (this.node()) {
             s += " nodeTileClassName:'" + this.node().nodeTileClassName() + "'"
         }
+
+        if (this.isVertical) {
+            s += " isVertical:" + this.isVertical()
+        }
         return s
     }
 

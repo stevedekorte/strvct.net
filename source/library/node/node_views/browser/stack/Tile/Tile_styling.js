@@ -35,23 +35,4 @@
 
     // --- styles ---
 
-    /*
-    applyStyles () {
-        super.applyStyles()
-
-        // flash
-        
-        if (this.shouldShowFlash() && this.selectedFlashColor()) {
-            this.setBackgroundColor(this.selectedFlashColor())
-            this.setTransition("background-color 0.3s")
-            //this.addTimeout(() => { this.setBackgroundColor(this.currentBgColor()) }, 100)
-            this.addTimeout(() => { super.applyStyles() }, 100)
-            this.setShouldShowFlash(false)
-        }
-        
-        return this
-    }
-    */
-    
-    
 }.initThisCategory());

@@ -19,10 +19,38 @@
         return this
     }
 
-    makeOrientationRight () { // left to right columns, top to bottom items?
-        this.setFlexDirection("column") //  need to use flex to avoid gaps in rows despite 0 marins
+    /*
+    makeOrientationRight () {  
+        //super.makeOrientationRight()
+
+        //stackview is right so nav is top to bottom
+        //this.debugLog("makeOrientationRight")
+
         this.setMinAndMaxWidth("100%")
+        this.setMinAndMaxHeight("fit-content")
+    }
+
+    makeOrientationDown () { 
+         //super.makeOrientationDown()
+       // stackview is down so nav is left to right
+
+       this.setMinAndMaxWidth("fit-content")
+       this.setMinAndMaxHeight("100%")
+    }
+    */
+
+    makeOrientationRight () { 
+        // stack left to right columns, so top to bottom items
+        this.setFlexDirection("column") //  need to use flex to avoid gaps in rows despite 0 marins
+
+        
+        this.setMinWidth("100%")
+        this.setHeight("fit-content")
         this.setMinHeight("100%")
+
+        //this.setMaxHeight("fit-content")
+        //this.setMinHeight("100%")
+
         //this.setMaxHeight("fit-content")
         //this.setFlexBasis("300px")
         //this.setMinAndMaxWidth("300px")
@@ -31,10 +59,13 @@
         this.debugLog("makeOrientationRight on ", this.node() ? this.node().title() : null)
     }
 
-    makeOrientationDown () { // top to bottom columns, left to right items?
+    makeOrientationDown () { 
+        // top to bottom columns, left to right items?
         this.setFlexDirection("row")
-        //this.setMinAndMaxWidth("fit-content")
-        this.setMinAndMaxWidth("100%")
+        //this.setMinWidth("fit-content") // won't scroll properly if this is 100%
+        //this.setMaxWidth("fit-content")
+        this.setMinWidth("100%")
+        this.setWidth("fit-content")
         this.setMinAndMaxHeight("100%")
         //this.setMinAndMaxWidth(null)
         //this.setMinAndMaxHeight("50px")   
@@ -53,7 +84,11 @@
     // --- get orientation ---
 
     isVertical () {
-        return this.stackView().direction() === "right"
+        const sv = this.stackView()
+        if (!sv) {
+            return null
+        }
+        return sv.direction() === "right"
     }
 
     // --- stacking general ---

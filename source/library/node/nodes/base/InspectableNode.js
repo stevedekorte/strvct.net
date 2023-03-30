@@ -47,7 +47,21 @@
     }
 
     setupInspectorFromSlots () {
-        this.thisPrototype().allSlotsMap().forEachV(slot => {
+        const slotsMap = this.thisPrototype().allSlotsMap()
+        const slotNames = slotsMap.keysArray()
+        
+        this.nodeInspector().setTitle(this.title() + " inspector")
+        {
+            // move "type" slot to first item
+            const s = "nodeType"
+            if (slotNames.indexOf(s !== -1)) {
+                slotNames.remove(s)
+                slotNames.unshift(s)
+            }
+        }
+        
+        slotNames.forEachV(slotName => {
+            const slot = slotsMap.at(slotName)
             if (slot.canInspect()) {
                 const field = slot.newInspectorField()
                 let pathNodes = null

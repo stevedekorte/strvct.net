@@ -164,16 +164,13 @@
         cv.setHeightPercentage(100) 
         cv.setPosition("relative")
         cv.setFloat("left")
-
         //cv.autoFitParentWidth().autoFitParentHeight() // can't do this since we need to float left for sliding
-
         //cv.setTransition("all 0.2s ease, transform 0s, left 0s, right 0s, width 0s, min-width 0s, max-width 0s")
         cv.setTransition("all 0s")
         cv.setZIndex(2) // so it will be above other views like the slide delete button 
         this.setZIndex(1)
         this.setContentView(cv)
         this.addSubview(cv)
-
         return this
     }
 
@@ -334,15 +331,18 @@
         //this.debugLog("makeOrientationRight")
 
         this.setDisplay("inline-block")  
-        this.setWidth("100%")
+
+        this.setMinAndMaxWidth("100%")
+        this.setMinAndMaxHeight("80px")
+
         //this.setWidth("fit-content")
         //this.setHeight("fit-content")
         //this.setHeight(this.parentView().desiredHeight())
         //this.setBorderBottom("1px solid rgba(255, 255, 255, 0.3)")
 
         //this.setBorderRight("1px solid rgba(255, 0, 0, 1)")
-        this.setMinAndMaxWidth(null) // new
-        this.setMinAndMaxHeight(null)
+        //this.setMinAndMaxWidth(null) // new
+        //his.setMinAndMaxHeight(null)
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
 
         /*
@@ -358,8 +358,12 @@
         this.setDisplay("inline-block")
         //this.setWidth("fit-content")
         //this.setWidth("170px")
-        this.setWidth(null)
-        this.setMinAndMaxWidth("100%")
+
+        this.setMinAndMaxWidth("200px")
+        this.setMinAndMaxHeight("100%")
+        
+
+
         //this.setMinAndMaxWHeight(null) // new
         //this.setWidth("100%") // want 100% if single item, like breadcrumb
         // otherwise, the stack view should figure out the widths using one of
@@ -378,7 +382,7 @@
                 //console.log("node " + this.node().title() + " height " + h)
                 if (h) {
                     this.setMinAndMaxHeight(h)
-                    this.contentView().setMinAndMaxHeight(h)
+                    //this.contentView().setMinAndMaxHeight(h)
                 }
             }
         }

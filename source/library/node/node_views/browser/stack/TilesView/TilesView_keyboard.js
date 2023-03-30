@@ -58,7 +58,7 @@
     }
 
     onMeta_n_KeyDown (event) {
-        this.debugLog(this.type() + " for " + this.node().title() + " onShiftPlusKeyUp")
+        this.debugLog(this.type() + " for " + this.node().title() + " onMeta_n_KeyDown")
         this.addIfPossible()
         event.stopPropagation()
         event.preventDefault()

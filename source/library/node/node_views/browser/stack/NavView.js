@@ -78,7 +78,11 @@
     }
 
     isVertical () {
-        return this.stackView().direction() === "right"
+        const sv = this.stackView()
+        if (!sv) {
+            return null
+        }
+        return sv.direction() === "right"
     }
 
     syncOrientation () {
@@ -117,12 +121,25 @@
     // ---
 
     makeOrientationRight () {
+        // stack view is top to bottom so nav is left to right
         this.setFlexDirection("column")
         this.setFlexBasis(this.targetWidth() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
+
+        /*
+        this.setOverflowX("hidden")
+        this.setOverflowY("scroll")
+        */
+
+        /*
         this.setBorderBottom(null)
         this.setBorderRight(this.borderStyle())
+        */
+        this.setBorderRight("1px solid #333")
+        this.setBorderBottom(null)
+
+
         this.scrollView().setIsVertical(true)
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
     }
@@ -132,10 +149,22 @@
         this.setFlexBasis(this.targetHeight() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
+
+        /*
+        this.setOverflowX("scroll")
+        this.setOverflowY("hidden")
+        */
+
+        /*
         this.setBorderRight(null)
         this.setBorderBottom(this.borderStyle())
+        */
+        this.setBorderRight(null)
+        this.setBorderBottom("1px solid #333")
+
         this.scrollView().setIsVertical(false)
         //this.setBoxShadow("inset 0 -10px 40px #222")
+
     }
 
     setNode (aNode) {
@@ -153,6 +182,7 @@
             const w = this.node().nodeMinTileWidth()
             if (w && !Type.isNullOrUndefined(w)) {
                 this.setMinAndMaxWidth(w)
+                this.setMinAndMaxHeight("100%")
                 /*
                 this.setFlexBasis(w + "px")
                 this.setFlexGrow(0)
@@ -162,6 +192,7 @@
         } else {
             const h = this.node().nodeMinTileHeight()
             if (h && !Type.isNullOrUndefined(h)) {
+                this.setMinAndMaxWidth("100%")
                 this.setMinAndMaxHeight(h)
             }
         }
