@@ -77,4 +77,10 @@
         return this
     }
 
+    applyStyles () {
+        console.log(this.type() + " themeClassName ", this.node().themeClassName())
+        super.applyStyles()
+        return this
+    }
+
 }.initThisClass());

@@ -348,6 +348,10 @@
         return this.parentNode()
     }
 
+    parentThemeClass () {
+        // 
+    }
+
     parentThemeState () {
         return this.themeClass().subnodeBefore(this)
     }

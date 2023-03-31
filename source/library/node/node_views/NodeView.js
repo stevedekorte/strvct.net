@@ -37,6 +37,16 @@
         return this
     }
 
+    themeClassName () {
+        if (this.node()) {
+            const name = this.node().themeClassName()
+            if (name) {
+                return name
+            }
+        }
+        return super.themeClassName()
+    }
+
     updateElementIdLabel () {
         this.element().id = this.debugTypeId()
         return this

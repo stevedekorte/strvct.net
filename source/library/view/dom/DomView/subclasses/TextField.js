@@ -152,13 +152,6 @@
 
     // ---
 
-    setPaddingTop (v) {
-        if (v === "0.6em") {
-            console.log(this.value() + " setPaddingTop " + v)
-        }
-        return super.setPaddingTop(v)
-    }
-
     // editing control
 
     /*

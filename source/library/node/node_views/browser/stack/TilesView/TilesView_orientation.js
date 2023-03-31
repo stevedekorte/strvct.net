@@ -55,30 +55,63 @@
         //this.setFlexBasis("300px")
         //this.setMinAndMaxWidth("300px")
         //this.setMinAndMaxHeight(null)
-        
+
+
         this.debugLog("makeOrientationRight on ", this.node() ? this.node().title() : null)
+
+        /*
+        this.tiles().forEach(item => {
+            //item.setWidth("fit-content")
+            item.setMinAndMaxWidth("100%")
+            item.setMinAndMaxHeight("fit-content")
+            //item.setHeight(this.desiredHeight()) // this could cause reflow, so let's avoid if we can
+            //console.log("    prepare for down orientation on subview ", item.node().title())
+        })
+        */
+
+        if (this.node()) {
+            const align = this.node().nodeChildrenAlignment()
+            this.setJustifyContent(null)
+            if (this.validAlignItemsPropertyValues().contains(align)) {
+                this.setAlignItems(align)
+            } else {
+                //this.node().setNodeChildrenAlignment(null) // can't do a node modifcation during a view update or sync loop will be detected
+            }
+        }
     }
 
     makeOrientationDown () { 
-        // top to bottom columns, left to right items?
+        // stackview is down, so items are left to right
         this.setFlexDirection("row")
-        //this.setMinWidth("fit-content") // won't scroll properly if this is 100%
-        //this.setMaxWidth("fit-content")
+
         this.setMinWidth("100%")
         this.setWidth("fit-content")
         this.setMinAndMaxHeight("100%")
+
         //this.setMinAndMaxWidth(null)
         //this.setMinAndMaxHeight("50px")   
         //this.setFlexBasis("300px")
 
         this.debugLog("makeOrientationDown on ", this.node() ? this.node().title() : null)
 
+        /*
         this.tiles().forEach(item => {
-            //item.setWidth("fit-content")
-            item.setHeight("fit-content")
+            //item.setMinAndMaxWidth("100%")
+            item.setMinAndMaxHeight("100%")
             //item.setHeight(this.desiredHeight()) // this could cause reflow, so let's avoid if we can
             //console.log("    prepare for down orientation on subview ", item.node().title())
         })
+        */
+
+        if (this.node()) {
+            const align = this.node().nodeChildrenAlignment()
+            if (this.validJustifyContentPropertyValues().contains(align)) {
+                this.setJustifyContent(align)
+            } else {
+                //this.node().setNodeChildrenAlignment(null) // can't do a node modifcation during a view update or sync loop will be detected
+            }
+            this.setAlignItems(null)
+        }
     }
 
     // --- get orientation ---

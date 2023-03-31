@@ -626,8 +626,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/CssDomView.js",
-    "size": 62380,
-    "hash": "ROIbme2K4N1heCWnv85fMXi+LX+gz9MkzYuuJWmRick="
+    "size": 62854,
+    "hash": "pRj+IFWvMnZYsDqR1ndzJSeR9a+92VKN4iDVhoy27rY="
   },
   {
     "path": "source/library/view/dom/DomView/SubviewsDomView.js",
@@ -736,8 +736,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 15410,
-    "hash": "9lUto7kjIJN6Oyeo9PwCPON9WLxD5rao69o7Muwq1MY="
+    "size": 15240,
+    "hash": "kVaUuSHjiQHeliZZAz3nv18+hJ9usQamtJDYd/itubI="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -771,8 +771,8 @@
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
-    "size": 7628,
-    "hash": "kSZwctICf3MY9zp4m8rM/FhG/OVtA9ATLtWP+Ljvfz0="
+    "size": 8105,
+    "hash": "o3qLfTqHCUOKrpmAjvPvgEKjQOp7mS39od8x+zcGpdI="
   },
   {
     "path": "source/library/node/nodes/base/StyledNode.js",
@@ -1056,8 +1056,8 @@
   },
   {
     "path": "source/library/node/node_views/NodeView.js",
-    "size": 10099,
-    "hash": "hW9Ioa69FoTYZBVZSM5k9CTkgYtWnmvitRR7ftbrsPE="
+    "size": 10325,
+    "hash": "2gbWevL+buiJuvR2+2xJo6t9RzPjEiVEIeXSmALH8yM="
   },
   {
     "path": "source/library/node/node_views/ImageWellView.js",
@@ -1081,8 +1081,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
-    "size": 8863,
-    "hash": "dqU78WyScbyqxU6URI5xbPZHCa1l94n0Ik0YmkpJqcQ="
+    "size": 9618,
+    "hash": "XFuzjqDVdLii1T0Bt0yY/k/ShiilXqWO0twfBieEVuQ="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackScrollView.js",
@@ -1091,8 +1091,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView.js",
-    "size": 7727,
-    "hash": "tIIbaLkxhwwHVO7Yg9RnUv8ub8n4nLybZWpTXAPODYg="
+    "size": 7729,
+    "hash": "sf2CIvsGlsMHdmu7tT9cea+ubAUOrUY+EjLRYXFEptU="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_dragViewProtocol.js",
@@ -1106,8 +1106,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_orientation.js",
-    "size": 6748,
-    "hash": "rw4gPEW9xAfjASrWJYu5nnZtWg6pB5Yj/gfTrmGANHA="
+    "size": 7925,
+    "hash": "AFK6uoHUExX2DqYnqsM0UoDZr7N3PwD57injeH9H7PM="
   },
   {
     "path": "source/library/node/node_views/browser/stack/TilesView/TilesView_keyboard.js",
@@ -1126,8 +1126,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile.js",
-    "size": 13519,
-    "hash": "QtxeTrwazu31HKCe+on3MIaQgd6uM+HRJv1IpxZDXJU="
+    "size": 13642,
+    "hash": "AqjNqpGoxHe1wTGfCgYqSEIcNyKCtSHgailoLYLMldc="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_dragging.js",
@@ -1161,8 +1161,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BMTextNodeTile.js",
-    "size": 1570,
-    "hash": "z45JzvN9LYwYuSWv6qhwxEyNczT4sEWrzNwBCVu1Lwg="
+    "size": 1730,
+    "hash": "oLxrgghy0590K4dEiK0jzjo3UAROO860TSZCvnCzA3c="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/BreadCrumbsTile.js",

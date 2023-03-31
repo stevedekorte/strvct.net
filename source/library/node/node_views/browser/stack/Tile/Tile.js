@@ -327,13 +327,15 @@
         return this
     }
 
-    makeOrientationRight () {  //stackview is right (other view is on the right and nav is top to bottom)
-        //this.debugLog("makeOrientationRight")
+    makeOrientationRight () {  
+        // stackview is right so tiles are top to bottom
 
         this.setDisplay("inline-block")  
 
         this.setMinAndMaxWidth("100%")
-        this.setMinAndMaxHeight("80px")
+        this.setMinHeight("5em")
+        this.setHeight("fit-content")
+        this.setMaxHeight(null)
 
         //this.setWidth("fit-content")
         //this.setHeight("fit-content")
@@ -353,13 +355,18 @@
     }
 
     makeOrientationDown () { 
+
+        // stackview is down so tiles are left to right
         //this.debugLog("makeOrientationDown")
 
         this.setDisplay("inline-block")
         //this.setWidth("fit-content")
         //this.setWidth("170px")
 
-        this.setMinAndMaxWidth("200px")
+        this.setMinAndMaxWidth("17em")
+        this.setWidth("fit-content")
+        this.setMaxWidth(null)
+
         this.setMinAndMaxHeight("100%")
         
 

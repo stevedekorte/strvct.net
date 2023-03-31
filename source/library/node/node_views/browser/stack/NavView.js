@@ -121,16 +121,23 @@
     // ---
 
     makeOrientationRight () {
-        // stack view is top to bottom so nav is left to right
+        // stack view is left to right, so nav items are top to bottom
         this.setFlexDirection("column")
-        this.setFlexBasis(this.targetWidth() + "px")
+        //this.setFlexBasis(this.targetWidth() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
 
-        /*
-        this.setOverflowX("hidden")
-        this.setOverflowY("scroll")
-        */
+        // this are handled in sync to node
+        this.setMinAndMaxWidth("17em") // syncFromNode can override if node requests a sizes
+        this.setMinAndMaxHeight("100%")
+
+        if (this.node()) {
+            if (this.node().nodeFillsRemainingWidth()) {
+                this.setMinWidth("fit-content") // should only do this if it's the last node?
+                this.setWidth(null)
+                this.setMaxWidth("auto") // should only do this if it's the last node?
+            }
+        }
 
         /*
         this.setBorderBottom(null)
@@ -139,21 +146,26 @@
         this.setBorderRight("1px solid #333")
         this.setBorderBottom(null)
 
-
         this.scrollView().setIsVertical(true)
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
     }
 
     makeOrientationDown () {
+        // stack view is top to bottom, so nav items are left to right
+
         this.setFlexDirection("row")
-        this.setFlexBasis(this.targetHeight() + "px")
+        //this.setFlexBasis(this.targetHeight() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
 
-        /*
-        this.setOverflowX("scroll")
-        this.setOverflowY("hidden")
-        */
+        this.setMinAndMaxWidth("100%")
+        this.setMinAndMaxHeight("5em")
+
+        if (this.node()) {
+            if (this.node().nodeFillsRemainingWidth()) {
+               // this.setMinAndMaxHeight("100%")
+            }
+        }
 
         /*
         this.setBorderRight(null)
@@ -188,13 +200,16 @@
                 this.setFlexGrow(0)
                 this.setFlexShrink(0)
                 */
-            }
+            } 
         } else {
             const h = this.node().nodeMinTileHeight()
             if (h && !Type.isNullOrUndefined(h)) {
                 this.setMinAndMaxWidth("100%")
                 this.setMinAndMaxHeight(h)
-            }
+            } /*else {
+                this.setMinAndMaxWidth("100%")
+                this.setMinAndMaxHeight("5em")
+            }*/
         }
 
         return this

@@ -28,11 +28,10 @@
                 slot.setInspectorPath(path)
                 slot.setLabel(label)
                 slot.setShouldStoreSlot(true)
-                slot.setDuplicateOp("duplicate")
+                slot.setDuplicateOp("copyValue")
                 slot.setSlotType("String")
                 slot.setValidValues(values)
                 slot.setCanInspect(true)
-
                 return slot
             }
             addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure(() => { 
@@ -65,7 +64,18 @@
             slot.setCanInspect(true)
             slot.setLabel("is vertical")
             slot.setSlotType("Boolean")
-            slot.setInspectorPath("Layout")
+            slot.setInspectorPath("Children Layout")
+            slot.setShouldStoreSlot(true)
+        }
+
+        {
+            const slot = this.newSlot("nodeChildrenAlignment", "Start")
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("alignment")
+            slot.setSlotType("String")
+            slot.setValidValues(["flex-start", "center", "flex-end", "space-between", "space-around"])
+            slot.setInspectorPath("Children Layout")
             slot.setShouldStoreSlot(true)
         }
 
@@ -120,7 +130,7 @@
             slot.setLabel("fills remaining")
             slot.setCanEditInspection(false)
             slot.setCanInspect(false)
-            slot.setInspectorPath("Layout")
+            slot.setInspectorPath("Children Layout")
         }
 
         {
@@ -130,7 +140,7 @@
             slot.setCanEditInspection(true)
             slot.setCanInspect(true)
             slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("Layout")
+            slot.setInspectorPath("Children Layout")
         }
 
         {

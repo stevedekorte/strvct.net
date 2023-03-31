@@ -1097,8 +1097,12 @@
 
     // float
 
+    validFloatPropertyValues () {
+        return [null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"]
+    }
+
     setFloat (v) {
-        assert([null, "left", "right", "none", "inline-start", "inline-end", "start", "end", "initial", "inherit"].contains(v))
+        assert(this.validFloatPropertyValues().contains(v))
         this.setCssProperty("float", v)
         return this
     }
@@ -1121,8 +1125,12 @@
 
     // sizing
 
+    validBoxSizingPropertyValues () {
+        return [null, "inherit", "content-box", "border-box"]
+    }
+
     setBoxSizing (s) {
-        // valid values: ["inherit", "content-box", "border-box"]
+        assert(this.validBoxSizingPropertyValues().contains(s))
         return this.setCssProperty("box-sizing", s)
     }
 
@@ -1400,8 +1408,12 @@
 
     // flex align-items (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
 
+    validAlignItemsPropertyValues () {
+        return [null, "flex-start", "center", "flex-end", "space-between", "space-around", "stretch"]
+    }
+
     setAlignItems (v) {
-        assert([null, "flex-start", "center", "flex-end"].contains(v))
+        assert(this.validAlignItemsPropertyValues().contains(v))
         this.setCssProperty("align-items", v)
         return this
     }
@@ -1412,8 +1424,12 @@
 
     // flex justify-content (flex-start, center, flex-end) - NOTE: alignment depends on direct of flex!
     
+    validJustifyContentPropertyValues () {
+        return [null, "flex-start", "center", "flex-end", "space-between", "space-around"]
+    }
+
     setJustifyContent (v) {
-        assert([null, "flex-start", "center", "flex-end"].contains(v))
+        assert(this.validJustifyContentPropertyValues().contains(v))
         this.setCssProperty("justify-content", v)
         return this
     }
