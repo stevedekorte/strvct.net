@@ -7,14 +7,6 @@
 */
 
 (class BMThemeClass extends BMThemeFolder {
-  initPrototypeSlots () {
-      this.newSlot("standardStateNames", [
-        "disabled",
-        "unselected", 
-        "selected", 
-        "active"
-      ]);
-  }
 
   init () {
     super.init();
@@ -25,61 +17,22 @@
     this.setTitle("Untitled " + this.thisClass().visibleClassName());
     this.setSubtitle("class")
     this.setCanDelete(true);
-    this.addAction("add");
     this.setSubnodeClasses([BMThemeState, BMThemeFolder]);
     this.setNodeCanReorderSubnodes(true);
-    this.removeAction("add")
   }
 
-  /*
-  setSubtitle (s) {
-    if (this.subtitle() && (s === "" || s === null)) {
-      debugger;
-    }
-    super.setSubtitle(s)
-    return this
-  }
-  */
-
-  didInit () {
-    super.didInit();
+  initForNonDeserialization () {
+    super.initForNonDeserialization();
     this.setSubtitle("class")
-    //this.removeAction("add")
-
-    //console.log(this.typeId() + " subnodes: ", this.subnodes())
     this.setupSubnodes();
   }
 
-  subnodeNames () {
-    return this.standardStateNames();
-  }
-
   setupSubnodes () {
-    const subnodeClass = this.subnodeClasses().first();
-    this.subnodeNames().forEach((name) => {
-      const subnode = this.subnodeWithTitleIfAbsentInsertProto(
-        name,
-        subnodeClass
-      );
-    });
-  }
-
-  // --- states ---
-
-  activeThemeState () {
-    return this.firstSubnodeWithTitle("active");
-  }
-
-  unselectedThemeState () {
-    return this.firstSubnodeWithTitle("unselected");
-  }
-
-  selectedThemeState () {
-    return this.firstSubnodeWithTitle("selected");
-  }
-
-  disabledThemeState () {
-    return this.firstSubnodeWithTitle("disabled");
+    debugger
+    if (!this.hasSubnodes()) {
+      this.subnodeWithTitleIfAbsentInsertProto("states", BMThemeStates);
+      this.subnodeWithTitleIfAbsentInsertProto("children", BMThemeClassChildren);
+    }
   }
 
   // --- default ---
@@ -87,83 +40,25 @@
   setupAsDefault() {
     this.setTitle("Tile");
     this.setupSubnodes();
-    this.subnodes().forEach((sn) => sn.didInit());
-
-    this.setupActiveDefault();
-    this.setupUnselectedDefault();
-    this.setupSelectedDefault();
-    this.setupDisabledDefault();
-
-    //this.setupColumnsDefault()
+    this.states().setupAsDefault()
     return this;
   }
 
-  // --- default states ---
-
-  setupActiveDefault () {
-    const state = this.activeThemeState();
-    //state.setColor("white")
-    //state.setBackgroundColor("#333")
-    state.setThemeAttribute("color", "white");
-    state.setThemeAttribute("backgroundColor", "#333");
-    //state.setThemeAttribute("fontWeight", "normal");
-    state.setThemeAttribute("paddingLeft", "22px");
-    state.setThemeAttribute("paddingRight", "22px");
-    state.setThemeAttribute("paddingTop", "8px");
-    state.setThemeAttribute("paddingBottom", "8px");
-
+  stateWithName (name) {
+    return this.states().stateWithName(name);
   }
 
-  setupUnselectedDefault () {
-    const state = this.unselectedThemeState();
-    state.setThemeAttribute("color", "#bbb");
-    state.setThemeAttribute("backgroundColor", "transparent");
-    //state.setThemeAttribute("fontWeight", "normal");
+  states () {
+    return this.firstSubnodeWithTitle("states");
   }
 
-  setupSelectedDefault () {
-    const state = this.selectedThemeState();
-    state.setThemeAttribute("color", "white");
-    state.setThemeAttribute("backgroundColor", "#222");
-    //state.setThemeAttribute("fontWeight", "normal");
+  children () {
+    return this.firstSubnodeWithTitle("children");
   }
 
-  setupDisabledDefault () {
-    const state = this.disabledThemeState();
-    state.setThemeAttribute("color", "#ccc");
-    //state.setThemeAttribute("backgroundColor", "transparent");
-    //state.setThemeAttribute("fontWeight", "normal");
-  }
-
-  setupColumnsDefault () {
-    const columns = BMThemeFolder.clone().setTitle("columns");
-    this.addSubnode(columns);
-
-    const colors = [
-      [60, 60, 60],
-      [48, 48, 48],
-      [32, 32, 32],
-      [26, 26, 26],
-      [16, 16, 16],
-    ];
-
-    colors.forEach((c) => {
-      const cssColorString = "rgb(" + c.join(",") + ")";
-      const field = BMStringField.clone()
-        .setKey("backgroundColor")
-        .setValue(cssColorString);
-      columns.addSubnode(field);
-    });
-  }
-
-  // -- heplers ---
-
-  themeAttributeNamed(name) {
-    return this.firstSubnodeWithTitle(name);
-  }
-
-  themeSubclassNamed(name) {
-    return this.firstSubnodeWithTitle(name);
+  selfAndAllThemeChildren () {
+    const children = this.children().subnodes().map(themeClass => themeClass.selfAndAllThemeChildren())
+    return [this].concat(children.flat())
   }
 
 }.initThisClass());

@@ -58,7 +58,7 @@ const nodePath = require('path');
 
 	onRequest (request, response) {
 		//console.log("got request ", request)
-		const r = new StrvctHttpsServerRequest()
+		const r = StrvctHttpsServerRequest.clone()
 		r.setServer(this)
 		r.setRequest(request)
 		r.setResponse(response)

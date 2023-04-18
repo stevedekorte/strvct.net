@@ -56,18 +56,6 @@
         return this
     }
 
-    didInit () {
-        /*
-        this.store().promiseOpen().then(() => {
-            //this.removeAllSubnodes()
-            //this.collectGarbage()
-            //debugger
-            this.postNoteNamed("blobsDidOpen")
-        })
-
-        */
-    }
-
     promiseOpen () {
         debugger
         return this.store().promiseOpen()

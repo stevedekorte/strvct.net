@@ -527,13 +527,6 @@
         this.newSlot("enabled", false)
     }
 
-    /*
-    init () {
-        super.init() 
-        return this
-    }
-    */
-
     beginFrame () {
         //console.log("--- new frame ---")
         this.setNeedsReflow(false)

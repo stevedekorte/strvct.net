@@ -56,6 +56,10 @@
 
     // open
 
+    isOpen () {
+        return this.idb().isOpen()
+    }
+
     open () {
         throw new Error(this.type() + " synchronous open not supported")
         return this

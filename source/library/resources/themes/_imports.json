@@ -5,6 +5,6 @@
     "BMDefaultTheme.js",
     "BMThemeClass.js",
     "BMThemeState.js",
-    "BMThemeLevelClass.js",
-    "BMThemeLeveledFolder.js"
+    "BMThemeStates.js",
+    "BMThemeClassChildren.js"
 ]

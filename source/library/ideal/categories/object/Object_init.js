@@ -26,7 +26,7 @@
 
     - appDidInit (when the Application posts an appDidInit notification)
 
-        Implement an appDidInit() method, and in init() call this.listenForAppdidInit().
+        Implement an appDidInit() method, and in init() call this.listenForAppDidInit().
 
 
 */
@@ -48,7 +48,25 @@
         return this
     }
 
+    initForNonDeserialization () {
+        //console.log(this.type() + ".initForNonDeserialization")
+    }
+
+    initForDeserialization () {
+        //console.log(this.type() + ".initForDeserialization")
+    }
+
     afterInit () {
+        //console.log(this.type() + ".afterInit")
+
+        if (this.isDeserializing) {
+            if (this.isDeserializing()) {
+                this.initForDeserialization()
+            } else {
+                this.initForNonDeserialization()
+            }
+        }
+
         assert(!this.hasDoneInit()) // sanity check
         if (this.shouldScheduleDidInit()) {
             this.scheduleDidInit() // implemented in Object_init.js

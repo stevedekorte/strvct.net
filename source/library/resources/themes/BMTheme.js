@@ -24,17 +24,20 @@
     this.setCanDelete(true);
     this.addAction("add");
     //this.setSubnodeClasses([BMThemeLevel]);
-    this.setSubnodeClasses([BMThemeClass, BMThemeFolder, BMThemeLeveledFolder]);
+    this.setSubnodeClasses([BMThemeClass]);
     this.setNodeCanReorderSubnodes(true);
     //this.setupSubnodes()
   }
 
   setupAsDefault () {
+    debugger
     this.setTitle("DefaultTheme");
     const defaultThemeClass = BMThemeClass.clone().setupAsDefault();
     this.addSubnode(defaultThemeClass);
     return this;
   }
+
+  // --- 
 
   themeClassNamed (name) {
     return this.firstSubnodeWithTitle(name)
@@ -52,6 +55,31 @@
         options.addSubnode(option)
     })
     return options
-}
+  }
+
+  themeClassNamed (name) {
+    return this.allThemeClasses().detect(themeClass => themeClass.title() === name)
+/*
+    const themeClass = this.firstSubnodeWithTitle(className)
+    if (themeClass) {
+      return themeClass.themeClassNamed(name)
+    }
+    return null
+    */
+  }
+
+  allThemeClasses () {
+    return this.subnodes().map(themeClass => themeClass.selfAndAllThemeChildren()).flat()
+  }
+
+  allThemeClassesMap () {
+    const map = new Map()
+    this.allThemeClasses().forEach(themeClass => map.set(themeClass.title(), themeClass))
+    return map
+  }
+
+  stateWithName (name) {
+    return this.states().stateWithName(name)
+  }
 
 }.initThisClass());

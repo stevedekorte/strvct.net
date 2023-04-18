@@ -7,29 +7,14 @@
 */
 
 (class BMDefaultTheme extends BMTheme {
-    
-    /*
-    initPrototype () {
-        this.setShouldScheduleDidInit(true)
-    }
-    */
 
-    init () {
-        this.setShouldScheduleDidInit(true)
-        super.init()
-        return this
-    }
-
-    didInit () {
-        //debugger;
-        //console.log(this.typeId() + " didInit")
-
-        super.didInit()
+    initForNonDeserialization () {
+        super.initForNonDeserialization();
         this.setupAsDefault() 
     }
 
     setupAsDefault () {
-        if (this.subnodes().length === 0) {
+        if (!this.hasSubnodes()) {
             //debugger
             this.setTitle("DefaultTheme")
             const defaultThemeClass = BMThemeClass.clone().setupAsDefault()

@@ -217,24 +217,8 @@
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
-    /*
-    scheduleDidInit () {
-        console.log(this.debugTypeId() + " scheduleDidInit")
-        //debugger;
-        super.scheduleDidInit()
-    }
-    */
-
-    didInit () {
-        if (this.hasDoneInit()) {
-            // hack to skip if already called from ThemeClass setupAsDefault 
-            console.log(this.typeId() + " didInit - already called so skipping")
-            return
-        }
-        //debugger;
-        assert(!this.hasDoneInit())
-        //console.log(this.typeId() + " didInit setupSubnodes: ", this.subnodes().map(sn => sn.typeId()))
-        super.didInit()
+    initForNonDeserialization () {
+        super.initForNonDeserialization()
         this.setupSubnodes()
     }
 
@@ -356,6 +340,16 @@
         return this.themeClass().subnodeBefore(this)
     }
 
+    /*
+       do lookup of style within theme
+       this follows parent themeClasses on the same state, and then goes to the parent states
+       e.g. if Tile is the parent of StringTile, and the view's state is "selected"
+       we would follow this lookup path until we found a non-null value:
+       StringTile/selected -> Tile/selected -> 
+       StringTile/unselected -> Tile/unselected ->
+       StringTile/disabled -> Tile/disabled ->
+    */
+    
     getStyleValueNamed (name) {
         const getterMethod = this[name]
 
@@ -382,7 +376,24 @@
         return v
     }
 
-    // --- apply styles ---
+    // --- apply style  ---
+
+    applyToView (aView) {
+        this.applyStyleSlotsToView(this.styleSlots(), aView)
+        return this
+    }
+
+    applyNonBorderStylesToView (aView) {
+        this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView)
+        return this
+    }
+
+    applyBorderStylesToView (aView) {
+        this.applyStyleSlotsToView(this.borderStyleSlots(), aView)
+        return this
+    }
+
+    // --- apply styles slots ---
 
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
@@ -397,23 +408,6 @@
                 console.log("style " + name + " locked on view " + aView.type())
             }
         })
-        return this
-    }
-
-    applyToView (aView) {
-        this.applyStyleSlotsToView(this.styleSlots(), aView)
-        return this
-    }
-
-    // --- apply style subsets ---
-
-    applyNonBorderStylesToView (aView) {
-        this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView)
-        return this
-    }
-
-    applyBorderStylesToView (aView) {
-        this.applyStyleSlotsToView(this.borderStyleSlots(), aView)
         return this
     }
 
@@ -457,6 +451,12 @@
             // these look like: disabled.backgroundColor: "black"
         })
         return map
+    }
+
+    // --- helpers ---
+
+    attributeNamed (name) {
+        return this.firstSubnodeWithTitle(name)
     }
 
 }.initThisClass());

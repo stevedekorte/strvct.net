@@ -59,21 +59,12 @@
 
     init () {
         super.init()
+        this.scheduleMethod("moveToBase")
+        //this.scheduleMethod("pullPathFromUrlHash")
         return this
     }
 
-    didInit () {
-        super.didInit()
-        this.scheduleMethod("moveToBase")
-    }
-
     /*
-    didInit () {
-        super.didInit()
-        this.scheduleMethod("pullPathFromUrlHash")
-    }
-
-
     pullPathFromUrlHash () {
         const path = App.shared().mainWindow().urlHash()
         if (path.length) {
@@ -102,6 +93,8 @@
     }
 
     moveToBase () {
+        assert(this.headerNode())
+        assert(this.breadCrumbsNode())
         this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
         return this
     }

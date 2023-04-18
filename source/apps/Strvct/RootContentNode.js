@@ -26,8 +26,6 @@
         this.newSlot("headerNode", null)
     }
 
-    // ---
-
     init () {
         super.init()
         this.setTitle("Root Content Node")
@@ -35,22 +33,17 @@
         //this.addAction("add")
         this.setNodeMinTileHeight(55)
         this.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
-        return this
-    }
 
-    didInit () {
-        super.didInit()
-        // This didInit *may not execute before* the didInit of other nodes such as the header and breadcrumbs.
-        //debugger;
-
-        // subnodes
-        this.setupHeaderNode()
+        if (!this.isDeserializing()) {
+            this.setupSubnodes()
+        }
         return this
     }
 
     // header
 
-    setupHeaderNode () {
+    setupSubnodes () { // setup header node
+        //debugger;
         if (this.subnodes().length > 1) {
             debugger;
             this.removeAllSubnodes()
@@ -70,7 +63,7 @@
     }
 
     newHeaderNode () {
-        debugger;
+        //debugger;
         const node = HeaderNode.clone() // FolderNode?
         node.setNodeTileClassName("HeaderTile")
         node.setNodeMinTileHeight(55)

@@ -10,28 +10,29 @@
 
 */
 
-
-
-
 (class ProtoClass extends Object {
 
    // --- clone ---
 
     static clone () {
         if (this.isSingleton() && this.hasShared()) {
-         //   debugger;
             // kinda weird dealing with shared in clone like this
             // do we do this to deal with deserialization of singletons?
             return this.shared() 
         }
 
-        const obj = new this() 
-        obj.init()
+        const obj = new this()
+        assert(obj._initArguments === null)
+        obj._initArguments = arguments
+
+        obj.init(arguments)
 
         if (this.isSingleton()) {
             this.setShared(obj)
         }
         obj.afterInit()
+
+        obj._initArguments = null
 
         //this.allInstancesWeakSet().add(obj)
 
@@ -164,7 +165,6 @@
     }
 
     // --- instance ---
-
 
     initPrototypeSlots () {
         this.newSlot("isDebugging", false)

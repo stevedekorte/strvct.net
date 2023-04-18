@@ -1,10 +1,26 @@
 "use strict";
 
 
+/*
+Object.defineSlots(typedArrayClass.prototype, {
+    _isDeserializing: false
+})
+*/
+
 (class Object_store extends Object {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
-        return this.clone()
+        debugger;
+        return this.clone({ _isDeserializing: true, _store: aStore })
+    }
+
+    isDeserializing () { 
+        // this needs to be call with init's arguments
+        // e.g. this.initIsDeserializing.call(this, arguments)
+        const args = this._initArguments
+        assert(args !== undefined)
+        const isDeserializing = args && args.length && args[0]._isDeserializing
+        return isDeserializing
     }
 
     loadFromRecord (aRecord, aStore) {

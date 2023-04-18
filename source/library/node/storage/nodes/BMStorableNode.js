@@ -13,7 +13,6 @@
 
 (class BMStorableNode extends StyledNode {
 
-
     initPrototypeSlots () {
         this.setShouldStore(true)
         this.setShouldScheduleDidInit(true)
@@ -59,11 +58,6 @@
             slot.setShouldStoreSlot(false)
         }
         */
-    }
-
-    didInit () {
-        super.didInit()
-        return this
     }
 
     // --- udpates ---

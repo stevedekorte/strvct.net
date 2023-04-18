@@ -15,7 +15,6 @@ if (!String.prototype.capitalized) {
     // Base class with helpful methods for cloning and slot creation 
 
     constructor () {
-        this.init()
     }
 
     static initThisClass () {
@@ -51,7 +50,7 @@ if (!String.prototype.capitalized) {
 
     static clone () {
         const obj = new this()
-        //obj.init()
+        obj.init()
         return obj
     }
     
@@ -65,7 +64,7 @@ if (!String.prototype.capitalized) {
         }
 
         if (initialValue === undefined) { 
-            initialValue = null 
+            initialValue = null;
         };
 
         const privateName = "_" + slotName;
@@ -77,7 +76,7 @@ if (!String.prototype.capitalized) {
             }
         }
 
-        const setterName = "set" + slotName.capitalized()
+        const setterName = "set" + slotName.capitalized();
 
         if (!this[setterName]) {
             this[setterName] = function (newValue) {

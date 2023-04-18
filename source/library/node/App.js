@@ -27,11 +27,25 @@
     // we open store from app class since we might want to load app instance from store
 
     static loadAndRunShared () {
-        this.defaultStore().setName(this.type()) // name of the database
-        //this.defaultStore().promiseOpen().then(() => { this.cfcx() })
-        //return 
+        const store = this.defaultStore()
+        store.setName(this.type()) // name of the database
+        const clearFirst = true
 
-        this.defaultStore().promiseOpen().then(() => { 
+        if (clearFirst) {
+            store.promiseDeleteAll().then(() => { 
+                console.log(">>>>>>>>>>>>>>>> cleared db <<<<<<<<<<<<<<<")
+                //debugger
+                store.close()
+                this.justOpen()
+            })
+        } else {
+            this.justOpen()
+        }
+    }
+
+    static justOpen () {
+        const store = this.defaultStore()
+        store.promiseOpen().then(() => { 
             this.onPoolOpenSuccess(this.defaultStore()) 
         }).catch((error) => {
             console.warn("ERROR: ", error)
@@ -45,8 +59,18 @@
     }
 
     static onPoolOpenSuccess (aPool) {
-        this.defaultStore().rootOrIfAbsentFromClosure(() => this.rootNodeProto().clone()) // create the root object
+        const store = this.defaultStore()
+
+        console.log(">>>>>>> store count: ", store.count())
+        store.rootOrIfAbsentFromClosure(() => {
+            //debugger
+            return this.rootNodeProto().clone()
+        }) // create the root object
         //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
+        this.launchAppAfterOpen()
+    }
+
+    static launchAppAfterOpen () {
         const app = this.clone()
         this.setShared(app)
         app.run()

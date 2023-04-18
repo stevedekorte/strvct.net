@@ -11,12 +11,6 @@
 
 (class Date_ideal extends Date {
 
-    /*
-    static clone () {
-        return new Date(this.getTime())
-     }
-    */
-
     copy () {
         return this.shallowCopy()
      }

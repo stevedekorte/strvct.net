@@ -77,11 +77,14 @@
         this.setNodeCanEditTitle(true)
         this.setNodeIsVertical(false) 
         this.setCanDelete(false)
+
+        if (!this.isDeserializing()) {
+            this.setupSubnodes()
+        }
         return this
     }
 
-    didInit () {
-        super.didInit()
+    setupSubnodes () {
         // This didInit *may not execute before* the didInit of other nodes such as the header and breadcrumbs.
         //debugger;
 
@@ -91,13 +94,12 @@
         }
 
         if (!this.themes()) {
-            debugger;
             this.setThemes(BMThemeResources.shared())
         }
 
         if (!this.prototypes()) {
             //this.setPrototypes(BMPrototypesNode.shared())
-        }        
+        }
 
         // subnodes
         this.setupBreadCrumbsNode()
@@ -107,8 +109,6 @@
     // bread crumbs
 
     setupBreadCrumbsNode () {
-        //debugger
-
         if (this.subnodes().length > 1) {
             this.removeAllSubnodes()
         }

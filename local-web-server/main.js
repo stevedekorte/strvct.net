@@ -2,6 +2,6 @@
 
 require("./StrvctHttpsServer.js")
 
-const server = new StrvctHttpsServer()
+const server = StrvctHttpsServer.clone()
 server.run()
 

@@ -28,6 +28,9 @@ if (!String.prototype.capitalized) {
     )
 }
 // ------------------------------------------------------------------
+// a quick and dirty base class used for bootstrapping a more
+// full featured ProtoClass base class & Object categories
+// ------------------------------------------------------------------
 
 (class Base {
     // Base class with helpful methods for cloning and slot creation 
@@ -77,7 +80,7 @@ if (!String.prototype.capitalized) {
 
     static clone () {
         const obj = new this()
-        obj.init()
+        obj.init(arguments) 
         return obj
     }
 

@@ -151,8 +151,8 @@
         return this
     }
 
-    // -----------------------------------------
-
+    // --- path array for debugging --------------------------------------
+    
     themePathArray () {
         // using this is problematic as we may want to make the path 
         // dependent of complex things e.g. if the themeClassName isn't
@@ -175,15 +175,25 @@
         return path
     }
 
+    themePathString () {
+        return this.themePathArray().join(" / ")
+    }
+    
+    // --- getting current theme/state/attribute ---
+
+    // --- theme class ---
+
     currentThemeClass () {
         const theme = BMThemeResources.shared().activeTheme()
         if (!theme) {
             return null
         }
         const className = this.themeClassName() ? this.themeClassName() : "DefaultThemeClass"
-        const themeClass = theme.firstSubnodeWithTitle(className)
+        const themeClass = theme.themeClassNamed(className)
         return themeClass
     }
+
+    // --- theme state ---
 
     currentThemeStateName () {
         let stateName = "unselected"
@@ -208,25 +218,23 @@
         let state = null
         if (tc) {
             let stateName = this.currentThemeStateName()
-            const state = tc.firstSubnodeWithTitle(stateName)
+            const state = tc.stateWithName(stateName)
             assert(state)
             return state
         }
         return null
     }
 
-    themePathString () {
-        return this.themePathArray().join(" / ")
-    }
+    // --- theme attribute ---
 
     themeValueForAttribute (attributeName) {
         const stateNode = this.currentThemeState()
         if (stateNode) {
-            const attribtueNode = stateNode.firstSubnodeWithTitle(attributeName)
+            const attribtueNode = stateNode.attributeNamed(attributeName)
             if (attribtueNode) {
                 const value = attribtueNode.value()
                 if (!value) {
-                    console.log("no color found for ", this.themePathString() + " / " + attributeName)
+                    console.log("no attribute found for ", this.themePathString() + " / " + attributeName)
                     return null
                 }
                 //console.log("theme: " + fullPathString + " = " + value)
@@ -238,17 +246,14 @@
         return null
     }
 
-    // -------------------------------------
+    // --- theme attribute helpers ----------------------------------
 
     currentColor () {
         const v = this.themeValueForAttribute("color")
         if (v) {
             return v
         }
-        //console.log(this.typeId() + ".themeValueForAttribute('color') = ", v)
-        //debugger;
         return "inherit"
-        //return "yellow"
     }
 
     currentBgColor () {
@@ -257,7 +262,6 @@
             return v
         }
         return "inherit"
-        //return "orange"
     }
 
     resyncAllViews () {

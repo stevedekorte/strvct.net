@@ -75,8 +75,10 @@
 
     static clone () {
         const obj = new this()
+        assert(obj._initArguments !== undefined)
+        obj._initArguments = arguments
         obj.init()
-        obj.afterInit()
+        obj.afterInit.call(obj, arguments)
         return obj
     }
 
@@ -216,6 +218,7 @@
         /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(this, "_slotsMap", new Map())
         Object.defineSlot(this, "_allSlotsMap", new Map())
+        Object.defineSlot(this, "_initArguments", null)
         this.setupAllSlotsMap()
 
         // We need to separate initPrototypeSlots, initSlots, initPrototype as

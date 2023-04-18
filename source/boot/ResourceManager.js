@@ -146,9 +146,9 @@ class UrlResource {
     }
 
     static clone () {
-        const instance = new this()
-        instance.init()
-        return instance
+        const obj = new this()
+        obj.init()
+        return obj
     }
 	
     init () {

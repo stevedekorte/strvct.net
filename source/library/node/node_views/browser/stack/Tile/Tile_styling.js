@@ -8,7 +8,6 @@
 
 (class Tile_styling extends Tile {
     
-    
     didUpdateSlotParentView (oldValue, newValue) {
         super.didUpdateSlotParentView(oldValue, newValue)
         //this.scheduleMethod("applyStyles")

@@ -324,6 +324,7 @@
         this.removeMutationObservations()
         this.setActiveObjects(new Map())
         this.setDirtyObjects(new Map())
+        this.recordsMap().close()
         return this
     }
 
@@ -792,25 +793,31 @@
     }
 
     promiseDeleteAll () {
-        assert(this.isOpen())
-        // assert not loading or storing?
-        const map = this.recordsMap()
-        map.begin()
-        map.forEachK(pid => {
-            map.removeKey(pid)
-        }) // the remove applies to the changeSet
-        debugger
-        return map.promiseCommit()
+        return this.promiseOpen().then(() => {
+            assert(this.isOpen())
+            // assert not loading or storing?
+            const map = this.recordsMap()
+            map.begin()
+            map.forEachK(pid => {
+                map.removeKey(pid)
+            }) // the remove applies to the changeSet
+            //debugger
+            return map.promiseCommit()
+        })
     }
 
     promiseClear () {
-        return this.recordsMap().promiseClear(resolve, reject)
+        return this.recordsMap().promiseClear()
     }
 
     // ---------------------------
 
     rootSubnodeWithTitleForProto (aTitle, aProto) {
         return this.rootObject().subnodeWithTitleIfAbsentInsertProto(aTitle, aProto)
+    }
+
+    count () {
+        return this.recordsMap().count()
     }
 
     totalBytes () {

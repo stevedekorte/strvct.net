@@ -39,19 +39,14 @@
 
         this.setShouldStore(false)
         this.setShouldStoreSubnodes(false)
+
+        if (!this.isDeserializing()) {
+            this.setupSubnodes()
+        }
         return this
     }
 
-    /*
-    didInit () {
-        debugger;
-        this.setResources(this.subnodeWithTitleIfAbsentInsertProto("Resources", BMResources))
-        this.subnodeWithTitleIfAbsentInsertProto("Storage", BMDataStore))
-        this.subnodeWithTitleIfAbsentInsertProto("Blobs", BMBlobs)
-    }
-    */
-
-    didInit () {
+    setupSubnodes () {
         this.addSettingNameAndClass("Resources", BMResources)
         this.addSettingNameAndClass("Storage", BMDataStore)
         this.addSettingNameAndClass("Blobs", BMBlobs)

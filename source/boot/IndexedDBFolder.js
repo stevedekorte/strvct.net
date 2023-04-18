@@ -145,7 +145,6 @@
     close () {
         if (this.isOpen()) {
             this.db().close()
-            this.setIsOpen(false)
             this.setDb(null)
             this.setPromiseForOpen(null)
         }
@@ -176,17 +175,19 @@
             throw new Error(m)
         };
 
-        /*
+    
         tx.oncomplete = (event) => {
-            console.log("readOnlyObjectStore tx completed")
+            //console.log("readOnlyObjectStore tx completed")
+            //debugger
         }
-        */
+        
 
         const objectStore = tx.objectStore(this.storeName())
         return objectStore
     }
 
     readWriteObjectStore () { // private
+        debugger
         const tx = this.db().transaction([this.storeName()], "readwrite");
         
         tx.onerror = (event) => {
@@ -195,13 +196,15 @@
             throw new Error(m)
         };
 
-        /*
+        
         tx.oncomplete = (event) => {
-            //console.log("readWriteObjectStore tx completed")
+            console.log("readWriteObjectStore tx oncomplete ", tx._note)
+            debugger
         }
-        */
+        
 
         const objectStore = tx.objectStore(this.storeName())
+        objectStore._tx = tx
         return objectStore
     }
 
@@ -360,21 +363,28 @@
     // removing
 
     promiseClear () {
-        debugger;
+        //debugger;
         return this.promiseOpen().then(() => {
             return new Promise((resolve, reject) => {
                 const objectStore = this.readWriteObjectStore();
+                objectStore._tx._note = "promiseClear"
+                
                 const request = objectStore.clear();
                 const stack = this.currentStack()
 
+                objectStore._tx.oncomplete = (event) => {
+                    console.log("db promiseClear tx oncomplete")
+                    resolve(event) 
+                };
+
                 request.onsuccess = (event) => {
-                    console.log("db clear request success")
+                    console.log("db promiseClear request onsuccess")
                     //debugger;
-                    resolve(event) // we use tx oncomplete (see above code in this method) instead
+                    //resolve(event) // use tx oncomplete instead?
                 };
 
                 request.onerror = (event) => {
-                    console.log("db clear error")
+                    console.log("db promiseClear request error")
                     reject(event)
                 };
             })
