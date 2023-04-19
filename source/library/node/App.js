@@ -34,7 +34,7 @@
         if (clearFirst) {
             store.promiseDeleteAll().then(() => { 
                 console.log(">>>>>>>>>>>>>>>> cleared db <<<<<<<<<<<<<<<")
-                debugger
+                //debugger
                 store.close()
                 //this.justOpen()
                 this.scheduleMethod("justOpen")

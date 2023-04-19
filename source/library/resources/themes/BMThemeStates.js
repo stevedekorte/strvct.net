@@ -49,7 +49,8 @@
   // --- states ---
 
   stateWithName (name) {
-    return this.firstSubnodeWithTitle("active");
+    assert(this.standardStateNames().contains(name))
+    return this.firstSubnodeWithTitle(name);
   }
 
   activeThemeState () {
@@ -74,52 +75,12 @@
     this.setTitle("states");
     this.setupSubnodes();
 
-    this.setupActiveDefault();
-    this.setupUnselectedDefault();
-    this.setupSelectedDefault();
-    this.setupDisabledDefault();
-
+    this.subnodes().forEach(state => state.setupAsDefault())
     //this.setupColumnsDefault()
     return this;
   }
 
-  // --- default states ---
-
-  setupActiveDefault () {
-    const state = this.activeThemeState();
-    //state.setColor("white")
-    //state.setBackgroundColor("#333")
-    state.setThemeAttribute("color", "white");
-    state.setThemeAttribute("backgroundColor", "#333");
-    //state.setThemeAttribute("fontWeight", "normal");
-    state.setThemeAttribute("paddingLeft", "22px");
-    state.setThemeAttribute("paddingRight", "22px");
-    state.setThemeAttribute("paddingTop", "8px");
-    state.setThemeAttribute("paddingBottom", "8px");
-
-  }
-
-  setupUnselectedDefault () {
-    const state = this.unselectedThemeState();
-    state.setThemeAttribute("color", "#bbb");
-    state.setThemeAttribute("backgroundColor", "transparent");
-    //state.setThemeAttribute("fontWeight", "normal");
-  }
-
-  setupSelectedDefault () {
-    const state = this.selectedThemeState();
-    state.setThemeAttribute("color", "white");
-    state.setThemeAttribute("backgroundColor", "#222");
-    //state.setThemeAttribute("fontWeight", "normal");
-  }
-
-  setupDisabledDefault () {
-    const state = this.disabledThemeState();
-    state.setThemeAttribute("color", "#ccc");
-    //state.setThemeAttribute("backgroundColor", "transparent");
-    //state.setThemeAttribute("fontWeight", "normal");
-  }
-
+  /*
   setupColumnsDefault () {
     const columns = BMThemeFolder.clone().setTitle("columns");
     this.addSubnode(columns);
@@ -140,5 +101,6 @@
       columns.addSubnode(field);
     });
   }
+  */
 
 }.initThisClass());

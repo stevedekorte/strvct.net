@@ -329,15 +329,19 @@
     // --- applying styles ---
 
     themeClass () {
-        return this.parentNode()
+        return this.themeStates().parentNode()
     }
 
     parentThemeClass () {
         // 
     }
 
+    themeStates () {
+        return this.parentNode()
+    }
+
     parentThemeState () {
-        return this.themeClass().subnodeBefore(this)
+        return this.themeStates().subnodeBefore(this)
     }
 
     /*
@@ -384,6 +388,7 @@
     }
 
     applyNonBorderStylesToView (aView) {
+        //debugger
         this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView)
         return this
     }
@@ -403,6 +408,11 @@
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
                 const v = this.getCachedStyleValueNamed(name)
+                if (v) {
+                    const themeClassName = this.themeClass().title()
+                    const stateName = this.title()
+                    console.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node())
+                }
                 aView.performIfResponding(aView.setterNameForSlot(name), v)
             } else {
                 console.log("style " + name + " locked on view " + aView.type())
@@ -458,6 +468,46 @@
     attributeNamed (name) {
         return this.firstSubnodeWithTitle(name)
     }
+
+    // --- defaults ----
+
+    setupAsDefault () {
+        const title = this.title()
+        const methodName = "setupAsDefault" + this.title().capitalized() + "State"
+        this[methodName].call(this)
+        return this
+    }
+
+    setupAsDefaultActiveState () {
+        //this.setColor("white")
+        //this.setBackgroundColor("#333")
+        this.setThemeAttribute("color", "white");
+        this.setThemeAttribute("backgroundColor", "#333");
+        //this.setThemeAttribute("fontWeight", "normal");
+      }
+    
+      setupAsDefaultUnselectedState () {
+        this.setThemeAttribute("color", "#bbb");
+        this.setThemeAttribute("backgroundColor", "transparent");
+        //this.setThemeAttribute("fontWeight", "normal");
+      }
+    
+      setupAsDefaultSelectedState () {
+        this.setThemeAttribute("color", "white");
+        this.setThemeAttribute("backgroundColor", "#222");
+        //this.setThemeAttribute("fontWeight", "normal");
+      }
+    
+      setupAsDefaultDisabledState () {
+        this.setThemeAttribute("color", "#ccc");
+        //this.setThemeAttribute("backgroundColor", "transparent");
+        //this.setThemeAttribute("fontWeight", "normal");
+
+        this.setThemeAttribute("paddingLeft", "22px");
+        this.setThemeAttribute("paddingRight", "22px");
+        this.setThemeAttribute("paddingTop", "8px");
+        this.setThemeAttribute("paddingBottom", "8px");
+      }
 
 }.initThisClass());
 

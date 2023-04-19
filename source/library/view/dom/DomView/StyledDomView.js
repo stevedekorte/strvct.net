@@ -215,9 +215,8 @@
 
     currentThemeState () {
         const tc = this.currentThemeClass() 
-        let state = null
         if (tc) {
-            let stateName = this.currentThemeStateName()
+            const stateName = this.currentThemeStateName()
             const state = tc.stateWithName(stateName)
             assert(state)
             return state

@@ -196,8 +196,8 @@
   },
   {
     "path": "source/library/ideal/map/AtomicMap.js",
-    "size": 6373,
-    "hash": "e5ghOMZNcvQDWzRXpUI99g+WGHJoHGEhrkZ0Conplw4="
+    "size": 6352,
+    "hash": "vygcSvJYmKiekZj2qzGSTuyeDrWVs5/xaj16tB8E2ls="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -686,8 +686,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/StyledDomView.js",
-    "size": 7130,
-    "hash": "e7zKK8A0QeKmo2LP3A2qBhwx4ZNeLXJA7CeM6B4scnE="
+    "size": 7107,
+    "hash": "60TaM6KmL8am4fqfoik7XPjxXRY41+ZtTLZLRW6aWMM="
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/BooleanView.js",
@@ -1256,8 +1256,8 @@
   },
   {
     "path": "source/library/node/App.js",
-    "size": 4902,
-    "hash": "L1y+me49Wcuv+hVyGVX8PHHtPmaiOKhBlrh52avUczA="
+    "size": 4904,
+    "hash": "parvnc8I2ichmNl1O84Jv1uhEgx2JMADMPWki5ChTa4="
   },
   {
     "path": "source/library/resources/BMResource.js",
@@ -1376,13 +1376,13 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 14699,
-    "hash": "KE81LXUUQopIXdPmuWvdnxgCCsFpa7zkaZZZ37WoiuA="
+    "size": 16496,
+    "hash": "FwDb+py6lIHEf0DrMBQYyHdVn1rtuJj1WI8qjTLi2Rs="
   },
   {
     "path": "source/library/resources/themes/BMThemeStates.js",
-    "size": 3425,
-    "hash": "0xDkh9EZ6nd8A57rn2FoZT1tL9YCuaRKljNiUTPcv8I="
+    "size": 2147,
+    "hash": "gmvodEn05nJqSysXlDKUf18lj4etpughLDflZVlLg6Q="
   },
   {
     "path": "source/library/resources/themes/BMThemeClassChildren.js",
