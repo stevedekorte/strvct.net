@@ -28,7 +28,6 @@
   }
 
   setupSubnodes () {
-    debugger
     if (!this.hasSubnodes()) {
       this.subnodeWithTitleIfAbsentInsertProto("states", BMThemeStates);
       this.subnodeWithTitleIfAbsentInsertProto("children", BMThemeClassChildren);
@@ -39,7 +38,7 @@
 
   setupAsDefault() {
     this.setTitle("Tile");
-    this.setupSubnodes();
+    //this.setupSubnodes();
     this.states().setupAsDefault()
     return this;
   }

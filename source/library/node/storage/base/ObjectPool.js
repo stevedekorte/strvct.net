@@ -801,7 +801,6 @@
             map.forEachK(pid => {
                 map.removeKey(pid)
             }) // the remove applies to the changeSet
-            //debugger
             return map.promiseCommit()
         })
     }

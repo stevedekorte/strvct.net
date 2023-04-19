@@ -22,37 +22,16 @@
         this.newSlot("options", { "durability": "strict" })
         this.newSlot("txId", null)
         this.newSlot("promiseForCommit", null)
-        this.newSlot("promiseForFinished", null)
+        //this.newSlot("promiseForFinished", null)
         this.newSlot("resolveFunc", null)
         this.newSlot("rejectFunc", null)
         this.newSlot("timeoutInMs", 1000)
     }
 
-    setIsComplete (aBool) {
-        if (this._isComplete) {
-            assert(aBool == true) // no turning back on complete!
-        }
-
-        this._isComplete = aBool
-
-        if (aBool) {
-            this.markResolved()
-        }
-
-        return this
-    }
-
-    setIsAborted (aBool) {
-        if (this._isAborted) {
-            assert(aBool == true) // no turning back on complete!
-        }
-
-        this._isAborted = aBool
-
-        if (aBool) {
-            this.markResolved()
-        }
-
+    markCompleted () {
+        assert(!this.isCompleted())
+        this.setIsCompleted(true)
+        this.markResolved()
         return this
     }
 
@@ -133,6 +112,7 @@
 	    this.assertNotCommitted()
 	    this.tx().abort() // how does this get rejected?
         this.setIsAborted(true)
+        this.markResolved()
 	    return this
     }
 
@@ -166,32 +146,32 @@
     }
 
     promiseCommit () {
-        this.setPromiseForCommit(new Promise((resolve, reject) => {
-            const tx = this.tx()
-            
-            tx.oncomplete = (event) => { 
-                this.debugLog(" COMMIT COMPLETE")
-                //debugger
-                this.setIsCompleted(true)
-                resolve(event) 
-            }
+        assert(!this.isFinished())
 
-            tx.onerror = (error) => { 
-                debugger;
-                this.markRejected(error)
-                reject(error)
-            }
+        // don't return promiseForFinished here as calling
+        // promiseForFinished creates the promise
 
-            //setTimeout(() => this.onTimeout(), this.timeoutInMs())
+        const tx = this.tx()
+        
+        tx.oncomplete = (event) => { 
+            this.debugLog(" COMMIT COMPLETE")
+            //debugger
+            this.markCompleted()
+        }
 
-            this.debugLog(" COMMITTING")
-            tx.commit()
+        tx.onerror = (error) => { 
+            //debugger;
+            this.markRejected(error)
+        }
 
-        }))
+        //setTimeout(() => this.onTimeout(), this.timeoutInMs())
 
-        //return this.promiseForCommit()
+        this.debugLog(" COMMITTING")
+        tx.commit()
+
         return this.promiseForFinished()
     }
+
 	
     // --- helpers ---
 
