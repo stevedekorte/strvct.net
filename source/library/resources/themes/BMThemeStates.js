@@ -43,7 +43,7 @@
           subnodeClass
         );
       });
-  }
+    }
   }
 
   // --- states ---

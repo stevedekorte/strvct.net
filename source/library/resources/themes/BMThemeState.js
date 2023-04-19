@@ -333,7 +333,7 @@
     }
 
     parentThemeClass () {
-        // 
+        return this.themeClass().parentThemeClass()
     }
 
     themeStates () {
@@ -354,9 +354,17 @@
        StringTile/disabled -> Tile/disabled ->
     */
     
-    getStyleValueNamed (name) {
+    getStyleValueNamed (name, depth = 1) {
+        assert(depth < 20)
+
         const getterMethod = this[name]
 
+        const themeClassName = this.themeClass().title()
+        const stateName = this.title()
+        const spacer = "-".repeat(depth)
+        console.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')")
+        //debugger
+        
         let v = null
 
         if (getterMethod) {
@@ -370,13 +378,30 @@
             //throw new Error(errorMsg)
         }
 
-        if (v == null) {
-            const parent = this.parentThemeState()
+        // lookup in ThemeClass's parent
+        if (v === null) {
+            const parent = this.parentThemeClass() // parent theme class eg: Default -(child)-> Tile -(child)-> TextTile
+            assert(parent !== this.themeClass())
             if (parent) {
-                return parent.getStyleValueNamed(name)
+                const stateName = this.title()
+                const state = parent.stateWithName(stateName)
+                v = state.getStyleValueNamed(name, depth+1) // will recurse through themeClass parents
             }
         }
-        
+
+        // lookup in ThemeState's parent
+        if (v === null) {
+            const parent = this.parentThemeState()// parent theme state eg: active -(child)-> selected -(child)-> unselected
+            assert(parent !== this)
+            if (parent) {
+                v = parent.getStyleValueNamed(name, depth+1) // will recurse through themeStates and each state will recurse themeClass parents
+            }
+        }
+
+        if (v) {
+            console.log("found: '" + v + "'")
+        }
+
         return v
     }
 

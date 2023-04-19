@@ -4,6 +4,18 @@
 
     BMThemeClass
 
+    Notes on attribute lookup:
+
+    If we have the following path of theme classes:
+
+      Default -(child)-> Tile -(child)-> TextTile
+
+    Example lookup path for a selected TextTile:
+
+      TextTile/selected   -> Tile/selected   -> Default->selected
+      TextTile/unselected -> Tile/unselected -> Default->unselected
+      TextTile/disabled   -> Tile/disabled   -> Default->disabled
+
 */
 
 (class BMThemeClass extends BMThemeFolder {
@@ -33,6 +45,19 @@
       this.subnodeWithTitleIfAbsentInsertProto("children", BMThemeClassChildren);
     }
   }
+
+  parentThemeClass () {
+    const parentChildrenNode = this.parentNode()
+    if (parentChildrenNode.title() !== "children") {
+      // it's a root themeClass under the Theme
+      return null
+    }
+    if (parentChildrenNode) {
+        const parentThemeClass = parentChildrenNode.parentNode()
+        return parentThemeClass
+    }
+    return null
+ }
 
   // --- default ---
 
