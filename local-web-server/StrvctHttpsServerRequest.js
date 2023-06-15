@@ -22,16 +22,20 @@ const nodePath = require('path');
 		//this.response().write("request:\n, this.requestDescription(request))
 		//console.log("request url:" + this.request().url)
 		//console.log("  decoded url:" + decodeURI(this.request().url))
-		//response.write("  path: '" + url.pathname + "'\n" );			
 		this.setUrlObject(this.getUrlObject())
-		this.setQueryDict(this.getQueryDict())
+		//this.setQueryDict(this.getQueryDict())
+		//console.log("  path: '" + this.getPath() + "'\n" );			
 		this.setPath(this.getPath())
 
+		this.onFileRequest()
+
+		/*
 		if (this.queryDict()) {
 			this.onQuery()
 		} else {
 			this.onFileRequest()
 		}
+		*/
 	}
 
 	getUrlObject () {
@@ -40,7 +44,11 @@ const nodePath = require('path');
 
 	getPath () {
 		//return nodePath.join(process.cwd(), decodeURI(this.urlObject().pathname))
-		return nodePath.join(".", decodeURI(this.urlObject().pathname))
+		let path = nodePath.join(".", decodeURI(this.urlObject().pathname));
+		if (path === "./") {
+			path = "./index.html";
+		}
+		return path;
 	}
 
 	getPathExtension () {

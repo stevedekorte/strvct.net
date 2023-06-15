@@ -345,13 +345,7 @@
     }
 
     /*
-       do lookup of style within theme
-       this follows parent themeClasses on the same state, and then goes to the parent states
-       e.g. if Tile is the parent of StringTile, and the view's state is "selected"
-       we would follow this lookup path until we found a non-null value:
-       StringTile/selected -> Tile/selected -> 
-       StringTile/unselected -> Tile/unselected ->
-       StringTile/disabled -> Tile/disabled ->
+       See notes at top of this file for explaination of lookup order.
     */
     
     getStyleValueNamed (name, depth = 1) {
@@ -359,11 +353,13 @@
 
         const getterMethod = this[name]
 
-        const themeClassName = this.themeClass().title()
-        const stateName = this.title()
-        const spacer = "-".repeat(depth)
-        console.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')")
-        //debugger
+        /*
+            const themeClassName = this.themeClass().title()
+            const stateName = this.title()
+            const spacer = "-".repeat(depth)
+            console.log(" " + spacer + " " + themeClassName + "/" + stateName + ".getStyleValueNamed('" + name + "')")
+            //debugger
+        */
         
         let v = null
 
@@ -433,11 +429,13 @@
             const isLocked = lockedSet ? lockedSet.has(name) : false;
             if (!isLocked) {
                 const v = this.getCachedStyleValueNamed(name)
+                /*
                 if (v) {
                     const themeClassName = this.themeClass().title()
                     const stateName = this.title()
                     console.log(themeClassName + " / " + stateName + " '" + v + "' -> " + aView.type())// + "/" + aView.node())
                 }
+                */
                 aView.performIfResponding(aView.setterNameForSlot(name), v)
             } else {
                 console.log("style " + name + " locked on view " + aView.type())

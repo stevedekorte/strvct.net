@@ -57,12 +57,6 @@
         return false
     }
  
-    thisClass () {
-        if (this.isPrototype()) {
-            return this.constructor
-        }
-        return this.__proto__.constructor
-    }
  
     thisPrototype () {
         assert(this.isInstance())

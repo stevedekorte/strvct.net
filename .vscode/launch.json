@@ -24,6 +24,22 @@
             "sourceMaps": true
         },
 
+
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "launch local HTTPS incognito",
+            "url": "https://localhost:8000/index.html",
+            "webRoot": "${workspaceFolder}",
+            "runtimeExecutable": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+            //"runtimeExecutable": "/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
+            "runtimeArgs": ["--incognito"],
+            "preLaunchTask": "Build",
+            "enableContentValidation": false,
+            "sourceMaps": true
+        },
+
+
         {
             "type": "chrome",
             "request": "launch",
