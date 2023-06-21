@@ -80,7 +80,7 @@ if (!String.prototype.capitalized) {
 
     static clone () {
         const obj = new this()
-        obj.init(arguments) 
+        obj.init() 
         return obj
     }
 

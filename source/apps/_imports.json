@@ -1,3 +1,4 @@
 [
-    "Strvct/_imports.json"
+    "shared/_imports.json",
+    "Havewords/_imports.json"
 ]

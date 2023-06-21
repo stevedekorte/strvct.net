@@ -22,18 +22,18 @@
         }
 
         const obj = new this()
-        assert(obj._initArguments === null)
-        obj._initArguments = arguments
-
-        obj.init(arguments)
+        //assert(obj._cloneArguments === null)
+        //obj._cloneArguments = arguments
 
         if (this.isSingleton()) {
             this.setShared(obj)
         }
+
+        obj.init()
+        obj.finalInit()
         obj.afterInit()
-
-        obj._initArguments = null
-
+        
+        //obj._cloneArguments = null
         //this.allInstancesWeakSet().add(obj)
 
         return obj
@@ -473,6 +473,15 @@
 
     initializeSlots () {
         this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this)) 
+    }
+
+    finalInit () {
+        super.finalInit()
+        this.finalInitSlots()
+    }
+
+    finalInitSlots () {
+        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this)) 
     }
 
     toString () {

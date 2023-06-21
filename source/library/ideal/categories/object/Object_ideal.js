@@ -13,7 +13,8 @@
     // ---- prototype ---
  
     initPrototypeSlots () {
-        Object.defineSlot(this, "_hasDoneInit", false)
+        //Object.defineSlot(this, "_cloneArguments", null)
+        Object.defineSlot(this, "_hasDoneInit", false) // so object's can distinguish changes from deserialization
         Object.defineSlot(this, "_shouldScheduleDidInit", false)
         Object.defineSlot(this, "_mutationObservers", null)
         Object.defineSlot(this, "_shouldStore", true)

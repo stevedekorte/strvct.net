@@ -718,10 +718,19 @@
 	    return this.subnodes().select(subnode => subnode !== aSubnode)
     }
 	
-    firstSubnodeOfType (aProto) {
-        return this.subnodes().detect(subnode => subnode.type() === aProto.type())
+    firstSubnodeOfType (obj) {
+        // obj could be clas, prototype, or instance
+        return this.subnodes().detect(subnode => subnode.type() === obj.type())
     }
 
+    setupSubnodeOfType (aClass) {
+        let subnode = this.firstSubnodeOfType(aClass)
+        if (!subnode) {
+            subnode = aClass.clone();
+            this.addSubnode(subnode);
+        }
+        return subnode
+    }
         
     sendRespondingSubnodes (aMethodName, argumentList) {
         this.subnodes().forEach((subnode) => { 

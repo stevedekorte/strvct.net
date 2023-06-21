@@ -29,9 +29,8 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
-  initForNonDeserialization () {
-    super.initForNonDeserialization();
-    this.setupSubnodes();
+  finalInit () {
+    this.setupSubnodes()
   }
 
   setupSubnodes () {

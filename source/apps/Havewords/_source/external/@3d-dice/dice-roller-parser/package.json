@@ -1,0 +1,61 @@
+{
+	"name": "@3d-dice/dice-roller-parser",
+	"version": "0.2.6",
+	"description": "A javascript dice roller that parses roll20 format strings and generates rolled outputs",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"typings": "dist/index.d.ts",
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"build": "npm run clean && pegjs src/diceroll.pegjs && tslint -c tslint.json --project tsconfig.json && webpack",
+		"clean": "rimraf dist/ src/diceroll.js",
+		"test": "jest",
+		"prepublishOnly": "npm run build",
+		"prepare": "npm run build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/3d-dice/dice-roller-parser.git"
+	},
+	"keywords": [
+		"dice",
+		"roller",
+		"roll",
+		"roll20",
+		"rpg",
+		"trpg",
+		"tabletop",
+		"dnd",
+		"d&d",
+		"dungeons",
+		"dragons",
+		"pathfinder"
+	],
+	"author": "Ben Morton <ben.morton91@gmail.com>",
+	"contributors": [
+		{
+			"name": "Frank Ali <frankieali4@gmail.com>"
+		}
+	],
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/3d-dice/dice-roller-parser/issues"
+	},
+	"homepage": "https://github.com/3d-dice/dice-roller-parser#readme",
+	"devDependencies": {
+		"@types/jest": "^27.5.1",
+		"@types/node": "^16.11.36",
+		"jest": "^27.5.1",
+		"pegjs": "^0.10.0",
+		"rimraf": "^3.0.2",
+		"ts-jest": "^27.1.5",
+		"ts-loader": "^9.3.0",
+		"tslint": "^6.1.3",
+		"typescript": "^4.7.2",
+		"webpack": "^5.72.1",
+		"webpack-cli": "^4.9.2"
+	}
+}

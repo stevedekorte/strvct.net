@@ -8,8 +8,12 @@
 
 (class BMDefaultTheme extends BMTheme {
 
-    initForNonDeserialization () {
-        super.initForNonDeserialization();
+    init () {
+        super.init()
+        return this
+    }
+
+    finalInit () {
         this.setupAsDefault() 
     }
 

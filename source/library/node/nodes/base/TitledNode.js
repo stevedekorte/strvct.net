@@ -198,15 +198,20 @@
         return root
     }
 
+    /*
     rootSubnodeWithTitleForProto (aString, aProto) {
         return this.rootNode().subnodeWithTitleIfAbsentInsertProto(aString, aProto)
     }
-    
+    */
+   
     subnodeWithTitleIfAbsentInsertProto (aString, aProto) {
         const subnode = this.firstSubnodeWithTitle(aString)
 
         if (subnode) {
             if (subnode.type() !== aProto.type()) {
+                // replace the subnode with matching title, 
+                // if it's not of the requested class
+
                 const newSubnode = aProto.clone()
                 try {
                     //newSubnode.copyFrom(subnode, true)
@@ -220,15 +225,28 @@
                 }
                 // TODO: Do we need to replace all references in pool and reload?
                 this.replaceSubnodeWith(subnode, newSubnode)
-                this.removeOtherSubnodeWithSameTitle(newSubnode)
+                this.removeOtherSubnodesWithSameTitle(newSubnode)
                 return newSubnode
             }
 
-            this.removeOtherSubnodeWithSameTitle(subnode)
+            this.removeOtherSubnodesWithSameTitle(subnode)
             return subnode
         }
 
         return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone())
+    }
+
+    addSubnodeAndSetSlotForClass (aName, aClass) {
+        // like subnodeWithTitleIfAbsentInsertProto but we also set the matching slot value to the subnode 
+        // (eg, subnode with title "Resources", sets "resources" slot)
+        const subnode = this.subnodeWithTitleIfAbsentInsertProto(aName, aClass)
+        this.removeOtherSubnodesWithSameTitle(subnode)
+        const slot = this.thisPrototype().slotNamed(aName.toLowerCase())
+        assert(slot)
+        if (slot) {
+            slot.onInstanceSetValue(this, subnode) 
+        }
+        return subnode
     }
 
     removeSubnodesWithTitle (aString) {
@@ -250,7 +268,7 @@
     }
     */
 
-    removeOtherSubnodeWithSameTitle (aSubnode) {
+    removeOtherSubnodesWithSameTitle (aSubnode) {
         assert(this.hasSubnode(aSubnode))
         this.subnodes().shallowCopy().forEach((sn) => {
             if (sn !== aSubnode) {

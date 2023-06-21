@@ -26,8 +26,8 @@
   },
   {
     "path": "source/boot/Base.js",
-    "size": 3854,
-    "hash": "YfUf0KMQCaexLDtKj1Gbj6qA9fMu6ebDdyVxYKyn7pQ="
+    "size": 3845,
+    "hash": "uxwDnkjFn0xjLwe94Sjntoo0c58yoh9fPbamQhwmP08="
   },
   {
     "path": "source/library/ideal/weak/EnumerableWeakMap.js",
@@ -61,18 +61,18 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_class.js",
-    "size": 9778,
-    "hash": "p9jOjJGFn4E5KsbT4JUAqfMayqunniIKRr2htANCOIs="
+    "size": 10054,
+    "hash": "QppRbWWd4kTLCVVKvXB8/GvImLcpYVZoqYvEizy67rg="
   },
   {
     "path": "source/library/ideal/categories/object/Object_ideal.js",
-    "size": 3601,
-    "hash": "cqE0cye/0pihWCLR+8A9zDzXWFyt3URBRUwQ4DXQX7c="
+    "size": 3720,
+    "hash": "Jg0ZhXv74SzyAZBj8kvL1tKJh0BL3pcJSC6Rx0zE2fE="
   },
   {
     "path": "source/library/ideal/categories/object/Object_init.js",
-    "size": 2971,
-    "hash": "zEcIybV+RCmDMhBBKLgXGOsVsHpLDE42t69HbsIlQbA="
+    "size": 2863,
+    "hash": "3RboPjhlA3GAf6ykZtofi7EbyKmic7gundxtW1okEpY="
   },
   {
     "path": "source/library/ideal/categories/object/Object_notification.js",
@@ -96,8 +96,8 @@
   },
   {
     "path": "source/library/ideal/categories/Array_ideal.js",
-    "size": 20447,
-    "hash": "lQLNBF1W3B6TrvuXqAGpINre//4KXrwo2NRhQ1pvM2Q="
+    "size": 20921,
+    "hash": "9FNqeWvYfwdIpu7nxFrlwZuTsGzLYkjs8ZiqkoB5uss="
   },
   {
     "path": "source/library/ideal/categories/Date_ideal.js",
@@ -151,13 +151,13 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 18770,
-    "hash": "4hOQ+NEPK3+PhRIffzP61/MVqq5Z7elTDFE4p+XvOyU="
+    "size": 20920,
+    "hash": "0S+FAA4wdjQWPgQHGMxQmOaSke9wjSpaPeognq8b3yk="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 15014,
-    "hash": "QURyzEjGD/y4J0TiRxdNBSJDYQSEGbAd1b37czR8XbU="
+    "size": 15254,
+    "hash": "NkUvfc8MxGr0kPcHtY+7mir8ioF2qPDU7FJGUKw+XLM="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -751,13 +751,13 @@
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 22278,
-    "hash": "R+EykO9vV0t5iZR94d17/AaAnJfBYo2flSHjyiYD3AI="
+    "size": 22552,
+    "hash": "QSdIsE3SctNZumwTKdG+TRYpx1fv2u8vVyR9Nz2hU0s="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
-    "size": 8215,
-    "hash": "Q21S0WVSYOGD9LjyIBw4ZbfNLfeKVdzYw0FQl7se4i8="
+    "size": 8918,
+    "hash": "/smWsra6fHSDVwNyoe+1Mo2mDtCR0KfkVMHdwWeAtwQ="
   },
   {
     "path": "source/library/node/nodes/base/ActionableNode.js",
@@ -766,8 +766,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 4828,
-    "hash": "WloGx3Ya5GNZ9rdGVgEGRN/C6fjHm1L1qv6KXk095O0="
+    "size": 6181,
+    "hash": "1SiZcJcgEEoPQbYSnlvcRawIv4gOR4eh8iYZNwxFzbQ="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -821,8 +821,8 @@
   },
   {
     "path": "source/library/node/storage/base/categories/primitives/Object_store.js",
-    "size": 2129,
-    "hash": "W9NvPv3LHsP5pCaczXx0g7R9UJSNL6Gqf6H2rSfgews="
+    "size": 2372,
+    "hash": "rbOxcbA/jBIgLZipI127xT465wZa3LW9cGehYJ07OqU="
   },
   {
     "path": "source/library/node/storage/base/categories/primitives/TypedArray-store.js",
@@ -846,8 +846,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 26533,
-    "hash": "MwuJvACu9MF/eYQzd3NLQt5Uoi1g/cYpARaC3gOK0Nw="
+    "size": 26679,
+    "hash": "Jg0TB/gEoSYHH/mOGleRExm33diy5EGbR+Uwy5HQ8FQ="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
@@ -876,8 +876,8 @@
   },
   {
     "path": "source/library/node/nodes/BMSummaryNode.js",
-    "size": 5023,
-    "hash": "HzhBwUmcWhXCOUl2bJ1R70faWwN80uUFWxmWmPqTiRg="
+    "size": 5797,
+    "hash": "DBbB+brLfcZFAFuu9jbr3Jy60nTfJSoXJUyJHxO6o+c="
   },
   {
     "path": "source/library/node/nodes/BMFolderNode.js",
@@ -946,8 +946,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/BMBooleanField.js",
-    "size": 1222,
-    "hash": "d8uxKdQkCvJm+4AJlqiIgOMxoguaDIkO5P+FJSmtt5I="
+    "size": 1355,
+    "hash": "gsJgBdTTvbzr1/Ve5b0PezeFk/Zlgh4C9jsFFQ/k5LU="
   },
   {
     "path": "source/library/node/fields/subclasses/BMColorField.js",
@@ -1081,8 +1081,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/NavView.js",
-    "size": 9618,
-    "hash": "XFuzjqDVdLii1T0Bt0yY/k/ShiilXqWO0twfBieEVuQ="
+    "size": 9642,
+    "hash": "n/xAOcvHQGy82CZuI33PZCTWCcSMwC6j+WCT03PdHc4="
   },
   {
     "path": "source/library/node/node_views/browser/stack/StackScrollView.js",
@@ -1256,8 +1256,8 @@
   },
   {
     "path": "source/library/node/App.js",
-    "size": 4904,
-    "hash": "parvnc8I2ichmNl1O84Jv1uhEgx2JMADMPWki5ChTa4="
+    "size": 4979,
+    "hash": "oaQLUoVCYP6JlafsXLRuBYjof+XE4DfgEZYW6MRfT1Q="
   },
   {
     "path": "source/library/resources/BMResource.js",
@@ -1296,8 +1296,8 @@
   },
   {
     "path": "source/library/resources/fonts/BMFontResources.js",
-    "size": 2482,
-    "hash": "nzt//rvW582AchGaTLVb6YbK678ktUygkpLWYhnhUh4="
+    "size": 2602,
+    "hash": "fdrU+1FPCHCkWfxu8wDKWiAdr69xiDLfOlrIfwWlRJc="
   },
   {
     "path": "source/library/resources/fonts/BMFontFamily.js",
@@ -1306,8 +1306,8 @@
   },
   {
     "path": "source/library/resources/fonts/BMFont.js",
-    "size": 1820,
-    "hash": "tVESpVidQ0pvoxpWgkahvPDbM9i6co9rDZ4dis55v6U="
+    "size": 3350,
+    "hash": "BJuq7+QW0aimamsAs0Gc0JMjp3Dm55/m/+WT8HS0A6U="
   },
   {
     "path": "source/library/resources/fonts/BMFontTile.js",
@@ -1351,8 +1351,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeResources.js",
-    "size": 1591,
-    "hash": "/BlX34LYbOwD+SLNUv6ZCPD6ysYOMMNiI4JRaS0z2J8="
+    "size": 1578,
+    "hash": "WgKUfYUCIQF/9bUPIKc9UWKBqVKMqLY4ysXZg5WQ3I4="
   },
   {
     "path": "source/library/resources/themes/BMThemeFolder.js",
@@ -1366,23 +1366,23 @@
   },
   {
     "path": "source/library/resources/themes/BMDefaultTheme.js",
-    "size": 503,
-    "hash": "k4zBzm2penkS75qUJwv8cgZgmlVyxjXyFqb4xYt2BwQ="
+    "size": 506,
+    "hash": "LJ8H0ty43uqSqZ4b3vA1t1sI+EowBotRGomehPAMEvA="
   },
   {
     "path": "source/library/resources/themes/BMThemeClass.js",
-    "size": 2120,
-    "hash": "Wm3hwXxaMKKWwdBg30BOaVHKMPRp37n2vADk6X/FZFY="
+    "size": 2142,
+    "hash": "Rm37tuhVqteIHTy0wtXq8b13vYN24f9j8+IEUJFwE8I="
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 17377,
-    "hash": "y5Odlm46w95ZZ1qoMKuOEwg1ceTYIhXvGT/r908Oz2M="
+    "size": 16172,
+    "hash": "3vSeumKu2UQzUYic/+D6GCxMEkvMV9NW2Bk8OoAjuQ4="
   },
   {
     "path": "source/library/resources/themes/BMThemeStates.js",
-    "size": 2149,
-    "hash": "92gN9GNurhG5kvbA9CLb2el2E7fRy0llA3zU4tnE76g="
+    "size": 2093,
+    "hash": "sRB3S9miGN1hdkzWADdcWvrIfZL+BiWi/TGqgtXrQBg="
   },
   {
     "path": "source/library/resources/themes/BMThemeClassChildren.js",
@@ -1410,134 +1410,174 @@
     "hash": "BIoBIa14nIFcS/ND6nYBxse+WNrv6O8SOFlmfbgstsA="
   },
   {
-    "path": "source/apps/Strvct/BMSettingsNode.js",
-    "size": 2200,
-    "hash": "Uaf6Y+Xyd4c8qdgxdimSRw+HYcLAZ236SMREN5AReZ0="
+    "path": "source/apps/shared/BMSettingsNode.js",
+    "size": 1666,
+    "hash": "pWEBkJLXdTlXJ8AOIhC0tS3AeNs/GB9HYOyxowxeWCI="
   },
   {
-    "path": "source/apps/Strvct/HeaderNode.js",
-    "size": 3215,
-    "hash": "ZSlRc+6BfqwYkSuLHbS7cisDMtRSwwMm1qZ9b04pObI="
+    "path": "source/apps/shared/BreadCrumbsNode.js",
+    "size": 679,
+    "hash": "zjB+HQWMF2KtCB6jqYNWRnnMc/KrzOR0ghoT2nQOjrs="
   },
   {
-    "path": "source/apps/Strvct/RootContentNode.js",
-    "size": 1895,
-    "hash": "kV+ft4v0hgap+xLrP31GWAFxCM5IwvNDblhofleQ9tQ="
+    "path": "source/apps/shared/HeaderNode.js",
+    "size": 2506,
+    "hash": "oNqCTlRMbyZchdxouHoff6e/ywa6F48sXWdjLaPV9XU="
   },
   {
-    "path": "source/apps/Strvct/StrvctApp.js",
-    "size": 4017,
-    "hash": "R1ydsLfzhFwQRFLgr3VKbWGiwU3LoBw/NexFqwSmax8="
+    "path": "source/apps/shared/RootContentNode.js",
+    "size": 1232,
+    "hash": "WQrGmbG7Sv7SkZ7ijX6xrHwoDxSlfAceDP3r9+38G6I="
   },
   {
-    "path": "source/apps/Strvct/_init.js",
-    "size": 74,
-    "hash": "2+4ji5xbfBCyjqmEdl9oPQ1MHhRJj+9p6nWBtBVdmIU="
+    "path": "source/apps/Havewords/services/Job.js",
+    "size": 1750,
+    "hash": "Q32Xn+VrRN0Cw6YZktRGIoVnRno69gcW53zyGD0M9GM="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica.woff2",
-    "size": 19540,
-    "hash": "33HOexOK5fbpQfJAg1+Spo5E7XM1PzdHDMGzlM6+g9o="
+    "path": "source/apps/Havewords/services/Jobs.js",
+    "size": 654,
+    "hash": "25m82qsGC082b0g8zPATdztH/dBW18M7liUmHwW9uJ0="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Oblique.woff2",
-    "size": 20472,
-    "hash": "bignHMnqWofbZwBpt9cyG7697pO3C0y6tZestbxymAw="
+    "path": "source/apps/Havewords/services/Services.js",
+    "size": 828,
+    "hash": "/PvS/YFJVJ0gTAx2beAR6qvrKB9X88xb7uA+RUtppjk="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Light.woff2",
-    "size": 17636,
-    "hash": "4ey80lfMsES4GzmY59ePFemulG+Ktkm1ScYsViiDhyg="
+    "path": "source/apps/Havewords/services/openai/OpenAiChat.js",
+    "size": 5728,
+    "hash": "N+b3cufkEYGOKK8pk3OTwilj6MqDVfcqz8DeXyjL2io="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Light Oblique.woff2",
-    "size": 18324,
-    "hash": "4uBj9kDQ5YAS+NZnQJNAC9zSlEK8socKYttLx8FoutU="
+    "path": "source/apps/Havewords/services/openai/OpenAiChatModel.js",
+    "size": 2035,
+    "hash": "+elev00yLyeyEoGnJIbqCBFBkiZ7PMpxfj6Lq5jA6jg="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold.woff2",
-    "size": 19284,
-    "hash": "agCpsxqQTPADk8YgUitM5Py7EqH5iVYaK5MTiKxFyjs="
+    "path": "source/apps/Havewords/services/openai/OpenAiModels.js",
+    "size": 2347,
+    "hash": "/tEYItMkM6Qwr1vzenSWo8y8VF/UQuweuU291ptUxTI="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Oblique.woff2",
-    "size": 20112,
-    "hash": "Ng6yCXS6EDgffB9k7+pIquQXLt0gdFG2axKYk9t18yk="
+    "path": "source/apps/Havewords/services/openai/OpenAiMusicBot.js",
+    "size": 3132,
+    "hash": "bcaGWkmvVnoKoyp/grm1dYxEmF3Fp9u35gQ3YMzB3zI="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Narrow.woff2",
-    "size": 20596,
-    "hash": "2J/RNQta9yMCjfhJiNCd7VF96ambhJMz1g2FA8sh5es="
+    "path": "source/apps/Havewords/services/openai/OpenAiRequest.js",
+    "size": 8568,
+    "hash": "KiSfje1QwlDifkjnP7D4TW3DkZDW8wpJscQFjoeLGh0="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Narrow Oblique.woff2",
-    "size": 21556,
-    "hash": "Hkev/R736iSWPyg/jp5IIsViTT6txSoZZcKTtY7re4c="
+    "path": "source/apps/Havewords/services/openai/OpenAiService.js",
+    "size": 917,
+    "hash": "KASn7A8fQp1TJ1hfXRnx9DpUvFtjYyQrLEwUKe13+a8="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Black.woff2",
-    "size": 18088,
-    "hash": "0rKVF3h2DTT1j+BRq4yF3KVI97JS3mPEjbvrfwHIoJY="
+    "path": "source/apps/Havewords/services/HwServices.js",
+    "size": 574,
+    "hash": "KFfLYZAzIkJPV60NH7EZff9tLKWI5sOsrGsNG1W/oWk="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Black Oblique.woff2",
-    "size": 18796,
-    "hash": "+8m9eABqD2uFT/q0J+0RkHd5M3oPYD84RIhaV4AstGA="
+    "path": "source/apps/Havewords/HavewordsApp.js",
+    "size": 3901,
+    "hash": "fii9cFIna8vNH+1v7XPx7Jpz5nWG8l34JV5dF94gbQE="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Condensed.woff2",
-    "size": 18148,
-    "hash": "yXKiIIaulUa33sTJFAVU2L0hUf/kh3t8B7I22Lrsa0g="
+    "path": "source/apps/Havewords/_init.js",
+    "size": 80,
+    "hash": "uc+Tbzk4Kls4Iplism/AByDcwyjIkjiqs1LygmHTmJw="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Condensed Oblique.woff2",
-    "size": 19192,
-    "hash": "xNzE7oabU4FZA/WuM1VS1Cb4jacPTUlEU4VNsDh1rg8="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Black.ttf",
+    "size": 90720,
+    "hash": "W+jZqiKbN8g8OcPeCHUW2pOpCS/cuET8sLtMDkvJraE="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Light Condensed.woff2",
-    "size": 17952,
-    "hash": "bZ+VmSkkFrbPx8/ZCbx2YHe3sKI73ydT9SGL6WRnnAY="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Black Italic.ttf",
+    "size": 92052,
+    "hash": "Q0hZAnE4n9+YTwxUDEwNCCfUisb+Fu1cyeYogeXIVHo="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Light Condensed Oblique.woff2",
-    "size": 19124,
-    "hash": "T6myeveoP31mnUE2z0LT32yrwGswm0V3rysrk4dMRyg="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Bold.ttf",
+    "size": 89880,
+    "hash": "eUgwacYCAZJZ/SIVrwM8YPtckPMHEJeDkYAzfcMGIjs="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Condensed.woff2",
-    "size": 18704,
-    "hash": "8Fa7c17GcX6HgkMgLIamoWyMOeSoMXLDoATftrtzzuA="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Bold Italic.ttf",
+    "size": 92228,
+    "hash": "Zei6piNMfspk8O7cdfek3Emovna/7YxBiwh/fisaJNo="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Bold Condensed Oblique.woff2",
-    "size": 19812,
-    "hash": "spV7fHfGBzEf7JZXqOtyU8PTeQO7XTPc6q8IEeH3fmM="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed ExtraBold.ttf",
+    "size": 90244,
+    "hash": "sN1I1p0HxKoXep42WvaCi3s7KJr4FMA6TpY1v2yrZZU="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Black Condensed.woff2",
-    "size": 17980,
-    "hash": "qi7XqdR85+uevUf7Kf9+UbuHqRpj92kFvOCfHPRH1rg="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed ExtraBold Italic.ttf",
+    "size": 92448,
+    "hash": "MlSOVL5tAhywJnbw9hDEH8JJilVkndyKbNBp9P6P/rg="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Black Condensed Oblique.woff2",
-    "size": 19264,
-    "hash": "OJQAcpmuZ+tyy9TffFDlplxa8tkjSY7eMqqy7Z63TXU="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed ExtraLight.ttf",
+    "size": 82604,
+    "hash": "GoVG+r1726zjaqcrARfUUIvn5zNZxgGcD0qs/ZVkrtA="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Narrow.woff2",
-    "size": 17836,
-    "hash": "Uqyxb8QhA/hX6xVV0Rc+2mIW5iTj1h9JUTvka2Ja1qE="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed ExtraLight Italic.ttf",
+    "size": 88584,
+    "hash": "ygMz+KRTPB0H8rySYb0CPe9s9M0mvxAsI0jyfPKVXYU="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Narrow Oblique.woff2",
-    "size": 18876,
-    "hash": "N2AipdDP+USG1xvQJhuk+KaLzAuxxV9N7m65YfZ3P+Q="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Italic.ttf",
+    "size": 89932,
+    "hash": "yZ4vrTxMPyKFlNdUFDjWCydIfD6m20U47GrT1LWLqwo="
   },
   {
-    "path": "resources/fonts/Helvetica/fonts/Helvetica Inserat Regular.woff2",
-    "size": 18844,
-    "hash": "RvQVa32Voy7M95sw5EFMsmGh0mxsnNDEqQxFRpMAqyE="
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Light.ttf",
+    "size": 83044,
+    "hash": "+v4Xl9MbGY4XnI/ZcZvFoUVNBzPFTSrM/n/W6FK7IZ4="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Light Italic.ttf",
+    "size": 88992,
+    "hash": "JMSLI/n0yICEk9teFbkYGbc3iFixoewwKZcUCkTwf+M="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Medium.ttf",
+    "size": 83928,
+    "hash": "WVS1BYWkpR1cES/OtiAks6P2cKjdxWy6FQhC3DWTs8g="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Medium Italic.ttf",
+    "size": 90104,
+    "hash": "H1jE2ceCThlFrNCpnLxDgARcc7y+jaYrfa/RHXsZCdg="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Regular.ttf",
+    "size": 83364,
+    "hash": "1f6job3ZL5eYcDTv+LxdFXDSNUXnLv0dFw/gdg/1pxs="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed SemiBold.ttf",
+    "size": 89916,
+    "hash": "HzRxrCSWhFF3r+HsnLLDFnccL2cpvvPet/p0frVD3sc="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed SemiBold Italic.ttf",
+    "size": 92440,
+    "hash": "dXYg9eey8ch25c6w0ridQEKUAXr1L0yK6tNTiuUgs1Q="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Thin.ttf",
+    "size": 81844,
+    "hash": "qpznfua4y19XNUIHWRU+43tMBBjhLQT6ofnCYA/tkuQ="
+  },
+  {
+    "path": "resources/fonts/BarlowCondensed/BarlowCondensed Thin Italic.ttf",
+    "size": 87948,
+    "hash": "VSxNdY9J/l3f1cPJFHzbXjRyRcHzWCdt6JPic7aJckg="
   },
   {
     "path": "resources/sounds/beep_06.wav",

@@ -33,13 +33,7 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
-  initForNonDeserialization () {
-    super.initForNonDeserialization();
-    this.setSubtitle("class")
-    this.setupSubnodes();
-  }
-
-  setupSubnodes () {
+  finalInit () {
     if (!this.hasSubnodes()) {
       this.subnodeWithTitleIfAbsentInsertProto("states", BMThemeStates);
       this.subnodeWithTitleIfAbsentInsertProto("children", BMThemeClassChildren);
@@ -65,6 +59,8 @@
     this.setTitle("Tile");
     //this.setupSubnodes();
     this.states().setupAsDefault()
+    this.children().addSubnode(BMThemeClass.clone().setTitle("HeaderTile"));
+    this.children().addSubnode(BMThemeClass.clone().setTitle("BreadCrumbsTile"));
     return this;
   }
 

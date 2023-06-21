@@ -37,9 +37,9 @@
         const components = aPath.split("/")
 
         const fontFileName = components.pop()
-        const fontsFolderName = components.pop()
+        //const fontsFolderName = components.pop()
         const familyName = components.pop()
-        assert(fontsFolderName === "fonts")
+        //assert(fontsFolderName === "fonts")
 
         /*
         // verify path is in expected format 
@@ -104,6 +104,10 @@
             options.addSubnode(option)
         })
         return options
+    }
+
+    hasLoadedAllFonts () {
+        return this.allFonts().detect(font => !font.fontFaceIsLoaded()) === null;
     }
 
 }.initThisClass());

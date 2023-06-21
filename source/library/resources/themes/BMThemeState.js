@@ -213,13 +213,13 @@
         this.setSubtitle("state")
 
         //this.setSubnodeClasses([BMStringField])
-        //this.setupSubnodes()
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
-    initForNonDeserialization () {
-        super.initForNonDeserialization()
-        this.setupSubnodes()
+    finalInit () {
+        if (!this.hasSubnodes()) {
+            this.setupSubnodes()
+        }
     }
 
     setThemeAttribute (key, value) {
@@ -259,42 +259,7 @@
             return BMResources.shared().fonts().allFontNames() 
         })   
 
-        this.styleSlots().forEach(slot => {
-            const name = slot.name()
-
-            const field = slot.newInspectorField()
-            field.setShouldStore(false)
-            field.setShouldStoreSubnodes(false) 
-
-            field.setTarget(this)
-            field.setNodeCanEditTitle(false)
-            field.setNodeCanReorderSubnodes(false)
-            field.setSummaryFormat("key value")
-            field.setHasNewlineAferSummary(true)
-            field.removeAction("add")
-            field.setCanDelete(false)
-
-            //debugger
-            const pathNodes = this.createNodePath(slot.inspectorPath())
-            pathNodes.forEach(node => {
-                if (node !== this) {
-                    node.setNodeSubtitleIsChildrenSummary(true)
-                    node.setHasNewlineAferSummary(true)
-                    if (node !== pathNodes.last()) {
-                        node.setHasNewLineSeparator(true)
-                    }
-                }
-            })
-
-            /*
-            const node = pathNodes.last()
-            if (node !== this) {
-                node.setNodeSubtitleIsChildrenSummary(true)
-            }
-            */
-
-            pathNodes.last().addSubnode(field)
-        })
+        this.addSubnodeFieldsForSlots(this.styleSlots())
     }
 
     // --- style cache ---
@@ -395,7 +360,7 @@
         }
 
         if (v) {
-            console.log("found: '" + v + "'")
+            //console.log("found: '" + v + "'")
         }
 
         return v

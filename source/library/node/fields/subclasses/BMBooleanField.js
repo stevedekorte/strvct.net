@@ -33,7 +33,10 @@
         const isValid = this.valueIsBool()
 		
         if (!isValid) {
-            this.setValueError("This needs to be a boolean (true or false).")
+            const s = "Field '" + this.key() + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
+            console.warn(s)
+            debugger;
+            this.setValueError(s)
         } else {
             this.setValueError(null)
         } 

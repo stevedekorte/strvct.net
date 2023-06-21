@@ -29,9 +29,11 @@
     static loadAndRunShared () {
         const store = this.defaultStore()
         store.setName(this.type()) // name of the database
-        const clearFirst = true
+        const clearFirst = false;
 
         if (clearFirst) {
+            console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<")
+
             store.promiseDeleteAll().then(() => { 
                 console.log(">>>>>>>>>>>>>>>> cleared db <<<<<<<<<<<<<<<")
                 //debugger

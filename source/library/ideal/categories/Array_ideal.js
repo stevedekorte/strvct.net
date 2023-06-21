@@ -173,17 +173,32 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
     hasDuplicates () {
         if (this.length > 100) {
             return this.hasDuplicates_setImplementation()
-
         } else {
             return this.hasDuplicates_indexOfImplementation()
         }
     }
+
+    /*
+    findDuplicate_setImplementation() {
+        const set = new Set()
+        for (let i = 0; i < this.length - 1; i++) { // skip last
+            const v = this[i]
+            if (set.has(v)) {
+                return v
+            } else {
+                set.add(v)
+            }
+        }
+        return undefined
+    }
+    */
 
     hasDuplicates_setImplementation() {
         const set = new Set()
         for (let i = 0; i < this.length - 1 /* skip last */; i++) {
             const v = this[i]
             if (set.has(v)) {
+                console.warn("found duplicate of ", v);
                 return true
             } else {
                 set.add(v)
@@ -194,7 +209,9 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
 
     hasDuplicates_indexOfImplementation () {
         for (let i = 0; i < this.length - 1 /* skip last */; i++) {
-            if (this.indexOf(this[i], i + 1) !== -1) {
+            const v = this[i];
+            if (this.indexOf(v, i + 1) !== -1) {
+                console.warn("found duplicate of ", v);
                 return true
             }
         }

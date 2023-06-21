@@ -99,7 +99,11 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         // storage related
         this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
-        this.simpleNewSlot("initProto", null) // clone this proto on init and set to initial value
+        this.simpleNewSlot("initProto", null) // clone this proto in init
+        this.simpleNewSlot("finalInitProto", null) // if not set (e.g. by deserialization), clone this proto in finalInit and add as subnode
+        this.simpleNewSlot("isSubnode", null) // in finalInit, add value as subnode if not already present
+        this.simpleNewSlot("isSubnodeField", null) // in finalInit, create a field for the slot and add as subnode
+
         this.simpleNewSlot("valueClass", null) // declare the value should be a kind of valueClass
         //this.simpleNewSlot("field", null)
         //this.simpleNewSlot("isLazy", false) // should hook getter
@@ -130,6 +134,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
 
         this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
+        //this.simpleNewSlot("isDeserializing", false) // need to add it here as we don't inherit it
     }
 
     newInspectorField () {
@@ -365,6 +370,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     directGetter () {
+        assert(arguments.length === 0);
         const privateName = this.privateName()
         const func = function () {
             return this[privateName]
@@ -457,6 +463,49 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     // -----------------------------------------------------
+
+    onInstanceFinalInitSlot (anInstance) {
+        const finalInitProto = this._finalInitProto
+        if (finalInitProto) {
+            const oldValue = this.onInstanceGetValue(anInstance)
+            if (oldValue === null) {
+
+                /*
+                let newValue;
+                if (this.isSubnode()) { // see if it's already a subnode
+                    const oldSubnode = anInstance.firstSubnodeOfType(finalInitProto)
+                    if (oldSubnode) {
+                        newValue = oldSubnode
+                    } else {
+                        const newSubnode = finalInitProto.clone();
+                        this.addSubnode(newSubnode);
+                        newValue = newSubnode
+                    }
+                } else {
+                    newValue = finalInitProto.clone()
+                }
+                */
+
+                const newValue = finalInitProto.clone()
+                this.onInstanceSetValue(anInstance, newValue)
+            } else if (oldValue.type() !== finalInitProto.type()) {
+                debugger;
+                throw new Error("finalInitProto type does not match existing value from Store")
+            }
+        }
+
+        if (this.isSubnode()) { 
+            // sanity check - we don't typically want to add it automatically if subnodes are stored
+            assert(anInstance.shouldStoreSubnodes() === false)
+            const value = this.onInstanceGetValue(anInstance)
+            anInstance.addSubnode(value)
+        }
+
+        if (this.isSubnodeField()) {   
+            assert(anInstance.shouldStoreSubnodes() === false)
+            anInstance.addSubnodeFieldForSlot(this);
+        }
+    }
 
     onInstanceInitSlot (anInstance) {
         //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined

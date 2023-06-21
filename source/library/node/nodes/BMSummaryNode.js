@@ -72,6 +72,19 @@
             slot.setInspectorPath("Summary")
         }
 
+
+        {
+            const slot = this.newSlot("hidePolicy", "none")
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel("hide policy")
+            slot.setValidValues(["none", "hide if value is true", "hide if value is false"])
+            slot.setSyncsToView(true)
+            slot.setInspectorPath("Summary")
+        }
+
         {
             const slot = this.overrideSlot("subtitleIsSubnodeCount", false)
             slot.setDuplicateOp("copyValue")
@@ -137,6 +150,15 @@
     summary () {
         const k = this.summaryKey()
         let v = this.summaryValue()
+
+        const hidePolicy = this.hidePolicy()
+        if (hidePolicy !== "none") {
+            if (v === true && hidePolicy === "hide if value is true") {
+                return ""
+            } else if (v === false && hidePolicy === "hide if value is false") {
+                return ""
+            }
+        }
 
         if (Type.isNull(v)) {
             v = ""

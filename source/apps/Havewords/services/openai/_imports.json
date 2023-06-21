@@ -1,0 +1,8 @@
+[
+    "OpenAiChat.js",
+    "OpenAiChatModel.js",
+    "OpenAiModels.js",
+    "OpenAiMusicBot.js",
+    "OpenAiRequest.js",
+    "OpenAiService.js"
+]

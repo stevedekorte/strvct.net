@@ -202,6 +202,7 @@
                 */
             } 
         } else {
+            //debugger;
             const h = this.node().nodeMinTileHeight()
             if (h && !Type.isNullOrUndefined(h)) {
                 this.setMinAndMaxWidth("100%")

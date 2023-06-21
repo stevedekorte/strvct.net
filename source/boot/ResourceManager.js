@@ -455,9 +455,20 @@ class ResourceManager {
     }
 
     onDone () {
-		const page_load_time = new Date().getTime() - performance.timing.navigationStart;
-		window.document.title = "" + Math.round(page_load_time/100)/10 + "s, " + Math.round(UrlResource._bytesLoaded/1000) + "k, " +  UrlResource._urlsLoaded + " files"
+        this.markPageLoadTime();
+		//window.document.title = this.loadTimeDescription();
 		//this.postEvent("resourceLoaderDone", {}) 
+    }
+
+    markPageLoadTime() {
+        this._pageLoadTime = new Date().getTime() - performance.timing.navigationStart;
+    }
+
+    loadTimeDescription () {
+        return "" + 
+            Math.round(this._pageLoadTime/100)/10 + "s, " + 
+            Math.round(UrlResource._bytesLoaded/1000) + "k, " + 
+            UrlResource._urlsLoaded + " files";
     }
 
     // --- public API ---

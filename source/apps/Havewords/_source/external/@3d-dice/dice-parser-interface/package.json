@@ -1,0 +1,39 @@
+{
+  "name": "@3d-dice/dice-parser-interface",
+  "author": {
+    "name": "Frank Ali"
+  },
+  "description": "a parser interface that parses roll20 format strings using @3d-dice/dice-roller-parser for @3d-dice/dice-box",
+  "version": "0.2.1",
+  "keywords": [
+    "dice",
+    "dice-box",
+    "roller",
+    "roll",
+    "roll20",
+    "rpg",
+    "ttrpg",
+    "tabletop",
+    "dnd",
+    "d&d",
+    "dungeons",
+    "dragons",
+    "pathfinder"
+  ],
+  "license": "MIT",
+  "homepage": "https://fantasticdice.games/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/3d-dice/dice-parser-interface"
+  },
+  "bugs": {
+    "url": "https://github.com/3d-dice/dice-parser-interface/issues"
+  },
+  "files": [
+    "src"
+  ],
+  "main": "./src/index",
+  "dependencies": {
+    "@3d-dice/dice-roller-parser": "^0.2.6"
+  }
+}

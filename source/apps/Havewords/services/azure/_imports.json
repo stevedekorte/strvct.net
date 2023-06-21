@@ -1,0 +1,6 @@
+[
+    "AzureService.js",
+    "AzureRegions.js",
+    "AzureTextToSpeech.js",
+    "AzureVoices.js"
+]

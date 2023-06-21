@@ -69,10 +69,19 @@
 
     static clone () {
         const obj = new this()
-        assert(obj._initArguments !== undefined)
-        obj._initArguments = arguments
+        //assert(obj._cloneArguments === null)
+        //obj._cloneArguments = arguments
         obj.init()
-        obj.afterInit.call(obj, arguments)
+        /*
+        if (obj.isDeserializing()) {
+            // finalInit will be call by the Store after loadFromRecord
+        } else {
+            obj.finalInit(); 
+        }
+        */
+        obj.finalInit()
+        obj.afterInit()
+
         return obj
     }
 
@@ -151,7 +160,10 @@
             const hasGetter = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, slotName))
             assert(!hasGetter)
             //const getterFunc = eval('function () { return this.' + ivarName + '; }');
-            const getterFunc = function () { return this[ivarName]; };
+            const getterFunc = function () { 
+                assert(arguments.length === 0);
+                return this[ivarName]; 
+            };
             const descriptor = {
                 configurable: true,
                 enumerable: false,
@@ -212,7 +224,7 @@
         /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
         Object.defineSlot(this, "_slotsMap", new Map())
         Object.defineSlot(this, "_allSlotsMap", new Map())
-        Object.defineSlot(this, "_initArguments", null)
+        //Object.defineSlot(this, "_cloneArguments", null)
         this.setupAllSlotsMap()
 
         // We need to separate initPrototypeSlots, initSlots, initPrototype as

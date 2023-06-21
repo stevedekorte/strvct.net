@@ -48,24 +48,14 @@
         return this
     }
 
-    initForNonDeserialization () {
-        //console.log(this.type() + ".initForNonDeserialization")
-    }
-
-    initForDeserialization () {
-        //console.log(this.type() + ".initForDeserialization")
+    finalInit () {
+        // if deserializing, called after (loadFromRecord) deserialization 
+        // otherwise, called after init()
+        return this
     }
 
     afterInit () {
         //console.log(this.type() + ".afterInit")
-
-        if (this.isDeserializing) {
-            if (this.isDeserializing()) {
-                this.initForDeserialization()
-            } else {
-                this.initForNonDeserialization()
-            }
-        }
 
         assert(!this.hasDoneInit()) // sanity check
         if (this.shouldScheduleDidInit()) {
@@ -73,6 +63,11 @@
         } else {
             this.didInit()
         }
+    }
+
+    finalInit () {
+        // nomrally called in clone(),
+        // but if deserializing, will be called by store after instanceFromRecordInStore() 
     }
 
     didInit () {

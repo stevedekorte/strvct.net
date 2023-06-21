@@ -527,6 +527,14 @@
             // might want to split this method into one to get ref and another to load contents instead
         }
         obj.loadFromRecord(aRecord, this)
+
+        if (obj.finalInit) {
+            obj.finalInit();
+        }
+        
+        if (obj.afterInit) {
+            obj.afterInit();
+        }
         return obj
     }
 

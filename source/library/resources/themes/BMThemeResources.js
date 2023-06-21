@@ -53,9 +53,10 @@
         //this.setSubnodes([BMDefaultTheme.clone()]) // hack
     }
 
-    initForNonDeserialization () {
-        super.initForNonDeserialization();
-        this.setSubnodes([BMDefaultTheme.clone()]) // hack
+    finalInit () {
+        if (!this.hasSubnodes()) {
+            this.addSubnode(BMDefaultTheme.clone()) // hack
+        }
     }
 
     activeTheme () {

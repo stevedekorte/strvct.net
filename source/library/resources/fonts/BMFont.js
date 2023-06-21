@@ -14,10 +14,29 @@
         return ["ttf", "woff", "woff2"]
     }
 
+    static fontWeightMap () {
+        const wm = new Map()
+        wm.set("Thin", 100);
+        wm.set("Extra Light", 200); wm.set("ExtraLight", 200);
+        wm.set("Ultra Light", 200); wm.set("UltraLight", 200);
+        wm.set("Light", 300);
+        wm.set("Normal", 400);
+        wm.set("Medium", 500);
+        wm.set("Semi Bold", 600); wm.set("SemiBold", 600);
+        wm.set("Demi Bold", 600); wm.set("DemiBold", 600);
+        wm.set("Bold", 700);
+        wm.set("Extra Bold", 800); wm.set("ExtraBold", 800);
+        wm.set("Ultra Bold", 800); wm.set("UltraBold", 800);
+        wm.set("Black", 900)
+        wm.set("Heavy", 900);
+        return wm;
+    }
+
     initPrototypeSlots () {
         this.newSlot("name", null)
         this.newSlot("options", null)
         this.newSlot("fontFace", null) // reference to browser FontFace object
+        this.newSlot("weightMap", BMFont.fontWeightMap()) 
     }
 
     initPrototype () {
@@ -41,9 +60,30 @@
         return this.path().fileName()
     }
 
+    fontFaceIsLoaded () {
+        const face = this.fontFace();
+        return face && face.status === "loaded";
+    }
+
+    optionsFromName () {
+        const name = this.name();
+        const options = {};
+        this.weightMap().forEach((v, k) => {
+            if (name.indexOf(k) !== -1) {
+                options.weight = v;
+            }
+        });
+
+        if (name.indexOf("Italic") !== -1) {
+            options.style = "italic";
+        }
+
+        return options;
+    }
+
     // loading 
 
-    didLoad () {
+    didLoad () { // called when resource data loaded
         super.didLoad()
         this.loadFontFromData()
         if (this.isDebugging()) {
@@ -55,7 +95,16 @@
     }
 
     loadFontFromData () {
-        const aFontFace = new FontFace(this.name(), this.data(), this.options()); 
+        let name = this.name();
+
+        if (Object.keys(this.options()).length === 0) {
+            this.setOptions(this.optionsFromName());
+            name = name.split(" ").shift();
+        }
+
+        //console.log("BMFont load " + this.name() + " -> '" + name + "' options: ", this.options());
+
+        const aFontFace = new FontFace(name, this.data(), this.options()); 
         this.setFontFace(aFontFace)
 
         aFontFace.load().then((loadedFace) => {
