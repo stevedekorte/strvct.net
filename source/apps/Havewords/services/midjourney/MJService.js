@@ -5,7 +5,7 @@
 
 */
 
-(class MJService extends Base {
+(class MJService extends BMSummaryNode {
   initPrototypeSlots() {
     this.newSlot("storagePrefix", "midjourney_io");
   }

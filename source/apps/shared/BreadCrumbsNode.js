@@ -24,11 +24,16 @@
         super.init()
         this.setNodeTileClassName("BreadCrumbsTile")
         this.setCanDelete(false)
-        this.setNodeMinTileHeight(75)
+        this.setNodeMinTileHeight(55)
         this.setNodeCanReorderSubnodes(false)
         this.setNodeIsVertical(true)
         this.removeAction("add")
         return this
+    }
+
+    finalInit () {
+        super.finalInit()
+        this.setNodeMinTileHeight(55)
     }
 
 

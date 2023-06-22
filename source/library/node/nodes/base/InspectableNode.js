@@ -186,10 +186,12 @@
         field.removeAction("add")
         field.setCanDelete(false)
         
+        /*
         if (name === "isAvailable") {
             debugger;
         }
-
+        */
+       
         const pathNodes = this.createNodePath(slot.inspectorPath())
         pathNodes.forEach(node => {
             if (node !== this) {

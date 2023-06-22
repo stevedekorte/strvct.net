@@ -35,7 +35,8 @@
         if (!isValid) {
             const s = "Field '" + this.key() + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
             console.warn(s)
-            debugger;
+            //debugger;
+            this.setValue(false);
             this.setValueError(s)
         } else {
             this.setValueError(null)

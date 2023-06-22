@@ -54,6 +54,7 @@
     }
 
     finalInit () {
+        super.finalInit();
         if (!this.hasSubnodes()) {
             this.addSubnode(BMDefaultTheme.clone()) // hack
         }

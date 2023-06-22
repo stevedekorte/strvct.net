@@ -19,12 +19,15 @@
     }
 
     {
-      const slot = this.newSlot("apis", "")
+      const slot = this.newSlot("models", null)
+      slot.setFinalInitProto(OpenAiModels)
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
     }
 
     {
-      const slot = this.newSlot("models", null)
-      slot.setFinalInitProto(OpenAiModels)
+      const slot = this.newSlot("conversations", null)
+      slot.setFinalInitProto(OpenAiConversations)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
@@ -38,6 +41,14 @@
     this.setTitle("OpenAI Chat");
     this.setSubtitle("service");
   }
+
+  /*
+  finalInit () {
+    super.finalInit()
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
+  }
+  */
 
   validateKey (s) {
     return s.length === 51 && s.startsWith("sk-");

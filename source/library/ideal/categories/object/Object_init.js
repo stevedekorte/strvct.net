@@ -65,11 +65,6 @@
         }
     }
 
-    finalInit () {
-        // nomrally called in clone(),
-        // but if deserializing, will be called by store after instanceFromRecordInStore() 
-    }
-
     didInit () {
         assert(!this.hasDoneInit())
         this.setHasDoneInit(true)

@@ -13,13 +13,16 @@
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Boolean")
       //slot.setValidValues([true, false]);
-      slot.setIsSubnodeField(true)
+      //slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
     {
       const slot = this.newSlot("isChecking", false);
       slot.setSlotType("Boolean")
-      slot.setShouldStoreSlot(false);
-      slot.setIsSubnodeField(true)
+      slot.setShouldStoreSlot(false)
+      //slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+
     }
   }
 
@@ -27,6 +30,17 @@
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
+
+  }
+
+  finalInit () {
+    super.finalInit();
+    this.setHasNewlineAferSummary(true)
+    this.setSummaryFormat("key")
+  }
+
+  subtitle () {
+    return this.isAvailable() ? "avaiable" : "";
   }
 
   models () {
@@ -42,6 +56,10 @@
   }
 
   async asyncCheckAvailability () {
+    if (this.isChecking()) {
+      return undefined;
+    }
+
     //debugger;
     if (!this.apiKey()) {
       console.warn(this.type() + " " + this.title() + " asyncCheckAvailability() - no api key");
@@ -75,7 +93,6 @@
     } else {
       this.setIsAvailable(true);
     }
-    //debugger;
     return this.isAvailable();
   }
 

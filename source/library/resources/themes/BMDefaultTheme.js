@@ -14,6 +14,7 @@
     }
 
     finalInit () {
+        super.finalInit();
         this.setupAsDefault() 
     }
 

@@ -34,6 +34,7 @@
   }
 
   finalInit () {
+    super.finalInit();
     if (!this.hasSubnodes()) {
       this.subnodeWithTitleIfAbsentInsertProto("states", BMThemeStates);
       this.subnodeWithTitleIfAbsentInsertProto("children", BMThemeClassChildren);

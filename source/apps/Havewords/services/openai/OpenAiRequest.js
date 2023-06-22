@@ -7,7 +7,7 @@
 
 */
 
-(class OpenAiRequest extends BMNode {
+(class OpenAiRequest extends BMSummaryNode {
 
   static initThisClass () {
     super.initThisClass();

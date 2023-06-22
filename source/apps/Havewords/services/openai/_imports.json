@@ -1,7 +1,7 @@
 [
+    "models/_imports.json",
+    "conversations/_imports.json",
     "OpenAiChat.js",
-    "OpenAiChatModel.js",
-    "OpenAiModels.js",
     "OpenAiMusicBot.js",
     "OpenAiRequest.js",
     "OpenAiService.js"

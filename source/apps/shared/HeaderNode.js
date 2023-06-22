@@ -90,11 +90,12 @@
         return this
     }
 
+    /*
     finalInit () {
         super.finalInit();
         return this
     }
-
+    */
 
     onTapOfNode () {
         super.onTapOfNode()

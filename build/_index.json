@@ -71,8 +71,8 @@
   },
   {
     "path": "source/library/ideal/categories/object/Object_init.js",
-    "size": 2863,
-    "hash": "3RboPjhlA3GAf6ykZtofi7EbyKmic7gundxtW1okEpY="
+    "size": 2706,
+    "hash": "Dz7lwWZLpNX7si70z6lV1rSOkbkIXhkiSSA4/ByF7Cw="
   },
   {
     "path": "source/library/ideal/categories/object/Object_notification.js",
@@ -766,8 +766,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 6181,
-    "hash": "1SiZcJcgEEoPQbYSnlvcRawIv4gOR4eh8iYZNwxFzbQ="
+    "size": 6210,
+    "hash": "tZGHPe05c5MUJPmT8Ogdhf9MIZOwK5Fg3C9k4jf8VX4="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -876,8 +876,8 @@
   },
   {
     "path": "source/library/node/nodes/BMSummaryNode.js",
-    "size": 5797,
-    "hash": "DBbB+brLfcZFAFuu9jbr3Jy60nTfJSoXJUyJHxO6o+c="
+    "size": 5966,
+    "hash": "ZjT14tjz3MCaLYU+4bnGoqb7dx6GJNxqBw9fk/zmPP4="
   },
   {
     "path": "source/library/node/nodes/BMFolderNode.js",
@@ -946,8 +946,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/BMBooleanField.js",
-    "size": 1355,
-    "hash": "gsJgBdTTvbzr1/Ve5b0PezeFk/Zlgh4C9jsFFQ/k5LU="
+    "size": 1391,
+    "hash": "QHTtBK4LoINJcl/LOKHBe/mCrLx6Bl+TiVekO+50Y+o="
   },
   {
     "path": "source/library/node/fields/subclasses/BMColorField.js",
@@ -1351,8 +1351,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeResources.js",
-    "size": 1578,
-    "hash": "WgKUfYUCIQF/9bUPIKc9UWKBqVKMqLY4ysXZg5WQ3I4="
+    "size": 1605,
+    "hash": "aaIlttgdcc6jf45I/60HBbhOuhEs6VjXZsOlBSqCa0E="
   },
   {
     "path": "source/library/resources/themes/BMThemeFolder.js",
@@ -1366,23 +1366,23 @@
   },
   {
     "path": "source/library/resources/themes/BMDefaultTheme.js",
-    "size": 506,
-    "hash": "LJ8H0ty43uqSqZ4b3vA1t1sI+EowBotRGomehPAMEvA="
+    "size": 533,
+    "hash": "o5xdQPtb0o8rQmOfqFvRV85Ew22nL2VnrhhWz51C9Ss="
   },
   {
     "path": "source/library/resources/themes/BMThemeClass.js",
-    "size": 2142,
-    "hash": "Rm37tuhVqteIHTy0wtXq8b13vYN24f9j8+IEUJFwE8I="
+    "size": 2165,
+    "hash": "+uQrVo9TefapQiIpHkFvers9sBEm4MzThB0YrhoxHjg="
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 16172,
-    "hash": "3vSeumKu2UQzUYic/+D6GCxMEkvMV9NW2Bk8OoAjuQ4="
+    "size": 16199,
+    "hash": "jqknJWrXmOA85SzE3CDnbFOVFQQqkZDwYlyMWEOy7Oo="
   },
   {
     "path": "source/library/resources/themes/BMThemeStates.js",
-    "size": 2093,
-    "hash": "sRB3S9miGN1hdkzWADdcWvrIfZL+BiWi/TGqgtXrQBg="
+    "size": 2116,
+    "hash": "OLwaGEic+lM++IUzTESwkPm88d30G0T2+Ri0zkePUEY="
   },
   {
     "path": "source/library/resources/themes/BMThemeClassChildren.js",
@@ -1416,13 +1416,13 @@
   },
   {
     "path": "source/apps/shared/BreadCrumbsNode.js",
-    "size": 679,
-    "hash": "zjB+HQWMF2KtCB6jqYNWRnnMc/KrzOR0ghoT2nQOjrs="
+    "size": 769,
+    "hash": "gb+hDYHhD3SdGXueB/ne4zTbNOmoHuRKfvwYmE8T83M="
   },
   {
     "path": "source/apps/shared/HeaderNode.js",
-    "size": 2506,
-    "hash": "oNqCTlRMbyZchdxouHoff6e/ywa6F48sXWdjLaPV9XU="
+    "size": 2519,
+    "hash": "jZnXxkcY5lk5lnGYuVtxjs0h5E9Eb43AQ40JU+Fd7Q4="
   },
   {
     "path": "source/apps/shared/RootContentNode.js",
@@ -1445,19 +1445,34 @@
     "hash": "/PvS/YFJVJ0gTAx2beAR6qvrKB9X88xb7uA+RUtppjk="
   },
   {
+    "path": "source/apps/Havewords/services/openai/models/OpenAiChatModel.js",
+    "size": 2350,
+    "hash": "Brh3GM8pIS3eg9ASJKR5sAxEDeuDhFD7GC3NhXGP7Kc="
+  },
+  {
+    "path": "source/apps/Havewords/services/openai/models/OpenAiModels.js",
+    "size": 1529,
+    "hash": "yMnV+AbKfaBenZBF9Z/91VOXgbiXVHtcsvAjaC8oqjs="
+  },
+  {
+    "path": "source/apps/Havewords/services/openai/conversations/messages/OpenAiMessage.js",
+    "size": 1787,
+    "hash": "jYeVFHEmL5OVFRvuqTC7DsGgKOxcGsKEhAyX0c1NVYI="
+  },
+  {
+    "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversation.js",
+    "size": 1285,
+    "hash": "f4X518lmXbIqWqjhdtwAhH+oW4EMOmUeQqtsk91effQ="
+  },
+  {
+    "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversations.js",
+    "size": 632,
+    "hash": "Dri/S6l1X2/Z/ZgUG94HtQw/cka4wIkGMg06hwS6Kwk="
+  },
+  {
     "path": "source/apps/Havewords/services/openai/OpenAiChat.js",
     "size": 5728,
     "hash": "N+b3cufkEYGOKK8pk3OTwilj6MqDVfcqz8DeXyjL2io="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/OpenAiChatModel.js",
-    "size": 2035,
-    "hash": "+elev00yLyeyEoGnJIbqCBFBkiZ7PMpxfj6Lq5jA6jg="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/OpenAiModels.js",
-    "size": 2347,
-    "hash": "/tEYItMkM6Qwr1vzenSWo8y8VF/UQuweuU291ptUxTI="
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiMusicBot.js",
@@ -1466,13 +1481,13 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiRequest.js",
-    "size": 8568,
-    "hash": "KiSfje1QwlDifkjnP7D4TW3DkZDW8wpJscQFjoeLGh0="
+    "size": 8575,
+    "hash": "fDRrrYzdjJ7CdQvRN0XYiibPoK7886b6lluH3K3ltec="
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiService.js",
-    "size": 917,
-    "hash": "KASn7A8fQp1TJ1hfXRnx9DpUvFtjYyQrLEwUKe13+a8="
+    "size": 1171,
+    "hash": "FQOZqkT8bkgOqR8QG8YG9X9kI7JOTxKrsXHzo2cAhlg="
   },
   {
     "path": "source/apps/Havewords/services/HwServices.js",

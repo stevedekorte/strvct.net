@@ -217,6 +217,7 @@
     }
 
     finalInit () {
+        super.finalInit();
         if (!this.hasSubnodes()) {
             this.setupSubnodes()
         }

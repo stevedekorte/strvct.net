@@ -30,6 +30,7 @@
   }
 
   finalInit () {
+    super.finalInit();
     this.setupSubnodes()
   }
 

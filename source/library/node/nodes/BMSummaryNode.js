@@ -72,7 +72,6 @@
             slot.setInspectorPath("Summary")
         }
 
-
         {
             const slot = this.newSlot("hidePolicy", "none")
             slot.setShouldStoreSlot(true)
@@ -153,9 +152,11 @@
 
         const hidePolicy = this.hidePolicy()
         if (hidePolicy !== "none") {
-            if (v === true && hidePolicy === "hide if value is true") {
+            const isTrue = (v === true || (typeof(v) === "string" && v !== ""));
+            const isFalse = (v === false || (typeof(v) === "string" && v === "") || v === null);
+            if (isTrue && hidePolicy === "hide if value is true") {
                 return ""
-            } else if (v === false && hidePolicy === "hide if value is false") {
+            } else if (isFalse && hidePolicy === "hide if value is false") {
                 return ""
             }
         }
