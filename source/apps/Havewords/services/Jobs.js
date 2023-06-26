@@ -8,7 +8,7 @@
 
 */
 
-(class Jobs extends Base {
+(class Jobs extends BMStorableNode {
   initPrototypeSlots() {
     this.newSlot("jobsSet", null);
     this.newSlot("jobClass", null);

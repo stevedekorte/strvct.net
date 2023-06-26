@@ -393,7 +393,7 @@
         } else {
             this[privateName] = newValue
         }
-        this[privateName]
+        //this[privateName]
         return this
     }
 

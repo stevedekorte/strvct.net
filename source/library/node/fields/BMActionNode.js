@@ -40,6 +40,11 @@
         return this
     }
 
+    target () {
+        const t = this._target;
+        return t ? t : this.parentNode()
+    }
+
     canDoAction () {
         const t = this.target()
         const m = this.methodName()

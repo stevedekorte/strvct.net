@@ -7,51 +7,101 @@
 
 */
 
-(class OpenAiRequest extends BMSummaryNode {
-
-  static initThisClass () {
-    super.initThisClass();
-    this.newClassSlot("requestCount", 0);
-  }
-
-  static incrementRequestCount() {
-    this.setRequestCount(this.requestCount() + 1);
-    return this.requestCount();
-  }
+(class OpenAiRequest extends BMStorableNode {
 
   initPrototypeSlots() {
-    this.newSlot("service", null); // optional reference to service object that owns request e.g. OpenAiChat - will receive onRequestComplete message if it responds to it
-    this.newSlot("apiUrl", null);
-    this.newSlot("apiKey", null);
-    this.newSlot("bodyJson", null); // this will contain the model choice and messages
-    this.newSlot("json", null);
+
+    {
+      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request e.g. OpenAiChat - will receive onRequestComplete message if it responds to it
+    }
+
+    {
+      const slot = this.newSlot("apiUrl", null);
+    }
+
+    {
+      const slot = this.newSlot("apiKey", null);
+    }
+
+    {
+      const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+    }
+
+    {
+      const slot = this.newSlot("json", null);
+    }
 
     // fetching
-    this.newSlot("fetchRequest", null);
-    this.newSlot("isFetchActive", false);
-    this.newSlot("fetchAbortController", null);
 
+    {
+      const slot = this.newSlot("fetchRequest", null);
+    }
+
+    {
+      const slot = this.newSlot("isFetchActive", false);
+    }
+
+    {
+      const slot = this.newSlot("fetchAbortController", null);
+    }
 
     // streaming
-    this.newSlot("isStreaming", false); // external read-only
-    this.newSlot("streamTarget", null); // will receive onStreamData and onStreamComplete messages
-    this.newSlot("xhr", null); 
-    this.newSlot("xhrResolve", null); 
-    this.newSlot("xhrReject", null); 
-    this.newSlot("requestId", null); 
-    this.newSlot("readIndex", 0);
-    this.newSlot("readLines", null);
 
-    this.newSlot("fullContent", null); 
-    this.newSlot("lastContent", "");
-    this.newSlot("error", null);
+    {
+      const slot = this.newSlot("isStreaming", false); // external read-only
+    }
+
+    {
+      const slot = this.newSlot("streamTarget", null); // will receive onStreamData and onStreamComplete messages
+    }
+
+    {
+      const slot = this.newSlot("xhr", null);
+    }
+
+    {
+      const slot = this.newSlot("xhrResolve", null); 
+    }
+
+    {
+      const slot = this.newSlot("xhrReject", null); 
+    }
+
+    {
+      const slot = this.newSlot("requestId", null);
+    }
+
+    {
+      const slot = this.newSlot("readIndex", 0);
+    }
+
+    {
+      const slot = this.newSlot("readLines", null);
+    }
+
+    {
+      const slot = this.newSlot("fullContent", null); 
+    }
+
+    {
+      const slot = this.newSlot("lastContent", "");
+    }
+
+    {
+      const slot = this.newSlot("error", null);
+    }
   }
 
   init() {
     super.init();
     this.setIsDebugging(false);
-    this.setRequestId(this.thisClass().incrementRequestCount());
+    this.setRequestId(this.puuid());
     this.setLastContent("");
+  }
+
+  setService(anObject) {
+    this.setDelegate(anObject);
+    return this;
   }
 
   body() {
@@ -103,35 +153,47 @@
   // --- normal response --- 
 
   async asyncSend () {
-    this.setIsStreaming(false);
+    try {
+      this.setIsStreaming(false);
 
-    this.assertValid();
-    if (this.isDebugging()) {
-      this.showRequest();
+      this.assertValid();
+      if (this.isDebugging()) {
+        this.showRequest();
+      }
+
+      const options = this.requestOptions();
+
+      const controller = new AbortController();
+      this.setFetchAbortController(controller);
+      options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
+
+      const fetchRequest = fetch(this.apiUrl(), options);
+
+      fetchRequest.then((response) => {
+        this.setIsFetchActive(false);
+        this.setFetchAbortController(null);
+        //return response.json();
+      }).catch((error) => {
+        this.setIsFetchActive(false);
+          console.error('Error:', error);
+      });
+
+      const response = await fetchRequest;
+      const json = await response.json();
+      this.setJson(json);
+      if (json.error) {
+        this.onError(new Error(json.error.message))
+      } else {
+        this.setFullContent(json.choices[0].message.content);
+        this.sendDelegate("onRequestComplete")
+        //this.showResponse();
+        return json
+      }
+    } catch (error) {
+      this.onError(error)
     }
 
-    const options = this.requestOptions();
-
-    const controller = new AbortController();
-    this.setFetchAbortController(controller);
-    options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
-
-    const fetchRequest = fetch(this.apiUrl(), options);
-
-    fetchRequest.then((response) => {
-      this.setIsFetchActive(false);
-      this.setFetchAbortController(null);
-      //return response.json();
-    }).catch((error) => {
-      this.setIsFetchActive(false);
-        console.error('Error:', error);
-    });
-
-    const response = await fetchRequest;
-    const json = response.json();
-    this.setJson(json);
-    this.showResponse();
-    return json;
+    return undefined;
   }
 
   // --- helpers ---
@@ -205,17 +267,28 @@
     this.onXhrRead();
   }
 
+  sendDelegate (methodName) {
+    const d = this.delegate()
+    if (d) {
+      const f = d[methodName]
+      if (f) {
+        f.apply(d, [this])
+        return true
+      }
+    }
+  }
+
   onXhrLoadEnd (event) {
     this.onXhrRead();
     this.streamTarget().onStreamComplete(this);
-    if (this.service().onRequestComplete) {
-      this.service().onRequestComplete(this)
-    }
+    this.sendDelegate("onRequestComplete")
     this.xhrResolve()(this.fullContent()); 
   }
 
-  setError (e) {
-    this._error = e;
+  onError (e) {
+    this.setError(e);
+    this.sendDelegate("onRequestError")
+
     if (e) {
       console.warn(this.debugTypeId() + " " + e.message);
     }
@@ -231,7 +304,7 @@
     s += "  xhr.statusText: '" + xhr.statusText + "'";
     s += "  xhr.readyState: ", xhr.readyState; // e.g.. 4 === DONE
     const error = new Error(s);
-    this.setError(error);
+    this.onError(error);
     this.streamTarget().onStreamComplete(this);
     this.xhrReject()(error);
   }
@@ -277,7 +350,7 @@
         line = this.readNextXhrLine();
       }
     } catch(error) {
-      this.setError(error);
+      this.onError(error);
       console.warn(this.type() + " ERROR:", error);
       debugger;
       this.xhrReject()(new Error(error));

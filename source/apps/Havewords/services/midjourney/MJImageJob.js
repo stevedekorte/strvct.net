@@ -37,20 +37,44 @@
   }
 
   initPrototypeSlots() {
-    this.newSlot("mjVersion", "5.1");
-    this.newSlot("prompt", null);
 
-    this.newSlot("taskId", null);
+    {
+      const slot = this.newSlot("mjVersion", "5.1");
+    }
 
-    this.newSlot("pollCount", 0);
-    this.newSlot("pollingMs", 4000);
+    {
+      const slot = this.newSlot("prompt", null);
+    }
 
-    this.newSlot("imageUrl", 0);
+    {
+      const slot = this.newSlot("taskId", null);
+    }
+
+    {
+      const slot = this.newSlot("pollCount", 0);
+    }
+
+    {
+      const slot = this.newSlot("pollingMs", 4000);
+    }
+
+    {
+      const slot = this.newSlot("imageUrl", 0);
+    }
+
   }
 
   init() {
     super.init();
     this.setIsDebugging(false);
+    this.setTitle("Untitled")
+    this.setSubtitle("Image Job")
+  }
+
+  finalInit () {
+    super.finalInit()
+    this.setCanDelete(true)
+    this.setNodeCanEditTitle(true)
   }
 
   newRequest() {

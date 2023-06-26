@@ -3,5 +3,6 @@
     "Jobs.js",
     "Services.js",
     "openai/_imports.json",
+    "midjourney/_imports.json",
     "HwServices.js"
 ]

@@ -9,7 +9,7 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("apiKey", "")
-      slot.setInspectorPath("")
+      //slot.setInspectorPath("")
       slot.setLabel("API Key")
       slot.setShouldStoreSlot(true)
       slot.setDuplicateOp("duplicate")
@@ -32,23 +32,26 @@
       slot.setIsSubnode(true);
     }
 
+    {
+      const slot = this.newSlot("jobs", null)
+      slot.setFinalInitProto(OpenAiJobs)
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
 
   init () {
     super.init();
-    this.setTitle("OpenAI Chat");
-    this.setSubtitle("service");
   }
 
-  /*
   finalInit () {
     super.finalInit()
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
+    this.setTitle("OpenAI Chat");
+    this.setSubtitle("AI service");
   }
-  */
 
   validateKey (s) {
     return s.length === 51 && s.startsWith("sk-");

@@ -80,7 +80,8 @@
     });
 
     this.setIsChecking(true);
-    const json = await request.asyncSend();
+    await request.asyncSend();
+    const json = request.json()
     this.setIsChecking(false);
     if (json.error) {
       /*

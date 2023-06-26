@@ -42,18 +42,25 @@
     this.setShouldStoreSubnodes(false);
   }
 
-  init() {
+  init () {
     super.init();
     this.setTitle("Message")
     this.setCanDelete(true)
   }
 
+  finalInit () {
+    super.finalInit()
+    const action = BMActionNode.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
+    this.addSubnode(action)
+  }
+
   subtitle () {
     let s = this.content()
-    if (s.length > 15) {
-      s = this.content().slice(0, 15) + "..."
+    const max = 40
+    if (s.length > max) {
+      s = this.content().slice(0, max) + "..."
     }
-    return this.role() + ": " + s
+    return this.role() + "\n" + s
   }
 
   tokenCount () {
@@ -79,19 +86,66 @@
     ];
   }
 
-  sendRequest () {
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    assert(i !== -1)
-    const json = messages.slice(i).map(m => m.openAiJson())
-    
-  }
-
   openAiJson () {
     return {
       role: this.role(),
       content: this.content()
     }
+  }
+
+  conversation () {
+    return this.parentNode()
+  }
+
+  conversationHistoryJson () {
+    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
+    const messages = this.conversation().messages()
+    const i = messages.indexOf(this)
+    assert(i !== -1)
+    const json = messages.slice(0, i+1).map(m => m.openAiJson())
+    return json
+  }
+
+  async sendInConversation () {
+    if (!this.request()) {
+      const request = this.newRequest()
+      this.setRequest(request)
+      request.asyncSend();
+    }
+  }
+
+  // --- send request -------------
+
+  selectedModel () {
+    return this.conversation().selectedModel()
+  }
+
+  apiKey () {
+    return this.conversation().conversations().service().apiKey()
+  }
+
+  newRequest() {
+    const request = OpenAiRequest.clone();
+    request.setApiUrl("https://api.openai.com/v1/chat/completions");
+    request.setApiKey(this.apiKey());
+    request.setDelegate(this)
+    request.setBodyJson({
+      model: this.selectedModel(),
+      messages: this.conversationHistoryJson(),
+      temperature: 0.7, // more creative
+      top_p: 0.9 // more diverse
+    });
+    return request;
+  }
+
+  onRequestError (aRequest) {
+    this.setError(aRequest.error())
+    this.setRequest(null)
+  }
+
+  onRequestComplete (aRequest) {
+    this.conversation().addAssistentMessageContent(aRequest.fullContent())
+    //this.setRequest(null)
   }
 
 }.initThisClass());

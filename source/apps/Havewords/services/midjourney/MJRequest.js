@@ -7,14 +7,31 @@
 
 */
 
-(class MJRequest extends Base {
+(class MJRequest extends BMStorableNode {
   initPrototypeSlots () {
-    this.newSlot("endpointPath", null);
-    this.newSlot("service", null)
-    this.newSlot("body", null); // JSON object
-    this.newSlot("startTime", null); // JSON object
-    this.newSlot("timeoutMs", 120000); 
-    this.newSlot("timeoutId", null); 
+    {
+      const slot = this.newSlot("endpointPath", null);
+    }
+
+    {
+      const slot = this.newSlot("service", null);
+    }
+
+    {
+      const slot = this.newSlot("body", null); // JSON object
+    }
+
+    {
+      const slot = this.newSlot("startTime", null); // JSON object
+    }
+    
+    {
+      const slot = this.newSlot("timeoutMs", 120000);
+    }
+
+    {
+      const slot = this.newSlot("timeoutId", null);
+    }
   }
 
   init () {

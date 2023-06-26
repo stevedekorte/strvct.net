@@ -62,4 +62,14 @@
     return this;
   }
 
+  selectedModel () {
+    return "gpt-4";
+  }
+
+  addAssistentMessageContent (content) {
+    const message = OpenAiMessage.clone().setRole("assistant").setContent(content)
+    this.addSubnode(message)
+    return this
+  }
+
 }.initThisClass());

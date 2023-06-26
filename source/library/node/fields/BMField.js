@@ -96,7 +96,8 @@
         }
 
         {
-            const slot = this.newSlot("valueMethod", null).setDuplicateOp("duplicate")
+            const slot = this.newSlot("valueMethod", null)
+            slot.setDuplicateOp("duplicate")
         }
         
         {
@@ -104,11 +105,13 @@
         }
         
         {
-            const slot = this.newSlot("keyError", null).setSyncsToView(true)
+            const slot = this.newSlot("keyError", null)
+            slot.setSyncsToView(true)
         }
         
         {
-            const slot = this.newSlot("valueError", null).setSyncsToView(true)
+            const slot = this.newSlot("valueError", null)
+            slot.setSyncsToView(true)
         }
         
         {

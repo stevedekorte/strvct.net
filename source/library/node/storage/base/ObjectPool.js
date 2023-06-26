@@ -528,6 +528,8 @@
         }
         obj.loadFromRecord(aRecord, this)
 
+        this.loadingPids().delete(obj.puuid()) // need to do this to get object to ber marked as dirty if it's slots are updated in finalInit
+
         if (obj.finalInit) {
             obj.finalInit();
         }

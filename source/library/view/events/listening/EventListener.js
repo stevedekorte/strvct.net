@@ -254,6 +254,7 @@ let listenCount = 0;
 
     handleEvent (event) {
         const fullMethodName = this.fullMethodName()
+
         //event._isUserInteraction = this.isUserInteraction() // unused
 
         const delegate = this.delegate()

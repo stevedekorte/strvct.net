@@ -8,19 +8,39 @@
 
 */
 
-(class Job extends Base {
+(class Job extends BMStorableNode {
   initPrototypeSlots() {
-    this.newSlot("manager", null);
-    //this.newSlot("jobId", null); 
-    this.newSlot("requestId", null); 
+    {
+      const slot = this.newSlot("manager", null);
+    }
+     
+    {
+      const slot = this.newSlot("requestId", null); 
+    }
 
-    this.newSlot("startDate", null);  
-    this.newSlot("endDate", null);
-    this.newSlot("timeoutInMs", null);
+    {
+      const slot = this.newSlot("startDate", null);
+    }
 
-    this.newSlot("progress", null);
-    this.newSlot("status", null); 
-    this.newSlot("error", null); 
+    {
+      const slot = this.newSlot("endDate", null);
+    }
+
+    {
+      const slot = this.newSlot("timeoutInMs", null);
+    }
+
+    {
+      const slot = this.newSlot("progress", null);
+    }
+
+    {
+      const slot = this.newSlot("status", null); 
+    }
+
+    {
+      const slot = this.newSlot("error", null); 
+    }
   }
 
   init () {

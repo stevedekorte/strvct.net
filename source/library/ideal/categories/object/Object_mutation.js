@@ -61,6 +61,11 @@
         return this._mutationObservers
     }
 
+    hasMutationObservers () {
+        const mos = this._mutationObservers
+        return mos && mos.size > 0
+    }
+
     addMutationObserver (anObserver) {
         this.mutationObservers().add(anObserver)
         return this

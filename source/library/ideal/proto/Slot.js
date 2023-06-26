@@ -487,6 +487,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 */
 
                 const newValue = finalInitProto.clone()
+                debugger;
                 this.onInstanceSetValue(anInstance, newValue)
             } else if (oldValue.type() !== finalInitProto.type()) {
                 debugger;
