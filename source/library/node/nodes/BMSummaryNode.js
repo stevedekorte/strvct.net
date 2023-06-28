@@ -5,7 +5,11 @@
     BMSummaryNode
     
     A node that contains Text, stores it's:
-        content, color, font, padding, margin
+    - content
+    - color
+    - font
+    - padding
+    - margin
     and has an inspector for these attributes
     
     support for links?

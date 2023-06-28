@@ -258,7 +258,7 @@
         this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure(() => { 
             //debugger;
             return BMResources.shared().fonts().allFontNames() 
-        })   
+        })
 
         this.addSubnodeFieldsForSlots(this.styleSlots())
     }

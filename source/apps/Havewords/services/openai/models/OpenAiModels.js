@@ -21,6 +21,7 @@
   finalInit() {
     super.finalInit();
     this.nodeSubtitleIsChildrenSummary(true)
+    this.setNodeSubtitleIsChildrenSummary(true)
     this.syncModelsToAllModelNames();
   }
 

@@ -74,6 +74,16 @@
         return "Unlinked"
     }
 
+    /*
+    setTitle (s) {
+        const ln = this.linkedNode()
+        if (ln) {
+            return ln.setTitle(s)
+        }
+        return this   
+    }
+    */
+
     subtitle () {
         const ln = this.linkedNode()
         if (ln) {

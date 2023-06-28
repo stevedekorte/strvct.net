@@ -101,16 +101,22 @@
     setImageDataUrl (dataURL) {
         assert(!Type.isArray(dataURL)) 
 
-        if (dataURL === this.imageDataUrl()) {
+        if (this.hasImageUrl(dataURL)) {
             return this
         }
         
         this.removeAllSubviews()
 
-        if (!Type.isNullOrUndefined(dataURL)) {
+        const v = ImageView.clone()
+        this.setImageView(v)
+        this.addSubview(v)
+
+        if (!Type.isNullOrUndefined(dataURL) && Type.isString(dataURL)) {
+            /*
             const v = ImageView.clone()
             this.setImageView(v)
             this.addSubview(v)
+            */
 
             v.fetchDataURLFromSrc(dataURL)
             v.autoFitChildHeight()
@@ -118,6 +124,16 @@
         }
 
         return this
+    }
+
+    hasImageUrl (url) {
+        const v = this.imageView()
+        if (v) {
+            if (url === v.dataURL() || url === v.srcUrl()) {
+                return true
+            }
+        }
+        return false
     }
     
     imageDataUrl () {

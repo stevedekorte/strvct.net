@@ -11,6 +11,7 @@
     {
       const slot = this.newSlot("isAvailable", undefined)
       slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true)
       slot.setSlotType("Boolean")
       //slot.setValidValues([true, false]);
       //slot.setIsSubnodeField(true)
@@ -20,9 +21,9 @@
       const slot = this.newSlot("isChecking", false);
       slot.setSlotType("Boolean")
       slot.setShouldStoreSlot(false)
+      slot.setSyncsToView(true)
       //slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
-
     }
   }
 
@@ -36,11 +37,14 @@
   finalInit () {
     super.finalInit();
     this.setHasNewlineAferSummary(true)
+    //this.setSummaryFormat("key value")
     this.setSummaryFormat("key")
+    this.setHidePolicy("hide if value is false")
   }
 
   subtitle () {
-    return this.isAvailable() ? "avaiable" : "";
+    //return this.isAvailable() ? "☑" : "☒";
+    return this.isAvailable() ? "available" : "";
   }
 
   models () {
@@ -81,8 +85,14 @@
 
     this.setIsChecking(true);
     await request.asyncSend();
-    const json = request.json()
     this.setIsChecking(false);
+
+    if (request.error()) {
+      this.setIsAvailable(false);
+      return false
+    }
+
+    const json = request.json() // should this be an await?
     if (json.error) {
       /*
         TODO: 

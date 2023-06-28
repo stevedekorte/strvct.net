@@ -30,5 +30,9 @@
         this.setValueIsVisible(true)
         this.setValueIsEditable(true)
     }
+
+    syncFromNode () {
+        super.syncFromNode()
+    }
     
 }.initThisClass());

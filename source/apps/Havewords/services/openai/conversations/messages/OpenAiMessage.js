@@ -13,6 +13,7 @@
       slot.setInspectorPath("")
       //slot.setLabel("role")
       slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setValidValues(this.validRoles())
@@ -24,6 +25,7 @@
       slot.setInspectorPath("")
       //slot.setLabel("role")
       slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
@@ -52,6 +54,7 @@
     super.finalInit()
     const action = BMActionNode.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
     this.addSubnode(action)
+    //this.scheduleSyncToView()
   }
 
   subtitle () {

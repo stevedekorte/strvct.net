@@ -132,6 +132,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("validValuesClosure", null) 
         this.simpleNewSlot("allowsMultiplePicks", false)
         this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
+        this.simpleNewSlot("summaryFormat", "none") // passed into slot inspector node
 
         this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
         //this.simpleNewSlot("isDeserializing", false) // need to add it here as we don't inherit it
@@ -141,13 +142,24 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         const slotType = this.slotType() 
         if (slotType /*&& this.canInspect()*/) {
             let fieldName = "BM" + slotType + "Field"
+
             if (this.validValues() || this.validValuesClosure()) {
                 fieldName = "BMOptionsNode"
             }
-            const proto = getGlobalThis()[fieldName]
+
+            let proto = getGlobalThis()[fieldName]
+
+            /*
+            if (!proto) {
+                let nodeName = "BM" + slotType + "Node"
+                proto = getGlobalThis()[nodeName]
+            }
+            */
+
             if (proto) {
                 const field = proto.clone()
 
+                // should we set the target here?
                 field.setKey(this.name())
                 field.setKeyIsEditable(false)
                 field.setValueMethod(this.name())
@@ -487,7 +499,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 */
 
                 const newValue = finalInitProto.clone()
-                debugger;
                 this.onInstanceSetValue(anInstance, newValue)
             } else if (oldValue.type() !== finalInitProto.type()) {
                 debugger;

@@ -2,17 +2,15 @@
 
 /*
 
-    BMPointerField
+    BMJsonField
 
-    A field that's a pointer to another node.
-(sometimes the other node is used as a list of items, but not always)
 
 */
         
-(class BMPointerField extends BMField {
+(class BMJsonField extends BMField {
     
     initPrototypeSlots () {
-
+        this.newSlot("nodeTileLink", null)
     }
 
     init () {
@@ -24,12 +22,20 @@
         this.setNodeTileIsSelectable(true)
     }
 
-    /*
     setValue (v) {
-        console.warn("WARNING: BMPointerField setValue '" + v + "'")
+        console.warn("WARNING: BMJsonField setValue '" + v + "'")
+        const node = BMJsonNode.nodeForJson(v)
+        this.setNodeTileLink(node)
         return this
     }
-    */
+
+    value () {
+        const node = this.nodeTileLink()
+        if (node) {
+            return node.jsonArchive()
+        }
+        return undefined
+    }
 
     proxyGetter(methodName, defaultReturnValue = "") {
         const v = this.value()
@@ -46,10 +52,6 @@
 	
     note () {
         return this.proxyGetter("note")
-    }
-	
-    nodeTileLink () {
-        return this.value()
     }
 
 }.initThisClass());

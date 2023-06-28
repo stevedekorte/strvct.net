@@ -39,6 +39,10 @@
         super.setTitle(s)
         return this
     }
+    
+    summary () {
+        return ""
+    }
 
     target () {
         const t = this._target;

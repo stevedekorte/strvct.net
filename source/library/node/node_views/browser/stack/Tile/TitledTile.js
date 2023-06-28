@@ -60,7 +60,7 @@
         this.setTitleView(tv)
         tv.setThemeClassName("TileTitle")
         tv.setUsesDoubleTapToEdit(true)
-        tv.setOverflow("visible")
+        //tv.setOverflow("visible")
         tv.setPaddingLeft("0em")
 
         const st = TileSubtitleView.clone()
@@ -275,7 +275,7 @@
     // arrow
     
     makeNoteRightArrow () {
-        debugger;
+        //debugger;
         const nv = this.noteView()
         
         nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"))        

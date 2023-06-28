@@ -64,7 +64,7 @@
             const slot = slotsMap.at(slotName)
             if (slot.canInspect()) {
                 const field = slot.newInspectorField()
-                let pathNodes = null
+                let h = null
 
                 if (field) {
                     field.setTarget(this)
@@ -181,7 +181,7 @@
         field.setTarget(this)
         field.setNodeCanEditTitle(false)
         field.setNodeCanReorderSubnodes(false)
-        field.setSummaryFormat("key value")
+        field.setSummaryFormat(slot.summaryFormat())
         field.setHasNewlineAferSummary(true)
         field.removeAction("add")
         field.setCanDelete(false)

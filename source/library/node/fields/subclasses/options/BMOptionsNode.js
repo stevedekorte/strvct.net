@@ -75,6 +75,10 @@
         return picked.map(subnode => subnode.summary()).join("")
     }
 
+    pickedValues () {
+        return this.pickedSubnodes().map(s => s.value())
+    }
+
     setSubtitle (aString) {
         return this
     }
@@ -84,7 +88,7 @@
             this.unpickSubnodesExcept(anOptionNode)
         }
 
-        const pickedValues = this.pickedSubnodes().map(s => s.value())
+        const pickedValues = this.pickedValues()
         //this.setValue(pickedValues)
         
         if (pickedValues.length) {
@@ -110,7 +114,7 @@
     }
 
     pickedSubnodes () {
-        this.setupSubnodesIfEmpty()
+        //this.setupSubnodesIfEmpty() // did we need this for loading from store?
         return this.subnodes().select(subnode => subnode.isPicked())
     }
 
@@ -216,22 +220,61 @@
         return this
     }
 
+    didUpdateSlotParentNode (oldValue, newValue) {
+        super.didUpdateSlotParentNode(oldValue, newValue) 
+        //debugger;
+        this.setupSubnodes()
+    }
+
+    targetHasPick (v) {
+        const value = this.value();
+
+        if (this.allowsMultiplePicks()) {
+            const values = Type.isArray(value) ? value : null;
+            return values.includes(v)
+        } 
+        
+        return v === value;
+    }
+
     setupSubnodes () {
-        const values = this.computedValidValues()
-        //debugger
-        if (!this.validValuesFromSubnodes().equals(values)) {
+        const target = this.target();
+        if (!target) {
+            return this;
+        }
+
+        const validValues = this.computedValidValues()
+        const validValuesMatch = this.validValuesFromSubnodes().asSet().equals(validValues.asSet());
+
+        const value = target ? this.value() : undefined;
+        const pickedValuesSet = this.pickedValues().asSet();
+        const pickedValuesMatch = value ? new Set(value).equals(pickedValuesSet) : false; // what about ordering?
+
+
+        const needsSync = target && !validValuesMatch || !pickedValuesMatch;
+        if (needsSync) {
             this.removeAllSubnodes()     
-            const options = values.map(v => {
+            const options = validValues.map(v => {
                 const optionNode = BMOptionNode.clone().setTitle(v).setValue(v)
-                if (v == this.value()) {
-                    optionNode.justSetIsPicked(true)
-                }
+                const isPicked = this.targetHasPick(v)
+                optionNode.justSetIsPicked(isPicked)
                 //optionNode.setIsPicked(v == this.value())
                 optionNode.setNodeCanEditTitle(false)
                 return optionNode
             })
             this.addSubnodes(options)
             //this.copySubnodes(options)
+            //this.scheduleSyncToView()
+
+            /*
+            if (this.key() === "role") {
+                console.log("target = ", this.target());
+                console.log("values = ", value);
+                console.log("pickedValuesSet = ", pickedValuesSet);
+                debugger
+                this.setTarget(null);
+            }
+            */
         }
         return this
     }

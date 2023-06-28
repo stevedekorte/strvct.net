@@ -29,7 +29,13 @@ if (!getGlobalThis().Image) {
 
         loadUrl (url) {
             this.crossOrigin = "Anonymous";
-            this.onload = () => { this.didLoad() }
+            this.onload = () => { 
+                this.didLoad() 
+            }
+            this.onerror = () => { 
+                console.warn("error loading image " + url)
+            }
+
             this.src = url;
             return this
         }
@@ -42,7 +48,7 @@ if (!getGlobalThis().Image) {
 
             // draw image to the canvas
             const ctx = canvas.getContext("2d");
-            ctx.drawImage(img, 0, 0);
+            ctx.drawImage(this, 0, 0);
 
             // get the image data from the canvas
             const data = canvas.toDataURL("image/jpeg");

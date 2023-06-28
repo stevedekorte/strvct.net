@@ -26,5 +26,9 @@
     this.setNodeCanReorderSubnodes(true)
   }
 
+  service () {
+    return this.parentNode()
+  }
+
 }.initThisClass());
 

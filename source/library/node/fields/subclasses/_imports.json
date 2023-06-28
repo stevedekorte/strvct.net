@@ -5,6 +5,7 @@
     "BMImageWellField.js",
     "BMNumberField.js",
     "BMPointerField.js",
+    "BMJsonField.js",
     "BMStampField.js",
     "BMStringField.js",
     "BMTextAreaField.js",

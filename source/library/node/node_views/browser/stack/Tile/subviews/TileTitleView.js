@@ -24,6 +24,7 @@
         this.setMarginTop("0em")
         this.setMarginLeft("0em")
         this.setMinWidth("20px")
+        this.setWidth("100%")
         this.setPaddingTop("2px")
         this.setPaddingBottom("2px")
         this.setTextAlign("left")
@@ -31,6 +32,15 @@
         this.setOverflow("hidden")
         this.setWordWrap("normal")
         return this
+    }
+
+    setOverflow (v) {
+        console.log("setOverflow(" + v + ")");
+        if (v !== "hidden") {
+            debugger;
+        }
+        super.setOverflow(v);
+        return this;
     }
 
     /*

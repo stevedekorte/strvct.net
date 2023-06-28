@@ -11,6 +11,11 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("endpointPath", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
@@ -19,25 +24,97 @@
 
     {
       const slot = this.newSlot("body", null); // JSON object
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      //slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
-      const slot = this.newSlot("startTime", null); // JSON object
+      const slot = this.newSlot("bodyJson", null); // JSON object
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("responseJson", null); // JSON object
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("startTime", null); 
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setCanEditInspection(false)
     }
     
     {
       const slot = this.newSlot("timeoutMs", 120000);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
       const slot = this.newSlot("timeoutId", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
+
+    {
+      const slot = this.newSlot("error", null);
+    }
+
+    {
+      const slot = this.newSlot("fetchAbortController", null);
+    }
+
+    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(true)
   }
 
   init () {
     super.init();
+    this.setTitle("request")
     this.setService(MJService.shared());
-    this.setIsDebugging(false)
+    this.setIsDebugging(true)
+  }
+
+  status () {
+    return this.subtitle()
+  }
+
+  setStatus (s) {
+    this.setSubtitle(s)
+    return this
+  }
+
+  isRunning () {
+    return this.fetchAbortController() !== null;
+  }
+
+  didUpdateSlotBody () {
+    this.setBodyJson(JSON.stringify(this.requestOptions(), 2, 2))
   }
 
   requestOptions () {
@@ -58,16 +135,22 @@
 
   assertValid () {
     if (!this.service()) {
-      throw new Error(this.type() + " service missing");
+      this.throwError(new Error(this.type() + " service missing"));
     }
 
     if (!this.service().apiKey()) {
-      throw new Error(this.type() + " apiKey missing");
+      this.throwError(new Error(this.type() + " apiKey missing"));
     }
 
     if (!this.service().apiBaseUrl()) {
-      throw new Error(this.type() + " apiBaseUrl missing");
+      this.throwError(new Error(this.type() + " apiBaseUrl missing"));
     }
+  }
+
+  throwError(error) {
+    this.setError(error)
+    this.setStatus(error.message)
+    throw error
   }
   
   async asyncSend () {
@@ -77,18 +160,31 @@
     const requestOptions = this.requestOptions()
 
     this.debugLog(" send request endpointUrl:" +  this.endpointUrl() + "options: \n", requestOptions);
+    this.setStatus("sending")
+
+    const controller = new AbortController();
+    this.setFetchAbortController(controller);
+    requestOptions.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
 
     const fetchPromise = fetch(this.endpointUrl(), requestOptions);
     const timeoutPromise = this.newTimeoutPromise();
+    this.setResponseJson("")
 
-    return Promise.race([timeoutPromise, fetchPromise])
+    return Promise.race([fetchPromise, timeoutPromise])
       .then(response => {
         this.clearTimeout();
-        return response.json();
+        this.setStatus("got response")
+        const json = response.json();
+        this.setResponseJson(JSON.stringify(json, 2, 2))
+        return json
       })
       .catch(error => {
-          throw new Error("request timeout after " + this.timeoutMs() + "ms");
-      });
+        const errorMessage = "request timeout after " + (this.timeoutMs()/1000) + " seconds"
+        this.throwError(new Error(errorMessage));
+      })
+      .finally(() => {
+        this.clearAbortController()
+      })
   }
 
   description () {
@@ -109,6 +205,19 @@
       this.setTimeoutId(null);
     }
     return this;
+  }
+    
+  abort () {
+    if (this.fetchAbortController()) {
+      this.fetchAbortController().abort();
+      this.clearAbortController()
+    }
+    return this;
+  }
+
+  clearAbortController () {
+    this.setFetchAbortController(null)
+    return this
   }
 
 }.initThisClass());

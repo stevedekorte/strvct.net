@@ -20,6 +20,11 @@
     return this;
   }
 
+  finalInit () {
+    super.finalInit();
+    this.setNoteIsSubnodeCount(true);
+  }
+
   newJob () {
     const job = this.jobClass().clone();
     job.setManager(this);

@@ -21,16 +21,17 @@
     this.setTitle("Conversations");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([OpenAiConversation])
-    this.addAction("add")
-    this.setNodeCanReorderSubnodes(true)
+    this.setSubnodeClasses([OpenAiConversation]);
+    this.addAction("add");
+    this.setNodeCanReorderSubnodes(true);
+  }
+
+  finalInit() {
+    super.finalInit()
+    this.setNoteIsSubnodeCount(true);
   }
 
   /*
-  finalInit() {
-    super.finalInit()
-  }
-
   didInit () {
     super.didInit()
   }

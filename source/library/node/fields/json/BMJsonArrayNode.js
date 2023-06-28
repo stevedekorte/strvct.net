@@ -85,5 +85,5 @@
         bdd.setDecodedData(JSON.stringify(json, null, 4))
         return bdd
     }
-    
+
 }.initThisClass());

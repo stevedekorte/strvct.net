@@ -11,7 +11,7 @@
     // --- supported mime types ---
 
     static supportedMimeTypes () {
-        throw new Error("subclasses should override this method")
+        //throw new Error("subclasses should override this method")
         return new Set()
     }
 

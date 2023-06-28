@@ -8,34 +8,89 @@
 
 */
 
-(class Job extends BMStorableNode {
+(class Job extends BMSummaryNode {
   initPrototypeSlots() {
     {
       const slot = this.newSlot("manager", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setCanEditInspection(false)
+      slot.setSummaryFormat("none")
     }
      
     {
       const slot = this.newSlot("requestId", null); 
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setCanEditInspection(false)
+      //slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("none")
     }
 
     {
       const slot = this.newSlot("startDate", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setCanEditInspection(false)
+      //slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("none")
     }
 
     {
       const slot = this.newSlot("endDate", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setCanEditInspection(false)
+      //slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("none")
     }
 
+    /*
     {
       const slot = this.newSlot("timeoutInMs", null);
+      slot.setInspectorPath("job")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
     }
+   */
 
     {
       const slot = this.newSlot("progress", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setCanEditInspection(false)
+      //slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("none")
     }
 
     {
       const slot = this.newSlot("status", null); 
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setCanEditInspection(false)
+      //slot.setIsSubnodeField(true)
+      slot.setInitValue("not started")
+      slot.setSummaryFormat("value")
     }
 
     {
@@ -85,7 +140,9 @@
 
   onEnd () {
     this.setEndDate(new Date().getTime());
-    this.manager().endJob(this);
+    if (this.manager()) {
+      this.manager().endJob(this);
+    }
   }
 
   errorMessage () { 

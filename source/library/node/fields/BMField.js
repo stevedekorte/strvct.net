@@ -15,16 +15,19 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("isVisible", true)
+            slot.setSyncsToView(true)
         }
 
         {
             const slot = this.newSlot("isEnabled", true)
+            slot.setSyncsToView(true)
         }
 
         // key
         {
             const slot = this.newSlot("key", "key")
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
             slot.setCanInspect(true)
             slot.setSlotType("String")
@@ -36,6 +39,7 @@
         {
             const slot = this.newSlot("keyIsVisible", true)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
@@ -46,6 +50,7 @@
         {
             const slot = this.newSlot("keyIsEditable", false)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
@@ -57,12 +62,14 @@
         {
             const slot = this.newSlot("value", null)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
         }
 
         {
             const slot = this.newSlot("valueIsVisible", true)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
@@ -73,6 +80,7 @@
         {
             const slot = this.newSlot("valueIsEditable", true)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
@@ -86,22 +94,26 @@
         {
             const slot = this.newSlot("valuePrefix", null)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
         }
 
         {
             const slot = this.newSlot("valuePostfix", null)
             slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
         }
 
         {
             const slot = this.newSlot("valueMethod", null)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
         }
         
         {
             const slot = this.newSlot("noteMethod", null)  // fetches note from a parent node method
+            slot.setSyncsToView(true)
         }
         
         {
@@ -116,6 +128,7 @@
         
         {
             const slot = this.newSlot("target", null)
+            slot.setSyncsToView(true)
         }
     }
 

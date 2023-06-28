@@ -846,7 +846,6 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
      }
     */
 
-
     // --- equality ---
 
     equals (array /*, visited = new Set()*/) {

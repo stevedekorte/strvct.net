@@ -81,6 +81,8 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
     }
 
     map () {
+        throw new Error("Number map is actually used?");
+        
         const a = [];
         for (let i = 0; i < this; i++) {
             a.push(i);

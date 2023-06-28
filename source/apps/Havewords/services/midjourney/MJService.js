@@ -13,6 +13,7 @@
       //slot.setInspectorPath("")
       slot.setLabel("API Key")
       slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
@@ -24,10 +25,11 @@
       slot.setInspectorPath("")
       slot.setLabel("API Base URL")
       slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setInitValue("https://api.midjourneyapi.io/v2")
-      slot.setIsSubnodeField(true)
+      //slot.setIsSubnodeField(true)
       //slot.setValidValues(values)
     }
 
@@ -50,16 +52,6 @@
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(false)
   }
-
-  /*
-  didUpdateSlot (aSlot, oldValue, newValue) {
-    super.didUpdateSlot(aSlot, oldValue, newValue);
-    if (this.parentNode()) {
-      debugger;
-      assert(this.hasMutationObservers());
-    }
-  }
-  */
 
   finalInit () {
     super.finalInit()

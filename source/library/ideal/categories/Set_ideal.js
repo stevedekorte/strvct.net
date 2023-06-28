@@ -21,6 +21,10 @@
         return results
     }
 
+    equals (aSet) {
+        return this.size === aSet.size && [...this].every(v => aSet.has(v));
+    }
+
     count () {
         return this.size
     }

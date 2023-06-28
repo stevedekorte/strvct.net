@@ -12,6 +12,7 @@
         this.newSlot("imageContainer", null)
         this.newSlot("rawImageView", null)
         this.newSlot("closeButtonView", null)
+        this.newSlot("srcUrl", null)
         this.newSlot("dataURL", null)
         this.newSlot("isEditable", false)
     }
@@ -116,6 +117,10 @@
     }
 
     // --- sync ---
+
+    hasImageUrl (url) {
+        return (url === v.dataURL() || url === v.srcUrl())
+    }
     
     removeRawImageView () {
         if (this.rawImageView()) {
@@ -132,6 +137,7 @@
             const img = new Image();
             img.setDelegate(this)
             img.loadUrl(src)
+            this.setSrcUrl(src)
         }
 		
         return this

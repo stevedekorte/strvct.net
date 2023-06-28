@@ -9,7 +9,6 @@
 (class TileSubtitleView extends TextField {
     
     initPrototypeSlots () {
-
     }
 
     init () {
@@ -21,7 +20,9 @@
         this.setFontSize("80%")
         this.setFontWeight("normal")
         this.setTextAlign("left")
-        this.setOverflow("visible")
+        this.setOverflow("hidden")
+        this.setMinWidth("2em")
+        this.setWidth("100%")
         this.setWordWrap("break-word")
         this.setWhiteSpace("pre")
         return this

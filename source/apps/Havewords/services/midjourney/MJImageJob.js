@@ -37,49 +37,156 @@
   }
 
   initPrototypeSlots() {
-
     {
-      const slot = this.newSlot("mjVersion", "5.1");
+      const slot = this.newSlot("mjVersion", "5.1");      
+      slot.setInspectorPath("")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      //slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
       const slot = this.newSlot("prompt", null);
+      slot.setInspectorPath("")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
-      const slot = this.newSlot("taskId", null);
+      const slot = this.newSlot("taskId", null);      
+      slot.setInspectorPath("")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
       const slot = this.newSlot("pollCount", 0);
+      slot.setInspectorPath("")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
       const slot = this.newSlot("pollingMs", 4000);
+      slot.setInspectorPath("")
+      slot.setLabel("Poll period in ms")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
-      const slot = this.newSlot("imageUrl", 0);
+      const slot = this.newSlot("unscaledImageUrl", null);
+      slot.setInspectorPath("")
+      slot.setLabel("unscaled image result")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("ImageWell")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
+    {
+      const slot = this.newSlot("imageUrl", null);
+      slot.setInspectorPath("")
+      slot.setLabel("image")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("ImageWell")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("request", null);
+      slot.setInspectorPath("")
+      //slot.setLabel("image")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      //slot.setIsSubnodeField(true)
+      slot.setSlotType("Pointer")
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("requestsNode", null);
+    }
+
+    this.newSlot("toggleRunningButton", null)
+    //this.setNodeSubtitleIsChildrenSummary(true)
+    this.setShouldStoreSubnodes(false)
   }
 
   init() {
     super.init();
-    this.setIsDebugging(false);
-    this.setTitle("Untitled")
-    this.setSubtitle("Image Job")
+    this.setIsDebugging(true);
+    //this.setTitle("Untitled Image Job")
+  }
+
+  title () {
+    if (this.prompt() === "") {
+      return "Untitled Image Job"
+    }
+    return this.prompt()
   }
 
   finalInit () {
     super.finalInit()
     this.setCanDelete(true)
-    this.setNodeCanEditTitle(true)
+    this.setNodeCanEditTitle(false)
+
+    {
+      const node = BMSummaryNode.clone().setTitle("requests")
+      node.setNoteIsSubnodeCount(true)
+      this.setRequestsNode(node)
+      this.addSubnode(node)
+    }
+
+    {
+      const action = BMActionNode.clone().setTitle("Start").setTarget(this).setMethodName("toggleRunning") // justStart
+      action.setIsEnabled(true)
+      this.addSubnode(action)
+      this.setToggleRunningButton(action)
+    }
+
+    this.setNodeSubtitleIsChildrenSummary(false)
+  }
+
+  jobs () {
+    return this.parentNode()
   }
 
   newRequest() {
     const request = MJRequest.clone();
-    request.setService(MJService.shared());
+    request.setService(this.jobs().service());
+
+    //const pollRequests = this.requestsNode().subnodes().select(sn => sn.title().includes("poll"))
+    //this.requestsNode().removeSubnodes(pollRequests);
+    this.requestsNode().addSubnode(request);
     return request;
   }
 
@@ -90,8 +197,18 @@
 
   onChange() {
     super.onChange();
-    HostSession.shared().updateImageProgress(this);
+    this.updateActions()
+    this.setSubtitle(this.status())
+    this.subtitle()
+    //HostSession.shared().updateImageProgress(this);
   }
+
+  /*
+  didUpdateSlot(aSlot, oldValue, newValue) {
+    const v = super.didUpdateSlot(aSlot, oldValue, newValue)
+    return v
+  }
+  */
 
   assertReady() {
     super.assertReady();
@@ -101,24 +218,67 @@
     assert(this.isApiV2());
   }
 
+  clear () {
+    this.requestsNode().removeAllSubnodes();
+    this.setUnscaledImageUrl(null);
+    this.setImageUrl(null);
+    this.setPollCount(0);
+    this.setTaskId(null);
+    return this;
+  }
+
   async justStart() {
+    this.clear()
     await this.sendStartRequest();
     await this.pollUntilReadyOrTimeout();
     await this.sendUpscaleRequest();
     return this.imageUrl();
   }
 
+  stop () {
+    const r = this.request();
+    if (r) {
+      r.abort()
+      this.onChange()
+    }
+    return this
+  }
+
+  toggleRunning () {
+    if (this.isRunning()) {
+      this.stop()
+    } else {
+      this.justStart()
+    }
+    return this
+  }
+
+  isRunning () {
+    return this.request() && this.request().isRunning()
+  }
+
+  updateActions () {
+    const isRunning = this.isRunning()
+    const button = this.toggleRunningButton()
+    button.setTitle(isRunning ? "Stop" : "Start")
+    return this
+  }
+
   async sendStartRequest() {
     this.setStatus("sending image gen request");
+    //debugger
 
     this.setProgress(0);
     this.onChange();
 
     const body = {
-      prompt: this.prompt() + " --v " +  this.mjVersion()
+      prompt: this.prompt() //+ " --v " +  this.mjVersion()
     };
 
-    const json = await this.newRequest().setEndpointPath("/imagine").setBody(body).asyncSend();
+    const request = this.newRequest()
+    this.setRequest(request)
+    request.setTitle("render request")
+    const json = await request.setEndpointPath("/imagine").setBody(body).asyncSend();
     this.throwIfContainsErrors(json);
 
     this.setTaskId(json.taskId);
@@ -165,7 +325,7 @@
       
     } while (!json.imageURL);
 
-    this.setImageUrl(json.imageURL); // non-upscaled version set until we have the full version
+    this.setUnscaledImageUrl(json.imageURL); // non-upscaled version set until we have the full version
     this.setStatus("got low scale image");
     this.setProgress(99);
     this.onChange();
@@ -174,10 +334,13 @@
   async pollRequest () {
     this.setPollCount(this.pollCount() + 1);
 
-    const json = await this.newRequest()
-      .setEndpointPath("/result")
-      .setBody({ taskId: this.taskId() })
-      .asyncSend();
+    const request = this.newRequest();
+    this.setRequest(request)
+    request.setTitle("poll request " + this.pollCount())
+    request.setEndpointPath("/result")
+    request.setBody({ taskId: this.taskId() });
+
+    const json = await request.asyncSend();
     this.debugLog(json);
     this.throwIfContainsErrors(json);
 
@@ -207,7 +370,11 @@
       }
 
       await new Promise((r) => setTimeout(r, this.pollingMs()));
-      json = await this.newRequest()
+      const request = this.newRequest();
+      request.setTitle("upscale request")
+      this.setRequest(request);
+
+      json = await request
         .setEndpointPath("/upscale")
         .setBody({ 
           taskId: this.taskId(), 
@@ -219,6 +386,9 @@
 
       if (json.imageURL) {
         this.setImageUrl(json.imageURL);
+        this.setRequest(null)
+        this.setStatus("complete");
+        this.onChange();
         break;
       } else {
         this.setPollCount(this.pollCount() + 1);
