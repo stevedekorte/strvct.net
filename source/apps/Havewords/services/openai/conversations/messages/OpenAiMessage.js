@@ -52,7 +52,7 @@
 
   finalInit () {
     super.finalInit()
-    const action = BMActionNode.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
+    const action = BMActionField.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
     this.addSubnode(action)
     //this.scheduleSyncToView()
   }

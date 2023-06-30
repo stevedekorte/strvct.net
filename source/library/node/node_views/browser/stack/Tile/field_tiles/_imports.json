@@ -1,7 +1,7 @@
 [
     "_css.css",
     "BMFieldTile.js",
-    "BMActionNodeTile.js",
+    "BMActionFieldTile.js",
     "BMBooleanFieldTile.js",
     "BMStringFieldTile.js",
     "BMTextAreaFieldTile.js",

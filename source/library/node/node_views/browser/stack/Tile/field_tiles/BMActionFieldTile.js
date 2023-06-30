@@ -2,11 +2,11 @@
 
 /*
 
-    BMActionNodeTile
+    BMActionFieldTile
 
 */
 
-(class BMActionNodeTile extends Tile {
+(class BMActionFieldTile extends BMFieldTile {
     
     initPrototypeSlots () {
         this.newSlot("buttonView", null)
@@ -18,7 +18,7 @@
         const cv = this.contentView()
         cv.flexCenterContent()
 		
-        const bv = ButtonView.clone().setElementClassName("BMActionNodeView")
+        const bv = ButtonView.clone().setElementClassName("BMActionFieldView")
         this.setButtonView(bv)
 	    bv.setTarget(this).setAction("didClickButton")
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)")

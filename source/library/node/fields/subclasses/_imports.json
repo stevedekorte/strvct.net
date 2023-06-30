@@ -1,4 +1,5 @@
 [
+    "BMActionField.js",
     "BMBooleanField.js",
     "BMColorField.js",
     "BMIdentityField.js",

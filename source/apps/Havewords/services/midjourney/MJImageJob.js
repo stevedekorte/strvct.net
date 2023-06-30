@@ -167,7 +167,7 @@
     }
 
     {
-      const action = BMActionNode.clone().setTitle("Start").setTarget(this).setMethodName("toggleRunning") // justStart
+      const action = BMActionField.clone().setTitle("Start").setTarget(this).setMethodName("toggleRunning") // justStart
       action.setIsEnabled(true)
       this.addSubnode(action)
       this.setToggleRunningButton(action)

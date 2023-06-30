@@ -33,7 +33,7 @@
 
     static fieldTypes () {
         return [
-            "BMActionNode", 
+            "BMActionField", 
             "BMBooleanField", 
             "BMDateNode",
             "BMImageWellField", 

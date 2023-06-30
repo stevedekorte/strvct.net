@@ -2,14 +2,14 @@
 
 /*
 
-    BMActionNode
+    BMActionField
     
     An abstraction of a UI visible action that can be performed on an object.
     the value is the action method name, the target is the field owner.
 
 */
 
-(class BMActionNode extends BMStorableNode {
+(class BMActionField extends BMField {
     
     static availableAsNodePrimitive () {
         return true
@@ -20,19 +20,26 @@
 
         this.newSlot("methodName", null).setShouldStoreSlot(true)
         this.newSlot("info", null).setShouldStoreSlot(true)
-        this.newSlot("isEnabled", true).setShouldStoreSlot(true)
+        //this.newSlot("isEnabled", true).setShouldStoreSlot(true)
         this.newSlot("isEditable", false).setShouldStoreSlot(true)
-        this.newSlot("target", null)
+        //this.newSlot("target", null)
     }
 
     initPrototype () {
         this.setShouldStore(true)
         this.setNodeTileIsSelectable(true)
         this.setNodeCanInspect(true)
+        this.setKeyIsVisible(false)
+        this.setValueIsVisible(false)
     }
 
     init () {
         super.init()
+    }
+
+    finalInit () {
+        super.finalInit()
+        this.initPrototype()
     }
 
     setTitle (s) {

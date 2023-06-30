@@ -7,7 +7,7 @@
     A simple push button view with a TextView label.
 
 
-    .BMActionNodeView {
+    .BMActionFieldView {
         min-height: 28px;
 
         padding-top: 8px;
@@ -26,7 +26,7 @@
 
     }
 
-    .BMActionNodeView:hover {
+    .BMActionFieldView:hover {
         color: white;
         background-color: #888;
     }
