@@ -507,6 +507,12 @@
     objectForRecord (aRecord) { // private
         const className = aRecord.type
         //console.log("loading " + className + " " + aRecord.id)
+        if (className === "Promise") {
+            console.warn(this.type() + " WARNING: a Promise was stored. Returning a null. Check stack trace to see which object stored it.")
+            debugger
+            return null
+        }
+
         const aClass = this.classForName(className)
 
         if (!aClass) {
@@ -643,6 +649,8 @@
     }
 
     refValue (v) {
+        assert(!Type.isPromise(v))
+
         if (Type.isLiteral(v)) {
             return v
         }
@@ -677,6 +685,12 @@
 
     // write an object
 
+    async kvPromiseForObject (obj) {
+        const record = await obj.asyncRecordForStore(this)
+        const jsonString = JSON.stringify(record)
+        return [obj.puuid(), jsonString]
+    }
+
     storeObject (obj) {
         assert(obj.shouldStore())
         const puuid = obj.puuid()
@@ -686,12 +700,30 @@
             this.setRootPid(puuid)
         }
 
-        const record = obj.recordForStore(this)
+        if (obj.asyncRecordForStore) {
+            // asyncRecordForStore is only implemented if there's no 
+            // synchronous option for serialization e.g. serializing a Blob
+            //throw new Error("no support for asyncRecordForStore yet!")
+            const kvPromise = this.kvPromiseForObject(obj)
+            this.recordsMap().asyncQueueSetKvPromise(kvPromise)
+        } else {
+            const record = obj.recordForStore(this)
+            const jsonString = JSON.stringify(record)
+            this.debugLog(() => "store " + puuid + " <- " + record.type )
+            this.recordsMap().set(puuid, jsonString)
+            //this.storeRecord(puuid, record)
+        }
+        return this
+    }
+
+    /*
+    storeRecord (puuid, record) {
         const jsonString = JSON.stringify(record)
         this.debugLog(() => "store " + puuid + " <- " + record.type )
         this.recordsMap().set(puuid, jsonString)
         return this
     }
+    */
 
     // -------------------------------------
 

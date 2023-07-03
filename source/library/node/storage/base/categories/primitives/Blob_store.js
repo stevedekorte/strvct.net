@@ -1,0 +1,69 @@
+"use strict";
+
+/*
+
+    Blob_store
+
+    Notes:
+
+    It seems there's no way to synchronously serialize a Blob.
+    Unfortunately, this complicates the ObjectPool/Store code.
+
+*/
+
+
+(class Blob_store extends Blob {
+
+    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
+        //assert(aRecord.type === "Blob")
+        const obj = this.fromBase64(aRecord.dataUrl)
+        return obj
+    }
+
+    loadFromRecord (aRecord, aStore) {
+        assert(aRecord.bytes.length === this.length)
+        const dataUrl = aRecord.dataUrl
+        return Blob.fromBase64(dataUrl)
+    }
+
+    async asyncRecordForStore (aStore) { // should only be called by Store
+        const dataUrl = await this.toBase64()
+        return {
+            type: "Blob", //Type.typeName(this), // should we use typeName to handle subclasses?
+            dataUrl: dataUrl
+        }
+    }
+
+    refsPidsForJsonStore (puuids = new Set()) {
+        return puuids
+    }
+
+    // --- serializers ---
+
+    async toBase64 () {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);  // Return the full data URL
+            reader.onerror = reject;
+            reader.readAsDataURL(this);
+        });
+    }
+
+    // --- deserializer ---
+    
+    static fromBase64 (dataURL) {
+        const parts = dataURL.split(',');
+        const mimeType = parts[0].slice(5, -7);
+        const byteCharacters = atob(parts[1]);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        return new Blob([byteArray], { type: mimeType });
+    }
+    
+}).initThisCategory();
+
+
+

@@ -53,6 +53,7 @@ getGlobalThis().Type = (class Type extends Object {
         return [
             "Array",
             "Boolean",
+            "Blob",
             "Map",
             "Null",
             "Number",
@@ -97,6 +98,10 @@ getGlobalThis().Type = (class Type extends Object {
             && /^class\s/.test(Function.prototype.toString.call(v));
 
         return result
+    }
+
+    static isPromise (v) {
+        return v instanceof Promise;
     }
 
     static isLiteral (v) {
@@ -177,6 +182,10 @@ getGlobalThis().Type = (class Type extends Object {
         return Type.valueHasConstructor(value, ArrayBuffer);
     }
 
+    static isBlob (value) {
+        return value instanceof Blob;
+    }
+
     // typed arrays 
 
     static valueHasConstructor (v, constructor) {  // private
@@ -245,6 +254,13 @@ getGlobalThis().Type = (class Type extends Object {
             return value.constructor.name
         }
 
+        /*
+        {
+            const type = Object.prototype.toString.call(value);
+            return type.slice(8, -1);
+        }
+        */
+
         const typeNames = this.allTypeNames()
         for (let i = 0; i < typeNames.length; i++) {
             const typeName = typeNames[i]
@@ -296,6 +312,7 @@ getGlobalThis().Type = (class Type extends Object {
         this.assertValueTypeNames([], ["Array", "Object"])
         this.assertValueTypeNames({} ["Object"])
         this.assertValueTypeNames(new Int8Array(), ["Int8Array", "Object"])
+        this.assertValueTypeNames(new Blob(), ["Blob", "Object"])
 
         // extras
         //assert(Type.isNullOrUndefined(undefined))

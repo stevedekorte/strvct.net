@@ -46,13 +46,13 @@
   },
   {
     "path": "source/library/ideal/categories/Type.js",
-    "size": 7610,
-    "hash": "61Yu5kndMQcDtMkYjFmPkvrXTKHHtWglh2occFtJtGE="
+    "size": 7985,
+    "hash": "SLu0IMAqTVHGVgNgJSf84diciy5O7K3ustAabq7O35Q="
   },
   {
     "path": "source/library/ideal/categories/object/Object-helpers.js",
-    "size": 5802,
-    "hash": "fwsDSCAjSkfE3aW6kpSG7iRIDmtkCtr81VHZb4ACh+0="
+    "size": 5816,
+    "hash": "4Ff2edQrGPHSgWUfBGKAGO64GnsH9yhWgOHuMyjUeRY="
   },
   {
     "path": "source/library/ideal/categories/object/Object_copying.js",
@@ -151,8 +151,8 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 21235,
-    "hash": "LKcTtf6zoweydHHyhwATcYAZJZ+aonMcgbunb+RjSno="
+    "size": 21647,
+    "hash": "KKY72h1rO2i1c52HEXZn3JjwJ0PE817RQ68FFNQ9J6E="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
@@ -196,8 +196,8 @@
   },
   {
     "path": "source/library/ideal/map/AtomicMap.js",
-    "size": 6352,
-    "hash": "vygcSvJYmKiekZj2qzGSTuyeDrWVs5/xaj16tB8E2ls="
+    "size": 7174,
+    "hash": "M7Y68erPZU29gut9kRbCTDaKWdOYspDl6WbilfdvxLk="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -261,8 +261,8 @@
   },
   {
     "path": "source/library/storage/PersistentAtomicMap.js",
-    "size": 5830,
-    "hash": "ql0CM2BubWsGw9MtjduA+y4k/3k/uQsMBdoRNyH+xsA="
+    "size": 5771,
+    "hash": "tkJUt0xwV68ATK8LCitaG9/Jqj/ElL1ibk16z93ZCBQ="
   },
   {
     "path": "source/library/storage/PersistentAsyncMap.js",
@@ -786,8 +786,8 @@
   },
   {
     "path": "source/library/node/storage/base/categories/ProtoClass_store.js",
-    "size": 2909,
-    "hash": "lKUhh2JY5puv9pSUVOW2lf+oD3CiQC5pKLU/do7Xwig="
+    "size": 3121,
+    "hash": "YSkCaLMkSJxlucEUj/srVDkqfzIh8gxMxziIsFxvPx4="
   },
   {
     "path": "source/library/node/storage/base/categories/BMNode_store.js",
@@ -803,6 +803,11 @@
     "path": "source/library/node/storage/base/categories/primitives/ArrayBuffer_store.js",
     "size": 1018,
     "hash": "KZLEE+1tEv6wvFXEAYOe9Y8u1nBePVeWdUHySYREXic="
+  },
+  {
+    "path": "source/library/node/storage/base/categories/primitives/Blob_store.js",
+    "size": 1838,
+    "hash": "X4eCb/7unSklYRNJ2qYkVJF1f3F8cWPolGeKc28sJb0="
   },
   {
     "path": "source/library/node/storage/base/categories/primitives/Date_store.js",
@@ -846,8 +851,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 26822,
-    "hash": "//34fzekLCVDrbBpMiFTD0BkAEywtI7J2jhRRt6MUVs="
+    "size": 28002,
+    "hash": "hrrLGfFxaG7TyUYIe/5lJg9YQ9YTQPjIAN3P2h4li+8="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
@@ -941,8 +946,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/BMActionField.js",
-    "size": 1993,
-    "hash": "qy0GAyKkU3v1RqtXj8vGz8HXJhLISJ+hG9vrrzHevIY="
+    "size": 2325,
+    "hash": "BsCS/L3ew4djj9UiAub2yVR7Yz87JrBFeaJuaOluFwk="
   },
   {
     "path": "source/library/node/fields/subclasses/BMBooleanField.js",
@@ -1001,8 +1006,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
-    "size": 7811,
-    "hash": "3/iacLGvyr3iZEfct9S+PWgIGtA4FQmGlStwPiAXr1w="
+    "size": 7843,
+    "hash": "nM9HIhvasjfomkIP2V4fgvzvD8jtbId67VzolfB8+9Q="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
@@ -1191,8 +1196,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/subviews/TileTitleView.js",
-    "size": 1366,
-    "hash": "IGYUJc7l6CKUdEs4j5+7qsS5dzS60ZAnxsvzyaKcnIU="
+    "size": 1177,
+    "hash": "EDY2HUacdwGiZpQuaovZEWLo4/OpAp6CQGZV3seC+LE="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/_css.css",
@@ -1206,8 +1211,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMActionFieldTile.js",
-    "size": 1658,
-    "hash": "n4f3zqscTMrbmgZL8P0563ryzPYms31f1IiQAEWVXTU="
+    "size": 1745,
+    "hash": "ZvyUpl+TXpAMaabz5y5+qd0FEQkfwFaucr+8wYsebqo="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/field_tiles/BMBooleanFieldTile.js",
@@ -1461,13 +1466,13 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/messages/OpenAiMessage.js",
-    "size": 3651,
-    "hash": "glmo2HgOH5ntx3xwsVoMtAYfWbvZbZ0WENuPObboV3k="
+    "size": 5030,
+    "hash": "qmR8tcZQqVXaKfP2To+kLLXB8yuP+JB+nxfb86oloXQ="
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversation.js",
-    "size": 1495,
-    "hash": "p+1spVMI99eQ7QkBZU6hy2bIuoPJAF0MTSU7CEKKvX8="
+    "size": 1472,
+    "hash": "aYvUF4VNJlDlmnw94qWCkXcc7X8o/0AjIUaiASdKdwU="
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversations.js",
@@ -1501,8 +1506,8 @@
   },
   {
     "path": "source/apps/Havewords/services/midjourney/MJImageJob.js",
-    "size": 12095,
-    "hash": "9Trm8ETEkSR+wD/ke+LxmBFbX3hmuvr0ICmveKDHOYM="
+    "size": 13513,
+    "hash": "P9AVSkGNpgwQZfXxnRFyJg1QU7Ud0haP37aafG4UrCI="
   },
   {
     "path": "source/apps/Havewords/services/midjourney/MJImageJobs.js",
@@ -1520,9 +1525,64 @@
     "hash": "8i2gmT/uVHsO7XsdpRsvpsjMmCyk8AU+vkS2vkD0XIs="
   },
   {
+    "path": "source/apps/Havewords/services/azure/speakers/requests/AzureTtsRequests.js",
+    "size": 606,
+    "hash": "bi8FbhryzC9mdZ55b0jfbcwKltCWZA5tgAF11/tlLCo="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/speakers/requests/AzureTtsRequest.js",
+    "size": 3144,
+    "hash": "2vvYBNdJtfKiQ75nKAN59YzCBH7VXLHnK0EmXliJlVE="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/speakers/AzureVoicesData.js",
+    "size": 194928,
+    "hash": "xlRMb+QDWlQKhNcjAMd8eqGXVdmzyrapj87w8wBOyRM="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/speakers/AzureSpeaker.js",
+    "size": 11063,
+    "hash": "sh9PYeZ2oOQxeHg4kxOzLqXfVyrImmhf1gNryl4S2xM="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/speakers/AzureSpeakers.js",
+    "size": 531,
+    "hash": "+7brNP1sdb8cFD1b3McCYDryY3bbHSfWrh2z9nLoRcs="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/AzureService.js",
+    "size": 2580,
+    "hash": "2ssuawEqrgeovfQw19gNP8ybhMj6RVUTDqs+NCLjkRQ="
+  },
+  {
+    "path": "source/apps/Havewords/services/youtube/MusicLibrary.js",
+    "size": 19644,
+    "hash": "d//Eq1OqSNERiHr/9OySEk8CwW3uu8e1WDdTotvCJ/g="
+  },
+  {
+    "path": "source/apps/Havewords/services/youtube/MusicPlayer.js",
+    "size": 2310,
+    "hash": "RITNU2xBwKozVLiXum06r1tMmjBhUAqqv9Z/LKmvkZ8="
+  },
+  {
+    "path": "source/apps/Havewords/services/youtube/YouTubeAudioPlayer.js",
+    "size": 8986,
+    "hash": "6083uZuNlPgvSsw9455xLiCDf0KgsZV2dJBYeAm1VKs="
+  },
+  {
+    "path": "source/apps/Havewords/services/youtube/YouTubeService.js",
+    "size": 877,
+    "hash": "GzXF0/ttF7u7d2tlBROeaVvzb9gJ3W7KphUwDa0Uk4I="
+  },
+  {
     "path": "source/apps/Havewords/services/HwServices.js",
-    "size": 805,
-    "hash": "LOBnbvAV2FETl+RcUK9eK6LcvcjNCSmi4AfKzu/5PLE="
+    "size": 1231,
+    "hash": "rmCp95+tB4/+tH1MRYCBrWJes2KbcMZo60iyBYgc1os="
+  },
+  {
+    "path": "source/apps/Havewords/helpers.js",
+    "size": 10185,
+    "hash": "63HXPHJOr6njcZk4gqZ74vf0m2i2NcTbELpdGKaQ0/s="
   },
   {
     "path": "source/apps/Havewords/HavewordsApp.js",

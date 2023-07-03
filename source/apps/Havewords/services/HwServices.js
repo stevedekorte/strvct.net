@@ -23,6 +23,20 @@
             slot.setFinalInitProto(MJService);
             slot.setIsSubnode(true);
         }
+
+        {
+            const slot = this.newSlot("azureService", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(AzureService);
+            slot.setIsSubnode(true);
+        }
+
+        {
+            const slot = this.newSlot("youtubeService", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(YouTubeService);
+            slot.setIsSubnode(true);
+        }
         
     }
 

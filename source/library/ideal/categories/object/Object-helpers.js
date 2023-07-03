@@ -19,6 +19,7 @@
     const classesToFix = [
         Array, 
         Boolean, 
+        Blob,
         Date, 
         Error, 
         Image, 

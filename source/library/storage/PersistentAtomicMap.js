@@ -169,7 +169,7 @@
 
     }
 
-    promiseApplyChanges () { // private -- apply changes to idb, super call will apply to map
+    async promiseApplyChanges () {
         console.log(this.name() + " --- promiseApplyChanges ---")
         //debugger
         const count = this.changedKeySet().size

@@ -99,7 +99,7 @@
     {
       const slot = this.newSlot("unscaledImageUrl", null);
       slot.setInspectorPath("")
-      slot.setLabel("unscaled image result")
+      slot.setLabel("unscaled image set")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -136,6 +136,19 @@
       const slot = this.newSlot("requestsNode", null);
     }
 
+    {
+      const slot = this.newSlot("toggleRunning", null);
+      slot.setInspectorPath("")
+      slot.setLabel("Start")
+      //slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Action")
+      slot.setIsSubnodeField(true)
+      slot.setActionMethodName("toggleRunning");
+    }
+
+
     this.newSlot("toggleRunningButton", null)
     //this.setNodeSubtitleIsChildrenSummary(true)
     this.setShouldStoreSubnodes(false)
@@ -166,15 +179,34 @@
       this.addSubnode(node)
     }
 
+    /*
     {
       const action = BMActionField.clone().setTitle("Start").setTarget(this).setMethodName("toggleRunning") // justStart
-      action.setIsEnabled(true)
+      //action.setIsEnabled(true)
       this.addSubnode(action)
       this.setToggleRunningButton(action)
     }
+    */
 
     this.setNodeSubtitleIsChildrenSummary(false)
   }
+
+  // ----
+
+  /*
+  toggleRunningActionDict() {
+    return {
+      isEnabled: true,
+      title: "Start"
+    }
+  }
+
+  toggleRunningAction_isEnabled() {
+    return true
+  }
+  */
+
+  // --------------------
 
   jobs () {
     return this.parentNode()
@@ -259,8 +291,8 @@
 
   updateActions () {
     const isRunning = this.isRunning()
-    const button = this.toggleRunningButton()
-    button.setTitle(isRunning ? "Stop" : "Start")
+    //const button = this.toggleRunningButton()
+    //button.setTitle(isRunning ? "Stop" : "Start")
     return this
   }
 
@@ -324,8 +356,11 @@
       json = await this.pollRequest()
       
     } while (!json.imageURL);
+    debugger;
 
-    this.setUnscaledImageUrl(json.imageURL); // non-upscaled version set until we have the full version
+    const imageDataUrl = await this.getDataForUrl(json.imageURL)
+
+    this.setUnscaledImageUrl(imageDataUrl); // non-upscaled version set until we have the full version
     this.setStatus("got low scale image");
     this.setProgress(99);
     this.onChange();
@@ -344,7 +379,6 @@
     this.debugLog(json);
     this.throwIfContainsErrors(json);
 
-
     if (json.percentage) {
       this.setStatus("rendering " + json.percentage + "%");
       this.setProgress(json.percentage);
@@ -354,6 +388,31 @@
       this.onChange();
     }
     return json;
+  }
+
+  async getDataForUrl (url) {
+    // Function to convert blob to data URL
+    function blobToDataURL(blob) {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+      });
+    }
+
+    // Fetch image
+    return fetch(url)
+      .then(response => response.blob()) // Get blob from response
+      .then(blob => blobToDataURL(blob)) // Convert blob to data URL
+      .then(dataURL => {
+          console.log(dataURL); // Use data URL (e.g., for displaying in an <img> element)
+          return dataURL
+      })
+      .catch(err => {
+          console.error(err);
+          throw err
+      });
   }
 
   async sendUpscaleRequest () {

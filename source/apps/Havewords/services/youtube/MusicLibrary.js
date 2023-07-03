@@ -79,12 +79,28 @@
 
 
 
-(class MusicLibrary extends Base {
+(class MusicLibrary extends BMStorableNode {
   // all tracks are under a Creative Commons License
 
   initPrototypeSlots() {
-    this.newSlot("playlists", null);
-    this.newSlot("currentTrack", null);
+    {
+      const slot = this.newSlot("playlists", null);
+    }
+
+    {
+      const slot = this.newSlot("currentTrack", null);
+      slot.setInspectorPath("")
+      //slot.setLabel("mute")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+    }
+
+    this.setShouldStore(true)
+    this.setShouldStoreSubnodes(false)
   }
 
   init() {
@@ -92,6 +108,13 @@
     this.setPlaylists(new Map());
     this.setupPlaylists()
     this.setIsDebugging(true);
+  }
+
+  finalInit () {   
+    this.setShouldStore(true)
+    this.setShouldStoreSubnodes(false)
+    super.finalInit()
+    this.setTitle("Music Library")
   }
 
   setupPlaylists () {

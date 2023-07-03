@@ -16,6 +16,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.newSlot("changedKeySet", null) // private method
         this.newSlot("keysAndValuesAreStrings", true) // private method - Bool, if true, runs assertString on all input keys and values
         this.newSlot("totalBytesCache", null) // private
+        this.newSlot("queuedSets", null)
     }
 
     init () {
@@ -24,6 +25,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.setSnapshot(null)
         this.setChangedKeySet(new Set())
         //this.setSnapshot(new Map())
+        this.setQueuedSets([])
         this.setIsDebugging(false)
     }
 
@@ -72,10 +74,11 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         return this
     }
 
-    promiseCommit () {
+    async promiseCommit () {
         this.debugLog(() => " prepare commit ---")
         this.assertInTx()
         if (this.hasChanges()) {
+            await this.asyncProcessSetPromiseQueue()
             const promise = this.promiseApplyChanges()
             this.changedKeySet().clear()
             this.clearTotalBytesCache()
@@ -90,8 +93,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     // --- changes ---
 
     hasChanges () {
-        return this.changedKeySet().size > 0
-        return this.map().isEqual(this.snapshot())
+        return this.changedKeySet().size > 0 || this.queuedSets().length > 0
+        //return this.map().isEqual(this.snapshot())
     }
 
     applyChanges () { // private - apply changes to snapshot
@@ -110,7 +113,6 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     }
 
     // reads
-
  
     // --- keys ---
 
@@ -152,6 +154,30 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.keysArray().forEach(k => this.removeKey(k))
         return this
     }
+
+    // --- async set ---
+
+    async asyncQueueSetKvPromise (kvPromise) {
+        const setPromise = new Promise((resolve, reject) => {
+            kvPromise.then((kvTuple) => {
+                assert(Type.isArray(kvTuple) && kvTuple.length == 2)
+                const k = kvTuple[0]
+                const v = kvTuple[1]
+                this.set(k, v)
+                resolve()
+            })
+        })
+        this.queuedSets().push(setPromise)
+        return setPromise
+    }
+
+    async asyncProcessSetPromiseQueue () {
+        return Promise.all(this.queuedSets()).then(() => {
+            this.setQueuedSets([])
+        })
+    }
+
+    // ---------------
 
     set (k, v) {
         return this.atPut(k, v)

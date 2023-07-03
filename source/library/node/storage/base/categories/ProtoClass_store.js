@@ -13,6 +13,9 @@
             //if (slot.shouldStoreSlot()) {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this)
+                if (Type.isPromise(v)) {
+                    throw new Error(this.type() + " '" + slotName + "' slot is set to shouldStore, but contains a Promise value which cannot be stored")
+                }
                 //assert(!Type.isUndefined(v))
                 aRecord.entries.push([slotName, aStore.refValue(v)])
             }

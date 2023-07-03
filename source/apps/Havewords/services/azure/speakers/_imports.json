@@ -1,0 +1,6 @@
+[
+    "requests/_imports.json",
+    "AzureVoicesData.js",
+    "AzureSpeaker.js",
+    "AzureSpeakers.js"
+]

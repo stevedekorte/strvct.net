@@ -248,7 +248,7 @@
 
         const value = target ? this.value() : undefined;
         const pickedValuesSet = this.pickedValues().asSet();
-        const pickedValuesMatch = value ? new Set(value).equals(pickedValuesSet) : false; // what about ordering?
+        const pickedValuesMatch = value ? new Set(Type.isArray(value) ? value : [value]).equals(pickedValuesSet) : false; // what about ordering?
 
 
         const needsSync = target && !validValuesMatch || !pickedValuesMatch;

@@ -6,7 +6,7 @@
 
 */
 
-(class BMActionFieldTile extends BMFieldTile {
+(class BMActionFieldTile extends Tile {
     
     initPrototypeSlots () {
         this.newSlot("buttonView", null)
@@ -42,6 +42,12 @@
             bv.setOpacity(0.5)	
         }
 		
+        return this
+    }
+
+    syncToNode () {
+        // just disable this
+        debugger;
         return this
     }
     

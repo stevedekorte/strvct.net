@@ -136,6 +136,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
         //this.simpleNewSlot("isDeserializing", false) // need to add it here as we don't inherit it
+
+        this.simpleNewSlot("actionMethodName", null) // used by slots that will be represented by ActionFields to store the methodName
     }
 
     newInspectorField () {
@@ -168,7 +170,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 //assert(!field.canSelfAddSubnode())
 
                 if (this.label()) {
-                    field.setKey(this.label())
+                    if (slotType === "Action") { // TODO: hack - find a uniform way to handle this
+                        field.setTitle(this.label())
+                        field.setMethodName(this.actionMethodName())
+                    } else {
+                        field.setKey(this.label())
+                    }
                 }
 
                 if (this.validValues()) {

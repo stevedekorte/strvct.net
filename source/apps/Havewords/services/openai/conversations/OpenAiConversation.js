@@ -38,6 +38,7 @@
   }
 
   finalInit () {
+    super.finalInit()
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(true)
     this.setSubnodeClasses([OpenAiMessage])
@@ -66,10 +67,10 @@
     return "gpt-4";
   }
 
-  addAssistentMessageContent (content) {
-    const message = OpenAiMessage.clone().setRole("assistant").setContent(content)
+  newMessage () {
+    const message = OpenAiMessage.clone().setRole("user")
     this.addSubnode(message)
-    return this
+    return message
   }
 
 }.initThisClass());

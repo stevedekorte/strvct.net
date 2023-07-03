@@ -4,21 +4,79 @@
     YouTubeAudioPlayer
 */
 
-(class YouTubeAudioPlayer extends Base {
+(class YouTubeAudioPlayer extends BMStorableNode {
   initPrototypeSlots() {
-    this.newSlot("element", null);
-    this.newSlot("playerPromise", null); // resolves once player is available. Use .then() on this to queue actions to wait on it
-    this.newSlot("player", null); // to store the YouTube player
-    this.newSlot("isReady", false);
-    this.newSlot("videoId", null);
-    this.newSlot("shouldRepeat", true);
-    this.newSlot("frameIsReady", null);
-    this.newSlot("volume", 0.05);
+    {
+      const slot = this.newSlot("element", null);
+    }
+    
+    { 
+      const slot = this.newSlot("playerPromise", null); // resolves once player is available. Use .then() on this to queue actions to wait on it
+    }
+
+    {
+      const slot = this.newSlot("player", null); // to store the YouTube player
+    }
+
+    {
+      const slot = this.newSlot("isReady", false);
+    }
+
+    {
+      const slot = this.newSlot("videoId", null);      
+      slot.setInspectorPath("")
+      slot.setLabel("video ID")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("shouldRepeat", true);      
+      slot.setInspectorPath("")
+      slot.setLabel("repeat")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("frameIsReady", null);
+    }
+
+    {
+      const slot = this.newSlot("volume", 0.05);
+      slot.setInspectorPath("")
+      //slot.setLabel("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    this.setShouldStore(true)
+    this.setShouldStoreSubnodes(false)
   }
 
   init() {
     super.init();
     this.setIsDebugging(false);
+  }
+
+  finalInit () {
+    this.setShouldStore(true)
+    this.setShouldStoreSubnodes(false)
+    
+    super.finalInit()
+    this.setTitle("YouTube Audio Player")
   }
 
   playerPromise() {

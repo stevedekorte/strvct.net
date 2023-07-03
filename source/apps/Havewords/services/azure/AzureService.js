@@ -6,31 +6,73 @@
 */
 
 (class AzureService extends BMStorableNode {
-  initPrototypeSlots () {
-    this.newSlot("regionOptions", [])
+  initPrototypeSlots() {
+    this.newSlot("regionOptions", []);
+
+    {
+      const slot = this.newSlot("apiKey", "");
+      //slot.setInspectorPath("")
+      slot.setLabel("API Key");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      //slot.setValidValues(values)
+    }
+
+    {
+      const slot = this.newSlot("region", "");
+      //slot.setInspectorPath("")
+      slot.setLabel("Region");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setValidValues(this.validRegions());
+      slot.setInitValue("eastus");
+      //slot.setValidValues(values)
+    }
+
+    {
+      const slot = this.newSlot("speakers", null);
+      slot.setLabel("Speakers");
+      slot.setFinalInitProto(AzureSpeakers);
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+    }
+
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
   }
 
-  init () {
+  init() {
     super.init();
-    if (!this.region()) {
-      this.setRegion("eastus"); // default to this
-    }
+    this.setTitle("Azure TTS");
+    this.setSubtitle("text-to-speech service");
+  }
+
+  validRegions () {
+    return [
+      // regions that support intonation features
+      ["Asia", "Southeast Asia", "southeastasia"],
+      ["Australia", "Australia East", "australiaeast"],
+      ["Europe", "North Europe", "northeurope"],
+      ["Europe", "West Europe", "westeurope"],
+      ["North America", "East US", "eastus"],
+      ["North America", "East US 2", "eastus2"],
+      ["North America", "South Central US", "southcentralus"],
+      ["North America", "West Central US", "westcentralus"],
+      ["North America", "West US", "westus"],
+      ["North America", "West US 2", "westus2"],
+      ["South America", "Brazil South", "brazilsouth"],
+    ].map((entry) => entry[2]) // only return the values (the 3rd item in each entry)
   }
 
   // --- api key ---
 
-  setApiKey (v) {
-    localStorage.setItem("azure_api_key", v)
-    return this
-  }
-
-  apiKey () {
-    const v = localStorage.getItem("azure_api_key")
-    console.log("azure_api_key:", v);
-    return v;
-  }
-
-  validateKey (s) {
+  validateKey(s) {
     if (!s) {
       return false;
     }
@@ -39,30 +81,22 @@
 
   // --- region ---
 
-  setRegion (v) {
-    localStorage.setItem("azure_region", v)
-    return this
-  }
-
-  region () {
-    return localStorage.getItem("azure_region")
-  }
-
-  validateRegion (s) {
+  validateRegion(s) {
     if (!s) {
       return false;
     }
 
     const isLowercaseOrUnderscore = (str) => {
       return /^[a-z_]+$/.test(str);
-    }
+    };
     return isLowercaseOrUnderscore(s);
   }
 
   // --- api check ---
 
-  hasApiAccess () {
-    return this.validateKey(this.apiKey()) && this.validateRegion(this.region())
+  hasApiAccess() {
+    return (
+      this.validateKey(this.apiKey()) && this.validateRegion(this.region())
+    );
   }
-
-}.initThisClass());
+}).initThisClass();

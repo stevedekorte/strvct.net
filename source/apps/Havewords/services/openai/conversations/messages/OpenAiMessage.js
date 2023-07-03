@@ -39,6 +39,17 @@
       const slot = this.newSlot("isResponse", null);
     }
 
+    {
+      const slot = this.newSlot("sendInConversation", null);
+      slot.setInspectorPath("")
+      slot.setLabel("Send")
+      //slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Action")
+      slot.setIsSubnodeField(true)
+      slot.setActionMethodName("sendInConversation");
+    }
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -50,12 +61,18 @@
     this.setCanDelete(true)
   }
 
+  setSendInConversation (v) {
+    debugger;
+  }
+
+  /*
   finalInit () {
     super.finalInit()
-    const action = BMActionField.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
-    this.addSubnode(action)
+    //const action = BMActionField.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
+    //this.addSubnode(action)
     //this.scheduleSyncToView()
   }
+  */
 
   subtitle () {
     let s = this.content()
@@ -100,7 +117,16 @@
     return this.parentNode()
   }
 
-  conversationHistoryJson () {
+  conversationHistoryPriorToSelfJson () {
+    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
+    const messages = this.conversation().messages()
+    const i = messages.indexOf(this)
+    assert(i !== -1)
+    const json = messages.slice(0, i).map(m => m.openAiJson())
+    return json
+  }
+
+  conversationHistoryUpToAndIncludingSelfJson () {
     // return json for all messages in conversation up to this point (unless they are marked as hidden?)
     const messages = this.conversation().messages()
     const i = messages.indexOf(this)
@@ -111,9 +137,10 @@
 
   async sendInConversation () {
     if (!this.request()) {
-      const request = this.newRequest()
-      this.setRequest(request)
-      request.asyncSend();
+      const message = this.conversation().newMessage()
+      message.setRole("assistant")
+      //this.conversation().postShouldFocusSubnode(message)
+      message.makeRequest()
     }
   }
 
@@ -127,6 +154,21 @@
     return this.conversation().conversations().service().apiKey()
   }
 
+  /*
+  assertValidRequest () {
+    assert(this.validRoles().includes(this.role()))
+  }
+  */
+
+  makeRequest () {
+    const request = this.newRequest()
+    this.setRequest(request)
+    //request.asyncSend();
+    request.setStreamTarget(this)
+    request.asyncSendAndStreamResponse()
+    return this
+  }
+
   newRequest() {
     const request = OpenAiRequest.clone();
     request.setApiUrl("https://api.openai.com/v1/chat/completions");
@@ -134,12 +176,14 @@
     request.setDelegate(this)
     request.setBodyJson({
       model: this.selectedModel(),
-      messages: this.conversationHistoryJson(),
+      messages: this.conversationHistoryPriorToSelfJson(),
       temperature: 0.7, // more creative
       top_p: 0.9 // more diverse
     });
     return request;
   }
+
+  // --- request delegate messages ---
 
   onRequestError (aRequest) {
     this.setError(aRequest.error())
@@ -147,8 +191,18 @@
   }
 
   onRequestComplete (aRequest) {
-    this.conversation().addAssistentMessageContent(aRequest.fullContent())
+    //this.conversation().addAssistentMessageContent(aRequest.fullContent())
     //this.setRequest(null)
+    //this.setStatus("complete")
   }
+
+  onStreamData(request, newContent) {
+    this.setContent(request.fullContent())
+  }
+
+  onStreamComplete(request) {
+
+  }
+
 
 }.initThisClass());

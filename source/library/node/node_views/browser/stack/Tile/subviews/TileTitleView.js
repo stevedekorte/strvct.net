@@ -34,15 +34,6 @@
         return this
     }
 
-    setOverflow (v) {
-        console.log("setOverflow(" + v + ")");
-        if (v !== "hidden") {
-            debugger;
-        }
-        super.setOverflow(v);
-        return this;
-    }
-
     /*
     tile () {
         return this.parentView().parentView()

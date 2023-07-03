@@ -6,11 +6,30 @@
 
 */
 
-(class MusicPlayer extends Base {
+(class MusicPlayer extends BMStorableNode {
   initPrototypeSlots() {
-    this.newSlot("tracksMap", null);
-    this.newSlot("currentTrack", null);
-    this.newSlot("isMuted", false);
+    {
+      const slot = this.newSlot("tracksMap", null);
+    }
+
+    {
+      const slot = this.newSlot("currentTrack", null);
+    }
+
+    {
+      const slot = this.newSlot("isMuted", false);
+      slot.setInspectorPath("")
+      slot.setLabel("mute")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+    }
+
+    this.setShouldStore(true)
+    this.setShouldStoreSubnodes(false)
   }
 
   init() {
@@ -20,16 +39,23 @@
     this.setIsDebugging(true);
   }
 
-  trackNames() {
+  finalInit () {
+    this.setShouldStore(true)
+    this.setShouldStoreSubnodes(false)
+    super.finalInit()
+    this.setTitle("Music Player")
+  }
+
+  trackNames () {
     return this.tracksMap().keysArray();
   }
 
-  selectPlaylistWithName(name) {
+  selectPlaylistWithName (name) {
     this.selectPlaylistsWithNames([name]);
     return this;
   }
 
-  selectPlaylistsWithNames(names) {
+  selectPlaylistsWithNames (names) {
     this.tracksMap().clear();
     names.forEach((name) => {
       const playlistMap = MusicLibrary.shared().playlistWithName(name);
@@ -40,7 +66,7 @@
     return this;
   }
 
-  playTrackWithName(name) {
+  playTrackWithName (name) {
     this.debugLog("playTrackWithName('" + name + "')");
     this.playTrackId(this.trackIdForName(name));
   }

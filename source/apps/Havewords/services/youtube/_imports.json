@@ -1,5 +1,6 @@
 [
     "MusicLibrary.js",
     "MusicPlayer.js",
-    "YouTubeAudioPlayer.js"
+    "YouTubeAudioPlayer.js",
+    "YouTubeService.js"
 ]

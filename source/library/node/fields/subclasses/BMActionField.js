@@ -16,12 +16,36 @@
     }
     
     initPrototypeSlots () {
-        this.overrideSlot("title", null).setShouldStoreSlot(true).setCanInspect(true).setSlotType("String").setLabel("Title")
 
-        this.newSlot("methodName", null).setShouldStoreSlot(true)
-        this.newSlot("info", null).setShouldStoreSlot(true)
-        //this.newSlot("isEnabled", true).setShouldStoreSlot(true)
-        this.newSlot("isEditable", false).setShouldStoreSlot(true)
+        {
+            const slot = this.overrideSlot("title", null)
+            slot.setShouldStoreSlot(true)
+            slot.setCanInspect(true)
+            slot.setSlotType("String")
+            slot.setLabel("Title")
+        }
+
+        {
+            const slot = this.newSlot("methodName", null)
+            slot.setShouldStoreSlot(true)
+        }
+
+        {
+            const slot = this.newSlot("info", null)
+            slot.setShouldStoreSlot(true)
+        }
+
+        {
+            //const slot = this.newSlot("isEnabled", true).setShouldStoreSlot(true)
+        }
+
+        /*
+        {
+            const slot = this.newSlot("isEditable", false)
+            slot.setShouldStoreSlot(true)
+        }
+        */
+
         //this.newSlot("target", null)
     }
 
@@ -60,7 +84,7 @@
         const t = this.target()
         const m = this.methodName()
         return t && t[m]
-    }
+    }1
 
     doAction () {
         if (this.canDoAction()) {
