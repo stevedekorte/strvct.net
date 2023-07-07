@@ -34,7 +34,7 @@
                 slot.setCanInspect(true)
                 return slot
             }
-            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure(() => { 
+            addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((instance) => { 
                 //return BMThemeResources.shared().activeTheme().themeClassNames()
                 return Tile.allSubclasses().map(aClass => aClass.type())
             })

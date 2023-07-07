@@ -204,6 +204,7 @@
             this.validate()
         } else {
             console.warn(this.type() + " target " + target.type() + " missing slot '" + setter + "'")
+            debugger;
         }
 		
         return this

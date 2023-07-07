@@ -161,7 +161,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             if (proto) {
                 const field = proto.clone()
 
-                // should we set the target here?
                 field.setKey(this.name())
                 field.setKeyIsEditable(false)
                 field.setValueMethod(this.name())

@@ -255,7 +255,7 @@
         this.removeAllSubnodes()
 
         // need this because the fonts typically aren't loaded until after this prototype is initialized
-        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure(() => { 
+        this.thisPrototype().slotNamed("fontFamily").setValidValuesClosure((instance) => { 
             //debugger;
             return BMResources.shared().fonts().allFontNames() 
         })

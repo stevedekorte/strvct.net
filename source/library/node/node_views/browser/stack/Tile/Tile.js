@@ -488,8 +488,14 @@
     
     nodeTileLink () {
         //this.debugLog(".visibleSubnodes() isInspecting:" + this.isInspecting())
+        /*
+        if(this.node().hasDefaultInspector && this.node().hasDefaultInspector()) {
+            return this.node().nodeDefaultInspector()
+        }
+        */
+
         if (this.isInspecting()) {
-            return  this.node().nodeInspector()
+            return this.node().nodeInspector()
         }
 
         return this.node().nodeTileLink()

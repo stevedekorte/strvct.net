@@ -24,6 +24,7 @@
     this.setSubnodeClasses([AzureSpeaker])
     this.setNodeCanReorderSubnodes(true)
     this.setNoteIsSubnodeCount(true);
+    //this.subnodes().forEach(sn => sn.setService(this.service()))
   }
 
   service () {

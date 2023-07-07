@@ -16,7 +16,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.newSlot("changedKeySet", null) // private method
         this.newSlot("keysAndValuesAreStrings", true) // private method - Bool, if true, runs assertString on all input keys and values
         this.newSlot("totalBytesCache", null) // private
-        this.newSlot("queuedSets", null)
+        //this.newSlot("queuedSets", null)
     }
 
     init () {
@@ -25,7 +25,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         this.setSnapshot(null)
         this.setChangedKeySet(new Set())
         //this.setSnapshot(new Map())
-        this.setQueuedSets([])
+        //this.setQueuedSets([])
         this.setIsDebugging(false)
     }
 
@@ -74,11 +74,17 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         return this
     }
 
+    promiseApplyChanges () {
+        // for subclasses to implement
+        this.applyChanges()
+        return Promise.resolve()
+    }
+
     async promiseCommit () {
         this.debugLog(() => " prepare commit ---")
         this.assertInTx()
         if (this.hasChanges()) {
-            await this.asyncProcessSetPromiseQueue()
+            //await this.asyncProcessSetPromiseQueue()
             const promise = this.promiseApplyChanges()
             this.changedKeySet().clear()
             this.clearTotalBytesCache()
@@ -93,8 +99,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     // --- changes ---
 
     hasChanges () {
-        return this.changedKeySet().size > 0 || this.queuedSets().length > 0
-        //return this.map().isEqual(this.snapshot())
+        return this.changedKeySet().size > 0;
+        //return this.changedKeySet().size > 0 || this.queuedSets().length > 0
     }
 
     applyChanges () { // private - apply changes to snapshot
@@ -157,6 +163,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     // --- async set ---
 
+    /*
     async asyncQueueSetKvPromise (kvPromise) {
         const setPromise = new Promise((resolve, reject) => {
             kvPromise.then((kvTuple) => {
@@ -176,6 +183,7 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
             this.setQueuedSets([])
         })
     }
+    */
 
     // ---------------
 

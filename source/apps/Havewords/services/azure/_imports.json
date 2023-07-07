@@ -1,4 +1,5 @@
 [
     "speakers/_imports.json",
+    "voices/_imports.json",
     "AzureService.js"
 ]

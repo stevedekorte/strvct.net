@@ -22,7 +22,7 @@
             slot.setSlotType("String")
             slot.setLabel("Theme Class")
             slot.setSyncsToView(true)
-            slot.setValidValuesClosure(() => { 
+            slot.setValidValuesClosure((instance) => { 
                 return BMThemeResources.shared().activeTheme().themeClassNames()
             })   
             //slot.setInspectorPath("Style")

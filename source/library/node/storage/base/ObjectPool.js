@@ -659,6 +659,7 @@
 
         if (!v.shouldStore()) {
             console.log("WARNING: called refValue on " + v.type() + " which has shouldStore=false")
+         //   debugger;
             return null
         }
 
@@ -824,7 +825,8 @@
         const recordsMap = this.recordsMap()
         recordsMap.keysArray().forEach(pid => {
             if (!this.markedSet().has(pid)) {
-                this.debugLog("--- sweeping --- deletePid(" + pid + ") " + JSON.stringify(recordsMap.at(pid)))
+                //this.debugLog("--- sweeping --- deletePid(" + pid + ") " + JSON.stringify(recordsMap.at(pid)))
+                this.debugLog(() => "--- sweeping --- deletePid(" + pid + ") ")
                 const count = recordsMap.count()
                 recordsMap.removeKey(pid)
                 assert(recordsMap.count() === count - 1)

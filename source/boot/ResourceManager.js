@@ -311,11 +311,22 @@ class UrlResource {
 class ResourceManager {
 
     static shared () {
+        if (!Object.hasOwn(this, "_shared")) {
+            const obj = new this();
+            this._shared = obj;
+            obj.init();
+        }
+        return this._shared
+    }
+
+    /*
+    static shared () {
         if (!this._shared) {
             this._shared = (new this).init()
         }
         return this._shared
     }
+    */
 
     isInBrowser () {
         return (typeof(document) !== 'undefined')

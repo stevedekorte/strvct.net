@@ -1,5 +1,129 @@
-(class AzureVoicesData extends Base {
-  static json() {
+"use strict";
+
+/* 
+    AzureVoices
+
+    Sample:
+
+    {
+        Name: "Microsoft Server Speech Text to Speech Voice (af-ZA, AdriNeural)",
+        DisplayName: "Adri",
+        LocalName: "Adri",
+        ShortName: "af-ZA-AdriNeural",
+        Gender: "Female",
+        Locale: "af-ZA",
+        LocaleName: "Afrikaans (South Africa)",
+        SampleRateHertz: "48000",
+        VoiceType: "Neural",
+        Status: "GA",
+        WordsPerMinute: "147",
+      },
+
+*/
+
+(class AzureVoices extends BMSummaryNode {
+
+  initPrototypeSlots () {
+    this.newSlot("voicesJson", null)
+    this.newSlot("indexes", null)
+  }
+
+  init () {
+    super.init()
+    this.setTitle("voices")
+    this.setIndexes(new Map())
+    this.setVoicesJson(this.json())
+    this.indexFor("shortName") // cache this index
+
+    this.setShouldStore(false)
+    this.setShouldStoreSubnodes(false)
+  }
+
+  finalInit () {
+    super.finalInit()
+    this.setNodeCanReorderSubnodes(false)
+    this.setNoteIsSubnodeCount(true);
+    this.setupSubnodes()
+  }
+
+  setupSubnodes () {
+    this.removeAllSubnodes()
+    
+    this.voicesJson().forEach(entry => {
+      const voice = AzureVoice.clone().setJson(entry)
+      this.addSubnode(voice)
+    })
+    return this
+  }
+
+  indexFor (methodName) {
+    const indexes = this.indexes()
+    if (!indexes.has(methodName)) {
+      const index = this.subnodes().indexMapForMethodName(methodName) 
+      // index of value -> [matching entries]
+      indexes.set(methodName, index)
+    }
+    return indexes.get(methodName)
+  }
+
+  localeNames () {
+    return new Array(this.indexFor("localeName").keys())
+  }
+
+  voicesForMethodNameAndValue (methodName, value) {
+    const matches = this.indexFor(methodName).get(value)
+    if (matches) {
+      return matches
+    }
+    return []
+  }
+
+  voicesForLocaleName (localeName) {
+    return this.voicesForMethodNameAndValue("localeName", localeName)
+  }
+
+  voicesForShortName (localeName) {
+    return this.voicesForMethodNameAndValue("shortName", localeName)
+  }
+
+  /*
+
+  validVoiceNamesForLocale (locale) {
+    const matches = this.voicesJson().select(e => {
+      if (entry.Locale === locale) {
+        return true
+       }
+      if (e.SecondaryLocaleList && e.SecondaryLocaleList.includes(locale)) {
+        return true
+      }
+      return false
+    })
+    return matches.map(e => e.ShortName) //entry.DisplayName)
+  }
+
+  calcLocaleNameToLocaleMap () {
+    const m = new Map()
+    this.voicesJson().forEach(entry => {
+      m.set(entry.LocaleName, entry.Locale)
+    })
+    return m
+  }
+
+  calcShortNameToEntryMap () {
+    const m = new Map()
+    this.voicesJson().forEach(entry => {
+      m.set(entry.ShortName, entry)
+    })
+    return m
+  }
+
+  voiceStylesForShortName (shortName) {
+    const entry = this.shortNameToEntryMap().get(shortName)
+    return entry.StyleList
+  }
+  */
+
+  json () {
     return [
       {
         Name: "Microsoft Server Speech Text to Speech Voice (af-ZA, AdriNeural)",

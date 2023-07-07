@@ -46,9 +46,10 @@
     }
 
     static hasShared () {
-        return !Type.isNullOrUndefined(this.sharedContext()._shared)
+        return Object.hasOwn(this.sharedContext(), "_shared")
+        //return !Type.isNullOrUndefined(this.sharedContext()._shared)
     }
-
+    
     static shared () {
         if (!this.hasShared()) {
             this.setShared(this.clone())
@@ -218,7 +219,6 @@
     }
 
     // slot objects
-
 
     getSlot (slotName) {
         return this.allSlotsMap().get(slotName)

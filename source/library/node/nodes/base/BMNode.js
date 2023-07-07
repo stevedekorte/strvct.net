@@ -789,13 +789,17 @@
             }
         }
 
+        assert(newValue.owner() === null)
+        newValue.setOwner(this)
+
         this.watchSubnodes()
         if (this._subnodes.contains(null)) { // what would cause this?
             //debugger;
             console.warn("found null in subnodes array - removing")
             this._subnodes.filterInPlace(sn => !(sn === null) )
         }
-        this._subnodes.forEach(sn => sn.setParentNode(this))
+        
+        this._subnodes.forEach(sn => sn.setParentNode(this)) // TODO: isn't this done elsewhere?
         this.didChangeSubnodeList() // not handled automatically
         return this
     }

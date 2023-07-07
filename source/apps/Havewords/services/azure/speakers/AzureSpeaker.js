@@ -33,28 +33,39 @@
 
 (class AzureSpeaker extends BMSummaryNode {
   initPrototypeSlots () {
+    /*
     {
-      const slot = this.newSlot("language", "en-US");
+      const slot = this.newSlot("service", null);
+    }
+    */
+
+    {
+      const slot = this.newSlot("localeName", "English (United States)");
+      slot.setInitValue("English (United States)")
       slot.setInspectorPath("")
-      //slot.setLabel("role")
+      slot.setLabel("locale name")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setValidValues(this.languageOptionLabels())
+      slot.setValidValuesClosure((instance) => { 
+        return instance.languageOptionLabels()
+      })   
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value")
     }
 
     {
-      const slot = this.newSlot("voiceName", "en-US-TonyNeural");
+      const slot = this.newSlot("shortName", "en-US-TonyNeural");
       slot.setInspectorPath("")
-      //slot.setLabel("role")
+      slot.setLabel("short name")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setValidValues(this.validVoiceNames())
+      slot.setValidValuesClosure((instance) => { 
+        return instance.validShortNames()
+      })   
       slot.setIsSubnodeField(true)      
       slot.setSummaryFormat("value")
     }
@@ -62,31 +73,29 @@
     {
       const slot = this.newSlot("voiceStyle", "whispering");
       slot.setInspectorPath("")
-      //slot.setLabel("role")
+      slot.setLabel("style")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setValidValues(this.validVoiceStyles())
+      slot.setValidValuesClosure((instance) => { 
+        return instance.validVoiceStyles()
+      })  
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value")
     }
-
-    /*
-    {
-      const slot = this.newSlot("voicesJson", AzureVoicesData.json());
-    }
-    */
     
     {
       const slot = this.newSlot("volume", "soft");
       slot.setInspectorPath("")
-      //slot.setLabel("role")
+      slot.setLabel("volume")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setValidValues(this.validVolumes())
+      slot.setValidValuesClosure((instance) => { 
+        return instance.validVolumes()
+      })  
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value")
     }
@@ -99,7 +108,6 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
-      //slot.setValidValues(this.validVolumes())
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value key")
     }
@@ -112,7 +120,6 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
-      //slot.setValidValues(this.validVolumes())
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value key")
     }
@@ -171,26 +178,36 @@
     this.setShouldStoreSubnodes(false)
   }
 
+  /*
+  initPrototype () {
+    const slot = this.slotNamed("shortName")
+    slot.setValidValues(this.validShortNames())
+  }
+  */
+
   init () {
     super.init();
     this.setTitle("Azure Speaker");
     this.setAudioBlobQueue([]);
+    console.log(this.typeId() + " init() ")
+
   }
 
   finalInit () {
     super.finalInit();
     this.setCanDelete(true);
+    console.log(this.typeId() + " finalInit() ")
+
   }
 
-  speakers () {
-    return this.parentNode()
+  // --- updates ---
+
+  didUpdateSlotLanguage (oldValue, newValue) {
+    // sync shortName and voiceStyle
+    debugger;
   }
 
   // ---
-
-  voicesJson () {
-    return AzureVoicesData.json()
-  }
 
   validVolumes () {
     return [
@@ -204,28 +221,44 @@
     ]
   }
 
-  validVoiceNames () {
-    return [
-      "en-US-TonyNeural"
-    ]
+  /*
+  didUpdateSlotParentNode (oldValue, newValue) {
+    super.didUpdateSlotParentNode(oldValue, newValue) 
+    console.log(this.typeId() + " setParentNode " + newValue.typeId())
+    debugger;
+    //this.setupSubnodes() // is this needed?
+  }
+  */
+
+  // ---------------------
+
+  voices () {
+    return this.service().voices()
+  }
+
+  selectedVoice () {
+    const matches = this.voices().voicesForShortName(this.shortName())
+    return matches[0]
+  }
+
+  validShortNames () {
+    return this.voices().voicesForLocaleName(this.localeName())
   }
 
   validVoiceStyles () {
-    return [
-      "newscast",
-      "angry",
-      "cheerful",
-      "sad",
-      "excited",
-      "friendly",
-      "terrified",
-      "shouting",
-      "unfriendly",
-      "whispering",
-      "hopeful",
-    ]
+    return this.selectedVoice().styleList()
   }
 
+  // --- helpers ---
+
+  speakers () {
+    return this.parentNode() // why doesn't this work?
+  }
+
+  service () {
+    return this.speakers().service()
+  }
+  
   // ---
 
   jsonForVoiceShortName (shortName) {
@@ -233,7 +266,7 @@
   }
 
   voiceSupportsStyle (styleName) {
-    const json = this.jsonForVoiceShortName(this.voiceName())
+    const json = this.jsonForVoiceShortName(this.shortName())
     return json.StyleList && json.StyleList.includes(styleName);
   }
 
@@ -247,7 +280,7 @@
     return this;
   }
 
-  selectedLanguageValue () {
+  locale () {
     return this.optionValueForLabel(this.language())
   }
 
@@ -256,20 +289,19 @@
   }
 
   optionValueForLabel (label) {
-    const option = this.languageOptions().select(option => option.label === label || option.value === label)
+    // TODO: cache this
+    const option = this.languageOptions().detect(option => option.label === label || option.value === label)
     return option ? option.value : undefined;
   }
 
   languageOptions () {
+    const voices = this.service().voices()
+
     const options = [];
     const localNames = new Set();
-    this.voicesJson().forEach(entry => {
-      const k = entry.LocaleName;
-      const v = entry.ShortName;
-      if (k.startsWith("en-US") && v !== "en-US-TonyNeural") {
-        // ensure we only use "en-US-TonyNeural" for en-US
-        return;
-      }
+    voices.subnodes().forEach(voice => {
+      const k = voice.localeName();
+      const v = voice.shortName();
       if (!localNames.has(k)) {
         options.push({ label: k, value: v});
         localNames.add(k);
@@ -292,22 +324,6 @@
     return this.voiceSupportsStyle(this.voiceStyle()) ? this.voiceStyle() : null;
   }
 
-  /*
-  cleanText(text) {
-    // make sure we don't lose the whitespace formatting as we need it for pacing
-    text = text.replaceAll("<p>", ""); 
-    text = text.replaceAll("</p>", "\n\n"); 
-    text = text.replaceAll("<br>", "\n\n"); 
-    //text = text.replaceAll(".", "\n\n"); 
-
-    text = text.removedHtmlTags(); 
-
-    text = text.replaceAll(" - ", "... "); // quick hack to get the pause length right for list items
-    //text = text.replaceAll(".\n\n", "...\n\n"); // quick hack to get the pause length right for list items
-    return text;
-  }
-  */
-
   pitchString () {
     return this.pitch() + "%"
   }
@@ -316,9 +332,12 @@
     return this.pitch() + "%"
   }
 
-  ssmlRequestForText(text) {
+  // -------------------------------------
+
+  ssmlRequestForText (text) {
     let s = `<prosody volume='soft' rate='${this.rateString()}' pitch='${this.pitchString()}'>${text}</prosody>`;
 
+    // wrap in style choice if available
     const style = this.supportedVoiceStyle();
     if (style) {
       // wrap it in a style, if one is specified and supported
@@ -326,42 +345,15 @@
     }
     
     const ssmlRequest = `
-      <speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='https://www.w3.org/2001/mstts' xml:lang='${this.selectedLanguageValue()}'>
-        <voice name='${this.voiceName()}'>
+      <speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xmlns:mstts='https://www.w3.org/2001/mstts' xml:lang='${this.locale()}'>
+        <voice name='${this.shortName()}'>
           ${s}
         </voice>
       </speak>`;
     return ssmlRequest;
   }
 
-  /*
-  async asyncSpeakText(text) {
-    if (this.isMuted()) {
-      return;
-    }
-
-    text = this.cleanText(text);
-    this.debugLog("asyncSpeakText(" + text + ")");
-
-    //this.debugLog("made request")
-    const response = await fetch(`https://${this.region()}.tts.speech.microsoft.com/cognitiveservices/v1`, {
-      method: 'POST',
-      headers: {
-        'Ocp-Apim-Subscription-Key': this.apiKey(),
-        'Content-Type': 'application/ssml+xml',
-        'X-Microsoft-OutputFormat': 'riff-24khz-16bit-mono-pcm',
-      },
-      body: this.ssmlRequestForText(text),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const audioBlob = await response.blob();
-    this.queueAudioBlob(audioBlob);
-  }
-  */
+  // -----------------------------------
 
   queueAudioBlob (audioBlob) {
     this.audioBlobQueue().push(audioBlob);
@@ -422,14 +414,6 @@
         this.debugLog("resumed");
       //}
     }
-  }
-
-  speakers () {
-    return this.parentNode()
-  }
-
-  service () {
-    return this.speakers().service()
   }
 
 }.initThisClass());

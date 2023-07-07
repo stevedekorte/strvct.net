@@ -128,7 +128,7 @@
         throw new Error("addField shouldn't be called - use BMFieldSetNode")
         return this.addSubnode(aField)
     }
-        
+    
     nodeTileLink () {
         // used by UI tile views to browse into next column
         return this

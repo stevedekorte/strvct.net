@@ -518,6 +518,56 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         return this.map(e => e[propertyName]);
     }
 
+    // --- creating indexes ---
+
+    uniqueIndexMapForProperty (propertyName, ignoreCollisions = false) {
+        const m = new Map()
+        this.forEach(entry => {
+            const k = entry[propertyName]
+            if (!m.has(k)) {
+                m.set(k, entry)
+            } else {
+                if (!ignoreCollisions) {
+                    const msg = "Array found two of the same value ('" + k + "') while building a uniqueIndexMap for property '" + propertyName + "'"
+                    console.warn(msg)
+                    throw new Error(msg)
+                }
+            }
+        })
+        return m
+    }
+
+    indexMapForProperty (propertyName) {
+        const m = new Map()
+        this.forEach(entry => {
+            const k = entry[propertyName]
+            if (m.has(k)) {
+                const array = m.get(k)
+                array.push(entry)
+            } else {
+                m.set(k, [entry])
+            }
+        })
+        return m
+    }
+
+
+    indexMapForMethodName (methodName) {
+        const m = new Map()
+        this.forEach(entry => {
+            const k = entry[methodName].apply(entry)
+            if (m.has(k)) {
+                const array = m.get(k)
+                array.push(entry)
+            } else {
+                m.set(k, [entry])
+            }
+        })
+        return m
+    }
+
+    // ---
+
     detect (func) {
         for (let i = 0; i < this.length; i++) {
             const v = this.at(i)

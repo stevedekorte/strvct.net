@@ -31,13 +31,17 @@
     }
 
     {
-      const slot = this.newSlot("outputAudioBlob", null); // sum of tokens of all messages
+      const slot = this.newSlot("outputAudioBlob", null);
       //slot.setInspectorPath("")
       //slot.setLabel("output audio")
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("AudioBlob");
       //slot.setIsSubnodeField(true)
+    }
+
+    {
+      const slot = this.newSlot("error", null);
     }
   }
 
@@ -82,13 +86,20 @@
 
     text = text.replaceAll(" - ", "... "); // quick hack to get the pause length right for list items
     //text = text.replaceAll(".\n\n", "...\n\n"); // quick hack to get the pause length right for list items
-    return text;
+    return text.trim();
   }
 
   async start() {
     const speaker = this.requests().speaker();
-
     const text = this.cleanText(this.inputText());
+
+    if (text.length === 0) {
+      const errorMsg = this.type() + " requested tts on empty string"
+      this.setError(errorMsg)
+      console.warn(errorMsg)
+      return Promise.resolve()
+    }
+
     const ssml = speaker.ssmlRequestForText(text);
     this.debugLog("start(" + text + ")");
 
@@ -111,6 +122,10 @@
     }
 
     const audioBlob = await response.blob();
+    // need to call asyncPrepareToStoreSynchronously as OutputAudioBlob slot is stored,
+    // and all writes to the store tx need to be sync so the store is in a consistent state for it's
+    // next read/write
+    await audioBlob.asyncPrepareToStoreSynchronously() 
     this.setOutputAudioBlob(audioBlob);
     speaker.queueAudioBlob(audioBlob);
   }

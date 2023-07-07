@@ -46,7 +46,7 @@
             slot.setCanInspect(true)
             slot.setLabel("icon")
             slot.setSlotType("String")
-            slot.setValidValuesClosure(() => BMIconResources.shared().iconNames())
+            slot.setValidValuesClosure((instance) => BMIconResources.shared().iconNames())
             slot.setInspectorPath("Note")
         }
 

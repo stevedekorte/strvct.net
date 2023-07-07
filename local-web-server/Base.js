@@ -32,13 +32,24 @@ if (!String.prototype.capitalized) {
         getGlobalThis()[this.type()] = this
         return this
     }
-    
+
+    static shared () {
+        if (!Object.hasOwn(this, "_shared")) {
+            const obj = new this();
+            this._shared = obj;
+            obj.init();
+        }
+        return this._shared
+    }
+
+    /*
     static shared () {
         if (!this._shared) {
             this._shared = this.clone()
         }
         return this._shared
     }
+    */
 
     static type () {
         return this.name

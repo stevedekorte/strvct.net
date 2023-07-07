@@ -26,8 +26,8 @@
   },
   {
     "path": "source/boot/Base.js",
-    "size": 3845,
-    "hash": "uxwDnkjFn0xjLwe94Sjntoo0c58yoh9fPbamQhwmP08="
+    "size": 4066,
+    "hash": "K7r+W8AYx23Do1DinxVl4wqptxZCDc2JtIZiEIFahSQ="
   },
   {
     "path": "source/library/ideal/weak/EnumerableWeakMap.js",
@@ -96,8 +96,8 @@
   },
   {
     "path": "source/library/ideal/categories/Array_ideal.js",
-    "size": 20920,
-    "hash": "VN4Ao6cB9GPw5xyBruHVxOEV9dFBiJyZTY58d51aKGU="
+    "size": 22267,
+    "hash": "iV/wQVQMR7XKXVizIUXXNJBCCyNSBzku0wx/LL2Lj1M="
   },
   {
     "path": "source/library/ideal/categories/Date_ideal.js",
@@ -151,13 +151,13 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 21647,
-    "hash": "KKY72h1rO2i1c52HEXZn3JjwJ0PE817RQ68FFNQ9J6E="
+    "size": 21597,
+    "hash": "T6CRPsI1XNKAbvGnrzhxGAzM3rGWcZ1yjeSVfvSnRvo="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 15256,
-    "hash": "SG5wvBrwagfQJdG3JqxsVyjbHXevMvWwFNUsaBHEbQ8="
+    "size": 15323,
+    "hash": "TLBh8HD5FdK/X4QERwHXr+/Mpe9gR9F8OPAWvBqk8/M="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -196,8 +196,8 @@
   },
   {
     "path": "source/library/ideal/map/AtomicMap.js",
-    "size": 7174,
-    "hash": "M7Y68erPZU29gut9kRbCTDaKWdOYspDl6WbilfdvxLk="
+    "size": 7325,
+    "hash": "kKaM5rMoQHz1G1hlBATSRwVduhxR0TJs54NI7qM/geY="
   },
   {
     "path": "source/library/ideal/formatters/ByteFormatter.js",
@@ -746,18 +746,18 @@
   },
   {
     "path": "source/library/node/SubnodesArray.js",
-    "size": 408,
-    "hash": "JSSczx20j1Lo4XBrqDlMSb+FJqV7dPN7kqKcqUMtFPs="
+    "size": 614,
+    "hash": "pbTDbPu8WAPCV9LxJX+DmZn7llQvsQ9ZNN7sA0juxTg="
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 22552,
-    "hash": "QSdIsE3SctNZumwTKdG+TRYpx1fv2u8vVyR9Nz2hU0s="
+    "size": 22672,
+    "hash": "cN5uF5xL+YRcrewmi4KGlzyAEKVvjo7Zpw+HvIU4hIs="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
-    "size": 8918,
-    "hash": "/smWsra6fHSDVwNyoe+1Mo2mDtCR0KfkVMHdwWeAtwQ="
+    "size": 8926,
+    "hash": "ro36wXR4mXoiNR++nPupF01v3Rwh56GnHcqLYfxxSSQ="
   },
   {
     "path": "source/library/node/nodes/base/ActionableNode.js",
@@ -766,18 +766,18 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 6211,
-    "hash": "UCSzOpn+wrVxkjeNk6xOHRGC573/+CmUnHvQQCRL8zU="
+    "size": 6207,
+    "hash": "tQ3zK91ilWVrF+jgkM0kwlSYWJPqQF8HfHUwt/1HiYw="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
-    "size": 8105,
-    "hash": "o3qLfTqHCUOKrpmAjvPvgEKjQOp7mS39od8x+zcGpdI="
+    "size": 8113,
+    "hash": "jUTiUZJZR++8OVxHqi5EG3U2PnzTKk5ijRIvc+kXEj8="
   },
   {
     "path": "source/library/node/nodes/base/StyledNode.js",
-    "size": 982,
-    "hash": "sTkAQJp/PdKLpVu9zI9npRStMyCciF25czOfm6WqeWw="
+    "size": 990,
+    "hash": "qZEVdE1Bjmw2qmTaeoaB3WqfjNROmaMLHm8YVPYdVmE="
   },
   {
     "path": "source/library/node/nodes/base/BaseNode.js",
@@ -806,8 +806,8 @@
   },
   {
     "path": "source/library/node/storage/base/categories/primitives/Blob_store.js",
-    "size": 1838,
-    "hash": "X4eCb/7unSklYRNJ2qYkVJF1f3F8cWPolGeKc28sJb0="
+    "size": 2994,
+    "hash": "rbSr9a1pK5iwZ3rT3fLC4MBKRL//Mkawwcy+CTVQF34="
   },
   {
     "path": "source/library/node/storage/base/categories/primitives/Date_store.js",
@@ -851,8 +851,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 28002,
-    "hash": "hrrLGfFxaG7TyUYIe/5lJg9YQ9YTQPjIAN3P2h4li+8="
+    "size": 28108,
+    "hash": "Bv+r8tdUlyLF2U9EJ+fMTjq+w88yJRxf5Fm0o07qEj4="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
@@ -916,8 +916,8 @@
   },
   {
     "path": "source/library/node/fields/BMField.js",
-    "size": 7463,
-    "hash": "qjO3DuSXvqaGVApiLLzx3PfETzsTjRe0AF6SqMqm3Zo="
+    "size": 7485,
+    "hash": "1OmJml8wDWchv+gD4PUVE35FTPgycoQBCUPkgDiwI88="
   },
   {
     "path": "source/library/node/fields/json/BMJsonNode.js",
@@ -1006,8 +1006,8 @@
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionsNode.js",
-    "size": 7843,
-    "hash": "nM9HIhvasjfomkIP2V4fgvzvD8jtbId67VzolfB8+9Q="
+    "size": 7891,
+    "hash": "2T0AyeHGrp28nhHi1T1YRhPKt8K3U1xzmNmbHbradbI="
   },
   {
     "path": "source/library/node/fields/subclasses/options/BMOptionNode.js",
@@ -1136,8 +1136,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile.js",
-    "size": 13642,
-    "hash": "AqjNqpGoxHe1wTGfCgYqSEIcNyKCtSHgailoLYLMldc="
+    "size": 13811,
+    "hash": "KSodhalGg+vS/fa+561epYy1jq+xMLW3fU51zf6vSSA="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_dragging.js",
@@ -1386,8 +1386,8 @@
   },
   {
     "path": "source/library/resources/themes/BMThemeState.js",
-    "size": 16196,
-    "hash": "bCbYTOeIFMfF4QDl6r0zYoa5mZ+vpTUnBHJYWjumPfM="
+    "size": 16204,
+    "hash": "rhyWmiqvi82gx82Xn3nvRxCx3hqXlTI/vsk66LLRABQ="
   },
   {
     "path": "source/library/resources/themes/BMThemeStates.js",
@@ -1531,28 +1531,33 @@
   },
   {
     "path": "source/apps/Havewords/services/azure/speakers/requests/AzureTtsRequest.js",
-    "size": 3144,
-    "hash": "2vvYBNdJtfKiQ75nKAN59YzCBH7VXLHnK0EmXliJlVE="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/speakers/AzureVoicesData.js",
-    "size": 194928,
-    "hash": "xlRMb+QDWlQKhNcjAMd8eqGXVdmzyrapj87w8wBOyRM="
+    "size": 3643,
+    "hash": "VxrjCl/oLUE4PPval0CVGaYWmqSmSuqZABsHKhjFdcU="
   },
   {
     "path": "source/apps/Havewords/services/azure/speakers/AzureSpeaker.js",
-    "size": 11063,
-    "hash": "sh9PYeZ2oOQxeHg4kxOzLqXfVyrImmhf1gNryl4S2xM="
+    "size": 10534,
+    "hash": "bhkDwQPqvNxAduLY1vIfMXiyDVsoiBlvOisECzQzUmM="
   },
   {
     "path": "source/apps/Havewords/services/azure/speakers/AzureSpeakers.js",
-    "size": 531,
-    "hash": "+7brNP1sdb8cFD1b3McCYDryY3bbHSfWrh2z9nLoRcs="
+    "size": 598,
+    "hash": "UukPM0EqG5lg/k72eTg87Rf9YuMbUjnD54JB8NOtqFI="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/voices/AzureVoice.js",
+    "size": 2185,
+    "hash": "/CPn1Hpuc7c/nCR9S6ulEolWgKXNQMg1b6nKMrrrdX0="
+  },
+  {
+    "path": "source/apps/Havewords/services/azure/voices/AzureVoices.js",
+    "size": 197693,
+    "hash": "lg9X0m3T+VLQfil0xL+5O6kxyKJNHIWIPQ34ocmvDII="
   },
   {
     "path": "source/apps/Havewords/services/azure/AzureService.js",
-    "size": 2580,
-    "hash": "2ssuawEqrgeovfQw19gNP8ybhMj6RVUTDqs+NCLjkRQ="
+    "size": 2784,
+    "hash": "9Y0OxTRv5KB11dV94OILPTD3SEK5SfaJd3soomLfslI="
   },
   {
     "path": "source/apps/Havewords/services/youtube/MusicLibrary.js",

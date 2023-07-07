@@ -204,7 +204,7 @@
         if (this.validValues()) {
             return this.validValues()
         } else if (this.validValuesClosure()) {
-            return this.validValuesClosure()()
+            return this.validValuesClosure()(this.target())
         }
         return []
     }
@@ -220,11 +220,13 @@
         return this
     }
 
+    /*
     didUpdateSlotParentNode (oldValue, newValue) {
         super.didUpdateSlotParentNode(oldValue, newValue) 
         //debugger;
-        this.setupSubnodes()
+        //this.setupSubnodes() // is this needed?
     }
+    */
 
     targetHasPick (v) {
         const value = this.value();
