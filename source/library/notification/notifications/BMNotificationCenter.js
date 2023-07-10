@@ -109,7 +109,9 @@
     */
     
     hasObservation (obs) {
-        return this.observations().detect(ob => ob.isEqual(obs))
+        const match = this.observations().detect(ob => ob.isEqual(obs)) 
+        return !Type.isNullOrUndefined(match)
+
     }
     
     addObservation (obs) {
@@ -198,7 +200,9 @@
             //console.log("processPostQueue " + this.notifications().length)
             const notes = this.notifications()
             this.setNotifications([])
-            notes.forEach(note => this.postNotificationNow(note))
+            notes.forEach(note => {
+                this.postNotificationNow(note)
+            })
             //notes.forEach(note => this.tryToPostNotificationNow(note))
             this.setIsProcessing(false)
         } else {

@@ -874,6 +874,25 @@
         return this.typeId() + " '" + this.title() + "'"
     }
 
+    // ----
+
+    validValuesForSlotName (slotName) {
+        // if there's a method for this particular slot use it, 
+        // otherwise fail back on the validValues declared in the Slot
+
+        const getterName = "validValuesForSlot" + slotName.capitalized()
+        const m = this[getterName]
+        if (m) {
+            const validValues = m.call(this)
+            if (validValues !== undefined) {
+                return validValues
+            }
+        } 
+        
+        const slot = this.thisPrototype().slotNamed(slotName)
+        assert(slot)
+        return slot.validValues()
+    }
 
 }.initThisClass());
 

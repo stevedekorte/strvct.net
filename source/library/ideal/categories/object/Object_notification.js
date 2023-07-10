@@ -32,6 +32,29 @@
 
     // --- notification helpers --- 
 
+    // --- watch ---
+
+    watchSender (sender) {
+        const obs = BMNotificationCenter.shared().newObservation()
+        obs.setObserver(this)
+        obs.setIsOneShot(false)
+        obs.setSender(sender)
+        obs.startWatching()
+        return obs
+    }
+
+    watchForNoteFrom (aNoteName, sender) {
+        const obs = BMNotificationCenter.shared().newObservation()
+        obs.setObserver(this)
+        //obs.setIsOneShot(false)
+        obs.setSender(sender)
+        obs.setName(aNoteName)
+        obs.startWatching()
+        return obs
+    }
+
+    // --- watch once ---
+
     watchOnceForNote (aNoteName) {
         const obs = BMNotificationCenter.shared().newObservation()
         obs.setName(aNoteName)
@@ -43,7 +66,7 @@
     }
 
     watchOnceForNoteFrom (aNoteName, sender) {
-        return this.watchOnceForNote(aNoteName).setSender(sender)
+        return this.watchOnceForNote(aNoteName).setSender(sender) // does it work to set sender aftert it's started watching?
     }
 
     newNoteNamed (aNoteName) {

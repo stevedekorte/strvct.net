@@ -68,11 +68,26 @@
     }
 
     childrenSummary () {
+        const picked = this.value()
+
+        if (Type.isArray(picked)) {
+            if (picked.length === 0) {
+                return "No selection"
+            }
+            return picked
+        } else {
+            if (picked === null) {
+                return "No selection"
+            }
+            return [picked]
+        }
+        /*
         const picked = this.pickedSubnodes()
         if (picked.length === 0) {
             return "No selection"
         }
         return picked.map(subnode => subnode.summary()).join("")
+        */
     }
 
     pickedValues () {
@@ -82,6 +97,14 @@
     setSubtitle (aString) {
         return this
     }
+
+    /*
+    subtitle () {
+        const s = super.subtitle()
+        debugger
+        return s
+    }
+    */
 
     didToggleOption (anOptionNode) {
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
@@ -144,6 +167,42 @@
         }
     }
 
+    syncFromTarget () {
+        super.syncFromTarget()
+        this.setupSubnodes()
+        this.constrainValue()
+        return this
+    }
+
+    constrainValue () {
+        const v = this.value()
+        const validSet = this.validValuesFromSubnodes().asSet()
+        let didChange = false
+        let newV = null
+        if (Type.isArray(v)) {
+            newV = v.filter(item => { 
+                const isValid = validSet.has(item)
+                if (!isValid) {
+                    didChange = true
+                   // debugger;
+                }
+                return isValid
+            })
+        } else {
+            if (v !== null && !validSet.has(v)) {
+                newV = null
+                didChange = true
+                //debugger;
+
+            }
+        }
+        if (didChange) {
+            this.setValueOnTarget(newV)
+            this.didUpdateNode()
+        }
+        return this
+    }
+
     /*
     setValidValues (values) {
         if (!this.validValues().equals(values)) {
@@ -187,24 +246,32 @@
     }
     */
 
+    /*
     validValuesFromSource () {
-        // as this might be expensive, we should lazy load it first time
-        // and maybe 1) have some sort of change timestamp to check next time it's visible
-        // and/or 2) have a way of getting notifications for changes when possible?
         const source = this.optionsSource()
         const method = this.optionsSourceMethod()
         if (source && method) {
             const values = source[method].apply(source)
             return values
         }
+        
         return []
     }
+    */
 
     computedValidValues () {
         if (this.validValues()) {
             return this.validValues()
         } else if (this.validValuesClosure()) {
             return this.validValuesClosure()(this.target())
+        } else {
+            /*
+            const t = this.target()
+            if (t) {
+                const slotName = this.key()
+                return this.target().validValuesForSlotName(slotName)
+            }
+            */
         }
         return []
     }
@@ -224,7 +291,7 @@
     didUpdateSlotParentNode (oldValue, newValue) {
         super.didUpdateSlotParentNode(oldValue, newValue) 
         //debugger;
-        //this.setupSubnodes() // is this needed?
+        this.setupSubnodes() // is this needed?
     }
     */
 

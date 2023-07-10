@@ -48,7 +48,7 @@
       if (typeName === "String" || typeName === "Array") {
         slot.setSlotType(typeName)
       }
-      console.log(this.type() + " added slot '" + slotName + "'")
+      //console.log(this.type() + " added slot '" + slotName + "'")
     })
   }
 

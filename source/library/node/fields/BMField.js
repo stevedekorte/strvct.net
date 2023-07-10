@@ -130,6 +130,10 @@
             const slot = this.newSlot("target", null)
             slot.setSyncsToView(true)
         }
+
+        {
+            const slot = this.newSlot("didUpdateNodeObs", null)
+        }
     }
 
     initPrototype () {
@@ -180,6 +184,36 @@
         return this
     }
     */
+
+    didUpdateSlotTarget (oldValue, newValue) {
+        if (newValue) {
+            //debugger;
+            this.setDidUpdateNodeObs(this.watchForNoteFrom("didUpdateNode", newValue))
+        } else {
+            const obs = this.didUpdateNodeObs()
+            if (obs) {
+                obs.stopWatching()
+                this.setDidUpdateNodeObs(null)
+            }
+        }
+    }
+
+    didUpdateNode (aNote) {
+        //debugger;
+        if (aNote) {
+            const aNode = aNote.sender()
+            if (aNode === this.target()) {
+                // refresh
+                //debugger;
+                console.log(this.type() + " didUpdateNode " + aNode.typeId())
+                this.syncFromTarget()
+            }
+        }
+    }
+
+    syncFromTarget () {
+        return this
+    }
 
     didUpdateSlotValue (oldValue, newValue) {  // setValue() is called by View on edit
         if (this.target() && this.valueMethod()) {
@@ -257,7 +291,11 @@
         }
 
         if (parentNode.didUpdateField) {
-            parentNode.didUpdateField(this)
+            parentNode.didUpdateField(this) // what if it's down a path in an inspector?
+        }
+
+        if (this.target() && this.target().didUpdateField) {
+            this.target().didUpdateField(this) // what if it's down a path in an inspector?
         }
         
         return this

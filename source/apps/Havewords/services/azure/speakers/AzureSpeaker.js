@@ -43,35 +43,36 @@
       const slot = this.newSlot("localeName", "English (United States)");
       slot.setInitValue("English (United States)")
       slot.setInspectorPath("")
-      slot.setLabel("locale name")
+      slot.setLabel("language / locale name")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setValidValuesClosure((instance) => { 
-        return instance.languageOptionLabels()
+        return instance.validLocaleNames()
       })   
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value")
     }
 
     {
-      const slot = this.newSlot("shortName", "en-US-TonyNeural");
+      const slot = this.newSlot("displayName", null);
       slot.setInspectorPath("")
-      slot.setLabel("short name")
+      slot.setLabel("display name")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setValidValuesClosure((instance) => { 
-        return instance.validShortNames()
-      })   
       slot.setIsSubnodeField(true)      
       slot.setSummaryFormat("value")
+      slot.setValidValuesClosure((instance) => { 
+        return instance.validDisplayNames()
+      })  
+      slot.setCanEditInspection(true)
     }
 
     {
-      const slot = this.newSlot("voiceStyle", "whispering");
+      const slot = this.newSlot("voiceStyle", null);
       slot.setInspectorPath("")
       slot.setLabel("style")
       slot.setShouldStoreSlot(true)
@@ -202,12 +203,61 @@
 
   // --- updates ---
 
-  didUpdateSlotLanguage (oldValue, newValue) {
-    // sync shortName and voiceStyle
-    debugger;
+  didUpdateNode () {
+    //debugger;
+    return super.didUpdateNode()
   }
 
-  // ---
+  didUpdateSlotLocaleName (oldValue, newValue) {
+    // sync shortName and voiceStyle
+    //debugger;
+  }
+
+  didUpdateField (aField) {
+    // tell other fields to update
+    debugger
+  }
+
+  // --- helpers ---
+
+  speakers () {
+    return this.parentNode() // why doesn't this work?
+  }
+
+  service () {
+    return this.speakers().service()
+  }
+
+  voices () {
+    return this.service().voices()
+  }
+
+  // --- selection ---
+
+  validLocaleNames () {
+    return this.voices().localeNames()
+  }
+
+  validDisplayNames () {
+    const localeMatches = this.voices().voicesForMethodNameAndValue("localeName", this.localeName())
+    const displayNames = localeMatches.map(voice => voice.displayName())
+    return displayNames
+  }
+
+  selectedVoice () {
+    // localeName + displayName should be enough to select a unique voice
+    const localeMatches = this.voices().voicesForMethodNameAndValue("localeName", this.localeName())
+    const displayNameMatches = localeMatches.select(voice => voice.displayName())
+    const match = displayNameMatches.first()
+    return match
+  }
+
+  shortName () {
+    const v = this.selectedVoice()
+    return v ? v.shortName() : null;
+  }
+
+  // ---------------------
 
   validVolumes () {
     return [
@@ -221,54 +271,15 @@
     ]
   }
 
-  /*
-  didUpdateSlotParentNode (oldValue, newValue) {
-    super.didUpdateSlotParentNode(oldValue, newValue) 
-    console.log(this.typeId() + " setParentNode " + newValue.typeId())
-    debugger;
-    //this.setupSubnodes() // is this needed?
-  }
-  */
-
   // ---------------------
 
-  voices () {
-    return this.service().voices()
-  }
-
-  selectedVoice () {
-    const matches = this.voices().voicesForShortName(this.shortName())
-    return matches[0]
-  }
-
-  validShortNames () {
-    return this.voices().voicesForLocaleName(this.localeName())
-  }
-
   validVoiceStyles () {
-    return this.selectedVoice().styleList()
-  }
-
-  // --- helpers ---
-
-  speakers () {
-    return this.parentNode() // why doesn't this work?
-  }
-
-  service () {
-    return this.speakers().service()
+   // debugger;
+    const styles = this.selectedVoice().styleList()
+    return styles !== null ? styles : []
   }
   
   // ---
-
-  jsonForVoiceShortName (shortName) {
-    return this.voicesJson().find(entry => entry.ShortName === shortName);
-  }
-
-  voiceSupportsStyle (styleName) {
-    const json = this.jsonForVoiceShortName(this.shortName())
-    return json.StyleList && json.StyleList.includes(styleName);
-  }
 
   setIsMuted (aBool) {
     this._isMuted = aBool;
@@ -281,47 +292,14 @@
   }
 
   locale () {
-    return this.optionValueForLabel(this.language())
+    const voice = this.selectedVoice()
+    return voice ? voice.locale() : null;
   }
-
-  languageOptionLabels () {
-    return this.languageOptions().map(dict => dict.label)
-  }
-
-  optionValueForLabel (label) {
-    // TODO: cache this
-    const option = this.languageOptions().detect(option => option.label === label || option.value === label)
-    return option ? option.value : undefined;
-  }
-
-  languageOptions () {
-    const voices = this.service().voices()
-
-    const options = [];
-    const localNames = new Set();
-    voices.subnodes().forEach(voice => {
-      const k = voice.localeName();
-      const v = voice.shortName();
-      if (!localNames.has(k)) {
-        options.push({ label: k, value: v});
-        localNames.add(k);
-      }
-    });
-    
-    // Add placeholder option at start
-    //options.unshift({ label: 'Select language...', value: '' });
-  
-    return options;
-  }  
 
   async asyncSpeakTextIfAble (text) {
     if (this.hasApiAccess()) {
       await this.asyncSpeakText(text);
     }
-  }
-
-  supportedVoiceStyle () {
-    return this.voiceSupportsStyle(this.voiceStyle()) ? this.voiceStyle() : null;
   }
 
   pitchString () {
@@ -338,7 +316,7 @@
     let s = `<prosody volume='soft' rate='${this.rateString()}' pitch='${this.pitchString()}'>${text}</prosody>`;
 
     // wrap in style choice if available
-    const style = this.supportedVoiceStyle();
+    const style = this.voiceStyle();
     if (style) {
       // wrap it in a style, if one is specified and supported
       s = `<mstts:express-as style='${style}'>${s}</mstts:express-as>`

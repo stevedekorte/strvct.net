@@ -67,7 +67,7 @@
   }
 
   localeNames () {
-    return new Array(this.indexFor("localeName").keys())
+    return this.indexFor("localeName").keysArray()
   }
 
   voicesForMethodNameAndValue (methodName, value) {
@@ -85,43 +85,6 @@
   voicesForShortName (localeName) {
     return this.voicesForMethodNameAndValue("shortName", localeName)
   }
-
-  /*
-
-  validVoiceNamesForLocale (locale) {
-    const matches = this.voicesJson().select(e => {
-      if (entry.Locale === locale) {
-        return true
-       }
-      if (e.SecondaryLocaleList && e.SecondaryLocaleList.includes(locale)) {
-        return true
-      }
-      return false
-    })
-    return matches.map(e => e.ShortName) //entry.DisplayName)
-  }
-
-  calcLocaleNameToLocaleMap () {
-    const m = new Map()
-    this.voicesJson().forEach(entry => {
-      m.set(entry.LocaleName, entry.Locale)
-    })
-    return m
-  }
-
-  calcShortNameToEntryMap () {
-    const m = new Map()
-    this.voicesJson().forEach(entry => {
-      m.set(entry.ShortName, entry)
-    })
-    return m
-  }
-
-  voiceStylesForShortName (shortName) {
-    const entry = this.shortNameToEntryMap().get(shortName)
-    return entry.StyleList
-  }
-  */
 
   json () {
     return [
