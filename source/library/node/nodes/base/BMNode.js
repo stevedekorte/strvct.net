@@ -301,6 +301,18 @@
         return newSubnode
     }
 
+    replaceSubnodeWithSubnodes (aSubnode, newSubnodes) {
+        let index = this.indexOfSubnode(aSubnode)
+        assert(index !== -1)
+        this.removeSubnode(aSubnode)
+
+        newSubnodes.forEach(sn => {
+            this.addSubnodeAt(sn, index)
+            index ++
+        })
+        return this
+    }
+
     moveSubnodesToIndex (movedSubnodes, anIndex) {
         this.subnodes().moveItemsToIndex(movedSubnodes, anIndex)
         return this
@@ -876,6 +888,7 @@
 
     // ----
 
+    /*
     validValuesForSlotName (slotName) {
         // if there's a method for this particular slot use it, 
         // otherwise fail back on the validValues declared in the Slot
@@ -892,6 +905,34 @@
         const slot = this.thisPrototype().slotNamed(slotName)
         assert(slot)
         return slot.validValues()
+    }
+    */
+
+    /*
+    moveSubnodeToNode (aSubnode, aNode) {
+        this.removeSubnode(aSubnode)
+        aNode.addSubnode(aSubnode)
+        return this
+    }
+
+    moveSubnodesToNode (aNode) {
+        this.subnodes().shallowCopy().forEach(sn => {
+            this.moveSubnodeToNode(sn, aNode)
+        })
+    }
+    */
+
+    collapseUnbranchingNodes () {
+        this.subnodes().forEach(sn => sn.collapseUnbranchingNodes());
+        this.subnodes().shallowCopy().forEach(sn => {
+            const noSiblings = this.subnodes().length == 1 && sn.subnodes().length > 0;
+            const oneChild = sn.subnodes().length == 1;
+
+            if (noSiblings || oneChild) {
+                this.replaceSubnodeWithSubnodes(sn, sn.subnodes())
+            }
+        })
+        return this
     }
 
 }.initThisClass());

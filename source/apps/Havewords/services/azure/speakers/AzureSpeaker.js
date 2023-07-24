@@ -190,21 +190,19 @@
     super.init();
     this.setTitle("Azure Speaker");
     this.setAudioBlobQueue([]);
-    console.log(this.typeId() + " init() ")
 
   }
 
   finalInit () {
     super.finalInit();
     this.setCanDelete(true);
-    console.log(this.typeId() + " finalInit() ")
 
   }
 
   // --- updates ---
 
+  /*
   didUpdateNode () {
-    //debugger;
     return super.didUpdateNode()
   }
 
@@ -217,6 +215,7 @@
     // tell other fields to update
     debugger
   }
+  */
 
   // --- helpers ---
 

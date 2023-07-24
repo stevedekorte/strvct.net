@@ -9,7 +9,7 @@
 (class BMMeridiemNode extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("value", 1).setComment("month value starts with 1")
+        this.newSlot("value", 1)
     }
 
     /*

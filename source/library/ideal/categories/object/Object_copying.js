@@ -27,6 +27,12 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     }
  
     duplicate () {
+        if (this.constructor === Object) {
+            // it's a dictionary!
+            const deepCopyDict = JSON.parse(JSON.stringify(this)) // breaks for non-JSON!
+            //debugger;
+            return deepCopyDict;
+        }
         assert(this.isInstance())
         const instance = this.thisClass().clone().copyFrom(this)
         instance.duplicateSlotValuesFrom(this) // TODO: what about lazy slots?
@@ -60,18 +66,20 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
             const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
             const hasSlot = !Type.isNullOrUndefined(otherSlot)
             if (hasSlot) {
-                const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
                 const dop = otherSlot.duplicateOp()
-    
-                if (dop === "copyValue") {
-                    mySlot.onInstanceSetValue(this, v)
-                } else if (dop === "duplicate" && v && v.duplicate) {
-                    const dup = v.duplicate()
-                    mySlot.onInstanceSetValue(this, dup)
-                } else if (dop === "nop") {
-                    // nop
+                if (dop === "nop") {
+                    // skip
                 } else {
-                    throw new Error("unsupported slot duplicate operation: '" +  dop + "'")
+                    const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
+        
+                    if (dop === "copyValue") {
+                        mySlot.onInstanceSetValue(this, v)
+                    } else if (dop === "duplicate" && v && v.duplicate) {
+                        const dup = v.duplicate()
+                        mySlot.onInstanceSetValue(this, dup)
+                    } else {
+                        throw new Error("unsupported slot duplicate operation: '" +  dop + "'")
+                    }
                 }
             } else if (!ingoreMissingSlots) {
                 throw new MissingSlotError()

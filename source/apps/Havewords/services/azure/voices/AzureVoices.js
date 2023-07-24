@@ -26,6 +26,8 @@
   initPrototypeSlots () {
     this.newSlot("voicesJson", null)
     this.newSlot("indexes", null)
+    this.newSlot("voices", null)
+    this.newSlot("locales", null)
   }
 
   init () {
@@ -33,7 +35,9 @@
     this.setTitle("voices")
     this.setIndexes(new Map())
     this.setVoicesJson(this.json())
-    this.indexFor("shortName") // cache this index
+    this.setVoices([])
+    this.setLocales([])
+    //this.indexFor("shortName") // cache this index
 
     this.setShouldStore(false)
     this.setShouldStoreSubnodes(false)
@@ -42,24 +46,55 @@
   finalInit () {
     super.finalInit()
     this.setNodeCanReorderSubnodes(false)
-    this.setNoteIsSubnodeCount(true);
+    this.setNoteIsSubnodeCount(true)
     this.setupSubnodes()
   }
 
   setupSubnodes () {
+    //debugger;
     this.removeAllSubnodes()
     
+    this.setVoices([])
     this.voicesJson().forEach(entry => {
       const voice = AzureVoice.clone().setJson(entry)
-      this.addSubnode(voice)
+      this.voices().push(voice)
+      //this.addSubnode(voice)
     })
+    this.setupLocalesFolder()
+
     return this
   }
+
+  setupLocalesFolder () {
+    const localeNames = this.localeNames()
+    const root = this // BMFolderNode.clone().setTitle("By Locale")
+    const allVoices = this.voices() //[this.voices().first()]
+    allVoices.forEach(voice => {
+      const path = voice.localePathComponents(allVoices).join("/")
+      const pathNodes = root.createNodePath(path)
+      const aVoice = voice.duplicate()
+      console.log(path + ":" + aVoice.displayName())
+      pathNodes.last().addSubnode(aVoice)
+    })
+
+    this.collapseUnbranchingNodes()
+  }
+
+  /*
+  setupLocales () {
+    this.setLocales([])
+    const localesMap = this.indexFor("localeName")
+    localesMap.forEachKV((localeName, voices) => {
+      const locale = AzureLocale.clone().setTitle(localeName).setSubnodes(voices)
+      this.locales().push(locale)
+    })
+  }
+  */
 
   indexFor (methodName) {
     const indexes = this.indexes()
     if (!indexes.has(methodName)) {
-      const index = this.subnodes().indexMapForMethodName(methodName) 
+      const index = this.voices().indexMapForMethodName(methodName) 
       // index of value -> [matching entries]
       indexes.set(methodName, index)
     }
@@ -82,9 +117,11 @@
     return this.voicesForMethodNameAndValue("localeName", localeName)
   }
 
+  /*
   voicesForShortName (localeName) {
     return this.voicesForMethodNameAndValue("shortName", localeName)
   }
+  */
 
   json () {
     return [

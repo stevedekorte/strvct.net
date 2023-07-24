@@ -1,3 +1,4 @@
+/*
 {
 	// Disable sending telemetry
 	"clangd.checkUpdates": false, // Clangd
@@ -29,3 +30,4 @@
 	"vsicons.dontShowNewVersionMessage": true, // VSCode Icons
 	"workbench.welcomePage.walkthroughs.openOnInstall": false // VSCode Core
 }
+*/

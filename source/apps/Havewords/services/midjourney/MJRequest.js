@@ -16,6 +16,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setSyncsToView(true)
     }
 
     {
@@ -30,6 +31,7 @@
       slot.setSlotType("String")
       //slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
+      slot.setSyncsToView(true)
     }
 
     {
@@ -40,6 +42,7 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
+      slot.setSyncsToView(true)
     }
 
     {
@@ -50,6 +53,7 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
+      slot.setSyncsToView(true)
     }
 
     {
@@ -59,6 +63,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
       slot.setCanEditInspection(false)
+      slot.setSyncsToView(true)
     }
     
     {
@@ -69,6 +74,7 @@
       slot.setSlotType("Number")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
+      slot.setSyncsToView(true)
     }
 
     {
@@ -77,12 +83,13 @@
       slot.setShouldStoreSlot(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
-      slot.setIsSubnodeField(true)
+      slot.setIsSubnodeField(false)
       slot.setCanEditInspection(false)
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setSyncsToView(true)
     }
 
     {
@@ -171,10 +178,22 @@
     this.setResponseJson("")
 
     return Promise.race([fetchPromise, timeoutPromise])
-      .then(response => {
+      .then(async (response) => {
         this.clearTimeout();
         this.setStatus("got response")
-        const json = response.json();
+        const json = await response.json();
+
+        if (json.taskId) {
+          this.setStatus("started task")
+        } else if (json.percentage) {
+          this.setStatus(json.percentage + "% complete")
+        } else if (json.status) {
+          this.setStatus(json.status)
+        } else if (json.imageURL) {
+          this.setStatus("complete")
+        } 
+        
+
         this.setResponseJson(JSON.stringify(json, 2, 2))
         return json
       })

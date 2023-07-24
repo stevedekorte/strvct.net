@@ -67,13 +67,21 @@
     this.setSubnodeClasses([]);
   }
 
+  // --- helpers ---
+
   requests() {
     return this.parentNode();
+  }
+
+  service () {
+    return this.speaker().service()
   }
 
   speaker () {
     return this.requests().speaker()
   }
+
+  // --- text ---
 
   cleanText(text) {
     // make sure we don't lose the whitespace formatting as we need it for pacing
@@ -89,23 +97,46 @@
     return text.trim();
   }
 
+  cleanedText () {
+    return this.cleanText(this.inputText());
+  }
+
+  // --- request details ---
+
+  requestUrl () {
+    return "https://" + this.speaker().service().region() + ".tts.speech.microsoft.com/cognitiveservices/v1";
+  }
+
+  requestOptions () {
+
+  }
+
+  canSpeak () {
+    const hasKey = speaker.service().apiKey() !== null;
+    const hasText = this.cleanedText().length > 0;
+    return hasKey && hasText;
+  }
+
   async start() {
-    const speaker = this.requests().speaker();
-    const text = this.cleanText(this.inputText());
+    const speaker = this.speaker();
+    const text = this.cleanedText();
 
     if (text.length === 0) {
       const errorMsg = this.type() + " requested tts on empty string"
+      this.updateSubtitle("ERROR: empty text");
       this.setError(errorMsg)
       console.warn(errorMsg)
       return Promise.resolve()
     }
+
+    this.updateSubtitle("sending request");
 
     const ssml = speaker.ssmlRequestForText(text);
     this.debugLog("start(" + text + ")");
 
     //this.debugLog("made request")
     const response = await fetch(
-      `https://${speaker.service().region()}.tts.speech.microsoft.com/cognitiveservices/v1`,
+      this.requestUrl(),
       {
         method: "POST",
         headers: {
@@ -116,10 +147,16 @@
         body: ssml,
       }
     );
+    this.updateSubtitle("awaiting response");
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const codeString = HttpResponseCodes.shared().shortStringForCode(response.status);
+      this.updateSubtitle(codeString);
+      //throw new Error("HTTP error! status: " + codeString);
+      return 
     }
+
+    this.updateSubtitle("completed");
 
     const audioBlob = await response.blob();
     // need to call asyncPrepareToStoreSynchronously as OutputAudioBlob slot is stored,
@@ -128,6 +165,12 @@
     await audioBlob.asyncPrepareToStoreSynchronously() 
     this.setOutputAudioBlob(audioBlob);
     speaker.queueAudioBlob(audioBlob);
+  }
+
+  updateSubtitle (s) {
+    this.setSubtitle(s);
+    this.didUpdateNode();
+    return this;
   }
 
 }).initThisClass();

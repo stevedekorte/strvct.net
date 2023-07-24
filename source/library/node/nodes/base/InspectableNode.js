@@ -21,6 +21,7 @@
 
         {
             const slot = this.newSlot("nodeInspector", null)
+            slot.setDuplicateOp("nop")
         }
     }
 
@@ -64,7 +65,7 @@
             const slot = slotsMap.at(slotName)
             if (slot.canInspect()) {
                 const field = slot.newInspectorField()
-                let h = null
+                let pathNodes = null
 
                 if (field) {
                     field.setTarget(this)

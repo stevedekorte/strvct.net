@@ -32,6 +32,7 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("json", null)
+      slot.setDuplicateOp("duplicate")
     }
 
     this.setupPrototypeSlotsForEntryProperties()
@@ -94,6 +95,39 @@
       return this.styleList().includes(styleName)
     }
     return false
+  }
+
+  language () {
+    return this.localeName().before(" (")
+  }
+
+  sublocale () {
+    const ln = this.localeName()
+    const hasParens = ln.includes(" (") && ln.includes(")")
+    if (hasParens) {
+      const languageRegion = ln.after(" (").before(")")
+      return languageRegion
+    }
+    return null
+  }
+
+  localePathComponents (allVoices = []) {
+    const path = []
+    const ln = this.localeName()
+    const sublocale = this.sublocale()
+    const isUnique = allVoices.select(voice => voice.sublocale() === sublocale).length === 1
+
+    // we should not break out region if there is only one subregion
+    if (sublocale && !isUnique) {
+      const language = this.language()
+      path.push(language)
+      path.push(sublocale)
+    } else {
+      path.push(ln)
+    }
+    path.push(this.gender())
+    //path.push(this.displayName())
+    return path
   }
 
 }).initThisClass();

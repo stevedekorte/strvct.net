@@ -356,7 +356,7 @@
       json = await this.pollRequest()
       
     } while (!json.imageURL);
-    debugger;
+    //debugger;
 
     const imageDataUrl = await this.getDataForUrl(json.imageURL)
 

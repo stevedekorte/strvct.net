@@ -375,7 +375,6 @@
 
     // --- base getter setter ---
 
-
     baseGetSlotValue (aSlot) {
         if (aSlot.isWeak()) {
             return this.getWeakSlotValue(aSlot)
