@@ -1,5 +1,6 @@
 [
     "services/_imports.json",
+    "sessions/_imports.json",
     "helpers.js",
     "HttpResponseCodes.js",
     "HavewordsApp.js",

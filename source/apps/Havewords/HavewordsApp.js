@@ -31,6 +31,7 @@
 
         // view
         this.newSlot("browser", null)
+        this.newSlot("services", null)
         this.newSlot("sessions", null)
     }
 
@@ -79,6 +80,7 @@
         baseNode.removeAction("add")
         
         const services = baseNode.subnodeWithTitleIfAbsentInsertProto("Services", HwServices)
+        const sessions = baseNode.subnodeWithTitleIfAbsentInsertProto("Sessions", HwSessions)
         //this.setSessions(sessions);
 
         // settings

@@ -1506,8 +1506,8 @@
   },
   {
     "path": "source/apps/Havewords/services/midjourney/MJImageJob.js",
-    "size": 13515,
-    "hash": "D0mCEx5F8/4DG7fW+kIK6vjAzLeCO0clWKvEbm1sdTA="
+    "size": 13516,
+    "hash": "fysN+GPq/aNaG7RJx6QEltGIuHafEZtpHXf6EVns+5A="
   },
   {
     "path": "source/apps/Havewords/services/midjourney/MJImageJobs.js",
@@ -1531,8 +1531,8 @@
   },
   {
     "path": "source/apps/Havewords/services/azure/speakers/requests/AzureTtsRequest.js",
-    "size": 4478,
-    "hash": "HEcx7bxHgzY+xrjrf7nFH3DP/cWsvcOq6Njgb8cQ1xs="
+    "size": 4712,
+    "hash": "kYAWDyH5SVtY+sODldx2IpVOxKU8FBlqFpPAlL4+Dyg="
   },
   {
     "path": "source/apps/Havewords/services/azure/speakers/AzureSpeaker.js",
@@ -1546,8 +1546,8 @@
   },
   {
     "path": "source/apps/Havewords/services/azure/voices/AzureVoice.js",
-    "size": 3079,
-    "hash": "KTz1e3EOciYJUUpXjpatOueNLDxU3QorCnSm9rc63zk="
+    "size": 3080,
+    "hash": "qKL9TefNM0QxMEO9wKKXDDKmR7hBnB5vgIBcGhK01zg="
   },
   {
     "path": "source/apps/Havewords/services/azure/voices/AzureVoices.js",
@@ -1585,6 +1585,16 @@
     "hash": "rmCp95+tB4/+tH1MRYCBrWJes2KbcMZo60iyBYgc1os="
   },
   {
+    "path": "source/apps/Havewords/sessions/HwSession.js",
+    "size": 3513,
+    "hash": "KiQpZxg/Up+eh/A/JAUrE2PTxbUATDi9kZbUHk7VUus="
+  },
+  {
+    "path": "source/apps/Havewords/sessions/HwSessions.js",
+    "size": 697,
+    "hash": "Vc/B6AN2Q7XWnxfLO/rHTUM5eO847P27NJ27NCDYUJY="
+  },
+  {
     "path": "source/apps/Havewords/helpers.js",
     "size": 10185,
     "hash": "63HXPHJOr6njcZk4gqZ74vf0m2i2NcTbELpdGKaQ0/s="
@@ -1596,8 +1606,8 @@
   },
   {
     "path": "source/apps/Havewords/HavewordsApp.js",
-    "size": 3901,
-    "hash": "fii9cFIna8vNH+1v7XPx7Jpz5nWG8l34JV5dF94gbQE="
+    "size": 4034,
+    "hash": "RSFSzFPJsimtx6oVREXNN84jnEWnJJ6HsgJsoR7EHmE="
   },
   {
     "path": "source/apps/Havewords/_init.js",

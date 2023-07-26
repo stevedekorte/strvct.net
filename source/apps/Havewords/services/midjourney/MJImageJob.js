@@ -449,7 +449,7 @@
         this.setStatus("complete");
         this.onChange();
         break;
-      } else {
+      } else { 
         this.setPollCount(this.pollCount() + 1);
         if (json.percentage) {
           this.setStatus("upscaling " + json.percentage + "%");

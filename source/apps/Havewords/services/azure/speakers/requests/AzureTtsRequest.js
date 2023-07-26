@@ -167,6 +167,22 @@
     speaker.queueAudioBlob(audioBlob);
   }
 
+  /*
+  title () {
+    const t = super.title()
+    if (t !== "") {
+      return "Untitled" 
+    }
+    return t
+  }
+  */
+
+  didUpdateSlotInputText () {
+    this.setTitle(this.inputText())
+    this.didUpdateNode();
+    return this;
+  }
+
   updateSubtitle (s) {
     this.setSubtitle(s);
     this.didUpdateNode();
