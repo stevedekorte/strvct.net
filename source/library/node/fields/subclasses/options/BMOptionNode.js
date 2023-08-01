@@ -36,10 +36,24 @@
         return this
     }
 
+    optionsNode () {
+        //debugger
+        return this.firstParentChainNodeOfClass(BMOptionsNode)
+    }
+
     didUpdateSlotIsPicked (oldValue, newValue) {
-        if (this.parentNode()) {
-            this.parentNode().didToggleOption(this)
+        const optionsNode = this.optionsNode()
+        if (optionsNode) {
+            optionsNode.didToggleOption(this)
             this.didUpdateNode()
+        } else {
+            debugger;
+            console.log("parent: ", this.parentNode().title())
+            console.log("grand parent: ", this.parentNode().parentNode().title())
+            console.log("great grand parent: ", this.parentNode().parentNode().parentNode().title())
+            const result = this.firstParentChainNodeOfClass(BMOptionsNode)
+            console.log("result: ", result.title())
+            throw new Error("missing BMOptionsNode")
         }
     }
 

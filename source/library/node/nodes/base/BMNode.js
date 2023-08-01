@@ -228,7 +228,7 @@
         if (aNode !== this._parentNode) { 
             if (this._parentNode && aNode) {
                 console.warn(this.debugTypeId() + " setParentNode(" + aNode.debugTypeId() + ")  already has parent " + this._parentNode.debugTypeId())
-                //debugger;
+                debugger;
             }
             
             const oldNode = this._parentNode
@@ -595,6 +595,18 @@
             p.tellParentNodes(msg, aNode)
         }
     }
+
+    firstParentChainNodeOfClass (aClass) {
+        if (this.thisClass().isSubclassOf(aClass)) {
+            return this
+        }
+
+        if (this.parentNode()) {
+            return this.parentNode().firstParentChainNodeOfClass(aClass)
+        }
+
+        return null
+    }
     
     // --- log ------------------------
     
@@ -928,11 +940,28 @@
             const noSiblings = this.subnodes().length == 1 && sn.subnodes().length > 0;
             const oneChild = sn.subnodes().length == 1;
 
+            const sns = sn.subnodes().shallowCopy()
+            sns.forEach(node => node.removeFromParentNode())
+
             if (noSiblings || oneChild) {
-                this.replaceSubnodeWithSubnodes(sn, sn.subnodes())
+                this.replaceSubnodeWithSubnodes(sn, sns)
             }
         })
         return this
+    }
+
+    leafSubnodes (results = []) {
+         this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
+         return results
+    }
+
+    leafSubnodesIncludingSelf (results = []) {
+        if (!this.hasSubnodes()) {
+            results.push(this)
+        } else {
+            this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
+        }
+        return results
     }
 
 }.initThisClass());

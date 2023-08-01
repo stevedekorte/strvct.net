@@ -37,6 +37,7 @@
   }
 
   initPrototypeSlots() {
+    
     {
       const slot = this.newSlot("mjVersion", "5.1");      
       slot.setInspectorPath("")
@@ -149,7 +150,7 @@
     }
 
 
-    this.newSlot("toggleRunningButton", null)
+    //this.newSlot("toggleRunningButton", null)
     //this.setNodeSubtitleIsChildrenSummary(true)
     this.setShouldStoreSubnodes(false)
   }

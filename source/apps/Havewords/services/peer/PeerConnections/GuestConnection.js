@@ -3,18 +3,25 @@
 /* 
     GuestConnection
 
-    This class is only used for Host sessions
+    This class is only used for Host sessions 
+    Host has a guest connection instance for each peer client connection
 
 */
 
 (class GuestConnection extends PeerConnection {
   initPrototypeSlots() {
-    this.newSlot("pubkey", null); 
-    this.newSlot("player", null); 
+    {
+      const slot = this.newSlot("pubkey", null); 
+    }
+
+    {
+      const slot = this.newSlot("player", null);
+    }
   }
 
   init() {
     super.init();
+    this.setTitle("Guest Connection")
     this.setInfo({});
     this.setIsDebugging(true);
   }

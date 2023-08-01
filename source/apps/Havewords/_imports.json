@@ -1,8 +1,8 @@
 [
+    "external/_imports.json",
     "services/_imports.json",
     "sessions/_imports.json",
-    "helpers.js",
-    "HttpResponseCodes.js",
+    "helpers/_imports.json",
     "HavewordsApp.js",
     "_init.js"
 ]

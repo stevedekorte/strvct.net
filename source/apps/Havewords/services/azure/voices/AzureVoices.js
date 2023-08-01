@@ -73,7 +73,7 @@
       const path = voice.localePathComponents(allVoices).join("/")
       const pathNodes = root.createNodePath(path)
       const aVoice = voice.duplicate()
-      console.log(path + ":" + aVoice.displayName())
+      //console.log(path + ":" + aVoice.displayName())
       pathNodes.last().addSubnode(aVoice)
     })
 

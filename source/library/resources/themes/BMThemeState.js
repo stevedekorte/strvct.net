@@ -238,8 +238,8 @@
         const fields = this.getFields()
         if (fields.length) {
             fields.forEach(field => {
-                if (field.pickSubnodesMatchingValue) {
-                    field.pickSubnodesMatchingValue() 
+                if (field.pickLeafSubnodesMatchingValue) {
+                    field.pickLeafSubnodesMatchingValue() 
                 }
             })
         }

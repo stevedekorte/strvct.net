@@ -6,5 +6,6 @@
     "midjourney/_imports.json",
     "azure/_imports.json",
     "youtube/_imports.json",
+    "peer/_imports.json",
     "HwServices.js"
 ]

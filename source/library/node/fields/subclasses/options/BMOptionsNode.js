@@ -3,6 +3,17 @@
 /*
 
     BMOptionsNode 
+
+    valid values format: 
+
+    [
+        { 
+            label: "", 
+            value: valueOrRef,
+            subnodes: []
+        },
+        ...
+    ]
     
 */
 
@@ -15,9 +26,13 @@
     initPrototypeSlots () {
 
         {
-            const picksSlot = this.newSlot("allowsMultiplePicks", false)
-            picksSlot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
-            picksSlot.setShouldStoreSlot(true)
+            const slot = this.newSlot("syncedValidItemsJsonString", null)
+        }
+
+        {
+            const slot = this.newSlot("allowsMultiplePicks", false)
+            slot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
+            slot.setShouldStoreSlot(true)
         }
 
         this.overrideSlot("key", "").setShouldStoreSlot(true)
@@ -82,7 +97,7 @@
             return [picked]
         }
         /*
-        const picked = this.pickedSubnodes()
+        const picked = this.pickedLeafSubnodes()
         if (picked.length === 0) {
             return "No selection"
         }
@@ -90,8 +105,14 @@
         */
     }
 
+    // --- picked items ---
+
     pickedValues () {
-        return this.pickedSubnodes().map(s => s.value())
+        return this.pickedLeafSubnodes().map(s => s.value())
+    }
+
+    pickedValuesSet () {
+        return this.pickedValues().asSet()
     }
 
     setSubtitle (aString) {
@@ -108,7 +129,7 @@
 
     didToggleOption (anOptionNode) {
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
-            this.unpickSubnodesExcept(anOptionNode)
+            this.unpickLeafSubnodesExcept(anOptionNode)
         }
 
         const pickedValues = this.pickedValues()
@@ -127,25 +148,25 @@
         return this
     }
 
-    unpickSubnodesExcept (anOptionNode) {
-        this.subnodes().forEach(subnode => {
-            if (subnode !== anOptionNode) { 
-                subnode.setIsPicked(false) 
+    unpickLeafSubnodesExcept (anOptionNode) {
+        this.leafSubnodes().forEach(sn => {
+            if (sn !== anOptionNode) { 
+                sn.setIsPicked(false) 
             }
         })
         return this
     }
 
-    pickedSubnodes () {
+    pickedLeafSubnodes () {
         //this.setupSubnodesIfEmpty() // did we need this for loading from store?
-        return this.subnodes().select(subnode => subnode.isPicked())
+        return this.leafSubnodes().select(sn => sn.isPicked())
     }
 
     // syncing
 
-    pickSubnodesMatchingValue () {
+    pickLeafSubnodesMatchingValue () {
         const v = this.value()
-        this.subnodes().forEach(option => {
+        this.leafSubnodes().forEach(option => {
             if (Type.isArray(v)) {
                 option.justSetIsPicked(v.contains(option.value()))
             } else {
@@ -176,7 +197,7 @@
 
     constrainValue () {
         const v = this.value()
-        const validSet = this.validValuesFromSubnodes().asSet()
+        const validSet = this.validValuesFromLeafSubnodes().asSet()
         let didChange = false
         let newV = null
         if (Type.isArray(v)) {
@@ -223,7 +244,7 @@
     }
 	
     validValues () {
-        return this.subnodes().map(sn => sn.value())
+        return this.leafSubnodes().map(sn => sn.value())
     }
     */
     
@@ -276,8 +297,8 @@
         return []
     }
 
-    validValuesFromSubnodes () {
-        return this.subnodes().map(sn => sn.value())
+    validValuesFromLeafSubnodes () {
+        return this.leafSubnodes().map(sn => sn.value())
     }
 
     setupSubnodesIfEmpty () {
@@ -306,6 +327,50 @@
         return v === value;
     }
 
+    // --- syncing ---
+
+    onNodeAddItem (parentNode, item) {
+        const hasSubnodes = item.options && item.options.length 
+        const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
+        const sn = nodeClass.clone().setTitle(item.label)
+        
+        if (!hasSubnodes) {
+            sn.setValue(item.value ? item.value : item.label)
+            sn.justSetIsPicked(item.isPicked === true)
+            sn.setNodeCanEditTitle(false)
+        }
+
+        if (item.subtitle) {
+            sn.setSubtitle(item.subtitle)
+        }
+
+        parentNode.addSubnode(sn)
+
+        if (hasSubnodes) {
+            item.options.forEach(subitem => {
+                this.onNodeAddItem(sn, subitem)
+            })
+        }
+
+        return sn
+    }
+
+    itemForValue (v) {
+        if (Type.isString(v)) {
+            const isPicked = this.targetHasPick(v)
+            return {
+                path: "",
+                label: v,
+                subtitle: null,
+                value: v,
+                isPicked: isPicked, // slow - TODO: cache?
+                options: null
+            }
+        }
+        assert(Type.isObject(v))
+        return v
+    }
+
     setupSubnodes () {
         const target = this.target();
         if (!target) {
@@ -313,39 +378,30 @@
         }
 
         const validValues = this.computedValidValues()
-        const validValuesMatch = this.validValuesFromSubnodes().asSet().equals(validValues.asSet());
+        
+        const validItemsString = JSON.stableStringify(validValues);
+        const validValuesMatch = this.syncedValidItemsJsonString() === validItemsString;
 
         const value = target ? this.value() : undefined;
-        const pickedValuesSet = this.pickedValues().asSet();
+        const pickedValuesSet = this.pickedValuesSet();
         const pickedValuesMatch = value ? new Set(Type.isArray(value) ? value : [value]).equals(pickedValuesSet) : false; // what about ordering?
 
 
         const needsSync = target && !validValuesMatch || !pickedValuesMatch;
         if (needsSync) {
+            //debugger;
             this.removeAllSubnodes()     
-            const options = validValues.map(v => {
-                const optionNode = BMOptionNode.clone().setTitle(v).setValue(v)
-                const isPicked = this.targetHasPick(v)
-                optionNode.justSetIsPicked(isPicked)
-                //optionNode.setIsPicked(v == this.value())
-                optionNode.setNodeCanEditTitle(false)
-                return optionNode
+            validValues.forEach(v => {
+                const item = this.itemForValue(v)
+                this.onNodeAddItem(this, item)
             })
-            this.addSubnodes(options)
+            this.didUpdateNode() // needed?
             //this.copySubnodes(options)
             //this.scheduleSyncToView()
-
-            /*
-            if (this.key() === "role") {
-                console.log("target = ", this.target());
-                console.log("values = ", value);
-                console.log("pickedValuesSet = ", pickedValuesSet);
-                debugger
-                this.setTarget(null);
-            }
-            */
+            this.setSyncedValidItemsJsonString(validItemsString) 
         }
         return this
     }
+
     
 }.initThisClass());

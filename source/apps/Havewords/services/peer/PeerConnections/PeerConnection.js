@@ -5,13 +5,27 @@
 
 */
 
-(class PeerConnection extends Base {
+(class PeerConnection extends BMStorableNode {
   initPrototypeSlots() {
-    this.newSlot("peerId", null);
-    this.newSlot("server", null);
-    this.newSlot("conn", null);
-    this.newSlot("info", null);
-    this.newSlot("delegate", null);
+    {
+      const slot = this.newSlot("peerId", null);
+    }
+
+    {
+      const slot = this.newSlot("server", null);
+    }
+
+    {
+      const slot = this.newSlot("conn", null);
+    }
+
+    {
+      const slot = this.newSlot("info", null);
+    }
+
+    {
+      const slot = this.newSlot("delegate", null);
+    }
   }
 
   id() {
@@ -33,6 +47,7 @@
 
   init() {
     super.init();
+    this.setTitle("Peer Connection")
     this.setIsDebugging(true);
     return this;
   }

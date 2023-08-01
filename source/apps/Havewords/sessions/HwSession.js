@@ -10,100 +10,33 @@
 
   initPrototypeSlots () {
     {
-        const slot = this.newSlot("custom instructions", "");
-        //slot.setInspectorPath("")
-        //slot.setLabel("input text")
+        const slot = this.newSlot("settings", null)
         slot.setShouldStoreSlot(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("String");
-        slot.setIsSubnodeField(true);
-        //slot.setValidValues(values)
+        slot.setFinalInitProto(HwSessionSettings);
+        slot.setIsSubnode(true);
     }
 
-    /*
     {
-        const slot = this.newSlot("genre", "");
-        //slot.setInspectorPath("")
-        //slot.setLabel("input text")
+        const slot = this.newSlot("players", null)
         slot.setShouldStoreSlot(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("String");
-        slot.setIsSubnodeField(true);
-        //slot.setValidValues(values)
+        slot.setFinalInitProto(HwPlayers);
+        slot.setIsSubnode(true);
     }
 
     {
-        const slot = this.newSlot("language", null);
-        slot.setInspectorPath("");
-        slot.setLabel("Start");
-        //slot.setShouldStoreSlot(true)
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Action");
-        slot.setIsSubnodeField(true);
-        slot.setActionMethodName("start");
-    }
-    */
-
-    {
-        const slot = this.newSlot("music", "");
-        //slot.setInspectorPath("")
-        slot.setLabel("Music");
+        const slot = this.newSlot("aiChat", null)
         slot.setShouldStoreSlot(true);
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Boolean");
-        slot.setIsSubnodeField(true);
-        //slot.setValidValues(["on", "off"]);
-        //slot.setInitValue("off");
-        slot.setInitValue(false);
-
+        slot.setFinalInitProto(HwAiChat);
+        slot.setIsSubnode(true);
     }
 
     {
-        const slot = this.newSlot("narration", "");
-        //slot.setInspectorPath("")
-        slot.setLabel("Narration");
+        const slot = this.newSlot("playersChat", null)
         slot.setShouldStoreSlot(true);
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Boolean");
-        slot.setIsSubnodeField(true);
-        //slot.setValidValues(["on", "off"]);
-        //slot.setInitValue("off");
-        slot.setInitValue(false);
+        slot.setFinalInitProto(HwPlayersChat);
+        slot.setIsSubnode(true);
     }
 
-    // toggle music
-    // toggle narration
-    // copy invite link
-    // copy transcript
-
-    {
-      const slot = this.newSlot("startSessionAction", null);
-      slot.setInspectorPath("");
-      slot.setLabel("Start");
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Action");
-      slot.setIsSubnodeField(true);
-      slot.setActionMethodName("startSession");
-    }
-
-    /*
-    {
-        const slot = this.newSlot("resetSessionAction", null);
-        slot.setInspectorPath("");
-        slot.setLabel("Reset Session");
-        //slot.setShouldStoreSlot(true)
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Action");
-        slot.setIsSubnodeField(true);
-        slot.setActionMethodName("resetSession");
-      }
-      */
   }
 
   init () {

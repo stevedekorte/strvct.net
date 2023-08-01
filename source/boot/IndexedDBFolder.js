@@ -23,7 +23,7 @@
 
     init () {
         super.init()
-        this.setIsDebugging(true)
+        this.setIsDebugging(false)
     }
 
     setPath (aString) {

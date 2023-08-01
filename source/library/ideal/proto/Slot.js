@@ -508,7 +508,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 this.onInstanceSetValue(anInstance, newValue)
             } else if (oldValue.type() !== finalInitProto.type()) {
                 debugger;
-                throw new Error("finalInitProto type does not match existing value from Store")
+                const warning = "finalInitProto type does not match existing value from Store";
+                console.warn(warning)
+                //throw new Error(warning)
             }
         }
 
