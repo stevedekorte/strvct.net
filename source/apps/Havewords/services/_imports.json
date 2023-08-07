@@ -7,5 +7,6 @@
     "azure/_imports.json",
     "youtube/_imports.json",
     "peer/_imports.json",
+    "SpeechToText/_imports.json",
     "HwServices.js"
 ]

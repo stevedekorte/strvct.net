@@ -8,11 +8,70 @@
 (class RzServer extends BMStorableNode {
   initPrototypeSlots() {
 
+
+    /*
     {
-      const slot = this.newSlot("info", null);
-      slot.setShouldStoreSlot(true);
-      slot.setFinalInitProto(RzServerInfo);
-      slot.setIsSubnode(true);
+      host: "peerjssignalserver.herokuapp.com",
+      path: "/peerjs",
+      secure: true,
+      port: 443,
+      reliable: true,
+      pingInterval: 1000, // 1 second
+      debug: false
+    }
+    */
+
+    {
+      const slot = this.newSlot("host", "peerjssignalserver.herokuapp.com");      
+      slot.setInspectorPath("info")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("value")
+    }
+
+    {
+      const slot = this.newSlot("path", "/peerjs");      
+      slot.setInspectorPath("info")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("value")
+    }
+
+    {
+      const slot = this.newSlot("port", 443);      
+      slot.setInspectorPath("info")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("value")
+    }
+
+
+    {
+      const slot = this.newSlot("isSecure", true);      
+      slot.setInspectorPath("info")
+      slot.setLabel("is secure")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("key value")
     }
 
     {
@@ -59,19 +118,11 @@
   }
 
   title () {
-    const info = this.info()
-    if (info) {
-      return info.host() 
-    }
-    return null
+    return this.host() 
   }
 
   subtitle () {
-    const info = this.info()
-    if (info) {
-      return info.port() + " " + (info.isSecure() ? "secure" : "")
-    }
-    return null
+    return this.port() + " " + (this.isSecure() ? "secure" : "");
   }
 
   /*
@@ -85,13 +136,19 @@
 
   // --- getting peer list ----
 
+  getPeersUrl () {
+    return "https://" + this.host() + this.path() + '/api/peers';
+  }
+
+
   async refreshPeers () {
     const peerIds = await this.fetchPeerIds();
     this.peers().setPeerIdArray(peerIds)
+    return peerIds
   }
 
   async fetchPeerIds() { // Note this is a GET request, so we don't need to be connected to do this
-    const url = this.info().getPeersUrl();
+    const url = this.getPeersUrl();
     console.log("getPeersUrl: '" + url + "'");
     const response = await fetch(url);
     if (!response.ok) {
@@ -99,6 +156,10 @@
     }
     const peers = await response.json();
     return peers;
+  }
+
+  availablePeerIds () {
+    return this.peers().subnodes().map(rzPeer => rzPeer.title())
   }
 
   // --- connecting to a peer ----

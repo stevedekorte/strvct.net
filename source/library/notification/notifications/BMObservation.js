@@ -27,12 +27,12 @@
     }
 
     onFinalizedSlotObserver () {
-        debugger;
+        //debugger;
         this.scheduleMethod("stopWatching")
     }
 
     onFinalizedSlotSender () {
-        debugger;
+        //debugger;
         this.scheduleMethod("stopWatching")
     }
 

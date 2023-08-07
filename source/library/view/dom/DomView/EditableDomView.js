@@ -39,7 +39,71 @@
 
     // --- set caret ----
 
-    insertTextAtCursor(text) {
+    consolidateTextNodesAndPreserveSelection () {
+        const div = this.element()
+
+        const selection = window.getSelection();
+        if (!selection.rangeCount) return;
+    
+        const range = selection.getRangeAt(0);
+        
+        // Get current selection's start and end positions relative to the entire text content of the div
+        const startOffset = getOffsetWithinParent(range.startContainer, range.startOffset);
+        const endOffset = getOffsetWithinParent(range.endContainer, range.endOffset);
+    
+        // Merge all text nodes into a single text node
+        const combinedText = Array.from(div.childNodes)
+            .map(node => node.textContent)
+            .join('');
+        while (div.firstChild) {
+            div.removeChild(div.firstChild);
+        }
+        div.appendChild(document.createTextNode(combinedText));
+    
+        // Restore the selection or cursor position
+        const newRange = document.createRange();
+        newRange.setStart(div.firstChild, startOffset);
+        newRange.setEnd(div.firstChild, endOffset);
+        selection.removeAllRanges();
+        selection.addRange(newRange);
+    
+        // Helper function to calculate offset within the parent
+        function getOffsetWithinParent(node, offset) {
+            if (node === div) return offset;
+            
+            let length = 0;
+            while (node.previousSibling) {
+                node = node.previousSibling;
+                length += node.textContent.length;
+            }
+            return length + offset;
+        }
+        return this
+    }
+    
+
+    insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
+        this.consolidateTextNodesAndPreserveSelection()
+        
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+    
+        // Extract text content before and after the cursor/selection
+        const startText = range.startContainer.textContent.substring(0, range.startOffset);
+        const endText = range.startContainer.textContent.substring(range.endOffset);
+    
+        // Reconstruct the full text content with the inserted text
+        range.startContainer.textContent = startText + text + endText;
+    
+        // Position the cursor after the inserted text
+        range.setStart(range.startContainer, startText.length + text.length);
+        range.setEnd(range.startContainer, startText.length + text.length);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        return this
+    }
+    
+    insertTextAtCursor (text) {
         const savedSelection = this.saveSelection()
 
         if (window.getSelection) {
@@ -54,7 +118,6 @@
         }
         savedSelection.collapse()
         this.restoreSelection(savedSelection)
-
         return this
     }
 

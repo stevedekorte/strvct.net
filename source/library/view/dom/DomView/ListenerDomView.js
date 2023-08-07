@@ -104,6 +104,7 @@
 
     invokeMethodNameForEvent (methodName, event) {
         //this.debugLog(".invokeMethodNameForEvent('" + methodName + "')")
+        //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
         if (this[methodName]) {
             //console.log(this.typeId() + ".invokeMethodNameForEvent('" + methodName + "')")
             const continueProp = this[methodName].apply(this, [event])
@@ -239,7 +240,6 @@
         const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
         //console.log(" onKeyDown ", methodName)
         const result = this.invokeMethodNameForEvent(methodName, event)
-
         /*
         if (event.repeat) { // should this be a different method name?
             this.forceRedisplay() // can't tell if this works without disabling color transitions on tiles
@@ -247,6 +247,15 @@
         */
 
         return result
+    }
+
+    onKeyUp (event) {
+        let shouldPropogate = true
+        //this.debugLog(" onKeyUp ", event._id)
+        const methodName = BMKeyboard.shared().upMethodNameForEvent(event)
+        //console.log(this.typeId() + " onKeyUp methodName: ", methodName)
+        this.invokeMethodNameForEvent(methodName, event)
+        return shouldPropogate
     }
 
     // --- registering for focus / blur events ---

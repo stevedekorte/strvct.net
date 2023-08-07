@@ -72,9 +72,6 @@
         event.stopPropagation()
     }
 
-
-
-
     addIfPossible () {
         const node = this.node()
 

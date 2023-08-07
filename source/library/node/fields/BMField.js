@@ -186,16 +186,19 @@
     */
 
     didUpdateSlotTarget (oldValue, newValue) {
-        if (newValue) {
-            //debugger;
-            this.setDidUpdateNodeObs(this.watchForNoteFrom("didUpdateNode", newValue))
-        } else {
+        if (oldValue) {
             const obs = this.didUpdateNodeObs()
             if (obs) {
                 obs.stopWatching()
                 this.setDidUpdateNodeObs(null)
             }
         }
+
+        if (newValue) {
+            //debugger;
+            this.setDidUpdateNodeObs(this.watchForNoteFrom("didUpdateNode", newValue))
+            this.scheduleMethod("syncFromTarget")
+        } 
     }
 
     didUpdateNode (aNote) {
@@ -205,7 +208,7 @@
             if (aNode === this.target()) {
                 // refresh
                 //debugger;
-                console.log(this.type() + " didUpdateNode " + aNode.typeId())
+                //console.log(this.type() + " didUpdateNode " + aNode.typeId())
                 this.syncFromTarget()
             }
         }

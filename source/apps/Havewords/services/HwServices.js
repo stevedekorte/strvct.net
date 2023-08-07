@@ -44,6 +44,13 @@
             slot.setFinalInitProto(PeerService);
             slot.setIsSubnode(true);
         }
+
+        {
+            const slot = this.newSlot("speechToTextSessions", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(SpeechToTextSessions);
+            slot.setIsSubnode(true);
+        }
         
     }
 

@@ -30,6 +30,5 @@
     return this.parentNode()
   }
 
-
 }.initThisClass());
 

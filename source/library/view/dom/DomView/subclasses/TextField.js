@@ -569,4 +569,73 @@
         return this
     }
 
+    // --- speech to text input ---
+
+    onAlternate_l_KeyDown (event) {
+        if (this.hasFocus()) {
+            if (!event.repeat) {
+                this.startSpeechToText()
+            }
+            event.stopPropagation();
+            event.preventDefault();
+            //return true
+        }
+    }
+
+    onAlternate_l_KeyUp(event) {
+        if (this.hasFocus()) {
+            this.stopSpeechToText()
+            event.stopPropagation();
+        } else {
+            debugger;
+        }
+    }
+
+    startSpeechToText () {
+        console.log("=== start speech to text ===")
+        if (this._speechSession) {
+            this._speechSession.stop()
+            this._speechSession = null
+        }
+
+        // TODO: add visual indicator?
+        if (!this._speechSession) {
+            if (getGlobalThis()["SpeechToTextSession"]) {
+                this._speechSession = SpeechToTextSession.clone().setDelegate(this)
+                //debugger
+                this._speechSession.start()
+            } else {
+                console.warn("no SpeechToTextSession class available")
+            }
+        }
+    }
+
+    onSpeechInterimResult (speechSession) {
+        const s = speechSession.intermFullTranscript()
+        console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'")
+
+        //this.blur()
+        //this.insertTextAtCursorSimple(s)
+        //this.focus()
+    }
+
+    onSpeechEnd (speechSession) {
+        //this.blur()
+        const s = speechSession.fullTranscript()
+        console.log("onSpeechEnd full: '" + s + "'")
+        this.insertTextAtCursorSimple(s)
+        //this.setValue(speechSession.fullTranscript())
+        this._speechSession = null
+    }
+
+    stopSpeechToText () {
+        console.log("==== stop speech to text ====") 
+        // TODO: add visual indicator?
+        const speech = this._speechSession
+        if (speech) {
+            speech.stop()
+        }
+    }
+
+
 }.initThisClass());

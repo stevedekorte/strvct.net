@@ -44,12 +44,6 @@
 		
         return this
     }
-
-    syncToNode () {
-        // just disable this
-        debugger;
-        return this
-    }
     
     onEnterKeyUp (event) {
         this.doAction()

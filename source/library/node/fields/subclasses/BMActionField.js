@@ -35,16 +35,7 @@
             slot.setShouldStoreSlot(true)
         }
 
-        {
-            //const slot = this.newSlot("isEnabled", true).setShouldStoreSlot(true)
-        }
-
-        /*
-        {
-            const slot = this.newSlot("isEditable", false)
-            slot.setShouldStoreSlot(true)
-        }
-        */
+        // inherits isEnabled and isEditable slots from Field
 
         //this.newSlot("target", null)
     }
@@ -84,7 +75,7 @@
         const t = this.target()
         const m = this.methodName()
         return t && t[m]
-    }1
+    }
 
     doAction () {
         if (this.canDoAction()) {
@@ -102,5 +93,54 @@
 	    
 	    return this
     }
+
+    syncFromTarget () {
+        super.syncFromTarget()
     
+        const t = this.target()
+        if (t) {
+            const infoMethodName = this.methodName() + "ActionInfo"
+            const method = t[infoMethodName];
+            if (method) {
+                const infoDict = method.apply(t, [])
+                this.setActionInfo(infoDict)
+            }
+        }
+    }
+
+    prepareToAccess () {
+        debugger
+        super.prepareToAccess()
+        this.syncFromTarget()
+        return this
+    }
+    
+    setActionInfo (infoDict) {
+        //if (JSON.stableStringify(infoDict) != JSON.stableStringify(this.actionInfo())) {
+
+            if (infoDict.isEnabled !== undefined) {
+                this.setIsEnabled(infoDict.isEnabled)
+            }
+
+            if (infoDict.title !== undefined) {
+                this.setTitle(infoDict.title)
+            }
+
+            if (infoDict.isVisible !== undefined) {
+                this.setIsVisible(infoDict.isVisible)
+            }
+
+            //this.didUpdateNode()
+        //}
+        return this
+    }
+
+    actionInfo () {
+        return {
+            isEnabled: this.isEnabled(),
+            title: this.title(),
+            isVisible: this.isVisible()
+        }
+    }
+
 }.initThisClass());

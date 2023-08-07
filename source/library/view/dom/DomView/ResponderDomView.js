@@ -163,15 +163,6 @@
     }
     */
 
-    onKeyUp (event) {
-        let shouldPropogate = true
-        //this.debugLog(" onKeyUp ", event._id)
-        const methodName = BMKeyboard.shared().upMethodNameForEvent(event)
-        //console.log("methodName: ", methodName)
-        this.invokeMethodNameForEvent(methodName, event)
-        return shouldPropogate
-    }
-
     didEdit () {
         this.debugLog("didEdit")
         this.tellParentViews("onDidEdit", this)

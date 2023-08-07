@@ -170,7 +170,7 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       //slot.setIsSubnodeField(true)
-      slot.setSlotType("Action")
+      slot.setSlotType("c")
       slot.setCanEditInspection(false)
     }
     */

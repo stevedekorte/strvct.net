@@ -22,19 +22,6 @@
       slot.setCanEditInspection(false)
     }
 
-
-    {
-      const slot = this.newSlot("connectAction", null);
-      slot.setInspectorPath("")
-      slot.setLabel("Connect")
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Action")
-      slot.setIsSubnodeField(true)
-      slot.setActionMethodName("connect");
-    }
-
     this.setShouldStoreSubnodes(false);
   }
 
@@ -60,14 +47,6 @@
 
   server () {
     return this.parentNode().parentNode()
-  }
-
-  connect () {
-    /*
-    const hostConnection = PeerServer.shared().connectToPeerId(this.hostId());
-    hostConnection.setDelegate(this);
-    this.setHostConnection(hostConnection);
-    */
   }
 
 }.initThisClass());

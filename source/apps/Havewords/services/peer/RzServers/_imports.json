@@ -1,9 +1,7 @@
 [
-    "RzServerConn.js",
-    "RzServerConns.js",
+    "RzServerConns/_imports.json",
     "RzPeer.js",
     "RzServerPeers.js",
-    "RzServerInfo.js",
     "RzServer.js",
     "RzServers.js"
 ]
