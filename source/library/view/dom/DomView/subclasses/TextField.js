@@ -611,20 +611,16 @@
     }
 
     onSpeechInterimResult (speechSession) {
-        const s = speechSession.intermFullTranscript()
-        console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'")
-
-        //this.blur()
+        //const s = speechSession.intermFullTranscript()
+        const s = speechSession.fullTranscript()
+        //console.log("onSpeechInterimResult intermFullTranscript: '" + s + "'")
         //this.insertTextAtCursorSimple(s)
-        //this.focus()
     }
 
     onSpeechEnd (speechSession) {
-        //this.blur()
         const s = speechSession.fullTranscript()
         console.log("onSpeechEnd full: '" + s + "'")
         this.insertTextAtCursorSimple(s)
-        //this.setValue(speechSession.fullTranscript())
         this._speechSession = null
     }
 

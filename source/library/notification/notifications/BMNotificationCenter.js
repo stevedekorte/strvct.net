@@ -139,6 +139,7 @@
     
     removeObservation (anObservation) {
         const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
+        //const filtered = this.observations().filter(obs => obs !== anObservation)
         this.setObservations(filtered)
         return this
     }

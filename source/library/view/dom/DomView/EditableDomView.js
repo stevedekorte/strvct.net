@@ -36,6 +36,15 @@
     }
     */
 
+    getSelectedText() {
+        if (this.isFocused()) {
+            const selection = window.getSelection();
+            return selection.toString();
+        } else {
+            console.warn(this.type() + " attempt to get selection on unfocused text")
+        }
+        return ""
+    }
 
     // --- set caret ----
 
@@ -47,6 +56,18 @@
     
         const range = selection.getRangeAt(0);
         
+        // Helper function to calculate offset within the parent
+        function getOffsetWithinParent(node, offset) {
+            if (node === div) return offset;
+            
+            let length = 0;
+            while (node.previousSibling) {
+                node = node.previousSibling;
+                length += node.textContent.length;
+            }
+            return length + offset;
+        }
+
         // Get current selection's start and end positions relative to the entire text content of the div
         const startOffset = getOffsetWithinParent(range.startContainer, range.startOffset);
         const endOffset = getOffsetWithinParent(range.endContainer, range.endOffset);
@@ -66,25 +87,14 @@
         newRange.setEnd(div.firstChild, endOffset);
         selection.removeAllRanges();
         selection.addRange(newRange);
-    
-        // Helper function to calculate offset within the parent
-        function getOffsetWithinParent(node, offset) {
-            if (node === div) return offset;
-            
-            let length = 0;
-            while (node.previousSibling) {
-                node = node.previousSibling;
-                length += node.textContent.length;
-            }
-            return length + offset;
-        }
+
         return this
     }
     
 
     insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
         this.consolidateTextNodesAndPreserveSelection()
-        
+
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
     

@@ -156,8 +156,8 @@
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
-    "size": 15322,
-    "hash": "d5xVh008mm/zoD/nAZk3ZxqP7UVFXUNnADv3rRt9UsE="
+    "size": 15361,
+    "hash": "UxoQJpM0WpUeq/xr673AN0VNhDaC+8yi6zlBvBsl8yc="
   },
   {
     "path": "source/library/ideal/proxies/ObservableProxy.js",
@@ -236,8 +236,8 @@
   },
   {
     "path": "source/library/notification/SyncScheduler.js",
-    "size": 8573,
-    "hash": "Rp0JuR1MISSdAIQA/36rmo59YoFh0yGksew+Zl7f6yM="
+    "size": 8602,
+    "hash": "0AEQ4xwEFWmb8YGal4aWPVFvraROI0ZkNTAh/tFh3k4="
   },
   {
     "path": "source/library/notification/notifications/BMNotification.js",
@@ -246,13 +246,13 @@
   },
   {
     "path": "source/library/notification/notifications/BMNotificationCenter.js",
-    "size": 9337,
-    "hash": "ScKmSjqxyfenpugeEP13mvutVzJKp721YbCS0ibcpSE="
+    "size": 9421,
+    "hash": "PAAA/0r4djjth3Mg5xmFNwxGEUW3v89HQU46W1jJHiQ="
   },
   {
     "path": "source/library/notification/notifications/BMObservation.js",
-    "size": 4655,
-    "hash": "TR2zG3BU/nWgv485kmiB5xdaQ0FCZi1F3U/Q0TJMy/E="
+    "size": 5315,
+    "hash": "aDqiapNdYD6KKLKv6cpPWPepwU2AappHRt8gOqla3ME="
   },
   {
     "path": "source/library/notification/Broadcaster.js",
@@ -661,8 +661,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/EditableDomView.js",
-    "size": 10434,
-    "hash": "ueFi60Hs+nReBrymKV3dHIDpetjFRJ6fldLKBDG5WjM="
+    "size": 10710,
+    "hash": "dh6H/0dOpdBBwxxZRT9tgt4zUnX7uU/7Cf8af26ilHs="
   },
   {
     "path": "source/library/view/dom/DomView/DomView.js",
@@ -736,8 +736,8 @@
   },
   {
     "path": "source/library/view/dom/DomView/subclasses/TextField.js",
-    "size": 17154,
-    "hash": "HVPq93s/r9zjl9iURjdWyTOAzMvVEf1FC/sP7zsBTuI="
+    "size": 17083,
+    "hash": "4OyfDAjjRsMd6BmOCTNpRH9dnavh06QT99bRYEFXApU="
   },
   {
     "path": "source/library/view/dom/BrowserDragAndDrop/BMDataUrl.js",
@@ -1676,8 +1676,8 @@
   },
   {
     "path": "source/apps/Havewords/services/SpeechToText/SpeechToTextSession.js",
-    "size": 9381,
-    "hash": "H/2WdLA/zyn15VL21pwvQTu9wcO4ASei50FOe0icwXU="
+    "size": 10193,
+    "hash": "kG4cMwnVOmp3qEYpB8kgB8NImx++lEudopHgahFrz2A="
   },
   {
     "path": "source/apps/Havewords/services/SpeechToText/SpeechToTextSessions.js",

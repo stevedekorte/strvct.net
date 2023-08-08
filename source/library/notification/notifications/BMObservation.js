@@ -15,6 +15,7 @@
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("name", null) // String 
         this.newSlot("isOneShot", false) // Boolean
+        this.newSlot("didFinalizeStop", false) // Boolean
         this.newWeakSlot("observer", null) // WeakRef slot to observer
         this.newWeakSlot("sender", null) // WeakRef to sender
     }
@@ -27,13 +28,21 @@
     }
 
     onFinalizedSlotObserver () {
-        //debugger;
-        this.scheduleMethod("stopWatching")
+        this.stopFromCollectedRef()
     }
 
     onFinalizedSlotSender () {
-        //debugger;
-        this.scheduleMethod("stopWatching")
+        this.stopFromCollectedRef()
+    }
+
+    stopFromCollectedRef () {
+        if (!this.didFinalizeStop()) {
+            // need this check because if observer and sender finalizations occur in the same event loop
+            // both with try to schedule stopWatching, and the SyncScheduler will (mistakenly?) detect this is a loop
+            this.setDidFinalizeStop(true)
+            this.scheduleMethod("stopWatching")
+        }
+        return this
     }
 
     // --- private helpers ---

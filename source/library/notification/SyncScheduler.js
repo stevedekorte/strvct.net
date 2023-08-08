@@ -92,6 +92,7 @@
                         "  while processing: (" + this.currentAction().description() + ")"
                     ].join("\n")
                     console.log(error)
+                    debugger
                     throw new Error(error)
                 }
             }

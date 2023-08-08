@@ -29,6 +29,23 @@
       slot.setSummaryFormat("value")
     }
 
+    {
+      const slot = this.newSlot("inputTimeoutId", null);
+    }
+
+    {
+      const slot = this.newSlot("inputTimeoutMs", 3000);      
+      slot.setInspectorPath("")
+      slot.setLabel("inputTimeoutMs")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Number")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("value")
+    }
+
 
     {
       /* 
@@ -55,7 +72,7 @@
       Interim results are essentially guesses or partial results that might change as more audio is processed. 
       They allow you to show what the system is recognizing in real-time as the user is speaking.
       */
-      const slot = this.newSlot("getInterimResults", false);      
+      const slot = this.newSlot("getInterimResults", true);      
       slot.setInspectorPath("settings")
       slot.setLabel("Shares Interim Results")
       slot.setShouldStoreSlot(true)
@@ -223,29 +240,67 @@
     return this
   }
 
+  usesInputTimeout () {
+    return this.getInterimResults()
+  }
+
+  startInputTimeout () {
+    this.clearInputTimeout()
+    if (this.usesInputTimeout()) {
+      const tid = setTimeout(() => this.onInputTimeout(), this.inputTimeoutMs());
+      this.setInputTimeoutId(tid)
+    }
+    return this
+  }
+
+  clearInputTimeout () {
+    const tid = this.inputTimeoutId()
+    if (tid) {
+      clearTimeout(tid)
+      this.setInputTimeoutId(null)
+    }
+    return this
+  }
+
+  resetInputTimeout () {
+    this.clearInputTimeout()
+    this.startInputTimeout()
+    return this
+  }
+
+  onInputTimeout () {
+    this.clearInputTimeout()
+    console.log("SPEECH onInputTimeout() stop")
+    this.stop()
+    return this
+  }
+
   onResult (event) {
     //this.debugLog("onResult")
-    
-    let interimTranscript = '';
-    let finalTranscript = '';
+
+    let interim = '';
+    let final = '';
+
     for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
-            finalTranscript += event.results[i][0].transcript;
+          final += event.results[i][0].transcript;
         } else {
-            interimTranscript += event.results[i][0].transcript;
+          interim += event.results[i][0].transcript;
         }
     }
-   //document.getElementById('output').innerText = finalTranscript + interimTranscript; // Display both final and interim results
-    //this.onTranscript(finalTranscript + interimTranscript)
 
-    console.log("SPEECH onResult interm: '" + interimTranscript + "'")
-    console.log("SPEECH onResult final: '" + finalTranscript + "'")
+    console.log("SPEECH onResult interm: '" + interim + "'")
+    console.log("SPEECH onResult final: '" + final + "'")
 
-    this.setInterimTranscript(interimTranscript)
-    if (finalTranscript) {
-      this.setFinalTranscript(finalTranscript)
+    if (interim.length) {
+      this.resetInputTimeout()
+    }
+
+    this.setInterimTranscript(interim)
+    if (final) {
+      this.setFinalTranscript(final)
       this.appendToFullTranscript(this.finalTranscript())
-      console.log("SPEECH onResult full: '" + finalTranscript + "'")
+      console.log("SPEECH onResult full: '" + this.fullTranscript() + "'")
 
       if (!this.isRecording()) {
         this.setFinalTranscript("")
@@ -291,6 +346,7 @@
     if (!this.isRecording()) {
       this.clearTranscript();
       this.setupIfNeeded();
+      this.startInputTimeout()
       this.recognition().start();
       this.setIsRecording(true);
     }
@@ -306,6 +362,7 @@
   stop () {
     //this.debugLog("stop")
     if (this.isRecording()) {
+      this.clearInputTimeout()
       this.recognition().stop();
       this.setIsRecording(false);
       //this.appendToFullTranscript(this.interimTranscript())

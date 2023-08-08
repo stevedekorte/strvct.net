@@ -328,7 +328,7 @@
     // --- weak slot ---
 
     onFinalizedSlot (aSlot) {
-        this[aSlot.privateName()] = undefined
+        this[aSlot.privateName()] = undefined // replace the weak ref with undefined
 
         // only called on weak slot
         const k = aSlot.methodForOnFinalized()
