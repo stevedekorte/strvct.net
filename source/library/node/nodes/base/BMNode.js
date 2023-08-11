@@ -596,6 +596,26 @@
         }
     }
 
+    parentChainNodes (chain = []) {
+        chain.unshift(this)
+        const p = this.parentNode()
+        if (p) {
+            p.parentChain(chain)
+        }
+        return chain
+    }
+
+    parentChainNodeTo (node, chain = []) {
+        if (this !== node) {
+            chain.unshift(this)
+            const p = this.parentNode()
+            if (p) {
+                p.parentChainNodeTo(node, chain)
+            }
+        }
+        return chain
+    }
+
     firstParentChainNodeOfClass (aClass) {
         if (this.thisClass().isSubclassOf(aClass)) {
             return this
@@ -962,6 +982,48 @@
             this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
         }
         return results
+    }
+
+    // --- options helper ---- TODO: move elsewhere
+
+    addOptionNodeForDict (item) {
+        const hasSubnodes = item.options && item.options.length
+        const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
+        const newNode = nodeClass.clone().setTitle(item.label)
+        
+        if (!hasSubnodes) {
+            newNode.setValue(item.value ? item.value : item.label)
+            newNode.justSetIsPicked(item.isPicked === true)
+            newNode.setNodeCanEditTitle(false)
+        }
+
+        if (item.subtitle) {
+            //debugger;
+            newNode.setSubtitle(item.subtitle)
+        }
+
+        this.addSubnode(newNode)
+
+        if (hasSubnodes) {
+            /*
+            item.options.forEach(subitem => {
+                sn.addOptionNodeForDict(subitem)
+            })
+            */
+
+            newNode.addOptionNodesForArray(item.options)
+        }
+
+        return newNode
+    }
+
+    addOptionNodesForArray (itemDicts) {
+        if (itemDicts) {
+            itemDicts.forEach(subitemDict => {
+                this.addOptionNodeForDict(subitemDict)
+            })
+        }
+        return this   
     }
 
 }.initThisClass());

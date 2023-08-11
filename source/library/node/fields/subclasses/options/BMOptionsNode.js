@@ -4,17 +4,33 @@
 
     BMOptionsNode 
 
-    valid values format: 
+        Idea:
 
-    [
-        { 
-            label: "", 
-            value: valueOrRef,
-            subnodes: []
-        },
-        ...
-    ]
-    
+        have pickedValues() always return an array of the form:
+
+        [
+            {
+                path: ["path string component A", "path string component B", ...],
+                label: "", //?
+                value: aValue, // and value that is valid JSON (no undefined, Maps, non-dict Objects, etc)
+            },
+            ...
+        ]
+
+        and implement pickedValue() to return first item:
+
+            pickedValue () {
+                return this.pickedValues().first()
+            }
+
+        and have pick action choose which to set on target value depend on this.allowsMultiplePicks()
+
+        Calling value() and setValue() on the target:
+        
+        - we need to support just putting in value or array (if multi-choice) of raw values,
+          as well as an option to store the pickedDicts(), so we need another Slot attribute...
+          
+
 */
 
 (class BMOptionsNode extends BMField {
@@ -105,7 +121,48 @@
         */
     }
 
-    // --- picked items ---
+    // --- subtitle ---
+
+    setSubtitle (aString) {
+        return this
+    }
+
+    subtitle () {
+        if (this.usesValidDict()) {
+            return this.pickedNodePathStrings().join("\n")
+        }
+        const s = super.subtitle()
+        return s
+    }
+
+        
+    // --- getting picked items ---
+
+    /*
+
+    fullPickedValues () {
+        return this.usesValidDict() ? this.pickedNodeValuePaths() : this.pickedValues()
+    }
+
+    pickedNodeValuePaths () {
+        return this.pickedNodePaths().map(nodePath => nodePath.map(node => { 
+            return node.value ? node.value() : node.title() // string join won't work on non strings!
+        }))
+    }
+    */
+
+    pickedNodePathStrings () {
+        return this.pickedNodePaths().map(nodePath => nodePath.map(node => { 
+            //return node.value ? node.value() : node.title() // string join won't work on non strings!
+            return node.title()
+        }).join(" / "))
+    }
+
+    pickedNodePaths () {
+        return this.pickedLeafSubnodes().map(leafNode => leafNode.parentChainNodeTo(this))
+    }
+
+    // ---
 
     pickedValues () {
         return this.pickedLeafSubnodes().map(s => s.value())
@@ -115,38 +172,69 @@
         return this.pickedValues().asSet()
     }
 
-    setSubtitle (aString) {
-        return this
+    usesValidDict () {
+        const vv = this.validValues()
+        return vv && vv.length && Type.isDictionary(vv[0]);
     }
 
-    /*
-    subtitle () {
-        const s = super.subtitle()
-        debugger
-        return s
+
+    pickedLeafSubnodes () {
+        //this.setupSubnodesIfEmpty() // did we need this for loading from store?
+        return this.leafSubnodes().select(sn => sn.isPicked())
     }
-    */
+
+    pickedItems () {
+        return this.pickedLeafSubnodes().map(sn => {
+            return {
+                label: sn.label(),
+                value: sn.value(),
+                path: sn.parentChainNodeTo(this).map(sn => sn.title())
+            }
+        })
+    }
+
+    // --- handle pick event ---
 
     didToggleOption (anOptionNode) {
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
             this.unpickLeafSubnodesExcept(anOptionNode)
         }
 
-        const pickedValues = this.pickedValues()
-        //this.setValue(pickedValues)
+        const pickedValues = this.pickedValues();
         
+        let v = null;
+
         if (pickedValues.length) {
-            if (this.allowsMultiplePicks()) {
-                this.setValue(pickedValues)
-            } else {
-                this.setValue(pickedValues.first())
-            }
-        } else {
-            this.setValue(null)
+            v = this.allowsMultiplePicks() ? pickedValues : pickedValues.first();
         }
+
+        this.setValue(v)
 
         return this
     }
+
+    setValueOnTarget (v) {
+        super.setValueOnTarget(v)
+        //this.setOptionsOnTarget()
+        return this
+    }
+
+    /*
+    setOptionsOnTarget () {
+        const t = this.target()
+        if (t) {
+            const setter = this.setterNameForSlot(this.valueMethod() + "Options")
+            
+            if (t[setter]) {
+                t[setter].apply(t, [this.pickedItems()])
+                //t.didUpdateNode()
+            } 
+        }
+        return this
+    }
+    */
+
+    // --- picking and unpicking items programatically ---
 
     unpickLeafSubnodesExcept (anOptionNode) {
         this.leafSubnodes().forEach(sn => {
@@ -156,13 +244,6 @@
         })
         return this
     }
-
-    pickedLeafSubnodes () {
-        //this.setupSubnodesIfEmpty() // did we need this for loading from store?
-        return this.leafSubnodes().select(sn => sn.isPicked())
-    }
-
-    // syncing
 
     pickLeafSubnodesMatchingValue () {
         const v = this.value()
@@ -175,8 +256,11 @@
         })
     }
 
+
+    // --- syncing ---
+
     acceptedSubnodeTypes () {
-        return [BMOptionNode.type()]
+        return [BMOptionNode.type()] // , BMFolderNode.type()]
     }
 
     // IMPORTANT: we want to use valid values this way so we can edit the subnodes from the UI
@@ -192,10 +276,14 @@
         super.syncFromTarget()
         this.setupSubnodes()
         this.constrainValue()
+        //this.setOptionsOnTarget()
         return this
     }
 
     constrainValue () {
+        // make sure the target's value is one of the valid options
+
+        /*
         const v = this.value()
         const validSet = this.validValuesFromLeafSubnodes().asSet()
         let didChange = false
@@ -221,32 +309,9 @@
             this.setValueOnTarget(newV)
             this.didUpdateNode()
         }
+        */
         return this
     }
-
-    /*
-    setValidValues (values) {
-        if (!this.validValues().equals(values)) {
-            this.removeAllSubnodes()     
-            const options = values.map(v => {
-                const optionNode = BMOptionNode.clone().setTitle(v).setValue(v)
-                if (v == this.value()) {
-                    optionNode.justSetIsPicked(true)
-                }
-                //optionNode.setIsPicked(v == this.value())
-                optionNode.setNodeCanEditTitle(false)
-                return optionNode
-            })
-            this.addSubnodes(options)
-            //this.copySubnodes(options)
-        }
-        return this
-    }
-	
-    validValues () {
-        return this.leafSubnodes().map(sn => sn.value())
-    }
-    */
     
     nodeTileLink () {
         // used by UI tile views to browse into next column
@@ -254,7 +319,6 @@
     }
 
     prepareForFirstAccess () {
-        //debugger
         super.prepareForFirstAccess()
         this.setupSubnodesIfEmpty()
     }
@@ -329,79 +393,85 @@
 
     // --- syncing ---
 
-    onNodeAddItem (parentNode, item) {
-        const hasSubnodes = item.options && item.options.length 
-        const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
-        const sn = nodeClass.clone().setTitle(item.label)
-        
-        if (!hasSubnodes) {
-            sn.setValue(item.value ? item.value : item.label)
-            sn.justSetIsPicked(item.isPicked === true)
-            sn.setNodeCanEditTitle(false)
-        }
-
-        if (item.subtitle) {
-            sn.setSubtitle(item.subtitle)
-        }
-
-        parentNode.addSubnode(sn)
-
-        if (hasSubnodes) {
-            item.options.forEach(subitem => {
-                this.onNodeAddItem(sn, subitem)
-            })
-        }
-
-        return sn
-    }
 
     itemForValue (v) {
         if (Type.isString(v)) {
-            const isPicked = this.targetHasPick(v)
+            //const isPicked = this.targetHasPick(v)
             return {
-                path: "",
+                //path: null,  // returned in picked values?
                 label: v,
                 subtitle: null,
                 value: v,
-                isPicked: isPicked, // slow - TODO: cache?
+                //isPicked: isPicked, // slow - TODO: cache?
                 options: null
             }
         }
-        assert(Type.isObject(v))
+        assert(Type.isDictionary(v))
         return v
     }
 
-    setupSubnodes () {
+    valueAsArray () {
         const target = this.target();
-        if (!target) {
-            return this;
-        }
-
-        const validValues = this.computedValidValues()
-        
-        const validItemsString = JSON.stableStringify(validValues);
-        const validValuesMatch = this.syncedValidItemsJsonString() === validItemsString;
-
         const value = target ? this.value() : undefined;
-        const pickedValuesSet = this.pickedValuesSet();
-        const pickedValuesMatch = value ? new Set(Type.isArray(value) ? value : [value]).equals(pickedValuesSet) : false; // what about ordering?
 
+        if (value === null || value === undefined) {
+            return [];
+        } else if (this.allowsMultiplePicks()) {
+            return value;
+        } else {
+            return [value];
+        }
+    }
 
-        const needsSync = target && !validValuesMatch || !pickedValuesMatch;
-        if (needsSync) {
-            //debugger;
-            this.removeAllSubnodes()     
+    validValuesMatch () {
+        const validValues = this.computedValidValues()
+        const validItemsString = JSON.stableStringify(validValues);
+        const validValuesMatch = this.syncedValidItemsJsonString() === validItemsString; // could check a hash instead but maybe JS interns strings itself?
+        return validValuesMatch
+    }
+
+    picksMatch () {
+        return JSON.stableStringify(this.valueAsArray()) === JSON.stableStringify(this.pickedValues());
+    }
+
+    needsSyncToSubnodes () {
+        if (this.target()) {
+            const validValuesMatch = this.validValuesMatch()
+            const picksMatch = this.picksMatch();
+            const needsSync = (!validValuesMatch || !picksMatch);
+            return needsSync
+        }
+        return false
+    }
+
+    setupSubnodes () {
+        if (this.needsSyncToSubnodes()) {
+            /*
+            if (this.title() === "Genre") {
+                debugger;
+            }
+            */
+            this.removeAllSubnodes()
+            const validValues = this.computedValidValues()
+
             validValues.forEach(v => {
                 const item = this.itemForValue(v)
-                this.onNodeAddItem(this, item)
+                this.addOptionNodeForDict(item)
             })
-            this.didUpdateNode() // needed?
             //this.copySubnodes(options)
             //this.scheduleSyncToView()
-            this.setSyncedValidItemsJsonString(validItemsString) 
+            this.setSyncedValidItemsJsonString(JSON.stableStringify(validValues)) 
+
+            return this.leafSubnodes().forEach(sn => {
+                sn.setIsPicked(this.targetHasPick(sn.value()))
+            })
+
+            this.didUpdateNode() // needed?
         }
         return this
     }
+
+
 
     
 }.initThisClass());

@@ -122,7 +122,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("isPrivate", false)
 
         // inspector related
-        // slotType is a string value, eg: "Boolean", "String", "Number", Action - can be used to find a class 
+        // slotType is a string value, eg: "Boolean", "String", "Number", "Action" - can be used to find a class 
         // to create an inspector node for the slotValue
         this.simpleNewSlot("slotType", null)
         this.simpleNewSlot("canInspect", false)

@@ -579,6 +579,19 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         return null; // or should this be undefined?
     }
 
+    detectAndReturnValue (func) {
+        // returns the first non-false return value
+        for (let i = 0; i < this.length; i++) {
+            const v = this.at(i)
+            const result = func(v, i);
+            if (result) {
+                return result;
+            }
+        }
+
+        return null; // or should this be undefined?
+    }
+
     detectPerform (functionName) {
         const args = this.slice.call(arguments).slice(1);
         return this.detect((value, index) => {

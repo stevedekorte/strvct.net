@@ -25,9 +25,19 @@
     }
 
     {
-        const slot = this.newSlot("custom instructions", "");
+      const slot = this.newSlot("genreOptions", null);
+    }
+
+    /*
+    {
+      const slot = this.newSlot("genreOptionsPaths", null);
+    }
+    */
+
+    {
+        const slot = this.newSlot("customInstructions", "");
         //slot.setInspectorPath("")
-        //slot.setLabel("input text")
+        slot.setLabel("custom instructions")
         slot.setShouldStoreSlot(true);
         slot.setDuplicateOp("duplicate");
         slot.setSlotType("String");
@@ -68,7 +78,7 @@
     {
         const slot = this.newSlot("narration", "");
         //slot.setInspectorPath("")
-        slot.setLabel("Narration");
+        slot.setLabel("Voice Narration");
         slot.setShouldStoreSlot(true);
         slot.setSyncsToView(true);
         slot.setDuplicateOp("duplicate");
@@ -84,6 +94,14 @@
     // copy invite link
     // copy transcript
 
+
+    {
+      const slot = this.newSlot("promptComposer", null)
+      slot.setShouldStoreSlot(true);
+      slot.setFinalInitProto(HwPromptComposer);
+      slot.setIsSubnode(true);
+    }
+
     /*
     {
       const slot = this.newSlot("startSessionAction", null);
@@ -96,18 +114,6 @@
       slot.setIsSubnodeField(true);
       slot.setActionMethodName("startSession");
     }
-
-      {
-        const slot = this.newSlot("resetSessionAction", null);
-        slot.setInspectorPath("");
-        slot.setLabel("Reset Session");
-        //slot.setShouldStoreSlot(true)
-        slot.setSyncsToView(true);
-        slot.setDuplicateOp("duplicate");
-        slot.setSlotType("Action");
-        slot.setIsSubnodeField(true);
-        slot.setActionMethodName("resetSession");
-      }
       */
   }
 
@@ -116,7 +122,7 @@
 
     this.addAction("add");
     this.setCanDelete(false);
-    this.setNodeCanEditTitle(true);
+    this.setNodeCanEditTitle(false);
     this.setTitle("Settings");
     this.setSubtitle("");
     this.setNodeCanReorderSubnodes(false);
@@ -127,6 +133,11 @@
   finalInit () {
     super.finalInit();
     //this.setupSessionOptions()
+    //debugger
+  }
+
+  session () {
+    return this.parentNode()
   }
 
   startSession () {

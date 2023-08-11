@@ -170,6 +170,12 @@ getGlobalThis().Type = (class Type extends Object {
         return typeof(value) === "object" 
     }
 
+    static isDictionary (value) {
+        // WARNING: a good guess for our use cases, but not always correct!
+        // e.g. 3rd party libraries and code may use Object instances as or like Objects instead of as Dictionaries (such as in JSON)
+        return this.isObject(value) && (value.constructor === Object) 
+    }
+
     static isString (value) {
         return typeof(value) === "string"
     } 

@@ -48,6 +48,8 @@
             this.didUpdateNode()
         } else {
             debugger;
+            // if this is called, the stack views might not have properly synced 
+            // after the OptionsNode removed it's subnodes
             console.log("parent: ", this.parentNode().title())
             console.log("grand parent: ", this.parentNode().parentNode().title())
             console.log("great grand parent: ", this.parentNode().parentNode().parentNode().title())
@@ -57,7 +59,8 @@
         }
     }
 
-    toggle () {
+    toggle () { 
+        // The OptionNodeTile knows to call this
         this.setIsPicked(!this.isPicked())
         return this
     }
@@ -75,10 +78,11 @@
         return this.title()
     }
 
-
+    /*
     subtitle () {
         return null
     }
+    */
 
     summary () {
         return this.title()
@@ -87,5 +91,14 @@
     note () {
         return this.isPicked() ? "✓" : ""
     }
+
+    /*
+    didUpdateSlotParentNode (oldValue, newValue) {
+        super.didUpdateSlotParentNode(oldValue, newValue) 
+        if (newValue === null) {
+            debugger;
+        }
+    }
+    */
 
 }.initThisClass());

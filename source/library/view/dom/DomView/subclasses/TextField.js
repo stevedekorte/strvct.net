@@ -569,7 +569,7 @@
         return this
     }
 
-    // --- speech to text input ---
+    // --- speech to text input -----------------------------------------------------------------------
 
     onAlternate_l_KeyDown (event) {
         if (this.hasFocus()) {
@@ -632,6 +632,5 @@
             speech.stop()
         }
     }
-
 
 }.initThisClass());

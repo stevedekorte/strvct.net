@@ -35,7 +35,7 @@
 
     {
       const slot = this.newSlot("inputTimeoutMs", 3000);      
-      slot.setInspectorPath("")
+      slot.setInspectorPath("settings")
       slot.setLabel("inputTimeoutMs")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
