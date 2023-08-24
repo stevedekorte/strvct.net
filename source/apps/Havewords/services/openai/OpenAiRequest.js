@@ -10,21 +10,38 @@
 (class OpenAiRequest extends BMStorableNode {
 
   initPrototypeSlots() {
-
     {
       const slot = this.newSlot("delegate", null); // optional reference to service object that owns request e.g. OpenAiChat - will receive onRequestComplete message if it responds to it
     }
 
     {
       const slot = this.newSlot("apiUrl", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
       const slot = this.newSlot("apiKey", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
       const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
@@ -39,6 +56,12 @@
 
     {
       const slot = this.newSlot("isFetchActive", false);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
     }
 
     {
@@ -49,6 +72,12 @@
 
     {
       const slot = this.newSlot("isStreaming", false); // external read-only
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
     }
 
     {
@@ -69,10 +98,22 @@
 
     {
       const slot = this.newSlot("requestId", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
       const slot = this.newSlot("readIndex", 0);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
@@ -81,15 +122,36 @@
 
     {
       const slot = this.newSlot("fullContent", null); 
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
       const slot = this.newSlot("lastContent", "");
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
     }
+
+    this.setShouldStore(false)
+    this.setShouldStoreSubnodes(false)
   }
 
   init() {
@@ -97,6 +159,7 @@
     this.setIsDebugging(false);
     this.setRequestId(this.puuid());
     this.setLastContent("");
+    this.setTitle("Request")
   }
 
   setService(anObject) {
@@ -279,7 +342,16 @@
   }
 
   onXhrLoadEnd (event) {
-    this.onXhrRead();
+    const isError = this.xhr().status >= 300
+    if (isError) {
+      const json = JSON.parse(this.xhr().responseText);
+      if (json.error) {
+        this.onError(new Error(json.error.message));
+      } else {
+        this.onError(new Error("request error code:" + this.xhr().status + ")"));
+      }
+    }
+
     this.streamTarget().onStreamComplete(this);
     this.sendDelegate("onRequestComplete")
     this.xhrResolve()(this.fullContent()); 
@@ -296,7 +368,6 @@
   }
 
   onXhrError (event) {
-    //debugger;
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
     let s = "got an error on xhr requestId" + this.requestId() + ":";
@@ -310,36 +381,43 @@
   }
 
   onXhrAbort (event) {
-    debugger;
     this.streamTarget().onStreamComplete(this);
     this.xhrReject()(new Error("aborted"));
   }
 
-  readNextXhrLine () {
+  unreadResponse () {
     const xhr = this.xhr();
     const unread = xhr.responseText.substr(this.readIndex());
+    return unread
+  }
+
+  readNextXhrLine () {
+    const unread = this.unreadResponse();
     const newLineIndex = unread.indexOf("\n");
 
     if (newLineIndex === -1) {
       return undefined; // no new line found
     }
 
-    const newLine = unread.substr(0, newLineIndex);
-    this.setReadIndex(this.readIndex() + newLineIndex+1); // advance the read index
+    let newLine = unread.substr(0, newLineIndex);
+    this.setReadIndex(this.readIndex() + newLineIndex + 1); // advance the read index
+
+    newLine = newLine.trim()
+    if (newLine.length === 0) {
+      return undefined
+    }
+
     return newLine;
   }
 
-  onXhrRead () {
+  onXhrRead (isDone=false) {
     try {
       let line = this.readNextXhrLine();
 
       while (line !== undefined) {
-        line = line.trim()
-        if (line.length === 0) {
-          // emplty line - ignore
-        } else if (line.startsWith("data:")) {
+        if (line.startsWith("data:")) {
           const s = line.after("data:");
-          if (line.includes("[DONE]")) {
+          if (isDone || line.includes("[DONE]")) {
             // stream is done and will close
           } else {
             // we should expect json
@@ -352,7 +430,6 @@
     } catch(error) {
       this.onError(error);
       console.warn(this.type() + " ERROR:", error);
-      debugger;
       this.xhrReject()(new Error(error));
     }
   }
@@ -360,7 +437,6 @@
   onStreamJsonChunk (json) {
     if (json.error) {
       console.warn("ERROR:" + json.error.message);
-      debugger;
       this.xhrReject()(new Error(json.error.message));
     } else if (
         json.choices &&

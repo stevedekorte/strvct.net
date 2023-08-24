@@ -1481,8 +1481,8 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/messages/OpenAiMessage.js",
-    "size": 5030,
-    "hash": "qmR8tcZQqVXaKfP2To+kLLXB8yuP+JB+nxfb86oloXQ="
+    "size": 5376,
+    "hash": "QhdOAgN9JTil9dBIGkXwgibSn3Bvf20t/4pFM4Zns00="
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversation.js",
@@ -1511,8 +1511,8 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiRequest.js",
-    "size": 9454,
-    "hash": "K4ugb5ykm76fReDiU2Ed01lllMX8qV0JxsSNZW09B3c="
+    "size": 12107,
+    "hash": "D7QnB5RMPNpuHe94ER3R+I/Fcagxz3bC79k7RHn9yBw="
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiService.js",
@@ -1726,8 +1726,8 @@
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/SessionOptionsConfig.js",
-    "size": 25697,
-    "hash": "lIdf8MjCCTG8b9V62M526U2pzk685l5HF2yz7lt07EA="
+    "size": 25672,
+    "hash": "WlroZ35qnJDjncXTe7oOXxyWQ9Ga/SgD1TE7zuVyBVU="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/HwSessionSettings.js",

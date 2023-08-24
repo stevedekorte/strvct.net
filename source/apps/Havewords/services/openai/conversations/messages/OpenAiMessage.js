@@ -33,10 +33,22 @@
 
     {
       const slot = this.newSlot("request", null);
+      /*
+      slot.setInspectorPath("")
+      //slot.setLabel("role")
+      slot.setShouldStoreSlot(false)
+      //slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setIsSubnodeField(true)
+      */
     }
 
     {
       const slot = this.newSlot("isResponse", null);
+    }
+
+    {
+      const slot = this.newSlot("error", null);
     }
 
     {
@@ -187,7 +199,8 @@
 
   onRequestError (aRequest) {
     this.setError(aRequest.error())
-    this.setRequest(null)
+    this.setContent("ERROR: " + aRequest.error().message)
+    //this.setRequest(null)
   }
 
   onRequestComplete (aRequest) {
