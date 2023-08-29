@@ -185,19 +185,19 @@
     return "Unlabeled"
   }
 
-  onUpdateSlotIsContinuos (aSlot, oldValue, newValue) {
+  didUpdateSlotIsContinuos (oldValue, newValue) {
     if (this.recognition()) {
       this.recognition().continuous = newValue;
     }
   }
 
-  onUpdateSlotGetInterimResults (aSlot, oldValue, newValue) {
+  didUpdateSlotGetInterimResults (oldValue, newValue) {
     if (this.recognition()) {
       this.recognition().interimResults = newValue;
     }
   }
 
-  onUpdateSlotIsRecording (aSlot, oldValue, newValue) {
+  didUpdateSlotIsRecording (oldValue, newValue) {
     if (this.recognition()) {
       this.didUpdateNode()
     }

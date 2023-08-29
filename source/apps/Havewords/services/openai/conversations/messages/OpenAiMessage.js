@@ -33,14 +33,13 @@
 
     {
       const slot = this.newSlot("request", null);
-      /*
       slot.setInspectorPath("")
       //slot.setLabel("role")
       slot.setShouldStoreSlot(false)
       //slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Pointer")
       slot.setIsSubnodeField(true)
-      */
     }
 
     {

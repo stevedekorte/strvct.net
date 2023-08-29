@@ -140,15 +140,21 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("actionMethodName", null) // used by slots that will be represented by ActionFields to store the methodName
     }
 
+    fieldInspectorClassName () {
+        const slotType = this.slotType() 
+        let fieldName = "BM" + slotType + "Field"
+
+        if (this.validValues() || this.validValuesClosure()) {
+            fieldName = "BMOptionsNode"
+        }
+        
+        return fieldName
+    }
+
     newInspectorField () {
         const slotType = this.slotType() 
         if (slotType /*&& this.canInspect()*/) {
-            let fieldName = "BM" + slotType + "Field"
-
-            if (this.validValues() || this.validValuesClosure()) {
-                fieldName = "BMOptionsNode"
-            }
-
+            const fieldName = this.fieldInspectorClassName()
             let proto = getGlobalThis()[fieldName]
 
             /*

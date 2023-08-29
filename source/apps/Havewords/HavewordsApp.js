@@ -33,6 +33,7 @@
         this.newSlot("browser", null)
         this.newSlot("services", null)
         this.newSlot("sessions", null)
+        this.newSlot("characters", null)
     }
 
     // ---
@@ -80,8 +81,13 @@
         baseNode.removeAction("add")
         
         const services = baseNode.subnodeWithTitleIfAbsentInsertProto("Services", HwServices)
+        this.setServices(services) // not used yet
+
         const sessions = baseNode.subnodeWithTitleIfAbsentInsertProto("Sessions", HwSessions)
-        //this.setSessions(sessions);
+        this.setSessions(sessions) // not used yet
+
+        const characters = baseNode.subnodeWithTitleIfAbsentInsertProto("Characters", Characters)
+        this.setCharacters(characters) // not used yet
 
         // settings
         //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)

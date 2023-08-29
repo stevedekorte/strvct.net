@@ -46,10 +46,18 @@
     this.setCanDelete(true);
     this.setNodeCanEditTitle(true);
     this.setTitle("Untitled");
-    this.setSubtitle("session");
+    //this.setSubtitle("session");
     this.setNodeCanReorderSubnodes(false);
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
+  }
+
+  subtitle () {
+    const genre = this.settings().genre()
+    if (genre) {
+      return genre + " session"
+    }
+    return "session"
   }
 
   finalInit () {

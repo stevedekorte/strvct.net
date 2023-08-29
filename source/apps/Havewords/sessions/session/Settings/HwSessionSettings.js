@@ -94,7 +94,6 @@
     // copy invite link
     // copy transcript
 
-
     {
       const slot = this.newSlot("promptComposer", null)
       slot.setShouldStoreSlot(true);
@@ -102,7 +101,19 @@
       slot.setIsSubnode(true);
     }
 
-    /*
+
+    {
+      const slot = this.newSlot("inviteLink", "");
+      //slot.setInspectorPath("")
+      slot.setLabel("invite link")
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      //slot.setValidValues(values)
+  }
+
     {
       const slot = this.newSlot("startSessionAction", null);
       slot.setInspectorPath("");
@@ -114,12 +125,10 @@
       slot.setIsSubnodeField(true);
       slot.setActionMethodName("startSession");
     }
-      */
   }
 
   init () {
     super.init();
-
     this.addAction("add");
     this.setCanDelete(false);
     this.setNodeCanEditTitle(false);
@@ -154,6 +163,10 @@
 
   didUpdateSlotNarration (oldValue, newValue) {
     console.log("narration: ", newValue)
+  }
+
+  startSessionAction () {
+
   }
 
 }).initThisClass();

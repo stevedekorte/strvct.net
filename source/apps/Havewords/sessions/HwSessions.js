@@ -31,6 +31,7 @@
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
         this.setSubnodeClasses([HwSession])
+        this.setNoteIsSubnodeCount(true);
     }
 	
 }.initThisClass());

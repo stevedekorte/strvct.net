@@ -22,6 +22,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
@@ -32,16 +33,22 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
       const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+    }
+
+    {
+      const slot = this.newSlot("body", null); 
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
@@ -56,12 +63,15 @@
 
     {
       const slot = this.newSlot("isFetchActive", false);
+      /*
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Boolean")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+      */
     }
 
     {
@@ -104,6 +114,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
@@ -114,6 +125,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
@@ -128,8 +140,10 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
+    /*
     {
       const slot = this.newSlot("lastContent", "");
       slot.setInspectorPath("")
@@ -139,39 +153,49 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
     }
+    */
 
     {
       const slot = this.newSlot("error", null);
+    }
+
+    {
+      const slot = this.newSlot("status", "");
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     this.setShouldStore(false)
     this.setShouldStoreSubnodes(false)
   }
 
-  init() {
+  init () {
     super.init();
-    this.setIsDebugging(false);
+    this.setIsDebugging(true);
     this.setRequestId(this.puuid());
-    this.setLastContent("");
+    //this.setLastContent("");
     this.setTitle("Request")
   }
 
-  setService(anObject) {
+  subtitle () {
+    return this.status();
+  }
+
+  setService (anObject) {
     this.setDelegate(anObject);
     return this;
   }
 
-  body() {
-    return JSON.stringify(this.bodyJson());
+  body () {
+    return JSON.stringify(this.bodyJson(), 2, 2);
   }
 
-  requestOptions() {
+  requestOptions () {
     const apiKey = this.apiKey();
     return {
       method: "POST",
@@ -183,7 +207,7 @@
     };
   }
 
-  assertValid() {
+  assertValid () {
     if (!this.apiUrl()) {
       throw new Error(this.type() + " apiUrl missing");
     }
@@ -217,6 +241,7 @@
 
   async asyncSend () {
     try {
+      this.setStatus("fetching")
       this.setIsStreaming(false);
 
       this.assertValid();
@@ -250,6 +275,7 @@
         this.setFullContent(json.choices[0].message.content);
         this.sendDelegate("onRequestComplete")
         //this.showResponse();
+        this.setStatus("completed " + this.responseSizeDescription())
         return json
       }
     } catch (error) {
@@ -257,6 +283,11 @@
     }
 
     return undefined;
+  }
+
+  responseSizeDescription () {
+    const size = this.xhr() ? this.xhr().responseText.length : 0;
+    return ByteFormatter.clone().setValue(size).formattedValue();
   }
 
   // --- helpers ---
@@ -290,6 +321,8 @@
     this.assertReadyToStream();
     
     this.setIsStreaming(true);
+    this.setStatus("streaming")
+
     this.bodyJson().stream = true;
     this.setReadLines([]);
 
@@ -342,6 +375,7 @@
   }
 
   onXhrLoadEnd (event) {
+    //debugger
     const isError = this.xhr().status >= 300
     if (isError) {
       const json = JSON.parse(this.xhr().responseText);
@@ -350,14 +384,25 @@
       } else {
         this.onError(new Error("request error code:" + this.xhr().status + ")"));
       }
+    } else {
+      this.readXhrLines() // finish reading any remaining lines
     }
 
     this.streamTarget().onStreamComplete(this);
     this.sendDelegate("onRequestComplete")
+    this.setStatus("completed " + this.responseSizeDescription())
     this.xhrResolve()(this.fullContent()); 
   }
 
+  didUpdateSlotError (oldValue, newValue) {
+    //debugger
+    if (newValue) {
+      this.setStatus("ERROR: " + newValue.message)
+    }
+  }
+
   onError (e) {
+    //debugger
     this.setError(e);
     this.sendDelegate("onRequestError")
 
@@ -381,13 +426,13 @@
   }
 
   onXhrAbort (event) {
+    this.setStatus("aborted")
     this.streamTarget().onStreamComplete(this);
     this.xhrReject()(new Error("aborted"));
   }
 
   unreadResponse () {
-    const xhr = this.xhr();
-    const unread = xhr.responseText.substr(this.readIndex());
+    const unread = this.xhr().responseText.substr(this.readIndex());
     return unread
   }
 
@@ -402,29 +447,33 @@
     let newLine = unread.substr(0, newLineIndex);
     this.setReadIndex(this.readIndex() + newLineIndex + 1); // advance the read index
 
-    newLine = newLine.trim()
-    if (newLine.length === 0) {
-      return undefined
-    }
-
     return newLine;
   }
 
-  onXhrRead (isDone=false) {
+  onXhrRead () {
+    this.readXhrLines()
+  }
+
+
+  readXhrLines () {
     try {
       let line = this.readNextXhrLine();
 
       while (line !== undefined) {
-        if (line.startsWith("data:")) {
-          const s = line.after("data:");
-          if (isDone || line.includes("[DONE]")) {
-            // stream is done and will close
-          } else {
-            // we should expect json
-            const json = JSON.parse(s);
-            this.onStreamJsonChunk(json);
-          }
-        } 
+        line = line.trim()
+        if (line.length) {
+          if (line.startsWith("data:")) {
+            const s = line.after("data:");
+            if (line.includes("[DONE]")) {
+              // skip, stream is done and will close
+            } else {
+              // we should expect json
+              console.log("LINE: " + s)
+              const json = JSON.parse(s);
+              this.onStreamJsonChunk(json);
+            }
+          } 
+        }
         line = this.readNextXhrLine();
       }
     } catch(error) {
@@ -436,7 +485,7 @@
 
   onStreamJsonChunk (json) {
     if (json.error) {
-      console.warn("ERROR:" + json.error.message);
+      console.warn("ERROR: " + json.error.message);
       this.xhrReject()(new Error(json.error.message));
     } else if (
         json.choices &&
@@ -447,8 +496,11 @@
         const newContent = json.choices[0].delta.content;
         this.setFullContent(this.fullContent() + newContent);
         this.streamTarget().onStreamData(this, newContent);
+        console.warn("CONTENT: ", newContent);
+
     } else {
       if (json.id) {
+        console.warn("HEADER: ", JSON.stringify(json));
         // this is the header chunk - do we need to keep this around?
       } else {
         console.warn("WARNING: don't know what to do with this JsonChunk", json);

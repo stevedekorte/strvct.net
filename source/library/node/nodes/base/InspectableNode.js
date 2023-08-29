@@ -174,8 +174,12 @@
 
     addSubnodeFieldForSlot (slot) {
         const name = slot.name()
-
         const field = slot.newInspectorField()
+        if (!field) {
+            const className = slot.fieldInspectorClassName()
+            throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'")
+        }
+
         field.setShouldStore(false)
         field.setShouldStoreSubnodes(false) 
 

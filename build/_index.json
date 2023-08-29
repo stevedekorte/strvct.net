@@ -111,8 +111,8 @@
   },
   {
     "path": "source/library/ideal/categories/Number_ideal.js",
-    "size": 2871,
-    "hash": "gZXdOiuDWEJP7Cz2j0yyPKTMftWUPeMpJsd5WgTWL40="
+    "size": 3625,
+    "hash": "vwwYEkFXHOfg6ZHsjm49iXaVMCMs2Hq6JzWRCiN/2Ok="
   },
   {
     "path": "source/library/ideal/categories/Boolean_ideal.js",
@@ -151,8 +151,8 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 21680,
-    "hash": "VozD4/J1SkDZjtZ9t8d0krYgSCob5y8Q/93fDm4kEZ8="
+    "size": 21840,
+    "hash": "xeYXAG1s2n+uZpfJPXlsI7F5/t50tWQpu0GY9EaGDnQ="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
@@ -766,8 +766,8 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 6254,
-    "hash": "9XlOv1W37SxMivmBZxkkZa4AZZWjT/K+QQi9Pnaa1m8="
+    "size": 6480,
+    "hash": "/qNkGqA9wVSZDuPDPZQC7a0UrRVVnh1IJmYXP5XBHxA="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
@@ -1481,8 +1481,8 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/messages/OpenAiMessage.js",
-    "size": 5376,
-    "hash": "QhdOAgN9JTil9dBIGkXwgibSn3Bvf20t/4pFM4Zns00="
+    "size": 5392,
+    "hash": "rYRLIlPv+HlU4mCY4ZgTrujy51ZJPNYJuBK4i9bMgHU="
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversation.js",
@@ -1511,8 +1511,8 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiRequest.js",
-    "size": 12107,
-    "hash": "D7QnB5RMPNpuHe94ER3R+I/Fcagxz3bC79k7RHn9yBw="
+    "size": 13273,
+    "hash": "KNVWnG1iQzpSGVvSkEv1pgObosfzHm1mH4Y8AWHge+A="
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiService.js",
@@ -1676,8 +1676,8 @@
   },
   {
     "path": "source/apps/Havewords/services/SpeechToText/SpeechToTextSession.js",
-    "size": 10201,
-    "hash": "0NdHZ2maxuTI3Ca+2FGYcRBCPhUc8pMvnoo5TYqCefY="
+    "size": 10183,
+    "hash": "IcPH9nDU+icBuFUsTV89DVz5C8GE1HqhGsSZMeuXKzM="
   },
   {
     "path": "source/apps/Havewords/services/SpeechToText/SpeechToTextSessions.js",
@@ -1721,8 +1721,8 @@
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/prompt/HwPromptComposer.js",
-    "size": 5795,
-    "hash": "bHlQwT8F7CYC/FMHsIN8ZJSotQOJpPINe8cpfrYK788="
+    "size": 6040,
+    "hash": "t9mso1pSJ9bBcydv7vtko3qm3jf0v7CHCEITkqZoshc="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/SessionOptionsConfig.js",
@@ -1731,18 +1731,18 @@
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/HwSessionSettings.js",
-    "size": 3652,
-    "hash": "rBruzICudS30UeCwH2GzkO8EfD4+0NQ2CpilY41La00="
+    "size": 4021,
+    "hash": "hFjNHl3yTq/Yz7Kr3JQCsN92F1EdpPtSTZSqT0O9lf4="
   },
   {
     "path": "source/apps/Havewords/sessions/session/HwSession.js",
-    "size": 1445,
-    "hash": "J160aX4TVoJVisrCv2NBlDX6h+Xl6xV13syEW4mYpaI="
+    "size": 1586,
+    "hash": "Ys5kGFwed3pj8e/BGvrNtBMGTSorkZUQ2kvs6gk+Z6s="
   },
   {
     "path": "source/apps/Havewords/sessions/HwSessions.js",
-    "size": 697,
-    "hash": "Vc/B6AN2Q7XWnxfLO/rHTUM5eO847P27NJ27NCDYUJY="
+    "size": 739,
+    "hash": "W3fQ8KIYCeymqfVMIQywAgmMmxIbsdfERY8MP9flvqM="
   },
   {
     "path": "source/apps/Havewords/helpers/helpers.js",
@@ -1755,9 +1755,34 @@
     "hash": "eVrSJwHkarQYUoucifQJ2TVFxLjK/NCIuZzhhxoEl7A="
   },
   {
+    "path": "source/apps/Havewords/characters/CharacterDetails/CharacterDetails.js",
+    "size": 3748,
+    "hash": "J4/0xscy+D8jXzjztnQSRLhT0x69hFktX6FgmU3L+JA="
+  },
+  {
+    "path": "source/apps/Havewords/characters/AbilityScores/AbilityScores.js",
+    "size": 3000,
+    "hash": "HtWoFJnNCwhs0qjyCxsivGNgNtqPInnLhemDnU5HTBA="
+  },
+  {
+    "path": "source/apps/Havewords/characters/CombatStats/CombatStats.js",
+    "size": 4012,
+    "hash": "Fr024V0TFPFwgaUfUuZQ2VRKKqPznuB+it2sCAqMWgM="
+  },
+  {
+    "path": "source/apps/Havewords/characters/Character.js",
+    "size": 3292,
+    "hash": "UcxXFbaQkRDEEwa9FQnf71s3d1dxAYAZQYY+D4XYd2o="
+  },
+  {
+    "path": "source/apps/Havewords/characters/Characters.js",
+    "size": 500,
+    "hash": "annNTNfT0TOM4yZfpeqP1z7gjzJORwqcPZcYlC5v0/4="
+  },
+  {
     "path": "source/apps/Havewords/HavewordsApp.js",
-    "size": 4034,
-    "hash": "RSFSzFPJsimtx6oVREXNN84jnEWnJJ6HsgJsoR7EHmE="
+    "size": 4294,
+    "hash": "SrSohfUUGv/qLeIzMgskVP64QOCK5UeiKLVd1j72Pds="
   },
   {
     "path": "source/apps/Havewords/_init.js",

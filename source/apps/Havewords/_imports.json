@@ -3,6 +3,7 @@
     "services/_imports.json",
     "sessions/_imports.json",
     "helpers/_imports.json",
+    "characters/_imports.json",
     "HavewordsApp.js",
     "_init.js"
 ]

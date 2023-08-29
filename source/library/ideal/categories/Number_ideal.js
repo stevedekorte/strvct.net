@@ -128,7 +128,38 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
     byteSizeDescription () {
         return ByteFormatter.clone().setValue(this).formattedValue();
     }
+
+    withOrdinalIndicator () {
+        return this + "" + this.ordinalIndicator()
+    }
+
+    ordinalIndicator () {
+        const num = this;
+
+        if (typeof num !== 'number' || isNaN(num) || !Number.isInteger(num)) {
+            return '';
+        }
+    
+        const lastDigit = num % 10;
+        const lastTwoDigits = num % 100;
+    
+        if (lastTwoDigits >= 11 && lastTwoDigits <= 13) {
+            return 'th';
+        }
+    
+        switch (lastDigit) {
+            case 1:
+                return 'st';
+            case 2:
+                return 'nd';
+            case 3:
+                return 'rd';
+            default:
+                return 'th';
+        }
+    }
+    
     
 }).initThisCategory();
 
-};
+}; // wrapper to keep Base64 (at top of this file) from being a global

@@ -22,6 +22,7 @@
         slot.setDuplicateOp("duplicate");
         slot.setSlotType("String");
         slot.setIsSubnodeField(true);
+        slot.setSyncsToView(true)
         //slot.setValidValues(values)
     }
 
@@ -33,6 +34,7 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
+      slot.setSyncsToView(true)
       //slot.setValidValues(values)
   }
 
@@ -57,15 +59,26 @@
     this.setCanDelete(false);
     this.setNodeCanEditTitle(false);
     this.setTitle("Prompt Composer");
-    this.setSubtitle("");
     this.setNodeCanReorderSubnodes(false);
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
   }
 
+
   finalInit () {
     super.finalInit();
     //this.setupSessionOptions()
+  }
+
+  subtitle () {
+    let prompt = this.completedPrompt()
+    if (prompt.length > 0) {
+      if (prompt.includes("ERROR")) {
+        return "ERROR"
+      }
+      return "complete"
+    }
+    return "?"
   }
 
   sessionSettings () {
