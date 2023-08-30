@@ -140,7 +140,13 @@
         this.setShouldStore(true)
     }
 
-    didLoadFromStore () {
+    init () {
+        super.init()
+        this.setSummaryFormat("key value")
+        this.setHasNewlineAferSummary(true)
+    }
+
+    didLoadFromStore () { // move to finalInit?
         super.didLoadFromStore()
         this.validate()
     }
@@ -338,6 +344,17 @@
     setJson (json) {
         this.setValue(json) 
         return this
+    }
+
+    // ----------------
+
+    asJson () {
+        // test used for Character sheet atm
+        // separate fron jsonArchive 
+        return {
+            key: this.key(),
+            value: this.value()
+        }
     }
     
 }.initThisClass());

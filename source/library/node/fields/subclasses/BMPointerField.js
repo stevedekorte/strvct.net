@@ -52,4 +52,11 @@
         return this.value()
     }
 
+    jsonArchive () {
+        if (this.value() && this.value().jsonArchive) {
+            return this.value().jsonArchive()
+        }
+        return undefined;
+    }
+
 }.initThisClass());

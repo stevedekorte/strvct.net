@@ -5,7 +5,7 @@
 
 */
 
-(class Character extends BMStorableNode {
+(class Character extends JsonGroup {
   initPrototypeSlots() {
 
     {
@@ -41,7 +41,6 @@
       slot.setSyncsToView(true)
     }
 
-    /*
 
     {
       const slot = this.newSlot("proficiencies", CharacterProficiencies.clone());
@@ -75,26 +74,11 @@
       slot.setCanEditInspection(true);
       slot.setSyncsToView(true)
     }
-    */
 
     // ------
 
-
-    /*
     {
-      const slot = this.newSlot("jsonNode", BMJsonDictionaryNode.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(false)
-    }
-    */
-
-    {
-      const slot = this.newSlot("dictString", "");
+      const slot = this.newSlot("jsonString", "");
       //slot.setInspectorPath("")
       slot.setShouldStoreSlot(false);
       slot.setDuplicateOp("duplicate");
@@ -109,14 +93,11 @@
     super.init();
     this.setCanDelete(true);
     this.setShouldStoreSubnodes(false);
+    this.setNodeCanEditTitle(true);
   }
 
   finalInit () {
     super.finalInit()
-    this.setCanDelete(true);
-    this.setNodeCanEditTitle(true);
-    this.setShouldStoreSubnodes(false);
-    this.setCanDelete(true);
   }
 
   title () {
@@ -125,6 +106,11 @@
 
   subtitle () {
     return this.characterDetails().description()
+  }
+
+  jsonString () {
+    //debugger
+    return super.jsonString()
   }
 
 }.initThisClass());

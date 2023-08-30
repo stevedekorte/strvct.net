@@ -72,7 +72,6 @@
         //slot.setValidValues(["on", "off"]);
         //slot.setInitValue("off");
         slot.setInitValue(false);
-
     }
 
     {

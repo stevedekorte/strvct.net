@@ -24,15 +24,18 @@
 
     init () {
         super.init()
-    }
-
-    subtitle () {
-        return "Dictionary"
+        this.setSubtitle("Dictionary")
+        this.setSummaryFormat("key value")
+        this.setHasNewLineSeparator(true)
+        this.setHasNewlineAferSummary(true)
+        //this.setNodeSummarySuffix("newline")
     }
 
     // ------------------------------
 
     setJson (json) {
+        assert(Type.isDictionary(json));
+
         json.ownForEachKV((k, v) => {
             const aNode = this.thisClass().nodeForJson(v)
             aNode.setTitle(k)

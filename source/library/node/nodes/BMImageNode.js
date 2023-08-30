@@ -31,5 +31,10 @@
     onDidEditNode () {
         this.debugLog(" onDidEditNode")
     }
+
+    jsonArchive () {
+        debugger;
+        return undefined;
+    }
     
 }.initThisClass());

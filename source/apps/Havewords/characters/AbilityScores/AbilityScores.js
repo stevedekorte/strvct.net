@@ -5,7 +5,11 @@
 
 */
 
-(class AbilityScores extends BMSummaryNode {
+(class AbilityScores extends JsonGroup {
+  abilityOptions () {
+    return [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+  }
+
   initPrototypeSlots() {
     {
       const slot = this.newSlot("strength", 0);
@@ -17,6 +21,7 @@
         slot.setCanEditInspection(true);
         slot.setSyncsToView(true)
         slot.setSummaryFormat("key value")
+        slot.setValidValues(this.abilityOptions())
     }
 
     {
@@ -29,6 +34,7 @@
       slot.setCanEditInspection(true);
       slot.setSyncsToView(true)
       slot.setSummaryFormat("key value")
+      slot.setValidValues(this.abilityOptions())
     }
 
     {
@@ -41,6 +47,7 @@
       slot.setCanEditInspection(true);
       slot.setSyncsToView(true)
       slot.setSummaryFormat("key value")
+      slot.setValidValues(this.abilityOptions())
     }
 
     {
@@ -53,6 +60,7 @@
       slot.setCanEditInspection(true);
       slot.setSyncsToView(true)
       slot.setSummaryFormat("key value")
+      slot.setValidValues(this.abilityOptions())
     }
 
     {
@@ -65,6 +73,7 @@
       slot.setCanEditInspection(true);
       slot.setSyncsToView(true)
       slot.setSummaryFormat("key value")
+      slot.setValidValues(this.abilityOptions())
     }
 
     {
@@ -77,31 +86,20 @@
       slot.setCanEditInspection(true);
       slot.setSyncsToView(true)
       slot.setSummaryFormat("key value")
+      slot.setValidValues(this.abilityOptions())
     }
 
-    // ----------------------------
-
-    {
-      const slot = this.newSlot("dictString", "");
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(false);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
-      slot.setSyncsToView(false)
-    }
   }
 
   init() {
     super.init();
-    this.setTitle("Abilities")
     this.setCanDelete(true);
     this.setShouldStoreSubnodes(false);
   }
 
   finalInit () {
     super.finalInit()
+    this.setTitle(this.type().humanized());
     this.setCanDelete(true);
     this.setNodeCanEditTitle(true);
     this.setShouldStoreSubnodes(false);

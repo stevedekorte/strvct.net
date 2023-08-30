@@ -160,13 +160,22 @@ String.prototype._setterCacheMap = new Map();
         return Number(this);
     }
 
-    //move to libraries?
-    humanized () //someMethodName -> Some Method Name
-    {
+    /*
+    uncamelCase () {
+        return this
+            .replace(/([A-Z])/g, ' $1') // Prepend a space before each uppercase letter
+            .trim(); // Remove potential leading space
+    }
+    */
+
+    humanized () {
+        // convert camel case to normal string e.g. someMethodName -> Some Method Name
+
         const words = [];
         let start = -1;
         const capitalized = this.capitalized();
-        for (let i = 0; i < capitalized.length; i++) {
+        let i;
+        for (i = 0; i < capitalized.length; i++) {
             if (capitalized.slice(i, i + 1).match(/[A-Z]/)) {
                 let word = capitalized.slice(start, i);
                 if (word) {

@@ -7,7 +7,7 @@
 
 */
         
-(class BMJsonNode extends BMStorableNode {
+(class BMJsonNode extends BMSummaryNode {
     
     static canOpenMimeType (mimeType) {
         return mimeType === "application/json"

@@ -12,6 +12,7 @@
             {
                 path: ["path string component A", "path string component B", ...],
                 label: "", //?
+                subtitle: null, //
                 value: aValue, // and value that is valid JSON (no undefined, Maps, non-dict Objects, etc)
             },
             ...
@@ -395,7 +396,7 @@
 
 
     itemForValue (v) {
-        if (Type.isString(v)) {
+        if (Type.isString(v) || Type.isNumber(v)) {
             //const isPicked = this.targetHasPick(v)
             return {
                 //path: null,  // returned in picked values?

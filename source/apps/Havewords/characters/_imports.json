@@ -1,7 +1,11 @@
 [
+    "JsonGroup.js",
+    "CharacterGroup.js",
+    "MutableCharacterGroup.js",
     "CharacterDetails/_imports.json",
     "AbilityScores/_imports.json",
     "CombatStats/_imports.json",
+    "Flexible/_imports.json",
     "Character.js",
     "Characters.js"
 ]
