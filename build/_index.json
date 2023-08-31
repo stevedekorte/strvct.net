@@ -1771,8 +1771,8 @@
   },
   {
     "path": "source/apps/Havewords/characters/CharacterDetails/CharacterDetails.js",
-    "size": 7170,
-    "hash": "qZyeq2H83sOpCBqvLJwdd07SqhjnF0wGbFRlWPPI970="
+    "size": 7177,
+    "hash": "KW1iGHrsNPxpO6nDH2mLYc/zTpBkUw5jJXWIr2kUQTM="
   },
   {
     "path": "source/apps/Havewords/characters/AbilityScores/AbilityScores.js",
@@ -1790,9 +1790,14 @@
     "hash": "MI/yDIQg/OJjIABBcEoaICFKsf6F6IuzJtYL0ucfB/Y="
   },
   {
-    "path": "source/apps/Havewords/characters/Flexible/Equipment/CharacterEquipment.js",
-    "size": 119,
-    "hash": "bDAGzK/+A5U9dWGi1l42poF3FlEf0zzTxXeQ/EdP+rI="
+    "path": "source/apps/Havewords/characters/Flexible/Actions/CharacterActions.js",
+    "size": 115,
+    "hash": "xyjqsgFVr+L0bEEHtgX4um5pSI1CUQaDfvAIgXAPVqk="
+  },
+  {
+    "path": "source/apps/Havewords/characters/Flexible/Inventory/CharacterInventory.js",
+    "size": 123,
+    "hash": "k97wXe3GUhezknwBtcE2ePD2pUbvOAwqOyLBZOBbNUw="
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/Features/CharacterFeatures.js",
@@ -1800,14 +1805,19 @@
     "hash": "VQu42lYi+QuCJkDDFd/e+e+dhEuXZUyHRyuV/kH57m8="
   },
   {
+    "path": "source/apps/Havewords/characters/Flexible/Skills/CharacterSkills.js",
+    "size": 1392,
+    "hash": "jzlGP0/aN1Oz7ds7i3MKiXCefYkrX49DHCca3tZ+wUs="
+  },
+  {
     "path": "source/apps/Havewords/characters/Flexible/Proficiencies/CharacterProficiencies.js",
-    "size": 1406,
-    "hash": "1Vv9ze8dhTtBTegGSLMANWL/DHk6RpRcBwzDeG+NOwQ="
+    "size": 825,
+    "hash": "BrRuCKU4cVCj/J9yxlyjPfz4yIHnbDNk+o1DEta5TGE="
   },
   {
     "path": "source/apps/Havewords/characters/Character.js",
-    "size": 2886,
-    "hash": "WEpWaxkvb7UeIkGdaI6525QSN3GbQfbI8PoBpbyztic="
+    "size": 3559,
+    "hash": "339ij0DhDyb7AwerKcmAgI17uFG06xF7FwKki7GSIcU="
   },
   {
     "path": "source/apps/Havewords/characters/Characters.js",

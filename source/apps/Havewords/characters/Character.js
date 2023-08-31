@@ -20,6 +20,18 @@
     }
 
     {
+      const slot = this.newSlot("combatStats", CombatStats.clone());
+      //slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Pointer");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSyncsToView(true)
+    }
+
+
+    {
       const slot = this.newSlot("abilityScores", AbilityScores.clone());
       //slot.setInspectorPath("")
       slot.setShouldStoreSlot(true);
@@ -31,7 +43,29 @@
     }
 
     {
-      const slot = this.newSlot("combatStats", CombatStats.clone());
+      const slot = this.newSlot("skills", CharacterSkills.clone());
+      //slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Pointer");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSyncsToView(true)
+    }
+
+    {
+      const slot = this.newSlot("actions", CharacterActions.clone());
+      //slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Pointer");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSyncsToView(true)
+    }
+
+    {
+      const slot = this.newSlot("features", CharacterFeatures.clone());
       //slot.setInspectorPath("")
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
@@ -54,7 +88,7 @@
     }
 
     {
-      const slot = this.newSlot("equipment", CharacterEquipment.clone());
+      const slot = this.newSlot("inventory", CharacterInventory.clone());
       //slot.setInspectorPath("")
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
@@ -64,16 +98,7 @@
       slot.setSyncsToView(true)
     }
 
-    {
-      const slot = this.newSlot("features", CharacterFeatures.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
-    }
+
 
     // ------
 

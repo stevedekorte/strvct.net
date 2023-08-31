@@ -105,8 +105,6 @@
                     newNode.setNodeCanReorderSubnodes(false) // should this be here?
                     newNode.setTitle(component)
                     newNode.removeAction("add")
-                    //console.log("newNode.actions():", newNode.actions())
-                    //debugger
                     return newNode
                 })
                 pathNodes.push(node)

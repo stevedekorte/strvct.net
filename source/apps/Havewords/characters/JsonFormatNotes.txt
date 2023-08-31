@@ -1,0 +1,121 @@
+{
+    "type": "CharacterSheet",
+    "label": "Character Sheet",
+    "subnodes": [
+
+        {
+            "type": "CharacterDetails",
+            "label": "Character Details",
+            "subnodes": [
+            {
+                "type": "CharacterDetail",
+                "label": "name",
+                "value": "Zhor"
+            },
+            {
+                "type": "CharacterDetail",
+                "label": "class",
+                "value": "Wizard"
+            }
+        },
+        
+        {
+            "type": "CharacterSpells",
+            "label": "Spells",
+            "subnodes": [        
+                {
+                    "type": "CharacterSpell",
+                    "label": "cantrip",
+                    "value": "Firebolt"
+                },
+                {
+                    "type": "Spell",
+                    "label": "5th-level",
+                    "value": "Teleportation Circle"
+                }
+            ]
+        },
+
+        {
+            "type": "EquipmentItems",
+            "label": "Equipment",
+            "subnodes": [
+                {
+                    "type": "EquipmentItem",
+                    "label": "robe",
+                    "value": "Robe of the Archmagi"
+                },
+            ]
+        }
+
+    ]
+}
+
+// spell
+
+{
+    "type": "Spell",
+    "name": "Spell Name",
+    "school": "School of Magic",
+    "casting_time": "Time to Cast",
+    "range": "Range of Spell",
+    "components": {
+        "verbal": true or false,
+        "somatic": true or false,
+        "material": true or false,
+        "material_description": "Materials Needed",
+        "material_cost": "Cost if applicable",
+        "consumed": true or false
+    },
+    "duration": "Duration of Spell",
+    "concentration": true or false,
+    "description": "Full description of spell effect",
+    "damage": {
+        "type": "Damage Type",
+        "dice": "Dice Rolled for Damage",
+        "additional_effects": "Any secondary effects"
+    },
+    "higher_levels": "Description of effects when cast using higher-level slots",
+    "target": {
+        "type": "single, area, etc.",
+        "shape": "cone, sphere, etc. if applicable",
+        "size": "Dimensions of area if applicable"
+    }
+}
+
+
+// proficiency 
+// examples type examples: "Weapon", "Tool", "Language"*/
+
+{
+    "class": "CharacterProficiency",
+    "type": "Weapon",
+    "name": "Longsword",
+    "description": "A versatile weapon often used by knights and warriors.",
+    "proficiency_bonus": "?", // for weapons
+    "associated_checks" : "?", // for tools
+}
+
+// equipment item
+
+{
+    "type": "Weapon, Armor, Adventuring Gear, etc.",
+    "name": "Name of the Equipment",
+    "weight": "Weight in pounds or appropriate unit",
+    "value": {
+        "gold": "Amount in gold pieces (gp)",
+        "silver": "Amount in silver pieces (sp)",
+        "copper": "Amount in copper pieces (cp)"
+    },
+    "properties": [
+        "List any special properties or features of the equipment."
+    ],
+    "description": "A detailed or flavor description of the item.",
+    "bonus": {
+        "attack": "Bonus to attack rolls if applicable",
+        "damage": "Bonus to damage rolls if applicable",
+        "armor_class": "Bonus to AC if applicable",
+        "other": "Any other type of bonus or effect"
+    },
+    "requires_attunement": true or false
+}

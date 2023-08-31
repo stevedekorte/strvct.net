@@ -5,7 +5,7 @@
 
 */
 
-(class CharacterEquipment extends CharacterFlex {
+(class CharacterInventoryItem extends CharacterFlex {
 
 
 }.initThisClass());
