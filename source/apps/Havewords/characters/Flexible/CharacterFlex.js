@@ -23,11 +23,13 @@
     this.setCanDelete(false);
     this.setNodeCanEditTitle(false);
     this.setShouldStoreSubnodes(true);
+    this.setNodeSubtitleIsChildrenSummary(true);
     //this.setNodeSubtitleIsChildrenSummary(true);
   }
 
   subtitle () {
-    return null
+    return this.childrenSummary()
   }
+
 
 }.initThisClass());

@@ -32,7 +32,7 @@
     init () {
         super.init()
         this.setNodeCanReorderSubnodes(false)
-        this.addAction("add")
+        this.addNodeAction("add")
 
         // settings are effectively a global node that references other globals
         // so we don't need to store it (for now)

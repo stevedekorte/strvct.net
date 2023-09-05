@@ -5,6 +5,7 @@
     "BMBooleanFieldTile.js",
     "BMStringFieldTile.js",
     "BMTextAreaFieldTile.js",
+    "BMChatFieldTile.js",
     "BMImageWellFieldTile.js",
     "options/_imports.json",
     "BMPointerFieldTile.js"

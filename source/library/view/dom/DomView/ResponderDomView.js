@@ -163,6 +163,12 @@
     }
     */
 
+    didInput () {
+        this.debugLog("didInput")
+        this.tellParentViews("onDidInput", this)
+        return this
+    }
+
     didEdit () {
         this.debugLog("didEdit")
         this.tellParentViews("onDidEdit", this)

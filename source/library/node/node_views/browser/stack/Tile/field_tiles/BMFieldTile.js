@@ -349,9 +349,18 @@
         return this
     }
     
-    onDidEdit (changedView) {
+    onDidEdit (changedView) { // sent up subview chain when an edit occurs
         this.scheduleSyncToNode() 
         return true
+    }
+
+    onDidInput (changedView) { // sent up subview chain when an input occurs
+        if (changedView === this.valueView()) {
+            const node = this.node()
+            if (node.onValueInput) {
+                node.onValueInput()
+            }
+        }
     }
 
     syncStylesToSubviews () {

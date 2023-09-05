@@ -16,7 +16,7 @@
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
     //this.setSubnodeClasses([RzServer]);
-    this.removeAction("add");
+    this.removeNodeAction("add");
     this.setNodeCanReorderSubnodes(false);
   }
 

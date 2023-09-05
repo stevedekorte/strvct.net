@@ -709,7 +709,7 @@
     /*
     nodeParentHasDeleteAction () {
         const p = this.parentNode()
-        return p && p.hasAction("delete")
+        return p && p.hasNodeAction("delete")
     }
     */
 
@@ -724,7 +724,7 @@
     */
 
     canSelfAddSubnode () {
-        return this.hasAction("add")
+        return this.hasNodeAction("add")
     }
 
     // --- utility -----------------------------

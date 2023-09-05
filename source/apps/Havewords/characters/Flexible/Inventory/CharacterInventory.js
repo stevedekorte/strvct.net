@@ -1,11 +1,11 @@
 "use strict";
 
 /* 
-    CharacterEquipment
+    CharacterInventory
 
 */
 
-(class CharacterInventoryItem extends CharacterFlex {
+(class CharacterInventory extends CharacterFlex {
 
 
 }.initThisClass());

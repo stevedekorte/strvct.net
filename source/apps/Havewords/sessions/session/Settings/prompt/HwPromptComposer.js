@@ -55,7 +55,7 @@
   init () {
     super.init();
 
-    this.addAction("add");
+    this.addNodeAction("add");
     this.setCanDelete(false);
     this.setNodeCanEditTitle(false);
     this.setTitle("Prompt Composer");

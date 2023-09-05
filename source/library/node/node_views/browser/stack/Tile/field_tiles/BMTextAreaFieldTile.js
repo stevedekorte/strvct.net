@@ -52,6 +52,7 @@
         //v.setFontFamily("Mono")
         //v.setDoesHoldFocusOnReturn(true)
         v.setDoesInput(false)
+        v.setIsMultiline(true)
         return v
     }
     

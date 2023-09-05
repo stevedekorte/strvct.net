@@ -16,7 +16,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([PeerConnection]);
-    this.removeAction("add");
+    this.removeNodeAction("add");
     this.setNodeCanReorderSubnodes(true);
   }
 

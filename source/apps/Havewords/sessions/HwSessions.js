@@ -25,7 +25,7 @@
     finalInit () {
         super.finalInit();
         
-        this.addAction("add")
+        this.addNodeAction("add")
         this.setTitle("Sessions");
         this.setNodeCanReorderSubnodes(true)
         this.setShouldStore(true)

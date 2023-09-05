@@ -52,7 +52,7 @@
 
   init() {
     super.init();
-    this.addAction("add");
+    this.addNodeAction("add");
     this.setCanDelete(true);
     this.setNodeCanEditTitle(true);
     this.setTitle("Untitled");

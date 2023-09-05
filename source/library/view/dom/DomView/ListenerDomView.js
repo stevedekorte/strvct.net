@@ -254,7 +254,7 @@
         //this.debugLog(" onKeyUp ", event._id)
         const methodName = BMKeyboard.shared().upMethodNameForEvent(event)
         //console.log(this.typeId() + " onKeyUp methodName: ", methodName)
-        this.invokeMethodNameForEvent(methodName, event)
+        shouldPropogate = this.invokeMethodNameForEvent(methodName, event)
         return shouldPropogate
     }
 

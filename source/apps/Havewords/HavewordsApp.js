@@ -44,7 +44,7 @@
         this.setName("Havewords.ai")
         this.setVersion([0, 0, 0, 0])
         this.setNodeCanReorderSubnodes(true)
-        //this.addAction("add")
+        //this.addNodeAction("add")
         document.title = "...";
 
         return this
@@ -78,7 +78,7 @@
 
     setupModel () {
         const baseNode = this.rootNode().headerNode().breadCrumbsNode()
-        baseNode.removeAction("add")
+        baseNode.removeNodeAction("add")
         
         const services = baseNode.subnodeWithTitleIfAbsentInsertProto("Services", HwServices)
         this.setServices(services) // not used yet

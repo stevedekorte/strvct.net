@@ -24,7 +24,7 @@
         this.newSlot("doesTrim", false)
         this.newSlot("didTextInputNote", null)
         this.newSlot("didTextEditNote", null)
-        this.newSlot("doesInput", false)
+        this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
         this.newSlot("allowsSetStringWhileFocused", false)
 
         // has to start false for proper state setup
@@ -67,7 +67,7 @@
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
         //this.formatValue()
 
-        //this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
+        this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
         //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
 
         this.setIsDebugging(false)
@@ -371,7 +371,9 @@
 
     insertEnterAtCursor (event) {
         if (this.isFocused()) {
-            this.insertTextAtCursor("\n")
+            //this.insertTextAtCursor("\n")
+            this.insertTextAtCursorSimple("\n")
+            this.placeCaretAtEnd()
         }   
     }
 
@@ -381,19 +383,18 @@
         //const keyName = BMKeyboard.shared().keyForEvent(event)
         //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
 
-        if (!this.isMultiline() && event.keyCode === returnKeyCode) {
-        //if (!this.isMultiline() && keyName === "Enter") {
-            // block return key down if it's a single line text field
-            // this still seems to allow return up key event
-            event.preventDefault()
+        //if (this.isMultiline() && this.doesInput())
+
+
+        if (event.keyCode === returnKeyCode) {
+            const isSingleLine = !this.isMultiline()
+            // block return key down if it's a single line text field (or if in input mode aka send onInput note on enter key up)
+            // this still allows return up key event
+            if (isSingleLine || this.doesInput()) {
+                event.preventDefault()
+            }
         }
 
-        /*
-        if (this.isContentEditable()) {
-            return false // stop propogation
-        }
-        */
-       //debugger;
         return true
     }
     
@@ -412,6 +413,10 @@
             return false // stop propogation
         }
         */
+        if (this.doesInput()) {
+            //this.insertEnterAtCursor()
+            return true // prevent default
+        }
 
         return false
     }
@@ -428,18 +433,26 @@
         if (!this.isContentEditable()) {
             return 
         }
-
-        /*
-        if (!this.doesInput()) {
-            //this.insertEnterAtCursor()
-            return
-        }
-        */
+        
 	    //this.debugLog(".onEnterKeyUp()")
 	    //this.didEdit()
 
         this.formatValue()
         this.afterEnter()
+
+        if (this.doesInput()) {
+            //this.insertEnterAtCursor()
+            return false
+        }
+    }
+
+    // Alt Enter
+
+    onAlternateEnterKeyDown (event) {
+        if (this.doesInput() && this.isMultiline()) {
+            this.insertTextAtCursorAndConsolidate("\n")
+            //this.formatValue()
+        }
     }
 
 

@@ -22,7 +22,7 @@
         this.setTitle(null)
         this.setSubtitle(null)
         
-        //this.addActions(["add"])
+        //this.addNodeActions(["add"])
         //this.setCanDelete(true)
 
     }

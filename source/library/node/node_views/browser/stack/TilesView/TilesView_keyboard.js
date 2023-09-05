@@ -304,7 +304,7 @@
     deleteTile (aTile) {
         let sNode = aTile.node()
         if (sNode && sNode.canDelete()) { 
-			sNode.performAction("delete") 
+			sNode.performNodeAction("delete") 
 		}
         return this
     }
@@ -323,8 +323,8 @@
         }		
 
         const sNode = this.selectedNode()
-        if (sNode && sNode.hasAction("add")) { 
-            const newNode = sNode.performAction("add") 
+        if (sNode && sNode.hasNodeAction("add")) { 
+            const newNode = sNode.performNodeAction("add") 
             this.selectNextColumn()
             if (this.nextColumn()) {
                 this.nextColumn().selectTileWithNode(newNode)

@@ -237,7 +237,7 @@ let listenCount = 0;
             }
             */
 
-            this.handleEvent(event)
+            return this.handleEvent(event)
         })
         
         return result

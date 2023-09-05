@@ -14,7 +14,7 @@
 
   init () {
     super.init();
-    this.addAction("add")
+    this.addNodeAction("add")
     return this;
   }
 

@@ -68,7 +68,7 @@
         this.setCanDelete(true)
         this.setNoteIconName("right-arrow")
 
-        this.addAction("add")
+        this.addNodeAction("add")
         this.setSubnodeClasses(this.jsonClasses())
         this.setTitle("JSON")
     }

@@ -25,7 +25,7 @@
 
     init () {
         super.init()
-        this.addActions(["add"])
+        this.addNodeActions(["add"])
     }
     
     onDidEditNode () {

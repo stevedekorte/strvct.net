@@ -22,7 +22,7 @@
     this.setSubtitle("theme")
     //this.setSubtitle("Theme")
     this.setCanDelete(true);
-    this.addAction("add");
+    this.addNodeAction("add");
     //this.setSubnodeClasses([BMThemeLevel]);
     this.setSubnodeClasses([BMThemeClass]);
     this.setNodeCanReorderSubnodes(true);

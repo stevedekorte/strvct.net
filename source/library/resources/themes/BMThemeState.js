@@ -209,7 +209,7 @@
             let b = slot.shouldStoreSlotOnInstance(this)
             assert(!b)
         }
-        this.removeAction("add")
+        this.removeNodeAction("add")
         this.setSubtitle("state")
 
         //this.setSubnodeClasses([BMStringField])

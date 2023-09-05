@@ -90,8 +90,51 @@
 
         return this
     }
-    
 
+    insertTextAtCursorAndConsolidate (text) {
+        const el = this.element();
+        var sel, range, textNode, insertedTextLength = text.length;
+
+        if (window.getSelection) {
+            sel = window.getSelection();
+    
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+    
+                // Remember the position before insertion
+                var positionBeforeInsertion = range.startOffset;
+    
+                // Create a new text node containing the text to insert
+                textNode = document.createTextNode(text);
+                range.insertNode(textNode);
+    
+                // Adjust the selection to be at the end of the new text node
+                range.setStartAfter(textNode);
+                range.setEndAfter(textNode);
+                sel.removeAllRanges();
+                sel.addRange(range);
+    
+                // Calculate new position after consolidation
+                var positionAfterConsolidation = positionBeforeInsertion + insertedTextLength;
+    
+                // Now, consolidate all text nodes in the div
+                el.textContent = el.textContent;
+    
+                // Restore the position
+                var newRange = document.createRange();
+                var newSel = window.getSelection();
+                newRange.setStart(el.childNodes[0], positionAfterConsolidation);
+                newRange.collapse(true);
+                newSel.removeAllRanges();
+                newSel.addRange(newRange);
+            }
+        } else if (document.selection && document.selection.createRange) {
+            // For older versions of IE
+            document.selection.createRange().text = text;
+        }
+    }
+    
+    
     insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
         this.consolidateTextNodesAndPreserveSelection()
 
@@ -113,6 +156,39 @@
         return this
     }
     
+    /*
+    insertTextAtCursorSimple (text) {
+        const el = this.element();
+        // First, ensure that all text is consolidated into a single node
+        el.textContent = el.textContent;
+    
+        var sel, range;
+        if (window.getSelection) {
+            sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                
+                range.deleteContents();
+                
+                var textNode = document.createTextNode(text);
+                range.insertNode(textNode);
+    
+                // Move the caret to the end of the newly inserted text node
+                range = document.createRange();
+                range.selectNodeContents(textNode);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        } else if (document.selection && document.selection.createRange) {
+            // For older versions of IE
+            document.selection.createRange().text = text;
+        }
+    }
+    */
+    
+
+    /*
     insertTextAtCursor (text) {
         const savedSelection = this.saveSelection()
 
@@ -130,6 +206,7 @@
         this.restoreSelection(savedSelection)
         return this
     }
+    */
 
     saveSelection () {
         if (window.getSelection) {
@@ -157,6 +234,27 @@
 
     // --- set caret ----
 
+    placeCaretAtEnd () {
+        const el = this.element()
+        el.focus();
+
+        if (typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
+            var range = document.createRange();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else if (typeof document.body.createTextRange !== "undefined") {
+            var textRange = document.body.createTextRange();
+            textRange.moveToElementText(el);
+            textRange.collapse(false);
+            textRange.select();
+        }
+        return this
+    }
+
+    
     moveCaretToEnd () {
         const contentEditableElement = this.element()
         let range, selection;

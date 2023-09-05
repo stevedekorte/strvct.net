@@ -15,7 +15,7 @@ HwPlayers
     init () {
         super.init()
         this.setTitle("Players");
-        this.addAction("add")
+        this.addNodeAction("add")
         this.setNodeCanReorderSubnodes(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)

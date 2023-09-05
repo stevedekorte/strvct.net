@@ -170,9 +170,11 @@
         }
 
         // make this optional? 
+        /*
         if (v === "") {
             return ""
         }
+        */
 
         const f = this.summaryFormat()
         let end = this.nodeSummarySuffixOut()

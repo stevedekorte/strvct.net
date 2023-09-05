@@ -14,7 +14,7 @@
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("actions", null)
+            const slot = this.newSlot("nodeActions", null)
             slot.setInitProto(Array)
         }
     }
@@ -28,34 +28,34 @@
     
     // --- standard actions -----------------------------
     
-    addAction (actionString) {
-        if (!this.actions().contains(actionString)) {
-	        this.actions().push(actionString)
+    addNodeAction (actionString) {
+        if (!this.nodeActions().contains(actionString)) {
+	        this.nodeActions().push(actionString)
             this.didUpdateNode()
         }
         return this
     }
 
-    removeAction (actionString) {
-        if (this.actions().contains(actionString)) {
-        	this.actions().remove(actionString)
+    removeNodeAction (actionString) {
+        if (this.nodeActions().contains(actionString)) {
+        	this.nodeActions().remove(actionString)
             this.didUpdateNode()
         }
         return this
     }
     
-    addActions (actionStringList) {
+    addNodeActions (actionStringList) {
         actionStringList.forEach( (action) => {
-            this.addAction(action)
+            this.addNodeAction(action)
         })
         return this
     }
     
-    hasAction (actionName) {
-        return this.actions().contains(actionName)
+    hasNodeAction (actionName) {
+        return this.nodeActions().contains(actionName)
     }
     
-    performAction (actionName) {
+    performNodeAction (actionName) {
         return this[actionName].apply(this)
     }
 
@@ -63,7 +63,7 @@
     /*
     nodeParentHasDeleteAction () {
         const p = this.parentNode()
-        return p && p.hasAction("delete")
+        return p && p.hasNodeAction("delete")
     }
     */
 
@@ -78,7 +78,7 @@
     */
 
     canSelfAddSubnode () {
-        return this.hasAction("add")
+        return this.hasNodeAction("add")
     }
 
 }.initThisClass());

@@ -80,7 +80,7 @@
 
         //console.log("insertIndex: ", insertIndex)
 
-        if (this.node().hasAction("add")) {
+        if (this.node().hasNodeAction("add")) {
             // create new subnode at index
             const newSubnode = this.node().addAt(insertIndex)
 

@@ -16,7 +16,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([SttMessage]);
-    this.addAction("add");
+    this.addNodeAction("add");
     this.setNodeCanReorderSubnodes(true);
   }
 

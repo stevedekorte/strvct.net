@@ -44,6 +44,7 @@
             "BMOptionsNode",
             "BMStringField",
             "BMTextAreaField",
+            //"BMChatField",
             //"BMTextNode",
             "BMTimeNode",
             "BMLinkNode",

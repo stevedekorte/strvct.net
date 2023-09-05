@@ -24,7 +24,7 @@
 
     init () {
         super.init()
-        this.setSubtitle("Dictionary")
+        //this.setSubtitle("Dictionary")
         this.setSummaryFormat("key value")
         this.setHasNewLineSeparator(true)
         this.setHasNewlineAferSummary(true)
@@ -78,8 +78,11 @@
         const dict = {}
         this.subnodes().forEach((sn) => {
             const key = sn.key ? sn.key() : sn.title()
-            const value = sn.jsonArchive()
-            dict[key] = value
+            if (sn.jsonArchive) {
+                // so we skip CreatorNode
+                const value = sn.jsonArchive()
+                dict[key] = value
+            }
         })
         return dict
     }

@@ -220,6 +220,10 @@
         }
     }
 
+    didTextInput (aNote) { // just added to see if this is working
+        debugger; /////////////////////////////////////////
+    }
+
     syncFromTarget () {
         return this
     }
@@ -243,6 +247,7 @@
         
         if (target[setter]) {
             target[setter].apply(target, [v])
+
             target.didUpdateNode()
             this.validate()
         } else {
@@ -293,7 +298,8 @@
         return null
     }
 	
-    didUpdateView (aFieldView) {        
+    didUpdateView (aFieldView) {  
+        debugger;      
         let parentNode = this.parentNode()
         if (!parentNode) {
             parentNode = this.target()
