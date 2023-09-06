@@ -5,11 +5,11 @@
 
 */
 
-(class OpenAiMessage extends BMTextAreaField {
+(class OpenAiMessage extends BMStorableNode {
   initPrototypeSlots() {
 
     {
-      const slot = this.newSlot("role", "user"); 
+      const slot = this.newSlot("role", "system"); 
       slot.setInspectorPath("")
       //slot.setLabel("role")
       slot.setShouldStoreSlot(true)
@@ -17,11 +17,9 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setValidValues(this.validRoles())
-      //slot.setIsSubnodeField(true)
-      slot.setCanInspect(true)
+      slot.setIsSubnodeField(true)
     }
 
-    /*
     {
       const slot = this.newSlot("content", "");
       slot.setInspectorPath("")
@@ -30,10 +28,8 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      //slot.setIsSubnodeField(true)
-      slot.setCanInspect(true)
+      slot.setIsSubnodeField(true)
     }
-    */
 
     {
       const slot = this.newSlot("request", null);
@@ -43,21 +39,17 @@
       //slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Pointer")
-      //slot.setIsSubnodeField(true)
-      slot.setCanInspect(true)
+      slot.setIsSubnodeField(true)
     }
 
     {
       const slot = this.newSlot("isResponse", null);
-      slot.setCanInspect(true)
     }
 
     {
       const slot = this.newSlot("error", null);
-      slot.setCanInspect(true)
     }
 
-    /*
     {
       const slot = this.newSlot("sendInConversation", null);
       slot.setInspectorPath("")
@@ -69,23 +61,15 @@
       slot.setIsSubnodeField(true)
       slot.setActionMethodName("sendInConversation");
     }
-    */
-
 
     this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
+    this.setShouldStoreSubnodes(false);
   }
 
   init () {
     super.init();
-    this.setValue("")
+    this.setTitle("Message")
     this.setCanDelete(true)
-  }
-
-  finalInit () {
-    super.finalInit();
-    this.setNodeTileClassName("BMChatFieldTile")
-    this.setKeyIsVisible(true)
   }
 
   setSendInConversation (v) {
@@ -100,27 +84,6 @@
     //this.scheduleSyncToView()
   }
   */
-
-  valueIsEditable () {
-    return this.role() === "user"
-  }
-
-  key () {
-    if (this.role() === "user") {
-      return "user"
-    }
-    return "narrator"
-  }
-
-  content () {
-    return this.value()
-  }
-
-  setContent (s) {
-    this.setValue(s)
-    this.directDidUpdateNode()
-    return this
-  }
 
   subtitle () {
     let s = this.content()
@@ -183,10 +146,6 @@
     return json
   }
 
-  send () {
-    return this.sendInConversation()
-  }
-
   async sendInConversation () {
     if (!this.request()) {
       const message = this.conversation().newMessage()
@@ -202,12 +161,8 @@
     return this.conversation().selectedModel()
   }
 
-  service () {
-    return this.conversation().service()
-  }
-
   apiKey () {
-    return this.service().apiKey()
+    return this.conversation().conversations().service().apiKey()
   }
 
   /*
@@ -258,11 +213,11 @@
   }
 
   onStreamComplete(request) {
-    this.conversation().newMessage().setRole("user")
+
   }
 
   onValueInput () {
-    this.sendInConversation()
+
   }
 
 

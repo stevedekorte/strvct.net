@@ -52,6 +52,10 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  sessions () {
+    return this.parentNode()
+  }
+
   subtitle () {
     const genre = this.settings().genre()
     if (genre) {

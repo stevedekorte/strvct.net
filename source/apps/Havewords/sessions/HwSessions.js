@@ -33,5 +33,9 @@
         this.setSubnodeClasses([HwSession])
         this.setNoteIsSubnodeCount(true);
     }
+
+    app () {
+        return this.parentNode()
+    }
 	
 }.initThisClass());

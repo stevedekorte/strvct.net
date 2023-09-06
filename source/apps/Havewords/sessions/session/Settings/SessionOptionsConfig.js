@@ -283,7 +283,7 @@ Here is an example of the playerInfo JSON format:
   "appearance": "..."
 }
 
-Here are the character sheets (in JSON format) for the players in our game:
+Here are the player character sheets (in JSON format) for the players in our game:
 
 [playerCharacterSheets]
 

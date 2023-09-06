@@ -36,18 +36,28 @@
         v.setBackgroundColor("rgba(255, 255, 255, 0.05)")
         v.setBorder("1px solid rgba(255, 255, 255, 0.02)")
         v.setBorderRadius("0.4em")
+        v.setPaddingTop("0.4em")
         v.setPaddingLeft("0.4em")
+        v.setPaddingRight("0.4em")
         v.setPaddingBottom("0.4em")
+        v.setAllowsHtml(true)
         
         v.setIsMultiline(true)
         v.setDoesInput(true)
         
-        v.setBackgroundColor = () => {}
+        v.setPaddingTop = () => { return this }
+        v.setPaddingLeft = () => { return this }
+        v.setPaddingRight = () => { return this }
+        v.setPaddingBottom = () => { return this }
+        
+        v.setBackgroundColor = () => { return this }
         v.setBorder = () => {
-         //   debugger;
+            //debugger;
+            return this
         }
         v.syncBorder = () => {
             // avoiding changing border
+            return this
         }
         
        /*
@@ -59,6 +69,5 @@
         //v.setDoesInput(false)
         return v
     }
-
     
 }.initThisClass());

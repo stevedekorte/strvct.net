@@ -512,7 +512,7 @@
             console.log("idb tx atAdd ", key)
             tx.begin()
             //tx.setIsDebugging(this.isDebugging())
-            tx.setIsDebugging(true)
+            //tx.setIsDebugging(true)
             tx.atAdd(key, value)
             return tx.promiseCommit() 
         })

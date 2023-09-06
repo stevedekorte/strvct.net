@@ -6,7 +6,7 @@
 
 */
 
-(class HwAiChat extends BMSummaryNode {
+(class HwAiChat extends OpenAiConversation /*BMSummaryNode*/ {
     
     initPrototypeSlots () {
     }
@@ -24,6 +24,15 @@
 
     finalInit () {
         super.finalInit();
+    }
+
+    session () {
+        return this.parentNode()
+    }
+
+    service () {
+        //return this.session().sessions().app().services().openAiService()
+        return HavewordsApp.shared().services().openAiService()
     }
 	
 }.initThisClass());

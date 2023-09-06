@@ -24,7 +24,6 @@
       const slot = this.newSlot("model", null); 
     }
 
-    //this.setSubnodeClasses([OpenAiMessage])
   }
 
   init() {
@@ -34,14 +33,20 @@
     this.setNodeCanEditTitle(true)
     this.setTitle("Untitled")
     this.setSubtitle("conversation")
-    this.setNodeCanReorderSubnodes(true)
-  }
-
-  finalInit () {
-    super.finalInit()
+    this.setNodeCanReorderSubnodes(false)
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(true)
     this.setSubnodeClasses([OpenAiMessage])
+  }
+
+  /*
+  finalInit () {
+    super.finalInit()
+  }
+  */
+
+  service () {
+    return this.conversations().service()
   }
 
   conversations () {
@@ -68,9 +73,15 @@
   }
 
   newMessage () {
-    const message = OpenAiMessage.clone().setRole("user")
+    const msgClass = this.subnodeClasses().first()
+    const message = msgClass.clone().setRole("user")
     this.addSubnode(message)
     return message
   }
+
+  clear () {
+    this.removeAllSubnodes()
+    return this
+  } 
 
 }.initThisClass());

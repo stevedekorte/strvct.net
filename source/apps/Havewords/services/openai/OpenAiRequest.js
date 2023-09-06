@@ -468,7 +468,7 @@
               // skip, stream is done and will close
             } else {
               // we should expect json
-              console.log("LINE: " + s)
+              //console.log("LINE: " + s)
               const json = JSON.parse(s);
               this.onStreamJsonChunk(json);
             }
@@ -496,11 +496,11 @@
         const newContent = json.choices[0].delta.content;
         this.setFullContent(this.fullContent() + newContent);
         this.streamTarget().onStreamData(this, newContent);
-        console.warn("CONTENT: ", newContent);
+        //console.warn("CONTENT: ", newContent);
 
     } else {
       if (json.id) {
-        console.warn("HEADER: ", JSON.stringify(json));
+        //console.warn("HEADER: ", JSON.stringify(json));
         // this is the header chunk - do we need to keep this around?
       } else {
         console.warn("WARNING: don't know what to do with this JsonChunk", json);

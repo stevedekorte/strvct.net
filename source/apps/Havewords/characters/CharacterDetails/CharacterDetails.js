@@ -120,7 +120,7 @@
 
   initPrototypeSlots() {
     {
-      const slot = this.newSlot("name", "Unnamed");
+      const slot = this.newSlot("name", "Unnamed Character");
         //slot.setInspectorPath("")
         slot.setShouldStoreSlot(true);
         slot.setDuplicateOp("duplicate");
@@ -247,7 +247,7 @@
   }
 
   description () {
-    return this.levelName() + " " + this.race() + " " + this.class() 
+    return this.levelName() + " " + this.race() + " " + this.class()
   }
 
   levelName () {

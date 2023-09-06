@@ -74,7 +74,7 @@
     let prompt = this.completedPrompt()
     if (prompt.length > 0) {
       if (prompt.includes("ERROR")) {
-        return "ERROR"
+        return "ERROR (see prompt)"
       }
       return "complete"
     }
@@ -134,6 +134,13 @@
     const item = this.selectedItem()
     if (!item) {
       this.setComposedPrompt("")
+    }
+
+    if (item === null) {
+      this.setCompletedPrompt("ERROR: no selected genre")
+      return this
+    } else {
+    
     }
 
     //debugger
@@ -219,7 +226,7 @@
     if (this.players().length === 0) {
       return "\n\n[ERROR: NO PLAYERS TO PROVIDE PLAYER NAMES]\n\n"
     }
-    return this.players().map(player => player.nickname()).join(", ");
+    return this.players().map(player => player.title()).join(", ");
   }
 
   playerCharacterSheetsString () {

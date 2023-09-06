@@ -146,6 +146,13 @@
             const slot = this.newSlot("canDelete", false)
             slot.setDuplicateOp("copyValue")
         }
+
+        /*
+        {
+            const slot = this.newSlot("nodeIsHidden", false)
+            slot.setDuplicateOp("copyValue")
+        }
+        */
     }
 
     init () {

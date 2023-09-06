@@ -85,11 +85,11 @@
   // ----------------------------
 
   // Function to approximate token count
-  approximateTokens(message) {
+  approximateTokens (message) {
     return Math.ceil(message.length / 4);
   }
 
-  addToConversation(json) {
+  addToConversation (json) {
     assert(this.validRoles().indexOf(json.role) !== -1);
 
     // Check if conversation length exceeds limit

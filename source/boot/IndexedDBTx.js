@@ -61,9 +61,11 @@
         return this._promiseForFinished
     }
 
+    /*
     isDebugging () {
         return true
     }
+    */
     
     init () {
         super.init()

@@ -170,7 +170,7 @@
     }
 
     async promiseApplyChanges () {
-        console.log(this.name() + " --- promiseApplyChanges ---")
+        //console.log(this.name() + " --- promiseApplyChanges ---")
         //debugger
         const count = this.changedKeySet().size
 

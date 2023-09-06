@@ -164,8 +164,13 @@
     console.log("narration: ", newValue)
   }
 
-  startSessionAction () {
-
+  startSession () {
+    const chat = this.session().aiChat()
+    chat.clear()
+    const msg = chat.newMessage()
+    msg.setRole("system")
+    msg.setContent(this.promptComposer().completedPrompt())
+    msg.send()
   }
 
 }).initThisClass();

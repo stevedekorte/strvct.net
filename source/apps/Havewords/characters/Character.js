@@ -130,7 +130,7 @@
   }
 
   subtitle () {
-    return this.characterDetails().description()
+    return [this.characterDetails().description().trim(), "character"].join(" ")
   }
 
   jsonString () {

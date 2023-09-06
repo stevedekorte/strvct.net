@@ -198,7 +198,6 @@
         
         //debugger;
 
-
         this.visibleSubnodes().forEach((subnode) => {
             let subview = undefined;
 

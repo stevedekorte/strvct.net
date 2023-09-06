@@ -22,9 +22,10 @@
         this.newSlot("doesClearOnReturn", false)
         this.newSlot("doesHoldFocusOnReturn", false)
         this.newSlot("doesTrim", false)
-        this.newSlot("didTextInputNote", null)
-        this.newSlot("didTextEditNote", null)
+        //this.newSlot("didTextInputNote", null)
+        //this.newSlot("didTextEditNote", null)
         this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
+        this.newSlot("allowsHtml", false) // 
         this.newSlot("allowsSetStringWhileFocused", false)
 
         // has to start false for proper state setup
@@ -67,7 +68,7 @@
         //this.setIsRegisteredForKeyboard(true) // gets set by setContentEditable()
         //this.formatValue()
 
-        this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
+        //this.setDidTextInputNote(this.newNoteNamed("didTextInput"))
         //this.setDidTextEditNote(this.newNoteNamed("didTextEdit"))
 
         this.setIsDebugging(false)
@@ -305,6 +306,16 @@
         return this.string()
     }
 
+    // allowsHtml
+
+    setNewValue (v) {
+        if (this.allowsHtml()) {
+            this.setInnerHtml(v)
+        } else {
+            super.setString(v)
+        }
+        return this
+    }
     
     setString (newValue) {
         if (Type.isNullOrUndefined(newValue)) {
@@ -321,13 +332,12 @@
 
             if (this.isFocused()) {
                 if (this.allowsSetStringWhileFocused()) {
-                    super.setString(newValue)
+                    this.setNewValue(newValue)
                 } 
                 //throw new Error("attempt to call TextField.setString while it's focused")
-
             } else {
                 //this.isFocused()
-                super.setString(newValue)
+                this.setNewValue(newValue)
             }
             
             /*
@@ -455,7 +465,6 @@
         }
     }
 
-
     onEscapeKeyDown (event) {
         this.releaseFirstResponder()
         event.stopPropagation()
@@ -474,9 +483,11 @@
             //this.focusAfterDelay(.125) // hack to get focus back after chat view scrolling - TODO: fix this
         }
 
+        /*
         if (this.didTextInputNote()) {
             this.didTextInputNote().post()
         }
+        */
         
         if (event) {
             event.stopPropagation()

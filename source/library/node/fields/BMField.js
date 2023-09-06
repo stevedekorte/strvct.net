@@ -207,6 +207,11 @@
         } 
     }
 
+    directDidUpdateNode () {
+        super.didUpdateNode()
+        return this
+    }
+
     didUpdateNode (aNote) {
         //debugger;
         if (aNote) {
@@ -217,11 +222,9 @@
                 //console.log(this.type() + " didUpdateNode " + aNode.typeId())
                 this.syncFromTarget()
             }
+        } else {
+            //console.warn(this.type() + " received didUpdateNode() with no aNote argument - calling super.didUpdateNode()")
         }
-    }
-
-    didTextInput (aNote) { // just added to see if this is working
-        debugger; /////////////////////////////////////////
     }
 
     syncFromTarget () {
