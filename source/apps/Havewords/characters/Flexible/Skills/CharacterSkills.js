@@ -5,6 +5,93 @@
 
 */
 
+/*
+{
+  "Strength": [
+      {
+          "label": "Athletics",
+          "subtitle": "Physical feats, climbing, swimming"
+      }
+  ],
+  "Dexterity": [
+      {
+          "label": "Acrobatics",
+          "subtitle": "Balance, flips, rolls"
+      },
+      {
+          "label": "Sleight of Hand",
+          "subtitle": "Picking pockets, small tricks"
+      },
+      {
+          "label": "Stealth",
+          "subtitle": "Moving quietly, hiding"
+      }
+  ],
+  "Intelligence": [
+      {
+          "label": "Arcana",
+          "subtitle": "Magic, magical lore"
+      },
+      {
+          "label": "History",
+          "subtitle": "Historical events, ancient knowledge"
+      },
+      {
+          "label": "Investigation",
+          "subtitle": "Search for clues, deductions"
+      },
+      {
+          "label": "Nature",
+          "subtitle": "Flora, fauna, geography"
+      },
+      {
+          "label": "Religion",
+          "subtitle": "Deities, rites, religious lore"
+      }
+  ],
+  "Wisdom": [
+      {
+          "label": "Animal Handling",
+          "subtitle": "Calm, control, ride animals"
+      },
+      {
+          "label": "Insight",
+          "subtitle": "Read intentions, detect lies"
+      },
+      {
+          "label": "Medicine",
+          "subtitle": "Diagnose, stabilize, heal"
+      },
+      {
+          "label": "Perception",
+          "subtitle": "Notice, search, spot"
+      },
+      {
+          "label": "Survival",
+          "subtitle": "Track, navigate, predict weather"
+      }
+  ],
+  "Charisma": [
+      {
+          "label": "Deception",
+          "subtitle": "Lie, mislead, feign"
+      },
+      {
+          "label": "Intimidation",
+          "subtitle": "Threaten, coerce, bully"
+      },
+      {
+          "label": "Performance",
+          "subtitle": "Dance, sing, entertain"
+      },
+      {
+          "label": "Persuasion",
+          "subtitle": "Convince, charm, negotiate"
+      }
+  ]
+}
+*/
+
 (class CharacterSkills extends CharacterFlex {
 
   metaInfo () {
@@ -50,12 +137,15 @@
     super.init();
     this.setCanDelete(false);
     this.setShouldStoreSubnodes(true);
-    this.setupSubnodes()
   }
 
   finalInit () {
     super.finalInit()
     this.setNodeSubtitleIsChildrenSummary(true);
+    if (!this.hasSubnodes()) {
+      this.setupSubnodes()
+    }
+    this.setSubnodesSummaryFormat("key value")
   }
 
   setupSubnodes () {

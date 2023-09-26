@@ -35,9 +35,17 @@
         return sheets
     }
 
+    addStyleSheetString (cssCode) {
+        const styleElement = document.createElement('style');
+        styleElement.innerHTML = cssCode;
+        document.head.appendChild(styleElement);
+        return this
+    }
+
     show () {
         this.debugLog(":")
         this.styleSheets().forEach(sheet => sheet.show())
+        return this
     }
 
 }.initThisClass());

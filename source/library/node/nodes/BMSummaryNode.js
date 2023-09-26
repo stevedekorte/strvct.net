@@ -27,7 +27,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("String")
             slot.setLabel("suffix")
-            slot.setInspectorPath("Summary")
+            slot.setInspectorPath("Node/Summary")
             slot.setSyncsToView(true)
         }
 
@@ -38,7 +38,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("is children summary")
-            slot.setInspectorPath("Subtitle")
+            slot.setInspectorPath("Node/Summary/Subtitle")
             slot.setSyncsToView(true)
         }
 
@@ -49,7 +49,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("ends with new line")
-            slot.setInspectorPath("Summary")
+            slot.setInspectorPath("Node/Summary")
             slot.setSyncsToView(true)
         }
 
@@ -60,7 +60,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("new line separates key/value")
-            slot.setInspectorPath("Summary")
+            slot.setInspectorPath("Node/Summary")
             slot.setSyncsToView(true)
         }
 
@@ -73,7 +73,7 @@
             slot.setLabel("format")
             slot.setValidValues(["none", "key", "value", "key value", "value key"])
             slot.setSyncsToView(true)
-            slot.setInspectorPath("Summary")
+            slot.setInspectorPath("Node/Summary")
         }
 
         {
@@ -85,7 +85,7 @@
             slot.setLabel("hide policy")
             slot.setValidValues(["none", "hide if value is true", "hide if value is false"])
             slot.setSyncsToView(true)
-            slot.setInspectorPath("Summary")
+            slot.setInspectorPath("Node/Summary")
         }
 
         {
@@ -95,7 +95,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("is subnode count")
-            slot.setInspectorPath("Subtitle")
+            slot.setInspectorPath("Node/Summary/Subtitle")
             slot.setSyncsToView(true)
         }
 
@@ -106,7 +106,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("is subnode count")
-            slot.setInspectorPath("Note")
+            slot.setInspectorPath("Node/Summary/Note")
             slot.setSyncsToView(true)
         }
     }

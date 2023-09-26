@@ -310,7 +310,7 @@
         //debugger;
 
         if (!this.hasActiveObject(anObject)) {
-            const title = anObject.title ? anObject.title() : "-";
+            //const title = anObject.title ? anObject.title() : "-";
             //this.debugLog(() => anObject.debugTypeId() + ".addMutationObserver(" + this.debugTypeId() + " '" + title + "')")
             anObject.addMutationObserver(this)
             this.activeObjects().set(anObject.puuid(), anObject)

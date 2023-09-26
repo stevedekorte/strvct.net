@@ -30,7 +30,7 @@
             slot.setCanInspect(true)
             slot.setLabel("value")
             slot.setSlotType("String")
-            slot.setInspectorPath("Subtitle")
+            slot.setInspectorPath("Node/Subtitle")
             slot.setShouldStoreSlot(true)
         }
 
@@ -47,7 +47,7 @@
             slot.setLabel("icon")
             slot.setSlotType("String")
             slot.setValidValuesClosure((instance) => BMIconResources.shared().iconNames())
-            slot.setInspectorPath("Note")
+            slot.setInspectorPath("Node/Note")
         }
 
         {
@@ -62,7 +62,7 @@
             slot.setCanInspect(true)
             slot.setLabel("editable")
             slot.setSlotType("Boolean")
-            slot.setInspectorPath("Subtitle")
+            slot.setInspectorPath("Node/Subtitle")
             slot.setShouldStoreSlot(true)
         }
 

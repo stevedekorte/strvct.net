@@ -101,6 +101,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
         this.simpleNewSlot("initProto", null) // clone this proto in init
         this.simpleNewSlot("finalInitProto", null) // if not set (e.g. by deserialization), clone this proto in finalInit and add as subnode
+        //this.simpleNewSlot("shouldFinalInitAsSubnode", false) // if final init is used, it will add the init instance as a subnode use "isSubnode" instead
         this.simpleNewSlot("isSubnode", null) // in finalInit, add value as subnode if not already present
         this.simpleNewSlot("isSubnodeField", null) // in finalInit, create a field for the slot and add as subnode
 
@@ -512,6 +513,20 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
                 const newValue = finalInitProto.clone()
                 this.onInstanceSetValue(anInstance, newValue)
+
+                /*
+                if (this.shouldFinalInitAsSubnode()) {
+                    anInstance.addSubnode(newValue)
+                    
+                    const title = this.finalInitTitle()
+                    if (title) {
+                        newValue.setTitle(title)
+                        anInstance.subnodeWithTitleIfAbsentInsertProto(title, finalInitProto)
+                    } else {
+                        anInstance.addSubnode(newValue)
+                    }
+                }
+                */
             } else if (oldValue.type() !== finalInitProto.type()) {
                 debugger;
                 const warning = "finalInitProto type does not match existing value from Store";

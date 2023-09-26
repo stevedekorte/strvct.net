@@ -32,7 +32,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("String")
             slot.setLabel("key")
-            slot.setInspectorPath("Key")
+            slot.setInspectorPath("Node/Field/Key")
         }
 
 
@@ -44,7 +44,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("visible")
-            slot.setInspectorPath("Key")
+            slot.setInspectorPath("Node/Field/Key")
         }
 
         {
@@ -55,7 +55,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("editable")
-            slot.setInspectorPath("Key")
+            slot.setInspectorPath("Node/Field/Key")
         }
 
         // value
@@ -74,7 +74,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("visible")
-            slot.setInspectorPath("Value")
+            slot.setInspectorPath("Node/Field/Value")
         }
 
         {
@@ -85,7 +85,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("editable")
-            slot.setInspectorPath("Value")
+            slot.setInspectorPath("Node/Field/Value")
         }
 
         this.newSlot("link", null)

@@ -67,6 +67,7 @@
         this.documentBodyView().addSubview(browser)
 
         //this.addTimeout( () => this.showClasses(), 1)
+
     }
 
     showClasses () {

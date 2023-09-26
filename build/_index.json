@@ -151,8 +151,8 @@
   },
   {
     "path": "source/library/ideal/proto/Slot.js",
-    "size": 21840,
-    "hash": "xeYXAG1s2n+uZpfJPXlsI7F5/t50tWQpu0GY9EaGDnQ="
+    "size": 22521,
+    "hash": "BUysqWjBRtl5eTazNV/O+OQvXQpyxX6GrbxFusG6cOM="
   },
   {
     "path": "source/library/ideal/proto/ProtoClass.js",
@@ -556,8 +556,8 @@
   },
   {
     "path": "source/library/view/webbrowser/WebDocument.js",
-    "size": 716,
-    "hash": "HvDi1jhO0zGdTSyHg6htCfpDyvc8vGQdXlrrH5DZQlw="
+    "size": 952,
+    "hash": "XUwfw3SolgLQiadLUWYCfpey6sczy87oHy9Tfc21yRE="
   },
   {
     "path": "source/library/view/webbrowser/BMStyleSheet.js",
@@ -751,13 +751,13 @@
   },
   {
     "path": "source/library/node/nodes/base/BMNode.js",
-    "size": 26886,
-    "hash": "M1r51d0XB4ol8tDeJGBiJ7Of6ppo2TUzvuemp2la2xw="
+    "size": 26928,
+    "hash": "FlWZ1AvrLw7AWBKEEF2eI7Ko2uNErJScE4oFuoqSL4Q="
   },
   {
     "path": "source/library/node/nodes/base/TitledNode.js",
-    "size": 8926,
-    "hash": "ro36wXR4mXoiNR++nPupF01v3Rwh56GnHcqLYfxxSSQ="
+    "size": 8941,
+    "hash": "wxK3nEbE4lCJks/1pq81ed3tE5JnJc6unguQmEmExSU="
   },
   {
     "path": "source/library/node/nodes/base/ActionableNode.js",
@@ -766,18 +766,18 @@
   },
   {
     "path": "source/library/node/nodes/base/InspectableNode.js",
-    "size": 6382,
-    "hash": "miSSPb9ckwm9dpxROd8PwQpO7xeMqZtkFGV6ebap61Q="
+    "size": 6479,
+    "hash": "rGhAydGY8HBcMgMFJnzXIkRMW9bPOnOKC/gwu4V91FA="
   },
   {
     "path": "source/library/node/nodes/base/ViewableNode.js",
-    "size": 8160,
-    "hash": "bb4ua61VpsS+kpJlIBwg/SWojk2TTiB4Lgw2r6SQX5g="
+    "size": 8300,
+    "hash": "owwE1F+9mnGnSQEOkhunsk75ro0gz2AIqLDUMToKD+c="
   },
   {
     "path": "source/library/node/nodes/base/StyledNode.js",
-    "size": 990,
-    "hash": "qZEVdE1Bjmw2qmTaeoaB3WqfjNROmaMLHm8YVPYdVmE="
+    "size": 1039,
+    "hash": "xcIo+oi8UTZf39/svye897VcJqdDo4kP9O0qHr7woOk="
   },
   {
     "path": "source/library/node/nodes/base/BaseNode.js",
@@ -851,8 +851,8 @@
   },
   {
     "path": "source/library/node/storage/base/ObjectPool.js",
-    "size": 28109,
-    "hash": "WgaziMShBp0As19tnKaAQvET9qwbSCK0QuOrARGk2BI="
+    "size": 28111,
+    "hash": "iPBjGbRtEhSrNcxJxck4H/P1vh1VvJrp7cUrP3PSAZ4="
   },
   {
     "path": "source/library/node/storage/base/PersistentObjectPool.js",
@@ -881,8 +881,8 @@
   },
   {
     "path": "source/library/node/nodes/BMSummaryNode.js",
-    "size": 6006,
-    "hash": "zSOtdaa66HbQ7n/+Rk5ggQLt631Xu+cgjdFn/78SiWg="
+    "size": 6070,
+    "hash": "XZD/qjjON7AXsBcNMcbvzg4PJetcUPb3Ujpdh+BULPI="
   },
   {
     "path": "source/library/node/nodes/BMFolderNode.js",
@@ -916,8 +916,8 @@
   },
   {
     "path": "source/library/node/fields/BMField.js",
-    "size": 9256,
-    "hash": "J6yi1m/xmUcqH8efol4ueTcEy/rFhhT4xAuUXDTI2/s="
+    "size": 9311,
+    "hash": "xj7FJOtzoJ5B96bY1n9ZN9ZQqg2uCwDK0zMBtwQBJnw="
   },
   {
     "path": "source/library/node/fields/json/BMJsonNode.js",
@@ -931,8 +931,8 @@
   },
   {
     "path": "source/library/node/fields/json/BMJsonDictionaryNode.js",
-    "size": 2385,
-    "hash": "qUSrqk4WbJlxCA0rjnt8UJeGSXKion8iVNu5E00vk1M="
+    "size": 2682,
+    "hash": "6VdpyAzXV2Je8n5fdWV2RdSEoXJNYPG61viNjPZMPgA="
   },
   {
     "path": "source/library/node/fields/json/BMJsonNullField.js",
@@ -971,13 +971,13 @@
   },
   {
     "path": "source/library/node/fields/subclasses/BMNumberField.js",
-    "size": 3663,
-    "hash": "wKfhUgtN3tCJOIHDfhjmylwavmReTnws3iVA9bsLr7A="
+    "size": 3683,
+    "hash": "0CumweQaHvk7dtuq2mDxL8r7gC3jffc3b2igvch+e6w="
   },
   {
     "path": "source/library/node/fields/subclasses/BMPointerField.js",
-    "size": 1206,
-    "hash": "zATFLTsBWE+KkGlGnjh9TuJZs3TeoF9/wmGSmRtYGTo="
+    "size": 1487,
+    "hash": "4ZocFv1K+Z5nn3rHQ82dWP9smt1EfPNy/khdtb68ofw="
   },
   {
     "path": "source/library/node/fields/subclasses/BMJsonField.js",
@@ -1066,8 +1066,8 @@
   },
   {
     "path": "source/library/node/node_views/NodeView.js",
-    "size": 10324,
-    "hash": "c5pW1sbBnzhqPAWDrMsGmWsprpAffjj5I59bniW7L9k="
+    "size": 10851,
+    "hash": "MsU9E1lmsHdP2DI1Lb57lJdXJaKLPEGINDd08Qowfts="
   },
   {
     "path": "source/library/node/node_views/ImageWellView.js",
@@ -1136,8 +1136,8 @@
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile.js",
-    "size": 13811,
-    "hash": "KSodhalGg+vS/fa+561epYy1jq+xMLW3fU51zf6vSSA="
+    "size": 13842,
+    "hash": "sKmXFzAAsz1bsy92HQVrs4C/Q+0zcUBsnPnObjhwyEk="
   },
   {
     "path": "source/library/node/node_views/browser/stack/Tile/Tile_dragging.js",
@@ -1461,8 +1461,8 @@
   },
   {
     "path": "source/apps/Havewords/services/Job.js",
-    "size": 3879,
-    "hash": "b+v3bZqE1HjP/refim7hngE8vqc3f0L5PW5iUogwo9U="
+    "size": 3897,
+    "hash": "n22Ewgjcayuq7COUcCcYxAjw1qzYpUCyhiR9P/8Alnw="
   },
   {
     "path": "source/apps/Havewords/services/Jobs.js",
@@ -1486,13 +1486,13 @@
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/messages/OpenAiMessage.js",
-    "size": 6185,
-    "hash": "ZL/uYjU1JTWSinAl6XAt4AkJRK1EMc3Q1HQ8k9HwTCE="
+    "size": 6380,
+    "hash": "7wIywy9gS7gje8zQQ1GLtEV6PGeB/Y3v1Qkl4QBhgUk="
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversation.js",
-    "size": 1613,
-    "hash": "LAj971JWr0zZ3wEuOLMX666Q0GpFQE5f6bnV/QQCOzI="
+    "size": 1756,
+    "hash": "nUSyu4DlWLagwtDVkVFr8bfdLdqwUUoVmzKos7H+n9Y="
   },
   {
     "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversations.js",
@@ -1510,14 +1510,9 @@
     "hash": "+5ROTmILP/T0hUCcG5yaqvzA3EExHPZ0QFldJwIMSck="
   },
   {
-    "path": "source/apps/Havewords/services/openai/OpenAiChat.js",
-    "size": 5730,
-    "hash": "+rC2bSezQsWhWLvFFf54S5+XI24GHT8YfZ0xhbWYJg4="
-  },
-  {
     "path": "source/apps/Havewords/services/openai/OpenAiRequest.js",
-    "size": 13279,
-    "hash": "SF/D0wqHg9UX76z2XO5NKv+12HTeqclPf3UMEGvJBrE="
+    "size": 13307,
+    "hash": "cUKCI+ZIC/fR1O0KLhqWKs33bec9NvMS3TNfk6x6ask="
   },
   {
     "path": "source/apps/Havewords/services/openai/OpenAiService.js",
@@ -1536,8 +1531,8 @@
   },
   {
     "path": "source/apps/Havewords/services/midjourney/MJRequest.js",
-    "size": 6081,
-    "hash": "wK4ccMbrRlHG7t3paECY8dS5ijPZSZRP7+j+WGcEPPE="
+    "size": 6072,
+    "hash": "2dbxP40JveaXSxOHrpWo515+FpKkGVdqnJKHXF0JY+U="
   },
   {
     "path": "source/apps/Havewords/services/midjourney/MJService.js",
@@ -1695,24 +1690,29 @@
     "hash": "QsS8cMhFCYtkBODQWnFy5kv0UANdH4oJshOh8YuFV1s="
   },
   {
+    "path": "source/apps/Havewords/sessions/session/AiChat/ChatCss.js",
+    "size": 5285,
+    "hash": "Rfs8dfvpBlzWhl4jjn8XdARD9dbal8HOrH8946FgDmw="
+  },
+  {
     "path": "source/apps/Havewords/sessions/session/AiChat/HwAiChatMessage.js",
-    "size": 370,
-    "hash": "lRsYzhdhcDDmaDTprMrI1uyr45zTsmwt/yX/nmkyVgY="
+    "size": 3737,
+    "hash": "lFoK/LFNJvvbK0Hu5phOj64Qk3kmEIgKUuq0p0VnFec="
   },
   {
     "path": "source/apps/Havewords/sessions/session/AiChat/HwAiChat.js",
-    "size": 736,
-    "hash": "BjY0W+C1aG6u9rONTSKnwtwB8SwyijN3QW8AarfC+u8="
+    "size": 1070,
+    "hash": "cdrS49wsQJto6Teho5Afh3Qvca5Yq98RiVCbtVJaasA="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Players/HwPlayer.js",
-    "size": 1145,
-    "hash": "cCqnMBYAbZ4bnLJgpjva4KQNY62Eg5V+gCKncHxZ7B8="
+    "size": 2227,
+    "hash": "M+a5ihSMLXW0S1klcfi+J/WVZ9rj+jqRy0DP6Ft9P/A="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Players/HwPlayers.js",
-    "size": 488,
-    "hash": "O4xMtBkLL4PWCUBZEG6Z1IUd7jFEZvfXsi4H4bndelM="
+    "size": 1110,
+    "hash": "Jix0Gkf0ZA83GhrYvcs5/M5JVK5UHQ3P2surY6FqaP8="
   },
   {
     "path": "source/apps/Havewords/sessions/session/PlayersChat/HwPlayersChatMessage.js",
@@ -1726,23 +1726,23 @@
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/prompt/HwPromptComposer.js",
-    "size": 6180,
-    "hash": "9Q5rekkOwe67Fhf0PeFnOqvmNXv3dVyvoRG8F4c6VS0="
+    "size": 6774,
+    "hash": "6cEYFd3IBrbe1CLzfEpCheDpwIdeRRRc4ZG/u9yelzI="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/SessionOptionsConfig.js",
-    "size": 25679,
-    "hash": "jt1vxIQ+vQ65m5mRWCkJAShHZmEjvjSnVdqq+rPe72M="
+    "size": 29077,
+    "hash": "8zide8FF3PyZY5AxaA/DuvF24nrSv82Uq64byvpf8MQ="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Settings/HwSessionSettings.js",
-    "size": 4210,
-    "hash": "AvtOZxz7I1rLhBufDpQY8aAPSGGIqNJM1aWb59FNAv4="
+    "size": 4717,
+    "hash": "8VGBOJe2m1UoSMCorMl/ZUwjOEbGBwX2b1G537KFFKc="
   },
   {
     "path": "source/apps/Havewords/sessions/session/HwSession.js",
-    "size": 1640,
-    "hash": "X57kEJ/xtQblPr1JXkGxJkrviXfLFVP7dcRlewm3XxM="
+    "size": 2099,
+    "hash": "Oyh2uLW1/+SFQs2qZYGq/RUS11+bje2BsGkTejvflOM="
   },
   {
     "path": "source/apps/Havewords/sessions/HwSessions.js",
@@ -1761,8 +1761,8 @@
   },
   {
     "path": "source/apps/Havewords/characters/JsonGroup.js",
-    "size": 927,
-    "hash": "O+L6CEqA4oye+7ITlt2bVCaSPhiAiViPJbODs+ox/xg="
+    "size": 997,
+    "hash": "nuhqAPS/i+nztylpqMoii9brvtaN6B3/AaR6Sl93H+g="
   },
   {
     "path": "source/apps/Havewords/characters/CharacterGroup.js",
@@ -1776,8 +1776,8 @@
   },
   {
     "path": "source/apps/Havewords/characters/CharacterDetails/CharacterDetails.js",
-    "size": 7186,
-    "hash": "ATJr1wqFfGN/cMRMoOK5l3DTaFQ/iL+uHgaG47uvrQQ="
+    "size": 7501,
+    "hash": "5OVaQPPWXq5iU7kMzwR3/o87bMQd4Dz5E8RCXJddT80="
   },
   {
     "path": "source/apps/Havewords/characters/AbilityScores/AbilityScores.js",
@@ -1791,38 +1791,38 @@
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/CharacterFlex.js",
-    "size": 605,
-    "hash": "jgIaQqRQ5hP2kID6QrCPgdY+0UgSRr7vsSwJg4SrLlk="
+    "size": 1275,
+    "hash": "CZ2GmxeUx9qJyJiYqdWiFaj30oBih8T3DtDe/6ooeZM="
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/Actions/CharacterActions.js",
-    "size": 193,
-    "hash": "0tC+msiSaBRy4yXm07sW0tYtjfS0rvLY4yP4ogvdGHk="
+    "size": 730,
+    "hash": "Eqh+MHrH6D34GiJtuycTEDDoLFJ7yEtVAq34Q8acHpo="
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/Inventory/CharacterInventory.js",
-    "size": 119,
-    "hash": "rxtOsWUv+XtPcwkmrBll2ZLQxmvtl3EqpRoEmsSaNEY="
+    "size": 1127,
+    "hash": "OIC2FIj8McZTWPtL5/PngYZF9VvSJQH4z2ZMSU2MszU="
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/Features/CharacterFeatures.js",
-    "size": 117,
-    "hash": "VQu42lYi+QuCJkDDFd/e+e+dhEuXZUyHRyuV/kH57m8="
+    "size": 2727,
+    "hash": "TZL/xvqPQiKUplkriX58pk6QGEmxcYKbFkDDyC4Fz+o="
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/Skills/CharacterSkills.js",
-    "size": 1392,
-    "hash": "jzlGP0/aN1Oz7ds7i3MKiXCefYkrX49DHCca3tZ+wUs="
+    "size": 3396,
+    "hash": "R57vb8c3D0GxRyL0skF8pOWff9XDnulj6kM2SMdf2oE="
   },
   {
     "path": "source/apps/Havewords/characters/Flexible/Proficiencies/CharacterProficiencies.js",
-    "size": 263,
-    "hash": "EiZwA3/xaOvMvLBC73nhaimJk9vpRUFESvX0ETWYNCA="
+    "size": 791,
+    "hash": "pyoxlO+sT0MBVovcckTmNvYIiupbI+DA5jgs+Nahkik="
   },
   {
     "path": "source/apps/Havewords/characters/Character.js",
-    "size": 3591,
-    "hash": "GMVn83nCmHoFC2rOqvfo/FRN0nxniU8yMwyvt2iaG8k="
+    "size": 2781,
+    "hash": "xCC6pIrFIaBmHcTtCPt+vO22tUveMyeYK6oh1IDKRyA="
   },
   {
     "path": "source/apps/Havewords/characters/Characters.js",
@@ -1831,8 +1831,8 @@
   },
   {
     "path": "source/apps/Havewords/HavewordsApp.js",
-    "size": 4302,
-    "hash": "YUe00QID4sYImHeEb3HNhK5Vd3cDp5+d02s08BlQ0X4="
+    "size": 4303,
+    "hash": "HYJti5CgkmFDx24WizzLdEOMFH73Qt8zWkmCkr1J7s4="
   },
   {
     "path": "source/apps/Havewords/_init.js",

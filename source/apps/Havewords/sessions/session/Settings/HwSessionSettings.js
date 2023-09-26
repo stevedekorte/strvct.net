@@ -13,7 +13,7 @@
     //sessionOptionsJson
 
     {
-      const slot = this.newSlot("genre", "");
+      const slot = this.newSlot("genre", "The Lost City");
       //slot.setInspectorPath("")
       slot.setLabel("Genre")
       slot.setShouldStoreSlot(true);
@@ -111,7 +111,7 @@
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
       //slot.setValidValues(values)
-  }
+    }
 
     {
       const slot = this.newSlot("startSessionAction", null);
@@ -141,8 +141,18 @@
   finalInit () {
     super.finalInit();
     //this.setupSessionOptions()
-    //debugger
+    if (this.genre() === "") {
+      //this.setGenre("Fantasy / Dungeons & Dragons / module / The Lost City")
+    }
   }
+
+  /*
+  setGenre (v) {
+    this._genre = v
+    debugger
+    return this
+  }
+  */
 
   session () {
     return this.parentNode()
@@ -167,10 +177,27 @@
   startSession () {
     const chat = this.session().aiChat()
     chat.clear()
+
+    this.promptComposer().compose()
+    const prompt = this.promptComposer().completedPrompt();
+    
     const msg = chat.newMessage()
     msg.setRole("system")
-    msg.setContent(this.promptComposer().completedPrompt())
+    msg.setContent(prompt)
     msg.send()
   }
+
+  isReadyToStart () {
+    return !this.promptComposer().hasError()
+  }
+
+
+  startSessionActionInfo () {
+    return {
+        isEnabled: this.isReadyToStart(),
+        //title: this.title(),
+        //isVisible: this.isReadyToStart()
+    }
+}
 
 }).initThisClass();

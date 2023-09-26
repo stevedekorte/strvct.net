@@ -5,14 +5,20 @@
     BMPointerField
 
     A field that's a pointer to another node.
-(sometimes the other node is used as a list of items, but not always)
+    (sometimes the other node is used as a list of items, but not always)
 
 */
         
 (class BMPointerField extends BMField {
     
     initPrototypeSlots () {
-
+        /*
+        {
+            const slot = this.newSlot("fieldSlotName", null)
+            slot.setCanInspect(true)
+            slot.setInspectorPath("Node/Field/Pointer")
+        }
+        */
     }
 
     init () {
@@ -37,7 +43,9 @@
     }
 
     title () {
-        return this.proxyGetter("title")
+        const title = this.proxyGetter("title")
+        return title
+        //return title ? title : this.fieldSlotName()
     }
 	
     subtitle () {

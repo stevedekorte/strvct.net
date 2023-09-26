@@ -18,6 +18,11 @@
     return JSON.stringify(this.jsonArchive(), 2, 2)
   }
 
+  updateJson (json) {
+    this.setJson(json)
+    return this
+  }
+  
   setJson (dict) {
     Object.keys(dict).forEach(k => {
       const v = dict[k]
@@ -31,7 +36,7 @@
 
   jsonArchive () {
     const dict = {
-      type: this.title(),
+      //type: this.title(),
     }
 
     this.subnodes().filter(sn => sn.title() !== "jsonString").map(sn => {

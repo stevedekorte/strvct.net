@@ -295,6 +295,7 @@
 	
     syncFromNode () {
         // is this ever called?
+        this.syncCssFromNode()
         this.updateSubviews()
         this.syncOrientation()
         return this

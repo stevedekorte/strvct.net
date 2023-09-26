@@ -9,109 +9,64 @@
   initPrototypeSlots() {
 
     {
-      const slot = this.newSlot("characterDetails", CharacterDetails.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
+      const slot = this.newSubnodeSlot("characterDetails", CharacterDetails);
     }
 
     {
-      const slot = this.newSlot("combatStats", CombatStats.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
-    }
-
-
-    {
-      const slot = this.newSlot("abilityScores", AbilityScores.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
+      const slot = this.newSubnodeSlot("combatStats", CombatStats);
     }
 
     {
-      const slot = this.newSlot("skills", CharacterSkills.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
+      const slot = this.newSubnodeSlot("abilityScores", AbilityScores);
     }
 
     {
-      const slot = this.newSlot("actions", CharacterActions.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
+      const slot = this.newSubnodeSlot("skills", CharacterSkills);
     }
 
     {
-      const slot = this.newSlot("features", CharacterFeatures.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
-    }
-
-
-    {
-      const slot = this.newSlot("proficiencies", CharacterProficiencies.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
+      const slot = this.newSubnodeSlot("actions", CharacterActions);
     }
 
     {
-      const slot = this.newSlot("inventory", CharacterInventory.clone());
-      //slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(true);
-      slot.setSyncsToView(true)
+      const slot = this.newSubnodeSlot("features", CharacterFeatures);
     }
 
+    {
+      const slot = this.newSubnodeSlot("proficiencies", CharacterProficiencies);
+    }
 
+    {
+      const slot = this.newSubnodeSlot("inventory", CharacterInventory);
+    }
 
     // ------
 
     {
       const slot = this.newSlot("jsonString", "");
-      //slot.setInspectorPath("")
+      //slot.setInspectorPath("Character")
       slot.setShouldStoreSlot(false);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
+      //slot.setIsSubnodeField(true);
+      slot.setCanInspect(true)
       slot.setCanEditInspection(false);
       slot.setSyncsToView(false)
     }
+
+    {
+      const slot = this.newSlot("setupAsSampleAction", null);
+      //slot.setInspectorPath("Character");
+      slot.setLabel("Setup as Sample");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      //slot.setIsSubnodeField(true);
+      slot.setCanInspect(true)
+      slot.setActionMethodName("setupAsSample");
+    }
+    
+
   }
 
   init() {
@@ -125,7 +80,31 @@
     super.finalInit()
   }
 
+  newSubnodeSlot (slotName, finalProto) {
+    assert(Type.isString(slotName))
+    assert(Type.isClass(finalProto))
+
+    const slot = this.newSlot(slotName, null);
+    slot.setShouldStoreSlot(true);
+    slot.setFinalInitProto(finalProto);
+    slot.setIsSubnode(true);
+
+    /*
+    const slot = this.newSlot(slotName, null);
+    slot.setFinalInitProto(finalProto)
+    slot.setShouldFinalInitAsSubnode(true)
+    slot.setShouldStoreSlot(true);
+    slot.setDuplicateOp("duplicate");
+    slot.setSyncsToView(true)
+    */
+    return slot
+  }
+
   title () {
+    return this.characterDetails().name()
+  }
+
+  name () {
     return this.characterDetails().name()
   }
 
@@ -134,8 +113,21 @@
   }
 
   jsonString () {
-    //debugger
     return super.jsonString()
+  }
+
+  setJson (json) {
+    super.setJson(json)
+    return this
+  }
+
+  setupAsSample () {
+    this.subnodes().forEach(sn => {
+      if (sn.setupAsSample) {
+        sn.setupAsSample();
+      }
+    })
+    return this
   }
 
 }.initThisClass());

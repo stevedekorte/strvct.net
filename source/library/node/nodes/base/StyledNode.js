@@ -21,6 +21,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("String")
             slot.setLabel("Theme Class")
+            slot.setInspectorPath("Node/Styled")
             slot.setSyncsToView(true)
             slot.setValidValuesClosure((instance) => { 
                 return BMThemeResources.shared().activeTheme().themeClassNames()

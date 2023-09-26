@@ -129,8 +129,16 @@
     return item
   }
 
-  compose () {
+  hasError () {
+    const prompt = this.completedPrompt()
+    if (!prompt || prompt.includes("ERROR")) {
+      return true
+    }
 
+    return false
+  }
+
+  compose () {
     const item = this.selectedItem()
     if (!item) {
       this.setComposedPrompt("")
@@ -234,7 +242,7 @@
       return "\n\n[ERROR: NO PLAYERS TO PROVIDE CHARACTER SHEETS]\n\n"
     }
     const sheetsJson = this.players().map(player => player.characterSheetJson());
-    return JSON.stringify(sheetsJson);
+    return JSON.stringify(sheetsJson, 2, 2);
   }
 
   selectedItemLabelString () {
@@ -246,9 +254,18 @@
     s = s.replaceAll("[selectedItemLabel]", this.selectedItemLabelString());
     s = s.replaceAll("[playerNames]", this.playerNamesString());
     s = s.replaceAll("[playerCharacterSheets]", this.playerCharacterSheetsString());
+
+    const sampleCharacter = Character.clone().setupAsSample()
+    s = s.replaceAll("[CharacterSheetExampleJson]", sampleCharacter.jsonString());
+    s = s.replaceAll("[CharacterRaceNameOptions]", JSON.stringify(sampleCharacter.characterDetails().raceNameOptions()));
     return s;
   }
 
+  imagePromptForSceneSummary (s) {
+    const item = this.selectedItem();
+    const prefix = item.artPromptPrefix ? item.artPromptPrefix : "";
+    return prefix + s;
+  }
 
 }).initThisClass();
 

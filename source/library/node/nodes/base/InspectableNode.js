@@ -178,6 +178,10 @@
             throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'")
         }
 
+        if (field.setFieldSlotName) {
+            field.setFieldSlotName(slot.name())
+        }
+
         field.setShouldStore(false)
         field.setShouldStoreSubnodes(false) 
 

@@ -2,7 +2,6 @@
     "models/_imports.json",
     "conversations/_imports.json",
     "jobs/_imports.json",
-    "OpenAiChat.js",
     "OpenAiRequest.js",
     "OpenAiService.js"
 ]

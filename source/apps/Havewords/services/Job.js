@@ -12,7 +12,7 @@
   initPrototypeSlots() {
     {
       const slot = this.newSlot("manager", null);
-      slot.setInspectorPath("")
+      slot.setInspectorPath("Job")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -23,7 +23,7 @@
      
     {
       const slot = this.newSlot("requestId", null); 
-      slot.setInspectorPath("")
+      slot.setInspectorPath("Job")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -35,7 +35,7 @@
 
     {
       const slot = this.newSlot("startDate", null);
-      slot.setInspectorPath("")
+      slot.setInspectorPath("Job")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -47,7 +47,7 @@
 
     {
       const slot = this.newSlot("endDate", null);
-      slot.setInspectorPath("")
+      slot.setInspectorPath("Job")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -70,7 +70,7 @@
 
     {
       const slot = this.newSlot("progress", null);
-      slot.setInspectorPath("")
+      slot.setInspectorPath("Job")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -82,7 +82,7 @@
 
     {
       const slot = this.newSlot("status", null); 
-      slot.setInspectorPath("")
+      slot.setInspectorPath("Job")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")

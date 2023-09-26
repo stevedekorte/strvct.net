@@ -89,6 +89,7 @@
             const slot = this.newSlot("nodeType", null)
             slot.setCanInspect(true)
             slot.setLabel("type")
+            slot.setInspectorPath("Node")
             slot.setSlotType("String")
             slot.setCanEditInspection(false)
         }

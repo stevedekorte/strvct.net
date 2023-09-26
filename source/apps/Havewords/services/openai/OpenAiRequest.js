@@ -11,7 +11,7 @@
 
   initPrototypeSlots() {
     {
-      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request e.g. OpenAiChat - will receive onRequestComplete message if it responds to it
+      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request - will receive onRequestComplete message if it responds to it
     }
 
     {
@@ -143,9 +143,8 @@
       slot.setCanEditInspection(false)
     }
 
-    /*
     {
-      const slot = this.newSlot("lastContent", "");
+      const slot = this.newSlot("lastContent", ""); // useful when separating renderable html while streaming
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
@@ -153,7 +152,6 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
     }
-    */
 
     {
       const slot = this.newSlot("error", null);

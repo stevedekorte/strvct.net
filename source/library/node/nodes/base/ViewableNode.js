@@ -32,6 +32,8 @@
                 slot.setSlotType("String")
                 slot.setValidValues(values)
                 slot.setCanInspect(true)
+                slot.setInspectorPath("Node/Viewable")
+
                 return slot
             }
             addSlot("nodeTileClassName", "", "Tile View Class", null).setValidValuesClosure((instance) => { 
@@ -64,7 +66,7 @@
             slot.setCanInspect(true)
             slot.setLabel("is vertical")
             slot.setSlotType("Boolean")
-            slot.setInspectorPath("Children Layout")
+            slot.setInspectorPath("Node/Viewable/Children Layout")
             slot.setShouldStoreSlot(true)
         }
 
@@ -75,7 +77,7 @@
             slot.setLabel("alignment")
             slot.setSlotType("String")
             slot.setValidValues(["flex-start", "center", "flex-end", "space-between", "space-around"])
-            slot.setInspectorPath("Children Layout")
+            slot.setInspectorPath("Node/Viewable/Children Layout")
             slot.setShouldStoreSlot(true)
         }
 
@@ -98,14 +100,14 @@
             const slot = this.newSlot("nodeMinTileHeight", 0)
             slot.setDuplicateOp("copyValue")
             slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("style")
+            slot.setInspectorPath("Node/Viewable/Style")
         }
 
         {
             const slot = this.newSlot("nodeMinTileWidth", 0)
             slot.setDuplicateOp("copyValue")
             slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("style")
+            slot.setInspectorPath("Node/Viewable/Style")
         }
 
         // html
@@ -130,7 +132,7 @@
             slot.setLabel("fills remaining")
             slot.setCanEditInspection(false)
             slot.setCanInspect(false)
-            slot.setInspectorPath("Children Layout")
+            slot.setInspectorPath("Node/Viewable/Children Layout")
         }
 
         {
@@ -140,7 +142,7 @@
             slot.setCanEditInspection(true)
             slot.setCanInspect(true)
             slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("Children Layout")
+            slot.setInspectorPath("Node/Viewable/Children Layout")
         }
 
         {

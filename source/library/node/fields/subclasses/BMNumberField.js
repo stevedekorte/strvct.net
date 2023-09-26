@@ -28,7 +28,7 @@
             slot.setCanInspect(true)
             slot.setCanEditInspection(true)
             slot.setLabel("Is integer")
-            slot.setInspectorPath("Number")
+            slot.setInspectorPath("NumberField")
             //slot.setSyncsToView(true)
         }
 
@@ -40,7 +40,7 @@
             slot.setCanInspect(true)
             slot.setCanEditInspection(true)
             slot.setLabel("Has limits")
-            slot.setInspectorPath("Number")
+            slot.setInspectorPath("NumberField")
             //slot.setSyncsToView(true)
         }
 
@@ -52,7 +52,7 @@
             slot.setCanInspect(true)
             slot.setCanEditInspection(true)
             slot.setLabel("Min Value")
-            slot.setInspectorPath("Number")
+            slot.setInspectorPath("NumberField")
             //slot.setSyncsToView(true)
         }
 
@@ -64,7 +64,7 @@
             slot.setCanInspect(true)
             slot.setCanEditInspection(true)
             slot.setLabel("Max value")
-            slot.setInspectorPath("Number")
+            slot.setInspectorPath("NumberField")
             //slot.setSyncsToView(true)
         }
     }

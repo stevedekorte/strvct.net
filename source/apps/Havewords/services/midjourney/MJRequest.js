@@ -192,7 +192,6 @@
         } else if (json.imageURL) {
           this.setStatus("complete")
         } 
-        
 
         this.setResponseJson(JSON.stringify(json, 2, 2))
         return json

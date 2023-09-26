@@ -37,6 +37,16 @@
         slot.setIsSubnode(true);
     }
 
+    {
+      const slot = this.newSlot("isHost", true);
+      //slot.setInspectorPath("")
+      slot.setLabel("Is Host");
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setCanEditInspection(false)
+    }
+
   }
 
   init () {
@@ -56,16 +66,25 @@
     return this.parentNode()
   }
 
+  sessionType () {
+    return "session" + (this.isHost() ? " host" : "")
+  }
+
   subtitle () {
     const genre = this.settings().genre()
     if (genre) {
-      return genre + " session"
+      return genre + " " + this.sessionType()
     }
-    return "session"
+    return this.sessionType()
   }
 
   finalInit () {
     super.finalInit();
+    this.settings().promptComposer().compose()
+  }
+
+  isReadyToStart () {
+    
   }
 
   startSession () {

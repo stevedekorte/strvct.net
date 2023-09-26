@@ -175,6 +175,24 @@
         return this.node().subnodes()
     }
 
+    syncCssFromNode () {
+        const node = this.node()
+
+        if (node && node.cssVariableDict) {
+            const dict = node.cssVariableDict()
+            if (dict) {
+                const el = this.element()
+
+                Object.keys(dict).forEach(k => {
+                    const v = dict[k];
+                    //el.style.setProperty('--example-variable', v);
+                    el.style.setProperty(k, v);
+                })
+            }
+        }
+        return this
+    }
+
     syncFromNode () {
         let subnodesDidChange = false
         // override this method if the view manages it's own subviews
@@ -236,6 +254,8 @@
         }
 
         this.subviews().forEach(subview => subview.syncFromNodeNow())
+
+        //this.syncCssFromNode()
 
         return subnodesDidChange
     }

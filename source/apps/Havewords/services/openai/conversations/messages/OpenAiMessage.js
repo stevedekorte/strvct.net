@@ -252,12 +252,12 @@
     //this.setRequest(null)
     //this.setStatus("complete")
   }
-
-  onStreamData(request, newContent) {
+  
+  onStreamData (request, newContent) {
     this.setContent(request.fullContent())
   }
-
-  onStreamComplete(request) {
+  
+  onStreamComplete (request) {
     this.conversation().newMessage().setRole("user")
   }
 
@@ -265,5 +265,12 @@
     this.sendInConversation()
   }
 
+  cssVariableDict () {
+    return {
+      //"background-color": "var(--body-background-color)",
+      //"color": "var(--body-color)",
+      //"--body-background-color": "inherit"
+    }
+  }
 
 }.initThisClass());

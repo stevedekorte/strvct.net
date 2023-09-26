@@ -246,12 +246,22 @@
     this.setNodeSubtitleIsChildrenSummary(true);
   }
 
+  raceNameOptions () {
+    return this.thisPrototype().slotNamed("race").validValues().map(dict => dict.label)
+  }
+
   description () {
     return this.levelName() + " " + this.race() + " " + this.class()
   }
 
   levelName () {
     return this.level().withOrdinalIndicator() + " level"
+  }
+
+  jsonArchive () {
+    const json = super.jsonArchive()
+    delete json.portrait; // as we don't what the AI to see the image data when we share the character sheet json with it
+    return json
   }
 
 }.initThisClass());

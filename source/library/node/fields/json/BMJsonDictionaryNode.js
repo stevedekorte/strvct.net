@@ -14,6 +14,10 @@
     }
 
     initPrototypeSlots () {
+        {
+            const slot = this.newSlot("shouldMerge", true)
+        }
+
         this.setNodeCanEditTitle(true)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true)
@@ -37,12 +41,17 @@
         assert(Type.isDictionary(json));
 
         json.ownForEachKV((k, v) => {
-            const aNode = this.thisClass().nodeForJson(v)
-            aNode.setTitle(k)
-            if (aNode.setKey) {
-                aNode.setKey(k)
+            const sn = this.firstSubnodeWithTitle(k) // do this if we want to merge
+            if (this.shouldMerge() && sn) {
+                sn.setJson(v)
+            } else {
+                const aNode = this.thisClass().nodeForJson(v)
+                aNode.setTitle(k)
+                if (aNode.setKey) {
+                    aNode.setKey(k)
+                }
+                this.addSubnode(aNode)
             }
-            this.addSubnode(aNode)
         })
         return this
     }

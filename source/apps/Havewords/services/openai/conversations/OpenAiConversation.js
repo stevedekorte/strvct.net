@@ -84,4 +84,10 @@
     return this
   } 
 
+  onUpdateMessage (aMsg) {
+    // sent for things like streaming updates
+    // can be useful for sharing the changes with other clients
+  }
+
+
 }.initThisClass());
