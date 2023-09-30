@@ -67,7 +67,7 @@
     //debugger;
     if (!this.apiKey()) {
       console.warn(this.type() + " " + this.title() + " asyncCheckAvailability() - no api key");
-      debugger;
+      //debugger;
       return null
     }
 

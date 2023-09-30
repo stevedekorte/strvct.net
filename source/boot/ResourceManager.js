@@ -22,6 +22,7 @@
 // A single function to access globals that works
 // in the browser (which uses 'window') and on node.js (which uses 'global')
 
+
 function getGlobalThis () {
 	const isDef = function (v) {
 		return typeof(v) !== "undefined"
@@ -300,7 +301,7 @@ class UrlResource {
 
     promiseLoadUnzipIfNeeded () {
         if (!getGlobalThis().pako) {
-            return UrlResource.clone().setPath("source/boot/pako.js").promiseLoadAndEval()
+            return UrlResource.clone().setPath(ResourceManager.bootPath() + "/pako.js").promiseLoadAndEval()
         }
         return Promise.resolve()
     }
@@ -309,6 +310,10 @@ class UrlResource {
 // ------------------------------------------------------------------------
 
 class ResourceManager {
+
+    static bootPath () {
+        return "strvct/source/boot/"
+    }
 
     static shared () {
         if (!Object.hasOwn(this, "_shared")) {
@@ -525,11 +530,11 @@ class ResourceManager {
 
 const urls = [
     //"source/boot/getGlobalThis.js",
-    "source/boot/Base.js",
-    "source/boot/IndexedDBFolder.js",
-    "source/boot/IndexedDBTx.js",
-    "source/boot/HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
-    //"source/boot/pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
+    ResourceManager.bootPath() + "Base.js",
+    ResourceManager.bootPath() + "IndexedDBFolder.js",
+    ResourceManager.bootPath() + "IndexedDBTx.js",
+    ResourceManager.bootPath() + "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
+    //ResourceManager.bootPath() + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
 ]
 
 /*
