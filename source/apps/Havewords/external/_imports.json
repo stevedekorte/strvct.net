@@ -1,5 +1,4 @@
 [
-    "json-stable-stringify/json-stable-stringify.js",
     "peerjs/peerjs1.3.2.min.js",
     "purify/purify2.3.3.min.js"
 ]

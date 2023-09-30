@@ -1445,11 +1445,6 @@
     "hash": "lLqYuvH77bUuw5duK3GtV2EBhqtpFwz/+46L/bDCdTE="
   },
   {
-    "path": "source/apps/Havewords/external/json-stable-stringify/json-stable-stringify.js",
-    "size": 2866,
-    "hash": "3CGqYuwogK/Q2izHtuGBbmUTd7PcpNScKOJ/1HPkYxo="
-  },
-  {
     "path": "source/apps/Havewords/external/peerjs/peerjs1.3.2.min.js",
     "size": 318553,
     "hash": "O/Lquv6x31SkIS3e8FcKfFlDI1edkGMe7iilEInk1zM="
