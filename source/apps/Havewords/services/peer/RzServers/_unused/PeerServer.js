@@ -68,13 +68,13 @@
     return this;
   }
 
-  async onOpen(peerId) {
+  async onOpen (peerId) {
     this.setPeerId(peerId)
     this.debugLog("open with peerId: '" + peerId + "'");
     this.delegate().onPeerServerOpen()
   }
   
-  addPeerConnection(pc) {
+  addPeerConnection (pc) {
     pc.setServer(this)
     this.peerConnections().set(pc.id(), pc);
     return this;
@@ -169,20 +169,20 @@
     }
   }
 
-  connectToPeerId(peerId) {
+  connectToPeerId (peerId) {
     const conn = this.peer().connect(peerId);
     const pc = PeerConnection.clone().setConn(conn)
     this.addPeerConnection(pc);
     return pc
   }
 
-  broadcast(json) {
+  broadcast (json) {
     this.peerConnections().forEachKV((id, peerConnection) => {
       peerConnection.send(json)
     });
   }
 
-  broadcastExceptTo(json, excludeId) {
+  broadcastExceptTo (json, excludeId) {
     this.peerConnections().forEachKV((guestId, peerConnection) => {
         if (peerConnection.peerId() !== excludeId) {
           peerConnection.send(json);

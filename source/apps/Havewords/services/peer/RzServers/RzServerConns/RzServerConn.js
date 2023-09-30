@@ -230,7 +230,6 @@
     }
   }
 
-
   disconnect () {
     if (this.peer()) {
       this.setStatus("disconnecting")
@@ -357,7 +356,7 @@
     this.debugLog("opened with peerId: '" + peerId + "'");
     this.setStatus("connected to server")
     this.refreshPeers()
-    this.sendDelegateMessage("onPeerServerOpen")
+    this.sendDelegateMessage("onPeerServerOpen", [this])
   }
 
   // --- incoming peer connections ---

@@ -47,6 +47,31 @@
       slot.setCanEditInspection(false)
     }
 
+    {
+      const slot = this.newSlot("serverConnection", true);
+      //slot.setInspectorPath("")
+      slot.setLabel("server connection");
+      slot.setShouldStoreSlot(true);
+      //slot.setFinalInitProto(HwPlayers);
+      //slot.setIsSubnode(true);
+    }
+
+  }
+
+  connectToServer () {
+    const rzServer = PeerService.shared().servers().first();
+    const serverConn = rzServer.serverConns().add();
+    serverConn.setDelegate(this);
+    this.setServerConnection(serverConn);
+    serverConn.connect();
+  }
+
+  onPeerServerOpen (serverConn) {
+    console.log(this.type() + " onPeerServerOpen")
+  }
+
+  onPeerConnection (peerConn) {
+    console.log(this.type() + " onPeerConnection")
   }
 
   init () {

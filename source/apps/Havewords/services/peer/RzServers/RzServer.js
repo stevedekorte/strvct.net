@@ -60,7 +60,6 @@
       slot.setSummaryFormat("value")
     }
 
-
     {
       const slot = this.newSlot("isSecure", true);      
       slot.setInspectorPath("info")

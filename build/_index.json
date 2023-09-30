@@ -1425,22 +1425,22 @@
     "hash": "BIoBIa14nIFcS/ND6nYBxse+WNrv6O8SOFlmfbgstsA="
   },
   {
-    "path": "source/apps/shared/BMSettingsNode.js",
+    "path": "source/library/app/BMSettingsNode.js",
     "size": 1670,
     "hash": "tCFm580KxGLjB50INEoOmhqDA90zvC98deahejeRss8="
   },
   {
-    "path": "source/apps/shared/BreadCrumbsNode.js",
+    "path": "source/library/app/BreadCrumbsNode.js",
     "size": 773,
     "hash": "YEuE0gPm361Eq3IK1qFVYf8KA4fyRPldsbvzF73rLBI="
   },
   {
-    "path": "source/apps/shared/HeaderNode.js",
+    "path": "source/library/app/HeaderNode.js",
     "size": 2527,
     "hash": "IHofhS3rNGMun4H8idUvdcS534IDOrJHvGvNPQpoZBc="
   },
   {
-    "path": "source/apps/shared/RootContentNode.js",
+    "path": "source/library/app/RootContentNode.js",
     "size": 1236,
     "hash": "lLqYuvH77bUuw5duK3GtV2EBhqtpFwz/+46L/bDCdTE="
   },
@@ -1616,8 +1616,8 @@
   },
   {
     "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzServerConn.js",
-    "size": 15801,
-    "hash": "cBpxCUBMXlIj2aYQgS7Jtyv4zfJkm4IWvK0xIVGDfms="
+    "size": 15808,
+    "hash": "PWCVie5vfPym9iCi/CSDTKqf8eRiTlswhmCPUOUQXE0="
   },
   {
     "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzServerConns.js",
@@ -1636,8 +1636,8 @@
   },
   {
     "path": "source/apps/Havewords/services/peer/RzServers/RzServer.js",
-    "size": 4157,
-    "hash": "spFTMVoxALuKNDTDDV5UjlAzdcW+eZrp4d2EVFXRhJ0="
+    "size": 4156,
+    "hash": "+1pI9UsWN5JlGm0xY5I8m7GolRPF3lYj4elzD8SDmyA="
   },
   {
     "path": "source/apps/Havewords/services/peer/RzServers/RzServers.js",
@@ -1661,8 +1661,8 @@
   },
   {
     "path": "source/apps/Havewords/services/peer/PeerService.js",
-    "size": 702,
-    "hash": "Z5813YdH3HMqB43TS9yCVr6k0HRBNQC+LPWdBOTcBoI="
+    "size": 780,
+    "hash": "8Fg/q3EUgoFs8fGAi3HZsrRGE1I9f9zy3zzAjn1B9Pc="
   },
   {
     "path": "source/apps/Havewords/services/SpeechToText/SttMessages/SttMessage.js",
@@ -1706,8 +1706,8 @@
   },
   {
     "path": "source/apps/Havewords/sessions/session/Players/HwPlayer.js",
-    "size": 2227,
-    "hash": "M+a5ihSMLXW0S1klcfi+J/WVZ9rj+jqRy0DP6Ft9P/A="
+    "size": 2234,
+    "hash": "DPEdeQiKqED9n+dB33dX/UhEIR1bQYZpXOTXCHb8evU="
   },
   {
     "path": "source/apps/Havewords/sessions/session/Players/HwPlayers.js",
@@ -1741,8 +1741,8 @@
   },
   {
     "path": "source/apps/Havewords/sessions/session/HwSession.js",
-    "size": 2099,
-    "hash": "Oyh2uLW1/+SFQs2qZYGq/RUS11+bje2BsGkTejvflOM="
+    "size": 2782,
+    "hash": "CkVdVzaD4VqKoE3jl53ufVZmGnRs+AjEL3QPuxMbqBI="
   },
   {
     "path": "source/apps/Havewords/sessions/HwSessions.js",

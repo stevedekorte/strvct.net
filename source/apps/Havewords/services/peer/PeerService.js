@@ -6,6 +6,12 @@
 */
 
 (class PeerService extends BMSummaryNode {
+  
+  static initClass () {
+    this.setIsSingleton(true)
+    return this
+  }
+
   initPrototypeSlots () {
 
     {

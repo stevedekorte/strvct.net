@@ -37,7 +37,7 @@
     {
       const slot = this.newSlot("kickAction", null);
       slot.setInspectorPath("");
-      slot.setLabel("Kick");
+      slot.setLabel("Kick Player");
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
