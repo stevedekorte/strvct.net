@@ -230,6 +230,11 @@
     "hash": "wk6jGzNBXBNDW4NytOLQEKXJgKwvAxSDGPdVLFd6OqU="
   },
   {
+    "path": "source/library/ideal/networking/HttpResponseCodes.js",
+    "size": 5641,
+    "hash": "eVrSJwHkarQYUoucifQJ2TVFxLjK/NCIuZzhhxoEl7A="
+  },
+  {
     "path": "source/library/notification/SyncAction.js",
     "size": 1580,
     "hash": "Gby43PQyVBY+vRmf70GvH+WBjNpb87djgEeV6rzpmjQ="
@@ -1748,11 +1753,6 @@
     "path": "source/apps/Havewords/helpers/helpers.js",
     "size": 10185,
     "hash": "63HXPHJOr6njcZk4gqZ74vf0m2i2NcTbELpdGKaQ0/s="
-  },
-  {
-    "path": "source/apps/Havewords/helpers/HttpResponseCodes.js",
-    "size": 5641,
-    "hash": "eVrSJwHkarQYUoucifQJ2TVFxLjK/NCIuZzhhxoEl7A="
   },
   {
     "path": "source/apps/Havewords/characters/JsonGroup.js",
