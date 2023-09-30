@@ -1,6 +1,6 @@
 [
-    "external/_imports.json",
-    "services/_imports.json",
+    "resources/_imports.json",
+    "external-libs/_imports.json",
     "sessions/_imports.json",
     "helpers/_imports.json",
     "characters/_imports.json",

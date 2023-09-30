@@ -2,11 +2,11 @@
 
 /*
 
-    HwServices
+    Services
 
 */
 
-(class HwServices extends BMSummaryNode {
+(class Services extends BMSummaryNode {
     
     initPrototypeSlots () {
         {
@@ -16,7 +16,6 @@
             slot.setIsSubnode(true);
         }
 
-        
         {
             const slot = this.newSlot("midjourneyService", null)
             slot.setShouldStoreSlot(true);
@@ -51,7 +50,6 @@
             slot.setFinalInitProto(SpeechToTextSessions);
             slot.setIsSubnode(true);
         }
-        
     }
 
     init () {

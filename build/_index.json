@@ -1430,6 +1430,236 @@
     "hash": "BIoBIa14nIFcS/ND6nYBxse+WNrv6O8SOFlmfbgstsA="
   },
   {
+    "path": "source/library/services/Job.js",
+    "size": 3897,
+    "hash": "n22Ewgjcayuq7COUcCcYxAjw1qzYpUCyhiR9P/8Alnw="
+  },
+  {
+    "path": "source/library/services/Jobs.js",
+    "size": 747,
+    "hash": "b42Pfv3SbOyJA5ftUV3S0PAv/qvQcm73148TwSgEuA0="
+  },
+  {
+    "path": "source/library/services/OpenAI/models/OpenAiChatModel.js",
+    "size": 2688,
+    "hash": "a21+AIlcgHqGeydYMRhRqKf2hX43w+NuhRFzxXWLXpI="
+  },
+  {
+    "path": "source/library/services/OpenAI/models/OpenAiModels.js",
+    "size": 1625,
+    "hash": "diWJFyhz/Lt2UVo7bd636hEcxLNq+lJCulPVYcHhz24="
+  },
+  {
+    "path": "source/library/services/OpenAI/conversations/messages/OpenAiMessage.js",
+    "size": 6380,
+    "hash": "7wIywy9gS7gje8zQQ1GLtEV6PGeB/Y3v1Qkl4QBhgUk="
+  },
+  {
+    "path": "source/library/services/OpenAI/conversations/OpenAiConversation.js",
+    "size": 1756,
+    "hash": "nUSyu4DlWLagwtDVkVFr8bfdLdqwUUoVmzKos7H+n9Y="
+  },
+  {
+    "path": "source/library/services/OpenAI/conversations/OpenAiConversations.js",
+    "size": 677,
+    "hash": "vXriCLl9TpmLHi4JnSr0LuHkRx9Q06vpJW0SBc1IJCY="
+  },
+  {
+    "path": "source/library/services/OpenAI/jobs/OpenAiJobs.js",
+    "size": 518,
+    "hash": "gkxN3yvSZoJdYUfbJndXMXsu6h9wSX0nYbRSuX09E4c="
+  },
+  {
+    "path": "source/library/services/OpenAI/jobs/OpenAiJob.js",
+    "size": 513,
+    "hash": "+5ROTmILP/T0hUCcG5yaqvzA3EExHPZ0QFldJwIMSck="
+  },
+  {
+    "path": "source/library/services/OpenAI/OpenAiRequest.js",
+    "size": 13307,
+    "hash": "cUKCI+ZIC/fR1O0KLhqWKs33bec9NvMS3TNfk6x6ask="
+  },
+  {
+    "path": "source/library/services/OpenAI/OpenAiService.js",
+    "size": 1263,
+    "hash": "2lbIxpxmtmjh4TFrryKnJn27kFa65SYwMfSvRSCj0R4="
+  },
+  {
+    "path": "source/library/services/Midjourney/MJImageJob.js",
+    "size": 13523,
+    "hash": "kzGDzuV7yRB0JPpaKyG7WnIMakO5/jAaqC4wbacxThc="
+  },
+  {
+    "path": "source/library/services/Midjourney/MJImageJobs.js",
+    "size": 510,
+    "hash": "dole0C//vTLCn6k5hGIvP+WUJmqw/EW/W/mlZtLDPEA="
+  },
+  {
+    "path": "source/library/services/Midjourney/MJRequest.js",
+    "size": 6072,
+    "hash": "2dbxP40JveaXSxOHrpWo515+FpKkGVdqnJKHXF0JY+U="
+  },
+  {
+    "path": "source/library/services/Midjourney/MJService.js",
+    "size": 2072,
+    "hash": "8i2gmT/uVHsO7XsdpRsvpsjMmCyk8AU+vkS2vkD0XIs="
+  },
+  {
+    "path": "source/library/services/Azure/speakers/requests/AzureTtsRequests.js",
+    "size": 610,
+    "hash": "Pt0JyM1OfSmFaS2JUhrD0E/M9mGo2vRmUpDv+v3NksE="
+  },
+  {
+    "path": "source/library/services/Azure/speakers/requests/AzureTtsRequest.js",
+    "size": 4716,
+    "hash": "jGw1yJly0e1F1qS2J5HgHlT3rIGM2NsvUHXkBUkG72Y="
+  },
+  {
+    "path": "source/library/services/Azure/speakers/AzureSpeaker.js",
+    "size": 9814,
+    "hash": "R6skou5+hEnh08cK5qxFjO6OxRuiY9aR+kkXf1xfOlE="
+  },
+  {
+    "path": "source/library/services/Azure/speakers/AzureSpeakers.js",
+    "size": 534,
+    "hash": "Zf7tMLpCg1v7yx+2DWd6HI96IYjtLrD3e7RTkQ0VKr8="
+  },
+  {
+    "path": "source/library/services/Azure/voices/AzureVoice.js",
+    "size": 3080,
+    "hash": "qKL9TefNM0QxMEO9wKKXDDKmR7hBnB5vgIBcGhK01zg="
+  },
+  {
+    "path": "source/library/services/Azure/voices/AzureVoices.js",
+    "size": 197911,
+    "hash": "tQT0LkLY39LCgu9djKYLtI56+9lgFijceBNYSqkkHW4="
+  },
+  {
+    "path": "source/library/services/Azure/AzureService.js",
+    "size": 2784,
+    "hash": "9Y0OxTRv5KB11dV94OILPTD3SEK5SfaJd3soomLfslI="
+  },
+  {
+    "path": "source/library/services/YouTube/MusicLibrary.js",
+    "size": 19644,
+    "hash": "d//Eq1OqSNERiHr/9OySEk8CwW3uu8e1WDdTotvCJ/g="
+  },
+  {
+    "path": "source/library/services/YouTube/MusicPlayer.js",
+    "size": 2310,
+    "hash": "RITNU2xBwKozVLiXum06r1tMmjBhUAqqv9Z/LKmvkZ8="
+  },
+  {
+    "path": "source/library/services/YouTube/YouTubeAudioPlayer.js",
+    "size": 8986,
+    "hash": "6083uZuNlPgvSsw9455xLiCDf0KgsZV2dJBYeAm1VKs="
+  },
+  {
+    "path": "source/library/services/YouTube/YouTubeService.js",
+    "size": 877,
+    "hash": "GzXF0/ttF7u7d2tlBROeaVvzb9gJ3W7KphUwDa0Uk4I="
+  },
+  {
+    "path": "source/library/services/Peer/external-libs/peerjs/peerjs1.3.2.min.js",
+    "size": 318553,
+    "hash": "O/Lquv6x31SkIS3e8FcKfFlDI1edkGMe7iilEInk1zM="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerConns/RzPeerConns/RzMsgs/RzMsg.js",
+    "size": 2807,
+    "hash": "jszrE3K+RxXS3BqPWIMTEuIOzttHLpuep7dFbeEPecM="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerConns/RzPeerConns/RzMsgs/RzMsgs.js",
+    "size": 505,
+    "hash": "gpbN6y84Iq2GoKCAHAha4pv/MhTb7BImttU1w6v2YJI="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerConns/RzPeerConns/RzPeerConn.js",
+    "size": 5444,
+    "hash": "uqQB7K0pjFrzcM685KoJyGQNRdFmBSE2/e8lpmfwA2Y="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerConns/RzPeerConns/RzPeerConns.js",
+    "size": 796,
+    "hash": "o2dcRxzsRU3m378cJdmRJCrAwNHbuZFMl88r2t5yiUA="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerConns/RzServerConn.js",
+    "size": 15808,
+    "hash": "PWCVie5vfPym9iCi/CSDTKqf8eRiTlswhmCPUOUQXE0="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerConns/RzServerConns.js",
+    "size": 530,
+    "hash": "ij9aqlCdQH1Ht2ZSlt7jjAk+myqRIAWlRS0eTNSourc="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzPeer.js",
+    "size": 837,
+    "hash": "X5fpcSm3+DN8sb+3DFdBdDK9Qe1nGG2WVRLIvQq8OQg="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServerPeers.js",
+    "size": 910,
+    "hash": "52uJ7eOPhChzhBkq4c5/JKi641oQAXBeISIKhZvsz8o="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServer.js",
+    "size": 4156,
+    "hash": "+1pI9UsWN5JlGm0xY5I8m7GolRPF3lYj4elzD8SDmyA="
+  },
+  {
+    "path": "source/library/services/Peer/RzServers/RzServers.js",
+    "size": 598,
+    "hash": "zN36aKN+tWd3OaGqiUWz8Ix5Q+JgoMcyrzkdVOJEshM="
+  },
+  {
+    "path": "source/library/services/Peer/PeerConnections/PeerConnection.js",
+    "size": 2526,
+    "hash": "Syu9ZSf/DewvqW+W9wWvRYEKlhu+8HUHQ0sKf171bu0="
+  },
+  {
+    "path": "source/library/services/Peer/PeerConnections/GuestConnection.js",
+    "size": 4942,
+    "hash": "3WF/6XdgmrN2+BBMGjxAt5c/kinfOQ60/YofPFxZIe4="
+  },
+  {
+    "path": "source/library/services/Peer/PeerConnections/PeerConnections.js",
+    "size": 576,
+    "hash": "m3RT1CHEi9ofHvTfALLyl0R7c5wSgnwj3J9ufDD7MRA="
+  },
+  {
+    "path": "source/library/services/Peer/PeerService.js",
+    "size": 780,
+    "hash": "8Fg/q3EUgoFs8fGAi3HZsrRGE1I9f9zy3zzAjn1B9Pc="
+  },
+  {
+    "path": "source/library/services/SpeechToText/SttMessages/SttMessage.js",
+    "size": 866,
+    "hash": "BnR4G1xJFgpAGLTN0eLkFXBnVqhXqBbjk0E5xJAxtk4="
+  },
+  {
+    "path": "source/library/services/SpeechToText/SttMessages/SttMessages.js",
+    "size": 519,
+    "hash": "96/jygKmwIG5QgUPdC3e8qIOKxFSMljOVBhnP/nkZGI="
+  },
+  {
+    "path": "source/library/services/SpeechToText/SpeechToTextSession.js",
+    "size": 10183,
+    "hash": "IcPH9nDU+icBuFUsTV89DVz5C8GE1HqhGsSZMeuXKzM="
+  },
+  {
+    "path": "source/library/services/SpeechToText/SpeechToTextSessions.js",
+    "size": 678,
+    "hash": "qe7Vvi/ln2bKsb9QVCWlod+Oju0x1BVD+s8LOisLbxU="
+  },
+  {
+    "path": "source/library/services/Services.js",
+    "size": 1645,
+    "hash": "kKIYsVvfm52sJx6/FVBma9Yg/pKwT8Jve1khH6/7yFc="
+  },
+  {
     "path": "source/library/app/BMSettingsNode.js",
     "size": 1670,
     "hash": "tCFm580KxGLjB50INEoOmhqDA90zvC98deahejeRss8="
@@ -1450,244 +1680,44 @@
     "hash": "lLqYuvH77bUuw5duK3GtV2EBhqtpFwz/+46L/bDCdTE="
   },
   {
-    "path": "source/apps/Havewords/external/peerjs/peerjs1.3.2.min.js",
-    "size": 318553,
-    "hash": "O/Lquv6x31SkIS3e8FcKfFlDI1edkGMe7iilEInk1zM="
+    "path": "source/apps/Havewords/resources/icons/Carret Left.svg",
+    "size": 261,
+    "hash": "VLVturgFGcYNmR8z3fXFG1UaNds/uewokxITVJD3ufs="
   },
   {
-    "path": "source/apps/Havewords/external/purify/purify2.3.3.min.js",
+    "path": "source/apps/Havewords/resources/icons/Carret Right.svg",
+    "size": 591,
+    "hash": "iY1XYVE+LWxMTUS8Gm8sAz6n1Y88BQy+tIWBC1ISAjY="
+  },
+  {
+    "path": "source/apps/Havewords/resources/icons/Image Placeholder.svg",
+    "size": 261,
+    "hash": "wokPQUl9FzhPZR6Rvex6cDxoAw3wI+B3pKX95gKUmVc="
+  },
+  {
+    "path": "source/apps/Havewords/resources/icons/Mic Off.svg",
+    "size": 1677,
+    "hash": "YP3KQjUfX8j0wMjJvgrbwP1DT7Vrtgghq/spGmj/MQk="
+  },
+  {
+    "path": "source/apps/Havewords/resources/icons/Mic On.svg",
+    "size": 1229,
+    "hash": "wM8RKDHUX3+bV9iV0hc9byl/2d/mOrU+rZ0Q5V/R/hU="
+  },
+  {
+    "path": "source/apps/Havewords/resources/images/avatars/Avatar AI.png",
+    "size": 287016,
+    "hash": "K+znR6KbK06zd4ebJr5KUwgEHpD39bwv+J9fnfi+GKE="
+  },
+  {
+    "path": "source/apps/Havewords/resources/images/avatars/Avatar Default.png",
+    "size": 11929,
+    "hash": "ln2VacTi7tlpXfHM7csjxtzBnyjd5Ixg/29TaXmdjrg="
+  },
+  {
+    "path": "source/apps/Havewords/external-libs/purify/purify2.3.3.min.js",
     "size": 18570,
     "hash": "oSylcnNnVAq6xN6tZNYTELCNhlvz0BNgk5NN+86f0Vk="
-  },
-  {
-    "path": "source/apps/Havewords/services/Job.js",
-    "size": 3897,
-    "hash": "n22Ewgjcayuq7COUcCcYxAjw1qzYpUCyhiR9P/8Alnw="
-  },
-  {
-    "path": "source/apps/Havewords/services/Jobs.js",
-    "size": 747,
-    "hash": "b42Pfv3SbOyJA5ftUV3S0PAv/qvQcm73148TwSgEuA0="
-  },
-  {
-    "path": "source/apps/Havewords/services/Services.js",
-    "size": 828,
-    "hash": "/PvS/YFJVJ0gTAx2beAR6qvrKB9X88xb7uA+RUtppjk="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/models/OpenAiChatModel.js",
-    "size": 2688,
-    "hash": "a21+AIlcgHqGeydYMRhRqKf2hX43w+NuhRFzxXWLXpI="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/models/OpenAiModels.js",
-    "size": 1625,
-    "hash": "diWJFyhz/Lt2UVo7bd636hEcxLNq+lJCulPVYcHhz24="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/conversations/messages/OpenAiMessage.js",
-    "size": 6380,
-    "hash": "7wIywy9gS7gje8zQQ1GLtEV6PGeB/Y3v1Qkl4QBhgUk="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversation.js",
-    "size": 1756,
-    "hash": "nUSyu4DlWLagwtDVkVFr8bfdLdqwUUoVmzKos7H+n9Y="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/conversations/OpenAiConversations.js",
-    "size": 677,
-    "hash": "vXriCLl9TpmLHi4JnSr0LuHkRx9Q06vpJW0SBc1IJCY="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/jobs/OpenAiJobs.js",
-    "size": 518,
-    "hash": "gkxN3yvSZoJdYUfbJndXMXsu6h9wSX0nYbRSuX09E4c="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/jobs/OpenAiJob.js",
-    "size": 513,
-    "hash": "+5ROTmILP/T0hUCcG5yaqvzA3EExHPZ0QFldJwIMSck="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/OpenAiRequest.js",
-    "size": 13307,
-    "hash": "cUKCI+ZIC/fR1O0KLhqWKs33bec9NvMS3TNfk6x6ask="
-  },
-  {
-    "path": "source/apps/Havewords/services/openai/OpenAiService.js",
-    "size": 1263,
-    "hash": "2lbIxpxmtmjh4TFrryKnJn27kFa65SYwMfSvRSCj0R4="
-  },
-  {
-    "path": "source/apps/Havewords/services/midjourney/MJImageJob.js",
-    "size": 13523,
-    "hash": "kzGDzuV7yRB0JPpaKyG7WnIMakO5/jAaqC4wbacxThc="
-  },
-  {
-    "path": "source/apps/Havewords/services/midjourney/MJImageJobs.js",
-    "size": 510,
-    "hash": "dole0C//vTLCn6k5hGIvP+WUJmqw/EW/W/mlZtLDPEA="
-  },
-  {
-    "path": "source/apps/Havewords/services/midjourney/MJRequest.js",
-    "size": 6072,
-    "hash": "2dbxP40JveaXSxOHrpWo515+FpKkGVdqnJKHXF0JY+U="
-  },
-  {
-    "path": "source/apps/Havewords/services/midjourney/MJService.js",
-    "size": 2072,
-    "hash": "8i2gmT/uVHsO7XsdpRsvpsjMmCyk8AU+vkS2vkD0XIs="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/speakers/requests/AzureTtsRequests.js",
-    "size": 610,
-    "hash": "Pt0JyM1OfSmFaS2JUhrD0E/M9mGo2vRmUpDv+v3NksE="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/speakers/requests/AzureTtsRequest.js",
-    "size": 4716,
-    "hash": "jGw1yJly0e1F1qS2J5HgHlT3rIGM2NsvUHXkBUkG72Y="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/speakers/AzureSpeaker.js",
-    "size": 9814,
-    "hash": "R6skou5+hEnh08cK5qxFjO6OxRuiY9aR+kkXf1xfOlE="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/speakers/AzureSpeakers.js",
-    "size": 534,
-    "hash": "Zf7tMLpCg1v7yx+2DWd6HI96IYjtLrD3e7RTkQ0VKr8="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/voices/AzureVoice.js",
-    "size": 3080,
-    "hash": "qKL9TefNM0QxMEO9wKKXDDKmR7hBnB5vgIBcGhK01zg="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/voices/AzureVoices.js",
-    "size": 197911,
-    "hash": "tQT0LkLY39LCgu9djKYLtI56+9lgFijceBNYSqkkHW4="
-  },
-  {
-    "path": "source/apps/Havewords/services/azure/AzureService.js",
-    "size": 2784,
-    "hash": "9Y0OxTRv5KB11dV94OILPTD3SEK5SfaJd3soomLfslI="
-  },
-  {
-    "path": "source/apps/Havewords/services/youtube/MusicLibrary.js",
-    "size": 19644,
-    "hash": "d//Eq1OqSNERiHr/9OySEk8CwW3uu8e1WDdTotvCJ/g="
-  },
-  {
-    "path": "source/apps/Havewords/services/youtube/MusicPlayer.js",
-    "size": 2310,
-    "hash": "RITNU2xBwKozVLiXum06r1tMmjBhUAqqv9Z/LKmvkZ8="
-  },
-  {
-    "path": "source/apps/Havewords/services/youtube/YouTubeAudioPlayer.js",
-    "size": 8986,
-    "hash": "6083uZuNlPgvSsw9455xLiCDf0KgsZV2dJBYeAm1VKs="
-  },
-  {
-    "path": "source/apps/Havewords/services/youtube/YouTubeService.js",
-    "size": 877,
-    "hash": "GzXF0/ttF7u7d2tlBROeaVvzb9gJ3W7KphUwDa0Uk4I="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzPeerConns/RzMsgs/RzMsg.js",
-    "size": 2807,
-    "hash": "jszrE3K+RxXS3BqPWIMTEuIOzttHLpuep7dFbeEPecM="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzPeerConns/RzMsgs/RzMsgs.js",
-    "size": 505,
-    "hash": "gpbN6y84Iq2GoKCAHAha4pv/MhTb7BImttU1w6v2YJI="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzPeerConns/RzPeerConn.js",
-    "size": 5444,
-    "hash": "uqQB7K0pjFrzcM685KoJyGQNRdFmBSE2/e8lpmfwA2Y="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzPeerConns/RzPeerConns.js",
-    "size": 796,
-    "hash": "o2dcRxzsRU3m378cJdmRJCrAwNHbuZFMl88r2t5yiUA="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzServerConn.js",
-    "size": 15808,
-    "hash": "PWCVie5vfPym9iCi/CSDTKqf8eRiTlswhmCPUOUQXE0="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerConns/RzServerConns.js",
-    "size": 530,
-    "hash": "ij9aqlCdQH1Ht2ZSlt7jjAk+myqRIAWlRS0eTNSourc="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzPeer.js",
-    "size": 837,
-    "hash": "X5fpcSm3+DN8sb+3DFdBdDK9Qe1nGG2WVRLIvQq8OQg="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServerPeers.js",
-    "size": 910,
-    "hash": "52uJ7eOPhChzhBkq4c5/JKi641oQAXBeISIKhZvsz8o="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServer.js",
-    "size": 4156,
-    "hash": "+1pI9UsWN5JlGm0xY5I8m7GolRPF3lYj4elzD8SDmyA="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/RzServers/RzServers.js",
-    "size": 598,
-    "hash": "zN36aKN+tWd3OaGqiUWz8Ix5Q+JgoMcyrzkdVOJEshM="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/PeerConnections/PeerConnection.js",
-    "size": 2526,
-    "hash": "Syu9ZSf/DewvqW+W9wWvRYEKlhu+8HUHQ0sKf171bu0="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/PeerConnections/GuestConnection.js",
-    "size": 4942,
-    "hash": "3WF/6XdgmrN2+BBMGjxAt5c/kinfOQ60/YofPFxZIe4="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/PeerConnections/PeerConnections.js",
-    "size": 576,
-    "hash": "m3RT1CHEi9ofHvTfALLyl0R7c5wSgnwj3J9ufDD7MRA="
-  },
-  {
-    "path": "source/apps/Havewords/services/peer/PeerService.js",
-    "size": 780,
-    "hash": "8Fg/q3EUgoFs8fGAi3HZsrRGE1I9f9zy3zzAjn1B9Pc="
-  },
-  {
-    "path": "source/apps/Havewords/services/SpeechToText/SttMessages/SttMessage.js",
-    "size": 866,
-    "hash": "BnR4G1xJFgpAGLTN0eLkFXBnVqhXqBbjk0E5xJAxtk4="
-  },
-  {
-    "path": "source/apps/Havewords/services/SpeechToText/SttMessages/SttMessages.js",
-    "size": 519,
-    "hash": "96/jygKmwIG5QgUPdC3e8qIOKxFSMljOVBhnP/nkZGI="
-  },
-  {
-    "path": "source/apps/Havewords/services/SpeechToText/SpeechToTextSession.js",
-    "size": 10183,
-    "hash": "IcPH9nDU+icBuFUsTV89DVz5C8GE1HqhGsSZMeuXKzM="
-  },
-  {
-    "path": "source/apps/Havewords/services/SpeechToText/SpeechToTextSessions.js",
-    "size": 678,
-    "hash": "qe7Vvi/ln2bKsb9QVCWlod+Oju0x1BVD+s8LOisLbxU="
-  },
-  {
-    "path": "source/apps/Havewords/services/HwServices.js",
-    "size": 1667,
-    "hash": "QsS8cMhFCYtkBODQWnFy5kv0UANdH4oJshOh8YuFV1s="
   },
   {
     "path": "source/apps/Havewords/sessions/session/AiChat/ChatCss.js",
@@ -1750,9 +1780,24 @@
     "hash": "HexJczhhji6jiyq4qlk+rrmxcTRZ6JZG3cw6gDIT/GU="
   },
   {
-    "path": "source/apps/Havewords/helpers/helpers.js",
-    "size": 10185,
-    "hash": "63HXPHJOr6njcZk4gqZ74vf0m2i2NcTbELpdGKaQ0/s="
+    "path": "source/apps/Havewords/helpers/Blob_helpers.js",
+    "size": 518,
+    "hash": "6WwnFVfyGCrgJhRlkjtMH8sl2C4QWdjxso0RaBhdr1I="
+  },
+  {
+    "path": "source/apps/Havewords/helpers/String_base_helpers.js",
+    "size": 3036,
+    "hash": "erDGpb8FzlAF24/3uOpwAhdnRy8CpXnytnP9MF7cfCs="
+  },
+  {
+    "path": "source/apps/Havewords/helpers/String_helpers.js",
+    "size": 1843,
+    "hash": "b8LzfYlA8xe2FxqptxVk7Jb7HkafP+JteAEnOSJBx1w="
+  },
+  {
+    "path": "source/apps/Havewords/helpers/String_html_helpers.js",
+    "size": 4382,
+    "hash": "Krh2fO80HrPcsI1yTwQjgbjPI21m+XpIrVNNSASlMUc="
   },
   {
     "path": "source/apps/Havewords/characters/JsonGroup.js",
@@ -1826,8 +1871,8 @@
   },
   {
     "path": "source/apps/Havewords/HavewordsApp.js",
-    "size": 4303,
-    "hash": "HYJti5CgkmFDx24WizzLdEOMFH73Qt8zWkmCkr1J7s4="
+    "size": 4301,
+    "hash": "xu039jzBGXor6e8xkW873zt+QpUwaY84TdOBvaxFPIA="
   },
   {
     "path": "source/apps/Havewords/_init.js",

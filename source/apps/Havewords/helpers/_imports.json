@@ -1,3 +1,6 @@
 [
-    "helpers.js"
+    "Blob_helpers.js",
+    "String_base_helpers.js",
+    "String_helpers.js",
+    "String_html_helpers.js"
 ]

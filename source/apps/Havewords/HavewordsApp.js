@@ -81,7 +81,7 @@
         const baseNode = this.rootNode().headerNode().breadCrumbsNode()
         baseNode.removeNodeAction("add")
         
-        const services = baseNode.subnodeWithTitleIfAbsentInsertProto("Services", HwServices)
+        const services = baseNode.subnodeWithTitleIfAbsentInsertProto("Services", Services)
         this.setServices(services) // not used yet
 
         const sessions = baseNode.subnodeWithTitleIfAbsentInsertProto("Sessions", HwSessions)
