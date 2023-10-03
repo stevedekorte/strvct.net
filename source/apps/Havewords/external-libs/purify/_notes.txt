@@ -1,1 +1,0 @@
-Used by MessageView to sanitize HTML (often received over network from peers or API services) before displaying it.

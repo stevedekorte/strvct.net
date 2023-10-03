@@ -4,6 +4,16 @@ direct manipulation of structured content
 
 ##Getting started
 
+----
+
+FOR NEW REPOS:
+
+To set up strvct submodule, from within project folder run:
+
+	git submodule add https://github.com/stevedekorte/strvct.net.git strvct
+
+----
+
 Build system is currently setup for VSCode. To open the project, open this root source folder in VSCode.
 
 First, you'll need to start the local HTTPS web server by running:
