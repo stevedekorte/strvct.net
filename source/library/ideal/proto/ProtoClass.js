@@ -156,9 +156,13 @@
         }
         const path = ""
         lines.append(prefix + spacer + this.type() + " " + path + postfix)
+        /*
+        if (this.parentClass()) { // for UML diagram
+            lines.append("[" + this.type() + "] -> [" + this.parentClass().type() + "]")
+        }
+        */
         const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()))
         const subclassLines = sortedSubclasses.map((subclass) => {
-            //return spacer + subclass.subclassesDescription(level + 1, traversed) 
             return subclass.subclassesDescription(level + 1, traversed) 
         })
         lines.appendItems(subclassLines)
@@ -280,6 +284,13 @@
         if (this.hasSlot(slotName)) {
             const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
             console.log(msg)
+
+            // hack to avoid error for methods like Set isSubsetOf, which exist on only on some browsers
+            // so we define ourselves.
+            if(typeof(initialValue) === "function" && this[slotName + "_isOptional"] !== undefined) {
+                return null
+            }
+            debugger
             throw new Error(msg)
         }
         return this.justNewSlot(slotName, initialValue, allowOnInstance)

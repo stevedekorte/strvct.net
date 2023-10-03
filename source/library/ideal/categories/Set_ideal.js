@@ -88,8 +88,16 @@
         return result
     }
 
+    isSubsetOf_isOptional () {
+        // so exception isn't thrown if the browser defines it
+    }
+
     isSubsetOf (superSet) {
         return superSet.isSupersetOf(this);
+    }
+
+    isSupersetOf_isOptional () {
+        // so exception isn't thrown if the browser defines it
     }
 
     isSupersetOf (subset) {
@@ -104,6 +112,10 @@
         }
         return true;
     }
+
+    union_isOptional () {
+        // so exception isn't thrown if the browser defines it
+    }
     
     union (setB) {
         let _union = new Set(this);
@@ -111,6 +123,10 @@
             _union.add(v);
         }
         return _union;
+    }
+
+    intersection_isOptional () {
+        // so exception isn't thrown if the browser defines it
     }
     
     intersection (setB) {
@@ -121,6 +137,10 @@
             }
         }
         return _intersection;
+    }
+
+    symmetricDifference_isOptional () {
+        // so exception isn't thrown if the browser defines it
     }
     
     symmetricDifference (setB) { 
@@ -134,6 +154,10 @@
             }
         }
         return _difference;
+    }
+
+    difference_isOptional () {
+        // so exception isn't thrown if the browser defines it
     }
     
     difference (setB) { // return values in self that are not in setB

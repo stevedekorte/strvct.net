@@ -134,6 +134,7 @@
 
     setup () {
         this.setupDocTheme()
+        //this.addTimeout( () => this.showClasses(), 1)
         return this        
     }
 
@@ -149,8 +150,36 @@
 
         //Documentation.shared().show()
         //this.registerServiceWorker() // not working yet
+        this.waitForFontsToLoad();
     }
 
+    showClasses () {
+        const s = ProtoClass.subclassesDescription()
+        console.log(s)
+    }
+
+
+    // --- fonts ---
+
+    waitForFontsToLoad () {
+        const done = BMResources.shared().fonts().hasLoadedAllFonts();
+        if (done) {
+            this.onAllFontsLoaded()
+            return;
+        }
+        console.log("not done loading fonts");
+        setTimeout(() => {
+            this.waitForFontsToLoad()
+        }, 100);
+    }
+
+    onAllFontsLoaded () {
+        document.body.style.display = "flex";
+        ResourceManager.shared().markPageLoadTime();
+        document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
+        console.log("done loading fonts!");
+    }
+        
     // window and document 
 
     mainWindow () {
@@ -178,16 +207,33 @@
         console.log("Application '" + this.name() + "' version " + this.versionsString())
     }
 
-    // document theme
+    // themes - temporary, until ThemesResources is ready
 
     setupDocTheme () {
-        //const doc = DocumentBody.shared()
-        const doc = this.documentBodyView()
+        const doc = DocumentBody.shared()
+        doc.setHeight("100%") // trying to fix body not fitting window
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
-        this.setupNormalTheme()
+        this.setupNormalDocTheme()
+        //this.setupVectorTheme()
+        //this.setupBlenderProTheme()
     }
 
+    setupNormalDocTheme () {
+        const doc = DocumentBody.shared()
+        doc.setBackgroundColor("#191919")
+        doc.setFontFamily("BarlowCondensed");
+        doc.setFontWeight("Medium");
+        //doc.setFontWeight("bold")
+        //doc.setFontFamily("Helvetica Neue")
+        //doc.setFontFamily("Helvetica LT W01 Condensed")
+        //doc.setFontFamily("San Francisco Display")
+        //doc.setFontFamily("PublicSans Light")
+        //doc.setFontFamily("OpenSans Regular")
+        doc.setFontSizeAndLineHeight("16px")
+   }
+
+   /*
     setupNormalDocTheme () {
         //const doc = DocumentBody.shared()
         const doc = this.documentBodyView()
@@ -196,5 +242,6 @@
         doc.setFontSizeAndLineHeight("15px")
         doc.setLetterSpacing("0.05em")
    }
+   */
 
 }.initThisClass());
