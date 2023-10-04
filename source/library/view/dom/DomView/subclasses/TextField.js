@@ -657,4 +657,38 @@
         }
     }
 
+    // --- arrow key defaults disabled while editing ---
+
+    onUpArrowKeyDown (event) { // why down and not up?
+        if (this.isFocused()) { 
+            return false
+        }
+        
+        return super.onUpArrowKeyDown(event)
+    }
+	
+    onDownArrowKeyDown (event) { // why down and not up?
+        if (this.isFocused()) { 
+            return false
+        }
+
+        return super.onDownArrowKeyDown(event)
+    }
+	
+    onLeftArrowKeyUp (event) {
+        if (this.isFocused()) { 
+            return false
+        }
+        
+        return super.onLeftArrowKeyUp(event)
+    }
+	
+    onRightArrowKeyUp (event) {
+        if (this.isFocused()) { 
+            return false
+        }
+        
+        return super.onRightArrowKeyUp(event)
+    }
+
 }.initThisClass());
