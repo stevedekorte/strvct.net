@@ -97,7 +97,7 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
 
         rq.onload  = (event) => { 
             if (rq.status >= 400 && rq.status <= 599) {
-                reject(new Error(request.status + " " + rq.statusText + " error loading " + path + " "))
+                reject(new Error(rq.status + " " + rq.statusText + " error loading " + path + " "))
             }
             this.response = rq.response
             console.log("loaded ", path)
