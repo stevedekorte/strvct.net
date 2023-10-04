@@ -810,7 +810,7 @@
 
     pathForIconName (aName) {
         const pathSeparator = "/"
-        return ["resources", "icons", aName + ".svg"].join(pathSeparator)
+        return ["strvct", "resources", "icons", aName + ".svg"].join(pathSeparator)
     }
 
     // transition

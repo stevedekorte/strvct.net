@@ -31,6 +31,7 @@
 
   svgIconView () {
     // TODO: this view stuff probably shouldn't be in the model
+    debugger
     const icon = SvgIconView.clone().setSvgString(this.svgString())
     return icon
   }

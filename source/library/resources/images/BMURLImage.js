@@ -19,6 +19,7 @@
 
     init () {
         super.init()
+        this.setIsDebugging(true)
         return this
     }
 

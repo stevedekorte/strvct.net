@@ -280,6 +280,7 @@
         
         nv.setBackgroundImageUrlPath(this.pathForIconName("right-gray"))        
         nv.setBackgroundSizeWH(10, 10)
+        nv.setBackgroundRepeat("no-repeat")
         
         nv.setMinAndMaxWidth(10)
         nv.setMinAndMaxHeight(10)
