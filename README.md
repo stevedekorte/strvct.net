@@ -4,15 +4,17 @@ direct manipulation of structured content
 
 ##Getting started
 
-----
+---
 
 FOR NEW REPOS:
 
 To set up strvct submodule, from within project folder run:
 
-	git submodule add https://github.com/stevedekorte/strvct.net.git strvct
+    git submodule add https://github.com/stevedekorte/strvct.net.git strvct
 
-----
+If you want to deploy your app on Github Pages, you'll need to add a .nojekyll file to your root folder.
+
+---
 
 Build system is currently setup for VSCode. To open the project, open this root source folder in VSCode.
 
