@@ -1,3 +1,0 @@
-
-PeerApp.loadAndRunShared()
-

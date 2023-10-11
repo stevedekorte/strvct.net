@@ -1,9 +1,0 @@
-[
-    "BMMessages.js",
-    "BMNetwork.js",
-    "webrtc/_imports.json",
-    "messages/_imports.json",
-    "identities/_imports.json",
-    "blacklists/_imports.json",
-    "connection/_imports.json"
-]
