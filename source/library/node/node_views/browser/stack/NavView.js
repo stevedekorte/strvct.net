@@ -10,7 +10,9 @@
 
     initPrototypeSlots () {
         this.newSlot("stackView", null)
+        this.newSlot("headerView", null) // placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
         this.newSlot("scrollView", null) // ScrollView fits NavView size, and contains TilesView which may be larger
+        this.newSlot("footerView", null) // placed in bottom of NavView, set to display:none if no node.footerNode() 
         this.newSlot("tilesView", null) // is inside scrollView
         this.newSlot("isCollapsed", false)
         this.newSlot("animatesCollapse", true)
@@ -45,7 +47,8 @@
 
     init () {
         super.init()
-        this.setDisplay("block")
+        //this.setDisplay("block")
+        this.setDisplay("flex")
         this.setPosition("relative")
         this.setFlexDirection("column")
         this.setFlexGrow(1)
@@ -64,8 +67,27 @@
         this.footerView().hideDisplay()
         */
 
+        const borderStyle = "1px solid rgba(255, 255, 255, 0.1)"
+        const backgroundColor = "rgba(255, 255, 255, 0.03)"
+
+        {
+            const v = TileContainer.clone()
+            v.setBorderBottom(borderStyle)
+            v.setBackgroundColor(backgroundColor)
+            this.setHeaderView(v)
+            this.addSubview(v)
+        }
+
         this.setScrollView(StackScrollView.clone())
         this.addSubview(this.scrollView())
+
+        {
+            const v = TileContainer.clone()
+            v.setBorderTop(borderStyle)
+            v.setBackgroundColor(backgroundColor)
+            this.setFooterView(v)
+            this.addSubview(v)
+        }
 
         this.setTilesView(TilesView.clone())
         this.scrollView().addSubview(this.tilesView())
@@ -148,6 +170,18 @@
 
         this.scrollView().setIsVertical(true)
         //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
+
+        if (this.headerView()) {
+            const v = this.headerView()
+            v.setWidth("fit-content")
+            v.setHeight("100%")
+        }
+
+        if (this.footerView()) {
+            const v = this.footerView()
+            v.setWidth("fit-content")
+            v.setHeight("100%")
+        }
     }
 
     makeOrientationDown () {
@@ -177,11 +211,33 @@
         this.scrollView().setIsVertical(false)
         //this.setBoxShadow("inset 0 -10px 40px #222")
 
+
+        if (this.headerView()) {
+            const v = this.headerView()
+            v.setWidth("100%")
+            v.setHeight("fit-content")
+        }
+
+        if (this.footerView()) {
+            const v = this.footerView()
+            v.setWidth("100%")
+            v.setHeight("fit-content")
+        }
     }
 
     setNode (aNode) {
         super.setNode(aNode)
         this.tilesView().setNode(aNode)
+
+        if (aNode.headerNode) {
+            this.headerView().setNode(aNode.headerNode())
+        }
+
+        if (aNode.footerNode) {
+        //    debugger;
+            this.footerView().setNode(aNode.footerNode())
+        }
+
         return this
     }
 
@@ -213,6 +269,8 @@
             }*/
         }
 
+        this.headerView().syncFromNode()
+        this.footerView().syncFromNode()
         return this
     }
 

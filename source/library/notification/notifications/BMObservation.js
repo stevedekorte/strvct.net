@@ -117,7 +117,10 @@
             this.stopWatching()
             return
         }
-        const method = obs[note.name()]
+
+        //const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];
+        const method = obs[note.name()];
+
         if (method) {
             method.call(obs, note)
         } else {

@@ -84,7 +84,8 @@
 
   finalInit () {
     super.finalInit();
-    this.setNodeTileClassName("BMChatFieldTile")
+    this.setNodeTileClassName("BMChatInputTile")
+    //this.setOverrideSubviewProto(this.nodeTileClass())
     this.setKeyIsVisible(true)
   }
 
@@ -258,7 +259,7 @@
   }
   
   onStreamComplete (request) {
-    this.conversation().newMessage().setRole("user")
+    //this.conversation().newMessage().setRole("user")
   }
 
   onValueInput () {

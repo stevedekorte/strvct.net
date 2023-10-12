@@ -202,9 +202,6 @@
   // --- updates ---
 
   /*
-  didUpdateNode () {
-    return super.didUpdateNode()
-  }
 
   didUpdateSlotLocaleName (oldValue, newValue) {
     // sync shortName and voiceStyle

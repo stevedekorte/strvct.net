@@ -4,10 +4,25 @@
 
     SyncScheduler
 
+    SyncScheduler is sort of a lower level NotificationCenter.
+    
+    SyncScheduler essientially:
+        - receives requests of the form "send targetA messageB"
+        - and at the end of the event loop:
+        -- coaleses them (so the same message isn't sent twice to the same target)
+        -- sends them
+
+    Thie NotificationCenter could be used to do this, but it would be heavier:
+     - overhead of every receiver registering observations
+     - overhead of matching observations with posts
+     - potential garbage collection issues
+
+    Motivation:
+
     Many state changes can cause the need to synchronize a given object 
     with others within a given event loop, but we only want synchronization to 
     happen at the end of an event loop, so a shared SyncScheduler instance is used to
-    track which sync actions should be sent at the end of the event loop and only sends each one once. 
+    track which sync actions should be sent at the end of the event loop and only sends each one once.
 
     SyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
 
@@ -48,7 +63,8 @@
                 - sync to node
                 - node posts didUpdateNode
                 - edit view #2
-                - view get didUpdateNode and does syncFromNode which overwrites view state #2
+                - view gets didUpdateNode and does syncFromNode which overwrites view state #2 causing an error!
+            But the above would have been ok if the didUpdateNode was posted once at the end of the event loop.
 
     	
 */
@@ -62,11 +78,10 @@
         this.newSlot("currentAction", null)
     }
 
-    /*
     init () {
         super.init()
+        this.setIsDebugging(true)
     }
-    */
 
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
@@ -258,6 +273,7 @@
                 count ++
                 if (count > 6) {
                     this.debugLog("loop?")
+                    debugger
                 }
                 assert (count < maxCount)
             }

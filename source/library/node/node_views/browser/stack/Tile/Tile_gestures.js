@@ -47,7 +47,10 @@
 
     justTap () {
         this.setIsInspecting(false)
-        this.column().didTapItem(this)
+
+        if (this.column()) {
+            this.column().didTapItem(this)
+        }
 
         //console.log(this.debugTypeId() + " justTap")
         if (this.isSelectable()) {

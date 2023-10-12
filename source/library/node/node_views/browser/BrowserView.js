@@ -42,7 +42,7 @@
         
     Questions:
 
-    - Should headerNode be the AppNode, so we can option click it to inspect it and map app name to header?
+    - Should browserHeaderNode be the AppNode, so we can option click it to inspect it and map app name to header?
     - Which node should be root node of storage pool?
     -- does App own the pool, or does pool own the app?
     -- should there be a RootPoolNode class that helps manage the pool or help expose management and info to the UI? 
@@ -84,18 +84,18 @@
     }
     */
 
-    headerNode () {
+    browserHeaderNode () {
         return this.node().subnodes().first()
     }
 
     breadCrumbsNode () {
-        return this.headerNode().subnodes().first()
+        return this.browserHeaderNode().subnodes().first()
     }
 
     moveToBase () {
-        assert(this.headerNode())
+        assert(this.browserHeaderNode())
         assert(this.breadCrumbsNode())
-        this.selectNodePathArray([this.headerNode(), this.breadCrumbsNode()])
+        this.selectNodePathArray([this.browserHeaderNode(), this.breadCrumbsNode()])
         return this
     }
 

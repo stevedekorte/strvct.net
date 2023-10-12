@@ -34,18 +34,17 @@
     }
 
     makeVertical () {
-        //this.setWidth("fit-content")
         this.setWidth("100%")
-        this.setHeight("100%")
+        this.setFlexGrow(1);
         this.setOverflowY("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
         this.setOverflowX("hidden")
         return this
     }
 
     makeHorizontal () {
-        this.setWidth("100%")
+        this.setWidth("null")
         this.setHeight("100%")
-        //this.setHeight("fit-content")
+        this.setFlexGrow(1);
         this.setOverflowY("hidden") 
         this.setOverflowX("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
         return this

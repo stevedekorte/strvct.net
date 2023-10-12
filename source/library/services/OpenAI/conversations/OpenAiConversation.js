@@ -24,11 +24,14 @@
       const slot = this.newSlot("model", null); 
     }
 
+    {
+      const slot = this.newSlot("footerNode", null);
+    }
   }
 
   init() {
     super.init();
-    this.addNodeAction("add")
+    //this.addNodeAction("add")
     this.setCanDelete(true)
     this.setNodeCanEditTitle(true)
     this.setTitle("Untitled")
@@ -37,6 +40,13 @@
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(true)
     this.setSubnodeClasses([OpenAiMessage])
+
+    {
+      const f = ChatInputNode.clone()
+      f.setCanDelete(false)
+      f.setConversation(this)
+      this.setFooterNode(f)
+    }
   }
 
   /*
@@ -89,5 +99,18 @@
     // can be useful for sharing the changes with other clients
   }
 
+  onChatInput (chatInputNode) {
+    const v = chatInputNode.value()
+    if (v) {
+      const m = this.newMessage()
+      m.setRole("user")
+      m.setValue(v)
+      m.sendInConversation()
+      debugger
+      chatInputNode.setValue("")
+      //chatInputNode.directDidUpdateNode()
+      chatInputNode.didUpdateNode()
+    }
+  }
 
 }.initThisClass());

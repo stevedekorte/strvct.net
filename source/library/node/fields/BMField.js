@@ -212,9 +212,16 @@
         return this
     }
 
+    /*
+    didUpdateTargetNode (aNote) {
+        debugger;
+    }
+    */
+
     didUpdateNode (aNote) {
         //debugger;
         if (aNote) {
+            // if it has a note, it was a post sent through notification center that the target node changed
             const aNode = aNote.sender()
             if (aNode === this.target()) {
                 // refresh
@@ -223,6 +230,7 @@
                 this.syncFromTarget()
             }
         } else {
+            //super.didUpdateNode() // causes sync scheduler message overflow
             //console.warn(this.type() + " received didUpdateNode() with no aNote argument - calling super.didUpdateNode()")
         }
     }

@@ -3,6 +3,7 @@
     "NavView.js",
     "StackScrollView.js",
     "TilesView/_imports.json",
-    "Tile/_imports.json"
+    "Tile/_imports.json",
+    "TileContainer.js"
 ]
 

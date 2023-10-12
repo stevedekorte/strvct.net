@@ -2,12 +2,12 @@
 
 /*
 
-    BMChatFieldTile
+    BMChatInputTile
 
     
 */
 
-(class BMChatFieldTile extends BMTextAreaFieldTile {
+(class BMChatInputTile extends BMTextAreaFieldTile {
     
     initPrototypeSlots () {
     }
@@ -17,13 +17,14 @@
         this.keyView().hideDisplay()
         this.setValueUneditableBorder("none")
         this.setValueEditableBorder("none")
+        //this.setWidth("-webkit-fill-available")
         return this
     }
 
     createValueView () {
      //   debugger;
 
-        const v = TextField.clone().setElementClassName("BMChatFieldTileValueView")
+        const v = TextField.clone().setElementClassName("BMChatInputTileValueView")
         v.setDisplay("block")
         v.setPosition("relative")
         v.setWordWrap("normal")
@@ -69,5 +70,13 @@
         //v.setDoesInput(false)
         return v
     }
+
+    /*
+    setWidth (w) {
+        debugger;
+        super.setWidth(w)
+        return this
+    }
+    */
     
 }.initThisClass());

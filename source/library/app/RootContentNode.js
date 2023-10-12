@@ -24,7 +24,7 @@
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("headerNode", null)
+            const slot = this.newSlot("browserHeaderNode", null)
             slot.setShouldStoreSlot(true)
             slot.setFinalInitProto(HeaderNode)
             slot.setIsSubnode(true)

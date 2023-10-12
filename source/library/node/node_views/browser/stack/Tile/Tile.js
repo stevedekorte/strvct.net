@@ -208,7 +208,11 @@
     }
 
     column () {
-        return this.parentView()
+        const pv = this.parentView()
+        if (pv.isKindOf(TilesView)) {
+            return pv
+        }
+        return null
     }
     
     navView () {
@@ -309,8 +313,26 @@
         const scrollView = this.tilesView().parentView()
         const navView = scrollView.parentView()
         const stackView = navView.parentView()
-        return stackView
+        if (stackView.isKindOf(StackView)) {
+            return stackView
+        }
+        return null
         //return this.firstParentViewWithAncestorClass(StackView)
+    }
+
+    direction () {
+        const sv = this.stackView()
+        if (sv) {
+            const d = sv.direction()
+            return d
+        }
+
+        const pv = this.parentView()
+        if (pv && pv.direction) {
+            return pv.direction()
+        }
+
+        return "down"
     }
 
     syncOrientation () {
@@ -318,7 +340,7 @@
             return this
         }
 
-        const d = this.stackView().direction()
+        const d = this.direction()
 
         if (d === "right") {
             this.makeOrientationRight()
@@ -365,7 +387,9 @@
         //this.setWidth("170px")
 
         this.setMinAndMaxWidth("17em")
-        this.setWidth("fit-content")
+        //this.setWidth("fit-content")
+        this.setWidth("-webkit-fill-available")
+
         this.setMaxWidth(null)
 
         this.setMinAndMaxHeight("100%")

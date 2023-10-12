@@ -18,7 +18,7 @@
 
     init () {
         super.init()
-        //this.setNodeObservation(BMNotificationCenter.shared().newObservation().setName("didUpdateNode").setObserver(this))
+        //this.setNodeObservation(BMNotificationCenter.shared().newObservation().setName("didUpdateNodeNote").setObserver(this))
         this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this)) // observe all posts from node
         this.updateSubnodeToSubviewMap()
         return this
@@ -274,7 +274,8 @@
         return this
     }
 
-    didUpdateNode () {
+    didUpdateNode (aNote) {
+        assert(aNote)
         //this.debugLog(" didUpdateNode " + this.node().type())
         this.scheduleSyncFromNode()
     }

@@ -109,7 +109,7 @@
     }
 
     prepareToAccess () {
-        debugger
+        //debugger
         super.prepareToAccess()
         this.syncFromTarget()
         return this
