@@ -263,16 +263,15 @@
             const maxCount = 10
 
             while (this.actionCount()) {
-                /*
-                this.(() => " --- processSets # " + count + " --- ")
-                this.debugLog(() => this.description())
-                this.debugLog(() => BMNotificationCenter.shared().notesDescription())
-                this.debugLog(" --- ")
-                */
                 this.processSets()
                 count ++
                 if (count > 6) {
-                    this.debugLog("loop?")
+                    this.setIsDebugging(true)
+                    console.log("loop?")
+                    console.log(" --- processSets # " + count + " --- ")
+                    console.log("\nSyncActions:\n" + this.actionsDescription())
+                    console.log("\nNotifications:\n" + BMNotificationCenter.shared().notesDescription())
+                    console.log(" --- ")
                     debugger
                 }
                 assert (count < maxCount)
@@ -285,6 +284,9 @@
     }
 
     actionsDescription () {
+        if (this.orderedActions().length === 0) {
+            return "none";
+        }
         return this.orderedActions().map(action => "    " + action.description() ).join("\n")
     }
 

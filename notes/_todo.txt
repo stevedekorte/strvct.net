@@ -908,6 +908,9 @@ TODO:
     NODE 
 		
 		TO VIEWS
+			Node.didUpdateNode
+			post onUpdatedNode notification
+			View.onUpdatedNode(aNote)
 		
 		TO STORE
 	        didUpdateSlot

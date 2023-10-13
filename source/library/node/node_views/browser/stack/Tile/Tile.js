@@ -313,7 +313,7 @@
         const scrollView = this.tilesView().parentView()
         const navView = scrollView.parentView()
         const stackView = navView.parentView()
-        if (stackView.isKindOf(StackView)) {
+        if (stackView && stackView.thisClass().isKindOf(StackView)) {
             return stackView
         }
         return null

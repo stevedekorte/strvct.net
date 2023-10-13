@@ -432,7 +432,13 @@
     }
 
     picksMatch () {
-        return JSON.stableStringify(this.valueAsArray()) === JSON.stableStringify(this.pickedValues());
+        // [""]' != '[]'
+        const a = JSON.stableStringify(this.valueAsArray());
+        const b = JSON.stableStringify(this.pickedValues());
+        if (a === '[""]' && b == '[]') {
+            return true // TODO: fix this hack...
+        }
+        return a === b;
     }
 
     needsSyncToSubnodes () {

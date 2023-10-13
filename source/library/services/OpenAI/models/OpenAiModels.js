@@ -46,7 +46,8 @@
 
   didInit () {
     super.didInit()
-    this.asyncCheckAvailability();
+    //this.asyncCheckAvailability()
+    this.makeAllModelsAvailable()
   }
 
   service () {
@@ -56,14 +57,22 @@
   allModelNames () {
     // model names with versions numbers are ones soon to be depricated, 
     // so we don't include those, to avoid wasting requests
-    return [
-      "gpt-4", 
-      "gpt-4-32k", 
-      "gpt-3.5-turbo", 
-      "gpt-4-0613", 
-      "gpt-3.5-turbo-0613"
-    ];
+    const names = []
+    names.push("gpt-4")
+    /*
+    names.push("gpt-4-32k")
+    names.push("gpt-3.5-turbo")
+    names.push("gpt-4-0613")
+    names.push("gpt-3.5-turbo-0613")
+    */
+    return names
   }
+
+  makeAllModelsAvailable () {
+    for (const model of this.subnodes()) { 
+      model.setIsAvailable(true)
+    }
+}
 
   async asyncCheckAvailability () {
       for (const model of this.subnodes()) { 

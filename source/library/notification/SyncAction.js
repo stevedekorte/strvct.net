@@ -61,9 +61,9 @@
     }
 	
     description () {
-        const t = this.target() ? this.target().type() : "null"
+        const t = this.target() ? this.target().typeId() : "null"
         const o = this.order() === 0 ? "" : " order:" + this.order()
-        return t + " " + this.method() + "" + o
+        return this.typeId() + " " + t + " " + this.method() + "" + o
     }
 
 }.initThisClass());
