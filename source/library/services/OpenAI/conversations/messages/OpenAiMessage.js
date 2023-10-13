@@ -256,6 +256,7 @@
   
   onStreamData (request, newContent) {
     this.setContent(request.fullContent())
+    this.conversation().onUpdateMessage(this)
   }
   
   onStreamComplete (request) {

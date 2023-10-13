@@ -11,17 +11,24 @@
 
     // --- movement animations ---
 
-    scrollToBottom () {
+    domScrollToBottom () {
         const focusedElement = document.activeElement
         const needsRefocus = focusedElement !== this.element()
         // console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
 
-        this.setScrollTop(this.scrollHeight())
+        //this.setScrollTop(this.scrollHeight() + "px")
+        this.element().scrollTop = this.element().scrollHeight;
 
-        if (needsRefocus) {
+        //if (needsRefocus) {
+        if (focusedElement !== document.activeElement) {
             focusedElement.focus()
         }
         //e.animate({ scrollTop: offset }, 500); // TODO: why doesn't this work?
+        return this
+    }
+
+    scrollToBottom () {
+        this.domScrollToBottom()
         return this
     }
 

@@ -97,6 +97,7 @@
   onUpdateMessage (aMsg) {
     // sent for things like streaming updates
     // can be useful for sharing the changes with other clients
+    this.postNoteNamed("onRequestScrollToBottom")
   }
 
   onChatInput (chatInputNode) {
@@ -114,6 +115,7 @@
 
   clearInput () {
     this.footerNode().setValue("")
+    this.postNoteNamed("onRequestScrollToBottom")
   }
 
 }.initThisClass());

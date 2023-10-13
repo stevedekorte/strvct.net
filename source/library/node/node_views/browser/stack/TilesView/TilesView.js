@@ -180,6 +180,11 @@
         return this
     }
 
+    onRequestScrollToBottom (aNote) {
+        //console.log(this.typeId() + " onRequestScrollToBottom")
+        this.addTimeout(() => { this.scrollView().domScrollToBottom() }, 0)
+    }
+
     // --- duplicating tiles ---
 
     duplicateSelectedTile () {

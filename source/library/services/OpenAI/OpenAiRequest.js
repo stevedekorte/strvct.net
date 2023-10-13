@@ -340,10 +340,28 @@
     this.setFullContent("");
 
     // why false arg? see https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
-    xhr.addEventListener("progress", (event) => this.onXhrProgress(event), false);
-    xhr.addEventListener("loadend", (event) => this.onXhrLoadEnd(event));
-    xhr.addEventListener("error", (event) => this.onXhrError(event));
-    xhr.addEventListener("abort", (event) => this.onXhrAbort(event));
+    xhr.addEventListener("progress", (event) => {
+     EventManager.shared().safeWrapEvent(() => { this.onXhrProgress(event) })
+     //this.onXhrProgress(event)
+    }, false);
+
+    xhr.addEventListener("loadend", (event) => {
+      EventManager.shared().safeWrapEvent(() => { this.onXhrLoadEnd(event) })
+      //this.onXhrLoadEnd(event)
+    });
+
+    xhr.addEventListener("error", (event) => {
+      EventManager.shared().safeWrapEvent(() => { this.onXhrError(event) })
+      //this.onXhrError(event)
+    });
+
+    xhr.addEventListener("abort", (event) => {
+      EventManager.shared().safeWrapEvent(() => { this.onXhrAbort(event) })
+      //this.onXhrAbort(event)
+    });
+
+    //  EventManager.shared().safeWrapEvent(() => { ... })
+
 
     const promise = new Promise((resolve, reject) => {
       this.setXhrResolve(resolve);
