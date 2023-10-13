@@ -78,5 +78,15 @@
         return this
     }
     */
+
+    onUpdatedNode (aNote) {
+        //debugger
+        return super.onUpdatedNode(aNote)
+    }
+
+    syncFromNode () {
+        //debugger
+        return super.syncFromNode()
+    }
     
 }.initThisClass());

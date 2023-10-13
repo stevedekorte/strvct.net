@@ -80,7 +80,7 @@
 
     init () {
         super.init()
-        this.setIsDebugging(true)
+        //this.setIsDebugging(true)
     }
 
     newActionForTargetAndMethod (target, syncMethod, order) {

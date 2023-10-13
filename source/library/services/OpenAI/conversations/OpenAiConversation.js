@@ -106,11 +106,14 @@
       m.setRole("user")
       m.setValue(v)
       m.sendInConversation()
-      debugger
-      chatInputNode.setValue("")
-      //chatInputNode.directDidUpdateNode()
-      chatInputNode.didUpdateNode()
+      //debugger
+      //chatInputNode.setValue("")
+      this.scheduleMethod("clearInput", 2)
     }
+  }
+
+  clearInput () {
+    this.footerNode().setValue("")
   }
 
 }.initThisClass());

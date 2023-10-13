@@ -202,7 +202,7 @@
 
         if (newValue) {
             //debugger;
-            this.setDidUpdateNodeObs(this.watchForNoteFrom("didUpdateNode", newValue))
+            this.setDidUpdateNodeObs(this.watchForNoteFrom("onUpdatedNode", newValue))
             this.scheduleMethod("syncFromTarget")
         } 
     }
@@ -218,7 +218,7 @@
     }
     */
 
-    didUpdateNode (aNote) {
+    onUpdatedNode (aNote) {
         //debugger;
         if (aNote) {
             // if it has a note, it was a post sent through notification center that the target node changed

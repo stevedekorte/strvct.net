@@ -158,7 +158,7 @@
 
     init () {
         super.init()
-        this.setDidUpdateNodeNote(this.newNoteNamed("didUpdateNode"))
+        this.setDidUpdateNodeNote(this.newNoteNamed("onUpdatedNode"))
         this.setShouldFocusSubnodeNote(this.newNoteNamed("shouldFocusSubnode"))
         this.setShouldFocusAndExpandSubnodeNote(this.newNoteNamed("shouldFocusAndExpandSubnode"))
         this.watchSubnodes()

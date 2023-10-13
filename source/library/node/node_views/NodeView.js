@@ -274,7 +274,7 @@
         return this
     }
 
-    didUpdateNode (aNote) {
+    onUpdatedNode (aNote) {
         assert(aNote)
         //this.debugLog(" didUpdateNode " + this.node().type())
         this.scheduleSyncFromNode()

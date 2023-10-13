@@ -44,4 +44,11 @@
     this.conversation().onChatInput(this)
   }
 
+  /*
+  sehatValue (v) {
+    debugger;
+    return super.setValue(v)
+  }
+  */
+
 }.initThisClass());
