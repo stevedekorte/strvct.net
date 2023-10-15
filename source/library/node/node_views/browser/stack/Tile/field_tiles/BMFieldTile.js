@@ -164,6 +164,7 @@
         //v.setInnerHtml("error")
         v.setColor("red")
         v.setPaddingBottom("0em")
+        v.setWhiteSpace("normal")
         this.setErrorView(v)
         this.errorViewContainer().addSubview(v)
         return v 

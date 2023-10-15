@@ -241,6 +241,8 @@
     try {
       this.setStatus("fetching")
       this.setIsStreaming(false);
+      this.sendDelegate("onRequestBegin")
+
 
       this.assertValid();
       if (this.isDebugging()) {
@@ -319,7 +321,7 @@
     this.assertReadyToStream();
     
     this.setIsStreaming(true);
-    this.setStatus("streaming")
+    this.setStatus("streaming");
 
     this.bodyJson().stream = true;
     this.setReadLines([]);
@@ -371,6 +373,8 @@
     //const s = JSON.stringify(options, 2, 2);
     //this.debugLog("SENDING REQUEST BODY:", options.body)
     xhr.send(options.body);
+
+    this.sendDelegate("onRequestBegin")
 
     return promise;
   }

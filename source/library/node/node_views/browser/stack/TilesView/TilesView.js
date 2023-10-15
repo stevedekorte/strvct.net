@@ -181,8 +181,8 @@
     }
 
     onRequestScrollToBottom (aNote) {
-        //console.log(this.typeId() + " onRequestScrollToBottom")
-        this.addTimeout(() => { this.scrollView().domScrollToBottom() }, 0)
+        console.log(this.typeId() + " onRequestScrollToBottom")
+        this.addTimeout(() => { this.scrollView().domScrollToBottom() }, 1)
     }
 
     // --- duplicating tiles ---

@@ -54,7 +54,12 @@
 
     {
       const slot = this.newSlot("error", null);
-      slot.setCanInspect(true)
+      slot.setShouldStoreSlot(true)
+    }
+
+    {
+      const slot = this.newSlot("isComplete", false);
+      slot.setShouldStoreSlot(true)
     }
 
     /*
@@ -218,6 +223,8 @@
   */
 
   makeRequest () {
+    this.setError(null)
+
     const request = this.newRequest()
     this.setRequest(request)
     //request.asyncSend();
@@ -242,16 +249,30 @@
 
   // --- request delegate messages ---
 
+  onRequestBegin (aRequest) {
+    this.setNote(this.centerDotsHtml())
+  }
+
   onRequestError (aRequest) {
     this.setError(aRequest.error())
-    this.setContent("ERROR: " + aRequest.error().message)
-    //this.setRequest(null)
+    const msg = aRequest.error().message
+    if (msg.includes("Please try again in 6ms.")) {
+      console.warn("retrying openai request in 1 second");
+      this.addTimeout(() => this.makeRequest(), 1000);
+    }
+  }
+
+  valueError () {
+    const e = this.error()
+    return e ? e.message : null
   }
 
   onRequestComplete (aRequest) {
     //this.conversation().addAssistentMessageContent(aRequest.fullContent())
     //this.setRequest(null)
     //this.setStatus("complete")
+    this.setIsComplete(true)
+    this.setNote(null)
   }
   
   onStreamData (request, newContent) {
@@ -260,6 +281,8 @@
   }
   
   onStreamComplete (request) {
+    this.setContent(request.fullContent())
+    this.conversation().onUpdateMessage(this)
     //this.conversation().newMessage().setRole("user")
   }
 
@@ -274,5 +297,10 @@
       //"--body-background-color": "inherit"
     }
   }
+
+  centerDotsHtml () {
+    return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
+  }
+
 
 }.initThisClass());
