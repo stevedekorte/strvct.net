@@ -9,7 +9,7 @@
     
 */
 
-(class TilesView extends NodeView {
+(class TilesView extends ScrollContentView {
     
     initPrototypeSlots () {
         this.newSlot("tiles", null)
@@ -59,10 +59,6 @@
 
     // --- helpers ---
     // subview path: StackView -> NavView -> ScrollView -> TilesView -> Tiles
-
-    scrollView () {
-        return this.parentView()
-    }
 
     navView () {
         const sv = this.scrollView()
@@ -180,10 +176,6 @@
         return this
     }
 
-    onRequestScrollToBottom (aNote) {
-        console.log(this.typeId() + " onRequestScrollToBottom")
-        this.addTimeout(() => { this.scrollView().domScrollToBottom() }, 1)
-    }
 
     // --- duplicating tiles ---
 

@@ -57,6 +57,12 @@
       slot.setShouldStoreSlot(true)
     }
 
+
+    {
+      const slot = this.newSlot("delegate", null);
+      slot.setShouldStoreSlot(true)
+    }
+
     {
       const slot = this.newSlot("isComplete", false);
       slot.setShouldStoreSlot(true)
@@ -273,16 +279,18 @@
     //this.setStatus("complete")
     this.setIsComplete(true)
     this.setNote(null)
+    this.conversation().onMessageComplete(this)
   }
   
   onStreamData (request, newContent) {
+    this.conversation().onMessageWillUpdate(this)
     this.setContent(request.fullContent())
-    this.conversation().onUpdateMessage(this)
+    this.conversation().onMessageUpdate(this)
   }
   
   onStreamComplete (request) {
     this.setContent(request.fullContent())
-    this.conversation().onUpdateMessage(this)
+    this.conversation().onMessageUpdate(this)
     //this.conversation().newMessage().setRole("user")
   }
 
@@ -300,6 +308,17 @@
 
   centerDotsHtml () {
     return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
+  }
+
+  sendDelegate (methodName) {
+    const d = this.delegate()
+    if (d) {
+      const f = d[methodName]
+      if (f) {
+        f.apply(d, [this])
+        return true
+      }
+    }
   }
 
 

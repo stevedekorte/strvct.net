@@ -198,9 +198,12 @@
                 this.removeAllListeners()
             }
             
-
+            const oldValue = this._element
             this._element = e
             e.setDomView(this)
+
+            this.didUpdateSlotElement(oldValue, e)
+            
             /*
             if (e) {
                 // use timer as focus listener can't be set up yet - why not?
@@ -210,6 +213,12 @@
         }
         return this
     }
+
+    didUpdateSlotElement (e) {
+        // for subclasses to override
+        return this
+    }
+
 
     hasElement () {
         return !Type.isNullOrUndefined(this.element())

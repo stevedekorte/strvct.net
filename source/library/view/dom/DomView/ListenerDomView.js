@@ -92,6 +92,10 @@
         return this.listenerNamed("KeyboardListener")
     }
 
+    scrollListener () {
+        return this.listenerNamed("ScrollListener")
+    }
+
     touchListener () {
         return this.listenerNamed("TouchListener")
     }

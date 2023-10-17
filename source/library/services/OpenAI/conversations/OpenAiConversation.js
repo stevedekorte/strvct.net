@@ -17,6 +17,10 @@
     }
 
     {
+      const slot = this.newSlot("maxTokenCount", 8000); // max allowed by model
+    }
+
+    {
       const slot = this.newSlot("initialMessagesCount", 3); // Number of initial messages to always keep
     }
 
@@ -47,6 +51,10 @@
       f.setConversation(this)
       this.setFooterNode(f)
     }
+  }
+
+  subviewsScrollSticksToBottom () {
+    return true
   }
 
   /*
@@ -94,10 +102,35 @@
     return this
   } 
 
-  onUpdateMessage (aMsg) {
+  onMessageWillUpdate (aMsg) {
+    // note if the scroll view position is at the end or beginning before we update the message
+    this.postNoteNamed("onRequestMarkScrollPoint")
+    // after we update the message, if it was at the end, we'll request to scroll to the end 
+  }
+
+  onMessageUpdate (aMsg) {
     // sent for things like streaming updates
     // can be useful for sharing the changes with other clients
     this.postNoteNamed("onRequestScrollToBottom")
+    //this.postNoteNamed("onRequestScrollToBottomIfMarkAtBottom")
+  }
+
+  onMessageComplete (Msg) {
+    this.postNoteNamed("onRequestScrollToBottom")
+    this.checkTokenCount()
+  }
+
+  checkTokenCount () {
+    this.updateTokenCount()
+    const tc = this.tokenCount()
+    console.log("token count: ", tc)
+    if (tc > this.maxTokenCount()*0.9) {
+      // time to compact
+    }
+  }
+
+  compactTokens () {
+
   }
 
   onChatInput (chatInputNode) {
