@@ -9,6 +9,16 @@
   initPrototypeSlots() {
 
     {
+      const slot = this.newSlot("chatMessageId", null);
+      slot.setShouldStoreSlot(true)
+    }
+
+    {
+      const slot = this.newSlot("conversation", null);
+      slot.setShouldStoreSlot(true)
+    }
+
+    {
       const slot = this.newSlot("role", "user"); 
       slot.setInspectorPath("")
       //slot.setLabel("role")
@@ -68,6 +78,16 @@
       slot.setShouldStoreSlot(true)
     }
 
+    {
+      const slot = this.newSlot("retryCount", 0);
+      //slot.setShouldStoreSlot(true)
+    }
+
+    {
+      const slot = this.newSlot("summaryMessage", null);
+      //slot.setShouldStoreSlot(true)
+    }
+
     /*
     {
       const slot = this.newSlot("sendInConversation", null);
@@ -89,7 +109,7 @@
 
   init () {
     super.init();
-    this.setValue("")
+    this.setContent("")
     this.setCanDelete(true)
   }
 
@@ -98,6 +118,13 @@
     this.setNodeTileClassName("BMChatInputTile")
     //this.setOverrideSubviewProto(this.nodeTileClass())
     this.setKeyIsVisible(true)
+    this.createIdIfAbsent()
+  }
+
+  createIdIfAbsent () {
+    if (!this.chatMessageId()) {
+      this.setChatMessageId(Object.newUuid())
+    }
   }
 
   setSendInConversation (v) {
@@ -177,23 +204,42 @@
     return this.parentNode()
   }
 
-  conversationHistoryPriorToSelfJson () {
-    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
+  previousMessages () {
     const messages = this.conversation().messages()
     const i = messages.indexOf(this)
     assert(i !== -1)
-    const json = messages.slice(0, i).map(m => m.openAiJson())
+    return messages.slice(0, i)
+  }
+
+  previousMessagesIncludingSelf () {
+    const messages = this.conversation().messages()
+    const i = messages.indexOf(this)
+    assert(i !== -1)
+    return messages.slice(0, i+1)
+  }
+
+  previousMessage () {
+    const messages = this.conversation().messages()
+    const i = messages.indexOf(this)
+    if (i > -1) {
+      return messages[i-1]
+    }
+    return null
+  }
+
+  conversationHistoryPriorToSelfJson () {
+    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
+    const json = this.previousMessages().map(m => m.openAiJson())
     return json
   }
 
+  /*
   conversationHistoryUpToAndIncludingSelfJson () {
     // return json for all messages in conversation up to this point (unless they are marked as hidden?)
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    assert(i !== -1)
-    const json = messages.slice(0, i+1).map(m => m.openAiJson())
+    const json = this.previousMessagesIncludingSelf().map(m => m.openAiJson())
     return json
   }
+  */
 
   send () {
     return this.sendInConversation()
@@ -230,7 +276,6 @@
 
   makeRequest () {
     this.setError(null)
-
     const request = this.newRequest()
     this.setRequest(request)
     //request.asyncSend();
@@ -239,7 +284,7 @@
     return this
   }
 
-  newRequest() {
+  newRequest () {
     const request = OpenAiRequest.clone();
     request.setApiUrl("https://api.openai.com/v1/chat/completions");
     request.setApiKey(this.apiKey());
@@ -263,8 +308,10 @@
     this.setError(aRequest.error())
     const msg = aRequest.error().message
     if (msg.includes("Please try again in 6ms.")) {
-      console.warn("retrying openai request in 1 second");
-      this.addTimeout(() => this.makeRequest(), 1000);
+      this.setRetryCount(this.retryCount() + 1)
+      const seconds = Math.pow(2, this.retryCount());
+      console.warn("WARNING: retrying openai request in " + seconds + " seconds");
+      this.addTimeout(() => this.makeRequest(), seconds*1000);
     }
   }
 
@@ -274,24 +321,23 @@
   }
 
   onRequestComplete (aRequest) {
-    //this.conversation().addAssistentMessageContent(aRequest.fullContent())
     //this.setRequest(null)
     //this.setStatus("complete")
     this.setIsComplete(true)
     this.setNote(null)
-    this.conversation().onMessageComplete(this)
+    this.sendDelegate("onMessageComplete")
   }
   
   onStreamData (request, newContent) {
-    this.conversation().onMessageWillUpdate(this)
+    this.sendDelegate("onMessageWillUpdate")
+
     this.setContent(request.fullContent())
-    this.conversation().onMessageUpdate(this)
+    this.sendDelegate("onMessageUpdate")
   }
   
   onStreamComplete (request) {
     this.setContent(request.fullContent())
-    this.conversation().onMessageUpdate(this)
-    //this.conversation().newMessage().setRole("user")
+    this.sendDelegate("onMessageUpdate")
   }
 
   onValueInput () {
@@ -310,6 +356,13 @@
     return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
   }
 
+  delegate () {
+    if (!this._delegate) {
+      return this.conversation()
+    }
+    return this._delegate
+  }
+
   sendDelegate (methodName) {
     const d = this.delegate()
     if (d) {
@@ -321,5 +374,26 @@
     }
   }
 
+  newSummaryMessage () {
+    const m = this.thisClass().clone()
+    m.setRole("user")
+    m.setContent(this.summaryRequestPrompt())
+    m.setConversation(this.conversation())
+    return m
+  }
+
+  sendSummaryMessage () {
+    if (!this.summaryMessage()) {
+      this.setNote("sending summary request")
+      const m = this.newSummaryMessage()
+      this.setSummaryMessage(m)
+    }
+  }
+
+  summaryRequestPrompt () {
+    return `Please write a concise summary of the previous chat history 
+    which includes any details necessary to adequately continue the conversation 
+    without the complete chat history. Start the summary with the title: "SUMMARY OF STORY SO FAR:"`
+  }
 
 }.initThisClass());

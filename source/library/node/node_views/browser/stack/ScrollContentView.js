@@ -52,7 +52,7 @@
         super.syncFromNode()
         const node = this.node()
         if (node && node.subviewsScrollSticksToBottom) {
-                this.setSticksToBottom(node.subviewsScrollSticksToBottom())
+            this.setSticksToBottom(node.subviewsScrollSticksToBottom())
         }
         return this
     }
@@ -76,17 +76,15 @@
         return this.parentView()
     }
 
+    /*
     onRequestScrollToBottom (aNote) {
-        /*
-        console.log(this.typeId() + " onRequestScrollToBottom")
         this.addTimeout(() => { 
-            //this.scrollView().domScrollToBottom() 
             this.parentView().domScrollToBottom()
         }, 1);
         this.setWasAtBottom(true)
         this.setLastScrollHeight(this.clientHeight())
-        */
     }
+    */
 
     // --- scroll events ---
 
@@ -143,16 +141,11 @@
     onContentMutations (mutations) {
         if (this.sticksToBottom()) {
             if (this.wasAtBottom()) {
-                console.log("ScrollContentView scrollToBottom")
-                //this.domScrollToBottom()
+                //console.log("ScrollContentView scrollToBottom")
                 this.parentView().domScrollToBottom()
                 this.setWasAtBottom(true)
                 this.setLastScrollHeight(this.clientHeight())
-                
-                //this.onRequestScrollToBottom(null)
-                //this.setWasAtBottom(true) // in case scroll is animated?
             }
-            //this.updateScrollTracking()
         }
     }
 

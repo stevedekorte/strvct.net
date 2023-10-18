@@ -31,6 +31,7 @@
     {
       const slot = this.newSlot("footerNode", null);
     }
+
   }
 
   init() {
@@ -57,11 +58,10 @@
     return true
   }
 
-  /*
   finalInit () {
     super.finalInit()
+    this.messages().forEach(m => m.setConversation(this))
   }
-  */
 
   service () {
     return this.conversations().service()
@@ -90,9 +90,15 @@
     return "gpt-4";
   }
 
-  newMessage () {
+  justNewMessage () {
     const msgClass = this.subnodeClasses().first()
-    const message = msgClass.clone().setRole("user")
+    const m = msgClass.clone().setRole("user")
+    m.setConversation(this)
+    return m
+  }
+
+  newMessage () {
+    const message = this.justNewMessage()
     this.addSubnode(message)
     return message
   }
@@ -103,34 +109,39 @@
   } 
 
   onMessageWillUpdate (aMsg) {
-    // note if the scroll view position is at the end or beginning before we update the message
-    this.postNoteNamed("onRequestMarkScrollPoint")
-    // after we update the message, if it was at the end, we'll request to scroll to the end 
   }
 
   onMessageUpdate (aMsg) {
     // sent for things like streaming updates
     // can be useful for sharing the changes with other clients
-    this.postNoteNamed("onRequestScrollToBottom")
-    //this.postNoteNamed("onRequestScrollToBottomIfMarkAtBottom")
   }
 
-  onMessageComplete (Msg) {
-    this.postNoteNamed("onRequestScrollToBottom")
-    this.checkTokenCount()
+  onMessageComplete (aMsg) {
+    this.footerNode().setValueIsEditable(true)
+    if (aMsg.error() === null) {
+      const pmsg = aMsg.previousMessage() 
+      /*
+      if (pmsg && pmsg.value() === this.summaryRequestPrompt()) {
+        // it's a response to a summary request
+        //this.removeSubnodes(aMsg.previousMessages())
+      }
+      */
+      this.checkTokenCount()
+    }
   }
 
   checkTokenCount () {
     this.updateTokenCount()
     const tc = this.tokenCount()
     console.log("token count: ", tc)
-    if (tc > this.maxTokenCount()*0.9) {
-      // time to compact
+    if (tc > this.maxTokenCount() * 0.9) {
+      this.compactTokens()
     }
   }
 
   compactTokens () {
-
+    const m = this.messages().last()
+    m.sendSummaryMessage()
   }
 
   onChatInput (chatInputNode) {
@@ -138,15 +149,15 @@
     if (v) {
       const m = this.newMessage()
       m.setRole("user")
-      m.setValue(v)
+      m.setContent(v)
       m.sendInConversation()
       this.scheduleMethod("clearInput", 2) 
+      this.footerNode().setValueIsEditable(false)
     }
   }
 
   clearInput () {
     this.footerNode().setValue("")
-    this.postNoteNamed("onRequestScrollToBottom")
   }
 
 }.initThisClass());

@@ -412,6 +412,9 @@
     this.sendDelegate("onRequestComplete")
     this.setStatus("completed " + this.responseSizeDescription())
     this.xhrResolve()(this.fullContent()); 
+
+    //const completionDict = this.bodyJson();
+    //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, 2, 2)); // no usage property!
   }
 
   didUpdateSlotError (oldValue, newValue) {
