@@ -220,6 +220,15 @@
         
         return s
     }
+
+    didUpdateNode () {
+        super.didUpdateNode()
+    
+        // how can we generalize this without creating unnecessary update notifications?
+        if (this.parentNode()) {
+          this.parentNode().didUpdateNode()
+        }
+    }
     
 }.initThisClass());
 
