@@ -33,5 +33,12 @@
         super.init()
         this.setKeyIsVisible(false)
     }
+
+    appendToValue (text) {
+        this.setValue(this.value() + text)
+        return this
+    }
+
+
     
 }.initThisClass());
