@@ -36,7 +36,6 @@
 
   init() {
     super.init();
-    //this.addNodeAction("add")
     this.setCanDelete(true)
     this.setNodeCanEditTitle(true)
     this.setTitle("Untitled")
@@ -54,6 +53,10 @@
     }
   }
 
+  nodeFillsRemainingWidth () {
+    return true
+  }
+
   subviewsScrollSticksToBottom () {
     return true
   }
@@ -61,6 +64,8 @@
   finalInit () {
     super.finalInit()
     this.messages().forEach(m => m.setConversation(this))
+    this.removeNodeAction("add")
+    this.setNodeFillsRemainingWidth(true)
   }
 
   service () {

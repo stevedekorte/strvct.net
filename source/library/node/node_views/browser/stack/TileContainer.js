@@ -67,7 +67,6 @@
         */
         this.setWidth("-webkit-fill-available")
         this.setHeight("fit-content")
-
     }
 
     makeOrientationDown () {
