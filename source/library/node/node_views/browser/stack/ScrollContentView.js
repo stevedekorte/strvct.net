@@ -48,6 +48,14 @@
 
     // -----
 
+    setNode (aNode) {
+        super.setNode(aNode)
+        if (aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
+            this.addTimeout(() => { this.scrollToBottom() }, 0)
+        }
+        return this
+    }
+
     syncFromNode () {
         super.syncFromNode()
         const node = this.node()

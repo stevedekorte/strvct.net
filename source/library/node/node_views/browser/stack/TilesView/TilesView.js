@@ -169,6 +169,10 @@
         super.didChangeNode()
 
         if (this.node() && this.node().nodeTilesStartAtBottom()) {
+            this.setTransition("none")
+            this.setAnimation("none")
+            this.element().style.scrollBehavior = 'auto';
+            this.element().offsetHeight; // force reflow
             this.addTimeout(() => { this.scrollToBottom() }, 0)
             //this.tile().last().scrollIntoView()
         }

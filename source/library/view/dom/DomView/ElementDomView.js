@@ -53,6 +53,7 @@
         this.newSlot("elementClassName", "")
         this.newSlot("elementType", "div")
         this.newSlot("element", null)
+        this.newSlot("usesSmoothScrolling", false)
     }
 
     init () {

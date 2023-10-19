@@ -122,7 +122,7 @@
             this.element().scrollIntoView({ 
                 block: "start", 
                 inline: "nearest", 
-                behavior: "smooth", 
+                behavior: this.usesSmoothScrolling() ? "smooth" : "auto", 
             })
         }, 0)
 
