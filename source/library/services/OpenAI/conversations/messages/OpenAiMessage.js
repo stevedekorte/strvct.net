@@ -13,6 +13,13 @@
       slot.setShouldStoreSlot(true)
     }
 
+    /*
+    {
+      const slot = this.newSlot("messageType", null);
+      slot.setShouldStoreSlot(true)
+    }
+    */
+
     {
       const slot = this.newSlot("conversation", null);
       slot.setShouldStoreSlot(true)

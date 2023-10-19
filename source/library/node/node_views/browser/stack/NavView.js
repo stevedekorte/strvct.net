@@ -154,10 +154,12 @@
         this.setMinAndMaxHeight("100%")
 
         if (this.node()) {
-            if (this.node().nodeFillsRemainingWidth()) {
-                this.setMinWidth("fit-content") // should only do this if it's the last node?
-                this.setWidth(null)
-                this.setMaxWidth("auto") // should only do this if it's the last node?
+            if (this.node().nodeFillsRemainingWidth() && this.isLastNavView()) {
+                //debugger;
+                //this.setMinWidth("fit-content") // should only do this if it's the last node?
+                this.setMinWidth("17em") // should only do this if it's the last node?
+                this.setWidth("-webkit-fill-available")
+                this.setMaxWidth("-webkit-fill-available") // should only do this if it's the last node?
             }
         }
 
@@ -241,6 +243,10 @@
         return this
     }
 
+    isLastNavView () {
+        return Type.isNullOrUndefined(this.stackView().nextStackView())
+    }
+
     syncFromNode () {
         this.syncOrientation()
         //this.tilesView().syncFromNode()
@@ -249,13 +255,11 @@
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth()
             if (w && !Type.isNullOrUndefined(w)) {
-                this.setMinAndMaxWidth(w)
+                //this.setMinAndMaxWidth(w)
+                this.setMinWidth(w)
+                //const maxw = this.isLastNavView() ? "-webkit-fill-available" : null;
+                //this.setMaxWidth(maxw)
                 this.setMinAndMaxHeight("100%")
-                /*
-                this.setFlexBasis(w + "px")
-                this.setFlexGrow(0)
-                this.setFlexShrink(0)
-                */
             } 
         } else {
             //debugger;
@@ -310,13 +314,6 @@
     collapse () {
         if (!this.isCollapsed()) {
             this.hideDisplay()
-            //this.setMinAndMaxWidth(0)
-
-            /*
-            this.setFlexBasis("0px")
-            this.setFlexGrow(0)
-            this.setFlexShrink(0)
-            */
            this.setIsCollapsed(true)
         }
     }
@@ -324,7 +321,6 @@
     uncollapse () {
         if (this.isCollapsed()) {
             this.unhideDisplay()
-            //this.setMinAndMaxWidth(this.targetWidth() + "px")
             this.syncOrientation()
             this.setIsCollapsed(false)
         }
