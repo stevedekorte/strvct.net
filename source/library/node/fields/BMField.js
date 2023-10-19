@@ -336,6 +336,13 @@
         return null
     }
 
+    summary () {
+        if (!this.isVisible()) {
+            return ""
+        }
+        return super.summary()
+    }
+
     summaryKey () {
         return this.key()
     }

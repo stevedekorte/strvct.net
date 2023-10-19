@@ -192,6 +192,7 @@
         field.setHasNewlineAferSummary(true)
         field.removeNodeAction("add")
         field.setCanDelete(false)
+        field.setIsVisible(slot.isSubnodeFieldVisible())
         
         /*
         if (name === "isAvailable") {

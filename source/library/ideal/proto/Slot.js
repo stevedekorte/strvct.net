@@ -104,6 +104,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         //this.simpleNewSlot("shouldFinalInitAsSubnode", false) // if final init is used, it will add the init instance as a subnode use "isSubnode" instead
         this.simpleNewSlot("isSubnode", null) // in finalInit, add value as subnode if not already present
         this.simpleNewSlot("isSubnodeField", null) // in finalInit, create a field for the slot and add as subnode
+        this.simpleNewSlot("isSubnodeFieldVisible", true) // sets isVisible on Field when created
 
         this.simpleNewSlot("valueClass", null) // declare the value should be a kind of valueClass
         //this.simpleNewSlot("field", null)
