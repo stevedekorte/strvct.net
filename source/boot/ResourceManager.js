@@ -309,6 +309,41 @@ class UrlResource {
 
 // ------------------------------------------------------------------------
 
+class BootLoadingView {
+
+  element () {
+    return document.getElementById("loadingView");
+  }
+
+  unhide () {
+    this.loadingView().style.display = "block";
+  }
+
+  hide () {
+    this.loadingView().style.display = "none";
+  }
+
+  update (n, count) {
+    //this.loadingView().innerHTML = "Loading " + file.split("/").pop() + "...";
+
+    const percent = Math.round(100*(n / count));
+
+    const bar = document.getElementById("innerLoadingView");
+    bar.style.width = 10*(percent/100) + "em";
+    //this.loadingView().innerText = "Loading " + percent + "%";
+    //console.log("'" + this.loadingView().innerText + "'");
+  }
+
+  close () {
+    const e = this.element();
+    e.parentNode.removeChild(e);
+  }
+}
+
+const bootLoadingView = new BootLoadingView();
+
+// ------------------------------------------------------------------------
+
 class ResourceManager {
 
     static bootPath () {
@@ -433,8 +468,16 @@ class ResourceManager {
 
     evalIndexResources () {
         //debugger
-        this.cssResources().promiseSerialForEach(r => r.promiseLoadAndEval()).then(() => {
-            return this.jsResources().promiseSerialForEach(r => r.promiseLoadAndEval()) 
+        let count = 0
+        this.cssResources().promiseSerialForEach(r => {
+            return r.promiseLoadAndEval()
+        }).then(() => {
+            return this.jsResources().promiseSerialForEach(r => {
+                count++
+                bootLoadingView.update(count, this.jsResources().length);
+                console.log("count: " + count + " / " + this.jsResources().length)
+                return r.promiseLoadAndEval()
+            }) 
         }).then(() => this.onDone())
     }
 
@@ -461,6 +504,7 @@ class ResourceManager {
     
     onProgress (path) {
         this._evalCount ++
+        //bootLoadingView.update(this._evalCount, 100);
         //const detail = { path: path, progress: this._evalCount / this.jsEntries().length }
         //this.postEvent("resourceLoaderLoadUrl", detail)
         //this.postEvent("resourceLoaderProgress", detail)
@@ -471,6 +515,7 @@ class ResourceManager {
     }
 
     onDone () {
+        bootLoadingView.close();
         this.markPageLoadTime();
 		//window.document.title = this.loadTimeDescription();
 		//this.postEvent("resourceLoaderDone", {}) 
