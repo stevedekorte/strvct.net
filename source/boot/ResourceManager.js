@@ -236,7 +236,6 @@ class UrlResource {
 
     promiseLoadAndEval () {
         //console.log("promiseLoadAndEval " + this.path())
-        //debugger
         return this.promiseLoad().then(() => {
             this.eval()
             return Promise.resolve(this)
@@ -310,31 +309,44 @@ class UrlResource {
 // ------------------------------------------------------------------------
 
 class BootLoadingView {
+  isAvailable() {
+    return this.element() !== null;
+  }
 
   element () {
     return document.getElementById("loadingView");
   }
 
+  /*
   unhide () {
-    this.loadingView().style.display = "block";
+    this.element().style.display = "block";
   }
 
   hide () {
-    this.loadingView().style.display = "none";
+    this.element().style.display = "none";
   }
+  */
 
   update (n, count) {
+    if (!this.isAvailable()) {
+        return
+    }
+
     //this.loadingView().innerHTML = "Loading " + file.split("/").pop() + "...";
 
-    const percent = Math.round(100*(n / count));
+    const percent = Math.round(100 * (n / count));
 
     const bar = document.getElementById("innerLoadingView");
-    bar.style.width = 10*(percent/100) + "em";
+    bar.style.width = 10 * (percent / 100) + "em";
     //this.loadingView().innerText = "Loading " + percent + "%";
     //console.log("'" + this.loadingView().innerText + "'");
   }
 
-  close () {
+  close() {
+    if (!this.isAvailable()) {
+        return
+    }
+
     const e = this.element();
     e.parentNode.removeChild(e);
   }
@@ -475,7 +487,7 @@ class ResourceManager {
             return this.jsResources().promiseSerialForEach(r => {
                 count++
                 bootLoadingView.update(count, this.jsResources().length);
-                console.log("count: " + count + " / " + this.jsResources().length)
+                //console.log("count: " + count + " / " + this.jsResources().length)
                 return r.promiseLoadAndEval()
             }) 
         }).then(() => this.onDone())
