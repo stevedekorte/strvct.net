@@ -21,6 +21,7 @@
         this.newSlot("path", null)
         this.newSlot("separatorString", "/")
         this.newSlot("onStackViewPathChangeObs", null)
+        this.newSlot("crumbObservations", null)
     }
 
     init () {
@@ -33,6 +34,8 @@
         //this.updateSubviews()
         this.setIsSelectable(true)
         this.setIsRegisteredForWindowResize(true)
+
+        this.setCrumbObservations([])
         return this
     }
 
@@ -176,6 +179,7 @@
 
     newUnpaddedButton () {
         const v = ButtonView.clone()
+        //const v = BreadCrumbButton.clone()
         v.setDisplay("inline-block")
         v.titleView().setOverflow("visible")
         v.setHeightPercentage(100)
@@ -186,7 +190,6 @@
         v.titleView().setPaddingRight("0em")
         //v.debugTypeId = function () { return "crumbView" }
         return v
-
     }
 
     buttonForName (aName) {
@@ -221,6 +224,9 @@
     crumbViewForNode (node, i, pathNodes) {
         const name = node.title()
         const crumb = this.buttonForName(name)
+        if (crumb.setNode) {
+            crumb.setNode(node)
+        }
         // not efficient to get pathNodes
         // just get the path to the crumb node itself
         //console.log("pathNodes: " + pathNodes.map(n => n.title()).join("/"))
@@ -247,6 +253,8 @@
         this.contentView().removeAllSubviews()
         this.contentView().addSubviews(separatedViews)
         this.updateCompaction()
+
+        this.watchPathNodes()
         return this
     }
 
@@ -310,6 +318,27 @@
 
     desiredWidth () {
         return Number.MAX_VALUE
+    }
+
+    onUpdatedNode (aNote) {
+        this.scheduleMethod("setupPathViews")
+    }
+
+    watchPathNodes () {
+        this.unwatchPathNodes()
+        this.pathNodes().forEach(node => {
+            const obs = this.watchSender(node)
+            this.crumbObservations().push(obs)
+        })
+        return this
+    }
+
+    unwatchPathNodes () {
+        this.crumbObservations().forEach(obs => {
+            obs.stopWatching()
+        })
+        this.setCrumbObservations([])
+        return this
     }
 
 }.initThisClass());
