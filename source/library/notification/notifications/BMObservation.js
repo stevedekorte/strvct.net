@@ -14,6 +14,7 @@
     initPrototypeSlots () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("name", null) // String 
+        this.newSlot("sendName", null) // String 
         this.newSlot("isOneShot", false) // Boolean
         this.newSlot("didFinalizeStop", false) // Boolean
         this.newWeakSlot("observer", null) // WeakRef slot to observer
@@ -118,8 +119,8 @@
             return
         }
 
-        //const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];
-        const method = obs[note.name()];
+        const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];
+        //const method = obs[note.name()];
 
         if (method) {
             method.call(obs, note)

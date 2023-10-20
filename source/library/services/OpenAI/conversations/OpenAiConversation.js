@@ -158,7 +158,9 @@
       m.sendInConversation()
       this.scheduleMethod("clearInput", 2) 
       this.footerNode().setValueIsEditable(false)
+      return m
     }
+    return null
   }
 
   clearInput () {

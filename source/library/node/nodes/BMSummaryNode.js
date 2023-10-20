@@ -224,7 +224,15 @@
     didUpdateNode () {
         super.didUpdateNode()
     
-        // how can we generalize this without creating unnecessary update notifications?
+        // TODO: FIX HACK, how can we generalize this without creating unnecessary update notifications?
+
+        /*
+        this.parentChainNodes().forEach(node => {
+            //node.didUpdateNode()
+            //node.scheduleMethod("didUpdateNode")
+        })
+        */
+
         if (this.parentNode()) {
           this.parentNode().didUpdateNode()
         }

@@ -660,7 +660,6 @@
         return this
     }
 
-
     // -- adding subnodes by instantiating subnode class ----
     
     justAddAt (anIndex) {
