@@ -165,6 +165,10 @@ getGlobalThis().Type = (class Type extends Object {
         return typeof(value) === "number"
     }
 
+    static isInteger (value) {
+        return this.isNumber(value) && (value % 1 === 0);
+    }
+
     static isObject (value) { 
         // WARNING: true for array and dictionary too!
         return typeof(value) === "object" 

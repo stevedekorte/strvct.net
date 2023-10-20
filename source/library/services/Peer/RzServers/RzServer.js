@@ -73,6 +73,8 @@
       slot.setSummaryFormat("key value")
     }
 
+    // -------------------
+
     {
       const slot = this.newSlot("peers", null)
       slot.setFinalInitProto(RzServerPeers);
@@ -114,6 +116,60 @@
     super.finalInit()
     this.setCanDelete(true)
     this.refreshPeers()
+  }
+
+  static fullPathForDict (dict) {
+    return dict.host + ":" + dict.port + dict.path
+  }
+
+  fullPath () {
+    return this.host() + ":" + this.port() + this.path() // path always begins with slash?
+  }
+
+  setDict (dict) {
+    /*
+    {
+      host: "peerjssignalserver.herokuapp.com",
+      path: "/peerjs",
+      isSecure: true,
+      port: 443,
+      reliable: true,
+      pingInterval: 1000, // 1 second
+      debug: false
+    }
+    */
+    assert(Type.isString(dict.host))
+    this.setHost(dict.host)
+
+    assert(Type.isString(dict.path))
+    this.setPath(dict.path)
+
+    assert(Type.isBoolean(dict.isSecure))
+    this.setIsSecure(dict.isSecure === true)
+
+    assert(Type.isInteger(dict.port))
+    this.setPort(dict.port)
+
+    // optional server connection defaults for this server
+
+    /*
+    if (dict.isReliable !== undefined) {
+      assert(Type.isBoolean(dict.isReliable))
+      this.setIsReliable(dict.isReliable)
+    }
+
+    if (dict.debug !== undefined) {
+      assert(Type.isBoolean(dict.isReliable))
+      this.setDebug(dict.debug)
+    }
+
+    if (dict.pingInterval !== undefined) {
+      assert(Type.isNumber(dict.isReliable))
+      this.setPingInterval(dict.pingInterval)
+    }
+    */
+   
+    return this
   }
 
   title () {
