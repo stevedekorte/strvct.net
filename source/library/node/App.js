@@ -178,6 +178,18 @@
         ResourceManager.shared().markPageLoadTime();
         document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
         console.log("done loading fonts!");
+        this.afterAppDidInit()
+    }
+
+    afterAppDidInit () {
+        const searchParams = WebBrowserWindow.shared().pageUrl().searchParams
+        if (searchParams.keys().length !== 0) {
+            this.handleSearchParams(searchParams)
+        }
+    }
+
+    handleSearchParams (searchParams) {
+        
     }
         
     // window and document 

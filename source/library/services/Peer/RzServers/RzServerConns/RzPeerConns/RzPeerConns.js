@@ -16,7 +16,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([RzPeerConn]);
-    this.removeNodeAction("add");
+    this.setCanAdd(false);
     this.setNodeCanReorderSubnodes(true);
   }
 

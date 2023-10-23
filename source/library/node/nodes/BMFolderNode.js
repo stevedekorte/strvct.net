@@ -51,7 +51,7 @@
 
     init () {
         super.init()
-        this.addNodeAction("add")
+        this.setCanAdd(true)
         this.setSubnodeClasses(BMNode.primitiveNodeClasses())
     }
 

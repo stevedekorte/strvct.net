@@ -18,7 +18,7 @@
         this.setNodeCanEditTitle(true)
         this.setTitle("children")
         this.setCanDelete(true)
-        this.addNodeAction("add")
+        this.setCanAdd(true)
         this.setSubnodeClasses([BMThemeClass])
         this.setNodeCanReorderSubnodes(true)
     }

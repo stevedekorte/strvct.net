@@ -39,7 +39,7 @@
         this.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
         this.setNodeCanReorderSubnodes(false)
         this.setShouldStoreSubnodes(false)
-        this.removeNodeAction("add")
+        this.setCanAdd(false)
         return this
     }
 

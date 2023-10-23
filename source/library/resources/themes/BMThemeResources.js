@@ -46,7 +46,7 @@
         this.setShouldStoreSubnodes(true)
 
         this.setNoteIsSubnodeCount(true)
-        this.addNodeAction("add")
+        this.setCanAdd(true)
         this.setSubnodeClasses([BMTheme, BMDefaultTheme])
         this.setNodeCanReorderSubnodes(true)
 

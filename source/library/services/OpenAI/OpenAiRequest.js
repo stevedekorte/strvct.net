@@ -341,6 +341,8 @@
 
     this.setFullContent("");
 
+    // TODO: move to a standard wrapped XHR class?
+    
     // why false arg? see https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
     xhr.addEventListener("progress", (event) => {
      EventManager.shared().safeWrapEvent(() => { this.onXhrProgress(event) })

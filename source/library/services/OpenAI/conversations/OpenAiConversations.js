@@ -22,7 +22,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([OpenAiConversation]);
-    this.addNodeAction("add");
+    this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
 

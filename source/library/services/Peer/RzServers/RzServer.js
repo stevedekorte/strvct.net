@@ -128,16 +128,19 @@
 
   setDict (dict) {
     /*
+    sample dict:
+
     {
       host: "peerjssignalserver.herokuapp.com",
       path: "/peerjs",
       isSecure: true,
       port: 443,
       reliable: true,
-      pingInterval: 1000, // 1 second
+      pingInterval: 1000, // 1 second TODO: change to pingIntervalMs
       debug: false
     }
     */
+
     assert(Type.isString(dict.host))
     this.setHost(dict.host)
 
@@ -168,7 +171,7 @@
       this.setPingInterval(dict.pingInterval)
     }
     */
-   
+
     return this
   }
 

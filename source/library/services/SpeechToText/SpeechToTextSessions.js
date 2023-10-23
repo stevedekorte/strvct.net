@@ -17,7 +17,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([SpeechToTextSession]);
-    this.addNodeAction("add");
+    this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
 

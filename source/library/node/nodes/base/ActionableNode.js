@@ -27,6 +27,15 @@
     */
     
     // --- standard actions -----------------------------
+
+    setCanAdd (aBool) {
+        if (aBool) {
+            this.addNodeAction("add")
+        } else {
+            this.removeNodeAction("add")
+        }
+        return this
+    }
     
     addNodeAction (actionString) {
         if (!this.nodeActions().contains(actionString)) {

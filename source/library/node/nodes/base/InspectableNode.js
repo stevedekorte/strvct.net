@@ -104,7 +104,7 @@
                     const newNode = nodeClass.clone()
                     newNode.setNodeCanReorderSubnodes(false) // should this be here?
                     newNode.setTitle(component)
-                    newNode.removeNodeAction("add")
+                    newNode.setCanAdd(false)
                     return newNode
                 })
                 pathNodes.push(node)
@@ -190,7 +190,7 @@
         field.setNodeCanReorderSubnodes(false)
         field.setSummaryFormat(slot.summaryFormat())
         field.setHasNewlineAferSummary(true)
-        field.removeNodeAction("add")
+        field.setCanAdd(false)
         field.setCanDelete(false)
         field.setIsVisible(slot.isSubnodeFieldVisible())
         

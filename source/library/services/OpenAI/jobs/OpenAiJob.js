@@ -16,7 +16,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([OpenAiJob])
-    //this.addNodeAction("add")
+    //this.setCanAdd(true)
     this.setNodeCanReorderSubnodes(true)
   }
 

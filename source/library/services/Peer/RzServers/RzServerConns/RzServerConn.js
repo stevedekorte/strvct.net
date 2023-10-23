@@ -276,6 +276,12 @@
     return this.serverConnections().parentNode()
   }
 
+  fullPeerId () {
+    const id = this.peerId()
+    const fullPath = this.server().fullPath()
+    return fullPath + ":" + id
+  }
+
   /*
   peerOptions () {
     // Deployed peerjs server
@@ -375,6 +381,7 @@
 
     this.setPeerId("") // only if we are having the server assign the id...
     this.setStatus("closed")
+    this.sendDelegateMessage("onPeerServerClose", [this])
   }
 
   onDisconnected () {
@@ -389,6 +396,7 @@
     */
 
     this.setStatus("disconnected")
+    this.sendDelegateMessage("onPeerServerDisconnected", [this])
   }
 
   onConnection (conn) {
@@ -430,13 +438,17 @@
     this.setStatus(error.message)
 
     const etype =  error.type
-    const errorMethodName = "on" + etype.split("-").map(s => s.capitalized()).join() + "Error";
+    const errorMethodName = "on" + etype.split("-").map(s => s.capitalized()).join("") + "Error";
     const method = this[errorMethodName]
     if (method) {
       method.apply(this, [error])
     } else {
       throw new Error("missing error handler method '" + errorMethodName + "'")
     }
+  }
+
+  onErrorPeerUnavailable (error) {
+    console.warn(this.typeId() + " error: ", error)
   }
 
   onBrowserIncompatible (error) {

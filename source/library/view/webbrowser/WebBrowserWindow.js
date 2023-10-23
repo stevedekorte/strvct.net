@@ -125,6 +125,8 @@
         return result
     }
 
+    // --- url hash ---
+
     urlHash () {
         return decodeURI(window.location.hash.substr(1)) // return string after # character
     }
@@ -146,6 +148,32 @@
         return dict
     }
 
+    // --- url ---
+    
+    pageUrl () {
+        return new URL(window.location.href)
+    }
+
+    baseUrl () {
+        /*
+          Returns URL with no parameters or hash.
+
+          Example:
+          for URL:    http://localhost:3000/page?param=value#section, 
+          baseUrl is: http://localhost:3000/page
+
+        */
+        const url = new URL(window.location.href);
+        let basePath = url.pathname;
+
+        // Remove trailing "index.html" if present
+        if (basePath.endsWith('/index.html')) {
+            basePath = basePath.substring(0, basePath.lastIndexOf('index.html'));
+        }
+
+        return url.origin + basePath;
+    }
+
     urlHostname () {
         const parser = document.createElement("a")
         parser.href = window.location.href
@@ -155,6 +183,25 @@
         }
         return name
     }
+
+    /*
+    getUrlParametersDict () {
+        const parser = document.createElement('a');
+        parser.href = window.location.href;
+        debugger
+
+        const query = parser.search.substring(1);
+        const vars = query.split('&');
+        const params = {};
+        for (let i = 0; i < vars.length; i++) {
+            const pair = vars[i].split('=');
+            params[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1]);
+        }
+        return params;
+    }
+    */
+
+    // --- title ---
 	
     setTitle (aName) {
         document.title = aName

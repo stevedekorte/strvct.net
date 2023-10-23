@@ -64,7 +64,7 @@
   finalInit () {
     super.finalInit()
     this.messages().forEach(m => m.setConversation(this))
-    this.removeNodeAction("add")
+    this.setCanAdd(false)
     this.setNodeFillsRemainingWidth(true)
   }
 
