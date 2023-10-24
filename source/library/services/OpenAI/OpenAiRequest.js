@@ -385,15 +385,16 @@
     this.onXhrRead();
   }
 
-  sendDelegate (methodName) {
+  sendDelegate (methodName, args = [this]) {
     const d = this.delegate()
     if (d) {
       const f = d[methodName]
       if (f) {
-        f.apply(d, [this])
+        f.apply(d, args)
         return true
       }
     }
+    return false
   }
 
   onXhrLoadEnd (event) {

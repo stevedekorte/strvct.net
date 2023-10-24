@@ -5,25 +5,8 @@
 
 */
 
-(class OpenAiMessage extends BMTextAreaField {
+(class OpenAiMessage extends ConversationMessage {
   initPrototypeSlots() {
-
-    {
-      const slot = this.newSlot("chatMessageId", null);
-      slot.setShouldStoreSlot(true)
-    }
-
-    /*
-    {
-      const slot = this.newSlot("messageType", null);
-      slot.setShouldStoreSlot(true)
-    }
-    */
-
-    {
-      const slot = this.newSlot("conversation", null);
-      slot.setShouldStoreSlot(true)
-    }
 
     {
       const slot = this.newSlot("role", "user"); 
@@ -37,20 +20,6 @@
       //slot.setIsSubnodeField(true)
       slot.setCanInspect(true)
     }
-
-    /*
-    {
-      const slot = this.newSlot("content", "");
-      slot.setInspectorPath("")
-      //slot.setLabel("role")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      //slot.setIsSubnodeField(true)
-      slot.setCanInspect(true)
-    }
-    */
 
     {
       const slot = this.newSlot("request", null);
@@ -70,22 +39,6 @@
     }
 
     {
-      const slot = this.newSlot("error", null);
-      slot.setShouldStoreSlot(true)
-    }
-
-
-    {
-      const slot = this.newSlot("delegate", null);
-      slot.setShouldStoreSlot(true)
-    }
-
-    {
-      const slot = this.newSlot("isComplete", false);
-      slot.setShouldStoreSlot(true)
-    }
-
-    {
       const slot = this.newSlot("retryCount", 0);
       //slot.setShouldStoreSlot(true)
     }
@@ -94,21 +47,6 @@
       const slot = this.newSlot("summaryMessage", null);
       //slot.setShouldStoreSlot(true)
     }
-
-    /*
-    {
-      const slot = this.newSlot("sendInConversation", null);
-      slot.setInspectorPath("")
-      slot.setLabel("Send")
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Action")
-      slot.setIsSubnodeField(true)
-      slot.setActionMethodName("sendInConversation");
-    }
-    */
-
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
@@ -122,30 +60,8 @@
 
   finalInit () {
     super.finalInit();
-    this.setNodeTileClassName("BMChatInputTile")
-    //this.setOverrideSubviewProto(this.nodeTileClass())
-    this.setKeyIsVisible(true)
-    this.createIdIfAbsent()
   }
 
-  createIdIfAbsent () {
-    if (!this.chatMessageId()) {
-      this.setChatMessageId(Object.newUuid())
-    }
-  }
-
-  setSendInConversation (v) {
-    debugger;
-  }
-
-  /*
-  finalInit () {
-    super.finalInit()
-    //const action = BMActionField.clone().setTitle("Send").setTarget(this).setMethodName("sendInConversation")
-    //this.addSubnode(action)
-    //this.scheduleSyncToView()
-  }
-  */
 
   valueIsEditable () {
     return this.role() === "user"
@@ -207,47 +123,6 @@
     }
   }
 
-  conversation () {
-    return this.parentNode()
-  }
-
-  previousMessages () {
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    assert(i !== -1)
-    return messages.slice(0, i)
-  }
-
-  previousMessagesIncludingSelf () {
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    assert(i !== -1)
-    return messages.slice(0, i+1)
-  }
-
-  previousMessage () {
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    if (i > -1) {
-      return messages[i-1]
-    }
-    return null
-  }
-
-  conversationHistoryPriorToSelfJson () {
-    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
-    const json = this.previousMessages().map(m => m.openAiJson())
-    return json
-  }
-
-  /*
-  conversationHistoryUpToAndIncludingSelfJson () {
-    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
-    const json = this.previousMessagesIncludingSelf().map(m => m.openAiJson())
-    return json
-  }
-  */
-
   send () {
     return this.sendInConversation()
   }
@@ -274,6 +149,8 @@
   apiKey () {
     return this.service().apiKey()
   }
+
+  // --- openai response request --- 
 
   /*
   assertValidRequest () {
@@ -359,27 +236,7 @@
     }
   }
 
-  centerDotsHtml () {
-    return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
-  }
-
-  delegate () {
-    if (!this._delegate) {
-      return this.conversation()
-    }
-    return this._delegate
-  }
-
-  sendDelegate (methodName) {
-    const d = this.delegate()
-    if (d) {
-      const f = d[methodName]
-      if (f) {
-        f.apply(d, [this])
-        return true
-      }
-    }
-  }
+  // --- summary ---
 
   newSummaryMessage () {
     const m = this.thisClass().clone()

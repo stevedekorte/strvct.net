@@ -1,5 +1,6 @@
 [
     "messages/_imports.json",
+    "Conversation.js",
     "OpenAiConversation.js",
     "OpenAiConversations.js",
     "ChatInputNode.js"
