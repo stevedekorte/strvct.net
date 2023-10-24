@@ -400,6 +400,8 @@
   }
 
   onConnection (conn) {
+    // incoming connection
+
     const id = conn.peer;
     this.debugLog("incoming connection from: " + id)
 
@@ -573,7 +575,7 @@
     const peerConn = RzPeerConn.clone().setPeerId(peerId)
     this.addPeerConnection(peerConn)
     peerConn.connect()
-    return this
+    return peerConn // the caller should problaby call peerConn.setDelegate(this) and handling it's delegate messages
   }
 
   unconnectedPeerConns () {

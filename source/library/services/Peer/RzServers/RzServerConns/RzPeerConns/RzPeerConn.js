@@ -3,6 +3,9 @@
 /* 
     RzPeerConn
 
+
+    TODO: add isOpen slot?
+    
 */
 
 (class RzPeerConn extends BMSummaryNode {
@@ -170,20 +173,20 @@
 
   onOpen () {
     this.debugLog("onOpen");
-    this.sendDelegateMessage("onOpen");
+    this.sendDelegateMessage("onPeerOpen");
   }
 
   onData (data) {
     const msg = RzMsg.clone().setContent(data)
     this.peerMsgs().addSubnode(msg)
-    this.sendDelegateMessage("onData", [data]);
+    this.sendDelegateMessage("onPeerData", [data]);
   }
 
   onError (error) {
     this.debugLog("onError:", error);
     this.setStatus("error: " + error.message)
 
-    this.sendDelegateMessage("onError", [error]);
+    this.sendDelegateMessage("onPeerError", [error]);
   }
 
   onClose () {
@@ -193,12 +196,12 @@
     this.serverConn().removePeerConnection(this);
     this.setConn(null);
 
-    this.sendDelegateMessage("onClose");
+    this.sendDelegateMessage("onPeerClose");
   }
 
   // --- delegate ---
 
-  sendDelegateMessage (methodName, args = []) {
+  sendDelegateMessage (methodName, args = [this]) {
     const d = this.delegate();
     if (d) {
       const m = d[methodName];

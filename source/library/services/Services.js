@@ -30,12 +30,14 @@
             slot.setIsSubnode(true);
         }
 
+        /*
         {
             const slot = this.newSlot("youtubeService", null)
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(YouTubeService);
             slot.setIsSubnode(true);
         }
+        */
 
         {
             const slot = this.newSlot("peerService", null)
