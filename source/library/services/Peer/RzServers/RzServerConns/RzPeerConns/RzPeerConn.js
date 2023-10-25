@@ -322,7 +322,7 @@
   }
 
   onPong () {
-    console.log(this.typeId() + " onPong")
+    //console.log(this.typeId() + " onPong")
     this.setGotPong(true)
   }
 
@@ -355,12 +355,12 @@
   // --- receiving ping & sending pong ---
 
   onPing () {
-    console.log(this.typeId() + " onPing")
+    //console.log(this.typeId() + " onPing")
     this.sendPong();
   }
 
   sendPong () {
-    console.log(this.typeId() + " sendPong")
+    //console.log(this.typeId() + " sendPong")
     this.send({ name: "RzPeerConnPong" })
   }
 
