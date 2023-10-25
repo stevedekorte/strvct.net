@@ -3,6 +3,8 @@
 /* 
     RzServerConn
 
+    Wrapper for PeerJS Peer object.
+
 */
 
 (class RzServerConn extends BMStorableNode {

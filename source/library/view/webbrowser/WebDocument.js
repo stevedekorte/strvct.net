@@ -11,7 +11,6 @@
 (class WebDocument extends ProtoClass {
     
     initPrototypeSlots () {
-
     }
 
     init () {

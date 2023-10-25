@@ -124,20 +124,44 @@
   // --- json ---
 
   jsonArchive () {
-    return {
+    const msgsJson = []
+    this.messages().forEach(msg => {
+      msgsJson.push(msg.jsonArchive())
+    })
+    assert(Type.isArray(msgsJson))
+
+    const json = {
       type: this.type(),
-      messages: this.messages().map(msg => msg.jsonArchive())
+      messages: msgsJson
     }
+    return json
   }
 
   setJsonArchive (json) {
-    const messages =json.messages.map(msgJson => {
+    this.removeAllSubnodes()
+
+    assert(Type.isArray(json.messages))
+
+    const messages = json.messages.forEach(msgJson => {
       const msgClass = getGlobalThis()[msgJson.type];
       assert(msgClass);
-      return msgClass.clone().setConversation(this).setJsonArcive(msgJson);
+      const msg = msgClass.clone().setConversation(this).setJsonArcive(msgJson);
+      this.addSubnode(msg)
     });
-    this.setMessages(messages);
     return this
+  }
+
+  messageWithId (chatMessageId) {
+    return this.messages().detect(msg => msg.chatMessageId() === chatMessageId)
+  }
+
+  updateMessageJson (msgJson) {
+    const m = this.messageWithId(msgJson.chatMessageId)
+    if (m) {
+      m.setJsonArchive(msgJson)
+    } else {
+      console.warn(this.typeId() + " updateMessageJson no message found with chatMessageId '" + chatMessageId + "'")
+    }
   }
 
 }.initThisClass());

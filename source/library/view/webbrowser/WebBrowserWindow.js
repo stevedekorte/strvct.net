@@ -12,12 +12,21 @@
 (class WebBrowserWindow extends ProtoClass {
     
     initPrototypeSlots () {
+        {
+            this.newSlot("windowListener", null)
+        }
     }
     
     init () {
         //throw new Error("this class is meant to be used as singleton, for now")
         super.init()
         //this.showAgent()
+        this.setupWindowListener()
+        return this
+    }
+
+    setupWindowListener () {
+        this.setWindowListener(WindowListener.clone().setDelegate(this).setIsListening(true))
         return this
     }
 
@@ -219,6 +228,52 @@
         }
         return null
     }
+
+
+    /*
+        We listen for these Window/Page/Browser events and post them as notifications
+        so non-UI objects can easily listen for them as they are app
+        startup/shutdown events which are needed outside of the UI as well.
+
+        For example: when the app terminates or goes offline, 
+        WebRTC connections ideally should explicitly close their DataConnections 
+        so the other side doesn't have to wait until a timeout or send error.
+
+    */
+
+    onDocumentBeforeUnload (event) {
+        this.postNoteNamed("onDocumentBeforeUnload")
+    }
+
+    onDocumentUnload (event) {
+        this.postNoteNamed("onDocumentUnload")
+    }
+
+    onPageShow (event) {
+        this.postNoteNamed("onPageShow")
+    }
+    
+    onPageHide (event) {
+        this.postNoteNamed("onPageHide")
+    }
+
+    onFormSubmit (event) {
+        this.postNoteNamed("onFormSubmit")
+    }
+
+    onBrowserOnline (event) {
+        this.postNoteNamed("onBrowserOnline")
+    }
+
+    onBrowserOffline (event) {
+        this.postNoteNamed("onBrowserOffline")
+    }
+
+    /*
+    onWindowResize (event) {
+        super.onWindowResize(event)
+    }
+    */
 
 }.initThisClass());
 

@@ -158,7 +158,6 @@
         console.log(s)
     }
 
-
     // --- fonts ---
 
     waitForFontsToLoad () {

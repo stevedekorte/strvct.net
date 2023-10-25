@@ -3,6 +3,7 @@
 /* 
     RzPeerConn
 
+    Wrapper for PeerJS DataConnection.
 
     TODO: add isOpen slot?
     
@@ -85,6 +86,26 @@
       const slot = this.newSlot("delegate", null);
     }
 
+
+    {
+      const slot = this.newSlot("useMessageLog", false);
+    }
+
+
+    // --- ping pong keepalive ---
+
+    {
+      const slot = this.newSlot("nextPingTimeout", null);
+    }
+
+    {
+      const slot = this.newSlot("gotPong", false);
+    }
+
+    {
+      const slot = this.newSlot("nextPingTimeoutMs", 10000);
+    }
+
     this.setShouldStoreSubnodes(false);
     this.setCanDelete(true)
   }
@@ -110,6 +131,7 @@
     super.init();
     this.setStatus("offline");
     this.setIsDebugging(true);
+
     return this;
   }
 
@@ -130,6 +152,7 @@
     if (conn) {
       this.setPeerId(conn.peer);
       this.setupConn();
+      this.watchOnceForNote("onDocumentBeforeUnload");
     }
     return this;
   }
@@ -173,12 +196,27 @@
 
   onOpen () {
     this.debugLog("onOpen");
+    this.sendPing()
     this.sendDelegateMessage("onPeerOpen");
   }
 
   onData (data) {
-    const msg = RzMsg.clone().setContent(data)
-    this.peerMsgs().addSubnode(msg)
+    // data in JSON format?
+    if (this.useMessageLog()) {
+      const msg = RzMsg.clone().setContent(data)
+      this.peerMsgs().addSubnode(msg)
+    }
+
+    if (data.name === "RzPeerConnPing") {
+      this.onPing()
+      return
+    } 
+
+    if (data.name === "RzPeerConnPong") {
+      this.onPong()
+      return
+    }
+
     this.sendDelegateMessage("onPeerData", [data]);
   }
 
@@ -192,11 +230,17 @@
   onClose () {
     this.debugLog("onClose");
     this.setStatus("closed")
+    this.cancelNextPingTimeout()
 
     this.serverConn().removePeerConnection(this);
     this.setConn(null);
 
     this.sendDelegateMessage("onPeerClose");
+  }
+
+  onDocumentBeforeUnload (aNote) {
+    console.log(this.typeId() + " onDocumentBeforeUnload shutdown")
+    this.shutdown()
   }
 
   // --- delegate ---
@@ -206,8 +250,13 @@
     if (d) {
       const m = d[methodName];
       if (m) {
+        this.debugLog("sending delegate message " + methodName);
         m.apply(d, args);
+      } else {
+        this.debugLog("delegate " + this.delegate().typeId() + " missing method " + methodName);
       }
+    } else {
+      this.debugLog("no delegate");
     }
   }
 
@@ -257,6 +306,62 @@
     return {
       isEnabled: this.isConnected()
     }
+  }
+
+  // --- sending ping & receiving pong ---
+
+  sendPing () {
+    if (!this.nextPingTimeout()) {
+      console.log(this.typeId() + " sendPing")
+      this.setGotPong(false)
+      this.send({ name: "RzPeerConnPing" })
+      this.setupNextPingTimeout()
+    } else {
+      debugger
+    }
+  }
+
+  onPong () {
+    console.log(this.typeId() + " onPong")
+    this.setGotPong(true)
+  }
+
+  // --- ping timeout ---
+
+  setupNextPingTimeout () {
+    this.cancelNextPingTimeout()
+    const po = setTimeout(() => { this.onPingTimeout() }, this.nextPingTimeoutMs());
+    this.setNextPingTimeout(po);
+  }
+
+  cancelNextPingTimeout () {
+    const po = this.nextPingTimeout()
+    if (po) {
+      clearTimeout(po)
+      this.setNextPingTimeout(null)
+    }
+  }
+
+  onPingTimeout () {
+    this.setNextPingTimeout(null)
+    if (this.gotPong()) {
+      this.sendPing()
+    } else {
+      console.log(this.typeId() + " onPingTimeout shutdown")
+      this.shutdown()
+    }
+  }
+
+  // --- receiving ping & sending pong ---
+
+  onPing () {
+    console.log(this.typeId() + " onPing")
+    this.sendPong();
+  }
+
+  sendPong () {
+    console.log(this.typeId() + " sendPong")
+    this.send({ name: "RzPeerConnPong" })
   }
 
 }.initThisClass());

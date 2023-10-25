@@ -5,6 +5,8 @@
 
     Listens to a set of Window related events.
 
+    NOTE: the target of the event is the browser window and not a DOM element.
+
 */
 
 (class WindowListener extends EventSetListener {
@@ -30,7 +32,7 @@
         this.addEventNameAndMethodName("beforeunload", "onDocumentBeforeUnload"); // Window specific?
         this.addEventNameAndMethodName("unload", "onDocumentUnload"); // Window specific?
 
-        this.addEventNameAndMethodName("submit", "onSubmit"); // FormElement specific
+        this.addEventNameAndMethodName("submit", "onFormSubmit"); // FormElement specific
 
         this.addEventNameAndMethodName("online", "onBrowserOnline"); // Window specific
         this.addEventNameAndMethodName("offline", "onBrowserOffline"); // Window specific
@@ -41,8 +43,7 @@
     }
 
     listenTarget () {
-        // 
-        return window // is this the best way to handle this?
+        return window // we need to target the window and not the element asssociated with a View
     }
     
 }.initThisClass());

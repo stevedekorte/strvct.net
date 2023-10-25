@@ -79,11 +79,6 @@
         return null
     }
 
-    /*
-    onWindowResize (event) {
-        super.onWindowResize(event)
-    }
-    */
    
 }.initThisClass());
 
