@@ -37,11 +37,14 @@
   }
 
   onValueInput () {
-    this.send()
+    if (this.value()) {
+      this.send()
+    }
   }
 
   send () {
-    this.conversation().onChatInput(this)
+    //this.conversation().onChatInput(this)
+    this.conversation().onChatInputValue(this.value())
   }
 
   /*

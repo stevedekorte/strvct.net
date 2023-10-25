@@ -91,21 +91,14 @@
 
   // --- chat actions ---
 
-  onChatInput (chatInputNode) {
-    const v = chatInputNode.value()
-    if (v) {
-      const m = this.newMessage()
-      m.setContent(v)
-      m.sendInConversation()
-      this.scheduleMethod("clearInput", 2) 
-      this.footerNode().setValueIsEditable(false)
-      return m
-    }
-    return null
+  onChatInputValue (v) {
+    const m = this.newMessage()
+    m.setRole("user")
+    m.setContent(v)
+    m.sendInConversation()
+    this.scheduleMethod("clearInput", 2) 
+    this.footerNode().setValueIsEditable(false) // wait for response to enable again
   }
 
-  clearInput () {
-    this.footerNode().setValue("")
-  }
 
 }.initThisClass());

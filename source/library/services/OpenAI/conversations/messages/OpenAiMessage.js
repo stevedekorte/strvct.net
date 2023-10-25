@@ -260,4 +260,18 @@
     without the complete chat history. Start the summary with the title: "SUMMARY OF STORY SO FAR:"`
   }
 
+  // --- json ---
+
+  jsonArchive () {
+    const json = super.jsonArchive()
+    json.role = this.role()
+    return json
+  }
+
+  setJsonArchive (json) {
+    super.setJsonArchive(json)
+    this.setRole(json.role)
+    return this
+  }
+
 }.initThisClass());

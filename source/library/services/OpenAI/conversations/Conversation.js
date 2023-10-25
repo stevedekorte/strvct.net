@@ -12,6 +12,10 @@
       const slot = this.newSlot("footerNode", null);
     }
 
+    {
+      //const slot = this.newSlot("delegate", null);
+    }
+
   }
 
   init() {
@@ -106,22 +110,34 @@
     return message
   }
 
-  onChatInput (chatInputNode) {
-    const v = chatInputNode.value()
-    if (v) {
-      const m = this.newMessage()
-      m.setRole("user")
-      m.setContent(v)
-      m.sendInConversation()
-      this.scheduleMethod("clearInput", 2) 
-      this.footerNode().setValueIsEditable(false)
-      return m
-    }
-    return null
+  onChatInputValue (v) {
+    const m = this.newMessage()
+    m.setContent(v)
+    this.scheduleMethod("clearInput", 2) 
+    //this.footerNode().setValueIsEditable(false)
   }
 
   clearInput () {
     this.footerNode().setValue("")
+  }
+
+  // --- json ---
+
+  jsonArchive () {
+    return {
+      type: this.type(),
+      messages: this.messages().map(msg => msg.jsonArchive())
+    }
+  }
+
+  setJsonArchive (json) {
+    const messages =json.messages.map(msgJson => {
+      const msgClass = getGlobalThis()[msgJson.type];
+      assert(msgClass);
+      return msgClass.clone().setConversation(this).setJsonArcive(msgJson);
+    });
+    this.setMessages(messages);
+    return this
   }
 
 }.initThisClass());

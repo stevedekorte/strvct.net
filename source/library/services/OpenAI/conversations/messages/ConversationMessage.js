@@ -9,12 +9,17 @@
   initPrototypeSlots() {
 
     {
+      const slot = this.newSlot("conversation", null);
+      slot.setShouldStoreSlot(false)
+    }
+
+    {
       const slot = this.newSlot("chatMessageId", null);
       slot.setShouldStoreSlot(true)
     }
 
     {
-      const slot = this.newSlot("conversation", null);
+      const slot = this.newSlot("isComplete", false);
       slot.setShouldStoreSlot(true)
     }
 
@@ -25,12 +30,7 @@
 
     {
       const slot = this.newSlot("delegate", null);
-      slot.setShouldStoreSlot(true)
-    }
-
-    {
-      const slot = this.newSlot("isComplete", false);
-      slot.setShouldStoreSlot(true)
+      slot.setShouldStoreSlot(false)
     }
 
     this.setShouldStore(true);
@@ -82,7 +82,15 @@
     if (s.length > max) {
       s = this.content().slice(0, max) + "..."
     }
-    return this.role() + "\n" + s
+    return this.speakerName() + "\n" + s
+  }
+
+  speakerName () {
+    return this.key()
+  }
+
+  setSpeakerName (s) {
+    return this.setKey(s)
   }
 
   conversation () {
@@ -123,41 +131,12 @@
   // --- sending ---
 
   send () {
-    return this.sendInConversation()
-  }
 
-  async sendInConversation () {
-    if (!this.request()) {
-      const message = this.conversation().newMessage()
-      message.setRole("assistant")
-      //this.conversation().postShouldFocusSubnode(message)
-      message.makeRequest()
-    }
   }
 
   valueError () {
     const e = this.error()
     return e ? e.message : null
-  }
-
-  onRequestComplete (aRequest) {
-    //this.setRequest(null)
-    //this.setStatus("complete")
-    this.setIsComplete(true)
-    this.setNote(null)
-    this.sendDelegate("onMessageComplete")
-  }
-  
-  onStreamData (request, newContent) {
-    this.sendDelegate("onMessageWillUpdate")
-
-    this.setContent(request.fullContent())
-    this.sendDelegate("onMessageUpdate")
-  }
-  
-  onStreamComplete (request) {
-    this.setContent(request.fullContent())
-    this.sendDelegate("onMessageUpdate")
   }
 
   onValueInput () {
@@ -193,6 +172,26 @@
       }
     }
     return false
+  }
+
+
+  // --- json ---
+
+  jsonArchive () {
+    // TODO: automate with a slot attribute?
+    return {
+      type: this.type(),
+      chatMessageId: this.chatMessageId(),
+      content: this.content(),
+      speakerName: this.speakerName()
+    }
+  }
+
+  setJsonArchive (json) {
+    this.setChatMessageId(json.chatMessageId);
+    this.setContent(json.content);
+    this.setSpeakerName(json.speakerName);
+    return this
   }
 
 }.initThisClass());
