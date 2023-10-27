@@ -36,11 +36,15 @@
         bv.setTitle(node.title())
         bv.setIsEditable(node.nodeCanEditTitle())
 
+        bv.setIsEnabled(node.isEnabled())
+
         if (node.isEnabled()) {
-            bv.setOpacity(1)	
+            bv.setOpacity(1)
         } else {
             bv.setOpacity(0.5)	
         }
+
+        this.setIsVisible(this.node().isVisible())
 		
         return this
     }

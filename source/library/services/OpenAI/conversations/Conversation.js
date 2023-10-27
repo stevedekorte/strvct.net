@@ -138,6 +138,7 @@
   }
 
   setJsonArchive (json) {
+    debugger;
     this.removeAllSubnodes()
 
     assert(Type.isArray(json.messages))
@@ -145,8 +146,10 @@
     const messages = json.messages.forEach(msgJson => {
       const msgClass = getGlobalThis()[msgJson.type];
       assert(msgClass);
-      const msg = msgClass.clone().setConversation(this).setJsonArcive(msgJson);
-      this.addSubnode(msg)
+      this.updateMessageJson(msgJson) // not efficient
+
+      //const msg = msgClass.clone().setConversation(this).setJsonArcive(msgJson);
+      //this.addSubnode(msg)
     });
     return this
   }
@@ -160,7 +163,11 @@
     if (m) {
       m.setJsonArchive(msgJson)
     } else {
-      console.warn(this.typeId() + " updateMessageJson no message found with chatMessageId '" + chatMessageId + "'")
+      // add message
+      const newMsg = this.newMessage()
+      newMsg.setJsonArchive(msgJson)
+      SimpleSynth.clone().playReceiveBeep()
+      //console.warn(this.typeId() + " updateMessageJson no message found with chatMessageId '" + chatMessageId + "'")
     }
   }
 

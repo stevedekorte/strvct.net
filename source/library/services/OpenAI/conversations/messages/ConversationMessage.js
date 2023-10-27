@@ -179,18 +179,29 @@
 
   jsonArchive () {
     // TODO: automate with a slot attribute?
+    assert(this.chatMessageId())
+    assert(this.speakerName())
+    assert(this.content())
+    
     return {
       type: this.type(),
       chatMessageId: this.chatMessageId(),
-      content: this.content(),
-      speakerName: this.speakerName()
+      speakerName: this.speakerName(),
+      content: this.content()
     }
   }
 
   setJsonArchive (json) {
+
+    assert(json.chatMessageId);
     this.setChatMessageId(json.chatMessageId);
-    this.setContent(json.content);
+
+    assert(json.speakerName);
     this.setSpeakerName(json.speakerName);
+
+    assert(json.content);
+    this.setContent(json.content);
+
     return this
   }
 

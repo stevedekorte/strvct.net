@@ -74,6 +74,11 @@
         return this
     }
 
+    removeListenersForName (name) {
+        this.nameToListenersMap().delete(name)
+        return this
+    }
+
     clean () {
         const n2l = this.nameToListenersMap()
         n2l.shallowCopy().forEachKV((name, listenerSet) => {

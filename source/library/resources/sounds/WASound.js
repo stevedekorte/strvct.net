@@ -97,7 +97,7 @@
 
     didSetupWAContext () {
         //console.warn(this.typeId() + " " + this.path() + " got didSetupWAContext broadcast - can decode now")
-        Broadcaster.shared().removeListenerForName(this, "removeListenerForName")
+        Broadcaster.shared().removeListenerForName(this, "didSetupWAContext")
         if (this.data()) {
             this.decodeBuffer(this.data())
             this.setData(null) // so we only decode once

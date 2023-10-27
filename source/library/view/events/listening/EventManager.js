@@ -37,6 +37,7 @@
             // those APIs can be used. Would help if JS sent a special event for this.
             this.setHasReceivedUserEvent(true)
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
+            //this.postNoteNamed("onFirstUserEvent") // we may only need one of these - added this to make it easier to listen for
         }
         
         return this

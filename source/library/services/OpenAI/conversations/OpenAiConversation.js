@@ -98,6 +98,7 @@
     m.sendInConversation()
     this.scheduleMethod("clearInput", 2) 
     this.footerNode().setValueIsEditable(false) // wait for response to enable again
+    SimpleSynth.clone().playSendBeep()
   }
 
 

@@ -92,8 +92,13 @@
     
     note () {
         //console.log(this.title() + " noteIsSubnodeCount: " + this.noteIsSubnodeCount())
-        if (this.noteIsSubnodeCount() && this.subnodesCount()) {
-            return this.subnodesCount()
+        if (this.noteIsSubnodeCount()) {
+            const count = this.subnodesCount()
+            if (count) {
+                return count
+            }
+
+            return ""
         }
         
         return this._note

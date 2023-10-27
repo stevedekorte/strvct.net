@@ -103,7 +103,7 @@
     }
 
     {
-      const slot = this.newSlot("nextPingTimeoutMs", 10000);
+      const slot = this.newSlot("nextPingTimeoutMs", 30*1000); 
     }
 
     this.setShouldStoreSubnodes(false);

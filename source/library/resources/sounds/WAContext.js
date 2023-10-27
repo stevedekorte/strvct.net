@@ -9,18 +9,16 @@
 
     Notes:
 
-    Browsers don't allow sounds to be played until a user interacts (using certain events) with the page.
-    So this class registers to listen for "firstUserEvent", and sets up the WebAudioContext after when it's received.
+    Browsers don't allow sounds to be played until a user interacts (using certain events) with the page,
+    so this class registers to listen for "onFirstUserEvent" notification, and sets up the WebAudioContext after when it's received.
 
 */
 
 (class WAContext extends BaseNode {
-
-    // in JS, do we need user input first to play audio?
     
     static initClass () {
         Broadcaster.shared().addListenerForName(this, "firstUserEvent")
-        //this.watchOnceForNote("firstUserEvent")
+        //this.watchOnceForNote("onFirstUserEvent")
         return this
     }
 
@@ -67,12 +65,6 @@
 
     disconnectSource (webAudioSource) {
         
-    }
-    */
-
-    /*
-    prepareToAccess () {
-        super.prepareToAccess()
     }
     */
 

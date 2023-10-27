@@ -140,9 +140,29 @@
         return this
     }
 
+    onTapBegin (aGesture) {
+        if (!this.isEnabled()) {
+            aGesture.cancel()
+            return
+        }
+        this.setBackgroundColor("rgba(255, 255, 255, 0.1)")
+        //SimpleSynth.clone().playButtonDown()
+    }
+
+    onTapCancelled (aGesture) {
+        this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
+        //SimpleSynth.clone().playButtonCancelled()
+    }
+
     onTapComplete (aGesture) {
         //this.debugLog(".onTapComplete()")
+        //const bgColor = this.backgroundColor();
+        //setTimeout(() => { this.setBackgroundColor(bgColor) }, 100);
+        //this.setBackgroundColor("rgba(255, 255, 255, 0.2)")
+        this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
         this.sendActionToTarget()
+        //SimpleSynth.clone().playButtonUp()
+        SimpleSynth.clone().playButtonTap()
         return false
     }
     
