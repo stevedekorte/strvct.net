@@ -204,11 +204,15 @@
     return e ? e.message : null
   }
 
+  onComplete () {
+    // to be overridden by subclasses
+  }
+
   onRequestComplete (aRequest) {
     //this.setRequest(null)
     //this.setStatus("complete")
-    this.setIsComplete(true)
     this.setNote(null)
+    this.setIsComplete(true)
     this.sendDelegate("onMessageComplete")
   }
   
@@ -221,6 +225,7 @@
   
   onStreamComplete (request) {
     this.setContent(request.fullContent())
+    this.setIsComplete(true)
     this.sendDelegate("onMessageUpdate")
   }
 

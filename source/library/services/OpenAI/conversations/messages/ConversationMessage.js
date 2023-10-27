@@ -58,6 +58,21 @@
     }
   }
 
+  setIsComplete (aBool) {
+    if (this._isComplete !== aBool) {
+      if (aBool) {
+        this.onComplete()
+      }
+      this._isComplete = aBool;
+    }
+    return this
+  }
+
+  onComplete () {
+    // to be overridden by subclasses
+    this.sendDelegate("onCompletedMessage")
+  }
+
   setSendInConversation (v) {
     debugger;
   }
@@ -187,20 +202,24 @@
       type: this.type(),
       chatMessageId: this.chatMessageId(),
       speakerName: this.speakerName(),
-      content: this.content()
+      content: this.content(),
+      isComplete: this.isComplete()
     }
   }
 
   setJsonArchive (json) {
 
-    assert(json.chatMessageId);
+    assert(Type.isString(json.chatMessageId));
     this.setChatMessageId(json.chatMessageId);
 
-    assert(json.speakerName);
+    assert(Type.isString(json.speakerName));
     this.setSpeakerName(json.speakerName);
 
-    assert(json.content);
+    assert(Type.isString(json.content));
     this.setContent(json.content);
+
+    assert(Type.isBoolean(json.isComplete));
+    this.setIsComplete(json.isComplete);
 
     return this
   }

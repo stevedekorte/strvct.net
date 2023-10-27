@@ -441,10 +441,10 @@
   onXhrError (event) {
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
-    let s = "got an error on xhr requestId" + this.requestId() + ":";
-    s += "  xhr.status:     " + xhr.status; // e.g. 404 = file not found
-    s += "  xhr.statusText: '" + xhr.statusText + "'";
-    s += "  xhr.readyState: ", xhr.readyState; // e.g.. 4 === DONE
+    let s = "Error on Xhr requestId " + this.requestId() + " ";
+    s += " status: " + xhr.status; // e.g. 404 = file not found
+    s += " statusText '" + xhr.statusText + "'";
+    s += " readyState: " + xhr.readyState; // e.g.. 4 === DONE
     const error = new Error(s);
     this.onError(error);
     this.streamTarget().onStreamComplete(this);

@@ -72,7 +72,7 @@
   }
 
   onMessageUpdate (aMsg) {
-    // sent for things like streaming updates
+    // e.g. sent by OpenAiMessage for things like streaming updates
     // can be useful for sharing the changes with other clients
   }
 
@@ -88,6 +88,10 @@
       */
       this.checkTokenCount()
     }
+  }
+
+  onCompletedMessage (aMsg) {
+
   }
 
   // -------- ///////////////////////

@@ -38,6 +38,36 @@
       //slot.setSummaryFormat("value")
     }
 
+    // --- error and reconnect ---
+
+    {
+      const slot = this.newSlot("error", null); 
+      slot.setShouldStoreSlot(false)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("didInitiateConnection", false); // if we initiated, it's up to us to try to reconnect
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setSlotType("Boolean")
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("shouldAutoReconnect", true) // (if didInitiateConnection is also true)
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("Boolean")
+    }
+
+    {
+      const slot = this.newSlot("reconnectAttemptCount", 0)
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("Number")
+    }
+
+    // -------------------------
+
     {
       const slot = this.newSlot("peerMsgs", null)
       slot.setFinalInitProto(RzMsgs);
@@ -56,6 +86,7 @@
       slot.setIsSubnodeField(true)
       slot.setActionMethodName("shutdown");
     }
+
 
 
     {
@@ -187,6 +218,7 @@
     if (peer) {
       const conn = peer.connect(this.peerId());
       this.setConn(conn)
+      this.setDidInitiateConnection(true)
     } else {
       this.setStatus("can't connect to peer when server connection is offline")
     }
@@ -198,6 +230,7 @@
     this.debugLog("onOpen");
     this.sendPing()
     this.sendDelegateMessage("onPeerOpen");
+    this.setReconnectAttemptCount(0)
   }
 
   onData (data) {
@@ -221,10 +254,26 @@
   }
 
   onError (error) {
+    this.setError(error)
     this.debugLog("onError:", error);
     this.setStatus("error: " + error.message)
 
     this.sendDelegateMessage("onPeerError", [error]);
+
+    const isDisconnect = this.disconnectErrorTypes().includes(error.type);
+    if (isDisconnect) {
+      this.onUnexpectedDisconnect()
+    }
+  }
+
+  disconnectErrorTypes () {
+    return [
+      "network",
+      "peer-unavailable",
+      "disconnected",
+      "server-error",
+      "socket-error"
+    ];
   }
 
   onClose () {
@@ -236,6 +285,22 @@
     this.setConn(null);
 
     this.sendDelegateMessage("onPeerClose");
+  }
+
+  onUnexpectedDisconnect () {
+    if (this.shouldAutoReconnect() && this.didInitiateConnection()) {
+      const count = this.reconnectAttemptCount();
+      this.setReconnectAttemptCount(this.reconnectAttemptCount() + 1);
+      const delaySeconds = Math.pow(2, count);
+      this.addTimeout(() => { this.reconnect() }, delaySeconds * 1000);
+      console.log(this.typeId() + " will attempt reconnect in " + delaySeconds + " seconds");
+
+    }
+  }
+
+  reconnect () {
+    console.log(this.typeId() + " attempting reconnect")
+    this.connect()
   }
 
   onDocumentBeforeUnload (aNote) {
