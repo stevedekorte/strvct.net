@@ -36,6 +36,8 @@
       f.setConversation(this)
       this.setFooterNode(f)
     }
+
+    this.setNodeChildrenAlignment("flex-start")
   }
 
   nodeFillsRemainingWidth () {
@@ -51,7 +53,7 @@
     this.messages().forEach(m => m.setConversation(this))
     this.setCanAdd(false)
     this.setNodeFillsRemainingWidth(true)
-
+    this.setNodeChildrenAlignment("flex-end")
     this.setCanDelete(true)
   }
 

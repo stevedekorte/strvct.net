@@ -71,10 +71,12 @@
 
         if (this.node()) {
             const align = this.node().nodeChildrenAlignment()
-            this.setJustifyContent(null)
+            //this.setJustifyContent(null)
             if (this.validAlignItemsPropertyValues().contains(align)) {
-                this.setAlignItems(align)
+                this.setJustifyContent(align)
+                //this.setAlignItems(align)
             } else {
+                debugger;
                 //this.node().setNodeChildrenAlignment(null) // can't do a node modifcation during a view update or sync loop will be detected
             }
         }

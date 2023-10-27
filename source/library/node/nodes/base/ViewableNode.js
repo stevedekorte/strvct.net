@@ -71,7 +71,7 @@
         }
 
         {
-            const slot = this.newSlot("nodeChildrenAlignment", "Start")
+            const slot = this.newSlot("nodeChildrenAlignment", "flex-start")
             slot.setDuplicateOp("copyValue")
             slot.setCanInspect(true)
             slot.setLabel("alignment")
@@ -164,6 +164,13 @@
         super.init()
     }
     */
+
+    finalInit () {
+        super.finalInit()
+        if (this.nodeChildrenAlignment() === "Start") {
+            this.setNodeChildrenAlignment("flex-start")
+        }
+    }
 
     nodeOrientation () {
         return this.nodeIsVertical() ? "right" : "down" 

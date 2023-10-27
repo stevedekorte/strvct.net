@@ -51,6 +51,14 @@
     setNode (aNode) {
         super.setNode(aNode)
         if (aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
+            //this.setHeight(null)
+            this.setJustifyContent("flex-end")
+            //this.setHeight("fit-content")
+            /*
+            this.setMinHeight(null)
+            this.setMaxHeight(null)
+            this.setMarginTop("auto")
+            */
             this.addTimeout(() => { this.scrollToBottom() }, 0)
         }
         return this
