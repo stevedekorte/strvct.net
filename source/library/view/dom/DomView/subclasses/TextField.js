@@ -260,8 +260,14 @@
         this.unpauseGestures() // do we need to check for (!this.contentEditable())?
     }
 
+    blur () {
+        //debugger
+        //console.log(this.value() + " blur")
+        return super.blur()
+    }
+
     onBlur () {
-        console.log(this.value() + " onBlur")
+        //console.log(this.value() + " onBlur")
         super.onBlur()
         if (this.usesDoubleTapToEdit()) {
             this.setContentEditable(false)
@@ -389,7 +395,7 @@
 
     onKeyDown (event) {
         let result = super.onKeyDown(event)
-        const returnKeyCode = 13
+        const returnKeyCode = 13 // return key
         //const keyName = BMKeyboard.shared().keyForEvent(event)
         //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
 
@@ -479,7 +485,8 @@
         }
         
         if (this.doesClearOnReturn()) {
-            this.setInnerHtml("")
+            this.setTextContent("")
+            //this.setInnerHtml("")
             //this.focusAfterDelay(.125) // hack to get focus back after chat view scrolling - TODO: fix this
         }
 

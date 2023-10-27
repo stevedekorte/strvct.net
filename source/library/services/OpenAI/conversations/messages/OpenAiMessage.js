@@ -62,16 +62,12 @@
     super.finalInit();
   }
 
-
   valueIsEditable () {
     return this.role() === "user"
   }
 
-  key () {
-    if (this.role() === "user") {
-      return "user"
-    }
-    return "narrator"
+  aiSpeakerName () {
+    return "OpenAI"
   }
 
   content () {
@@ -127,13 +123,15 @@
     return this.sendInConversation()
   }
 
-  async sendInConversation () {
+  sendInConversation () {
     if (!this.request()) {
-      const message = this.conversation().newMessage()
-      message.setRole("assistant")
+      const m = this.conversation().newMessage()
+      m.setRole("assistant")
       //this.conversation().postShouldFocusSubnode(message)
-      message.makeRequest()
+      m.makeRequest()
+      return m
     }
+    return null
   }
 
   // --- send request -------------

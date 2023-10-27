@@ -46,6 +46,7 @@
         v.setIsMultiline(true)
         v.setDoesInput(true)
         
+        // hack to disable theme application
         v.setPaddingTop = () => { return this }
         v.setPaddingLeft = () => { return this }
         v.setPaddingRight = () => { return this }
@@ -66,8 +67,9 @@
         v.setValueUneditableBorder("1px solid white")
         */
         //v.setFontFamily("Mono")
-        //v.setDoesHoldFocusOnReturn(true)
-        //v.setDoesInput(false)
+        v.setDoesHoldFocusOnReturn(true)
+        v.setDoesInput(true)
+        v.setDoesClearOnReturn(true)
         return v
     }
 

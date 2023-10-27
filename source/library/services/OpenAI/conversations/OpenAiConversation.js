@@ -91,15 +91,33 @@
 
   // --- chat actions ---
 
+  aiSpeakerName () {
+    return this.selectedModel().toUpperCase()
+  }
+
   onChatInputValue (v) {
     const m = this.newMessage()
     m.setRole("user")
     m.setContent(v)
-    m.sendInConversation()
-    this.scheduleMethod("clearInput", 2) 
+
+    const responseMessage = m.sendInConversation();
+    responseMessage.setSpeakerName(this.aiSpeakerName())
+
     this.footerNode().setValueIsEditable(false) // wait for response to enable again
     SimpleSynth.clone().playSendBeep()
   }
 
+  startWithPrompt (prompt) {
+    this.clear()
+    
+    //debugger
+    const m = this.newMessage()
+    m.setSpeakerName(this.aiSpeakerName())
+    m.setRole("system")
+    m.setContent(prompt)
+    const responseMessage = m.send()
+    responseMessage.setSpeakerName(this.aiSpeakerName())
+    return this
+  }
 
 }.initThisClass());

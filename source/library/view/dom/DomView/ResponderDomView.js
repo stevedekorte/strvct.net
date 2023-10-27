@@ -53,7 +53,8 @@
     }
 
     focus () {
-        if (!this.isActiveElement()) {
+        //console.log(this.typeId() + " focus")
+        if (!this.isActiveElement()) { // document.activeElement might have browser specific behaviors
             //console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
             /*
             const focusedView = WebBrowserWindow.shared().activeDomView()
@@ -115,7 +116,6 @@
     // --- inner html ---
 
     setInnerHtml (v) {
-     //   debugger
         const oldValue = this.element().innerHTML
 
         if (v === null) {
@@ -130,8 +130,8 @@
 
         const isFocused = this.isActiveElementAndEditable()
 
-        if (isFocused) {
-            this.blur()
+        if (isFocused && v !== "") {
+            this.blur() // why is this here? need to be careful with this
             const savedSelection = this.saveSelection()
             //console.log("savedSelection:", savedSelection)
             this.element().innerHTML = v

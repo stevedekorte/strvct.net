@@ -119,12 +119,11 @@
   onChatInputValue (v) {
     const m = this.newMessage()
     m.setContent(v)
-    this.scheduleMethod("clearInput", 2) 
     //this.footerNode().setValueIsEditable(false)
   }
 
   clearInput () {
-    this.footerNode().setValue("")
+    debugger; // shouldn't need this as TextField has option to do this
   }
 
   // --- json ---
