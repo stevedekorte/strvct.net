@@ -376,5 +376,12 @@
             value: this.value()
         }
     }
+
+    // ----------------
+    
+    setIsEditable (aBool) {
+        this.setValueIsEditable(false)
+        return this
+    }
     
 }.initThisClass());

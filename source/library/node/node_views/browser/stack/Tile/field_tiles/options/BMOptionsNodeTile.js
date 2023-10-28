@@ -25,5 +25,15 @@
         return this
     }
     */
+
+    syncFromNode () {
+        super.syncFromNode()
+        if (this.valueIsEditable()) {
+
+        } else {
+
+        }
+        return this
+    }
 	
 }.initThisClass());

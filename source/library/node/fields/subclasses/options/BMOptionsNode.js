@@ -178,7 +178,6 @@
         return vv && vv.length && Type.isDictionary(vv[0]);
     }
 
-
     pickedLeafSubnodes () {
         //this.setupSubnodesIfEmpty() // did we need this for loading from store?
         return this.leafSubnodes().select(sn => sn.isPicked())

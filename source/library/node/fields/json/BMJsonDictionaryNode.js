@@ -104,5 +104,17 @@
         bdd.setDecodedData(JSON.stringify(json, null, 4))
         return bdd
     }
+
+  // --- editable ---
+  
+  setIsEditable (aBool) {
+    this.subnodes().forEach(sn => {
+      if (sn.setIsEditable) {
+        sn.setIsEditable(aBool)
+        console.log(sn.title() + " setIsEditable(" + aBool + ")")
+      }
+    });
+    return this
+  }
     
 }.initThisClass());

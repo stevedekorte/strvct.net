@@ -208,6 +208,10 @@
     return this.conn() !== null
   }
 
+  isOpen () {
+    return this.conn() && this.conn().open
+  }
+
   connect () {
     if (this.isServerConn()) {
       this.setStatus("can't connect to our own peer id")
@@ -363,13 +367,13 @@
 
   connectActionInfo () {
     return {
-      isEnabled: !this.isServerConn() && !this.isConnected() && this.serverIsConnected()
+      isEnabled: !this.isServerConn() && !this.isOpen() && this.serverIsConnected()
     }
   }
 
   shutdownActionInfo () {
     return {
-      isEnabled: this.isConnected()
+      isEnabled: this.isOpen()
     }
   }
 
