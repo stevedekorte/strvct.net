@@ -194,9 +194,10 @@
 
   jsonArchive () {
     // TODO: automate with a slot attribute?
-    assert(this.chatMessageId())
-    assert(this.speakerName())
-    assert(this.content())
+    assert(Type.isString(this.chatMessageId()))
+    assert(Type.isString(this.speakerName()))
+    assert(Type.isString(this.content()))
+    assert(Type.isBoolean(this.isComplete()))
     
     return {
       type: this.type(),

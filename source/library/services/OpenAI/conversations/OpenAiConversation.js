@@ -110,7 +110,6 @@
   startWithPrompt (prompt) {
     this.clear()
     
-    //debugger
     const m = this.newMessage()
     m.setSpeakerName(this.aiSpeakerName())
     m.setRole("system")
@@ -118,6 +117,12 @@
     const responseMessage = m.send()
     responseMessage.setSpeakerName(this.aiSpeakerName())
     return this
+  }
+
+  onNewMessageFromUpdate (newMsg) {
+    // TODO: we only want to do this when message isComplete
+    const responseMessage = newMsg.sendInConversation();
+    responseMessage.setSpeakerName(this.aiSpeakerName())
   }
 
 }.initThisClass());

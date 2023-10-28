@@ -143,7 +143,7 @@
   }
 
   setJsonArchive (json) {
-    debugger;
+    //debugger;
     this.removeAllSubnodes()
 
     assert(Type.isArray(json.messages))
@@ -151,10 +151,9 @@
     const messages = json.messages.forEach(msgJson => {
       const msgClass = getGlobalThis()[msgJson.type];
       assert(msgClass);
-      this.updateMessageJson(msgJson) // not efficient
-
-      //const msg = msgClass.clone().setConversation(this).setJsonArcive(msgJson);
-      //this.addSubnode(msg)
+      //this.updateMessageJson(msgJson) // not efficient
+      const msg = msgClass.clone().setConversation(this).setJsonArchive(msgJson);
+      this.addSubnode(msg)
     });
     return this
   }
@@ -172,8 +171,13 @@
       const newMsg = this.newMessage()
       newMsg.setJsonArchive(msgJson)
       SimpleSynth.clone().playReceiveBeep()
+      this.onNewMessageFromUpdate(newMsg)
       //console.warn(this.typeId() + " updateMessageJson no message found with chatMessageId '" + chatMessageId + "'")
     }
+  }
+
+  onNewMessageFromUpdate (newMsg) {
+    // for subclasses to override
   }
 
 }.initThisClass());
