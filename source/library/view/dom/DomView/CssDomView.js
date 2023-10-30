@@ -1559,7 +1559,7 @@
 
     // helper for hide/show display
 
-    setDisplayIsHidden (aBool) {
+    setIsDisplayHidden (aBool) {
         if (aBool) {
             this.hideDisplay()
         } else {

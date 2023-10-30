@@ -31,7 +31,10 @@
 
     toggle () {
         //debugger
-        this.node().toggle()
+        const canToggle = this.node().optionsNode().valueIsEditable();
+        if (canToggle) {
+            this.node().toggle()
+        }
         return this
     }
 
@@ -51,11 +54,10 @@
         return this
     }
 
-    /*
     syncToNode () {
         super.syncToNode()
+        
         return this
     }
-    */
-	
+
 }.initThisClass());

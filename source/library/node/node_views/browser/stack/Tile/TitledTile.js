@@ -145,7 +145,7 @@
         if (node) {
             this.titleView().setIsEditable(node.nodeCanEditTitle())
             this.subtitleView().setIsEditable(node.nodeCanEditSubtitle())
-            this.subtitleView().setDisplayIsHidden(!this.hasSubtitle())
+            this.subtitleView().setIsDisplayHidden(!this.hasSubtitle())
     
             if (node) {
                 const imageUrl = node.nodeThumbnailUrl()
@@ -165,7 +165,7 @@
         } else {
             this.titleView().setIsEditable(false)
             this.subtitleView().setIsEditable(false)
-            this.subtitleView().setDisplayIsHidden(true) 
+            this.subtitleView().setIsDisplayHidden(true) 
         }
 
         this.syncStylesToSubviews()
@@ -269,6 +269,9 @@
         this.subtitleView().setString(node.subtitle())
         //this.noteView().setString(this.node().note())
         this.updateSubviews()
+
+        this.setIsDisplayHidden(!node.isVisible())
+        
         return this
     }
     

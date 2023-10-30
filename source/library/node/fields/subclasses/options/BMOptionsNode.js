@@ -256,7 +256,6 @@
         })
     }
 
-
     // --- syncing ---
 
     acceptedSubnodeTypes () {

@@ -75,7 +75,7 @@
     // --- editable ---
     
     setIsEditable (aBool) {
-        this.closeButtonView().setDisplayIsHidden(!aBool)
+        this.closeButtonView().setIsDisplayHidden(!aBool)
         return this
     }
 

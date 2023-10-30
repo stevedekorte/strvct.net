@@ -102,7 +102,7 @@
         }
 
         this.titleView().setValue(s)
-        //this.titleView().setDisplayIsHidden(!s)
+        //this.titleView().setIsDisplayHidden(!s)
         return this
     }
 
@@ -120,7 +120,7 @@
     }
 
     setTitleIsVisible (aBool) {
-        this.titleView().setDisplayIsHidden(!aBool)
+        this.titleView().setIsDisplayHidden(!aBool)
         return this
     }
 

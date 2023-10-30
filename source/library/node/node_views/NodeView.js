@@ -196,15 +196,16 @@
     syncFromNode () {
         let subnodesDidChange = false
         // override this method if the view manages it's own subviews
+        const node = this.node();
 
-        if (!this.node()) { 
+        if (!node) { 
             this.removeAllSubviews();
             return
         }
 
         //console.log("> " + this.debugTypeId() + " syncFromNode")
         
-        this.node().prepareToSyncToView()
+        node.prepareToSyncToView()
         this.updateSubnodeToSubviewMap() // not ideal - move this to update on subview add/remove
        
         const newSubviews = []
@@ -230,8 +231,28 @@
             }
             
             //assert(!newSubviews.contains(subview))
-            newSubviews.push(subview)   
+            newSubviews.push(subview)
+
+            /*
+            // this sets the display attribute which my be set elsewhere...
+
+            subview.setIsDisplayHidden(!subnode.isVisible())
+
+            if (!subnode.isVisible()) {
+                debugger;
+                console.log("subnode " + subnode.title() + " isDisplayHidden: " + subview.isDisplayHidden())
+            }
+            */
+
         })
+
+        /*
+        if (!node.isVisible()) {
+            debugger;
+        }
+
+        this.setIsDisplayHidden(!node.isVisible())
+        */
 
         /*
         const oldSubviews = this.subviews().shallowCopy()
@@ -269,7 +290,7 @@
     syncToNode () {
         const node = this.node()
         if (node) {
-            node.didUpdateNode()
+            //node.didUpdateNode() // is this needed? Shouldn't the slot hooks cover this?
         }
         return this
     }

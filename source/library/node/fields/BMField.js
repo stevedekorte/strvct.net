@@ -13,10 +13,6 @@
 (class BMField extends BMSummaryNode {
     
     initPrototypeSlots () {
-        {
-            const slot = this.newSlot("isVisible", true)
-            slot.setSyncsToView(true)
-        }
 
         {
             const slot = this.newSlot("isEnabled", true)

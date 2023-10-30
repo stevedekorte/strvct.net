@@ -28,11 +28,19 @@
 
     syncFromNode () {
         super.syncFromNode()
-        if (this.valueIsEditable()) {
 
+        /*
+            We need a way of enabling/dissabling the options
+            depending on whether the node value is editable.
+            We still want the subnodes to be visible, 
+            we just don't want to allow the selection to chage.
+        */
+
+        /*
+        if (this.node().valueIsEditable()) {
         } else {
-
         }
+        */
         return this
     }
 	

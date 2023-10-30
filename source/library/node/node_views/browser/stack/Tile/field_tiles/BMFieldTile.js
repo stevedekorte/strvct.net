@@ -243,7 +243,7 @@
 		
         const node = this.node()
         node.prepareToSyncToView()
-        this.setDisplayIsHidden(!node.isVisible())
+        this.setIsDisplayHidden(!node.isVisible())
 
         this.syncKeyFromNode()
         this.syncValueFromNode()
@@ -258,7 +258,7 @@
 
         keyView.setString(this.visibleKey()) // setString only applies if value changed
         keyView.setIsVisible(node.keyIsVisible())
-        keyView.setDisplayIsHidden(!node.keyIsVisible())
+        keyView.setIsDisplayHidden(!node.keyIsVisible())
         keyView.setIsEditable(node.keyIsEditable())
         keyView.setColor(this.keyViewColor())
     }
@@ -270,7 +270,7 @@
         const newValue = this.visibleValue()
         valueView.setValue(newValue)
         valueView.setIsEditable(node.valueIsEditable())
-        valueView.setDisplayIsHidden(!node.valueIsVisible())
+        valueView.setIsDisplayHidden(!node.valueIsVisible())
 
         if (node.valueIsEditable()) {
             //valueView.setColor(this.editableColor())

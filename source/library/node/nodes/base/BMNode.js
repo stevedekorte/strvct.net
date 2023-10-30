@@ -148,6 +148,11 @@
             slot.setDuplicateOp("copyValue")
         }
 
+        {
+            const slot = this.newSlot("isVisible", true)
+            slot.setSyncsToView(true)
+        }
+
         /*
         {
             const slot = this.newSlot("nodeIsHidden", false)

@@ -76,7 +76,7 @@
     }
 
     syncEnabled () {
-        this.setDisplayIsHidden(!this.isEnabled())
+        this.setIsDisplayHidden(!this.isEnabled())
         return this
     }
 

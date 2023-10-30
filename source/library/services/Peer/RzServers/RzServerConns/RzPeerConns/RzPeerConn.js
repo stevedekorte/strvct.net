@@ -11,6 +11,23 @@
 
 (class RzPeerConn extends BMSummaryNode {
 
+  connOptionsDefault () {
+    return {
+      label: undefined,
+      metadata: {},
+      serialization: "json",
+      reliable: true, // true ensures no dropped messages 
+      /*
+      config: {
+        iceServers: [
+          { url: 'stun:stun1.example.net' },
+          { url: 'turn:turn.example.org', username: 'user', credential: 'pass' }
+        ]
+      } // Allows passing a custom WebRTC configuration. 
+      */
+    }
+  }
+
   initPrototypeSlots() {
     {
       const slot = this.newSlot("peerId", null);
@@ -24,6 +41,15 @@
       slot.setCanEditInspection(false)
       //slot.setSummaryFormat("value")
     }
+
+    {
+      const slot = this.newSlot("connOptions", null);
+      slot.setInspectorPath("")
+      //slot.setLabel("connection options")
+      slot.setShouldStoreSlot(true)
+      slot.setDuplicateOp("duplicate")
+    }
+
 
     {
       const slot = this.newSlot("status", "");
@@ -162,6 +188,7 @@
     super.init();
     this.setStatus("offline");
     this.setIsDebugging(true);
+    this.setConnOptions(this.connOptionsDefault())
 
     return this;
   }
@@ -212,6 +239,23 @@
     return this.conn() && this.conn().open
   }
 
+  // --- connection options ---
+
+  setConnLabel (s) {
+    this.connOptions().label = s
+    return this
+  }
+
+  connLabel () {
+    return this.connOptions().label
+  }
+
+  connMetadata () {
+    return this.connOptions().metadata
+  }
+
+  // --------------------------------
+
   connect () {
     if (this.isServerConn()) {
       this.setStatus("can't connect to our own peer id")
@@ -220,7 +264,7 @@
 
     const peer = this.serverConn().peer();
     if (peer) {
-      const conn = peer.connect(this.peerId());
+      const conn = peer.connect(this.peerId(), this.connOptions());
       this.setConn(conn)
       this.setDidInitiateConnection(true)
     } else {

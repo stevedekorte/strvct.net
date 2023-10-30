@@ -27,7 +27,7 @@
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
         //this.setMinAndMaxHeight("fit-content")
         this.makeOrientationRight()
-        this.setDisplayIsHidden(true)
+        this.setIsDisplayHidden(true)
 
         return this
     }
@@ -99,9 +99,9 @@
 
         if (aNode === null) {
             this.removeTile()
-            this.setDisplayIsHidden(true)
+            this.setIsDisplayHidden(true)
         } else {
-            this.setDisplayIsHidden(false)
+            this.setIsDisplayHidden(false)
             const tile = this.tile()
             if (tile) {
                 const tileClass = this.subviewProtoForSubnode(aNode);
