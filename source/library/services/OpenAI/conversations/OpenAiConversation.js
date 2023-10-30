@@ -121,8 +121,12 @@
 
   onNewMessageFromUpdate (newMsg) {
     // TODO: we only want to do this when message isComplete
-    const responseMessage = newMsg.sendInConversation();
-    responseMessage.setSpeakerName(this.aiSpeakerName())
+    /*
+    if (!this.session().isHost() && newMsg.isComplete()) {
+      const responseMessage = newMsg.sendInConversation();
+      responseMessage.setSpeakerName(this.aiSpeakerName())
+    }
+    */
   }
 
 }.initThisClass());

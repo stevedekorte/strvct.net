@@ -111,7 +111,12 @@
     this.subnodes().forEach(sn => {
       if (sn.setIsEditable) {
         sn.setIsEditable(aBool)
-        console.log(sn.title() + " setIsEditable(" + aBool + ")")
+        if (!aBool) {
+            if (sn.setCanAdd) {
+                sn.setCanAdd(false)
+            }
+        }
+        //console.log(sn.title() + " setIsEditable(" + aBool + ")")
       }
     });
     return this
