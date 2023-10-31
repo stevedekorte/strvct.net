@@ -193,6 +193,11 @@
 
     // --- slots ---
 
+    slotsWithAnnotation (key, value) {
+        assert(this.isPrototype())
+        return this.allSlotsMap().valuesArray().select(slot => slot.getAnnotation(key) === value)
+    }
+
     slotNamed (slotName) {
         assert(this.isPrototype())
 

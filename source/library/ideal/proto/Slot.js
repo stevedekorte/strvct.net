@@ -145,10 +145,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // --- annotations ---
 
-    slotsWithAnnotation (key, value) {
-        return this.allSlotsMap().valuesArray().select(slot => slot.getAnnotation(key) === value)
-    }
-
     annotations () {
         if (!this._annotations) {
             this._annotations = new Map()

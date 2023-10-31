@@ -435,6 +435,8 @@
     return this
   }
 
+  // --- error handling ---
+
   onError (error) {
     this.debugLog("error ", error);
     //debugger
@@ -442,7 +444,11 @@
     this.setStatus(error.message)
 
     const etype =  error.type
-    const errorMethodName = "on" + etype.split("-").map(s => s.capitalized()).join("") + "Error";
+    let errorMethodName = "on" + etype.split("-").map(s => s.capitalized()).join("") //+ "Error";
+    if (!errorMethodName.endsWith("Error")) {
+      errorMethodName += "Error";
+    }
+
     const method = this[errorMethodName]
     if (method) {
       method.apply(this, [error])
@@ -450,6 +456,8 @@
       throw new Error("missing error handler method '" + errorMethodName + "'")
     }
   }
+
+  // --- error type handlers ---
 
   onErrorPeerUnavailable (error) {
     console.warn(this.typeId() + " error: ", error)
@@ -517,6 +525,8 @@
     // ERROR
     // Native WebRTC errors.
   }
+
+  // --- reconnect ---
 
   attemptToReconnect () {
     const retryDelay = 5000

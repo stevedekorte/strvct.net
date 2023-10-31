@@ -8,6 +8,7 @@
 (class ConversationMessage extends BMTextAreaField {
   initPrototypeSlots() {
 
+    this.slotNamed("key").setAnnotation("shouldJsonArchive", true)
     this.slotNamed("value").setAnnotation("shouldJsonArchive", true)
 
     {
@@ -43,11 +44,13 @@
       //slot.setAnnotation("shouldJsonArchive", true)
     }
 
+    /*
     {
       const slot = this.newSlot("annotations", null); // a place for any sort of extra JSON info
       slot.setShouldStoreSlot(true)
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setAnnotation("shouldJsonArchive", false)
     }
+    */
 
     {
       const slot = this.newSlot("isComplete", false);
@@ -78,7 +81,7 @@
     super.init();
     this.setContent("")
     this.setCanDelete(true)
-    this.setAnnotations({})
+    //this.setAnnotations({})
   }
 
   finalInit () {
@@ -86,7 +89,6 @@
     this.setNodeTileClassName("BMChatInputTile")
     //this.setOverrideSubviewProto(this.nodeTileClass())
     this.setKeyIsVisible(true)
-    this.setKey("Speaker")
     this.createIdIfAbsent()
   }
 
@@ -235,7 +237,7 @@
   // --- json ---
 
   jsonArchive () {
-    const jsonArchiveSlots = this.slotsWithAnnotation("shouldJsonArchive", true) 
+    const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true) 
     const dict = {
       type: this.type()
     }
@@ -245,6 +247,8 @@
       const v = slot.onInstanceGetValue(this)
       dict[k] = v;
     })
+
+    console.log(this.typeId() + ".jsonArchive() = " + JSON.stringify(dict, 2, 2));
 
     return dict
 
@@ -270,13 +274,16 @@
   }
 
   setJsonArchive (json) {
-    const keys = Object.keys(json);
-    const jsonArchiveSlots = this.slotsWithAnnotation("shouldJsonArchive", true);
+
+    console.log(this.typeId() + ".setJsonArchive(" + JSON.stringify(json, 2, 2) + ")");
+
+    const keys = Object.keys(json).select(key => key !== "type");
+    const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
     assert(keys.length === jsonArchiveSlots.length); // or should we assume a diff if missing?
 
     keys.forEach(key => {
       if (key !== "type") {
-        const slot = this.slotNamed(key);
+        const slot = this.thisPrototype().slotNamed(key);
         assert(slot);
         const value = json[key];
         slot.onInstanceSetValue(this, value);
