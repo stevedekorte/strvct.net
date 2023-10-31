@@ -43,7 +43,7 @@
       slot.setSlotType("Number")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(true)
-      slot.setSummaryFormat("value")
+      slot.setSummaryFormat("key value")
     }
 
 

@@ -16,12 +16,14 @@
             slot.setIsSubnode(true);
         }
 
+        /*
         {
             const slot = this.newSlot("midjourneyService", null)
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(MJService);
             slot.setIsSubnode(true);
         }
+        */
 
         {
             const slot = this.newSlot("azureService", null)
