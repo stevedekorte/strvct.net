@@ -37,7 +37,7 @@
       this.setFooterNode(f)
     }
 
-    this.setNodeChildrenAlignment("flex-start")
+    this.setNodeChildrenAlignment("flex-start") // make the messages stick to the bottom
   }
 
   nodeFillsRemainingWidth () {
@@ -132,7 +132,7 @@
     const msgsJson = []
     this.messages().forEach(msg => {
       msgsJson.push(msg.jsonArchive())
-    })
+    }) // we don't use map because it returns a SubnodesArray instance...
     assert(Type.isArray(msgsJson))
 
     const json = {
@@ -143,17 +143,12 @@
   }
 
   setJsonArchive (json) {
-    //debugger;
+    assert(Type.isArray(json.messages)) // sanity check
+
     this.removeAllSubnodes()
 
-    assert(Type.isArray(json.messages))
-
-    const messages = json.messages.forEach(msgJson => {
-      const msgClass = getGlobalThis()[msgJson.type];
-      assert(msgClass);
-      //this.updateMessageJson(msgJson) // not efficient
-      const msg = msgClass.clone().setConversation(this).setJsonArchive(msgJson);
-      this.addSubnode(msg)
+    json.messages.forEach(msgJson => {
+      this.newMessageFromJson(msgJson)
     });
     return this
   }
@@ -162,20 +157,25 @@
     return this.messages().detect(msg => msg.messageId() === messageId)
   }
 
+  newMessageFromJson (msgJson) {
+    const msg = ConversationMessage.fromJsonArchive(msgJson)
+    msg.setConversation(this)
+    this.addSubnode(msg)
+    return msg
+  }
+
   updateMessageJson (msgJson) {
-    const m = this.messageWithId(msgJson.messageId)
-    if (m) {
-      m.setJsonArchive(msgJson)
-      return m
-    } else {
-      // add message
-      const newMsg = this.newMessage()
-      newMsg.setJsonArchive(msgJson)
-      SimpleSynth.clone().playReceiveBeep()
-      this.onNewMessageFromUpdate(newMsg)
-      //console.warn(this.typeId() + " updateMessageJson no message found with messageId '" + messageId + "'")
-      return 
+    const oldMsg = this.messageWithId(msgJson.messageId)
+    if (oldMsg) {
+      oldMsg.setJsonArchive(msgJson)
+      return oldMsgm
     }
+
+    const newMsg = this.newMessageFromJson(msgJson)
+    SimpleSynth.clone().playReceiveBeep()
+    this.onNewMessageFromUpdate(newMsg)
+    //console.warn(this.typeId() + " updateMessageJson no message found with messageId '" + messageId + "'")
+    return newMsg
   }
 
   onNewMessageFromUpdate (newMsg) {

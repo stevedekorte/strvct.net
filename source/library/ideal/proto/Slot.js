@@ -140,7 +140,41 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         //this.simpleNewSlot("isDeserializing", false) // need to add it here as we don't inherit it
 
         this.simpleNewSlot("actionMethodName", null) // used by slots that will be represented by ActionFields to store the methodName
+        this.simpleNewSlot("annotations", null) 
     }
+
+    // --- annotations ---
+
+    slotsWithAnnotation (key, value) {
+        return this.allSlotsMap().valuesArray().select(slot => slot.getAnnotation(key) === value)
+    }
+
+    annotations () {
+        if (!this._annotations) {
+            this._annotations = new Map()
+        }
+        return this._annotations
+    }
+
+    setAnnotation (key, value) {
+        this.annotations().set(key, value);
+        return this
+    }
+
+    hasAnnotation (key) {
+        return this.annotations().has(key);
+    }
+
+    getAnnotation (key) {
+        return this.annotations().get(key);
+    }
+
+    removeAnnotation () {
+        this.annotations().delete(key);
+        return this
+    }
+
+    // --- inspector ---
 
     fieldInspectorClassName () {
         const slotType = this.slotType() 
@@ -458,7 +492,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (Type.isUndefined(m)) {
             throw new Error(anInstance.type() + " is missing setter '" + this._setterName + "'")
         }
-        return m.call(anInstance, aValue)
+        return m.call(anInstance, aValue) // not consistent with rawset to return this...
+    }
+
+    onInstanceRawSetValue (anInstance, aValue) {
+        anInstance[this._privateName] = aValue;
+        return this
     }
 
     // --- StoreRefs for lazy slots ---

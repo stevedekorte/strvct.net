@@ -31,7 +31,6 @@
             slot.setInspectorPath("Node/Field/Key")
         }
 
-
         {
             const slot = this.newSlot("keyIsVisible", true)
             slot.setShouldStoreSlot(true)

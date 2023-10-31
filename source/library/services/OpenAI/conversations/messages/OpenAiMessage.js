@@ -19,6 +19,8 @@
       slot.setValidValues(this.validRoles())
       //slot.setIsSubnodeField(true)
       slot.setCanInspect(true)
+
+      slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
@@ -35,6 +37,13 @@
 
     {
       const slot = this.newSlot("isResponse", null);
+      slot.setShouldStoreSlot(true)
+      slot.setCanInspect(true)
+    }
+
+    {
+      const slot = this.newSlot("isVisibleToAi", true);
+      slot.setShouldStoreSlot(true)
       slot.setCanInspect(true)
     }
 
@@ -265,6 +274,7 @@
 
   // --- json ---
 
+  /*
   jsonArchive () {
     const json = super.jsonArchive()
     json.role = this.role()
@@ -276,5 +286,6 @@
     this.setRole(json.role)
     return this
   }
+  */
 
 }.initThisClass());

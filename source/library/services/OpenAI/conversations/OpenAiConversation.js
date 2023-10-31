@@ -45,11 +45,23 @@
     return this.conversations().service()
   }
 
+  selectedModel () {
+    return "gpt-4";
+  }
+
   conversations () {
     return this.parentNode()
   }
 
-  // -------- ///////////////////////
+  // --- history ---
+
+  conversationHistoryPriorToSelfJson () {
+    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
+    const json = this.previousMessages().select(m => m.isVisibleToAi()).map(m => m.openAiJson())
+    return json
+  }
+
+  // --- summary ---
 
   updateTokenCount () {
     const count = this.subnodes().sum(message => message.tokenCount())
@@ -60,10 +72,6 @@
   trimConversation() {
     // todo - implement
     return this;
-  }
-
-  selectedModel () {
-    return "gpt-4";
   }
 
   // --- overrides ---

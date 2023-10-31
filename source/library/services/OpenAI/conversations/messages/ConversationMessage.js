@@ -8,6 +8,8 @@
 (class ConversationMessage extends BMTextAreaField {
   initPrototypeSlots() {
 
+    this.slotNamed("value").setAnnotation("shouldJsonArchive", true)
+
     {
       const slot = this.newSlot("conversation", null);
       slot.setShouldStoreSlot(false)
@@ -16,25 +18,50 @@
     {
       const slot = this.newSlot("messageId", null);
       slot.setShouldStoreSlot(true)
+      slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("senderId", null);
       slot.setShouldStoreSlot(true)
+      slot.setAnnotation("shouldJsonArchive", true)
+    }
+
+    {
+      const slot = this.newSlot("inReplyToMessageId", null);
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setAnnotation("shouldJsonArchive", true)
+    }
+
+    {
+      const slot = this.newSlot("timestamp", null);
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      //slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("annotations", null); // a place for any sort of extra JSON info
       slot.setShouldStoreSlot(true)
+      slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("isComplete", false);
       slot.setShouldStoreSlot(true)
+      slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setShouldStoreSlot(true)
+    }
+
+    {
+      const slot = this.newSlot("isVisibleToUser", true);
       slot.setShouldStoreSlot(true)
     }
 
@@ -96,9 +123,15 @@
     return this.value()
   }
 
+  setValue (s) {
+    super.setValue(s)
+    this.directDidUpdateNode() // so updates trigger UI refresh
+    return this
+  }
+
   setContent (s) {
     this.setValue(s)
-    this.directDidUpdateNode()
+    //this.directDidUpdateNode()
     return this
   }
 
@@ -157,7 +190,6 @@
   // --- sending ---
 
   send () {
-
   }
 
   valueError () {
@@ -200,11 +232,25 @@
     return false
   }
 
-
   // --- json ---
 
   jsonArchive () {
+    const jsonArchiveSlots = this.slotsWithAnnotation("shouldJsonArchive", true) 
+    const dict = {
+      type: this.type()
+    }
+
+    jsonArchiveSlots.forEach(slot => {
+      const k = slot.getterName()
+      const v = slot.onInstanceGetValue(this)
+      dict[k] = v;
+    })
+
+    return dict
+
+    /*
     // TODO: automate with a slot attribute?
+    assert(Type.isString(this.senderId()) || null)
     assert(Type.isString(this.messageId()))
     assert(Type.isString(this.speakerName()))
     assert(Type.isString(this.content()))
@@ -220,10 +266,24 @@
       isComplete: this.isComplete(),
       annotations: this.annotations()
     }
+    */
   }
 
   setJsonArchive (json) {
+    const keys = Object.keys(json);
+    const jsonArchiveSlots = this.slotsWithAnnotation("shouldJsonArchive", true);
+    assert(keys.length === jsonArchiveSlots.length); // or should we assume a diff if missing?
 
+    keys.forEach(key => {
+      if (key !== "type") {
+        const slot = this.slotNamed(key);
+        assert(slot);
+        const value = json[key];
+        slot.onInstanceSetValue(this, value);
+      }
+    })
+
+    /*
     assert(Type.isString(json.messageId));
     this.setMessageId(json.messageId);
 
@@ -241,8 +301,20 @@
 
     //assert(Type.isDictionary(json.annotations));
     this.setIsComplete(json.annotations);
+    */
 
     return this
+  }
+
+  static fromJsonArchive (json) {
+    const className = json.type;
+    assert(className); // sanity check
+    
+    const aClass = getGlobalThis()[className];
+    assert(aClass.isKindOf(this)); // sanity check
+
+    const instance = aClass.clone().setJsonArchive(json)
+    return instance
   }
 
 }.initThisClass());
