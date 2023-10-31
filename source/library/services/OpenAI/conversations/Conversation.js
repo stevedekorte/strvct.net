@@ -158,21 +158,23 @@
     return this
   }
 
-  messageWithId (chatMessageId) {
-    return this.messages().detect(msg => msg.chatMessageId() === chatMessageId)
+  messageWithId (messageId) {
+    return this.messages().detect(msg => msg.messageId() === messageId)
   }
 
   updateMessageJson (msgJson) {
-    const m = this.messageWithId(msgJson.chatMessageId)
+    const m = this.messageWithId(msgJson.messageId)
     if (m) {
       m.setJsonArchive(msgJson)
+      return m
     } else {
       // add message
       const newMsg = this.newMessage()
       newMsg.setJsonArchive(msgJson)
       SimpleSynth.clone().playReceiveBeep()
       this.onNewMessageFromUpdate(newMsg)
-      //console.warn(this.typeId() + " updateMessageJson no message found with chatMessageId '" + chatMessageId + "'")
+      //console.warn(this.typeId() + " updateMessageJson no message found with messageId '" + messageId + "'")
+      return 
     }
   }
 

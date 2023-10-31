@@ -14,7 +14,17 @@
     }
 
     {
-      const slot = this.newSlot("chatMessageId", null);
+      const slot = this.newSlot("messageId", null);
+      slot.setShouldStoreSlot(true)
+    }
+
+    {
+      const slot = this.newSlot("senderId", null);
+      slot.setShouldStoreSlot(true)
+    }
+
+    {
+      const slot = this.newSlot("annotations", null); // a place for any sort of extra JSON info
       slot.setShouldStoreSlot(true)
     }
 
@@ -41,6 +51,7 @@
     super.init();
     this.setContent("")
     this.setCanDelete(true)
+    this.setAnnotations({})
   }
 
   finalInit () {
@@ -53,8 +64,8 @@
   }
 
   createIdIfAbsent () {
-    if (!this.chatMessageId()) {
-      this.setChatMessageId(Object.newUuid())
+    if (!this.messageId()) {
+      this.setMessageId(Object.newUuid())
     }
   }
 
@@ -194,24 +205,30 @@
 
   jsonArchive () {
     // TODO: automate with a slot attribute?
-    assert(Type.isString(this.chatMessageId()))
+    assert(Type.isString(this.messageId()))
     assert(Type.isString(this.speakerName()))
     assert(Type.isString(this.content()))
     assert(Type.isBoolean(this.isComplete()))
+    //assert(Type.isDictionary(this.annotations()))
     
     return {
       type: this.type(),
-      chatMessageId: this.chatMessageId(),
+      messageId: this.messageId(),
+      senderId: this.senderId(),
       speakerName: this.speakerName(),
       content: this.content(),
-      isComplete: this.isComplete()
+      isComplete: this.isComplete(),
+      annotations: this.annotations()
     }
   }
 
   setJsonArchive (json) {
 
-    assert(Type.isString(json.chatMessageId));
-    this.setChatMessageId(json.chatMessageId);
+    assert(Type.isString(json.messageId));
+    this.setMessageId(json.messageId);
+
+    //assert(Type.isString(json.senderId));
+    this.setSenderId(json.senderId);
 
     assert(Type.isString(json.speakerName));
     this.setSpeakerName(json.speakerName);
@@ -221,6 +238,9 @@
 
     assert(Type.isBoolean(json.isComplete));
     this.setIsComplete(json.isComplete);
+
+    //assert(Type.isDictionary(json.annotations));
+    this.setIsComplete(json.annotations);
 
     return this
   }
