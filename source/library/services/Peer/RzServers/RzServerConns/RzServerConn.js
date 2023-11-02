@@ -583,9 +583,15 @@
     return this.server().availablePeerIds()
   }
 
-  connectToPeerId (peerId) {
+  connectionToPeerId (peerId) {
     const peerConn = RzPeerConn.clone().setPeerId(peerId)
     this.addPeerConnection(peerConn)
+    //peerConn.connect() // caller should call connect() after setting up peerConn
+    return peerConn // the caller should problaby call peerConn.setDelegate(this) and handling it's delegate messages
+  }
+
+  connectToPeerId (peerId) {
+    const peerConn = this.connectionToPeerId(peerId)
     peerConn.connect()
     return peerConn // the caller should problaby call peerConn.setDelegate(this) and handling it's delegate messages
   }

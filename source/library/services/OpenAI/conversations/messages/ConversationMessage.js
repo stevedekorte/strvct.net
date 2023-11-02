@@ -251,26 +251,6 @@
     console.log(this.typeId() + ".jsonArchive() = " + JSON.stringify(dict, 2, 2));
 
     return dict
-
-    /*
-    // TODO: automate with a slot attribute?
-    assert(Type.isString(this.senderId()) || null)
-    assert(Type.isString(this.messageId()))
-    assert(Type.isString(this.speakerName()))
-    assert(Type.isString(this.content()))
-    assert(Type.isBoolean(this.isComplete()))
-    //assert(Type.isDictionary(this.annotations()))
-    
-    return {
-      type: this.type(),
-      messageId: this.messageId(),
-      senderId: this.senderId(),
-      speakerName: this.speakerName(),
-      content: this.content(),
-      isComplete: this.isComplete(),
-      annotations: this.annotations()
-    }
-    */
   }
 
   setJsonArchive (json) {
@@ -280,7 +260,14 @@
     const keys = Object.keys(json).select(key => key !== "type");
     const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
     assert(keys.length === jsonArchiveSlots.length); // or should we assume a diff if missing?
+    
+    jsonArchiveSlots.forEach(slot => {
+      const k = slot.getterName()
+      const v = json[k]
+      slot.onInstanceSetValue(this, value);
+    })
 
+    /*
     keys.forEach(key => {
       if (key !== "type") {
         const slot = this.thisPrototype().slotNamed(key);
@@ -289,25 +276,6 @@
         slot.onInstanceSetValue(this, value);
       }
     })
-
-    /*
-    assert(Type.isString(json.messageId));
-    this.setMessageId(json.messageId);
-
-    //assert(Type.isString(json.senderId));
-    this.setSenderId(json.senderId);
-
-    assert(Type.isString(json.speakerName));
-    this.setSpeakerName(json.speakerName);
-
-    assert(Type.isString(json.content));
-    this.setContent(json.content);
-
-    assert(Type.isBoolean(json.isComplete));
-    this.setIsComplete(json.isComplete);
-
-    //assert(Type.isDictionary(json.annotations));
-    this.setIsComplete(json.annotations);
     */
 
     return this

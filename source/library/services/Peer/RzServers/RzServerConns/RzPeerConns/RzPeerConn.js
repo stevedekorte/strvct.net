@@ -241,17 +241,34 @@
 
   // --- connection options ---
 
+  // --- label ---
+
   setConnLabel (s) {
+    // the label we pass when we initiate a connection
     this.connOptions().label = s
     return this
   }
 
   connLabel () {
+    // the label we pass when we initiate a connection
     return this.connOptions().label
   }
 
+  peerLabel () {
+    // the label we receive when we accept a connection
+    return this.conn().label
+  }
+
+  // --- metadata ---
+
   connMetadata () {
+    // the metadata we pass when we initiate a connection
     return this.connOptions().metadata
+  }
+
+  peerMetadata () {
+    // the metadata we receive when we accept a connection
+    return this.conn().metadata
   }
 
   // --------------------------------
