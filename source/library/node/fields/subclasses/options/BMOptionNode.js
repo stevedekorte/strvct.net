@@ -24,6 +24,10 @@
         this.setNodeCanEditTitle(true)
     }
 
+    debugTypeId () {
+        return this.typeId() + "_'" + this.label() + "'"
+    }
+    
     /*
     init () {
         super.init()

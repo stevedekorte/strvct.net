@@ -263,14 +263,21 @@
             const maxCount = 10
 
             while (this.actionCount()) {
+                if (count > -1) {
+                    console.log("\nSyncScheduler looped " + count + " times, queue size is: " + this.actionCount() + "\n")
+                }
+
                 this.processSets()
                 count ++
+
+    
+
                 if (count > 6) {
                     this.setIsDebugging(true)
-                    console.log("loop?")
+                    console.log("\n\nSyncScheduler looped " + count + " times without resolving. Are we in a sync loop?")
                     console.log(" --- processSets # " + count + " --- ")
-                    console.log("\nSyncActions:\n" + this.actionsDescription())
-                    console.log("\nNotifications:\n" + BMNotificationCenter.shared().notesDescription())
+                    console.log("\nSyncActions (" + this.actionCount() + ") :\n" + this.actionsDescription())
+                    console.log("\n" + BMNotificationCenter.shared().shortDescription() + ":\n" + BMNotificationCenter.shared().notesDescription())
                     console.log(" --- ")
                     debugger
                 }

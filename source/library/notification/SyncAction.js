@@ -61,7 +61,7 @@
     }
 	
     description () {
-        const t = this.target() ? this.target().typeId() : "null"
+        const t = this.target() ? this.target().debugTypeId() : "null"
         const o = this.order() === 0 ? "" : " order:" + this.order()
         return this.typeId() + " " + t + " " + this.method() + "" + o
     }
