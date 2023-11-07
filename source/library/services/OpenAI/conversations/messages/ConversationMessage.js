@@ -235,7 +235,7 @@
   }
 
   // --- json ---
-
+/*
   jsonArchive () {
     const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true) 
     const dict = {
@@ -267,17 +267,6 @@
       slot.onInstanceSetValue(this, value);
     })
 
-    /*
-    keys.forEach(key => {
-      if (key !== "type") {
-        const slot = this.thisPrototype().slotNamed(key);
-        assert(slot);
-        const value = json[key];
-        slot.onInstanceSetValue(this, value);
-      }
-    })
-    */
-
     return this
   }
 
@@ -291,5 +280,6 @@
     const instance = aClass.clone().setJsonArchive(json)
     return instance
   }
+  */
 
 }.initThisClass());

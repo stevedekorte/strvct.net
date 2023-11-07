@@ -156,8 +156,7 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
     }
 
     containsAny (anArray) {
-        const match = anArray.detect(item => this.contains(item))
-        return !Type.isNullOrUndefined(match)
+        return anArray.canDetect(item => this.contains(item))
     }
 
     // --- duplicates ---
@@ -567,6 +566,11 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
     }
 
     // ---
+
+    canDetect (func) {
+        const result = this.detect(func);
+        return result !== undefined && result !== null;
+    }
 
     detect (func) {
         for (let i = 0; i < this.length; i++) {

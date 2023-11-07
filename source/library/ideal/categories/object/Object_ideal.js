@@ -107,8 +107,7 @@
             return false
         }
  
-        const firstKeyWithUnequalValue = keys.detect(k => this.getOwnProperty(k) !== anObject.getOwnProperty(k))
-        return !Type.isNullOrUndefined(firstKeyWithUnequalValue)
+        return keys.canDetect(k => this.getOwnProperty(k) !== anObject.getOwnProperty(k))
     }
  
     getOwnProperty (key) {

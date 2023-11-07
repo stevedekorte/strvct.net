@@ -145,6 +145,25 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // --- annotations ---
 
+    setValidValues (v) {
+        this._validValues = v;
+
+        // sanity check
+        if (v) {
+            const isValid = this._validValues.includes(this.initValue());
+            if (!isValid) {
+                const isOptionsDict = Type.isArray(v) && v.length && v.first().label;
+                if (!isOptionsDict) {
+                    console.log("ERROR Slot.setValidValues:")
+                    const s = "this._validValues: " + JSON.stringify(this._validValues) + " doesn't contain '" + this.initValue() + "'";
+                    console.log(s)
+                    throw new Error("valid values constraint not met: " + s)
+                }
+            }
+        }
+        return this
+    }
+
     annotations () {
         if (!this._annotations) {
             this._annotations = new Map()
@@ -345,7 +364,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return true
         /*
         const slotsMap = this.owner().slotsMap() // TODO: this is slow
-        return this.hookNames().detect(hookName => slotsMap.has(hookName)) ? true : false
+        return this.hookNames().canDetect(hookName => slotsMap.has(hookName)) 
         */
     }
 

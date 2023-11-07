@@ -93,6 +93,10 @@
     title () {
         return this.key()
     }
+
+    debugTypeId () {
+        return this.typeId() + "_'" + this.key() + "'"
+    }
     
     setTitle (s) {
         this.setKey(s)
@@ -199,7 +203,14 @@
         if (anOptionNode.isPicked() && !this.allowsMultiplePicks()) {
             this.unpickLeafSubnodesExcept(anOptionNode)
         }
+        
+        const v = this.formatedPickedValues()
+        this.setValue(v)
 
+        return this
+    }
+
+    formatedPickedValues () {
         const pickedValues = this.pickedValues();
         
         let v = null;
@@ -207,10 +218,7 @@
         if (pickedValues.length) {
             v = this.allowsMultiplePicks() ? pickedValues : pickedValues.first();
         }
-
-        this.setValue(v)
-
-        return this
+        return v
     }
 
     setValueOnTarget (v) {
@@ -467,10 +475,26 @@
             //this.scheduleSyncToView()
             this.setSyncedValidItemsJsonString(JSON.stableStringify(validValues)) 
 
-            return this.leafSubnodes().forEach(sn => {
+            this.leafSubnodes().forEach(sn => {
                 sn.setIsPicked(this.targetHasPick(sn.value()))
             })
 
+            if (this.needsSyncToSubnodes()) {
+                console.log("\nERROR: OptionsNode '" + this.key() + "' not synced with target after sync!")
+                console.log("Let's try syncing the picked values to the target:")
+                console.log("VALID VALUES:")
+                console.log("  computedValidValues: " + JSON.stableStringify(this.computedValidValues()));
+                console.log("  syncedValidItemsJsonString(): " +  this.syncedValidItemsJsonString());
+                console.log("BEFORE:")
+                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
+                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
+                this.setValueOnTarget(this.formatedPickedValues())
+                console.log("AFTER:")
+                console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
+                console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
+                debugger;
+                assert(!this.needsSyncToSubnodes()) // important sanity check - maybe values aren't in pickable set?
+            }
             this.didUpdateNode() // needed?
         }
         return this

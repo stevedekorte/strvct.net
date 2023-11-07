@@ -23,7 +23,7 @@
     */
 
     senderId () {
-        return this.sender().typeId()
+        return this.sender().debugTypeId()
     }
 
     setSender (obj) {

@@ -5,7 +5,12 @@
 
     Wrapper for PeerJS DataConnection.
 
-    TODO: add isOpen slot?
+    Delegate messages:
+
+      - onPeerOpen (peerConn)
+      - onPeerClose (peerConn)
+      - onPeerData (peerConn, data)
+      - onPeerError (peerConn)
     
 */
 
@@ -148,7 +153,6 @@
       const slot = this.newSlot("useMessageLog", false);
     }
 
-
     // --- ping pong keepalive ---
 
     {
@@ -261,19 +265,20 @@
 
   // --- metadata ---
 
-  connMetadata () {
-    // the metadata we pass when we initiate a connection
-    return this.connOptions().metadata
+  localMetadata () {
+    // metadata we'll share with peer when we connect
+    return this.connOptions().metadata;
   }
 
-  peerMetadata () {
-    // the metadata we receive when we accept a connection
-    return this.conn().metadata
+  remoteMetadata () {
+    // metadata the peer shared with us when we connected
+    return this.conn().metadata;
   }
 
   // --------------------------------
 
   connect () {
+    this.setDidInitiateConnection(true)
     if (this.isServerConn()) {
       this.setStatus("can't connect to our own peer id")
       return this
@@ -294,7 +299,7 @@
   onOpen () {
     this.debugLog("onOpen");
     this.sendPing()
-    this.sendDelegateMessage("onPeerOpen");
+    this.sendDelegateMessage("onPeerOpen", [this]);
     this.setReconnectAttemptCount(0)
   }
 
@@ -315,7 +320,7 @@
       return
     }
 
-    this.sendDelegateMessage("onPeerData", [data]);
+    this.sendDelegateMessage("onPeerData", [this, data]);
   }
 
   onError (error) {
@@ -323,7 +328,7 @@
     this.debugLog("onError:", error);
     this.setStatus("error: " + error.message)
 
-    this.sendDelegateMessage("onPeerError", [error]);
+    this.sendDelegateMessage("onPeerError", [this, error]);
 
     const isDisconnect = this.disconnectErrorTypes().includes(error.type);
     if (isDisconnect) {
@@ -349,7 +354,7 @@
     this.serverConn().removePeerConnection(this);
     this.setConn(null);
 
-    this.sendDelegateMessage("onPeerClose");
+    this.sendDelegateMessage("onPeerClose", [this]);
   }
 
   onUnexpectedDisconnect () {

@@ -63,6 +63,11 @@
 
     // --- detect, select, map ---
 
+    canDetect (func) {
+        const result = this.detect(func);
+        return result !== undefined && result !== null;
+    }
+    
     detect (fn) {
         for (let v of this) {
             const r = fn(v)

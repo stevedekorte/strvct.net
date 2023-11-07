@@ -30,6 +30,7 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
+      slot.setInitValue(this.validRegions().first())
       slot.setValidValues(this.validRegions());
       slot.setInitValue("eastus");
       //slot.setValidValues(values)

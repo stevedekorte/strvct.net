@@ -1,4 +1,4 @@
 
-console.log("--- StrvctApp _init.js ---")
+//console.log("--- StrvctApp _init.js ---")
 StrvctApp.loadAndRunShared() 
 

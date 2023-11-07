@@ -207,7 +207,7 @@
 
   async fetchPeerIds() { // Note this is a GET request, so we don't need to be connected to do this
     const url = this.getPeersUrl();
-    console.log("getPeersUrl: '" + url + "'");
+    this.debugLog("getPeersUrl: '" + url + "'");
     const response = await fetch(url);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

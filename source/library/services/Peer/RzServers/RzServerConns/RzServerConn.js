@@ -195,6 +195,19 @@
     this.setCanDelete(true)
   }
 
+  // --- peer connection class ---
+
+  setPeerConnClass (aClass) {
+    this.peerConns().setSubnodeClasses([aClass])
+    return this
+  }
+
+  peerConnClass () {
+    return this.peerConns().subnodeClasses().first()
+  }
+
+  // --- title / subtitle ---
+
   title () {
     const id = this.peerId()
     return id ? id : "no peer id assigned"
@@ -204,14 +217,7 @@
     return this.status()
   }
 
-  /*
-  shutdown () {
-    this.peerConnections().valuesArray().forEach((conn) => {
-      conn.shutdown();
-    });
-    return this;
-  }
-  */
+  // --- connect ---
 
   isConnected () {
     return this.peer() && !this.peer().disconnected
@@ -232,6 +238,8 @@
     }
   }
 
+  // --- disconnect ---
+
   disconnect () {
     if (this.peer()) {
       this.setStatus("disconnecting")
@@ -245,6 +253,8 @@
       isEnabled: this.isConnected()
     }
   }
+
+  // --- destroy ---
 
   destroy () {
     if (this.peer()) {
@@ -260,15 +270,16 @@
     }
   }
 
-  // --- connecting to a peer ----
   /*
-  connectToPeerId (peerId) {
-    const conn = this.peer().connect(peerId);
-    const pc = PeerConnection.clone().setConn(conn)
-    this.addPeerConnection(pc);
-    return pc
+  shutdown () {
+    this.peerConnections().valuesArray().forEach((conn) => {
+      conn.shutdown();
+    });
+    return this;
   }
   */
+
+  // --- connecting to a peer ----
 
   serverConnections () {
     return this.parentNode()
@@ -320,6 +331,8 @@
   peer () {
     return this._peer
   }
+
+  // --- connect to signaling server ---
 
   attemptToConnect () {
     /*
@@ -584,7 +597,7 @@
   }
 
   connectionToPeerId (peerId) {
-    const peerConn = RzPeerConn.clone().setPeerId(peerId)
+    const peerConn = this.peerConnClass().clone().setPeerId(peerId)
     this.addPeerConnection(peerConn)
     //peerConn.connect() // caller should call connect() after setting up peerConn
     return peerConn // the caller should problaby call peerConn.setDelegate(this) and handling it's delegate messages

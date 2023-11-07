@@ -66,8 +66,8 @@
     }
     
     fieldNamed (aName) {
-        return this.subnodes().detect( (subnode) => { 
-            return subnode.valueMethod() === aName || subnode.key() === aName
+        return this.subnodes().detect(sn => { 
+            return sn.valueMethod() === aName || sn.key() === aName
         })
     }
     
@@ -84,7 +84,7 @@
     }
 
     invalidSubnodes () {
-        return this.subnodes().select(subnode => !subnode.validate())
+        return this.subnodes().select(sn => !sn.validate())
     }
 
     isValid () {

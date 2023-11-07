@@ -90,6 +90,10 @@
         this.setNameIndex({});
     }
 
+    shortDescription () {
+        return "NotificationCenter " + this.notifications().length + " notes, " + this.observations().length + " obs";
+    }
+
     // --- observations ----
 
     /*
@@ -109,9 +113,7 @@
     */
     
     hasObservation (obs) {
-        const match = this.observations().detect(ob => ob.isEqual(obs)) 
-        return !Type.isNullOrUndefined(match)
-
+        return this.observations().canDetect(ob => ob.isEqual(obs)) 
     }
     
     addObservation (obs) {
@@ -126,8 +128,7 @@
     }
 
     hasObservationsForSender (sender) {
-        const obs = this.observations().detect(obs => obs.sender() === sender)
-        return !Type.isNullOrUndefined(obs)
+        return this.observations().canDetect(obs => obs.sender() === sender)
     }
 
     /*
@@ -159,7 +160,7 @@
     // --- notifying ----
     
     hasNotification (note) {
-        return this.notifications().detect(n => n.isEqual(note))
+        return this.notifications().canDetect(n => n.isEqual(note))
     }
     
     addNotification (note) {
@@ -286,4 +287,5 @@
             console.log("current post sender stack: ", this.currentNote().senderStack())
         }
     }
+
 }.initThisClass());

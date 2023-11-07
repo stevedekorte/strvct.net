@@ -121,8 +121,7 @@
     }
 
     tileWithNode (aNode) {
-        const tile = this.tiles().detect(tile => tile.node().nodeTileLink() === aNode)
-        return tile
+        return this.tiles().detect(tile => tile.node().nodeTileLink() === aNode)
     }
 
     maxTileWidth () {

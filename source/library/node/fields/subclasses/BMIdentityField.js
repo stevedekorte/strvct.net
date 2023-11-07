@@ -36,7 +36,7 @@
 	    
         const parts = newValue.split(" ").concat(newValue.split("\n")).concat(newValue.split(","))
 	    //console.log("parts = '", parts)
-        const validPart = parts.detect((part) => { return bitcore.PublicKey.isValid(part) })
+        const validPart = parts.detect(part => { return bitcore.PublicKey.isValid(part) })
 
         if (validPart) {
             newValue = validPart

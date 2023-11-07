@@ -425,7 +425,7 @@
     promiseNewTx () {
         assert(this.isOpen())
         //debugger;
-        console.log(this.path() + " promiseNewTx")
+        this.debugLog(this.path() + " promiseNewTx")
         /*
         const lastTx = this.lastTx()
         if (lastTx) {
@@ -473,14 +473,14 @@
                 return this.promiseRemoveAt(key)
             }
 
-            console.log("idb promiseHasKey ", key)
+            //console.log("idb promiseHasKey ", key)
             return this.promiseHasKey(key).then((hasKey) => {
                 if (hasKey) {
-                    console.log("idb YES hasKey promiseUpdate", key)
+                    //console.log("idb YES hasKey promiseUpdate", key)
 
                     return this.promiseUpdate(key, value)
                 } else {
-                    console.log("idb NO hasKey promiseAdd", key)
+                    //console.log("idb NO hasKey promiseAdd", key)
                     return this.promiseAdd(key, value)
                 }
             })
@@ -509,7 +509,7 @@
 
     promiseAdd (key, value) { // private
         return this.promiseNewTx().then((tx) => {
-            console.log("idb tx atAdd ", key)
+            this.debugLog("idb tx atAdd ", key)
             tx.begin()
             //tx.setIsDebugging(this.isDebugging())
             //tx.setIsDebugging(true)

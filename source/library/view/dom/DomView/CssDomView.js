@@ -454,6 +454,9 @@
     }
 
     setFontSize (s) {
+        if (s === "6px") {
+            //debugger;
+        }
         this.setCssProperty("font-size", s)
         return this
     }

@@ -27,6 +27,7 @@
     // we open store from app class since we might want to load app instance from store
 
     static loadAndRunShared () {
+        //debugger;
         const store = this.defaultStore()
         store.setName(this.type()) // name of the database
         const clearFirst = false;
@@ -161,6 +162,11 @@
     // --- fonts ---
 
     waitForFontsToLoad () {
+        this.onAllFontsLoaded()
+
+        /*
+        // NOTES: we really only want to wait for the font's currently displayed to be loaded.
+        // What's the best way to do that?
         const done = BMResources.shared().fonts().hasLoadedAllFonts();
         if (done) {
             this.onAllFontsLoaded()
@@ -169,14 +175,15 @@
         console.log("not done loading fonts");
         setTimeout(() => {
             this.waitForFontsToLoad()
-        }, 100);
+        }, 10);
+        */
     }
 
     onAllFontsLoaded () {
         document.body.style.display = "flex";
         ResourceManager.shared().markPageLoadTime();
         document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        console.log("done loading fonts!");
+        console.log("done loading fonts! " + JSON.stringify(BMResources.shared().fonts().allFontNames()));
         this.afterAppDidInit()
     }
 

@@ -78,7 +78,7 @@
         if (aView == this) {
             return true
         }
-        return this.subviews().detect(sv => sv.hasSubviewDescendant(aView))
+        return this.subviews().canDetect(sv => sv.hasSubviewDescendant(aView))
     }
 
     allSubviewsRecursively (allViews = new Set()) {
@@ -576,8 +576,7 @@
     // NOTE: when we ask parent to fit child, should we make sure child position attribute allows this?
 
     hasAbsolutePositionChild () {
-        const match = this.subviews().detect(sv => sv.position() === "absolute")
-        return !Type.isNullOrUndefined(match)
+        return this.subviews().canDetect(sv => sv.position() === "absolute")
     }
 
     // auto fit width

@@ -190,7 +190,7 @@
         const p = points.first()
         const view = this.viewTarget()
         return view.containsPoint(p)
-        //return points.detect(p1 => !view.containsPoint(p1)) === null
+        //return points.canDetect(p1 => !view.containsPoint(p1))
     }
 
     // --- listener classes ---
@@ -950,9 +950,8 @@
 
         const view = this.viewTarget();
         const points = this.allDownPoints();
-        const match = points.detect(p => view.containsPoint(p)) 
         //console.log("all points.length:", points.length, " has match:", match != null)
-        return match !== null
+        return points.canDetect(p => view.containsPoint(p)) 
     }
 
     allPoints () { // TODO: some better abstraction for Touch+Mouse?

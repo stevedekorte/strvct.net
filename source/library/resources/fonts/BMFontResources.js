@@ -74,14 +74,14 @@
     }
 
     fontFamilyNamed (aName) {
-        let family = this.families().detect(family => family.name() === aName);
-
-        if (!family) {
-            family = BMFontFamily.clone().setName(aName)
-            this.addFamily(family)
+        const family = this.families().detect(family => family.name() === aName);
+        if (family) {
+            return family;
         }
 
-        return family
+        const newFamily = BMFontFamily.clone().setName(aName)
+        this.addFamily(newFamily)
+        return newFamily
     }
 
     allFonts () {
@@ -106,8 +106,27 @@
         return options
     }
 
+    // --- font loading status ---
+
     hasLoadedAllFonts () {
-        return this.allFonts().detect(font => !font.fontFaceIsLoaded()) === null;
+        return this.unloadedFonts().length === 0;
+    }
+
+    loadedFonts () {
+        return this.allFonts().select(font => font.fontFaceIsLoaded());
+    }
+
+    unloadedFonts () {
+        return this.allFonts().select(font => !font.fontFaceIsLoaded());
+    }
+
+    hasLoadedFontWithName (name) {
+        return this.loadedFonts().canDetect(font => font.name() === name);
+    }
+
+    hasLoadedAllFontsWithNames (names) {
+        // not efficient to call alot - cache in a set if that becomes a use case
+        return names.canDetect(name => !this.hasLoadedFontWithName(name)) === false; 
     }
 
 }.initThisClass());

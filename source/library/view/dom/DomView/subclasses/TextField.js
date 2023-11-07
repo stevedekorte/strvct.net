@@ -290,7 +290,7 @@
 	
     containsReturns () {
         const value = this.value() // correct?
-        return returnStrings.detect(returnString => value.contains(returnString))		
+        return returnStrings.canDetect(returnString => value.contains(returnString))		
     }
 	
     // ------------------

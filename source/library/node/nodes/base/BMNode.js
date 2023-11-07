@@ -393,8 +393,7 @@
         */
         //const type = aSunode.type()
         const ancestors = aSubnode.thisClass().ancestorClassesTypesIncludingSelf()
-        const match = this.acceptedSubnodeTypes().detect(type => ancestors.contains(type))
-        return !Type.isNullOrUndefined(match)
+        return this.acceptedSubnodeTypes().canDetect(type => ancestors.contains(type))
     }
 
     forEachSubnodeRecursively (fn) {
@@ -1037,6 +1036,71 @@
         }
         return this   
     }
+
+    // --- jsonArchive ---
+
+    setJsonArchive (json) {
+        // NOTE: use slot.setAnnotation("shouldJsonArchive", true) to set a slot to be json archived
+        
+        console.log(this.typeId() + ".setJsonArchive(" + JSON.stringify(json, 2, 2) + ")");
+
+        const keys = Object.keys(json).select(key => key !== "type");
+        const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
+        //assert(keys.length === jsonArchiveSlots.length); // or should we assume a diff if missing?
+        
+        jsonArchiveSlots.forEach(slot => {
+            const k = slot.getterName();
+            const v = json[k];
+            if (json.hasOwnProperty(k)) {
+                slot.onInstanceSetValue(this, v);
+            } else {
+                console.warn("no dict key '" + k + "' for archive slot " + k);
+            }
+        })
+
+        /*
+        keys.forEach(key => {
+            if (key !== "type") {
+            const slot = this.thisPrototype().slotNamed(key);
+            assert(slot);
+            const value = json[key];
+            slot.onInstanceSetValue(this, value);
+            }
+        })
+        */
+
+        return this
+    }
+
+
+    jsonArchive () {
+        const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true) 
+        const dict = {
+        type: this.type()
+        }
+
+        jsonArchiveSlots.forEach(slot => {
+            const k = slot.getterName()
+            const v = slot.onInstanceGetValue(this)
+            dict[k] = v;
+        })
+
+        console.log(this.typeId() + ".jsonArchive() = " + JSON.stringify(dict, 2, 2));
+
+        return dict
+    }
+    
+    static fromJsonArchive (json) {
+        const className = json.type;
+        assert(className); // sanity check
+        
+        const aClass = getGlobalThis()[className];
+        assert(aClass.isKindOf(this)); // sanity check
+
+        const instance = aClass.clone().setJsonArchive(json)
+        return instance
+    }
+
 
 }.initThisClass());
 

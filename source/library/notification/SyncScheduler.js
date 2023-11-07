@@ -145,8 +145,7 @@
     }
 
     hasActionsForTarget (target) {
-        const match = this.actions().valuesArray().detect(action => action.target() === target)
-        return !Type.isNullOrUndefined(match)
+        return this.actions().valuesArray().canDetect(action => action.target() === target)
     }
 
     unscheduleTarget (target) {
@@ -263,9 +262,11 @@
             const maxCount = 10
 
             while (this.actionCount()) {
+                /*
                 if (count > -1) {
                     console.log("\nSyncScheduler looped " + count + " times, queue size is: " + this.actionCount() + "\n")
                 }
+                */
 
                 this.processSets()
                 count ++

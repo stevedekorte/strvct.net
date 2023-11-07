@@ -29,13 +29,23 @@
     return this.parentNode()
   }
 
+  setPeerConClass (aClass) {
+    // assert(aClass.isKindOf(RzPeerConn.thisClass()));
+    this.setSubnodeClasses([aClass])
+    return this
+  }
+
+  peerConnClass () {
+    return this.subnodeClasses().first()
+  }
+
   addIfAbsentPeerConnForId (id) {
     const match = this.subnodes().detect(sn => sn.peerId() === id)
     if (match) {
       return match
     }
 
-    const pc = RzPeerConn.clone().setPeerId(id).setServerConn(this.serverConn())
+    const pc = this.peerConnClass().clone().setPeerId(id).setServerConn(this.serverConn())
     this.addSubnode(pc)
     return pc
   }

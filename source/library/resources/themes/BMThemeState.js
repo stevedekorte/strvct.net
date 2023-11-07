@@ -46,7 +46,7 @@
     }
 
     static validLetterSpacingValues () {
-        const values = []
+        const values = ["inherit"]
         for (let i = 0; i < 0.51; i += 0.01) {
             const s = (i + "").slice(0, 4)
             values.push(s + "em")
@@ -55,7 +55,7 @@
     }
 
     static validLineHeightValues () {
-        const values = []
+        const values = ["inherit"]
         for (let i = 1; i < 3; i += 0.1) {
             const s = (i + "").slice(0, 3)
             values.push(s + "em")
@@ -64,11 +64,11 @@
     }
 
     static validColors () {
-        return ["#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
+        return ["inherit", "", "transparent", "white", "black", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
     }
 
     static validPaddingValues () {
-        const values = []
+        const values = ["inherit"]
         for (let i = 0; i < 41; i ++) {
             values.push(i + "px")
         }
@@ -76,7 +76,7 @@
     }
 
     static validBorderWidthValues () {
-        const values = []
+        const values = ["inherit"]
         for (let i = 0; i < 10; i ++) {
             values.push(i + "px")
         }
@@ -84,11 +84,11 @@
     }
 
     static validBorderStyleValues () {
-    return ["none", "dotted", "dashed", "solid", /*"groove", "inset"*/]
+        return ["inherit", "none", "dotted", "dashed", "solid", /*"groove", "inset"*/]
     }
 
     static validFontSizes () {
-        const values = []
+        const values = ["inherit"]
         for (let i = 6; i < 80; i ++) {
             values.push(i + "px")
         }
@@ -108,7 +108,16 @@
             slot.setShouldStoreSlot(true)
             slot.setDuplicateOp("duplicate")
             slot.setSlotType("String")
-            slot.setValidValues(values)
+
+            //slot.setValidValues(values)
+            
+            if (values) {
+                const initValue = values.first();
+                //console.log("BMThemeState setting " + JSON.stringify([name, path, label]) + " to initValue '" + initValue + "'");
+                slot.setInitValue(initValue) // first value is typically "inherit"
+                slot.setValidValues(values)
+            }
+            
             styleSlots.push(slot)
         }
 
@@ -116,7 +125,7 @@
 
         addSlot("color", "colors", "color", this.thisClass().validColors())
         addSlot("backgroundColor", "colors", "background", this.thisClass().validColors())
-        addSlot("opacity", "colors", "opacity", ["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0"])
+        addSlot("opacity", "colors", "opacity", ["inherit", "0.0", "0.1", "0.2", "0.3", "0.4", "0.5", "0.6", "0.7", "0.8", "0.9", "1.0", ""])
 
         // --- font ---
 
