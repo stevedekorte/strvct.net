@@ -158,7 +158,16 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
                 return 'th';
         }
     }
-    
+
+    asCountForLabel (label) {
+        const count = this;
+        if (count === 0) {
+            return "no " + label + "s";
+        } else if (count === 1) {
+            return count + " " + label;
+        } 
+        return count + " " + label + "s";
+    }
     
 }).initThisCategory();
 

@@ -426,6 +426,7 @@
         assert(this.isOpen())
         //debugger;
         this.debugLog(this.path() + " promiseNewTx")
+        //debugger;
         /*
         const lastTx = this.lastTx()
         if (lastTx) {
@@ -512,7 +513,6 @@
             this.debugLog("idb tx atAdd ", key)
             tx.begin()
             //tx.setIsDebugging(this.isDebugging())
-            //tx.setIsDebugging(true)
             tx.atAdd(key, value)
             return tx.promiseCommit() 
         })

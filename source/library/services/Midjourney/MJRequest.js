@@ -104,7 +104,7 @@
     super.init();
     this.setTitle("request")
     this.setService(MJService.shared());
-    this.setIsDebugging(true)
+    this.setIsDebugging(false)
   }
 
   status () {

@@ -157,7 +157,7 @@
 
   init() {
     super.init();
-    this.setIsDebugging(true);
+    this.setIsDebugging(false);
     //this.setTitle("Untitled Image Job")
   }
 
