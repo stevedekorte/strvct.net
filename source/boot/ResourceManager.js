@@ -115,6 +115,26 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
 
 // --- Array promises --------------
 
+Object.defineSlot(Array.prototype, "promiseSerialTimeoutsForEach", function (aBlock) {
+    return new Promise((resolve, reject) => {
+
+        const nextFunc = (array, index) => {
+            if (array.length === index) {
+                resolve();
+                return 
+            }
+
+            const v = array[index];
+            const promise = aBlock(v);
+            promise.then(() => {
+                setTimeout(() => nextFunc(array, index+1), 0);
+            })
+        }
+
+        nextFunc(this, 0);
+    })
+})
+
 Object.defineSlot(Array.prototype, "promiseSerialForEach", function (aBlock) {
     let promise = null
     this.forEach((v) => {
@@ -309,12 +329,21 @@ class UrlResource {
 // ------------------------------------------------------------------------
 
 class BootLoadingView {
+    
   isAvailable() {
     return this.element() !== null;
   }
 
   element () {
     return document.getElementById("loadingView");
+  }
+  
+  titleElement () {
+    return document.getElementById("loadingViewTitle");
+  }
+
+  barElement () {
+    return document.getElementById("innerLoadingView");
   }
 
   /*
@@ -327,26 +356,41 @@ class BootLoadingView {
   }
   */
 
-  update (n, count) {
+  setTitle (s) {
     if (!this.isAvailable()) {
         return
     }
-
-    //this.loadingView().innerHTML = "Loading " + file.split("/").pop() + "...";
-
-    const percent = Math.round(100 * (n / count));
-
-    const bar = document.getElementById("innerLoadingView");
-    bar.style.width = 10 * (percent / 100) + "em";
-    //this.loadingView().innerText = "Loading " + percent + "%";
-    //console.log("'" + this.loadingView().innerText + "'");
+    this.titleElement().innerText = s;
+    return this;
   }
 
-  close() {
+  title () {
+    return this.titleElement().innerText;
+  }
+
+  setBarRatio (r) {
+    if (r < 0 || r > 1) {
+        throw new Error("invalid ratio")
+    }
+
+    const v = Math.round(100 * r)/100; // limit to 2 decimals
+    this.barElement().style.width = 10 * v + "em";
+    return this
+  }
+
+  setBarToNofM (n, count) {
     if (!this.isAvailable()) {
         return
     }
 
+    this.setBarRatio(n / count);
+    return this
+  }
+
+  close () {
+    if (!this.isAvailable()) {
+        return
+    }
     const e = this.element();
     e.parentNode.removeChild(e);
   }
@@ -453,8 +497,11 @@ class ResourceManager {
             this._promiseForLoadCam = UrlResource.clone().setPath(path).promiseLoad().then((resource) => {
                 const cam = resource.dataAsJson()
                 // this._cam = cam
-                return Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel?
+
+                return Reflect.ownKeys(cam).promiseSerialTimeoutsForEach((k) => { // use parallel?
+                //return Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel?
                     const v = cam[k]
+                    //console.log("promiseLoadCam promiseAtPut")
                     return HashCache.shared().promiseAtPut(k, v)
                 })
             })
@@ -484,13 +531,15 @@ class ResourceManager {
 
     evalIndexResources () {
         //debugger
+        // promiseSerialForEach promiseSerialTimeoutsForEach
         let count = 0
-        this.cssResources().promiseSerialForEach(r => {
+        this.cssResources().promiseSerialTimeoutsForEach(r => {
             return r.promiseLoadAndEval()
         }).then(() => {
-            return this.jsResources().promiseSerialForEach(r => {
+            return this.jsResources().promiseSerialTimeoutsForEach(r => {
                 count++
-                bootLoadingView.update(count, this.jsResources().length);
+                bootLoadingView.setBarToNofM(count, this.jsResources().length);
+                //debugger;
                 //console.log("count: " + count + " / " + this.jsResources().length)
                 return r.promiseLoadAndEval()
             }) 
@@ -520,7 +569,7 @@ class ResourceManager {
     
     onProgress (path) {
         this._evalCount ++
-        //bootLoadingView.update(this._evalCount, 100);
+        //bootLoadingView.setBarToNofM(this._evalCount, 100);
         //const detail = { path: path, progress: this._evalCount / this.jsEntries().length }
         //this.postEvent("resourceLoaderLoadUrl", detail)
         //this.postEvent("resourceLoaderProgress", detail)
@@ -531,7 +580,8 @@ class ResourceManager {
     }
 
     onDone () {
-        bootLoadingView.close();
+        getGlobalThis().bootLoadingView = bootLoadingView;
+        //bootLoadingView.close();
         this.markPageLoadTime();
 		//window.document.title = this.loadTimeDescription();
 		//this.postEvent("resourceLoaderDone", {}) 

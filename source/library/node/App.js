@@ -90,6 +90,7 @@
         this.newSlot("name", "App")
         this.newSlot("version", [0, 0])
         this.newSlot("hasDoneAppInit", false)
+        this.newSlot("rootView", null)
     }
 
     init () {
@@ -116,7 +117,7 @@
             return this
         }
 
-       this.setupUi()
+       this.setup()
     }
 
     /*
@@ -150,6 +151,20 @@
         return this        
     }
 
+    hideRootView () {
+        if (this.rootView()) {
+            this.rootView().setIsDisplayHidden(true);
+        }
+        return this
+    }
+
+    unhideRootView () {
+        if (this.rootView()) {
+            this.rootView().setIsDisplayHidden(false);
+        }
+        return this
+    }
+
     appDidInit () {
         this.showVersion()
 
@@ -173,6 +188,7 @@
     // --- fonts ---
 
     waitForFontsToLoad () {
+        bootLoadingView.setTitle("Initializing...")
         //this.onAllFontsLoaded()
 
         // NOTES: we really only want to wait for the font's currently displayed to be loaded.
@@ -183,22 +199,31 @@
             return;
         }
         console.log("not done loading fonts");
+
         setTimeout(() => {
+            bootLoadingView.setTitle(bootLoadingView.title() + ".")
             this.waitForFontsToLoad()
         }, 10);
         
     }
 
     onAllFontsLoaded () {
+        bootLoadingView.setTitle("onAllFontsLoaded")
+
         document.body.style.display = "flex";
         ResourceManager.shared().markPageLoadTime();
         document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
         console.log("done loading fonts! " + JSON.stringify(BMResources.shared().fonts().allFontNames()));
-        this.afterAppDidInit()
+        //this.afterAppDidInit()
+        
+        bootLoadingView.close()
+        this.unhideRootView()
     }
 
+    /*
     afterAppDidInit () {
     }
+    */
 
     afterAppUiDidInit () {
         const searchParams = WebBrowserWindow.shared().pageUrl().searchParams
