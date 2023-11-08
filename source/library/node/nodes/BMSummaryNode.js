@@ -123,7 +123,7 @@
     }
 
     didUpdateSlotSummaryFormat () {
-        this.didUpdateNode()
+        this.didUpdateNodeIfInitialized()
     }
 
     summaryKey () {
@@ -234,7 +234,8 @@
         */
 
         if (this.parentNode()) {
-          this.parentNode().didUpdateNode()
+            //assert(this.parentNode().hasDoneInit())
+            this.parentNode().didUpdateNodeIfInitialized() // didUpdateNodeIfInitialized?
         }
     }
     

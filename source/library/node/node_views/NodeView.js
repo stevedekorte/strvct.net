@@ -290,7 +290,7 @@
     syncToNode () {
         const node = this.node()
         if (node) {
-            //node.didUpdateNode() // is this needed? Shouldn't the slot hooks cover this?
+            //node.didUpdateNodeIfInitialized() // is this needed? Shouldn't the slot hooks cover this?
         }
         return this
     }

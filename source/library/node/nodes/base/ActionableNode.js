@@ -40,7 +40,7 @@
     addNodeAction (actionString) {
         if (!this.nodeActions().contains(actionString)) {
 	        this.nodeActions().push(actionString)
-            this.didUpdateNode()
+            this.didUpdateNodeIfInitialized()
         }
         return this
     }
@@ -48,7 +48,7 @@
     removeNodeAction (actionString) {
         if (this.nodeActions().contains(actionString)) {
         	this.nodeActions().remove(actionString)
-            this.didUpdateNode()
+            this.didUpdateNodeIfInitialized()
         }
         return this
     }

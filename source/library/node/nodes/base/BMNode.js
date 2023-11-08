@@ -483,7 +483,9 @@
         //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)) // TODO: remove after debugging
         this.scheduleMethod("onDidReorderSubnodes")
         //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
-        this.didUpdateNode()
+        if (this.hasDoneInit()) {
+            this.didUpdateNode()
+        }
         return this
     }
 
@@ -528,9 +530,15 @@
     
     // --- update / sync system ----------------------------
     
+    didUpdateNodeIfInitialized () {
+        if (this.hasDoneInit()) {
+            this.didUpdateNode()
+        }
+    }
+
     didUpdateNode () {
         if (!this.hasDoneInit()) {
-            return
+            return false
         }
 
         const note = this.didUpdateNodeNote()
@@ -545,8 +553,10 @@
         
         if (this.parentNode()) {
             assert(this.parentNode() !== this)
-            this.parentNode().didUpdateNode()
+            this.parentNode().didUpdateNodeIfInitialized()
         }
+
+        return true
     }
 
     hasDuplicateSubnodes () {
@@ -692,7 +702,7 @@
     addAt (anIndex) {
         const newSubnode = this.justAddAt(anIndex)
         if (newSubnode) {
-            this.didUpdateNode()
+            this.didUpdateNodeIfInitialized()
             this.postShouldFocusAndExpandSubnode(newSubnode)
         }
         return newSubnode

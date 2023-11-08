@@ -116,7 +116,7 @@
             return this
         }
 
-       this.setup()
+       this.setupUi()
     }
 
     /*
@@ -134,6 +134,17 @@
     // 2. setup
 
     setup () {
+        this.setupModel()
+        this.setupUi()
+        return this
+    }
+
+    setupModel () {
+        // for subclasses to override
+        return this
+    }
+
+    setupUi () {
         this.setupDocTheme()
         //this.addTimeout( () => this.showClasses(), 1)
         return this        
@@ -162,9 +173,8 @@
     // --- fonts ---
 
     waitForFontsToLoad () {
-        this.onAllFontsLoaded()
+        //this.onAllFontsLoaded()
 
-        /*
         // NOTES: we really only want to wait for the font's currently displayed to be loaded.
         // What's the best way to do that?
         const done = BMResources.shared().fonts().hasLoadedAllFonts();
@@ -176,7 +186,7 @@
         setTimeout(() => {
             this.waitForFontsToLoad()
         }, 10);
-        */
+        
     }
 
     onAllFontsLoaded () {
@@ -188,6 +198,9 @@
     }
 
     afterAppDidInit () {
+    }
+
+    afterAppUiDidInit () {
         const searchParams = WebBrowserWindow.shared().pageUrl().searchParams
         if (searchParams.keys().length !== 0) {
             this.handleSearchParams(searchParams)
@@ -195,10 +208,11 @@
     }
 
     handleSearchParams (searchParams) {
-        
+        // for subclasses to implement
+        return this
     }
         
-    // window and document 
+    // -- window and document ---
 
     mainWindow () {
         return WebBrowserWindow.shared()
@@ -225,11 +239,10 @@
         console.log("Application '" + this.name() + "' version " + this.versionsString())
     }
 
-    // themes - temporary, until ThemesResources is ready
+    // --- themes - temporary, until ThemesResources is ready
 
     setupDocTheme () {
         const doc = DocumentBody.shared()
-        doc.setHeight("100%") // trying to fix body not fitting window
         doc.setColor("#f4f4ec")
         doc.setBackgroundColor("rgb(25, 25, 25)")
         this.setupNormalDocTheme()

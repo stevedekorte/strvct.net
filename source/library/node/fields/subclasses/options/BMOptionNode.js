@@ -49,7 +49,7 @@
         const optionsNode = this.optionsNode()
         if (optionsNode) {
             optionsNode.didToggleOption(this)
-            this.didUpdateNode()
+            this.didUpdateNodeIfInitialized()
         } else {
             debugger;
             // if this is called, the stack views might not have properly synced 

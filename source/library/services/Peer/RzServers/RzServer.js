@@ -78,7 +78,7 @@
     {
       const slot = this.newSlot("peers", null)
       slot.setFinalInitProto(RzServerPeers);
-      slot.setShouldStoreSlot(true);
+      slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
     }
 

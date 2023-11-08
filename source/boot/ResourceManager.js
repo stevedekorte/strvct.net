@@ -362,6 +362,10 @@ class ResourceManager {
         return "strvct/source/boot/"
     }
 
+    bootPath () {
+        return ResourceManager.bootPath()
+    }
+
     static shared () {
         if (!Object.hasOwn(this, "_shared")) {
             const obj = new this();
@@ -581,10 +585,37 @@ class ResourceManager {
         //return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
     }
 
+    setupAndRun () {
+        console.log("ResourcesManager.setupAndRun()")
+        const bp = this.bootPath()
+        const urls = [
+            //"source/boot/getGlobalThis.js",
+            bp + "Base.js",
+            bp + "IndexedDBFolder.js",
+            bp + "IndexedDBTx.js",
+            bp + "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
+            //bp + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
+        ]
+        
+        /*
+        urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
+            ResourceManager.shared().run()
+        })
+        */
+        
+        
+        urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loadedResources) => {
+            loadedResources.forEach(resource => resource.evalDataAsJS())
+            this.run()
+        })
+
+        return this
+    }
 }
 
 // ---------------------------------------------------------------------------------------------
 
+/*
 const urls = [
     //"source/boot/getGlobalThis.js",
     ResourceManager.bootPath() + "Base.js",
@@ -594,15 +625,19 @@ const urls = [
     //ResourceManager.bootPath() + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
 ]
 
-/*
-urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
-    ResourceManager.shared().run()
-})
-*/
+//urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
+ //   ResourceManager.shared().run()
+//)
 
 
 urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loadedResources) => {
     loadedResources.forEach(resource => resource.evalDataAsJS())
     ResourceManager.shared().run()
 })
+*/
 
+window.addEventListener('load', function() {
+    // This event is fired when the entire page, including all dependent resources such as stylesheets and images, is fully loaded.
+    console.log('window.load event: other resources finished loading, starting ResourcesManager now.');
+    ResourceManager.shared().setupAndRun()
+});

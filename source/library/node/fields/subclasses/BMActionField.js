@@ -130,7 +130,7 @@
                 this.setIsVisible(infoDict.isVisible)
             }
 
-            //this.didUpdateNode()
+            //this.didUpdateNodeIfInitialized()
         //}
         return this
     }

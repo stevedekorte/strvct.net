@@ -48,7 +48,7 @@
       const slot = this.newSlot("voices", null);
       slot.setLabel("voices");
       slot.setFinalInitProto(AzureVoices);
-      slot.setShouldStoreSlot(true);
+      slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
     }
 

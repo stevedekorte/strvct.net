@@ -235,7 +235,7 @@
             
             if (t[setter]) {
                 t[setter].apply(t, [this.pickedItems()])
-                //t.didUpdateNode()
+                //t.didUpdateNodeIfInitialized()
             } 
         }
         return this
@@ -314,7 +314,7 @@
         }
         if (didChange) {
             this.setValueOnTarget(newV)
-            this.didUpdateNode()
+            this.didUpdateNodeIfInitialized()
         }
         */
         return this
@@ -495,7 +495,7 @@
                 debugger;
                 assert(!this.needsSyncToSubnodes()) // important sanity check - maybe values aren't in pickable set?
             }
-            this.didUpdateNode() // needed?
+            this.didUpdateNodeIfInitialized() // needed?
         }
         return this
     }

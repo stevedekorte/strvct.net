@@ -44,8 +44,8 @@
         return this
     }
 
-    setup () {
-        super.setup()
+    setupUi () {
+        super.setupUi()
         this.setupModel()
         BMResources.shared()
         

@@ -160,7 +160,7 @@
 
         return this.store().promiseAt(this.valueHash()).then((value) => {
             this._value = value
-            this.didUpdateNode()
+            this.didUpdateNodeIfInitialized()
         })
     }
 

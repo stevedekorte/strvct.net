@@ -237,7 +237,7 @@
             this.validate()
         }
 
-        this.didUpdateNode()
+        this.didUpdateNodeIfInitialized()
     }
 
     setValueOnTarget (v) { // called by View on edit

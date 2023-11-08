@@ -245,7 +245,7 @@
     }
 
     scheduleSyncToView () {
-        this.didUpdateNode()
+        this.didUpdateNodeIfInitialized()
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView")
         return this
     }

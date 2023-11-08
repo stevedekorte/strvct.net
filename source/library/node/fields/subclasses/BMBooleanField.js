@@ -33,9 +33,10 @@
         const isValid = this.valueIsBool()
 		
         if (!isValid) {
-            const s = "Field '" + this.key() + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
+            const targetName = this.target() ? this.target().debugTypeId() : "<no target>";
+            const s = "Field '" + this.key() + "' on target '" + targetName + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
             console.warn(s)
-            //debugger;
+            debugger;
             this.setValue(false);
             this.setValueError(s)
         } else {
@@ -51,7 +52,10 @@
     }
 	
     didUpdateNode () {
-        this.validate()
+        assert(this.hasDoneInit())
+        //if (this.hasDoneInit()) { 
+            this.validate()
+        //}
         return super.didUpdateNode()
     }
 
