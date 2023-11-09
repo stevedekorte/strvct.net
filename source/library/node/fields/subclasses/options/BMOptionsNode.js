@@ -52,6 +52,10 @@
             slot.setShouldStoreSlot(true)
         }
 
+        {
+            //const slot = this.newSlot("isSettingUp", false) // doesn't appear to be needed
+        }
+
         this.overrideSlot("key", "").setShouldStoreSlot(true)
 
         //this.newSlot("optionsSource", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")  // this could be stored...
@@ -275,7 +279,8 @@
 
     didUpdateSlotValidValues (oldValue, newValue) {
         if (newValue) {
-            this.setupSubnodes()
+            //this.setupSubnodes()
+            //this.scheduleMethod("setupSubnodes")
         }
     }
 
@@ -458,12 +463,10 @@
     }
 
     setupSubnodes () {
-        if (this.needsSyncToSubnodes()) {
-            /*
-            if (this.title() === "Genre") {
-                debugger;
-            }
-            */
+        //debugger
+        if (this.needsSyncToSubnodes() /*&& !this.isSettingUp()*/) {
+            //this.setIsSettingUp(true)
+            //console.log(this.typeId() + " " + this.nodePathString() + " setupSubnodes");
             this.removeAllSubnodes()
             const validValues = this.computedValidValues()
 
@@ -495,6 +498,7 @@
                 debugger;
                 assert(!this.needsSyncToSubnodes()) // important sanity check - maybe values aren't in pickable set?
             }
+            //this.setIsSettingUp(false)
             this.didUpdateNodeIfInitialized() // needed?
         }
         return this

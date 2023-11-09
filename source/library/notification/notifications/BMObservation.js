@@ -19,6 +19,9 @@
         this.newSlot("didFinalizeStop", false) // Boolean
         this.newWeakSlot("observer", null) // WeakRef slot to observer
         this.newWeakSlot("sender", null) // WeakRef to sender
+
+        this.newSlot("noteHash", null) // null or string
+
     }
 
     init () {
@@ -44,6 +47,20 @@
             this.scheduleMethod("stopWatching")
         }
         return this
+    }
+
+    // --- noteHash ---
+
+    clearNoteHash () {
+        this._noteHash = null;
+        return this
+    }
+
+    noteHash () {
+        if (!this._noteHash) {
+            this._noteHash = Type.typeUniqueId(this.name()) + Type.typeUniqueId(this.sender())
+        }
+        return this._noteHash
     }
 
     // --- private helpers ---

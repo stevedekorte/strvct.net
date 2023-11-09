@@ -1019,19 +1019,12 @@
         }
 
         if (item.subtitle) {
-            //debugger;
             newNode.setSubtitle(item.subtitle)
         }
 
         this.addSubnode(newNode)
 
         if (hasSubnodes) {
-            /*
-            item.options.forEach(subitem => {
-                sn.addOptionNodeForDict(subitem)
-            })
-            */
-
             newNode.addOptionNodesForArray(item.options)
         }
 
