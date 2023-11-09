@@ -276,7 +276,7 @@
 
     clearStyleCache () {
         this.setStyleCacheMap(null)
-        console.log(" clearStyleCache")
+        console.log("clearStyleCache")
         return this
     }
 

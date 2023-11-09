@@ -42,7 +42,7 @@
     }
 	
     send () {
-        this.debugLog(() => "   <- sending " + this.description())
+        //this.debugLog(() => "   <- sending " + this.description())
         const t = this.target()
         const m = this.method()
         const a = this.args()

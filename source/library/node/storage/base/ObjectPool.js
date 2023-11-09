@@ -415,7 +415,7 @@
         assert(this.isOpen())
         const scheduler = SyncScheduler.shared()
         const methodName = "commitStoreDirtyObjects"
-        console.log("--- scheduleStore ---")
+        //console.log(this.type() + " --- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
                 //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null)
@@ -429,7 +429,7 @@
 
     commitStoreDirtyObjects () {
         if (this.hasDirtyObjects()) {
-            console.log("--- commitStoreDirtyObjects ---")
+            console.log(this.type() + " --- commitStoreDirtyObjects ---")
 
             //this.debugLog("--- commitStoreDirtyObjects begin ---")
             //debugger;

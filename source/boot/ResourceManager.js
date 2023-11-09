@@ -100,13 +100,13 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
                 reject(new Error(rq.status + " " + rq.statusText + " error loading " + path + " "))
             }
             this.response = rq.response
-            console.log("loaded ", path)
+            console.log("URL loaded ", path)
             //debugger
             resolve(rq.response) 
         }
 
         rq.onerror = (event) => { 
-            console.log("error loading ", path)
+            console.log("URL error loading ", path)
             reject(undefined) 
         }
         rq.send()
@@ -172,6 +172,10 @@ class UrlResource {
         return obj
     }
 	
+    type () {
+        return "UrlResource";
+    }
+
     init () {
         this._path = null
         this._resourceHash = null
@@ -213,6 +217,7 @@ class UrlResource {
     }
 
     promiseLoad_2 () {
+        //debugger;
         const h = this.resourceHash() 
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared()
@@ -225,10 +230,10 @@ class UrlResource {
                     })
                 } else {
                     // otherwise, load normally and cache result
-                    console.log("no cache for ", this.resourceHash() + " " + this.path())
+                    console.log(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path())
                     return this.promiseJustLoad().then(() => {
                         hc.promiseAtPut(h, this.data()).then(() => {
-                            console.log("stored cache for ", this.resourceHash() + " " + this.path())
+                            console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path())
                             return Promise.resolve(this)
                         })
                     })
@@ -329,7 +334,7 @@ class UrlResource {
 // ------------------------------------------------------------------------
 
 class BootLoadingView {
-    
+
   isAvailable() {
     return this.element() !== null;
   }
@@ -404,6 +409,10 @@ class ResourceManager {
 
     static bootPath () {
         return "strvct/source/boot/"
+    }
+
+    type () {
+        return "ResourceManager";
     }
 
     bootPath () {
@@ -481,7 +490,7 @@ class ResourceManager {
         //debugger
         //return this.hashCache().promiseClear().then(() => {
             return HashCache.shared().promiseCount().then((count) => {
-                console.log("hashcache count: ", count)
+                console.log(this.type() + " hashcache count: ", count)
                 if (!count) {
                     return this.promiseLoadCam()
                 }
@@ -688,6 +697,6 @@ urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loaded
 
 window.addEventListener('load', function() {
     // This event is fired when the entire page, including all dependent resources such as stylesheets and images, is fully loaded.
-    console.log('window.load event: other resources finished loading, starting ResourcesManager now.');
+    //console.log('window.load event: other resources finished loading, starting ResourcesManager now.');
     ResourceManager.shared().setupAndRun()
 });

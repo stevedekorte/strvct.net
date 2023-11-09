@@ -18,7 +18,7 @@
         super.init()
         this.setIdb(IndexedDBFolder.clone())
         this.setIsDebugging(false)
-        this.idb().setIsDebugging(true)
+        this.idb().setIsDebugging(false)
         this.setPath("sharedHashCache")
     }
 
@@ -104,7 +104,7 @@
             // verify key before writing
             return this.promiseHashKeyForData(data).then((dataHash) => {
                 if (hash === dataHash) {
-                    console.log("HachCache atPut ", hash)
+                    console.log("HashCache atPut ", hash)
                     return this.idb().promiseAtPut(hash, data)
                 }
                 return Promise.reject(new Error("hash key does not match hash of value"))

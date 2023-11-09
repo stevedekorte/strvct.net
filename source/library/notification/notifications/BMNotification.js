@@ -60,7 +60,7 @@
 
     noteHash () {
         if (!this._noteHash) {
-            this._noteHash = Type.typeUniqueId(this.name()) + Type.typeUniqueId(this.sender())
+            this._noteHash = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender())
         }
         return this._noteHash
     }

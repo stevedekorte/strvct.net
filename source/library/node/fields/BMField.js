@@ -353,7 +353,9 @@
     }
 
     jsonArchive () {
-        return this.value()
+        console.log(this.typeId() + ".jsonArchive()")
+        return super.jsonArchive()
+//        return this.value()
     }
 
     setJson (json) {

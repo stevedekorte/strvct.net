@@ -578,10 +578,13 @@
             if (Type.isFunction(s)) {
                 s = s()
             }
+
+            const tid = this.thisClass().hasShared() ? this.type() : this.debugTypeId();
+
             if (arguments.length == 1) {
-                console.log(this.debugTypeId() + " " + s)
+                console.log(tid + " " + s)
             } else {
-                console.log(this.debugTypeId() + " ", arguments[0], arguments[1])
+                console.log(tid + " ", arguments[0], arguments[1])
             }
         }
         return this

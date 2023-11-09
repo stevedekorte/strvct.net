@@ -96,6 +96,20 @@
 
     // ---
 
+    /*
+    matchesNotification (note) {
+        // this is used so much, it might be worth direct accessors...
+        const sender = this._sender
+        const matchesSender = (sender === null) || (sender === note._sender) 
+        if (matchesSender) {
+            const name = this._name
+            const matchesName = (name === null) || (note._name === name) 
+            return matchesName
+        }
+        return false
+    }
+    */
+
     matchesNotification (note) {
         const sender = this.sender()
         const matchesSender = (sender === null) || (sender === note.sender()) 
@@ -155,8 +169,8 @@
     isEqual (obs) {
         const sameName = this.name() === obs.name()
         const sameObserver = this.observer() === obs.observer()
-        const sameSenderId = this.sender() === obs.sender()
-        return sameName && sameObserver && sameSenderId
+        const sameSender = this.sender() === obs.sender()
+        return sameName && sameObserver && sameSender
     }
 
     startWatching () {

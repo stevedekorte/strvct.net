@@ -65,7 +65,7 @@
     static onPoolOpenSuccess (aPool) {
         const store = this.defaultStore()
 
-        console.log(">>>>>>> store count: ", store.count())
+        console.log(this.type() + " onPoolOpenSuccess store count: ", store.count())
         store.rootOrIfAbsentFromClosure(() => {
             //debugger
             return this.rootNodeProto().clone()
@@ -135,6 +135,7 @@
     // 2. setup
 
     setup () {
+        this.debugLog("Launching " + this.fullVersionString())
         this.setupModel()
         this.setupUi()
         return this
@@ -166,8 +167,6 @@
     }
 
     appDidInit () {
-        this.showVersion()
-
         this.setHasDoneAppInit(true)
         this.postNoteNamed("appDidInit")
 
@@ -198,7 +197,7 @@
             this.onAllFontsLoaded()
             return;
         }
-        console.log("not done loading fonts");
+        //this.debugLog("not done loading fonts");
 
         setTimeout(() => {
             bootLoadingView.setTitle(bootLoadingView.title() + ".")
@@ -213,17 +212,13 @@
         document.body.style.display = "flex";
         ResourceManager.shared().markPageLoadTime();
         document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        console.log("done loading fonts! " + JSON.stringify(BMResources.shared().fonts().allFontNames()));
+        //this.debugLog("done loading fonts! " + JSON.stringify(BMResources.shared().fonts().allFontNames()));
         //this.afterAppDidInit()
         
         bootLoadingView.close()
         this.unhideRootView()
+        this.afterAppUiDidInit()
     }
-
-    /*
-    afterAppDidInit () {
-    }
-    */
 
     afterAppUiDidInit () {
         const searchParams = WebBrowserWindow.shared().pageUrl().searchParams
@@ -260,8 +255,8 @@
         return this.version().join(".")
     }
 
-    showVersion () {
-        console.log("Application '" + this.name() + "' version " + this.versionsString())
+    fullVersionString () {
+        return "Application '" + this.name() + "' version " + this.versionsString();
     }
 
     // --- themes - temporary, until ThemesResources is ready

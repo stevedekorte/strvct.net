@@ -81,6 +81,7 @@
         this.newSlot("isProcessing", false)
         this.newSlot("nameIndex", null) // dict of dicts
         this.newSlot("obsHighwaterCount", 100) // used
+        this.newSlot("noteSet", null) // Set used for fast lookup for matching note
     }
 
     init () {
@@ -88,6 +89,7 @@
         this.setObservations([]);
         this.setNotifications([]);
         this.setNameIndex({});
+        this.setNoteSet(new Set());
     }
 
     shortDescription () {
@@ -160,6 +162,11 @@
     // --- notifying ----
     
     hasNotification (note) {
+        if (this.noteSet().has(note)) {
+            // quick check to see if we have an exact match
+            // reusing notes can help make these lookups more efficient
+            return true
+        }
         return this.notifications().canDetect(n => n.isEqual(note))
     }
     
@@ -170,6 +177,7 @@
                 console.log("NotificationCenter '" + note.sender().title() + "' " + note.name())
             }
             */
+            this.noteSet().add(note)
             this.notifications().push(note)
 		    SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1)
         }
@@ -203,6 +211,7 @@
             const notes = this.notifications()
             this.setNotifications([])
             notes.forEach(note => {
+                this.noteSet().delete(note)
                 this.postNotificationNow(note)
             })
             //notes.forEach(note => this.tryToPostNotificationNow(note))

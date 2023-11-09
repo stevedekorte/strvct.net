@@ -34,6 +34,8 @@
 
 */
 
+//const allSetupOptions = new Set();
+
 (class BMOptionsNode extends BMField {
     
     static availableAsNodePrimitive () {
@@ -465,6 +467,11 @@
     setupSubnodes () {
         //debugger
         if (this.needsSyncToSubnodes() /*&& !this.isSettingUp()*/) {
+            /*
+            if (allSetupOptions.has(this)) {
+                debugger;
+            }
+            */
             //this.setIsSettingUp(true)
             //console.log(this.typeId() + " " + this.nodePathString() + " setupSubnodes");
             this.removeAllSubnodes()
@@ -491,7 +498,9 @@
                 console.log("BEFORE:")
                 console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
                 console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
+
                 this.setValueOnTarget(this.formatedPickedValues())
+                
                 console.log("AFTER:")
                 console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
                 console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
@@ -500,11 +509,12 @@
             }
             //this.setIsSettingUp(false)
             this.didUpdateNodeIfInitialized() // needed?
+            /*
+            allSetupOptions.add(this)
+            assert(allSetupOptions.has(this))
+            */
         }
         return this
     }
-
-
-
     
 }.initThisClass());
