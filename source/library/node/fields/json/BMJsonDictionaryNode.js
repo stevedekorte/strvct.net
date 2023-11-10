@@ -37,6 +37,12 @@
 
     // ------------------------------
 
+    jsonArchive () {
+        throw new Error("unimplemented");
+    }
+
+    // ------------------------------
+
     setJson (json) {
         assert(Type.isDictionary(json));
 
@@ -56,6 +62,18 @@
         return this
     }
 
+    asJson () {
+        const dict = {}
+        this.subnodes().forEach((sn) => {
+            const key = sn.key ? sn.key() : sn.title()
+            if (sn.asJson) {
+                // so we skip CreatorNode
+                const value = sn.asJson()
+                dict[key] = value
+            }
+        })
+        return dict
+    }
 
     // ----------
 
@@ -82,19 +100,6 @@
     }
 
     // ------------
-
-    jsonArchive () {
-        const dict = {}
-        this.subnodes().forEach((sn) => {
-            const key = sn.key ? sn.key() : sn.title()
-            if (sn.jsonArchive) {
-                // so we skip CreatorNode
-                const value = sn.jsonArchive()
-                dict[key] = value
-            }
-        })
-        return dict
-    }
 
     getBMDataUrl () {
         const json = this.jsonArchive() 

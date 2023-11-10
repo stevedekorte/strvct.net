@@ -407,6 +407,15 @@
 
     // --- syncing ---
 
+    /*
+    setValue (v) {
+        if (Type.isDictionary(v)) {
+            debugger;
+        }
+        this._value = v;
+        return this;
+    }
+    */
 
     itemForValue (v) {
         if (Type.isString(v) || Type.isNumber(v)) {
@@ -499,12 +508,16 @@
                 console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
                 console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
 
+                debugger;
+                this.valueAsArray()
+
                 this.setValueOnTarget(this.formatedPickedValues())
                 
                 console.log("AFTER:")
                 console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
                 console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
                 debugger;
+                this.valueAsArray()
                 assert(!this.needsSyncToSubnodes()) // important sanity check - maybe values aren't in pickable set?
             }
             //this.setIsSettingUp(false)

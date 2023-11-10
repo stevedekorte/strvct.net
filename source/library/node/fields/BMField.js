@@ -355,15 +355,30 @@
     jsonArchive () {
         console.log(this.typeId() + ".jsonArchive()")
         return super.jsonArchive()
-//        return this.value()
     }
 
+    // --- simplified JSON representation ---
+
+
     setJson (json) {
+        //console.log("Field " + this.key() + " setJson(" + json + ")") 
         this.setValue(json) 
+        assert(this.value() === json)
         return this
     }
 
-    // ----------------
+    asJson () {
+        // test used for Character sheet atm
+        // separate fron jsonArchive 
+        return this.value()
+    }
+
+    /*
+    setJson (json) {
+        this.setKey(json.key) 
+        this.setValue(json.value) 
+        return this
+    }
 
     asJson () {
         // test used for Character sheet atm
@@ -373,6 +388,7 @@
             value: this.value()
         }
     }
+    */
 
     // ----------------
     
