@@ -13,8 +13,8 @@
   init() {
     super.init();
     this.setTitle("peer connections");
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
+    this.setShouldStore(false);
+    this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([RzPeerConn]);
     this.setCanAdd(false);
     this.setNodeCanReorderSubnodes(true);
@@ -23,6 +23,7 @@
   finalInit() {
     super.finalInit()
     this.setNoteIsSubnodeCount(true);
+    assert(this.subnodeCount() === 0);
   }
 
   serverConn () {
@@ -40,6 +41,8 @@
   }
 
   addIfAbsentPeerConnForId (id) {
+    this.assertValidSubnodes()
+
     const match = this.subnodes().detect(sn => sn.peerId() === id)
     if (match) {
       return match
@@ -48,6 +51,18 @@
     const pc = this.peerConnClass().clone().setPeerId(id).setServerConn(this.serverConn())
     this.addSubnode(pc)
     return pc
+  }
+
+  assertValidSubnodes () {
+    const invalidMatch = this.subnodes().detect(sn => sn.thisClass().type() !== this.peerConnClass().type())
+    assert(!invalidMatch);
+  }
+
+  addSubnode (aSubnode) {
+    this.assertValidSubnodes()
+    const r = super.addSubnode(aSubnode)
+    this.assertValidSubnodes()
+    return r
   }
 
 }.initThisClass());

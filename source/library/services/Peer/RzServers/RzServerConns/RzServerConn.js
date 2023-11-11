@@ -193,6 +193,7 @@
     this.setPeerId("")
     this.setStatus("unconnected")
     this.setCanDelete(true)
+    this.setShouldStore(false)
   }
 
   // --- peer connection class ---
@@ -376,7 +377,7 @@
     this.setPeerId(peerId)
     this.debugLog("opened with peerId: '" + peerId + "'");
     this.setStatus("connected to server")
-    this.refreshPeers()
+    //this.refreshPeers()
     this.sendDelegateMessage("onPeerServerOpen", [this])
   }
 
@@ -614,6 +615,10 @@
   }
 
   async refreshPeers () {
+    // NOTE: we want to be able to use custom peerConnClass and we don't want to remove 
+    // subnodes on refresh. Maybe we should separate availablePeers from peerConns?
+    
+    /*
     // compose this for fast lookup - TODO: use subnode index instead of building index
     const idToPeerMap = new Map();
     this.peerConns().subnodes().forEach(pc => idToPeerMap.set(pc.peerId(), pc));
@@ -637,6 +642,7 @@
 
     // what should we do with connected peers that are no longer in the peer id list?
     // should we leave them in the list or shut them down?
+    */
 
     return this
   }

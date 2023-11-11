@@ -238,7 +238,7 @@ let listenCount = 0;
             */
 
             return this.handleEvent(event)
-        })
+        }, event);
         
         return result
     }

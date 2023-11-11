@@ -272,7 +272,10 @@
 
   remoteMetadata () {
     // metadata the peer shared with us when we connected
-    return this.conn().metadata;
+    if (this.conn()) {
+      return this.conn().metadata;
+    }
+    return null
   }
 
   // --------------------------------

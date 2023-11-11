@@ -18,8 +18,8 @@
 
     Example use:
 
-            EventManager.shared().safeWrapEvent(() => { ... })
-
+            EventManager.shared().safeWrapEvent(() => { ... }, event) // we pass in event so we can access it globally
+ 
 */
 
 (class EventManager extends ProtoClass {
@@ -28,6 +28,22 @@
         this.newSlot("eventLevelCount", 0)
         this.newSlot("hasReceivedUserEvent", false) // we only care about this for user events, but event manager handles timeouts too
         this.newSlot("beginUserEventDate", null)
+        this.newSlot("currentEvent", null)
+    }
+
+    currentEventName () {
+        const e = this.currentEvent();
+        if (e === null) {
+            return null;
+        } else if (Type.isString(e)) {
+            return e;
+        }
+        return e.constructor.name;
+    }
+
+    currentEventIsUserInput () {
+        const userEventNames = ["KeyboardEvent", "MouseEvent"];
+        return userEventNames.includes(this.currentEventName());
     }
 
     onReceivedUserEvent () { // sent by event listeners if event is user interaction (like click) that browser waits for to enable things like audio/video use
@@ -65,7 +81,7 @@
     }
     
     /*
-    safeWrapEvent (callback) {
+    safeWrapEvent (callback, event) {
         let result = undefined
         this.incrementEventLevelCount()
         try {
@@ -83,7 +99,9 @@
     }
     */
 
-    safeWrapEvent (callback) {
+    safeWrapEvent (callback, event) {
+        assert(event)
+        this.setCurrentEvent(event)
         //ThrashDetector.shared().beginFrame()
         //Perf.shared().beginFrame()
         let result = undefined
@@ -103,7 +121,9 @@
 
         this.decrementEventLevelCount()
         assert(this.eventLevelCount() === eventCountBefore)
+
         this.syncIfAppropriate() // TODO: is this the best spot?
+        this.setCurrentEvent(null) // wait until after sync so our sync code can access the event
         //Perf.shared().endFrame()
         //ThrashDetector.shared().endFrame()
         return result

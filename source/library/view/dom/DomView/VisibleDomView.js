@@ -84,7 +84,7 @@
         }
 
         const obs = new IntersectionObserver((entries, observer) => {
-            EventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer) })
+            EventManager.shared().safeWrapEvent(() => { this.handleIntersection(entries, observer) }, "IntersectionObserverEvent")
             //this.handleIntersection(entries, observer)
         }, intersectionObserverOptions)
 

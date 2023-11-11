@@ -115,7 +115,7 @@
   finalInit () {
     super.finalInit()
     this.setCanDelete(true)
-    this.refreshPeers()
+    //this.refreshPeers()
   }
 
   static fullPathForDict (dict) {

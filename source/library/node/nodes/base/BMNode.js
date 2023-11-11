@@ -1088,7 +1088,7 @@
             dict[k] = v;
         })
 
-        console.log(this.typeId() + ".jsonArchive() = " + JSON.stringify(dict, 2, 2));
+        //console.log(this.typeId() + ".jsonArchive() = " + JSON.stringify(dict, 2, 2));
 
         return dict
     }

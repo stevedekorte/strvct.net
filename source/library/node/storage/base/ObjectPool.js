@@ -693,7 +693,7 @@
     }
 
     storeObject (obj) {
-        assert(obj.shouldStore())
+        //assert(obj.shouldStore())
         const puuid = obj.puuid()
         assert(!Type.isNullOrUndefined(puuid))
 
