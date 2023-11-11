@@ -353,7 +353,7 @@
     }
 
     jsonArchive () {
-        console.log(this.typeId() + ".jsonArchive()")
+        //console.log(this.typeId() + ".jsonArchive()")
         return super.jsonArchive()
     }
 

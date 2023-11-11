@@ -168,7 +168,7 @@
     const oldMsg = this.messageWithId(msgJson.messageId)
     if (oldMsg) {
       oldMsg.setJsonArchive(msgJson)
-      return oldMsgm
+      return oldMsg
     }
 
     const newMsg = this.newMessageFromJson(msgJson)
