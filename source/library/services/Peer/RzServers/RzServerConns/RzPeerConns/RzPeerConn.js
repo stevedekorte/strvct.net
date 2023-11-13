@@ -236,7 +236,7 @@
   }
 
   isConnected () {
-    return this.conn() !== null
+    return this.isOpen()
   }
 
   isOpen () {

@@ -21,12 +21,14 @@
       slot.setIsSubnode(true);
     }
 
+    /*
     {
       const slot = this.newSlot("connections", null)
       slot.setFinalInitProto(PeerConnections)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
+    */
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -40,6 +42,10 @@
     super.finalInit()
     this.setTitle("Peer Network");
     this.setSubtitle("WebRTC");
+  }
+
+  defaultSignalServer () {
+    return this.servers().subnodes().first();
   }
 
 }.initThisClass());

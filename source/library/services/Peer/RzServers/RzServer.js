@@ -198,7 +198,6 @@
     return "https://" + this.host() + this.path() + '/api/peers';
   }
 
-
   async refreshPeers () {
     const peerIds = await this.fetchPeerIds();
     this.peers().setPeerIdArray(peerIds)
@@ -229,6 +228,20 @@
     return pc
   }
   */
+
+  // --- generate a valid peer id ---
+
+  static generateRandomPeerId (length = 10) {
+    let result = '';
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+}
 
 
 }.initThisClass());

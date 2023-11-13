@@ -24,6 +24,19 @@
     }
 
     {
+      const slot = this.newSlot("peerIdPrefix", "");
+      slot.setInspectorPath("")
+      slot.setLabel("our peer id root")
+      slot.setShouldStoreSlot(false)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+      //slot.setSummaryFormat("value")
+    }
+
+    {
       const slot = this.newSlot("peerId", null);
       slot.setInspectorPath("")
       slot.setLabel("our peer id")
@@ -68,8 +81,28 @@
       slot.setSummaryFormat("key value")
     }
 
+    // --- get id retries ---
+
     {
-      const slot = this.newSlot("retryCount", 0);      
+      const slot = this.newSlot("getIdRetryCount", 0);   
+    }
+
+    {
+      const slot = this.newSlot("getIdRetryDelayMs", 100);   
+    }
+
+    {
+      const slot = this.newSlot("getIdMaxRetries", 100);   
+    }
+
+    // --- connect retries ---
+
+    {
+      const slot = this.newSlot("connectRetryDelayMs", 5000);   
+    }
+
+    {
+      const slot = this.newSlot("connectRetryCount", 0);      
       slot.setInspectorPath("info")
       //slot.setLabel("prompt")
       slot.setShouldStoreSlot(true)
@@ -82,7 +115,7 @@
     }
 
     {
-      const slot = this.newSlot("maxRetries", 3);      
+      const slot = this.newSlot("connectMaxRetries", 3);      
       slot.setInspectorPath("info")
       //slot.setLabel("prompt")
       slot.setShouldStoreSlot(true)
@@ -93,6 +126,8 @@
       slot.setCanEditInspection(true)
       slot.setSummaryFormat("key value")
     }
+
+    // --- ping / pong ---
 
     {
       const slot = this.newSlot("pingIntervalMs", 1000);   
@@ -227,7 +262,8 @@
   connect () {
     if (!this.isConnected()) {
       this.setStatus("connecting")
-      this.setRetryCount(0)
+      this.setGetIdRetryCount(0)
+      this.setConnectRetryCount(0)
       this.attemptToConnect()
     }
     return this
@@ -335,29 +371,18 @@
 
   // --- connect to signaling server ---
 
+  newPeerId () {
+    return this.peerIdPrefix() + "-" + RzServer.generateRandomPeerId(10)
+  }
+
   attemptToConnect () {
-    /*
-    const json1 = JSON.stableStringify(this.peerOptions(), 2, 2)
-    const json2 = JSON.stableStringify(this.peerOptions2(), 2, 2)
-    console.log(json1)
-    console.log(json2)
-    assert(json1 === json2)
-    */
-    //console.log("getPeers: ", await this.getPeers());
-    //this.setStatus("connection attempt #"  + this.retryCount())
+    console.log("connecting to peerjs signal server: ", JSON.stringify(this.peerOptions(), 2, 2) )
 
-    //const id = LocalUser.shared().id();
-    //this.debugLog("connecting to peerjs rendezvous server")
-    console.log("connecting to peerjs rendezvous server: ", JSON.stringify(this.peerOptions(), 2, 2) )
-    //debugger;
-    const requestedPeerId = this.peerId() ? this.peerId() : undefined;
+    let requestedPeerId = undefined;
+    if (this.peerIdPrefix().length) {
+      requestedPeerId = this.newPeerId()
+    }
     const peer = new Peer(requestedPeerId, this.peerOptions()); /* let server assign unique peer id */
-
-    /*
-    peer.__peerData = {
-      // Your data here
-    };
-    */
 
     if (peer) {
       peer.on("open", (id) => this.onOpen(id) );
@@ -452,32 +477,40 @@
   // --- error handling ---
 
   onError (error) {
-    this.debugLog("error ", error);
+    //this.debugLog("error ", error);
     //debugger
     console.log("error: " + error.message)
     this.setStatus(error.message)
 
     const etype =  error.type
-    let errorMethodName = "on" + etype.split("-").map(s => s.capitalized()).join("") //+ "Error";
-    if (!errorMethodName.endsWith("Error")) {
-      errorMethodName += "Error";
+    let errorMethodRoot = etype.split("-").map(s => s.capitalized()).join("") //+ "Error";
+    if (!errorMethodRoot.endsWith("Error")) {
+      errorMethodRoot += "Error";
     }
+    const errorMethodName = "on" + errorMethodRoot;
 
+    debugger;
+
+    // send self error message
     const method = this[errorMethodName]
     if (method) {
       method.apply(this, [error])
     } else {
       throw new Error("missing error handler method '" + errorMethodName + "'")
     }
+
+    // send delegate error message 
+    const delegateErrorMethodName = "onSignalServer" + errorMethodRoot;
+    this.sendDelegateMessage(delegateErrorMethodName, [this, error])
   }
 
   // --- error type handlers ---
 
-  onErrorPeerUnavailable (error) {
+  onPeerUnavailableError (error) {
     console.warn(this.typeId() + " error: ", error)
   }
 
-  onBrowserIncompatible (error) {
+  onBrowserIncompatibleError (error) {
     // ERRORFATAL
     // The client's browser does not support some or all WebRTC features that you are trying to use.
   }
@@ -532,7 +565,27 @@
   onUnavailableIdError (error) {
     // ERRORSOMETIMES FATAL
     // The ID passed into the Peer constructor is already taken.
-    // This error is not fatal if your peer has open peer-to-peer connections. This can happen if you attempt to reconnect a peer that has been disconnected from the server, but its old ID has now been taken.
+    // This error is not fatal if your peer has open peer-to-peer connections. 
+    // This can happen if you attempt to reconnect a peer that has been disconnected from the server, but its old ID has now been taken.
+    if (this.peerIdPrefix()) {
+      this.retryClosure(() => {
+        debugger;
+        this.attemptToConnect()
+      })
+    }
+  }
+
+  getIdRetryClosure (func) {
+    if (this.getIdRetryCount() < this.getIdMaxRetries()) {
+      this.setGetIdRetryCount(this.getIdRetryCount() + 1);
+      this.addTimeout(() => {
+        console.warn(this.typeId() + " retry get id");
+        func();
+      }, this.getIdRetryDelayMs());
+    } else {
+      console.warn(this.typeId() + " reached max get id retries");
+    }
+    return this
   }
 
   onWebrtcError (error) {
@@ -543,18 +596,17 @@
   // --- reconnect ---
 
   attemptToReconnect () {
-    const retryDelay = 5000
 
-    if (this.retryCount() < this.maxRetries()) {
+    if (this.connectRetryCount() < this.connectMaxRetries()) {
       setTimeout(() => {
-        this.setRetryCount(this.retryCount() + 1);
+        this.setConnectRetryCount(this.connectRetryCount() + 1);
         if (!this.isConnected()) {
-          this.setStatus(this.status() + " retry #" + this.retryCount()) // + " in " + (retryDelay/1000) + " secs")
+          this.setStatus(this.status() + " retry #" + this.connectRetryCount()) // + " in " + (this.connectRetryDelayMs()/1000) + " secs")
           this.attemptToConnect()
         } else {
           this.peer().reconnect(); // TODO: will this call onConnection again?
         }
-      }, retryDelay);
+      }, this.connectRetryDelayMs());
     } else {
       debugger
       const warning = "Reached maximum number of " + this.maxRetries() + " retries.";
