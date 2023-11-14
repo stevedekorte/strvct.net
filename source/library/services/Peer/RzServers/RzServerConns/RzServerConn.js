@@ -489,7 +489,7 @@
     }
     const errorMethodName = "on" + errorMethodRoot;
 
-    debugger;
+    //debugger;
 
     // send self error message
     const method = this[errorMethodName]
