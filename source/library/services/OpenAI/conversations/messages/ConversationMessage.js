@@ -13,17 +13,22 @@
 
     {
       const slot = this.newSlot("conversation", null);
-      slot.setShouldStoreSlot(false)
+      slot.setCanInspect(false);
+      slot.setShouldStoreSlot(false);
     }
 
     {
       const slot = this.newSlot("messageId", null);
-      slot.setShouldStoreSlot(true)
+      slot.setSlotType("String");
+      slot.setCanInspect(true);
+      slot.setShouldStoreSlot(true);
       slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("senderId", null);
+      slot.setSlotType("String");
+      slot.setCanInspect(true);
       slot.setShouldStoreSlot(true)
       slot.setAnnotation("shouldJsonArchive", true)
     }
@@ -33,13 +38,16 @@
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
+      slot.setCanInspect(true);
+      slot.setShouldStoreSlot(true)
       slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("timestamp", null);
-      slot.setShouldStoreSlot(true);
+      slot.setCanInspect(true);
       slot.setDuplicateOp("duplicate");
+      slot.setShouldStoreSlot(true)
       slot.setSlotType("Number");
       //slot.setAnnotation("shouldJsonArchive", true)
     }
@@ -54,22 +62,28 @@
 
     {
       const slot = this.newSlot("isComplete", false);
-      slot.setShouldStoreSlot(true)
       slot.setAnnotation("shouldJsonArchive", true)
+      slot.setCanInspect(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("error", null);
-      slot.setShouldStoreSlot(true)
+      slot.setCanInspect(false);
+      slot.setShouldStoreSlot(true);
     }
 
     {
       const slot = this.newSlot("isVisibleToUser", true);
-      slot.setShouldStoreSlot(true)
+      slot.setCanInspect(true);
+      slot.setSlotType("Boolean");
+      slot.setShouldStoreSlot(true);
     }
 
     {
       const slot = this.newSlot("delegate", null);
+      slot.setCanInspect(false);
       slot.setShouldStoreSlot(false)
     }
 

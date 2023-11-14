@@ -40,9 +40,11 @@
     this.setNodeChildrenAlignment("flex-start") // make the messages stick to the bottom
   }
 
+  /*
   nodeFillsRemainingWidth () {
     return true
   }
+  */
 
   subviewsScrollSticksToBottom () {
     return true

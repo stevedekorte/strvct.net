@@ -6,6 +6,7 @@
 */
 
 (class OpenAiConversation extends Conversation {
+  
   initPrototypeSlots() {
 
     {

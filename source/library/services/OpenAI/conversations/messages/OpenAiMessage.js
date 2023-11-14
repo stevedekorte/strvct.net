@@ -19,41 +19,44 @@
       slot.setValidValues(this.validRoles())
       //slot.setIsSubnodeField(true)
       slot.setCanInspect(true)
-
       slot.setAnnotation("shouldJsonArchive", true)
     }
 
     {
       const slot = this.newSlot("request", null);
       slot.setInspectorPath("")
-      //slot.setLabel("role")
+      slot.setLabel("request")
       slot.setShouldStoreSlot(false)
       //slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Pointer")
       //slot.setIsSubnodeField(true)
-      slot.setCanInspect(true)
+      slot.setCanInspect(false)
     }
 
     {
-      const slot = this.newSlot("isResponse", null);
+      const slot = this.newSlot("isResponse", false);
+      slot.setSlotType("Boolean")
       slot.setShouldStoreSlot(true)
       slot.setCanInspect(true)
     }
 
     {
       const slot = this.newSlot("isVisibleToAi", true);
-      slot.setShouldStoreSlot(true)
-      slot.setCanInspect(true)
+      slot.setSlotType("Boolean");
+      slot.setShouldStoreSlot(true);
+      slot.setCanInspect(true);
     }
 
     {
       const slot = this.newSlot("retryCount", 0);
+      slot.setSlotType("Number");
       //slot.setShouldStoreSlot(true)
     }
 
     {
       const slot = this.newSlot("summaryMessage", null);
+      slot.setSlotType("String");
       //slot.setShouldStoreSlot(true)
     }
 

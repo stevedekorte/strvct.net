@@ -47,6 +47,20 @@
     }
     */
 
+    /*
+    didUpdateSlotLinkedNode (oldValue, newValue) {
+        assert(Type.isNull(newValue) || Type.isObject(newValue));
+
+        if (Type.isObject(newValue)) {
+            const isNode = newValue.thisClass().isKindOf(BMNode);
+            assert(isNode);
+        }
+
+        debugger;
+        return this
+    }
+    */
+
     nodeAcceptsDrop (aNode) {
         return true
     }

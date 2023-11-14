@@ -74,6 +74,11 @@
                     pathNodes.last().addSubnode(field)
                 } else {
                     const node = slot.onInstanceGetValue(this)
+                    if (Type.isBoolean(node) || Type.isNumber(node)) {
+                        // we assume slot value will be a node if not specified but it's not a node!
+                        throw new Error(this.type() + "." + slot.name() + " must have it's slotType set to be inspected")
+                    }
+                    assert(node === null || (Type.isObject(node) && node.thisClass().isKindOf(BMNode)));
                     const linkNode = BMLinkNode.clone().setLinkedNode(node)
                     linkNode.setCanDelete(false) 
                     pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
