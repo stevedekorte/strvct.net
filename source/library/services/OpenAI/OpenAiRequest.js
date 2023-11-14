@@ -63,15 +63,6 @@
 
     {
       const slot = this.newSlot("isFetchActive", false);
-      /*
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-      */
     }
 
     {

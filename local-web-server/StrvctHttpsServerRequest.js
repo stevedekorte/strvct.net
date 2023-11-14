@@ -6,6 +6,7 @@ require("./MimeExtensions.js")
 const fs = require('fs');
 const nodePath = require('path');
 
+const https = require('https');
 
 (class StrvctHttpsServerRequest extends Base {
 	
@@ -14,7 +15,7 @@ const nodePath = require('path');
 		this.newSlot("request", null)
 		this.newSlot("response", null)
 		this.newSlot("urlObject", null)
-		this.newSlot("queryDict", null)
+		this.newSlot("queryMap", null)
 		this.newSlot("path", null)
 	}
 
@@ -23,11 +24,18 @@ const nodePath = require('path');
 		//console.log("request url:" + this.request().url)
 		//console.log("  decoded url:" + decodeURI(this.request().url))
 		this.setUrlObject(this.getUrlObject())
-		//this.setQueryDict(this.getQueryDict())
-		//console.log("  path: '" + this.getPath() + "'\n" );			
+	
+		this.setQueryMap(this.getQueryMap())
 		this.setPath(this.getPath())
 
-		this.onFileRequest()
+		//console.log("  path: '" + this.path() + "'\n" );			
+		//console.log("  getQueryMap: '" + JSON.stringify(this.queryMap().keys(), 2, 2) + "'\n" );		
+
+		if (this.path() === "proxy" && this.queryMap().get("url")) {
+			this.onProxyRequest()
+		} else {
+			this.onFileRequest()
+		}
 
 		/*
 		if (this.queryDict()) {
@@ -37,6 +45,55 @@ const nodePath = require('path');
 		}
 		*/
 	}
+
+	// --- handle proxy request --------------------------
+
+	async onProxyRequest () {
+		const url = this.queryMap().get("url");
+		console.log("proxy request for: " + url + "")
+		https.get(url, (res) => {
+
+			const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
+			console.log('Proxy MIME Type:', mimeType);
+
+			// Array to hold the chunks of data
+			const chunks = [];
+	
+			// Listen for data events to receive chunks of data
+			res.on('data', (chunk) => {
+				chunks.push(chunk);
+			});
+	
+			// When the response has ended
+			res.on('end', () => {
+				// Combine all the chunks into a single buffer
+				const buffer = Buffer.concat(chunks);
+	
+				// Display the byte size of the image
+				console.log('Proxy Byte count:', buffer.length);
+				this.onProxyRequestSuccess(mimeType, buffer)
+			});
+		}).on('error', (e) => {
+			console.error(`Error fetching the image: ${e.message}`);
+			this.onProxyRequestError(error)
+		});
+	}
+
+	onProxyRequestSuccess (mimeType, data) {
+		this.response().writeHead(200, {
+			'Content-Type': mimeType,
+			'Access-Control-Allow-Origin': '*',
+		});
+
+		this.response().write(data);
+		this.response().end();
+	}
+
+	onProxyRequestError (error) {
+		console.error('proxy request error:', error.message);
+	}
+
+	// -----------------------------
 
 	getUrlObject () {
 		return new URL("https://" + this.server().hostname() + this.request().url)
@@ -80,18 +137,13 @@ const nodePath = require('path');
 		return s
 	}
 
-	getQueryDict () {
-		const queryDict = {}
+	getQueryMap () {
+		const queryMap = new Map()
 		const entries = Array.from(this.urlObject().searchParams.entries())
 		entries.forEach(entry => { 
-			queryDict[entry[0]] = entry[1]
+			queryMap.set(entry[0], entry[1]);
 		})
-
-		if (Object.keys(queryDict).length > 0) {
-			console.log("  queryDict = ", queryDict)
-			return queryDict
-		}
-		return null
+		return queryMap
 	}
 
 	onFileRequest () {

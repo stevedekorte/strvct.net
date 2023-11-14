@@ -160,7 +160,13 @@
     // --- url ---
     
     pageUrl () {
+        // returns full URL including path and query
         return new URL(window.location.href)
+    }
+
+    rootUrl () {
+        const urlWithoutPathOrQuery = window.location.protocol + "//" + window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        return urlWithoutPathOrQuery
     }
 
     baseUrl () {

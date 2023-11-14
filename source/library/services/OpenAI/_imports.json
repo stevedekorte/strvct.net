@@ -1,7 +1,7 @@
 [
     "models/_imports.json",
     "conversations/_imports.json",
-    "jobs/_imports.json",
+    "imageprompts/_imports.json",
     "OpenAiRequest.js",
     "OpenAiService.js"
 ]

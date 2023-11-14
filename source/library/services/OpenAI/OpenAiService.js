@@ -33,11 +33,20 @@
     }
 
     {
+      const slot = this.newSlot("imagesPrompts", null)
+      slot.setFinalInitProto(OpenAiImagePrompts)
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+    }
+
+    /*
+    {
       const slot = this.newSlot("jobs", null)
       slot.setFinalInitProto(OpenAiJobs)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
+    */
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
