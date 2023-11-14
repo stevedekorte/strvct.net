@@ -112,6 +112,14 @@
     }
   }
 
+  inReplyToMessage () {
+    const id = this.inReplyToMessageId();
+    if (id) {
+      return this.conversation().messageWithId(id);
+    }
+    return null
+  }
+
   setIsComplete (aBool) {
     if (this._isComplete !== aBool) {
       if (aBool) {
