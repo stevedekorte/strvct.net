@@ -79,6 +79,10 @@
       slot.setCanEditInspection(false);
     }
 
+    {
+      const slot = this.newSlot("isLoading", false); // String
+    }
+
   }
 
   init() {
@@ -117,6 +121,20 @@
     return HavewordsApp.shared().services().openAiService()
   }
 
+  imagePrompt () {
+    return this.images().imagePrompt()
+  }
+
+  // --- checks ---
+
+  isLoaded () {
+    return this.imageUrl() !== null
+  }
+
+  hasError () {
+    return this.error() !== "" && this.error() !== null
+  }
+
   // --- generate action ---
 
   canFetch () {
@@ -138,10 +156,12 @@
   }
 
   fetch () {
+    this.setIsLoading(true)
+
     const url = this.proxyUrl()
     this.setStatus("fetching...")
-    console.log("fetch url " + this.url())
-    console.log("fetch proxy " + url)
+    //console.log("fetch url " + this.url())
+    //console.log("fetch proxy " + url)
     fetch(url)
         .then(response => {
             if (!response.ok) {
@@ -154,7 +174,7 @@
             const reader = new FileReader();
             reader.onloadend = () => {
                 const imageDataUrl = reader.result;
-                this.onSuccess(imageDataUrl);
+                this.onLoaded(imageDataUrl);
             };
             reader.readAsDataURL(blob);
         })
@@ -165,17 +185,37 @@
 
   // --- events ---
 
-  onSuccess (imageDataUrl) {
+  onLoaded (imageDataUrl) {
+    this.setIsLoading(false)
     console.log('Image Data URL: ' + imageDataUrl.length + " bytes");
     this.setImageUrl(imageDataUrl);
     this.setStatus("complete")
+    this.sendDelegate("onImageLoaded", [this])
   }
 
   onError (error) {
+    this.setIsLoading(false)
     const s = "ERROR: " + error.message;
     console.error(s);
     this.setError(s);
     this.setStatus(s)
+    this.sendDelegate("onImageError", [this])
+  }
+
+  delegate () {
+    return this.imagePrompt()
+  }
+
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate()
+    if (d) {
+      const f = d[methodName]
+      if (f) {
+        f.apply(d, args)
+        return true
+      }
+    }
+    return false
   }
 
 }.initThisClass());

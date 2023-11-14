@@ -109,6 +109,9 @@
       slot.setCanEditInspection(false);
     }
 
+    {
+      const slot = this.newSlot("delegate", null); 
+    }
   }
 
   init() {
@@ -217,9 +220,6 @@
       return
     }
     
-    //this.setStatus("loading images...")
-    this.setStatus("complete")
-
     json.data.forEach(imageDict => {
       const image = this.images().add();
       //imageResult.setCreated(json.created);
@@ -229,6 +229,7 @@
       image.fetch();
     })
 
+    this.updateStatus()
     console.log('Success:', json.data);
   }
 
@@ -237,6 +238,40 @@
     console.error(s);
     this.setError(error.message);
     this.setStatus(s)
+    this.sendDelegate("onImagePromptError", [this, aiImage])
+  }
+
+  // --- image delegate messages ---
+
+  onImageLoaded (aiImage) {
+    this.didUpdateNode()
+    this.updateStatus()
+    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage])
+  }
+
+  onImageError (aiImage) {
+    this.didUpdateNode()
+    this.updateStatus()
+    this.sendDelegate("onImagePromptImageError", [this, aiImage])
+  }
+
+  updateStatus () {
+    const s = this.images().status()
+    if (s) {
+      this.setStatus(s)
+    }
+  }
+
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate()
+    if (d) {
+      const f = d[methodName]
+      if (f) {
+        f.apply(d, args)
+        return true
+      }
+    }
+    return false
   }
 
 }.initThisClass());
