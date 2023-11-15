@@ -167,6 +167,13 @@
       const slot = this.newSlot("nextPingTimeoutMs", 30*1000); 
     }
 
+    // --- msg chunking --
+
+    {
+      const slot = this.newSlot("chunks", null); 
+    }
+
+
     this.setShouldStoreSubnodes(false);
     this.setCanDelete(true)
   }
@@ -192,8 +199,8 @@
     super.init();
     this.setStatus("offline");
     this.setIsDebugging(true);
-    this.setConnOptions(this.connOptionsDefault())
-
+    this.setConnOptions(this.connOptionsDefault());
+    this.setChunks(new Map());
     return this;
   }
 
@@ -301,29 +308,71 @@
 
   onOpen () {
     this.debugLog("onOpen");
-    this.sendPing()
+    this.clearChunks();
+    this.sendPing();
     this.sendDelegateMessage("onPeerOpen", [this]);
-    this.setReconnectAttemptCount(0)
+    this.setReconnectAttemptCount(0);
   }
 
-  onData (data) {
-    // data in JSON format?
+  onData (json) { // we set connection transmission format to JSON
     if (this.useMessageLog()) {
-      const msg = RzMsg.clone().setContent(data)
+      const msg = RzMsg.clone().setContent(json)
       this.peerMsgs().addSubnode(msg)
     }
 
-    if (data.name === "RzPeerConnPing") {
+    if (json.name === "RzPeerConnPing") {
       this.onPing()
       return
     } 
 
-    if (data.name === "RzPeerConnPong") {
+    if (json.name === "RzPeerConnPong") {
       this.onPong()
       return
     }
 
-    this.sendDelegateMessage("onPeerData", [this, data]);
+    if (json.name === "RzPeerChunk") {
+      this.onReceiveChunk(json)
+      return
+    }
+
+    this.sendDelegateMessage("onPeerData", [this, json]);
+  }
+
+  clearChunks () {
+    this.chunks().clear()
+    return this
+  }
+
+  onReceiveChunk (chunk) {
+    /*
+      chunkJson format:
+      {
+        name: "RzPeerChunk",
+        index: i, 
+        total: total number of chunks,
+        content: aString (part of JSON string)
+      }
+    */
+    const chunks = this.chunks()
+
+    console.warn(this.type() + " onReceiveChunk() ", JSON.stringify(chunk));
+
+    chunks.set(chunk.index, chunk.content);
+
+    if (chunks.size === chunk.total) {
+      // Reassemble the original message
+      let s = "";
+      for (let i = 0; i < chunk.total; i++) {
+          s += chunks.get(i);
+      }
+
+      const json = JSON.parse(s);
+      this.clearChunks()
+
+      console.warn(this.type() + " completedChunks ", JSON.stringify(json));
+
+      this.sendDelegateMessage("onPeerData", [this, json]);
+    }
   }
 
   onError (error) {
@@ -400,6 +449,16 @@
 
   // --- sending ---
 
+  maxMessageSize () {
+    const conn = this.conn();
+    if (conn.peerConnection) {
+      const maxSize = conn.peerConnection._sctp.maxMessageSize;
+      return maxSize
+    }
+    // assume default?
+    return 65536; // in bytes
+  }
+
   send (json) {
     const conn = this.conn();
 
@@ -408,17 +467,37 @@
       return;
     }
 
-    if (conn.peerConnection) {
-      const mSize = JSON.stringify(json).length;
-      const maxSize = conn.peerConnection._sctp.maxMessageSize;
-      if (mSize > maxSize) {
-        const s = this.type() + " send() message size of " + mSize + " exceeds max of " + maxSize;
-        console.warn(s);
-        throw new Error(s);
-      }
+    // chunk message if it's too big
+    const data = JSON.stringify(json);
+    const mSize = data.length;
+    const maxSize = this.maxMessageSize()
+    if (mSize > maxSize) {
+      const s = this.type() + " send() message size of " + mSize + " exceeds max of " + maxSize;
+      console.warn(s);
+      this.sendDataAsChunks(data);
+      return;
     }
 
     conn.send(json);
+  }
+
+  sendDataAsChunks (dataStr) {
+    const wrapperSize = 1024; // safe guess
+    const chunkSize = this.maxMessageSize() - wrapperSize;
+
+    // Calculate the number of chunks
+    const numChunks = Math.ceil(dataStr.length / chunkSize);
+
+    for (let i = 0; i < numChunks; i++) {
+        const chunk = {
+          name: "RzPeerChunk",
+          index: i,
+          total: numChunks,
+          content: dataStr.slice(i * chunkSize, (i + 1) * chunkSize)
+        };
+        console.warn(this.type() + " sending chunk:" + JSON.stringify(chunk))
+        this.conn().send(chunk);
+    }
   }
 
   sendThenClose (json) {
