@@ -401,11 +401,24 @@
   // --- sending ---
 
   send (json) {
-    if (!this.conn()) {
+    const conn = this.conn();
+
+    if (!conn) {
       console.warn("attempt to send to closed connection ", this.peerId());
       return;
     }
-    this.conn().send(json);
+
+    if (conn.peerConnection) {
+      const mSize = JSON.stringify(json).length;
+      const maxSize = conn.peerConnection._sctp.maxMessageSize;
+      if (mSize > maxSize) {
+        const s = this.type() + " send() message size of " + mSize + " exceeds max of " + maxSize;
+        console.warn(s);
+        throw new Error(s);
+      }
+    }
+
+    conn.send(json);
   }
 
   sendThenClose (json) {
