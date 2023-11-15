@@ -49,6 +49,7 @@
         
         this.applyStyles() // normally this would happen in updateSubviews
         this.imageWellView().setImageDataUrl(field.value())
+        this.imageWellView().setIsEditable(field.valueIsEditable())
 
         return this
     }

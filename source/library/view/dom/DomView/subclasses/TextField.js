@@ -216,7 +216,7 @@
     }
 
     onDoubleTapCancelled (aGesture) {
-        console.log(this.value() + " onDoubleTapCancelled")
+        //console.log(this.value() + " onDoubleTapCancelled")
     }
 
     onDoubleTapComplete (aGesture) {

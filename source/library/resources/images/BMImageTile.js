@@ -23,7 +23,7 @@
         const node = this.node()
 
         if (node) {
-            const name = node.name()
+            const name = node.title()
             this.titleView() //.setFontFamily(name)
         }
 

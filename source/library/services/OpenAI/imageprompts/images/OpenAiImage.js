@@ -10,6 +10,7 @@
 
     {
       const slot = this.newSlot("revisedPrompt", null);
+      slot.setAnnotation("shouldJsonArchive", true)
       slot.setInspectorPath("")
       slot.setLabel("revised prompt")
       slot.setShouldStoreSlot(true)
@@ -22,6 +23,7 @@
 
     {
       const slot = this.newSlot("url", null);
+      slot.setAnnotation("shouldJsonArchive", true)
       slot.setInspectorPath("")
       slot.setLabel("url")
       slot.setShouldStoreSlot(true)
@@ -32,9 +34,9 @@
       slot.setCanEditInspection(false)
     }
 
-
     {
       const slot = this.newSlot("imageUrl", null);
+      slot.setAnnotation("shouldJsonArchive", true)
       slot.setInspectorPath("")
       slot.setLabel("image")
       slot.setShouldStoreSlot(true)

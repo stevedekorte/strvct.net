@@ -6,7 +6,7 @@
 
     - designed to contain an ImagineView
     - can have it's own frame and decoration
-    - supports drag & drop of images
+    - supports drag & drop of images 
 
 */
 

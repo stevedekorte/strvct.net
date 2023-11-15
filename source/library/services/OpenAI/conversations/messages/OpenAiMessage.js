@@ -10,27 +10,22 @@
 
     {
       const slot = this.newSlot("role", "user"); 
-      slot.setInspectorPath("")
-      //slot.setLabel("role")
+      slot.setAnnotation("shouldJsonArchive", true)
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setValidValues(this.validRoles())
-      //slot.setIsSubnodeField(true)
-      slot.setCanInspect(true)
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setCanInspect(true);
+      slot.setInspectorPath("OpenAiMessage");
     }
 
     {
       const slot = this.newSlot("request", null);
-      slot.setInspectorPath("")
       slot.setLabel("request")
       slot.setShouldStoreSlot(false)
-      //slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Pointer")
-      //slot.setIsSubnodeField(true)
       slot.setCanInspect(false)
     }
 
@@ -38,7 +33,8 @@
       const slot = this.newSlot("isResponse", false);
       slot.setSlotType("Boolean")
       slot.setShouldStoreSlot(true)
-      slot.setCanInspect(true)
+      slot.setCanInspect(true);
+      slot.setInspectorPath("OpenAiMessage");
     }
 
     {
@@ -46,6 +42,7 @@
       slot.setSlotType("Boolean");
       slot.setShouldStoreSlot(true);
       slot.setCanInspect(true);
+      slot.setInspectorPath("OpenAiMessage");
     }
 
     {
@@ -57,6 +54,7 @@
     {
       const slot = this.newSlot("summaryMessage", null);
       slot.setSlotType("String");
+      slot.setInspectorPath("OpenAiMessage");
       //slot.setShouldStoreSlot(true)
     }
 

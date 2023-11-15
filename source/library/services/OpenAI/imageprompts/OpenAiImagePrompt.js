@@ -171,7 +171,7 @@
     this.setError("")
     this.setStatus("fetching response...")
 
-    const apiKey = this.imagePrompts().service().apiKey(); // Replace with your actual API key
+    const apiKey = this.service().apiKey(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
     
     const bodyJson = {
