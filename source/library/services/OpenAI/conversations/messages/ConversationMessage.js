@@ -182,10 +182,6 @@
     return this.setKey(s)
   }
 
-  conversation () {
-    return this.parentNode()
-  }
-
   // --- conversation history ---
 
   previousMessages () {
@@ -213,9 +209,17 @@
 
   conversationHistoryPriorToSelfJson () {
     // return json for all messages in conversation up to this point (unless they are marked as hidden?)
+    const json = this.previousMessages().select(m => m.isVisibleToAi()).map(m => m.openAiJson())
+    return json
+  }
+
+  /*
+  conversationHistoryPriorToSelfJson () {
+    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
     const json = this.previousMessages().map(m => m.openAiJson())
     return json
   }
+  */
 
   // --- sending ---
 

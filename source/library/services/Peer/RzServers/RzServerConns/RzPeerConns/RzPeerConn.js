@@ -418,7 +418,7 @@
   // --- shutdown ---
 
   shutdown () {
-    console.log(this.type() + " " + this.shortId() + " shutdown");
+    console.warn(this.type() + " " + this.shortId() + " shutdown");
     if (this.conn()) { // only close connection if it's still up
       this.setStatus("shutdown")
       this.conn().close()

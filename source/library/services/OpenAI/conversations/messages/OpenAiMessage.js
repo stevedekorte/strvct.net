@@ -250,7 +250,7 @@
   }
 
   // --- summary ---
-
+  /*
   newSummaryMessage () {
     const m = this.thisClass().clone()
     m.setRole("user")
@@ -272,6 +272,7 @@
     which includes any details necessary to adequately continue the conversation 
     without the complete chat history. Start the summary with the title: "SUMMARY OF STORY SO FAR:"`
   }
+  */
 
 
 }.initThisClass());

@@ -55,13 +55,6 @@
   }
 
   // --- history ---
-
-  conversationHistoryPriorToSelfJson () {
-    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
-    const json = this.previousMessages().select(m => m.isVisibleToAi()).map(m => m.openAiJson())
-    return json
-  }
-
   // --- summary ---
 
   updateTokenCount () {
@@ -94,8 +87,11 @@
   }
 
   compactTokens () {
+    // skip for now
+    /*
     const m = this.messages().last()
     m.sendSummaryMessage()
+    */
   }
 
   // --- chat actions ---
