@@ -1,13 +1,13 @@
 "use strict";
 
 /* 
-    RzServerConn
+    RzSigServerConn
 
     Wrapper for PeerJS Peer object.
 
 */
 
-(class RzServerConn extends BMStorableNode {
+(class RzSigServerConn extends BMStorableNode {
   initPrototypeSlots() {
 
     {
@@ -79,6 +79,12 @@
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(true)
       slot.setSummaryFormat("key value")
+    }
+
+    // --- connection prompise ---
+
+    {
+      const slot = this.newSlot("connectPromise", null);
     }
 
     // --- get id retries ---
@@ -186,6 +192,7 @@
 
     {
       const slot = this.newSlot("destroyAction", null);
+      slot.setCanInspect(true);
       slot.setInspectorPath("")
       slot.setLabel("Destroy")
       //slot.setShouldStoreSlot(true)
@@ -259,14 +266,27 @@
     return this.peer() && !this.peer().disconnected
   }
 
+  clearConnectPromise () {
+    this.setConnectPromise(null);
+    return this;
+  }
+
+  connectPromise () {
+    if (!this._connectPromise) {
+      this._connectPromise = Promise.clone();
+    }
+    return this._connectPromise 
+  }
+
   connect () {
     if (!this.isConnected()) {
+      this.clearConnectPromise();
       this.setStatus("connecting")
       this.setGetIdRetryCount(0)
       this.setConnectRetryCount(0)
       this.attemptToConnect()
     }
-    return this
+    return this.connectPromise()
   }
 
   connectActionInfo () {
@@ -372,7 +392,7 @@
   // --- connect to signaling server ---
 
   newPeerId () {
-    return this.peerIdPrefix() + "-" + RzServer.generateRandomPeerId(10)
+    return this.peerIdPrefix() + "-" + RzSigServer.generateRandomPeerId(10)
   }
 
   attemptToConnect () {
@@ -403,7 +423,8 @@
     this.debugLog("opened with peerId: '" + peerId + "'");
     this.setStatus("connected to server")
     //this.refreshPeers()
-    this.sendDelegateMessage("onPeerServerOpen", [this])
+    this.sendDelegateMessage("onPeerServerOpen", [this]);
+    this.connectPromise().callResolveFunc();
   }
 
   // --- incoming peer connections ---
@@ -502,6 +523,8 @@
     // send delegate error message 
     const delegateErrorMethodName = "onSignalServer" + errorMethodRoot;
     this.sendDelegateMessage(delegateErrorMethodName, [this, error])
+
+    //this.connectPromise().callRejectFunc();
   }
 
   // --- error type handlers ---

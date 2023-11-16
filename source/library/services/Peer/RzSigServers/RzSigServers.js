@@ -1,28 +1,27 @@
 "use strict";
 
 /* 
-    RzServers
+    RzSigServers
 
 */
 
-(class RzServers extends BMSummaryNode {
+(class RzSigServers extends BMSummaryNode {
   initPrototypeSlots() {
 
   }
 
   init() {
     super.init();
-    this.setTitle("Servers");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([RzServer]);
+    this.setSubnodeClasses([RzSigServer]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
 
   finalInit() {
     super.finalInit()
-    this.setTitle("Rendezvous Servers");
+    this.setTitle("PeerJS Signal Servers");
     this.setNoteIsSubnodeCount(true);
     this.setupDefaultServers()
   }
@@ -30,10 +29,10 @@
   setupDefaultServers () {
     const map = this.fullPathToServerMap() // TODO: use node hash support instead
     this.defaultServerDicts().forEach(dict => {
-      const fullPath = RzServer.fullPathForDict(dict)
+      const fullPath = RzSigServer.fullPathForDict(dict)
       const server = map.at(fullPath)
       if (!server) {
-        const newServer = RzServer.clone().setDict(dict)
+        const newServer = RzSigServer.clone().setDict(dict)
         this.addSubnode(newServer)
         map.atPut(newServer.fullPath(), newServer)
       }

@@ -4,7 +4,7 @@
 
     Map_ideal
 
-    Some extra methods for the Javascript Set primitive.
+    Some extra methods for the Javascript Map primitive.
 
 */
 

@@ -2,11 +2,11 @@
 
 /* 
 
-    RzServerPeers
+    RzSigServerPeers
 
 */
 
-(class RzServerPeers extends BMSummaryNode {
+(class RzSigServerPeers extends BMSummaryNode {
   initPrototypeSlots() {
   }
 
@@ -15,7 +15,7 @@
     this.setTitle("peers");
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
-    //this.setSubnodeClasses([RzServer]);
+    //this.setSubnodeClasses([RzSigServer]);
     this.setCanAdd(false);
     this.setNodeCanReorderSubnodes(false);
   }

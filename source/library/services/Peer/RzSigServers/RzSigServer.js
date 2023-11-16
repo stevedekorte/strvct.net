@@ -1,13 +1,29 @@
 "use strict";
 
 /* 
-    RzServer
+    RzSigServer
 
 */
 
-(class RzServer extends BMStorableNode {
-  initPrototypeSlots() {
+(class RzSigServer extends BMStorableNode {
 
+  // --- generate a valid peer id ---
+
+  static generateRandomPeerId (length = 10) {
+    let result = '';
+    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
+  }
+
+  // --- prototype ---
+
+  initPrototypeSlots() {
 
     /*
     {
@@ -77,14 +93,14 @@
 
     {
       const slot = this.newSlot("peers", null)
-      slot.setFinalInitProto(RzServerPeers);
+      slot.setFinalInitProto(RzSigServerPeers);
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
     }
 
     {
       const slot = this.newSlot("serverConns", null)
-      slot.setFinalInitProto(RzServerConns);
+      slot.setFinalInitProto(RzSigServerConns);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
@@ -228,20 +244,6 @@
     return pc
   }
   */
-
-  // --- generate a valid peer id ---
-
-  static generateRandomPeerId (length = 10) {
-    let result = '';
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    const charactersLength = characters.length;
-
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-
-    return result;
-}
 
 
 }.initThisClass());

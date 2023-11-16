@@ -12,6 +12,7 @@
     "Error_ideal.js",
     "Function_ideal.js",
     "Image_ideal.js",
+    "Promise_ideal.js",
     "TypedArray-ideal.js"
 ]
 

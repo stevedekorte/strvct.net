@@ -2,11 +2,11 @@
 
 /* 
 
-    RzServerConns
+    RzSigServerConns
 
 */
 
-(class RzServerConns extends BMSummaryNode {
+(class RzSigServerConns extends BMSummaryNode {
   initPrototypeSlots() {
   }
 
@@ -15,7 +15,7 @@
     this.setTitle("server connections");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([RzServerConn]);
+    this.setSubnodeClasses([RzSigServerConn]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }

@@ -16,7 +16,7 @@
 
     {
       const slot = this.newSlot("servers", null)
-      slot.setFinalInitProto(RzServers)
+      slot.setFinalInitProto(RzSigServers)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
