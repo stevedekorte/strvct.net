@@ -11,6 +11,11 @@
 
 (class WebBrowserWindow extends ProtoClass {
     
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         {
             this.newSlot("windowListener", null)

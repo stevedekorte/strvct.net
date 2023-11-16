@@ -16,6 +16,11 @@
 
 (class Devices extends ProtoClass {
     
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         //this.newSlot("gamePadListener", null)
         this.newSlot("keyboard", null)

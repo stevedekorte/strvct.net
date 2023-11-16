@@ -15,6 +15,11 @@
 
 (class TouchScreen extends Device {
 
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         this.newSlot("currentEvent", null)
         this.newSlot("lastEvent", null)

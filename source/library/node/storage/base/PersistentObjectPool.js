@@ -11,6 +11,11 @@
 
 (class PersistentObjectPool extends ObjectPool {
     
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
 
     }

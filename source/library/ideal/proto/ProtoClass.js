@@ -51,6 +51,19 @@
     }
     
     static shared () {
+        if (!this.isSingleton()) {
+            console.warn("WARNING: called " + this.type() + ".shared() but class not declared a singleton!");
+            /*
+                // to properly declare a singleton, add this to the class declaration (must be a subclass of ProtoClass):
+                
+                static initClass () {
+                    this.setIsSingleton(true)
+                    return this
+                }
+            */
+            debugger;
+        }
+
         if (!this.hasShared()) {
             this.setShared(this.clone())
         }

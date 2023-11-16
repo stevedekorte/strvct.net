@@ -17,6 +17,12 @@
 */
 
 (class SimpleSynth extends ProtoClass {
+
+  static initClass () {
+    this.setIsSingleton(true)
+    return this
+  }
+
   initPrototypeSlots () {
     //this.newSlot("idb", null)
   }

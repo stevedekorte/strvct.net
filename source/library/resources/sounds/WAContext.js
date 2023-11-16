@@ -17,6 +17,7 @@
 (class WAContext extends BaseNode {
     
     static initClass () {
+        this.setIsSingleton(true)
         Broadcaster.shared().addListenerForName(this, "firstUserEvent")
         //this.watchOnceForNote("onFirstUserEvent")
         return this

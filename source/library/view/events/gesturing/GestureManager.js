@@ -23,6 +23,11 @@
 
 (class GestureManager extends ProtoClass {
     
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         this.newSlot("activeGesture", null) // aGesture
         this.newSlot("begunGestures", null) // dict

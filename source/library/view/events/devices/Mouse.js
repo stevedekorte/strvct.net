@@ -16,6 +16,11 @@
 */
 
 (class Mouse extends Device {
+
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
     
     initPrototypeSlots () {
         this.newSlot("isDown", false)

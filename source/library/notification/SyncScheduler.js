@@ -71,6 +71,11 @@
 
 (class SyncScheduler extends ProtoClass {
 
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         this.newSlot("actions", new Map())
         this.newSlot("hasTimeout", false)

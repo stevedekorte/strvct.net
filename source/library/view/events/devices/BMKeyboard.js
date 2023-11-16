@@ -39,6 +39,12 @@
 
 
 (class BMKeyboard extends Device {
+
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
         this.newSlot("keyboardListener", null)

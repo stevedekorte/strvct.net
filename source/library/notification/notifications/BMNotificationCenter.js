@@ -73,6 +73,12 @@
 */
 
 (class BMNotificationCenter extends ProtoClass {
+
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         this.newSlot("observations", null) // array 
         this.newSlot("notifications", null) // array 

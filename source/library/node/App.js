@@ -15,6 +15,11 @@
 
 (class App extends TitledNode {
     
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     // --- shared ---
     // We override sharedContext so all subclasses use the same shared value
     // and anyone can call App.shared() to access it

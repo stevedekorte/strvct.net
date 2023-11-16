@@ -34,6 +34,12 @@
 */
 
 (class Broadcaster extends ProtoClass {
+
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
         this.newSlot("nameToListenersMap", null)  // dict to set
     }

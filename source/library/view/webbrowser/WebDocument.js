@@ -10,6 +10,11 @@
 
 (class WebDocument extends ProtoClass {
     
+    static initClass () {
+        this.setIsSingleton(true)
+        return this
+    }
+    
     initPrototypeSlots () {
     }
 
