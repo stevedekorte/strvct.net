@@ -170,6 +170,7 @@
   start () {
     this.setError("")
     this.setStatus("fetching response...")
+    this.sendDelegate("onImagePromptStart", [this])
 
     const apiKey = this.service().apiKey(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
@@ -202,6 +203,7 @@
   }
 
   onSuccess (json) {
+    this.sendDelegate("onImagePromptLoading", [this])
     /*
       json format:
 
@@ -212,7 +214,6 @@
             revised_prompt: "...",
             url: "...",
         ]
-
     */
 
     if (json.error) {
@@ -220,6 +221,7 @@
       return
     }
     
+    // now we need load the images
     json.data.forEach(imageDict => {
       const image = this.images().add();
       //imageResult.setCreated(json.created);
@@ -238,7 +240,8 @@
     console.error(s);
     this.setError(error.message);
     this.setStatus(s)
-    this.sendDelegate("onImagePromptError", [this, aiImage])
+    this.sendDelegate("onImagePromptError", [this]);
+    this.onEnd();
   }
 
   // --- image delegate messages ---
@@ -247,12 +250,18 @@
     this.didUpdateNode()
     this.updateStatus()
     this.sendDelegate("onImagePromptImageLoaded", [this, aiImage])
+    this.onEnd();
   }
 
   onImageError (aiImage) {
     this.didUpdateNode()
     this.updateStatus()
     this.sendDelegate("onImagePromptImageError", [this, aiImage])
+    this.onEnd();
+  }
+
+  onEnd () {
+    this.sendDelegate("onImagePromptEnd", [this])
   }
 
   updateStatus () {
