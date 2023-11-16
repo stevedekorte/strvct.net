@@ -47,7 +47,7 @@
   }
 
   selectedModel () {
-    return "gpt-4";
+    return "gpt-4-1106-preview";
   }
 
   conversations () {
