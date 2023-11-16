@@ -133,7 +133,7 @@
     }
     
     {
-      const slot = this.newSlot("serverConn", null);
+      const slot = this.newSlot("sigServerConn", null);
     }
 
     {
@@ -154,6 +154,10 @@
     }
 
     // --- ping pong keepalive ---
+
+    {
+      const slot = this.newSlot("useKeepAlive", false);
+    }
 
     {
       const slot = this.newSlot("nextPingTimeout", null);
@@ -236,8 +240,8 @@
   }
 
   isServerConn () {
-    if (this.serverConn()) {
-      return this.peerId() === this.serverConn().peerId()
+    if (this.sigServerConn()) {
+      return this.peerId() === this.sigServerConn().peerId()
     }
     return false
   }
@@ -294,7 +298,7 @@
       return this
     }
 
-    const peer = this.serverConn().peer();
+    const peer = this.sigServerConn().peer();
     if (peer) {
       const conn = peer.connect(this.peerId(), this.connOptions());
       this.setConn(conn)
@@ -309,7 +313,9 @@
   onOpen () {
     this.debugLog("onOpen");
     this.clearChunks();
-    this.sendPing();
+    if (this.useKeepAlive()) {
+      this.sendPing();
+    }
     this.sendDelegateMessage("onPeerOpen", [this]);
     this.setReconnectAttemptCount(0);
   }
@@ -355,7 +361,7 @@
     */
     const chunks = this.chunks()
 
-    console.warn(this.type() + " onReceiveChunk() ", JSON.stringify(chunk));
+    //console.warn(this.type() + " onReceiveChunk() ", JSON.stringify(chunk));
 
     chunks.set(chunk.index, chunk.content);
 
@@ -403,7 +409,7 @@
     this.setStatus("closed")
     this.cancelNextPingTimeout()
 
-    this.serverConn().removePeerConnection(this);
+    this.sigServerConn().removePeerConnection(this);
     this.setConn(null);
 
     this.sendDelegateMessage("onPeerClose", [this]);
@@ -495,7 +501,7 @@
           total: numChunks,
           content: dataStr.slice(i * chunkSize, (i + 1) * chunkSize)
         };
-        console.warn(this.type() + " sending chunk:" + JSON.stringify(chunk))
+        //console.warn(this.type() + " sending chunk:" + JSON.stringify(chunk))
         this.conn().send(chunk);
     }
   }
@@ -514,14 +520,14 @@
     if (this.conn()) { // only close connection if it's still up
       this.setStatus("shutdown")
       this.conn().close()
-      this.serverConn().removePeerConnection(this);
+      this.sigServerConn().removePeerConnection(this);
       this.setConn(null);
     }
   }
 
   serverIsConnected () {
-    if (this.serverConn()) {
-      return this.serverConn().isConnected()
+    if (this.sigServerConn()) {
+      return this.sigServerConn().isConnected()
     }
     return false
   }

@@ -99,7 +99,7 @@
     }
 
     {
-      const slot = this.newSlot("serverConns", null)
+      const slot = this.newSlot("sigServerConns", null)
       slot.setFinalInitProto(RzSigServerConns);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);

@@ -338,12 +338,12 @@
 
   // --- connecting to a peer ----
 
-  serverConnections () {
+  sigServerConnections () {
     return this.parentNode()
   }
 
   server () {
-    return this.serverConnections().parentNode()
+    return this.sigServerConnections().parentNode()
   }
 
   fullPeerId () {
@@ -423,14 +423,14 @@
     this.debugLog("opened with peerId: '" + peerId + "'");
     this.setStatus("connected to server")
     //this.refreshPeers()
-    this.sendDelegateMessage("onPeerServerOpen", [this]);
+    this.sendDelegateMessage("onSigServerOpen", [this]);
     this.connectPromise().callResolveFunc();
   }
 
   // --- incoming peer connections ---
   
   addPeerConnection (aPeerConn) {
-    aPeerConn.setServerConn(this)
+    aPeerConn.setSigServerConn(this)
     this.peerConns().addSubnode(aPeerConn)
     return this;
   }
@@ -443,7 +443,7 @@
 
     this.setPeerId("") // only if we are having the server assign the id...
     this.setStatus("closed")
-    this.sendDelegateMessage("onPeerServerClose", [this])
+    this.sendDelegateMessage("onSigServerClose", [this])
   }
 
   onDisconnected () {
@@ -458,7 +458,7 @@
     */
 
     this.setStatus("disconnected")
-    this.sendDelegateMessage("onPeerServerDisconnected", [this])
+    this.sendDelegateMessage("onSigServerDisconnected", [this])
   }
 
   onConnection (conn) {
@@ -477,7 +477,7 @@
   }
 
   onOpenPeerConnection (peerConn) {
-    // sent by a PeerConnection to it's PeerServer after it opens
+    // sent by a PeerConnection to it's SigServer after it opens
     // and is ready for messages
     this.sendDelegateMessage("onPeerConnection", [peerConn])
   }
@@ -565,7 +565,7 @@
 
   onSslUnavailableError (error) { 
     // ERRORFATAL
-    // PeerJS is being used securely, but the cloud server does not support SSL. Use a custom PeerServer.
+    // PeerJS is being used securely, but the cloud server does not support SSL. Use a custom SigServer.
   }
 
   onServerError (error) {
@@ -705,7 +705,7 @@
     const newSubnodes = newPeerIds.map(id => {
       let pc = idToPeerMap.at(id)
       if (!pc) {
-        pc = RzPeerConn.clone().setPeerId(id).setServerConn(this)
+        pc = RzPeerConn.clone().setPeerId(id).setSigServerConn(this)
       }
       return pc
     })

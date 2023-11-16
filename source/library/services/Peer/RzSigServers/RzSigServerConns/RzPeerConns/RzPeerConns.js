@@ -26,7 +26,7 @@
     assert(this.subnodeCount() === 0);
   }
 
-  serverConn () {
+  sigServerConn () {
     return this.parentNode()
   }
 
@@ -48,7 +48,7 @@
       return match
     }
 
-    const pc = this.peerConnClass().clone().setPeerId(id).setServerConn(this.serverConn())
+    const pc = this.peerConnClass().clone().setPeerId(id).setSigServerConn(this.sigServerConn())
     this.addSubnode(pc)
     return pc
   }

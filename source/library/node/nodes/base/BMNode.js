@@ -1045,7 +1045,7 @@
     setJsonArchive (json) {
         // NOTE: use slot.setAnnotation("shouldJsonArchive", true) to set a slot to be json archived
         
-        console.log(this.typeId() + ".setJsonArchive(" + JSON.stringify(json, 2, 2) + ")");
+        //console.log(this.typeId() + ".setJsonArchive(" + JSON.stringify(json, 2, 2) + ")");
 
         const keys = Object.keys(json).select(key => key !== "type");
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
