@@ -40,8 +40,8 @@
 
   finalInit () {
     super.finalInit()
-    this.setTitle("Peer Network");
-    this.setSubtitle("WebRTC");
+    this.setTitle("WebRTC");
+    this.setSubtitle("peer-to-peer networking");
   }
 
   defaultSignalServer () {

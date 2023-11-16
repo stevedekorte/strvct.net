@@ -123,6 +123,12 @@
       const slot = this.newSlot("readLines", null);
     }
 
+
+    {
+      const slot = this.newSlot("finishReason", null);
+    }
+
+
     {
       const slot = this.newSlot("fullContent", null); 
       slot.setInspectorPath("")
@@ -483,6 +489,10 @@
             const s = line.after("data:");
             if (line.includes("[DONE]")) {
               // skip, stream is done and will close
+              const errorFinishReasons = ["length", "stop"];
+              if (errorFinishReasons.includes(this.finishReason())) {
+                this.setError("finish reason: '" + this.finishReason() + "'");
+              }
             } else {
               // we should expect json
               //console.log("LINE: " + s)
@@ -514,7 +524,7 @@
         this.setFullContent(this.fullContent() + newContent);
         this.streamTarget().onStreamData(this, newContent);
         //console.warn("CONTENT: ", newContent);
-
+        this.setFinishReason(json.choices[0].finish_reason);
     } else {
       if (json.id) {
         //console.warn("HEADER: ", JSON.stringify(json));

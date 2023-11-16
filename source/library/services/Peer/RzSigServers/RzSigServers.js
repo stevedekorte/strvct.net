@@ -21,7 +21,7 @@
 
   finalInit() {
     super.finalInit()
-    this.setTitle("PeerJS Signal Servers");
+    this.setTitle("PeerJS Signalling Servers");
     this.setNoteIsSubnodeCount(true);
     this.setupDefaultServers()
   }
