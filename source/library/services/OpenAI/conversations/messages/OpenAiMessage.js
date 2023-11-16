@@ -92,6 +92,10 @@
 
   subtitle () {
     let s = this.content()
+    if (Type.isNullOrUndefined(s)) {
+      s = "";
+    }
+
     const max = 40
     if (s.length > max) {
       s = this.content().slice(0, max) + "..."
@@ -101,7 +105,7 @@
 
   tokenCount () {
     const s = this.content()
-    if (s === null) {
+    if (Type.isNullOrUndefined(s)) {
       return 0
     }
     return Math.ceil(s.length / 4); // approximation

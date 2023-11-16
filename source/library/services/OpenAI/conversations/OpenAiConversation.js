@@ -58,8 +58,10 @@
   // --- summary ---
 
   updateTokenCount () {
+    /*
     const count = this.subnodes().sum(message => message.tokenCount())
     this.setTokenCount(count)
+    */
     return this
   }
 
