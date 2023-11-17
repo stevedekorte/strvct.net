@@ -126,12 +126,17 @@
     return null
   }
 
+  replies () {
+    const mid = this.messageId()
+    return this.conversation().messages().select(m => m.inReplyToMessageId() === mid)
+  }
+
   setIsComplete (aBool) {
     if (this._isComplete !== aBool) {
+      this._isComplete = aBool;
       if (aBool) {
         this.onComplete()
       }
-      this._isComplete = aBool;
     }
     return this
   }
