@@ -68,9 +68,11 @@
     this.setCanDelete(true)
   }
 
+  /*
   finalInit () {
     super.finalInit();
   }
+  */
 
   valueIsEditable () {
     return this.role() === "user"
@@ -217,6 +219,7 @@
   }
 
   onComplete () {
+    super.onComplete() // sends a delegate message
     // to be overridden by subclasses
   }
 

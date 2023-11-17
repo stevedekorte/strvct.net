@@ -129,8 +129,8 @@
                         const chunk = BMDataUrl.clone()
                         chunk.setMimeType(mimeType)
                         chunk.setDecodedData(s)
-                        console.log("mimeType:", mimeType)
-                        console.log("    data:", s)
+                        console.log("Drag mimeType: '" + mimeType + "'")
+                        console.log("    data: " + s.length + " bytes")
                         this.onBrowserDropChunk(chunk)
                     })
                 }

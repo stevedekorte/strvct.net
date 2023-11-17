@@ -45,6 +45,16 @@
     init () { 
         // this is called by Object.clone()
         // here to be overridden by subclasses
+        /*
+
+        In normal object creation, we call clone() and it calls:
+            obj.init()
+            obj.finalInit()
+            obj.afterInit()
+
+        But for deserialization:
+        */
+
         return this
     }
 
@@ -71,12 +81,12 @@
     }
 
     hasDoneInit () {
-        return this._hasDoneInit === true
+        return this._hasDoneInit === true // hasDoneInit only set after serialization
     }
     
     setHasDoneInit (aBool) {
         assert(this._hasDoneInit === false)
-        this._hasDoneInit = aBool
+        this._hasDoneInit = aBool; // NOTEL if shouldScheduleDidInit (e.g. in StorableNode), then this gets called at *end* of event loop
         return this
     }
     

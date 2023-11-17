@@ -103,13 +103,6 @@
     this.setNodeFillsRemainingWidth(true)
   }
 
-  /*
-  didInit () {
-    super.didInit()
-  }
-
-  */
-
   subtitle () {
     return this.status()
   }

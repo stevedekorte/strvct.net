@@ -44,10 +44,10 @@
 
         {
             const slot = this.newSlot("keyIsEditable", false)
+            slot.setCanInspect(true)
             slot.setShouldStoreSlot(true)
             slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
-            slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("editable")
             slot.setInspectorPath("Node/Field/Key")
@@ -56,20 +56,23 @@
         // value
         {
             const slot = this.newSlot("value", null)
+            slot.setCanInspect(true)
+            slot.setInspectorPath("Node/Field/Value")
             slot.setShouldStoreSlot(true)
             slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
+            //slot.setSlotType("String") // might be boolean or number, so use overrideSlot() on field types
         }
 
         {
             const slot = this.newSlot("valueIsVisible", true)
+            slot.setInspectorPath("Node/Field/Value")
             slot.setShouldStoreSlot(true)
             slot.setSyncsToView(true)
             slot.setDuplicateOp("duplicate")
             slot.setCanInspect(true)
             slot.setSlotType("Boolean")
             slot.setLabel("visible")
-            slot.setInspectorPath("Node/Field/Value")
         }
 
         {

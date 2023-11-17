@@ -8,8 +8,20 @@
 (class ConversationMessage extends BMTextAreaField {
   initPrototypeSlots() {
 
-    this.slotNamed("key").setAnnotation("shouldJsonArchive", true)
-    this.slotNamed("value").setAnnotation("shouldJsonArchive", true)
+    {
+      const slot = this.overrideSlot("key")
+      slot.setAnnotation("shouldJsonArchive", true);
+      slot.setCanInspect(true);
+      slot.setSlotType("String");
+    }
+
+    {
+      const slot = this.overrideSlot("value");
+      slot.setAnnotation("shouldJsonArchive", true);
+      slot.setCanInspect(true);
+      slot.setInspectorPath("Node/Field/Value");
+      slot.setSlotType("String");
+    }
 
     {
       const slot = this.newSlot("conversation", null);
@@ -68,6 +80,7 @@
       const slot = this.newSlot("isComplete", false);
       slot.setAnnotation("shouldJsonArchive", true)
       slot.setCanInspect(true);
+      //slot.setDoesHookSetter(true); // no longer needed?
       slot.setInspectorPath("ConversationMessage");
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Boolean");
@@ -131,14 +144,11 @@
     return this.conversation().messages().select(m => m.inReplyToMessageId() === mid)
   }
 
-  setIsComplete (aBool) {
-    if (this._isComplete !== aBool) {
-      this._isComplete = aBool;
-      if (aBool) {
-        this.onComplete()
-      }
+  didUpdateSlotIsComplete (oldValue, newValue) {
+    //debugger;
+    if(this.conversation()) { // so not called during deserialization
+      this.onComplete();
     }
-    return this
   }
 
   onComplete () {
