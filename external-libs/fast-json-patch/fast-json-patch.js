@@ -928,3 +928,22 @@ exports.compare = compare;
 /******/ ]);
 
 getGlobalThis().JsonPatch = jsonpatch; // NOTE: added by SLD to make globally avaialble
+
+JsonPatch.ensurePathExists = function (jsonObject, path) {
+    let currentObject = jsonObject;
+    const pathSegments = path.split('/').slice(1); // Removing the leading slash
+
+    for (const segment of pathSegments) {
+        if (!(segment in currentObject)) {
+            currentObject[segment] = {}; // Create a new dictionary if the path segment doesn't exist
+        }
+        currentObject = currentObject[segment];
+    }
+}
+
+JsonPatch.applyPatchWithAutoCreation = function (jsonObject, patch) {
+    for (const operation of patch) {
+        JsonPatch.ensurePathExists(jsonObject, operation.path);
+    }
+    JsonPatch.applyPatch(jsonObject, patch);
+}
