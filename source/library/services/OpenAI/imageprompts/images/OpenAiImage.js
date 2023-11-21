@@ -9,6 +9,20 @@
   initPrototypeSlots() {
 
     {
+      const slot = this.newSlot("imageUrl", null);
+      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setInspectorPath("")
+      slot.setLabel("image")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("ImageWell")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    
+    {
       const slot = this.newSlot("revisedPrompt", null);
       slot.setAnnotation("shouldJsonArchive", true)
       slot.setInspectorPath("")
@@ -34,18 +48,6 @@
       slot.setCanEditInspection(false)
     }
 
-    {
-      const slot = this.newSlot("imageUrl", null);
-      slot.setAnnotation("shouldJsonArchive", true)
-      slot.setInspectorPath("")
-      slot.setLabel("image")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("ImageWell")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-    }
 
     {
       const slot = this.newSlot("fetchAction", null);

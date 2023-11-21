@@ -226,9 +226,16 @@
   onRequestComplete (aRequest) {
     //this.setRequest(null)
     //this.setStatus("complete")
+    this.cleanResult()
     this.setNote(null)
     this.setIsComplete(true)
     this.sendDelegate("onMessageComplete")
+  }
+
+  cleanResult () {
+    const s = this.content().replace(/>\n+</g, '><');
+    this.setContent(s);
+    return this;
   }
   
   onStreamData (request, newContent) {
@@ -248,6 +255,7 @@
     this.sendInConversation()
   }
 
+  /*
   cssVariableDict () {
     return {
       //"background-color": "var(--body-background-color)",
@@ -255,6 +263,7 @@
       //"--body-background-color": "inherit"
     }
   }
+  */
 
   // --- summary ---
   /*

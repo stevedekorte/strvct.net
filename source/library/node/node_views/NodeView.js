@@ -181,16 +181,19 @@
         if (node && node.cssVariableDict) {
             const dict = node.cssVariableDict()
             if (dict) {
-                const el = this.element()
-
-                Object.keys(dict).forEach(k => {
-                    const v = dict[k];
-                    //el.style.setProperty('--example-variable', v);
-                    el.style.setProperty(k, v);
-                })
+                this.applyCssVariableDict(dict)
             }
         }
         return this
+    }
+
+    applyCssVariableDict (dict) {
+        const el = this.element()
+        Object.keys(dict).forEach(k => {
+            const v = dict[k];
+            //el.style.setProperty('--example-variable', v);
+            el.style.setProperty(k, v);
+        })
     }
 
     syncFromNode () {
@@ -202,6 +205,8 @@
             this.removeAllSubviews();
             return
         }
+
+        this.syncCssFromNode();
 
         //console.log("> " + this.debugTypeId() + " syncFromNode")
         

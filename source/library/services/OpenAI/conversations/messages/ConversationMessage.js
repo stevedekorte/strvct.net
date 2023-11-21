@@ -250,6 +250,7 @@
     this.sendInConversation()
   }
 
+  /*
   cssVariableDict () {
     return {
       //"background-color": "var(--body-background-color)",
@@ -257,6 +258,7 @@
       //"--body-background-color": "inherit"
     }
   }
+  */
 
   centerDotsHtml () {
     return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
