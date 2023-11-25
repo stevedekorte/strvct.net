@@ -22,61 +22,58 @@ const https = require('https');
 	process () {
 		//this.response().write("request:\n, this.requestDescription(request))
 		console.log("request url:" + this.request().url)
-		console.log("  decoded url:" + decodeURI(this.request().url))
+		//console.log("  decoded url:" + decodeURI(this.request().url))
 		this.setUrlObject(this.getUrlObject())
 	
 		this.setQueryMap(this.getQueryMap())
 		this.setPath(this.getPath())
 
 		console.log("  path: '" + this.path() + "'\n" );			
-		console.log("  getQueryMap keys: '" + JSON.stringify([...this.queryMap().entries()], 2, 2) + "'\n" );		
+		console.log("  getQueryMap entries: '" + JSON.stringify([...this.queryMap().entries()], 2, 2) + "'\n" );		
 
 		if (this.queryMap().get("proxyUrl")) {
 			this.onProxyRequest()
 		} else {
-			this.onFileRequest()
+			this.onFileRequest();
 		}
-
-		/*
-		if (this.queryDict()) {
-			this.onQuery()
-		} else {
-			this.onFileRequest()
-		}
-		*/
 	}
 
 	// --- handle proxy request --------------------------
 
 	async onProxyRequest () {
-		const url = this.queryMap().get("proxyUrl");
-		console.log("proxy request for: " + url + "")
-		https.get(url, (res) => {
+		try {
+			const url = this.queryMap().get("proxyUrl");
+			console.log("proxy request for: " + url + "");
+			https.get(url, (res) => {
 
-			const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
-			console.log('Proxy MIME Type:', mimeType);
+				const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
+				console.log('Proxy MIME Type:', mimeType);
 
-			// Array to hold the chunks of data
-			const chunks = [];
-	
-			// Listen for data events to receive chunks of data
-			res.on('data', (chunk) => {
-				chunks.push(chunk);
+				// Array to hold the chunks of data
+				const chunks = [];
+		
+				// Listen for data events to receive chunks of data
+				res.on('data', (chunk) => {
+					chunks.push(chunk);
+				});
+		
+				// When the response has ended
+				res.on('end', () => {
+					// Combine all the chunks into a single buffer
+					const buffer = Buffer.concat(chunks);
+		
+					// Display the byte size of the image
+					console.log('Proxy Byte count:', buffer.length);
+					this.onProxyRequestSuccess(mimeType, buffer)
+				});
+			}).on('error', (e) => {
+				console.error(`Error fetching the image: ${e.message}`);
+				this.onProxyRequestError(error)
 			});
-	
-			// When the response has ended
-			res.on('end', () => {
-				// Combine all the chunks into a single buffer
-				const buffer = Buffer.concat(chunks);
-	
-				// Display the byte size of the image
-				console.log('Proxy Byte count:', buffer.length);
-				this.onProxyRequestSuccess(mimeType, buffer)
-			});
-		}).on('error', (e) => {
-			console.error(`Error fetching the image: ${e.message}`);
-			this.onProxyRequestError(error)
-		});
+
+		} catch (e) {
+			this.onProxyRequestError(e)
+		}
 	}
 
 	onProxyRequestSuccess (mimeType, data) {

@@ -54,6 +54,13 @@
             slot.setFinalInitProto(SpeechToTextSessions);
             slot.setIsSubnode(true);
         }
+
+        {
+            const slot = this.newSlot("proxyServers", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(ProxyServers);
+            slot.setIsSubnode(true);
+        }
     }
 
     init () {

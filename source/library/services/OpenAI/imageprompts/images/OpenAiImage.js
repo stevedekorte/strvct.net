@@ -149,7 +149,9 @@
   // --- fetching the image ---
 
   proxyUrl () {
-    return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
+    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
+    return proxyUrl;
+    //return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
   }
 
   fetch () {
@@ -158,7 +160,7 @@
     const url = this.proxyUrl()
     this.setStatus("fetching...")
     //console.log("fetch url " + this.url())
-    //console.log("fetch proxy " + url)
+    console.log(this.type() + " fetch proxy url: " + url)
     fetch(url)
         .then(response => {
             if (!response.ok) {
