@@ -21,7 +21,7 @@
       slot.setCanEditInspection(false)
     }
 
-    
+
     {
       const slot = this.newSlot("revisedPrompt", null);
       slot.setAnnotation("shouldJsonArchive", true)
@@ -149,7 +149,7 @@
   // --- fetching the image ---
 
   proxyUrl () {
-    return WebBrowserWindow.shared().rootUrl() + "/proxy?url=" + encodeURIComponent(this.url())
+    return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
   }
 
   fetch () {

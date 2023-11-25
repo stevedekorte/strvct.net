@@ -21,17 +21,17 @@ const https = require('https');
 
 	process () {
 		//this.response().write("request:\n, this.requestDescription(request))
-		//console.log("request url:" + this.request().url)
-		//console.log("  decoded url:" + decodeURI(this.request().url))
+		console.log("request url:" + this.request().url)
+		console.log("  decoded url:" + decodeURI(this.request().url))
 		this.setUrlObject(this.getUrlObject())
 	
 		this.setQueryMap(this.getQueryMap())
 		this.setPath(this.getPath())
 
-		//console.log("  path: '" + this.path() + "'\n" );			
-		//console.log("  getQueryMap: '" + JSON.stringify(this.queryMap().keys(), 2, 2) + "'\n" );		
+		console.log("  path: '" + this.path() + "'\n" );			
+		console.log("  getQueryMap keys: '" + JSON.stringify([...this.queryMap().entries()], 2, 2) + "'\n" );		
 
-		if (this.path() === "proxy" && this.queryMap().get("url")) {
+		if (this.queryMap().get("proxyUrl")) {
 			this.onProxyRequest()
 		} else {
 			this.onFileRequest()
@@ -49,7 +49,7 @@ const https = require('https');
 	// --- handle proxy request --------------------------
 
 	async onProxyRequest () {
-		const url = this.queryMap().get("url");
+		const url = this.queryMap().get("proxyUrl");
 		console.log("proxy request for: " + url + "")
 		https.get(url, (res) => {
 
