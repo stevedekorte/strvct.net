@@ -58,8 +58,8 @@
 
   finalInit () {
     super.finalInit()
-    this.setTitle("OpenAI Chat");
-    this.setSubtitle("AI service");
+    this.setTitle("OpenAI");
+    this.setSubtitle("AI services");
   }
 
   validateKey (s) {

@@ -53,7 +53,7 @@
     }
 
     {
-      const slot = this.newSlot("port", null);
+      const slot = this.newSlot("port", 0);
       slot.setAnnotation("shouldJsonArchive", true)
       slot.setInspectorPath("")
       slot.setLabel("Port")
@@ -202,7 +202,7 @@
     
     let urlString = this.protocolString() + "://" + this.hostname();
 
-    if (this.port() !== null) {
+    if (this.port() !== 0 && this.port() !== null) {
         urlString += ":" + this.port();
     }
 
