@@ -124,6 +124,12 @@
     //this.footerNode().setValueIsEditable(false)
   }
 
+  setChatInputIsEnabled (aBool) {
+    this.footerNode().setValueIsEditable(aBool);
+    return this
+  }
+
+
   clearInput () {
     debugger; // shouldn't need this as TextField has option to do this
   }

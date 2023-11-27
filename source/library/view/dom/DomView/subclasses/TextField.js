@@ -32,7 +32,11 @@
         this.newSlot("usesDoubleTapToEdit", false) 
 
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
-        this.newSlot("isEditable", false).setOwnsSetter(true).setDoesHookSetter(true)
+        {
+            const slot = this.newSlot("isEditable", false);
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+        }
 
         this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)")
         this.newSlot("uneditableBorder", "none")
@@ -60,7 +64,7 @@
         this.setPaddingTop("0.3em")
         this.setPaddingBottom("0.3em")
         this.setLineHeight("1.15em")
-        this.setMinHeight("1em")
+        this.setMinHeight("2.07em")
 		
         this.setIsRegisteredForFocus(true) // need this to call unpauseGestures when editing ends
 
