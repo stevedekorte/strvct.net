@@ -247,11 +247,13 @@
   }
 
   isConnected () {
-    return this.isOpen()
+    const isConnected = this.isOpen();
+    assert(Type.isBoolean(isConnected));
+    return isConnected;
   }
 
   isOpen () {
-    return this.conn() && this.conn().open
+    return !Type.isNullOrUndefined(this.conn()) && this.conn().open
   }
 
   // --- connection options ---
@@ -514,6 +516,10 @@
   }
 
   // --- shutdown ---
+
+  disconnect () {
+    this.shutdown();
+  }
 
   shutdown () {
     console.warn(this.type() + " " + this.shortId() + " shutdown");

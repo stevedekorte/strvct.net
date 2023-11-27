@@ -37,6 +37,7 @@
     
     initPrototypeSlots () {
         this.newSlot("titleView", null)
+        this.newSlot("subtitleView", null)
         this.newSlot("isEnabled", true)
         this.newSlot("iconView", null)
         this.newSlot("info", null)
@@ -45,6 +46,7 @@
     init () {
         super.init()
         this.setDisplay("flex")
+        this.setFlexDirection("column")
         this.flexCenterContent()
         this.setHeight("fit-content")
         this.setWidth("100%")
@@ -58,21 +60,34 @@
 
         this.turnOffUserSelect()
         this.setBorderRadiusPx(1)
-        
-        {
-            const tv = TextField.clone()
-            this.setTitleView(tv)
-            this.addSubview(tv)
-            tv.fillParentView()
-            tv.setPaddingTop("0.1em").setPaddingBottom("0.1em")
-            tv.setPaddingLeft("1em").setPaddingRight("1em")
-            tv.flexCenterContent()
-            tv.setTextAlign("center")
-            tv.setMinHeight("1em")
-            tv.setWhiteSpace("nowrap")
-            tv.setTextOverflow("ellipsis")
 
-            
+        {
+            const view = TextField.clone()
+            this.setTitleView(view)
+            this.addSubview(view)
+            view.fillParentView()
+            view.setPaddingTop("0.1em").setPaddingBottom("0.1em")
+            view.setPaddingLeft("1em").setPaddingRight("1em")
+            view.flexCenterContent()
+            view.setTextAlign("center")
+            view.setMinHeight("1em")
+            view.setWhiteSpace("nowrap")
+            view.setTextOverflow("ellipsis")
+        }
+
+        {
+            const view = TextField.clone()
+            this.setSubtitleView(view)
+            this.addSubview(view)
+            view.fillParentView()
+            view.setPaddingTop("0.1em").setPaddingBottom("0.1em")
+            view.setPaddingLeft("1em").setPaddingRight("1em")
+            view.flexCenterContent()
+            view.setTextAlign("center")
+            view.setMinHeight("1em")
+            view.setWhiteSpace("nowrap")
+            view.setTextOverflow("ellipsis")
+            view.setFontSize("80%")
         }
 
         this.setTitle("")
@@ -96,9 +111,11 @@
         return this
     }
 
+    // --- title ---
+
     setTitle (s) {
         if (s === "" || Type.isNullOrUndefined(s)) { 
-            s = " "; //"&nbsp;" // to avoid weird html layout issues
+            s = " "; // to avoid weird html layout issues
         }
 
         this.titleView().setValue(s)
@@ -109,6 +126,22 @@
     title () {
         return this.titleView().value()
     }
+
+    // --- subtitle ---
+
+    setSubtitle (s) {
+        //console.log(this.typeId() + ".setSubtitle('" + s + "')")
+        const isEmpty = (s === "" || Type.isNullOrUndefined(s));
+        this.subtitleView().setValue(s)
+        this.subtitleView().setIsDisplayHidden(isEmpty)
+        return this
+    }
+
+    subtitle () {
+        return this.subtitleView().value()
+    }
+
+    // ------
 
     setHasOutline (aBool) {
         if (aBool) {

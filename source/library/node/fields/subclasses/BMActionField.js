@@ -118,20 +118,45 @@
     setActionInfo (infoDict) {
         //if (JSON.stableStringify(infoDict) != JSON.stableStringify(this.actionInfo())) {
 
-            if (infoDict.isEnabled !== undefined) {
-                this.setIsEnabled(infoDict.isEnabled)
+        {
+            const v = infoDict.isEnabled;
+            if (v !== undefined) {
+                if (!Type.isBoolean(v)) {
+                    const methodName = this.methodName() + "ActionInfo";
+                    console.warn(this.target().typeId() + "." + methodName + "() returned invalid value of '" + v + "' for isEnabled. Boolean value is required.")
+                }
+                assert(Type.isBoolean(v));
+                this.setIsEnabled(v);
             }
+        }
 
-            if (infoDict.title !== undefined) {
-                this.setTitle(infoDict.title)
+        {
+            const v = infoDict.title
+            if (v !== undefined) {
+                assert(Type.isString(v) || Type.isNull(v));
+                this.setTitle(v);
             }
+        }
 
-            if (infoDict.isVisible !== undefined) {
-                this.setIsVisible(infoDict.isVisible)
+        {
+            const v = infoDict.subtitle
+            if (v !== undefined) {
+                assert(Type.isString(v) || Type.isNull(v));
+                this.setSubtitle(v);
             }
+        }
 
-            //this.didUpdateNodeIfInitialized()
-        //}
+        {
+            const v = infoDict.isVisible 
+            if (v !== undefined) {
+                assert(Type.isBoolean(v));
+                this.setIsVisible(v)
+            }
+        }
+
+        // this.didUpdateNodeIfInitialized();
+        // }
+
         return this
     }
 
@@ -139,6 +164,7 @@
         return {
             isEnabled: this.isEnabled(),
             title: this.title(),
+            subtitle: subthis.title(),
             isVisible: this.isVisible()
         }
     }

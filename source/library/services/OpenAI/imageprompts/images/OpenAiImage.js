@@ -135,7 +135,7 @@
   // --- generate action ---
 
   canFetch () {
-    return this.url();
+    return Type.isString(this.url());
   }
 
   fetchActionInfo () {

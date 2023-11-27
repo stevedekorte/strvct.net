@@ -28,8 +28,8 @@ const https = require('https');
 		this.setQueryMap(this.getQueryMap())
 		this.setPath(this.getPath())
 
-		console.log("  path: '" + this.path() + "'\n" );			
-		console.log("  getQueryMap entries: '" + JSON.stringify([...this.queryMap().entries()], 2, 2) + "'\n" );		
+		//console.log("  path: '" + this.path() + "'\n" );			
+		//console.log("  getQueryMap entries: '" + JSON.stringify([...this.queryMap().entries()], 2, 2) + "'\n" );		
 
 		if (this.queryMap().get("proxyUrl")) {
 			this.onProxyRequest()

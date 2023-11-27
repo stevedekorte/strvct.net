@@ -18,7 +18,7 @@
     
     initPrototypeSlots () {
         {
-            this.newSlot("windowListener", null)
+            const slot = this.newSlot("windowListener", null)
         }
     }
     
@@ -278,6 +278,10 @@
 
     onBrowserOffline (event) {
         this.postNoteNamed("onBrowserOffline")
+    }
+
+    isOnline () {
+        return navigator.onLine
     }
 
     /*

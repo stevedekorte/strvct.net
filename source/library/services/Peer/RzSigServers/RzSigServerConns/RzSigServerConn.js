@@ -219,6 +219,10 @@
       const slot = this.newSlot("delegate", null);
     }
 
+    {
+      const slot = this.newSlot("error", null);
+    }
+
     this.setShouldStoreSubnodes(false);
   }
 
@@ -263,7 +267,9 @@
   // --- connect ---
 
   isConnected () {
-    return this.peer() && !this.peer().disconnected
+    const isConnected = !Type.isNullOrUndefined(this.peer()) && !this.peer().disconnected;
+    assert(Type.isBoolean(isConnected));
+    return isConnected;
   }
 
   clearConnectPromise () {
@@ -280,13 +286,14 @@
 
   connect () {
     if (!this.isConnected()) {
+      this.setError(null);
       this.clearConnectPromise();
-      this.setStatus("connecting")
-      this.setGetIdRetryCount(0)
-      this.setConnectRetryCount(0)
-      this.attemptToConnect()
+      this.setStatus("connecting");
+      this.setGetIdRetryCount(0);
+      this.setConnectRetryCount(0);
+      this.attemptToConnect();
     }
-    return this.connectPromise()
+    return this.connectPromise();
   }
 
   connectActionInfo () {
@@ -500,8 +507,9 @@
   onError (error) {
     //this.debugLog("error ", error);
     //debugger
-    console.log("error: " + error.message)
-    this.setStatus(error.message)
+    console.log("error: " + error.message);
+    this.setStatus(error.message);
+    this.setError(error.message);
 
     const etype =  error.type
     let errorMethodRoot = etype.split("-").map(s => s.capitalized()).join("") //+ "Error";

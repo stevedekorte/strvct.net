@@ -34,6 +34,7 @@
         const node = this.node()
         const bv = this.buttonView()
         bv.setTitle(node.title())
+        bv.setSubtitle(node.subtitle())
         bv.setIsEditable(node.nodeCanEditTitle())
 
         bv.setIsEnabled(node.isEnabled())
@@ -44,8 +45,15 @@
             bv.setOpacity(0.5)	
         }
 
-        this.setIsVisible(this.node().isVisible())
-		
+        const isVisible = this.node().isVisible();
+        assert(Type.isBoolean(isVisible));
+        //this.setIsVisible(isVisible);
+        this.setIsDisplayHidden(!isVisible);
+
+
+        if (!isVisible) {
+            assert(this.isDisplayHidden())
+        }
         return this
     }
     

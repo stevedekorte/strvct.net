@@ -11,14 +11,15 @@
     
     initPrototypeSlots () {
         // css hidden values
-        this.newSlot("hiddenDisplayValue", undefined)
+        this.newSlot("hiddenDisplayMode", false)
+        this.newSlot("hiddenDisplayValue", null)
         /*
         this.newSlot("hiddenMinHeight", undefined)
         this.newSlot("hiddenMaxHeight", undefined)
         */
         this.newSlot("hiddenTransitionValue", undefined)
         //this.newSlot("pushedAttributes", undefined)
-        this.newSlot("pushedSlotValues", undefined)
+        //this.newSlot("pushedSlotValues", undefined)
         this.newSlot("cachedSize", null)
     }
 
@@ -32,6 +33,7 @@
     // --- push/pop slot values ---
     // useful for pushing a css attribute using it's normal getter/setter methods
 
+    /*
     pushedSlotValues () {
         if (Type.isUndefined(this._pushedSlotValues)) {
             this._pushedSlotValues = new Map()
@@ -66,6 +68,7 @@
         this[setterName].call(this, oldValue)
         return this
     }
+    */
 
     /*
     // --- push and pop attribute stacks ---
@@ -1526,7 +1529,11 @@
 
     setDisplay (s) {
         //assert(s in { "none", ...} );
-        this.setCssProperty("display", s)
+        if (this.hiddenDisplayMode()) {
+            this.setHiddenDisplayValue(s);
+        } else {
+            this.setCssProperty("display", s);
+        }
         return this
     }
 
@@ -1535,7 +1542,6 @@
     }
 
     // hide height
-
 
     /*
     hideHeight () {
@@ -1572,28 +1578,29 @@
     }
 
     isDisplayHidden () {
-        return this.display() === "none"
+        return this.hiddenDisplayMode()
     }
 
     hideDisplay () {
-        if (this.display() !== "none") {
-            this.setHiddenDisplayValue(this.display())
-            this.setDisplay("none")
+        if (!this.hiddenDisplayMode()) {
+            this.setHiddenDisplayValue(this.display());
+            this.setDisplay("none"); // must call *before* setHiddenDisplayMode(true)
+            this.setHiddenDisplayMode(true);
         }
         return this
     }
 
     unhideDisplay () {
-        if (this.display() === "none") {
-            if (this._hiddenDisplayValue) {
-                this.setDisplay(this.hiddenDisplayValue())
-                this.setHiddenDisplayValue(null)
-            } else {
-                this.setDisplay(null)
-                // we don't now what value to set display to, so we have to raise an exception
-                //throw new Error(this.type() + " attempt to unhide display value that was not hidden")
+        if (this.hiddenDisplayMode()) {
+            const oldValue = this.hiddenDisplayValue();
+            this.setHiddenDisplayValue(null); 
+            assert(oldValue);
+            if (oldValue) {
+                this.setHiddenDisplayMode(false); // must call *before* setDisplay()
+                this.setDisplay(oldValue);
             }
         }
+        this.setHiddenDisplayMode(false); // must call *before* setDisplay()
         return this
     }
 

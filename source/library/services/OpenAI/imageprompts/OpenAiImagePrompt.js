@@ -150,7 +150,7 @@
   // --- generate action ---
 
   canGenerate () {
-    return this.prompt().length;
+    return this.prompt().length !== 0;
   }
 
   generate () {
