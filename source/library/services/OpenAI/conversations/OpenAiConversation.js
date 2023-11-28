@@ -29,11 +29,16 @@
       const slot = this.newSlot("model", null); 
     }
 
+    {
+      const slot = this.newSlot("responseMsgClass", null); 
+    }
+
   }
 
   init() {
     super.init();
-    this.setSubnodeClasses([OpenAiMessage])
+    this.setSubnodeClasses([OpenAiMessage]);
+    this.setResponseMsgClass(OpenAiResponseMessage);
   }
 
   finalInit () {
@@ -65,17 +70,12 @@
     return this
   }
 
+  /*
   trimConversation() {
     // todo - implement
     return this;
   }
-
-  // --- overrides ---
-
-  initNewMessage (aMessage) {
-    aMessage.setRole("user")
-    return aMessage
-  }
+  */
 
   // -- managing tokens ---
 
@@ -96,6 +96,37 @@
     */
   }
 
+  // --- new messages ---
+  // this is a bit verbose, but (for now) I like the explicitness 
+  // and that it might make it easier to support other AI services
+
+  newUserMessage () {
+    const m = this.newMessage();
+    m.setSpeakerName("User"); // caller should override this
+    m.setRole("user");
+    return m;
+  }
+
+  newAssistantMessage () {
+    const m = this.newMessage();
+    m.setSpeakerName(this.aiSpeakerName());
+    m.setRole("assistant");
+    return m;
+  }
+
+  newSystemMessage () {
+    const m = this.newMessage();
+    m.setSpeakerName(this.aiSpeakerName());
+    m.setRole("system");
+    return m;
+  }
+
+  newResponseMessage () {
+    const m = this.newMessageOfClass(this.responseMsgClass());
+    this.addSubnode(m);
+    return m;
+  }
+
   // --- chat actions ---
 
   aiSpeakerName () {
@@ -103,26 +134,19 @@
   }
 
   onChatInputValue (v) {
-    const m = this.newMessage()
-    m.setRole("user")
-    m.setContent(v)
-
-    const responseMessage = m.sendInConversation();
-    responseMessage.setSpeakerName(this.aiSpeakerName())
-
-    this.footerNode().setValueIsEditable(false) // wait for response to enable again
-    SimpleSynth.clone().playSendBeep()
+    const userMsg = this.newUserMessage();
+    userMsg.setContent(v);
+    userMsg.setIsComplete(true);
+    const responseMessage = userMsg.requestResponse();
+    this.footerNode().setValueIsEditable(false); // wait for response to enable again
+    SimpleSynth.clone().playSendBeep();
   }
 
   startWithPrompt (prompt) {
     this.clear()
-    
-    const m = this.newMessage()
-    m.setSpeakerName(this.aiSpeakerName())
-    m.setRole("system")
-    m.setContent(prompt)
-    const responseMessage = m.send()
-    responseMessage.setSpeakerName(this.aiSpeakerName())
+    const promptMsg = this.newSystemMessage();
+    promptMsg.setContent(prompt);
+    const responseMessage = promptMsg.requestResponse();
     return this
   }
 
@@ -130,8 +154,7 @@
     // TODO: we only want to do this when message isComplete
     /*
     if (!this.session().isHost() && newMsg.isComplete()) {
-      const responseMessage = newMsg.sendInConversation();
-      responseMessage.setSpeakerName(this.aiSpeakerName())
+      const responseMessage = newMsg.requestResponse();
     }
     */
   }

@@ -95,32 +95,31 @@
   }
 
   onCompletedMessage (aMsg) {
-
   }
 
-  // -------- ///////////////////////
+  // -- creating new messages ---
 
-  initNewMessage (aMessage) {
-    return aMessage
+  newMessageOfClass (msgClass) {
+    const m = msgClass.clone();
+    m.setConversation(this);
+    return m;
   }
 
-  justNewMessage () {
-    const msgClass = this.subnodeClasses().first()
-    const m = msgClass.clone()
-    m.setConversation(this)
-    this.initNewMessage(m)
-    return m
-  }
+  // -- new message instances ---
 
   newMessage () {
-    const message = this.justNewMessage()
-    this.addSubnode(message)
-    return message
+    const msgClass = this.subnodeClasses().first();
+    const m = this.newMessageOfClass(msgClass);
+    this.addSubnode(m);
+    return m;
   }
 
+  // --- chat input ---
+
   onChatInputValue (v) {
-    const m = this.newMessage()
-    m.setContent(v)
+    const m = this.newMessage();
+    m.setContent(v);
+    m.setIsComplete(true);
     //this.footerNode().setValueIsEditable(false)
   }
 
@@ -128,7 +127,6 @@
     this.footerNode().setValueIsEditable(aBool);
     return this
   }
-
 
   clearInput () {
     debugger; // shouldn't need this as TextField has option to do this

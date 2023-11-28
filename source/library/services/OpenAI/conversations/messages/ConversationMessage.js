@@ -106,6 +106,17 @@
       slot.setShouldStoreSlot(false)
     }
 
+    {
+      const slot = this.newSlot("deleteAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Delete");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setCanInspect(true)
+      slot.setActionMethodName("delete");
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
   }
@@ -247,7 +258,7 @@
   }
 
   onValueInput () {
-    this.sendInConversation()
+    this.requestResponse()
   }
 
   /*

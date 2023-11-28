@@ -21,23 +21,6 @@
     }
 
     {
-      const slot = this.newSlot("request", null);
-      slot.setLabel("request")
-      slot.setShouldStoreSlot(false)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Pointer")
-      slot.setCanInspect(false)
-    }
-
-    {
-      const slot = this.newSlot("isResponse", false);
-      slot.setSlotType("Boolean")
-      slot.setShouldStoreSlot(true)
-      slot.setCanInspect(true);
-      slot.setInspectorPath("OpenAiMessage");
-    }
-
-    {
       const slot = this.newSlot("isVisibleToAi", true);
       slot.setSlotType("Boolean");
       slot.setShouldStoreSlot(true);
@@ -46,16 +29,14 @@
     }
 
     {
-      const slot = this.newSlot("retryCount", 0);
-      slot.setSlotType("Number");
-      //slot.setShouldStoreSlot(true)
-    }
-
-    {
-      const slot = this.newSlot("summaryMessage", null);
-      slot.setSlotType("String");
-      slot.setInspectorPath("OpenAiMessage");
-      //slot.setShouldStoreSlot(true)
+      const slot = this.newSlot("requestResponseAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Request Response");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setCanInspect(true)
+      slot.setActionMethodName("requestResponse");
     }
 
     this.setShouldStore(true);
@@ -73,6 +54,10 @@
     super.finalInit();
   }
   */
+
+  isResponse () {
+    return false;
+  }
 
   valueIsEditable () {
     return this.role() === "user"
@@ -135,82 +120,30 @@
     }
   }
 
+  // --- request response action ---
+
+  canRequestResponse () {
+    return this.isVisibleToAi()
+  }
+
+  requestResponseActionInfo () {
+    return {
+        isEnabled: this.canRequestResponse(),
+        //title: "",
+        isVisible: this.canRequestResponse()
+    }
+  }
+
   send () {
-    return this.sendInConversation()
+    throw new Error("use requestResponse instead");
   }
 
-  sendInConversation () {
-    if (!this.request()) {
-      const m = this.conversation().newMessage()
-      m.setRole("assistant")
-      //this.conversation().postShouldFocusSubnode(message)
-      m.makeRequest()
-      return m
-    }
-    return null
-  }
-
-  // --- send request -------------
-
-  selectedModel () {
-    return this.conversation().selectedModel()
-  }
-
-  service () {
-    return this.conversation().service()
-  }
-
-  apiKey () {
-    return this.service().apiKey()
-  }
-
-  // --- openai response request --- 
-
-  /*
-  assertValidRequest () {
-    assert(this.validRoles().includes(this.role()))
-  }
-  */
-
-  makeRequest () {
-    this.setError(null)
-    const request = this.newRequest()
-    this.setRequest(request)
-    //request.asyncSend();
-    request.setStreamTarget(this)
-    request.asyncSendAndStreamResponse()
-    return this
-  }
-
-  newRequest () {
-    const request = OpenAiRequest.clone();
-    request.setApiUrl("https://api.openai.com/v1/chat/completions");
-    request.setApiKey(this.apiKey());
-    request.setDelegate(this)
-    request.setBodyJson({
-      model: this.selectedModel(),
-      messages: this.conversationHistoryPriorToSelfJson(),
-      temperature: 0.7, // more creative
-      top_p: 0.9 // more diverse
-    });
-    return request;
-  }
-
-  // --- request delegate messages ---
-
-  onRequestBegin (aRequest) {
-    this.setNote(this.centerDotsHtml())
-  }
-
-  onRequestError (aRequest) {
-    this.setError(aRequest.error())
-    const msg = aRequest.error().message
-    if (msg.includes("Please try again in 6ms.")) {
-      this.setRetryCount(this.retryCount() + 1)
-      const seconds = Math.pow(2, this.retryCount());
-      console.warn("WARNING: retrying openai request in " + seconds + " seconds");
-      this.addTimeout(() => this.makeRequest(), seconds*1000);
-    }
+  requestResponse () {
+    const response = this.conversation().newResponseMessage();
+    response.setSpeakerName(this.conversation().aiSpeakerName());
+    //this.conversation().postShouldFocusSubnode(responseMessage)
+    response.makeRequest();
+    return response;
   }
 
   valueError () {
@@ -222,73 +155,18 @@
     super.onComplete() // sends a delegate message
     // to be overridden by subclasses
   }
-
-  onRequestComplete (aRequest) {
-    //this.setRequest(null)
-    //this.setStatus("complete")
-    this.cleanResult()
-    this.setNote(null)
-    this.setIsComplete(true)
-    this.sendDelegate("onMessageComplete")
-  }
-
-  cleanResult () {
-    const s = this.content().replace(/>\n+</g, '><');
-    this.setContent(s);
-    return this;
-  }
   
-  onStreamData (request, newContent) {
-    this.sendDelegate("onMessageWillUpdate")
-
-    this.setContent(request.fullContent())
-    this.sendDelegate("onMessageUpdate")
-  }
-  
-  onStreamComplete (request) {
-    this.setContent(request.fullContent())
-    this.setIsComplete(true)
-    this.sendDelegate("onMessageUpdate")
-  }
-
   onValueInput () {
-    this.sendInConversation()
+    this.requestResponse()
   }
 
-  /*
-  cssVariableDict () {
+  // --- temporary ---
+
+  jsonMsgForSet () {
     return {
-      //"background-color": "var(--body-background-color)",
-      //"color": "var(--body-color)",
-      //"--body-background-color": "inherit"
+      name: "updateAiChatMessage",
+      payload: this.jsonArchive()
     }
   }
-  */
-
-  // --- summary ---
-  /*
-  newSummaryMessage () {
-    const m = this.thisClass().clone()
-    m.setRole("user")
-    m.setContent(this.summaryRequestPrompt())
-    m.setConversation(this.conversation())
-    return m
-  }
-
-  sendSummaryMessage () {
-    if (!this.summaryMessage()) {
-      this.setNote("sending summary request")
-      const m = this.newSummaryMessage()
-      this.setSummaryMessage(m)
-    }
-  }
-
-  summaryRequestPrompt () {
-    return `Please write a concise summary of the previous chat history 
-    which includes any details necessary to adequately continue the conversation 
-    without the complete chat history. Start the summary with the title: "SUMMARY OF STORY SO FAR:"`
-  }
-  */
-
 
 }.initThisClass());
