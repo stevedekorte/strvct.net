@@ -64,7 +64,9 @@
         this.setPaddingTop("0.3em")
         this.setPaddingBottom("0.3em")
         this.setLineHeight("1.15em")
-        this.setMinHeight("2.07em")
+        //this.setMinHeight("2.07em")
+        this.setMinHeight("1em");
+        this.setCssProperty("outline", "none");
 		
         this.setIsRegisteredForFocus(true) // need this to call unpauseGestures when editing ends
 
