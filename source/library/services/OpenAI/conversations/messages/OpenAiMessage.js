@@ -116,8 +116,12 @@
   openAiJson () {
     return {
       role: this.role(),
-      content: this.content()
+      content: this.contentVisisbleToAi()
     }
+  }
+
+  contentVisisbleToAi () {
+    return this.content()
   }
 
   // --- request response action ---
