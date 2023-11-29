@@ -53,20 +53,22 @@
         return obs
     }
 
-    // --- watch once ---
-
-    watchOnceForNote (aNoteName) {
+    watchForNote (aNoteName) {
         const obs = BMNotificationCenter.shared().newObservation()
         obs.setName(aNoteName)
         obs.setObserver(this)
-        obs.setIsOneShot(true)
         obs.startWatching()
-        //this.debugLog(".watchOnceForNote('" + aNoteName + "')")
         return obs
     }
 
+    // --- watch once ---
+
+    watchOnceForNote (aNoteName) {
+        return this.watchForNote(aNoteName).setIsOneShot(true)
+    }
+
     watchOnceForNoteFrom (aNoteName, sender) {
-        return this.watchOnceForNote(aNoteName).setSender(sender) // does it work to set sender aftert it's started watching?
+        return this.watchOnceForNote(aNoteName).setSender(sender) // does it work to set sender after it's started watching?
     }
 
     newNoteNamed (aNoteName) {

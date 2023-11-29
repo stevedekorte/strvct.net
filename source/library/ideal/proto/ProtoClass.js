@@ -481,9 +481,11 @@
     // ----
 
     didUpdateSlot (aSlot, oldValue, newValue) {
-        const m = this[aSlot.methodForDidUpdate()]
-        if (m) {
-            m.call(this, oldValue, newValue)
+        const methodName = aSlot.methodForDidUpdate();
+        const method = this[methodName]
+
+        if (method) {
+            method.call(this, oldValue, newValue)
         }
         /*
         if (aSlot.shouldStoreSlot()) {
