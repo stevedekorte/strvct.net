@@ -170,3 +170,12 @@ getGlobalThis().assert = function (v) {
     }
     return v
 }
+
+getGlobalThis().debugAssert = function (v) {
+    if (!Boolean(v)) {
+        console.warn("assert failed - false value");
+        debugger;
+        throw new Error("assert failed - false value")
+    }
+    return v
+}

@@ -18,6 +18,22 @@
     }
     */
 
+    static newUuid () {
+        const length = 10
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        const charactersLength = characters.length;
+        const randomValues = new Uint8Array(length);
+        window.crypto.getRandomValues(randomValues);
+        const result = new Array(length);
+    
+        for (let i = 0; i < length; i++) {
+            result[i] = characters[randomValues[i] % charactersLength];
+        }
+    
+        return result.join('');
+    }
+
+    /*
     static newUuid () { 
         // TODO: move this JS UUID when it's added to JS standard lib
         const uuidPart = () => { 
@@ -28,6 +44,7 @@
         }
         return uuidPart() + uuidPart()
     }
+    */
 
    // _puuid: undefined,
 
