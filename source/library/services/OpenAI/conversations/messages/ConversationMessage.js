@@ -157,7 +157,7 @@
 
   didUpdateSlotIsComplete (oldValue, newValue) {
     //debugger;
-    if(this.conversation()) { // so not called during deserialization
+    if(newValue && this.conversation()) { // so not called during deserialization
       this.scheduleMethod("onComplete");
     }
   }
