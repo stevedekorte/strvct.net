@@ -100,6 +100,7 @@
   // this is a bit verbose, but (for now) I like the explicitness 
   // and that it might make it easier to support other AI services
 
+
   newUserMessage () {
     const m = this.newMessage();
     m.setSpeakerName("User"); // caller should override this

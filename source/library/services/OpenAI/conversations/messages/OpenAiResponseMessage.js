@@ -38,6 +38,20 @@
       //slot.setShouldStoreSlot(true)
     }
 
+    {
+      // See: https://aipromptskit.com/openai-temperature-parameter/
+      const slot = this.newSlot("temperature", 0.7); // 0-1, higher = more creative
+      slot.setSlotType("Number");
+      //slot.setShouldStoreSlot(true)
+    }
+
+    {
+      // See: https://aipromptskit.com/openai-temperature-parameter/
+      const slot = this.newSlot("topP", 0.8); // 0-1, higher = more diverse
+      slot.setSlotType("Number");
+      //slot.setShouldStoreSlot(true)
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
   }
@@ -117,8 +131,8 @@
     request.setBodyJson({
       model: this.selectedModel(),
       messages: this.conversationHistoryPriorToSelfJson(),
-      temperature: 0.7, // more creative
-      top_p: 0.9 // more diverse
+      temperature: this.temperature(), 
+      top_p: this.topP() // more diverse
     });
     return request;
   }
@@ -129,9 +143,12 @@
   }
   */
 
+  visiblePreviousMessages () {
+    return this.previousMessages().select(m => m.isVisibleToAi())
+  }
+
   conversationHistoryPriorToSelfJson () {
-    // return json for all messages in conversation up to this point (unless they are marked as hidden?)
-    const json = this.previousMessages().select(m => m.isVisibleToAi()).map(m => m.openAiJson())
+    const json = this.visiblePreviousMessages().select(m => m.isVisibleToAi()).map(m => m.openAiJson())
     return json
   }
 

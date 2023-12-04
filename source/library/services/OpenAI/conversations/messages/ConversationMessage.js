@@ -210,18 +210,33 @@
 
   // --- conversation history ---
 
-  previousMessages () {
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    assert(i !== -1)
-    return messages.slice(0, i)
+  // --- previous ---
+
+  visiblePreviousMessages () {
+    // subclasses should override for different behaviors
+    return this.previousMessages()
   }
 
+  previousMessages () {
+    return this.conversation().messages().before(this);
+  }
+
+  /*
+  previousMessages (results = []) {
+    // doing it this way gives each message (and message sublclass a chance to filter messages
+    const m = this.previousMessage();
+    if (m) {
+      results.push(m);
+      m.previousMessage(results);
+    }
+    return results;
+  }
+  */
+
   previousMessagesIncludingSelf () {
-    const messages = this.conversation().messages()
-    const i = messages.indexOf(this)
-    assert(i !== -1)
-    return messages.slice(0, i+1)
+    const messages = this.previousMessages();
+    messages.push(this);
+    return messages;
   }
 
   previousMessage () {
@@ -231,6 +246,18 @@
       return messages[i-1]
     }
     return null
+  }
+
+  // --- following ---
+
+  followingMessages () {
+    return this.conversation().messages().after(this);
+  }
+
+  followingMessagesIncludingSelf () {
+    const messages = this.followingMessages();
+    messages.unshift(this);
+    return messages;
   }
 
   // --- sending ---

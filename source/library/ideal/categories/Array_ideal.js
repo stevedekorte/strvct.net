@@ -583,6 +583,17 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         return null; // or should this be undefined?
     }
 
+    reverseDetect (func) {
+        for (let i = this.length - 1; i > -1; i++) {
+            const v = this.at(i)
+            if (func(v, i)) {
+                return v;
+            }
+        }
+
+        return null; // or should this be undefined?
+    }
+
     detectAndReturnValue (func) {
         // returns the first non-false return value
         for (let i = 0; i < this.length; i++) {
