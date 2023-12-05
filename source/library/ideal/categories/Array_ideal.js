@@ -150,6 +150,21 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         return this.at(this.length - 1) // returns undefined for negative indexes
     }
 
+    lastN (n) {
+        // Check if the array is empty
+        if (n === 0 || this.length === 0) {
+            return [];
+        }
+    
+        // If the array has fewer elements than N, return the whole array
+        if (this.length < n) {
+            return this.slice();
+        }
+    
+        // Return the last N elements
+        return this.slice(-n);
+    }
+
     contains (element) {
         return this.includes(element)
         //return this.indexOf(element) !== -1;
@@ -584,7 +599,7 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
     }
 
     reverseDetect (func) {
-        for (let i = this.length - 1; i > -1; i++) {
+        for (let i = this.length - 1; i > -1; i--) {
             const v = this.at(i)
             if (func(v, i)) {
                 return v;

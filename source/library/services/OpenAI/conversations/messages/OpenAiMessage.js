@@ -142,8 +142,13 @@
     throw new Error("use requestResponse instead");
   }
 
+  responseMsgClass () {
+    return this.conversation().responseMsgClass();
+  }
+
   requestResponse () {
-    const response = this.conversation().newResponseMessage();
+    const response = this.conversation().newMessageOfClass(this.responseMsgClass());
+    this.conversation().addSubnode(response);
     response.setSpeakerName(this.conversation().aiSpeakerName());
     //this.conversation().postShouldFocusSubnode(responseMessage)
     response.makeRequest();

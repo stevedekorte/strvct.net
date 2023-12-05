@@ -36,6 +36,7 @@
 
         {
             const slot = this.newSlot("note", null)
+            slot.setSyncsToView(true)
             slot.setDuplicateOp("copyValue")
             slot.setShouldStoreSlot(true)
         }

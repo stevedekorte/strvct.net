@@ -218,18 +218,19 @@
   }
 
   previousMessages () {
-    return this.conversation().messages().before(this);
+    const msgs = this.conversation().messages();
+    assert(msgs.includes(this));
+    return msgs.before(this);
   }
 
   /*
-  previousMessages (results = []) {
+  history () {
+    // previous messqages + this message
     // doing it this way gives each message (and message sublclass a chance to filter messages
-    const m = this.previousMessage();
-    if (m) {
-      results.push(m);
-      m.previousMessage(results);
-    }
-    return results;
+    const pm = this.previousMessage();
+    const history = pm ? pm.history() : [];
+    history.push(this);
+    return history;
   }
   */
 
@@ -285,7 +286,7 @@
   */
 
   centerDotsHtml () {
-    return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
+    return `........<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
   }
 
   delegate () {

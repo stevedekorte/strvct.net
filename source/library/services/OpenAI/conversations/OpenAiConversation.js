@@ -105,6 +105,7 @@
     const m = this.newMessage();
     m.setSpeakerName("User"); // caller should override this
     m.setRole("user");
+    m.setConversation(this);
     return m;
   }
 
@@ -112,6 +113,7 @@
     const m = this.newMessage();
     m.setSpeakerName(this.aiSpeakerName());
     m.setRole("assistant");
+    m.setConversation(this);
     return m;
   }
 
@@ -119,11 +121,13 @@
     const m = this.newMessage();
     m.setSpeakerName(this.aiSpeakerName());
     m.setRole("system");
+    m.setConversation(this);
     return m;
   }
 
   newResponseMessage () {
     const m = this.newMessageOfClass(this.responseMsgClass());
+    m.setConversation(this);
     this.addSubnode(m);
     return m;
   }
@@ -158,6 +162,16 @@
       const responseMessage = newMsg.requestResponse();
     }
     */
+  }
+
+  aiVisibleHistoryForResponse (aResponseMessage) {
+    assert(this.messages().includes(aResponseMessage));
+    const previousMessages = this.messages().before(aResponseMessage);
+    const visibleMessages = previousMessages.select(m => m.isVisibleToAi());
+    /*
+      override to support summaries
+    */
+    return visibleMessages;
   }
 
 }.initThisClass());

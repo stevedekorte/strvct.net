@@ -124,38 +124,34 @@
   }
 
   newRequest () {
+    const messages = this.visiblePreviousMessages(); 
+    const jsonHistory = messages.map(m => m.openAiJson());
+
     const request = OpenAiRequest.clone();
     request.setApiUrl("https://api.openai.com/v1/chat/completions");
     request.setApiKey(this.apiKey());
     request.setDelegate(this)
     request.setBodyJson({
       model: this.selectedModel(),
-      messages: this.conversationHistoryPriorToSelfJson(),
+      messages: jsonHistory,
       temperature: this.temperature(), 
       top_p: this.topP() // more diverse
     });
     return request;
   }
 
-  /*
-  aiVisisblePreviousMessages () {
-    return this.previousMessages().select(m => m.isVisibleToAi());
-  }
-  */
-
   visiblePreviousMessages () {
-    return this.previousMessages().select(m => m.isVisibleToAi())
-  }
-
-  conversationHistoryPriorToSelfJson () {
-    const json = this.visiblePreviousMessages().select(m => m.isVisibleToAi()).map(m => m.openAiJson())
-    return json
+    // give conversation a chance to control this
+    // which may be useful for summaries
+    const messages = this.conversation().aiVisibleHistoryForResponse(this); 
+    return messages;
   }
 
   // --- handle request delegate messages ---
 
   onRequestBegin (aRequest) {
-    this.setNote(this.centerDotsHtml())
+    const s = this.centerDotsHtml();
+    this.setNote(s)
   }
 
   onRequestError (aRequest) {

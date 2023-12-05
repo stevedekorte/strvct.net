@@ -300,7 +300,9 @@
                 console.warn(this.type() + " target " + target.type() + " missing note getter slot '" + slotName + "'")
             }
         }
-        return null
+
+       // return null
+        return this._note
     }
 	
     didUpdateView (aFieldView) {  
