@@ -87,8 +87,43 @@
     }
 
     syncFromNode () {
-        //debugger
+
+        const node = this.node();
+        if (node) {
+            /*
+            if (node.thisClass().isKindOf(HwAiResponseMessage)) {
+                console.log("found message");
+               // debugger;
+            }
+            */
+            if (node.isComplete) {
+                if (node.isComplete()) {
+                    this.removeDots();
+                } else {
+                    this.addDots();
+                }
+            }
+        }
+
         return super.syncFromNode()
+    }
+
+    addDots () {
+        const view = this.valueView();
+        view.setCssProperty("--div-after-display", "inline-block");
+        view.setCssProperty("--div-after-animation", "dotty steps(1,end) 1s infinite");
+        return this;
+    }
+
+    removeDots () {
+        const view = this.valueView();
+        view.setCssProperty("--div-after-display", "none");
+        view.setCssProperty("--div-after-animation", "none");
+        return this;
+    }
+
+    centerDotsHtml () {
+        return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
     }
     
 }.initThisClass());

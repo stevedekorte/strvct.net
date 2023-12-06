@@ -150,8 +150,8 @@
   // --- handle request delegate messages ---
 
   onRequestBegin (aRequest) {
-    const s = this.centerDotsHtml();
-    this.setNote(s)
+    //const s = this.centerDotsHtml();
+    //this.setNote(s)
   }
 
   onRequestError (aRequest) {
