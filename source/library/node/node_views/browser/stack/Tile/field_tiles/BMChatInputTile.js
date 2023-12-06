@@ -87,17 +87,11 @@
     }
 
     syncFromNode () {
-
         const node = this.node();
         if (node) {
-            /*
-            if (node.thisClass().isKindOf(HwAiResponseMessage)) {
-                console.log("found message");
-               // debugger;
-            }
-            */
             if (node.isComplete) {
                 if (node.isComplete()) {
+                    //this.addDots();
                     this.removeDots();
                 } else {
                     this.addDots();
@@ -109,7 +103,7 @@
     }
 
     addDots () {
-        const view = this.valueView();
+        const view = this.valueView(); // this is a TextField
         view.setCssProperty("--div-after-display", "inline-block");
         view.setCssProperty("--div-after-animation", "dotty steps(1,end) 1s infinite");
         return this;

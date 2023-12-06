@@ -243,7 +243,7 @@
   selectedVoice () {
     // localeName + displayName should be enough to select a unique voice
     const localeMatches = this.voices().voicesForMethodNameAndValue("localeName", this.localeName())
-    const displayNameMatches = localeMatches.select(voice => voice.displayName())
+    const displayNameMatches = localeMatches.select(voice => voice.displayName() === this.displayName())
     const match = displayNameMatches.first()
     return match
   }

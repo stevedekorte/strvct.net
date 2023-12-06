@@ -12,7 +12,6 @@
 
   init() {
     super.init();
-    this.setTitle("Web STT");
     this.setSubtitle("speech-to-text service");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
@@ -25,7 +24,7 @@
     super.finalInit()
     this.setNoteIsSubnodeCount(false);
 
-    this.setTitle("Web STT");
+    this.setTitle("Web Speech to Text");
     this.setSubtitle("speech-to-text service");
   }
 

@@ -6,13 +6,12 @@
 */
 
 (class OpenAiImagePrompts extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
   }
 
-  init() {
+  init () {
     super.init();
-    this.setTitle("Image Prompts");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([OpenAiImagePrompt])
@@ -20,9 +19,9 @@
     this.setNodeCanReorderSubnodes(true)
   }
 
-  finalInit() {
+  finalInit () {
     super.finalInit()
-    this.setTitle("Image Prompts");
+    this.setTitle("Text to Image");
   }
 
   service () {

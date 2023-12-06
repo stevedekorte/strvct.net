@@ -24,7 +24,7 @@
     {
       const slot = this.newSlot("region", "");
       //slot.setInspectorPath("")
-      slot.setLabel("Region");
+      slot.setLabel("Server Region");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -58,7 +58,7 @@
 
   init() {
     super.init();
-    this.setTitle("Azure TTS");
+    this.setTitle("Azure Text to Speech");
     this.setSubtitle("text-to-speech service");
   }
 
