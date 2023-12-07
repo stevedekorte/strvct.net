@@ -108,4 +108,5 @@
       this.validateKey(this.apiKey()) && this.validateRegion(this.region())
     );
   }
+  
 }).initThisClass();

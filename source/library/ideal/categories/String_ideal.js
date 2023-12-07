@@ -368,6 +368,15 @@ String.prototype._setterCacheMap = new Map();
         });
     }
 
+    ellipsisClip (length) {
+        // Check if the length of the string is less than or equal to the specified length
+        if (this.length <= length) {
+            return this.toString();
+        }
+        // Clip the string to the specified length and append "..."
+        return this.substring(0, length) + '...';
+    }
+
     loremIpsum (minWordCount, maxWordCount) {
         if (!minWordCount) { minWordCount = 10; }
         if (!maxWordCount) { maxWordCount = 40; }

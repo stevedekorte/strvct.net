@@ -594,6 +594,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             // sanity check - we don't typically want to add it automatically if subnodes are stored
             assert(anInstance.shouldStoreSubnodes() === false)
             const value = this.onInstanceGetValue(anInstance)
+            assert(value);
             anInstance.addSubnode(value)
         }
 

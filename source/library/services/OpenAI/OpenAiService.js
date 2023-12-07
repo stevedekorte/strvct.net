@@ -39,6 +39,13 @@
       slot.setIsSubnode(true);
     }
 
+    {
+      const slot = this.newSlot("ttsPrompts", null)
+      slot.setFinalInitProto(OpenAiTtsPrompts)
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+    }
+
     /*
     {
       const slot = this.newSlot("jobs", null)

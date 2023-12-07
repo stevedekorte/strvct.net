@@ -150,6 +150,10 @@
     }
 
     {
+      const slot = this.newSlot("audioQueue", null);
+    }
+
+    {
       const slot = this.newSlot("audioBlobQueue", null);
     }
 
@@ -189,6 +193,7 @@
   init () {
     super.init();
     this.setTitle("Azure Speaker");
+    this.setAudioQueue(AudioQueue.clone());
     this.setAudioBlobQueue([]);
 
   }
@@ -198,21 +203,6 @@
     this.setCanDelete(true);
 
   }
-
-  // --- updates ---
-
-  /*
-
-  didUpdateSlotLocaleName (oldValue, newValue) {
-    // sync shortName and voiceStyle
-    //debugger;
-  }
-
-  didUpdateField (aField) {
-    // tell other fields to update
-    debugger
-  }
-  */
 
   // --- helpers ---
 
@@ -270,7 +260,6 @@
   // ---------------------
 
   validVoiceStyles () {
-   // debugger;
     const styles = this.selectedVoice().styleList()
     return styles !== null ? styles : []
   }
@@ -278,24 +267,19 @@
   // ---
 
   setIsMuted (aBool) {
-    this._isMuted = aBool;
-    if (aBool) {
-      this.pause();
-    } else {
-      this.resume();
-    }
+    this.audioQueue().setIsMuted(aBool);
     return this;
   }
+
+  isMuted () {
+    return this.audioQueue().isMuted();
+  }
+
+  // ---
 
   locale () {
     const voice = this.selectedVoice()
     return voice ? voice.locale() : null;
-  }
-
-  async asyncSpeakTextIfAble (text) {
-    if (this.hasApiAccess()) {
-      await this.asyncSpeakText(text);
-    }
   }
 
   pitchString () {
@@ -329,65 +313,19 @@
 
   // -----------------------------------
 
-  queueAudioBlob (audioBlob) {
-    this.audioBlobQueue().push(audioBlob);
-    this.processQueue();
+  queueAudioBlob (audioBlob) { // called by the request once it's complete
+    this.audioQueue().queueAudioBlob(audioBlob);
     return this;
-  }
-
-  processQueue () {
-    if (!this.currentAudio()) {
-      const q = this.audioBlobQueue();
-      if (q.length) {
-        const blob = q.shift();
-        this.playAudioBlob(blob);
-      }
-    }
-    return this;
-  }
-
-  playAudioBlob (audioBlob) {
-    this.pause();
-    if (!this.isMuted()) {
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-      this.setCurrentAudio(audio);
-      audio.onended = () => { this.onAudioEnd(audio); }
-
-      //HostSession.shared().broadcastPlayAudioBlob(audioBlob);
-    } else {
-      this.processQueue();
-    }
-    return this;
-  }
-
-  onAudioEnd (audio) {
-    this.debugLog("finished playing");
-    this.setCurrentAudio(null);
-    this.processQueue();
   }
   
   pause() {
     this.debugLog("pause()");
-
-    const audio = this.currentAudio();
-    if (audio) {
-      audio.pause();
-      this.debugLog("paused");
-    }
+    this.audioQueue().pause();
   }
 
   resume () {
     this.debugLog("resume()");
-
-    const audio = this.currentAudio();
-    if (audio) {
-      //if (audio.paused) {
-        audio.play();
-        this.debugLog("resumed");
-      //}
-    }
+    this.audioQueue().resume();
   }
 
 }.initThisClass());

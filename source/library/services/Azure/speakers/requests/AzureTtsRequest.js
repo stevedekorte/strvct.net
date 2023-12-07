@@ -147,7 +147,7 @@
         body: ssml,
       }
     );
-    console.log("SSML: [[\n" + ssml + "\n]]");
+    //console.log("SSML: [[\n" + ssml + "\n]]");
     this.updateSubtitle("awaiting response");
 
     if (!response.ok) {
