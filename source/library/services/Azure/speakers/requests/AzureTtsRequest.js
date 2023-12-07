@@ -168,15 +168,10 @@
     speaker.queueAudioBlob(audioBlob);
   }
 
-  /*
   title () {
-    const t = super.title()
-    if (t !== "") {
-      return "Untitled" 
-    }
-    return t
+    const p = this.inputText().clipWithEllipsis(30);
+    return p ? p : "Text to Speech Prompt";
   }
-  */
 
   didUpdateSlotInputText () {
     this.setTitle(this.inputText())

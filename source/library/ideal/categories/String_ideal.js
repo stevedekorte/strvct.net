@@ -368,7 +368,7 @@ String.prototype._setterCacheMap = new Map();
         });
     }
 
-    ellipsisClip (length) {
+    clipWithEllipsis (length) {
         // Check if the length of the string is less than or equal to the specified length
         if (this.length <= length) {
             return this.toString();
@@ -471,6 +471,20 @@ String.prototype._setterCacheMap = new Map();
     stripHTML () {
         const doc = new DOMParser().parseFromString(this, 'text/html');
         return doc.body.textContent || "";
+    }
+
+    stripHtmlDivsWithClassNames (classNames) {
+        // Parse the HTML string into a DOM object
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(this, 'text/html');
+    
+        // Iterate over each class name and remove the corresponding divs
+        classNames.forEach(className => {
+            doc.querySelectorAll(`div.${className}`).forEach(el => el.remove());
+        });
+    
+        // Serialize the document back to a string
+        return doc.body.innerHTML;
     }
 
 }).initThisCategory();

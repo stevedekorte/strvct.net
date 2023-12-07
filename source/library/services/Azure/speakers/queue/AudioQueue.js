@@ -57,6 +57,7 @@
     const lines = [];
     const qSize = this.audioBlobQueue().length;
     const isPlaying = this.currentAudio() !== null;
+    
     if (isPlaying) {
       lines.push("playing");
     }

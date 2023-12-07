@@ -145,7 +145,7 @@
   }
 
   title () {
-    const p = this.prompt().ellipsisClip(30);
+    const p = this.prompt().clipWithEllipsis(30);
     return p ? p : "Text to Speech Prompt";
   }
 
