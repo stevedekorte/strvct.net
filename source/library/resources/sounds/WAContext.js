@@ -30,10 +30,12 @@
 
     initPrototypeSlots () {
         this.newSlot("audioContext", null)
+        this.newSlot("setupPromise", null)
     }
 
     init () {
-        super.init()
+        super.init();
+        this.setSetupPromise(Promise.clone());
     }
 
     title () {
@@ -51,16 +53,17 @@
     setupIfNeeded () {
         if (!this.isSetup()) {
             //debugger;
-            this.setAudioContext(new window.AudioContext())
-            Broadcaster.shared().broadcastNameAndArgument("didSetupWAContext", this)
-            //console.warn("can't get audio context until user gesture e.g. tap")
+            this.setAudioContext(new window.AudioContext());
+            this.setupPromise().callResolveFunc();
+            Broadcaster.shared().broadcastNameAndArgument("didSetupWAContext", this);
+            //console.warn("can't get audio context until user gesture e.g. tap");
         }
         return this
     }
     
     /*
     connectSource (webAudioSource) {
-        this.setupIfNeeded()
+        this.setupIfNeeded();
         webAudioSource.connect(this.audioContext().destination);
     }
 

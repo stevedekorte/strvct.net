@@ -143,6 +143,7 @@
         this.debugLog("Launching " + this.fullVersionString())
         this.setupModel()
         this.setupUi()
+        this.appDidInit()
         return this
     }
 

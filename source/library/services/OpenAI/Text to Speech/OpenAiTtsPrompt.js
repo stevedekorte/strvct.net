@@ -17,6 +17,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("");
     }
 
     {
@@ -30,11 +31,13 @@
       slot.setSlotType("String")
       slot.setValidValues(validModels)
       slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("value key")
     }
 
     {
       const validVoices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
-      const slot = this.newSlot("voice", validVoices.first());
+      //const slot = this.newSlot("voice", validVoices.first());
+      const slot = this.newSlot("voice", "fable");
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
@@ -42,13 +45,14 @@
       slot.setSlotType("String")
       slot.setValidValues(validVoices)
       slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("value key")
     }
 
     {
       const validResponseFormats = ["mp3", "opus", "aac", "flac"];
       const slot = this.newSlot("responseFormat", validResponseFormats.first());
       slot.setInspectorPath("")
-      slot.setLabel("response format")
+      slot.setLabel("format")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -66,6 +70,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
       slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("value key")
     }
 
     {
@@ -96,18 +101,20 @@
     {
       const slot = this.newSlot("isMuted", false);
       slot.setInspectorPath("")
-      slot.setLabel("Muted")
+      slot.setLabel("is muted")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Boolean")
       slot.setIsSubnodeField(true)
+      slot.setSummaryFormat("");
     }
 
     {
       const slot = this.newSlot("audioQueue", null)
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
+      slot.setSummaryFormat("");
     }
 
     {
@@ -126,6 +133,7 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false);
+      slot.setSummaryFormat("");
     }
 
     {
@@ -133,7 +141,7 @@
     }
   }
 
-  init() {
+  init () {
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -142,8 +150,11 @@
     this.setCanDelete(true);
     this.setNodeCanReorderSubnodes(false);
     this.setAudioQueue(AudioQueue.clone());
+    this.setNodeSubtitleIsChildrenSummary(true);
+    this.setTitle("Text to Speech");
   }
 
+  /*
   title () {
     const p = this.prompt().clipWithEllipsis(30);
     return p ? p : "Text to Speech Prompt";
@@ -152,6 +163,7 @@
   subtitle () {
     return this.status()
   }
+  */
 
   finalInit() {
     super.finalInit()

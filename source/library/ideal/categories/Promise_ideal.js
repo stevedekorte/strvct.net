@@ -6,6 +6,15 @@
 
     Some extra methods for the Javascript Promise primitive.
 
+    Use:
+
+    const promise = Promise.clone();
+
+    ...
+    promise.callResolveFunc();
+    ...
+    promise.callRejectFunc();
+
 */
 
 Object.defineSlot(Promise, "clone", function () { // add a class method
