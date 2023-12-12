@@ -121,6 +121,7 @@
     const m = this.newMessage();
     m.setSpeakerName(this.aiSpeakerName());
     m.setRole("system");
+    m.setIsComplete(true);
     m.setIsVisibleToUser(false);
     m.setConversation(this);
     return m;

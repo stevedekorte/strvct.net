@@ -82,7 +82,7 @@
     }
 
     {
-      const slot = this.newSlot("streamTarget", null); // will receive onStreamData and onStreamComplete messages
+      const slot = this.newSlot("streamTarget", null); // will receive onStreamData and onStreamEnd messages
     }
 
     {
@@ -306,8 +306,9 @@
     const target = this.streamTarget();
     if (target) {
       // verify streamTarget protocol is implemented by it
+      assert(target.onStreamStart);
       assert(target.onStreamData);
-      assert(target.onStreamComplete);
+      assert(target.onStreamEnd);
     }
   }
 
@@ -316,7 +317,7 @@
     assert(!this.xhr());
 
     this.assertReadyToStream();
-    
+
     this.setIsStreaming(true);
     this.setStatus("streaming");
 
@@ -363,17 +364,17 @@
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
 
-
     const promise = new Promise((resolve, reject) => {
       this.setXhrResolve(resolve);
       this.setXhrReject(reject);
     });
 
-    //const s = JSON.stringify(options, 2, 2);
-    //this.debugLog("SENDING REQUEST BODY:", options.body)
-    xhr.send(options.body);
-
     this.sendDelegate("onRequestBegin")
+    this.streamTarget().onStreamStart(this);
+
+    //const s = JSON.stringify(options, 2, 2);
+    //this.debugLog("SENDING REQUEST BODY:", options.body);
+    xhr.send(options.body);
 
     return promise;
   }
@@ -408,7 +409,7 @@
       this.readXhrLines() // finish reading any remaining lines
     }
 
-    this.streamTarget().onStreamComplete(this);
+    this.streamTarget().onStreamEnd(this); // all data chunks should have already been sent via onStreamData
     this.sendDelegate("onRequestComplete")
     this.setStatus("completed " + this.responseSizeDescription())
     this.xhrResolve()(this.fullContent()); 
@@ -444,13 +445,13 @@
     s += " readyState: " + xhr.readyState; // e.g.. 4 === DONE
     const error = new Error(s);
     this.onError(error);
-    this.streamTarget().onStreamComplete(this);
+    this.streamTarget().onStreamEnd(this);
     this.xhrReject()(error);
   }
 
   onXhrAbort (event) {
     this.setStatus("aborted")
-    this.streamTarget().onStreamComplete(this);
+    this.streamTarget().onStreamEnd(this);
     this.xhrReject()(new Error("aborted"));
   }
 

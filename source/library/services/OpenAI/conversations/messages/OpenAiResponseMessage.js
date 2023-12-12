@@ -189,22 +189,26 @@
     this.setContent(s);
     return this;
   }
+
+  // --- stream target events ---
+
+  onStreamStart (request) {
+  }
   
   onStreamData (request, newContent) {
     this.sendDelegate("onMessageWillUpdate")
-
     this.setContent(request.fullContent())
     this.sendDelegate("onMessageUpdate")
   }
   
-  onStreamComplete (request) {
-    this.setContent(request.fullContent())
-    this.setIsComplete(true)
-    this.sendDelegate("onMessageUpdate")
+  onStreamEnd (request) {
+    //this.setContent(request.fullContent()); // all data has already been sent
+    this.setIsComplete(true);
+    this.sendDelegate("onMessageUpdate");
   }
 
   onValueInput () {
-    this.requestResponse()
+    this.requestResponse();
   }
 
 }.initThisClass());

@@ -5,6 +5,7 @@
 
 */
 
+
 (class OpenAiModels extends BMSummaryNode {
   initPrototypeSlots() {
     this.newSlot("models", null);
@@ -59,6 +60,7 @@
     // so we don't include those, to avoid wasting requests
     const names = []
     names.push("gpt-4")
+    //names.push("gpt-4-1106-preview");
     /*
     names.push("gpt-4-32k")
     names.push("gpt-3.5-turbo")
