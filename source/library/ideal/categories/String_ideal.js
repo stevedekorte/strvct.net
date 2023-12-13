@@ -12,6 +12,10 @@ String.prototype._setterCacheMap = new Map();
 
 (class String_ideal extends String {
     
+    countOccurances (substring) {
+        return this.split(substring).length - 1;
+    }
+
     shallowCopy () {
         return this
     }
