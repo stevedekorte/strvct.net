@@ -24,7 +24,8 @@
     createValueView () {
      //   debugger;
 
-        const v = TextField.clone().setElementClassName("BMChatInputTileValueView")
+        const v = TextField.clone().setElementClassName("BMChatInputTileValueView");
+        v.setIsMergeable(true);
         v.setDisplay("block")
         v.setPosition("relative")
         v.setWordWrap("normal")

@@ -17,6 +17,10 @@
 (class TextField extends StyledDomView {
     
     initPrototypeSlots () {
+
+        this.newSlot("lastMergeValue", ""); // for merge support
+        this.newSlot("isMergeable", false); // for merge support
+        
         this.newSlot("selectedColor", null)
         this.newSlot("unselectedColor", null)
         this.newSlot("doesClearOnReturn", false)
@@ -309,11 +313,13 @@
         return super.setInnerText(s)
     }
 
-    /*
     setValue (newValue) {
-        return this.setString(newValue);
+        if (this.isMergeable()) {
+            return this.setValueWithMerge(newValue);
+        } else {
+            return this.setString(newValue);
+        }
     }
-    */
 
     /*
     setValue (newValue) {
@@ -324,27 +330,29 @@
     }
     */
 
-    setValue (newValue) {
-        const oldValue = this.element().innerHTML;
+    setValueWithMerge (newValue) {
+        //const oldValue = this.element().innerHTML;
+        const oldValue = this.lastMergeValue();
         if (newValue !== oldValue) {
-            /*
-            if (this.parentView().type() !== "ButtonView") {
-                console.log("oldValue: [" + oldValue + "]");
-                debugger;
-            }
-            */
             const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
-            const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
+            //const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
+            const shouldMerge = newValue.beginsWith(oldValue);
             if (shouldMerge) {
+                console.log("oldValue: [" + oldValue + "]");
+                console.log("newValue: [" + newValue + "]");
+
                 const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
                 reader.beginHtmlStream();
                 reader.onStreamHtml(newValue);
                 reader.endHtmlStream();
                 this.element().mergeFrom(reader.rootElement());
+                console.log("merged: [" + this.element().innerHTML + "]");
+                this.setLastMergeValue(newValue);
             } else {
-                return this.setString(newValue);
+                 this.setString(newValue);
             }
         }
+        return this;
     }
 
     value () {
@@ -354,12 +362,13 @@
 
     // allowsHtml
 
-    setNewValue (v) {
+    setNewValue (v) { // private method
         if (this.allowsHtml()) {
             this.setInnerHtml(v)
         } else {
             super.setString(v)
         }
+        this.setLastMergeValue(v);
         return this
     }
     
@@ -744,37 +753,101 @@
 
 // --- experimental DOM merge support ----
 
-HTMLElement.prototype.mergeFrom = function(sourceElement) {
-    // Ensure sourceElement is an instance of HTMLElement
-    if (!(sourceElement instanceof HTMLElement)) {
-        throw new Error('sourceElement must be an instance of HTMLElement');
+/*
+    nodeTypes:
+
+{
+  "1": "ELEMENT_NODE",
+  "2": "ATTRIBUTE_NODE",
+  "3": "TEXT_NODE",
+  "4": "CDATA_SECTION_NODE",
+  "5": "ENTITY_REFERENCE_NODE",
+  "6": "ENTITY_NODE",
+  "7": "PROCESSING_INSTRUCTION_NODE",
+  "8": "COMMENT_NODE",
+  "9": "DOCUMENT_NODE",
+  "10": "DOCUMENT_TYPE_NODE",
+  "11": "DOCUMENT_FRAGMENT_NODE",
+  "12": "NOTATION_NODE"
+}
+
+*/
+
+assert(HTMLElement.prototype.clone === undefined);
+
+HTMLElement.prototype.clone = function() {
+    const newNode = document.createElement(this.tagName);
+    Array.from(this.attributes).forEach(attr => {
+        newNode.setAttribute(attr.name, attr.value);
+    });
+    newNode.innerHTML = this.innerHTML;
+    return newNode
+};
+
+HTMLElement.prototype.mergeFrom = function(remoteElement) {
+    if (this.innerHTML === remoteElement.innerHTML) {
+        return;
     }
 
-    const cloneAndAppend = (currentSourceNode, currentTargetNode) => {
-        Array.from(currentSourceNode.childNodes).forEach((child, index) => {
-            if (child.nodeType === Node.ELEMENT_NODE) {
-                // Find a similar element in the target at the same position
-                let similarElement = currentTargetNode.children[index];
-                if (similarElement && similarElement.tagName === child.tagName && similarElement.className === child.className) {
-                    // If a similar element exists, recurse into it without cloning
-                    if (child.hasChildNodes()) {
-                        cloneAndAppend(child, similarElement);
-                    }
-                    return;
-                }
+    if (!(remoteElement instanceof HTMLElement)) {
+        throw new Error('remoteElement must be an instance of HTMLElement');
+    }
+
+    console.log("         this.innerHTML: " + this.innerHTML);
+    console.log("remoteElement.innerHTML: " + remoteElement.innerHTML);
+
+    const localChildNodes = Array.from(this.childNodes);
+    const remoteChildNodes = Array.from(remoteElement.childNodes);
+
+    // walk through the source
+    assert(localChildNodes.length <= remoteChildNodes.length);
+
+    for (let i = 0; i < remoteChildNodes.length; i++) {
+        //debugger;
+
+        const remoteChildNode = remoteChildNodes[i];
+        
+        if (i < localChildNodes.length) {
+            let localChildNode = localChildNodes[i];
+
+            // special case for cut of tags
+            if (i === localChildNodes.length -1 && localChildNode.nodeType === Node.TEXT_NODE && remoteChildNode.nodeType !== Node.TEXT_NODE) {
+                // this can happen if last string ended on an incomplete tag e.g. "...<"
+                this.removeChild(localChildNode);
+                assert(remoteChildNode.nodeType === Node.ELEMENT_NODE);
+                localChildNode = remoteChildNode.clone();
+                this.addChild(localChildNode);
             }
 
-            // For text nodes or unique element nodes, clone and append
-            let clonedNode = child.cloneNode(false);
-            currentTargetNode.appendChild(clonedNode);
+            assert(localChildNode.nodeType === remoteChildNode.nodeType);
 
-            // Recurse if the current child node has child nodes
-            if (child.hasChildNodes()) {
-                cloneAndAppend(child, clonedNode);
+            // handle children already present
+            switch (localChildNode.nodeType) {
+                case Node.ELEMENT_NODE:
+                    assert(localChildNode.tagName === remoteChildNode.tagName);
+                    assert(localChildNode.className === remoteChildNode.className);
+                    localChildNode.mergeFrom(remoteChildNode);
+                    break;
+                case Node.TEXT_NODE:
+                    localChildNode.textContent = remoteChildNode.textContent;
+                    break;
+                default:
+                    throw new Error("unhandled node type " + localChildNode.nodeType);
             }
-        });
-    };
 
-    // Start the recursive cloning and appending process
-    cloneAndAppend(sourceElement, this);
+        } else {
+            // handle new children
+            switch (remoteChildNode.nodeType) {
+                case Node.ELEMENT_NODE:
+                    this.appendChild(remoteChildNode.clone());
+                    break;
+                case Node.TEXT_NODE:
+                    const newTextNode = document.createTextNode(remoteChildNode.textContent);
+                    this.appendChild(newTextNode);
+                    break;
+                default:
+                    throw new Error("unhandled node type " + localChildNode.nodeType);
+            }
+        }
+    }
 };
