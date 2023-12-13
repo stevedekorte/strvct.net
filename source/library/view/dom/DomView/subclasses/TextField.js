@@ -309,8 +309,42 @@
         return super.setInnerText(s)
     }
 
+    /*
     setValue (newValue) {
-        return this.setString(newValue)
+        return this.setString(newValue);
+    }
+    */
+
+    /*
+    setValue (newValue) {
+        const oldValue = this.string();
+        if (newValue !== oldValue) {
+            return this.setString(newValue);
+        }
+    }
+    */
+
+    setValue (newValue) {
+        const oldValue = this.element().innerHTML;
+        if (newValue !== oldValue) {
+            /*
+            if (this.parentView().type() !== "ButtonView") {
+                console.log("oldValue: [" + oldValue + "]");
+                debugger;
+            }
+            */
+            const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
+            const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
+            if (shouldMerge) {
+                const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
+                reader.beginHtmlStream();
+                reader.onStreamHtml(newValue);
+                reader.endHtmlStream();
+                this.element().mergeFrom(reader.rootElement());
+            } else {
+                return this.setString(newValue);
+            }
+        }
     }
 
     value () {
@@ -705,3 +739,42 @@
     }
 
 }.initThisClass());
+
+
+
+// --- experimental DOM merge support ----
+
+HTMLElement.prototype.mergeFrom = function(sourceElement) {
+    // Ensure sourceElement is an instance of HTMLElement
+    if (!(sourceElement instanceof HTMLElement)) {
+        throw new Error('sourceElement must be an instance of HTMLElement');
+    }
+
+    const cloneAndAppend = (currentSourceNode, currentTargetNode) => {
+        Array.from(currentSourceNode.childNodes).forEach((child, index) => {
+            if (child.nodeType === Node.ELEMENT_NODE) {
+                // Find a similar element in the target at the same position
+                let similarElement = currentTargetNode.children[index];
+                if (similarElement && similarElement.tagName === child.tagName && similarElement.className === child.className) {
+                    // If a similar element exists, recurse into it without cloning
+                    if (child.hasChildNodes()) {
+                        cloneAndAppend(child, similarElement);
+                    }
+                    return;
+                }
+            }
+
+            // For text nodes or unique element nodes, clone and append
+            let clonedNode = child.cloneNode(false);
+            currentTargetNode.appendChild(clonedNode);
+
+            // Recurse if the current child node has child nodes
+            if (child.hasChildNodes()) {
+                cloneAndAppend(child, clonedNode);
+            }
+        });
+    };
+
+    // Start the recursive cloning and appending process
+    cloneAndAppend(sourceElement, this);
+};

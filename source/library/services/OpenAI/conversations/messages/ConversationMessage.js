@@ -285,10 +285,6 @@
   }
   */
 
-  centerDotsHtml () {
-    return `........<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
-  }
-
   delegate () {
     if (!this._delegate) {
       return this.conversation()

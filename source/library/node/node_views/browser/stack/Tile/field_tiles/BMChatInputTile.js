@@ -102,6 +102,10 @@
         return super.syncFromNode()
     }
 
+    // Support for animated trailing dots using CSS "after" style and CSS animation.
+    // It's toggled using CSS variables "--div-after-display" and "--div-after-animation".
+    // See CSS BMChatInputTileValueView class settings.
+
     addDots () {
         const view = this.valueView(); // this is a TextField
         view.setCssProperty("--div-after-display", "inline-block");
@@ -116,8 +120,10 @@
         return this;
     }
 
+    /*
     centerDotsHtml () {
         return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
     }
+    */
     
 }.initThisClass());
