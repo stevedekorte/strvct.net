@@ -21,6 +21,23 @@
         return this
     }
 
+    onSpeakingText (aNote) {
+        const text = aNote.info();
+        console.log("onSpeakingText: [" + text + "]");
+        const e = this.valueView().element().findElementWithTextContent(text);
+        assert(e);
+        //e.style.color = "white";
+        e.style.opacity = 1;
+    }
+
+    onSpokeText (aNote) {
+        const text = aNote.info();
+        console.log("onSpokeText: [" + text + "]");
+        const e = this.valueView().element().findElementWithTextContent(text);
+        assert(e);
+        e.style.opacity = 0.6;
+    }
+
     createValueView () {
      //   debugger;
 

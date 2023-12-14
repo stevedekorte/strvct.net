@@ -334,19 +334,20 @@
         //const oldValue = this.element().innerHTML;
         const oldValue = this.lastMergeValue();
         if (newValue !== oldValue) {
-            const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
+            //const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
+            const mergeableChange = (newValue.length > oldValue.length);
             //const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
             const shouldMerge = newValue.beginsWith(oldValue);
             if (shouldMerge) {
-                console.log("oldValue: [" + oldValue + "]");
-                console.log("newValue: [" + newValue + "]");
+                //console.log("oldValue: [" + oldValue + "]");
+                //console.log("newValue: [" + newValue + "]");
 
                 const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
                 reader.beginHtmlStream();
                 reader.onStreamHtml(newValue);
                 reader.endHtmlStream();
                 this.element().mergeFrom(reader.rootElement());
-                console.log("merged: [" + this.element().innerHTML + "]");
+                //console.log("merged: [" + this.element().innerHTML + "]");
                 this.setLastMergeValue(newValue);
             } else {
                  this.setString(newValue);
@@ -752,6 +753,7 @@
 
 
 // --- experimental DOM merge support ----
+// TODO: move to ideal if useful
 
 /*
     nodeTypes:
@@ -793,8 +795,8 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
         throw new Error('remoteElement must be an instance of HTMLElement');
     }
 
-    console.log("         this.innerHTML: " + this.innerHTML);
-    console.log("remoteElement.innerHTML: " + remoteElement.innerHTML);
+    //console.log("         this.innerHTML: " + this.innerHTML);
+    //console.log("remoteElement.innerHTML: " + remoteElement.innerHTML);
 
     const localChildNodes = Array.from(this.childNodes);
     const remoteChildNodes = Array.from(remoteElement.childNodes);
@@ -816,7 +818,7 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
                 this.removeChild(localChildNode);
                 assert(remoteChildNode.nodeType === Node.ELEMENT_NODE);
                 localChildNode = remoteChildNode.clone();
-                this.addChild(localChildNode);
+                this.appendChild(localChildNode);
             }
 
             assert(localChildNode.nodeType === remoteChildNode.nodeType);
@@ -851,3 +853,24 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
         }
     }
 };
+
+HTMLElement.prototype.findElementWithTextContent = function(textContent) {
+    const children = Array.from(this.childNodes);
+
+    for (let i = 0; i < children.length; i++) {
+        const child = children[i];
+
+        if (child.textContent === textContent) {
+            return child;
+        }
+
+        if (child.nodeType === Node.ELEMENT_NODE) {
+            const match = child.findElementWithTextContent(textContent);
+            if (match) {
+                return match;
+            }
+        }
+    }
+
+    return null;
+}

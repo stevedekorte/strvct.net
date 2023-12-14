@@ -2,7 +2,7 @@
 
 /* 
     OpenAiTtsPrompt
-
+ 
 */
 
 (class OpenAiTtsPrompt extends BMSummaryNode {
@@ -117,12 +117,13 @@
       slot.setSummaryFormat("");
     }
 
+    /*
     {
       const slot = this.newSlot("outputAudioBlob", null)
       slot.setShouldStoreSlot(false);
       //slot.setIsSubnode(true);
     }
-
+    */
 
     {
       const slot = this.newSlot("status", ""); // String
@@ -134,6 +135,10 @@
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false);
       slot.setSummaryFormat("");
+    }
+
+    {
+      const slot = this.newSlot("sound", null); // latest sound being generated
     }
 
     {
@@ -199,7 +204,8 @@
   }
 
   generate () {
-    this.start()
+    this.start();
+    return this;
   }
 
   generateActionInfo () {
@@ -217,9 +223,11 @@
   }
 
   start () {
-    this.setError("")
-    this.setStatus("fetching response...")
-    this.sendDelegate("onTtsPromptStart", [this])
+    this.setError("");
+    this.setStatus("fetching response...");
+    this.sendDelegate("onTtsPromptStart", [this]);
+
+    this.setSound(WASound.clone());
 
     const apiKey = this.service().apiKey(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
@@ -253,10 +261,12 @@
     // need to call asyncPrepareToStoreSynchronously as OutputAudioBlob slot is stored,
     // and all writes to the store tx need to be sync so the store is in a consistent state for it's
     // next read/write
-    await audioBlob.asyncPrepareToStoreSynchronously() 
-    this.setOutputAudioBlob(audioBlob);
-    this.audioQueue().queueAudioBlob(audioBlob);
-
+    //await audioBlob.asyncPrepareToStoreSynchronously() 
+    //const sound = WASound.fromBlob(audioBlob);
+    
+    const sound = this.sound();
+    sound.setDataBlob(audioBlob);
+    this.audioQueue().queueWASound(sound);
     this.setStatus("success");
     console.log('Success: got audio blob of size: ' + audioBlob.size);
   }
@@ -269,26 +279,6 @@
     this.sendDelegate("onTtsPromptError", [this]);
     this.onEnd();
   }
-
-  // --- image delegate messages ---
-
-  /*
-  // replace with onPlaying() onPlayed()?
-
-  onImageLoaded (aiImage) {
-    this.didUpdateNode()
-    this.updateStatus()
-    this.sendDelegate("onTtsPromptImageLoaded", [this, aiImage])
-    this.onEnd();
-  }
-
-  onImageError (aiImage) {
-    this.didUpdateNode()
-    this.updateStatus()
-    this.sendDelegate("onTtsPromptImageError", [this, aiImage])
-    this.onEnd();
-  }
-  */
 
   onEnd () {
     this.sendDelegate("onTtsPromptEnd", [this])

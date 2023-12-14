@@ -1,49 +1,29 @@
 "use strict";
 
 /* 
-    AudioQueue 
+    AudioClip 
 
 */
 
-(class AudioQueue extends BMSummaryNode {
+(class AudioClip extends BMSummaryNode {
 
   initPrototypeSlots () {
 
     {
-      const slot = this.newSlot("isMuted", false);
+      const slot = this.newSlot("transcript", false);
     }
 
     {
-      const slot = this.newSlot("currentAudio", null);
-      /*
-      slot.setInspectorPath("")
-      slot.setLabel("Muted")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("AudioBlob")
-      slot.setIsSubnodeField(true)
-      */
-    }
-
-    {
-      const slot = this.newSlot("audioBlobQueue", null);
+      const slot = this.newSlot("audioBlob", null);
     }
 
     this.setNodeSubtitleIsChildrenSummary(true)
     this.setShouldStoreSubnodes(false)
   }
 
-  /*
-  initPrototype () {
-    const slot = this.slotNamed("shortName")
-    slot.setValidValues(this.validShortNames())
-  }
-  */
-
   init () {
     super.init();
-    this.setTitle("Audio Queue");
+    this.setTitle("AudioClip");
     this.setAudioBlobQueue([]);
 
   }
@@ -55,26 +35,39 @@
 
   subtitle () {
     const lines = [];
-    const qSize = this.audioBlobQueue().length;
-    const isPlaying = this.currentAudio() !== null;
-    
-    if (isPlaying) {
-      lines.push("playing");
-    }
-
-    if (qSize) {
-      lines.push(qSize + " clips queued");
-    }
-
-    if (this.isMuted()) {
-      lines.push("muted");
-    }
-
+    lines.push(this.transcript().clipWithEllipsis(20));
+    lines.push(this.sizeInBytes() + " bytes");
+    lines.push(this.lengthInSeconds() + " seconds");
     return lines.join("\n");
   }
 
-  // ---
+  newAudioObject () {
+    const audioBlob = this.audioBlob();
+    if (audioBlob) {
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      return audio;
+    }
+    return null
+  }
 
+  sizeInBytes () {
+    if (this.audioBlob()) {
+      return this.audioBlob().size;
+    }
+    return 0;
+  }
+
+  lengthInSeconds () {
+    const audio = this.newAudioObject();
+    if (audio) {
+      return audio.duration;
+    }
+    return 0;
+  }
+
+  // ---
+  
   setIsMuted (aBool) {
     this._isMuted = aBool;
     if (aBool) {
@@ -85,7 +78,7 @@
     return this;
   }
 
-  // -----------------------------------
+  // ---
 
   queueAudioBlob (audioBlob) {
     this.audioBlobQueue().push(audioBlob);

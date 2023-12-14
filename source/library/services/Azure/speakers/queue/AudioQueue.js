@@ -15,19 +15,10 @@
 
     {
       const slot = this.newSlot("currentAudio", null);
-      /*
-      slot.setInspectorPath("")
-      slot.setLabel("Muted")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("AudioBlob")
-      slot.setIsSubnodeField(true)
-      */
     }
 
     {
-      const slot = this.newSlot("audioBlobQueue", null);
+      const slot = this.newSlot("queue", null);
     }
 
     this.setNodeSubtitleIsChildrenSummary(true)
@@ -44,7 +35,7 @@
   init () {
     super.init();
     this.setTitle("Audio Queue");
-    this.setAudioBlobQueue([]);
+    this.setQueue([]);
 
   }
 
@@ -55,15 +46,14 @@
 
   subtitle () {
     const lines = [];
-    const qSize = this.audioBlobQueue().length;
     const isPlaying = this.currentAudio() !== null;
     
     if (isPlaying) {
       lines.push("playing");
     }
 
-    if (qSize) {
-      lines.push(qSize + " clips queued");
+    if (this.queueSize()) {
+      lines.push(this.queueSize() + " clips queued");
     }
 
     if (this.isMuted()) {
@@ -71,6 +61,10 @@
     }
 
     return lines.join("\n");
+  }
+
+  queueSize () {
+    return this.queue().length;
   }
 
   // ---
@@ -88,39 +82,54 @@
   // -----------------------------------
 
   queueAudioBlob (audioBlob) {
-    this.audioBlobQueue().push(audioBlob);
+    const sound = WASound.fromBlob(audioBlob);
+    this.queueWASound(sound);
+    return sound;
+  }
+
+  queueWASound (waSound) {
+    this.queue().push(waSound);
     this.processQueue();
     this.didUpdateNode();
-    return this;
   }
 
   processQueue () {
     if (!this.currentAudio()) {
-      const q = this.audioBlobQueue();
+      const q = this.queue();
       if (q.length) {
-        const blob = q.shift();
-        this.playAudioBlob(blob);
+        const sound = q.shift();
+        this.playSound(sound);
       }
     }
     return this;
   }
 
-  playAudioBlob (audioBlob) {
+  async playSound (sound) {
     this.pause();
     if (!this.isMuted()) {
+      //sound.setData(audioBlob);
+      sound.setDelegate(this);
+      this.setCurrentAudio(sound);
+      sound.play(); // returns a promise
+
       // URL.createObjectURL(), unlike FileReader.readAsDataURL(),
       // does not give access to the converted URL
+      /*
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
       audio.play();
       this.setCurrentAudio(audio);
       audio.onended = () => { this.onAudioEnd(audio); }
-
+      */
       //HostSession.shared().broadcastPlayAudioBlob(audioBlob);
     } else {
       this.processQueue();
     }
     return this;
+  }
+
+  onSoundEnded (waSound) {
+    this.onAudioEnd(null);
   }
 
   onAudioEnd (audio) {

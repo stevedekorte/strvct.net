@@ -27,6 +27,9 @@
 
     initPrototypeSlots () {
 
+        // converting blob to ArrayBuffer
+        this.newSlot("arrayBufferPromise", null);
+
         // decoding 
         this.newSlot("decodePromise", null);
         this.newSlot("decodedBuffer", null);
@@ -45,7 +48,14 @@
 
         this.newSlot("whenToPlay", 0);
         this.newSlot("offsetInSeconds", 0);
-        this.newSlot("durationInSeconds", undefined);
+        //this.newSlot("durationInSeconds", undefined);
+
+        this.newSlot("isPlaying", false);
+        this.newSlot("delegate", null);
+
+        // optional info
+        this.newSlot("label", null);
+        this.newSlot("transcript", null);
 
         //this.newSlot("loopStart", null);
         //this.newSlot("loopEnd", null);
@@ -54,6 +64,7 @@
     init () {
         super.init();
         this.setDecodePromise(Promise.clone());
+        this.setArrayBufferPromise(Promise.resolve());
     }
 
     title () {
@@ -64,20 +75,51 @@
         return this.path().lastPathComponent().sansExtension();
     }
 
+    // --- blob ---
+
+    static fromBlob (audioBlob) {
+        return this.clone().setDataBlob(audioBlob);
+    }
+
+    setDataBlob (audioBlob) {
+        const promise = Promise.clone();
+        this.setArrayBufferPromise(promise);
+
+        const fileReader = new FileReader();
+
+        fileReader.onload = (event) => {
+            const arrayBuffer = event.target.result;
+            this.setData(arrayBuffer);
+            promise.callResolveFunc();
+        }
+
+        fileReader.onerror = (error) => {
+            promise.callRejectFunc(error);
+        }
+
+        fileReader.readAsArrayBuffer(audioBlob);
+        return this;
+    }
+
     // --- attributes ---
 
     duration () {
         if (this.decodedBuffer()) {
-            return this.decodedBuffer().duration;
+            return this.decodedBuffer().duration; // in seconds
         }
         return 0;
     }
 
-    length () { // sample count
+    sampleCount () { 
         if (this.decodedBuffer()) {
             return this.decodedBuffer().length;
         }
         return 0;
+    }
+
+    length () { 
+        throw new Error("use sampleCount method instead");
+        return this.sampleCount();
     }
 
     numberOfChannels () { // sample count
@@ -111,18 +153,21 @@
             return Promise.resolve();
         }
 
-        if (!this.hasData()) {
-            throw new Error("no data for sound");
-        }
-
         return WAContext.shared().setupPromise().then(
-            () => { this.decodeBuffer(this.data()); }
+            () => { 
+                return this.arrayBufferPromise().then(() => { 
+                    if (!this.hasData()) {
+                        throw new Error("no data for sound");
+                    }
+                    return this.decodeBuffer(this.data());
+                }); 
+            }
         );
     }
 
-    decodeBuffer (aBuffer) {
-        assert(!Type.isNullOrUndefined(aBuffer));
-        this.audioCtx().decodeAudioData(aBuffer,
+    decodeBuffer (audioArrayBuffer) {
+        assert(!Type.isNullOrUndefined(audioArrayBuffer));
+        this.audioCtx().decodeAudioData(audioArrayBuffer,
             decodedBuffer => { 
                 this.onDecode(decodedBuffer); // wrap in try?
                 this.decodePromise().callResolveFunc();
@@ -133,6 +178,7 @@
             }
         );
         this.setLoadState("decoding");
+        return this.decodePromise()
     }
 
     // --- decode ---
@@ -162,22 +208,22 @@
         source.buffer = this.decodedBuffer();
         source.connect(ctx.destination);
         this.syncToSource(source);
-        source.addEventListener("ended", (event) => { this.onEnded(event) })
+        source.addEventListener("ended", (event) => { 
+            this.onEnded(event);
+        })
         return source
     }
 
     syncToSource (source) {
         source.playbackRate.value = this.playbackRate();
         source.loop = this.loop();
-        source.onended = () => { this.onEnded() };
+        /*
+        source.onended = () => { 
+            debugger;
+            this.onEnded() 
+        };
+        */
         return this;
-    }
-
-    onEnded () {
-        // playback ended
-        this.playPromise().callResolveFunc();
-        this.setSource(null);
-        this.postNoteNamed("onSoundEnded");
     }
 
     // --- play ---
@@ -187,10 +233,19 @@
             this.setPlayPromise(Promise.clone());
             this.setSource(this.newAudioSource());
             this.syncToSource(this.source());
-            this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.durationInSeconds());
-            this.postNoteNamed("onSoundStarted");
+            assert(this.decodedBuffer());
+            this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
+            this.setIsPlaying(true);
+            this.post("onSoundStarted");
             return this.playPromise();
         })
+    }
+
+    onEnded () {
+        this.setIsPlaying(false);
+        this.playPromise().callResolveFunc();
+        this.setSource(null);
+        this.post("onSoundEnded");
     }
 
     stop () {
@@ -216,6 +271,31 @@
     sourceState () {
         // valid states: ["suspended", "running", "closed"]
         return this.source() ? this.source().state : "no source";
+    }
+
+    post (methodName) {
+        this.postNoteNamed(methodName);
+        this.sendDelegate(methodName);
+        return this;
+    }
+
+    sendDelegate (methodName, args = [this]) {
+        const d = this.delegate();
+        if (d) {
+          const f = d[methodName]
+          if (f) {
+            f.apply(d, args)
+            return true
+          }
+        } else {
+          /*
+          const error = this.type() + " delegate missing method '" + methodName + "'";
+          console.log(error);
+          debugger;
+          throw new Error(error);
+          */
+        }
+        return false
     }
 
 }.initThisClass());
