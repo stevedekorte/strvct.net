@@ -40,8 +40,8 @@
     }
 
     {
-      const slot = this.newSlot("ttsPrompts", null)
-      slot.setFinalInitProto(OpenAiTtsPrompts)
+      const slot = this.newSlot("ttsSessions", null)
+      slot.setFinalInitProto(OpenAiTtsSessions)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }

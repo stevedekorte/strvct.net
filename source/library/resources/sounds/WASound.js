@@ -51,7 +51,7 @@
         //this.newSlot("durationInSeconds", undefined);
 
         this.newSlot("isPlaying", false);
-        this.newSlot("delegate", null);
+        this.newSlot("delegateSet", null);
 
         // optional info
         this.newSlot("label", null);
@@ -65,6 +65,7 @@
         super.init();
         this.setDecodePromise(Promise.clone());
         this.setArrayBufferPromise(Promise.resolve());
+        this.setDelegateSet(new Set());
     }
 
     title () {
@@ -215,14 +216,9 @@
     }
 
     syncToSource (source) {
+        // TODO: do this work if it's already playing?
         source.playbackRate.value = this.playbackRate();
         source.loop = this.loop();
-        /*
-        source.onended = () => { 
-            debugger;
-            this.onEnded() 
-        };
-        */
         return this;
     }
 
@@ -236,15 +232,34 @@
             assert(this.decodedBuffer());
             this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
             this.setIsPlaying(true);
-            this.post("onSoundStarted");
+            this.onStarted();
             return this.playPromise();
         })
     }
 
+    description () {
+        const parts = [this.type()];
+        if (this.label()) {
+            parts.push(this.label());
+        }
+
+        if (this.transcript()) {
+            parts.push(this.transcript().clipWithEllipsis(15));
+        }
+
+        return parts.join(" ");
+    }
+
+    onStarted () {
+        console.log("Sound.onStarted() " + this.description());
+        this.post("onSoundStarted");
+    }
+
     onEnded () {
+        console.log("Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
-        this.playPromise().callResolveFunc();
         this.setSource(null);
+        this.playPromise().callResolveFunc();
         this.post("onSoundEnded");
     }
 
@@ -279,23 +294,39 @@
         return this;
     }
 
+    addDelegate (d) {
+        this.delegateSet().add(d);
+        return this;
+    }
+
+    removeDelegate (d) {
+        this.delegateSet().delete(d);
+        return this;
+    }
+
     sendDelegate (methodName, args = [this]) {
+        const sendDelegate = (d, methodName, args) => {
+            const f = d[methodName]
+            if (f) {
+              f.apply(d, args)
+            }
+        };
+
+        /*
         const d = this.delegate();
         if (d) {
-          const f = d[methodName]
-          if (f) {
-            f.apply(d, args)
-            return true
-          }
+          sendDelegate(d, methodName, args);
         } else {
-          /*
           const error = this.type() + " delegate missing method '" + methodName + "'";
           console.log(error);
           debugger;
           throw new Error(error);
-          */
         }
-        return false
+        */
+
+        this.delegateSet().forEach(d => { 
+            sendDelegate(d, methodName, args); 
+        });
     }
 
 }.initThisClass());

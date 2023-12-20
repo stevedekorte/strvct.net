@@ -83,7 +83,7 @@
 
   // --- text ---
 
-  cleanText(text) {
+  cleanText (text) {
     // make sure we don't lose the whitespace formatting as we need it for pacing
     text = text.replaceAll("<p>", "");
     text = text.replaceAll("</p>", "\n\n");

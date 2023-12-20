@@ -429,7 +429,7 @@
 
     commitStoreDirtyObjects () {
         if (this.hasDirtyObjects()) {
-            console.log(this.type() + " --- commitStoreDirtyObjects ---")
+            //console.log(this.type() + " --- commitStoreDirtyObjects ---")
 
             //this.debugLog("--- commitStoreDirtyObjects begin ---")
             //debugger;
@@ -522,8 +522,13 @@
             debugger
             return null
         }
-        
         assert(!Type.isNullOrUndefined(aRecord.id))
+
+        if (Type.isUndefined(aClass.instanceFromRecordInStore)) {
+            console.warn("Class '" + className + "' missing method 'instanceFromRecordInStore' - deserializing as null");
+            debugger;
+            return null;
+        }
         const obj = aClass.instanceFromRecordInStore(aRecord, this)
         assert(!this.hasActiveObject(obj))
         obj.setPuuid(aRecord.id)

@@ -1,11 +1,11 @@
 "use strict";
 
 /* 
-    OpenAiTtsPrompt
+    OpenAiTtsSession
  
 */
 
-(class OpenAiTtsPrompt extends BMSummaryNode {
+(class OpenAiTtsSession extends BMSummaryNode {
   initPrototypeSlots() {
 
     {
@@ -111,7 +111,8 @@
     }
 
     {
-      const slot = this.newSlot("audioQueue", null)
+      const slot = this.newSlot("audioQueue", null);
+      slot.setDuplicateOp("copyValue")
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
       slot.setSummaryFormat("");
@@ -154,9 +155,11 @@
     this.setCanAdd(false);
     this.setCanDelete(true);
     this.setNodeCanReorderSubnodes(false);
-    this.setAudioQueue(AudioQueue.clone());
+    //if (!this.audioQueue()) {
+      this.setAudioQueue(AudioQueue.clone());
+    //}
     this.setNodeSubtitleIsChildrenSummary(true);
-    this.setTitle("Text to Speech");
+    this.setTitle("Text to Speech Session");
   }
 
   /*
@@ -175,12 +178,12 @@
     this.setCanDelete(true)
   }
 
-  ttsPrompts () {
+  ttsSessions () {
     return this.parentNode()
   }
 
   service () {
-    //return this.ttsPrompts().service()
+    //return this.ttsSessions().service()
     return HavewordsApp.shared().services().openAiService()
   }
 
@@ -203,11 +206,6 @@
     return this.prompt().length > 0;
   }
 
-  generate () {
-    this.start();
-    return this;
-  }
-
   generateActionInfo () {
     return {
         isEnabled: this.canGenerate(),
@@ -222,15 +220,56 @@
     return "https://api.openai.com/v1/audio/speech";
   }
 
-  start () {
+  apiKey () {
+    return this.service().apiKey()
+  }
+
+  newRequest () {
+    const request = OpenAiRequest.clone();
+    request.setApiUrl(this.endpoint());
+    request.setApiKey(this.apiKey());
+    request.setDelegate(this)
+
+    const bodyJson = {
+      model: this.model(), 
+      voice: this.voice(), 
+      input: this.prompt(),
+      response_format: this.responseFormat(), 
+      speed: this.speed()
+    };
+
+    request.setBodyJson(bodyJson);
+    return request;
+  }
+
+  onRequestBegin(request) {
+
+  }
+
+  onRequestComplete(request) {
+    this.onSuccess();
+  }
+
+  onRequestError(request, error) {
+
+  }
+
+  async generate () {
+    const request = this.newRequest();
+    request._sound = WASound.clone();
+    await request.asyncSend();
+    return sound;
+  }
+
+  /*
+  generate () {
     this.setError("");
     this.setStatus("fetching response...");
     this.sendDelegate("onTtsPromptStart", [this]);
 
-    this.setSound(WASound.clone());
+    const sound = WASound.clone();
 
     const apiKey = this.service().apiKey(); // Replace with your actual API key
-    const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
     
     const bodyJson = {
         model: this.model(), 
@@ -249,12 +288,15 @@
         body: JSON.stringify(bodyJson)
     })
     .then(response => {
+      response._sound = sound;
         this.onSuccess(response);
     })
     .catch((error) => {
         this.onError(error);
     });
+    return sound;
   }
+  */
 
   async onSuccess (response) {
     const audioBlob = await response.blob();
@@ -263,12 +305,12 @@
     // next read/write
     //await audioBlob.asyncPrepareToStoreSynchronously() 
     //const sound = WASound.fromBlob(audioBlob);
-    
-    const sound = this.sound();
+
+    const sound = response._sound;
     sound.setDataBlob(audioBlob);
     this.audioQueue().queueWASound(sound);
     this.setStatus("success");
-    console.log('Success: got audio blob of size: ' + audioBlob.size);
+    //console.log('Success: got audio blob of size: ' + audioBlob.size);
   }
 
   onError (error) {

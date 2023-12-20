@@ -125,7 +125,7 @@
   }
 
   title () {
-    const p = this.prompt()
+    const p = this.prompt().clipWithEllipsis(15);
     return p ? p : "Image Prompt";
   }
 

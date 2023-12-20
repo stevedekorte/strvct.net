@@ -14,11 +14,11 @@
     }
 
     {
-      const slot = this.newSlot("currentAudio", null);
+      const slot = this.newSlot("currentSound", null);
     }
 
     {
-      const slot = this.newSlot("queue", null);
+      const slot = this.newSlot("queue", null); // FIFO (first in first out) queue
     }
 
     this.setNodeSubtitleIsChildrenSummary(true)
@@ -46,7 +46,7 @@
 
   subtitle () {
     const lines = [];
-    const isPlaying = this.currentAudio() !== null;
+    const isPlaying = this.currentSound() !== null;
     
     if (isPlaying) {
       lines.push("playing");
@@ -87,17 +87,19 @@
     return sound;
   }
 
-  queueWASound (waSound) {
-    this.queue().push(waSound);
+  queueWASound (sound) {
+    console.log(this.type() + " PUSH " + sound.description());
+    this.queue().push(sound);
     this.processQueue();
     this.didUpdateNode();
   }
 
   processQueue () {
-    if (!this.currentAudio()) {
+    if (!this.currentSound()) {
       const q = this.queue();
       if (q.length) {
         const sound = q.shift();
+        console.log(this.type() + " POP " + sound.description());
         this.playSound(sound);
       }
     }
@@ -105,23 +107,12 @@
   }
 
   async playSound (sound) {
-    this.pause();
+    //this.pause();
     if (!this.isMuted()) {
       //sound.setData(audioBlob);
-      sound.setDelegate(this);
-      this.setCurrentAudio(sound);
+      sound.addDelegate(this);
+      this.setCurrentSound(sound);
       sound.play(); // returns a promise
-
-      // URL.createObjectURL(), unlike FileReader.readAsDataURL(),
-      // does not give access to the converted URL
-      /*
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-      this.setCurrentAudio(audio);
-      audio.onended = () => { this.onAudioEnd(audio); }
-      */
-      //HostSession.shared().broadcastPlayAudioBlob(audioBlob);
     } else {
       this.processQueue();
     }
@@ -129,30 +120,30 @@
   }
 
   onSoundEnded (waSound) {
-    this.onAudioEnd(null);
-  }
-
-  onAudioEnd (audio) {
+    waSound.removeDelegate(this);
     this.debugLog("finished playing");
-    this.setCurrentAudio(null);
+    this.setCurrentSound(null);
     this.processQueue();
     this.didUpdateNode();
   }
   
   pause () {
+    throw new Error("pause not supported");
+    /*
     this.debugLog("pause()");
 
-    const audio = this.currentAudio();
+    const audio = this.currentSound();
     if (audio) {
       audio.pause();
       this.debugLog("paused");
     }
+    */
   }
 
   resume () {
     this.debugLog("resume()");
 
-    const audio = this.currentAudio();
+    const audio = this.currentSound();
     if (audio) {
       //if (audio.paused) {
         audio.play();
@@ -163,3 +154,14 @@
 
 }.initThisClass());
 
+  /*
+  Old Audio code
+
+  // URL.createObjectURL(), unlike FileReader.readAsDataURL(),
+  // does not give access to the converted URL
+  const audioUrl = URL.createObjectURL(audioBlob);
+  const audio = new Audio(audioUrl);
+  audio.play();
+  this.setCurrentSound(audio);
+  audio.onended = () => { this.onAudioEnd(audio); }
+  */

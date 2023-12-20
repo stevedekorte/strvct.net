@@ -244,7 +244,7 @@
     }
 
     shouldDebugNote (note) {
-        return this.isDebugging() === true && (this.debugNoteName() === null || this.debugNoteName() === note.name());
+        return note.isDebugging() || (this.isDebugging() === true && (this.debugNoteName() === null || this.debugNoteName() === note.name()));
     }
     
     postNotificationNow (note) {
@@ -258,7 +258,7 @@
         const showDebug = this.shouldDebugNote(note)
 
         if (showDebug) {
-            this.debugLog(" senderId " + note.senderId() + " posting " + note.name())
+            console.log(" >>> " + this.type() + " senderId " + note.senderId() + " posting " + note.name())
             //this.showObservers()
         }
         
@@ -267,8 +267,10 @@
         observations.forEach( (obs) => {
             if (obs.matchesNotification(note)) {
                 if (showDebug) {
-                    this.debugLog(" " + note.name() + " matches obs ", obs)
-                    this.debugLog(" sending ", note.name() + " to obs " + obs.type())
+                    //console.log(" >>> " + this.type() + " " + note.name() + " matches obs: " + obs.description())
+                    if (obs.observer.type() === "HwChatInputTile") {
+                        console.log(" >>> " +this.type() + " sending ", note.name() + " to observer " + obs.observer().typeId())
+                    }
                 }
             
                 obs.sendNotification(note)    

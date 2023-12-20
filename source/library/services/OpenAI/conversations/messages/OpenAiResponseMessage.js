@@ -177,16 +177,9 @@
   onRequestComplete (aRequest) {
     //this.setRequest(null)
     //this.setStatus("complete")
-    this.cleanResult()
     this.setNote(null)
     this.setIsComplete(true)
     this.sendDelegate("onMessageComplete")
-  }
-
-  cleanResult () {
-    const s = this.content().replace(/>\n+</g, '><'); // remove new lines between ">" and "<" e.g. ">\n<" -> "><"
-    this.setContent(s);
-    return this;
   }
 
   // --- stream target events ---

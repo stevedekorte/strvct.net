@@ -1,4 +1,4 @@
 [
-    "OpenAiTtsPrompt.js",
-    "OpenAiTtsPrompts.js"
+    "OpenAiTtsSession.js",
+    "OpenAiTtsSessions.js"
 ]

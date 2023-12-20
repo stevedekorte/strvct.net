@@ -1,11 +1,11 @@
 "use strict";
 
 /* 
-    OpenAiTtsPrompts
+    OpenAiTtsSessions
 
 */
 
-(class OpenAiTtsPrompts extends BMSummaryNode {
+(class OpenAiTtsSessions extends BMSummaryNode {
   initPrototypeSlots () {
 
   }
@@ -14,14 +14,14 @@
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([OpenAiTtsPrompt])
+    this.setSubnodeClasses([OpenAiTtsSession])
     this.setCanAdd(true)
     this.setNodeCanReorderSubnodes(true)
   }
 
   finalInit () {
     super.finalInit()
-    this.setTitle("Text to Speech");
+    this.setTitle("Text to Speech Sessions");
   }
 
   service () {

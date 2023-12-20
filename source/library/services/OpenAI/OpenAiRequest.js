@@ -4,6 +4,12 @@
     OpenAiRequest
 
     Wrapper for request to OpenAi API
+    delegate methods:
+
+    onRequestBegin(request)
+    onRequestComplete(request)
+    onRequestError(request, error)
+
 
 */
 
@@ -240,14 +246,12 @@
       this.setIsStreaming(false);
       this.sendDelegate("onRequestBegin")
 
-
       this.assertValid();
       if (this.isDebugging()) {
         this.showRequest();
       }
 
       const options = this.requestOptions();
-
       const controller = new AbortController();
       this.setFetchAbortController(controller);
       options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
@@ -383,18 +387,6 @@
     this.onXhrRead();
   }
 
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
-    if (d) {
-      const f = d[methodName]
-      if (f) {
-        f.apply(d, args)
-        return true
-      }
-    }
-    return false
-  }
-
   onXhrLoadEnd (event) {
     //debugger
     const isError = this.xhr().status >= 300
@@ -428,7 +420,7 @@
   onError (e) {
     //debugger
     this.setError(e);
-    this.sendDelegate("onRequestError")
+    this.sendDelegate("onRequestError", [this, e])
 
     if (e) {
       console.warn(this.debugTypeId() + " " + e.message);
@@ -557,6 +549,18 @@
       this.xhr().abort();
     }
     return this;
+  }
+
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate()
+    if (d) {
+      const f = d[methodName]
+      if (f) {
+        f.apply(d, args)
+        return true
+      }
+    }
+    return false
   }
 
 }).initThisClass();

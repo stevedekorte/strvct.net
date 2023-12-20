@@ -331,28 +331,46 @@
     }
     */
 
+    setupHtmlReader () {
+        const newReader = HtmlStreamReader.clone();
+        newReader.beginHtmlStream();
+        this.element().innerHTML = "";
+        newReader.beginHtmlStream();
+        newReader.rootNode().setDomNode(this.element()); // has to be after begin
+        this.setHtmlStreamReader(newReader);
+        return this;
+    }
+
     setValueWithMerge (newValue) {
+
         //const oldValue = this.element().innerHTML;
         const oldValue = this.lastMergeValue();
         if (newValue !== oldValue) {
-            //const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
-            const mergeableChange = (newValue.length > oldValue.length);
-            //const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
-            const shouldMerge = newValue.beginsWith(oldValue);
+
+            if (!this.htmlStreamReader()) {
+                this.setupHtmlReader();
+            }
+            const reader = this.htmlStreamReader();
+
+            debugger;
+
+
+            const shouldMerge = newValue.length > oldValue.length && newValue.beginsWith(oldValue);
             if (shouldMerge) {
                 //console.log("oldValue: [" + oldValue + "]");
                 //console.log("newValue: [" + newValue + "]");
 
-                const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
-                reader.beginHtmlStream();
-                reader.onStreamHtml(newValue);
-                reader.endHtmlStream();
-                this.element().mergeFrom(reader.rootElement());
+                const reader = this.htmlStreamReader();
+                const newContent = newValue.after(oldValue);
+                reader.onStreamHtml(newContent);
                 //console.log("merged: [" + this.element().innerHTML + "]");
-                this.setLastMergeValue(newValue);
             } else {
-                 this.setString(newValue);
+                // it's incompatible, restart the stream
+                reader.endHtmlStream();
+                this.element().innerHTML = "";
+                reader.onStreamHtml(newValue);
             }
+            this.setLastMergeValue(newValue);
         }
         return this;
     }
@@ -866,7 +884,7 @@ HTMLElement.prototype.findElementWithTextContent = function(textContent) {
         }
 
         if (child.textContent.trim() === textContent) {
-            console.warn("WARNING: findElementWithTextContent non exact match for [" + textContent.clipWithEllipsis(15) + "]");
+            console.warn("WARNING: findElementWithTextContent non exact match for [" + textContent.clipWithEllipse(15) + "]");
             return child;
         }
 

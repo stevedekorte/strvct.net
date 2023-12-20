@@ -22,26 +22,42 @@
     }
 
     onSpeakingText (aNote) {
+        //debugger;
         const text = aNote.info();
-        console.log("onSpeakingText: [" + text + "]");
+        console.log(this.typeId() + " onSpeakingText: [" + text.clipWithEllipsis(15) + "]");
         const e = this.valueView().element().findElementWithTextContent(text);
         assert(e);
         //e.style.color = "white";
         e.style.opacity = 1;
+        //e.style.color = "rgba(255, 255, 0, 1)";
     }
 
     onSpokeText (aNote) {
+        //debugger;
         const text = aNote.info();
-        console.log("onSpokeText: [" + text + "]");
+        console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
         const e = this.valueView().element().findElementWithTextContent(text);
         assert(e);
-        e.style.opacity = 0.6;
+        //e.style.opacity = 0.6;
+        //e.style.color = "rgba(136, 136, 136, 1)";
     }
+
+    /*
+    highlightText (text) {
+
+    }
+
+
+    unhighlightText (text) {
+
+    }
+    */
 
     createValueView () {
      //   debugger;
 
         const v = TextField.clone().setElementClassName("BMChatInputTileValueView");
+        
         v.setIsMergeable(true);
         v.setDisplay("block")
         v.setPosition("relative")
@@ -60,6 +76,7 @@
         v.setPaddingRight("0.4em")
         v.setPaddingBottom("0.4em")
         v.setAllowsHtml(true)
+        //v.setWhiteSpace("normal");
         
         v.setIsMultiline(true)
         v.setDoesInput(true)
@@ -106,6 +123,8 @@
 
     syncFromNode () {
         const node = this.node();
+        this.watchSender(node);
+
         if (node) {
             if (node.isComplete) {
                 if (node.isComplete()) {
