@@ -422,6 +422,10 @@ String.prototype._setterCacheMap = new Map();
         });
     }
 
+    containsHtml () {
+        return /<(\w+)[^>]*>/.test(this);
+    }
+
     GUID () {
         function s4() {
             return Math.floor((1 + Math.random()) * 0x10000)

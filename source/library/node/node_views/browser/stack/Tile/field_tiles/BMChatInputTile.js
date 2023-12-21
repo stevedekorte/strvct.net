@@ -76,7 +76,7 @@
         v.setPaddingRight("0.4em")
         v.setPaddingBottom("0.4em")
         v.setAllowsHtml(true)
-        //v.setWhiteSpace("normal");
+        v.setWhiteSpace("normal");
         
         v.setIsMultiline(true)
         v.setDoesInput(true)
@@ -136,7 +136,12 @@
             }
         }
 
-        return super.syncFromNode()
+        super.syncFromNode();
+        
+        if (this.valueView().element().innerHTML) {
+
+        }
+        return this;
     }
 
     // Support for animated trailing dots using CSS "after" style and CSS animation.
