@@ -177,7 +177,6 @@
   onRequestComplete (aRequest) {
     //this.setRequest(null)
     //this.setStatus("complete")
-    this.setNote(null)
     this.setIsComplete(true)
     this.sendDelegate("onMessageComplete")
   }

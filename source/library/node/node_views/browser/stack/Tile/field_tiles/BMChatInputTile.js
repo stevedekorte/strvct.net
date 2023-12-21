@@ -137,7 +137,7 @@
         }
 
         super.syncFromNode();
-        
+
         if (this.valueView().element().innerHTML) {
 
         }

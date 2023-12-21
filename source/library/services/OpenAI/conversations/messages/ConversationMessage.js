@@ -84,6 +84,7 @@
       slot.setInspectorPath("ConversationMessage");
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Boolean");
+      slot.setSyncsToView(true)
     }
 
     {
@@ -98,6 +99,7 @@
       slot.setInspectorPath("ConversationMessage");
       slot.setSlotType("Boolean");
       slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true)
     }
 
     {

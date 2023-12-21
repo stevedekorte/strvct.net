@@ -180,7 +180,8 @@
     this.setIsDebugging(true);
     this.setRequestId(this.puuid());
     //this.setLastContent("");
-    this.setTitle("Request")
+    this.setTitle("Request");
+    this.setIsDebugging(true);
   }
 
   subtitle () {
@@ -384,10 +385,13 @@
   }
 
   onXhrProgress (event) {
+    console.log(this.typeId() + " onXhrProgress() bytes " + this.fullContent().length);
     this.onXhrRead();
   }
 
   onXhrLoadEnd (event) {
+    console.log(this.typeId() + " onXhrLoadEnd() bytes " + this.fullContent().length);
+
     //debugger
     const isError = this.xhr().status >= 300
     if (isError) {
@@ -405,6 +409,8 @@
     this.sendDelegate("onRequestComplete")
     this.setStatus("completed " + this.responseSizeDescription())
     this.xhrResolve()(this.fullContent()); 
+
+    console.log(this.typeId() + " onXhrLoadEnd()");
 
     //const completionDict = this.bodyJson();
     //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, 2, 2)); // no usage property!
@@ -556,6 +562,7 @@
     if (d) {
       const f = d[methodName]
       if (f) {
+        this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "()")
         f.apply(d, args)
         return true
       }

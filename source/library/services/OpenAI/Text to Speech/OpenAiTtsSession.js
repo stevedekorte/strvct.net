@@ -6,6 +6,32 @@
 */
 
 (class OpenAiTtsSession extends BMSummaryNode {
+
+  speedOptionsJson () {
+    return [
+      {
+        "value": 1,
+        "label": "1x",
+      },
+      {
+        "value": 1.25,
+        "label": "1.25x",
+      },
+      {
+        "value": 1.5,
+        "label": "1.5x",
+      },
+      {
+        "value": 1.75,
+        "label": "1.75x",
+      },
+      {
+        "value": 2,
+        "label": "2x",
+      },
+    ];
+  }
+
   initPrototypeSlots() {
 
     {
@@ -62,7 +88,8 @@
     }
 
     {
-      const slot = this.newSlot("speed", 1.0);
+      const validValuesJson = this.speedOptionsJson()
+      const slot = this.newSlot("speed", validValuesJson.first().value);
       slot.setInspectorPath("")
       slot.setLabel("speed")
       slot.setShouldStoreSlot(true)
@@ -71,6 +98,7 @@
       slot.setSlotType("Number")
       slot.setIsSubnodeField(true)
       slot.setSummaryFormat("value key")
+      slot.setValidValues(validValuesJson)
     }
 
     {
@@ -256,7 +284,8 @@
 
   async generate () {
     const request = this.newRequest();
-    request._sound = WASound.clone();
+    const sound = WASound.clone();
+    request._sound = sound;
     await request.asyncSend();
     return sound;
   }
