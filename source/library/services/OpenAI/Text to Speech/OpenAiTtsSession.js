@@ -8,6 +8,8 @@
 (class OpenAiTtsSession extends BMSummaryNode {
 
   speedOptionsJson () {
+    return [1, 1.25, 1.5, 1.75, 2];
+    /*
     return [
       {
         "value": 1,
@@ -30,6 +32,7 @@
         "label": "2x",
       },
     ];
+    */
   }
 
   initPrototypeSlots() {
@@ -57,7 +60,7 @@
       slot.setSlotType("String")
       slot.setValidValues(validModels)
       slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("value key")
+      slot.setSummaryFormat("")
     }
 
     {
@@ -89,7 +92,8 @@
 
     {
       const validValuesJson = this.speedOptionsJson()
-      const slot = this.newSlot("speed", validValuesJson.first().value);
+      const slot = this.newSlot("speed", validValuesJson.first());
+      //const slot = this.newSlot("speed", validValuesJson.first().value);
       slot.setInspectorPath("")
       slot.setLabel("speed")
       slot.setShouldStoreSlot(true)

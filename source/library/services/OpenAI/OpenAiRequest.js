@@ -385,12 +385,12 @@
   }
 
   onXhrProgress (event) {
-    console.log(this.typeId() + " onXhrProgress() bytes " + this.fullContent().length);
+    //console.log(this.typeId() + " onXhrProgress() bytes " + this.fullContent().length);
     this.onXhrRead();
   }
 
   onXhrLoadEnd (event) {
-    console.log(this.typeId() + " onXhrLoadEnd() bytes " + this.fullContent().length);
+    //console.log(this.typeId() + " onXhrLoadEnd() bytes [[" + this.fullContent() + "]]");
 
     //debugger
     const isError = this.xhr().status >= 300

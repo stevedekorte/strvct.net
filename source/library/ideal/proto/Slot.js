@@ -157,7 +157,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     console.log("ERROR Slot.setValidValues:")
                     const s = "this._validValues: " + JSON.stringify(this._validValues) + " doesn't contain '" + this.initValue() + "'";
                     console.log(s)
-                    throw new Error("valid values constraint not met: " + s)
+                    debugger;
+                    //throw new Error("valid values constraint not met: " + s)
                 }
             }
         }
