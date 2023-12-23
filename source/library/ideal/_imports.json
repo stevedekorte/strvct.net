@@ -7,7 +7,8 @@
     "map/_imports.json",
     "formatters/_imports.json",
     "misc/_imports.json",
-    "networking/_imports.json"
+    "networking/_imports.json",
+    "html/_imports.json"
 ]
 
 
