@@ -143,6 +143,13 @@
     }
 
     {
+      const slot = this.newSlot("ttsRequestQueue", null);
+      slot.setDuplicateOp("copyValue")
+      slot.setShouldStoreSlot(false);
+      slot.setSummaryFormat("");
+    }
+
+    {
       const slot = this.newSlot("audioQueue", null);
       slot.setDuplicateOp("copyValue")
       slot.setShouldStoreSlot(false);
@@ -187,6 +194,8 @@
     this.setCanAdd(false);
     this.setCanDelete(true);
     this.setNodeCanReorderSubnodes(false);
+
+    this.setTtsRequestQueue([]);
     //if (!this.audioQueue()) {
       this.setAudioQueue(AudioQueue.clone());
     //}
@@ -257,7 +266,7 @@
   }
 
   newRequest () {
-    const request = OpenAiRequest.clone();
+    const request = OpenAiTtsRequest.clone();
     request.setApiUrl(this.endpoint());
     request.setApiKey(this.apiKey());
     request.setDelegate(this)
@@ -274,90 +283,38 @@
     return request;
   }
 
-  onRequestBegin(request) {
-
-  }
-
-  onRequestComplete(request) {
-    this.onSuccess();
-  }
-
-  onRequestError(request, error) {
-
-  }
-
-  async generate () {
-    const request = this.newRequest();
-    const sound = WASound.clone();
-    request._sound = sound;
-    await request.asyncSend();
-    return sound;
-  }
-
-  /*
   generate () {
-    this.setError("");
-    this.setStatus("fetching response...");
-    this.sendDelegate("onTtsPromptStart", [this]);
-
-    const sound = WASound.clone();
-
-    const apiKey = this.service().apiKey(); // Replace with your actual API key
-    
-    const bodyJson = {
-        model: this.model(), 
-        voice: this.voice(), 
-        input: this.prompt(),
-        response_format: this.responseFormat(), 
-        speed: this.speed()
-    };
-    
-    fetch(this.endpoint(), {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ` + apiKey,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyJson)
-    })
-    .then(response => {
-      response._sound = sound;
-        this.onSuccess(response);
-    })
-    .catch((error) => {
-        this.onError(error);
-    });
-    return sound;
+    const request = this.newRequest();
+    this.ttsRequestQueue().unshift(request);
+    request.sound().setTranscript(this.prompt());
+    this.audioQueue().queueWASound(request.sound());
+    request.asyncSend();
+    return request.sound();
   }
-  */
 
-  async onSuccess (response) {
-    const audioBlob = await response.blob();
-    // need to call asyncPrepareToStoreSynchronously as OutputAudioBlob slot is stored,
-    // and all writes to the store tx need to be sync so the store is in a consistent state for it's
-    // next read/write
-    //await audioBlob.asyncPrepareToStoreSynchronously() 
-    //const sound = WASound.fromBlob(audioBlob);
+  onRequestBegin (request) {
 
-    const sound = response._sound;
-    sound.setDataBlob(audioBlob);
-    this.audioQueue().queueWASound(sound);
-    this.setStatus("success");
+  }
+
+  async onRequestComplete (request) {
+    this.setStatus("success");    
+    //this.onEnd();
     //console.log('Success: got audio blob of size: ' + audioBlob.size);
   }
 
-  onError (error) {
+  onRequestError (request, error) {
     const s = "ERROR: " + error.message;
     console.error(s);
     this.setError(error.message);
     this.setStatus(s)
     this.sendDelegate("onTtsPromptError", [this]);
-    this.onEnd();
+    //this.onEnd();
+    debugger;
   }
 
-  onEnd () {
-    this.sendDelegate("onTtsPromptEnd", [this])
-  }
+  //onEnd () {
+    // on success or error
+  //}
 
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate()

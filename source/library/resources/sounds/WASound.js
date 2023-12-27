@@ -30,6 +30,8 @@
         // converting blob to ArrayBuffer
         this.newSlot("arrayBufferPromise", null);
 
+        // fetching
+        this.newSlot("fetchPromise", null);
         // decoding 
         this.newSlot("decodePromise", null);
         this.newSlot("decodedBuffer", null);
@@ -63,6 +65,7 @@
 
     init () {
         super.init();
+        //this.setFetchPromise(Promise.clone());
         this.setDecodePromise(Promise.clone());
         this.setArrayBufferPromise(Promise.resolve());
         this.setDelegateSet(new Set());
@@ -154,16 +157,24 @@
             return Promise.resolve();
         }
 
-        return WAContext.shared().setupPromise().then(
-            () => { 
-                return this.arrayBufferPromise().then(() => { 
-                    if (!this.hasData()) {
-                        throw new Error("no data for sound");
-                    }
-                    return this.decodeBuffer(this.data());
-                }); 
-            }
-        );
+        if (!this.fetchPromise()) {
+            this.setFetchPromise(Promise.resolve());
+        }
+
+        return this.fetchPromise().then(() => {
+
+            return WAContext.shared().setupPromise().then(
+                () => { 
+                    return this.arrayBufferPromise().then(() => { 
+                        if (!this.hasData()) {
+                            throw new Error("no data for sound");
+                        }
+                        return this.decodeBuffer(this.data());
+                    }); 
+                }
+            );
+
+        });
     }
 
     decodeBuffer (audioArrayBuffer) {

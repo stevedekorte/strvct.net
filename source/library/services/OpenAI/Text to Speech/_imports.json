@@ -1,4 +1,5 @@
 [
+    "OpenAiTtsRequest.js",
     "OpenAiTtsSession.js",
     "OpenAiTtsSessions.js"
 ]

@@ -13,6 +13,10 @@
     }
 
     {
+      const slot = this.newSlot("requestId", null); // needed?
+    }
+
+    {
       const slot = this.newSlot("apiUrl", null);
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
@@ -59,15 +63,8 @@
       const slot = this.newSlot("isFetchActive", false);
     }
 
-
     {
-      const slot = this.newSlot("lastContent", ""); // useful when separating renderable html while streaming
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      const slot = this.newSlot("fetchAbortController", null);
     }
 
     {
@@ -85,6 +82,18 @@
       slot.setCanEditInspection(false)
     }
 
+    {
+      const slot = this.newSlot("fetchPromise", null);
+    }
+
+    {
+      const slot = this.newSlot("audioBlob", null);
+    }
+
+    {
+      const slot = this.newSlot("sound", null); // WASound
+    }
+
     this.setShouldStore(false)
     this.setShouldStoreSubnodes(false)
   }
@@ -93,7 +102,11 @@
     super.init();
     this.setIsDebugging(true);
     this.setRequestId(this.puuid());
-    this.setTitle("Request")
+    this.setTitle("Request");
+
+    this.setFetchPromise(Promise.clone());
+    this.setSound(WASound.clone());
+    this.sound().setFetchPromise(this.fetchPromise());
   }
 
   subtitle () {
@@ -156,7 +169,7 @@
   async asyncSend () {
     try {
       this.setStatus("fetching")
-      this.setIsStreaming(false);
+      //this.setIsStreaming(false);
       this.sendDelegate("onRequestBegin")
 
       this.assertValid();
@@ -174,29 +187,52 @@
       fetchRequest.then((response) => {
         this.setIsFetchActive(false);
         this.setFetchAbortController(null);
-        //return response.json();
       }).catch((error) => {
         this.setIsFetchActive(false);
-          console.error('Error:', error);
+        console.error('Error:', error);
+        this.onError(error);
       });
 
       const response = await fetchRequest;
-      const json = await response.json();
-      this.setJson(json);
-      if (json.error) {
-        this.onError(new Error(json.error.message))
-      } else {
-        this.setFullContent(json.choices[0].message.content);
-        this.sendDelegate("onRequestComplete")
-        //this.showResponse();
-        this.setStatus("completed " + this.responseSizeDescription())
-        return json
-      }
+      //this.sendDelegate("onRequestConnected");
+
+      const audioBlob = await response.blob();
+      this.fetchPromise().callResolveFunc()
+      this.setAudioBlob(audioBlob);
+      //this.sendDelegate("onRequestGotAudioBlob");
+
+      // need to call asyncPrepareToStoreSynchronously as OutputAudioBlob slot is stored,
+      // and all writes to the store tx need to be sync so the store is in a consistent state for it's
+      // next read/write
+      //await audioBlob.asyncPrepareToStoreSynchronously() 
+      //const sound = WASound.fromBlob(audioBlob);
+      this.sound().setDataBlob(audioBlob);
+
+      this.sendDelegate("onRequestComplete");
     } catch (error) {
-      this.onError(error)
+      this.onError(error);
     }
 
     return undefined;
+  }
+
+  abort () {
+    if (this.isFetchActive()) {
+      if (this.fetchAbortController()) {
+        this.fetchAbortController().abort();
+      }
+      return this;
+    } 
+
+    if (this.isActive()) {
+      this.xhr().abort();
+    }
+    return this;
+  }
+
+  onError (error) {
+    this.sendDelegate("onRequestError", [this, error]);
+    this.fetchPromise().callRejectFunc(error);
   }
 
   sendDelegate (methodName, args = [this]) {

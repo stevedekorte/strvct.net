@@ -21,6 +21,14 @@
         return this
     }
 
+    didUpdateSlotNode (oldValue, newValue) {
+        const node = newValue;
+        if (node) {
+            this.watchOnceForNoteFrom("onSpeakingText", node);
+            this.watchOnceForNoteFrom("onSpokeText", node);
+        }
+    }
+
     onSpeakingText (aNote) {
         //debugger;
         const text = aNote.info();
@@ -29,7 +37,8 @@
         assert(e);
         //e.style.color = "white";
         e.style.opacity = 1;
-        //e.style.color = "rgba(255, 255, 0, 1)";
+        //e.style.fontWeight = "bold";
+        e.style.color = "rgba(255, 255, 0, 1)";
     }
 
     onSpokeText (aNote) {
@@ -38,8 +47,9 @@
         console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
         const e = this.valueView().element().findElementWithTextContent(text);
         assert(e);
+        e.style.fontWeight = "normal";
         //e.style.opacity = 0.6;
-        //e.style.color = "rgba(136, 136, 136, 1)";
+        e.style.color = "rgba(136, 136, 136, 1)";
     }
 
     /*
