@@ -64,7 +64,7 @@
     // fetching
 
     {
-      const slot = this.newSlot("fetchRequest", null);
+      const slot = this.newSlot("fetchPromise", null);
     }
 
     {
@@ -257,9 +257,19 @@
       this.setFetchAbortController(controller);
       options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
 
-      const fetchRequest = fetch(this.apiUrl(), options);
+      const fetchPromise = fetch(this.apiUrl(), options);
 
-      fetchRequest.then((response) => {
+      try {
+        await fetchPromise;
+        this.setIsFetchActive(false);
+        this.setFetchAbortController(null);
+      } catch (error) {
+        this.setIsFetchActive(false);
+        console.error('Error:', error);
+      }
+
+      /*
+      fetchPromise.then((response) => {
         this.setIsFetchActive(false);
         this.setFetchAbortController(null);
         //return response.json();
@@ -267,8 +277,9 @@
         this.setIsFetchActive(false);
           console.error('Error:', error);
       });
+      */
 
-      const response = await fetchRequest;
+      const response = await fetchPromise;
       const json = await response.json();
       this.setJson(json);
       if (json.error) {

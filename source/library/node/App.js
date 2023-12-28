@@ -116,13 +116,13 @@
         return true
     }
 
-    run () {
+    async run () {
         if (!this.isBrowserCompatible()) {
             ResourceLoaderPanel.shared().setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
             return this
         }
 
-       this.setup()
+       await this.setup()
     }
 
     /*
@@ -139,20 +139,20 @@
 
     // 2. setup
 
-    setup () {
+    async setup () {
         this.debugLog("Launching " + this.fullVersionString())
-        this.setupModel()
-        this.setupUi()
+        await this.setupModel()
+        await this.setupUi()
         this.appDidInit()
         return this
     }
 
-    setupModel () {
+    async setupModel () {
         // for subclasses to override
         return this
     }
 
-    setupUi () {
+    async setupUi () {
         this.setupDocTheme()
         //this.addTimeout( () => this.showClasses(), 1)
         return this        

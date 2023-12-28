@@ -161,20 +161,15 @@
             this.setFetchPromise(Promise.resolve());
         }
 
-        return this.fetchPromise().then(() => {
+        await this.fetchPromise();
 
-            return WAContext.shared().setupPromise().then(
-                () => { 
-                    return this.arrayBufferPromise().then(() => { 
-                        if (!this.hasData()) {
-                            throw new Error("no data for sound");
-                        }
-                        return this.decodeBuffer(this.data());
-                    }); 
-                }
-            );
+        await WAContext.shared().setupPromise();
+        await this.arrayBufferPromise();
 
-        });
+        if (!this.hasData()) {
+            throw new Error("no data for sound");
+        }
+        return this.decodeBuffer(this.data());
     }
 
     decodeBuffer (audioArrayBuffer) {
@@ -236,16 +231,15 @@
     // --- play ---
 
     async play () {
-        return this.promiseToDecode().then(() => {
-            this.setPlayPromise(Promise.clone());
-            this.setSource(this.newAudioSource());
-            this.syncToSource(this.source());
-            assert(this.decodedBuffer());
-            this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
-            this.setIsPlaying(true);
-            this.onStarted();
-            return this.playPromise();
-        })
+        await this.promiseToDecode();
+        this.setPlayPromise(Promise.clone());
+        this.setSource(this.newAudioSource());
+        this.syncToSource(this.source());
+        assert(this.decodedBuffer());
+        this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
+        this.setIsPlaying(true);
+        this.onStarted();
+        return this.playPromise();
     }
 
     description () {

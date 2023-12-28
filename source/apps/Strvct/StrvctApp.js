@@ -44,9 +44,9 @@
         return this
     }
 
-    setupUi () {
-        super.setupUi()
-        this.setupModel()
+    async setupUi () {
+        await super.setupUi()
+        await this.setupModel()
         BMResources.shared()
         
         const browser = BrowserView.clone()
