@@ -79,8 +79,14 @@
 
 
 
-(class MusicLibrary extends BMStorableNode {
+(class MusicLibrary extends BMSummaryNode {
   // all tracks are under a Creative Commons License
+
+  static initClass () {
+    //debugger;
+    this.setIsSingleton(true)
+    return this
+  }
 
   initPrototypeSlots() {
     {
@@ -95,7 +101,7 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      //slot.setIsSubnodeField(true)
       slot.setCanEditInspection(true)
     }
 
@@ -106,13 +112,15 @@
   init() {
     super.init();
     this.setPlaylists(new Map());
-    this.setupPlaylists()
+    this.setupPlaylists();
     this.setIsDebugging(true);
   }
 
   finalInit () {   
     this.setShouldStore(true)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStoreSubnodes(false);
+    this.setSubnodeClasses([YouTubePlaylist]);
+    this.setCanAdd(true);
     super.finalInit()
     this.setTitle("Music Library")
   }
@@ -128,7 +136,12 @@
       assert(dict);
       const plMap = new Map(Object.entries(dict));
       m.set(name, plMap);
-    })
+
+      const playlist = YouTubePlaylist.clone();
+      playlist.setName(name);
+      this.addSubnode(playlist);
+      playlist.setJson(dict);
+    });
     return this;
   }
 

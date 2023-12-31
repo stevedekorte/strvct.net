@@ -1,4 +1,6 @@
 [
+    "YouTubeTrack.js",
+    "YouTubePlaylist.js",
     "MusicLibrary.js",
     "MusicPlayer.js",
     "YouTubeAudioPlayer.js",

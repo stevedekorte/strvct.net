@@ -31,36 +31,34 @@
     // --- store ---
     // we open store from app class since we might want to load app instance from store
 
-    static loadAndRunShared () {
+    static async loadAndRunShared () {
         //debugger;
-        const store = this.defaultStore()
-        store.setName(this.type()) // name of the database
+        const store = this.defaultStore();
+        store.setName(this.type()); // name of the database
         const clearFirst = false;
 
         if (clearFirst) {
             console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<")
-
-            store.promiseDeleteAll().then(() => { 
-                console.log(">>>>>>>>>>>>>>>> cleared db <<<<<<<<<<<<<<<")
-                //debugger
-                store.close()
-                //this.justOpen()
-                this.scheduleMethod("justOpen")
-            })
+            await store.promiseDeleteAll();
+            console.log(">>>>>>>>>>>>>>>> cleared db <<<<<<<<<<<<<<<")
+            //debugger
+            store.close();
+            this.scheduleMethod("justOpen");
         } else {
-            this.justOpen()
+            this.justOpen();
         }
     }
 
-    static justOpen () {
-        const store = this.defaultStore()
-        store.promiseOpen().then(() => { 
-            this.onPoolOpenSuccess(this.defaultStore()) 
-        }).catch((error) => {
-            console.warn("ERROR: ", error)
+    static async justOpen () {
+        const store = this.defaultStore();
+        try {
+            await store.promiseOpen();
+            this.onPoolOpenSuccess(this.defaultStore()) ;
+        } catch (error) {
+            console.warn("ERROR: ", error);
             debugger;
             //ResourceLoaderPanel.shared().setError(errorMessage)
-        })
+        }
     }
 
     static promiseDeleteDefaultStore () {

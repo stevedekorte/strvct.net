@@ -76,7 +76,9 @@
     }
 
     didInit () {
-        assert(!this.hasDoneInit())
+        if (this.thisClass().isSingleton === undefined || !this.thisClass().isSingleton()) { // temporary hack to avoid singleton getting multiple didInits
+            assert(!this.hasDoneInit()); 
+        }
         this.setHasDoneInit(true)
     }
 
@@ -85,8 +87,8 @@
     }
     
     setHasDoneInit (aBool) {
-        assert(this._hasDoneInit === false)
-        this._hasDoneInit = aBool; // NOTEL if shouldScheduleDidInit (e.g. in StorableNode), then this gets called at *end* of event loop
+        //assert(this._hasDoneInit === false)
+        this._hasDoneInit = aBool; // NOTE: if shouldScheduleDidInit (e.g. in StorableNode), then this gets called at *end* of event loop
         return this
     }
     

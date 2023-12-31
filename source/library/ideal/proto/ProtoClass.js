@@ -14,7 +14,7 @@
 
    // --- clone ---
 
-    static clone () {
+   static preClone () {
         if (this.isSingleton() && this.hasShared()) {
             // kinda weird dealing with shared in clone like this
             // do we do this to deal with deserialization of singletons?
@@ -29,14 +29,19 @@
             this.setShared(obj)
         }
 
-        obj.init()
-        obj.finalInit()
-        obj.afterInit()
+        return obj;
+    }
+    static clone () {
+        const obj = this.preClone();
+
+        obj.init();
+        obj.finalInit();
+        obj.afterInit();
         
         //obj._cloneArguments = null
         //this.allInstancesWeakSet().add(obj)
 
-        return obj
+        return obj;
     }
 
     // --- shared ---

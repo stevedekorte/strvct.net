@@ -7,7 +7,16 @@
 */
 
 (class MusicPlayer extends BMStorableNode {
+
+  /*
+  static initClass () {
+    this.setIsSingleton(true)
+    return this
+  }
+  */
+
   initPrototypeSlots() {
+
     {
       const slot = this.newSlot("tracksMap", null);
     }

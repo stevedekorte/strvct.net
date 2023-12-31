@@ -13,7 +13,9 @@ Object.defineSlots(typedArrayClass.prototype, {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
         //debugger;
-        const instance = new this();
+        const instance = this.preClone ? this.preClone() : new this();
+
+        //const instance = new this();
         //instance._isDeserializing = true;
         //instance.setIsDeserializing(true);
         instance.init();

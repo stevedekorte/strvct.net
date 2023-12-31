@@ -20,6 +20,11 @@
 
             EventManager.shared().safeWrapEvent(() => { ... }, event) // we pass in event so we can access it globally
  
+
+    Example of waiting on first user event:
+
+    await EventManager.shared().firstUserEventPromise();
+    
 */
 
 (class EventManager extends ProtoClass {
@@ -34,6 +39,12 @@
         this.newSlot("hasReceivedUserEvent", false) // we only care about this for user events, but event manager handles timeouts too
         this.newSlot("beginUserEventDate", null)
         this.newSlot("currentEvent", null)
+        this.newSlot("firstUserEventPromise", null)
+    }
+
+    init () {
+        super.init();
+        this.setFirstUserEventPromise(Promise.clone());
     }
 
     currentEventName () {
@@ -59,6 +70,7 @@
             this.setHasReceivedUserEvent(true)
             Broadcaster.shared().broadcastNameAndArgument("firstUserEvent", this) // need this for some JS APIs which can only be used after first input event
             //this.postNoteNamed("onFirstUserEvent") // we may only need one of these - added this to make it easier to listen for
+            this.firstUserEventPromise().callResolveFunc();
         }
         
         return this

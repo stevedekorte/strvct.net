@@ -5,13 +5,20 @@
 */
 
 (class YouTubeAudioPlayer extends BMStorableNode {
-  initPrototypeSlots() {
+
+  static initClass () {
+    this.setIsSingleton(true)
+    return this
+  }
+
+  initPrototypeSlots () {
+
     {
       const slot = this.newSlot("element", null);
     }
     
     { 
-      const slot = this.newSlot("playerPromise", null); // resolves once player is available. Use .then() on this to queue actions to wait on it
+      const slot = this.newSlot("playerPromise", null); // resolves once player is available
     }
 
     {
@@ -54,7 +61,7 @@
       const slot = this.newSlot("volume", 0.05);
       slot.setInspectorPath("")
       //slot.setLabel("")
-      slot.setShouldStoreSlot(true)
+      slot.setShouldStoreSlot(false)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Number")
@@ -66,9 +73,11 @@
     this.setShouldStoreSubnodes(false)
   }
 
-  init() {
+  init () {
     super.init();
-    this.setIsDebugging(false);
+    this.setIsDebugging(true);
+    this.setPlayerPromise(Promise.clone());
+    this.setupFrame();
   }
 
   finalInit () {
@@ -79,18 +88,12 @@
     this.setTitle("YouTube Audio Player")
   }
 
-  playerPromise() {
-    if (!this._playerPromise) {
-      this._playerPromise = new Promise((resolve, reject) => {
-        this._resolvePlayer = resolve;
-        this._rejectPlayer = reject;
-      });
-      this.loadFrameAPI(); // this will call setupPlayer after frame is loaded
-    }
-    return this._playerPromise;
+  async setupFrame () {
+    await EventManager.shared().firstUserEventPromise();
+    this.loadFrameAPI(); // this will call setupPlayer after frame is loaded
   }
 
-  loadFrameAPI() {
+  loadFrameAPI () {
     this.debugLog("loadFrameAPI()");
     // Load the YouTube IFrame Player API asynchronously
     const tag = document.createElement("script");
@@ -100,14 +103,14 @@
     return this;
   }
 
-  onFrameReady() {
+  onFrameReady () {
     this.debugLog("onFrameReady()");
     this.setFrameIsReady(true);
     this.setupPlayer();
     return this;
   }
 
-  setupPlayer() {
+  setupPlayer () {
     this.debugLog("setupPlayer()");
     const json = {
       height: "0",
@@ -120,6 +123,7 @@
           this.onPlayerStateChange(event);
         },
         onError: (event) => {
+          debugger;
           this.onPlayerError(event);
         },
       },
@@ -149,32 +153,31 @@
     return this;
   }
 
-  play() {
+  async play () {
     if (!this.videoId()) {
       return;
     }
 
-    this.playerPromise().then(() => {
-      this.debugLog("play() after promise");
-      const startSeconds = 0.0;
-      if (this.videoId()) {
-        this.player().loadVideoById(this.videoId(), startSeconds);
-        //this.player().pauseVideo()
-        //this.player().cueVideoById(this.videoId());
-        //this.playWhenBuffered();
-      }
-    });
-    return this;
+    await this.playerPromise();
+    this.debugLog("play() after promise");
+    const startSeconds = 0.0;
+    if (this.videoId()) {
+      this.player().loadVideoById(this.videoId(), startSeconds);
+      //this.player().pauseVideo()
+      //this.player().cueVideoById(this.videoId());
+      //this.playWhenBuffered();
+    }
   }
 
-  isPlaying() {
+  isPlaying () {
     if (this.isReady()) {
       return this.player().getPlayerState() === YT.PlayerState;
     }
     return false;
   }
 
-  onPlayerError(event) {
+  onPlayerError (event) {
+    debugger;
     // Handle the error based on the error code
     const error = Number(event.data);
     this.debugLog(
@@ -214,20 +217,18 @@
     }
   }
 
-  onPlayerReady(event) {
+  onPlayerReady (event) {
     this.debugLog("onPlayerReady()");
     assert(!this.isReady());
     this.setIsReady(true);
     this.updateVolume();
 
-    assert(this._resolvePlayer);
-    if (this._resolvePlayer) {
-      this._resolvePlayer();
-    }
+    assert(this._playerPromise);
+    this.playerPromise().callResolveFunc();
     //this.player().style.display = "none";
   }
 
-  onPlayerStateChange(event) {
+  onPlayerStateChange (event) {
     this.debugLog("onPlayerStateChange " + event.data);
 
     const state = Number(event.data);
@@ -262,58 +263,51 @@
     }
   }
 
-  onPlayerEnd(event) {
+  onPlayerEnd (event) {
     if (this.shouldRepeat()) {
       this.player().playVideo(); // Replay the video when it ends
     }
   }
 
-  setVolume(v) {
+  async setVolume (v) {
     // 0.0 to 1.0
-    this.playerPromise().then(() => {
-      assert(v >= 0 && v <= 1.0);
-      this._volume = v;
-      this.updateVolume();
-    });
+    await this.playerPromise();
+    assert(v >= 0 && v <= 1.0);
+    this._volume = v;
+    this.updateVolume();
     return this;
   }
 
-  updateVolume() {
-    this.playerPromise().then(() => {
-      const v = this.volume() * 100;
-      if (this.isReady()) {
-        this.debugLog("set volume:", v);
-        this.player().setVolume(v);
-        this.debugLog("getVolume: ", this.player().getVolume());
-        //assert(v === this.player().getVolume());
-      }
-    });
-    return this;
+  async updateVolume () {
+    await this.playerPromise();
+    const v = this.volume() * 100;
+    if (this.isReady()) {
+      this.debugLog("set volume:", v);
+      this.player().setVolume(v);
+      this.debugLog("getVolume: ", this.player().getVolume());
+      //assert(v === this.player().getVolume());
+    }
   }
 
-  stop() {
+  async stop () {
     if (!this._playerPromise) {
       // no one has asked player to play yet,
       // so we can ignore the stop
       return;
     }
-    this.playerPromise().then(() => {
-      this.player().stopVideo();
-    });
-    return this;
+    await this.playerPromise();
+    this.player().stopVideo();
   }
 
-  shutdown() {
-    this.playerPromise().then(() => {
-      const player = this.player();
-      player.stopVideo();
-      player.destroy();
-      this.setPlayer(null);
-    });
-    return this;
+  async shutdown () {
+    await this.playerPromise();
+    const player = this.player();
+    player.stopVideo();
+    player.destroy();
+    this.setPlayer(null);
   }
 
-  secondsBuffered() {
+  secondsBuffered () {
     if (this.isReady()) {
       const player = this.player();
       var fraction = player.getVideoLoadedFraction(); // Get the fraction of the video that has been loaded
@@ -326,7 +320,7 @@
     return 0;
   }
 
-  playWhenBuffered() {
+  playWhenBuffered () {
     if (!this._checkBuffer) {
       this._checkBuffer = setInterval(() => {
         if (this.secondsBuffered() > 30) {
@@ -339,7 +333,7 @@
   }
 }).initThisClass();
 
-function onYouTubeIframeAPIReady() {
+getGlobalThis().onYouTubeIframeAPIReady = function () {
   // called after API code downloads
   YouTubeAudioPlayer.shared().onFrameReady();
 }

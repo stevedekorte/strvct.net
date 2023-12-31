@@ -68,12 +68,9 @@
 
     // --- setup model ---
 
-    setupModel () {
-        if (false) {
-            BMBlobs.shared().promiseOpen().then(() => this.appDidInit())
-        } else {
-            this.appDidInit()
-        }
+    async setupModel () {
+        //await BMBlobs.shared().promiseOpen();
+        this.appDidInit();
         // settings
         //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
         //this.setSettings(settings)
