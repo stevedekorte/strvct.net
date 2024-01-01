@@ -30,13 +30,14 @@
   }
 
   finalInit () {   
-    this.setShouldStore(true)
-    this.setShouldStoreSubnodes(false)
+    super.finalInit();
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([MusicTrack]);
     this.setCanAdd(true);
     this.setCanDelete(true);
     this.setNoteIsSubnodeCount(true);
-    super.finalInit()
+    this.makeSortSubnodesByTitle();
   }
 
   title () {

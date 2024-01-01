@@ -66,7 +66,7 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
-      slot.setCanEditInspection(false);
+      slot.setCanEditInspection(true);
       slot.setValidValues(this.validVolumeValues());
     }
 
@@ -105,8 +105,10 @@
     const values = [];
     let v = 0;
     while (v <= 1.0) {
-      values.push(Math.round(v*100)/100);
+      values.push(v);
+      //values.push({ label: (v*100) + "%", value: v });
       v += 0.05;
+      v = Math.round(v*100)/100;
     }
     return values;
   }

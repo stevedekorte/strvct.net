@@ -523,7 +523,7 @@
         Waiting: "8WGbzIXjSRw"
       },
 
-      SoundFX: {
+      "Sound FX": {
         "knocking on door FX": "HIJunF3DIjw",
         "creaking door opening FX": "ij5bdBI_JVA",
         "door closing FX": "PAPcSY20DYA",
@@ -532,7 +532,6 @@
         "sword fight FX": "4g-iCX2oST4",
         "sword slice FX": "VjrY6foiTxw",
         "critical axe hit FX": "Q6ab0gpaKIw",
-        "axe hit FX": "l1XG1rBstSk",
         "dementor wailing FX": "8XbN5nIBuew",
         "dementor soul kiss FX": "ZUqDcr4lznU",
         "card shuffling FX": "dbfwV0-XCRY",
