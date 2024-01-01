@@ -2,7 +2,7 @@
 
 /* 
 
-  YouTubeTrack
+  MusicTrack
 
 
 */
@@ -10,7 +10,7 @@
 
 
 
-(class YouTubeTrack extends BMSummaryNode {
+(class MusicTrack extends BMSummaryNode {
 
   initPrototypeSlots() {
     {
@@ -34,6 +34,18 @@
       //slot.setIsSubnodeField(true);
       //slot.setCanEditInspection(true);
     }
+
+    /*
+    {
+      const slot = this.newSlot("service", "YouTube");
+      slot.setInspectorPath("");
+      slot.setLabel("service");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+    }
+    */
 
     {
       const slot = this.newSlot("shouldPlayOnAccess", true);

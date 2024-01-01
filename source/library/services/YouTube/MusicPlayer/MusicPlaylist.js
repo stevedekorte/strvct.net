@@ -2,13 +2,13 @@
 
 /* 
 
-  YouTubePlaylist
+  MusicPlaylist
 
 
 */
 
 
-(class YouTubePlaylist extends BMSummaryNode {
+(class MusicPlaylist extends BMSummaryNode {
 
   initPrototypeSlots() {
     {
@@ -32,9 +32,10 @@
   finalInit () {   
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(false)
-    this.setSubnodeClasses([YouTubeTrack]);
+    this.setSubnodeClasses([MusicTrack]);
     this.setCanAdd(true);
     this.setCanDelete(true);
+    this.setNoteIsSubnodeCount(true);
     super.finalInit()
   }
 
@@ -53,6 +54,31 @@
 
   newTrack () {
     return this.add();
+  }
+
+  tracks () {
+    return this.subnodes();
+  }
+
+  trackNames () {
+    return this.subnodes().map(sn => sn.name());
+  }
+
+  trackWithName (name) {
+    return this.firstSubnodeWithTitle(name);
+  }
+
+  clear () {
+    this.removeAllSubnodes();
+    return this;
+  }
+
+  copyMergeTracks (tracks) {
+    tracks.forEach(track => {
+      if (!this.trackWithName(track.name())) {
+        this.newTrack().setName(track.name()).setTrackId(track.trackId());
+      }
+    })
   }
 
 }).initThisClass();

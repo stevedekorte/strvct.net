@@ -59,14 +59,27 @@
 
     {
       const slot = this.newSlot("volume", 0.05);
-      slot.setInspectorPath("")
-      //slot.setLabel("")
-      slot.setShouldStoreSlot(false)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Number")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      //slot.setLabel("");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      slot.setValidValues(this.validVolumeValues());
+    }
+
+    {
+      const slot = this.newSlot("togglePlayAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Play");
+      //slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("togglePlay");
     }
 
     this.setShouldStore(true)
@@ -86,6 +99,16 @@
     
     super.finalInit()
     this.setTitle("YouTube Audio Player")
+  }
+
+  validVolumeValues () {
+    const values = [];
+    let v = 0;
+    while (v <= 1.0) {
+      values.push(Math.round(v*100)/100);
+      v += 0.05;
+    }
+    return values;
   }
 
   async setupFrame () {
@@ -331,6 +354,27 @@
       }, 1000); // Check every second
     }
   }
+
+  // --- actions ---
+
+  togglePlay () {
+    if (this.isPlaying()) {
+      this.stop();
+    } else {
+      this.play();
+    }
+    return this;
+  }
+
+  togglePlayActionInfo () {
+    return {
+      isEnabled: true,
+      title: this.isPlaying() ? "Stop" : "Play",
+      isVisible: true,
+    };
+  }
+
+
 }).initThisClass();
 
 getGlobalThis().onYouTubeIframeAPIReady = function () {

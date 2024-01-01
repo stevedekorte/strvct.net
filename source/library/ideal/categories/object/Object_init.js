@@ -67,7 +67,10 @@
     afterInit () {
         //console.log(this.type() + ".afterInit")
 
-        assert(!this.hasDoneInit()) // sanity check
+        if (this.thisClass().isSingleton === undefined || !this.thisClass().isSingleton()) { // temporary hack to avoid singleton getting multiple didInits
+            assert(!this.hasDoneInit()) // sanity check
+        }
+
         if (this.shouldScheduleDidInit()) {
             this.scheduleDidInit() // implemented in Object_init.js
         } else {

@@ -1,8 +1,5 @@
 [
-    "YouTubeTrack.js",
-    "YouTubePlaylist.js",
-    "MusicLibrary.js",
-    "MusicPlayer.js",
+    "MusicPlayer/_imports.json",
     "YouTubeAudioPlayer.js",
     "YouTubeService.js"
 ]

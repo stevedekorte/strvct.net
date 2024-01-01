@@ -3,23 +3,17 @@
 /* 
     Music
 
+    Use:
+
+    MusicPlayer.shared().selectPlaylistsWithNames(playlistNames);
+    ...
+    MusicPlayer.shared().playTrackWithName(aName);
 
 */
 
 (class MusicPlayer extends BMStorableNode {
 
-  /*
-  static initClass () {
-    this.setIsSingleton(true)
-    return this
-  }
-  */
-
   initPrototypeSlots() {
-
-    {
-      const slot = this.newSlot("tracksMap", null);
-    }
 
     {
       const slot = this.newSlot("currentTrack", null);
@@ -37,14 +31,23 @@
       slot.setCanEditInspection(true)
     }
 
+    {
+      const slot = this.newSlot("playlist", null);
+      slot.setInspectorPath("")
+      slot.setLabel("playlist")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setFinalInitProto(MusicPlaylist);    
+      slot.setIsSubnode(true);
+    }
+
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(false)
   }
 
   init() {
     super.init();
-    this.setTracksMap(new Map());
-    this.selectPlaylistWithName("DnD");
     this.setIsDebugging(true);
   }
 
@@ -53,10 +56,12 @@
     this.setShouldStoreSubnodes(false)
     super.finalInit()
     this.setTitle("Music Player")
+    this.playlist().setName("playlist");
+    this.selectPlaylistWithName("Fantasy");
   }
 
   trackNames () {
-    return this.tracksMap().keysArray();
+    return this.playlist().trackNames();
   }
 
   selectPlaylistWithName (name) {
@@ -65,12 +70,11 @@
   }
 
   selectPlaylistsWithNames (names) {
-    this.tracksMap().clear();
+    this.playlist().clear();
+    const musicLibrary = App.shared().services().youtubeService().musicLibrary();
     names.forEach((name) => {
-      const playlistMap = MusicLibrary.shared().playlistWithName(name);
-      playlistMap.forEachKV((k, v) => {
-        this.tracksMap().set(k, v);
-      });
+      const libraryPlaylist = MusicLibrary.shared().playlistWithName(name);
+      this.playlist().copyMergeTracks(libraryPlaylist.tracks());
     });
     return this;
   }
@@ -81,7 +85,7 @@
   }
 
   trackIdForName (name) {
-    return this.tracksMap().get(name);
+    return this.playlist().trackWithName(name).trackId();
   }
 
   playTrackId (vid) {

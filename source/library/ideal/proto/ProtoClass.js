@@ -31,6 +31,7 @@
 
         return obj;
     }
+    
     static clone () {
         const obj = this.preClone();
 

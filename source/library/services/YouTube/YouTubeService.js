@@ -7,6 +7,7 @@
 
 (class YouTubeService extends BMStorableNode {
   initPrototypeSlots() {
+    /*
     {
       const slot = this.newSlot("musicLibrary", null)
       slot.setShouldStoreSlot(true);
@@ -20,6 +21,7 @@
         slot.setFinalInitProto(MusicPlayer);
         slot.setIsSubnode(true);
     }
+    */
 
     {
         const slot = this.newSlot("youTubeAudioPlayer", null)
