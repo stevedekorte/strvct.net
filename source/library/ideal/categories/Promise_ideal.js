@@ -26,15 +26,32 @@ Object.defineSlot(Promise, "clone", function () { // add a class method
       });
       promise._resolveFunc = resolveFunc;
       promise._rejectFunc = rejectFunc;
-      return promise 
+      promise._status = "pending";
+      return promise ;
 });
 
-Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, arg3) { 
+Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, arg3) {
+    assert(this._status !== "rejected");
+    this._status = "resolved";
     return this._resolveFunc(arg1, arg2, arg3);
 });
 
 Object.defineSlot(Promise.prototype, "callRejectFunc", function (arg1, arg2, arg3) { 
+    assert(this._status !== "resolved");
+    this._status = "rejected";
     return this._rejectFunc(arg1, arg2, arg3);
+});
+
+Object.defineSlot(Promise.prototype, "isResolved", function () { 
+    return this._status === "resolved";
+});
+
+Object.defineSlot(Promise.prototype, "isRejected", function () { 
+    return this._status === "rejected";
+});
+
+Object.defineSlot(Promise.prototype, "isPending", function () { 
+    return this._status === "pending";
 });
 
 /*

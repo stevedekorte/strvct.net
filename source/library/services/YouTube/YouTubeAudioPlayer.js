@@ -22,39 +22,55 @@
     }
 
     {
-      const slot = this.newSlot("player", null); // to store the YouTube player
+      const slot = this.newSlot("player", null); // reference to store the YouTube player
     }
 
     {
-      const slot = this.newSlot("isReady", false);
+      const slot = this.newSlot("stateName", false);
+      slot.setInspectorPath("");
+      slot.setLabel("status");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
+    {
+      const slot = this.newSlot("trackName", "");      
+      slot.setInspectorPath("");
+      slot.setLabel("Track Name");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("videoId", null);      
-      slot.setInspectorPath("")
-      slot.setLabel("video ID")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setLabel("Video ID");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("shouldRepeat", true);      
-      slot.setInspectorPath("")
-      slot.setLabel("repeat")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-    }
-
-    {
-      const slot = this.newSlot("frameIsReady", null);
+      slot.setCanEditInspection(false);
+      slot.setDuplicateOp("duplicate");
+      slot.setInspectorPath("");
+      slot.setIsSubnodeField(true);
+      slot.setLabel("Repeat");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("Boolean");
     }
 
     {
@@ -67,6 +83,7 @@
       slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(true);
+      slot.setAllowsMultiplePicks(false);
       slot.setValidValues(this.validVolumeValues());
     }
 
@@ -119,8 +136,8 @@
   }
 
   loadFrameAPI () {
-    this.debugLog("loadFrameAPI()");
     // Load the YouTube IFrame Player API asynchronously
+    this.debugLog("loadFrameAPI()");
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
     const firstScriptTag = document.getElementsByTagName("script")[0];
@@ -130,7 +147,6 @@
 
   onFrameReady () {
     this.debugLog("onFrameReady()");
-    this.setFrameIsReady(true);
     this.setupPlayer();
     return this;
   }
@@ -174,7 +190,6 @@
       console.warn(error);
       throw error;
     }
-    this.setIsReady(false);
     return this;
   }
 
@@ -194,9 +209,39 @@
     }
   }
 
+  isReady () {
+    return this.playerPromise().isResolved();
+  }
+
+  statesMap () {
+    const statesDict = {
+      "3": "buffering",
+      "5": "cued",
+      "0": "ended",
+      "2": "paused",
+      "1": "playing",
+      "-1": "unstarted"
+    }
+    const statesMap = new Map(Object.entries(statesDict));
+    return statesMap;
+  }
+
+  stateName () {
+    if (this.isReady()) {
+      const k = String(this.player().getPlayerState());
+      assert(this.statesMap().has(k));
+      return this.statesMap().get(k);
+    }
+    return "unitialized";
+  }
+
   isPlaying () {
     if (this.isReady()) {
-      return this.player().getPlayerState() === YT.PlayerState;
+      const currentState = this.player().getPlayerState();
+      //const playStates = [YT.PlayerState.CUED, YT.PlayerState.BUFFERING, YT.PlayerState.PLAYING];
+      const playStates = [YT.PlayerState.BUFFERING, YT.PlayerState.PLAYING];
+      return playStates.includes(currentState);
+
     }
     return false;
   }
@@ -244,8 +289,6 @@
 
   onPlayerReady (event) {
     this.debugLog("onPlayerReady()");
-    assert(!this.isReady());
-    this.setIsReady(true);
     this.updateVolume();
 
     assert(this._playerPromise);
@@ -286,6 +329,8 @@
       default:
         this.debugLog("Video unknown state chage");
     }
+
+    this.didUpdateNodeIfInitialized();
   }
 
   onPlayerEnd (event) {
