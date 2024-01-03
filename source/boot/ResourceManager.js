@@ -650,6 +650,7 @@ class ResourceManager {
         const urls = [
             //"source/boot/getGlobalThis.js",
             bp + "Base.js",
+            bp + "Promise_ideal.js",
             bp + "IndexedDBFolder.js",
             bp + "IndexedDBTx.js",
             bp + "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used

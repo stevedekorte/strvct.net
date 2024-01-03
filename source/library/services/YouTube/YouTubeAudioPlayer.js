@@ -117,7 +117,7 @@
 
   init () {
     super.init();
-    this.setIsDebugging(true);
+    this.setIsDebugging(false);
     this.setPlayerPromise(Promise.clone().setLabel(this.type() + " setup"));
     this.setupFrame();
   }
@@ -384,10 +384,12 @@
     await this.playerPromise();
     const v = this.volume() * 100;
     if (this.isReady()) {
-      this.debugLog("set volume:", v);
       this.player().setVolume(v);
-      this.debugLog("getVolume: ", this.player().getVolume());
-      //assert(v === this.player().getVolume());
+      if(v !== this.player().getVolume()) {
+        this.debugLog("WARNING: setVolume not equal getVolume after set");
+        this.debugLog("set volume:", v);
+        this.debugLog("getVolume: ", this.player().getVolume());
+      }
     }
   }
 

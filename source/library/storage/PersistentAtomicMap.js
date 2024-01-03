@@ -110,6 +110,12 @@
 	
     // ---- clear --- 
 		
+    async promiseClear () {
+        await this.idb().promiseClear();
+        this.map().clear();
+    }
+
+    /*
     promiseClear () {
         return new Promise((resolve, reject) => {
             this.idb().promiseClear().then(() => {
@@ -118,6 +124,7 @@
             }, reject)
         })
     }
+    */
 		
     // --- transactions ---
 

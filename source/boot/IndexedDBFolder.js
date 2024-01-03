@@ -36,15 +36,6 @@
         return "indexedDB" in window;
     }
 
-    /*
-    promiseHasIndexedDB () {
-        if (this.hasIndexedDB()) {
-            return Promise.resolve()
-        } 
-        return Promise.reject(new Error("IndexedDB unavailable on this client."))
-    }
-    */
-
     hasStorageApi () {
         return navigator.storage && navigator.storage.persist
     }
@@ -87,36 +78,36 @@
     }
 
     newPromiseOpen () {
-        assert(this.hasIndexedDB())
+        assert(this.hasIndexedDB());
+        const openPromise = Promise.clone();
 
-        return new Promise((resolve, reject) => {
-            if(this.isOpen()) {
-                resolve()
-                return
-            }
+        if(this.isOpen()) {
+            return Promise.resolve();
+        }
 
-            const version = 2 // can't be zero
-            //console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
-            const request = window.indexedDB.open(this.path(), version);
+        const version = 2 // can't be zero
+        //console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
+        const request = window.indexedDB.open(this.path(), version);
 
-            request.onsuccess = (event) => {
-                //debugger;
-                this.setDb(event.target.result)
-                resolve()
-            }
+        request.onsuccess = (event) => {
+            //debugger;
+            this.setDb(event.target.result)
+            openPromise.callResolveFunc();
+        }
 
-            request.onupgradeneeded = (event) => {
-                //debugger;
-                this.onOpenUpgradeNeeded(event) // onsuccess will be called next?
-            }
+        request.onupgradeneeded = (event) => {
+            //debugger;
+            this.onOpenUpgradeNeeded(event) // onsuccess will be called next?
+        }
 
-            request.onerror = (error) => {
-                debugger;
-                this.debugLog(" open db error: ", event);
-                this.onOpenError(event)
-                reject(error)
-            }
-        })
+        request.onerror = (error) => {
+            debugger;
+            this.debugLog(" open db error: ", event);
+            this.onOpenError(event)
+            openPromise.callRejectFunc(error);
+        }
+
+        return openPromise;
     }
 
     onOpenError (event) {
@@ -210,14 +201,12 @@
 
     // reading
 
-    promiseHasKey (key) {
-        return this.promiseOpen().then(() => {
-            return this.promiseCount(key).then((count) => {
-                const hasKey = count !== 0;
-                //debugger;
-                return Promise.resolve(hasKey)
-            })
-        })
+    async promiseHasKey (key) {
+        await this.promiseOpen();
+        const promise = Promise.clone();
+        const count = await this.promiseCount(key);
+        const hasKey = count !== 0;
+        return hasKey;
     }
 
     currentStack () {
@@ -225,81 +214,83 @@
         return stack
     }
     
-    promiseAt (key) {
-        return this.promiseOpen().then(() => {
-            return new Promise((resolve, reject) => {
-                //console.log("promiseAt ", key)
-                const objectStore = this.readOnlyObjectStore()
-                const request = objectStore.get(key);
-                const stack = this.currentStack()
+    async promiseAt (key) {
+        await this.promiseOpen();
+        const atPromise = Promise.clone();
 
-                request.onsuccess = (event) => {
-                    // request.result is undefined if value not in DB
-                    try {
-                        if (typeof(request.result) !== "undefined") {
-                            const entry = request.result
-                            const value = entry.value
-                            resolve(value)
-                        } else {
-                            resolve(undefined)
-                        }
-                    } catch (e) {
-                        this.debugLog(" promiseAt('" +  key + "') caught stack ", stack)
-                        throw e
-                    }
+        //console.log("promiseAt ", key)
+        const objectStore = this.readOnlyObjectStore()
+        const request = objectStore.get(key);
+        const stack = this.currentStack()
+
+        request.onsuccess = (event) => {
+            // request.result is undefined if value not in DB
+            try {
+                if (typeof(request.result) !== "undefined") {
+                    const entry = request.result
+                    const value = entry.value
+                    atPromise.callResolveFunc(value);
+                } else {
+                    atPromise.callResolveFunc(undefined);
                 }
-                
-                request.onerror = (event) => {
-                    console.log("promiseAt('" + key + "') onerror", event.target.error)
-                    resolve(undefined)
-                }
-            })
-        })
+            } catch (e) {
+                this.debugLog(" promiseAt('" +  key + "') caught stack ", stack)
+                throw e
+            }
+        }
+        
+        request.onerror = (event) => {
+            console.log("promiseAt('" + key + "') onerror", event.target.error);
+            atPromise.callResolveFunc(undefined);
+        }
+        
+        return atPromise;
     }
 
-    promiseCount (optionalKey) {
-        return this.promiseOpen().then(() => {
-            return new Promise((resolve, reject) => {
-                const objectStore = this.readOnlyObjectStore()
-                const request = objectStore.count(optionalKey);
-                const stack = this.currentStack()
+    async promiseCount (optionalKey) {
+        await this.promiseOpen();
+        const countPromise = Promise.clone();
+        const objectStore = this.readOnlyObjectStore();
+        const request = objectStore.count(optionalKey);
+        const stack = this.currentStack();
 
-                request.onsuccess = (event) => {
-                    const count = request.result
-                    if (optionalKey) {
-                        //console.log("promiseCount " + count + " for optionalKey: '" + optionalKey + "'")
-                        //debugger;
-                    }
-                    resolve(count)
-                }
-                
-                request.onerror = (event) => {
-                    console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack)
-                    reject(event)
-                }
-            })
-        })
+        request.onsuccess = (event) => {
+            const count = request.result;
+            if (optionalKey) {
+                //console.log("promiseCount " + count + " for optionalKey: '" + optionalKey + "'")
+                //debugger;
+            }
+            countPromise.callResolveFunc(count);
+        }
+        
+        request.onerror = (event) => {
+            console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack);
+            countPromise.callRejectFunc(event);
+        }
+
+        return countPromise;
     }
 
-    promiseAllKeys () {
-        return this.promiseOpen().then(() => {
-            return new Promise((resolve, reject) => {
-                const objectStore = this.readOnlyObjectStore()
-                const request = objectStore.getAllKeys();
-                const stack = this.currentStack()
+    async promiseAllKeys () {
+        await this.promiseOpen();
+        const promise = Promise.clone();
 
-                request.onsuccess = (event) => {
-                    const keysArray = request.result
-                    //console.log("promiseAllKeys ", keysArray)
-                    resolve(keysArray)
-                }
-                
-                request.onerror = (event) => {
-                    console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack)
-                    reject(event)
-                }
-            })
-        })
+        const objectStore = this.readOnlyObjectStore();
+        const request = objectStore.getAllKeys();
+        const stack = this.currentStack();
+
+        request.onsuccess = (event) => {
+            const keysArray = request.result;
+            //console.log("promiseAllKeys ", keysArray);
+            promise.callResolveFunc(keysArray);
+        }
+        
+        request.onerror = (event) => {
+            console.error("promiseCount() onerror: ", event.target.error, " stack: ", stack);
+            promise.callRejectFunc(event);
+        }
+
+        return promise;
     }
 
     /*
@@ -331,28 +322,30 @@
     }
     */
 
-    promiseAsMap () {
-        return this.promiseOpen().then(() => {
-            return new Promise((resolve, reject) => {
-                const objectStore = this.readOnlyObjectStore()
-                const request = objectStore.getAll()
-                const stack = this.currentStack()
+    async promiseAsMap () {
+        await this.promiseOpen();
+        const promise = Promise.clone();
 
-                request.onsuccess = (event) => {
-                    const results = event.target.result
-                    const map = new Map()
-                    results.forEach(result => {
-                        map.set(result.key, result.value)
-                    })
-                    resolve(map)
-                }
+        const objectStore = this.readOnlyObjectStore();
+        const request = objectStore.getAll();
+        const stack = this.currentStack();
 
-                request.onerror = (event) => {
-                    reject(event)
-                }
+        request.onsuccess = (event) => {
+            const results = event.target.result;
+            const map = new Map();
+            results.forEach(result => {
+                map.set(result.key, result.value);
             })
-        })
+            promise.callResolveFunc(map);
+        }
+
+        request.onerror = (event) => {
+            promise.callRejectFunc(event);
+        }
+
+        return promise;
     }
+
 
     show () {
         this.promiseAsMap().then((map) => {
@@ -362,54 +355,53 @@
 
     // removing
 
-    promiseClear () {
-        //debugger;
-        return this.promiseOpen().then(() => {
-            return new Promise((resolve, reject) => {
-                const objectStore = this.readWriteObjectStore();
-                objectStore._tx._note = "promiseClear"
-                
-                const request = objectStore.clear();
-                const stack = this.currentStack()
+    async promiseClear () {
+        await this.promiseOpen();
+        const clearPromise = Promise.clone();
 
-                objectStore._tx.oncomplete = (event) => {
-                    console.log("db promiseClear tx oncomplete")
-                    resolve(event) 
-                };
+        const objectStore = this.readWriteObjectStore();
+        objectStore._tx._note = "promiseClear";
+        
+        const request = objectStore.clear();
+        const stack = this.currentStack();
 
-                request.onsuccess = (event) => {
-                    console.log("db promiseClear request onsuccess")
-                    //debugger;
-                    //resolve(event) // use tx oncomplete instead?
-                };
+        objectStore._tx.oncomplete = (event) => {
+            console.log("db promiseClear tx oncomplete");
+            clearPromise.callResolveFunc(event);
+        };
 
-                request.onerror = (event) => {
-                    console.log("db promiseClear request error")
-                    reject(event)
-                };
-            })
-        })
+        request.onsuccess = (event) => {
+            console.log("db promiseClear request onsuccess");
+            //resolve(event) // use tx oncomplete instead?
+        };
+
+        request.onerror = (event) => {
+            console.log("db promiseClear request error");
+            clearPromise.callRejectFunc(event);
+        };
+
+        return clearPromise;
     }
 
-    promiseDelete () {
-        debugger
-        assert(!this.isOpen())
 
-        return new Promise((resolve, reject) => {
-            const request = window.indexedDB.deleteDatabase(this.storeName())
+    async promiseDelete () {
+        assert(!this.isOpen());
+        const deletePromise = Promise.clone();
 
-            request.onerror = (error) => {
-                this.debugLog("Error deleting '" + this.storeName() + "'");
-                reject(error)
-            }
+        const request = window.indexedDB.deleteDatabase(this.storeName());
 
-            request.onsuccess = (event) => {
-                this.debugLog(" deleted successfully '" + this.storeName() + "'");
-                resolve(event)
-            }
+        request.onerror = (error) => {
+            this.debugLog("Error deleting '" + this.storeName() + "'");
+            deletePromise.callRejectFunc(error);
+        }
 
-            this.setDb(null)
-        })
+        request.onsuccess = (event) => {
+            this.debugLog(" deleted successfully '" + this.storeName() + "'");
+            deletePromise.callResolveFunc(event);
+        }
+
+        this.setDb(null);
+        return deletePromise;
     }
 
     assertLastTxCommitedOrAborted () {
@@ -468,76 +460,70 @@
 
     // -------------------------------------------------------------------
 
-    promiseAtPut (key, value) {
-        return this.promiseOpen().then(() => {
-            if (typeof(value) === "undefined") {
-                return this.promiseRemoveAt(key)
-            }
+    async promiseAtPut (key, value) {
+        await this.promiseOpen();
 
-            //console.log("idb promiseHasKey ", key)
-            return this.promiseHasKey(key).then((hasKey) => {
-                if (hasKey) {
-                    //console.log("idb YES hasKey promiseUpdate", key)
+        if (typeof(value) === "undefined") {
+            return this.promiseRemoveAt(key)
+        }
 
-                    return this.promiseUpdate(key, value)
-                } else {
-                    //console.log("idb NO hasKey promiseAdd", key)
-                    return this.promiseAdd(key, value)
-                }
-            })
-        })//.then(() => this.promiseAssertHasKey(key))
+        const hasKey = await this.promiseHasKey(key);
+
+        if (hasKey) {
+            //console.log("idb YES hasKey promiseUpdate", key)
+            return this.promiseUpdate(key, value)
+        } 
+
+        //console.log("idb NO hasKey promiseAdd", key)
+        return this.promiseAdd(key, value)
     }
 
-    promiseAssertHasKey (key) {
-        return this.promiseHasKey(key).then((hasKey) => {
-            if (!hasKey) {
-                debugger;
-                return Promise.reject(new Error("failed assert"))
-            } else {
-                return Promise.resolve()
-            }
-        })
+    async promiseAssertHasKey (key) {
+        const hasKey = await this.promiseHasKey(key);
+
+        if (!hasKey) {
+            debugger;
+            return Promise.reject(new Error("failed assert"));
+        } else {
+            return Promise.resolve();
+        }
     }
 
-    promiseUpdate (key, value) { // private
-        return this.promiseNewTx().then((tx) => {
-            tx.begin()
-            tx.setIsDebugging(this.isDebugging())
-            tx.atUpdate(key, value)
-            return tx.promiseCommit() 
-        })
+    async promiseUpdate (key, value) { // private
+        const tx = await this.promiseNewTx();
+        tx.begin();
+        tx.setIsDebugging(this.isDebugging());
+        tx.atUpdate(key, value);
+        return tx.promiseCommit();
     }
 
-    promiseAdd (key, value) { // private
-        return this.promiseNewTx().then((tx) => {
-            this.debugLog("idb tx atAdd ", key)
-            tx.begin()
-            //tx.setIsDebugging(this.isDebugging())
-            tx.atAdd(key, value)
-            return tx.promiseCommit() 
-        })
+    async promiseAdd (key, value) { // private
+        const tx = await this.promiseNewTx();
+        this.debugLog("idb tx atAdd ", key);
+        tx.begin();
+        //tx.setIsDebugging(this.isDebugging());
+        tx.atAdd(key, value);
+        return tx.promiseCommit();
     }
 
-    promiseRemoveAt (key) {
-        return this.promiseOpen().then(() => {
-            return this.promiseNewTx().then((tx) => {
-                tx.begin()
-                tx.setIsDebugging(this.isDebugging())
-                tx.removeAt(key)
-                return tx.promiseCommit() 
-            })
-        })
+    async promiseRemoveAt (key) {
+        await this.promiseOpen();
+        const tx = await this.promiseNewTx();
+        tx.begin();
+        tx.setIsDebugging(this.isDebugging());
+        tx.removeAt(key);
+        return tx.promiseCommit();
     }
 
     // test
 
-    static promiseSelfTest () {
+    static async promiseSelfTest () {
         const folder = IndexedDBFolder.clone()
-        folder.promiseAtPut("test", "x").then(() => {
-            folder.promiseAsMap().then((map) => { console.log("db map = ", map) })
-        }).then(() => {
-            folder.promiseAt("test", (v) => { console.log("read ", v) })
-        })
+        await folder.promiseAtPut("test", "x");
+        const map = await folder.promiseAsMap();
+        console.log("db map = ", map);
+        const v = await folder.promiseAt("test");
+        console.log("read ", v);
     }
 
 }.initThisClass());
