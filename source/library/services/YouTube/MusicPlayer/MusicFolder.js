@@ -2,13 +2,13 @@
 
 /* 
 
-  MusicPlaylist
+  MusicFolder
 
 
 */
 
 
-(class MusicPlaylist extends BMSummaryNode {
+(class MusicFolder extends BMSummaryNode {
 
   initPrototypeSlots() {
     {
@@ -33,7 +33,7 @@
     super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([MusicTrack]);
+    this.setSubnodeClasses([MusicTrack, MusicFolder]);
     this.setCanAdd(true);
     this.setCanDelete(true);
     this.setNoteIsSubnodeCount(true);
@@ -54,19 +54,29 @@
   }
 
   newTrack () {
-    return this.add();
+    const track = MusicTrack.clone();
+    this.addSubnode(track);
+    return track;
+  }
+
+  folders () {
+    return this.subnodes().select(sn => sn.thisClass().isKindOf(MusicFolder));
   }
 
   tracks () {
-    return this.subnodes();
+    return this.subnodes().select(sn => sn.thisClass().isKindOf(MusicTrack));
   }
 
   trackNames () {
-    return this.subnodes().map(sn => sn.name());
+    return this.tracks().map(sn => sn.name());
   }
 
   trackWithName (name) {
-    return this.firstSubnodeWithTitle(name);
+    let track = this.tracks().detect(tack => track.name() === name);
+    if (!track) {
+      track = this.folders().detectAndReturnValue(folder => folder.trackWithName(name));
+    }
+    return track;
   }
 
   clear () {

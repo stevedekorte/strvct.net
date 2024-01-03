@@ -48,7 +48,24 @@
     */
 
     {
+      const slot = this.newSlot("togglePlayAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Play");
+      //slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("togglePlay");
+    }
+
+    {
       const slot = this.newSlot("shouldPlayOnAccess", true);
+    }
+
+    {
+      const slot = this.newSlot("isPlaying", false);
+      slot.setSyncsToView(true);
     }
 
     this.setShouldStore(true);
@@ -72,8 +89,10 @@
   }
 
   subtitle () {
-    return this.trackId();
+    return this.isPlaying() ? "playing" : "";
   }
+
+    /*
 
   prepareToAccess () {
     super.prepareToAccess();
@@ -81,15 +100,53 @@
       this.play();
     }
   }
+  */
+
+  library () {
+    return this.firstParentChainNodeOfClass(MusicLibrary)
+  }
+
+  folder () {
+    return this.firstParentChainNodeOfClass(MusicFolder)
+  }
 
   async play () {
-    const player = YouTubeAudioPlayer.clone();
+    const player = this.library().musicPlayer()
     player.setTrackName(this.name());
     player.setVideoId(this.trackId());
     player.setShouldRepeat(false);
-    this._player = player;
+    this.setIsPlaying(true);
     await player.play();
-    await player.shutdown();
+    this.setIsPlaying(false);
+  }
+
+  async stop () {
+    const player = this.library().musicPlayer()
+    await player.stop();
+    this.setIsPlaying(false);
+  }
+
+  isMusicTrack () {
+    return true;
+  }
+
+  // --- play action ---
+
+  togglePlay () {
+    if (this.isPlaying()) {
+      this.stop();
+    } else {
+      this.play();
+    }
+    return this;
+  }
+
+  togglePlayActionInfo () {
+    return {
+      isEnabled: true,
+      title: this.isPlaying() ? "Stop" : "Play",
+      isVisible: true,
+    };
   }
 
 }).initThisClass();

@@ -25,13 +25,24 @@
     }
 
     {
+      const slot = this.newSlot("folder", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Folder")
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setFinalInitProto(MusicFolder);
+      slot.setIsSubnode(true)
+    }
+
+    {
       const slot = this.newSlot("musicPlayer", null);
       slot.setInspectorPath("");
       slot.setLabel("Music Player")
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      //slot.setIsSubnodeField(true)
+      slot.setIsSubnode(true)
     }
 
     {
@@ -41,7 +52,7 @@
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      //slot.setIsSubnodeField(true)
+      slot.setIsSubnode(true)
     }
 
     this.setShouldStore(true);
@@ -50,29 +61,37 @@
 
   init() {
     super.init();
-    this.setupPlaylists();
+    //this.setFolder(MusicFolder.clone());
     this.setIsDebugging(true);
   }
 
   finalInit() {
+    super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([MusicPlaylist]);
+    this.setSubnodeClasses([MusicFolder]);
     this.setCanAdd(true);
-    super.finalInit();
     this.setTitle("Music Library");
+    this.setupPlaylists();
+    this.folder().setName("Playlists");
   }
 
   musicPlayer () {
     if (!this._musicPlayer) {
-      this._musicPlayer = YouTubeAudioPlayer.clone();
+      const p = YouTubeAudioPlayer.clone();
+      p.setTitle("Music Player");
+      p.setVolume(0.05);
+      this._musicPlayer = p;
     }
     return this._musicPlayer;
   }
 
   soundEffectPlayer () {
     if (!this._soundEffectPlayer) {
-      this._soundEffectPlayer = YouTubeAudioPlayer.clone();
+      const p = YouTubeAudioPlayer.clone();
+      p.setTitle("Sound Effect Player");
+      p.setVolume(0.5);
+      this._soundEffectPlayer = p;
     }
     return this._soundEffectPlayer;
   }
@@ -94,22 +113,22 @@
   setupPlaylists () {
     const playlistNames = Object.keys(this.playlistDicts());
     playlistNames.forEach((name) => {
-      const playlist = MusicPlaylist.clone();
+      const playlist = MusicFolder.clone();
       playlist.setName(name);
-      this.addSubnode(playlist);
+      this.folder().addSubnode(playlist);
       playlist.setJson(this.playlistDicts()[name]);
     });
     return this;
   }
 
   playlistWithName (name) {
-    const match = this.firstSubnodeWithTitle(name);
+    const match = this.folder().firstSubnodeWithTitle(name);
     assert(match);
     return match;
   }
 
   playlists () {
-    return this.subnodes();
+    return this.folder().subnodes();
   }
 
   trackWithName (name) {
@@ -122,7 +141,10 @@
   playTrackWithName (name) {
     this.debugLog("playTrackWithName('" + name + "')");
     const track = this.trackWithName(name);
-    assert(track);
+    if (!track) {
+      console.warn(this.type() + " couldn't find track '" + name + "'");
+      return;
+    }
     const player = this.musicPlayer();
     player.setTrackName(track.name());
     player.setVideoId(track.trackId());
@@ -137,7 +159,10 @@
 
   async playSoundEffectWithName (name) {
     const track = this.trackWithName(name);
-    assert(track);
+    if (!track) {
+      console.warn(this.type() + " couldn't find track '" + name + "'");
+      return;
+    }
     const player = this.soundEffectPlayer();
     player.setTrackName(track.name());
     player.setVideoId(track.trackId());
@@ -182,7 +207,7 @@
         "Vampire Castle": "8tMZWESYXAA",
         "Preparing for a Trial": "sSTVlP1v6-M",
         "Royal Palace": "KTH8CuWEOvc",
-        "Cursed City": "nI-iFEFCySE",
+        "Cursed City - dogs barking, faint conversations, naying of horses": "nI-iFEFCySE",
         "Mechanical Dungeon": "8lZWC0PwaLA",
         Stables: "QZyoM1nXWRo",
         "Scroll Shop, Scribe's Office": "eYKWDUptWA4",

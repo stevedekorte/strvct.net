@@ -2,6 +2,17 @@
 
 /* 
     YouTubeAudioPlayer
+
+
+    One shot use example:
+
+      const player = YouTubeAudioPlayer.clone();
+      player.setTrackName(this.name());
+      player.setVideoId(this.trackId());
+      player.setShouldRepeat(false);
+      await player.play();
+      await player.shutdown();
+
 */
 
 (class YouTubeAudioPlayer extends BMStorableNode {
@@ -41,7 +52,7 @@
     {
       const slot = this.newSlot("trackName", "");      
       slot.setInspectorPath("");
-      slot.setLabel("Track Name");
+      slot.setLabel("track name");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -53,7 +64,7 @@
     {
       const slot = this.newSlot("videoId", null);      
       slot.setInspectorPath("");
-      slot.setLabel("Video ID");
+      slot.setLabel("track id");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -68,7 +79,7 @@
       slot.setDuplicateOp("duplicate");
       slot.setInspectorPath("");
       slot.setIsSubnodeField(true);
-      slot.setLabel("Repeat");
+      slot.setLabel("repeat");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setSlotType("Boolean");
@@ -117,6 +128,24 @@
     
     super.finalInit();
     this.setTitle("YouTube Audio Player");
+  }
+
+  subtitle () {
+    if (this.isPlaying()) {
+      const lines = []
+      lines.push(this.stateName() + " '" + this.trackName() + "'");
+      /*
+      const secs = this.secondsBuffered();
+      if (secs) {
+        const percentBufferred = Math.round(this.fractionBuffered()*100) + "%";
+        lines.push(percentBufferred + " buffered (" + secs + "s)");
+        //lines.push(secs + "s buffered");
+      }
+      */
+      lines.push("volume: " + Math.round(this.volume()*100) + "%");
+      return lines.join("\n");
+    }
+    return ""
   }
 
   validVolumeValues () {
@@ -190,13 +219,16 @@
 
     const startSeconds = 0.0;
     if (this.videoId()) {
+      //this.stop(); // if we do this, the next video only gets cued but not played. Why?
+      this.resolvePlayPromise();
+
       this.setPlayPromise(Promise.clone().setLabel(this.type() + ".playPromise"));
       this.player().loadVideoById(this.videoId(), startSeconds);
       //this.player().pauseVideo()
       //this.player().cueVideoById(this.videoId());
       //this.playWhenBuffered();
+      return this.playPromise();
     }
-    return this.playPromise();
   }
 
   isReady () {
@@ -327,8 +359,16 @@
     if (this.shouldRepeat()) {
       this.player().playVideo(); // Replay the video when it ends
     } else {
-      this.playPromise().callResolveFunc();
+      this.resolvePlayPromise();
     }
+  }
+
+  resolvePlayPromise () {
+    if (this.playPromise()) {
+      this.playPromise().callResolveFunc();
+      this.setPlayPromise(null);
+    }
+    return this;
   }
 
   async setVolume (v) {
@@ -359,6 +399,7 @@
     }
     await this.playerPromise();
     this.player().stopVideo();
+    this.resolvePlayPromise();
   }
 
   async shutdown () {
@@ -372,17 +413,27 @@
   secondsBuffered () {
     if (this.isReady()) {
       const player = this.player();
-      var fraction = player.getVideoLoadedFraction(); // Get the fraction of the video that has been loaded
-      var duration = player.getDuration(); // Get the total duration of the video
-      var bufferedTime = fraction * duration; // Calculate the amount of time that has been buffered
+      const fraction = player.getVideoLoadedFraction(); // Get the fraction of the video that has been loaded
+      const duration = player.getDuration(); // Get the total duration of the video
+      const bufferedTime = fraction * duration; // Calculate the amount of time that has been buffered
 
-      console.log("Buffered time: " + bufferedTime + " seconds");
-      return this;
+      //console.log("Buffered time: " + bufferedTime + " seconds");
+      return Math.round(bufferedTime);
+    }
+    return 0;
+  }
+
+  fractionBuffered () {
+    if (this.isReady()) {
+      const player = this.player();
+      const fraction = player.getVideoLoadedFraction(); // Get the fraction of the video that has been loaded
+      return fraction;
     }
     return 0;
   }
 
   playWhenBuffered () {
+    // this is trying to solve the problem of choppy playback by ensuring sufficient buffering
     if (!this._checkBuffer) {
       this._checkBuffer = setInterval(() => {
         if (this.secondsBuffered() > 30) {
