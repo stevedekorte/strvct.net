@@ -83,12 +83,13 @@
   }
 
   async play () {
-    const player = YouTubeAudioPlayer.shared();
+    const player = YouTubeAudioPlayer.clone();
     player.setTrackName(this.name());
     player.setVideoId(this.trackId());
-    const isSoundFX = this.name().includes("FX");
-    player.setShouldRepeat(!isSoundFX);
+    player.setShouldRepeat(false);
+    this._player = player;
     await player.play();
+    await player.shutdown();
   }
 
 }).initThisClass();

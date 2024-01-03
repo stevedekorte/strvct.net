@@ -1,85 +1,14 @@
 "use strict";
 
 /* 
-    MusicLibrary
 
-    To get a list from a videos list page, scroll to the bottom, then open the console and type:
+  MusicLibrary
 
-      function getVideoslist() {
-        let vids = document.getElementsByClassName("yt-simple-endpoint focus-on-expand style-scope ytd-rich-grid-media");
-        let dict = {}; 
-        for (const vid of vids) {  
-          let k = vid.getAttribute("aria-label");
-          if (k.indexOf(" - ") != -1) {
-            k = k.split(" - ")[1]
-          }
-
-          if (k.indexOf("(") != -1) {
-            k = k.split("(")[0]
-          }
-
-          if (k.indexOf("|") != -1) {
-            k = k.split("|")[0]
-          }
-
-          if (k.indexOf(" by ") != -1) {
-            k = k.split(" by ")[0]
-          }
-          k = k.trim();
-
-          let v = vid.getAttribute("href").split("=")[1];
-          if (v.indexOf("&") != -1) {
-            v = v.split("&")[0]
-          }
-          dict[k] = v 
-
-        }; 
-        return JSON.stringify(dict, 2, 2);
-      };
-      getVideoslist();
-
-    To get a list from a playlist page:
-
-    function getPlaylist() {
-      let vids = document.getElementsByClassName("yt-simple-endpoint style-scope ytd-playlist-video-renderer");
-      let dict = {}; 
-      for (const vid of vids) {  
-
-        // get key 
-        
-        let k = vid.getAttribute("title");
-        if (k.indexOf(" - ") != -1) {
-          k = k.split(" - ")[1]
-        }
-
-        if (k.indexOf("(") != -1) {
-          k = k.split("(")[0]
-        }
-
-        if (k.indexOf(" by ") != -1) {
-          k = k.split(" by ")[0]
-        }
-        k = k.trim();
-
-        // get value
-
-        let v = vid.getAttribute("href").split("=")[1];
-        if (v.indexOf("&") != -1) {
-          v = v.split("&")[0]
-        }
-        dict[k] = v 
-      }; 
-      return JSON.stringify(dict, 2, 2);
-    };
-    getPlaylist();
-
-    TODO: move this to node script
-*/
-
-
-(class MusicLibrary extends BMSummaryNode {
   // all tracks are under a Creative Commons License
 
+*/
+
+(class MusicLibrary extends BMSummaryNode {
 
   initPrototypeSlots() {
 
@@ -93,6 +22,26 @@
       slot.setSlotType("String");
       //slot.setIsSubnodeField(true)
       slot.setCanEditInspection(true);
+    }
+
+    {
+      const slot = this.newSlot("musicPlayer", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Music Player")
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      //slot.setIsSubnodeField(true)
+    }
+
+    {
+      const slot = this.newSlot("soundEffectPlayer", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Sound Effect Player")
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      //slot.setIsSubnodeField(true)
     }
 
     this.setShouldStore(true);
@@ -112,6 +61,34 @@
     this.setCanAdd(true);
     super.finalInit();
     this.setTitle("Music Library");
+  }
+
+  musicPlayer () {
+    if (!this._musicPlayer) {
+      this._musicPlayer = YouTubeAudioPlayer.clone();
+    }
+    return this._musicPlayer;
+  }
+
+  soundEffectPlayer () {
+    if (!this._soundEffectPlayer) {
+      this._soundEffectPlayer = YouTubeAudioPlayer.clone();
+    }
+    return this._soundEffectPlayer;
+  }
+
+  shutdown () {
+    if (this._musicPlayer) {
+      this._musicPlayer.shutdown();
+      this.setMusicPlayer(null);
+    }
+
+    if (this._soundEffectPlayer) {
+      this._soundEffectPlayer.shutdown();
+      this.setSoundEffectPlayer(null);
+    }
+
+    return this;
   }
 
   setupPlaylists () {
@@ -145,16 +122,27 @@
   playTrackWithName (name) {
     this.debugLog("playTrackWithName('" + name + "')");
     const track = this.trackWithName(name);
-    if (track) {
-      track.play();
-    } else {
-      throw new Error(this.type() + " missing track with name '" + name + "'");
-    }
+    assert(track);
+    const player = this.musicPlayer();
+    player.setTrackName(track.name());
+    player.setVideoId(track.trackId());
+    player.setShouldRepeat(true);
+    player.play();
   }
 
   tracksForPlaylistsWithNames (playlistNames) {
     const playlists = playlistNames.map(pName => this.playlistWithName(pName));
     return playlists.map(playlist => playlist.tracks()).flat();
+  }
+
+  async playSoundEffectWithName (name) {
+    const track = this.trackWithName(name);
+    assert(track);
+    const player = this.soundEffectPlayer();
+    player.setTrackName(track.name());
+    player.setVideoId(track.trackId());
+    player.setShouldRepeat(false);
+    await player.play();
   }
 
   playlistDicts () {
@@ -399,7 +387,6 @@
         "Tavern/Inn": "roABNwbjZf4",
         "The Adventure Begins": "q8R4MxLoOZM", // eh
         "Knight Tournament": "Kws7g5Qqae0", // eh
-        "Gong Sound": "_grH3Z5YHdI",
 
         // from https://www.youtube.com/@AjsDnDMusic/videos
         "Auril Rises Once More": "T4tCCZN_h5Q",
@@ -524,29 +511,30 @@
       },
 
       "Sound FX": {
-        "knocking on door FX": "HIJunF3DIjw",
-        "creaking door opening FX": "ij5bdBI_JVA",
-        "door closing FX": "PAPcSY20DYA",
-        "heavy metal door opening and closing FX": "c90uCjVbW_g",
-        "dramatic jungle drums FX": "3e1Acwh8GmQ",
-        "sword fight FX": "4g-iCX2oST4",
-        "sword slice FX": "VjrY6foiTxw",
-        "critical axe hit FX": "Q6ab0gpaKIw",
-        "dementor wailing FX": "8XbN5nIBuew",
-        "dementor soul kiss FX": "ZUqDcr4lznU",
-        "card shuffling FX": "dbfwV0-XCRY",
-        "demonic laugh FX": "9Il8gAr7Ar4",
-        "dark war horn FX": "kUw-fc2BYLo",
-        "bright war horn FX": "o54owbOXrro",
-        "cinematic war horn FX": "tsl854orF1I",
-        "war horn with echo FX": "enQyoFCrSXY",
-        "long war horn FX": "uHHMV8hukBI",
-        "ork battle horn FX": "hPKTrrgMrmBc",
-        "distant ominous war horn FX": "GCilFSXdLuM",
-        "scary war horn FX": "C7YbRGABJ3U"
+        "Gong": "_grH3Z5YHdI",
+        "knocking on door": "HIJunF3DIjw",
+        "creaking door opening": "ij5bdBI_JVA",
+        "door closing": "PAPcSY20DYA",
+        "heavy metal door opening and closing": "c90uCjVbW_g",
+        "dramatic jungle drums": "3e1Acwh8GmQ",
+        "sword fight": "4g-iCX2oST4",
+        "sword slice": "VjrY6foiTxw",
+        "critical axe hit": "Q6ab0gpaKIw",
+        "dementor wailing": "8XbN5nIBuew",
+        "dementor soul kiss": "ZUqDcr4lznU",
+        "card shuffling": "dbfwV0-XCRY",
+        "demonic laugh": "9Il8gAr7Ar4",
+        "dark war horn": "kUw-fc2BYLo",
+        "bright war horn": "o54owbOXrro",
+        "cinematic war horn": "tsl854orF1I",
+        "war horn with echo": "enQyoFCrSXY",
+        "long war horn": "uHHMV8hukBI",
+        "ork battle horn": "hPKTrrgMrmBc",
+        "distant ominous war horn": "GCilFSXdLuM",
+        "scary war horn": "C7YbRGABJ3U"
       },
 
-      "SciFi": {
+      "Science Fiction": {
           //"Deep Thought": "IngU5tGtJQY", // only good for first 90 seconds
           "Space hitchhiker harpsicord": "nGd7Zphv1J0", // good for hitchhikers
           "Upbeat exploration": "sB6jXSr7_wQ", // good for hitchhikers

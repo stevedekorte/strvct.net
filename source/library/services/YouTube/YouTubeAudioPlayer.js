@@ -6,15 +6,11 @@
 
 (class YouTubeAudioPlayer extends BMStorableNode {
 
-  static initClass () {
-    this.setIsSingleton(true)
-    return this
-  }
-
   initPrototypeSlots () {
 
     {
       const slot = this.newSlot("element", null);
+      slot.setSyncsToView(true);
     }
     
     { 
@@ -22,11 +18,16 @@
     }
 
     {
-      const slot = this.newSlot("player", null); // reference to store the YouTube player
+      const slot = this.newSlot("playPromise", null);
     }
 
     {
-      const slot = this.newSlot("stateName", false);
+      const slot = this.newSlot("player", null); // reference to store the YouTube player
+      slot.setSyncsToView(true);
+    }
+
+    {
+      const slot = this.newSlot("stateName", "");
       slot.setInspectorPath("");
       slot.setLabel("status");
       slot.setShouldStoreSlot(false);
@@ -63,7 +64,7 @@
 
     {
       const slot = this.newSlot("shouldRepeat", true);      
-      slot.setCanEditInspection(false);
+      slot.setCanEditInspection(true);
       slot.setDuplicateOp("duplicate");
       slot.setInspectorPath("");
       slot.setIsSubnodeField(true);
@@ -99,23 +100,23 @@
       slot.setActionMethodName("togglePlay");
     }
 
-    this.setShouldStore(true)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
   }
 
   init () {
     super.init();
     this.setIsDebugging(true);
-    this.setPlayerPromise(Promise.clone());
+    this.setPlayerPromise(Promise.clone().setLabel(this.type() + " setup"));
     this.setupFrame();
   }
 
   finalInit () {
-    this.setShouldStore(true)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
     
-    super.finalInit()
-    this.setTitle("YouTube Audio Player")
+    super.finalInit();
+    this.setTitle("YouTube Audio Player");
   }
 
   validVolumeValues () {
@@ -132,23 +133,9 @@
 
   async setupFrame () {
     await EventManager.shared().firstUserEventPromise();
-    this.loadFrameAPI(); // this will call setupPlayer after frame is loaded
-  }
-
-  loadFrameAPI () {
-    // Load the YouTube IFrame Player API asynchronously
-    this.debugLog("loadFrameAPI()");
-    const tag = document.createElement("script");
-    tag.src = "https://www.youtube.com/iframe_api";
-    const firstScriptTag = document.getElementsByTagName("script")[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    return this;
-  }
-
-  onFrameReady () {
-    this.debugLog("onFrameReady()");
+    await YouTubePlayerFrame.shared().frameReadyPromise();
+    //this.playerPromise().beginTimeout(3000);
     this.setupPlayer();
-    return this;
   }
 
   setupPlayer () {
@@ -180,7 +167,7 @@
     try {
       const e = document.createElement("div");
       this.setElement(e);
-      e.id = "youTubePlayer";
+      e.id = "YouTubePlayer_" + this.puuid();
       e.style.display = "none";
       document.body.appendChild(e);
       const player = new YT.Player(e.id, json);
@@ -200,13 +187,16 @@
 
     await this.playerPromise();
     this.debugLog("play() after promise");
+
     const startSeconds = 0.0;
     if (this.videoId()) {
+      this.setPlayPromise(Promise.clone().setLabel(this.type() + ".playPromise"));
       this.player().loadVideoById(this.videoId(), startSeconds);
       //this.player().pauseVideo()
       //this.player().cueVideoById(this.videoId());
       //this.playWhenBuffered();
     }
+    return this.playPromise();
   }
 
   isReady () {
@@ -336,6 +326,8 @@
   onPlayerEnd (event) {
     if (this.shouldRepeat()) {
       this.player().playVideo(); // Replay the video when it ends
+    } else {
+      this.playPromise().callResolveFunc();
     }
   }
 
@@ -421,12 +413,28 @@
     };
   }
 
+  async shutdown () {
+    if (this.playerPromise().hasAwaiters()) {
+      // it's in the middle of being setup so wait until that resolves/rejects
+      await this.playerPromise();
+    }
+
+    // cleanup player
+    const player = this.player();
+    if (player) {
+      player.stopVideo();
+      player.destroy();
+      this.setPlayer(null);
+    }
+
+    // cleanup element
+    const e = this.element();
+    if (e) {
+      e.parentNode.removeChild(e);
+      this.setElement(null);
+    }
+
+    this.setPlayerPromise(Promise.clone().setLabel(this.type() + " setup"));
+  }
 
 }).initThisClass();
-
-getGlobalThis().onYouTubeIframeAPIReady = function () {
-  // called after API code downloads
-  YouTubeAudioPlayer.shared().onFrameReady();
-}
-
-//YouTubeAudioPlayer.shared() // get the iframe and player setup
