@@ -482,7 +482,7 @@ class ResourceManager {
         // as this will be much faster than loading the files individually
         //debugger
         //await this.hashCache().promiseClear();
-        const count = HashCache.shared().promiseCount();
+        const count = await HashCache.shared().promiseCount();
 
         console.log(this.type() + " hashcache count: ", count)
         if (!count) {

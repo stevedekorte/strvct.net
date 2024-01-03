@@ -83,9 +83,9 @@
 
     // loading 
 
-    didLoad () { // called when resource data loaded
+    async didLoad () { // called when resource data loaded
         super.didLoad()
-        this.loadFontFromData()
+        await this.promiseLoadFontFromData()
         if (this.isDebugging()) {
             //this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'")
             //debugger;
@@ -94,7 +94,7 @@
         return this
     }
 
-    loadFontFromData () {
+    async promiseLoadFontFromData () {
         let name = this.name();
 
         if (Object.keys(this.options()).length === 0) {
@@ -107,16 +107,18 @@
         const aFontFace = new FontFace(name, this.data(), this.options()); 
         this.setFontFace(aFontFace)
 
-        aFontFace.load().then((loadedFace) => {
+        try {
+            const loadedFace = await aFontFace.load();
             // can probably do this in the background, 
             // but it's nice to know when it's complete
-           // this.didLoad()
-            assert(loadedFace === aFontFace)
-            document.fonts.add(loadedFace)
-            //console.log("added font to document: ", this.name())
-        }).catch((error) => {
-            this.onLoadError(error)
-        });
+            // this.didLoad();
+            assert(loadedFace === aFontFace);
+            document.fonts.add(loadedFace);
+            //console.log("added font to document: ", this.name());
+        } catch (error) {
+            this.onLoadError(error);
+            throw error;
+        }
     }
 
     onLoadError (error) {

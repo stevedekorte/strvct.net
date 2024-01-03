@@ -62,13 +62,12 @@
         return this
     }
 
-    promiseOpen () {
+    async promiseOpen () {
         if (!this.isOpen()) {
-            this.idb().setPath(this.name())
+            this.idb().setPath(this.name());
         }
-        return this.idb().promiseOpen().then(() => {
-            return this.promiseOnOpen() 
-        })
+        await this.idb().promiseOpen();
+        await this.promiseOnOpen() ;
     }
 	
     promiseOnOpen () {
@@ -82,40 +81,34 @@
 	
     // ---- operations ---
 
-    promiseClear () {
-        return this.promiseOpen().then(() => {
-            return this.idb().promiseClear()
-        })
+    async promiseClear () {
+        await this.promiseOpen();
+        await this.idb().promiseClear();
     }
 
-    promiseAllKeys () {
-        return this.promiseOpen().then(() => {
-            return this.idb().promiseAllKeys()
-        })
+    async promiseAllKeys () {
+        await this.promiseOpen();
+        await this.idb().promiseAllKeys();
     }
 
-    promiseHasKey (key) { // resolve passes true or false
-        return this.promiseOpen().then(() => {
-            return this.idb().promiseHasKey(key)
-        })
+    async promiseHasKey (key) { // resolve passes true or false
+        await this.promiseOpen();
+        return this.idb().promiseHasKey(key);
     }
 
-    promiseAt (key) { // resolve passes value or undefined
-        return this.promiseOpen().then(() => {
-            return this.idb().promiseAt(key)
-        })
+    async promiseAt (key) { // resolve passes value or undefined
+        await this.promiseOpen();
+        return this.idb().promiseAt(key);
     }
 
-    promiseAtPut (key, value) {
-        return this.promiseOpen().then(() => {
-            return this.idb().promiseAtPut(key, value)
-        })
+    async promiseAtPut (key, value) {
+        await this.promiseOpen();
+        return this.idb().promiseAtPut(key, value);
     }
 
-    promiseRemoveAt (key) {
-        return this.promiseOpen().then(() => {
-            return this.idb().promiseRemoveAt(key, value)
-        })
+    async promiseRemoveAt (key) {
+        await this.promiseOpen();
+        return this.idb().promiseRemoveAt(key, value);
     }
 
 }.initThisClass());

@@ -162,23 +162,22 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     /*
     async asyncQueueSetKvPromise (kvPromise) {
-        const setPromise = Promise.clone();
+        const promise = Promise.clone();
         const kvTuple = await kvPromise
 
         assert(Type.isArray(kvTuple) && kvTuple.length == 2);
         const k = kvTuple[0];
         const v = kvTuple[1];
         this.set(k, v);
-        setPromise.callResolveFunc();
+        promise.callResolveFunc();
 
         this.queuedSets().push(setPromise);
-        return setPromise;
+        return promise;
     }
 
     async asyncProcessSetPromiseQueue () {
-        return Promise.all(this.queuedSets()).then(() => {
-            this.setQueuedSets([])
-        })
+        await Promise.all(this.queuedSets());
+        this.setQueuedSets([]);
     }
     */
 
@@ -264,56 +263,51 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
     totalBytes () {
         const cachedResult = this.totalBytesCache()
         if (!Type.isNull(cachedResult)) {
-            return cachedResult
+            return cachedResult;
         }
 
-        this.assertNotInTx()
-        this.assertAccessible()
-        assert(this.keysAndValuesAreStrings())
-        let byteCount = 0
+        this.assertNotInTx();
+        this.assertAccessible();
+        assert(this.keysAndValuesAreStrings());
+        let byteCount = 0;
         this.map().forEachKV((k, v) => {
             byteCount += k.length + v.length // not correct for unicode, but fast and good enough for now
             //byteCount += k.byteLength() + v.byteLength() // correct, but slow
         })
-        this.setTotalBytesCache(byteCount)
-        return byteCount
+        this.setTotalBytesCache(byteCount);
+        return byteCount;
     }
 
     asJson () {
-        return this.map().asDict()
+        return this.map().asDict();
     }
 
     fromJson (json) {
-        this.map().clear()
-        this.map().fromDict(json)
+        this.map().clear();
+        this.map().fromDict(json);
         return this
     }
 
     // test
 
-    static selfTest () {
+    static async selfTest () {
         const m = this.clone()
 
-        m.begin()
-        m.atPut("foo", "bar")
-        m.promiseCommit().then(() => {
+        // atPut test
+        m.begin();
+        m.atPut("foo", "bar");
+        await m.promiseCommit(); 
+        assert(m.count() === 1)
+        assert(m.Array()[0] === "foo")
 
-            assert(m.count() === 1)
-            assert(m.Array()[0] === "foo")
+        // removeAt test
+        m.begin();
+        m.removeAt("foo");
+        await m.promiseCommit();
+        assert(m.count() === 0);
 
-        }).then(() => {
-
-            m.begin()
-            m.removeAt("foo")
-            return m.promiseCommit()
-
-        }).then(() => {
-
-            assert(m.count() === 0)
-
-        })
-
-        return this
+        return true;
     }
+
 }.initThisClass(); //.selfTest()
 

@@ -1,8 +1,8 @@
 [
     "WebBrowserScreen.js",
     "WebBrowserWindow.js",
-    "WebBrowserNotifications.js",
     "WebBrowserNotification.js",
+    "WebBrowserNotifications.js",
     "WebDocument.js",
     "BMStyleSheet.js",
     "ThrashDetector.js"

@@ -71,9 +71,10 @@
         return this
     }
 
-    promiseOpen () {
-        this.debugLog(() => "promiseOnOpen() '" + this.name() + "'")
-        return this.idb().promiseOpen().then(() => { return this.promiseOnOpen()}) // it can deal with multiple calls while it's opening
+    async promiseOpen () {
+        this.debugLog(() => "promiseOnOpen() '" + this.name() + "'");
+        await this.idb().promiseOpen();
+        return this.promiseOnOpen(); // it can deal with multiple calls while it's opening
     }
 	
     async promiseOnOpen () {
@@ -84,7 +85,7 @@
         } 
 
         this.debugLog("onOpen() - loading cache");
-        return this.promiseLoadMap();
+        await this.promiseLoadMap();
     }
 
     async promiseLoadMap () {
@@ -153,13 +154,9 @@
         // indexeddb commits on next event loop automatically
         // tx is marked as committed and will throw exception on further writes
 
-        /*
-        if (this.isDebugging()) {
-            return tx.promiseCommit().then(() => this.promiseVerifySync())
-        } else {
-            return tx.promiseCommit()
-        }
-        */
+        //await tx.promiseCommit();
+        //await this.promiseVerifySync();
+
         this.setIsApplying(false);
     }
 
@@ -173,28 +170,27 @@
             this.applyChangesToTx(tx)
             return tx.promiseCommit()
         } else {
-            return this.idb().promiseNewTx().then((tx) => {
-                this.applyChangesToTx(tx)
-                return tx.promiseCommit()
-            })
+            const tx = await this.idb().promiseNewTx();
+            this.applyChangesToTx(tx);
+            return tx.promiseCommit();
         }
     }
 	
     // --- helpers ---
 
-    promiseVerifySync () {
-        const currentMap = this.map().shallowCopy()
+    async promiseVerifySync () {
+        const currentMap = this.map().shallowCopy();
+        const map = await this.idb().promiseAsMap();
 
-        return this.idb().promiseAsMap().then(map => {	 
-            const isSynced = map.isEqual(currentMap) // works if keys and values are strings
-            if (isSynced) {
-                this.debugLog(".verifySync() SUCCEEDED")
-            } else {
-                //this.idb().show()
-                //console.log("syncdb idb json: ", JSON.stringify(map.asDict(), null, 2))
-                throw new Error(his.debugTypeId() + ".verifySync() FAILED")
-            }
-        })
+        const isSynced = map.isEqual(currentMap); // works if keys and values are strings
+        if (isSynced) {
+            this.debugLog(".verifySync() SUCCEEDED");
+        } else {
+            //this.idb().show()
+            //console.log("syncdb idb json: ", JSON.stringify(map.asDict(), null, 2))
+            throw new Error(his.debugTypeId() + ".verifySync() FAILED");
+        }
     }
+    
 }.initThisClass());
 

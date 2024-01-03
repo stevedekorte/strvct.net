@@ -65,10 +65,9 @@
         return this.data() !== null
     }
 
-    promiseLoad () { 
-        return this.urlResource().promiseLoad().then(r => {
-            this._data = r.data()
-        })
+    async promiseLoad () {
+        const r = await this.urlResource().promiseLoad();
+        this._data = r.data();
     }
 
     // --- load data from cam ---

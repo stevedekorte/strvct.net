@@ -72,7 +72,7 @@
   }
 
   trackWithName (name) {
-    let track = this.tracks().detect(tack => track.name() === name);
+    let track = this.tracks().detect(track => track.name() === name);
     if (!track) {
       track = this.folders().detectAndReturnValue(folder => folder.trackWithName(name));
     }
@@ -84,6 +84,7 @@
     return this;
   }
 
+  /*
   copyMergeTracks (tracks) {
     tracks.forEach(track => {
       if (!this.trackWithName(track.name())) {
@@ -91,5 +92,6 @@
       }
     })
   }
+  */
 
 }).initThisClass();

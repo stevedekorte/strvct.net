@@ -31,8 +31,8 @@
         return this.idb().promiseHasKey(hash)
     }
 
-    promiseCount () {
-        return this.idb().promiseCount()
+    async promiseCount () {
+        return this.idb().promiseCount();
     }
 
     assertValidValue (v) {
@@ -49,78 +49,68 @@
         return this.idb().promiseHasKey(key)
     }
 
-    promiseContentForHashOrUrl (hash, url) {
-        //debugger
-        if (hash) {
-            return this.idb().promiseAt(hash).then((dataFromDb) => {
-                if (typeof(v) !== "undefined") {
-                    // if we have the value, return it
-                    this.assertValidValue(dataFromDb)
-                    return Promise.resolve(dataFromDb)
-                }
-                //debugger
-                console.log("no hachcache key '" + hash + "' '" + url + "'")
-                // otherwise load it from url, store it, and then return it
-                return this.promiseLoadUrlAndWriteToHash(url, hash)
-            })
+    async promiseContentForHashOrUrl (hash, url) {
+        if (!hash) {
+            throw new Error("this API requires a hash");
+        }
+
+        const dataFromDb = await this.idb().promiseAt(hash);
+        if (typeof(v) !== "undefined") {
+            // if we have the value, return it
+            this.assertValidValue(dataFromDb);
+            return dataFromDb;
+        }
+        console.log("no hachcache key '" + hash + "' '" + url + "'");
+        // otherwise load it from url, store it, and then return it
+        return this.promiseLoadUrlAndWriteToHash(url, hash);
+    }
+
+    async promiseLoadUrlAndWriteToHash (url, hash) {
+        const resource = await UrlResource.with(url).promiseLoad();
+        const data = resource.data();
+        if (data === undefined) {
+            throw new Error("unable to load url: '" + url + "'");
         } else {
-            // if you want to create a key, use the promiseHashKeyForData() API
-            // TODO add a data write API so we don't compute hash twice
-            return Promise.reject(new Error("this API requires a hash"))
-            //  load it from url, store it, and then return it
-            //return this.promiseLoadUrlAndWriteToHash(url, hash)
+            console.log("HashCache loaded url: '" + url + "'");
+            debugger;
+            await this.promiseAtPut(hash, data);
+            return data;
         }
     }
 
-    promiseLoadUrlAndWriteToHash (url, hash) {
-        return UrlResource.with(url).promiseLoad().then((resource) => {
-            const data = resource.data()
-            debugger
-            if (data === undefined) {
-                throw new Error("unable to load url: '" + url + "'")
-            } else {
-                console.log("HashCache loaded url: '" + url + "'")
-                debugger
-                return this.promiseAtPut(hash, data).then(() => {
-                    return Promise.resolve(data)
-                })
-            }
-        })
-    }
-
     promiseAt (hash) {
-        return this.idb().promiseAt(hash)
+        return this.idb().promiseAt(hash);
     }
 
-    promiseAtPut (hash, data) {
-        this.assertValidValue(data)
+    async promiseAtPut (hash, data) {
+        this.assertValidValue(data);
 
-        return this.promiseHasHash(hash).then((hasHash) => {
-            if (hasHash) {
-                // we have this key so no point in writing (as same key always means same value)
-                return Promise.resolve()
-            }
+        const hasHash = await this.promiseHasHash(hash);
 
-            // verify key before writing
-            return this.promiseHashKeyForData(data).then((dataHash) => {
-                if (hash === dataHash) {
-                    console.log("HashCache atPut ", hash)
-                    return this.idb().promiseAtPut(hash, data)
-                }
-                return Promise.reject(new Error("hash key does not match hash of value"))
-            })
-        })
+        if (hasHash) {
+            // we have this key so no point in writing (as same key always means same value)
+            return;
+        }
+
+        // verify key before writing
+        const dataHash = await this.promiseHashKeyForData(data);
+
+        if (hash !== dataHash) {
+            throw new Error("hash key does not match hash of value");
+        }
+
+        console.log("HashCache atPut ", hash);
+        return this.idb().promiseAtPut(hash, data);
     }
 
-    promiseHashKeyForData (data) {
+    async promiseHashKeyForData (data) {
         if (typeof(data) === "string") {
             data = new TextEncoder("utf-8").encode(data);    
         }
 
-        return crypto.subtle.digest("SHA-256", data).then((hashArrayBuffer) => {
-            const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)))
-            return Promise.resolve(hashString)
-        })
+        const hashArrayBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashString = btoa(String.fromCharCode.apply(null, new Uint8Array(hashArrayBuffer)));
+        return hashString;
     }
 
     promiseClear () {
@@ -133,12 +123,8 @@
     async removeInvalidRecords () {
         const keys = await this.idb().promiseAllKeys();
         let promise = null;
-        keys.forEach((key) => {
-            if (!promise) {
-                promise = this.promiseVerifyOrDeleteKey(key);
-            } else {
-                promise = promise.then(() => this.promiseVerifyOrDeleteKey(key));
-            }
+        keys.forEach(async (key) => {
+            await this.promiseVerifyOrDeleteKey(key);
         });
     }
 

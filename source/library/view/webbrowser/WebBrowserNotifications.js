@@ -22,78 +22,78 @@
 
 (class WebBrowserNotifications extends ProtoClass {
     
+    static initClass () {
+        this.setIsSingleton(true);
+        return this;
+      }
+
     initPrototypeSlots () {
-        this.newSlot("permissionRequestResult", null)
-        this.newSlot("waitingNote", null)
+        this.newSlot("permissionRequestResult", null);
     }
 
-    /*
     init () {
-        super.init()
-        //throw new Error("this class is meant to be used as singleton, for now")
+        super.init();
+        this.setIsDebugging(true);
+        this.requestPermissionIfNeeded();
         return this
     }
-    */
+
+    // --- getting permission ---
 
     hasPermission () {
-        return this.permissionRequestResult() === "granted"
+        return this.permissionRequestResult() === "granted";
     }
 
     wasDenied () {
-        return this.permissionRequestResult() === "denied"
+        return this.permissionRequestResult() === "denied";
     }
 
     hasAskedForPermission () {
-        return this.permissionRequestResult() !== null
+        return this.permissionRequestResult() !== null;
     }
 
-    requestPermissionIfNeeded () {
+    async requestPermissionIfNeeded () {
         if (!this.hasAskedForPermission()) {
-            this.requestPermission()
+            await this.requestPermission();
         }
-        return this
     }
 
-    requestPermission () {
-        Notification.requestPermission().then((result) => {
-            this.setPermissionRequestResult(result);
-            console.log("requestPermission:", result);
-            this.postWaitingNotes();
-        });
-        Notification.requestPermission();
+    async requestPermission () {
+        const result = await Notification.requestPermission();
+        this.setPermissionRequestResult(result);
+        if (this.wasDenied()) {
+            console.warn(this.type() + " permission denied");
+        }
+        this.debugLog("requestPermission:", result);
     }
 
     isSupported () {
         return window.hasOwnProperty("Notification");
     }
 
-    postNote (aNote) {
-        this.setWaitingNote(aNote)
+    // --- posting ---
 
+    async postNote (aNote) {
         if (!this.isSupported()) {
-            return this
+            console.warn(this.type() + " sending browser notifications is not supported");
+            return;
         }
 
-        this.requestPermissionIfNeeded() // will call this.postWaitingNotes()
+        if (!this.hasAskedForPermission()) {
+            await this.requestPermissionIfNeeded(); // will call this.postWaitingNotes()
+        }
 
         if (this.hasPermission()) {
-            this.postWaitingNotes()
+            aNote.justPost();
         }
-
-        return this
-    }
-
-    postWaitingNotes () {
-        if (this.waitingNote()) {
-            this.waitingNote().tryToPost()
-            this.setWaitingNote(null)
-        }
-        return this
     }
 
     newNote () {
-        return WebBrowserNotification.clone()
+        return WebBrowserNotification.clone();
     }
     
 }.initThisClass());
 
+WebBrowserNotifications.shared();
+
+WebBrowserNotifications.shared().newNote().setTitle("hello").setBody("world!").tryToPost();

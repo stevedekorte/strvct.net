@@ -8,17 +8,19 @@
 
 (class IndexedDBFolder extends Base {
     initPrototypeSlots () {
-        this.newSlot("path", "/")
-        this.newSlot("pathSeparator", "/") // path should end with pathSeparator
-        this.newSlot("db", null)
+        this.newSlot("path", "/");
+        this.newSlot("pathSeparator", "/"); // path should end with pathSeparator
+        this.newSlot("db", null);
 
         // requesting persistence
-        this.newSlot("hasPermission", false)
-        this.newSlot("promiseForPersistence", null)
+        this.newSlot("hasPermission", false);
+        this.newSlot("promiseForPersistence", null);
 
-        this.newSlot("promiseForOpen", null) // has a value while opening. Returns this value while opening so multiple requests queue for open
-        this.newSlot("lastTx", null) 
-        //this.newSlot("keyCacheSet", null) 
+        this.newSlot("promiseForOpen", null); // has a value while opening. Returns this value while opening so multiple requests queue for open
+        this.newSlot("lastTx", null) ;
+        //this.newSlot("keyCacheSet", null);
+        this.newSlot("version", 2); 
+
     }
 
     init () {
@@ -49,12 +51,13 @@
 
     async newPromisePersistence () {
         if (!this.hasStorageApi()) {
-            return Promise.reject(new Error("Missing navigator.storage API."))
+            throw new Error("Missing navigator.storage API.");
         }
 
         const granted = await navigator.storage.persist();
         
         this.setHasPermission(granted);
+
         if (granted) {
             //console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
         } else {
@@ -72,9 +75,10 @@
         return (this.db() !== null)
     }
 
-    promiseOpen () {
+    async promiseOpen () {
         if (!this.promiseForOpen()) {
-            this.setPromiseForOpen(this.promisePersistence().then(() => this.newPromiseOpen()))
+            await this.promisePersistence();
+            this.setPromiseForOpen(this.newPromiseOpen())
         }
         return this.promiseForOpen()
     }
@@ -87,9 +91,8 @@
             return Promise.resolve();
         }
 
-        const version = 2 // can't be zero
         //console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
-        const request = window.indexedDB.open(this.path(), version);
+        const request = window.indexedDB.open(this.path(), this.version());
 
         request.onsuccess = (event) => {
             //debugger;
@@ -121,25 +124,25 @@
     }
 
     onOpenUpgradeNeeded (event) {
-        this.debugLog(" onupgradeneeded - likely setting up local database for the first time")
+        this.debugLog(" onupgradeneeded - likely setting up local database for the first time");
 
         const db = event.target.result;
 
         db.onerror = (event) => {
-            console.log("db error ", event)
+            console.log("db error ", event);
         };
 
-        this.setDb(db)
+        this.setDb(db);
 
         const objectStore = db.createObjectStore(this.storeName(), { keyPath: "key" }, false);
         const idbIndex = objectStore.createIndex("key", "key", { unique: true });
     }
 
     close () {
-        if (this.isOpen()) {
+        if (this.isOpen()) {;
             this.db().close()
-            this.setDb(null)
-            this.setPromiseForOpen(null)
+            this.setDb(null);
+            this.setPromiseForOpen(null);
         }
         return this
     }
@@ -154,7 +157,7 @@
 
     pathForKey (key) {
         //assert(!key.contains(this.pathSeparator()))
-        return this.path() + key
+        return this.path() + key;
     }
 
     // private helpers
@@ -441,9 +444,8 @@
                     lastTx.show()
                 } 
 
-                return lastTx.promiseForFinished().then(() => {
-                    return Promise.resolve(this.privateNewTx())
-                })
+                await lastTx.promiseForFinished();
+                return this.privateNewTx();
             }
         }
         */

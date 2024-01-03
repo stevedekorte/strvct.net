@@ -471,7 +471,7 @@ String.prototype._setterCacheMap = new Map();
     }
 
     promiseSha256Digest () {
-        // example use: "hello".promiseSha256Digest().then((hashBuffer) => {...})
+        // example use: const hashBuffer = await "hello".promiseSha256Digest();
         const uint8Array = new TextEncoder("utf-8").encode(this);    
         return crypto.subtle.digest("SHA-256", uint8Array.buffer)
     }
