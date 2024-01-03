@@ -128,12 +128,12 @@ Object.defineSlot(Array.prototype, "promiseSerialTimeoutsForEach", function (aBl
             const promise = aBlock(v);
             promise.then(() => {
                 setTimeout(() => nextFunc(array, index+1), 0);
-            })
+            });
         }
 
         nextFunc(this, 0);
     })
-})
+});
 
 Object.defineSlot(Array.prototype, "promiseSerialForEach", function (aBlock) {
     let promise = null
@@ -147,12 +147,12 @@ Object.defineSlot(Array.prototype, "promiseSerialForEach", function (aBlock) {
         }
     })
     return promise
-})
+});
 
 Object.defineSlot(Array.prototype, "promiseParallelMap", function (aBlock) {
     const promises = this.map((v) => aBlock(v))
     return Promise.all(promises) // passes results to then()
-})
+});
 
 // -----------------------------------
 
@@ -451,31 +451,24 @@ class ResourceManager {
         return this
     }
 
-    run () {
+    async run () {
         this.onProgress("", 0)
-
         // load the boot resource index and start loading/evaling js files
-        this.promiseLoadIndex().then(() => {
-            return this.promiseLoadCamIfNeeded().then(() => {
-                this.evalIndexResources()
-            })
-        })
-
+        await this.promiseLoadIndex();
+        await this.promiseLoadCamIfNeeded();
+        this.evalIndexResources();
         return this
     }
 
     // --- load index ---
 
-    promiseLoadIndex () {
+    async promiseLoadIndex () {
         const path = "build/_index.json"
-        return UrlResource.with(path).promiseLoad().then((resource) => {
-            //debugger
-            this._index = resource.dataAsJson()
-            this._indexResources = this._index.map((entry) => {
-                return UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash)
-            })
-            return Promise.resolve(this)
-        })
+        const resource = await UrlResource.with(path).promiseLoad();
+        this._index = resource.dataAsJson()
+        this._indexResources = this._index.map((entry) => {
+            return UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash)
+        });
     }
 
     indexResources () {
@@ -484,19 +477,18 @@ class ResourceManager {
 
     // --- load cam ---
 
-    promiseLoadCamIfNeeded () {
+    async promiseLoadCamIfNeeded () {
         // if hashCache is empty, load the compressed cam and add it to the cache first
         // as this will be much faster than loading the files individually
         //debugger
-        //return this.hashCache().promiseClear().then(() => {
-            return HashCache.shared().promiseCount().then((count) => {
-                console.log(this.type() + " hashcache count: ", count)
-                if (!count) {
-                    return this.promiseLoadCam()
-                }
-                return Promise.resolve()
-            })
-        //})
+        //await this.hashCache().promiseClear();
+        const count = HashCache.shared().promiseCount();
+
+        console.log(this.type() + " hashcache count: ", count)
+        if (!count) {
+            return this.promiseLoadCam()
+        }
+        return Promise.resolve();
     }
 
     promiseLoadCam () {
@@ -644,9 +636,9 @@ class ResourceManager {
         //return this.resourceEntriesWithExtensions(extensions).map(entry => entry.path)
     }
 
-    setupAndRun () {
-        console.log("ResourcesManager.setupAndRun()")
-        const bp = this.bootPath()
+    async setupAndRun () {
+        console.log("ResourcesManager.setupAndRun()");
+        const bp = this.bootPath();
         const urls = [
             //"source/boot/getGlobalThis.js",
             bp + "Base.js",
@@ -655,7 +647,7 @@ class ResourceManager {
             bp + "IndexedDBTx.js",
             bp + "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
             //bp + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
-        ]
+        ];
         
         /*
         urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
@@ -663,11 +655,16 @@ class ResourceManager {
         })
         */
         
-        
+        /*
         urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loadedResources) => {
             loadedResources.forEach(resource => resource.evalDataAsJS())
             this.run()
         })
+        */
+
+        const loadedResources = await urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad());
+        loadedResources.forEach(resource => resource.evalDataAsJS());
+        this.run();
 
         return this
     }

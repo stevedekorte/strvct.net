@@ -50,10 +50,10 @@
         console.log(this.type() + " --- self test end --- ")
     }
 
-    static promiseSelfTest () {
-        return new Promise((resolve, reject) => {
-            this.addTimeout(() => { return PersistentObjectPool.promiseSelfTest() }, 1000)
-        })
+    static async promiseSelfTest () {
+        this.addTimeout(() => { 
+            return PersistentObjectPool.promiseSelfTest() 
+        }, 1000);
     }
     
 }.initThisClass());

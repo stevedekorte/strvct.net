@@ -42,11 +42,8 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         assert(this.isOpen())
     }
 
-    promiseOpen () {
-        return new Promise((resolve, reject) => {
-            this.open()
-            resolve()
-        })
+    async promiseOpen () {
+        this.open();
     }
 
     close () {
@@ -165,17 +162,17 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     /*
     async asyncQueueSetKvPromise (kvPromise) {
-        const setPromise = new Promise((resolve, reject) => {
-            kvPromise.then((kvTuple) => {
-                assert(Type.isArray(kvTuple) && kvTuple.length == 2)
-                const k = kvTuple[0]
-                const v = kvTuple[1]
-                this.set(k, v)
-                resolve()
-            })
-        })
-        this.queuedSets().push(setPromise)
-        return setPromise
+        const setPromise = Promise.clone();
+        const kvTuple = await kvPromise
+
+        assert(Type.isArray(kvTuple) && kvTuple.length == 2);
+        const k = kvTuple[0];
+        const v = kvTuple[1];
+        this.set(k, v);
+        setPromise.callResolveFunc();
+
+        this.queuedSets().push(setPromise);
+        return setPromise;
     }
 
     async asyncProcessSetPromiseQueue () {

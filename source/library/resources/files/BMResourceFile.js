@@ -131,44 +131,45 @@
 
     promiseLoadFromUrl () {
         //console.log("loading via url fetch for path: ", this.path())
+        const promise = Promise.clone();
 
-        return new Promise((resolve, reject) => {
-            const path = this.path()
-            const rq = new XMLHttpRequest();
-            rq.open('GET', path, true);
-            if (this.loadRequestType()) {
-                rq.responseType = this.loadRequestType();
-            }
+        const path = this.path()
+        const rq = new XMLHttpRequest();
+        rq.open('GET', path, true);
+        if (this.loadRequestType()) {
+            rq.responseType = this.loadRequestType();
+        }
 
-            rq.onload  = (event) => { 
-                this.onUrlLoad(event); 
-                resolve() 
-            }
+        rq.onload = (event) => { 
+            this.onUrlLoad(event); 
+            promise.callResolveFunc();
+        }
 
-            rq.onerror = (event) => { 
-                this.onRequestError(event); 
-                reject() 
-            }
+        rq.onerror = (event) => { 
+            this.onRequestError(event); 
+            promise.callRejectFunc();
+        }
 
-            /*        
-            rq.onload      = (event) => { this.onRequestLoad(event) }
-            rq.onabort     = (event) => { this.onRequestAbort(event) }
-            rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
-            rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
-            */
+        /*        
+        rq.onload      = (event) => { this.onRequestLoad(event) }
+        rq.onabort     = (event) => { this.onRequestAbort(event) }
+        rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
+        rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
+        */
 
-            rq.onprogress  = (event) => { 
-                this.onRequestProgress(event) 
-            }
+        rq.onprogress = (event) => { 
+            this.onRequestProgress(event) 
+        }
 
-            rq.ontimeout   = (event) => { 
-                this.onRequestTimeout(event);
-                reject() 
-            }
+        rq.ontimeout = (event) => { 
+            this.onRequestTimeout(event);
+            promise.callRejectFunc();
+        }
 
-            this.setRequest(rq)
-            rq.send();
-        })
+        this.setRequest(rq)
+        rq.send();
+
+        return promise;
     }
 
     onUrlLoad () {

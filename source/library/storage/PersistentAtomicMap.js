@@ -76,26 +76,25 @@
         return this.idb().promiseOpen().then(() => { return this.promiseOnOpen()}) // it can deal with multiple calls while it's opening
     }
 	
-    promiseOnOpen () {
+    async promiseOnOpen () {
         if (false) {
             debugger;
-            this.debugLog("onOpen() - CLEARING BEFORE OPEN")
-            return this.promiseClear().then(() => this.promiseLoadMap())
+            this.debugLog("onOpen() - CLEARING BEFORE OPEN");
+             await this.promiseClear();
         } 
 
-        this.debugLog("onOpen() - loading cache")
-        return this.promiseLoadMap()
+        this.debugLog("onOpen() - loading cache");
+        return this.promiseLoadMap();
     }
 
-    promiseLoadMap () {
-        return this.idb().promiseAsMap().then(map => {
-            assert(!Type.isNull(map))
-            //console.log(this.debugTypeId() + " onOpen() --- loaded cache with " + this.recordsMap().count() + " keys")
-            this.setMap(map)
-            //console.log("map keys:", map.keysArray())
-            this.setIsOpen(true)
-            //this.verifySync(callback, errorCallback)
-        })
+    async promiseLoadMap () {
+        const map = await this.idb().promiseAsMap();
+        assert(!Type.isNull(map));
+        //console.log(this.debugTypeId() + " onOpen() --- loaded cache with " + this.recordsMap().count() + " keys")
+        this.setMap(map);
+        //console.log("map keys:", map.keysArray())
+        this.setIsOpen(true);
+        //this.verifySync(callback, errorCallback)
     }
 
     // --- close ---
@@ -114,17 +113,6 @@
         await this.idb().promiseClear();
         this.map().clear();
     }
-
-    /*
-    promiseClear () {
-        return new Promise((resolve, reject) => {
-            this.idb().promiseClear().then(() => {
-                this.map().clear()            
-                resolve()
-            }, reject)
-        })
-    }
-    */
 		
     // --- transactions ---
 
@@ -172,8 +160,7 @@
             return tx.promiseCommit()
         }
         */
-        this.setIsApplying(false)
-
+        this.setIsApplying(false);
     }
 
     async promiseApplyChanges () {

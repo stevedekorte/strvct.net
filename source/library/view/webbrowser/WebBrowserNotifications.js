@@ -56,15 +56,15 @@
 
     requestPermission () {
         Notification.requestPermission().then((result) => {
-            this.setPermissionRequestResult(result)
+            this.setPermissionRequestResult(result);
             console.log("requestPermission:", result);
-            this.postWaitingNotes()
+            this.postWaitingNotes();
         });
         Notification.requestPermission();
     }
 
     isSupported () {
-        return window.hasOwnProperty("Notification")
+        return window.hasOwnProperty("Notification");
     }
 
     postNote (aNote) {

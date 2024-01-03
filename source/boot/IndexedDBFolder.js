@@ -47,19 +47,21 @@
         return this.promiseForPersistence()
     }
 
-    newPromisePersistence () {
+    async newPromisePersistence () {
         if (!this.hasStorageApi()) {
             return Promise.reject(new Error("Missing navigator.storage API."))
         }
 
-        return navigator.storage.persist().then((granted) => {
-            this.setHasPermission(granted)
-            if (granted) {
-                //console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
-            } else {
-                console.warn("WARNING: IndexedDBFolder: Storage may be cleared by the UA under storage pressure.");
-            }
-        })
+        const granted = await navigator.storage.persist();
+        
+        this.setHasPermission(granted);
+        if (granted) {
+            //console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
+        } else {
+            console.warn("WARNING: IndexedDBFolder: Storage may be cleared by the UA under storage pressure.");
+        }
+
+        return granted;
     }
 
     storeName () {
@@ -293,34 +295,41 @@
         return promise;
     }
 
-    /*
+    // ------------
 
-    promiseReadOnlyCursorRequest () {
-        return new Promise((resolve, reject) => {
-            const objectStore = this.readOnlyObjectStore()
-            const idbRequest = objectStore.openCursor()
-            idbRequest.onsuccess = (event) => {
-                resolve(event)
-            }
-            idbRequest.onerror = (event) => {
-                reject(event)
-            }
-        })
+    /*
+    async promiseReadOnlyCursorRequest () {
+        const promise = Promise.clone();
+        const objectStore = this.readOnlyObjectStore();
+        const idbRequest = objectStore.openCursor();
+
+        idbRequest.onsuccess = (event) => {
+            promise.callResolveFunc(event);
+        }
+
+        idbRequest.onerror = (event) => {
+            promise.callRejectFunc(event);
+        }
+
+        return promise;
     }
 
+    async promiseForeachKey (aBlock) {
+        const event = await this.promiseReadOnlyCursorRequest();
+        const promise = Promise.clone();
 
-    promiseForeachKey (aBlock) {
-        return this.promiseReadOnlyCursorRequest().then((event) => {
-            const cursor = event.target.result
-            if (cursor) {
-                aBlock(cursor.value.key)
-                cursor.continue() // this calls open resolve function again
-            } else {
-                resolve()
-            }
-        })
+        const cursor = event.target.result;
+        if (cursor) {
+            aBlock(cursor.value.key);
+            cursor.continue(); // this calls open resolve function again
+        } else {
+            promise.callResolveFunc()
+        }
     }
     */
+
+    // ---------------
+
 
     async promiseAsMap () {
         await this.promiseOpen();
@@ -347,10 +356,9 @@
     }
 
 
-    show () {
-        this.promiseAsMap().then((map) => {
-            this.debugLog(" " + this.path() + " = " + map.description())
-        })
+    async show () {
+        const map = await this.promiseAsMap();
+        this.debugLog(" " + this.path() + " = " + map.description());
     }
 
     // removing

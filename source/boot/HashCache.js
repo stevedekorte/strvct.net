@@ -130,29 +130,24 @@
 
     // --- collect invalid records ---
 
-    removeInvalidRecords () {
-        this.idb().promiseAllKeys().then((keys) => {
-            let promise = null
-            keys.forEach((key) => {
-                if (!promise) {
-                    promise = this.promiseVerifyOrDeleteKey(key)
-                } else {
-                    promise = promise.then(() => this.promiseVerifyOrDeleteKey(key))
-                }
-            })
-        })
+    async removeInvalidRecords () {
+        const keys = await this.idb().promiseAllKeys();
+        let promise = null;
+        keys.forEach((key) => {
+            if (!promise) {
+                promise = this.promiseVerifyOrDeleteKey(key);
+            } else {
+                promise = promise.then(() => this.promiseVerifyOrDeleteKey(key));
+            }
+        });
     }
 
-    promiseVerifyOrDeleteKey (key) {
-        return this.idb().promiseAt(key).then((value) => {
-            return this.promiseHashKeyForData(value).then((hashKey) => {
-                if (key !== hashKey) {
-                    return this.idb().promiseRemoveAt(key)
-                } else {
-                    return Promise.resolve()
-                }
-            })
-        })
+    async promiseVerifyOrDeleteKey (key) {
+        const value = this.idb().promiseAt(key);
+        const hashKey = this.promiseHashKeyForData(value);
+        if (key !== hashKey) {
+            await this.idb().promiseRemoveAt(key);
+        }
     }
 
 }.initThisClass());

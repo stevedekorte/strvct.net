@@ -243,7 +243,7 @@
 
   async asyncSend () {
     try {
-      this.setStatus("fetching")
+      this.setStatus("fetching");
       this.setIsStreaming(false);
       this.sendDelegate("onRequestBegin")
 
@@ -283,16 +283,16 @@
       const json = await response.json();
       this.setJson(json);
       if (json.error) {
-        this.onError(new Error(json.error.message))
+        this.onError(new Error(json.error.message));
       } else {
         this.setFullContent(json.choices[0].message.content);
-        this.sendDelegate("onRequestComplete")
+        this.sendDelegate("onRequestComplete");
         //this.showResponse();
-        this.setStatus("completed " + this.responseSizeDescription())
-        return json
+        this.setStatus("completed " + this.responseSizeDescription());
+        return json;
       }
     } catch (error) {
-      this.onError(error)
+      this.onError(error);
     }
 
     return undefined;
@@ -321,7 +321,7 @@
   assertReadyToStream () {
     const target = this.streamTarget();
     if (target) {
-      // verify streamTarget protocol is implemented by it
+      // verify streamTarget protocol is implemented by target
       assert(target.onStreamStart);
       assert(target.onStreamData);
       assert(target.onStreamEnd);
@@ -513,7 +513,7 @@
         }
         line = this.readNextXhrLine();
       }
-    } catch(error) {
+    } catch (error) {
       this.onError(error);
       console.warn(this.type() + " ERROR:", error);
       this.xhrReject()(new Error(error));

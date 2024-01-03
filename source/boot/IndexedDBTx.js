@@ -22,43 +22,31 @@
         this.newSlot("options", { "durability": "strict" })
         this.newSlot("txId", null)
         this.newSlot("promiseForCommit", null)
-        //this.newSlot("promiseForFinished", null)
-        this.newSlot("resolveFunc", null)
-        this.newSlot("rejectFunc", null)
+        this.newSlot("promiseForFinished", null)
         this.newSlot("timeoutInMs", 1000)
     }
 
+    init () {
+        super.init()
+        this.setPromiseForFinished(Promise.clone());
+        //this.setIsDebugging(false) // this will be overwritten by db with it's own isDebugging setting
+    }
+
     markCompleted () {
-        assert(!this.isCompleted())
-        this.setIsCompleted(true)
-        this.markResolved()
+        assert(!this.isCompleted());
+        this.setIsCompleted(true);
+        this.markResolved();
         return this
     }
 
     markRejected (error) {
-        const f = this.rejectFunc()
-        if (f) {
-            f(error)
-        }
+        this.promiseForFinished().callRejectFunc(error);
         return this
     }
 
     markResolved () {
-        const f = this.resolveFunc()
-        if (f) {
-            f()
-        }
+        this.promiseForFinished().callResolveFunc();
         return this
-    }
-
-    promiseForFinished () {
-        if (!this._promiseForFinished) {
-            this._promiseForFinished = new Promise((resolve, reject) => {
-                this.setResolveFunc(resolve)
-                this.setRejectFunc(reject)
-            })
-        }
-        return this._promiseForFinished
     }
 
     /*
@@ -66,11 +54,6 @@
         return true
     }
     */
-    
-    init () {
-        super.init()
-        //this.setIsDebugging(false) // this will be overwritten by db with it's own isDebugging setting
-    }
 
     db () {
         return this.dbFolder().db()
@@ -111,10 +94,10 @@
     }
 	
     abort () {
-	    this.assertNotCommitted()
-	    this.tx().abort() // how does this get rejected?
-        this.setIsAborted(true)
-        this.markResolved()
+	    this.assertNotCommitted();
+	    this.tx().abort(); // how does this get rejected?
+        this.setIsAborted(true);
+        this.markResolved();
 	    return this
     }
 
