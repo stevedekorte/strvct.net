@@ -182,22 +182,13 @@
       this.setFetchAbortController(controller);
       options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
 
-      const fetchRequest = fetch(this.apiUrl(), options);
-
-      fetchRequest.then((response) => {
-        this.setIsFetchActive(false);
-        this.setFetchAbortController(null);
-      }).catch((error) => {
-        this.setIsFetchActive(false);
-        console.error('Error:', error);
-        this.onError(error);
-      });
-
-      const response = await fetchRequest;
+      const response = await fetch(this.apiUrl(), options);
+      this.setIsFetchActive(false);
+      this.setFetchAbortController(null);
       //this.sendDelegate("onRequestConnected");
 
       const audioBlob = await response.blob();
-      this.fetchPromise().callResolveFunc()
+      this.fetchPromise().callResolveFunc();
       this.setAudioBlob(audioBlob);
       //this.sendDelegate("onRequestGotAudioBlob");
 
@@ -209,11 +200,12 @@
       this.sound().setDataBlob(audioBlob);
 
       this.sendDelegate("onRequestComplete");
+
     } catch (error) {
+      this.setIsFetchActive(false);
+      console.error('Error:', error);
       this.onError(error);
     }
-
-    return undefined;
   }
 
   abort () {

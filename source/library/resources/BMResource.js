@@ -12,42 +12,42 @@
 
     static supportedMimeTypes () {
         //throw new Error("subclasses should override this method")
-        return new Set()
+        return new Set();
     }
 
     static canOpenMimeType (mimeType) {
-        return this.supportedMimeTypes().has(mimeType)
+        return this.supportedMimeTypes().has(mimeType);
     }
 
     static openMimeChunk (dataChunk) {
-         throw new Error("subclasses should override this method")
-        //const aNode = this.clone()
-        //setValue(dataChunk)
-        //console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length)
-        //return aNode
+         throw new Error("subclasses should override this method");
+        //const aNode = this.clone();
+        //setValue(dataChunk);
+        //console.log(dataChunk.mimeType() + " data.length: " + dataChunk.decodedData().length);
+        //return aNode;
     }
 
     // --- supported extension types ---
 
     static supportedExtensions () {
-        throw new Error("subclasses should override this method")
-        return []
+        throw new Error("subclasses should override this method");
+        return [];
     }
 
     static canHandleExtension (extension) {
-        return this.supportedExtensions().contains(extension)
+        return this.supportedExtensions().contains(extension);
     }
 
     // ---
 
     initPrototypeSlots () {
-        this.newSlot("path", "")
-        this.newSlot("data", null)
-        this.newSlot("error", null)
-        this.newSlot("loadState", "unloaded") // "unloaded", "loading", "decoding", "loaded"
-        this.newSlot("loadProgress", null) // null or a number 0 to 100
-        this.newSlot("isLoaded", false)
-        this.newSlot("urlResource", null)
+        this.newSlot("path", "");
+        this.newSlot("data", null);
+        this.newSlot("error", null);
+        this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
+        this.newSlot("loadProgress", null); // null or a number 0 to 100
+        this.newSlot("isLoaded", false);
+        this.newSlot("urlResource", null);
     }
 
     /*
@@ -57,48 +57,49 @@
     */
 
     title () {
-        return this.name()
+        return this.name();
     }
 
     subtitle () {
-        return this.path().pathExtension()
+        return this.path().pathExtension();
     }
 
     subtitle () {
-        return this.path().pathExtension() + ", " + this.loadState()
+        return this.path().pathExtension() + ", " + this.loadState();
     }
 
     name () {
-        return this.path().lastPathComponent().sansExtension()
+        return this.path().lastPathComponent().sansExtension();
     }
 
     // --- resource file ---
 
     /*
     fileResource () {
-        const rootFolder = BMFileResources.shared().rootFolder()
-        const fileResource = rootFolder.nodeAtSubpathString(this.path())
-        return fileResource
+        const rootFolder = BMFileResources.shared().rootFolder();
+        const fileResource = rootFolder.nodeAtSubpathString(this.path());
+        return fileResource;
     }
 
-    promiseLoadFileResource () {        
-        this.setTitle(this.path().lastPathComponent().sansExtension())
+    async promiseLoadFileResource () {        
+        this.setTitle(this.path().lastPathComponent().sansExtension());
         
-        const fileResource = this.fileResource()
+        const fileResource = this.fileResource();
         if (!fileResource) {
           const error = "no index for file resource at path '" + this.path() + "'"
-          this.setError(error)
-          throw new Error(error)
+          this.setError(error);
+          throw new Error(error);
         }
-        return fileResource.promiseLoad().then(() => { this.onFileResourceLoaded(fileResource) })
+        await fileResource.promiseLoad();
+        this.onFileResourceLoaded(fileResource);
     }
     
     onFileResourceLoaded (fileResource) {
-        this.setData(fileResource.data())
-        this.postNoteNamed("resourceLoaded")
-        this.setLoadState("loaded")
-        this.didLoad()
-        return this
+        this.setData(fileResource.data());
+        this.postNoteNamed("resourceLoaded");
+        this.setLoadState("loaded");
+        this.didLoad();
+        return this;
     }
     */
 
@@ -106,29 +107,28 @@
 
     loadIfNeeded () {
         if (this.loadState() === "unloaded") {
-            this.load()
+            this.load();
         }
-        return this
+        return this;
     }
 
-    load () {
-        this.promiseLoadUrlResource()
+    async load () {
+        await this.promiseLoadUrlResource();
         //this.promiseLoadFileResource()
-        return this
+        return this;
     }
 
-    promiseLoadUrlResource () {
-        return this.urlResource().promiseLoad().then(urlResource => {
-            this.setData(this.urlResource().data())
-            this.postNoteNamed("resourceLoaded")
-            this.setLoadState("loaded")
-            this.didLoad()
-        })
+    async promiseLoadUrlResource () {
+        const urlResource = await this.urlResource().promiseLoad();
+        this.setData(this.urlResource().data());
+        this.postNoteNamed("resourceLoaded");
+        this.setLoadState("loaded");
+        this.didLoad();
     }
     
     didLoad () {
-        this.setIsLoaded(true)
-        this.postNoteNamed("didLoad")
+        this.setIsLoaded(true);
+        this.postNoteNamed("didLoad");
     }
 
 }.initThisClass());

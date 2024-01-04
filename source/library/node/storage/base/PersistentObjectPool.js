@@ -32,10 +32,11 @@
         throw new Error(this.type() + " synchronous open not available - use promiseOpen()")
     }
 
-    promiseSelfTest () {
-        console.log(this.type() + " --- self test start --- ")
-        const store = this.thisClass().clone()
-        return store.promiseOpen().then(() => this.selfTestOnStore(store))
+    async promiseSelfTest () {
+        console.log(this.type() + " --- self test start --- ");
+        const store = this.thisClass().clone();
+        await store.promiseOpen();
+        this.selfTestOnStore(store);
     }
 
     selfTestOnStore (store) {

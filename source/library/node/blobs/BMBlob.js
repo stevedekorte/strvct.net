@@ -70,17 +70,18 @@
         this.setupValueField()
     }
 
-    setupValueField () {
-        const field = BMTextAreaField.clone().setKey("value")
-        field.setValueMethod("value")
-        field.setValueIsEditable(false)
-        field.setIsMono(true)
-        field.setTarget(this)
-        field.getValueFromTarget()
-        this.addSubnode(field)
+    async setupValueField () {
+        const field = BMTextAreaField.clone().setKey("value");
+        field.setValueMethod("value");
+        field.setValueIsEditable(false);
+        field.setIsMono(true);
+        field.setTarget(this);
+        field.getValueFromTarget();
+        this.addSubnode(field);
 
-        this.promiseReadValue().then(() => { this.didReadValue() })
-        this.scheduleSyncToView()
+        await this.promiseReadValue();
+        this.didReadValue();
+        this.scheduleSyncToView();
     }
 
     didReadValue () {
@@ -117,51 +118,46 @@
         return this.parentNode().store()
     }
 
-    promiseWriteValue () {
+    async promiseWriteValue () {
         // what about number or null values?
         const v = this.value()
         assert(Type.isArrayBuffer(v) || Type.isString(v))
 
-        return v.promiseSha256Digest().then((digestBuffer) => {
-            const h = digestBuffer.base64Encoded()
-            return this.promiseWriteValueWithHash(v, h)
-        })
+        const digestBuffer = await v.promiseSha256Digest();
+        const h = digestBuffer.base64Encoded();
+        await this.promiseWriteValueWithHash(v, h);
     }
 
-    promiseWriteValueWithHash (v, h) {
-        this.setValueHash(h)
+    async promiseWriteValueWithHash (v, h) {
+        this.setValueHash(h);
         
         if (Type.isArrayBuffer(v)) {
-            assert(v.byteLength)
+            assert(v.byteLength);
         }
 
-        assert(this.isValid())
+        assert(this.isValid());
 
-        const resolveAtPut = () => {
+        await this.store().promiseOpen();
+
+        try {
+            await this.store().promiseAtPut(h, v);
             console.log("did write hash/value pair: " + this.description())
-        }
-
-        const rejectAtPut = (error) => {
+        } catch (error) {
             console.log("error writing hash/value pair: " + this.description())
             debugger
         }
-
-        return this.store().promiseOpen().then(() => {
-            return this.store().promiseAtPut(h, v).then(resolveAtPut, rejectAtPut)
-        })
     }
 
-    promiseReadValue () {
+    async promiseReadValue () {
         if (this.value()) {
-            resolve()
+            return
         }
 
-        assert(this.isValid())
+        assert(this.isValid());
 
-        return this.store().promiseAt(this.valueHash()).then((value) => {
-            this._value = value
-            this.didUpdateNodeIfInitialized()
-        })
+        const value = await this.store().promiseAt(this.valueHash());
+        this._value = value;
+        this.didUpdateNodeIfInitialized();
     }
 
     isValid () {

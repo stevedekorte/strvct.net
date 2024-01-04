@@ -115,43 +115,32 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
 
 // --- Array promises --------------
 
-Object.defineSlot(Array.prototype, "promiseSerialTimeoutsForEach", function (aBlock) {
-    return new Promise((resolve, reject) => {
-
-        const nextFunc = (array, index) => {
+Object.defineSlot(Array.prototype, "promiseSerialTimeoutsForEach", async function (aPromiseBlock) {
+        const nextFunc = async function (array, index) {
             if (array.length === index) {
-                resolve();
-                return 
+                return; // finished
             }
 
             const v = array[index];
-            const promise = aBlock(v);
-            promise.then(() => {
-                setTimeout(() => nextFunc(array, index+1), 0);
-            });
+            await aPromiseBlock(v);
+            setTimeout(() => nextFunc(array, index+1), 0);
         }
 
         nextFunc(this, 0);
+});
+
+Object.defineSlot(Array.prototype, "promiseSerialForEach", async function (aBlock) {
+    this.forEach(async (v) => {
+        await aBlock(v);
     })
 });
 
-Object.defineSlot(Array.prototype, "promiseSerialForEach", function (aBlock) {
-    let promise = null
-    this.forEach((v) => {
-        if (promise) {
-            promise = promise.then(() => { 
-                return aBlock(v) 
-            })
-        } else {
-            promise = aBlock(v)
-        }
-    })
-    return promise
-});
 
-Object.defineSlot(Array.prototype, "promiseParallelMap", function (aBlock) {
-    const promises = this.map((v) => aBlock(v))
-    return Promise.all(promises) // passes results to then()
+Object.defineSlot(Array.prototype, "promiseParallelMap", async function (aBlock) {
+    const promises = this.map(v => aBlock(v))
+    const values = await Promise.all(promises);
+    //debugger;
+    return values;
 });
 
 // -----------------------------------
@@ -206,65 +195,55 @@ class UrlResource {
         return this._resourceHash
     }
 
-    promiseLoad () {
+    async promiseLoad () {
         // load unzipper if needed
         if (this.isZipFile()) {
-            return this.promiseLoadUnzipIfNeeded().then(() => { 
-                return this.promiseLoad_2()
-            })
+            await this.promiseLoadUnzipIfNeeded();
         }
         return this.promiseLoad_2()
     }
 
-    promiseLoad_2 () {
-        //debugger;
-        const h = this.resourceHash() 
+    async promiseLoad_2 () {
+        const h = this.resourceHash() ;
         if (h && getGlobalThis().HashCache) {
-            const hc = HashCache.shared()
-            return hc.promiseHasKey(h).then((hasKey) => {
-                if (hasKey) {
-                    // if hashcache is available and hash data, use it
-                    return hc.promiseAt(h).then((data) => {
-                        this._data = data
-                        return Promise.resolve(this)
-                    })
-                } else {
-                    // otherwise, load normally and cache result
-                    console.log(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path())
-                    return this.promiseJustLoad().then(() => {
-                        hc.promiseAtPut(h, this.data()).then(() => {
-                            console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path())
-                            return Promise.resolve(this)
-                        })
-                    })
-                }
-            })
+            const hc = HashCache.shared();
+            const hasKey = await hc.promiseHasKey(h);
+            if (hasKey) {
+                // if hashcache is available and hash data, use it
+                const data = await hc.promiseAt(h);
+                this._data = data;
+                return this;
+            } else {
+                // otherwise, load normally and cache result
+                console.log(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                await this.promiseJustLoad();
+                await hc.promiseAtPut(h, this.data());
+                console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                return this;
+            }
         } else {
-            return this.promiseJustLoad()
+            return this.promiseJustLoad();
         }
     }
 
-    promiseJustLoad () {
-        //debugger
-        return URL.with(this.path()).promiseLoad().then((data) => {
-            //debugger
+    async promiseJustLoad () {
+        try {
+            const data = await URL.with(this.path()).promiseLoad();
             this._data = data;
             this.constructor._bytesLoaded += data.byteLength;
             this.constructor._urlsLoaded += 1;
-            return Promise.resolve(this)
-        }).catch((error) => {
+        } catch (error) {
             debugger
             this._error = error
             throw error
-        })
+        }
+        return this;
     }
 
-    promiseLoadAndEval () {
+    async promiseLoadAndEval () {
         //console.log("promiseLoadAndEval " + this.path())
-        return this.promiseLoad().then(() => {
-            this.eval()
-            return Promise.resolve(this)
-        })
+        await this.promiseLoad();
+        this.eval();
     }
 
     eval () {
@@ -491,21 +470,23 @@ class ResourceManager {
         return Promise.resolve();
     }
 
-    promiseLoadCam () {
+    async promiseLoadCam () {
         // cache the promise so if we call this multiple times we don't load it again
         if (!this._promiseForLoadCam) {
-            const path = "build/_cam.json.zip"
-            this._promiseForLoadCam = UrlResource.clone().setPath(path).promiseLoad().then((resource) => {
-                const cam = resource.dataAsJson()
+            this._promiseForLoadCam = Promise.clone();
+            try {
+                const path = "build/_cam.json.zip"
+                const resource = await UrlResource.clone().setPath(path).promiseLoad();
+                const cam = resource.dataAsJson();
                 // this._cam = cam
-
-                return Reflect.ownKeys(cam).promiseSerialTimeoutsForEach((k) => { // use parallel?
-                //return Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel?
-                    const v = cam[k]
-                    //console.log("promiseLoadCam promiseAtPut")
-                    return HashCache.shared().promiseAtPut(k, v)
-                })
-            })
+                await Reflect.ownKeys(cam).promiseSerialTimeoutsForEach((k) => { // use parallel?
+                    const v = cam[k];
+                    return HashCache.shared().promiseAtPut(k, v);
+                });
+                this._promiseForLoadCam.callResolveFunc();
+            } catch (error) {
+                this._promiseForLoadCam.callRejectFunc();
+            }
         }
         return this._promiseForLoadCam
     }
@@ -530,21 +511,25 @@ class ResourceManager {
 
     // --- eval ---
 
-    evalIndexResources () {
+    async evalIndexResources () {
         //debugger
         // promiseSerialForEach promiseSerialTimeoutsForEach
         let count = 0
-        this.cssResources().promiseSerialTimeoutsForEach(r => {
+
+        await this.cssResources().promiseSerialTimeoutsForEach(r => {
+            // NOTE: can't do in parallel as the order in which CSS files are loaded matters
+            return r.promiseLoadAndEval();
+        });
+
+        await this.jsResources().promiseSerialTimeoutsForEach(r => {
+            count ++;
+            bootLoadingView.setBarToNofM(count, this.jsResources().length);
+            //debugger;
+            //console.log("count: " + count + " / " + this.jsResources().length)
             return r.promiseLoadAndEval()
-        }).then(() => {
-            return this.jsResources().promiseSerialTimeoutsForEach(r => {
-                count++
-                bootLoadingView.setBarToNofM(count, this.jsResources().length);
-                //debugger;
-                //console.log("count: " + count + " / " + this.jsResources().length)
-                return r.promiseLoadAndEval()
-            }) 
-        }).then(() => this.onDone())
+        });
+
+        this.onDone();
     }
 
     // --- browser specific ---
@@ -649,49 +634,16 @@ class ResourceManager {
             //bp + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
         ];
         
-        /*
-        urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
-            ResourceManager.shared().run()
-        })
-        */
-        
-        /*
-        urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loadedResources) => {
-            loadedResources.forEach(resource => resource.evalDataAsJS())
-            this.run()
-        })
-        */
-
+        // we can load the JS resource in parallel
         const loadedResources = await urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad());
+        // but we have to eval the JS serially as order matters
         loadedResources.forEach(resource => resource.evalDataAsJS());
         this.run();
-
         return this
     }
 }
 
 // ---------------------------------------------------------------------------------------------
-
-/*
-const urls = [
-    //"source/boot/getGlobalThis.js",
-    ResourceManager.bootPath() + "Base.js",
-    ResourceManager.bootPath() + "IndexedDBFolder.js",
-    ResourceManager.bootPath() + "IndexedDBTx.js",
-    ResourceManager.bootPath() + "HashCache.js" // important that this be after IndexedDBFolder/Tx so it can be used
-    //ResourceManager.bootPath() + "pako.js" // loaded lazily first time UrlResource is asked to load a .zip file
-]
-
-//urls.promiseSerialForEach((url) => UrlResource.with(url).promiseLoadAndEval()).then(() => {
- //   ResourceManager.shared().run()
-//)
-
-
-urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad()).then((loadedResources) => {
-    loadedResources.forEach(resource => resource.evalDataAsJS())
-    ResourceManager.shared().run()
-})
-*/
 
 window.addEventListener('load', function() {
     // This event is fired when the entire page, including all dependent resources such as stylesheets and images, is fully loaded.

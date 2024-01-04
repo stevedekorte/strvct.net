@@ -154,34 +154,42 @@
     //return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
   }
 
-  fetch () {
-    this.setIsLoading(true)
+  async fetch () {
+    this.setIsLoading(true);
 
-    const url = this.proxyUrl()
-    this.setStatus("fetching...")
-    //console.log("fetch url " + this.url())
-    console.log(this.type() + " fetch proxy url: " + url)
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                const error = new Error(`HTTP error! Status: ${response.status}`);
-                this.onError(error)
-            }
-            return response.blob();
-        })
-        .then(blob => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const imageDataUrl = reader.result;
-                this.onLoaded(imageDataUrl);
-            };
-            reader.readAsDataURL(blob);
-        })
-        .catch(error => {
-            this.onError(error)
-        });
+    const url = this.proxyUrl();
+    this.setStatus("fetching...");
+    //console.log("fetch url " + this.url());
+    console.log(this.type() + " fetch proxy url: " + url);
+
+    try {
+      const response = fetch(url);
+
+      if (!response.ok) {
+          const error = new Error(`HTTP error! Status: ${response.status}`);
+          throw error;
+      }
+
+      const blob = await response.blob();
+
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+          const imageDataUrl = reader.result;
+          this.onLoaded(imageDataUrl);
+      };
+
+      reader.onerror = (error) => {
+        throw error;
+      };
+
+      reader.readAsDataURL(blob);
+
+    } catch (error) {
+      this.onError(error);
+    }
   }
-
+  
   // --- events ---
 
   onLoaded (imageDataUrl) {

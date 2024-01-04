@@ -97,12 +97,18 @@
         return b
     }
 
-    promiseLoadCachedBlob () {        
+    async promiseLoadCachedBlob () {        
         assert(this.hasCachedBlob())
         const h = this.resourceHash()
         const blob = BMBlobs.shared().blobWithValueHash(h)   
         this.debugLog(() => "reading from blob cache... " + h + " " + this.path())
-        return blob.promiseReadValue().then(() => this.onReadCachedBlob(blob), () => this.onErrorReadingCachedBlob(blob))
+        try {
+            await blob.promiseReadValue();
+            this.onReadCachedBlob(blob);
+        } catch (error) {
+            this.onErrorReadingCachedBlob(blob);
+            throw error;
+        }
     }
 
     onReadCachedBlob (blob) {

@@ -124,14 +124,14 @@
         return this
     }
 
-    promiseOpen () { 
-        const map = this.recordsMap()
-        map.setName(this.name())
-        return map.promiseOpen().then(() => {
-            this.onPoolOpenSuccess()
-        }).catch((error) => {
-            this.onPoolOpenFailure(error)
-        })
+    async promiseOpen () { 
+        const map = this.recordsMap();
+        map.setName(this.name());
+        try {
+            await map.promiseOpen();
+        } catch (error) {
+            this.onPoolOpenFailure(error);
+        }
     }
 
     onPoolOpenSuccess () {
@@ -841,35 +841,34 @@
         return deleteCount
     }
 
-    promiseDeleteAll () {
-        return this.promiseOpen().then(() => {
-            assert(this.isOpen())
-            // assert not loading or storing?
-            const map = this.recordsMap()
-            map.begin()
-            map.forEachK(pid => {
-                map.removeKey(pid)
-            }) // the remove applies to the changeSet
-            return map.promiseCommit()
-        })
+    async promiseDeleteAll () {
+        await this.promiseOpen();
+        assert(this.isOpen());
+        // assert not loading or storing?
+        const map = this.recordsMap()
+        map.begin()
+        map.forEachK(pid => {
+            map.removeKey(pid)
+        }) // the remove applies to the changeSet
+        await map.promiseCommit()
     }
 
     promiseClear () {
-        return this.recordsMap().promiseClear()
+        return this.recordsMap().promiseClear();
     }
 
     // ---------------------------
 
     rootSubnodeWithTitleForProto (aTitle, aProto) {
-        return this.rootObject().subnodeWithTitleIfAbsentInsertProto(aTitle, aProto)
+        return this.rootObject().subnodeWithTitleIfAbsentInsertProto(aTitle, aProto);
     }
 
     count () {
-        return this.recordsMap().count()
+        return this.recordsMap().count();
     }
 
     totalBytes () {
-        return this.recordsMap().totalBytes()
+        return this.recordsMap().totalBytes();
     }
 
     // ---------------------------

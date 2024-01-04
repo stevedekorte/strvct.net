@@ -242,7 +242,7 @@ class IndexBuilder {
     }
 
     hashForData (data) {
-        //crypto.subtle.digest("SHA-256", this).then(resolve, reject)
+        //const hash = await crypto.subtle.digest("SHA-256", this);
         const hash = crypto.createHash('sha256').update(data).digest("base64");
         return hash
     }

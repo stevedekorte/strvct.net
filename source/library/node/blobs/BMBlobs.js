@@ -88,49 +88,48 @@
     
     createBlobWithNameAndValue (aName, aValue) {
         //debugger
-        const oldBlob = this.blobWithName(aName)
+        const oldBlob = this.blobWithName(aName);
         if (oldBlob) {
-            oldBlob.setValue(aValue)
-            return oldBlob
+            oldBlob.setValue(aValue);
+            return oldBlob;
         }
 
-        assert(!this.hasBlobWithName(aName))
-        const blob = BMBlob.clone()
-        blob.setName(aName)
-        blob.setValue(aValue) // this will trigger an async compute of valueHash and store of value
-        this.addSubnode(blob)
-        return blob
+        assert(!this.hasBlobWithName(aName));
+        const blob = BMBlob.clone();
+        blob.setName(aName);
+        blob.setValue(aValue); // this will trigger an async compute of valueHash and store of value
+        this.addSubnode(blob);
+        return blob;
     }
 
-    collectGarbage () {
+    async collectGarbage () {
         // remove invalid Blob subnodes (thbose with null meta data)
         this.subnodes().shallowCopy().forEach((blob) => {
             if (!blob.isValid()) {
-                this.debugLog(" collecting inValid blob:", blob.description())
-                blob.delete()
+                this.debugLog(" collecting inValid blob:", blob.description());
+                blob.delete();
             }
         })
 
         // remove store entries which are not referenced by a Blob subnode valueHash
-        const subnodeHashes = this.subnodes().map(sn => sn.valueHash()).asSet()
-        const store = this.store()
+        const subnodeHashes = this.subnodes().map(sn => sn.valueHash()).asSet();
+        const store = this.store();
 
         //store.promiseClear()
-        store.promiseAllKeys().then((storedHashes) => {
-            storedHashes.forEach((h) => {
-                if (!subnodeHashes.has(h)) {
-                    this.debugLog("collecting unreferenced blob hash:", h)
-                    store.promiseRemoveKey(h)
-                }
-            })
+        const storedHashes = await store.promiseAllKeys();
+        storedHashes.forEach(async (h) => {
+            if (!subnodeHashes.has(h)) {
+                this.debugLog("collecting unreferenced blob hash:", h);
+                await store.promiseRemoveKey(h);
+            }
         })
     }
 
-    static selfTest () {
-        this.addTimeout(() => {
-            const blob = BMBlobs.shared().blobForKey("http://test.com/")
-            blob.setValue("test content")
-            blob.promiseWrite()
+    static async selfTest () {
+        this.addTimeout(async () => {
+            const blob = BMBlobs.shared().blobForKey("http://test.com/");
+            blob.setValue("test content");
+            await blob.promiseWrite();
         })
     }
 

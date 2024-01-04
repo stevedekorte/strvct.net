@@ -167,10 +167,10 @@
 
   // --- fetch ---
 
-  start () {
-    this.setError("")
-    this.setStatus("fetching response...")
-    this.sendDelegate("onImagePromptStart", [this])
+  async start () {
+    this.setError("");
+    this.setStatus("fetching response...");
+    this.sendDelegate("onImagePromptStart", [this]);
 
     const apiKey = this.service().apiKey(); // Replace with your actual API key
     const endpoint = 'https://api.openai.com/v1/images/generations'; // DALL·E 2 API endpoint
@@ -183,27 +183,25 @@
         size: this.imageSize()
     };
     
-    fetch(endpoint, {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ` + apiKey,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(bodyJson)
-    })
-    .then(response => {
-      return response.json()
-    })
-    .then(resultData => {
-        this.onSuccess(resultData);
-    })
-    .catch((error) => {
-        this.onError(error);
-    });
+    try {
+      const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+              'Authorization': `Bearer ` + apiKey,
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bodyJson)
+      });
+
+      const resultData = await response.json();
+      this.onSuccess(resultData);
+    } catch (error) {
+      this.onError(error);
+    }
   }
 
   onSuccess (json) {
-    this.sendDelegate("onImagePromptLoading", [this])
+    this.sendDelegate("onImagePromptLoading", [this]);
     /*
       json format:
 
@@ -217,7 +215,7 @@
     */
 
     if (json.error) {
-      this.setStatus("ERROR: " + json.error.message)
+      this.setStatus("ERROR: " + json.error.message);
       return
     }
     
@@ -239,7 +237,7 @@
     const s = "ERROR: " + error.message;
     console.error(s);
     this.setError(error.message);
-    this.setStatus(s)
+    this.setStatus(s);
     this.sendDelegate("onImagePromptError", [this]);
     this.onEnd();
   }
@@ -247,40 +245,40 @@
   // --- image delegate messages ---
 
   onImageLoaded (aiImage) {
-    this.didUpdateNode()
-    this.updateStatus()
-    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage])
+    this.didUpdateNode();
+    this.updateStatus();
+    this.sendDelegate("onImagePromptImageLoaded", [this, aiImage]);
     this.onEnd();
   }
 
   onImageError (aiImage) {
-    this.didUpdateNode()
-    this.updateStatus()
-    this.sendDelegate("onImagePromptImageError", [this, aiImage])
+    this.didUpdateNode();
+    this.updateStatus();
+    this.sendDelegate("onImagePromptImageError", [this, aiImage]);
     this.onEnd();
   }
 
   onEnd () {
-    this.sendDelegate("onImagePromptEnd", [this])
+    this.sendDelegate("onImagePromptEnd", [this]);
   }
 
   updateStatus () {
-    const s = this.images().status()
+    const s = this.images().status();
     if (s) {
-      this.setStatus(s)
+      this.setStatus(s);
     }
   }
 
   sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
+    const d = this.delegate();
     if (d) {
-      const f = d[methodName]
+      const f = d[methodName];
       if (f) {
-        f.apply(d, args)
-        return true
+        f.apply(d, args);
+        return true;
       }
     }
-    return false
+    return false;
   }
 
 }.initThisClass());

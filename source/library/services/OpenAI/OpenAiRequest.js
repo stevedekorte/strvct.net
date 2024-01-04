@@ -268,17 +268,6 @@
         console.error('Error:', error);
       }
 
-      /*
-      fetchPromise.then((response) => {
-        this.setIsFetchActive(false);
-        this.setFetchAbortController(null);
-        //return response.json();
-      }).catch((error) => {
-        this.setIsFetchActive(false);
-          console.error('Error:', error);
-      });
-      */
-
       const response = await fetchPromise;
       const json = await response.json();
       this.setJson(json);
