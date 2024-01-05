@@ -256,7 +256,12 @@
       const fetchPromise = fetch(this.apiUrl(), options);
 
       try {
-        await fetchPromise;
+        const response = await fetchPromise;
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
         this.setIsFetchActive(false);
         this.setFetchAbortController(null);
       } catch (error) {
@@ -264,7 +269,6 @@
         console.error('Error:', error);
       }
 
-      const response = await fetchPromise;
       const json = await response.json();
       this.setJson(json);
       if (json.error) {

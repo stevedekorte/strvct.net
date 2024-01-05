@@ -163,7 +163,7 @@
     console.log(this.type() + " fetch proxy url: " + url);
 
     try {
-      const response = fetch(url);
+      const response = await fetch(url);
 
       if (!response.ok) {
           const error = new Error(`HTTP error! Status: ${response.status}`);
