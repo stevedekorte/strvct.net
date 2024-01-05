@@ -246,7 +246,7 @@
             throw error
         }
 
-        //console.log(" --- SyncScheduler END ---")
+        //console.log(" --- SyncScheduler END --- (END OF EVENT LOOP!)")
 
         return this
     }

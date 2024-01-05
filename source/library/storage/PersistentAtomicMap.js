@@ -125,7 +125,17 @@
         return s
     }
 
-    applyChangesToTx (tx) {
+    async promiseApplyChanges () {
+        //console.log(this.name() + " --- promiseApplyChanges ---")
+        //debugger
+        const count = this.changedKeySet().size
+        const tx = this.idb().privateNewTx();
+        //const tx = await this.idb().promiseNewTx();
+        await this.applyChangesToTx(tx);
+        //return tx.promiseCommit();
+    }
+
+    async applyChangesToTx (tx) {
         //debugger
         assert(!this.isApplying())
         this.setIsApplying(true)
@@ -149,31 +159,14 @@
         
         super.applyChanges() // do this last as it will clear the snapshot
         
-        this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----")
+        this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----");
 
         // indexeddb commits on next event loop automatically
         // tx is marked as committed and will throw exception on further writes
 
-        //await tx.promiseCommit();
-        //await this.promiseVerifySync();
-
+        await tx.promiseCommit();
         this.setIsApplying(false);
-    }
-
-    async promiseApplyChanges () {
-        //console.log(this.name() + " --- promiseApplyChanges ---")
-        //debugger
-        const count = this.changedKeySet().size
-
-        if (true) {
-            const tx = this.idb().privateNewTx()
-            this.applyChangesToTx(tx)
-            return tx.promiseCommit()
-        } else {
-            const tx = await this.idb().promiseNewTx();
-            this.applyChangesToTx(tx);
-            return tx.promiseCommit();
-        }
+        //await this.promiseVerifySync();
     }
 	
     // --- helpers ---
@@ -189,6 +182,7 @@
             //this.idb().show()
             //console.log("syncdb idb json: ", JSON.stringify(map.asDict(), null, 2))
             throw new Error(his.debugTypeId() + ".verifySync() FAILED");
+            debugger;
         }
     }
     

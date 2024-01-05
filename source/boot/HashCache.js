@@ -99,7 +99,7 @@
             throw new Error("hash key does not match hash of value");
         }
 
-        console.log("HashCache atPut ", hash);
+        this.debugLog("HashCache atPut ", hash);
         return this.idb().promiseAtPut(hash, data);
     }
 

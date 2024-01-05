@@ -94,42 +94,42 @@
     this.setTitle("Image");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([])
-    this.setCanAdd(false)
-    this.setNodeCanReorderSubnodes(false)
+    this.setSubnodeClasses([]);
+    this.setCanAdd(false);
+    this.setNodeCanReorderSubnodes(false);
   }
 
   finalInit() {
-    super.finalInit()
-    this.setCanDelete(true)
-    this.setNodeFillsRemainingWidth(true)
+    super.finalInit();
+    this.setCanDelete(true);
+    this.setNodeFillsRemainingWidth(true);
   }
 
   subtitle () {
-    return this.status()
+    return this.status();
   }
 
   images () {
-    return this.parentNode()
+    return this.parentNode();
   }
 
   service () {
     //return this.images().service()
-    return HavewordsApp.shared().services().openAiService()
+    return HavewordsApp.shared().services().openAiService();
   }
 
   imagePrompt () {
-    return this.images().imagePrompt()
+    return this.images().imagePrompt();
   }
 
   // --- checks ---
 
   isLoaded () {
-    return this.imageUrl() !== null
+    return this.imageUrl() !== null;
   }
 
   hasError () {
-    return this.error() !== "" && this.error() !== null
+    return this.error() !== "" && this.error() !== null;
   }
 
   // --- generate action ---
@@ -171,25 +171,13 @@
       }
 
       const blob = await response.blob();
-
-      const reader = new FileReader();
-
-      reader.onloadend = () => {
-          const imageDataUrl = reader.result;
-          this.onLoaded(imageDataUrl);
-      };
-
-      reader.onerror = (error) => {
-        throw error;
-      };
-
-      reader.readAsDataURL(blob);
-
+      const dataUrl = await blob.asyncToDataUrl();
+      this.onLoaded(dataUrl);
     } catch (error) {
       this.onError(error);
     }
   }
-  
+
   // --- events ---
 
   onLoaded (imageDataUrl) {
@@ -214,15 +202,15 @@
   }
 
   sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
+    const d = this.delegate();
     if (d) {
-      const f = d[methodName]
+      const f = d[methodName];
       if (f) {
-        f.apply(d, args)
-        return true
+        f.apply(d, args);
+        return true;
       }
     }
-    return false
+    return false;
   }
 
 }.initThisClass());

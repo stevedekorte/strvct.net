@@ -189,22 +189,20 @@
         return parts.join(", ")
     }
 
-    /*
-    static testHash () {
-        // code from nodejs
-        // crypto.createHash('sha256').update(Buffer.from("abc", "utf8")).digest("base64")
+    static async testHash () {
+        // This is a test to make sure browser JS and node JS hashes match.
+        //  Here's the code from nodejs:
+        // crypto.createHash('sha256').update(Buffer.from("abc", "utf8")).digest("base64");
         const nodejsHash = 'ungWv48Bz+pBQUDeXa4iI7ADYaOWF3qctBD/YfIAFa0='
         const enc = new TextEncoder(); // always utf-8
         const uint8Array = enc.encode("abc");
         const arrayBuffer = uint8Array.buffer
-        arrayBuffer.promiseSha256Digest((digestBuffer) => {
-            const h = digestBuffer.base64Encoded()
-            assert(h === nodejsHash)
-            console.log("hashes match!")
-            debugger;
-        })
+        const digestBuffer = await arrayBuffer.promiseSha256Digest();
+        const h = digestBuffer.base64Encoded()
+        assert(h === nodejsHash)
+        console.log("hashes match!")
+        debugger;
     }
-    */
 
 }.initThisClass());
 

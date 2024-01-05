@@ -1,5 +1,7 @@
 
 
+"use strict";
+
 require("./StrvctHttpsServer.js")
 
 const server = StrvctHttpsServer.clone()

@@ -82,27 +82,18 @@
     // --- blob ---
 
     static fromBlob (audioBlob) {
-        return this.clone().setDataBlob(audioBlob);
+        const sound = this.clone();
+        sound.asyncLoadFromDataBlob(audioBlob); // don't await as we want to return the sound instance immediately
+        return sound;
     }
 
-    setDataBlob (audioBlob) {
-        const promise = Promise.clone();
+    async asyncLoadFromDataBlob (audioBlob) {
+        // start the FileReader conversion to an array buffer
+        const promise = audioBlob.asyncToArrayBuffer();
         this.setArrayBufferPromise(promise);
-
-        const fileReader = new FileReader();
-
-        fileReader.onload = (event) => {
-            const arrayBuffer = event.target.result;
-            this.setData(arrayBuffer);
-            promise.callResolveFunc();
-        }
-
-        fileReader.onerror = (error) => {
-            promise.callRejectFunc(error);
-        }
-
-        fileReader.readAsArrayBuffer(audioBlob);
-        return this;
+        const arrayBuffer = await promise;
+        // set the result 
+        this.setData(arrayBuffer);
     }
 
     // --- attributes ---
@@ -162,7 +153,6 @@
         }
 
         await this.fetchPromise();
-
         await WAContext.shared().setupPromise();
         await this.arrayBufferPromise();
 

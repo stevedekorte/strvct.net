@@ -46,6 +46,10 @@
 */
 
 (class ObjectPool extends ProtoClass {
+
+    static shouldStore () {
+        return false;
+    }
     
     initPrototypeSlots () {
         this.newSlot("name", "defaultDataStore")
@@ -88,14 +92,15 @@
 
     init () {
         super.init()
-        this.setRecordsMap(ideal.AtomicMap.clone())
-        this.setActiveObjects(new Map())
-        this.setDirtyObjects(new Map())
-        this.setLoadingPids(new Set())
-        this.setLastSyncTime(null)
-        this.setMarkedSet(null)
-        this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"))
-        this.setIsDebugging(false)
+        this.setRecordsMap(ideal.AtomicMap.clone());
+        this.setActiveObjects(new Map());
+        this.setDirtyObjects(new Map());
+        this.setLoadingPids(new Set());
+        this.setLastSyncTime(null);
+        this.setMarkedSet(null);
+        this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"));
+        this.setIsDebugging(false);
+        //debugger;
         return this
     }
 
@@ -413,13 +418,14 @@
             return this
         }
         assert(this.isOpen())
-        const scheduler = SyncScheduler.shared()
-        const methodName = "commitStoreDirtyObjects"
+        const scheduler = SyncScheduler.shared();
+        const methodName = "commitStoreDirtyObjects";
         //console.log(this.type() + " --- scheduleStore ---")
         if (!scheduler.isSyncingTargetAndMethod(this, methodName)) {
             if (!scheduler.hasScheduledTargetAndMethod(this, methodName)) {
-                //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null)
-                scheduler.scheduleTargetAndMethod(this, methodName, 1000)
+                //console.warn("scheduleStore currentAction = ", SyncScheduler.currentAction() ? SyncScheduler.currentAction().description() : null);
+                this.debugLog("scheduling commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size );
+                scheduler.scheduleTargetAndMethod(this, methodName, 1000);
             }
         }
         return this
@@ -427,15 +433,16 @@
 
     // --- storing ---
 
-    commitStoreDirtyObjects () {
+    async commitStoreDirtyObjects () {
+        this.debugLog("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
+
         if (this.hasDirtyObjects()) {
             //console.log(this.type() + " --- commitStoreDirtyObjects ---")
 
             //this.debugLog("--- commitStoreDirtyObjects begin ---")
-            //debugger;
-            this.recordsMap().begin()
+            await this.recordsMap().promiseBegin()
             const storeCount = this.storeDirtyObjects()
-            this.recordsMap().promiseCommit()
+            await this.recordsMap().promiseCommit()
             this.debugLog("--- commitStoreDirtyObjects end --- stored " + storeCount + " objects")
             this.debugLog("--- commitStoreDirtyObjects total objects: " + this.recordsMap().count())
 
@@ -454,8 +461,8 @@
 
         while (true) { // easier to express clearly than do/while in this case
             let thisLoopStoreCount = 0
-            const dirtyBucket = this.dirtyObjects()
-            this.setDirtyObjects(new Map())
+            const dirtyBucket = this.dirtyObjects();
+            this.setDirtyObjects(new Map());
 
             dirtyBucket.forEachKV((puuid, obj) => {
                 //console.log("  storing pid " + puuid)
@@ -741,40 +748,37 @@
         return this
     }
 
-    promiseCollect () {
+    async promiseCollect () {
         if (Type.isUndefined(this.rootPid())) {
-            console.log("---- NO ROOT PID FOR COLLECT - clearing! ----")
-            //debugger
-            this.recordsMap().begin()
-            this.recordsMap().clear()
-            this.recordsMap().promiseCommit()
-            //debugger;
+            console.log("---- NO ROOT PID FOR COLLECT - clearing! ----");
+            await this.recordsMap().promiseBegin();
+            this.recordsMap().clear();
+            await this.recordsMap().promiseCommit();
             return 0;
         }
-        //debugger;
+
         // this is an on-disk collection
         // in-memory objects aren't considered
         // so we make sure they're flushed to the db first 
-        //debugger
-        this.recordsMap().begin()
-        this.flushIfNeeded() // store any dirty objects
+        await this.recordsMap().promiseCommit();
+        this.flushIfNeeded(); // store any dirty objects
 
-        this.debugLog(() => "--- begin collect --- with " + this.recordsMap().count() + " pids")
-        this.setMarkedSet(new Set())
-        this.markedSet().add(this.rootKey()) // so rootKey->rootPid entry isn't swept
-        this.markPid(this.rootPid())
-        this.activeObjects().forEachK(pid => this.markPid(pid))
-        this.activeLazyPids().forEachK(pid => this.markPid(pid))
-        const deleteCount = this.sweep()
-        this.setMarkedSet(null)
+        this.debugLog(() => "--- begin collect --- with " + this.recordsMap().count() + " pids");
+        this.setMarkedSet(new Set());
+        this.markedSet().add(this.rootKey()); // so rootKey->rootPid entry isn't swept
+        this.markPid(this.rootPid());
+        this.activeObjects().forEachK(pid => this.markPid(pid));
+        this.activeLazyPids().forEachK(pid => this.markPid(pid));
+        const deleteCount = this.sweep();
+        this.setMarkedSet(null);
 
-        this.debugLog(() => "--- end collect --- collecting " + deleteCount + " pids ---")
+        this.debugLog(() => "--- end collect --- collecting " + deleteCount + " pids ---");
        // debugger
-        const promise = this.recordsMap().promiseCommit()
+        await this.recordsMap().promiseCommit();
 
-        const remainingCount = this.recordsMap().count()
-        this.debugLog(() => " ---- keys count after commit: " + remainingCount + " ---")
-        return promise
+        const remainingCount = this.recordsMap().count();
+        this.debugLog(() => " ---- keys count after commit: " + remainingCount + " ---");
+        return remainingCount;
     }
 
     markPid (pid) { // private
@@ -846,7 +850,7 @@
         assert(this.isOpen());
         // assert not loading or storing?
         const map = this.recordsMap()
-        map.begin()
+        await map.promiseBegin()
         map.forEachK(pid => {
             map.removeKey(pid)
         }) // the remove applies to the changeSet

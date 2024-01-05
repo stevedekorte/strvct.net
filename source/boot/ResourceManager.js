@@ -100,7 +100,7 @@ Object.defineSlot(URL.prototype, "promiseLoad", function () {
                 reject(new Error(rq.status + " " + rq.statusText + " error loading " + path + " "))
             }
             this.response = rq.response
-            console.log("URL loaded ", path)
+            //console.log("URL loaded ", path)
             //debugger
             resolve(rq.response) 
         }
@@ -203,6 +203,16 @@ class UrlResource {
         return this.promiseLoad_2()
     }
 
+    isDebugging () {
+        return false;
+    }
+
+    debugLog (s) {
+        if (this.isDebugging()) {
+            console.log(s);
+        }
+    }
+
     async promiseLoad_2 () {
         const h = this.resourceHash() ;
         if (h && getGlobalThis().HashCache) {
@@ -215,10 +225,10 @@ class UrlResource {
                 return this;
             } else {
                 // otherwise, load normally and cache result
-                console.log(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
-                console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                this.debugLog(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
         } else {
@@ -302,11 +312,10 @@ class UrlResource {
         return pako.inflate(this.data());
     }
 
-    promiseLoadUnzipIfNeeded () {
+    async promiseLoadUnzipIfNeeded () {
         if (!getGlobalThis().pako) {
-            return UrlResource.clone().setPath(ResourceManager.bootPath() + "/pako.js").promiseLoadAndEval()
+            await UrlResource.clone().setPath(ResourceManager.bootPath() + "/pako.js").promiseLoadAndEval()
         }
-        return Promise.resolve()
     }
 }
 
@@ -463,11 +472,10 @@ class ResourceManager {
         //await this.hashCache().promiseClear();
         const count = await HashCache.shared().promiseCount();
 
-        console.log(this.type() + " hashcache count: ", count)
+        //console.log(this.type() + " hashcache count: ", count)
         if (!count) {
-            return this.promiseLoadCam()
+            await this.promiseLoadCam();
         }
-        return Promise.resolve();
     }
 
     async promiseLoadCam () {
@@ -622,7 +630,7 @@ class ResourceManager {
     }
 
     async setupAndRun () {
-        console.log("ResourcesManager.setupAndRun()");
+        //console.log("ResourcesManager.setupAndRun()");
         const bp = this.bootPath();
         const urls = [
             //"source/boot/getGlobalThis.js",

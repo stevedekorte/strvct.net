@@ -12,6 +12,8 @@ Object.defineSlots(typedArrayClass.prototype, {
 (class Object_store extends Object {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
+        assert(this.shouldStore());
+
         //debugger;
         const instance = this.preClone ? this.preClone() : new this();
 
@@ -44,6 +46,8 @@ Object.defineSlots(typedArrayClass.prototype, {
     }
 
     recordForStore (aStore) { // should only be called by Store
+        assert(this.shouldStore());
+
         const entries = []
 
         Object.keys(this).forEach((k) => {
@@ -67,7 +71,8 @@ Object.defineSlots(typedArrayClass.prototype, {
     }
     
     defaultStore () {
-        return PersistentObjectPool.shared()
+        const store = PersistentObjectPool.sharedPool();
+        return store;
     }
 
     // ---

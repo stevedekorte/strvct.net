@@ -126,7 +126,7 @@
       this.updateSubtitle("ERROR: empty text");
       this.setError(errorMsg)
       console.warn(errorMsg)
-      return Promise.resolve()
+      return;
     }
 
     this.updateSubtitle("sending request");

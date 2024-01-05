@@ -68,20 +68,7 @@
     // --- serializers ---
 
     async toBase64 () {
-        const promise = Promise.clone();
-        const reader = new FileReader();
-
-        reader.onloadend = () => {
-            promise.callResolveFunc(reader.result);  // Return the full data URL
-        };
-
-        reader.onerror = (error) => {
-            promise.callRejectFunc(error);
-        };
-
-        reader.readAsDataURL(this);
-
-        return promise;
+        return this.asyncToDataUrl();
     }
 
     // --- deserializer ---

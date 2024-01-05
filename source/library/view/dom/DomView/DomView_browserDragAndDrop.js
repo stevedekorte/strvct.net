@@ -139,14 +139,10 @@
         }
     }
 
-    onBrowserDropFile (file) {
-        const mimeType = file.type
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const data = event.target.result
-            this.onBrowserDropMimeTypeAndRawData(mimeType, data)
-        }
-        reader.readAsDataURL(file);
+    async onBrowserDropFile (file) {
+        const mimeType = file.type;
+        const data = await FileReader.promiseReadAsDataURL(file);
+        this.onBrowserDropMimeTypeAndRawData(mimeType, data);
     }
 
     onBrowserDropMimeTypeAndRawData (mimeType, dataUrl) {

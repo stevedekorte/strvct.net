@@ -20,6 +20,10 @@
 
     }
 
+    static sharedPool () {
+        return this.shared();
+    }
+
     init () {
         super.init()
         this.setName("defaultDataStore")

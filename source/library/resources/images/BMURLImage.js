@@ -9,26 +9,26 @@
 (class BMURLImage extends BMResource {
     
     static supportedExtensions () {
-        return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"]
+        return ["apng", "avif", "gif", "jpg", "jpeg", "jfif", "pjpeg", "pjp", "png", "webp", /* these aren't well supported -> */ "tif", "tiff", "ico", "cur", "bmp"];
     }
 
     initPrototypeSlots () {
-        //this.newSlot("path", "")
-        this.newSlot("dataURL", "")
+        //this.newSlot("path", "");
+        this.newSlot("dataURL", "");
     }
 
     init () {
-        super.init()
-        this.setIsDebugging(false)
+        super.init();
+        this.setIsDebugging(false);
         return this
     }
 
     title () {
-        return this.path().fileName()
+        return this.path().fileName();
     }
 
     subtitle () {
-        return this.path().pathExtension()
+        return this.path().pathExtension();
     }
 
     /*
@@ -42,47 +42,37 @@
     */
 
     load () {
-        this.loadDataURL()
-        return this
+        this.loadDataURL();
+        return this;
     }
 
-    loadDataURL () {
+    async loadDataURL () {
         if (this.isDebugging()) {
-            this.debugLog(".loadDataURL() " + this.path())
+            this.debugLog(".loadDataURL() " + this.path());
         }
 
+        try {
+            const response = await fetch(this.path());
+            const blob = await response.blob();
+            const dataUrl = await blob.asyncToDataUrl();
+            this.setDataURL(dataUrl);
+        } catch (error) {
+            this.setError(error);
+            throw error;
+        }
+
+        /*
         const request = new XMLHttpRequest();
         request.open("get", this.path());
         request.responseType = "blob";
         request.onload = () => { this.loadedRequest(request) };
         request.send();
-        return this
-    }
-
-    loadedRequest (request) {
-
-        if (this.isDebugging()) {
-            this.debugLog(".loadedRequest() ", request)
-        }
-
-        const fileReader = new FileReader();
-
-        fileReader.onload = () => {
-            const dataURL = fileReader.result
-            this.setDataURL(dataURL);
-
-            if (this.isDebugging()) {
-                this.debugLog(" setDataURL() ", dataURL)
-            }
-
-        };
-
-        fileReader.readAsDataURL(request.response); 
-        
-        return this
+        */
+        return this;
     }
 
     didFetchDataUrl (dataURL) {
+        debugger;
         this.setDataURL(dataURL);
         
         /*

@@ -153,15 +153,3 @@
   }
 
 }.initThisClass());
-
-  /*
-  Old Audio code
-
-  // URL.createObjectURL(), unlike FileReader.readAsDataURL(),
-  // does not give access to the converted URL
-  const audioUrl = URL.createObjectURL(audioBlob);
-  const audio = new Audio(audioUrl);
-  audio.play();
-  this.setCurrentSound(audio);
-  audio.onended = () => { this.onAudioEnd(audio); }
-  */

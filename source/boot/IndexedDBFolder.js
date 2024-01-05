@@ -85,11 +85,12 @@
 
     newPromiseOpen () {
         assert(this.hasIndexedDB());
-        const openPromise = Promise.clone();
 
-        if(this.isOpen()) {
-            return Promise.resolve();
+        if (this.isOpen()) {
+            throw new Error("this should not happen as we should only have a single openPromise instance");
         }
+
+        const openPromise = Promise.clone();
 
         //console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
         const request = window.indexedDB.open(this.path(), this.version());
@@ -493,9 +494,7 @@
 
         if (!hasKey) {
             debugger;
-            return Promise.reject(new Error("failed assert"));
-        } else {
-            return Promise.resolve();
+            throw new Error("failed assert");
         }
     }
 

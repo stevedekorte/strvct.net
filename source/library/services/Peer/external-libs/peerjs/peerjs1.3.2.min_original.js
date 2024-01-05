@@ -5541,14 +5541,12 @@ var parcelRequire = (function (e, r, t, n) {
                       (t.data = !0),
                       (t.reliable = !!r.ordered);
 
-                    //console.warn("peerjs skipping check for binary blob support (for now) so we avoid raising an exception on every run");
-                    /*
-                    SLD NOTE: skip this test so we can catch all exceptions without the debugger stopping here EVERY TIME...
+                    //console.warn("peerjs skipping check for binary blob support (for now) so we avoid raising an exception on every run")
+                    
                     try {
                       (r.binaryType = "blob"),
                         (t.binaryBlob = !n.Supports.isIOS);
                     } catch (o) {}
-                    */
                     
                   } catch (o) {
                   } finally {

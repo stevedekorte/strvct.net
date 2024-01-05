@@ -168,9 +168,9 @@
 
   async asyncSend () {
     try {
-      this.setStatus("fetching")
+      this.setStatus("fetching");
       //this.setIsStreaming(false);
-      this.sendDelegate("onRequestBegin")
+      this.sendDelegate("onRequestBegin");
 
       this.assertValid();
       if (this.isDebugging()) {
@@ -197,7 +197,7 @@
       // next read/write
       //await audioBlob.asyncPrepareToStoreSynchronously() 
       //const sound = WASound.fromBlob(audioBlob);
-      this.sound().setDataBlob(audioBlob);
+      this.sound().asyncLoadFromDataBlob(audioBlob);
 
       this.sendDelegate("onRequestComplete");
 

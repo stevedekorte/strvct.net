@@ -549,7 +549,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         const finalInitProto = this._finalInitProto
         if (finalInitProto) {
             const oldValue = this.onInstanceGetValue(anInstance)
-            if (oldValue === null) {
+            if (Type.isNullOrUndefined(oldValue)) {
+            //if (oldValue === null) {
 
                 /*
                 let newValue;

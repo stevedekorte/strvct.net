@@ -600,7 +600,8 @@
                 s = s()
             }
 
-            const tid = this.thisClass().hasShared() ? this.type() : this.debugTypeId();
+            //const tid = this.thisClass().hasShared() ? this.type() + "(shared)" : this.debugTypeId();
+            const tid = this.thisClass().hasShared() ? this.debugTypeId() + "(shared)" : this.debugTypeId();
 
             if (arguments.length == 1) {
                 console.log(tid + " " + s)

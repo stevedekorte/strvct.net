@@ -240,8 +240,8 @@
 
         if (aNode !== this._parentNode) { 
             if (this._parentNode && aNode) {
-                console.warn(this.debugTypeId() + " setParentNode(" + aNode.debugTypeId() + ")  already has parent " + this._parentNode.debugTypeId())
-                debugger;
+                console.warn(this.debugTypeId() + " setParentNode(" + aNode.debugTypeId() + ")  already has parent " + this._parentNode.debugTypeId());
+                console.warn("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
             
             const oldNode = this._parentNode
@@ -831,6 +831,12 @@
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
             oldValue.removeMutationObserver(this)
+        }
+
+        if (Type.isNullOrUndefined(newValue)) {
+            console.warn("attempt to set subnodes array to null or undefined - possible corruption of object pool storage <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+            //debugger;
+            newValue = [];
         }
 
         if (newValue.type() !== "SubnodesArray") {
