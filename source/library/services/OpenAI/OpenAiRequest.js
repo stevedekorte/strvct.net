@@ -96,11 +96,7 @@
     }
 
     {
-      const slot = this.newSlot("xhrResolve", null); 
-    }
-
-    {
-      const slot = this.newSlot("xhrReject", null); 
+      const slot = this.newSlot("xhrPromise", null); 
     }
 
     {
@@ -245,7 +241,7 @@
     try {
       this.setStatus("fetching");
       this.setIsStreaming(false);
-      this.sendDelegate("onRequestBegin")
+      this.sendDelegate("onRequestBegin");
 
       this.assertValid();
       if (this.isDebugging()) {
@@ -283,8 +279,6 @@
     } catch (error) {
       this.onError(error);
     }
-
-    return undefined;
   }
 
   responseSizeDescription () {
@@ -318,6 +312,11 @@
   }
 
   async asyncSendAndStreamResponse () {
+
+    assert(!this.xhrPromise());
+
+    this.setXhrPromise(Promise.clone());
+
     this.assertValid();
     assert(!this.xhr());
 
@@ -369,11 +368,6 @@
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
 
-    const promise = new Promise((resolve, reject) => {
-      this.setXhrResolve(resolve);
-      this.setXhrReject(reject);
-    });
-
     this.sendDelegate("onRequestBegin")
     this.streamTarget().onStreamStart(this);
 
@@ -381,7 +375,7 @@
     //this.debugLog("SENDING REQUEST BODY:", options.body);
     xhr.send(options.body);
 
-    return promise;
+    return this.xhrPromise();
   }
 
   onXhrProgress (event) {
@@ -407,8 +401,8 @@
 
     this.streamTarget().onStreamEnd(this); // all data chunks should have already been sent via onStreamData
     this.sendDelegate("onRequestComplete")
-    this.setStatus("completed " + this.responseSizeDescription())
-    this.xhrResolve()(this.fullContent()); 
+    this.setStatus("completed " + this.responseSizeDescription());
+    this.xhrPromise().callResolveFunc(this.fullContent()); 
 
     console.log(this.typeId() + " onXhrLoadEnd()");
 
@@ -444,13 +438,13 @@
     const error = new Error(s);
     this.onError(error);
     this.streamTarget().onStreamEnd(this);
-    this.xhrReject()(error);
+    this.xhrPromise().callRejectFunc(error);
   }
 
   onXhrAbort (event) {
     this.setStatus("aborted")
     this.streamTarget().onStreamEnd(this);
-    this.xhrReject()(new Error("aborted"));
+    this.xhrPromise().callRejectFunc(new Error("aborted"));
   }
 
   unreadResponse () {
@@ -505,14 +499,14 @@
     } catch (error) {
       this.onError(error);
       console.warn(this.type() + " ERROR:", error);
-      this.xhrReject()(new Error(error));
+      this.xhrPromise().callRejectFunc(new Error(error));      
     }
   }
 
   onStreamJsonChunk (json) {
     if (json.error) {
       console.warn("ERROR: " + json.error.message);
-      this.xhrReject()(new Error(json.error.message));
+      this.xhrPromise().callRejectFunc(new Error(json.error.message));
     } else if (
         json.choices &&
         json.choices.length > 0 &&
