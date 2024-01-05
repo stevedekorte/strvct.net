@@ -239,7 +239,7 @@
     this.setPeerId("")
     this.setStatus("unconnected")
     this.setCanDelete(true)
-    this.setShouldStore(false)
+    this.setShouldStore(true)
   }
 
   // --- peer connection class ---

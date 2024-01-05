@@ -80,7 +80,7 @@
     if (!this._musicPlayer) {
       const p = YouTubeAudioPlayer.clone();
       p.setTitle("Music Player");
-      p.setVolume(0.05);
+      p.setVolume(0.1);
       this._musicPlayer = p;
     }
     return this._musicPlayer;
