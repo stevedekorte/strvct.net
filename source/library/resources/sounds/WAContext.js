@@ -52,7 +52,6 @@
 
     setupIfNeeded () {
         if (!this.isSetup()) {
-            //debugger;
             this.setAudioContext(new window.AudioContext());
             this.setupPromise().callResolveFunc();
             Broadcaster.shared().broadcastNameAndArgument("didSetupWAContext", this);
@@ -61,6 +60,22 @@
         return this
     }
     
+    async promiseDecodeArrayBuffer (audioArrayBuffer) {
+        await this.setupPromise(); // should we throw an error instead? 
+
+        const promise = Promise.clone();
+
+        this.audioContext().decodeAudioData(audioArrayBuffer,
+            decodedBuffer => { 
+                promise.callResolveFunc(decodedBuffer);
+            },
+            error => { 
+                promise.callRejectFunc(error);
+            }
+        );
+        return promise;
+    }
+
     /*
     connectSource (webAudioSource) {
         this.setupIfNeeded();

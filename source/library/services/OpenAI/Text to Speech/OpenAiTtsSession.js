@@ -292,6 +292,12 @@
     return request.sound();
   }
 
+  stopAndClearQueue () {
+    this.audioQueue().stopAndClearQueue();
+    // any previously queued requests will finish downloading but
+    // will not be played
+  }
+
   onRequestBegin (request) {
 
   }

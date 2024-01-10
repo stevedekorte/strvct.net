@@ -288,7 +288,9 @@
     // -----------------------
 
     removeFromParentView () {
-        this.parentView().removeSubview(this)
+        if (this.parentView()) {
+            this.parentView().removeSubview(this); // will set parentView to null
+        }
         return this
     }
 
@@ -725,5 +727,29 @@
         this.subviews().forEach(sv => sv.resyncAllViews())
         return this
     }
+
+    // ----
+
+    setParentViewIfTrue (parentView, aBool) {
+        // helper method to easily add/remove view instead of using setDisplay("none")
+        // useful to avoid excessive DOM tree, especially in repeated elements like Tiles in a ScrollView
+        // the problem is that layout is dependent on ordering and adding a subview to the end of the subviews
+        // may change layout...
+
+        if (aBool) {
+            this.addToParentViewIfNeeded(parentView);
+        } else {
+            this.removeFromParentView();
+        }
+        return this;
+    }
+
+    addToParentViewIfNeeded (parentView) {
+        if (this.parentView() !== parentView) {
+            parentView.addSubview(this);
+        }
+        return this;
+    }
+
 
 }.initThisClass());

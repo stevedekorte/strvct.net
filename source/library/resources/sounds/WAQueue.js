@@ -113,14 +113,14 @@
     return this;
   }
 
-  onSoundEnded (audio) {
+  onSoundEnded (waSound) {
     this.debugLog("finished playing");
     this.setCurrentSound(null);
     this.processQueue();
     this.didUpdateNode();
   }
   
-  pause () {
+  stop () {
     this.debugLog("pause()");
 
     const sound = this.currentSound();
@@ -140,6 +140,11 @@
         this.debugLog("resumed");
       //}
     }
+  }
+
+  stopAndClearQueue () {
+    this.soundQueue().clear();
+    this.stop();
   }
 
 }.initThisClass());

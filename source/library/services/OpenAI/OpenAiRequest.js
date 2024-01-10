@@ -372,7 +372,7 @@
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
 
-    this.sendDelegate("onRequestBegin")
+    this.sendDelegate("onRequestBegin");
     this.streamTarget().onStreamStart(this);
 
     //const s = JSON.stringify(options, 2, 2);

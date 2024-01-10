@@ -34,6 +34,7 @@
       const f = ChatInputNode.clone()
       f.setCanDelete(false)
       f.setConversation(this)
+      f.setHasValueButton(true);
       this.setFooterNode(f)
     }
 

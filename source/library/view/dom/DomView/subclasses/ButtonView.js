@@ -88,6 +88,7 @@
             view.setWhiteSpace("nowrap")
             view.setTextOverflow("ellipsis")
             view.setFontSize("80%")
+            view.setIsDisplayHidden(true);
         }
 
         this.setTitle("")

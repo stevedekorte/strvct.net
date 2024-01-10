@@ -1145,6 +1145,18 @@
     }
 
 
+    // gap 
+
+    setGap (s) {
+        this.setCssProperty("gap", s)
+        return this
+    }
+
+    gap () {
+        return this.getCssProperty("gap")
+    }
+
+
     // border 
 
     setBorder (s) {

@@ -28,36 +28,81 @@
     initPrototypeSlots () {
 
         // converting blob to ArrayBuffer
-        this.newSlot("arrayBufferPromise", null);
+        {
+            const slot = this.newSlot("arrayBufferPromise", null);
+        }
 
         // fetching
-        this.newSlot("fetchPromise", null);
+        {
+            const slot = this.newSlot("fetchPromise", null);
+        }
+
         // decoding 
-        this.newSlot("decodePromise", null);
-        this.newSlot("decodedBuffer", null);
+        {
+            const slot = this.newSlot("decodePromise", null);
+        }
+
+        {
+            const slot = this.newSlot("decodedBuffer", null);
+        }
+
         //this.newSlot("decodeError", false);
 
         // playing
-        this.newSlot("shouldPlayOnLoad", false);
-        this.newSlot("shouldPlayOnAccess", true);
-        this.newSlot("playPromise", null);
-        this.newSlot("source", null); // AudioBufferSourceNode 
+        {
+            const slot = this.newSlot("shouldPlayOnLoad", false);
+        }
 
+        
+        {
+            const slot = this.newSlot("shouldPlayOnAccess", true);
+        }
+
+        {
+            const slot = this.newSlot("playPromise", null);
+        }
+
+        {
+            const slot = this.newSlot("source", null); // AudioBufferSourceNode 
+        }
 
         // source attributes
-        this.newSlot("loop", false);
-        this.newSlot("playbackRate", 1);
+        {
+            const slot = this.newSlot("loop", false);
+        }
 
-        this.newSlot("whenToPlay", 0);
-        this.newSlot("offsetInSeconds", 0);
+        {
+            const slot = this.newSlot("playbackRate", 1);
+        }
+
+        {
+            const slot = this.newSlot("whenToPlay", 0);
+        }
+
+        {
+            const slot = this.newSlot("offsetInSeconds", 0);
+        }
+
         //this.newSlot("durationInSeconds", undefined);
 
-        this.newSlot("isPlaying", false);
-        this.newSlot("delegateSet", null);
+        {
+            const slot = this.newSlot("isPlaying", false);
+        }
+
+        {
+            const slot = this.newSlot("delegateSet", null);
+        }
 
         // optional info
-        this.newSlot("label", null);
-        this.newSlot("transcript", null);
+        {
+            const slot = this.newSlot("label", null);
+            slot.setAnnotation("shouldJsonArchive", true);
+        }
+
+        {
+            const slot = this.newSlot("transcript", null);
+            slot.setAnnotation("shouldJsonArchive", true);
+        }
 
         //this.newSlot("loopStart", null);
         //this.newSlot("loopEnd", null);
@@ -148,22 +193,37 @@
             return Promise.resolve();
         }
 
-        if (!this.fetchPromise()) {
-            this.setFetchPromise(Promise.resolve());
-        }
+        try {
+            if (!this.fetchPromise()) {
+                this.setFetchPromise(Promise.resolve());
+            }
 
-        await this.fetchPromise();
-        await WAContext.shared().setupPromise();
-        await this.arrayBufferPromise();
+            await this.fetchPromise();
+            await this.arrayBufferPromise();
 
-        if (!this.hasData()) {
-            throw new Error("no data for sound");
+            if (!this.hasData()) {
+                throw new Error("no data for sound");
+            }
+
+            const decodedBuffer = await WAContext.shared().promiseDecodeArrayBuffer(this.data());
+            this.onDecode(decodedBuffer);
+        } catch (error) {
+            this.onError(error);
+            throw error;
         }
-        return this.decodeBuffer(this.data());
     }
 
-    decodeBuffer (audioArrayBuffer) {
+    onError (e) {
+        console.warn(this.type() + " onDecodeError ", e.error, " " + this.path());
+        this.setError(e.error);
+    }
+
+
+    /*
+    async decodeBuffer (audioArrayBuffer) {
         assert(!Type.isNullOrUndefined(audioArrayBuffer));
+        await WAContext.shared().setupPromise();
+
         this.audioCtx().decodeAudioData(audioArrayBuffer,
             decodedBuffer => { 
                 this.onDecode(decodedBuffer); // wrap in try?
@@ -177,6 +237,7 @@
         this.setLoadState("decoding");
         return this.decodePromise()
     }
+    */
 
     // --- decode ---
 
@@ -223,9 +284,8 @@
     async play () {
         await this.promiseToDecode();
         this.setPlayPromise(Promise.clone());
-        this.setSource(this.newAudioSource());
+        this.setSource(this.newAudioSource()); // setups source with decoded buffer
         this.syncToSource(this.source());
-        assert(this.decodedBuffer());
         this.source().start(this.whenToPlay(), this.offsetInSeconds(), this.duration());
         this.setIsPlaying(true);
         this.onStarted();

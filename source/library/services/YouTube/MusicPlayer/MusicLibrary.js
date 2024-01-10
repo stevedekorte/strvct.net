@@ -460,6 +460,11 @@
         "Sleepy Town": "kEUj4U335YI",
         "Welcome To The Far North!": "u6wieZVCp9E",
         "A Calm Journey on the Seas": "832xOOXnjpk",
+
+        "Sleeping Dragon": "51pRMJpjYvk",
+        "Heavenly Crystal Bells": "9Q4DzzV2PW8",
+
+        "Meditative Oud Music": "dRU494VecTw"
       },
 
       "Harry Potter": {
@@ -499,7 +504,7 @@
 
         // from https://www.youtube.com/watch?v=PzkE3dOYFVo
         "Tchaikovsky Waltz of the Flowers": "PzkE3dOYFVo",
-        "Tchaikovsky Dance of the Sugar Plum Fairy": "w600ZPxZzSk",
+        "Tchaikovsky Dance of the Sugar Plum Fairy": "w600ZPxZzSk"
       },
 
       "Studio Ghibli": {

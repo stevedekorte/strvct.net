@@ -19,6 +19,20 @@
       //slot.setCanInspect(true)
     }
 
+    {
+      const slot = this.newSlot("hasValueButton", false);
+      slot.setSyncsToView(true);
+    }
+
+    {
+      const slot = this.newSlot("isMicOn", false);
+      slot.setSyncsToView(true);
+    }
+
+    {
+      const slot = this.newSlot("sttSession", null);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
@@ -47,11 +61,55 @@
     this.conversation().onChatInputValue(this.value())
   }
 
+  valueButtonIconName () {
+    return this.isMicOn() ? "Mic On" : "Mic Off";
+  }
+
+  onClickValueButton () {
+    this.setIsMicOn(!this.isMicOn());
+    console.log("this.isMicOn():", this.isMicOn());
+    if (this.isMicOn()) {
+      this.setupSttSessionIfNeeded();
+      this.sttSession().start();
+    } else {
+      if (this.sttSession()) {
+        this.sttSession().stop();
+      }
+    }
+    this.didUpdateNode();
+  }
+
+  setupSttSessionIfNeeded () {
+    if (!this.sttSession()) {
+      const stt = SpeechToTextSession.clone().setDelegate(this);
+      this.setSttSession(stt);
+    }
+  }
+
   /*
   sehatValue (v) {
     debugger;
     return super.setValue(v)
   }
   */
+
+  onSpeechInterimResult (sttSession) {
+    const text = this.sttSession().interimTranscript();
+    this.setValue(text);
+    console.log("onSpeechInterimResult('" + text + "')");
+  }
+
+  onSpeechEnd (sttSession) {
+    const text = this.sttSession().interimTranscript();
+    this.setValue(text);
+    this.onValueInput();
+    this.setValue("");
+    console.log("onSpeechEnd('" + text + "')");
+    /*
+    debugger;
+    this.sttSession().stop();
+  */
+    this.setIsMicOn(false);
+  }
 
 }.initThisClass());
