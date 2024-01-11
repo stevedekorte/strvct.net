@@ -359,7 +359,7 @@
         if (changedView === this.valueView()) {
             const node = this.node()
             this.syncToNode(); //  is this done elsewhere
-            debugger;
+            //debugger;
             if (node.onValueInput) {
                 node.onValueInput()
             }
