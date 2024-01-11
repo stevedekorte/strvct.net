@@ -358,6 +358,8 @@
     onDidInput (changedView) { // sent up subview chain when an input occurs
         if (changedView === this.valueView()) {
             const node = this.node()
+            this.syncToNode(); //  is this done elsewhere
+            debugger;
             if (node.onValueInput) {
                 node.onValueInput()
             }

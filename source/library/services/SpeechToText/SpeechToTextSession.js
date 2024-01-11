@@ -30,11 +30,26 @@
     }
 
     {
+      const slot = this.newSlot("language", 'en-US');
+      slot.setCanEditInspection(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setInspectorPath("settings")
+      slot.setLabel("language");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true);
+      slot.setValidValues(['en-US']);
+      slot.setSummaryFormat("key value");
+    }
+
+
+    {
       const slot = this.newSlot("inputTimeoutId", null);
     }
 
     {
-      const slot = this.newSlot("inputTimeoutMs", 3000);      
+      const slot = this.newSlot("inputTimeoutMs", 2000);      
       slot.setInspectorPath("settings")
       slot.setLabel("inputTimeoutMs")
       slot.setShouldStoreSlot(true)
@@ -212,8 +227,9 @@
       assert(rec)
 
       rec.continuous = this.isContinuous();
+      console.log("rec.continuous:", rec.continuous);
       rec.interimResults = this.getInterimResults();
-      rec.lang = 'en-US';
+      rec.lang = this.language();
       
       rec.onresult = (event) => {
           this.onResult(event)
@@ -239,6 +255,8 @@
 
     return this
   }
+
+  // --- timeout ---
 
   usesInputTimeout () {
     return this.getInterimResults()
@@ -269,11 +287,19 @@
   }
 
   onInputTimeout () {
-    this.clearInputTimeout()
-    console.log("SPEECH onInputTimeout() stop")
-    this.stop()
+    this.clearInputTimeout();
+    console.log("SPEECH onInputTimeout() stop");
+    this.onInput();
+    this.stop();
+    /*
+    if (this.isContinuous()) {
+      this.start();
+    }
+    */
     return this
   }
+
+  // --- events ---
 
   onResult (event) {
     //this.debugLog("onResult")
@@ -282,32 +308,37 @@
     let final = '';
 
     for (let i = event.resultIndex; i < event.results.length; ++i) {
+        const word = event.results[i][0].transcript;
         if (event.results[i].isFinal) {
-          final += event.results[i][0].transcript;
+          final += word;
         } else {
-          interim += event.results[i][0].transcript;
+          interim += word;
         }
     }
 
     console.log("SPEECH onResult interm: '" + interim + "'")
-    console.log("SPEECH onResult final: '" + final + "'")
 
     if (interim.length) {
       this.resetInputTimeout()
     }
 
-    this.setInterimTranscript(interim)
+    this.setInterimTranscript(interim);
+    if (interim.length) {
+      this.sendDelegateMessage("onSpeechInterimResult", [this])
+    }
+
     if (final) {
       this.setFinalTranscript(final)
       this.appendToFullTranscript(this.finalTranscript())
-      console.log("SPEECH onResult full: '" + this.fullTranscript() + "'")
+      //console.log("SPEECH onResult full: '" + this.fullTranscript() + "'")
 
+      console.log("SPEECH onResult final: '" + final + "'")
+      this.sendDelegateMessage("onSpeechFinal", [this])
+      
       if (!this.isRecording()) {
         this.setFinalTranscript("")
       }
     }
-
-    this.sendDelegateMessage("onSpeechInterimResult", [this])
   }
 
   intermFullTranscript () {
@@ -316,8 +347,8 @@
 
   appendToFullTranscript (s) {
     const ft = this.fullTranscript()
-    const spacer = ft.length === 0 ? "" : "..."
-    this.setFullTranscript(ft + spacer + this.finalTranscript())
+    const spacer = ft.length === 0 ? "" : " "
+    this.setFullTranscript(ft + spacer + s)
     return this
   }
 
@@ -329,11 +360,23 @@
   }
 
   onSpeechEnd (event) {
+    this.sendDelegateMessage("onSpeechEnd", [this]);
+  }
+
+  onInput () {
+    // copy any interm to full Transcript
+    // any transcript marked final was (presumably) already added to full transcript in onResult()
+    this.appendToFullTranscript(this.interimTranscript());
+    this.setInterimTranscript("");
+    this.setFinalTranscript("");
+    this.stop(); // copying the interim transcript is only valid if we stop the recording, which clears the results.
+    this.sendDelegateMessage("onSpeechInput", [this]);
+
   }
 
   onEnd (event) {
     this.setIsRecording(false)
-    this.sendDelegateMessage("onSpeechEnd", [this])
+    this.sendDelegateMessage("onSessionEnd", [this])
   }
 
   onError (event) {

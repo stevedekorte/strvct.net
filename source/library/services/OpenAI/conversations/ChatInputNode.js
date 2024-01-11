@@ -29,9 +29,11 @@
       slot.setSyncsToView(true);
     }
 
+    /*
     {
       const slot = this.newSlot("sttSession", null);
     }
+    */
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -50,7 +52,7 @@
     this.setKeyIsVisible(false)
   }
 
-  onValueInput () {
+  onValueInput (changedView) {
     if (this.value()) {
       this.send()
     }
@@ -60,6 +62,8 @@
     //this.conversation().onChatInput(this)
     this.conversation().onChatInputValue(this.value())
   }
+
+  /*
 
   valueButtonIconName () {
     return this.isMicOn() ? "Mic On" : "Mic Off";
@@ -78,38 +82,6 @@
     }
     this.didUpdateNode();
   }
-
-  setupSttSessionIfNeeded () {
-    if (!this.sttSession()) {
-      const stt = SpeechToTextSession.clone().setDelegate(this);
-      this.setSttSession(stt);
-    }
-  }
-
-  /*
-  sehatValue (v) {
-    debugger;
-    return super.setValue(v)
-  }
   */
-
-  onSpeechInterimResult (sttSession) {
-    const text = this.sttSession().interimTranscript();
-    this.setValue(text);
-    console.log("onSpeechInterimResult('" + text + "')");
-  }
-
-  onSpeechEnd (sttSession) {
-    const text = this.sttSession().interimTranscript();
-    this.setValue(text);
-    this.onValueInput();
-    this.setValue("");
-    console.log("onSpeechEnd('" + text + "')");
-    /*
-    debugger;
-    this.sttSession().stop();
-  */
-    this.setIsMicOn(false);
-  }
 
 }.initThisClass());

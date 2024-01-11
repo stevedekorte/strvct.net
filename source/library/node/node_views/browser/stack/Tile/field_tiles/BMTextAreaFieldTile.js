@@ -11,7 +11,11 @@
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("valueButton", null);
+            const slot = this.newSlot("sttButton", null); // Button, for speech to text
+        }
+
+        {
+            const slot = this.newSlot("sttSession", null); // SpeechToTextSession
         }
     }
 
@@ -77,36 +81,12 @@
         bv.setPadding("0px");
         bv.setMarginTop("1px");
         //bv.setDisplay("none");
-        bv.setIconName("Mic Off");
+        //bv.setIconName("Mic Off");
         bv.titleView().setIsDisplayHidden(true);
 
-        this.setValueButton(bv);
+        this.setSttButton(bv);
+        this.updateSttButton();
         //this.valueViewContainer().addSubview(bv);
-    }
-
-    onClickValueButton () {
-        const node = this.node();
-        if (node && node.onClickValueButton) {
-            node.onClickValueButton();
-        }
-    }
-    
-    syncValueFromNode () {
-        super.syncValueFromNode();
-        const node = this.node();
-        if (node) {
-            if (node.hasValueButton) {
-                const show = node.hasValueButton && node.hasValueButton();
-                //const shouldDisplay = show ? "block" : "none";
-                //this.valueButton().setDisplay(shouldDisplay);
-                //this.valueButton().setDisplay("block");
-                this.valueButton().setParentViewIfTrue(this.valueViewContainer(), show);
-                if (node.valueButtonIconName) {
-                    const name = node.valueButtonIconName();
-                    this.valueButton().setIconName(name);
-                }
-            }
-        }
     }
 
     /*
@@ -151,5 +131,85 @@
         return this
     }
     */
+
+    // --- text to speech button ---
+    
+    syncValueFromNode () {
+        super.syncValueFromNode();
+        const node = this.node();
+        if (node) {
+            if (node.hasValueButton) {
+                const show = node.hasValueButton && node.hasValueButton();
+                this.sttButton().setParentViewIfTrue(this.valueViewContainer(), show);
+                this.updateSttButton();
+            }
+        }
+    }
+
+    isMicOn () {
+        if (!this.sttSession()) {
+            return false;
+        }
+        return this.sttSession().isRecording();
+    }
+
+    updateSttButton () {
+        const iconName = this.isMicOn() ? "Mic On" : "Mic Off";
+        this.sttButton().setIconName(iconName);
+    }
+
+    onClickValueButton () {
+        console.log("this.isMicOn():", this.isMicOn());
+        if (!this.isMicOn()) {
+            this.setupSttSessionIfNeeded();
+            this.sttSession().start();
+        } else {
+            this.sttSession().stop();
+        }
+        this.updateSttButton();
+    }
+
+    setupSttSessionIfNeeded () {
+        if (!this.sttSession()) {
+          const stt = SpeechToTextSession.clone().setDelegate(this).setSessionLabel("ChatInputNode STT input");
+          this.setSttSession(stt);
+        }
+    }
+
+    onSpeechInterimResult (sttSession) {
+        const text = this.sttSession().interimTranscript();
+        this.valueView().setString(text);
+        console.log("onSpeechInterimResult('" + text + "')");
+    }
+
+    onSpeechFinal (sttSession) {
+
+    }
+
+    onSpeechInput (sttSession) {
+        const text = this.sttSession().fullTranscript();
+        console.log("onSpeechInput('" + text + "')");
+        debugger;
+        if (text.length > 0) {
+            const textField = this.valueView();
+            //textField.setString(text);
+            textField.setValue(text);
+            textField.afterEnter(null);
+            //textField.didInput();
+            //this.sttSession().stop();
+        }
+        assert(!sttSession.isRecording());
+        this.updateSttButton();
+    }
+
+    onSpeechEnd (sttSession) {
+        this.updateSttButton()
+    }
+
+    onSessionEnd (sttSession) {
+        this.updateSttButton()
+    }
+
+
     
 }.initThisClass());
