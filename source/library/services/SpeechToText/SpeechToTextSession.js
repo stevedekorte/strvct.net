@@ -49,7 +49,7 @@
     }
 
     {
-      const slot = this.newSlot("inputTimeoutMs", 2000);      
+      const slot = this.newSlot("inputTimeoutMs", 1500);      
       slot.setInspectorPath("settings")
       slot.setLabel("inputTimeoutMs")
       slot.setShouldStoreSlot(true)
@@ -165,6 +165,10 @@
       slot.setActionMethodName("toggleRecording");
     }
 
+    {
+      const slot = this.newSlot("transcriptPromise", null);
+    }
+
   }
 
   init() {
@@ -173,7 +177,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setNodeCanReorderSubnodes(false);
-    this.setIsDebugging(true)
+    this.setIsDebugging(true);
   }
 
   finalInit() {
@@ -227,7 +231,7 @@
       assert(rec)
 
       rec.continuous = this.isContinuous();
-      console.log("rec.continuous:", rec.continuous);
+      //console.log("rec.continuous:", rec.continuous);
       rec.interimResults = this.getInterimResults();
       rec.lang = this.language();
       
@@ -371,7 +375,7 @@
     this.setFinalTranscript("");
     this.stop(); // copying the interim transcript is only valid if we stop the recording, which clears the results.
     this.sendDelegateMessage("onSpeechInput", [this]);
-
+    this.transcriptPromise().callResolveFunc(this.fullTranscript());
   }
 
   onEnd (event) {
@@ -380,20 +384,25 @@
   }
 
   onError (event) {
-    this.sendDelegateMessage("onSpeechError", [this, event.error])
-    console.warn(this.typeId() + " error: " + event.error)
+    const error = event.error;
+    this.sendDelegateMessage("onSpeechError", [this, error]);
+    console.warn(this.typeId() + " error: " + error);
+    if (this.transcriptPromise()) {
+      this.transcriptPromise().callRejectFunc(error);
+    }
   }
 
   start () {
     this.debugLog("start")
     if (!this.isRecording()) {
+      this.setTranscriptPromise(Promise.clone());
       this.clearTranscript();
       this.setupIfNeeded();
       this.startInputTimeout()
       this.recognition().start();
       this.setIsRecording(true);
     }
-    return this
+    return this.transcriptPromise();
   }
 
   startActionInfo () {
@@ -447,7 +456,5 @@
       }
     }
   }
-
-
 
 }.initThisClass());

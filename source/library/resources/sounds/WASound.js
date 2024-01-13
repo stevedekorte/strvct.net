@@ -27,17 +27,20 @@
 
     initPrototypeSlots () {
 
-        // converting blob to ArrayBuffer
+        // converting blob to ArrayBuffer, arrayBuffer is stored in data slot
+
         {
             const slot = this.newSlot("arrayBufferPromise", null);
         }
 
         // fetching
+
         {
             const slot = this.newSlot("fetchPromise", null);
         }
 
         // decoding 
+
         {
             const slot = this.newSlot("decodePromise", null);
         }
@@ -46,13 +49,11 @@
             const slot = this.newSlot("decodedBuffer", null);
         }
 
-        //this.newSlot("decodeError", false);
-
         // playing
+
         {
             const slot = this.newSlot("shouldPlayOnLoad", false);
         }
-
         
         {
             const slot = this.newSlot("shouldPlayOnAccess", true);
@@ -67,6 +68,7 @@
         }
 
         // source attributes
+
         {
             const slot = this.newSlot("loop", false);
         }
@@ -116,6 +118,19 @@
         this.setDelegateSet(new Set());
     }
 
+    /*
+    setData (data) {
+        console.log(this.typeId() + ".setData(", data, ")");
+        this._data = data;
+        return this;
+    }
+    */
+
+    setArrayBuffer (arrayBuffer) {
+        this.setData(arrayBuffer);
+        return this;
+    }
+
     title () {
         return this.name();
     }
@@ -139,6 +154,7 @@
         const arrayBuffer = await promise;
         // set the result 
         this.setData(arrayBuffer);
+        console.log(this.typeId() + " setData " + arrayBuffer.byteLength);
     }
 
     // --- attributes ---
@@ -194,18 +210,26 @@
         }
 
         try {
-            if (!this.fetchPromise()) {
-                this.setFetchPromise(Promise.resolve());
-            }
+            if (this.path()) {
+                //debugger;
+                console.log(this.typeId() + " path: ", path);
+            } else {
+                if (!this.fetchPromise()) {
+                    this.setFetchPromise(Promise.resolve());
+                }
 
-            await this.fetchPromise();
-            await this.arrayBufferPromise();
+                await this.fetchPromise();
+                await this.arrayBufferPromise();
+            }
 
             if (!this.hasData()) {
                 throw new Error("no data for sound");
             }
 
-            const decodedBuffer = await WAContext.shared().promiseDecodeArrayBuffer(this.data());
+            assert(this.data().byteLength);
+            const arrayBufferCopy = this.data().slice(0);
+            const decodedBuffer = await WAContext.shared().promiseDecodeArrayBuffer(arrayBufferCopy);
+            assert(this.data().byteLength);
             this.onDecode(decodedBuffer);
         } catch (error) {
             this.onError(error);
@@ -217,27 +241,6 @@
         console.warn(this.type() + " onDecodeError ", e.error, " " + this.path());
         this.setError(e.error);
     }
-
-
-    /*
-    async decodeBuffer (audioArrayBuffer) {
-        assert(!Type.isNullOrUndefined(audioArrayBuffer));
-        await WAContext.shared().setupPromise();
-
-        this.audioCtx().decodeAudioData(audioArrayBuffer,
-            decodedBuffer => { 
-                this.onDecode(decodedBuffer); // wrap in try?
-                this.decodePromise().callResolveFunc();
-            },
-            error => { 
-                this.onDecodeError(error); 
-                this.decodePromise().callRejectFunc(error);
-            }
-        );
-        this.setLoadState("decoding");
-        return this.decodePromise()
-    }
-    */
 
     // --- decode ---
 
@@ -383,5 +386,20 @@
             sendDelegate(d, methodName, args); 
         });
     }
+
+    // ----
+
+    async promiseDataUrl () {
+        // Step 1: Convert ArrayBuffer to Blob
+        const arrayBuffer = this.data();
+        assert(arrayBuffer);
+        console.log(this.typeId() + " promiseDataUrl byte count " + arrayBuffer.byteLength);
+        assert(arrayBuffer.byteLength > 0);
+        const mimeType = 'audio/*';
+        const dataUrl = await arrayBuffer.promiseAsDataUrlWithMimeType(mimeType);
+        console.log("dataUrl: ", dataUrl.clipWithEllipsis(20));
+        return dataUrl;
+    }
+
 
 }.initThisClass());

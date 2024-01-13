@@ -90,24 +90,6 @@
     }
 
     /*
-    setParentViewIfTrue (parentView, aBool) {
-        if (aBool) {
-            this.addToParentViewIfNeeded(parentView);
-        } else {
-            this.removeFromParentView();
-        }
-        return this;
-    }
-
-    addToParentViewIfNeeded (parentView) {
-        if (this.parentView() !== parentView) {
-            parentView.addSubview(this);
-        }
-        return this;
-    }
-    */
-
-    /*
     updateSubviews () {   
         super.updateSubviews()
         return this
@@ -136,13 +118,10 @@
     
     syncValueFromNode () {
         super.syncValueFromNode();
-        const node = this.node();
-        if (node) {
-            if (node.hasValueButton) {
-                const show = node.hasValueButton && node.hasValueButton();
-                this.sttButton().setParentViewIfTrue(this.valueViewContainer(), show);
-                this.updateSttButton();
-            }
+        const show = this.sendNodeDelegate("hasValueButton");
+        if (show !== undefined) {
+            this.sttButton().setParentViewIfTrue(this.valueViewContainer(), show);
+            this.updateSttButton();
         }
     }
 
@@ -189,7 +168,7 @@
     onSpeechInput (sttSession) {
         const text = this.sttSession().fullTranscript();
         console.log("onSpeechInput('" + text + "')");
-        debugger;
+        //debugger;
         if (text.length > 0) {
             const textField = this.valueView();
             //textField.setString(text);
@@ -209,7 +188,5 @@
     onSessionEnd (sttSession) {
         this.updateSttButton()
     }
-
-
     
 }.initThisClass());

@@ -88,7 +88,7 @@
   }
 
   queueWASound (sound) {
-    console.log(this.type() + " PUSH " + sound.description());
+    //console.log(this.type() + " PUSH " + sound.description());
     this.queue().push(sound);
     this.processQueue();
     this.didUpdateNode();
@@ -99,7 +99,7 @@
       const q = this.queue();
       if (q.length) {
         const sound = q.shift();
-        console.log(this.type() + " POP " + sound.description());
+        //console.log(this.type() + " POP " + sound.description());
         this.playSound(sound);
       }
     }

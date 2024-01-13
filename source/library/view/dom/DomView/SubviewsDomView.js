@@ -728,13 +728,17 @@
         return this
     }
 
-    // ----
+    // ---- adding and removing a view to enable/disable it ---
 
     setParentViewIfTrue (parentView, aBool) {
-        // helper method to easily add/remove view instead of using setDisplay("none")
-        // useful to avoid excessive DOM tree, especially in repeated elements like Tiles in a ScrollView
-        // the problem is that layout is dependent on ordering and adding a subview to the end of the subviews
-        // may change layout...
+        /*
+         This is a helper method to easily add/remove view instead of using setDisplay("none"),
+         which useful to avoid an excessively larger DOM tree, especially in repeated elements like Tiles in a ScrollView.
+
+         NOTES:
+         The problem is that layout is dependent on ordering and adding a subview to the end of the subviews
+         may change layout. So it's usually better to use setIsDisplayHidden() instead. But 
+        */
 
         if (aBool) {
             this.addToParentViewIfNeeded(parentView);

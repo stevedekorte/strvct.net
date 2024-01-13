@@ -3,6 +3,8 @@
 /* 
     OpenAiTtsSession
  
+    Text to Speech
+
 */
 
 (class OpenAiTtsSession extends BMSummaryNode {
@@ -285,11 +287,17 @@
 
   generate () {
     const request = this.newRequest();
-    this.ttsRequestQueue().unshift(request);
-    request.sound().setTranscript(this.prompt());
-    this.audioQueue().queueWASound(request.sound());
+    this.ttsRequestQueue().unshift(request); // needed?
+    const sound = request.sound();
+    sound.setTranscript(this.prompt());
+    this.queueSound(sound);
     request.asyncSend();
-    return request.sound();
+    return sound;
+  }
+
+  queueSound (sound) {
+    this.audioQueue().queueWASound(sound);
+    return this;
   }
 
   stopAndClearQueue () {

@@ -100,7 +100,7 @@
 
   init () {
     super.init();
-    this.setIsDebugging(true);
+    this.setIsDebugging(false);
     this.setRequestId(this.puuid());
     this.setTitle("Request");
 

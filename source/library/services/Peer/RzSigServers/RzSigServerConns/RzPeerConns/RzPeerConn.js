@@ -202,7 +202,7 @@
   init() {
     super.init();
     this.setStatus("offline");
-    this.setIsDebugging(true);
+    this.setIsDebugging(false);
     this.setConnOptions(this.connOptionsDefault());
     this.setChunks(new Map());
     return this;
@@ -377,7 +377,7 @@
       const json = JSON.parse(s);
       this.clearChunks()
 
-      console.warn(this.type() + " completedChunks ", JSON.stringify(json));
+      //this.debugLog(this.type() + " completedChunks ", JSON.stringify(json));
 
       this.sendDelegateMessage("onPeerData", [this, json]);
     }

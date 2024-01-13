@@ -120,7 +120,9 @@
 
     async promiseLoadUrlResource () {
         const urlResource = await this.urlResource().promiseLoad();
-        this.setData(this.urlResource().data());
+        const data = this.urlResource().data();
+        assert(data.byteLength);
+        this.setData(data);
         this.postNoteNamed("resourceLoaded");
         this.setLoadState("loaded");
         this.didLoad();

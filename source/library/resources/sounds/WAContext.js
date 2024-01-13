@@ -61,12 +61,14 @@
     }
     
     async promiseDecodeArrayBuffer (audioArrayBuffer) {
+        // NOTE: may mutate audioArrayBuffer!!!!!!!!!!
         await this.setupPromise(); // should we throw an error instead? 
 
         const promise = Promise.clone();
-
+        //assert(audioArrayBuffer.byteLength);
         this.audioContext().decodeAudioData(audioArrayBuffer,
             decodedBuffer => { 
+                //assert(audioArrayBuffer.byteLength);
                 promise.callResolveFunc(decodedBuffer);
             },
             error => { 

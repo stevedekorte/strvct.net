@@ -172,17 +172,21 @@
   }
 
   updateMessageJson (msgJson) {
-    const oldMsg = this.messageWithId(msgJson.messageId)
+    const oldMsg = this.messageWithId(msgJson.messageId);
+
     if (oldMsg) {
       oldMsg.setJsonArchive(msgJson)
       return oldMsg
+    } else {
+      const newMsg = this.newMessageFromJson(msgJson);
+      if (newMsg.onNewFromNetwork) {
+        newMsg.scheduleMethod("onNewFromNetwork");
+      }
+      SimpleSynth.clone().playReceiveBeep();
+      this.onNewMessageFromUpdate(newMsg);
+      //console.warn(this.typeId() + " updateMessageJson no message found with messageId '" + messageId + "'");
+      return newMsg;
     }
-
-    const newMsg = this.newMessageFromJson(msgJson)
-    SimpleSynth.clone().playReceiveBeep()
-    this.onNewMessageFromUpdate(newMsg)
-    //console.warn(this.typeId() + " updateMessageJson no message found with messageId '" + messageId + "'")
-    return newMsg
   }
 
   onNewMessageFromUpdate (newMsg) {
