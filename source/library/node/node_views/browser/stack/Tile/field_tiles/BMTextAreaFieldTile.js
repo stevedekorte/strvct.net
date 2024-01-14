@@ -83,7 +83,7 @@
         //bv.setDisplay("none");
         //bv.setIconName("Mic Off");
         bv.titleView().setIsDisplayHidden(true);
-
+        bv.setAttribute("title", "Speech to text input")
         this.setSttButton(bv);
         this.updateSttButton();
         //this.valueViewContainer().addSubview(bv);
