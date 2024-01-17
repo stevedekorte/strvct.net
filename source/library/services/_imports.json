@@ -7,5 +7,6 @@
     "Peer/_imports.json",
     "SpeechToText/_imports.json",
     "ProxyServers/_imports.json",
+    "HomeAssistant/_imports.json",
     "Services.js"
 ]

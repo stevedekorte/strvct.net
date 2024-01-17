@@ -59,6 +59,13 @@
             slot.setFinalInitProto(ProxyServers);
             slot.setIsSubnode(true);
         }
+
+        {
+            const slot = this.newSlot("homeAssistants", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(HomeAssistants);
+            slot.setIsSubnode(true);
+        }
     }
 
     init () {

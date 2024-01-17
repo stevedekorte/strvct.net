@@ -432,6 +432,30 @@
         return this.getCssProperty("font-family")
     }
 
+    // font style 
+
+    setFontStyle (s) {
+        assert(Type.isString(s) || Type.isNull(s))
+        this.setCssProperty("font-style", s)
+        return this
+    }
+
+    fontStyle () {
+        return this.getCssProperty("font-style")
+    }
+
+    // font stretch 
+
+    setFontStretch (s) {
+        assert(Type.isString(s) || Type.isNull(s))
+        this.setCssProperty("font-stretch", s)
+        return this
+    }
+
+    fontStretch () {
+        return this.getCssProperty("font-stretch")
+    }
+
     // font weight
 
     fontWeightValidatorFunction (v) {

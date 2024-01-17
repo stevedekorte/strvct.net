@@ -118,8 +118,14 @@
   init () {
     super.init();
     this.setIsDebugging(false);
-    this.setPlayerPromise(Promise.clone().setLabel(this.type() + " setup"));
-    this.setupFrame();
+  }
+
+  playerPromise () {
+    if (!this._playerPromise) {
+      this._playerPromise = Promise.clone().setLabel(this.type() + " setup");
+      this.setupFrame();
+    }
+    return this._playerPromise
   }
 
   finalInit () {
@@ -168,6 +174,8 @@
   }
 
   setupPlayer () {
+    console.log("------------- setup YouTubePlayer ---------------");
+    //debugger;
     this.debugLog("setupPlayer()");
     const json = {
       height: "0",
@@ -232,7 +240,10 @@
   }
 
   isReady () {
-    return this.playerPromise().isResolved();
+    if (this._playerPromise) {
+      return this.playerPromise().isResolved();
+    }
+    return false;
   }
 
   statesMap () {
@@ -373,10 +384,13 @@
 
   async setVolume (v) {
     // 0.0 to 1.0
-    await this.playerPromise();
-    assert(v >= 0 && v <= 1.0);
-    this._volume = v;
-    this.updateVolume();
+    if (this._volume !== v) {
+      assert(v >= 0 && v <= 1.0);
+      this._volume = v;
+      if (this._playerPromise) {
+        this.updateVolume();
+      }
+    }
     return this;
   }
 

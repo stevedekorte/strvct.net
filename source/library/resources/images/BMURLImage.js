@@ -13,7 +13,6 @@
     }
 
     initPrototypeSlots () {
-        //this.newSlot("path", "");
         this.newSlot("dataURL", "");
     }
 
@@ -30,16 +29,6 @@
     subtitle () {
         return this.path().pathExtension();
     }
-
-    /*
-    setPath (aPath) {
-        if (this._path !== aPath) {
-            this._path = aPath
-            this.loadDataURL()
-        }
-        return this
-    }
-    */
 
     load () {
         this.loadDataURL();
@@ -74,15 +63,6 @@
     didFetchDataUrl (dataURL) {
         debugger;
         this.setDataURL(dataURL);
-        
-        /*
-        // now just to show that passing to a canvas doesn't hold the same results
-        const canvas = document.createElement("canvas");
-        canvas.width = myImage.naturalWidth;
-        canvas.height = myImage.naturalHeight;
-        canvas.getContext("2d").drawImage(myImage, 0, 0);
-        */
-
         return this
     }
 

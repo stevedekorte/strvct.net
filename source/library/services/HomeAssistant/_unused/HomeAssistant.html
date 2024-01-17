@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Home Assistant Devices</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Home Assistant Devices</h1>
+    <div id="deviceList">Connecting to Home Assistant...</div>
+
+    <script>
+        const token = "";
+
+        const hassUrl = 'ws://umbrel.local:8123/api/websocket';
+
+        const accessToken=token;  // Replace with your token
+
+        let entities=[];
+        let devices=[];
+        let entityRegistry=[];
+
+        // Create WebSocket connection
+        const socket=new WebSocket(hassUrl);
+
+        socket.addEventListener('open',() => {
+            // Authenticate when connection is open
+            socket.send(JSON.stringify({
+                type: 'auth',
+                access_token: accessToken
+            }));
+        });
+
+        socket.addEventListener('message',(event) => {
+            const message=JSON.parse(event.data);
+
+            // Check for auth OK
+            if(message.type==='auth_ok') {
+                // Request list of entities
+                socket.send(JSON.stringify({
+                    id: 1,
+                    type: 'get_states'
+                }));
+                // Request list of devices
+                socket.send(JSON.stringify({
+                    id: 2,
+                    type: 'config/device_registry/list'
+                }));
+                // Request entity registry
+                socket.send(JSON.stringify({
+                    id: 3,
+                    type: 'config/entity_registry/list'
+                }));
+            }
+
+            // Handle responses
+            if(message.id===1&&message.type==='result') {
+                entities=message.result;
+                if(devices.length>0&&entityRegistry.length>0) {
+                    displayDeviceStatus();
+                }
+            }
+
+            if(message.id===2&&message.type==='result') {
+                devices=message.result;
+                if(entities.length>0&&entityRegistry.length>0) {
+                    displayDeviceStatus();
+                }
+            }
+
+            if(message.id===3&&message.type==='result') {
+                entityRegistry=message.result;
+                if(entities.length>0&&devices.length>0) {
+                    displayDeviceStatus();
+                }
+            }
+        });
+
+        function displayDeviceStatus() {
+            const deviceListElement = document.getElementById('deviceList');
+            deviceListElement.innerHTML='';
+
+            devices.forEach(device => {
+                // Find entities that belong to this device in the entity registry
+                const deviceEntityIds=entityRegistry.filter(er => er.device_id===device.id).map(er => er.entity_id);
+                const deviceEntities=entities.filter(entity => deviceEntityIds.includes(entity.entity_id));
+
+                // Create a string with the state of each entity
+                const entityStates=deviceEntities.map(entity => `${entity.entity_id.split('.')[1]}: ${entity.state}`).join(', ');
+
+                // Display device information along with its entities' states
+                const deviceElement=document.createElement('div');
+                deviceElement.innerHTML=`<strong>${device.name}</strong> (${entityStates||'No entities found'})`;
+                deviceListElement.appendChild(deviceElement);
+            });
+        }
+
+        socket.addEventListener('error',(error) => {
+            console.error('WebSocket Error: ',error);
+            document.getElementById('deviceList').innerText='Error connecting to Home Assistant';
+        });
+
+    </script>
+</body>
+
+</html>

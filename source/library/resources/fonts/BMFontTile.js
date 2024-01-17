@@ -13,22 +13,23 @@
     }
 
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
     
     updateSubviews () {
-        super.updateSubviews()
+        super.updateSubviews();
 	
-        const node = this.node()
+        const node = this.node();
 
         if (node) {
-            const name = node.name()
-            this.titleView().setFontFamily(name)
+            this.titleView().setFontFamily(node.fontFamilyName());
+            this.titleView().setFontStyle(node.fontStyle());
+            this.titleView().setFontWeight(node.fontWeight());
+            this.titleView().setFontStretch(node.fontStretch());
         }
 
-        return this
+        return this;
     }
-
     
 }.initThisClass());

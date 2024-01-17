@@ -128,4 +128,42 @@
         return this
     }
 
+    /*
+    cssVariableDict () {
+        const face = this.fontFace();
+        return {
+            "font-family": face.family,
+            "font-style": face.style, 
+            "font-weight": face.weight, 
+            "font-stretch": face.stretch, 
+        }
+    }
+    */
+
+    // fontFace attributes accessors
+
+    fontFaceAttribute (name) {
+        const face = this.fontFace();
+        if (face) {
+            return face[name];
+        }
+        return null;
+    }
+
+    fontFamilyName () {
+        return this.fontFaceAttribute("family");
+    }
+
+    fontStyle () {
+        return this.fontFaceAttribute("style");
+    }
+
+    fontWeight () {
+        return this.fontFaceAttribute("weight");
+    }
+
+    fontStretch () {
+        return this.fontFaceAttribute("stretch");
+    }
+
 }.initThisClass());
