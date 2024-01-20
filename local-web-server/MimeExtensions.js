@@ -149,6 +149,7 @@
 			".dcurl": "text/vnd.curl.dcurl",
 			".dd2": "application/vnd.oma.dd2+xml",
 			".ddd": "application/vnd.fujixerox.ddd",
+			".dae": "model/vnd.collada+xml",
 			".deb": "application/x-debian-package",
 			".def": "text/plain",
 			".deploy": "application/octet-stream",

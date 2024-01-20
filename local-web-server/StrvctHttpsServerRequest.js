@@ -167,8 +167,9 @@ const https = require('https');
 		let contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
 
 		if (!contentType) {
-			contentType = MimeExtensions.shared().mimeTypeForPathExtension("txt")
-			console.log("  error: no known mime type for extension: '" + ext + "' so we'll assume " + contentType)
+			//contentType = MimeExtensions.shared().mimeTypeForPathExtension("txt")
+			contentType = "application/octet-stream";
+			console.log("  WARNING: no known mime type for extension: '" + ext + "' so we'll assume " + contentType);
 			/*
 			this.response().writeHead(401, {})
 			this.response().end()

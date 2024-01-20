@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgo=">
 
 <head>
     <meta charset="UTF-8">
@@ -17,9 +18,14 @@
     <div id="deviceList">Connecting to Home Assistant...</div>
 
     <script>
-        const token = "";
+        const deviceListElement = document.getElementById('deviceList');
 
-        const hassUrl = 'ws://umbrel.local:8123/api/websocket';
+        const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMTg2MzJiNDRhMDg0N2M0OTc2NzNhN2JkMmE2M2Y2NyIsImlhdCI6MTcwNTUxNTEwMSwiZXhwIjoyMDIwODc1MTAxfQ.BLXypYTQNzhKEZV7bKqsE30_2wNPIntRvfRKNtxKMmw";
+
+        //const hassUrl = 'ws://localnode.ddns.net:8123/api/websocket';
+        const hassUrl = 'wss://localnode.ddns.net:8124/api/websocket';
+        //const hassUrl = 'ws://73.15.246.44:8123/api/websocket';
+        //const hassUrl = 'ws://umbrel.local:8123/api/websocket';
 
         const accessToken=token;  // Replace with your token
 
@@ -28,7 +34,7 @@
         let entityRegistry=[];
 
         // Create WebSocket connection
-        const socket=new WebSocket(hassUrl);
+        const socket = new WebSocket(hassUrl);
 
         socket.addEventListener('open',() => {
             // Authenticate when connection is open
@@ -36,10 +42,19 @@
                 type: 'auth',
                 access_token: accessToken
             }));
+            console.log("sent access token");
         });
 
-        socket.addEventListener('message',(event) => {
-            const message=JSON.parse(event.data);
+        socket.addEventListener('message', async (event) => {
+            //console.log("message(" + event.data + ")");
+            let data = event.data;
+
+            if (typeof(data) !== "string") {
+                data = await data.text();
+                //console.log("converted message data(" + data + ")");
+            }
+
+            const message=JSON.parse(data);
 
             // Check for auth OK
             if(message.type==='auth_ok') {

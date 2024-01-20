@@ -10,21 +10,22 @@
     this.newSlot("regionOptions", []);
 
     {
-      const slot = this.newSlot("longLivedToken", null);
-      //slot.setInspectorPath("")
-      slot.setLabel("Long Lived Token");
+      const slot = this.newSlot("protocol", "wss");
+      slot.setInspectorPath("Settings")
+      slot.setLabel("Protocol");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
+      slot.setValidValues(["wss", "ws"]);
     }
 
     {
       //const slot = this.newSlot("host", "umbrel.local");
-      const slot = this.newSlot("host", "localhost");
-      //slot.setInspectorPath("")
-      slot.setLabel("Host");
+      const slot = this.newSlot("host", "localnode.ddns.net");
+      slot.setInspectorPath("Settings")
+      slot.setLabel("Host (HomeAssistant websocket server)");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -34,14 +35,59 @@
 
     {
       //const slot = this.newSlot("port", 8123);
-      const slot = this.newSlot("port", 8080);
-      //slot.setInspectorPath("")
-      slot.setLabel("Host");
+      const slot = this.newSlot("port", 8124);
+      slot.setInspectorPath("Settings")
+      slot.setLabel("Port");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
+    }
+
+    {
+      const slot = this.newSlot("url", 8124);
+      slot.setInspectorPath("Settings")
+      slot.setLabel("Url");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      slot.setSummaryFormat("value");
+    }
+
+
+    {
+      const slot = this.newSlot("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMTg2MzJiNDRhMDg0N2M0OTc2NzNhN2JkMmE2M2Y2NyIsImlhdCI6MTcwNTUxNTEwMSwiZXhwIjoyMDIwODc1MTAxfQ.BLXypYTQNzhKEZV7bKqsE30_2wNPIntRvfRKNtxKMmw");
+      slot.setInspectorPath("Settings")
+      slot.setLabel("Access Token");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+    }
+
+    {
+      const slot = this.newSlot("devicesNode", null)
+      slot.setFinalInitProto(BMSummaryNode);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
+
+
+    {
+      const slot = this.newSlot("scanAction", null);
+      //slot.setInspectorPath("Character");
+      slot.setLabel("Scan");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setCanInspect(true)
+      slot.setActionMethodName("scan");
     }
 
     {
@@ -75,40 +121,57 @@
   init() {
     super.init();
     this.setTitle("Home Assistant");
-    this.setMessagePromises(new Set());
+    this.setCanDelete(true);
+    this.setMessagePromises(new Map());
     this.setDevices([]);
     this.setEntities([]);
     this.setEntityRegistry([]);
   }
 
   subtitle () {
-    return this.host();
+    return this.url();
   }
   
   finalInit () {
     super.finalInit();
+    this.setCanDelete(true);
+    this.updateUrl();
+    this.setNodeCanEditTitle(true);
+
+    this.devicesNode().setTitle("Devices");
+    this.devicesNode().setNoteIsSubnodeCount(true);
+    this.devicesNode().makeSortSubnodesByTitle();
+
     //this.scan();
   }
 
-  wsUrl () {
-    //return "wss://" + this.host() + ":" + this.port() + "/api/websocket";
-    return "wss://" + this.host() + ":" + this.port() + "/";
-  }
-
   didUpdateSlotHost () {
-
+    this.updateUrl()
   }
 
   didUpdateSlotPort () {
-
+    this.updateUrl()
   }
 
-  didUpdateUrl () {
+  composedUrl () {
+    const url = this.protocol() + "://" + this.host() + ":" + this.port() + "/";
+    return url;
+  }
 
+  updateUrl () {
+    this.setUrl(this.composedUrl());
+  }
+
+  didUpdateSlotUrl () {
+    //this.rescan();
+  }
+
+  hasValidUrl () {
+    return this.host().length > 0 && this.port() >= 0;
   }
 
   scan () {
-    const socket = new WebSocket(this.wsUrl());
+    const socket = new WebSocket(this.url());
     this.setSocket(socket);
 
     socket.addEventListener('open',() => {
@@ -136,15 +199,15 @@
 
   async onOpen (event) {
       // Authenticate when connection is open
-      debugger;
+      //debugger;
       await this.asyncSendMessageDict({
         type: 'auth',
-        access_token: this.longLivedToken()
+        access_token: this.accessToken()
       });
 
-      this.setEntityStates(await this.asyncGetStates());
+      this.setEntities(await this.asyncGetStates());
       this.setDevices(await this.asyncDeviceRegistry());
-      this.setEntiryRegistry(await this.asyncEntityRegistry());
+      this.setEntityRegistry(await this.asyncEntityRegistry());
       this.show();
   }
 
@@ -169,11 +232,24 @@
   asyncSendMessageDict (dict) {
     // we will add the id to the dict
     const promise = Promise.clone();
-    const id = this.newMessageId();
-    this.messagePromises().put(id, promise);
+    let id = this.newMessageId();
 
-    dict.id = id;
-    socket.send(JSON.stringify(dict));
+    if (dict["type"] !== "auth") {
+      dict.id = id;
+    } else {
+      id = "auth";
+    }
+    this.messagePromises().set(id, promise);
+
+    const s = JSON.stringify(dict);
+    console.log(this.typeId() + " asyncSendMessageDict(" + s + ")");
+    this.socket().send(s);
+    return promise;
+  }
+
+  popPromiseWithId (id) {
+    const promise = this.messagePromises().get(id);
+    this.messagePromises().delete(id);
     return promise;
   }
 
@@ -181,14 +257,16 @@
     const message = JSON.parse(event.data);
 
     // Check for auth OK
-    if(message.type==='auth_ok') {
-      this.onAuthOkMessage(event);
-    }
-
-    if (message.type==='result') {
+    if(message.type === 'auth_ok') {
+      const promise = this.popPromiseWithId("auth");
+      promise.callResolveFunc(true);
+    } else if(message.type === 'auth_invalid') {
+      const promise = this.popPromiseWithId("auth");
+      promise.callResolveFunc(false);
+    } else if (message.type === 'result') {
       const id = message.id;
       const result = message.result;
-      const promise = this.messagePromises().at(id);
+      const promise = this.popPromiseWithId(id);
       promise.callResolveFunc(result);
     } else {
       console.warn(this.typeId() + " WARNING: unhandled message [[" + JSON.stringify(message, 2, 2) + "]]");
@@ -196,7 +274,7 @@
   }
 
   show () {
-      const s = "";
+      let s = "";
 
       this.devices().forEach(device => {
           // Find entities that belong to this device in the entity registry
@@ -205,10 +283,37 @@
 
           const entityStates = deviceEntities.map(entity => `${entity.entity_id.split('.')[1]}: ${entity.state}`).join(', ');
 
-          s += `<strong>${device.name}</strong> (${entityStates||'No entities found'})`;
+          //s += device.name + " " + (entityStates || '') + "\n";
+          //const node = BMFieldTile.clone();
+          const node = BMSummaryNode.clone();
+          node.setTitle(device.name);
+          //node.setSubtitle(entityStates);
+          node.setNodeSubtitleIsChildrenSummary(true);
+          this.devicesNode().addSubnode(node);
+
+          deviceEntities.forEach(deviceEntity => {
+            const sn = BMSummaryNode.clone();
+            //sn.setTitle(deviceEntity.entity_id.before("."));
+            sn.setTitle(deviceEntity.entity_id);
+            sn.setSubtitle(deviceEntity.state);
+            sn.setSummaryFormat("key value");
+            node.addSubnode(sn);
+          });
       });
 
-      console.log("SHOW: ", s);
+
+      //console.log("SHOW: ", s);
   }
+
+
+  scanActionInfo () {
+    return {
+        isEnabled: this.hasValidUrl(),
+        //title: this.title(),
+        subtitle: this.hasValidUrl() ? null : "Invalid Host URL",
+        isVisible: true
+    }
+  }
+
   
 }).initThisClass();

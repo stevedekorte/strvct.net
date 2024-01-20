@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 
-const url = 'wss://localhost:8080/'; // Replace with your WebSocket server URL
+const url = 'wss://umbrel.local:8080/'; // Replace with your WebSocket server URL
 const ws = new WebSocket(url, {
   rejectUnauthorized: false // This bypasses the certificate validation
 });
