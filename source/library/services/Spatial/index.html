@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Babylon.js OBJ Model Viewer with FreeCamera</title>
+    <style>
+        html, body {
+            padding: 0;
+            margin: 0;
+            background-color: black;
+        }
+
+        #renderCanvas {
+            width: 100%;
+            height: 100vh;
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="renderCanvas"></canvas>
+    <script src="https://cdn.babylonjs.com/babylon.js"></script>
+    <!-- 
+    <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
+    -->
+    <script type="text/javascript" src="external-libs/assimpjs/assimpjs.js"></script>
+
+    <script>// Ensure Babylon.js and AssimpJS are included
+window.onload = function () {
+    assimpjs ().then (function (AssimpJS) {
+
+        // Initialize Babylon.js scene, camera, and light
+        var canvas = document.getElementById('renderCanvas');
+        var engine = new BABYLON.Engine(canvas, true);
+        var scene = new BABYLON.Scene(engine);
+        var darkerBlue = new BABYLON.Color4(0, 0, 0.5, 1); // Darker blue background
+        var lightBlue = new BABYLON.Color4(135 / 255, 206 / 255, 235 / 255, 1);
+        const c = 0.5;
+        var blueprintColor = new BABYLON.Color4(0.2*c, 0.6*c, 0.8*c, 1); // Blueprint blue color
+
+        scene.clearColor = blueprintColor;
+
+        
+        var camera = new BABYLON.FreeCamera('camera', new BABYLON.Vector3(-500, 200, 800), scene);
+        camera.attachControl(canvas, true);
+
+        camera.target = new BABYLON.Vector3(-500, 0, 0);
+        
+        var light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), scene);
+        
+        var resultDiv = document.getElementById("resultDiv");
+
+        // ----------------------------------------------------------------------
+
+        
+        window.addEventListener("wheel", function(event) {
+            event.preventDefault(); // Prevent the default scroll behavior
+
+            var delta = Math.sign(event.deltaY);
+            var speed = 5; // Adjust speed as needed
+            camera.position.addInPlace(camera.getForwardRay().direction.scale(delta * speed));
+        }, { passive: false }); // Set passive to false to allow preventDefault
+
+        window.addEventListener("keydown", function(event) {
+            event.preventDefault(); // Prevent the default scroll behavior
+
+            var speed = 5; // Adjust the movement speed as needed
+            console.log("event.key: ", event.key);
+            if (event.key === "w") {
+                camera.position.y -= speed; // Move camera forward
+            } else if (event.key === "s") {
+                camera.position.y += speed; // Move camera backward
+            }
+            // Calculate the right vector
+            var forward = camera.getForwardRay().direction;
+            var up = BABYLON.Vector3.Up();
+            var right = BABYLON.Vector3.Cross(forward, up);
+
+            if (event.key === "a") {
+                //if (event.key === "ArrowLeft") {
+                camera.position.subtractInPlace(right.scale(-speed)); // Move camera to the left
+            } else if (event.key === "d") {
+                camera.position.addInPlace(right.scale(-speed)); // Move camera to the right
+            }
+        }, { passive: false });
+
+        // ----------------------------------------------------------------------
+        //debugger;
+
+        // Load the .DAE file
+        assimpjs ().then (function (ajs) {
+            // fetch the files to import
+            let files = [
+                'main house.obj',
+                "Grass_Light_Green.jpg"
+            ];
+            Promise.all (files.map ((file) => fetch (file))).then ((responses) => {
+                return Promise.all (responses.map ((res) => res.arrayBuffer ()));
+            }).then ((arrayBuffers) => {
+                console.log("arrayBuffers[0].byteLength:", arrayBuffers[0].byteLength);
+                console.log("arrayBuffers[1].byteLength:", arrayBuffers[1].byteLength);
+                // create new file list object, and add the files
+                let fileList = new ajs.FileList ();
+                for (let i = 0; i < files.length; i++) {
+                    fileList.AddFile (files[i], new Uint8Array (arrayBuffers[i]));
+                }
+                
+                // convert file list to assimp json
+                let result = ajs.ConvertFileList (fileList, 'assjson');
+                
+                // check if the conversion succeeded
+                if (!result.IsSuccess () || result.FileCount () == 0) {
+                    resultDiv.innerHTML = result.GetErrorCode ();
+                    return;
+                }
+
+                // get the result file, and convert to string
+                let objFile = result.GetFile (0);
+                let objJsonContent = new TextDecoder ().decode (objFile.GetContent ());
+                let objJson = JSON.parse (objJsonContent);
+
+                /*
+                resultDiv.style.display = "block"
+                resultDiv.style.whiteSpace = "pre"
+                resultDiv.innerHTML = JSON.stringify (objJson, null, 4);
+                canvas.style.display = "none";
+                return // ---------------------------=============================================================
+*/
+                // --------------------------------------------------------------------
+                const redMaterial = new BABYLON.StandardMaterial("redMaterial", scene);
+                redMaterial.diffuseColor = new BABYLON.Color3(1, 0, 0); 
+
+                const roofMaterial = new BABYLON.StandardMaterial("roofMaterial", scene);
+                roofMaterial.diffuseColor = new BABYLON.Color3(0.4, 0.4, 0.4); 
+
+                const windowSlatsMaterial = new BABYLON.StandardMaterial("windowSlatsMaterial", scene);
+                windowSlatsMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7); 
+
+                const stoneMaterial = new BABYLON.StandardMaterial("stoneMaterial", scene);
+                stoneMaterial.diffuseColor = new BABYLON.Color3(0.7, 0.7, 0.7); 
+
+                
+
+                const wallsMaterial = new BABYLON.StandardMaterial("wallsMaterial", scene);
+                wallsMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1); 
+
+                const deckMaterial = new BABYLON.StandardMaterial("deckMaterial", scene);
+                deckMaterial.diffuseColor = new BABYLON.Color3(1, 1, 1); // A shade of brown
+
+
+                const windowMaterial = new BABYLON.StandardMaterial("windowMaterial", scene);
+                windowMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0); 
+                windowMaterial.alpha = 0.4;
+
+                const windowFrameMaterial = new BABYLON.StandardMaterial("windowFrameMaterial", scene);
+                windowFrameMaterial.diffuseColor = new BABYLON.Color3(0.8, 0.8, 0.8); 
+
+                const grassMaterial = new BABYLON.StandardMaterial("grassMaterial", scene);
+                grassMaterial.diffuseColor = new BABYLON.Color3(0, 0.3, 0); 
+                grassMaterial.specularColor = new BABYLON.Color3(0, 0, 0); // Minimal specular highlights
+                grassMaterial.specularPower = 128; 
+
+
+                //grassMaterial.diffuseTexture = new BABYLON.Texture("Grass_Light_Green.jpg", scene);
+
+                // Assuming `objJson` is your parsed JSON from AssimpJS
+                objJson.meshes.forEach(meshData => {
+                    let vertices = meshData.vertices;
+                    let indices = [].concat(...meshData.faces); // Flatten the faces array
+                    let normals = meshData.normals;
+                    let uvs = meshData.texturecoords && meshData.texturecoords[0] ? meshData.texturecoords[0] : []; // Check and provide default if needed
+
+                    let mesh = new BABYLON.Mesh("meshName", scene);
+                    mesh.scaling.x = -1;
+
+                    let vertexData = new BABYLON.VertexData();
+
+                    vertexData.positions = vertices;
+                    vertexData.indices = indices;
+                    vertexData.normals = normals;
+                    vertexData.uvs = uvs;
+
+                    vertexData.applyToMesh(mesh);
+
+                    // Apply materials if available
+                    if (meshData.materialindex !== undefined && objJson.materials) {
+                        let materialData = objJson.materials[meshData.materialindex];
+                        //console.log("meshData.materialindex: ", meshData.materialindex);
+                        let material = new BABYLON.StandardMaterial("materialName", scene);
+                        //debugger;
+                        // Set material properties based on materialData
+                        // e.g., material.diffuseColor = new BABYLON.Color3(...);
+
+                        mesh.material = material;
+                    }
+
+                    /*
+                    materialindex 
+                    1= decks, chimney
+                    2: stone wall
+                    3: grass
+                    4: windows
+                    5: window frames
+                    6: window slats
+                    7: roof
+                    */
+                    //mesh.material = wallsMaterial;    
+
+
+                    if (meshData.materialindex === 0) {
+                        console.log("meshData.materialindex:", meshData.materialindex);
+
+                        //mesh.material = wallsMaterial;    
+                    } else if (meshData.materialindex === 1) {
+                        mesh.material = deckMaterial;  
+                    } else if (meshData.materialindex === 2) {
+                        mesh.material = stoneMaterial;  
+                    } else if (meshData.materialindex === 3) {
+                        mesh.material = grassMaterial;
+                    } else if (meshData.materialindex === 4) {
+                        mesh.material = windowMaterial;
+                    } else if (meshData.materialindex === 5) {
+                        mesh.material = windowFrameMaterial;
+                    } else if (meshData.materialindex === 6) {
+                        mesh.material = windowSlatsMaterial;
+                    } else if (meshData.materialindex === 7) {
+                        //mesh.material = windowFrameMaterial;
+                        mesh.material = roofMaterial
+                   } else {
+                        console.log("meshData.materialindex:", meshData.materialindex);
+                        //mesh.material = redMaterial
+                    }
+                    
+                });
+
+
+                scene.meshes.forEach(function(mesh) {
+                    if(mesh.material){
+                        mesh.material.backFaceCulling = false;
+                    }
+                });
+
+                // ---------------
+
+                /*
+                const applyMaterials2 = function (objJson, mtlJson, scene) {
+                    debugger;
+                    let materials = {};
+
+                    // Parse materials from MTL JSON
+                    if (mtlJson.materials) {
+                        mtlJson.materials.forEach(materialData => {
+                            let material = new BABYLON.StandardMaterial(materialData.name, scene);
+
+                            // Set material properties
+                            // Adjust these based on the properties available in your MTL JSON
+                            if (materialData.properties) {
+                                materialData.properties.forEach(prop => {
+                                    switch (prop.key) {
+                                        case '$clr.diffuse':
+                                            material.diffuseColor = new BABYLON.Color3(...prop.value);
+                                            break;
+                                        // Add cases for other material properties like specular, ambient, etc.
+                                    }
+                                });
+                            }
+
+                            materials[materialData.name] = material;
+                        });
+                    }
+                    
+                    debugger;
+
+                    // Construct meshes and apply materials
+                    objJson.meshes.forEach(meshData => {
+                        let vertices = meshData.vertices;
+                        let indices = [].concat(...meshData.faces); // Flatten the faces array
+                        let normals = meshData.normals;
+                        let uvs = meshData.texturecoords && meshData.texturecoords[0] ? meshData.texturecoords[0] : [];
+
+                        let mesh = new BABYLON.Mesh(meshData.name || "mesh", scene);
+                        let vertexData = new BABYLON.VertexData();
+
+                        vertexData.positions = vertices;
+                        vertexData.indices = indices;
+                        vertexData.normals = normals;
+                        vertexData.uvs = uvs;
+
+                        vertexData.applyToMesh(mesh);
+
+                        // Apply material to mesh
+                        if (meshData.materialindex !== undefined) {
+                            let materialName = objJson.materials[meshData.materialindex].name;
+                            mesh.material = materials[materialName];
+                        }
+                    });
+                }
+
+            // Example usage
+            //debugger;
+            //console.log("applyMaterials2:"  ,applyMaterials2);
+            applyMaterials2(objJson, mtlJson, scene);
+*/
+
+
+            });
+        });
+        
+        // Render loop
+        engine.runRenderLoop(function () {
+            scene.render();
+        });
+        
+        // Resize the engine on window resize
+        window.addEventListener('resize', function () {
+            engine.resize();
+        });
+
+
+        
+    });
+};
+    </script>
+    <div id="resultDiv" style="display:none;">loading...</div>
+</body>
+</html>

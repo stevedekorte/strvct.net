@@ -213,6 +213,7 @@
     let resultUrl;
     try {
       const url = new URL(urlString);
+      console.log("ProxyServer proxyURL: ", parameterValue);
       url.searchParams.set(this.parameterName(), parameterValue);
       //url.searchParams.set(this.parameterName(), encodeURIComponent(parameterValue));
       resultUrl = url.toString();
