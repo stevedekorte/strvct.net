@@ -36,7 +36,7 @@ if (!String.prototype.capitalized) {
     }
 
     static shared () {
-        if (!Object.hasOwn(this, "_shared")) {
+        if (!Object.hasOwnProperty(this, "_shared")) {
             const obj = new this();
             this._shared = obj;
             obj.init();
