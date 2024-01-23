@@ -8,32 +8,28 @@ const https = require('https');
 const fs = require('fs');
 const nodePath = require('path');
 
-
 (class StrvctHttpsServer extends Base {
 	
 	initPrototypeSlots () {
 		this.newSlot("server", null);
 		this.newSlot("hostname", "localhost");
-		this.newSlot("port", 8000);
+		this.newSlot("port", null);
+		this.newSlot("keyPath", null);
+		this.newSlot("certPath", null);
 	}
 
 	init () {
-		super.init()
+		super.init();
+		this.setPort(8000);
+		this.setKeyPath(nodePath.join(__dirname, 'keys/server.key'));
+		this.setCertPath(nodePath.join(__dirname, 'keys/server.crt'));
 		return this
 	}
-
-	serverKeyPath () {
-		return nodePath.join(__dirname, 'keys/server.key')
-	}
-
-	serverCertPath () {
-		return nodePath.join(__dirname, 'keys/server.crt')
-	}
-
+	
 	options () {
 		return {
-			key: fs.readFileSync(this.serverKeyPath()),
-			cert: fs.readFileSync(this.serverCertPath())
+			key: fs.readFileSync(this.keyPath()),
+			cert: fs.readFileSync(this.certPath())
 		}
 	}
 
@@ -75,4 +71,3 @@ const nodePath = require('path');
 	}
 
 }.initThisClass());
-
