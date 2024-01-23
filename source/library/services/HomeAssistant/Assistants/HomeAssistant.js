@@ -5,7 +5,7 @@
 
 */
 
-(class HomeAssistant extends BMStorableNode {
+(class HomeAssistant extends BMSummaryNode {
   initPrototypeSlots() {
     this.newSlot("regionOptions", []);
 
@@ -60,7 +60,7 @@
 
 
     {
-      const slot = this.newSlot("accessToken", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJmMTg2MzJiNDRhMDg0N2M0OTc2NzNhN2JkMmE2M2Y2NyIsImlhdCI6MTcwNTUxNTEwMSwiZXhwIjoyMDIwODc1MTAxfQ.BLXypYTQNzhKEZV7bKqsE30_2wNPIntRvfRKNtxKMmw");
+      const slot = this.newSlot("accessToken", "");
       slot.setInspectorPath("Settings")
       slot.setLabel("Access Token");
       slot.setShouldStoreSlot(true);
@@ -72,7 +72,7 @@
 
     {
       const slot = this.newSlot("devicesNode", null)
-      slot.setFinalInitProto(BMSummaryNode);
+      slot.setFinalInitProto(HomeAssistantDevices);
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
     }
@@ -137,10 +137,6 @@
     this.setCanDelete(true);
     this.updateUrl();
     this.setNodeCanEditTitle(true);
-
-    this.devicesNode().setTitle("Devices");
-    this.devicesNode().setNoteIsSubnodeCount(true);
-    this.devicesNode().makeSortSubnodesByTitle();
 
     //this.scan();
   }
@@ -208,7 +204,7 @@
       this.setEntities(await this.asyncGetStates());
       this.setDevices(await this.asyncDeviceRegistry());
       this.setEntityRegistry(await this.asyncEntityRegistry());
-      this.show();
+      this.finsihScan();
   }
 
   asyncGetStates () {
@@ -273,26 +269,115 @@
     }
   }
 
-  show () {
-      let s = "";
+  finsihScan () {
+      this.devicesNode().setDevicesJson(this.devices());
+      console.log("this.devices()[20]:", JSON.stringify(this.devices()[0], 2, 2));
+      console.log("this.entityRegistry()[20]:", JSON.stringify(this.entityRegistry()[0], 2, 2));
+      console.log("this.entities()[20]:", JSON.stringify(this.entities()[0], 2, 2));
 
+      /*
+
+      Example device:
+
+      {
+        "area_id": null,
+        "configuration_url": null,
+        "config_entries": [
+          "a8bc13c525dbdcf6e0bbcd6b8693dadc"
+        ],
+        "connections": [],
+        "disabled_by": null,
+        "entry_type": "service",
+        "hw_version": null,
+        "id": "6cdcb91bb251ccd6ba6828d4b56c761b",
+        "identifiers": [
+          [
+            "sun",
+            "a8bc13c525dbdcf6e0bbcd6b8693dadc"
+          ]
+        ],
+        "manufacturer": null,
+        "model": null,
+        "name_by_user": null,
+        "name": "Sun",
+        "serial_number": null,
+        "sw_version": null,
+        "via_device_id": null
+      }
+
+      Example entity:
+
+      {
+        "entity_id": "person.steve",
+        "state": "unknown",
+        "attributes": {
+          "editable": true,
+          "id": "steve",
+          "user_id": "e55ca8faae12472898941e6eb8802489",
+          "device_trackers": [],
+          "friendly_name": "Steve"
+        },
+        "last_changed": "2024-01-17T18:51:50.916677+00:00",
+        "last_updated": "2024-01-17T18:52:28.382201+00:00",
+        "context": {
+          "id": "01HMCC90TY0NRN93F72KV1QEAX",
+          "parent_id": null,
+          "user_id": null
+        }
+      }
+
+
+      example entityRegistry:
+      {
+        "area_id": null,
+        "config_entry_id": "78a7a47f8151214520d5107adc398354",
+        "device_id": "0d0e73b442b43c01d43cf1c308121817",
+        "disabled_by": null,
+        "entity_category": null,
+        "entity_id": "remote.living_room_2",
+        "has_entity_name": true,
+        "hidden_by": null,
+        "icon": null,
+        "id": "b3c5634b2c480bccb319d77b0a175040",
+        "name": null,
+        "options": {
+          "conversation": {
+            "should_expose": false
+          }
+        },
+        "original_name": null,
+        "platform": "apple_tv",
+        "translation_key": null,
+        "unique_id": "D4:A3:3D:67:77:BF"
+      },
+      */
+
+      /*
+      this.devices().forEach(deviceJson => {
+        const node = HomeAssistantDevice.clone();
+        node.setJsonDict(deviceJson);
+        //node.setEntitiesJson(deviceEntities);
+
+      });
+*/
+        /*
       this.devices().forEach(device => {
           // Find entities that belong to this device in the entity registry
-          const deviceEntityIds = this.entityRegistry().filter(er => er.device_id===device.id).map(er => er.entity_id);
+          const deviceEntityIds = this.entityRegistry().filter(er => er.device_id === device.id).map(er => er.entity_id);
           const deviceEntities = this.entities().filter(entity => deviceEntityIds.includes(entity.entity_id));
 
           const entityStates = deviceEntities.map(entity => `${entity.entity_id.split('.')[1]}: ${entity.state}`).join(', ');
 
-          //s += device.name + " " + (entityStates || '') + "\n";
-          //const node = BMFieldTile.clone();
-          const node = BMSummaryNode.clone();
+          const node = HomeAssistantDevice.clone();
+          node.setJsonDict(device);
+          node.setEntitiesJson(deviceEntities);
+
           node.setTitle(device.name);
           //node.setSubtitle(entityStates);
-          node.setNodeSubtitleIsChildrenSummary(true);
           this.devicesNode().addSubnode(node);
 
           deviceEntities.forEach(deviceEntity => {
-            const sn = BMSummaryNode.clone();
+            const sn = HomeAssistantEntity.clone();
             //sn.setTitle(deviceEntity.entity_id.before("."));
             sn.setTitle(deviceEntity.entity_id);
             sn.setSubtitle(deviceEntity.state);
@@ -300,6 +385,7 @@
             node.addSubnode(sn);
           });
       });
+      */
 
 
       //console.log("SHOW: ", s);

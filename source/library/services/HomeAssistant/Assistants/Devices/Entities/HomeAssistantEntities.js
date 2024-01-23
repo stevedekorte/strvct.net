@@ -1,21 +1,21 @@
 "use strict";
 
 /* 
-    HomeAssistantDevices
+    HomeAssistantEntities
 
 */
 
-(class HomeAssistantDevices extends BMSummaryNode {
+(class HomeAssistantEntities extends BMSummaryNode {
   initPrototypeSlots() {
 
   }
 
   init() {
     super.init();
-    this.setTitle("devices");
+    this.setTitle("entities");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([HomeAssistantDevice]);
+    this.setSubnodeClasses([HomeAssistantEntity]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
@@ -37,15 +37,8 @@
   }
   */
 
-  setDevicesJson (devicesJson) {
-    this.removeAllSubnodes();
+  setEntitiesJson (entitiesJson) {
 
-    devicesJson.forEach(deviceJson => {
-      const node = HomeAssistantDevice.clone();
-      node.setDeviceJson(deviceJson);
-      this.addSubnode(node);
-      //node.setEntitiesJson(deviceEntities);
-    });
     return this;
   }
 
