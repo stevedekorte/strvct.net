@@ -5,6 +5,7 @@ require("./Base.js")
 require("./StrvctHttpsServerRequest.js")
 
 const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const nodePath = require('path');
 
@@ -16,6 +17,7 @@ const nodePath = require('path');
 		this.newSlot("port", null);
 		this.newSlot("keyPath", null);
 		this.newSlot("certPath", null);
+		this.newSlot("isSecure", true);
 	}
 
 	init () {
@@ -34,15 +36,16 @@ const nodePath = require('path');
 	}
 
 	run () {
-		/*
-		require("../source/boot/ResourceManager.js")
-		//vm.runInThisContext(fs.readFileSync(__dirname + "/mime_extensions.js"))
-		//vm.runInThisContext(fs.readFileSync(__dirname + "/../source/boot/ResourceManager.js"))
-		*/
+		if (this.isSecure()) {
+			this._server = https.createServer(this.options(), (request, response) => { 
+				this.onRequest(request, response) 
+			});
+		} else {
+			this._server = http.createServer((request, response) => {
+				this.onRequest(request, response) 
+			});
+		}
 
-		this._server = https.createServer(this.options(), (request, response) => { 
-			this.onRequest(request, response) 
-		})
 		this._server.listen(this.port());
 
 		const sandboxPath =  process.cwd()

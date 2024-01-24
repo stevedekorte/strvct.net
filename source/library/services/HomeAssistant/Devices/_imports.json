@@ -1,5 +1,4 @@
 [
-    "Entities/_imports.json",
     "HomeAssistantDevice.js",
     "HomeAssistantDevices.js"
 ]

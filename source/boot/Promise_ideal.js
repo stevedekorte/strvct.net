@@ -72,6 +72,7 @@ Object.defineSlot(Promise.prototype, "label", function () {
 
 Object.defineSlot(Promise.prototype, "beginTimeout", function (ms) {
     assert(this.isPending());
+    assert(this._timeoutId === null);
     this._timeoutMs = ms;
     this._timeoutId = setTimeout(() => { 
         this.onTimeout() 
@@ -82,7 +83,9 @@ Object.defineSlot(Promise.prototype, "beginTimeout", function (ms) {
 Object.defineSlot(Promise.prototype, "cancelTimeout", function () {
     const tid = this._timeoutId;
     if (tid) {
-        cancelTimeout(tid);
+        clearTimeout(tid);
+        //console.log("Promise cancelTimeout() label: ", this.label().clipWithEllipsis(40) );
+        //debugger;
         this._timeoutId = null;
     }
     return this;
@@ -98,6 +101,7 @@ Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, ar
     assert(this._status !== "rejected");
     this._status = "resolved";
     this.clearAwaiterCount();
+    this.cancelTimeout();
     return this._resolveFunc(arg1, arg2, arg3);
 });
 
@@ -105,6 +109,7 @@ Object.defineSlot(Promise.prototype, "callRejectFunc", function (arg1, arg2, arg
     assert(this._status !== "resolved");
     this._status = "rejected";
     this.clearAwaiterCount();
+    this.cancelTimeout();
     return this._rejectFunc(arg1, arg2, arg3);
 });
 

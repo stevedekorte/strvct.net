@@ -1,11 +1,11 @@
 "use strict";
 
 /* 
-    HomeAssistantDevices
+    HomeAssistantGroup
 
 */
 
-(class HomeAssistantDevices extends BMSummaryNode {
+(class HomeAssistantGroup extends BMSummaryNode {
   initPrototypeSlots() {
 
   }
@@ -37,16 +37,31 @@
   }
   */
 
-  setDevicesJson (devicesJson) {
-    this.removeAllSubnodes();
+  defaultSubnodeClass () {
+    return this.subnodeClasses().first();
+  }
 
-    devicesJson.forEach(deviceJson => {
-      const node = HomeAssistantDevice.clone();
-      node.setDeviceJson(deviceJson);
+  setHaJson (json) {
+    this.removeAllSubnodes();
+    json.forEach(snJson => {
+      const node = this.defaultSubnodeClass().clone();
+      node.setHaJson(snJson);
       this.addSubnode(node);
-      //node.setEntitiesJson(deviceEntities);
     });
     return this;
+  }
+
+  homeAssistant () {
+    return this.parentNode();
+  }
+
+  completeSetup () {
+    this.subnodes().forEach(sn => sn.completeSetup());
+    return this;
+  }
+
+  subnodeWithId (id) {
+    return this.subnodes().detect(sn => sn.id() === id);
   }
 
 }.initThisClass());

@@ -12,7 +12,10 @@ Object.defineSlots(typedArrayClass.prototype, {
 (class Object_store extends Object {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
-        assert(this.shouldStore());
+        if(!this.shouldStore()) {
+            console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object with shouldStore set to false - returning null");
+            return null;
+        }
 
         //debugger;
         const instance = this.preClone ? this.preClone() : new this();

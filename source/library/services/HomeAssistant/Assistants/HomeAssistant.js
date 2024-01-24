@@ -58,7 +58,6 @@
       slot.setSummaryFormat("value");
     }
 
-
     {
       const slot = this.newSlot("accessToken", "");
       slot.setInspectorPath("Settings")
@@ -71,23 +70,74 @@
     }
 
     {
+      const slot = this.newSlot("status", "");
+      slot.setCanEditInspection(false);
+      slot.setInspectorPath("")
+      slot.setLabel("status");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+    }
+
+    {
+      const slot = this.newSlot("error", null);
+      slot.setCanEditInspection(false);
+      slot.setInspectorPath("")
+      slot.setLabel("error");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      //slot.setIsSubnodeField(true);
+    }
+
+    {
+      const slot = this.newSlot("hasAuth", false);
+      slot.setCanEditInspection(false);
+      slot.setInspectorPath("")
+      slot.setLabel("has auth");
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+    }
+
+
+    {
       const slot = this.newSlot("devicesNode", null)
       slot.setFinalInitProto(HomeAssistantDevices);
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
     }
 
+    {
+      const slot = this.newSlot("entitiesNode", null)
+      slot.setFinalInitProto(HomeAssistantEntities);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
 
     {
-      const slot = this.newSlot("scanAction", null);
+      const slot = this.newSlot("statesNode", null)
+      slot.setFinalInitProto(HomeAssistantStates);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
+
+
+    {
+      const slot = this.newSlot("toggleConnectAction", null);
       //slot.setInspectorPath("Character");
-      slot.setLabel("Scan");
+      slot.setLabel("Connect");
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
       slot.setIsSubnodeField(true);
       slot.setCanInspect(true)
-      slot.setActionMethodName("scan");
+      slot.setActionMethodName("connect");
     }
 
     {
@@ -102,18 +152,6 @@
       const slot = this.newSlot("messagePromises", null);
     }
 
-    {
-      const slot = this.newSlot("devices", null);
-    }
-
-    {
-      const slot = this.newSlot("entities", null);
-    }
-
-    {
-      const slot = this.newSlot("entityRegistry", null);
-    }
-
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
@@ -123,13 +161,10 @@
     this.setTitle("Home Assistant");
     this.setCanDelete(true);
     this.setMessagePromises(new Map());
-    this.setDevices([]);
-    this.setEntities([]);
-    this.setEntityRegistry([]);
   }
 
   subtitle () {
-    return this.url();
+    return [this.url(), this.status()].join("\n");
   }
   
   finalInit () {
@@ -137,8 +172,7 @@
     this.setCanDelete(true);
     this.updateUrl();
     this.setNodeCanEditTitle(true);
-
-    //this.scan();
+    this.setStatus("not connected");
   }
 
   didUpdateSlotHost () {
@@ -166,7 +200,23 @@
     return this.host().length > 0 && this.port() >= 0;
   }
 
-  scan () {
+  toggleConnect () {
+    if (this.isConnected()) {
+      this.disconnect();
+    } else {
+      this.connect();
+    }
+  }
+
+  disconnect () {
+    this.setStatus("disconnecting...");
+    this.socket().close();
+    //this.setSocket(null); // needed?
+  }
+
+  connect () {
+    this.setStatus("connecting...");
+
     const socket = new WebSocket(this.url());
     this.setSocket(socket);
 
@@ -174,15 +224,40 @@
       this.onOpen();
     });
 
-    socket.addEventListener('message',(event) => {
+    socket.addEventListener('message', (event) => {
        this.onMessage(event);
     });
 
-    socket.addEventListener('error',(error) => {
+    socket.addEventListener('error', (error) => {
       this.onError(error);
     });
 
-    // close?
+    socket.addEventListener('close', (event) => {
+      this.onClose(event);
+    });
+  }
+
+  isConnected () {
+    return this.socket() !== null;
+  }
+
+  toggleConnectActionInfo () {
+    return {
+        isEnabled: true,
+        title: this.isConnected() ? "Disconnect" : "Connect",
+        subtitle: this.hasValidUrl() ? null : "Invalid Host URL",
+        isVisible: true
+    }
+  }
+
+  onClose (event) {
+    if (event.wasClean) {
+      //console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
+      this.setStatus('unconnected');
+    } else {
+      this.setStatus('Connection died');
+    }
+    this.setSocket(null);
   }
 
   onError (error) {
@@ -190,21 +265,53 @@
       console.log("ERROR: unable to connect");
     }
     console.warn(this.typeId() + " " + this.wsUrl() + " onError:", error);
+    this.setStatus("ERROR: " + error.message);
     throw error;
   }
 
-  async onOpen (event) {
-      // Authenticate when connection is open
-      //debugger;
-      await this.asyncSendMessageDict({
-        type: 'auth',
-        access_token: this.accessToken()
-      });
+  async getAuth () {
+    const hasAuth = await this.asyncSendMessageDict({
+      type: 'auth',
+      access_token: this.accessToken()
+    });
 
-      this.setEntities(await this.asyncGetStates());
-      this.setDevices(await this.asyncDeviceRegistry());
-      this.setEntityRegistry(await this.asyncEntityRegistry());
-      this.finsihScan();
+    if (!hasAuth) {
+      this.setStatus("ERROR: invalid access token");
+    } else {
+      this.setStatus("access token accepted");
+    }
+    this.setHasAuth(hasAuth);
+    return hasAuth;
+  }
+
+  async onOpen (event) {
+    this.setStatus("connected, authorizing...");
+    // await  onMessage message.type === "auth_required"
+  }
+
+  async refresh () {
+    try {
+      // fetch the JSON and setup objects
+
+      const states = await this.asyncGetStates();
+      this.statesNode().setHaJson(states);
+
+      const entities = await this.asyncEntityRegistry();
+      this.entitiesNode().setHaJson(entities);
+
+      const devices = await this.asyncDeviceRegistry();
+      this.devicesNode().setHaJson(devices);
+
+      // interconnect the obects (states to entities, entities to devices)
+
+      await this.statesNode().completeSetup();
+      await this.entitiesNode().completeSetup();
+      await this.devicesNode().completeSetup();
+
+    } catch (error) {
+      this.setError(error);
+      this.disconnect();
+    }
   }
 
   asyncGetStates () {
@@ -229,18 +336,43 @@
     // we will add the id to the dict
     const promise = Promise.clone();
     let id = this.newMessageId();
+    promise.beginTimeout(3000); // auth request and response aren't numbered
 
     if (dict["type"] !== "auth") {
       dict.id = id;
+      //promise.beginTimeout(3000); // auth request and response aren't numbered
     } else {
       id = "auth";
     }
     this.messagePromises().set(id, promise);
 
     const s = JSON.stringify(dict);
-    console.log(this.typeId() + " asyncSendMessageDict(" + s + ")");
+    promise.setLabel("HomeAssistant request: " + s);
+    console.log(this.type() + " asyncSendMessageDict( " + s.clipWithEllipsis(40) + " )");
     this.socket().send(s);
+
+    this.updateStatus();
     return promise;
+  }
+
+  updateStatus () {
+    if (this.messagePromises().size) {
+      const ids = Array.from(this.messagePromises().keys());
+      //this.setStatus("awaiting " + this.messagePromises().size + " messages (" + JSON.stringify(ids) + ")");
+      this.setStatus("awaiting " + this.messagePromises().size + " messages...");
+    } else {
+      if (this.socket()) {
+        this.setStatus("connected");
+      }
+    }
+  }
+
+  async onAuthOk () {
+    this.refresh();
+  }
+
+  async onAuthInvalid () {
+    this.disconnect();
   }
 
   popPromiseWithId (id) {
@@ -249,121 +381,43 @@
     return promise;
   }
 
-  onMessage (event) {
+  async onMessage (event) {
     const message = JSON.parse(event.data);
+    console.log(this.type() + " onMessage( ", event.data.clipWithEllipsis(40) + " )");
 
-    // Check for auth OK
-    if(message.type === 'auth_ok') {
+    if (message.type === "auth_required") {
+      await this.getAuth(); // response is handled with "auth" and "auth_invalid" message types
+    } else if (message.type === 'auth_ok') {
       const promise = this.popPromiseWithId("auth");
-      promise.callResolveFunc(true);
-    } else if(message.type === 'auth_invalid') {
+      promise.callResolveFunc(true); // should this be before resolve?
+      this.onAuthOk();
+    } else if (message.type === 'auth_invalid') {
       const promise = this.popPromiseWithId("auth");
-      promise.callResolveFunc(false);
+      promise.callResolveFunc(false); 
+      this.onAuthInvalid(); // should this be before resolve/reject?
+      //promise.callRejectFunc();
     } else if (message.type === 'result') {
-      const id = message.id;
-      const result = message.result;
-      const promise = this.popPromiseWithId(id);
-      promise.callResolveFunc(result);
+      if (message.success === false) {
+        this.setError(new Error(message.error.message));
+        this.setStatus("ERROR: ", message.error.message);
+      } else {
+        const id = message.id;
+        const result = message.result;
+        const promise = this.popPromiseWithId(id);
+        promise.callResolveFunc(result);
+      }
+
     } else {
       console.warn(this.typeId() + " WARNING: unhandled message [[" + JSON.stringify(message, 2, 2) + "]]");
     }
+    this.updateStatus();
   }
 
   finsihScan () {
-      this.devicesNode().setDevicesJson(this.devices());
-      console.log("this.devices()[20]:", JSON.stringify(this.devices()[0], 2, 2));
-      console.log("this.entityRegistry()[20]:", JSON.stringify(this.entityRegistry()[0], 2, 2));
-      console.log("this.entities()[20]:", JSON.stringify(this.entities()[0], 2, 2));
-
-      /*
-
-      Example device:
-
-      {
-        "area_id": null,
-        "configuration_url": null,
-        "config_entries": [
-          "a8bc13c525dbdcf6e0bbcd6b8693dadc"
-        ],
-        "connections": [],
-        "disabled_by": null,
-        "entry_type": "service",
-        "hw_version": null,
-        "id": "6cdcb91bb251ccd6ba6828d4b56c761b",
-        "identifiers": [
-          [
-            "sun",
-            "a8bc13c525dbdcf6e0bbcd6b8693dadc"
-          ]
-        ],
-        "manufacturer": null,
-        "model": null,
-        "name_by_user": null,
-        "name": "Sun",
-        "serial_number": null,
-        "sw_version": null,
-        "via_device_id": null
-      }
-
-      Example entity:
-
-      {
-        "entity_id": "person.steve",
-        "state": "unknown",
-        "attributes": {
-          "editable": true,
-          "id": "steve",
-          "user_id": "e55ca8faae12472898941e6eb8802489",
-          "device_trackers": [],
-          "friendly_name": "Steve"
-        },
-        "last_changed": "2024-01-17T18:51:50.916677+00:00",
-        "last_updated": "2024-01-17T18:52:28.382201+00:00",
-        "context": {
-          "id": "01HMCC90TY0NRN93F72KV1QEAX",
-          "parent_id": null,
-          "user_id": null
-        }
-      }
-
-
-      example entityRegistry:
-      {
-        "area_id": null,
-        "config_entry_id": "78a7a47f8151214520d5107adc398354",
-        "device_id": "0d0e73b442b43c01d43cf1c308121817",
-        "disabled_by": null,
-        "entity_category": null,
-        "entity_id": "remote.living_room_2",
-        "has_entity_name": true,
-        "hidden_by": null,
-        "icon": null,
-        "id": "b3c5634b2c480bccb319d77b0a175040",
-        "name": null,
-        "options": {
-          "conversation": {
-            "should_expose": false
-          }
-        },
-        "original_name": null,
-        "platform": "apple_tv",
-        "translation_key": null,
-        "unique_id": "D4:A3:3D:67:77:BF"
-      },
-      */
-
-      /*
-      this.devices().forEach(deviceJson => {
-        const node = HomeAssistantDevice.clone();
-        node.setJsonDict(deviceJson);
-        //node.setEntitiesJson(deviceEntities);
-
-      });
-*/
         /*
       this.devices().forEach(device => {
-          // Find entities that belong to this device in the entity registry
-          const deviceEntityIds = this.entityRegistry().filter(er => er.device_id === device.id).map(er => er.entity_id);
+          // Find entities that belong to this device in the states
+          const deviceEntityIds = this.states().filter(state => state.device_id === device.id).map(state => state.entity_id);
           const deviceEntities = this.entities().filter(entity => deviceEntityIds.includes(entity.entity_id));
 
           const entityStates = deviceEntities.map(entity => `${entity.entity_id.split('.')[1]}: ${entity.state}`).join(', ');
@@ -401,5 +455,16 @@
     }
   }
 
+  deviceWithId (id) {
+    return this.devicesNode().subnodeWithId(id);
+  }
+
+  entityWithId (id) {
+    return this.entitiesNode().subnodeWithId(id);
+  }
+
+  stateWithId (id) {
+    return this.statesNode().subnodeWithId(id);
+  }
   
 }).initThisClass();

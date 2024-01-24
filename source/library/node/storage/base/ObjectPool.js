@@ -536,7 +536,12 @@
             debugger;
             return null;
         }
-        const obj = aClass.instanceFromRecordInStore(aRecord, this)
+        const obj = aClass.instanceFromRecordInStore(aRecord, this);
+        if (obj === null) {
+            // maybe the class shouldStore is false?
+            return null;
+        }
+
         assert(!this.hasActiveObject(obj))
         obj.setPuuid(aRecord.id)
         this.addActiveObject(obj)
