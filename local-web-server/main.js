@@ -32,7 +32,7 @@ if (argv.key) {
 }
 
 if (argv.isSecure) {
-    server.setKeyPath(argv.isSecure);
+    server.setIsSecure(argv.isSecure);
 }
 
 server.run()
