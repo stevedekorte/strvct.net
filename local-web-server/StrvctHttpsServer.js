@@ -35,12 +35,18 @@ const nodePath = require('path');
 		}
 	}
 
+	protocol () {
+		return this.isSecure() ? "https" : "http";
+	}
+
 	run () {
 		if (this.isSecure()) {
+			console.log("running HTTPS");
 			this._server = https.createServer(this.options(), (request, response) => { 
 				this.onRequest(request, response) 
 			});
 		} else {
+			console.log("running HTTP");
 			this._server = http.createServer((request, response) => {
 				this.onRequest(request, response) 
 			});
@@ -53,7 +59,7 @@ const nodePath = require('path');
 		console.log("      cwd: '" + sandboxPath + "'")
 		console.log("     port: " + this.port())
 		console.log(" isSecure: " + this.isSecure())
-		console.log("      url: " + "https://" + this.hostname() + ":" + this.port() + "/index.html")
+		console.log("      url: " + this.protocol() + "://" + this.hostname() + ":" + this.port() + "/index.html")
 	}
 
 	onRequest (request, response) {
