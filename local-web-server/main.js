@@ -9,7 +9,7 @@ const argv = yargs(hideBin(process.argv)).options({
   port: { type: 'number', demandOption: false, describe: 'Port number' },
   key: { type: 'string', demandOption: false, describe: 'Key file path' },
   cert: { type: 'string', demandOption: false, describe: 'Cert file path' },
-  isSecure: { type: 'boolean', demandOption: true, describe: 'Is secure (set to true for HTTPS, false for HTTP)' }
+  isSecure: { type: 'boolean', demandOption: false, describe: 'Is secure (set to true for HTTPS, false for HTTP)' }
 }).argv;
 
 console.log(argv);
