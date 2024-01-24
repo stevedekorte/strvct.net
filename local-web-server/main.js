@@ -7,14 +7,15 @@ const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');
 const argv = yargs(hideBin(process.argv)).options({
   port: { type: 'number', demandOption: false, describe: 'Port number' },
-  key: { type: 'string', demandOption: false, describe: 'Key file path' },
+  key: { type: 'stri//ng', demandOption: false, describe: 'Key file path' },
   cert: { type: 'string', demandOption: false, describe: 'Cert file path' },
-  isSecure: { type: 'boolean', demandOption: false, describe: 'Is secure (set to true for HTTPS, false for HTTP)' }
+  secure: { type: 'boolean', demandOption: false, default:false, describe: 'Is secure (set to true for HTTPS, false for HTTP)' }
 }).argv;
 
 console.log(argv);
 
-require("./StrvctHttpsServer.js")
+require("./StrvctHttpsServer.js");
+
 
 const server = StrvctHttpsServer.clone();
 
@@ -31,8 +32,8 @@ if (argv.key) {
     server.setKeyPath(argv.key);
 }
 
-if (argv.isSecure) {
-    server.setIsSecure(argv.isSecure);
-}
+server.setIsSecure(argv.secure);
+//console.log("========= argv.secure:", argv.secure);
+//console.log("========= server.isSecure():", server.isSecure());
 
 server.run()
