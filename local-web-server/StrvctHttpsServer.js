@@ -50,9 +50,10 @@ const nodePath = require('path');
 
 		const sandboxPath =  process.cwd()
 		console.log(this.type() + ":")
-		console.log("  cwd: '" + sandboxPath + "'")
-		console.log("  port: " + this.port())
-		console.log("  url: " + "https://" + this.hostname() + ":" + this.port() + "/index.html")
+		console.log("      cwd: '" + sandboxPath + "'")
+		console.log("     port: " + this.port())
+		console.log(" isSecure: " + this.isSecure())
+		console.log("      url: " + "https://" + this.hostname() + ":" + this.port() + "/index.html")
 	}
 
 	onRequest (request, response) {
