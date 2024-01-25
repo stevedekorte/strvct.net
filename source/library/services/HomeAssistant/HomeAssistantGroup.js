@@ -15,7 +15,7 @@
     this.setTitle("devices");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([HomeAssistantDevice]);
+    //this.setSubnodeClasses([HomeAssistantDevice]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
@@ -23,6 +23,7 @@
   finalInit() {
     super.finalInit()
     this.setNoteIsSubnodeCount(true);
+    this.makeSortSubnodesByTitle();
   }
 
   /*
@@ -61,6 +62,8 @@
   }
 
   subnodeWithId (id) {
+    const ids = this.subnodes().map(sn => sn.id());
+
     return this.subnodes().detect(sn => sn.id() === id);
   }
 

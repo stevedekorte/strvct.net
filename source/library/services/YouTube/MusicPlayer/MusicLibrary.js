@@ -234,7 +234,7 @@
         "Practice Duel Sparring": "7DVo4NiYyUc",
         "Steppe / Savanna": "gXJM1L1cFpw",
         "Campfire Rest": "A1y09YspJvQ",
-        "Acid Pool": "E-J9oPhdB5k",
+        "Bubbling Caldron or Acid Pool": "E-J9oPhdB5k",
         "Pagan Festival": "Z6six5WeZVY",
         Brothel: "_ft7Nk2il_4",
         "Marching Through Rain": "nfK5wGJEjjs",

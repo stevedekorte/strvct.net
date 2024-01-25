@@ -35,6 +35,14 @@
       const slot = this.newSlot("device", null);
     }
 
+    {
+      const slot = this.newSlot("statesNode", null)
+      slot.setFinalInitProto(HomeAssistantStates);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
+
+
     /*
     {
       const slot = this.newSlot("scanAction", null);
@@ -64,7 +72,7 @@
   
   finalInit () {
     super.finalInit();
-
+    this.statesNode().setTitle("states");
   }
 
   didUpdateSlotHaJson (oldValue, newValue) {
@@ -88,7 +96,11 @@
   }
 
   subtitle () {
-    return this.haJson().device_id;
+    return this.statesCount() + " states";
+  }
+
+  statesCount () {
+    return this.statesNode().subnodeCount();
   }
 
   findDevice () {
@@ -101,13 +113,20 @@
     this.setTitle(json.entity_id);
     this.setSubtitle(json.device_id);
     
-    this.setDevice(this.findDevice());
-    this.device().addEntity(this);
+    const device = this.findDevice();
+    if (device) {
+      this.setDevice(device);
+      this.device().addEntity(this);
+      console.warn("entity " + this.id() + " found device with id " + this.deviceId())
+    } else {
+      console.warn("entity " + this.id() + " unable to find device with id " + this.deviceId())
+    }
     return this;
   }
 
   addState (state) {
-    //this.statesNode().addSubnode(state);
+    state.removeFromParentNode();
+    this.statesNode().addSubnode(state);
   }
 
   /*

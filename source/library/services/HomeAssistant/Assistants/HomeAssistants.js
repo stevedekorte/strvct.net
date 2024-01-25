@@ -21,8 +21,9 @@
   }
 
   finalInit() {
-    super.finalInit()
+    super.finalInit();
     this.setNoteIsSubnodeCount(true);
+    this.setSubtitle("home automation");
   }
 
   /*

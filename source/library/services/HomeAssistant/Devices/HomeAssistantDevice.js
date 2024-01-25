@@ -42,6 +42,13 @@
       slot.setIsSubnode(true);
     }
     */
+
+    {
+      const slot = this.newSlot("entitiesNode", null)
+      slot.setFinalInitProto(HomeAssistantEntities);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
   }
 
   init() {
@@ -52,13 +59,18 @@
     super.finalInit();
     this.setNodeCanEditTitle(true);
     this.setNodeSubtitleIsChildrenSummary(true);
+    this.entitiesNode().setTitle("entities");
   }
 
   subtitle () {
-    return this.haJson().id;
+    return this.entitiesNode().subnodeCount() + " entities, " + this.statesCount() + " states";
   }
 
-  deviceId () {
+  statesCount () {
+    return this.entitiesNode().subnodes().sum(entity => entity.statesCount());
+  }
+
+  id () {
     return this.haJson().id;
   }
 
@@ -71,14 +83,13 @@
   }
 
   completeSetup () {
-    this.removeAllSubnodes();
-    const states = this.parentNode().statesForDevice(this);
-    const entities = new Set();
-    states.map(state => state.entity())
+//    this.removeAllSubnodes();
+
   }
 
   addEntity (entity) {
-    //this.entitiesNode().addSubnode(entity);
+    entity.removeFromParentNode();
+    this.entitiesNode().addSubnode(entity);
   }
 
 }).initThisClass();

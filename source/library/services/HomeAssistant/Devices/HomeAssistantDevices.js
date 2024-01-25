@@ -13,7 +13,7 @@
   init() {
     super.init();
     this.setTitle("devices");
-
+    this.setSubnodeClasses([HomeAssistantDevice]);
   }
 
   finalInit() {

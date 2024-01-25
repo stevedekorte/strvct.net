@@ -1,5 +1,16 @@
 "use strict";
 
+/*
+
+TODO: respond to paths in:
+
+ /.well-known/acme-challenge/ 
+ 
+using the contents of: 
+ 
+ /home/public/.well-known/acme-challenge/. 
+
+*/
 
 require("./getGlobalThis.js")
 require("./Base.js")
@@ -18,6 +29,7 @@ const https = require('https');
 		this.newSlot("urlObject", null)
 		this.newSlot("queryMap", null)
 		this.newSlot("path", null)
+		this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/")
 	}
 
 	process () {
@@ -103,6 +115,12 @@ const https = require('https');
 		if (path === "./") {
 			path = "./index.html";
 		}
+
+		const acmePath = ".well-known/acme-challenge/"
+		if (path.startsWith(acmePath)) {
+			path = path.replace(acmePath, this.localAcmePath())
+		}
+
 		return path;
 	}
 
@@ -178,31 +196,35 @@ const https = require('https');
 			*/
 		}
 
-		// Ensure path is within sandbox
+		if (!path.startsWith(this.localAcmePath())) {
 
-		const sandboxPath =  process.cwd()
-		const normalPath = nodePath.normalize(path)
-		const pathRelativeToCwd = nodePath.relative(sandboxPath, normalPath); // relative from, to
+			// Ensure path is within sandbox
 
-		/*
-		console.log("path: '" + path + "'")
-		console.log("sandboxPath: '" + sandboxPath + "'")
-		console.log("normalPath: '" + normalPath + "'")
-		console.log("pathRelativeToCwd: '" + pathRelativeToCwd + "'")
-		console.log("---")
-		*/
+			const sandboxPath =  process.cwd()
+			const normalPath = nodePath.normalize(path)
+			const pathRelativeToCwd = nodePath.relative(sandboxPath, normalPath); // relative from, to
 
-		if (pathRelativeToCwd.indexOf("..") !== -1) {
-			this.response().writeHead(401, {});
-			this.response().end()
-			console.log("  error: attempt to access file path '" + path + "' which is outside of sandbox path '" + sandboxPath + "' relative path is '" + pathRelativeToCwd + "'")
-			return
+			/*
+			console.log("path: '" + path + "'")
+			console.log("sandboxPath: '" + sandboxPath + "'")
+			console.log("normalPath: '" + normalPath + "'")
+			console.log("pathRelativeToCwd: '" + pathRelativeToCwd + "'")
+			console.log("---")
+			*/
+
+			if (pathRelativeToCwd.indexOf("..") !== -1) {
+				this.response().writeHead(401, {});
+				this.response().end()
+				console.log("  error: attempt to access file path '" + path + "' which is outside of sandbox path '" + sandboxPath + "' relative path is '" + pathRelativeToCwd + "'")
+				return
+			}
+
 		}
 
 		// Ensure file exists
 
 		if (!fs.existsSync(path)) {
-			this.response().writeHead(401, {});
+			this.response().writeHead(404, {});
 			this.response().end()
 			console.log("  error: missing file ", path)
 			return
@@ -241,4 +263,5 @@ const https = require('https');
 		this.response().end();
 		return
 	}
+	
 }.initThisClass());

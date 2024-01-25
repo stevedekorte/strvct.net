@@ -13,6 +13,7 @@
   init() {
     super.init();
     this.setTitle("states");
+    this.setSubnodeClasses([HomeAssistantState]);
   }
 
   finalInit() {

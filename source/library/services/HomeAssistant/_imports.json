@@ -1,8 +1,8 @@
 [
     "HomeAssistantObject.js",
     "HomeAssistantGroup.js",
-    "Devices/_imports.json",
-    "Entities/_imports.json",
     "States/_imports.json",
+    "Entities/_imports.json",
+    "Devices/_imports.json",
     "Assistants/_imports.json"
 ]

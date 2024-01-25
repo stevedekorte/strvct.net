@@ -38,6 +38,29 @@
       const slot = this.newSlot("entity", null);
     }
 
+    {
+      const slot = this.newSlot("jsonString", "");
+      slot.setCanEditInspection(false);
+      //slot.setInspectorPath("Info")
+      slot.setLabel("json");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+    }
+
+    /*
+
+    {
+      const slot = this.newSlot("jsonString", null)
+      //slot.setFinalInitProto(BMTextAreaField);
+      slot.setShouldStoreSlot(false);
+      //slot.setIsSubnode(true);
+    }
+    */
+
+
     /*
     {
       const slot = this.newSlot("scanAction", null);
@@ -81,10 +104,6 @@
   }
   */
 
-  subtitle () {
-    return "state";
-  }
-
   id () {
     return this.haJson().context.id; // is this correct?
   }
@@ -98,14 +117,50 @@
     return entity;
   }
 
+  jsonString () {
+    return JSON.stringify(this.haJson(), 2, 2)
+  }
+
   completeSetup () {
     const json = this.haJson();
-    const name = json.attributes.friendly_name;
-    this.setTitle(name);
-    this.setSubtitle(json.entity_id);
+
+    /*
+    this.jsonString().setKey("json")
+    this.jsonString().setKeyIsVisible(true);
+    this.jsonString().setKeyIsEditable(false);
+
+    const s = JSON.stringify(this.haJson(), 2, 2);
+    if (s === "") {
+      debugger;
+    }
+    if (this.haJson() === null) {
+      debugger;
+    }
+    this.jsonString().setValue(s);
+    this.jsonString().setValueIsEditable(false);
+    */
     
-    this.setEntity(this.findEntity());
+    let name = json.attributes.friendly_name;
+    if (!name) {
+      name = json.entity_id
+    }
+
+    this.setTitle(name);
+    this.setSubtitle(json.state);
+    
+    const entity = this.findEntity();
+    if (entity) {
+      this.setEntity(entity);
+      entity.addState(this);
+      console.warn("state " + this.id() + " found entity with id " + this.entityId())
+    } else {
+      console.warn("state " + this.id() + " unable to find entity with id " + this.entityId())
+    }
     return this;
+  }
+
+  subtitle () {
+    return this.haJson().state;
   }
 
 }).initThisClass();

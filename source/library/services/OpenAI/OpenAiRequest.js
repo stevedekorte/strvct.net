@@ -316,7 +316,7 @@
   }
 
   async asyncSendAndStreamResponse () {
-    debugger;
+    //debugger;
     assert(!this.xhrPromise());
 
     this.setXhrPromise(Promise.clone());

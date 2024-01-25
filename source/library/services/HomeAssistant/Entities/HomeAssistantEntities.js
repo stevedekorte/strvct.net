@@ -13,6 +13,7 @@
   init() {
     super.init();
     this.setTitle("entities");
+    this.setSubnodeClasses([HomeAssistantEntity]);
   }
 
   finalInit() {
@@ -31,11 +32,6 @@
       this.addSubnode(node);
     });
     return this;
-  }
-
-  entityWithId (id) {
-    //const deviceEntities = this.entities().filter(entity => deviceEntityIds.includes(entity.entity_id));
-    return this.subnodes().detect(entity => entity.entityId() === id);
   }
 
   completeSetup () {
