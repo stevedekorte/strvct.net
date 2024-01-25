@@ -212,7 +212,7 @@
         try {
             if (this.path()) {
                 //debugger;
-                console.log(this.typeId() + " path: ", path);
+                //console.log(this.typeId() + " path: ", this.path());
             } else {
                 if (!this.fetchPromise()) {
                     this.setFetchPromise(Promise.resolve());

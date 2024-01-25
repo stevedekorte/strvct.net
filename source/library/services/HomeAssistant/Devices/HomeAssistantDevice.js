@@ -59,11 +59,16 @@
     super.finalInit();
     this.setNodeCanEditTitle(true);
     this.setNodeSubtitleIsChildrenSummary(true);
-    this.entitiesNode().setTitle("entities");
   }
 
-  subtitle () {
-    return this.entitiesNode().subnodeCount() + " entities, " + this.statesCount() + " states";
+  updateSubtitle () {
+    const s = [
+      this.id(), 
+      this.entitiesNode().subnodeCount() + " entities",
+      this.statesCount() + " states"
+    ].join("\n");
+    this.setSubtitle(s);
+    return this;
   }
 
   statesCount () {
@@ -72,6 +77,10 @@
 
   id () {
     return this.haJson().id;
+  }
+
+  areaId () {
+    return this.haJson().area_id;
   }
 
   didUpdateSlotHaJson (oldValue, newValue) {
@@ -83,13 +92,14 @@
   }
 
   completeSetup () {
-//    this.removeAllSubnodes();
-
+    //    this.removeAllSubnodes();
+    this.updateSubtitle();
   }
 
   addEntity (entity) {
     entity.removeFromParentNode();
     this.entitiesNode().addSubnode(entity);
+    return this;
   }
 
 }).initThisClass();

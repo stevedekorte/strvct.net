@@ -1,6 +1,5 @@
 [
     "external-libs/_imports.json",
     "RzSigServers/_imports.json",
-    "PeerConnections/_imports.json",
     "PeerService.js"
 ]

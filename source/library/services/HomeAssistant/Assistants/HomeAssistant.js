@@ -107,6 +107,13 @@
 
 
     {
+      const slot = this.newSlot("areasNode", null)
+      slot.setFinalInitProto(HomeAssistantAreas);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
+
+    {
       const slot = this.newSlot("devicesNode", null)
       slot.setFinalInitProto(HomeAssistantDevices);
       slot.setShouldStoreSlot(false);
@@ -292,6 +299,7 @@
   async refresh () {
     try {
       // fetch the JSON and setup objects
+      this.setStatus("refreshing objects...");
 
       const states = await this.asyncGetStates();
       this.statesNode().setHaJson(states);
@@ -302,28 +310,55 @@
       const devices = await this.asyncDeviceRegistry();
       this.devicesNode().setHaJson(devices);
 
-      // interconnect the obects (states to entities, entities to devices)
+      this.setStatus("");
 
-      await this.statesNode().completeSetup();
-      await this.entitiesNode().completeSetup();
-      await this.devicesNode().completeSetup();
-
+      //setTimeout(() => {
+        await this.connectObjects();
+      //}, 3000);
     } catch (error) {
       this.setError(error);
+      throw error;
       this.disconnect();
     }
   }
 
-  asyncGetStates () {
-    return this.asyncSendMessageDict({type: 'get_states'});
+  async connectObjects () {
+    // interconnect the obects (states to entities, entities to devices)
+    this.setStatus("connecting objects...");
+    await this.statesNode().completeSetup(); // moves each state into its entity 
+    await this.entitiesNode().completeSetup(); // moves each entity into its device 
+    await this.devicesNode().completeSetup();
+
+    this.areasNode().addDevices(this.devicesNode().subnodes());
+    await this.areasNode().completeSetup();
+
+    this.setStatus("");
   }
 
-  asyncDeviceRegistry () {
-    return this.asyncSendMessageDict({type: 'config/device_registry/list'});
+  /*
+  const updateAreaMessage = {
+    id: messageId,
+    type: 'config/device_registry/update',
+    device_id: deviceId,
+    area_id: newAreaId
+};
+*/
+
+
+  asyncAreasRegistry () {
+    return this.asyncSendMessageDict({ type: 'config/area_registry/list' });
   }
 
   asyncEntityRegistry () {
-    return this.asyncSendMessageDict({type: 'config/entity_registry/list'});
+    return this.asyncSendMessageDict({ type: 'config/entity_registry/list'});
+  }
+
+  asyncDeviceRegistry () {
+    return this.asyncSendMessageDict({ type: 'config/device_registry/list'});
+  }
+
+  asyncGetStates () {
+    return this.asyncSendMessageDict({ type: 'get_states'});
   }
 
   newMessageId () {
@@ -468,3 +503,18 @@
   }
   
 }).initThisClass();
+
+/*
+function changeDeviceArea(deviceId, newAreaId) {
+    const messageId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+
+    const updateAreaMessage = {
+        id: messageId,
+        type: 'config/device_registry/update',
+        device_id: deviceId,
+        area_id: newAreaId
+    };
+
+    socket.send(JSON.stringify(updateAreaMessage));
+}
+*/

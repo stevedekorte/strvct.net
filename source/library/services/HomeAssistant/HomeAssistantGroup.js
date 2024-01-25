@@ -57,13 +57,12 @@
   }
 
   completeSetup () {
-    this.subnodes().forEach(sn => sn.completeSetup());
+    this.subnodes().shallowCopy().forEach(sn => sn.completeSetup());
     return this;
   }
 
   subnodeWithId (id) {
-    const ids = this.subnodes().map(sn => sn.id());
-
+    //const ids = this.subnodes().map(sn => sn.id());
     return this.subnodes().detect(sn => sn.id() === id);
   }
 

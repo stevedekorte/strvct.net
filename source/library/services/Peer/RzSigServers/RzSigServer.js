@@ -77,6 +77,19 @@
     }
 
     {
+      const slot = this.newSlot("key", "");      
+      slot.setInspectorPath("info")
+      //slot.setLabel("prompt")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("")
+    }
+
+    {
       const slot = this.newSlot("isSecure", true);      
       slot.setInspectorPath("info")
       slot.setLabel("is secure")

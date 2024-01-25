@@ -35,9 +35,8 @@
   }
 
   completeSetup () {
-    this.subnodes().forEach(sn => sn.completeSetup());
+    this.subnodes().shallowCopy().forEach(sn => sn.completeSetup());
     return this;
   }
-
 
 }.initThisClass());

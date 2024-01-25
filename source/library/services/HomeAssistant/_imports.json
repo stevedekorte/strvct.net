@@ -4,5 +4,6 @@
     "States/_imports.json",
     "Entities/_imports.json",
     "Devices/_imports.json",
+    "Areas/_imports.json",
     "Assistants/_imports.json"
 ]

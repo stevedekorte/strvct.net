@@ -13,6 +13,19 @@
       slot.setShouldStoreSlot(true);
     }
 
+    {
+      const slot = this.newSlot("jsonString", "");
+      slot.setCanEditInspection(false);
+      slot.setCanInspect(true);
+      //slot.setInspectorPath("Info");
+      slot.setLabel("json");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      //slot.setIsSubnodeField(true);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }
@@ -21,7 +34,6 @@
     super.init();
     this.setTitle("");
     this.setCanDelete(true);
-    this.setSubtitle(this.type());
   }
   
   finalInit () {
@@ -30,6 +42,10 @@
     this.setNodeCanEditTitle(true);
     this.setNodeSubtitleIsChildrenSummary(true);
     this.setSummaryFormat("key value");
+  }
+
+  jsonString () {
+    return JSON.stringify(this.haJson(), 2, 2);
   }
 
   /*

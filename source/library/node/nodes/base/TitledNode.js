@@ -306,7 +306,15 @@
     // --- sorting helper ---
 
     makeSortSubnodesByTitle () {
-        this.setSubnodeSortFunc( (a, b) => a.title().localeCompare(b.title()) )
+        this.setSubnodeSortFunc(function (a, b) {
+            const cleanedTitle = function (t) {
+                return Type.isNullOrUndefined(t) ? "" : t;
+            }
+
+            let at = cleanedTitle(a.title());
+            let bt = cleanedTitle(b.title());
+            return at.localeCompare(bt);
+        })
         return this
     }
 

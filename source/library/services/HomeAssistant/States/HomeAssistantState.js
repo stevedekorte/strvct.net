@@ -38,18 +38,6 @@
       const slot = this.newSlot("entity", null);
     }
 
-    {
-      const slot = this.newSlot("jsonString", "");
-      slot.setCanEditInspection(false);
-      //slot.setInspectorPath("Info")
-      slot.setLabel("json");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-    }
-
     /*
 
     {
@@ -117,9 +105,6 @@
     return entity;
   }
 
-  jsonString () {
-    return JSON.stringify(this.haJson(), 2, 2)
-  }
 
   completeSetup () {
     const json = this.haJson();
@@ -140,27 +125,29 @@
     this.jsonString().setValueIsEditable(false);
     */
     
-    let name = json.attributes.friendly_name;
-    if (!name) {
-      name = json.entity_id
-    }
-
-    this.setTitle(name);
+    this.updateTitle();
     this.setSubtitle(json.state);
     
     const entity = this.findEntity();
     if (entity) {
       this.setEntity(entity);
       entity.addState(this);
-      console.warn("state " + this.id() + " found entity with id " + this.entityId())
+      //console.warn("state " + this.id() + " found entity with id " + this.entityId())
     } else {
       console.warn("state " + this.id() + " unable to find entity with id " + this.entityId())
     }
     return this;
   }
 
-  subtitle () {
-    return this.haJson().state;
+  updateTitle () {
+    const json = this.haJson();
+
+    let name = json.attributes.friendly_name;
+    if (!name) {
+      name = json.entity_id
+    }
+    this.setTitle(name);
+    return this;
   }
 
 }).initThisClass();

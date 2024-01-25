@@ -64,15 +64,9 @@
     this.setCanDelete(true);
   }
 
-  /*
-  subtitle () {
-    return "Entity";
-  }
-  */
   
   finalInit () {
     super.finalInit();
-    this.statesNode().setTitle("states");
   }
 
   didUpdateSlotHaJson (oldValue, newValue) {
@@ -95,10 +89,6 @@
     return this.haJson().entity_id;
   }
 
-  subtitle () {
-    return this.statesCount() + " states";
-  }
-
   statesCount () {
     return this.statesNode().subnodeCount();
   }
@@ -110,23 +100,39 @@
 
   completeSetup () {
     const json = this.haJson();
-    this.setTitle(json.entity_id);
-    this.setSubtitle(json.device_id);
-    
+
+    //this.setTitle(json.entity_id);
+    this.setTitle(json.original_name);    
+    this.updateSubtitle();
+
     const device = this.findDevice();
     if (device) {
       this.setDevice(device);
       this.device().addEntity(this);
-      console.warn("entity " + this.id() + " found device with id " + this.deviceId())
+      //console.warn("entity " + this.id() + " found device with id " + this.deviceId())
     } else {
-      console.warn("entity " + this.id() + " unable to find device with id " + this.deviceId())
+      console.warn("entity " + this.id() + " unable to find device with id " + this.deviceId());
+      //debugger;
     }
+    return this;
+  }
+
+  /*
+  title () {
+    return this.haJson().original_name;
+  }
+  */
+
+  updateSubtitle () {
+    const s = [this.id(), this.statesCount() + " states"].join("\n");
+    this.setSubtitle(s);
     return this;
   }
 
   addState (state) {
     state.removeFromParentNode();
     this.statesNode().addSubnode(state);
+    return this;
   }
 
   /*
