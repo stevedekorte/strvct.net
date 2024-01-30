@@ -64,12 +64,15 @@ const nodePath = require('path');
 
 	onRequest (request, response) {
 		//console.log("got request ", request)
-		const r = StrvctHttpsServerRequest.clone()
-		r.setServer(this)
-		r.setRequest(request)
-		r.setResponse(response)
-		//this.wait(10);
-		r.process()
+		try {
+			const r = StrvctHttpsServerRequest.clone();
+			r.setServer(this);
+			r.setRequest(request);
+			r.setResponse(response);
+			r.process();
+		} catch (error) {
+			console.warn("Caught StrvctHttpsServerRequest exception:", error);
+		}
 	}
 
 	wait (ms) {

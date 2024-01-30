@@ -12,12 +12,12 @@ using the contents of:
 
 */
 
-require("./getGlobalThis.js");
-require("./Base.js");
-require("./MimeExtensions.js");
+require("./getGlobalThis.js")
+require("./Base.js")
+require("./MimeExtensions.js")
 const fs = require('fs');
 const nodePath = require('path');
-//const { PassThrough } = require('stream');
+
 const https = require('https');
 
 (class StrvctHttpsServerRequest extends Base {
@@ -63,45 +63,15 @@ const https = require('https');
 
 	// --- handle proxy request --------------------------
 
-	onProxyRequest () {
+	async onProxyRequest () {
 		try {
 			const url = this.queryMap().get("proxyUrl");
 			console.log("proxy request for: " + url + "");
-
-			https.get(url, (res) => {
-				// Check if the response is successful
-				if (res.statusCode === 200) {
-					const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
-					console.log('Proxy MIME Type:', mimeType);
-			
-					this.response().writeHead(200, {
-						'Content-Type': mimeType,
-						'Access-Control-Allow-Origin': '*',
-					});
-			
-					// Pipe the response directly to the server response
-					res.pipe(this.response());
-				} else {
-					// Handle errors like 404 Not Found or 401 Unauthorized
-					this.response().writeHead(res.statusCode);
-					this.response().end(`Error: Received status code ${res.statusCode}`);
-				}
-			}).on('error', (e) => {
-				console.error(`Error fetching the image: ${e.message}`);
-				this.onProxyRequestError(e);
-			});
-
-			/*
 			https.get(url, (res) => {
 
 				const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
 				console.log('Proxy MIME Type:', mimeType);
 
-				this.response().writeHead(200, {
-					'Content-Type': mimeType,
-					'Access-Control-Allow-Origin': '*',
-				});
-				
 				// Array to hold the chunks of data
 				const chunks = [];
 		
@@ -115,23 +85,21 @@ const https = require('https');
 					// Combine all the chunks into a single buffer
 					const buffer = Buffer.concat(chunks);
 		
-					this.response().write(buffer);
-					this.response().end();
+					// Display the byte size of the image
+					console.log('Proxy Byte count:', buffer.length);
+					this.onProxyRequestSuccess(mimeType, buffer)
 				});
 			}).on('error', (e) => {
 				console.error(`Error fetching the image: ${e.message}`);
 				this.onProxyRequestError(error)
 			});
-			*/
 
 		} catch (e) {
 			this.onProxyRequestError(e)
 		}
 	}
 
-	/*
 	onProxyRequestSuccess (mimeType, data) {
-		// need to do this last so we know the mime type
 		this.response().writeHead(200, {
 			'Content-Type': mimeType,
 			'Access-Control-Allow-Origin': '*',
@@ -140,7 +108,6 @@ const https = require('https');
 		this.response().write(data);
 		this.response().end();
 	}
-	*/
 
 	onProxyRequestError (error) {
 		console.error('proxy request error:', error.message);
@@ -226,7 +193,6 @@ const https = require('https');
 	}
 
 	assertPathExists () {
-		const path = this.path();
 		if (!fs.existsSync(path)) {
 			this.throwCodeAndMessage(404, "error: missing file ", path);
 		}
