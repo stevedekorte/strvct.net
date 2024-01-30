@@ -8,21 +8,6 @@
 (class HomeAssistantArea extends HomeAssistantObject {
   initPrototypeSlots() {
 
-    {
-      const slot = this.newSlot("id", null)
-    }
-
-    {
-      const slot = this.newSlot("name", null)
-    }
-
-    {
-      const slot = this.newSlot("devicesNode", null)
-      slot.setFinalInitProto(HomeAssistantDevices);
-      slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
-    }
-
   }
 
   init() {
@@ -32,45 +17,47 @@
   finalInit () {
     super.finalInit();
     this.setNodeCanEditTitle(true);
-    this.setNodeSubtitleIsChildrenSummary(true);
+    //this.setNodeSubtitleIsChildrenSummary(true);
   }
 
-  didUpdateSlotId (oldValue, newValue) {
-    this.updateTitle();
-    return this;
+  id () {
+    return this.haJson().area_id;
   }
 
   updateTitle () {
-    const parts = this.id().split("_");
-    const s = parts.map(part => part.capitalized()).join(" ");
-    this.setTitle(s);
+    if (this.id()) {
+      const parts = this.id().split("_");
+      const s = parts.map(part => part.capitalized()).join(" ");
+      this.setTitle(s);
+    } else {
+      this.setTitle("null");
+    }
     return this;
   }
 
-  didUpdateSlotHaJson (oldValue, newValue) {
-    throw new Error("this shouldn't get called");
-    return this;
+  connectObjects () {
+    // no parents to connect to
   }
 
-  completeSetup () {
+  updateTitles () {
     this.updateTitle();
-    this.updateSubtitle();
+    //this.updateSubtitle();
+    this.setSubtitle("area");
+    return this;
   }
 
+  findOwner () {
+    debugger;
+    return null;
+  }
+
+  /*
   updateSubtitle () {
     const s = [
-      this.id(), 
-      this.devicesNode().subnodeCount() + " devices"
+      this.subnodeCount() + " devices"
     ].join("\n");
     this.setSubtitle(s);
     return this;
-  }
-
-  subtitle () {
-    const s = [
-      this.devicesNode().subnodeCount() + " devices"
-    ].join("\n");
-    return s;
   }
 
   addDevice (device) {
@@ -78,5 +65,6 @@
     this.devicesNode().addSubnode(device);
     return this;
   }
+  */
 
 }).initThisClass();

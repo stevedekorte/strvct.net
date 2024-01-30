@@ -622,7 +622,7 @@
         chain.unshift(this)
         const p = this.parentNode()
         if (p) {
-            p.parentChain(chain)
+            p.parentChainNodes(chain)
         }
         return chain
     }

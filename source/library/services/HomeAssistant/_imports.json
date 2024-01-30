@@ -1,4 +1,5 @@
 [
+    "HomeAssistantFolder.js",
     "HomeAssistantObject.js",
     "HomeAssistantGroup.js",
     "States/_imports.json",

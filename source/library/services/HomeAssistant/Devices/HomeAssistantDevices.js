@@ -17,7 +17,8 @@
   }
 
   finalInit() {
-    super.finalInit()
+    super.finalInit();
+    this.setGetMessageType("config/device_registry/list");
   }
 
 

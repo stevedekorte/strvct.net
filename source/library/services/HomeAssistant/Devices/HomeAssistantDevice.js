@@ -34,21 +34,7 @@
 
 (class HomeAssistantDevice extends HomeAssistantObject {
   initPrototypeSlots() {
-    /*
-    {
-      const slot = this.newSlot("entitiesNode", null)
-      slot.setFinalInitProto(HomeAssistantEntities);
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-    }
-    */
 
-    {
-      const slot = this.newSlot("entitiesNode", null)
-      slot.setFinalInitProto(HomeAssistantEntities);
-      slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
-    }
   }
 
   init() {
@@ -58,22 +44,22 @@
   finalInit () {
     super.finalInit();
     this.setNodeCanEditTitle(true);
-    this.setNodeSubtitleIsChildrenSummary(true);
   }
 
+  entitiesNode () {
+    return this;
+  }
+
+  /*
   updateSubtitle () {
     const s = [
-      this.id(), 
       this.entitiesNode().subnodeCount() + " entities",
       this.statesCount() + " states"
     ].join("\n");
     this.setSubtitle(s);
     return this;
   }
-
-  statesCount () {
-    return this.entitiesNode().subnodes().sum(entity => entity.statesCount());
-  }
+  */
 
   id () {
     return this.haJson().id;
@@ -83,17 +69,37 @@
     return this.haJson().area_id;
   }
 
-  didUpdateSlotHaJson (oldValue, newValue) {
-    const json = newValue;
-    //console.log(this.type() + ":" + JSON.stringify(newValue, 2, 2));
-    this.setTitle(json.name);
-    this.setSubtitle(json.id);
-    return this;
+  ownerId () {
+    return this.areaId();
   }
 
-  completeSetup () {
+  ownerGroup () {
+    return this.homeAssistant().areasNode();
+  }
+
+  updateTitles () {
+    let name = this.haJson().name_by_user;
+    if (!name) {
+      name = this.haJson().name;
+    }
+    if (name === null) {
+      name = "NULL";
+    }
     //    this.removeAllSubnodes();
-    this.updateSubtitle();
+    this.setName(name);
+    this.setTitle(this.computeShortName());
+
+    if (this.state()) {
+      this.setSubtitle(this.state());
+    }
+    //this.updateSubtitle();
+  }
+
+  state () {
+    if (this.subnodesCount() === 1) {
+      return this.subnodes().first().state();
+    }
+    return undefined;
   }
 
   addEntity (entity) {

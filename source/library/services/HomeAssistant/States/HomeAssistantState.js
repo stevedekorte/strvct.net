@@ -35,7 +35,7 @@
   initPrototypeSlots() {
 
     {
-      const slot = this.newSlot("entity", null);
+      //const slot = this.newSlot("entity", null);
     }
 
     /*
@@ -65,6 +65,7 @@
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
+    this.setSummaryFormat("key value");
   }
 
   init() {
@@ -79,6 +80,7 @@
   
   finalInit () {
     super.finalInit();
+    this.setNoteIsSubnodeCount(false);
   }
 
 /*
@@ -100,54 +102,46 @@
     return this.haJson().entity_id;
   }
 
-  findEntity () {
+  /*
+  findOwner () {
     const entity = this.homeAssistant().entityWithId(this.entityId());
     return entity;
   }
+  */
 
-
-  completeSetup () {
-    const json = this.haJson();
-
-    /*
-    this.jsonString().setKey("json")
-    this.jsonString().setKeyIsVisible(true);
-    this.jsonString().setKeyIsEditable(false);
-
-    const s = JSON.stringify(this.haJson(), 2, 2);
-    if (s === "") {
-      debugger;
-    }
-    if (this.haJson() === null) {
-      debugger;
-    }
-    this.jsonString().setValue(s);
-    this.jsonString().setValueIsEditable(false);
-    */
-    
-    this.updateTitle();
-    this.setSubtitle(json.state);
-    
-    const entity = this.findEntity();
-    if (entity) {
-      this.setEntity(entity);
-      entity.addState(this);
-      //console.warn("state " + this.id() + " found entity with id " + this.entityId())
-    } else {
-      console.warn("state " + this.id() + " unable to find entity with id " + this.entityId())
-    }
-    return this;
+  ownerId () {
+    return this.entityId();
   }
 
-  updateTitle () {
-    const json = this.haJson();
+  ownerGroup () {
+    return this.homeAssistant().entitiesNode();
+  }
 
+  updateTitles () {
+    this.setName(this.name());
+    this.setTitle(this.computeShortName());
+    this.setSubtitle(this.haJson().state);
+  }
+
+  name () {
+    const json = this.haJson();
     let name = json.attributes.friendly_name;
     if (!name) {
       name = json.entity_id
     }
-    this.setTitle(name);
+    return name;
+  }
+
+  /*
+  updateTitle () {
+    this.setName(this.computeName());
+    this.setTitle(this.computeShortName());
     return this;
+  }
+  */
+
+  state () {
+    return this.haJson().state;
   }
 
 }).initThisClass();

@@ -17,26 +17,8 @@
   }
 
   finalInit() {
-    super.finalInit()
-  }
-
-  firstSubnodeClass () {
-    return this.subnodeClasses().first();
-  }
-
-  setHaJson (json) {
-    this.removeAllSubnodes();
-    json.forEach(snJson => {
-      const node = this.subnodeClasses().first().clone();
-      node.setHaJson(snJson);
-      this.addSubnode(node);
-    });
-    return this;
-  }
-
-  completeSetup () {
-    this.subnodes().shallowCopy().forEach(sn => sn.completeSetup());
-    return this;
+    super.finalInit();
+    this.setGetMessageType("config/entity_registry/list");
   }
 
 }.initThisClass());

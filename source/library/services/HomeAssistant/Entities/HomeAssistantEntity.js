@@ -31,17 +31,6 @@
 
 (class HomeAssistantEntity extends HomeAssistantObject {
   initPrototypeSlots() {
-    {
-      const slot = this.newSlot("device", null);
-    }
-
-    {
-      const slot = this.newSlot("statesNode", null)
-      slot.setFinalInitProto(HomeAssistantStates);
-      slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
-    }
-
 
     /*
     {
@@ -67,14 +56,7 @@
   
   finalInit () {
     super.finalInit();
-  }
-
-  didUpdateSlotHaJson (oldValue, newValue) {
-    const json = newValue;
-    this.setTitle(json.entity_id);
-    this.setSubtitle(json.device_id);
-    //console.log(this.type() + ":" + JSON.stringify(newValue, 2, 2));
-    return this;
+    this.setNodeSubtitleIsChildrenSummary(true);
   }
 
   areaId () {
@@ -89,43 +71,59 @@
     return this.haJson().entity_id;
   }
 
+  statesNode () {
+    return this;
+  }
+
   statesCount () {
     return this.statesNode().subnodeCount();
   }
 
-  findDevice () {
-    const entity = this.homeAssistant().deviceWithId(this.deviceId());
-    return entity;
+  ownerId () {
+    return this.deviceId();
   }
 
-  completeSetup () {
+  ownerGroup () {
+    return this.homeAssistant().devicesNode();
+  }
+
+  updateTitles () {
     const json = this.haJson();
+    this.updateName();
+    this.setTitle(this.computeShortName());
+    this.setSubtitle("entiy");
 
-    //this.setTitle(json.entity_id);
-    this.setTitle(json.original_name);    
-    this.updateSubtitle();
-
-    const device = this.findDevice();
-    if (device) {
-      this.setDevice(device);
-      this.device().addEntity(this);
-      //console.warn("entity " + this.id() + " found device with id " + this.deviceId())
-    } else {
-      console.warn("entity " + this.id() + " unable to find device with id " + this.deviceId());
-      //debugger;
+    if (this.state()) {
+      this.setSubtitle(this.state());
     }
+  }
+
+  state () {
+    if (this.subnodesCount() === 1) {
+      return this.subnodes().first().state();
+    }
+    return undefined;
+  }
+
+  updateName () {
+    const json = this.haJson();
+    let name = json.original_name;
+    if (!name) {
+      name = json.entity_id;
+    }
+    this.setName(name);
     return this;
   }
 
   /*
-  title () {
-    return this.haJson().original_name;
-  }
-  */
-
   updateSubtitle () {
-    const s = [this.id(), this.statesCount() + " states"].join("\n");
-    this.setSubtitle(s);
+    if (this.statesCount() === 1) {
+      const s = this.statesNode().subnodes().first().state();
+      this.setSubtitle(s);
+    } else {
+      const s = [this.id(), this.statesCount() + " states"].join("\n");
+      this.setSubtitle(s);
+    }
     return this;
   }
 
@@ -135,7 +133,6 @@
     return this;
   }
 
-  /*
   scanActionInfo () {
     return {
         isEnabled: this.hasValidUrl(),

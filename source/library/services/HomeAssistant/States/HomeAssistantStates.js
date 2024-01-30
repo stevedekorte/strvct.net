@@ -17,13 +17,9 @@
   }
 
   finalInit() {
-    super.finalInit()
+    super.finalInit();
+    this.setGetMessageType("get_states");
+    this.setNodeSubtitleIsChildrenSummary(false);
   }
-
-  /*
-  statesForDevice (device) {
-    return this.subnodes().filter(state => state.deviceId() === device.id())
-  }
-  */
 
 }.initThisClass());

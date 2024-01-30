@@ -78,7 +78,7 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
+      slot.setIsSubnodeField(false);
     }
 
     {
@@ -102,36 +102,45 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Boolean");
-      slot.setIsSubnodeField(true);
+      slot.setIsSubnodeField(false);
     }
 
+
+    {
+      const slot = this.newSlot("rootFolder", null)
+      slot.setFinalInitProto(HomeAssistantFolder);
+      slot.setShouldStoreSlot(false);
+      slot.setIsSubnode(true);
+    }
+
+    const showNodes = false;
 
     {
       const slot = this.newSlot("areasNode", null)
       slot.setFinalInitProto(HomeAssistantAreas);
       slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(showNodes);
     }
 
     {
       const slot = this.newSlot("devicesNode", null)
       slot.setFinalInitProto(HomeAssistantDevices);
       slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(showNodes);
     }
 
     {
       const slot = this.newSlot("entitiesNode", null)
       slot.setFinalInitProto(HomeAssistantEntities);
       slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(showNodes);
     }
 
     {
       const slot = this.newSlot("statesNode", null)
       slot.setFinalInitProto(HomeAssistantStates);
       slot.setShouldStoreSlot(false);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(showNodes);
     }
 
 
@@ -180,6 +189,8 @@
     this.updateUrl();
     this.setNodeCanEditTitle(true);
     this.setStatus("not connected");
+    this.rootFolder().setTitle("regions");
+    this.groups().forEach(group => group.setHomeAssistant(this));
   }
 
   didUpdateSlotHost () {
@@ -296,25 +307,27 @@
     // await  onMessage message.type === "auth_required"
   }
 
+  groups () {
+    return [ 
+      this.areasNode(),
+      this.devicesNode(),
+      this.entitiesNode(),
+      this.statesNode()
+    ];
+  }
+
   async refresh () {
     try {
+      //debugger;
       // fetch the JSON and setup objects
       this.setStatus("refreshing objects...");
 
-      const states = await this.asyncGetStates();
-      this.statesNode().setHaJson(states);
+      await Promise.all(this.groups().map(group => group.asyncRefresh()));
 
-      const entities = await this.asyncEntityRegistry();
-      this.entitiesNode().setHaJson(entities);
-
-      const devices = await this.asyncDeviceRegistry();
-      this.devicesNode().setHaJson(devices);
+      this.groups().forEach(group => group.completeSetup());
 
       this.setStatus("");
-
-      //setTimeout(() => {
-        await this.connectObjects();
-      //}, 3000);
+      this.didUpdateNode();
     } catch (error) {
       this.setError(error);
       throw error;
@@ -322,30 +335,27 @@
     }
   }
 
-  async connectObjects () {
-    // interconnect the obects (states to entities, entities to devices)
-    this.setStatus("connecting objects...");
-    await this.statesNode().completeSetup(); // moves each state into its entity 
-    await this.entitiesNode().completeSetup(); // moves each entity into its device 
-    await this.devicesNode().completeSetup();
-
-    this.areasNode().addDevices(this.devicesNode().subnodes());
-    await this.areasNode().completeSetup();
-
-    this.setStatus("");
-  }
-
   /*
+  // change device areaId
   const updateAreaMessage = {
     id: messageId,
     type: 'config/device_registry/update',
     device_id: deviceId,
     area_id: newAreaId
-};
+  };
+
+  // change entity name
+    const updateEntityMessage = {
+        id: messageId,
+        type: 'config/entity_registry/update',
+        entity_id: entityId,
+        name: newFriendlyName
+    };
 */
 
+/*
 
-  asyncAreasRegistry () {
+  asyncAreaRegistry () {
     return this.asyncSendMessageDict({ type: 'config/area_registry/list' });
   }
 
@@ -360,6 +370,7 @@
   asyncGetStates () {
     return this.asyncSendMessageDict({ type: 'get_states'});
   }
+  */
 
   newMessageId () {
     const count = this.sentMessageCount();
@@ -490,6 +501,11 @@
     }
   }
 
+  /*
+  areaWithId (id) {
+    return this.areasNode().subnodeWithId(id);
+  }
+
   deviceWithId (id) {
     return this.devicesNode().subnodeWithId(id);
   }
@@ -501,6 +517,7 @@
   stateWithId (id) {
     return this.statesNode().subnodeWithId(id);
   }
+  */
   
 }).initThisClass();
 
