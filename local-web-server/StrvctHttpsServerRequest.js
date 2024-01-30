@@ -237,11 +237,31 @@ const https = require('https');
 			'Access-Control-Allow-Origin': '*',
 		});
 
+		//this.syncWriteFileToResponse(path, this.response());
+		this.streamFileToResponse(path, this.response());
+	}
+
+	syncWriteFileToResponse (path, response) {
 		const data = fs.readFileSync(path)
 		//this.response().write(data.toString());		
 		this.response().write(data);
 		//console.log("  sent " + data.length + " bytes")	
 		this.response().end();
+	}
+
+	streamFileToResponse (path, response) {
+		const readStream = fs.createReadStream(path);
+	
+		readStream.on('error', (error) => {
+			// Handle error, such as file not found
+			console.error('Error reading file:', error);
+			// Optionally, send an error response
+			response.writeHead(500, {'Content-Type': 'text/plain'});
+			response.end('Error reading file');
+		});
+	
+		readStream.pipe(response);
+		return this;
 	}
 
 	onQuery () {
