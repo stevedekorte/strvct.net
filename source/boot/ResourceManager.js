@@ -200,7 +200,7 @@ class UrlResource {
         if (this.isZipFile()) {
             await this.promiseLoadUnzipIfNeeded();
         }
-        return this.promiseLoad_2()
+        return this.promiseLoadFormCache()
     }
 
     isDebugging () {
@@ -213,14 +213,17 @@ class UrlResource {
         }
     }
 
-    async promiseLoad_2 () {
+    async promiseLoadFormCache () {
         const h = this.resourceHash() ;
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared();
-            const hasKey = await hc.promiseHasKey(h);
-            if (hasKey) {
-                // if hashcache is available and hash data, use it
-                const data = await hc.promiseAt(h);
+            //const hasKey = await hc.promiseHasKey(h);
+            const data = await hc.promiseAt(h);
+
+            if (data !== undefined) {
+            //if (hasKey) {
+                    // if hashcache is available and has data, use it
+//                const data = await hc.promiseAt(h);
                 this._data = data;
                 return this;
             } else {

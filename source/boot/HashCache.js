@@ -32,6 +32,7 @@
     }
 
     async promiseCount () {
+        //debugger;
         return this.idb().promiseCount();
     }
 
@@ -46,6 +47,7 @@
     }
 
     promiseHasKey (key) {
+        console.log("promiseHasKey(" + key + ")");
         return this.idb().promiseHasKey(key)
     }
 

@@ -25,7 +25,7 @@
 
     init () {
         super.init()
-        this.setIsDebugging(false)
+        this.setIsDebugging(true)
     }
 
     setPath (aString) {
@@ -254,6 +254,7 @@
     }
 
     async promiseCount (optionalKey) {
+        //debugger;
         await this.promiseOpen();
         const countPromise = Promise.clone();
         const objectStore = this.readOnlyObjectStore();
@@ -266,6 +267,14 @@
                 //console.log("promiseCount " + count + " for optionalKey: '" + optionalKey + "'")
                 //debugger;
             }
+
+            //throw new Error("TESTING PROMISE COUNT ERROR");
+            let a = false; 
+            if (a) {
+                countPromise.callRejectFunc(new Error("TESTING PROMISE COUNT ERROR"));
+                return;
+            }
+
             countPromise.callResolveFunc(count);
         }
         

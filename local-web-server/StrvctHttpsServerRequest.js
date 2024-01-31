@@ -10,6 +10,14 @@ using the contents of:
  
  /home/public/.well-known/acme-challenge/. 
 
+
+ NOTES:
+
+ Cache-Control:
+ 'no-cache' allows caching but requires revalidation.
+ 'no-store' disallows any caching.
+ 'private' allows caching but only in a private cache (like a user's browser), not in shared caches.
+
 */
 
 require("./getGlobalThis.js");
@@ -76,6 +84,7 @@ const https = require('https');
 			
 					this.response().writeHead(200, {
 						'Content-Type': mimeType,
+						'Cache-Control': 'private',
 						'Access-Control-Allow-Origin': '*',
 					});
 			
@@ -280,10 +289,11 @@ const https = require('https');
 
 		this.assertPathExists();
 
-		// read file and send response
+		// Send header and stream file response
 
 		this.response().writeHead(200, {
 			'Content-Type': contentType,
+			'Cache-Control': 'no-cache',
 			'Access-Control-Allow-Origin': '*',
 		});
 
@@ -291,6 +301,7 @@ const https = require('https');
 		this.streamFileContentToResponse(path, this.response());
 	}
 
+	/*
 	syncWriteFileToResponse (path, response) {
 		const data = fs.readFileSync(path)
 		//this.response().write(data.toString());		
@@ -298,6 +309,7 @@ const https = require('https');
 		//console.log("  sent " + data.length + " bytes")	
 		this.response().end();
 	}
+	*/
 
 	streamFileContentToResponse (path, response) {
 		const readStream = fs.createReadStream(path);

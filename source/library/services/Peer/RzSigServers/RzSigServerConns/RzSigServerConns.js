@@ -14,7 +14,7 @@
     super.init();
     this.setTitle("server connections");
     this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
+    this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([RzSigServerConn]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
@@ -23,6 +23,7 @@
   finalInit() {
     super.finalInit()
     this.setNoteIsSubnodeCount(true);
+    this.removeAllSubnodes();
   }
 
   service () {
