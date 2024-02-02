@@ -31,13 +31,13 @@ const https = require('https');
 (class StrvctHttpsServerRequest extends Base {
 	
 	initPrototypeSlots () {
-		this.newSlot("server", null)
-		this.newSlot("request", null)
-		this.newSlot("response", null)
-		this.newSlot("urlObject", null)
-		this.newSlot("queryMap", null)
-		this.newSlot("path", null)
-		this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/")
+		this.newSlot("server", null);
+		this.newSlot("request", null);
+		this.newSlot("response", null);
+		this.newSlot("urlObject", null);
+		this.newSlot("queryMap", null);
+		this.newSlot("path", null);
+		this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/");
 	}
 
 	process () {
@@ -241,6 +241,15 @@ const https = require('https');
 		}
 	}
 
+	assertNonDotPath () {
+		const path = this.path();
+		const dotComponents = path.split("/").filter(pathComponent => pathComponent.beginsWith("."));
+
+		if (dotComponents.length !== 0) {
+			this.throwCodeAndMessage(401, "error: attempt to access file path '" + path + "' which contains a path component begining with a dot.");
+		}
+	}
+
 	throwCodeAndMessage (code, message) {
 		const error = new Error(message)
 		error._code = code;
@@ -285,17 +294,19 @@ const https = require('https');
 			this.assertPathInSandbox();
 		}
 
-		// Ensure file exists
-
 		this.assertPathExists();
+		this.assertNonDotPath();
 
 		// Send header and stream file response
 
-		this.response().writeHead(200, {
+		const header = {
 			'Content-Type': contentType,
 			'Cache-Control': 'no-cache',
 			'Access-Control-Allow-Origin': '*',
-		});
+		};
+
+		this.response().writeHead(200, header);
+		//console.log("header:" + JSON.stringify(header));
 
 		//this.syncWriteFileToResponse(path, this.response());
 		this.streamFileContentToResponse(path, this.response());
