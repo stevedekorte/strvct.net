@@ -12,7 +12,7 @@
 
   init() {
     super.init();
-    this.setTitle("peer connections");
+    this.setTitle("connections to peers");
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([RzPeerConn]);

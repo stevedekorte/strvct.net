@@ -27,22 +27,25 @@
   }
 
   setupDefaultServers () {
-    const map = this.fullPathToServerMap() // TODO: use node hash support instead
+    const map = this.jsonStringToServerMap() // TODO: use node hash support instead
     this.defaultServerDicts().forEach(dict => {
-      const fullPath = RzSigServer.fullPathForDict(dict)
-      const server = map.at(fullPath)
+      const jsonString = JSON.stableStringify(dict);
+      const server = map.at(jsonString)
       if (!server) {
         const newServer = RzSigServer.clone().setDict(dict)
         this.addSubnode(newServer)
-        map.atPut(newServer.fullPath(), newServer)
+        map.atPut(jsonString, newServer)
       }
-    })
+    });
   }
 
-  fullPathToServerMap () {
-    const m = new Map()
-    this.servers().forEach(server => m.atPut(server.fullPath(), server))
-    return m
+  jsonStringToServerMap () {
+    const m = new Map();
+    this.servers().forEach(server => {
+      const k = JSON.stableStringify(server.dict());
+      m.atPut(k, server);
+    });
+    return m;
   }
 
   defaultServerDicts () {
@@ -51,16 +54,44 @@
         host: "peerjssignalserver.herokuapp.com",
         path: "/peerjs",
         isSecure: true,
-        port: 443,
+        port: 443
+        //webSocketPort: 443
+        /*
+        // this are server connection settings 
         isReliable: true,
         pingInterval: 1000, // 1 second
         debug: false
+        */
+      },
+      {
+        host: "undreamedof.ai",
+        path: "/peerjs",
+        isSecure: true,
+        port: 9000
+        //webSocketPort: 9001
+        /*
+        isReliable: true,
+        pingInterval: 1000, // 1 second
+        debug: false
+        */
+      },
+      {
+        host: "localhost",
+        path: "/peerjs",
+        isSecure: true,
+        port: 9000
+        //webSocketPort: 9001
+        /*
+        isReliable: true,
+        pingInterval: 1000, // 1 second
+        debug: false
+        */
       }
     ]
   }
 
   servers () {
-    return this.subnodes()
+    return this.subnodes();
   }
 
   /*

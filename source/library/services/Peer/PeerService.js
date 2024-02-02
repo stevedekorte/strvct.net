@@ -21,15 +21,6 @@
       slot.setIsSubnode(true);
     }
 
-    /*
-    {
-      const slot = this.newSlot("connections", null)
-      slot.setFinalInitProto(PeerConnections)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-    }
-    */
-
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
   }

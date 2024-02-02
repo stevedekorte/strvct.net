@@ -12,7 +12,7 @@
 
   init() {
     super.init();
-    this.setTitle("server connections");
+    this.setTitle("connections to sigserver");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([RzSigServerConn]);

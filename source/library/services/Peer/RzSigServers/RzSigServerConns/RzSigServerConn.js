@@ -228,7 +228,7 @@
 
   init() {
     super.init();
-    this.setIsDebugging(false)
+    this.setIsDebugging(true)
     this.setCanDelete(true)
     return this
   }
@@ -353,11 +353,13 @@
     return this.sigServerConnections().parentNode()
   }
 
+  /*
   fullPeerId () {
     const id = this.peerId()
-    const fullPath = this.server().fullPath()
+    const fullPath = this.server().httpFullPath()
     return fullPath + ":" + id
   }
+  */
 
   /*
   peerOptions () {
@@ -383,7 +385,8 @@
       port: server.port(),
       reliable: this.isReliable(),
       pingInterval: this.pingIntervalMs(),
-      debug: this.debug()
+      debug: this.debug(),
+      key: this.server().key().trim() !== "" ? this.server().key() : undefined
     }
   }
 

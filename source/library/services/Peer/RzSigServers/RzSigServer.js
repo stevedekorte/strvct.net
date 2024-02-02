@@ -65,8 +65,22 @@
 
     {
       const slot = this.newSlot("port", 443);      
+      slot.setInspectorPath("info");
+      slot.setLabel("port");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSummaryFormat("value");
+    }
+
+    /*
+    {
+      const slot = this.newSlot("webSocketPort", 443);      
       slot.setInspectorPath("info")
-      //slot.setLabel("prompt")
+      slot.setLabel("WebSocket Port")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -75,6 +89,7 @@
       slot.setCanEditInspection(true)
       slot.setSummaryFormat("value")
     }
+    */
 
     {
       const slot = this.newSlot("key", "");      
@@ -100,6 +115,19 @@
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(true)
       slot.setSummaryFormat("key value")
+    }
+
+    {
+      const slot = this.newSlot("status", null);      
+      //slot.setInspectorPath("info")
+      slot.setLabel("status")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("String")
+      slot.setIsSubnodeField(false)
+      slot.setCanEditInspection(true)
+      slot.setSummaryFormat("value")
     }
 
     // -------------------
@@ -136,7 +164,7 @@
   init() {
     super.init();
     //this.setPeerConnections(new Map());
-    this.setIsDebugging(false)
+    this.setIsDebugging(true)
     this.setCanDelete(true)
     return this
   }
@@ -151,8 +179,28 @@
     return dict.host + ":" + dict.port + dict.path
   }
 
+  /*
+  httpFullPath () {
+    return this.host() + ":" + this.port() + this.path() // path always begins with slash?
+  }
+
+  webSocketFullPath () {
+    return this.host() + ":" + this.webSocketPort() + this.path() // path always begins with slash?
+  }
+  */
+
   fullPath () {
     return this.host() + ":" + this.port() + this.path() // path always begins with slash?
+  }
+
+  dict () {
+    const dict = {};
+    dict.host = this.host();
+    dict.path = this.path();
+    dict.isSecure = this.isSecure();
+    dict.port = this.port();
+    //dict.webSocketPort = this.webSocketPort();
+    return dict;
   }
 
   setDict (dict) {
@@ -164,6 +212,7 @@
       path: "/peerjs",
       isSecure: true,
       port: 443,
+      webSocketPort: 443,
       reliable: true,
       pingInterval: 1000, // 1 second TODO: change to pingIntervalMs
       debug: false
@@ -181,6 +230,9 @@
 
     assert(Type.isInteger(dict.port))
     this.setPort(dict.port)
+
+    //assert(Type.isInteger(dict.webSocketPort))
+    //this.setPort(dict.webSocketPort)
 
     // optional server connection defaults for this server
 
@@ -209,7 +261,18 @@
   }
 
   subtitle () {
-    return this.port() + " " + (this.isSecure() ? "secure" : "");
+    //const http = this.httpProtocol();
+    //const ws = secure ? "wss" : "ws";
+
+    //return http + " " + this.port() + "\n" + ws + " " + this.webSocketPort();
+    const summary = this.port() + " " + this.path() + " " + (this.isSecure() ? "secure" : "");
+    return [summary, this.status()].join("\n");
+    //return http + ":" + this.port() + ", " + ws + ":" + this.webSocketPort() + " " + (this.isSecure() ? "secure" : "");
+  }
+
+  httpProtocol () {
+    const secure = this.isSecure();
+    return secure ? "https" : "http"; 
   }
 
   /*
@@ -224,7 +287,7 @@
   // --- getting peer list ----
 
   getPeersUrl () {
-    return "https://" + this.host() + this.path() + '/api/peers';
+    return this.httpProtocol() + "://" + this.host() + ":" + this.port() + this.path() + '/api/peers';
   }
 
   async refreshPeers () {
@@ -234,14 +297,28 @@
   }
 
   async fetchPeerIds() { // Note this is a GET request, so we don't need to be connected to do this
-    const url = this.getPeersUrl();
-    this.debugLog("getPeersUrl: '" + url + "'");
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    try {
+      const url = this.getPeersUrl();
+      this.debugLog("getPeersUrl: '" + url + "'");
+
+      const options = {
+        method: 'GET', // HTTP method
+        headers: {
+          'Authorization': `Bearer ${this.key()}`, // Passing the API key in the Authorization header
+          'Content-Type': 'application/json' // Assuming JSON data is expected
+        }
+      }
+
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const peers = await response.json();
+      return peers;
+    } catch (error) {
+      this.setStatus("ERROR:" + error.message);
+      return [];
     }
-    const peers = await response.json();
-    return peers;
   }
 
   availablePeerIds () {
