@@ -1,5 +1,14 @@
 
 [
+    "BarlowCondensed Regular.ttf",
+
+    "BarlowCondensed Medium.ttf",
+    "BarlowCondensed Medium Italic.ttf",
+    "BarlowCondensed SemiBold.ttf",
+    "BarlowCondensed SemiBold Italic.ttf",
+    "BarlowCondensed Thin.ttf",
+    "BarlowCondensed Thin Italic.ttf",
+
     "BarlowCondensed Black.ttf",
     "BarlowCondensed Black Italic.ttf",
     "BarlowCondensed Bold.ttf",
@@ -10,12 +19,5 @@
     "BarlowCondensed ExtraLight Italic.ttf",
     "BarlowCondensed Italic.ttf",
     "BarlowCondensed Light.ttf",
-    "BarlowCondensed Light Italic.ttf",
-    "BarlowCondensed Medium.ttf",
-    "BarlowCondensed Medium Italic.ttf",
-    "BarlowCondensed Regular.ttf",
-    "BarlowCondensed SemiBold.ttf",
-    "BarlowCondensed SemiBold Italic.ttf",
-    "BarlowCondensed Thin.ttf",
-    "BarlowCondensed Thin Italic.ttf"
+    "BarlowCondensed Light Italic.ttf"
 ]

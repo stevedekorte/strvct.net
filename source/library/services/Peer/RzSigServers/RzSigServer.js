@@ -297,6 +297,8 @@
   }
 
   async fetchPeerIds() { // Note this is a GET request, so we don't need to be connected to do this
+    this.setStatus("");
+
     try {
       const url = this.getPeersUrl();
       this.debugLog("getPeersUrl: '" + url + "'");
@@ -305,18 +307,23 @@
         method: 'GET', // HTTP method
         headers: {
           'Authorization': `Bearer ${this.key()}`, // Passing the API key in the Authorization header
-          'Content-Type': 'application/json' // Assuming JSON data is expected
+          'Content-Type': 'application/json', // Assuming JSON data is expected
+          'x-peer-key': this.key()
         }
       }
 
-      const response = await fetch(url, options);
+      console.log("headers: ", JSON.stringify(options, 2, 2));
+
+      const promise = fetch(url, options);
+      const response = await promise;
+      
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const peers = await response.json();
       return peers;
     } catch (error) {
-      this.setStatus("ERROR:" + error.message);
+      this.setStatus("ERROR: " + error.message);
       return [];
     }
   }
