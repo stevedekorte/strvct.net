@@ -243,7 +243,7 @@ const https = require('https');
 
 	assertNonDotPath () {
 		const path = this.path();
-		const dotComponents = path.split("/").filter(pathComponent => pathComponent.beginsWith("."));
+		const dotComponents = path.split("/").filter(pathComponent => pathComponent.startsWith("."));
 
 		if (dotComponents.length !== 0) {
 			this.throwCodeAndMessage(401, "error: attempt to access file path '" + path + "' which contains a path component begining with a dot.");
