@@ -11,7 +11,6 @@
 
   init() {
     super.init();
-    this.set
   }
 
   finalInit() {
