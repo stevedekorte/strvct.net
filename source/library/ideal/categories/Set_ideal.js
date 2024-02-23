@@ -147,7 +147,7 @@
     symmetricDifference_isOptional () {
         // so exception isn't thrown if the browser defines it
     }
-    
+
     symmetricDifference (setB) { 
         // return values in self that are not in setB + values in setB not in self
         let _difference = new Set(this);

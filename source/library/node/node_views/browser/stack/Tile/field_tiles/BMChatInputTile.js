@@ -21,26 +21,50 @@
         return this
     }
 
+    speakableElements () {
+        return this.valueView().element().getAllSubelementsWithAnyOfClass(this.node().classesToSpeak());
+    }
+
+    speakableElementWithText (text) {
+        return this.speakableElements().detect(e => e.textContent === text || e.textContent.trim() === text);
+    }
+
     onSpeakingText (aNote) {
         //debugger;
         const text = aNote.info();
         console.log(this.typeId() + " onSpeakingText: [" + text.clipWithEllipsis(15) + "]");
-        const e = this.valueView().element().findElementWithTextContent(text);
+        const e = this.speakableElementWithText(text);
+
         assert(e);
-        e.style.opacity = 1;
-        e.style.color = "rgba(255, 255, 0, 1)";
+        this.unhighlightAllSentences();
+        this.highlightElement(e);
+    }
+
+    unhighlightAllSentences () {
+        this.speakableElements().forEach(el => this.unhighlightElement(el));
+        return this;
     }
 
     onSpokeText (aNote) {
         //debugger;
         const text = aNote.info();
         console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
-        const e = this.valueView().element().findElementWithTextContent(text);
+        const e = this.speakableElementWithText(text);
         assert(e);
+        this.unhighlightElement(e);
+    }
+
+    highlightElement (e) {
+        e.style.opacity = 1;
+        e.style.color = "rgba(255, 255, 0, 1)";
+        return this;
+    }
+
+    unhighlightElement (e) {
         e.style.fontWeight = "";
         e.style.opacity = "";
         e.style.color = "";
-        //e.style.color = "rgba(136, 136, 136, 1)";
+        return this;
     }
 
     /*

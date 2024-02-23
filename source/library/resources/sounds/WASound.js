@@ -154,7 +154,7 @@
         const arrayBuffer = await promise;
         // set the result 
         this.setData(arrayBuffer);
-        console.log(this.typeId() + " setData " + arrayBuffer.byteLength);
+        //console.log(this.typeId() + " setData " + arrayBuffer.byteLength);
     }
 
     // --- attributes ---

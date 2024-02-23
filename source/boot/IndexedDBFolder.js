@@ -130,7 +130,8 @@
         const db = event.target.result;
 
         db.onerror = (event) => {
-            console.log("db error ", event);
+            console.log(this.type() + ".onOpenUpgradeNeeded() db error ", event);
+            debugger;
         };
 
         this.setDb(db);

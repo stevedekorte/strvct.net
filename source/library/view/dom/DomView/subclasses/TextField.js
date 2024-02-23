@@ -855,11 +855,15 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
     }
 };
 
-HTMLElement.prototype.findElementWithTextContent = function(textContent) {
+HTMLElement.prototype.findElementWithTextContent = function(textContent, className) {
     const children = Array.from(this.childNodes);
 
     for (let i = 0; i < children.length; i++) {
         const child = children[i];
+
+        if (className && !child.classList.contains(className)) {
+            continue;
+        }
 
         if (child.textContent === textContent) {
             return child;
@@ -871,7 +875,7 @@ HTMLElement.prototype.findElementWithTextContent = function(textContent) {
         }
 
         if (child.nodeType === Node.ELEMENT_NODE) {
-            const match = child.findElementWithTextContent(textContent);
+            const match = child.findElementWithTextContent(textContent, className);
             if (match) {
                 return match;
             }
@@ -880,3 +884,37 @@ HTMLElement.prototype.findElementWithTextContent = function(textContent) {
 
     return null;
 }
+
+//Element.prototype.getAllSubelements = function() { // Element includes HTML and SVG elements
+
+HTMLElement.prototype.getAllSubelementsWithClass = function(className) {
+    let allSubelements = [];
+    function recurse(element) {
+      Array.from(element.children).forEach(child => {
+        if (child.classList.contains(className)) {
+          allSubelements.push(child);
+        }
+        recurse(child);
+      });
+    }
+    recurse(this);
+    return allSubelements;
+  };
+
+HTMLElement.prototype.getAllSubelementsWithAnyOfClass = function(classNames) {
+    let allSubelements = [];
+    function recurse(element) {
+      Array.from(element.children).forEach(child => {
+        // Check if the child element contains any of the class names provided
+        if (classNames.some(className => child.classList.contains(className))) {
+          allSubelements.push(child);
+        }
+        recurse(child);
+      });
+    }
+    recurse(this);
+    return allSubelements;
+};
+  
+
+  

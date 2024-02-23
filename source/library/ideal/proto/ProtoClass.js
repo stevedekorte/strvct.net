@@ -306,14 +306,13 @@
         */
 
         if (this.hasSlot(slotName)) {
-            const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
-            console.log(msg)
-
             // hack to avoid error for methods like Set isSubsetOf, which exist on only on some browsers
             // so we define ourselves.
             if(typeof(initialValue) === "function" && this[slotName + "_isOptional"] !== undefined) {
                 return null
             }
+            const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
+            console.log(msg)
             debugger
             throw new Error(msg)
         }
