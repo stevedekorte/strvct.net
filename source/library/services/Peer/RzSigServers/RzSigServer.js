@@ -307,9 +307,12 @@
         method: 'GET', // HTTP method
         headers: {
           'Authorization': `Bearer ${this.key()}`, // Passing the API key in the Authorization header
-          'Content-Type': 'application/json', // Assuming JSON data is expected
-          'x-peer-key': this.key()
+          'Content-Type': 'application/json' // Assuming JSON data is expected
         }
+      }
+
+      if (this.key()) {
+        options.headers['x-peer-key'] = this.key();
       }
 
       console.log("headers: ", JSON.stringify(options, 2, 2));

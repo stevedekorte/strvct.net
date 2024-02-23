@@ -13,11 +13,11 @@
     }
 
     init () {
-        super.init()
-        this.keyView().hideDisplay()
-        this.setValueUneditableBorder("none")
-        this.setValueEditableBorder("none")
-        //this.setWidth("-webkit-fill-available")
+        super.init();
+        this.keyView().hideDisplay();
+        this.setValueUneditableBorder("none");
+        this.setValueEditableBorder("none");
+        //this.setWidth("-webkit-fill-available");
         return this
     }
 
@@ -163,9 +163,11 @@
 
         super.syncFromNode();
 
+        /*
         if (this.valueView().element().innerHTML) {
 
         }
+        */
         return this;
     }
 

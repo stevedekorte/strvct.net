@@ -377,17 +377,23 @@
   */
 
   peerOptions () {
-    const server = this.server()
-    return {
+    const server = this.server();
+    const options = {
       host: server.host(),
       path: server.path(),
       secure: server.isSecure(),
       port: server.port(),
       reliable: this.isReliable(),
       pingInterval: this.pingIntervalMs(),
-      debug: this.debug(),
-      key: this.server().key().trim() !== "" ? this.server().key() : undefined
+      debug: this.debug()
+    };
+    
+    const key = this.server().key().trim();
+    if (key) {
+      options.key = key;
     }
+
+    return options;
   }
 
   setPeer (aPeer) {
