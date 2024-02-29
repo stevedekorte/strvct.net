@@ -166,6 +166,7 @@ const https = require('https');
 		let path = nodePath.join(".", decodeURI(this.urlObject().pathname));
 		if (path === "./") {
 			path = "./index.html";
+			//path = "index.html";
 		}
 
 		const acmePath = ".well-known/acme-challenge/"
@@ -243,7 +244,7 @@ const https = require('https');
 
 	assertNonDotPath () {
 		const path = this.path();
-		const dotComponents = path.split("/").filter(pathComponent => pathComponent.startsWith("."));
+		const dotComponents = path.split("/").filter(pathComponent => pathComponent.startsWith(".."));
 
 		if (dotComponents.length !== 0) {
 			this.throwCodeAndMessage(401, "error: attempt to access file path '" + path + "' which contains a path component begining with a dot.");
