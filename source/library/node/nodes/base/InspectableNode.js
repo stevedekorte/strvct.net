@@ -192,6 +192,7 @@
 
         field.setTarget(this)
         field.setNodeCanEditTitle(false)
+        field.setValueIsEditable(slot.canEditInspection());
         field.setNodeCanReorderSubnodes(false)
         field.setSummaryFormat(slot.summaryFormat())
         field.setHasNewlineAferSummary(true)
