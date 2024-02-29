@@ -37,13 +37,18 @@
 
     calcIsSupported () {
         // return WebBrowserWindow.isTouchDevice()
-        let result = false 
+        let result = false;
+        
         if ("ontouchstart" in window) { 
+            // works on most browsers 
             result = true; 
-        } // works on most browsers 
-        if (navigator.maxTouchPoints) { r
-            esult = true; 
-        } // works on IE10/11 and Surface	
+        }
+
+        if (navigator.maxTouchPoints) {
+            // works on IE10/11 and Surface	
+            result = true; 
+        } 
+
         return result
     }
 
