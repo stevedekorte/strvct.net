@@ -333,6 +333,17 @@
         return this.getCssProperty("position")
     }
 
+    // inset
+
+    setInset (s) {
+        this.setCssProperty("position", s)
+        return this
+    }
+
+    inset () {
+        return this.getCssProperty("inset")
+    }
+
     // pointer events
 
     pointerEventsValidValues () {

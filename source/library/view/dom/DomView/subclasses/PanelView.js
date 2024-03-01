@@ -6,7 +6,7 @@
 
 */
 
-(class PanelView extends DomView {
+(class PanelView extends DomView { 
     
     initPrototypeSlots () {
         this.newSlot("titleView", null)
@@ -15,48 +15,66 @@
         this.newSlot("isDragging", false)
     }
 
+    setCssOnSubview (view) {
+        //view.setPadding("10px");
+        //view.setBorder("1px solid #ddd");
+        view.setMarginBottom("5px");
+        view.setPaddingLeft("1em");
+        view.setPaddingRight("1em");
+        view.setWidth("fit-content");
+        view.setHeight("fit-content");
+        view.setInset(null);
+        return this;
+    }
+
     init () {
         super.init()
-        this.setPosition("absolute")
-        this.setTitleView(TextField.clone().setElementClassName("PanelTitleView"))
-        this.addSubview(this.titleView())
-        this.titleView().setTextAlign("center")
-        this.titleView().setHeight("3em")
-        this.titleView().setWhiteSpace("normal")
-        this.titleView().centerInParentView()
-        this.titleView().setValue("hello")
-        this.titleView().setColor("white")
+        this.setDisplay("flex");
+        this.setPosition("absolute");
+
+        this.setAlignItems("center");
+        this.setJustifyContent("center");
+        this.setTop("0%");
+        this.setLeft("50%");
+        this.setTransform("translate(-50%, -50%)");
+        this.setFlexDirection("column");
+        //this.setMinAndMaxHeight("fit-content");
+        this.setWidth("fit-content");
+        this.setHeight("fit-content");
+        this.setZIndex(1000);
+
+        {
+            // title view
+            const view = TextField.clone().setElementClassName("PanelTitleView");
+            this.setTitleView(view);
+            this.addSubview(view);
+            view.setTextAlign("center")
+            view.setHeight("3em");
+            view.setWhiteSpace("normal");
+            view.centerInParentView();
+            view.setValue("");
+            view.setColor("white");
+            this.setCssOnSubview(view);
+        }
 
         //this.setSubtitleView(TextField.clone().setElementClassName("PanelSubtitleView"))
         //this.addSubview(this.subtitleView())
 
-        this.setButton1(ButtonView.clone())
-        this.addSubview(this.button1())
-        this.button1().setPosition("absolute").setRightPx(10).setBottomPx(10)
-        this.button1().setMinAndMaxWidth(100)
-        this.button1().setTitle("OK")
-        this.button1().setTarget(this).setAction("hitButton1")
+        {
+            // button 1
+            const view = ButtonView.clone();
+            this.setButton1(view);
+            this.addSubview(view);
+            //view.setPosition("absolute").setRightPx(10).setBottomPx(10);
+            //view.setMinAndMaxWidth(100);
+            view.setTitle("OK");
+            view.setTarget(this).setAction("hitButton1");
+            view.setBorder("1px solid rgba(255,255,255,0.5)");
+            view.setPaddingTop("0em");
+            view.setPaddingBottom("0em");
 
-        this.setMinAndMaxWidth(500)
-        this.setMinAndMaxHeight(200)
-        this.setBackgroundColor("black")
-        //this.setBorder("1px solid #ccc")
-        this.setPosition("absolute")
-        this.setLeftPx(0)
-        this.setTopPx(0)
-        //this.setupForDraggingWithMouse()
-        this.setBorderRadiusPx(5)
-        this.centerInParentView()
-
-        this._mouseMoveTrackerFunc = (event) => {
-            this.mouseMoveTracker(event)
+            this.setCssOnSubview(view);
         }
-
-        /*
-        this._mouseUpTrackerFunc = (event) => {
-            //
-        }
-        */
 
         return this
     }
@@ -66,7 +84,23 @@
         return this
     }
 
+    openInWindow () {
+        App.shared().mainWindow().documentBody().addSubview(this);
+        return this
+    }
 
+    static showError (error) {
+        const panel = PanelView.clone().setTitle(error.message)
+        //.setMinAndMaxWidth(300).setMinAndMaxHeight(200);
+        panel.centerInParentView();
+        panel.setTopPx(0);
+        panel.setBackgroundColor("red");
+        panel.setColor("white");
+        panel.openInWindow();
+        return panel;
+    }
+
+    /*
     // --- dragging ---
 
     setupForDraggingWithMouse () {
@@ -101,6 +135,7 @@
         //this.setBackgroundColor(this.normalColor())
         this.parentView().element().removeEventListener("mousemove", this._mouseMoveTrackerFunc, false);
     }
+    */
 
     hitButton1 () {
         this.close()

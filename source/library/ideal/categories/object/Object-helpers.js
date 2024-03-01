@@ -125,11 +125,11 @@ Object.defineSlotSafely = function(obj, slotName, slotValue) {
     }
 
     if (obj.hasOwnProperty(slotName)) {
-        const msg = nameForObj(obj) + "." + slotName + " slot already exists"
-        console.log(msg)
         if(typeof(slotValue) === "function" && obj[slotName + "_isOptional"] !== undefined) {
             return null
         }
+        const msg = nameForObj(obj) + "." + slotName + " slot already exists"
+        console.log(msg)
         throw new Error(msg)
     } else {
         //const msg = nameForObj(obj) + "." + slotName + " DEFINED"

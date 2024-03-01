@@ -3,6 +3,14 @@
 /* 
     OpenAiService
 
+    OpenAiService is a BMSummaryNode that holds the API key and subnodes for the various OpenAI services.
+
+    Example:
+
+    OpenAiService.shared().setApiKey("sk-1234567890");
+    const hasApiKey = OpenAiService.shared().hasApiKey();
+
+
 */
 
 (class OpenAiService extends BMSummaryNode {
@@ -71,6 +79,10 @@
 
   validateKey (s) {
     return s.length === 51 && s.startsWith("sk-");
+  }
+
+  hasApiKey () {
+    return this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }
 
 }.initThisClass());
