@@ -52,6 +52,17 @@
     this.setKeyIsVisible(false)
   }
 
+  /*
+  didUpdateSlotValue (oldValue, newValue) {
+    super.didUpdateSlotValue(oldValue, newValue);
+    return this;
+  }
+  */
+
+  onDidEditValue (valueView) {
+    this.conversation().onChatEditValue(this.value())
+  }
+
   onValueInput (changedView) {
     if (this.value()) {
       this.send()

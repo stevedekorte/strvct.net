@@ -36,7 +36,6 @@
     super.init();
     this.setTitle("Audio Queue");
     this.setQueue([]);
-
   }
 
   finalInit () {
@@ -150,6 +149,15 @@
         this.debugLog("resumed");
       //}
     }
+  }
+
+  stopAndClearQueue () {
+    const audio = this.currentSound();
+    if (audio) {
+        audio.stop();
+        // this.onSoundEnded(audio); // needed?
+    }
+    this.setQueue([]);
   }
 
 }.initThisClass());

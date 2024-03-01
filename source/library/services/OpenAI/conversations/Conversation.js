@@ -159,7 +159,7 @@
     });
     return this
   }
-
+  
   messageWithId (messageId) {
     return this.messages().detect(msg => msg.messageId() === messageId)
   }

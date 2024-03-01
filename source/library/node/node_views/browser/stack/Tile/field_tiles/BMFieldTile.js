@@ -351,7 +351,13 @@
     }
     
     onDidEdit (changedView) { // sent up subview chain when an edit occurs
-        this.scheduleSyncToNode() 
+        this.scheduleSyncToNode();
+        if (changedView === this.valueView()) {
+            const node = this.node()
+            if (node.onDidEditValue) {
+                node.onDidEditValue(changedView)
+            }
+        }
         return true
     }
 
@@ -361,7 +367,7 @@
             this.syncToNode(); //  is this done elsewhere
             //debugger;
             if (node.onValueInput) {
-                node.onValueInput()
+                node.onValueInput(changedView)
             }
         }
     }

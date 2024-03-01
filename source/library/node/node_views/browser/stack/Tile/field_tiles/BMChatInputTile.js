@@ -2,7 +2,7 @@
 
 /*
 
-    BMChatInputTile
+    BMChatInputTile 
 
     
 */
@@ -33,8 +33,13 @@
         //debugger;
         const text = aNote.info();
         console.log(this.typeId() + " onSpeakingText: [" + text.clipWithEllipsis(15) + "]");
-        const e = this.speakableElementWithText(text);
 
+        if (text.includes("<break time=")) {
+            // no need to highlight breaks as they are not in the text
+            return;
+        }
+
+        const e = this.speakableElementWithText(text);
         assert(e);
         this.unhighlightAllSentences();
         this.highlightElement(e);
@@ -49,6 +54,12 @@
         //debugger;
         const text = aNote.info();
         console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
+
+        if (text.includes("<break time=")) {
+            // no need to highlight breaks as they are not in the text
+            return;
+        }
+
         const e = this.speakableElementWithText(text);
         assert(e);
         this.unhighlightElement(e);

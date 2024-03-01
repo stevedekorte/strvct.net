@@ -322,9 +322,12 @@
     }
 
     stop () {
-        this.source().stop();
-        this.setSource(null);
-        this.setPlayPromise(null);
+        if (this.isPlaying()) {
+            this.source().stop();
+            this.onEnded(); // needed?
+            //this.setSource(null);
+            //this.setPlayPromise(null);
+        }
         return this;
     }
 

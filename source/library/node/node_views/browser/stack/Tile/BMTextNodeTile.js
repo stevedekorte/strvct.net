@@ -51,11 +51,6 @@
         this.scheduleSyncToNode()
     }
 
-    onDidEdit (aView) {
-        super.onDidEdit() 
-        return true // stop propogation
-    }
-
     // --- sync ---
 
     syncToNode () {   
