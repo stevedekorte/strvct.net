@@ -13,55 +13,28 @@
 
 */
 
-(class OpenAiService extends BMSummaryNode {
+(class OpenAiService extends AiService {
   initPrototypeSlots () {
+    
     {
-      const slot = this.newSlot("apiKey", "")
-      //slot.setInspectorPath("")
-      slot.setLabel("API Key")
-      slot.setShouldStoreSlot(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      //slot.setValidValues(values)
+      const slot = this.overrideSlot("models")
+      slot.setFinalInitProto(OpenAiModels);
     }
 
     {
-      const slot = this.newSlot("models", null)
-      slot.setFinalInitProto(OpenAiModels)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-    }
-
-    {
-      const slot = this.newSlot("conversations", null)
+      const slot = this.overrideSlot("conversations", null)
       slot.setFinalInitProto(OpenAiConversations)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
     }
 
     {
-      const slot = this.newSlot("imagesPrompts", null)
+      const slot = this.overrideSlot("imagesPrompts", null)
       slot.setFinalInitProto(OpenAiImagePrompts)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
     }
 
     {
-      const slot = this.newSlot("ttsSessions", null)
+      const slot = this.overrideSlot("ttsSessions", null)
       slot.setFinalInitProto(OpenAiTtsSessions)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
     }
-
-    /*
-    {
-      const slot = this.newSlot("jobs", null)
-      slot.setFinalInitProto(OpenAiJobs)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-    }
-    */
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -75,6 +48,11 @@
     super.finalInit()
     this.setTitle("OpenAI");
     this.setSubtitle("AI services");
+
+    // do we really want these to replace any stored values?
+    this.setChatModel("gpt-4-turbo-preview");
+    this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
+    this.setChatStreamEndpoint("https://api.openai.com/v1/chat/completions");
   }
 
   validateKey (s) {

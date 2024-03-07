@@ -323,6 +323,7 @@
     this.setStatus(s)
     this.sendDelegate("onTtsPromptError", [this]);
     //this.onEnd();
+    PanelView.showError(new Error("Text to Speech request " + s));
     debugger;
   }
 

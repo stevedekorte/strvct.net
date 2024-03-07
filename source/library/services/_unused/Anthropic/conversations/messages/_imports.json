@@ -1,4 +1,5 @@
 [
+    "ConversationMessage.js",
     "OpenAiMessage.js",
     "OpenAiResponseMessage.js"
 ]

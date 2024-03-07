@@ -238,7 +238,7 @@ const https = require('https');
 	assertPathExists () {
 		const path = this.path();
 		if (!fs.existsSync(path)) {
-			this.throwCodeAndMessage(404, "error: missing file ", path);
+			this.throwCodeAndMessage(404, "error: missing file " + path);
 		}
 	}
 
@@ -252,7 +252,7 @@ const https = require('https');
 	}
 
 	throwCodeAndMessage (code, message) {
-		const error = new Error(message)
+		const error = new Error(message);
 		error._code = code;
 		throw error;
 	}

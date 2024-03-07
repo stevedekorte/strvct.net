@@ -3,6 +3,12 @@
 /* 
     AudioQueue 
 
+    sound protocol:
+    play()
+    addDelegate(delegate)
+    removeDelegate(delegate)
+    stop()
+
 */
 
 (class AudioQueue extends BMSummaryNode {
@@ -87,6 +93,15 @@
   }
 
   queueWASound (sound) {
+    // e.g. sound could be a WASound or YouTube MusicTrack
+    // just needs to support the protocol
+
+    // verify sound protocol
+    assert(sound.play);
+    assert(sound.stop);
+    assert(sound.addDelegate);
+    assert(sound.removeDelegate);
+
     //console.log(this.type() + " PUSH " + sound.description());
     this.queue().push(sound);
     this.processQueue();

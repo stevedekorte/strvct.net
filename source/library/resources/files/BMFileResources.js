@@ -22,10 +22,20 @@
         return this
     }
 
+    /*
+    setup () {
+        // subclasses need to use this to set ResourceClasses
+        this.setResourceClasses([BMResourceFile])
+    }
+    */
+
     appDidInit () {
-        //this.debugLog(".appDidInit()")
-        //this.setupSubnodes()
-        return this
+        //this.debugLog(".appDidInit()");
+        //debugger;
+        //this.setupSubnodes();
+        //debugger;
+        this.setupSubnodesIfNeeded();
+        return this;
     }
 
     /*
@@ -66,6 +76,5 @@
         //debugger
         return this.subnodes().first()
     }
-
 
 }.initThisClass());

@@ -63,9 +63,28 @@
       const slot = this.newSlot("shouldPlayOnAccess", true);
     }
 
+    /*
+
+      // optional info
+      {
+        const slot = this.newSlot("label", null);
+        slot.setAnnotation("shouldJsonArchive", true);
+      }
+
+      {
+        const slot = this.newSlot("transcript", null);
+        slot.setAnnotation("shouldJsonArchive", true);
+      }
+
+    */
+
     {
       const slot = this.newSlot("isPlaying", false);
       slot.setSyncsToView(true);
+    }
+
+    {
+      const slot = this.newSlot("delegateSet", null);
     }
 
     this.setShouldStore(true);
@@ -74,6 +93,7 @@
 
   init() {
     super.init();
+    this.setDelegateSet(new Set());
     //this.setIsDebugging(true);
   }
 
@@ -115,15 +135,21 @@
     player.setTrackName(this.name());
     player.setVideoId(this.trackId());
     player.setShouldRepeat(false);
+
     this.setIsPlaying(true);
+    this.post("onSoundStarted");
     await player.play();
+
     this.setIsPlaying(false);
+    this.post("onSoundEnded");
   }
 
   async stop () {
     const player = this.library().musicPlayer()
     await player.stop();
     this.setIsPlaying(false);
+
+    this.post("onSoundEnded");
   }
 
   isMusicTrack () {
@@ -147,6 +173,37 @@
       title: this.isPlaying() ? "Stop" : "Play",
       isVisible: true,
     };
+  }
+
+  // --- delegates --- 
+
+  post (methodName) {
+    this.postNoteNamed(methodName);
+    this.sendDelegate(methodName);
+    return this;
+  }
+
+  addDelegate (d) {
+      this.delegateSet().add(d);
+      return this;
+  }
+
+  removeDelegate (d) {
+      this.delegateSet().delete(d);
+      return this;
+  }
+
+  sendDelegate (methodName, args = [this]) {
+      const sendDelegate = (d, methodName, args) => {
+          const f = d[methodName]
+          if (f) {
+            f.apply(d, args)
+          }
+      };
+
+      this.delegateSet().forEach(d => { 
+          sendDelegate(d, methodName, args); 
+      });
   }
 
 }).initThisClass();

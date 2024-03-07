@@ -14,18 +14,18 @@
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([OpenAiImagePrompt])
-    this.setCanAdd(true)
-    this.setNodeCanReorderSubnodes(true)
+    this.setSubnodeClasses([OpenAiImagePrompt]);
+    this.setCanAdd(true);
+    this.setNodeCanReorderSubnodes(true);
   }
 
   finalInit () {
-    super.finalInit()
+    super.finalInit();
     this.setTitle("Text to Image");
   }
 
   service () {
-    return this.parentNode()
+    return this.parentNode();
   }
 
 }.initThisClass());

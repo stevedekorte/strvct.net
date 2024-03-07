@@ -13,6 +13,7 @@
 
 (class OpenAiConversations extends BMSummaryNode {
   initPrototypeSlots() {
+
   }
 
   init() {
@@ -26,12 +27,18 @@
   }
 
   finalInit() {
-    super.finalInit();
+    super.finalInit()
     this.setNoteIsSubnodeCount(true);
   }
 
+  /*
+  didInit () {
+    super.didInit()
+  }
+  */
+
   service () {
-    return this.parentNode();
+    return this.parentNode()
   }
 
 }.initThisClass());

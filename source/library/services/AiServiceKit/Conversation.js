@@ -41,6 +41,10 @@
     this.setNodeChildrenAlignment("flex-start") // make the messages stick to the bottom
   }
 
+  onChatEditValue (v) {
+    // for subclasses to override
+  }
+
   /*
   nodeFillsRemainingWidth () {
     return true

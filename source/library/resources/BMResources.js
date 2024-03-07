@@ -4,6 +4,8 @@
 
     BMResources
 
+    BMResources.shared().files().resourceForPath("./app/sessions/session/Settings/prompt/MainPrompt_Claude3.txt") 
+
 */
 
 (class BMResources extends BMStorableNode {

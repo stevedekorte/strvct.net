@@ -73,7 +73,13 @@
     }
 
     resourceForPath (aPath) {
-        const rClass = this.resourceClassForFileExtension(aPath.pathExtension())
+        const rClass = this.resourceClassForFileExtension(aPath.pathExtension());
+        if (!rClass) {
+            debugger;
+            this.resourceClassForFileExtension(aPath.pathExtension());
+
+            return null
+        };
         const aResource = rClass.clone().setPath(aPath)
         aResource.load()
         return aResource
