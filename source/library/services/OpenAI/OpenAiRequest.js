@@ -17,6 +17,10 @@
     this.setIsDebugging(true);
   }
 
+  apiKey () {
+    return OpenAiService.shared().apiKey();
+  }
+
   requestOptions () {
     const apiKey = this.apiKey();
     return {

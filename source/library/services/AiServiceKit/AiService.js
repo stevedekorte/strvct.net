@@ -57,12 +57,14 @@
       slot.setIsSubnodeField(true)
     }
 
+    /*
     {
       const slot = this.newSlot("models", null)
       //slot.setFinalInitProto(OpenAiModels)
       slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(false);
     }
+    */
 
     {
       const slot = this.newSlot("conversations", null)
@@ -75,14 +77,14 @@
       const slot = this.newSlot("imagesPrompts", null)
       //slot.setFinalInitProto(OpenAiImagePrompts)
       slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(false);
     }
 
     {
       const slot = this.newSlot("ttsSessions", null)
       //slot.setFinalInitProto(OpenAiTtsSessions)
       slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
+      slot.setIsSubnode(false);
     }
 
     this.setShouldStore(true);
@@ -97,6 +99,13 @@
     super.finalInit()
     this.setTitle("AI Service");
     this.setSubtitle("services");
+
+    // subclasses should set these
+    /*
+    this.setChatModel("gpt-4-turbo-preview");
+    this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
+    this.setChatStreamEndpoint("https://api.openai.com/v1/chat/completions");
+    */
   }
 
   validateKey (s) {

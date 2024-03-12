@@ -6,5 +6,6 @@
     "ChatInputNode.js",
     "AiMessage.js",
     "AiResponseMessage.js",
-    "AiConversation.js"
+    "AiConversation.js",
+    "AiConversations.js"
 ]

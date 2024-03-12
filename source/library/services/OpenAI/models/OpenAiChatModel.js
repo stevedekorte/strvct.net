@@ -47,12 +47,12 @@
     return this.isAvailable() ? "available" : "";
   }
 
-  models () {
-    return this.parentNode()
+  service () {
+    return this.models().service();
   }
 
-  apiKey () {
-    return this.models().service().apiKey();
+  models () {
+    return this.parentNode()
   }
 
   title () {
@@ -65,13 +65,16 @@
     }
 
     //debugger;
-    if (!this.apiKey()) {
+
+    const apiKey = this.service().apiKey();
+
+    if (!apiKey) {
       console.warn(this.type() + " " + this.title() + " asyncCheckAvailability() - no api key");
       //debugger;
       return null
     }
 
-    //console.log("api key: '" + this.apiKey() + "'");
+    //console.log("api key: '" + apiKey + "'");
 
     const request = this.newRequest().setBodyJson({
       model: this.name(),
@@ -109,8 +112,7 @@
 
   newRequest () {
     const request = OpenAiRequest.clone();
-    request.setApiUrl("https://api.openai.com/v1/chat/completions");
-    request.setApiKey(this.apiKey());
+    request.setApiUrl(this.service().chatEndpoint());
     return request;
   }
 

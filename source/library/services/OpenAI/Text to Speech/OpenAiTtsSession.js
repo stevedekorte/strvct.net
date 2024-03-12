@@ -227,7 +227,7 @@
 
   service () {
     //return this.ttsSessions().service()
-    return HavewordsApp.shared().services().openAiService()
+    return OpenAiService.shared();
   }
 
   // ---
@@ -263,14 +263,9 @@
     return "https://api.openai.com/v1/audio/speech";
   }
 
-  apiKey () {
-    return this.service().apiKey()
-  }
-
   newRequest () {
     const request = OpenAiTtsRequest.clone();
     request.setApiUrl(this.endpoint());
-    request.setApiKey(this.apiKey());
     request.setDelegate(this)
 
     const bodyJson = {

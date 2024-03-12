@@ -10,34 +10,43 @@
     OpenAiService.shared().setApiKey("sk-1234567890");
     const hasApiKey = OpenAiService.shared().hasApiKey();
 
-
 */
 
 (class OpenAiService extends AiService {
+
+  static initClass () {
+    this.setIsSingleton(true);
+    return this;
+  }
+  
   initPrototypeSlots () {
     
+    /*
     {
-      const slot = this.overrideSlot("models")
+      const slot = this.overrideSlot("models");
       slot.setFinalInitProto(OpenAiModels);
+      slot.setIsSubnode(true);
+    }
+    */
+
+    {
+      const slot = this.overrideSlot("conversations", null);
+      slot.setFinalInitProto(OpenAiConversations);
+      slot.setIsSubnode(true);
     }
 
     {
-      const slot = this.overrideSlot("conversations", null)
-      slot.setFinalInitProto(OpenAiConversations)
+      const slot = this.overrideSlot("imagesPrompts", null);
+      slot.setFinalInitProto(OpenAiImagePrompts);
+      slot.setIsSubnode(true);
     }
 
     {
-      const slot = this.overrideSlot("imagesPrompts", null)
-      slot.setFinalInitProto(OpenAiImagePrompts)
+      const slot = this.overrideSlot("ttsSessions", null);
+      slot.setFinalInitProto(OpenAiTtsSessions);
+      slot.setIsSubnode(true);
     }
 
-    {
-      const slot = this.overrideSlot("ttsSessions", null)
-      slot.setFinalInitProto(OpenAiTtsSessions)
-    }
-
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
   }
 
   init () {

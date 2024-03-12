@@ -19,8 +19,8 @@
 (class SimpleSynth extends ProtoClass {
 
   static initClass () {
-    this.setIsSingleton(true)
-    return this
+    this.setIsSingleton(true);
+    return this;
   }
 
   initPrototypeSlots () {
@@ -33,11 +33,11 @@
 
   audioContext () {
     const context = new (window.AudioContext || window.webkitAudioContext)();
-    return context
+    return context;
   }
 
   playOminousSound () {
-    const audioContext = this.audioContext()
+    const audioContext = this.audioContext();
 
     const notes = [110, 123.47, 130.81, 146.83]; // Frequencies for notes A2, B2, C3, and D3
 
@@ -65,7 +65,7 @@
     Each note in the array is played for a duration of 0.1 seconds (100 milliseconds) with a delay of 0.1 seconds between each note. 
     The gain or volume of the notes is set to a low value of 0.02 to ensure that the notes are not too loud.
     */
-    const context = this.audioContext()
+    const context = this.audioContext();
     const gainNode = context.createGain();
     const volume = 0.1; //0.02;
 
@@ -87,7 +87,7 @@
   }
 
   playSendBeep () {
-    this.playNotes([330, 290])
+    this.playNotes([330, 290]);
   }
 
   playReceiveBeep () {
@@ -96,12 +96,12 @@
 
   playButtonTap () {
     //this.playNotes([440]);
-    this.playTrackNamed("buttonPress")
+    this.playTrackNamed("buttonPress");
   }
 
   playButtonDown () {
     //this.playNotes([400]);
-    this.playTrackNamed("buttonPress")
+    this.playTrackNamed("buttonPress");
   }
 
   playButtonUp () {
@@ -129,10 +129,10 @@
   }
 
   playTrackNamed (trackName) {
-    const notes = this.tracksJson()[trackName]
+    const notes = this.tracksJson()[trackName];
 
     if (!notes) {
-      console.warn("no track with name " + trackName + "'")
+      console.warn("no track with name " + trackName + "'");
       return
     }
 

@@ -340,8 +340,11 @@
             //const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
             const shouldMerge = newValue.beginsWith(oldValue);
             if (shouldMerge) {
-                //console.log("oldValue: [" + oldValue + "]");
-                //console.log("newValue: [" + newValue + "]");
+                /*
+                console.log("---- begin HTML merge ----");
+                console.log("oldValue: [" + oldValue + "]");
+                console.log("newValue: [" + newValue + "]");
+                */
 
                 const reader = HtmlStreamReader.clone(); // TODO: cache this for efficiency, release whenever shouldMerge is false
                 reader.beginHtmlStream();
@@ -350,6 +353,7 @@
                 this.element().mergeFrom(reader.rootElement());
                 //console.log("merged: [" + this.element().innerHTML + "]");
                 this.setLastMergeValue(newValue);
+                //console.log("---- end HTML merge ----");
             } else {
                  this.setString(newValue);
             }
@@ -803,7 +807,10 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
     const remoteChildNodes = Array.from(remoteElement.childNodes);
 
     // walk through the source
-    assert(localChildNodes.length <= remoteChildNodes.length);
+    if (localChildNodes.length <= remoteChildNodes.length) {
+         // this can happen if last string ended on an incomplete tag e.g. "...<"
+         // let it add it as a text node and then we'll replace it with the complete tag on the next merge?
+    }
 
     for (let i = 0; i < remoteChildNodes.length; i++) {
         //debugger;
@@ -813,9 +820,9 @@ HTMLElement.prototype.mergeFrom = function(remoteElement) {
         if (i < localChildNodes.length) {
             let localChildNode = localChildNodes[i];
 
-            // special case for cut of tags
+            // special case for cut off tags
             if (i === localChildNodes.length -1 && localChildNode.nodeType === Node.TEXT_NODE && remoteChildNode.nodeType !== Node.TEXT_NODE) {
-                // this can happen if last string ended on an incomplete tag e.g. "...<"
+                // this can happen if last string ended on an incomplete tag e.g. "...<" but the tag is now complete
                 this.removeChild(localChildNode);
                 assert(remoteChildNode.nodeType === Node.ELEMENT_NODE);
                 localChildNode = remoteChildNode.clone();

@@ -11,27 +11,19 @@
 
 */
 
-(class OpenAiConversations extends BMSummaryNode {
+(class OpenAiConversations extends AiConversations {
   initPrototypeSlots() {
   }
 
   init() {
     super.init();
-    this.setTitle("Conversations");
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
+  }
+
+
+  finalInit () {
+    super.finalInit()
     this.setSubnodeClasses([OpenAiConversation]);
-    this.setCanAdd(true);
-    this.setNodeCanReorderSubnodes(true);
   }
 
-  finalInit() {
-    super.finalInit();
-    this.setNoteIsSubnodeCount(true);
-  }
-
-  service () {
-    return this.parentNode();
-  }
 
 }.initThisClass());

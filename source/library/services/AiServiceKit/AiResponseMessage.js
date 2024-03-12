@@ -138,10 +138,9 @@
     const jsonHistory = messages.map(m => m.messagesJson());
 
     const request = this.requestClass().clone();
-//    request.setApiUrl("https://api.openai.com/v1/chat/completions");
     request.setApiUrl(this.service().chatEndpoint());
+    request.setStreamApiUrl(this.service().chatStreamEndpoint());
 
-    request.setApiKey(this.apiKey());
     request.setDelegate(this)
     request.setBodyJson({
       model: this.selectedModel(),

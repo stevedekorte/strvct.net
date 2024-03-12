@@ -17,11 +17,11 @@
 
   initPrototypeSlots() {
     {
-      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request - will receive onRequestComplete message if it responds to it
+      const slot = this.newSlot("delegate", null); // optional reference to object that owns request - will receive onRequestComplete message if it responds to it
     }
 
     {
-      const slot = this.newSlot("apiUrl", null);
+      const slot = this.newSlot("needsProxy", true);
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
@@ -32,7 +32,18 @@
     }
 
     {
-      const slot = this.newSlot("apiKey", null);
+      const slot = this.newSlot("apiUrl", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
+      const slot = this.newSlot("streamApiUrl", null);
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
@@ -130,7 +141,6 @@
       const slot = this.newSlot("finishReason", null);
     }
 
-
     {
       const slot = this.newSlot("fullContent", null); 
       slot.setInspectorPath("")
@@ -171,6 +181,11 @@
     this.setShouldStoreSubnodes(false)
   }
 
+  apiKey () {
+    throw new Error("apiKey getter should be implemented by subclass");
+    return null;
+  }
+
   init () {
     super.init();
     this.setIsDebugging(true);
@@ -184,11 +199,6 @@
     return this.status();
   }
 
-  setService (anObject) {
-    this.setDelegate(anObject);
-    return this;
-  }
-
   body () {
     return JSON.stringify(this.bodyJson(), 2, 2);
   }
@@ -200,12 +210,17 @@
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
+        'Accept-Encoding': 'identity'
       },
       body: JSON.stringify(this.bodyJson()),
     };
   }
 
   assertValid () {
+    if (!this.streamApiUrl()) {
+      throw new Error(this.type() + " streamApiUrl missing");
+    }
+
     if (!this.apiUrl()) {
       throw new Error(this.type() + " apiUrl missing");
     }
@@ -215,16 +230,22 @@
     }
   }
 
+  activeApiUrl () {
+    let url = this.isStreaming() ? this.streamApiUrl() : this.apiUrl();
+    if (this.needsProxy()) {
+      url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+    }
+    return url;
+  }
+
+  proxyUrl () {
+    const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
+    return proxyUrl;
+    //return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
+  }
+
   showRequest () {
-    this.debugLog(
-      " request " +
-      this.requestId() +
-      " apiUrl: " +
-        this.apiUrl() +
-        " body: " + 
-        JSON.stringify(this.bodyJson()) +
-        "'"
-    );
+    this.debugLog(this.description());
   }
 
   showResponse () {
@@ -253,7 +274,7 @@
       this.setFetchAbortController(controller);
       options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
 
-      const fetchPromise = fetch(this.apiUrl(), options);
+      const fetchPromise = fetch(this.activeApiUrl(), options);
 
       try {
         const response = await fetchPromise;
@@ -296,15 +317,31 @@
 
   // --- helpers ---
 
+  curlCommand () {
+    const commandParts = [];
+    commandParts.push(`curl  --insecure "` + this.activeApiUrl() + '"');
+    const headers = this.requestOptions().headers;
 
-  description() {
-    return (
-      this.type() +
-      " url:" +
-      this.apiUrl() +
-      " request:" +
-      JSON.stringify(this.requestOptions())
-    );
+     Object.keys(headers).forEach((key) => {
+      const value = headers[key];
+      commandParts.push(` --header "${key}: ${value}"`);
+    });
+
+    const data = JSON.stringify(this.bodyJson());
+    commandParts.push(` --data '` + data + `'`);
+    return commandParts.join(" \\\n");
+  }
+
+  description () {
+    const json = {
+      requestId: this.requestId(),
+      options: this.requestOptions(),
+      activeApiUrl:  this.activeApiUrl(),
+      apiUrl:  this.apiUrl(),
+      streamApiUrl:  this.streamApiUrl(),
+      body: this.bodyJson()
+    };
+    return JSON.stringify(json, 2, 2);
   }
 
   // --- streaming response --- 
@@ -319,6 +356,12 @@
     }
   }
 
+  setupForStreaming () {
+    // subclasses should override this method to set up the request for streaming
+    this.bodyJson().stream = true;
+    return this;
+  }
+
   async asyncSendAndStreamResponse () {
     //debugger;
     assert(!this.xhrPromise());
@@ -330,18 +373,22 @@
 
     this.assertReadyToStream();
 
+    //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
+    //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
+
     this.setIsStreaming(true);
     this.setStatus("streaming");
 
-    this.bodyJson().stream = true;
+    this.setupForStreaming();
     this.setReadLines([]);
 
     const xhr = new XMLHttpRequest();
     this.setXhr(xhr);
-    xhr.open("POST", this.apiUrl());
+    xhr.open("POST", this.activeApiUrl());
 
     // set headers
     const options = this.requestOptions();
+    
     for (const header in options.headers) {
       const value = options.headers[header];
       xhr.setRequestHeader(header, value);
@@ -360,7 +407,11 @@
     }, false);
 
     xhr.addEventListener("loadend", (event) => {
-      EventManager.shared().safeWrapEvent(() => { this.onXhrLoadEnd(event) }, event)
+      try { 
+        EventManager.shared().safeWrapEvent(() => { this.onXhrLoadEnd(event) }, event);
+      } catch (error) {
+       this.onError(error); 
+      }
       //this.onXhrLoadEnd(event)
     });
 
@@ -397,6 +448,8 @@
     //debugger
     const isError = this.xhr().status >= 300
     if (isError) {
+      console.log(this.description());
+      console.error(this.xhr().responseText);
       const json = JSON.parse(this.xhr().responseText);
       if (json.error) {
         this.onError(new Error(json.error.message));
@@ -437,16 +490,63 @@
   }
 
   onXhrError (event) {
+    debugger;
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
-    let s = "Error on Xhr requestId " + this.requestId() + " ";
-    s += " status: " + xhr.status; // e.g. 404 = file not found
-    s += " statusText '" + xhr.statusText + "'";
-    s += " readyState: " + xhr.readyState; // e.g.. 4 === DONE
+    //let s = "Error on Xhr requestId " + this.requestId() + " ";
+    let s = "Xhr error: " + this.description() + " ";
+    s += " status: " + this.nameForXhrStatusCode(xhr.status); // e.g. 404 = file not found
+    s += ", statusText: '" + xhr.statusText + "'";
+    s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
     const error = new Error(s);
     this.onError(error);
     this.streamTarget().onStreamEnd(this);
     this.xhrPromise().callRejectFunc(error);
+  }
+
+	nameForXhrStatusCode (statusCode) {
+		/**
+		   * This function returns a brief description of an XHR status code.
+		   * 
+		   * @param {number} statusCode - The XHR status code.
+		   * @returns {string} - A brief description of the status, or "Unknown status".
+		   */
+	
+		const xhrStatuses = {
+		  0: "Not started: Network Error, Request Blocked, or CORS issue",
+		  100: "Continue",
+		  101: "Switching protocols",
+		  200: "OK - Request successful",
+		  201: "Created - Resource created",
+		  301: "Moved permanently",
+		  304: "Not modified",
+		  400: "Bad request", 
+		  401: "Unauthorized",
+		  403: "Forbidden",
+		  404: "Not found",
+		  500: "Internal server error" 
+		};
+	
+		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
+	  }
+
+  nameForXhrReadyState (readyState) {
+    /**
+     * This function returns a brief description of an XHR readyState.
+     * 
+     * @param {number} readyState - The XHR readyState value.
+     * @returns {string} - A brief description of the state, or "Unknown state".
+     */
+
+    const xhrStates = {
+      0: "Request not initialized",
+      1: "Server connection established",
+      2: "Request received",
+      3: "Processing request",
+      4: "Request finished"
+    };
+
+    return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
   }
 
   onXhrAbort (event) {

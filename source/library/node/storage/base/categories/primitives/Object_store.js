@@ -13,7 +13,7 @@ Object.defineSlots(typedArrayClass.prototype, {
 
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
         if(!this.shouldStore()) {
-            console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object with shouldStore set to false - returning null");
+            console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
             return null;
         }
 

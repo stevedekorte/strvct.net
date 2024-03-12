@@ -164,18 +164,20 @@ if (!String.prototype.capitalized) {
 
 }.initThisClass());
 
-getGlobalThis().assert = function (v) {
+getGlobalThis().assert = function (v, errorMessage) {
     if (!Boolean(v)) {
-        throw new Error("assert failed - false value")
+        const m = errorMessage ? errorMessage : "assert failed - false value";
+        throw new Error(m);
     }
     return v
 }
 
-getGlobalThis().debugAssert = function (v) {
+getGlobalThis().debugAssert = function (v, errorMessage) {
     if (!Boolean(v)) {
-        console.warn("assert failed - false value");
+        const m = errorMessage ? errorMessage : "assert failed - false value";
+        console.warn(m);
         debugger;
-        throw new Error("assert failed - false value")
+        throw new Error(m)
     }
     return v
 }

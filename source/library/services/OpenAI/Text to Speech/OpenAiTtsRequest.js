@@ -28,17 +28,6 @@
     }
 
     {
-      const slot = this.newSlot("apiKey", null);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-    }
-
-    {
       const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
     }
 
@@ -109,11 +98,16 @@
     this.sound().setFetchPromise(this.fetchPromise());
   }
 
+  service () {
+    return OpenAiService.shared();
+  }
+
   subtitle () {
     return this.status();
   }
 
   setService (anObject) {
+    debugger;
     this.setDelegate(anObject);
     return this;
   }
@@ -123,7 +117,7 @@
   }
 
   requestOptions () {
-    const apiKey = this.apiKey();
+    const apiKey = this.service().apiKey();
     return {
       method: "POST",
       headers: {
@@ -135,13 +129,8 @@
   }
 
   assertValid () {
-    if (!this.apiUrl()) {
-      throw new Error(this.type() + " apiUrl missing");
-    }
-
-    if (!this.apiKey()) {
-      throw new Error(this.type() + " apiKey missing");
-    }
+    assert(this.service().hasApiKey(), this.type() + " apiKey missing");
+    assert(this.service().apiUrl(), this.type() + " apiUrl missing");
   }
 
   showRequest () {

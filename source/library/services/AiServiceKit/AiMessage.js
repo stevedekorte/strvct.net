@@ -119,6 +119,7 @@
   }
 
   messagesJson () {
+    
     return {
       role: this.role(),
       content: this.contentVisisbleToAi()

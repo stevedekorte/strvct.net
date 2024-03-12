@@ -73,65 +73,122 @@ const https = require('https');
 
 	onProxyRequest () {
 		try {
+			const req = this.request();
+			const res = this.response();
+
 			const url = this.queryMap().get("proxyUrl");
 			console.log("proxy request for: " + url + "");
 
-			https.get(url, (res) => {
-				// Check if the response is successful
-				if (res.statusCode === 200) {
-					const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
-					console.log('Proxy MIME Type:', mimeType);
+			const parsedUrl = new URL(url);
+			const hostname = parsedUrl.hostname;
+			// Incoming request handler
+			const options = {
+				hostname: hostname,
+				path: parsedUrl.pathname /*+ parsedUrl.search*/,
+				method: req.method,
+				headers: {
+					...req.headers,
+					'Host': hostname
+				},
+				rejectUnauthorized: false // Allow self-signed certificates
+			};
+		
+			let responseBody = [];
+
+			console.log("proxy request options: ", JSON.stringify(options, null, 2));
+
+
+			const proxyReq = https.request(options, (proxyRes) => {
+				res.writeHead(proxyRes.statusCode, proxyRes.headers);
 			
-					this.response().writeHead(200, {
-						'Content-Type': mimeType,
-						'Cache-Control': 'private',
-						'Access-Control-Allow-Origin': '*',
-					});
-			
-					// Pipe the response directly to the server response
-					res.pipe(this.response());
-				} else {
-					// Handle errors like 404 Not Found or 401 Unauthorized
-					this.response().writeHead(res.statusCode);
-					this.response().end(`Error: Received status code ${res.statusCode}`);
-				}
-			}).on('error', (e) => {
-				console.error(`Error fetching the image: ${e.message}`);
-				this.onProxyRequestError(e);
-			});
-
-			/*
-			https.get(url, (res) => {
-
-				const mimeType = res.headers['content-type'] ? res.headers['content-type'] : 'Unknown';
-				console.log('Proxy MIME Type:', mimeType);
-
-				this.response().writeHead(200, {
-					'Content-Type': mimeType,
-					'Access-Control-Allow-Origin': '*',
+				proxyRes.on('data', (chunk) => {
+					responseBody.push(chunk);
+					res.write(chunk);
+				});
+	
+				proxyRes.on('end', () => {
+					const contentType = proxyRes.headers['content-type'];
+					const contentEncoding = proxyRes.headers['content-encoding'];
+					const responseBuffer = Buffer.concat(responseBody);
+					//console.log('proxyRes headers: ', JSON.stringify(proxyRes.headers, null, 2));
+					console.log('proxyRes responseBuffer.byteLength: ', responseBuffer.byteLength, " bytes in " + contentEncoding + " encoding");
+					/*
+				
+					let responseString = '';
+				
+					if (contentEncoding) {
+					// Handle content encoding
+					if (contentEncoding === 'gzip') {
+						responseString = zlib.gunzipSync(responseBuffer).toString('utf8');
+					} else if (contentEncoding === 'deflate') {
+						responseString = zlib.inflateSync(responseBuffer).toString('utf8');
+					} else if (contentEncoding === 'br') {
+						responseString = zlib.brotliDecompressSync(responseBuffer).toString('utf8');
+					}
+					} else {
+					// Try different encodings
+					const encodings = ['utf8', 'utf16le', 'latin1'];
+					for (const encoding of encodings) {
+						try {
+						responseString = responseBuffer.toString(encoding);
+						JSON.parse(responseString);
+						break; // Valid JSON found, exit the loop
+						} catch (error) {
+						// Invalid JSON, try the next encoding
+						}
+					}
+					}
+				
+					if (contentType && contentType.includes('application/json')) {
+					if (responseString) {
+						try {
+						const responseJson = JSON.parse(responseString);
+						console.log('Outbound Response Body (JSON):');
+						console.log(JSON.stringify(responseJson, null, 2));
+						} catch (error) {
+						console.log('Outbound Response Body (Invalid JSON):');
+						console.log(responseString);
+						// Handle the invalid JSON case based on your requirements
+						}
+					} else {
+						console.log('Outbound Response Body (Unrecognized Encoding):');
+						console.log(responseBuffer.toString('hex'));
+					}
+					} else {
+					// Handle other content types as needed
+					console.log('Outbound Response Body:');
+					console.log(responseString || responseBuffer.toString('hex'));
+					}
+					console.log('---');
+					*/
+				
+					res.end();
 				});
 				
-				// Array to hold the chunks of data
-				const chunks = [];
-		
-				// Listen for data events to receive chunks of data
-				res.on('data', (chunk) => {
-					chunks.push(chunk);
+				// ...
+			
+				proxyReq.on('error', (error) => {
+					console.error(`Error: ${error.message}`);
+					//res.statusCode = proxyRes.statusCode; // may be undefined
+
+					const errorMessage = "proxy request error: '" + error.message + "' " + this.nameForXhrStatusCode(proxyReq.statusCode) + " for url: " + url + "";
+					console.log(errorMessage);
+					console.log("responseBody: '" + responseBody + "'");
+
+					res.statusCode = 500;
+					res.end('Internal Server Error');
 				});
-		
-				// When the response has ended
-				res.on('end', () => {
-					// Combine all the chunks into a single buffer
-					const buffer = Buffer.concat(chunks);
-		
-					this.response().write(buffer);
-					this.response().end();
-				});
-			}).on('error', (e) => {
-				console.error(`Error fetching the image: ${e.message}`);
-				this.onProxyRequestError(error)
 			});
-			*/
+		
+			req.on('data', (chunk) => {
+				console.log("inbound proxy body request chunk: '" + chunk + "'");
+				proxyReq.write(chunk);
+			});
+		
+			req.on('end', () => {
+				proxyReq.end();
+			});
+		
 
 		} catch (e) {
 			this.onProxyRequestError(e)
@@ -238,7 +295,7 @@ const https = require('https');
 	assertPathExists () {
 		const path = this.path();
 		if (!fs.existsSync(path)) {
-			this.throwCodeAndMessage(404, "error: missing file " + path);
+			this.throwCodeAndMessage(404, "404 error: missing file '" + path + "'");
 		}
 	}
 
@@ -252,65 +309,76 @@ const https = require('https');
 	}
 
 	throwCodeAndMessage (code, message) {
+		//debugger;
 		const error = new Error(message);
 		error._code = code;
 		throw error;
 	}
 
 	async onFileRequest () {
-		//console.log("  path:" + path)
-		const path = this.path()
+		try {
+			//console.log("  path:" + path)
+			const path = this.path()
 
-		// Ensure there is a file extension
-		// need this to determine contentType
+			// Ensure there is a file extension
+			// need this to determine contentType
 
-		const ext = this.getPathExtension()
-		//console.log("  ext:" + ext)
+			const ext = this.getPathExtension()
+			//console.log("  ext:" + ext)
 
-		if (!ext) {
-			this.throwCodeAndMessage(401, "  error: no file extension found in path: '" + path + "'");
-			return
+			if (!ext) {
+				this.throwCodeAndMessage(401, "  error: no file extension found in path: '" + path + "'");
+				return
+			}
+
+			// Ensure request is for a valid content type
+			// need this so client will accept our contentType response header
+
+			let contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
+
+			if (!contentType) {
+				//contentType = MimeExtensions.shared().mimeTypeForPathExtension("txt")
+				contentType = "application/octet-stream";
+				console.log("  WARNING: no known mime type for extension: '" + ext + "' so we'll assume " + contentType);
+				/*
+				this.response().writeHead(401, {})
+				this.response().end()
+				console.log("  error: no known mime type for extension: '" + ext + "'")
+				return
+				*/
+			}
+
+			if (path.startsWith(this.localAcmePath())) {
+				// we'll allow a read outside of the sandbox for localAcmePath (used for DNS key setup)
+			} else {
+				this.assertPathInSandbox();
+			}
+
+			this.assertPathExists();
+			this.assertNonDotPath();
+
+			// Send header and stream file response
+
+			const header = {
+				'Content-Type': contentType,
+				'Cache-Control': 'no-cache',
+				'Access-Control-Allow-Origin': '*',
+			};
+
+			this.response().writeHead(200, header);
+			//console.log("header:" + JSON.stringify(header));
+
+			//this.syncWriteFileToResponse(path, this.response());
+			this.streamFileContentToResponse(path, this.response());
+		} catch (error) {
+			if (error._code) {
+				this.response().writeHead(error._code, {'Content-Type': 'text/plain'});
+				this.response().end(error.message);
+				console.log("ERROR CODE: " + error._code + " MESSAGE:" + error.message);
+			} else {
+				console.log("ERROR: ", error.message);
+			}
 		}
-
-		// Ensure request is for a valid content type
-		// need this so client will accept our contentType response header
-
-		let contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
-
-		if (!contentType) {
-			//contentType = MimeExtensions.shared().mimeTypeForPathExtension("txt")
-			contentType = "application/octet-stream";
-			console.log("  WARNING: no known mime type for extension: '" + ext + "' so we'll assume " + contentType);
-			/*
-			this.response().writeHead(401, {})
-			this.response().end()
-			console.log("  error: no known mime type for extension: '" + ext + "'")
-			return
-			*/
-		}
-
-		if (path.startsWith(this.localAcmePath())) {
-			// we'll allow a read outside of the sandbox for localAcmePath (used for DNS key setup)
-		} else {
-			this.assertPathInSandbox();
-		}
-
-		this.assertPathExists();
-		this.assertNonDotPath();
-
-		// Send header and stream file response
-
-		const header = {
-			'Content-Type': contentType,
-			'Cache-Control': 'no-cache',
-			'Access-Control-Allow-Origin': '*',
-		};
-
-		this.response().writeHead(200, header);
-		//console.log("header:" + JSON.stringify(header));
-
-		//this.syncWriteFileToResponse(path, this.response());
-		this.streamFileContentToResponse(path, this.response());
 	}
 
 	/*
@@ -358,5 +426,52 @@ const https = require('https');
 		return
 	}
 	*/
+
+	nameForXhrStatusCode (statusCode) {
+		/**
+		   * This function returns a brief description of an XHR status code.
+		   * 
+		   * @param {number} statusCode - The XHR status code.
+		   * @returns {string} - A brief description of the status, or "Unknown status".
+		   */
 	
+		const xhrStatuses = {
+		  0: "Not started: Network Error, Request Blocked, or CORS issue",
+		  100: "Continue",
+		  101: "Switching protocols",
+		  200: "OK - Request successful",
+		  201: "Created - Resource created",
+		  301: "Moved permanently",
+		  304: "Not modified",
+		  400: "Bad request", 
+		  401: "Unauthorized",
+		  403: "Forbidden",
+		  404: "Not found",
+		  500: "Internal server error" 
+		};
+	
+		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
+	  }
+	
+	  /*
+	  nameForXhrReadyState (readyState) {
+		 // This function returns a brief description of an XHR readyState.
+		 // 
+		 // @param {number} readyState - The XHR readyState value.
+		 // @returns {string} - A brief description of the state, or "Unknown state".
+		 //
+	
+		const xhrStates = {
+		  0: "Request not initialized",
+		  1: "Server connection established",
+		  2: "Request received",
+		  3: "Processing request",
+		  4: "Request finished"
+		};
+	
+		return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
+	  }
+	  */
+	
+
 }.initThisClass());

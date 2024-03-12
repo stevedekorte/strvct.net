@@ -1,5 +1,6 @@
 [
     "AiServiceKit/_imports.json",
+    "Anthropic/_imports.json",
     "OpenAI/_imports.json",
     "Azure/_imports.json",
     "YouTube/_imports.json",

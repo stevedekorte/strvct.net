@@ -31,11 +31,11 @@
     this.setSubnodeClasses([])
 
     {
-      const f = ChatInputNode.clone()
-      f.setCanDelete(false)
-      f.setConversation(this)
+      const f = ChatInputNode.clone();
+      f.setCanDelete(false);
+      f.setConversation(this);
       f.setHasValueButton(true);
-      this.setFooterNode(f)
+      this.setFooterNode(f);
     }
 
     this.setNodeChildrenAlignment("flex-start") // make the messages stick to the bottom
@@ -47,21 +47,36 @@
 
   /*
   nodeFillsRemainingWidth () {
-    return true
+    return true;
   }
   */
 
   subviewsScrollSticksToBottom () {
-    return true
+    return true;
   }
 
   finalInit () {
-    super.finalInit()
-    this.messages().forEach(m => m.setConversation(this))
-    this.setCanAdd(false)
-    //this.setNodeFillsRemainingWidth(true)
-    this.setNodeChildrenAlignment("flex-end")
-    this.setCanDelete(true)
+    super.finalInit();
+    try {
+     // assert(this.subnodeClasses().length > 0, this.type() + " has no subnode classes");
+      this.messages().forEach(m => {
+        //assert(this.subnodeClasses().includes(m.thisClass()), m.type() + " is not in " + JSON.stringify(this.subnodeClasses().map(c => c.type())));
+        if(!m.setConversation) {
+          debugger;
+          throw new Error(m.type() + " missing setConversation() ");
+        }
+      });
+    } catch (error) {
+      //debugger;
+      console.log(this.type() + " finalInit error: " + error.message);
+      this.removeAllSubnodes();
+    }
+    //debugger;
+    this.messages().forEach(m => m.setConversation(this));
+    this.setCanAdd(false);
+    //this.setNodeFillsRemainingWidth(true);
+    this.setNodeChildrenAlignment("flex-end");
+    this.setCanDelete(true);
   }
 
   // --- messages ---

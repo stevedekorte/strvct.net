@@ -1,8 +1,0 @@
-[
-    "models/_imports.json",
-    "conversations/_imports.json",
-    "Text to Image/_imports.json",
-    "Text to Speech/_imports.json",
-    "OpenAiRequest.js",
-    "OpenAiService.js"
-]

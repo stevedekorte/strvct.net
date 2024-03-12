@@ -147,7 +147,7 @@
     assert(n);
     n.onClose();
     const p = n.parent();
-    assert(p);
+    assert(p); // this can happen on an incomplete tag e.g. [<div class="']
     this.setCurrentNode(p);
 
     this.sendDelegate("onHtmlStreamReaderPopNode", [this, n]);
@@ -183,6 +183,8 @@
   // --- open and close element ---
 
   onOpenElement (tagName, attributes) {
+    //console.log("onOpenElement(" + tagName + ", " + JSON.stringify(attributes) + ")");
+
     this.popIfCurrentNodeIsText();
 
     const e = this.newElement();
@@ -195,10 +197,18 @@
   }
 
   onCloseElement (tagName) {
+    //console.log("onCloseElement(" + tagName + ")");
+
     this.popIfCurrentNodeIsText();
-    const e = this.popNode();
-    assert(e.name() === tagName);
-    //console.log("onCloseElement " + e.asHtml());
+    
+    const currentNode = this.currentNode();
+    if (currentNode && currentNode.name() === tagName) {
+      const e = this.popNode();
+      assert(e.name() === tagName);
+      //console.log("onCloseElement " + e.asHtml());
+    } else {
+      console.warn("WARNING:  " + this.type() + ".onCloseElement(" + tagName + ") doesn't match current node " + currentNode.name() + " so we will ignore it and won't send a callback");
+    }
   }
 
   // ---------------------------------

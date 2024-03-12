@@ -1,7 +1,7 @@
 "use strict";
 
 /* 
-    OpenAiConversations
+    AiConversations
 
     conversations
     - conversation
@@ -11,9 +11,8 @@
 
 */
 
-(class OpenAiConversations extends BMSummaryNode {
+(class AiConversations extends BMSummaryNode {
   initPrototypeSlots() {
-
   }
 
   init() {
@@ -21,24 +20,24 @@
     this.setTitle("Conversations");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([OpenAiConversation]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
 
   finalInit() {
-    super.finalInit()
+    super.finalInit();
     this.setNoteIsSubnodeCount(true);
+
+    // subclasses should set this
+    this.setSubnodeClasses([AiConversation]);
   }
 
-  /*
-  didInit () {
-    super.didInit()
+  subviewsScrollSticksToBottom () {
+    return false;
   }
-  */
 
   service () {
-    return this.parentNode()
+    return this.parentNode();
   }
 
 }.initThisClass());
