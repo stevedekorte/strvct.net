@@ -1,5 +1,6 @@
 [
-    "AiService.js",
+    "XhrWrapper.js",
+    "AiChatModel.js",
     "AiRequest.js",
     "Conversation.js",
     "ConversationMessage.js",
@@ -7,5 +8,6 @@
     "AiMessage.js",
     "AiResponseMessage.js",
     "AiConversation.js",
-    "AiConversations.js"
+    "AiConversations.js",
+    "AiService.js"
 ]

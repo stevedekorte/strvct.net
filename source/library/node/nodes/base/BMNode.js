@@ -639,12 +639,31 @@
     }
 
     firstParentChainNodeOfClass (aClass) {
+        //return this.firstParentChainNodeDetect(node => node.thisClass().isSubclassOf(aClass));
+
         if (this.thisClass().isSubclassOf(aClass)) {
             return this
         }
 
         if (this.parentNode()) {
             return this.parentNode().firstParentChainNodeOfClass(aClass)
+        }
+
+        return null
+    }
+
+    firstParentChainNodeThatRespondsTo (methodName) {
+        return this.firstParentChainNodeDetect(node => node.respondsTo(methodName));
+    }
+
+    firstParentChainNodeDetect (func) {
+        // return this.parentChainNodes().detect(func);
+        if (func(this)) {
+            return this
+        }
+
+        if (this.parentNode()) {
+            return this.parentNode().firstParentChainNodeDetect(func);
         }
 
         return null

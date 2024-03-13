@@ -1,12 +1,13 @@
 "use strict";
 
 /* 
-    AiRequest
+    XhrWrapper
 
     Wrapper for request to API
     delegate methods:
 
     onRequestBegin(request)
+    onRequestRead(request)
     onRequestComplete(request)
     onRequestError(request, error)
 
@@ -19,18 +20,24 @@
       request.status()
       request.error()
 
-
 */
 
-(class AiRequest extends BMStorableNode {
+(class XhrWrapper extends BMStorableNode {
 
   initPrototypeSlots() {
     {
-      const slot = this.newSlot("delegate", null); // optional reference to object that owns request - will receive onRequestComplete message if it responds to it
+      const slot = this.newSlot("delegate", null); // optional ref
     }
 
     {
-      const slot = this.newSlot("service", null); 
+      const slot = this.newSlot("apiUrl", null);
+      slot.setInspectorPath("")
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
     }
 
     {
@@ -44,8 +51,9 @@
       slot.setCanEditInspection(false)
     }
 
+
     {
-      const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+      const slot = this.newSlot("requestOptions", null); // this will contain the model choice and messages
     }
 
     {
@@ -63,20 +71,6 @@
       const slot = this.newSlot("json", null);
     }
 
-    // fetching
-
-    {
-      const slot = this.newSlot("fetchPromise", null);
-    }
-
-    {
-      const slot = this.newSlot("isFetchActive", false);
-    }
-
-    {
-      const slot = this.newSlot("fetchAbortController", null);
-    }
-
     // streaming
 
     {
@@ -87,11 +81,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Boolean")
       slot.setIsSubnodeField(true)
-    }
-
-    {
-      const slot = this.newSlot("streamTarget", null); // will receive onStreamData and onStreamEnd messages
-    }
+    } 
 
     {
       const slot = this.newSlot("xhr", null);
@@ -124,15 +114,6 @@
     }
 
     {
-      const slot = this.newSlot("readLines", null);
-    }
-
-
-    {
-      const slot = this.newSlot("finishReason", null);
-    }
-
-    {
       const slot = this.newSlot("fullContent", null); 
       slot.setInspectorPath("")
       slot.setShouldStoreSlot(true)
@@ -141,16 +122,6 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
-    }
-
-    {
-      const slot = this.newSlot("lastContent", ""); // useful when separating renderable html while streaming
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
     }
 
     {
@@ -172,13 +143,17 @@
     this.setShouldStoreSubnodes(false)
   }
 
-
   init () {
     super.init();
     this.setIsDebugging(true);
     this.setRequestId(this.puuid());
-    //this.setLastContent("");
-    this.setTitle("Request");
+    this.setRequesstOptions({
+      method:"POST",
+      headers: {
+      },
+      body: ""
+    });
+    this.setTitle(this.type());
     this.setIsDebugging(true);
   }
 
@@ -186,20 +161,29 @@
     return this.status();
   }
 
-  // --- service properties ---
+  // --- options ---
 
-  apiUrl () {
-    return this.service().chatEndpoint();
+  headers () {
+    return this.requestOptions().headers;
   }
 
-  apiKey () {
-    return this.service().apiKey();
+
+  method () {
+    return this.requestOptions().method;
   }
 
-  // --- fetch ---
+  setMethod (m) {
+    this.requestOptions().method = m;
+    return this;
+  }
+
+  setBody (b) {
+    this.requestOptions().body = b;
+    return this;
+  }
 
   body () {
-    return JSON.stringify(this.bodyJson(), 2, 2);
+    return this.requestOptions().body;
   }
 
   requestOptions () {
@@ -215,18 +199,16 @@
     };
   }
 
-  assertValid () {
-    if (!this.apiUrl()) {
-      throw new Error(this.type() + " apiUrl missing");
-    }
+  // ----------------------------
 
-    if (!this.apiKey()) {
-      throw new Error(this.type() + " apiKey missing");
+  assertValid () {
+    if (!this.url()) {
+      throw new Error(this.type() + " url missing");
     }
   }
 
-  activeApiUrl () {
-    let url = this.apiUrl();
+  activeUrl () {
+    let url = this.url();
     if (this.needsProxy()) {
       url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     }
@@ -262,7 +244,7 @@
 
   curlCommand () {
     const commandParts = [];
-    commandParts.push(`curl  --insecure "` + this.activeApiUrl() + '"');
+    commandParts.push(`curl  --insecure "` + this.activeUrl() + '"');
     const headers = this.requestOptions().headers;
 
      Object.keys(headers).forEach((key) => {
@@ -279,8 +261,8 @@
     const json = {
       requestId: this.requestId(),
       options: this.requestOptions(),
-      activeApiUrl:  this.activeApiUrl(),
-      apiUrl:  this.apiUrl(),
+      url:  this.url(),
+      activeUrl: this.activeUrl(),
       body: this.bodyJson()
     };
     return JSON.stringify(json, 2, 2);
@@ -289,23 +271,16 @@
   // --- streaming response --- 
 
   assertReadyToStream () {
-    const target = this.streamTarget();
+    const target = this.delegate();
     if (target) {
-      // verify streamTarget protocol is implemented by target
+      // verify stream delegate protocol is implemented
       assert(target.onStreamStart);
       assert(target.onStreamData);
       assert(target.onStreamEnd);
     }
   }
 
-  setupForStreaming () {
-    // subclasses should override this method to set up the request for streaming
-    this.bodyJson().stream = true;
-    return this;
-  }
-
-  async asyncSendAndStreamResponse () {
-    //debugger;
+  async send () {
     assert(!this.xhrPromise());
 
     this.setXhrPromise(Promise.clone());
@@ -321,12 +296,9 @@
     this.setIsStreaming(true);
     this.setStatus("streaming");
 
-    this.setupForStreaming();
-    this.setReadLines([]);
-
     const xhr = new XMLHttpRequest();
     this.setXhr(xhr);
-    xhr.open("POST", this.activeApiUrl());
+    xhr.open("POST", this.activeUrl());
 
     // set headers
     const options = this.requestOptions();
@@ -344,33 +316,37 @@
     
     // why false arg? see https://stackoverflow.com/questions/51204603/read-response-stream-via-xmlhttprequest
     xhr.addEventListener("progress", (event) => {
-     EventManager.shared().safeWrapEvent(() => { this.onXhrProgress(event) }, event)
-     //this.onXhrProgress(event)
+      EventManager.shared().safeWrapEvent(() => { 
+        this.onXhrProgress(event) 
+      }, event)
     }, false);
 
     xhr.addEventListener("loadend", (event) => {
       try { 
-        EventManager.shared().safeWrapEvent(() => { this.onXhrLoadEnd(event) }, event);
+        EventManager.shared().safeWrapEvent(() => { 
+          this.onXhrLoadEnd(event) 
+        }, event);
       } catch (error) {
        this.onError(error); 
       }
-      //this.onXhrLoadEnd(event)
     });
 
     xhr.addEventListener("error", (event) => {
-      EventManager.shared().safeWrapEvent(() => { this.onXhrError(event) }, event)
-      //this.onXhrError(event)
+      EventManager.shared().safeWrapEvent(() => { 
+        this.onXhrError(event) 
+      }, event)
     });
 
     xhr.addEventListener("abort", (event) => {
-      EventManager.shared().safeWrapEvent(() => { this.onXhrAbort(event) }, event)
-      //this.onXhrAbort(event)
+      EventManager.shared().safeWrapEvent(() => { 
+        this.onXhrAbort(event) 
+      }, event)
     });
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
 
     this.sendDelegate("onRequestBegin");
-    this.streamTarget().onStreamStart(this);
+    this.sendDelegate("onStreamStart");
 
     //const s = JSON.stringify(options, 2, 2);
     //this.debugLog("SENDING REQUEST BODY:", options.body);
@@ -379,15 +355,17 @@
     return this.xhrPromise();
   }
 
+  // --- xhr request event handlers ---
+
   onXhrProgress (event) {
     //console.log(this.typeId() + " onXhrProgress() bytes " + this.fullContent().length);
     this.onXhrRead();
+    this.sendDelegate("onRequestRead");
   }
 
   onXhrLoadEnd (event) {
     //console.log(this.typeId() + " onXhrLoadEnd() bytes [[" + this.fullContent() + "]]");
 
-    //debugger
     const isError = this.xhr().status >= 300
     if (isError) {
       console.log(this.description());
@@ -402,37 +380,15 @@
       this.readXhrLines() // finish reading any remaining lines
     }
 
-    this.streamTarget().onStreamEnd(this); // all data chunks should have already been sent via onStreamData
-    this.sendDelegate("onRequestComplete")
+    this.sendDelegate("onStreamEnd"); // all data chunks should have already been sent via onStreamData
+    this.sendDelegate("onRequestComplete");
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
 
     console.log(this.typeId() + " onXhrLoadEnd()");
-
-    //const completionDict = this.bodyJson();
-    //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, 2, 2)); // no usage property!
-  }
-
-  didUpdateSlotError (oldValue, newValue) {
-    //debugger
-    if (newValue) {
-      this.setStatus("ERROR: " + newValue.message)
-    }
-  }
-
-  onError (e) {
-    //debugger
-    this.setError(e);
-    this.sendDelegate("onRequestError", [this, e])
-
-    if (e) {
-      console.warn(this.debugTypeId() + " " + e.message);
-    }
-    return this;
   }
 
   onXhrError (event) {
-    debugger;
     const xhr = this.xhr();
     // error events don't contain messages - need to look at xhr and guess at what happened
     //let s = "Error on Xhr requestId " + this.requestId() + " ";
@@ -442,9 +398,95 @@
     s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
     const error = new Error(s);
     this.onError(error);
-    this.streamTarget().onStreamEnd(this);
+    this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
   }
+
+  onXhrAbort (event) {
+    this.setStatus("aborted")
+    this.sendDelegate("onRequestEnd");
+    this.sendDelegate("onStreamEnd");
+    this.xhrPromise().callRejectFunc(new Error("aborted"));
+  }
+
+  onXhrRead () {
+    //this.sendDelegate("onStreamData", [this, this.fullContent()]);
+    //this.readXhrLines()
+  }
+
+  // --- xhr response reading lines ---
+
+  unreadResponse () {
+    const unread = this.xhr().responseText.substr(this.readIndex());
+    return unread
+  }
+
+  readNextXhrLine () {
+    const unread = this.unreadResponse();
+    const newLineIndex = unread.indexOf("\n");
+
+    if (newLineIndex === -1) {
+      return undefined; // no new line found
+    }
+
+    let newLine = unread.substr(0, newLineIndex);
+    this.setReadIndex(this.readIndex() + newLineIndex + 1); // advance the read index
+
+    return newLine;
+  }
+
+  // --- error ---
+
+  didUpdateSlotError (oldValue, newValue) {
+    if (newValue) {
+      this.setStatus("ERROR: " + newValue.message)
+    }
+  }
+
+  onError (e) {
+    this.setError(e);
+    this.sendDelegate("onRequestError", [this, e])
+
+    if (e) {
+      console.warn(this.debugTypeId() + " " + e.message);
+    }
+    return this;
+  }
+
+  // --- abort ---
+
+  isActive () {
+    const xhr = this.xhr();
+    if (xhr) {
+      const state = xhr.readyState;
+      return (state >= 1 && state <= 3);
+    }
+    return false;
+  }
+  
+  abort () {
+    if (this.isActive()) {
+      this.xhr().abort();
+    }
+    return this;
+  }
+
+  // --- delegate ---
+
+  sendDelegate (methodName, args = [this]) {
+    const d = this.delegate()
+    if (d) {
+      const f = d[methodName]
+      if (f) {
+        this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "()")
+        f.apply(d, args)
+        return true
+      }
+    }
+    return false
+  }
+
+  // --- helpers ---
 
 	nameForXhrStatusCode (statusCode) {
 		/**
@@ -489,129 +531,6 @@
     };
 
     return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
-  }
-
-  onXhrAbort (event) {
-    this.setStatus("aborted")
-    this.streamTarget().onStreamEnd(this);
-    this.xhrPromise().callRejectFunc(new Error("aborted"));
-  }
-
-  unreadResponse () {
-    const unread = this.xhr().responseText.substr(this.readIndex());
-    return unread
-  }
-
-  readNextXhrLine () {
-    const unread = this.unreadResponse();
-    const newLineIndex = unread.indexOf("\n");
-
-    if (newLineIndex === -1) {
-      return undefined; // no new line found
-    }
-
-    let newLine = unread.substr(0, newLineIndex);
-    this.setReadIndex(this.readIndex() + newLineIndex + 1); // advance the read index
-
-    return newLine;
-  }
-
-  onXhrRead () {
-    this.readXhrLines()
-  }
-
-
-  readXhrLines () {
-    try {
-      let line = this.readNextXhrLine();
-
-      while (line !== undefined) {
-        line = line.trim()
-        if (line.length) {
-          if (line.startsWith("data:")) {
-            const s = line.after("data:");
-            if (line.includes("[DONE]")) {
-              // skip, stream is done and will close
-              const errorFinishReasons = ["length", "stop"];
-              if (errorFinishReasons.includes(this.finishReason())) {
-                this.setError("finish reason: '" + this.finishReason() + "'");
-              }
-            } else {
-              // we should expect json
-              //console.log("LINE: " + s)
-              const json = JSON.parse(s);
-              this.onStreamJsonChunk(json);
-            }
-          } 
-        }
-        line = this.readNextXhrLine();
-      }
-    } catch (error) {
-      this.onError(error);
-      console.warn(this.type() + " ERROR:", error);
-      this.xhrPromise().callRejectFunc(new Error(error));      
-    }
-  }
-
-  onStreamJsonChunk (json) {
-    if (json.error) {
-      console.warn("ERROR: " + json.error.message);
-      this.xhrPromise().callRejectFunc(new Error(json.error.message));
-    } else if (
-        json.choices &&
-        json.choices.length > 0 &&
-        json.choices[0].delta &&
-        json.choices[0].delta.content
-      ) {
-        const newContent = json.choices[0].delta.content;
-        this.setFullContent(this.fullContent() + newContent);
-        this.streamTarget().onStreamData(this, newContent);
-        //console.warn("CONTENT: ", newContent);
-        this.setFinishReason(json.choices[0].finish_reason);
-    } else {
-      if (json.id) {
-        //console.warn("HEADER: ", JSON.stringify(json));
-        // this is the header chunk - do we need to keep this around?
-      } else {
-        console.warn("WARNING: don't know what to do with this JsonChunk", json);
-      }
-    }
-  }
-
-  isActive () {
-    const xhr = this.xhr();
-    if (xhr) {
-      const state = xhr.readyState;
-      return (state >= 1 && state <= 3);
-    }
-    return false;
-  }
-  
-  abort () {
-    if (this.isFetchActive()) {
-      if (this.fetchAbortController()) {
-        this.fetchAbortController().abort();
-      }
-      return this;
-    } 
-
-    if (this.isActive()) {
-      this.xhr().abort();
-    }
-    return this;
-  }
-
-  sendDelegate (methodName, args = [this]) {
-    const d = this.delegate()
-    if (d) {
-      const f = d[methodName]
-      if (f) {
-        this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "()")
-        f.apply(d, args)
-        return true
-      }
-    }
-    return false
   }
 
 }).initThisClass();

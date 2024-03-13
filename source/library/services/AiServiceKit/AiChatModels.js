@@ -1,28 +1,31 @@
 "use strict";
 
 /* 
-    OpenAiImagePrompts
+    AiChatModels
 
 */
 
-(class OpenAiImagePrompts extends BMSummaryNode {
-  initPrototypeSlots () {
-
+(class AiChatModels extends BMSummaryNode {
+  initPrototypeSlots() {
   }
 
-  init () {
+  init() {
     super.init();
+    this.setTitle("Chat Models");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([OpenAiImagePrompt]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
 
-  finalInit () {
+  finalInit() {
     super.finalInit();
-    this.setTitle("Text to Image");
     this.setNoteIsSubnodeCount(true);
+    this.setSubnodeClasses([AiChatModel]);
+  }
+
+  subviewsScrollSticksToBottom () {
+    return false;
   }
 
   service () {

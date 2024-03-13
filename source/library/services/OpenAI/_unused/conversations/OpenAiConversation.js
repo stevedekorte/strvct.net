@@ -17,7 +17,6 @@
 
   finalInit () {
     super.finalInit();
-    this.setMaxTokenCount(8000);
     this.setTokenBuffer(400);
     this.setInitialMessagesCount(3);
     this.setSubnodeClasses([OpenAiMessage]);

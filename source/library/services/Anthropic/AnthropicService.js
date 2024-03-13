@@ -32,7 +32,7 @@
 
     {
       const slot = this.overrideSlot("conversations", null);
-      slot.setFinalInitProto(AnthropicConversations);
+      slot.setFinalInitProto(AiConversations);
       slot.setIsSubnode(true);
     }
 
@@ -45,12 +45,12 @@
   finalInit () {
     super.finalInit()
     this.setTitle("Anthropic");
-    this.setSubtitle("AI services");
 
-    // do we really want these to replace any stored values?
-    this.setChatModel("claude-3-opus-20240229");
     this.setChatEndpoint("https://api.anthropic.com/v1/messages");
-    this.setChatStreamEndpoint("https://api.anthropic.com/v1/messages");
+    this.chatModel().setModelName("claude-3-opus-20240229");
+    this.chatModel().setMaxTokenCount(200000); // base level 
+
+    this.setSystemRoleName("user"); // only replaced in outbound request json
   }
 
   validateKey (s) {
@@ -59,6 +59,10 @@
 
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
+  }
+
+  chatRequestClass () {
+    return AnthropicRequest;
   }
 
 }.initThisClass());

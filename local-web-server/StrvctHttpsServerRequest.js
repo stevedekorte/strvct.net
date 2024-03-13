@@ -71,7 +71,56 @@ const https = require('https');
 
 	// --- handle proxy request --------------------------
 
+
+	proxyCurlCommandForOptions (options) {
+		const commandParts = [];
+		const url = "https://" + options.hostname + options.path;
+		commandParts.push("curl  --insecure '" + url + "'");
+		const headers = options.headers;
+	
+		 Object.keys(headers).forEach((key) => {
+		  const value = headers[key];
+		  commandParts.push(" --header '" + key + ": " + value + "'");
+		});
+	
+		// it becomes a POST reqeust if there is a body
+		//const data = "" //JSON.stringify(this.bodyJson());
+		//commandParts.push(" --data '" + data + "'");
+		return commandParts.join(" \\\n");
+	  }
+
+	  
 	onProxyRequest () {
+
+		/* 
+		example headers:
+
+		"method": "POST",
+		"headers": {
+		  "host": "localhost:8000",
+		  "connection": "keep-alive",
+		  "content-length": "122",
+		  "sec-ch-ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\"",
+		  "anthropic-beta": "messages-2023-12-15",
+		  "sec-ch-ua-mobile": "?0",
+		  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+		  "authorization": "Bearer I_USED_MY_KEY_ HERE",
+		  "content-type": "application/json",
+		  "anthropic-version": "2023-06-01",
+		  "sec-ch-ua-platform": "\"macOS\"",
+		  "origin": "https://localhost:8000",
+		  "sec-fetch-site": "same-origin",
+		  "sec-fetch-mode": "cors",
+		  "sec-fetch-dest": "empty",
+		  "referer": "https://localhost:8000/index.html",
+		  "accept-encoding": "gzip, deflate, br",
+		  "accept-language": "en-US,en;q=0.9",
+		  "Host": "api.anthropic.com"
+		},
+		*/
+
+		//also: "accept": "*/*",
+
 		try {
 			const req = this.request();
 			const res = this.response();
@@ -84,23 +133,47 @@ const https = require('https');
 			// Incoming request handler
 			const options = {
 				hostname: hostname,
-				path: parsedUrl.pathname /*+ parsedUrl.search*/,
+				path: parsedUrl.pathname + parsedUrl.search,
 				method: req.method,
 				headers: {
-					...req.headers,
-					'Host': hostname
+					...req.headers				
 				},
 				rejectUnauthorized: false // Allow self-signed certificates
 			};
+
+			const unneededHeaderKeys = [
+				"Host",
+				"sec-fetch-dest", 
+				"referer", 
+				"connection",
+				"sec-ch-ua",
+				"sec-ch-ua-mobile",
+				"sec-ch-ua-platform",
+				"accept-language",
+				"accept-encoding"
+			]; // not sure if this is needed
+
+			unneededHeaderKeys.forEach(key => delete options.headers[key]);
+
+			options.headers["host"] = hostname;
+			options.headers["sec-fetch-mode"] = "cors"; //"same-origin";
 		
 			let responseBody = [];
 
+			console.log("----------------------------------------------------");
 			console.log("proxy request options: ", JSON.stringify(options, null, 2));
-
+			console.log("----------------------------------------------------");
+			console.log("proxyCurlCommandForOptions: " +this.proxyCurlCommandForOptions(options));
+			console.log("----------------------------------------------------");
 
 			const proxyReq = https.request(options, (proxyRes) => {
+				const headers = proxyRes.headers;
+				//headers['Content-Type'] = mimeType;
+				delete headers['Access-Control-Allow-Origin'.toLowerCase()];
+				headers['Access-Control-Allow-Origin'] = '*',
+				//assert(proxyRes.statusCode === 200, "proxy request failed with status code: " + proxyRes.statusCode);
 				res.writeHead(proxyRes.statusCode, proxyRes.headers);
-			
+
 				proxyRes.on('data', (chunk) => {
 					responseBody.push(chunk);
 					res.write(chunk);
@@ -112,62 +185,13 @@ const https = require('https');
 					const responseBuffer = Buffer.concat(responseBody);
 					//console.log('proxyRes headers: ', JSON.stringify(proxyRes.headers, null, 2));
 					console.log('proxyRes responseBuffer.byteLength: ', responseBuffer.byteLength, " bytes in " + contentEncoding + " encoding");
-					/*
-				
-					let responseString = '';
-				
-					if (contentEncoding) {
-					// Handle content encoding
-					if (contentEncoding === 'gzip') {
-						responseString = zlib.gunzipSync(responseBuffer).toString('utf8');
-					} else if (contentEncoding === 'deflate') {
-						responseString = zlib.inflateSync(responseBuffer).toString('utf8');
-					} else if (contentEncoding === 'br') {
-						responseString = zlib.brotliDecompressSync(responseBuffer).toString('utf8');
-					}
-					} else {
-					// Try different encodings
-					const encodings = ['utf8', 'utf16le', 'latin1'];
-					for (const encoding of encodings) {
-						try {
-						responseString = responseBuffer.toString(encoding);
-						JSON.parse(responseString);
-						break; // Valid JSON found, exit the loop
-						} catch (error) {
-						// Invalid JSON, try the next encoding
-						}
-					}
-					}
-				
-					if (contentType && contentType.includes('application/json')) {
-					if (responseString) {
-						try {
-						const responseJson = JSON.parse(responseString);
-						console.log('Outbound Response Body (JSON):');
-						console.log(JSON.stringify(responseJson, null, 2));
-						} catch (error) {
-						console.log('Outbound Response Body (Invalid JSON):');
-						console.log(responseString);
-						// Handle the invalid JSON case based on your requirements
-						}
-					} else {
-						console.log('Outbound Response Body (Unrecognized Encoding):');
-						console.log(responseBuffer.toString('hex'));
-					}
-					} else {
-					// Handle other content types as needed
-					console.log('Outbound Response Body:');
-					console.log(responseString || responseBuffer.toString('hex'));
-					}
-					console.log('---');
-					*/
-				
+			
 					res.end();
 				});
 				
 				// ...
 			
-				proxyReq.on('error', (error) => {
+				proxyRes.on('error', (error) => {
 					console.error(`Error: ${error.message}`);
 					//res.statusCode = proxyRes.statusCode; // may be undefined
 

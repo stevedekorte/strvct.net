@@ -130,7 +130,7 @@
 
   assertValid () {
     assert(this.service().hasApiKey(), this.type() + " apiKey missing");
-    assert(this.service().apiUrl(), this.type() + " apiUrl missing");
+    assert(this.apiUrl(), this.type() + " apiUrl missing");
   }
 
   showRequest () {

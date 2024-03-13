@@ -24,23 +24,24 @@
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
+      slot.setFinalInitProto(AiChatModel)
+
       //slot.setValidValues(values);
     }
+
+    /*
+    {
+      const slot = this.newSlot("chatModels", null)
+      slot.setFinalInitProto(AiChatModels)
+      slot.setShouldStoreSlot(true);
+      slot.setIsSubnode(true);
+    }
+    */
 
     {
       const slot = this.newSlot("chatEndpoint", null);
       //slot.setInspectorPath("");
       slot.setLabel("Chat Endpoint URL");
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-      slot.setIsSubnodeField(true);
-    }
-
-    {
-      const slot = this.newSlot("chatStreamEndpoint", null);
-      //slot.setInspectorPath("");
-      slot.setLabel("Chat Stream Endpoint URL");
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
@@ -57,6 +58,21 @@
       slot.setIsSubnodeField(true)
     }
 
+      // Role names
+
+      {
+        const slot = this.newSlot("systemRoleName", "system"); 
+      }
+  
+      {
+        const slot = this.newSlot("assistantRoleName", "assistant"); 
+      }
+  
+      {
+        const slot = this.newSlot("userRoleName", "user"); 
+      }
+
+
     /*
     {
       const slot = this.newSlot("models", null)
@@ -68,7 +84,7 @@
 
     {
       const slot = this.newSlot("conversations", null)
-      //slot.setFinalInitProto(OpenAiConversations)
+      slot.setFinalInitProto(AiConversations)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
     }
@@ -102,9 +118,9 @@
 
     // subclasses should set these
     /*
-    this.setChatModel("gpt-4-turbo-preview");
     this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
-    this.setChatStreamEndpoint("https://api.openai.com/v1/chat/completions");
+    this.chatModel().setModelName("claude-3-opus-20240229");
+    this.chatModel().setMaxTokenCount(200000); // base level 
     */
   }
 
@@ -114,6 +130,27 @@
 
   hasApiKey () {
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
+  }
+
+  chatModelName () {
+    return this.chatModel().modelName();
+  }
+
+  serviceRoleNameForRole (role) {
+    if (role === "system") {
+      return this.systemRoleName();
+    }
+
+    if (role === "assistant") {
+      return this.assistantRoleName();
+    }
+
+    if (role === "user") {
+      return this.userRoleName();
+    }
+
+    throw new Error("unknown role " + role);
+    return role;
   }
 
 }.initThisClass());

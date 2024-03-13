@@ -33,14 +33,6 @@
     };
   }
 
-  onRespoonseJsonComplete (json) {
-    this.setFullContent(json.choices[0].message.content); // Specific to OpenAI
-    this.sendDelegate("onRequestComplete");
-    //this.showResponse();
-    this.setStatus("completed " + this.responseSizeDescription());
-    return json;
-  }
-
    // --- streaming ---
 
   readXhrLines () {

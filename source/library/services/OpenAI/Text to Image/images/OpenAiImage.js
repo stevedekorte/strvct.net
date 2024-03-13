@@ -44,7 +44,7 @@
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      //slot.setIsSubnodeField(true)
+      slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
     }
 
@@ -148,8 +148,10 @@
 
   // --- fetching the image ---
 
-  proxyUrl () {
+  getProxyUrl () {
     const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
+    console.log(this.type() + " url: '" + this.url() + "'");
+    console.log(this.type() + " proxy url: '" + proxyUrl + "'");
     return proxyUrl;
     //return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
   }
@@ -157,7 +159,7 @@
   async fetch () {
     this.setIsLoading(true);
 
-    const url = this.proxyUrl();
+    const url = this.getProxyUrl();
     this.setStatus("fetching...");
     //console.log("fetch url " + this.url());
     console.log(this.type() + " fetch proxy url: " + url);

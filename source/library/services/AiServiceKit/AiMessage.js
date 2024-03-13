@@ -71,16 +71,12 @@
   }
   */
 
-  userRoleName () {
-    return "user";
-  }
-
   isResponse () {
     return false;
   }
 
   valueIsEditable () {
-    return this.role() === this.userRoleName()
+    return this.role() === "user";
   }
 
   aiSpeakerName () {
@@ -118,10 +114,13 @@
     return Math.ceil(s.length / 4); // approximation
   }
 
+  service () {
+    return this.conversation().service();
+  }
+
   messagesJson () {
-    
     return {
-      role: this.role(),
+      role: this.service().serviceRoleNameForRole(this.role()),
       content: this.contentVisisbleToAi()
     }
   }

@@ -3,6 +3,8 @@
 /* 
     AnthropicRequest
 
+    Example request:
+
 
     curl https://api.anthropic.com/v1/messages \
      --header "anthropic-version: 2023-06-01" \
@@ -10,12 +12,19 @@
      --header "content-type: application/json" \
      --header "x-api-key: $ANTHROPIC_API_KEY" \
      --data \
-'{
-  "model": "claude-3-opus-20240229",
-  "messages": [{"role": "user", "content": "Hello"}],
-  "max_tokens": 256,
-  "stream": true
-}'
+    '{
+      "model": "claude-3-opus-20240229",
+      "messages": [{"role": "user", "content": "Hello"}],
+      "max_tokens": 256,
+      "stream": true
+    }'
+
+    Delegate protocol:
+
+      onRequestBegin(request)
+      onRequestComplete(request)
+      onRequestError(request, error)
+
 
 
 */
@@ -56,17 +65,6 @@
     body.stream = true;
     body.max_tokens = 2000;
     return this;
-  }
-
-
-
-  onRespoonseJsonComplete (json) {
-
-    this.setFullContent(json.response.content); // Specific to Anthropic
-    this.sendDelegate("onRequestComplete");
-    //this.showResponse();
-    this.setStatus("completed " + this.responseSizeDescription());
-    return json;
   }
 
    // --- streaming ---
@@ -133,7 +131,7 @@
     }
   }
 
-  onNewContent(newContent) {
+  onNewContent (newContent) {
     this.setFullContent(this.fullContent() + newContent);
     this.streamTarget().onStreamData(this, newContent);
   }

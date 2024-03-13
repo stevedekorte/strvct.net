@@ -20,18 +20,9 @@
   }
   
   initPrototypeSlots () {
-    
-    /*
-    {
-      const slot = this.overrideSlot("models");
-      slot.setFinalInitProto(OpenAiModels);
-      slot.setIsSubnode(true);
-    }
-    */
-
     {
       const slot = this.overrideSlot("conversations", null);
-      slot.setFinalInitProto(OpenAiConversations);
+      slot.setFinalInitProto(AiConversations);
       slot.setIsSubnode(true);
     }
 
@@ -46,7 +37,6 @@
       slot.setFinalInitProto(OpenAiTtsSessions);
       slot.setIsSubnode(true);
     }
-
   }
 
   init () {
@@ -56,12 +46,10 @@
   finalInit () {
     super.finalInit()
     this.setTitle("OpenAI");
-    this.setSubtitle("AI services");
 
-    // do we really want these to replace any stored values?
-    this.setChatModel("gpt-4-turbo-preview");
     this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
-    this.setChatStreamEndpoint("https://api.openai.com/v1/chat/completions");
+    this.chatModel().setModelName("gpt-4-turbo-preview");
+    this.chatModel().setMaxTokenCount(128000); // for gpt4 turbo
   }
 
   validateKey (s) {
@@ -70,6 +58,10 @@
 
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
+  }
+
+  chatRequestClass () {
+    return OpenAiRequest;
   }
 
 }.initThisClass());

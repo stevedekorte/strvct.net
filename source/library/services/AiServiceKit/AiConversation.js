@@ -24,41 +24,16 @@
     }
 
     {
-      const slot = this.newSlot("maxTokenCount", 8000); // max allowed by model
-    }
-
-    {
       const slot = this.newSlot("tokenBuffer", 400); // Buffer to ensure approximation doesn't exceed limit
     }
 
-    // Role names
-
-    {
-      const slot = this.newSlot("systemRoleName", "system"); 
-    }
-
-    {
-      const slot = this.newSlot("assistantRoleName", "assistant"); 
-    }
-
-    {
-      const slot = this.newSlot("userRoleName", "user"); 
-    }
 
   }
 
   init() {
     super.init();
-    // subclasses will need to set these
-    /*
-    this.setMaxTokenCount(8000);
-    this.setTokenBuffer(400);
-    this.setSystemRoleName("system");
-    this.setAssistantRoleName("assistant");
-    this.setUserRoleName("user");
-    this.setSubnodeClasses([OpenAiMessage]);
-    this.setResponseMsgClass(OpenAiResponseMessage);
-    */
+    this.setSubnodeClasses([AiMessage]);
+    this.setResponseMsgClass(AiResponseMessage);
   }
 
   finalInit () {
@@ -72,7 +47,7 @@
   }
 
   selectedModel () {
-    return this.service().chatModel();
+    return this.service().chatModelName();
   }
 
   conversations () {
@@ -81,6 +56,10 @@
 
   // --- history ---
   // --- summary ---
+
+  maxTokenCount () {
+    return this.service().chatModel().maxTokenCount();
+  }
 
   updateTokenCount () {
     /*
@@ -123,7 +102,7 @@
   newAssistantMessage () {
     const m = this.newMessage();
     m.setSpeakerName(this.aiSpeakerName());
-    m.setRole(this.assistantRoleName());
+    m.setRole("assistant");
     m.setConversation(this);
     return m;
   }
@@ -131,7 +110,7 @@
   newSystemMessage () {
     const m = this.newMessage();
     m.setSpeakerName(this.aiSpeakerName());
-    m.setRole(this.systemRoleName());
+    m.setRole("system");
     m.setIsComplete(true);
     m.setIsVisibleToUser(false);
     m.setConversation(this);
@@ -142,7 +121,7 @@
   newUserMessage () {
     const m = this.newMessage();
     m.setSpeakerName("User"); // caller should override this
-    m.setRole(this.userRoleName());
+    m.setRole("user");
     m.setConversation(this);
     return m;
   }
@@ -194,6 +173,10 @@
       override to support summaries
     */
     return visibleMessages;
+  }
+
+  chatRequestClass () {
+    return this.chatService().chatRequestClass();
   }
 
 }.initThisClass());

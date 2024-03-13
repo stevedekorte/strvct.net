@@ -203,6 +203,7 @@
     //}
     this.setNodeSubtitleIsChildrenSummary(true);
     this.setTitle("Text to Speech Session");
+    this.setNoteIsSubnodeCount(true);
   }
 
   /*

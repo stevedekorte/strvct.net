@@ -42,7 +42,7 @@
     {
       const slot = this.newSlot("summaryMessage", null);
       slot.setSlotType("String");
-      slot.setInspectorPath("OpenAiMessage");
+      slot.setInspectorPath("AiResponseMessage");
       //slot.setShouldStoreSlot(true)
     }
 
@@ -72,6 +72,11 @@
     this.setRole("assistant");
 
     this.setRequestClass(AiRequest); // subclasses should set this
+  }
+
+  requestClass () {
+    const node = this.firstParentChainNodeThatRespondsTo("chatRequestClass");
+    return node.chatRequestClass();
   }
 
   isResponse () {
@@ -108,7 +113,7 @@
   }
 
   service () {
-    return this.conversation().service()
+    return this.conversation().chatService()
   }
 
   apiKey () {
@@ -124,12 +129,10 @@
   */
 
   makeRequest () {
-    this.setError(null)
-    const request = this.newRequest()
-    this.setRequest(request)
-    //request.asyncSend();
-    request.setStreamTarget(this)
-    request.asyncSendAndStreamResponse()
+    this.setError(null);
+    const request = this.newRequest();
+    this.setRequest(request);
+    request.asyncSendAndStreamResponse();
     return this
   }
 
@@ -138,10 +141,12 @@
     const jsonHistory = messages.map(m => m.messagesJson());
 
     const request = this.requestClass().clone();
-    request.setApiUrl(this.service().chatEndpoint());
-    request.setStreamApiUrl(this.service().chatStreamEndpoint());
+    request.setService(this.service());
 
-    request.setDelegate(this)
+    request.setDelegate(this);
+    request.setStreamTarget(this); // unify with delegate
+
+
     request.setBodyJson({
       model: this.selectedModel(),
       messages: jsonHistory,

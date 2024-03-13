@@ -22,6 +22,7 @@
   finalInit () {
     super.finalInit()
     this.setTitle("Text to Speech Sessions");
+    this.setNoteIsSubnodeCount(true);
   }
 
   service () {
