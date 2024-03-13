@@ -54,7 +54,7 @@
   }
 
   validateKey (s) {
-    return s.length === 51 && s.startsWith("sk-");
+    return s.startsWith("sk-");
   }
 
   hasApiKey () {

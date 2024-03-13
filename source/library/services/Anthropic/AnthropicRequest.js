@@ -63,7 +63,7 @@
     // subclasses should override this method to set up the request for streaming
     const body = this.bodyJson();
     body.stream = true;
-    body.max_tokens = 2000;
+    body.max_tokens = 4096; // current max output tokens allowed by anthropic
     return this;
   }
 
