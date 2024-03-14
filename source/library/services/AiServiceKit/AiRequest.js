@@ -211,7 +211,7 @@
         Authorization: `Bearer ${apiKey}`,
         'Accept-Encoding': 'identity'
       },
-      body: JSON.stringify(this.bodyJson()),
+      body: JSON.stringify(this.bodyJson())
     };
   }
 
@@ -305,7 +305,9 @@
   }
 
   async asyncSendAndStreamResponse () {
-    //debugger;
+
+    this.service().prepareToSendRequest(this);
+
     assert(!this.xhrPromise());
 
     this.setXhrPromise(Promise.clone());

@@ -153,4 +153,9 @@
     return role;
   }
 
+  prepareToSendRequest (aRequest) {
+    // subclasses should override
+    return this;
+  }
+
 }.initThisClass());

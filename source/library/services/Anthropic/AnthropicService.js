@@ -65,4 +65,31 @@
     return AnthropicRequest;
   }
 
+  prepareToSendRequest (aRequest) {
+    // may need to merge messages in order to ensure messages alternate between user and assistant roles
+    const bodyJson = aRequest.bodyJson();
+    const messages = bodyJson.messages;
+    const newMessages = [];
+    let lastRole = null;
+    let mergedMessageCount = 0;
+    messages.forEach((message) => {
+      if (message.role === lastRole) {
+        const lastMessage = newMessages.last();
+        lastMessage.content += "\n---\n" + message.content;
+      } else {
+        newMessages.push(message);
+      }
+      lastRole = message.role;
+      mergedMessageCount += 1;
+    });
+
+    bodyJson.messages = newMessages;
+    aRequest.setBodyJson(bodyJson);
+
+    if (mergedMessageCount) {
+      console.log("AnthropicService.prepareToSendRequest() merged " + mergedMessageCount + " messages");
+    }
+    return this;
+  }
+
 }.initThisClass());

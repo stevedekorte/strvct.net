@@ -33,7 +33,7 @@
       slot.setSlotType("String")
       slot.setValidValues(this.validRoles())
       slot.setCanInspect(true);
-      slot.setInspectorPath("OpenAiMessage");
+      slot.setInspectorPath(this.type());
     }
 
     {
@@ -41,7 +41,7 @@
       slot.setSlotType("Boolean");
       slot.setShouldStoreSlot(true);
       slot.setCanInspect(true);
-      slot.setInspectorPath("OpenAiMessage");
+      slot.setInspectorPath(this.type());
     }
 
     {

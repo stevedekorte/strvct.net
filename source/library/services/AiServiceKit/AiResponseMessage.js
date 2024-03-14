@@ -146,12 +146,11 @@
     request.setDelegate(this);
     request.setStreamTarget(this); // unify with delegate
 
-
     request.setBodyJson({
       model: this.selectedModel(),
-      messages: jsonHistory,
       temperature: this.temperature(), 
-      top_p: this.topP() // more diverse
+      top_p: this.topP(),
+      messages: jsonHistory
     });
     return request;
   }
