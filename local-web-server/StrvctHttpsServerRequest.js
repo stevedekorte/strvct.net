@@ -166,6 +166,8 @@ const https = require('https');
 			console.log("proxyCurlCommandForOptions: " +this.proxyCurlCommandForOptions(options));
 			console.log("----------------------------------------------------");
 
+			const reqBodyParts = [];
+
 			const proxyReq = https.request(options, (proxyRes) => {
 				const headers = proxyRes.headers;
 				//headers['Content-Type'] = mimeType;
@@ -205,12 +207,25 @@ const https = require('https');
 			});
 		
 			req.on('data', (chunk) => {
-				console.log("inbound proxy body request chunk: '" + chunk + "'");
+				reqBodyParts.push(chunk);
 				proxyReq.write(chunk);
 			});
 		
 			req.on('end', () => {
 				proxyReq.end();
+
+				if (reqBodyParts.length > 0) {
+					const contentType = req.headers['content-type'];
+					if (contentType) {
+						const isText = contentType.startsWith('text') || contentType.startsWith('application/json') || contentType.startsWith('application/javascript');
+						if (isText) {
+							const body = Buffer.concat(reqBodyParts).toString('utf-8');
+							console.log(body); // only works for text
+						} else {
+							console.log("  request body is binary of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
+						}
+					}
+				}
 			});
 		
 
