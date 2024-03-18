@@ -165,6 +165,10 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         return this.slice(-n);
     }
 
+    secondToLast () {
+        return this.at(this.length - 2) // returns undefined for negative indexes
+    }
+
     contains (element) {
         return this.includes(element)
         //return this.indexOf(element) !== -1;

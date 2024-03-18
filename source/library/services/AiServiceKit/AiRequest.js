@@ -3,22 +3,23 @@
 /* 
     AiRequest
 
-    Wrapper for request to API
-    delegate methods:
+    Wrapper for request to API service that manages streaming the response and checking for various errors.
+    
+    Delegate protocol:
 
-    onRequestBegin(request)
-    onRequestComplete(request)
-    onRequestError(request, error)
+      onRequestBegin(request)
+      onRequestComplete(request)
+      onRequestError(request, error)
 
-    onStreamStart(request)
-    onStreamData(request, newContent)
-    onStreamEnd(request)
+      onStreamStart(request)
+      onStreamData(request, newContent)
+      onStreamEnd(request)
 
-    delegate can get info via: 
+    Delegate can get info via:
+
       request.fullContent() 
       request.status()
       request.error()
-
 
 */
 
@@ -127,9 +128,12 @@
       const slot = this.newSlot("readLines", null);
     }
 
+    {
+      const slot = this.newSlot("isContuation", false); // flag to skip "start" delegate message
+    }
 
     {
-      const slot = this.newSlot("finishReason", null);
+      const slot = this.newSlot("stopReason", null);
     }
 
     {
@@ -141,16 +145,6 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
-    }
-
-    {
-      const slot = this.newSlot("lastContent", ""); // useful when separating renderable html while streaming
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
     }
 
     {
@@ -177,7 +171,6 @@
     super.init();
     this.setIsDebugging(true);
     this.setRequestId(this.puuid());
-    //this.setLastContent("");
     this.setTitle("Request");
     this.setIsDebugging(true);
   }
@@ -208,7 +201,7 @@
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "Authorization": `Bearer ${apiKey}`,
         'Accept-Encoding': 'identity'
       },
       body: JSON.stringify(this.bodyJson())
@@ -306,15 +299,16 @@
 
   async asyncSendAndStreamResponse () {
 
-    this.service().prepareToSendRequest(this);
+    this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
 
-    assert(!this.xhrPromise());
-
-    this.setXhrPromise(Promise.clone());
-
-    this.assertValid();
     assert(!this.xhr());
 
+    if (!this.isContuation()) {
+      assert(!this.xhrPromise());
+      this.setXhrPromise(Promise.clone());
+    }
+
+    this.assertValid();
     this.assertReadyToStream();
 
     //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
@@ -340,7 +334,9 @@
 
     xhr.responseType = ""; // "" or "text" is required for streams
 
-    this.setFullContent("");
+    if (!this.isContuation()) {
+      this.setFullContent("");
+    }
 
     // TODO: move to a standard wrapped XHR class?
     
@@ -371,8 +367,10 @@
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
 
-    this.sendDelegate("onRequestBegin");
-    this.streamTarget().onStreamStart(this);
+    if (!this.isContuation()) {
+      this.sendDelegate("onRequestBegin");
+      this.streamTarget().onStreamStart(this);
+    }
 
     //const s = JSON.stringify(options, 2, 2);
     //this.debugLog("SENDING REQUEST BODY:", options.body);
@@ -406,6 +404,15 @@
 
     this.streamTarget().onStreamEnd(this); // all data chunks should have already been sent via onStreamData
     this.sendDelegate("onRequestComplete")
+
+    if (this.stoppedDueToMaxTokens()) {
+      // continue with another request
+      this.requestContinuation();
+      return;
+    } else if (this.stopError()) {
+      this.onError(this.stopError());
+      return;
+    }
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
 
@@ -413,6 +420,47 @@
 
     //const completionDict = this.bodyJson();
     //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, 2, 2)); // no usage property!
+  }
+
+  continueMessage () {
+    return { 
+      role: "user", 
+      content: "Your last request was truncated due to the response size limit. Please continue exactly where you left off."
+    };
+  }
+
+  responseMessage () {
+    return {
+      role: "assistant",
+      content: this.fullContent()
+    }
+  }
+
+  lastMessageIsContinueRequest () {
+    const messages = this.bodyJson().messages;
+    const lastMessage = messages.last();
+    return lastMessage && lastMessage.content === this.continueMessage().content;
+  }
+
+  requestContinuation () {
+    console.log(this.typeId() + " requestContinuation() =====================================");
+    // add a continue message to the end of the messages array if needed
+    if (this.lastMessageIsContinueRequest()) {
+      this.bodyJson().messages.secondToLast().content += this.fullContent();
+    } else {
+      this.bodyJson().messages.push(this.responseMessage());
+      this.bodyJson().messages.push(this.continueMessage());
+    }
+
+    // clear request state except fullContent
+    this.setXhr(null);
+    this.setXhrPromise(null);
+    this.setReadIndex(this.fullContent().length);
+    this.setStopReason(null);
+    this.setStatus("continuing");
+
+    // send request again to continue where we left off
+    this.asyncSendAndStreamResponse();
   }
 
   didUpdateSlotError (oldValue, newValue) {
@@ -535,8 +583,8 @@
             if (line.includes("[DONE]")) {
               // skip, stream is done and will close
               const errorFinishReasons = ["length", "stop"];
-              if (errorFinishReasons.includes(this.finishReason())) {
-                this.setError("finish reason: '" + this.finishReason() + "'");
+              if (errorFinishReasons.includes(this.stopReason())) {
+                this.setError("finish reason: '" + this.stopReason() + "'");
               }
             } else {
               // we should expect json
@@ -569,7 +617,7 @@
         this.setFullContent(this.fullContent() + newContent);
         this.streamTarget().onStreamData(this, newContent);
         //console.warn("CONTENT: ", newContent);
-        this.setFinishReason(json.choices[0].finish_reason);
+        this.setStopReason(json.choices[0].finish_reason);
     } else {
       if (json.id) {
         //console.warn("HEADER: ", JSON.stringify(json));
@@ -603,6 +651,11 @@
     return this;
   }
 
+  onNewContent (newContent) {
+    this.setFullContent(this.fullContent() + newContent);
+    this.streamTarget().onStreamData(this, newContent);
+  }
+
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate()
     if (d) {
@@ -614,6 +667,29 @@
       }
     }
     return false
+  }
+
+  // --- stopping ---
+
+  stopError () {
+    if (this.stopReason() !== null) {
+      return new Error(this.stopReasonDescription());
+    }
+    return null;
+  }
+
+  stopReasonDict () {
+    return new Error(this.type() + " stopReasonDict not implemented");
+  }
+
+  stopReasonDescription () {
+    const reason = this.stopReason();
+    const dict = this.stopReasonDict();
+    return dict[reason];
+  }
+
+  stoppedDueToMaxTokens () {
+    throw new Error(this.type() + " stoppedDueToMaxTokens not implemented");
   }
 
 }).initThisClass();

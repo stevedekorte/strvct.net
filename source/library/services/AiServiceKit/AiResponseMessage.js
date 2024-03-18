@@ -113,7 +113,7 @@
   }
 
   service () {
-    return this.conversation().chatService()
+    return this.conversation().service()
   }
 
   apiKey () {
@@ -192,8 +192,18 @@
   onRequestComplete (aRequest) {
     //this.setRequest(null)
     //this.setStatus("complete")
-    this.setIsComplete(true)
-    this.sendDelegate("onMessageComplete")
+    this.setIsComplete(true);
+    this.sendDelegate("onMessageComplete");
+  }
+
+  // --- response tag ---
+
+  beginsWithResponseTag () {
+    return this.fullContent().startsWith("<response>");
+  }
+
+  endsWithResponseTag () {
+    return this.fullContent().endsWith("</response>");
   }
 
   // --- stream target events ---

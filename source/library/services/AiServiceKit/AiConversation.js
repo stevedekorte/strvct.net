@@ -176,7 +176,12 @@
   }
 
   chatRequestClass () {
-    return this.chatService().chatRequestClass();
+    return this.service().chatRequestClass();
   }
+
+  onMessageComplete (aMsg) {
+    super.onMessageComplete(aMsg);
+    return this;
+  } 
 
 }.initThisClass());

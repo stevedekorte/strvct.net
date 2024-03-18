@@ -23,7 +23,13 @@
             slot.setFinalInitProto(OpenAiService);
             slot.setIsSubnode(true);
         }
-        
+
+        {
+            const slot = this.newSlot("groqService", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(GroqService);
+            slot.setIsSubnode(true);
+        }
 
         /*
         {

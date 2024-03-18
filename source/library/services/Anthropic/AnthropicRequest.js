@@ -19,18 +19,34 @@
       "stream": true
     }'
 
-    Delegate protocol:
+    Example response:
 
-      onRequestBegin(request)
-      onRequestComplete(request)
-      onRequestError(request, error)
+    {
+      "completion": "Hello! How can I assist you today?",
+      "stop_reason": "stop_sequence",
+      "truncated": false,
+      "log_id": "abc123", // the conversation id, used for continuation requests
+      "usage": {
+        "prompt_tokens": 10,
+        "completion_tokens": 20,
+        "total_tokens": 30
+      }
+    }
 
+    Contniuation request:
 
+    curl https://api.anthropic.com/v1/complete \
+      -H "Content-Type: application/json" \
+      -H "X-API-Key: YOUR_API_KEY" \
+      -d '{
+        "conversation_id": "abc123",
+        "continuation": true,
+        "parent_message_id": "def456"
+      }'
 
 */
 
 (class AnthropicRequest extends AiRequest {
-
 
   initPrototypeSlots() {
   }
@@ -113,28 +129,36 @@
     } else if (type === "message_delta") {
       // nothing to do?
       // example: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence":null, "usage":{"output_tokens": 15}}}
-      this.setFinishReason(json.delta.stop_reason);
+      this.setStopReason(json.delta.stop_reason);
     } else if (type === "message_stop") {
       // nothing to do?
       // example: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence":null, "usage":{"output_tokens": 15}}}
       if (json.stop_reason) {
-        this.setFinishReason(json.stop_reason);
+        this.setStopReason(json.stop_reason);
       } else if (json.delta && json.delta.stop_reason) {
-        this.setFinishReason(json.delta.stop_reason);
+        this.setStopReason(json.delta.stop_reason);
       }
     } else if (type === "ping") {
       // nothing to do?
       // example: {"type": "message_stop"}
-      //this.setFinishReason("complete");
+      //this.setStopReason("complete");
     } else {
       console.warn(this.type() + " WARNING: don't know what to do with this JsonChunk", json);
       debugger;
     }
   }
 
-  onNewContent (newContent) {
-    this.setFullContent(this.fullContent() + newContent);
-    this.streamTarget().onStreamData(this, newContent);
+  stopReasonDict () {
+    return {
+      "stop_sequence": "The model stopped because it encountered a stop sequence specified in the `stop` parameter of the API request. This is used to stop generation when a particular substring is encountered.",
+      "max_tokens": "The model stopped because it reached the maximum number of tokens allowed for the response, as specified by the `max_tokens_to_sample` parameter in the API request.",
+      "api_request": "The model stopped because the `/completions` API endpoint was called again with the same `conversation_id`, interrupting the previous generation.", 
+      null: "If the model completed its generation normally without encountering a stop sequence, reaching the max tokens limit, or being interrupted, the `stop_reason` will be `null`."
+    };
+  }
+
+  stoppedDueToMaxTokens () {
+    return this.stopReason() === "max_tokens";
   }
 
 }).initThisClass();

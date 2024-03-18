@@ -114,7 +114,7 @@
   finalInit () {
     super.finalInit()
     this.setTitle("AI Service");
-    this.setSubtitle("services");
+    this.setSubtitle("ai services");
 
     // subclasses should set these
     /*
