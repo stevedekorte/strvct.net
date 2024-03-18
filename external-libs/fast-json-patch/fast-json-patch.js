@@ -945,5 +945,5 @@ JsonPatch.applyPatchWithAutoCreation = function (jsonObject, patch) {
     for (const operation of patch) {
         JsonPatch.ensurePathExists(jsonObject, operation.path);
     }
-    JsonPatch.applyPatch(jsonObject, patch);
+    return JsonPatch.applyPatch(jsonObject, patch);
 }

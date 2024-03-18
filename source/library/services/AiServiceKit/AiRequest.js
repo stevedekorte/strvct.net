@@ -380,7 +380,7 @@
   }
 
   onXhrProgress (event) {
-    //console.log(this.typeId() + " onXhrProgress() bytes " + this.fullContent().length);
+    console.log(this.typeId() + " onXhrProgress() byte count: " + this.fullContent().length + " readIndex: " + this.readIndex() + " status: " + this.status());
     this.onXhrRead();
   }
 
