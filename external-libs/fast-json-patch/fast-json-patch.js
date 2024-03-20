@@ -518,7 +518,14 @@ function applyOperation(document, operation, validateOperation, mutateDocument, 
                     return returnValue;
                 }
             }
+
+            if (obj[key] === undefined) { // TMP HACK SLD - TODO remove later when there's a better way to handle this
+                console.warn("fast json patch ran into missing patch path [" + operation.path + "] - inserting a dict to avoid crash");
+                obj[key] = {}
+                debugger;
+            }
             obj = obj[key];
+            
             // If we have more keys in the path, but the next value isn't a non-null object,
             // throw an OPERATION_PATH_UNRESOLVABLE error instead of iterating again.
             if (validateOperation && t < len && (!obj || typeof obj !== "object")) {
@@ -929,15 +936,44 @@ exports.compare = compare;
 
 getGlobalThis().JsonPatch = jsonpatch; // NOTE: added by SLD to make globally avaialble
 
+
+JsonPatch.pathExists = function (obj, path) {
+    const properties = path.split('/').slice(1); // Removing the leading slash
+    let currentObj = obj;
+
+    for (let i = 0; i < properties.length; i++) {
+      const prop = properties[i];
+  
+      if (currentObj.hasOwnProperty(prop)) {
+        currentObj = currentObj[prop];
+      } else {
+        debugger;
+        return false;
+      }
+    }
+  
+    return true;
+  }
+
 JsonPatch.ensurePathExists = function (jsonObject, path) {
     let currentObject = jsonObject;
     const pathSegments = path.split('/').slice(1); // Removing the leading slash
+    let didCreatePath = false;
 
-    for (const segment of pathSegments) {
+    for (let i = 0; i < pathSegments.length; i++) {
+        const segment = pathSegments[i];
         if (!(segment in currentObject)) {
+            const currentPath = pathSegments.slice(0, i + 1).join('/');
+            console.log("JsonPatch.ensurePathExists() Creating missing path: [" + currentPath + "]");
             currentObject[segment] = {}; // Create a new dictionary if the path segment doesn't exist
+            didCreatePath = true;
         }
         currentObject = currentObject[segment];
+    }
+
+    assert(JsonPatch.pathExists(jsonObject, path));
+    if (didCreatePath) {
+        console.log("verified created path: " + path);
     }
 }
 

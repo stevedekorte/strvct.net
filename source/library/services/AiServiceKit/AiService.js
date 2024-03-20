@@ -120,7 +120,7 @@
     /*
     this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
     this.chatModel().setModelName("claude-3-opus-20240229");
-    this.chatModel().setMaxTokenCount(200000); // base level 
+    this.chatModel().setMaxContextTokenCount(200000); // base level 
     */
   }
 

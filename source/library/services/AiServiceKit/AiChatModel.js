@@ -21,7 +21,7 @@
 
 
     {
-      const slot = this.newSlot("maxTokenCount", 8000); // max input tokens allowed by model
+      const slot = this.newSlot("maxContextTokenCount", 8000); // max input tokens allowed by model
       slot.setLabel("Max Token Count");
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");

@@ -119,6 +119,17 @@
       slot.setActionMethodName("delete");
     }
 
+    {
+      const slot = this.newSlot("deleteFollowingMessagesAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Delete Following Messages");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setCanInspect(true)
+      slot.setActionMethodName("deleteFollowingMessages");
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
   }
@@ -261,6 +272,14 @@
     const messages = this.followingMessages();
     messages.unshift(this);
     return messages;
+  }
+
+  // --- deleting ---
+
+  deleteFollowingMessages () {
+    const messages = this.followingMessages();
+    messages.forEach(m => m.delete());
+    return this;
   }
 
   // --- sending ---

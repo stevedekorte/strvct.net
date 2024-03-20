@@ -57,8 +57,8 @@
   // --- history ---
   // --- summary ---
 
-  maxTokenCount () {
-    return this.service().chatModel().maxTokenCount();
+  maxContextTokenCount () {
+    return this.service().chatModel().maxContextTokenCount();
   }
 
   updateTokenCount () {
@@ -82,7 +82,7 @@
     this.updateTokenCount()
     const tc = this.tokenCount()
     console.log("token count: ", tc)
-    if (tc > this.maxTokenCount() * 0.9) {
+    if (tc > this.maxContextTokenCount() * 0.9) {
       this.compactTokens()
     }
   }

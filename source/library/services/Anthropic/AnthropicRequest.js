@@ -92,20 +92,24 @@
 
       while (line !== undefined) {
         line = line.trim();
+        //console.warn(this.type() + " readXhrLines() read line: [" + line + "]");
 
         if (line.length) {
           if (line.startsWith("data:")) {
             const s = line.after("data:");
             const json = JSON.parse(s);
             this.onStreamJsonChunk(json);
-          } 
-
+          } else if (line.startsWith("event:")) {
+            // ingore
+          } else {
+            console.warn(this.type() + " WARNING: don't know what to do with this line: [" + line + "]");
+            debugger;
+          }
         }
         line = this.readNextXhrLine();
       }
     } catch (error) {
       this.onError(error);
-      console.warn(this.type() + " ERROR:", error);
       this.xhrPromise().callRejectFunc(new Error(error));      
     }
   }
@@ -113,8 +117,16 @@
   onStreamJsonChunk (json) {
     const type = json.type;
     if (json.type === "error") {
-      console.warn("ERROR: " + json.error.message);
-      this.xhrPromise().callRejectFunc(new Error(json.error.message));
+      const s = json.error.type + ": " + json.error.message;
+      const error = new Error(s);
+      this.onError(error);
+      this.setStopReason(json.error.type);
+      if (json.error.message === "Output blocked by content filtering policy") {
+        this.fullContent().copyToClipboard();
+      }
+      this.abort();
+      debugger;
+      return;
     } else if (type === "message_start") {
       // nothing to do?
       // example {"type": "message_start", "message": {"id": "msg_1nZdL29xx5MUA1yADyHTEsnR8uuvGzszyY", "type": "message", "role": "assistant", "content": [], 
@@ -150,6 +162,8 @@
 
   stopReasonDict () {
     return {
+      " overloaded_error": "Overloaded",
+      "invalid_request_error" : "Invalid request. Content may be blocked",
       "stop_sequence": "The model stopped because it encountered a stop sequence specified in the `stop` parameter of the API request. This is used to stop generation when a particular substring is encountered.",
       "max_tokens": "The model stopped because it reached the maximum number of tokens allowed for the response, as specified by the `max_tokens_to_sample` parameter in the API request.",
       "api_request": "The model stopped because the `/completions` API endpoint was called again with the same `conversation_id`, interrupting the previous generation.", 

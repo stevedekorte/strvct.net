@@ -160,11 +160,13 @@ const https = require('https');
 		
 			let responseBody = [];
 
+			/*
 			console.log("----------------------------------------------------");
 			console.log("proxy request options: ", JSON.stringify(options, null, 2));
 			console.log("----------------------------------------------------");
 			console.log("proxyCurlCommandForOptions: " +this.proxyCurlCommandForOptions(options));
 			console.log("----------------------------------------------------");
+			*/
 
 			const reqBodyParts = [];
 
@@ -219,8 +221,10 @@ const https = require('https');
 					if (contentType) {
 						const isText = contentType.startsWith('text') || contentType.startsWith('application/json') || contentType.startsWith('application/javascript');
 						if (isText) {
-							const body = Buffer.concat(reqBodyParts).toString('utf-8');
-							console.log(body); // only works for text
+							console.log("  request body is text of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
+							//const body = Buffer.concat(reqBodyParts).toString('utf-8');
+							//console.log(body); // only works for text
+							//console.log("  request body is text of " + body.length + " characters");
 						} else {
 							console.log("  request body is binary of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
 						}

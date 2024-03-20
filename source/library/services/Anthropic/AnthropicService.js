@@ -48,7 +48,7 @@
 
     this.setChatEndpoint("https://api.anthropic.com/v1/messages");
     this.chatModel().setModelName("claude-3-opus-20240229");
-    this.chatModel().setMaxTokenCount(200000); // base level 
+    this.chatModel().setMaxContextTokenCount(200000); // base level 
 
     this.setSystemRoleName("user"); // only replaced in outbound request json
   }

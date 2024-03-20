@@ -10,6 +10,7 @@
     onRequestRead(request)
     onRequestComplete(request)
     onRequestError(request, error)
+    onRequestAbort(request)
 
     onStreamStart(request)
     onStreamData(request, newContent)
@@ -30,27 +31,49 @@
     }
 
     {
-      const slot = this.newSlot("apiUrl", null);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      const slot = this.newSlot("url", null);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("needsProxy", true);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
+
+    {
+      const slot = this.newSlot("method", "POST");
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
+    {
+      const slot = this.newSlot("headers", null);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Pointer");
+      slot.setIsSubnodeField(false);
+      slot.setCanEditInspection(false);
+    }
 
     {
       const slot = this.newSlot("requestOptions", null); // this will contain the model choice and messages
@@ -58,17 +81,13 @@
 
     {
       const slot = this.newSlot("body", null); 
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-    }
-
-    {
-      const slot = this.newSlot("json", null);
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     // streaming
@@ -163,54 +182,26 @@
 
   // --- options ---
 
-  headers () {
-    return this.requestOptions().headers;
-  }
-
-
-  method () {
-    return this.requestOptions().method;
-  }
-
-  setMethod (m) {
-    this.requestOptions().method = m;
-    return this;
-  }
-
-  setBody (b) {
-    this.requestOptions().body = b;
-    return this;
-  }
-
-  body () {
-    return this.requestOptions().body;
-  }
-
   requestOptions () {
-    const apiKey = this.apiKey();
     return {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-        'Accept-Encoding': 'identity'
-      },
-      body: JSON.stringify(this.bodyJson()),
+      method: this.method(),
+      headers: this.headers(),
+      body: this.body()
     };
   }
 
   // ----------------------------
 
-  assertValid () {
+  assertValidUrl () {
     if (!this.url()) {
       throw new Error(this.type() + " url missing");
     }
   }
 
   activeUrl () {
-    let url = this.url();
+    const url = this.url();
     if (this.needsProxy()) {
-      url = ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
+      return ProxyServers.shared().defaultServer().proxyUrlForUrl(url);
     }
     return url;
   }
@@ -218,7 +209,6 @@
   proxyUrl () {
     const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
     return proxyUrl;
-    //return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
   }
 
   showRequest () {
@@ -226,8 +216,6 @@
   }
 
   showResponse () {
-    const json = this.json();
-    this.debugLog(" response json: ", json);
     if (json.error) {
       console.warn(this.type() + " ERROR:", json.error.message);
     }
@@ -252,8 +240,8 @@
       commandParts.push(` --header "${key}: ${value}"`);
     });
 
-    const data = JSON.stringify(this.bodyJson());
-    commandParts.push(` --data '` + data + `'`);
+    // TODO: deal with binary body data
+    commandParts.push(` --data '` + this.body() + `'`);
     return commandParts.join(" \\\n");
   }
 
@@ -263,20 +251,19 @@
       options: this.requestOptions(),
       url:  this.url(),
       activeUrl: this.activeUrl(),
-      body: this.bodyJson()
+      body: this.body()
     };
     return JSON.stringify(json, 2, 2);
   }
 
   // --- streaming response --- 
 
-  assertReadyToStream () {
-    const target = this.delegate();
-    if (target) {
-      // verify stream delegate protocol is implemented
-      assert(target.onStreamStart);
-      assert(target.onStreamData);
-      assert(target.onStreamEnd);
+  assertValidDelegate () {
+    const d = this.delegate();
+    if (d) {
+      assert(d.onStreamStart);
+      assert(d.onStreamData);
+      assert(d.onStreamEnd);
     }
   }
 
@@ -285,27 +272,25 @@
 
     this.setXhrPromise(Promise.clone());
 
-    this.assertValid();
-    assert(!this.xhr());
+    this.assertValidUrl();
+    assert(!this.xhr(), "xhr should be null");
 
-    this.assertReadyToStream();
-
-    //console.log("--- URL ---\n", this.activeApiUrl(), "\n-----------");
-    //console.log("--- CURL ---\n", this.curlCommand(), "\n-----------");
+    this.assertValidDelegate();
 
     this.setIsStreaming(true);
     this.setStatus("streaming");
 
     const xhr = new XMLHttpRequest();
     this.setXhr(xhr);
-    xhr.open("POST", this.activeUrl());
+    xhr.open(this.method(), this.activeUrl());
 
     // set headers
     const options = this.requestOptions();
     
-    for (const header in options.headers) {
-      const value = options.headers[header];
-      xhr.setRequestHeader(header, value);
+    const headers = this.headers();
+    for (const k in headers) {
+      const v = headers[header];
+      xhr.setRequestHeader(k, v);
     }
 
     xhr.responseType = ""; // "" or "text" is required for streams
@@ -343,14 +328,10 @@
       }, event)
     });
 
-    //  EventManager.shared().safeWrapEvent(() => { ... })
-
     this.sendDelegate("onRequestBegin");
     this.sendDelegate("onStreamStart");
 
-    //const s = JSON.stringify(options, 2, 2);
-    //this.debugLog("SENDING REQUEST BODY:", options.body);
-    xhr.send(options.body);
+    xhr.send(this.body());
 
     return this.xhrPromise();
   }
@@ -363,22 +344,13 @@
     this.sendDelegate("onRequestRead");
   }
 
+  statusCode () {
+    return this.xhr().status;
+  }
+
   onXhrLoadEnd (event) {
     //console.log(this.typeId() + " onXhrLoadEnd() bytes [[" + this.fullContent() + "]]");
-
-    const isError = this.xhr().status >= 300
-    if (isError) {
-      console.log(this.description());
-      console.error(this.xhr().responseText);
-      const json = JSON.parse(this.xhr().responseText);
-      if (json.error) {
-        this.onError(new Error(json.error.message));
-      } else {
-        this.onError(new Error("request error code:" + this.xhr().status + ")"));
-      }
-    } else {
-      this.readXhrLines() // finish reading any remaining lines
-    }
+    //const hasError = this.xhr().status >= 300;
 
     this.sendDelegate("onStreamEnd"); // all data chunks should have already been sent via onStreamData
     this.sendDelegate("onRequestComplete");
@@ -398,13 +370,14 @@
     s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
     const error = new Error(s);
     this.onError(error);
+    this.sendDelegate("onStreamError", [this, error]);
     this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
   }
 
   onXhrAbort (event) {
     this.setStatus("aborted")
-    this.sendDelegate("onRequestEnd");
+    this.sendDelegate("onRequestComplete");
     this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
   }
@@ -412,27 +385,6 @@
   onXhrRead () {
     //this.sendDelegate("onStreamData", [this, this.fullContent()]);
     //this.readXhrLines()
-  }
-
-  // --- xhr response reading lines ---
-
-  unreadResponse () {
-    const unread = this.xhr().responseText.substr(this.readIndex());
-    return unread
-  }
-
-  readNextXhrLine () {
-    const unread = this.unreadResponse();
-    const newLineIndex = unread.indexOf("\n");
-
-    if (newLineIndex === -1) {
-      return undefined; // no new line found
-    }
-
-    let newLine = unread.substr(0, newLineIndex);
-    this.setReadIndex(this.readIndex() + newLineIndex + 1); // advance the read index
-
-    return newLine;
   }
 
   // --- error ---

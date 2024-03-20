@@ -53,7 +53,7 @@
     onSpokeText (aNote) {
         //debugger;
         const text = aNote.info();
-        console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
+        //console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
 
         if (text.includes("<break time=")) {
             // no need to highlight breaks as they are not in the text

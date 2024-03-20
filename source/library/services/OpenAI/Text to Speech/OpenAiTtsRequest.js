@@ -9,7 +9,7 @@
  
   initPrototypeSlots() {
     {
-      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request - will receive onRequestComplete message if it responds to it
+      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request 
     }
 
     {

@@ -3,6 +3,8 @@
 /* 
     AiRequest
 
+    AiRequest <- on -> XhrWrapper 
+
     Wrapper for request to API service that manages streaming the response and checking for various errors.
     
     Delegate protocol:
@@ -27,7 +29,7 @@
 
   initPrototypeSlots() {
     {
-      const slot = this.newSlot("delegate", null); // optional reference to object that owns request - will receive onRequestComplete message if it responds to it
+      const slot = this.newSlot("delegate", null); // optional reference to object that owns request 
     }
 
     {
@@ -64,21 +66,12 @@
       const slot = this.newSlot("json", null);
     }
 
-    // fetching
-
-    {
-      const slot = this.newSlot("fetchPromise", null);
-    }
-
-    {
-      const slot = this.newSlot("isFetchActive", false);
-    }
-
-    {
-      const slot = this.newSlot("fetchAbortController", null);
-    }
-
     // streaming
+
+
+    {
+      const slot = this.newSlot("xhr", null);
+    }
 
     {
       const slot = this.newSlot("isStreaming", false); // external read-only
@@ -88,14 +81,6 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Boolean")
       slot.setIsSubnodeField(true)
-    }
-
-    {
-      const slot = this.newSlot("streamTarget", null); // will receive onStreamData and onStreamEnd messages
-    }
-
-    {
-      const slot = this.newSlot("xhr", null);
     }
 
     {
@@ -169,7 +154,7 @@
 
   init () {
     super.init();
-    this.setIsDebugging(true);
+    this.setIsDebugging(false);
     this.setRequestId(this.puuid());
     this.setTitle("Request");
     this.setIsDebugging(true);
@@ -282,7 +267,7 @@
   // --- streaming response --- 
 
   assertReadyToStream () {
-    const target = this.streamTarget();
+    const target = this.delegate();
     if (target) {
       // verify streamTarget protocol is implemented by target
       assert(target.onStreamStart);
@@ -369,7 +354,7 @@
 
     if (!this.isContuation()) {
       this.sendDelegate("onRequestBegin");
-      this.streamTarget().onStreamStart(this);
+      this.sendDelegate("onStreamStart");
     }
 
     //const s = JSON.stringify(options, 2, 2);
@@ -380,8 +365,14 @@
   }
 
   onXhrProgress (event) {
-    console.log(this.typeId() + " onXhrProgress() byte count: " + this.fullContent().length + " readIndex: " + this.readIndex() + " status: " + this.status());
+    /*
+    const txt = event.currentTarget.responseText;
+    const latestString = txt.substr(txt.length - event.loaded, event.loaded);
+    console.log(this.typeId() + " onXhrProgress() read [" + latestString + "]");
+    */
+    //debugger;
     this.onXhrRead();
+
   }
 
   onXhrLoadEnd (event) {
@@ -402,8 +393,6 @@
       this.readXhrLines() // finish reading any remaining lines
     }
 
-    this.streamTarget().onStreamEnd(this); // all data chunks should have already been sent via onStreamData
-    this.sendDelegate("onRequestComplete")
 
     if (this.stoppedDueToMaxTokens()) {
       // continue with another request
@@ -413,6 +402,10 @@
       this.onError(this.stopError());
       return;
     }
+    debugger;
+    this.sendDelegate("onStreamEnd");
+    this.sendDelegate("onRequestComplete")
+
     this.setStatus("completed " + this.responseSizeDescription());
     this.xhrPromise().callResolveFunc(this.fullContent()); 
 
@@ -443,7 +436,7 @@
   }
 
   requestContinuation () {
-    console.log(this.typeId() + " requestContinuation() =====================================");
+    console.log("========================================== " + this.typeId() + " requestContinuation() =====================================");
     // add a continue message to the end of the messages array if needed
     if (this.lastMessageIsContinueRequest()) {
       this.bodyJson().messages.secondToLast().content += this.fullContent();
@@ -455,10 +448,11 @@
     // clear request state except fullContent
     this.setXhr(null);
     this.setXhrPromise(null);
-    this.setReadIndex(this.fullContent().length);
+    this.setReadIndex(0); // this is the read index on the responseText, not the fullContent
     this.setStopReason(null);
     this.setStatus("continuing");
 
+    this.setIsContuation(true); // so the fullContent isn't cleared
     // send request again to continue where we left off
     this.asyncSendAndStreamResponse();
   }
@@ -472,6 +466,7 @@
 
   onError (e) {
     //debugger
+    console.warn(this.type() + " ERROR: " + e.message);
     this.setError(e);
     this.sendDelegate("onRequestError", [this, e])
 
@@ -492,7 +487,7 @@
     s += ", readyState: " + this.nameForXhrReadyState(xhr.readyState); // e.g.. 4 === DONE
     const error = new Error(s);
     this.onError(error);
-    this.streamTarget().onStreamEnd(this);
+    this.sendDelegate("onStreamEnd");
     this.xhrPromise().callRejectFunc(error);
   }
 
@@ -543,7 +538,8 @@
 
   onXhrAbort (event) {
     this.setStatus("aborted")
-    this.streamTarget().onStreamEnd(this);
+    this.sendDelegate("onStreamEnd");
+    //this.sendDelegate("onStreamAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));
   }
 
@@ -551,81 +547,32 @@
     const unread = this.xhr().responseText.substr(this.readIndex());
     return unread
   }
-
+  
   readNextXhrLine () {
-    const unread = this.unreadResponse();
-    const newLineIndex = unread.indexOf("\n");
-
+    const responseText = this.xhr().responseText;
+    const newLineIndex = responseText.indexOf("\n", this.readIndex());
+  
     if (newLineIndex === -1) {
       return undefined; // no new line found
     }
-
-    let newLine = unread.substr(0, newLineIndex);
-    this.setReadIndex(this.readIndex() + newLineIndex + 1); // advance the read index
-
+  
+    const newLine = responseText.substring(this.readIndex(), newLineIndex);
+    this.setReadIndex(newLineIndex + 1); // advance the read index
+  
     return newLine;
   }
+
 
   onXhrRead () {
     this.readXhrLines()
   }
 
-
   readXhrLines () {
-    try {
-      let line = this.readNextXhrLine();
-
-      while (line !== undefined) {
-        line = line.trim()
-        if (line.length) {
-          if (line.startsWith("data:")) {
-            const s = line.after("data:");
-            if (line.includes("[DONE]")) {
-              // skip, stream is done and will close
-              const errorFinishReasons = ["length", "stop"];
-              if (errorFinishReasons.includes(this.stopReason())) {
-                this.setError("finish reason: '" + this.stopReason() + "'");
-              }
-            } else {
-              // we should expect json
-              //console.log("LINE: " + s)
-              const json = JSON.parse(s);
-              this.onStreamJsonChunk(json);
-            }
-          } 
-        }
-        line = this.readNextXhrLine();
-      }
-    } catch (error) {
-      this.onError(error);
-      console.warn(this.type() + " ERROR:", error);
-      this.xhrPromise().callRejectFunc(new Error(error));      
-    }
+    throw new Error(this.type() + " readXhrLines not implemented");
   }
 
   onStreamJsonChunk (json) {
-    if (json.error) {
-      console.warn("ERROR: " + json.error.message);
-      this.xhrPromise().callRejectFunc(new Error(json.error.message));
-    } else if (
-        json.choices &&
-        json.choices.length > 0 &&
-        json.choices[0].delta &&
-        json.choices[0].delta.content
-      ) {
-        const newContent = json.choices[0].delta.content;
-        this.setFullContent(this.fullContent() + newContent);
-        this.streamTarget().onStreamData(this, newContent);
-        //console.warn("CONTENT: ", newContent);
-        this.setStopReason(json.choices[0].finish_reason);
-    } else {
-      if (json.id) {
-        //console.warn("HEADER: ", JSON.stringify(json));
-        // this is the header chunk - do we need to keep this around?
-      } else {
-        console.warn("WARNING: don't know what to do with this JsonChunk", json);
-      }
-    }
+    throw new Error(this.type() + " onStreamJsonChunk not implemented");
   }
 
   isActive () {
@@ -638,13 +585,6 @@
   }
   
   abort () {
-    if (this.isFetchActive()) {
-      if (this.fetchAbortController()) {
-        this.fetchAbortController().abort();
-      }
-      return this;
-    } 
-
     if (this.isActive()) {
       this.xhr().abort();
     }
@@ -652,8 +592,9 @@
   }
 
   onNewContent (newContent) {
+    console.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
-    this.streamTarget().onStreamData(this, newContent);
+    this.sendDelegate("onStreamData", [this, newContent]);
   }
 
   sendDelegate (methodName, args = [this]) {
@@ -661,7 +602,7 @@
     if (d) {
       const f = d[methodName]
       if (f) {
-        this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "()")
+        this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
         f.apply(d, args)
         return true
       }

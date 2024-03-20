@@ -60,27 +60,35 @@
 
     this.setChatEndpoint("https://api.groq.com/openai/v1/chat/completions");
 
+    this.setupForMixtralModel();
+    //this.setupForLlamaModel();
+    //this.setupForGemma();
+
+    this.setSystemRoleName("user"); // only replaced in outbound request json
+  }
+
+  setupForMixtralModel () {
     // bad 
     // - insists on summarizing the prompt
     // - makes decisions for players
     // - aks for rolls on cantrips
     this.chatModel().setModelName("mixtral-8x7b-32768");
-    this.chatModel().setMaxTokenCount(32768); 
+    this.chatModel().setMaxContextTokenCount(32768); 
+  }
 
-    /*
+  setupForLlamaModel () {
     // unusable 
     // - understands it's a DM but can't even find character sheets 
     // - maybe content window is too small?
     this.chatModel().setModelName("llama2-70b-4096");
-    this.chatModel().setMaxTokenCount(4096); 
+    this.chatModel().setMaxContextTokenCount(4096); 
+  }
 
+  setupForGemma () {
     // utterly unusable 
     // - just summarized prompt and then couldn't discuss it
     this.chatModel().setModelName("gemma-7b-it");
-    this.chatModel().setMaxTokenCount(8192); 
-    */
-
-    this.setSystemRoleName("user"); // only replaced in outbound request json
+    this.chatModel().setMaxContextTokenCount(8192); 
   }
 
   validateKey (s) {

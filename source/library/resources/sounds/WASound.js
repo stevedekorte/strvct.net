@@ -309,12 +309,12 @@
     }
 
     onStarted () {
-        console.log("Sound.onStarted() " + this.description());
+        //console.log("Sound.onStarted() " + this.description());
         this.post("onSoundStarted");
     }
 
     onEnded () {
-        console.log("Sound.onEnded() " + this.description());
+        //console.log("Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
         this.setSource(null);
         this.playPromise().callResolveFunc();
@@ -396,7 +396,7 @@
         // Step 1: Convert ArrayBuffer to Blob
         const arrayBuffer = this.data();
         assert(arrayBuffer);
-        console.log(this.typeId() + " promiseDataUrl byte count " + arrayBuffer.byteLength);
+        //console.log(this.typeId() + " promiseDataUrl byte count " + arrayBuffer.byteLength);
         assert(arrayBuffer.byteLength > 0);
         const mimeType = 'audio/*';
         const dataUrl = await arrayBuffer.promiseAsDataUrlWithMimeType(mimeType);
