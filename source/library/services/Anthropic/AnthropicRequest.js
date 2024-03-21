@@ -49,6 +49,14 @@
 (class AnthropicRequest extends AiRequest {
 
   initPrototypeSlots() {
+    {
+      const slot = this.newSlot("usageInputTokenCount", 0);
+    }
+
+    {
+      const slot = this.newSlot("usageOutputTokenCount", 0);
+    }
+
   }
 
   init () {
@@ -131,6 +139,9 @@
       // nothing to do?
       // example {"type": "message_start", "message": {"id": "msg_1nZdL29xx5MUA1yADyHTEsnR8uuvGzszyY", "type": "message", "role": "assistant", "content": [], 
       // "model": "claude-3-opus-20240229, "stop_reason": null, "stop_sequence": null, "usage": {"input_tokens": 25, "output_tokens": 1}}}
+      if (json.message.usage) {
+        this.setUsageInputTokenCount(json.message.usage.input_tokens);
+      }
     } else if (type === "content_block_start") {
         this.onNewContent(json.content_block.text);
     } else if (type === "content_block_delta") {
@@ -143,17 +154,20 @@
       // example: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence":null, "usage":{"output_tokens": 15}}}
       this.setStopReason(json.delta.stop_reason);
     } else if (type === "message_stop") {
-      // nothing to do?
       // example: {"type": "message_delta", "delta": {"stop_reason": "end_turn", "stop_sequence":null, "usage":{"output_tokens": 15}}}
       if (json.stop_reason) {
         this.setStopReason(json.stop_reason);
-      } else if (json.delta && json.delta.stop_reason) {
-        this.setStopReason(json.delta.stop_reason);
-      }
+      } 
+    } else if (json.delta) {
+        if (json.delta.usage) {
+          this.setUsageOutputTokenCount(json.delta.usage.output_tokens);
+        }
+        if (json.delta.stop_reason && json.delta.stop_reason !== "end_turn") {
+          this.setStopReason(json.delta.stop_reason);
+        }
     } else if (type === "ping") {
-      // nothing to do?
+      // a keep alive message?
       // example: {"type": "message_stop"}
-      //this.setStopReason("complete");
     } else {
       console.warn(this.type() + " WARNING: don't know what to do with this JsonChunk", json);
       debugger;
@@ -162,8 +176,33 @@
 
   stopReasonDict () {
     return {
-      " overloaded_error": "Overloaded",
-      "invalid_request_error" : "Invalid request. Content may be blocked",
+      "invalid_api_key_error": "The provided API key is invalid.",
+      "invalid_model_error": "The specified model is invalid.",
+      "insufficient_quota_error": "The account associated with the API key has insufficient quota for this request.",
+      "user_rate_limited_error": "The user has sent too many requests and is being rate limited.",
+      "server_overloaded_error": "The server is currently overloaded. Please try again later.",
+      "bad_request_error": "The request is invalid or malformed.",
+      "invalid_response_format_error": "The specified response format is invalid.",
+      "invalid_temperature_error": "The specified temperature value is invalid. It must be a float between 0 and 1.",
+      "invalid_max_tokens_error": "The specified max_tokens value is invalid. It must be a positive integer.",
+      "invalid_stop_sequences_error": "The specified stop sequences are invalid.",
+      "invalid_top_p_error": "The specified top_p value is invalid. It must be a float between 0 and 1.",
+      "invalid_presence_penalty_error": "The specified presence_penalty value is invalid. It must be a float between -2.0 and 2.0.",
+      "invalid_frequency_penalty_error": "The specified frequency_penalty value is invalid. It must be a float between -2.0 and 2.0.",
+      "invalid_logit_bias_error": "The specified logit_bias is invalid.",
+      "text_too_long_error": "The specified text input exceeds the maximum allowed length.",
+      "invalid_stream_error": "The specified stream value is invalid. It must be a boolean.",
+      "api_key_missing_error": "The API key is missing from the request.",
+      "model_overloaded_error": "The specified model is currently overloaded. Please try again later.",
+      "internal_server_error": "An unexpected internal server error occurred.",
+      "service_unavailable_error": "The API service is currently unavailable.",
+
+      // not sure above errors are correct
+
+      "api_error": "A general API error occurred.",
+      "overloaded_error": "Overloaded",
+
+      "invalid_request_error" : "Invalid request. Content may be blocked by filter policy.",
       "stop_sequence": "The model stopped because it encountered a stop sequence specified in the `stop` parameter of the API request. This is used to stop generation when a particular substring is encountered.",
       "max_tokens": "The model stopped because it reached the maximum number of tokens allowed for the response, as specified by the `max_tokens_to_sample` parameter in the API request.",
       "api_request": "The model stopped because the `/completions` API endpoint was called again with the same `conversation_id`, interrupting the previous generation.", 

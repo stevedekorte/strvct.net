@@ -14,7 +14,7 @@
       slot.setShouldStoreSlot(false)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Pointer")
-      slot.setCanInspect(false)
+      slot.setCanInspect(true)
     }
 
     {
@@ -35,20 +35,25 @@
 
     {
       const slot = this.newSlot("retryCount", 0);
+      slot.setCanInspect(true);
+      slot.setInspectorPath(this.type());
       slot.setSlotType("Number");
+
       //slot.setShouldStoreSlot(true)
     }
 
     {
       const slot = this.newSlot("summaryMessage", null);
       slot.setSlotType("String");
-      slot.setInspectorPath("AiResponseMessage");
+      slot.setInspectorPath(this.type());
       //slot.setShouldStoreSlot(true)
     }
 
     {
       // See: https://aipromptskit.com/openai-temperature-parameter/
       const slot = this.newSlot("temperature", 0.7); // 0-1, higher = more creative
+      slot.setCanInspect(true);
+      slot.setInspectorPath(this.type());
       slot.setSlotType("Number");
       //slot.setShouldStoreSlot(true)
     }
@@ -56,6 +61,8 @@
     {
       // See: https://aipromptskit.com/openai-temperature-parameter/
       const slot = this.newSlot("topP", 0.8); // 0-1, higher = more diverse // top_p on Claude3
+      slot.setCanInspect(true);
+      slot.setInspectorPath(this.type());
       slot.setSlotType("Number");
       //slot.setShouldStoreSlot(true)
     }

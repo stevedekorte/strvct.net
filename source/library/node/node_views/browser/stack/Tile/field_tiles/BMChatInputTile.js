@@ -94,7 +94,7 @@
 
         const v = TextField.clone().setElementClassName("BMChatInputTileValueView");
         
-        v.setIsMergeable(true);
+        v.setIsMergeable(true); // needed to avoid recreating DOM elements when updating the value 
         v.setDisplay("block")
         v.setPosition("relative")
         v.setWordWrap("normal")

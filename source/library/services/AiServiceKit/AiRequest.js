@@ -38,13 +38,14 @@
 
     {
       const slot = this.newSlot("needsProxy", true);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setCanInspect(true);
+      slot.setCanEditInspection(false);
+      slot.setDuplicateOp("duplicate");
+      slot.setInspectorPath("");
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSlotType("String");
+      slot.setSyncsToView(true);
     }
 
     {
@@ -53,13 +54,14 @@
 
     {
       const slot = this.newSlot("body", null); 
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setCanInspect(true);
+      slot.setCanEditInspection(false);
+      slot.setInspectorPath("");
+      slot.setIsSubnodeField(true);
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
     }
 
     {
@@ -89,24 +91,24 @@
 
     {
       const slot = this.newSlot("requestId", null);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("readIndex", 0);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
@@ -402,7 +404,6 @@
       this.onError(this.stopError());
       return;
     }
-    debugger;
     this.sendDelegate("onStreamEnd");
     this.sendDelegate("onRequestComplete")
 
@@ -447,7 +448,6 @@
 
     // clear request state except fullContent
     this.setXhr(null);
-    this.setXhrPromise(null);
     this.setReadIndex(0); // this is the read index on the responseText, not the fullContent
     this.setStopReason(null);
     this.setStatus("continuing");
@@ -466,9 +466,10 @@
 
   onError (e) {
     //debugger
-    console.warn(this.type() + " ERROR: " + e.message);
+    console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
     this.setError(e);
-    this.sendDelegate("onRequestError", [this, e])
+    debugger;;
+    this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {
       console.warn(this.debugTypeId() + " " + e.message);
@@ -592,7 +593,7 @@
   }
 
   onNewContent (newContent) {
-    console.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
+    //console.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
     this.sendDelegate("onStreamData", [this, newContent]);
   }
@@ -602,7 +603,7 @@
     if (d) {
       const f = d[methodName]
       if (f) {
-        this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
+        //this.debugLog(this.typeId() + " sending " + d.typeId() + "." + methodName + "(" + (args[1]? args[1] : "") + ")")
         f.apply(d, args)
         return true
       }
@@ -613,7 +614,7 @@
   // --- stopping ---
 
   stopError () {
-    if (this.stopReason() !== null) {
+    if (this.stopReason() !== null && this.stopReason() !== "end_turn") { // end_turn is Anthropic's way of saying "done" (need to move this)
       return new Error(this.stopReasonDescription());
     }
     return null;
