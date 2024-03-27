@@ -122,6 +122,10 @@
     this.chatModel().setModelName("claude-3-opus-20240229");
     this.chatModel().setMaxContextTokenCount(200000); // base level 
     */
+
+   if (!this.hasApiKey()) {
+      this.fetchAndSetupInfo();
+    }
   }
 
   validateKey (s) {
@@ -156,6 +160,48 @@
   prepareToSendRequest (aRequest) {
     // subclasses should override
     return this;
+  }
+
+  async fetchAndSetupInfo () {
+    let info;
+
+    try {
+      info = await this.fetchInfo();
+    } catch (error) {
+      console.log(this.type() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
+      return;
+    }
+
+    if (info.apiKey) {
+      this.setApiKey(info.apiKey);
+    }
+
+    if (info.chatEndpoint) {
+      this.setChatEndpoint(info.chatEndpoint);
+    }
+
+    if (info.chatModelName) {
+      this.chatModel().setModelName(info.chatModelName);
+    }
+
+    if (info.chatModelMaxContextTokenCount) {
+      this.chatModel().setMaxContextTokenCount(info.chatModelMaxContextTokenCount);
+    }
+  }
+
+  fetchInfoUrl () {
+    const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+    const url = baseUrl + "/app/info/" + this.type() + ".json";
+    return url;
+  }
+
+  async fetchInfo () {
+    return fetch(this.fetchInfoUrl())
+      .then(response => response.json())
+      .then(json => {
+        console.log("info response", json);
+        return json;
+      });
   }
 
 }.initThisClass());

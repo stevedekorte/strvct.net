@@ -115,7 +115,7 @@
 
   service () {
     //return this.images().service()
-    return HavewordsApp.shared().services().openAiService();
+    return UndreamedOfApp.shared().services().openAiService();
   }
 
   imagePrompt () {

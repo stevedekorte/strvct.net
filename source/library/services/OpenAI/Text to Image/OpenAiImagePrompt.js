@@ -144,7 +144,7 @@
 
   service () {
     //return this.imagePrompts().service()
-    return HavewordsApp.shared().services().openAiService()
+    return UndreamedOfApp.shared().services().openAiService()
   }
 
   // --- generate action ---

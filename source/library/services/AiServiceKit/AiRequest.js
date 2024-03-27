@@ -116,7 +116,7 @@
     }
 
     {
-      const slot = this.newSlot("isContuation", false); // flag to skip "start" delegate message
+      const slot = this.newSlot("isContinuation", false); // flag to skip "start" delegate message
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -328,7 +328,7 @@
     this.setError(null); // clear error (in case we are retrying)
     assert(!this.xhr());
 
-    if (!this.isContuation()) {
+    if (!this.isContinuation()) {
       assert(!this.xhrPromise());
       this.setXhrPromise(Promise.clone());
     }
@@ -359,7 +359,7 @@
 
     xhr.responseType = ""; // "" or "text" is required for streams
 
-    if (!this.isContuation()) {
+    if (!this.isContinuation()) {
       this.setFullContent("");
     }
 
@@ -392,7 +392,7 @@
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
 
-    if (!this.isContuation()) {
+    if (!this.isContinuation()) {
       this.sendDelegate("onRequestBegin");
       this.sendDelegate("onStreamStart");
     }
@@ -504,7 +504,7 @@
     this.setStopReason(null);
     this.setStatus("continuing");
 
-    this.setIsContuation(true); // so the fullContent isn't cleared
+    this.setIsContinuation(true); // so the fullContent isn't cleared
     // send request again to continue where we left off
     this.asyncSendAndStreamResponse();
   }

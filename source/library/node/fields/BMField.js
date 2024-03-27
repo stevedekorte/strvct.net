@@ -368,7 +368,7 @@
     setJson (json) {
         //console.log("Field " + this.key() + " setJson(" + json + ")") 
         this.setValue(json) 
-        assert(this.value() === json)
+        assert(this.value() === json || (json === null && this.value() === "")); // sanity check
         return this
     }
 

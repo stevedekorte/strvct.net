@@ -47,7 +47,7 @@
     }
 
     promiseHasKey (key) {
-        console.log("promiseHasKey(" + key + ")");
+        //console.log("promiseHasKey(" + key + ")");
         return this.idb().promiseHasKey(key)
     }
 
