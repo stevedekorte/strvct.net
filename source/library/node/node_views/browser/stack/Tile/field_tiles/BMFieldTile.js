@@ -243,7 +243,7 @@
 		
         const node = this.node()
         node.prepareToSyncToView()
-        this.setIsDisplayHidden(!node.isVisible())
+        //this.setIsDisplayHidden(!node.isVisible())
 
         this.syncKeyFromNode()
         this.syncValueFromNode()

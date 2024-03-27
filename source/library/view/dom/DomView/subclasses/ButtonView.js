@@ -84,8 +84,8 @@
             view.setPaddingLeft("1em").setPaddingRight("1em")
             view.flexCenterContent()
             view.setTextAlign("center")
-            view.setMinHeight("1em")
-            view.setWhiteSpace("nowrap")
+            view.setMinHeight("fit-content")
+            view.setWhiteSpace("pre-wrap")
             view.setTextOverflow("ellipsis")
             view.setFontSize("80%")
             view.setIsDisplayHidden(true);

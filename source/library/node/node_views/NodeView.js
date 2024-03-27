@@ -172,7 +172,8 @@
     }
     
     visibleSubnodes () {
-        return this.node().subnodes()
+        const node = this.node();
+        return node.subnodes()
     }
 
     syncCssFromNode () {
@@ -197,15 +198,19 @@
     }
 
     syncFromNode () {
-        let subnodesDidChange = false
+        let subnodesDidChange = false;
         // override this method if the view manages it's own subviews
         const node = this.node();
 
         if (!node) { 
-            this.removeAllSubviews();
-            return
+            if (this.subviews().length > 0) {
+                this.removeAllSubviews();
+                return true;
+            }
+            return false;
         }
 
+        //this.setIsDisplayHidden(!node.isVisible())
         this.syncCssFromNode();
 
         //console.log("> " + this.debugTypeId() + " syncFromNode")
@@ -280,8 +285,6 @@
         }
 
         this.subviews().forEach(subview => subview.syncFromNodeNow())
-
-        //this.syncCssFromNode()
 
         return subnodesDidChange
     }

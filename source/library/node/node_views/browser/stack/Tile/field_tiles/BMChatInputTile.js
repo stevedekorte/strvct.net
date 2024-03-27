@@ -2,7 +2,7 @@
 
 /*
 
-    BMChatInputTile 
+    BMChatInputTile  
 
     
 */
@@ -18,6 +18,7 @@
         this.setValueUneditableBorder("none");
         this.setValueEditableBorder("none");
         //this.setWidth("-webkit-fill-available");
+        this.setElementClassName("BMChatInputTile"); // not needed
         return this
     }
 
@@ -32,7 +33,7 @@
     onSpeakingText (aNote) {
         //debugger;
         const text = aNote.info();
-        console.log(this.typeId() + " onSpeakingText: [" + text.clipWithEllipsis(15) + "]");
+        //console.log(this.typeId() + " onSpeakingText: [" + text.clipWithEllipsis(15) + "]");
 
         if (text.includes("<break time=")) {
             // no need to highlight breaks as they are not in the text
@@ -40,7 +41,7 @@
         }
 
         const e = this.speakableElementWithText(text);
-        assert(e);
+        assert(e, "BMChatInputTile.onSpeakingText(aNote) missing div for text [" + text + "]");
         this.unhighlightAllSentences();
         this.highlightElement(e);
     }
@@ -111,6 +112,15 @@
         v.setPaddingLeft("0.4em")
         v.setPaddingRight("0.4em")
         v.setPaddingBottom("0.4em")
+
+        // ---- narration text ---
+        v.setPaddingTop("0.4em");
+        v.setPaddingBottom("0.4em");
+        v.setPaddingLeft("0.8em");
+        v.setPaddingRight("0.8em");
+
+        // ----
+
         v.setAllowsHtml(true)
         v.setWhiteSpace("normal");
         

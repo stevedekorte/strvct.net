@@ -149,7 +149,7 @@
   }
 
   startWithPrompt (prompt) {
-    this.clear()
+    this.clear();
     const promptMsg = this.newSystemMessage();
     promptMsg.setContent(prompt);
     const responseMessage = promptMsg.requestResponse();

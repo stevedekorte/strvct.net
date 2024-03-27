@@ -179,12 +179,14 @@
     console.log("ERROR: ", aRequest.error().message);
     this.setError(aRequest.error());
     const msg = aRequest.error().message;
+    /*
     if (msg.includes("Please try again in 6ms.")) {
       this.setRetryCount(this.retryCount() + 1);
       const seconds = Math.pow(2, this.retryCount());
       console.warn("WARNING: retrying openai request in " + seconds + " seconds");
       this.addTimeout(() => this.makeRequest(), seconds*1000);
     }
+    */
   }
 
   valueError () {

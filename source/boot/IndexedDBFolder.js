@@ -495,7 +495,7 @@
             return this.promiseUpdate(key, value)
         } 
 
-        //console.log("idb NO hasKey promiseAdd", key)
+        console.log("idb NO hasKey promiseAdd", key)
         return this.promiseAdd(key, value)
     }
 

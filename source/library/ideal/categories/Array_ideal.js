@@ -571,17 +571,17 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
 
 
     indexMapForMethodName (methodName) {
-        const m = new Map()
+        const m = new Map();
         this.forEach(entry => {
-            const k = entry[methodName].apply(entry)
+            const k = entry[methodName].apply(entry);
             if (m.has(k)) {
-                const array = m.get(k)
-                array.push(entry)
+                const array = m.get(k);
+                array.push(entry);
             } else {
-                m.set(k, [entry])
+                m.set(k, [entry]);
             }
-        })
-        return m
+        });
+        return m;
     }
 
     // ---

@@ -217,6 +217,34 @@ class UrlResource {
         const h = this.resourceHash() ;
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared();
+            const hasKey = await hc.promiseHasKey(h);
+            //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
+
+            //if (data !== undefined) {
+            if (hasKey) {
+                // if hashcache is available and has data, use it
+                const data = await hc.promiseAt(h);
+                assert(data !== undefined, "hashcache has undefined data for " + h);
+                this._data = data;
+                return this;
+            } else {
+                // otherwise, load normally and cache result
+                this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                await this.promiseJustLoad();
+                await hc.promiseAtPut(h, this.data());
+                this.debugLog(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                return this;
+            }
+        } else {
+            return this.promiseJustLoad();
+        }
+    }
+
+    /*
+        async promiseLoadFormCache () {
+        const h = this.resourceHash() ;
+        if (h && getGlobalThis().HashCache) {
+            const hc = HashCache.shared();
             //const hasKey = await hc.promiseHasKey(h);
             const data = await hc.promiseAt(h);
 
@@ -238,6 +266,7 @@ class UrlResource {
             return this.promiseJustLoad();
         }
     }
+    */
 
     async promiseJustLoad () {
         try {

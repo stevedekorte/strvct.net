@@ -9,23 +9,25 @@
 (class BMActionFieldTile extends Tile {
     
     initPrototypeSlots () {
-        this.newSlot("buttonView", null)
+        {
+            const slot = this.newSlot("buttonView", null);
+        }
     }
 
     init () {
-        super.init()
+        super.init();
 
-        const cv = this.contentView()
-        cv.flexCenterContent()
+        const cv = this.contentView();
+        cv.flexCenterContent();
 		
-        const bv = ButtonView.clone().setElementClassName("BMActionFieldView")
-        this.setButtonView(bv)
-	    bv.setTarget(this).setAction("didClickButton")
-	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)")
+        const bv = ButtonView.clone().setElementClassName("BMActionFieldView");
+        this.setButtonView(bv);
+	    bv.setTarget(this).setAction("didClickButton");
+	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
 
-        this.addContentSubview(this.buttonView())
-        //this.setMinHeightPx(64)
-        return this
+        this.addContentSubview(this.buttonView());
+        //this.setMinHeightPx(64);
+        return this;
     }
 
     updateSubviews () {	

@@ -117,21 +117,46 @@
 
     {
       const slot = this.newSlot("isContuation", false); // flag to skip "start" delegate message
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("stopReason", null);
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
+    {
+      const slot = this.newSlot("retryDelaySeconds", 4);
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(false);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("fullContent", null); 
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
@@ -140,13 +165,25 @@
 
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath("")
+      slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
+    }
+
+
+    {
+      const slot = this.newSlot("retryRequestAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Retry Request");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("retryRequest");
     }
 
     this.setShouldStore(false)
@@ -288,6 +325,7 @@
 
     this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
 
+    this.setError(null); // clear error (in case we are retrying)
     assert(!this.xhr());
 
     if (!this.isContuation()) {
@@ -398,10 +436,13 @@
 
     if (this.stoppedDueToMaxTokens()) {
       // continue with another request
-      this.requestContinuation();
+      this.continueRequest();
       return;
     } else if (this.stopError()) {
-      this.onError(this.stopError());
+      if (!this.error()) {
+        // we don't want to overwrite a custom error if it's already set
+        this.onError(this.stopError());
+      }
       return;
     }
     this.sendDelegate("onStreamEnd");
@@ -433,14 +474,25 @@
   lastMessageIsContinueRequest () {
     const messages = this.bodyJson().messages;
     const lastMessage = messages.last();
+    // continueMessage is the user request for the ai to continue it's last message 
     return lastMessage && lastMessage.content === this.continueMessage().content;
   }
 
-  requestContinuation () {
-    console.log("========================================== " + this.typeId() + " requestContinuation() =====================================");
+  retryRequest () {
+    this.setXhr(null);
+    this.setReadIndex(0); // this is the read index on the responseText, not the fullContent
+    this.setStopReason(null);
+    this.setStatus("retrying");
+    this.setXhrPromise(null);
+    this.asyncSendAndStreamResponse();
+  }
+
+  continueRequest () {
+    console.log("========================================== " + this.typeId() + " continueRequest() =====================================");
     // add a continue message to the end of the messages array if needed
-    if (this.lastMessageIsContinueRequest()) {
-      this.bodyJson().messages.secondToLast().content += this.fullContent();
+    //if (this.lastMessageIsContinueRequest()) {
+    if (this.isContinuation()) {
+        this.bodyJson().messages.secondToLast().content += this.fullContent();
     } else {
       this.bodyJson().messages.push(this.responseMessage());
       this.bodyJson().messages.push(this.continueMessage());
@@ -464,11 +516,24 @@
     }
   }
 
+  retryWithDelay (seconds) {
+    console.log(this.typeId() + " retrying in " + seconds + " seconds");
+    this.addTimeout(() => { 
+      this.retryRequest();
+    }, seconds*1000);
+  }
+  
   onError (e) {
-    //debugger
-    console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
     this.setError(e);
-    debugger;;
+
+    if (this.isRecoverableError()) {
+      this.retryWithDelay(this.retryDelaySeconds());
+      this.setRetryDelaySeconds(this.retryDelaySeconds() * 2);
+      e.message = this.service().title() + " overloaded, retrying in " + this.retryDelaySeconds() + "s";
+    }
+
+    console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
+    debugger;
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {
@@ -632,6 +697,18 @@
 
   stoppedDueToMaxTokens () {
     throw new Error(this.type() + " stoppedDueToMaxTokens not implemented");
+  }
+
+  retriableStopReasons () {
+    return new Set(["overloaded_error"]);
+  }
+
+  isRecoverableError () {
+    const e = this.error();
+    if (e) {
+      return this.retriableStopReasons().has(e.name);
+    }
+    return false;
   }
 
 }).initThisClass();

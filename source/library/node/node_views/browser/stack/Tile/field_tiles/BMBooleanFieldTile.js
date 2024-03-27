@@ -23,6 +23,9 @@
         this.valueView().parentView().flexCenterContent()
         this.valueView().setPaddingBottom("0em")
 
+        this.keyView().setPaddingTop("0em")
+        this.keyView().setPaddingBottom("0.35em")
+
         //this.contentView().debugBorders()
         this.kvSection().subviews().at(1).flexCenterContent()
         //this.contentView().setFlexDirection("column")

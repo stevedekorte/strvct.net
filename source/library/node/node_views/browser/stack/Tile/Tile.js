@@ -300,9 +300,13 @@
     syncFromNode () {
         // is this ever called?
         //this.syncCssFromNode()
-        this.updateSubviews()
-        this.syncOrientation()
-        return this
+        const node = this.node();
+        if (node) {
+            this.setIsDisplayHidden(!node.isVisible());
+        }
+        this.updateSubviews();
+        this.syncOrientation();
+        return this;
     }
 
     tilesView () {

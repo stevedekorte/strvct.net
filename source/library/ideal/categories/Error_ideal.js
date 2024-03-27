@@ -17,10 +17,18 @@
     }
     */
 
-    static assert (v, errorMessage) {
+    static assert (v, errorMessage, errorName) {
         if (!Boolean(v)) {
             const m = errorMessage ? errorMessage : "assert failed - false value";
-            throw new Error(m);
+            debugger;
+            const e = new Error(m);
+            if (errorName) {
+                e.name = errorName;
+            }
+            if (errorMessage) {
+                console.warn("assert failed: " + errorMessage);
+            }
+            throw e;
         }
         return v;
     }

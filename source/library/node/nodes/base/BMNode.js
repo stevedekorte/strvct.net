@@ -139,26 +139,20 @@
         // view related, but computed on node
 
         {
-            const slot = this.newSlot("nodeVisibleClassName", null)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("nodeVisibleClassName", null);
+            slot.setDuplicateOp("copyValue");
         }
 
         {
-            const slot = this.newSlot("canDelete", false)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("canDelete", false);
+            slot.setDuplicateOp("copyValue");
         }
 
         {
-            const slot = this.newSlot("isVisible", true)
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("isVisible", true);
+            slot.setSyncsToView(true);
         }
 
-        /*
-        {
-            const slot = this.newSlot("nodeIsHidden", false)
-            slot.setDuplicateOp("copyValue")
-        }
-        */
     }
 
     init () {
@@ -411,6 +405,22 @@
             }
         })
         return results
+    }
+
+    // --------
+
+    addSubnodeIfAbsent (aNode) {
+        if (!this.hasSubnode(aNode)) {
+            this.addSubnode(aNode);
+        }
+        return this;
+    }
+
+    removeSubnodeIfPresent (aNode) {
+        if (this.hasSubnode(aNode)) {
+            this.removeSubnode(aNode);
+        }
+        return this;
     }
 
     // --------

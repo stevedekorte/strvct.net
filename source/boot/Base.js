@@ -167,6 +167,7 @@ if (!String.prototype.capitalized) {
 getGlobalThis().assert = function (v, errorMessage) {
     if (!Boolean(v)) {
         const m = errorMessage ? errorMessage : "assert failed - false value";
+        debugger;
         throw new Error(m);
     }
     return v

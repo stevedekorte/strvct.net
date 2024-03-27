@@ -70,7 +70,7 @@
 
   requestOptions () {
     const apiKey = this.apiKey();
-    return {
+    const json = {
       method: "POST",
       headers: {
         //"Content-Type": "application/json",
@@ -82,6 +82,7 @@
       },
       body: JSON.stringify(this.bodyJson()),
     };
+    return json;
   }
 
   setupForStreaming () {
@@ -125,15 +126,15 @@
   onStreamJsonChunk (json) {
     const type = json.type;
     if (json.type === "error") {
-      const s = json.error.type + ": " + json.error.message;
-      const error = new Error(s);
+      const error = new Error(json.error.message);
+      error.name = json.error.type;
       this.onError(error);
       this.setStopReason(json.error.type);
       if (json.error.message === "Output blocked by content filtering policy") {
         this.fullContent().copyToClipboard();
       }
       this.abort();
-      debugger;
+ //     debugger;
       return;
     } else if (type === "message_start") {
       // nothing to do?
@@ -175,6 +176,18 @@
   }
 
   stopReasonDict () {
+    /*
+    {
+    "invalid_request_error": "Indicates a problem with the format of your request to the API (incorrect parameters, invalid syntax, missing data, etc.).",
+    "authentication_error": "Your API key is incorrect or invalid.",
+    "permission_error": "Your API key lacks the permissions required for the endpoint/feature.",
+    "not_found_error": "The requested resource (e.g., model) was not found.",
+    "rate_limit_error": "You've exceeded the usage rate limit for your API key.",
+    "overloaded_error": "Anthropic's systems are temporarily overloaded.",
+    "api_error": "An unexpected internal error on Anthropic's side"
+  }
+  */
+
     return {
       "invalid_api_key_error": "The provided API key is invalid.",
       "invalid_model_error": "The specified model is invalid.",
@@ -200,7 +213,7 @@
       // not sure above errors are correct
 
       "api_error": "A general API error occurred.",
-      "overloaded_error": "Overloaded",
+      "overloaded_error": "Anthropic service overloaded",
 
       "invalid_request_error" : "Invalid request. Content may be blocked by filter policy.",
       "stop_sequence": "The model stopped because it encountered a stop sequence specified in the `stop` parameter of the API request. This is used to stop generation when a particular substring is encountered.",
@@ -212,6 +225,10 @@
 
   stoppedDueToMaxTokens () {
     return this.stopReason() === "max_tokens";
+  }
+
+  retriableStopReasons () {
+    return new Set(["overloaded_error", "server_overloaded_error", "service_unavailable_error"]);
   }
 
 }).initThisClass();

@@ -157,6 +157,22 @@ const https = require('https');
 
 			options.headers["host"] = hostname;
 			options.headers["sec-fetch-mode"] = "cors"; //"same-origin";
+
+			/* 
+			    Here is where we have a chance to insert auth keys, etc.
+
+			    If clients shares these headers:
+				- x-user-public-key
+				- x-user-request-signature 
+				- x-user-service-name
+
+				then we can:
+			   - verify user is in our system and has credits
+			   - verify signture for request
+			   - if all checks out, we lookup and add appropriate service auth key header
+
+			   
+			*/
 		
 			let responseBody = [];
 
