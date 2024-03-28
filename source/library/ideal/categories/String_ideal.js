@@ -481,6 +481,7 @@ String.prototype._setterCacheMap = new Map();
         return doc.body.textContent || "";
     }
 
+    /*
     stripHtmlDivsWithClassNames (classNames) {
         // Parse the HTML string into a DOM object
         const parser = new DOMParser();
@@ -494,6 +495,22 @@ String.prototype._setterCacheMap = new Map();
         // Serialize the document back to a string
         return doc.body.innerHTML;
     }
+    */
+
+    stripHtmlElementsWithTagNames (tagNames) {
+        // Parse the HTML string into a DOM object
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(this, 'text/html');
+    
+        // Iterate over each tag name and remove the corresponding elements
+        tagNames.forEach(tagName => {
+            doc.querySelectorAll(tagName).forEach(el => el.remove());
+        });
+    
+        // Serialize the document back to a string
+        return doc.body.innerHTML;
+    }
+    
 
 }).initThisCategory();
 

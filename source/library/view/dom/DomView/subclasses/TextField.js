@@ -894,19 +894,11 @@ HTMLElement.prototype.findElementWithTextContent = function(textContent, classNa
 
 //Element.prototype.getAllSubelements = function() { // Element includes HTML and SVG elements
 
+// --- find matching class names ---
+
 HTMLElement.prototype.getAllSubelementsWithClass = function(className) {
-    let allSubelements = [];
-    function recurse(element) {
-      Array.from(element.children).forEach(child => {
-        if (child.classList.contains(className)) {
-          allSubelements.push(child);
-        }
-        recurse(child);
-      });
-    }
-    recurse(this);
-    return allSubelements;
-  };
+    return this.getAllSubelementsWithAnyOfClass([className]);
+};
 
 HTMLElement.prototype.getAllSubelementsWithAnyOfClass = function(classNames) {
     let allSubelements = [];
@@ -922,6 +914,33 @@ HTMLElement.prototype.getAllSubelementsWithAnyOfClass = function(classNames) {
     recurse(this);
     return allSubelements;
 };
+
+// --- find matching tag names ---
+
+HTMLElement.prototype.elementsOfTag = function(tagName) {
+    assert(Type.isString(tagName));
+    return this.elementsOfTags([tagName]);
+}
+
+HTMLElement.prototype.elementsOfTags = function(tagNames) {
+    assert(Type.isArray(tagNames));
+
+    let allSubelements = [];
+
+    function recurse(element) {
+      Array.from(element.children).forEach(child => {
+        // Check if the child element's tag name is in the provided list 
+        if (tagNames.includes(child.tagName.toLowerCase())) { 
+          allSubelements.push(child);
+        }
+        recurse(child);
+      });
+    }
+
+    recurse(this);
+    return allSubelements;
+};
+
   
 
   

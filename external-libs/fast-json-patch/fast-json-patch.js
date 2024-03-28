@@ -973,7 +973,7 @@ JsonPatch.ensurePathExists = function (jsonObject, path) {
 
     assert(JsonPatch.pathExists(jsonObject, path));
     if (didCreatePath) {
-        console.log("verified created path: " + path);
+        //console.log("verified created path: " + path);
     }
 }
 

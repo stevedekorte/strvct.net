@@ -40,17 +40,6 @@
 
     setAttributes (dict) {
       this._attributes = dict;
-
-      /*
-      const classesToSpeak = ["sentence", "locationName", "sessionName"];
-      if (classesToSpeak.includes(dict.class)) {
-        //const style = "animation-duration: 1.1s; animation-name: fadeInWordsAnimation; animation-iteration-count: 1";
-        const style = "opacity: 0.1; transition: opacity 2s ease-in-out, color 2s ease-in-out; color: white;";
-        //assert(this._attributes["style"] === undefined);
-        this._attributes["style"] = style; // assume style isn't already set for now
-      }
-      */
-
       return this;
     }
 

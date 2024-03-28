@@ -23,7 +23,7 @@
     }
 
     speakableElements () {
-        return this.valueView().element().getAllSubelementsWithAnyOfClass(this.node().classesToSpeak());
+        return this.valueView().element().elementsOfTags(this.node().tagsToSpeak());
     }
 
     speakableElementWithText (text) {
