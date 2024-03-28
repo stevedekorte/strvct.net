@@ -101,7 +101,7 @@
     }
 
     {
-      const slot = this.newSlot("readIndex", 0);
+      const slot = this.newSlot("readIndex", 0); // current read index in the responseText
       slot.setInspectorPath("");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -126,6 +126,20 @@
       slot.setCanEditInspection(false);
     }
 
+
+    {
+      // where the continued request started in the fullContext (not the responseText)
+      // Need to remove fullContent after this point if we need to retry the request
+      const slot = this.newSlot("continuationStartIndex", 0); 
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+    }
+
     {
       const slot = this.newSlot("stopReason", null);
       slot.setInspectorPath(this.type());
@@ -138,7 +152,7 @@
     }
 
     {
-      const slot = this.newSlot("retryDelaySeconds", 4);
+      const slot = this.newSlot("retryDelaySeconds", 1);
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
@@ -479,8 +493,11 @@
   }
 
   retryRequest () {
+    this.setError(null);
+    this.setFullContent(this.fullContent().substring(0, this.continuationStartIndex()));
     this.setXhr(null);
-    this.setReadIndex(0); // this is the read index on the responseText, not the fullContent
+    // TODO need to track where coninutation read index was
+    this.setReadIndex(0); // this is the read index on the new xhr responseText, not the AiRequest fullContent
     this.setStopReason(null);
     this.setStatus("retrying");
     this.setXhrPromise(null);
@@ -491,11 +508,13 @@
     console.log("========================================== " + this.typeId() + " continueRequest() =====================================");
     // add a continue message to the end of the messages array if needed
     //if (this.lastMessageIsContinueRequest()) {
+    const messages = this.bodyJson().messages;
+    this.setContinuationStartIndex(this.fullContent().length); // clip back to here if we retry the new request
     if (this.isContinuation()) {
-        this.bodyJson().messages.secondToLast().content += this.fullContent();
+      messages.secondToLast().content += this.fullContent();
     } else {
-      this.bodyJson().messages.push(this.responseMessage());
-      this.bodyJson().messages.push(this.continueMessage());
+      messages.push(this.responseMessage());
+      messages.push(this.continueMessage());
     }
 
     // clear request state except fullContent
@@ -522,18 +541,23 @@
       this.retryRequest();
     }, seconds*1000);
   }
+
   
   onError (e) {
     this.setError(e);
 
     if (this.isRecoverableError()) {
-      this.retryWithDelay(this.retryDelaySeconds());
-      this.setRetryDelaySeconds(this.retryDelaySeconds() * 2);
-      e.message = this.service().title() + " overloaded, retrying in " + this.retryDelaySeconds() + "s";
+      const d = this.retryDelaySeconds();
+      const f = 2; // exponential backoff factor
+      const nd = (d*f).randomBetween(d*f*f); // random spot between the next two exponential points
+      this.retryWithDelay(nd);
+      this.setRetryDelaySeconds(nd);
+      const ts = TimePeriodFormatter.clone().setValueInSeconds(nd).formattedValue();
+      e.message = this.service().title() + " overloaded, retrying in " + ts;
     }
 
     console.warn(" ======================= " + this.type() + " ERROR: " + e.message + " ======================= ");
-    debugger;
+    //debugger;
     this.sendDelegate("onRequestError", [this, e]);
 
     if (e) {

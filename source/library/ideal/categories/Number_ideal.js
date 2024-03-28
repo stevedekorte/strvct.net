@@ -168,6 +168,13 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         } 
         return count + " " + label + "s";
     }
+
+    randomBetween (other) {
+        const min = Math.min(this, other);
+        const max = Math.max(this, other);
+        const randomValue = Math.random() * (max - min) + min;
+        return randomValue;
+      }
     
 }).initThisCategory();
 

@@ -21,6 +21,7 @@
         this.newSlot("order", 0)
         this.newSlot("args", null)
         this.newSlot("isUnscheduled", false)
+        this.newSlot("error", null)
     }
 
     /*
@@ -32,21 +33,22 @@
 	
     tryToSend () {
         try {
-            this.send()
+            this.send();
         } catch(error) {
-            console.warn(this.typeId() + ".tryToSend(" + this.description() + ") caught exception: ")
-            error.show()
-            return error
+            console.warn(this.typeId() + ".tryToSend(" + this.description() + ") caught exception: ");
+            error.show();
+            this.setError(error);
+            return error;
         }
-        return null
+        return null;
     }
 	
     send () {
         //this.debugLog(() => "   <- sending " + this.description())
-        const t = this.target()
-        const m = this.method()
-        const a = this.args()
-        t[m].apply(t, a ? a : [])
+        const t = this.target();
+        const m = this.method();
+        const a = this.args();
+        t[m].apply(t, a ? a : []);
         return null
     }
 	

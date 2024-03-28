@@ -230,8 +230,8 @@
                debugger;
             } else {
                 this.setCurrentAction(action)
-                //const actionError = action.tryToSend()
-                const actionError = action.send()
+                const actionError = action.tryToSend()
+                //const actionError = action.send()
                 if (actionError) {
                     error = actionError
                 }
