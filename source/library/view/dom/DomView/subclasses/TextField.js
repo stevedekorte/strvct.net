@@ -924,13 +924,14 @@ HTMLElement.prototype.elementsOfTag = function(tagName) {
 
 HTMLElement.prototype.elementsOfTags = function(tagNames) {
     assert(Type.isArray(tagNames));
+    const lowerCaseTagNames = tagNames.map(tagName => tagName.toLowerCase());
 
     let allSubelements = [];
 
     function recurse(element) {
       Array.from(element.children).forEach(child => {
         // Check if the child element's tag name is in the provided list 
-        if (tagNames.includes(child.tagName.toLowerCase())) { 
+        if (lowerCaseTagNames.includes(child.tagName.toLowerCase())) { 
           allSubelements.push(child);
         }
         recurse(child);
