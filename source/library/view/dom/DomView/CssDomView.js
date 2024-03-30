@@ -1691,7 +1691,9 @@
     setWebkitOverflowScrolling (s) {
         assert(Type.isString(s))
         this.setSpecialCssProperty("-webkit-overflow-scrolling", s)
-        assert(this.webkitOverflowScrolling() === s)
+        if(this.webkitOverflowScrolling() !== s) {
+            console.warn(this.type() + " ERROR: setWebkitOverflowScrolling failed")
+        }
         return this
     }
 
