@@ -237,4 +237,10 @@
     this.requestResponse();
   }
 
+  shutdown () {
+    if (this.request()) {
+      this.request().shutdown();
+    }
+  }
+
 }.initThisClass());

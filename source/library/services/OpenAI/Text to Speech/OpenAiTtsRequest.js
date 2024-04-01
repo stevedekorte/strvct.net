@@ -211,6 +211,11 @@
     return this;
   }
 
+  shutdown () {
+    this.abort();
+    return this;
+  }
+
   onError (error) {
     this.sendDelegate("onRequestError", [this, error]);
     this.fetchPromise().callRejectFunc(error);

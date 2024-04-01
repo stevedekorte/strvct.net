@@ -681,6 +681,11 @@
     return this;
   }
 
+  shutdown () {
+    this.abort();
+    return this;
+  }
+
   onNewContent (newContent) {
     //console.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);

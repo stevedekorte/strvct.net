@@ -181,6 +181,15 @@
     }
   }
 
+  shutdown () {
+    /*
+    if (this.xhr()) {
+      this.xhr().abort();
+    }
+    */
+   return this;
+  }
+
   // --- events ---
 
   onLoaded (imageDataUrl) {

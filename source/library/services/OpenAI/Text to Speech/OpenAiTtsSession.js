@@ -296,10 +296,16 @@
     return this;
   }
 
+  shutdown () {
+    this.stopAndClearQueue();
+    return this;
+  }
+
   stopAndClearQueue () {
+    this.ttsRequestQueue().forEach(r => r.shutdown());
+    this.setTtsRequestQueue([]);
+
     this.audioQueue().stopAndClearQueue();
-    // any previously queued requests will finish downloading but
-    // will not be played
   }
 
   onRequestBegin (request) {

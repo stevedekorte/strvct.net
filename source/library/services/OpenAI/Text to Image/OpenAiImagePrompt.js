@@ -282,4 +282,10 @@
     return false;
   }
 
+  shutdown () {
+    // TODO: add request ivar and abort it
+    this.images().subnodes().forEach(image => image.shutdown());
+    return this;
+  }
+
 }.initThisClass());

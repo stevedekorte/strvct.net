@@ -1141,10 +1141,41 @@
 
     // ---- shutdown ----
 
-    nodeShutdown () {
-        this.recursivelySendToOwnedNodes("nodeShutdown");
-        return this;
-    }
+    nodeShutdown (visited = new Set()) {
+        // need to check for loops
+        if (visited.has(this)) {
+            return
+        }
+        visited.add(this);
+
+        this.performIfResponding("shutdown", visited); 
+        this.ownedSlotValues().forEach(sv => sv.performIfResponding("nodeShutdown", visited));
+        this.subnodes().forEach(sn => {
+          sn.performIfResponding("nodeShutdown", visited);
+        });
+      }
+
+      slotsWhoseValuesAreOwned () {
+        return this.thisPrototype().slots().filter(slot => slot.ownsValue());
+      }
+
+      ownedSlotValues () {
+        return this.slotsWhoseValuesAreOwned().map(slot => slot.onInstanceGetValue(this));
+      }
+    
+      /*
+      recursivelySendToOwnedNodes (methodName) {
+        // for things like shutdown methods, we want to send them to all owned nodes 
+        // both to subnodes and slot values owned by each node
+    
+        // note: we probably want to send these from the bottom up
+        this.subnodes().forEach(sn => {
+          this.sendMessageToOwnedSlotValues(methodName);
+          sn.performIfResponding(methodName);
+        });
+        this.performIfResponding(methodName);
+      }
+      */
 
 }.initThisClass());
 

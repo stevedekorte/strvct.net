@@ -184,4 +184,9 @@
     return this;
   } 
 
+  shutdown () {
+    this.messages().forEach(m => m.performIfResponding("shutdown"));
+    return this;
+  }
+
 }.initThisClass());
