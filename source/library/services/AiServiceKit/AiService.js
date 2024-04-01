@@ -199,7 +199,7 @@
     return fetch(this.fetchInfoUrl())
       .then(response => response.json())
       .then(json => {
-        console.log("info response", json);
+        //console.log("info response", json);
         return json;
       });
   }

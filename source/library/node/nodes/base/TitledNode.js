@@ -230,7 +230,7 @@
                     if (error instanceof MissingSlotError) {
                         debugger;
                     } else {
-                        throw error
+                        error.rethrow();
                     }
                 }
                 // TODO: Do we need to replace all references in pool and reload?

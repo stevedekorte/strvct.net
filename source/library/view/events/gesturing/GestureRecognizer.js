@@ -450,7 +450,7 @@
             console.error(this.typeId() + ".sendDelegateMessage(" + methodName + ") caught exception ", e.stack)
             result = false
             //this.cancel() // how to do this without potentially cause a loop?
-            throw e
+            e.rethrow();
         }
         */
 

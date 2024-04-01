@@ -197,7 +197,7 @@
       this.onSuccess(resultData);
     } catch (error) {
       this.onError(error);
-      throw error;
+      error.rethrow();
     }
   }
 

@@ -304,12 +304,23 @@
 
   // --- disconnect ---
 
+  shutdown () {
+    this.disconnectAllPeers();
+    this.disconnect();
+    return this;
+  }
+
   disconnect () {
     if (this.peer()) {
       this.setStatus("disconnecting")
       this.peer().disconnect()
     }
     return this
+  }
+
+  disconnectAllPeers () {
+    this.peerConns().disconnectAllPeers();
+    return this;
   }
 
   disconnectActionInfo () {

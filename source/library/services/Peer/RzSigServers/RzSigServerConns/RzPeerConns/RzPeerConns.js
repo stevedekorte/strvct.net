@@ -65,4 +65,9 @@
     return r
   }
 
+  disconnectAllPeers () {
+    this.subnodes().forEach(sn => sn.disconnect())
+    return this
+  }
+
 }.initThisClass());

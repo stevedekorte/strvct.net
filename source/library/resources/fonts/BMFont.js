@@ -117,7 +117,7 @@
             //console.log("added font to document: ", this.name());
         } catch (error) {
             this.onLoadError(error);
-            throw error;
+            error.rethrow();
         }
     }
 

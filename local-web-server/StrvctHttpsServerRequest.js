@@ -64,6 +64,9 @@ const https = require('https');
 				this.response().end();
 				console.log(error.message);
 			} else {
+				if (error.cause === undefined && typeof(Error.cause) === 'function') {
+                    error.cause = error;
+                }
 				throw error;
 			}
 		}
@@ -171,7 +174,7 @@ const https = require('https');
 			   - verify signture for request
 			   - if all checks out, we lookup and add appropriate service auth key header
 
-			   
+
 			*/
 		
 			let responseBody = [];

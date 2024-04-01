@@ -276,7 +276,8 @@ class UrlResource {
             this.constructor._urlsLoaded += 1;
         } catch (error) {
             debugger
-            this._error = error
+            this._error = error;
+            error.cause = error;
             throw error
         }
         return this;

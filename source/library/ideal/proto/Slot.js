@@ -95,6 +95,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         // setter
         this.simpleNewSlot("ownsSetter", true) // if true, we'll create the setter
         this.simpleNewSlot("doesHookSetter", false) // if shouldStore, then auto post isDirty?
+        this.simpleNewSlot("ownsValue", false) // if true, and the owner instance gets (for example) a shutdown method, it propogates to the slot value
         //this.simpleNewSlot("doesPostSetter", false) // posts a didUpdateSlot<SlotName> notification
 
         // storage related

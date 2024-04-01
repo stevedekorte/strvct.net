@@ -177,6 +177,7 @@
       this.onLoaded(dataUrl);
     } catch (error) {
       this.onError(error);
+      //error.rethrow();
     }
   }
 

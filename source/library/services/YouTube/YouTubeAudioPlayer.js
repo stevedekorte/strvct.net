@@ -212,7 +212,7 @@
       this.setPlayer(player);
     } catch (error) {
       console.warn(error);
-      throw error;
+      error.rethrow();
     }
     return this;
   }

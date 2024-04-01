@@ -32,7 +32,8 @@
         this.makeOrientationRight()
 
         this.setOverflow("hidden")
-        this.setWebkitOverflowScrolling("regular")
+        this.setOverflowScrolling("auto")
+
         this.setMsOverflowStyle("none")
         this.setUserSelect("none")
 

@@ -508,7 +508,7 @@
                 console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
                 console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
 
-                debugger;
+                //debugger;
                 this.valueAsArray()
 
                 this.setValueOnTarget(this.formatedPickedValues())
@@ -516,7 +516,7 @@
                 console.log("AFTER:")
                 console.log("  valueAsArray: ", JSON.stableStringify(this.valueAsArray()))
                 console.log("  pickedValues: ", JSON.stableStringify(this.pickedValues()))
-                debugger;
+                //debugger;
                 this.valueAsArray()
                 assert(!this.needsSyncToSubnodes()) // important sanity check - maybe values aren't in pickable set?
             }

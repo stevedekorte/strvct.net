@@ -68,7 +68,7 @@
     static onPoolOpenSuccess (aPool) {
         const store = this.defaultStore()
 
-        console.log(this.type() + " onPoolOpenSuccess store count: ", store.count())
+        //console.log(this.type() + " onPoolOpenSuccess store count: ", store.count())
         store.rootOrIfAbsentFromClosure(() => {
             //debugger
             return this.rootNodeProto().clone()

@@ -1688,11 +1688,39 @@
 
     // webkit specific
 
-    setWebkitOverflowScrolling (s) {
+    overflowScrollingValidValues () {
+        return [null, "auto", "touch", "inherit", "initial", "unset"];
+    }
+    
+    setOverflowScrolling (s) {
+        //assert(Type.isString(s))
+        assert(this.overflowScrollingValidValues().contains(s))
+        this.setCssProperty("overflow-scrolling", s);
+        this.setWebkitOverflowScrolling(s);
+
+        //const style = this.cssStyle();
+        //style.setProperty("overflow-scrolling", s, "important");
+        /*
+        if(this.overflowScrolling() !== s) {
+            // this happens even in Chrome v123.0.6312.87 (2024)
+            console.warn(this.type() + " WARNING: setOverflowScrolling('" + s + "') failed (got '" + this.overflowScrolling() + "')");
+        }
+        */
+        return this
+    }
+
+    overflowScrolling () {
+        return this.getCssProperty("overflow-scrolling")
+    }
+
+    // webkit specific
+
+    setWebkitOverflowScrolling (s) {    
+        // NOTE: try to use setOverflowScrolling() instead, it will call this too
         assert(Type.isString(s))
         this.setSpecialCssProperty("-webkit-overflow-scrolling", s)
         if(this.webkitOverflowScrolling() !== s) {
-            console.warn(this.type() + " ERROR: setWebkitOverflowScrolling failed")
+            console.warn(this.type() + " WARNING: setWebkitOverflowScrolling failed")
         }
         return this
     }

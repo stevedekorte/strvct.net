@@ -59,9 +59,23 @@
         this.setHasPermission(granted);
 
         if (granted) {
-            //console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
+            console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
         } else {
-            console.warn("WARNING: IndexedDBFolder: Storage may be cleared by the UA under storage pressure.");
+            console.warn("WARNING: IndexedDBFolder: Storage may be cleared by the browser under storage pressure.");
+
+            //deleteDatabase("HavewordsApp"); 
+            /*
+            const estimate = await navigator.storage.estimate();
+            // estimate.usage doesn't work yet, so we'll do it manually
+            estimate.usage = await estimateAllIndexedDBUsage();
+
+            console.log("Storage (in bytes):");
+            console.log("    quota: " + Math.floor(estimate.quota/1000000) + " MB");
+            console.log("    usage: " + Math.floor((estimate.usage/1000000)*100)/100 + " MB"); 
+            console.log("        %: ", (estimate.usage / estimate.quota) * 100);
+
+            debugger;
+            */
         }
 
         return granted;
@@ -241,8 +255,8 @@
                     atPromise.callResolveFunc(undefined);
                 }
             } catch (e) {
-                this.debugLog(" promiseAt('" +  key + "') caught stack ", stack)
-                throw e
+                this.debugLog(" promiseAt('" +  key + "') caught stack ", stack);
+                throw e;
             }
         }
         
@@ -495,7 +509,7 @@
             return this.promiseUpdate(key, value)
         } 
 
-        console.log("idb NO hasKey promiseAdd", key)
+        //console.log("idb NO hasKey promiseAdd", key)
         return this.promiseAdd(key, value)
     }
 
@@ -546,3 +560,89 @@
     }
 
 }.initThisClass());
+
+
+// -----------------------------------------------------------------
+
+async function estimateAllIndexedDBUsage() {
+    const databases = await indexedDB.databases();
+    let totalUsage = 0;
+  
+    for (const database of databases) {
+      const databaseName = database.name;
+      const usage = await estimateIndexedDBUsage(databaseName);
+      console.log(`Database "${databaseName}" usage: ${usage} bytes (${(usage / 1024).toFixed(2)} KB)`);
+      totalUsage += usage;
+    }
+  
+    console.log(`Total IndexedDB usage: ${totalUsage} bytes (${(totalUsage / 1024).toFixed(2)} KB)`);
+    return totalUsage;
+  }
+  
+  // Function to estimate the usage of a single IndexedDB database
+  function estimateIndexedDBUsage(databaseName) {
+    return new Promise((resolve, reject) => {
+      const request = window.indexedDB.open(databaseName);
+      request.onerror = () => {
+        reject(request.error);
+      };
+      request.onsuccess = () => {
+        const db = request.result;
+        const storeNames = db.objectStoreNames;
+        let totalSize = 0;
+  
+        const transaction = db.transaction(storeNames, 'readonly');
+        transaction.onerror = () => {
+          reject(transaction.error);
+        };
+        transaction.oncomplete = () => {
+          db.close();
+          resolve(totalSize);
+        };
+  
+        for (let i = 0; i < storeNames.length; i++) {
+          const storeName = storeNames[i];
+          const objectStore = transaction.objectStore(storeName);
+          const cursorRequest = objectStore.openCursor();
+  
+          cursorRequest.onsuccess = (event) => {
+            const cursor = event.target.result;
+            if (cursor) {
+              const value = cursor.value;
+              const size = estimateObjectSize(value);
+              totalSize += size;
+              cursor.continue();
+            }
+          };
+        }
+      };
+    });
+  }
+  
+  // Function to estimate the size of an object
+  function estimateObjectSize(object) {
+    const jsonString = JSON.stringify(object);
+    const bytes = new TextEncoder().encode(jsonString).length;
+    return bytes;
+  }
+
+  function deleteDatabase(databaseName) {
+    return new Promise((resolve, reject) => {
+      const request = indexedDB.deleteDatabase(databaseName);
+  
+      request.onerror = (event) => {
+        console.error('Error deleting database:', event.target.error);
+        reject(event.target.error);
+      };
+  
+      request.onsuccess = (event) => {
+        console.log(`Database "${databaseName}" deleted successfully.`);
+        resolve();
+      };
+  
+      request.onblocked = (event) => {
+        console.warn('Deleting database blocked:', event);
+        reject(new Error('Deleting database blocked'));
+      };
+    });
+  }

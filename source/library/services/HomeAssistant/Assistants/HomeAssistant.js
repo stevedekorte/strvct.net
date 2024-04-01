@@ -284,7 +284,7 @@
     }
     console.warn(this.typeId() + " " + this.wsUrl() + " onError:", error);
     this.setStatus("ERROR: " + error.message);
-    throw error;
+    error.rethrow();
   }
 
   async getAuth () {

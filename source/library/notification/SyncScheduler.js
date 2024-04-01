@@ -243,7 +243,7 @@
         this.setIsProcessing(false)
         
         if (error) {
-            throw error
+            error.rethrow();
         }
 
         //console.log(" --- SyncScheduler END --- (END OF EVENT LOOP!)")

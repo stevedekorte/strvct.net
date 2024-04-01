@@ -10,6 +10,13 @@
 
 (class Error_ideal extends Error {
 
+    rethrow () {
+        if (this.cause === undefined && typeof(Error.cause) === 'function') {
+            this.cause = this;
+        }
+        throw this;
+    }
+
     /*
     JS seems to have this slot
     static stackTraceLimit () {

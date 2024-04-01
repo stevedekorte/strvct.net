@@ -107,7 +107,7 @@
             this.onReadCachedBlob(blob);
         } catch (error) {
             this.onErrorReadingCachedBlob(blob);
-            throw error;
+            error.rethrow();
         }
     }
 

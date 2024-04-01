@@ -1139,6 +1139,12 @@
         return instance
     }
 
+    // ---- shutdown ----
+
+    nodeShutdown () {
+        this.recursivelySendToOwnedNodes("nodeShutdown");
+        return this;
+    }
 
 }.initThisClass());
 

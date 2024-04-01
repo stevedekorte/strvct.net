@@ -47,7 +47,7 @@
             this.setDataURL(dataUrl);
         } catch (error) {
             this.setError(error);
-            throw error;
+            error.rethrow();
         }
 
         /*

@@ -108,7 +108,7 @@
         this.setTextAlign("left")
         */
 
-        this.setWebkitOverflowScrolling("touch")
+        this.setOverflowScrolling("touch")
 
         this.turnOffUserSelect()
         this.setAcceptsFirstResponder(false)
