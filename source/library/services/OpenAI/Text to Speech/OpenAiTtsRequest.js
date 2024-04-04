@@ -205,9 +205,6 @@
       return this;
     } 
 
-    if (this.isActive()) {
-      this.xhr().abort();
-    }
     return this;
   }
 

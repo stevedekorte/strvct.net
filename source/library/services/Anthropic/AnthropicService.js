@@ -91,7 +91,7 @@
       }
       if (message.role === lastRole) {
         const lastMessage = newMessages.last();
-        lastMessage.content += "\n---------------------\n" + message.content;
+        lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n" + message.content;
       } else {
         newMessages.push(message);
       }

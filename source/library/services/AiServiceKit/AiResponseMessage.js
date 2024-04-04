@@ -240,7 +240,13 @@
   shutdown () {
     if (this.request()) {
       this.request().shutdown();
+      this.setRequest(null);
     }
+  }
+
+  delete () {
+    this.shutdown();
+    return super.delete();
   }
 
 }.initThisClass());

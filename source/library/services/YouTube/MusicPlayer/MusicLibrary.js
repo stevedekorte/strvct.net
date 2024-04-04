@@ -397,7 +397,7 @@
         "Busy Market": "6ksms45EOIg",
         "Haunted Graveyard": "Ll0vtrU2oaI",
         "Calm Sea": "wm6AaLi-pzQ",
-        "Raging Battle": "JEUTQJzKef4",
+        "Raging Battle with many human warriors": "JEUTQJzKef4",
         "Winter Forest": "vuc0LK4LNWI",
 
         // from various

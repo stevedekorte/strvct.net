@@ -54,10 +54,10 @@
 
     {
       const slot = this.newSlot("body", null); 
-      slot.setCanInspect(true);
+      slot.setCanInspect(false);
       slot.setCanEditInspection(false);
       slot.setInspectorPath("");
-      slot.setIsSubnodeField(true);
+      slot.setIsSubnodeField(false);
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -199,6 +199,29 @@
       slot.setIsSubnodeField(true);
       slot.setActionMethodName("retryRequest");
     }
+
+    {
+      const slot = this.newSlot("copyBodyAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Copy Body");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("copyBody");
+    }
+
+    {
+      const slot = this.newSlot("copyMessagesAction", null);
+      slot.setInspectorPath("");
+      slot.setLabel("Copy Messages");
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
+      slot.setActionMethodName("copyMessages");
+    }
+
 
     this.setShouldStore(false)
     this.setShouldStoreSubnodes(false)
@@ -502,6 +525,18 @@
     this.setStatus("retrying");
     this.setXhrPromise(null);
     this.asyncSendAndStreamResponse();
+  }
+
+  copyBody () {
+    this.body().copyToClipboard();
+    return this;
+  }
+
+  copyMessages () {
+    const messages = this.bodyJson().messages;
+    const content = JSON.stringify(messages, 2, 2);
+    content.copyToClipboard();
+    return this;
   }
 
   continueRequest () {

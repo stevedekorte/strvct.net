@@ -424,6 +424,7 @@
     player.stopVideo();
     player.destroy();
     this.setPlayer(null);
+    console.log("------------- shutdown YouTubePlayer ---------------");
   }
 
   secondsBuffered () {
