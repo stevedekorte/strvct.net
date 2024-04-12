@@ -147,6 +147,35 @@
     const messages = this.visiblePreviousMessages(); 
     const jsonHistory = messages.map(m => m.messagesJson());
 
+    const lines = [];
+    messages.forEach((m, i) => { 
+      const v = m.isVisibleToAi() ? "V" : "X";
+      const parts = [i, v, m.type(), m.role()];
+      const size = Math.floor(m.content().length/1000) + " k";
+      let description = ""
+      if (m.reason) {
+        description = m.reason() 
+      }
+
+      if (m.content().length < 500) {
+        description = '"' + m.content() + '"';
+      }
+
+      parts.push(description);
+
+      if (m.content().length > 500) {
+        parts.push("(" + size + ")");
+      }
+
+      const line = parts.join(" ");
+      lines.push(line);
+    });
+
+    console.log(this.type() + ".newRequest() history:"); 
+    console.log(lines.join("\n"));
+    //debugger;
+    this.visiblePreviousMessages(); // TODO : REMOVE AFTER DEBUGGING
+
     const request = this.requestClass().clone();
     request.setService(this.service());
 
@@ -160,6 +189,10 @@
       messages: jsonHistory
     });
     return request;
+  }
+
+  showRequestInfo () {
+
   }
 
   visiblePreviousMessages () {
@@ -222,7 +255,6 @@
   }
   
   onStreamData (request, newContent) {
-    this.sendDelegate("onMessageWillUpdate")
     this.setContent(request.fullContent())
     this.sendDelegate("onMessageUpdate")
   }

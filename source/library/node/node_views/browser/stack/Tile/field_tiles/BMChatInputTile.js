@@ -2,7 +2,7 @@
 
 /*
 
-    BMChatInputTile  
+    BMChatInputTile   
 
     
 */
@@ -124,8 +124,8 @@
         v.setAllowsHtml(true)
         v.setWhiteSpace("normal");
         
-        v.setIsMultiline(true)
-        v.setDoesInput(true)
+        v.setIsMultiline(true);
+        v.setDoesInput(true);
         
         // hack to disable theme application
         v.setPaddingTop = () => { return this }
@@ -148,22 +148,13 @@
         v.setValueUneditableBorder("1px solid white")
         */
         //v.setFontFamily("Mono")
-        v.setDoesHoldFocusOnReturn(true)
-        v.setDoesInput(true)
-        v.setDoesClearOnReturn(true)
+        v.setDoesHoldFocusOnReturn(true);
+        v.setDoesInput(true);
+        //v.setDoesClearOnReturn(true);
         return v
     }
 
-    /*
-    setWidth (w) {
-        debugger;
-        super.setWidth(w)
-        return this
-    }
-    */
-
     onUpdatedNode (aNote) {
-        //debugger
         return super.onUpdatedNode(aNote)
     }
 
@@ -171,16 +162,17 @@
         const node = this.node();
         this.watchSender(node);
 
+        this.syncDotsFromNode();
+
+        /*
         if (node) {
-            if (node.isComplete) {
-                if (node.isComplete()) {
-                    //this.addDots();
-                    this.removeDots();
-                } else {
-                    this.addDots();
-                }
+            if (node.valueCanHitEnter) {
+                this.valueView().setCanHitEnter(node.valueCanHitEnter());
+            } else {
+                this.valueView().setCanHitEnter(true);
             }
         }
+        */
 
         super.syncFromNode();
 
@@ -192,18 +184,32 @@
         return this;
     }
 
+    syncDotsFromNode () {
+        const node = this.node();
+        if (node) {
+            if (node.isComplete) { // only for responding nodes
+                if (node.isComplete()) {
+                    this.hideDots();
+                } else {
+                    this.showDots();
+                }
+            }
+        }
+        return this;
+    }
+
     // Support for animated trailing dots using CSS "after" style and CSS animation.
     // It's toggled using CSS variables "--div-after-display" and "--div-after-animation".
     // See CSS BMChatInputTileValueView class settings.
 
-    addDots () {
+    showDots () {
         const view = this.valueView(); // this is a TextField
         view.setCssProperty("--div-after-display", "inline-block");
         view.setCssProperty("--div-after-animation", "dotty steps(1,end) 1s infinite");
         return this;
     }
 
-    removeDots () {
+    hideDots () {
         const view = this.valueView();
         view.setCssProperty("--div-after-display", "none");
         view.setCssProperty("--div-after-animation", "none");

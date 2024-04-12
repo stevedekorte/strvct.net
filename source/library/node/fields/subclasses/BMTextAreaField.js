@@ -38,5 +38,11 @@
         this.setValue(this.value() + text);
         return this
     }
+
+    syncFromTarget () {
+        super.syncFromTarget();
+        
+        return this
+    }
     
 }.initThisClass());

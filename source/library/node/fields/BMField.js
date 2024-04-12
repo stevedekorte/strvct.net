@@ -19,6 +19,7 @@
             slot.setSyncsToView(true)
         }
 
+
         // key
         {
             const slot = this.newSlot("key", "key")
@@ -84,6 +85,11 @@
             slot.setSlotType("Boolean")
             slot.setLabel("editable")
             slot.setInspectorPath("Node/Field/Value")
+        }
+
+        {
+            const slot = this.newSlot("valueCanHitEnter", true)
+            slot.setSyncsToView(true)
         }
 
         this.newSlot("link", null)
@@ -366,10 +372,15 @@
 
 
     setJson (json) {
-        //console.log("Field " + this.key() + " setJson(" + json + ")") 
-        this.setValue(json) 
-        assert(this.value() === json || (json === null && this.value() === "")); // sanity check
-        return this
+        this.setValue(json);
+        const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
+        if (!didSet) {
+            console.warn("Field " + this.key() + " setJson(" + json + ") failed to set value");
+            debugger;
+            this.setValue(json);
+        }
+        assert(didSet);
+        return this;
     }
 
     asJson () {

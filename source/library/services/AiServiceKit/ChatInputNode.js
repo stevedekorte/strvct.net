@@ -1,7 +1,7 @@
 "use strict";
 
 /* 
-    ChatInputNode
+    ChatInputNode 
 
 */
 
@@ -59,8 +59,14 @@
   }
   */
 
+  // --- value change events ---
+
   onDidEditValue (valueView) {
     this.conversation().onChatEditValue(this.value())
+  }
+
+  acceptsValueInput () {
+    return this.conversation() && this.conversation().acceptsChatInput();
   }
 
   onValueInput (changedView) {
@@ -69,9 +75,14 @@
     }
   }
 
+  // --- sending ---
+
   send () {
     //this.conversation().onChatInput(this)
-    this.conversation().onChatInputValue(this.value())
+    const v = this.value();
+    this.conversation().onChatInputValue(v);
+    debugger;
+    this.setValue(""); // clear input view
   }
 
   /*
@@ -94,5 +105,15 @@
     this.didUpdateNode();
   }
   */
+
+  disable () {
+    this.setValueIsEditable(false);
+    return this;
+  }
+
+  enable () {
+    this.setValueIsEditable(true);
+    return this;
+  }
 
 }.initThisClass());

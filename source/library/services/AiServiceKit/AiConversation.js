@@ -117,7 +117,6 @@
     return m;
   }
 
-
   newUserMessage () {
     const m = this.newMessage();
     m.setSpeakerName("User"); // caller should override this
@@ -184,9 +183,39 @@
     return this;
   } 
 
+
   shutdown () {
     this.messages().forEach(m => m.performIfResponding("shutdown"));
     return this;
+  }
+
+  // search helpers
+
+  incompleteMessages () {
+    const nonImageMessages =this.messages().select(m => !m.thisClass().isKindOf(HwImageMessage));
+    return nonImageMessages.select(m => !m.isComplete());
+  }
+
+  hasIncompleteMessages () {
+    return this.incompleteMessages().length > 0;
+  }
+
+  activeResponses () {
+    return this.incompleteMessages().filter(m => m.isResponse());
+  }
+
+  hasActiveResponses () {
+    return this.activeResponses().length > 0;
+  }
+
+  syncChatInputState () {
+    //this.footerNode().setValueIsEditable(this.activeResponses().length === 0);
+    return this;
+  }
+
+  acceptsChatInput () {
+    // override Conversation implementation
+    return !this.hasIncompleteMessages();
   }
 
 }.initThisClass());

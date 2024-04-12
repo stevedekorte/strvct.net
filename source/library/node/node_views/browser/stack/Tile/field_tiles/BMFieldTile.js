@@ -279,13 +279,20 @@
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.2)")
             valueView.setBorder(this.valueEditableBorder())
             valueView.setPaddingLeft("0.5em").setPaddingRight("0.5em")
-
         } else {
             //console.log("fieldview key '", node.key(), "' node.valueIsEditable() = ", node.valueIsEditable(), " setColor ", this.uneditableColor())
             valueView.setColor(this.uneditableColor())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
             valueView.setBorder(this.valueUneditableBorder())
             valueView.setPaddingLeft("0em").setPaddingRight("0em")
+        }
+
+        if (valueView.setCanHitEnter) {
+            if (node.acceptsValueInput) {
+                valueView.setCanHitEnter(node.acceptsValueInput());
+            } else {
+                valueView.setCanHitEnter(true);
+            }
         }
     }
 
@@ -365,7 +372,6 @@
         if (changedView === this.valueView()) {
             const node = this.node()
             this.syncToNode(); //  is this done elsewhere
-            //debugger;
             if (node.onValueInput) {
                 node.onValueInput(changedView)
             }

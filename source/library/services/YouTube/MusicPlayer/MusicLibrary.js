@@ -530,18 +530,19 @@
 
       Trivia: {
         // from https://www.youtube.com/watch?v=3dSCuAu4ge4
-        "Waiting Loop": "yVZ7g-EQzY8",
-        Countdown: "mXtIVwsRh3Q",
-        Question: "DliUjhJcgs4",
-        Winner: "CnFiJIgh1fE",
-        "Waiting Oneshot": "sXdxe7uYKb8",
-        "It's My Time": "EItvLXjgcMA",
-        "Winner Splash": "mz-sYKe3ES0",
-        Waiting: "8WGbzIXjSRw"
+        "waiting loop": "yVZ7g-EQzY8",
+        countdown: "mXtIVwsRh3Q",
+        question: "DliUjhJcgs4",
+        winner: "CnFiJIgh1fE",
+        "waiting oneshot": "sXdxe7uYKb8",
+        "it's my time": "EItvLXjgcMA",
+        "winner splash": "mz-sYKe3ES0",
+        waiting: "8WGbzIXjSRw"
       },
 
       "Sound FX": {
-        "Gong": "_grH3Z5YHdI",
+        "gong": "_grH3Z5YHdI",
+        "explosion": "HTXiJpCDiH4",
         "knocking on door": "HIJunF3DIjw",
         "creaking door opening": "ij5bdBI_JVA",
         "door closing": "PAPcSY20DYA",
@@ -566,14 +567,14 @@
 
       "Science Fiction": {
           //"Deep Thought": "IngU5tGtJQY", // only good for first 90 seconds
-          "Space hitchhiker harpsicord": "nGd7Zphv1J0", // good for hitchhikers
-          "Upbeat exploration": "sB6jXSr7_wQ", // good for hitchhikers
-          "Jaunty Scifi": "vvkofC411Mo",
+          "space hitchhiker harpsicord": "nGd7Zphv1J0", // good for hitchhikers
+          "upbeat exploration": "sB6jXSr7_wQ", // good for hitchhikers
+          "jaunty scifi": "vvkofC411Mo",
           "dramatic meditative exploration": "1E31BLIY4bQ",
           "dark suspenseful": "FSryKsTMp2M",
           "dark caverns and hallways": "pE7AwMfNYhM",
           "ethereal spooky": "gPcEQC5kzf4",
-          "Orbital Surveillance": "iLUZgqrRU_U", // eh
+          "orbital surveillance": "iLUZgqrRU_U", // eh
           "deep into the core": "1GTfMOx01tI"
       },
 

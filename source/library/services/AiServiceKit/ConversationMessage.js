@@ -136,22 +136,23 @@
 
   init () {
     super.init();
-    this.setContent("")
-    this.setCanDelete(true)
-    //this.setAnnotations({})
+    this.setContent("");
+    this.setCanDelete(true);
+    //this.setAnnotations({});
   }
 
   finalInit () {
     super.finalInit();
-    this.setNodeTileClassName("BMChatInputTile")
-    //this.setOverrideSubviewProto(this.nodeTileClass())
-    this.setKeyIsVisible(true)
-    this.createIdIfAbsent()
+    this.setNodeTileClassName("BMChatInputTile");
+    //this.setOverrideSubviewProto(this.nodeTileClass());
+    this.setKeyIsVisible(true);
+    this.setValueIsEditable(false);
+    this.createIdIfAbsent();
   }
 
   createIdIfAbsent () {
     if (!this.messageId()) {
-      this.setMessageId(Object.newUuid())
+      this.setMessageId(Object.newUuid());
     }
   }
 

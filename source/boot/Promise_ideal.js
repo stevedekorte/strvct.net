@@ -98,7 +98,7 @@ Object.defineSlot(Promise.prototype, "onTimeout", function () { // private
 // resolve / reject
 
 Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, arg3) {
-    assert(this._status !== "rejected");
+    assert(!this.isRejected(), "promise resolve call on already rejected promise");
     this._status = "resolved";
     this.clearAwaiterCount();
     this.cancelTimeout();
@@ -106,7 +106,7 @@ Object.defineSlot(Promise.prototype, "callResolveFunc", function (arg1, arg2, ar
 });
 
 Object.defineSlot(Promise.prototype, "callRejectFunc", function (arg1, arg2, arg3) { 
-    assert(this._status !== "resolved");
+    assert(!this.isResolved(), "promise reject call on already resolved promise");
     this._status = "rejected";
     this.clearAwaiterCount();
     this.cancelTimeout();

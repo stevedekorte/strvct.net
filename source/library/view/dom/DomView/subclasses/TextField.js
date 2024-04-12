@@ -30,6 +30,7 @@
         //this.newSlot("didTextInputNote", null)
         //this.newSlot("didTextEditNote", null)
         this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
+        this.newSlot("canHitEnter", false); // if true, enter key is muted and opacity is reduced
         this.newSlot("allowsHtml", false) // 
         this.newSlot("allowsSetStringWhileFocused", false)
 
@@ -221,6 +222,18 @@
                 this.removeDefaultDoubleTapGesture()
             }
             this.setContentEditable(false)
+        }
+
+        const isChatInput = this.parentViewsOfClass(HwChatInputTile).length > 0;
+        if (isChatInput) {
+            //debugger;
+        }
+        if (this.doesInput() && !this.canHitEnter()) {
+            this.setOpacity(0.5);
+        } else {
+            this.setOpacity(1);
+            //this.rgba().setAlpha(1);
+            //this.setColor("rgba(0, 0, 0, 0.5)");
         }
 
         return this
@@ -448,43 +461,55 @@
         }   
     }
 
+    isSingleLine () {
+        return !this.isMultiline();
+    }
+
+    shouldMuteEvent (event) {
+        let result = super.onKeyDown(event);
+        const returnKeyCode = 13; // return key
+
+        if (event.keyCode === returnKeyCode) {
+            // block return key down if it's a single line text field (or if in input mode aka send onInput note on enter key up)
+            // this still allows return up key event
+            if (this.isSingleLine() || this.doesInput()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     onKeyDown (event) {
         let result = super.onKeyDown(event)
-        const returnKeyCode = 13 // return key
         //const keyName = BMKeyboard.shared().keyForEvent(event)
         //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
 
-        //if (this.isMultiline() && this.doesInput())
-
-
-        if (event.keyCode === returnKeyCode) {
-            const isSingleLine = !this.isMultiline()
-            // block return key down if it's a single line text field (or if in input mode aka send onInput note on enter key up)
-            // this still allows return up key event
-            if (isSingleLine || this.doesInput()) {
-                event.preventDefault()
-            }
+        if (this.shouldMuteEvent(event)) {
+            event.preventDefault()
         }
 
         return true
     }
     
     onKeyUp (event) {
-        let result = super.onKeyUp(event)
-        this.didEdit()
+        const returnKeyCode = 13; // return key
+        let result = super.onKeyUp(event);
+        //this.didEdit()
+
+        if (!this.shouldMuteEvent(event)) {
+            this.didEdit(); // we muted the return key down event so content is not changed
+            // this is to avoid sending didEdit after didInput
+        }
 
         //event.preventDefault()
-       // return result
+        // return result
 
         //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
         //this.debugLog(" onKeyUp value: [" + this.value() + "]")
 
-        /*
-        if (this.isContentEditable()) {
-            return false // stop propogation
-        }
-        */
         if (this.doesInput()) {
+            event.preventDefault();
             //this.insertEnterAtCursor()
             return true // prevent default
         }
@@ -533,7 +558,17 @@
     }
 
     afterEnter (event) {
-        this.tellParentViews("didInput", this) 
+
+        if (this.doesInput()) {
+            if (this.canHitEnter()) {
+                this.tellParentViews("didInput", this) 
+            } else {
+                SimpleSynth.clone().playButtonCancelled();
+                return;
+            }
+        }
+
+        //this.tellParentViews("didInput", this) 
             
         if (!this.doesHoldFocusOnReturn()) {
             this.releaseFirstResponder()

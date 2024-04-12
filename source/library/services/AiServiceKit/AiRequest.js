@@ -190,6 +190,17 @@
 
 
     {
+      const slot = this.newSlot("didAbort", false);
+      slot.setInspectorPath(this.type());
+      slot.setShouldStoreSlot(true)
+      slot.setSyncsToView(true)
+      slot.setDuplicateOp("duplicate")
+      slot.setSlotType("Boolean")
+      slot.setIsSubnodeField(true)
+      slot.setCanEditInspection(false)
+    }
+
+    {
       const slot = this.newSlot("retryRequestAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Retry Request");
@@ -453,6 +464,9 @@
   }
 
   onXhrLoadEnd (event) {
+    if (this.didAbort()) {
+      return;
+    }
     //console.log(this.typeId() + " onXhrLoadEnd() bytes [[" + this.fullContent() + "]]");
 
     //debugger
@@ -662,7 +676,8 @@
   }
 
   onXhrAbort (event) {
-    this.setStatus("aborted")
+    this.setDidAbort(true);
+    this.setStatus("aborted");
     this.sendDelegate("onStreamEnd");
     //this.sendDelegate("onStreamAbort");
     this.xhrPromise().callRejectFunc(new Error("aborted"));

@@ -90,10 +90,6 @@
     return this
   } 
 
-  // we expect this message protocol to be sent to our conversation 
-
-  onMessageWillUpdate (aMsg) {
-  }
 
   onMessageUpdate (aMsg) {
     // e.g. sent by OpenAiMessage for things like streaming updates
@@ -136,7 +132,16 @@
 
   // --- chat input ---
 
+  acceptsChatInput () {
+    return true;
+  }
+
   onChatInputValue (v) {
+    debugger;
+    if (!this.acceptsChatInput()) {
+      console.warn(this.type() + " does not accept chat input");
+      return;
+    }
     const m = this.newMessage();
     m.setContent(v);
     m.setIsComplete(true);
@@ -155,17 +160,17 @@
   // --- json ---
 
   jsonArchive () {
-    const msgsJson = []
+    const msgsJson = [];
     this.messages().forEach(msg => {
-      msgsJson.push(msg.jsonArchive())
+      msgsJson.push(msg.jsonArchive());
     }) // we don't use map because it returns a SubnodesArray instance...
-    assert(Type.isArray(msgsJson))
+    assert(Type.isArray(msgsJson));
 
     const json = {
       type: this.type(),
       messages: msgsJson
-    }
-    return json
+    };
+    return json;
   }
 
   setJsonArchive (json) {
@@ -211,5 +216,19 @@
   onNewMessageFromUpdate (newMsg) {
     // for subclasses to override
   }
+
+  // --- enable / disable input ---
+
+  /*
+  disableInput () {
+    this.footerNode().disableEnter();
+    return this
+  }
+
+  enableInput () {
+    this.footerNode().enableEnter();
+    return this
+  }
+  */
 
 }.initThisClass());

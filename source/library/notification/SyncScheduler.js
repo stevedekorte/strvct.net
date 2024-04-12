@@ -28,7 +28,7 @@
 
        example use:
     
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView")
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode")
 
     Automatic sync loop detection
 
@@ -39,15 +39,11 @@
 
     Scheduled actions can also be given a priority via an optional 3rd argument:
 
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToView", 1)
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1)
 
     Higher priorities will be performed *later* than lower ones. 
 
     Some typical sync methods:
-
-        // node
-    	syncToStore
-    	syncToView
 
         // view
     	syncToNode	

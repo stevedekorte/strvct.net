@@ -48,6 +48,9 @@
 
     this.setChatEndpoint("https://api.anthropic.com/v1/messages");
     this.chatModel().setModelName("claude-3-opus-20240229");
+    //this.chatModel().setModelName("claude-3-sonnet-20240229"); // missing opening description, doesn't make roll request json with required fields
+    //this.chatModel().setModelName("claude-3-haiku-20240307"); // also doesn't make roll request json with required fields
+
     this.chatModel().setMaxContextTokenCount(200000); // base level 
 
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
@@ -67,7 +70,7 @@
 
   prepareToSendRequest (aRequest) {
     const bodyJson = aRequest.bodyJson();
-    const messages = bodyJson.messages;
+    let messages = bodyJson.messages;
 
     // remove initial system message and place it in the request json
 
@@ -80,6 +83,9 @@
       }
     }
 
+    // remove messages with empy content
+    messages = messages.filter((message) => { return message.content.length > 0; });
+
     // merge messages in order to ensure messages alternate between user and assistant roles
 
     const newMessages = [];
@@ -91,7 +97,8 @@
       }
       if (message.role === lastRole) {
         const lastMessage = newMessages.last();
-        lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n" + message.content;
+        //lastMessage.content += "\n- - - <comment>merged message content</comment> - - -\n" 
+        lastMessage.content = lastMessage.content + "\n" + message.content;
       } else {
         newMessages.push(message);
       }

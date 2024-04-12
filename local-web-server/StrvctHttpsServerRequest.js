@@ -67,7 +67,8 @@ const https = require('https');
 				if (error.cause === undefined && typeof(Error.cause) === 'function') {
                     error.cause = error;
                 }
-				throw error;
+				console.log("ERROR: ", error.message);
+				//throw error;
 			}
 		}
 	}

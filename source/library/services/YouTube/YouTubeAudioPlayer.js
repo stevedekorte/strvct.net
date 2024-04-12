@@ -86,6 +86,18 @@
     }
 
     {
+      const slot = this.newSlot("mute", false);      
+      slot.setCanEditInspection(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setInspectorPath("");
+      slot.setIsSubnodeField(true);
+      slot.setLabel("mute");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("Boolean");
+    }
+
+    {
       const slot = this.newSlot("volume", 0.05);
       slot.setInspectorPath("");
       //slot.setLabel("");
@@ -167,6 +179,7 @@
   }
 
   async setupFrame () {
+    debugger;
     await EventManager.shared().firstUserEventPromise();
     await YouTubePlayerFrame.shared().frameReadyPromise();
     //this.playerPromise().beginTimeout(3000);
@@ -218,11 +231,15 @@
   }
 
   async play () {
+    if (this.mute()) {
+      return;
+    }
+
     if (!this.videoId()) {
       return;
     }
 
-    await this.playerPromise();
+    await this.playerPromise(); // lazy load the player
     this.debugLog("play() after promise");
 
     const startSeconds = 0.0;
@@ -382,6 +399,12 @@
     return this;
   }
 
+  didUpdateMute (oldValue, newValue) {
+    if (this.mute()) {
+      this.stop();
+    } 
+  }
+
   async setVolume (v) {
     // 0.0 to 1.0
     if (this._volume !== v) {
@@ -475,14 +498,14 @@
 
   togglePlayActionInfo () {
     return {
-      isEnabled: true,
+      isEnabled: this.videoId() !== null,
       title: this.isPlaying() ? "Stop" : "Play",
       isVisible: true,
     };
   }
 
   async shutdown () {
-    if (this.playerPromise().hasAwaiters()) {
+    if (this._playerPromise && this.playerPromise().hasAwaiters()) {
       // it's in the middle of being setup so wait until that resolves/rejects
       await this.playerPromise();
     }
