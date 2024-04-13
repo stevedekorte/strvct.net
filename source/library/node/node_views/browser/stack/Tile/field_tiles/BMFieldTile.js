@@ -289,6 +289,8 @@
 
         if (valueView.setCanHitEnter) {
             if (node.acceptsValueInput) {
+                console.log("node.acceptsValueInput() = ", node.acceptsValueInput());
+                //debugger;
                 valueView.setCanHitEnter(node.acceptsValueInput());
             } else {
                 valueView.setCanHitEnter(true);

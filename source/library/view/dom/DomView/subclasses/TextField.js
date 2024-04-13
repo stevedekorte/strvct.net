@@ -18,7 +18,7 @@
     
     initPrototypeSlots () {
 
-        this.newSlot("lastMergeValue", ""); // for merge support
+        this.newSlot("lastMergeValue", null); // for merge support
         this.newSlot("isMergeable", false); // for merge support
         this.newSlot("htmlStreamReader", null); // for merge support
         
@@ -29,8 +29,19 @@
         this.newSlot("doesTrim", false)
         //this.newSlot("didTextInputNote", null)
         //this.newSlot("didTextEditNote", null)
-        this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
-        this.newSlot("canHitEnter", false); // if true, enter key is muted and opacity is reduced
+
+        {
+            const slot = this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+        }
+
+        {
+            const slot = this.newSlot("canHitEnter", false); // if true, enter key is muted and opacity is reduced
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+        }
+
         this.newSlot("allowsHtml", false) // 
         this.newSlot("allowsSetStringWhileFocused", false)
 
@@ -182,6 +193,14 @@
     }
     */
     
+    didUpdateSlotDoesInput () {
+        this.syncEditingControl()
+    }
+
+    didUpdateSlotCanHitEnter () {
+        this.syncEditingControl()
+    }
+    
     didUpdateSlotIsEditable () {
         this.syncEditingControl()
     }
@@ -224,20 +243,19 @@
             this.setContentEditable(false)
         }
 
-        const isChatInput = this.parentViewsOfClass(HwChatInputTile).length > 0;
-        if (isChatInput) {
-            //debugger;
-        }
         if (this.doesInput() && !this.canHitEnter()) {
             this.setOpacity(0.5);
+            this.setFontStyle("italic");
         } else {
             this.setOpacity(1);
+            this.setFontStyle("normal");
             //this.rgba().setAlpha(1);
             //this.setColor("rgba(0, 0, 0, 0.5)");
         }
 
         return this
     }
+
 
     onDoubleTapCancelled (aGesture) {
         //console.log(this.value() + " onDoubleTapCancelled")
@@ -327,12 +345,44 @@
         return super.setInnerText(s)
     }
 
+    chatInputTile () {
+        return this.parentViewsOfClass(HwChatInputTile).first();
+    }
+
     setValue (newValue) {
-        if (this.isMergeable()) {
-            return this.setValueWithMerge(newValue);
-        } else {
-            return this.setString(newValue);
+        newValue = this.cleanseNewValue(newValue);
+
+        /*
+        const oldValue = this.innerHtml();
+
+        if (newValue === "" && oldValue === "123") {
+            debugger;
         }
+
+        if (newValue === "123" && oldValue === "") {
+            debugger;
+        }
+        *
+
+        /*
+        if (this.chatInputTile()) {
+            if (this.chatInputTile().node().acceptsValueInput) {
+                debugger;
+            }
+        }
+        */
+        if (this.isMergeable()) {
+            this.setValueWithMerge(newValue);
+        } else {
+            this.setString(newValue);
+        }
+
+        /*
+        if (this.innerHtml() !== newValue) {
+            debugger;
+        }
+        */
+        return this;
     }
 
     /*
@@ -346,8 +396,12 @@
 
     setValueWithMerge (newValue) {
         //const oldValue = this.element().innerHTML;
-        const oldValue = this.lastMergeValue();
-        if (newValue !== oldValue) {
+        let oldValue = this.lastMergeValue();
+        const needsMerge = (oldValue === null) || (newValue !== oldValue); // to cover case of lastMergeValue never being set, but element has content
+        if (oldValue === null) {
+            oldValue = "";
+        }
+        if (needsMerge) {
             //const mergeableChange = (oldValue.length !== 0) && (newValue.length > oldValue.length);
             const mergeableChange = (newValue.length > oldValue.length);
             //const shouldMerge = mergeableChange && newValue.beginsWith(oldValue);
@@ -390,8 +444,8 @@
         this.setLastMergeValue(v);
         return this
     }
-    
-    setString (newValue) {
+
+    cleanseNewValue (newValue) {
         if (Type.isNullOrUndefined(newValue)) {
             newValue = ""
         }
@@ -400,14 +454,22 @@
             newValue = newValue.toString()
         }
 
+        return newValue;
+    }
+    
+    setString (newValue) {
+        newValue = this.cleanseNewValue(newValue);
+
         const oldValue = this.string()
         //let oldValue = this.visibleValue()
         if (oldValue !== newValue) {
 
             if (this.isFocused()) {
-                if (this.allowsSetStringWhileFocused()) {
-                    this.setNewValue(newValue)
-                } 
+                //if (this.allowsSetStringWhileFocused()) {
+                    //this.blur();
+                    this.setNewValue(newValue);
+                    //this.focus();
+                //} 
                 //throw new Error("attempt to call TextField.setString while it's focused")
             } else {
                 //this.isFocused()

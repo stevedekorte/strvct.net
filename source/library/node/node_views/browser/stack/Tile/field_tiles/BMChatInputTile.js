@@ -165,6 +165,8 @@
         this.syncDotsFromNode();
 
         /*
+        // moved to BMFieldTile
+        
         if (node) {
             if (node.valueCanHitEnter) {
                 this.valueView().setCanHitEnter(node.valueCanHitEnter());

@@ -81,7 +81,7 @@
     //this.conversation().onChatInput(this)
     const v = this.value();
     this.conversation().onChatInputValue(v);
-    debugger;
+    //debugger;
     this.setValue(""); // clear input view
   }
 
