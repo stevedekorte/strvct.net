@@ -138,6 +138,12 @@
         return this
     }
 
+    turnOnUserSelect () {
+        debugger;
+        super.turnOnUserSelect()
+        return this
+    }
+
     /*
     setNode (aNode) {
         super.setNode(aNode)
