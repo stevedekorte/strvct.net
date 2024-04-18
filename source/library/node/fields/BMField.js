@@ -87,6 +87,19 @@
             slot.setInspectorPath("Node/Field/Value")
         }
 
+        /*
+        {
+            const slot = this.newSlot("valueAllowsNull", true)
+            slot.setShouldStoreSlot(true)
+            slot.setSyncsToView(true)
+            slot.setDuplicateOp("duplicate")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("editable")
+            slot.setInspectorPath("Node/Field/Value")
+        }
+        */
+
         {
             const slot = this.newSlot("valueCanHitEnter", true)
             slot.setSyncsToView(true)

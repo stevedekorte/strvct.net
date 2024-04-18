@@ -88,7 +88,6 @@
     didUpdateSlotMaxValue () {
         this.validate()
     }
-    
 
     // ----
 
@@ -101,12 +100,26 @@
     }
 
     setValue (v) {
-        super.setValue(Number(v))
+        if (!Type.isNumber(v)) {
+            /*
+            if (Type.isNull() && this.valueAllowsNull()) {
+                // ok
+            } else {
+                // attempt to coerce to a number
+                v = Number(v);
+                asset(Type.isNaN(v) === false, "value must be a number")
+            }
+            */
+            v = Number(v);
+            asset(Type.isNaN(v) === false, "value must be a number")
+        }
+        
+        super.setValue(v);
         return this
     }
 
     valueIsNumeric () {
-        const n = this.value()
+        const n = this.value();
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 	

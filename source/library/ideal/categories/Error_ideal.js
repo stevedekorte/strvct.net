@@ -27,7 +27,7 @@
     static assert (v, errorMessage, errorName) {
         if (!Boolean(v)) {
             const m = errorMessage ? errorMessage : "assert failed - false value";
-            debugger;
+            //debugger;
             const e = new Error(m);
             if (errorName) {
                 e.name = errorName;

@@ -131,6 +131,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("canInspect", false)
         this.simpleNewSlot("canEditInspection", true)
         this.simpleNewSlot("label", null) // visible label on inspector
+        this.simpleNewSlot("allowsNullValue", null) // used for validation
         this.simpleNewSlot("validValues", null) // used for options field and validation
         this.simpleNewSlot("validValuesClosure", null) 
         this.simpleNewSlot("allowsMultiplePicks", false)

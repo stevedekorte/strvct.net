@@ -49,17 +49,17 @@
     // -----
 
     setNode (aNode) {
+        const didChange = this.node() !== aNode;
         super.setNode(aNode)
-        if (aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
+        if (didChange && aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
             //this.setHeight(null)
             this.setJustifyContent("flex-end")
             //this.setHeight("fit-content")
-            /*
-            this.setMinHeight(null)
-            this.setMaxHeight(null)
-            this.setMarginTop("auto")
-            */
-            this.addTimeout(() => { this.scrollToBottom() }, 0)
+            ///this.setMinHeight(null)
+            ///this.setMaxHeight(null)
+            ///this.setMarginTop("auto")
+            
+            this.addTimeout(() => { this.scrollToBottom() }, 0);
         }
         return this
     }
@@ -157,10 +157,12 @@
     onContentMutations (mutations) {
         if (this.sticksToBottom()) {
             if (this.wasAtBottom()) {
-                //console.log("ScrollContentView scrollToBottom")
-                this.parentView().domScrollToBottom()
-                this.setWasAtBottom(true)
-                this.setLastScrollHeight(this.clientHeight())
+                //console.log("ScrollContentView scrollToBottom");
+                /*
+                this.parentView().domScrollToBottom();
+                this.setWasAtBottom(true);
+                this.setLastScrollHeight(this.clientHeight());
+                */
             }
         }
     }
@@ -218,7 +220,10 @@
     }
 
     updateWasAtBottom () {
-        this.setWasAtBottom(this.isAtBottom())
+        if (this.wasAtBottom() !== this.isAtBottom()) {
+            console.log("this.isAtBottom() = ", this.isAtBottom());
+            this.setWasAtBottom(this.isAtBottom())
+        }
         return this
     }
 
