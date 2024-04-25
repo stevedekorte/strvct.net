@@ -3,6 +3,7 @@
     "Anthropic/_imports.json",
     "OpenAI/_imports.json",
     "Groq/_imports.json",
+    "Gemini/_imports.json",
     "Azure/_imports.json",
     "YouTube/_imports.json",
     "Peer/_imports.json",

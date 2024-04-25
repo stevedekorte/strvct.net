@@ -21,12 +21,6 @@
   
   initPrototypeSlots () {
     {
-      const slot = this.overrideSlot("conversations", null);
-      slot.setFinalInitProto(AiConversations);
-      slot.setIsSubnode(true);
-    }
-
-    {
       const slot = this.overrideSlot("imagesPrompts", null);
       slot.setFinalInitProto(OpenAiImagePrompts);
       slot.setIsSubnode(true);

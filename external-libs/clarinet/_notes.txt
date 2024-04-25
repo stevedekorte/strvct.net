@@ -1,0 +1,9 @@
+
+what:
+A JSON streaming parser.
+
+source:
+https://github.com/dscape/clarinet
+
+dependencies:
+stream node package

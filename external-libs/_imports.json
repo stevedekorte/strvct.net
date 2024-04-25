@@ -4,5 +4,7 @@
     "json-stable-stringify/_imports.json",
     "pako/_imports.json",
     "fast-json-patch/_imports.json",
-    "htmlparser2/_imports.json"
+    "htmlparser2/_imports.json",
+    "stream/stream.js",
+    "clarinet/clarinet.js"
 ]

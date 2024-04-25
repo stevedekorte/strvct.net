@@ -17,12 +17,24 @@
   initPrototypeSlots () {
 
     {
+      const slot = this.newSlot("serviceInfo", null);
+      //slot.setInspectorPath("");
+      slot.setLabel("info");
+      slot.setShouldStoreSlot(false);
+      slot.setDuplicateOp("duplicate");
+      //slot.setSlotType("String");
+      slot.setIsSubnodeField(false);
+
+      //slot.setValidValues(values);
+    }
+
+    {
       const slot = this.newSlot("chatModel", null);
       //slot.setInspectorPath("");
       slot.setLabel("Chat Model");
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
+      slot.setSlotType("Pointer");
       slot.setIsSubnodeField(true);
       slot.setFinalInitProto(AiChatModel)
 
@@ -123,9 +135,9 @@
     this.chatModel().setMaxContextTokenCount(200000); // base level 
     */
 
-   if (!this.hasApiKey()) {
-      this.fetchAndSetupInfo();
-    }
+   //if (!this.hasApiKey()) {
+      this.fetchAndSetupInfo(); // key may have changed
+    //}
   }
 
   validateKey (s) {
@@ -167,10 +179,16 @@
 
     try {
       info = await this.fetchInfo();
+      this.setServiceInfo(info);
+      this.setupFromInfo();
     } catch (error) {
       console.log(this.type() + ".fetchAndSetupInfo() [" + this.fetchInfoUrl() + " error: ", error);
       return;
     }
+  }
+
+  setupFromInfo () {
+    const info = this.serviceInfo();
 
     if (info.apiKey) {
       this.setApiKey(info.apiKey);

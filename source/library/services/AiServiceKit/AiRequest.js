@@ -272,7 +272,8 @@
     return {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        //"Content-Type": "application/json",
+        "Content-Type": "application/json; charset=utf-8",
         "Authorization": `Bearer ${apiKey}`,
         'Accept-Encoding': 'identity'
       },
@@ -365,7 +366,6 @@
 
   setupForStreaming () {
     // subclasses should override this method to set up the request for streaming
-    this.bodyJson().stream = true;
     return this;
   }
 
@@ -439,7 +439,7 @@
     });
 
     //  EventManager.shared().safeWrapEvent(() => { ... })
-
+    
     if (!this.isContinuation()) {
       this.sendDelegate("onRequestBegin");
       this.sendDelegate("onStreamStart");
@@ -451,6 +451,7 @@
 
     return this.xhrPromise();
   }
+
 
   onXhrProgress (event) {
     /*
@@ -686,6 +687,19 @@
   unreadResponse () {
     const unread = this.xhr().responseText.substr(this.readIndex());
     return unread
+  }
+
+  readRemaining () {
+    const responseText = this.xhr().responseText;
+
+    if (this.readIndex() >= responseText.length) {
+      return undefined;
+    }
+
+    const newLineIndex = responseText.length;
+    const newLine = responseText.substring(this.readIndex(), newLineIndex);
+    this.setReadIndex(newLineIndex); // advance the read index
+    return newLine;
   }
   
   readNextXhrLine () {

@@ -31,6 +31,14 @@
             slot.setIsSubnode(true);
         }
 
+
+        {
+            const slot = this.newSlot("geminiService", null)
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(GeminiService);
+            slot.setIsSubnode(true);
+        }
+
         /*
         {
             const slot = this.newSlot("midjourneyService", null)

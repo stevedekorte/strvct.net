@@ -13,15 +13,17 @@
 
     Models:
 
-        Context Window: 4,096 tokens
-        API String: llama2-70b-4096
-
-        Context Window: 32,768 tokens
-        API String: mixtral-8x7b-32768
-
+        Model ID: llama3-70b-8192
         Context Window: 8,192 tokens
-        API String: gemma-7b-it
 
+        Model ID:: llama2-70b-4096
+        Context Window: 4,096 tokens
+
+        Model ID:: mixtral-8x7b-32768
+        Context Window: 32,768 tokens
+
+        Model ID:: gemma-7b-it
+        Context Window: 8,192 tokens
 
 */
 
@@ -33,21 +35,6 @@
   }
   
   initPrototypeSlots () {
-    
-    /*
-    {
-      const slot = this.overrideSlot("models");
-      //slot.setFinalInitProto(GroqModels);
-      slot.setIsSubnode(true);
-    }
-    */
-
-    {
-      const slot = this.overrideSlot("conversations", null);
-      slot.setFinalInitProto(AiConversations);
-      slot.setIsSubnode(true);
-    }
-
   }
 
   init () {
@@ -60,8 +47,8 @@
 
     this.setChatEndpoint("https://api.groq.com/openai/v1/chat/completions");
 
-    this.setupForMixtralModel();
-    //this.setupForLlamaModel();
+    //this.setupForMixtralModel();
+    this.setupForLlamaModel();
     //this.setupForGemma();
 
     this.setSystemRoleName("user"); // only replaced in outbound request json
@@ -77,11 +64,15 @@
   }
 
   setupForLlamaModel () {
+
+    this.chatModel().setModelName("llama3-70b-8192");
+    this.chatModel().setMaxContextTokenCount(8192)
+
     // unusable 
     // - understands it's a DM but can't even find character sheets 
     // - maybe content window is too small?
-    this.chatModel().setModelName("llama2-70b-4096");
-    this.chatModel().setMaxContextTokenCount(4096); 
+    //this.chatModel().setModelName("llama2-70b-4096");
+    //this.chatModel().setMaxContextTokenCount(4096); 
   }
 
   setupForGemma () {

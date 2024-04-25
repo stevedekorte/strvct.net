@@ -21,6 +21,34 @@
       request.status()
       request.error()
 
+
+    PLAN: 
+
+    Transition these classes using xhr (or fetch) to use this wrapper.
+
+    Classes:
+
+      using xhr:
+        AiRequest
+        StrvctHttpsServerRequest?
+        AnthropicRequest
+        OpenAiRequest
+        OpenAiImage
+
+      using fetch:
+        AiService
+        AzureTtsRequest
+        OpenAiImagePrompt
+        OpenAiImage
+        OpenAiTtsRequest
+        RzSigServer
+        SceneView
+
+      1. replace onStream* API methods with onRequest*.
+      2. replace xhr/fetch within the above classes with XhrWrapper instance
+
+
+
 */
 
 (class XhrWrapper extends BMStorableNode {

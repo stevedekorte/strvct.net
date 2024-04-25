@@ -21,21 +21,6 @@
   }
   
   initPrototypeSlots () {
-    
-    /*
-    {
-      const slot = this.overrideSlot("models");
-      //slot.setFinalInitProto(AnthropicModels);
-      slot.setIsSubnode(true);
-    }
-    */
-
-    {
-      const slot = this.overrideSlot("conversations", null);
-      slot.setFinalInitProto(AiConversations);
-      slot.setIsSubnode(true);
-    }
-
   }
 
   init () {
@@ -46,12 +31,12 @@
     super.finalInit()
     this.setTitle("Anthropic");
 
-    this.setChatEndpoint("https://api.anthropic.com/v1/messages");
-    this.chatModel().setModelName("claude-3-opus-20240229");
+    //this.setChatEndpoint("https://api.anthropic.com/v1/messages");
+    //this.chatModel().setModelName("claude-3-opus-20240229");
     //this.chatModel().setModelName("claude-3-sonnet-20240229"); // missing opening description, doesn't make roll request json with required fields
     //this.chatModel().setModelName("claude-3-haiku-20240307"); // also doesn't make roll request json with required fields
 
-    this.chatModel().setMaxContextTokenCount(200000); // base level 
+    //this.chatModel().setMaxContextTokenCount(200000); // base level 
 
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
