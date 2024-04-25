@@ -1,5 +1,4 @@
 [
     "GeminiRequest.js",
-    "GeminiService.js",
-    "JsonStreamReader.js"
+    "GeminiService.js"
 ]

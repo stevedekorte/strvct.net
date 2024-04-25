@@ -8,7 +8,8 @@
     "formatters/_imports.json",
     "misc/_imports.json",
     "networking/_imports.json",
-    "html/_imports.json"
+    "html/_imports.json",
+    "json/_imports.json"
 ]
 
 
