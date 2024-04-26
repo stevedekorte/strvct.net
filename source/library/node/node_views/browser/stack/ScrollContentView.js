@@ -10,82 +10,25 @@
 
     initPrototypeSlots () {
 
-        /* 
-            Slots for implementing sticks-to-bottom behavior
 
-            Notes:
-            
-            When user scrolls or setScrollHeight:
-            - update wasAtBottom
-            - update lastScrollHeight (may be used elsewhere later)
-
-            When content changes:
-            - auto scroll if wasAtBottom true
-            - update lastScrollHeight to bottom (may be used elsewhere later)
-        */
-
-        {
-            const slot = this.newSlot("sticksToBottom", false); // turn on/off behavior
-        }
-
+        // needed for ScrollView sticksToBottom feature
         {
             const slot = this.newSlot("contentMutationObserver", null); // setup onContentMutations() event, within which we scroll to bottom if needed
-        }
-
-        {
-            const slot = this.newSlot("wasAtBottom", false); // on user onScroll events, marked to true if at bottom
-        }
-
-        {
-            const slot = this.newSlot("lastScrollHeight", 0);
         }
 
     }
 
     init () {
-        super.init()
+        super.init();
     }
 
     // -----
 
-    setNode (aNode) {
-        const didChange = this.node() !== aNode;
-        super.setNode(aNode)
-        if (didChange && aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
-            //this.setHeight(null)
-            this.setJustifyContent("flex-end")
-            //this.setHeight("fit-content")
-            ///this.setMinHeight(null)
-            ///this.setMaxHeight(null)
-            ///this.setMarginTop("auto")
-            
-            this.addTimeout(() => { this.scrollToBottom() }, 0);
-        }
-        return this
-    }
 
-    syncFromNode () {
-        super.syncFromNode()
-        const node = this.node()
-        if (node && node.subviewsScrollSticksToBottom) {
-            this.setSticksToBottom(node.subviewsScrollSticksToBottom())
-        }
-        return this
-    }
-
-    setSticksToBottom (aBool) {
-        if (this._sticksToBottom !== aBool) {
-            this._sticksToBottom = aBool;
-            if (aBool) {
-                //debugger
-                this.scrollListener().setIsListening(true)
-                this.updateScrollTracking()
-                this.startContentMutationObserverIfNeeded() // only starts if it's not already started
-            } else {
-                this.scrollListener().setIsListening(true) // can't do this as something else might need it...
-                this.stopContentMutationObserver() // not safe as we don't know if this is needed elsewhere
-            }
-        }
+    prepareToRetire () {
+        super.prepareToRetire();
+        this.stopContentMutationObserver();
+        return this;
     }
 
     scrollView () {
@@ -104,13 +47,34 @@
 
     // --- scroll events ---
 
-    listenForScroll () {
-        this.scrollListener().setIsListening(true) // start listing for scroll events
+    syncFromNode () {
+        super.syncFromNode()
+        const node = this.node()
+        if (node && node.subviewsScrollSticksToBottom) {
+            this.scrollView().setSticksToBottom(node.subviewsScrollSticksToBottom())
+        }
+        return this
     }
 
-    onScroll (event) {
-        this.updateScrollTracking()
-        //this.scrollView().onContentViewScroll(this)
+    setNode (aNode) {
+        const didChange = this.node() !== aNode;
+        super.setNode(aNode);
+        //debugger;
+
+        if (didChange && aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
+            //this.setHeight(null)
+            this.setJustifyContent("flex-end")
+            //this.setHeight("fit-content")
+            ///this.setMinHeight(null)
+            ///this.setMaxHeight(null)
+            ///this.setMarginTop("auto")
+            this.addTimeout(() => { this.scrollToBottom() }, 0);
+        }
+        return this
+    }
+
+    onScrollViewScroll (event) {
+
     }
 
     // --- code to do auto stick-to-bottom type behavior ---
@@ -118,14 +82,16 @@
 
     // --- content mutation observer ---
 
-    didUpdateSlotElement (e) {
-        super.didUpdateSlotElement(e)
-        if (e) {
-            this.startContentMutationObserver()
+    /*
+    didUpdateSlotElement (oldValue, newValue) {
+        super.didUpdateSlotElement(newValue)
+        if (newValue) {
+            this.startContentMutationObserverIfNeeded();
         } else {
-            this.stopContentMutationObserver()
+            this.stopContentMutationObserver();
         }
     }
+    */
 
     startContentMutationObserverIfNeeded () {
         if (!this.contentMutationObserver()) {
@@ -146,85 +112,20 @@
     }
 
     stopContentMutationObserver () {
-        const mo = this.contentMutationObserver();
-        if (mo) {
-            mo.disconnect();
+        const obs = this.contentMutationObserver();
+        if (obs) {
+            obs.disconnect();
             this.setContentMutationObserver(null);
         }
         return this;
     }
 
     onContentMutations (mutations) {
-        if (this.sticksToBottom()) {
-            if (this.wasAtBottom()) {
-                //console.log("ScrollContentView scrollToBottom");
-                /*
-                this.parentView().domScrollToBottom();
-                this.setWasAtBottom(true);
-                this.setLastScrollHeight(this.clientHeight());
-                */
-            }
+        const scrollView = this.scrollView();
+        if (scrollView) {
+            scrollView.onContentViewMutations(mutations);
         }
-    }
-
-    // --- is at bottom calc ---
-
-    isAtBottom () {
-        const e = this.element();
-        // Check if the content is at the bottom before adding new content
-        const tolerance = this.computeScrollTolerance(); // Tolerance value to account for subpixel values and rounding errors, cache this?
-        const difference = e.scrollHeight - (e.scrollTop + e.clientHeight);
-        //this.setWasAtBottom(difference <= tolerance)
-        return difference <= tolerance;
-    }
-
-    computeScrollTolerance () {
-        return 10; // was 5
-        /*
-        const e = this.element();
-        const style = window.getComputedStyle(e);
-    
-        // Get border widths
-        const borderTop = parseFloat(style.borderTopWidth);
-        const borderBottom = parseFloat(style.borderBottomWidth);
-    
-        // Get paddings
-        const paddingTop = parseFloat(style.paddingTop);
-        const paddingBottom = parseFloat(style.paddingBottom);
-    
-        // Potential subpixel discrepancies
-        const subpixelTolerance = 1 / (window.devicePixelRatio || 1);
-    
-        // Total tolerance is the sum of all the factors
-        return borderTop + borderBottom + paddingTop + paddingBottom + subpixelTolerance;
-        */
-    }
-
-    setScrollHeight (v) {
-        super.setScrollHeight(v)
-        this.updateScrollTracking()
-        return this
-    }
-
-    // -- updates ---
-
-    updateScrollTracking () {
-        this.updateLastScrollHeight()
-        this.updateWasAtBottom()
-        return this
-    }
-
-    updateLastScrollHeight () {
-        this.setLastScrollHeight(this.scrollHeight())
-        return this
-    }
-
-    updateWasAtBottom () {
-        if (this.wasAtBottom() !== this.isAtBottom()) {
-            console.log("this.isAtBottom() = ", this.isAtBottom());
-            this.setWasAtBottom(this.isAtBottom())
-        }
-        return this
+        return this;
     }
 
 }.initThisClass());

@@ -15,8 +15,15 @@
 
     init () {
         super.init()
-        this.setEventListenersMap(new Map())
+        //this.setEventListenersMap(new Map())
         return this
+    }
+
+    eventListenersMap () {
+        if (!this._eventListenersMap) {
+            this.setEventListenersMap(new Map())
+        }
+        return this._eventListenersMap;
     }
 
     // --- event listener management ---

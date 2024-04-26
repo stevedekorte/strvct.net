@@ -51,6 +51,7 @@
         this.setOverflowX("scroll") // has to be scroll, not auto, for touch scroll momentum to work 
         return this
     }
+
     
 }.initThisClass());
 

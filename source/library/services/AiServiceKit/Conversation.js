@@ -86,7 +86,12 @@
   }
 
   clear () {
-    this.removeAllSubnodes()
+    this.subnodes().forEach(msg => { 
+      if (msg.shutdown) { 
+        msg.shutdown() 
+      }
+    });
+    this.removeAllSubnodes();
     return this
   } 
 
