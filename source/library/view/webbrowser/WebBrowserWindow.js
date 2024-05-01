@@ -7,6 +7,10 @@
     Abstraction for the main web browser window. 
     Owns a DocumentBody view.
 
+    WebBrowserWindow.shared().storeSelectionRange();
+    // do stuff
+    WebBrowserWindow.shared().restoreSelectionRange();
+
 */
 
 (class WebBrowserWindow extends ProtoClass {
@@ -19,6 +23,10 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("windowListener", null)
+        }
+
+        {
+            const slot = this.newSlot("storedSelectionRange", null);
         }
     }
     
@@ -289,6 +297,70 @@
         super.onWindowResize(event)
     }
     */
+
+    // --- selection ----
+
+    getSelectionRange () {
+        if (window.getSelection) {
+            const sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                return sel.getRangeAt(0);
+            }
+        } else if (document.selection && document.selection.createRange) {
+            return document.selection.createRange();
+        }
+        return null;
+    }
+
+    setSelectionRange (range) {
+        if (range) {
+            if (window.getSelection) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else if (document.selection && range.select) {
+                range.select();
+            }
+
+            assert(this.getSelectionRange().isEqual(range));
+        }
+        return this;
+    }
+
+    // --- save / restore selection ----
+
+    storeSelectionRange () {
+        const range = this.getSelectionRange();
+        if (range) {
+            console.log(this.typeId() + "--- storing selection ---")
+            this.setStoredSelectionRange(range);
+            return true;
+        }
+        return false;
+    }
+
+    restoreSelectionRange () {
+        if (this.storedSelectionRange()) {
+            console.log(this.typeId() + "--- restoring selection ---");
+            this.setSelectionRange(this.storedSelectionRange()); // may be null
+            assert(this.storedSelectionRange().isEqual(this.getSelectionRange()));
+            this.setStoredSelectionRange(null);
+            return true;
+        }
+        return false;
+    }
+
+    safelyRunBlockWhileRestoringSelection (aBlock) {
+        this.storeSelectionRange()
+        try {
+            aBlock()
+        } catch (error) {
+            this.restoreSelectionRange()
+            console.error("error running block while restoring selection:", error);
+            error.rethrow();
+        }
+        return this
+    }
 
 }.initThisClass());
 

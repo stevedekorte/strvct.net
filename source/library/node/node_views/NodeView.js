@@ -309,7 +309,7 @@
         this.scheduleSyncFromNode()
     }
     
-    scheduleSyncToNode () {
+    scheduleSyncToNode (priority = 0) {
         if (this.hasScheduleSyncFromNode()) {
             this.hasScheduleSyncFromNode()
             console.log("SKIPPING scheduleSyncToNode because hasScheduleSyncFromNode")
@@ -317,7 +317,7 @@
             return this
         }
         
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 0)
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", priority)
         return this
     }
     

@@ -111,7 +111,7 @@
             }
             */
             v = Number(v);
-            asset(Type.isNaN(v) === false, "value must be a number")
+            assert(Type.isNaN(v) === false, "value must be a number");
         }
         
         super.setValue(v);

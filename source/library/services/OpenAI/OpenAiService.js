@@ -42,8 +42,9 @@
     this.setTitle("OpenAI");
 
     this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
-    this.chatModel().setModelName("gpt-4-turbo");
-    this.chatModel().setMaxContextTokenCount(128000); // for gpt4 turbo
+    // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
+    this.chatModel().setModelName("gpt-4-1106-preview"); // GPT-4-1106-preview (better instruction following)
+    this.chatModel().setMaxContextTokenCount(128000);
   }
 
   validateKey (s) {

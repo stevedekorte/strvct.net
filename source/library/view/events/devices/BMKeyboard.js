@@ -375,16 +375,21 @@
     // --- event handling method names ---
 
     downMethodNameForEvent (event) {
-        return "on" + this.modsAndKeyNameForEvent(event) + "KeyDown"
+        return "on" + this.modsAndKeyNameForEvent(event) + "KeyDown";
     }
 
     upMethodNameForEvent (event) {
-        return "on" + this.modsAndKeyNameForEvent(event) + "KeyUp"
+        return "on" + this.modsAndKeyNameForEvent(event) + "KeyUp";
     }
 
     eventIsAlphabetical (event) {
-        const c = event.keyCode
-        return c >= 65 && c <= 90
+        const c = event.keyCode;
+        return c >= 65 && c <= 90;
+    }
+
+    eventIsNumeric (event) {
+        const c = event.keyCode;
+        return c >= 48 && c <= 57;
     }
 
     modsAndKeyNameForEvent (event) {
@@ -398,7 +403,8 @@
         const key = this.keyForCode(event.keyCode)
         const isJustModifier = this.eventIsJustModifierKey(event)
         const modifiers = this.modifierNamesForEvent(event)
-        const isAlpabetical = this.eventIsAlphabetical(event)
+        const isAlpabetical = this.eventIsAlphabetical(event);
+        const isNumeric = this.eventIsNumeric(event);
         let keyName = key ? key.name() : event.code
 
         
@@ -420,11 +426,15 @@
         }
 
         if (isAlpabetical) {
-            keyName = "_" + keyName + "_"
             if (event.shiftKey) {
                 keyName = keyName.capitalized()
                 modifiers.remove("Shift")
             }
+            keyName = "_" + keyName + "_"
+        }
+
+        if (isNumeric) {
+            keyName = "_" + keyName + "_";
         }
 
         return modifiers.join("") + keyName

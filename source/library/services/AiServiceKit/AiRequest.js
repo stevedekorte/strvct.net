@@ -711,6 +711,12 @@
     }
   
     const newLine = responseText.substring(this.readIndex(), newLineIndex);
+
+    /*
+    console.log("responseText: [" + responseText + "]");
+    console.log("indexes: " + this.readIndex() + " -> " + newLineIndex);
+    console.log("newLine: [" + newLine + "]");
+    */
     this.setReadIndex(newLineIndex + 1); // advance the read index
   
     return newLine;

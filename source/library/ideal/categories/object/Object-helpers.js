@@ -25,7 +25,8 @@
         Image, 
         Set, 
         Map, 
-        Number, 
+        Number,
+        Range,
         String,
         ArrayBuffer
     ]

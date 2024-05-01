@@ -7,7 +7,7 @@
 
 */
 
-(class EditableDomView extends ControlDomView {
+(class EditableDomView extends SelectableDomView {
     
     initPrototypeSlots () {
         //this.newSlot("unfocusOnEnterKey", false)
@@ -35,16 +35,6 @@
         return this
     }
     */
-
-    getSelectedText() {
-        if (this.isFocused()) {
-            const selection = window.getSelection();
-            return selection.toString();
-        } else {
-            console.warn(this.type() + " attempt to get selection on unfocused text")
-        }
-        return ""
-    }
 
     // --- set caret ----
 
@@ -134,7 +124,6 @@
         }
     }
     
-    
     insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
         this.consolidateTextNodesAndPreserveSelection()
 
@@ -190,7 +179,7 @@
 
     /*
     insertTextAtCursor (text) {
-        const savedSelection = this.saveSelection()
+        const savedSelection = this.getSelectionRange()
 
         if (window.getSelection) {
             const sel = window.getSelection();
@@ -203,96 +192,11 @@
             document.selection.createRange().text = text;
         }
         savedSelection.collapse()
-        this.restoreSelection(savedSelection)
+        this.setSelectionRange(savedSelection)
         return this
     }
     */
 
-    saveSelection () {
-        if (window.getSelection) {
-            const sel = window.getSelection();
-            if (sel.getRangeAt && sel.rangeCount) {
-                return sel.getRangeAt(0);
-            }
-        } else if (document.selection && document.selection.createRange) {
-            return document.selection.createRange();
-        }
-        return null;
-    }
-    
-    restoreSelection (range) {
-        if (range) {
-            if (window.getSelection) {
-                const sel = window.getSelection();
-                sel.removeAllRanges();
-                sel.addRange(range);
-            } else if (document.selection && range.select) {
-                range.select();
-            }
-        }
-    }
-
-    // --- set caret ----
-
-    placeCaretAtEnd () {
-        const el = this.element()
-        el.focus();
-
-        if (typeof window.getSelection !== "undefined" && typeof document.createRange !== "undefined") {
-            var range = document.createRange();
-            range.selectNodeContents(el);
-            range.collapse(false);
-            var sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        } else if (typeof document.body.createTextRange !== "undefined") {
-            var textRange = document.body.createTextRange();
-            textRange.moveToElementText(el);
-            textRange.collapse(false);
-            textRange.select();
-        }
-        return this
-    }
-
-    
-    moveCaretToEnd () {
-        const contentEditableElement = this.element()
-        let range, selection;
-
-        if (document.createRange) {
-            //Firefox, Chrome, Opera, Safari, IE 9+
-            range = document.createRange(); //Create a range (a range is a like the selection but invisible)
-            range.selectNodeContents(contentEditableElement); //Select the entire contents of the element with the range
-            range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
-            selection = window.getSelection(); //get the selection object (allows you to change selection)
-            selection.removeAllRanges(); //remove any selections already made
-            selection.addRange(range); //make the range you have just created the visible selection
-        }
-        else if (document.selection) {
-            //IE 8 and lower
-            range = document.body.createTextRange(); //Create a range (a range is a like the selection but invisible)
-            range.moveToElementText(contentEditableElement); //Select the entire contents of the element with the range
-            range.collapse(false); //collapse the range to the end point. false means collapse to end rather than the start
-            range.select();//Select the range (make it the visible selection
-        }
-        return this
-    }
-
-    // --- text selection ------------------
-
-    selectAll () {
-        if (document.selection) {
-            const range = document.body.createTextRange();
-            range.moveToElementText(this.element());
-            range.select();
-        } else if (window.getSelection) {
-            const selection = window.getSelection(); 
-            const range = document.createRange();
-            range.selectNodeContents(this.element());
-            selection.removeAllRanges();
-            selection.addRange(range);  
-        }
-    }
 
     // --- paste from clipboardListener ---
 
@@ -326,89 +230,6 @@
         return true
     }
 
-    // ------------
-
-    replaceSelectedText (replacementText) {
-        let range;
-        if (window.getSelection) {
-            const sel = window.getSelection();
-            if (sel.rangeCount) {
-                range = sel.getRangeAt(0);
-                range.deleteContents();
-                range.insertNode(document.createTextNode(replacementText));
-            }
-
-            console.log("inserted node")
-        } else if (document.selection && document.selection.createRange) {
-            range = document.selection.createRange();
-            range.text = replacementText;
-            console.log("set range.text")
-        }
-
-        if (range) {
-            // now move the selection to just the end of the range
-            range.setStart(range.endContainer, range.endOffset);
-        }
-
-        return this
-    }
-
-    // untested
-
-    getCaretPosition () {
-        const editableElement = this.element()
-        let caretPos = 0
-        if (window.getSelection) {
-            const sel = window.getSelection();
-            if (sel.rangeCount) {
-                const range = sel.getRangeAt(0);
-                if (range.commonAncestorContainer.parentNode == editableElement) {
-                    caretPos = range.endOffset;
-                }
-            }
-        } else if (document.selection && document.selection.createRange) {
-            const range = document.selection.createRange();
-            if (range.parentElement() == editableElement) {
-                const tempEl = document.createElement("span");
-                editableElement.insertBefore(tempEl, editableElement.firstChild);
-                const tempRange = range.duplicate();
-                tempRange.moveToElementText(tempEl);
-                tempRange.setEndPoint("EndToEnd", range);
-                caretPos = tempRange.text.length;
-            }
-        }
-        return caretPos;
-    }
-
-    setCaretPosition (caretPos) {
-        const e = this.element();
-
-        if (e != null) {
-            if (e.createTextRange) {
-                const range = e.createTextRange();
-                range.move("character", caretPos);
-                range.select();
-            }
-            else {
-                if (e.selectionStart) {
-                    e.focus();
-                    e.setSelectionRange(caretPos, caretPos);
-                } else {
-                    e.focus();
-                }
-            }
-        }
-    }
-
-    // ---------------
-
-    clearSelection () {
-        if (window.getSelection) {
-            window.getSelection().removeAllRanges();
-        } else if (document.selection) {
-            document.selection.empty();
-        }
-        return this
-    }
+   
 
 }.initThisClass());

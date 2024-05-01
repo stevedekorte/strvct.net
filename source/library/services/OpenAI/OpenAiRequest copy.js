@@ -41,7 +41,7 @@
 
 */
 
-(class OpenAiRequest extends AiRequest {
+(class OpenAiRequest extends AiJsonRequest {
 
   initPrototypeSlots() {
 
@@ -58,16 +58,14 @@
 
   requestOptions () {
     const apiKey = this.apiKey();
-    const bodyJson = this.bodyJson();
-    bodyJson.stream = true;
-    //bodyJson.usage = true;
     return {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Content-Type": "application/json; charset=UTF-8",
         "Authorization": `Bearer ${apiKey}`,
-        'Accept-Encoding': 'identity', // to avoid dealing with gzip
+        "usage": true,
+        'Accept-Encoding': 'identity' // to avoid dealing with gzip
       },
       body: JSON.stringify(this.bodyJson()),
     };
@@ -79,7 +77,7 @@
     try {
       let line = this.readNextXhrLine();
       
-      //console.log("LINE: " + line);
+      console.log("LINE: " + line);
 
       while (line !== undefined) {
         line = line.trim()

@@ -83,10 +83,12 @@
     }
 
     asHtml () {
+      // NOTE: this is not normalized HTML, use asHtmlNormalized() on the returned value before comparing
       return this.openTagString() + this.innerHtml() + this.closeTagString();
     }
   
     innerHtml () {
+    // NOTE: this is not normalized HTML, use asHtmlNormalized() on the returned value before comparing
       const strings = this.children().map(child => child.asHtml());
       return strings.join("");
     }

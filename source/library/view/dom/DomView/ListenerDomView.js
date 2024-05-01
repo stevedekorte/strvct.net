@@ -103,6 +103,10 @@
         return this.listenerNamed("ScrollListener")
     }
 
+    selectListener () {
+        return this.listenerNamed("SelectListener");
+    }
+
     touchListener () {
         return this.listenerNamed("TouchListener")
     }
@@ -248,16 +252,17 @@
     onKeyDown (event) {
         //BMKeyboard.shared().showEvent(event)
         // expand the method name to include combinations of meta keys (e.g. shift, function, control, option, command, etc)
-        const methodName = BMKeyboard.shared().downMethodNameForEvent(event)
-        //console.log(" onKeyDown ", methodName)
-        const result = this.invokeMethodNameForEvent(methodName, event)
+        const methodName = BMKeyboard.shared().downMethodNameForEvent(event);
+        console.log(" onKeyDown ", methodName);
+        //assert(methodName !== "onKeyDown");
+        const result = this.invokeMethodNameForEvent(methodName, event);
         /*
         if (event.repeat) { // should this be a different method name?
             this.forceRedisplay() // can't tell if this works without disabling color transitions on tiles
         }
         */
 
-        return result
+        return result;
     }
 
     onKeyUp (event) {

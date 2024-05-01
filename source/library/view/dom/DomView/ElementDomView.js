@@ -342,16 +342,17 @@
     isContentEditable () { 
         // there's a separate method for contentEditable() that just accesses element attribute
         //const v = window.getComputedStyle(this.element(), null).getPropertyValue("contentEditable");
-        const s = this.getAttribute("contentEditable")
+        const s = this.getAttribute("contentEditable");
         if (s === "inherit" && this.parentView()) {
-            return this.parentView().isContentEditable()
+            return this.parentView().isContentEditable();
         }
-        const aBool = (s === "true" || s === true)
-        return aBool
+        const aBool = (s === "true" || s === true);
+        return aBool;
     }
 
     contentEditable () {
-        return this.getAttribute("contentEditable") === "true"
+        return this.getAttribute("contentEditable") === "true";
     }
+
 
 }.initThisClass());

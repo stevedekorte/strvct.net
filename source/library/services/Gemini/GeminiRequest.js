@@ -42,7 +42,7 @@
 
 */
 
-(class GeminiRequest extends AiRequest {
+(class GeminiRequest extends AiRequest { 
 
   initPrototypeSlots() {
     {

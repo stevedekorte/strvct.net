@@ -21,9 +21,9 @@
     setupListeners () {
         this.addEventNameAndMethodName("keyup", "onKeyUp").setIsUserInteraction(true)
         this.addEventNameAndMethodName("keydown", "onKeyDown").setIsUserInteraction(true)
-        //this.addEventNameAndMethodName("keypress", "onKeyPress");
+        //this.addEventNameAndMethodName("keypress", "onKeyPress"); // deprecated in modern browsers
         //this.addEventNameAndMethodName("change", "onChange");
-        //this.addEventNameAndMethodName("select", "onSelect");
+        this.addEventNameAndMethodName("input", "onInput");
         return this
     }
     

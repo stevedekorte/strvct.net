@@ -94,6 +94,7 @@
     }
 
     blur () { 
+        //console.log(this.typeId() + ".blur()");
         // i.e. unfocus
         this.element().blur()
         return this
@@ -116,31 +117,66 @@
     // --- inner html ---
 
     setInnerHtml (v) {
-        const oldValue = this.element().innerHTML
+        const oldValue = this.element().innerHTML;
 
-        if (v === null) {
-            v = ""
+        if (Type.isNullOrUndefined(v)) {
+            v = "";
+        }
+        if (!Type.isString(v)) {
+            v = "" + v; // coerce to string
         }
 
-        v = "" + v
+        const newValue = v.asNormalizedHtml();
 
-        if (v === oldValue) {
-            return this
+        if (newValue === oldValue) {
+            return this;
         }
 
-        const isFocused = this.isActiveElementAndEditable()
+        /*
+        //WebBrowserWindow.shared().storeSelectionRange();
+        //this.storeSelectionRange();
+        const isNumber = !Number.isNaN(parseInt(v, 10));
+        if (v.length && isNumber) {
+            const diff = oldValue.diff(v);
+            console.log("DIFF: ", JSON.stringify(diff, 2, 2));
+        }
 
-        if (isFocused && v !== "") {
-            this.blur() // why is this here? need to be careful with this
-            const savedSelection = this.saveSelection()
-            //console.log("savedSelection:", savedSelection)
-            this.element().innerHTML = v
-            savedSelection.collapse()
-            this.restoreSelection(savedSelection)
-            this.focus()
+        console.log("'" + v.substring(0, 10) + "...' SET");
+        */
+
+
+        if (this.isActiveElementAndEditable()) {
+            //debugger;
+        }
+
+        //assert(this.element().innerHTML === v, "innerHTML was not set"); // doesn't work as it may reformat the html
+        //WebBrowserWindow.shared().restoreSelectionRange();
+
+        updateElementHTML(this.element(), newValue);
+
+        /*
+        if (newValue !== "" && 
+            this.isActiveElementAndEditable() && 
+            this.containsSelection()) {
+
+                console.log("oldValue: [", oldValue, "]");
+                console.log("newValue: [", newValue, "]");
+
+                //const diff = oldValue.diff(newValue);
+                //console.log("DIFF: ", JSON.stringify(diff, 2, 2));
+
+                //assert(this.storeSelectionRange());
+                updateElementHTML(this.element(), newValue);
+                //this.element().innerHTML = newValue;
+                //assert(this.restoreSelectionRange());
+                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> restored selection");
+
+
+            //this.focus();
         } else {
-            this.element().innerHTML = v
+            this.element().innerHTML = newValue;
         }
+        */
 
         return this
     }
@@ -157,9 +193,8 @@
     }
 
     /*
-    onKeyPress (event) { // no longer used or registered
-        console.log("onKeyPress")
-        return true
+    onInput (event) {
+        // sent after the content is changed
     }
     */
 
@@ -315,3 +350,48 @@
     }
 
 }.initThisClass());
+
+
+
+function updateElementHTML(element, htmlContent) {
+    // Check if the element is currently focused
+    let isFocused = (document.activeElement === element);
+
+    // Save the current scrolling position to restore later if needed
+    //let scrollTop = element.scrollTop;
+    //let scrollLeft = element.scrollLeft;
+
+    // Check if the element is contenteditable or an input/textarea
+    let isEditable = element.contentEditable === 'true' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA';
+
+    if (isEditable && isFocused) {
+        // Save the selection or cursor position
+        let selectionStart = element.selectionStart;
+        let selectionEnd = element.selectionEnd;
+
+        // Set the innerHTML or value
+        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.value = htmlContent;
+        } else {
+            element.innerHTML = htmlContent;
+        }
+
+        // Restore the selection or cursor position
+        element.selectionStart = selectionStart;
+        element.selectionEnd = selectionEnd;
+    } else {
+        // Set the innerHTML or value
+        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+            element.value = htmlContent;
+        } else {
+            element.innerHTML = htmlContent;
+        }
+    }
+
+    // Restore the original focus state if it was focused before
+    if (isFocused) {
+        element.focus();
+        //element.scrollTop = scrollTop;
+        //element.scrollLeft = scrollLeft;
+    }
+}

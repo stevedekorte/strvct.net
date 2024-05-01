@@ -510,8 +510,51 @@ String.prototype._setterCacheMap = new Map();
         // Serialize the document back to a string
         return doc.body.innerHTML;
     }
-    
 
+    diff  (otherString) {
+        const originalText = this;
+        const modifiedText = otherString;
+        let i = 0, j = 0;
+        const diff = [];
+        
+        while (i < originalText.length || j < modifiedText.length) {
+            if (originalText[i] === modifiedText[j]) {
+            let matchStart = i;
+            while (originalText[i] === modifiedText[j] && i < originalText.length && j < modifiedText.length) {
+                i++;
+                j++;
+            }
+            if (i > matchStart) {
+                diff.push({ type: 'unchanged', text: originalText.substring(matchStart, i) });
+            }
+            } else {
+            let originalStart = i;
+            let modifiedStart = j;
+            while (originalText[i] !== modifiedText[j] && (i < originalText.length || j < modifiedText.length)) {
+                if (i < originalText.length) i++;
+                if (j < modifiedText.length) j++;
+            }
+            if (originalStart < i || modifiedStart < j) {
+                diff.push({ 
+                type: 'modified', 
+                original: originalText.substring(originalStart, i),
+                modified: modifiedText.substring(modifiedStart, j)
+                });
+            }
+            }
+        }
+        
+        return diff;
+    }
+
+    asNormalizedHtml () {
+        // Since what is returned by element.innerHTML is not always the same as the string used to set element.innerHTML 
+        // (due to html normalization), this method returns a normalized version of the html string which is useful for comparison.
+        const element = document.createElement("div");        
+        element.innerHTML = this;        
+        return element.innerHTML;
+    }
+    
 }).initThisCategory();
 
 

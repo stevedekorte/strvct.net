@@ -13,21 +13,21 @@
     }
 
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     setListenTarget (anElement) {
         // is event only works on document or window?
-        assert(anElement === document || anElement === window)
-        super.setListenTarget(anElement)
-        return this
+        //assert(anElement === document || anElement === window)
+        super.setListenTarget(anElement);
+        return this;
     }
 
     setupListeners () {
         this.addEventNameAndMethodName("selectstart", "onSelectStart");
-        this.addEventNameAndMethodName("selectionchange", "onSelectionChange");
-        return this
+        this.addEventNameAndMethodName("selectionchange", "onSelectionChange"); // IMPORTANT: not widely supported
+        return this;
     }
     
 }.initThisClass());

@@ -59,7 +59,10 @@
         this.newSlot("uneditableBorder", "none")
         this.newSlot("showsBorderWhenEditable", false)
         this.newSlot("mutationObserver", null)
-        this.newSlot("isMultiline", false)
+        this.newSlot("isMultiline", false);
+
+        this.newSlot("onBlurSelection", null)
+
     }
 
     init () {
@@ -96,6 +99,7 @@
 
         this.setIsDebugging(false)
         //this.lockedStyleAttributeSet().add("backgroundColor")
+        this.selectListener().setIsListening(true);
         return this
     }
 
@@ -288,7 +292,11 @@
         GestureManager.shared().unpause() // so things like text selection don't trigger gestures
     }
 
-    onFocusIn () {
+    // --- onFocusIn / onFocusOut ---
+
+    onFocusIn (event) {
+        // sent before focus and bubbles up the parent chain
+
         super.onFocusIn()
         //console.log(this.typeId() + " '" + this.string() + "' onFocusIn")
         if (this.contentEditable()) {
@@ -296,10 +304,26 @@
         }
     }
 
-    onFocusOut () {
+    onFocusOut (event) {
+        // sent before blur
+        console.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
+        //const isFocused = this.isActiveElementAndEditable();
+        this.storeSelectionRange();
+
         super.onFocusOut()
         //console.log(this.typeId() + " '" + this.string() + "' onFocusOut")
         this.unpauseGestures() // do we need to check for (!this.contentEditable())?
+    }
+
+    // --- onFocus / onBlur ---
+
+    onFocus (event) {
+        console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()")
+        if (this.onBlurSelection()) {
+            this.restoreSelectionRange();
+        } else {
+            console.log("--- NO blur selection ---")
+        }
     }
 
     blur () {
@@ -308,8 +332,7 @@
         return super.blur()
     }
 
-    onBlur () {
-        //console.log(this.value() + " onBlur")
+    onBlur (event) {
         super.onBlur()
         if (this.usesDoubleTapToEdit()) {
             this.setContentEditable(false)
@@ -318,6 +341,8 @@
         }
         this.unpauseGestures()
     }
+
+    // --------------------------------
 
     setPxFontSize (aNumber) {
         super.setPxFontSize(aNumber)
@@ -436,6 +461,7 @@
     // allowsHtml
 
     setNewValue (v) { // private method
+        //console.log("setNewValue(" + v.substring(0, 10) + "...)");
         if (this.allowsHtml()) {
             this.setInnerHtml(v)
         } else {
@@ -528,7 +554,6 @@
     }
 
     shouldMuteEvent (event) {
-        let result = super.onKeyDown(event);
         const returnKeyCode = 13; // return key
 
         if (event.keyCode === returnKeyCode) {
@@ -543,6 +568,7 @@
 
 
     onKeyDown (event) {
+        // sent before the content is changed
         let result = super.onKeyDown(event)
         //const keyName = BMKeyboard.shared().keyForEvent(event)
         //console.log(this.debugTypeId() + " onKeyDown event.keyCode = ", event.keyCode)
@@ -553,18 +579,17 @@
 
         return true
     }
-    
-    onKeyUp (event) {
-        const returnKeyCode = 13; // return key
-        let result = super.onKeyUp(event);
-        //this.didEdit()
+
+    onInput (event) {
+        // sent after the content is changed
+        const returnKeyCode = 13; 
 
         if (!this.shouldMuteEvent(event)) {
             this.didEdit(); // we muted the return key down event so content is not changed
             // this is to avoid sending didEdit after didInput
         }
 
-        //event.preventDefault()
+        //event.preventDefault();
         // return result
 
         //console.log(this.debugTypeId() + " onKeyUp event.keyCode = ", event.keyCode)
@@ -573,10 +598,14 @@
         if (this.doesInput()) {
             event.preventDefault();
             //this.insertEnterAtCursor()
-            return true // prevent default
+            return true; // prevent default
         }
-
-        return false
+        return false;
+    }
+    
+    onKeyUp (event) {
+        super.onKeyUp(event);
+        return false;
     }
     
     
@@ -836,7 +865,7 @@
 	
     onLeftArrowKeyUp (event) {
         if (this.isFocused()) { 
-            return false
+            return false          
         }
         
         return super.onLeftArrowKeyUp(event)
@@ -848,6 +877,12 @@
         }
         
         return super.onRightArrowKeyUp(event)
+    }
+
+    // --- select ---
+
+    onSelectStart (event) {
+        console.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()")
     }
 
 }.initThisClass());
@@ -1039,6 +1074,12 @@ HTMLElement.prototype.elementsOfTags = function(tagNames) {
     return allSubelements;
 };
 
+document.addEventListener('blur', function(event) {
+    const focusedElement = event.target;
+    console.log("'" + focusedElement.textContent.substring(0, 10) + "...' BLUR");
+  }, true);
   
-
-  
+document.addEventListener('focus', function(event) {
+    const focusedElement = event.target;
+    console.log("'" + focusedElement.textContent.substring(0, 10) + "...' FOCUS");
+  }, true);

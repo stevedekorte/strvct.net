@@ -106,8 +106,8 @@
         // sent from contentView when it mutates
         if (this.sticksToBottom()) {
             if (this.wasAtBottom()) {
-                //console.log("ScrollContentView scrollToBottom");
-                this.domScrollToBottom();
+                //this.domScrollToBottom();
+                this.contentView().scrollToBottom();
                 this.setWasAtBottom(true); // since we will be scrolling to bottom, we can set this to true now, so even if it's in progress on next mutation, it will be true
                 this.setLastScrollHeight(this.clientHeight());
             }
@@ -168,7 +168,6 @@
 
     updateWasAtBottom () {
         if (this.wasAtBottom() !== this.isAtBottom()) {
-            //console.log(">>>>>>>>>>>>>>>>>>  this.isAtBottom() = ", this.isAtBottom());
             this.setWasAtBottom(this.isAtBottom())
         }
         return this
