@@ -38,7 +38,7 @@
     /*
     onRequestScrollToBottom (aNote) {
         this.addTimeout(() => { 
-            this.parentView().domScrollToBottom()
+            this.parentView().immediatelyScrollToBottom()
         }, 1);
         this.setWasAtBottom(true)
         this.setLastScrollHeight(this.clientHeight())
@@ -69,6 +69,7 @@
             ///this.setMaxHeight(null)
             ///this.setMarginTop("auto")
             this.addTimeout(() => { this.scrollToBottom() }, 0);
+            
         }
         return this
     }

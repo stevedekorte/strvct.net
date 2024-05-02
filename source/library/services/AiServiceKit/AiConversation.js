@@ -47,7 +47,7 @@
   }
 
   selectedModel () {
-    return this.service().chatModelName();
+    return this.service().defaultChatModelName();
   }
 
   conversations () {
@@ -58,7 +58,7 @@
   // --- summary ---
 
   maxContextTokenCount () {
-    return this.service().chatModel().maxContextTokenCount();
+    return this.service().defaultChatModel().maxContextTokenCount();
   }
 
   updateTokenCount () {

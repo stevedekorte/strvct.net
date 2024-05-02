@@ -7,7 +7,7 @@
 
     REST:
 
-    POST https://LOCATION-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/LOCATION/publishers/google/models/MODEL_ID:GENERATE_RESPONSE_METHOD
+    POST https://{location id}-aiplatform.googleapis.com/v1/projects/{project id}/locations/{location id}/publishers/google/models/{model id}:{generate response method}
 
 
 
@@ -58,21 +58,21 @@
 
   /*
   endPointUrlFormat () {
-    return "https://LOCATION-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/LOCATION/publishers/google/models/MODEL_ID:GENERATE_RESPONSE_METHOD";
+    return "https://{location id}-aiplatform.googleapis.com/v1/projects/{project id}/locations/{location id}/publishers/google/models/{model id}:{generate response method}";
   }
   */
 
   endPointUrlFormat () {
-    return "https://generativelanguage.googleapis.com/v1beta/models/MODEL_ID:GENERATE_RESPONSE_METHOD?key=API_KEY";
+    return "https://generativelanguage.googleapis.com/v1beta/models/{model id}:{generate response method}?key={api key}";
   }
 
   setupChatEndpoint () {
     let url = this.endPointUrlFormat();
-    url = url.replaceAll("LOCATION", this.locationId());
-    url = url.replaceAll("PROJECT_ID", this.projectId());
-    url = url.replaceAll("MODEL_ID", this.chatModel().modelName());
-    url = url.replaceAll("GENERATE_RESPONSE_METHOD", "streamGenerateContent");
-    url = url.replaceAll("API_KEY", this.apiKey());
+    //url = url.replaceAll("{location id}", this.locationId());
+    //url = url.replaceAll("{project id}", this.projectId());
+    url = url.replaceAll("{model id}", this.defaultChatModel().modelName());
+    url = url.replaceAll("{generate response method}", "streamGenerateContent");
+    url = url.replaceAll("{api key}", this.apiKey());
     this.setChatEndpoint(url);
   }
 
@@ -91,8 +91,8 @@
 
   /*
   setupDefault () {
-    this.chatModel().setModelName("gemini-1.5-pro");
-    this.chatModel().setMaxContextTokenCount(1000000); // wow!
+    this.defaultChatModel().setModelName("gemini-1.5-pro");
+    this.defaultChatModel().setMaxContextTokenCount(1000000); // wow!
   }
   */
 
@@ -102,10 +102,6 @@
 
   hasApiKey () {
     return this.apiKey().length > 0; // && this.validateKey(this.apiKey());
-  }
-
-  chatRequestClass () {
-    return GeminiRequest;
   }
 
   validateKey (token) {

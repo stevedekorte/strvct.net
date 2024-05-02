@@ -11,7 +11,7 @@
 
     // --- movement animations ---
 
-    domScrollToBottom () {
+    immediatelyScrollToBottom () {
         const focusedElement = document.activeElement
         const needsRefocus = focusedElement !== this.element()
         // console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollToTop() needsRefocus = ", needsRefocus)
@@ -21,15 +21,15 @@
 
         //if (needsRefocus) {
         if (focusedElement !== document.activeElement) {
-            focusedElement.focus()
+            focusedElement.focus();
         }
         //e.animate({ scrollTop: offset }, 500); // TODO: why doesn't this work?
-        return this
+        return this;
     }
 
     scrollToBottom () {
-        this.domScrollToBottom()
-        return this
+        this.immediatelyScrollToBottom();
+        return this;
     }
 
     scrollSubviewToTop (aSubview) {

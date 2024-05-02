@@ -6,7 +6,7 @@
 
 */
 
-(class ScrollView extends DomView {
+(class ScrollView extends DomView { 
     
     initPrototypeSlots () {
 
@@ -106,8 +106,8 @@
         // sent from contentView when it mutates
         if (this.sticksToBottom()) {
             if (this.wasAtBottom()) {
-                //this.domScrollToBottom();
-                this.contentView().scrollToBottom();
+                this.immediatelyScrollToBottom();
+                //this.contentView().scrollToBottom();
                 this.setWasAtBottom(true); // since we will be scrolling to bottom, we can set this to true now, so even if it's in progress on next mutation, it will be true
                 this.setLastScrollHeight(this.clientHeight());
             }

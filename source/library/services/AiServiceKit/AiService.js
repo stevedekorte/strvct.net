@@ -28,6 +28,7 @@
       //slot.setValidValues(values);
     }
 
+    /*
     {
       const slot = this.newSlot("chatModel", null);
       //slot.setInspectorPath("");
@@ -37,9 +38,8 @@
       slot.setSlotType("Pointer");
       slot.setIsSubnodeField(true);
       slot.setFinalInitProto(AiChatModel)
-
-      //slot.setValidValues(values);
     }
+    */
 
     /*
     {
@@ -85,14 +85,12 @@
       }
 
 
-    /*
     {
       const slot = this.newSlot("models", null)
-      //slot.setFinalInitProto(OpenAiModels)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(false);
+      slot.setFinalInitProto(BMSummaryNode)
+      slot.setShouldStoreSlot(true); // will need to sync when loading from json
+      slot.setIsSubnode(true);
     }
-    */
 
     {
       const slot = this.newSlot("conversations", null)
@@ -121,6 +119,7 @@
 
   init () {
     super.init();
+
   }
 
   finalInit () {
@@ -128,16 +127,18 @@
     this.setTitle("AI Service");
     this.setSubtitle("ai services");
 
-    // subclasses should set these
     /*
-    this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
-    this.chatModel().setModelName("claude-3-opus-20240229");
-    this.chatModel().setMaxContextTokenCount(200000); // base level 
+    // add a default model, in case there are no models
+    if (this.models().subnodeCount() === 0) {
+      this.models().addSubnode(AiChatModel.clone());
+    }
     */
 
-   //if (!this.hasApiKey()) {
-      this.fetchAndSetupInfo(); // key may have changed
-    //}
+    this.fetchAndSetupInfo(); // can't just cache this as key or models may have changed
+  }
+
+  defaultChatModel () {
+    return this.models().subnodes().first(); // first model is the default
   }
 
   validateKey (s) {
@@ -148,8 +149,8 @@
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }
 
-  chatModelName () {
-    return this.chatModel().modelName();
+  defaultChatModelName () {
+    return this.defaultChatModel().modelName();
   }
 
   serviceRoleNameForRole (role) {
@@ -198,12 +199,20 @@
       this.setChatEndpoint(info.chatEndpoint);
     }
 
-    if (info.chatModelName) {
-      this.chatModel().setModelName(info.chatModelName);
+    if (info.defaultChatModelName) {
+      this.defaultChatModel().setModelName(info.defaultChatModelName);
     }
 
-    if (info.chatModelMaxContextTokenCount) {
-      this.chatModel().setMaxContextTokenCount(info.chatModelMaxContextTokenCount);
+    if (info.contextWindow) {
+      this.defaultChatModel().setMaxContextTokenCount(info.contextWindow);
+    }
+
+    if (info.models) {
+      this.models().removeAllSubnodes();
+      info.models.forEach(modelInfo => {
+        const model = AiChatModel.clone().setJson(modelInfo);
+        this.models().addSubnode(model);
+      });
     }
   }
 
@@ -220,6 +229,16 @@
         //console.log("info response", json);
         return json;
       });
+  }
+
+  chatRequestClass () {
+    // compose the class name from the service name e.g. AnthropicService -> AnthropicRequest 
+    const className = this.type().split("Service")[0] + "Request";
+    const requestClass = getGlobalThis()[className];
+    if (!requestClass) {
+      throw new Error("chatRequestClass " + className + " not found");
+    }
+    return requestClass;
   }
 
 }.initThisClass());

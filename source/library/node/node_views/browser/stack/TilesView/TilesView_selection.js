@@ -383,7 +383,7 @@
 	    this.navView().scrollView().setScrollTop(subview.offsetTop())
 	    return this 	    
     }
-    
+
     scrollToBottom () {
         const last = this.tiles().last()
 

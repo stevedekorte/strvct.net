@@ -32,11 +32,9 @@
     this.setTitle("Anthropic");
 
     //this.setChatEndpoint("https://api.anthropic.com/v1/messages");
-    //this.chatModel().setModelName("claude-3-opus-20240229");
-    //this.chatModel().setModelName("claude-3-sonnet-20240229"); // missing opening description, doesn't make roll request json with required fields
-    //this.chatModel().setModelName("claude-3-haiku-20240307"); // also doesn't make roll request json with required fields
-
-    //this.chatModel().setMaxContextTokenCount(200000); // base level 
+    //this.defaultChatModel().setModelName("claude-3-opus-20240229");
+    //this.defaultChatModel().setModelName("claude-3-sonnet-20240229"); // missing opening description, doesn't make roll request json with required fields
+    //this.defaultChatModel().setModelName("claude-3-haiku-20240307"); // also doesn't make roll request json with required fields
 
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
@@ -47,10 +45,6 @@
 
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  }
-
-  chatRequestClass () {
-    return AnthropicRequest;
   }
 
   prepareToSendRequest (aRequest) {

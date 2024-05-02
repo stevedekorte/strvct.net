@@ -41,10 +41,8 @@
     super.finalInit()
     this.setTitle("OpenAI");
 
-    this.setChatEndpoint("https://api.openai.com/v1/chat/completions");
+    // model and other info is set via OpenAiService.json file
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
-    this.chatModel().setModelName("gpt-4-1106-preview"); // GPT-4-1106-preview (better instruction following)
-    this.chatModel().setMaxContextTokenCount(128000);
   }
 
   validateKey (s) {
@@ -53,10 +51,6 @@
 
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
-  }
-
-  chatRequestClass () {
-    return OpenAiRequest;
   }
 
 }.initThisClass());

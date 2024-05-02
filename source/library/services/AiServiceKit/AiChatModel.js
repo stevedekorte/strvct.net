@@ -54,4 +54,19 @@
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }
 
+  setJson (json) {
+    assert(json.name);
+    this.setModelName(json.name);
+
+    if (json.title) {
+      this.setTitle(json.title);
+    } else {
+      this.setTitle(json.name);
+    }
+
+    assert(Type.isNumber(json.contextWindow));
+    this.setMaxContextTokenCount(json.contentWindow);
+    return this;
+  }
+
 }.initThisClass());
