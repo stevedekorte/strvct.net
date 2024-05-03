@@ -1074,6 +1074,10 @@ HTMLElement.prototype.elementsOfTags = function(tagNames) {
     return allSubelements;
 };
 
+/*
+
+// for testing
+
 document.addEventListener('blur', function(event) {
     const focusedElement = event.target;
     console.log("'" + focusedElement.textContent.substring(0, 10) + "...' BLUR");
@@ -1083,3 +1087,4 @@ document.addEventListener('focus', function(event) {
     const focusedElement = event.target;
     console.log("'" + focusedElement.textContent.substring(0, 10) + "...' FOCUS");
   }, true);
+  */

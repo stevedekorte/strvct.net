@@ -11,7 +11,7 @@
     {
       const slot = this.newSlot("modelName", null);
       //slot.setInspectorPath("");
-      slot.setLabel("Name");
+      slot.setLabel("name");
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
@@ -22,10 +22,10 @@
 
     {
       const slot = this.newSlot("maxContextTokenCount", 8000); // max input tokens allowed by model
-      slot.setLabel("Max Token Count");
+      slot.setLabel("context window");
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
+      slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
     }
 
@@ -40,6 +40,8 @@
   finalInit () {
     super.finalInit()
     this.setTitle("AI Model");
+    this.setSummaryFormat("value");
+    this.setHasNewlineAferSummary(true);
   }
 
   subtitle () {
@@ -64,9 +66,16 @@
       this.setTitle(json.name);
     }
 
-    assert(Type.isNumber(json.contextWindow));
-    this.setMaxContextTokenCount(json.contentWindow);
+    const cw = json.contextWindow;
+    assert(Type.isNumber(cw));
+    this.setMaxContextTokenCount(cw);
     return this;
+  }
+
+  summary () {
+    const cw = NumberFormatter.clone().setValue(this.maxContextTokenCount()).setSignificantDigits(2).formattedValue();
+
+    return this.modelName() + " (" + cw + ")\n";
   }
 
 }.initThisClass());

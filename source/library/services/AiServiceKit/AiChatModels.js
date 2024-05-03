@@ -22,6 +22,7 @@
     super.finalInit();
     this.setNoteIsSubnodeCount(true);
     this.setSubnodeClasses([AiChatModel]);
+    this.setNodeSubtitleIsChildrenSummary(true);
   }
 
   subviewsScrollSticksToBottom () {

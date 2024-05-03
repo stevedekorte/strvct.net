@@ -87,7 +87,7 @@
 
     {
       const slot = this.newSlot("models", null)
-      slot.setFinalInitProto(BMSummaryNode)
+      slot.setFinalInitProto(AiChatModels)
       slot.setShouldStoreSlot(true); // will need to sync when loading from json
       slot.setIsSubnode(true);
     }
@@ -126,6 +126,7 @@
     super.finalInit()
     this.setTitle("AI Service");
     this.setSubtitle("ai services");
+    this.setModels(AiChatModels.clone());
 
     /*
     // add a default model, in case there are no models
@@ -134,6 +135,7 @@
     }
     */
 
+    this.models().setTitle("Models");
     this.fetchAndSetupInfo(); // can't just cache this as key or models may have changed
   }
 

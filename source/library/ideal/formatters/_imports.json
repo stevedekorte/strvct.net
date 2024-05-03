@@ -1,4 +1,5 @@
 [
+    "NumberFormatter.js",
     "ByteFormatter.js",
     "TimePeriodFormatter.js",
     "TimeFormatter.js"
