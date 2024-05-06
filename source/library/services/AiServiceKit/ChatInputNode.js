@@ -60,7 +60,7 @@
   */
 
   setValue (v) {
-    console.log("ChatInputNode setValue('" + v + "')");
+    //console.log("ChatInputNode setValue('" + v + "')");
     super.setValue(v);
     return this;
   }

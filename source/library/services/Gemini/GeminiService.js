@@ -199,7 +199,7 @@
             }
           ]
         }
-        firstMessage.content = "Please begin the game now.";
+        firstMessage.content = "Please begin the game now. Remember to use the content-warning tag where appropriate.";
         //messages.shift();
       }
     }

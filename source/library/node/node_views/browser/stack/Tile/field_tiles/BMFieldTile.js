@@ -274,12 +274,12 @@
         valueView.setIsDisplayHidden(!node.valueIsVisible())
 
 
+        /*
         if (this.node().type() === "ChatInputNode" && newValue === "") {
             console.log("BMChatInputTile syncValueFromNode(BMChatInputNode) newValue = [" + newValue + "]");
-            //debugger;
             valueView.setValue(newValue);
-            //debugger;
         }
+        */
 
         if (node.valueIsEditable()) {
             //valueView.setColor(this.editableColor())
