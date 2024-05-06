@@ -306,7 +306,7 @@
 
     onFocusOut (event) {
         // sent before blur
-        console.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
+        //console.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
         //const isFocused = this.isActiveElementAndEditable();
         this.storeSelectionRange();
 
@@ -318,11 +318,11 @@
     // --- onFocus / onBlur ---
 
     onFocus (event) {
-        console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()")
+       // console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()")
         if (this.onBlurSelection()) {
             this.restoreSelectionRange();
         } else {
-            console.log("--- NO blur selection ---")
+            //console.log("--- NO blur selection ---")
         }
     }
 
@@ -444,11 +444,11 @@
                 reader.endHtmlStream();
                 this.element().mergeFrom(reader.rootElement());
                 //console.log("merged: [" + this.element().innerHTML + "]");
-                this.setLastMergeValue(newValue);
                 //console.log("---- end HTML merge ----");
             } else {
                  this.setString(newValue);
             }
+            this.setLastMergeValue(newValue);
         }
         return this;
     }

@@ -2,7 +2,7 @@
 
 /*
 
-    BMChatInputTile   
+    BMChatInputTile 
 
     
 */
@@ -161,28 +161,8 @@
     syncFromNode () {
         const node = this.node();
         this.watchSender(node);
-
         this.syncDotsFromNode();
-
-        /*
-        // moved to BMFieldTile
-        
-        if (node) {
-            if (node.valueCanHitEnter) {
-                this.valueView().setCanHitEnter(node.valueCanHitEnter());
-            } else {
-                this.valueView().setCanHitEnter(true);
-            }
-        }
-        */
-
         super.syncFromNode();
-
-        /*
-        if (this.valueView().element().innerHTML) {
-
-        }
-        */
         return this;
     }
 

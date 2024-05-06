@@ -28,28 +28,6 @@
       //slot.setValidValues(values);
     }
 
-    /*
-    {
-      const slot = this.newSlot("chatModel", null);
-      //slot.setInspectorPath("");
-      slot.setLabel("Chat Model");
-      slot.setShouldStoreSlot(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
-      slot.setIsSubnodeField(true);
-      slot.setFinalInitProto(AiChatModel)
-    }
-    */
-
-    /*
-    {
-      const slot = this.newSlot("chatModels", null)
-      slot.setFinalInitProto(AiChatModels)
-      slot.setShouldStoreSlot(true);
-      slot.setIsSubnode(true);
-    }
-    */
-
     {
       const slot = this.newSlot("chatEndpoint", null);
       //slot.setInspectorPath("");

@@ -171,8 +171,8 @@
       lines.push(line);
     });
 
-    console.log(this.type() + ".newRequest() history:"); 
-    console.log(lines.join("\n"));
+    //console.log(this.type() + ".newRequest() history:"); 
+    //console.log(lines.join("\n"));
     //debugger;
     this.visiblePreviousMessages(); // TODO : REMOVE AFTER DEBUGGING
 

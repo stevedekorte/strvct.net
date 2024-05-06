@@ -137,10 +137,9 @@
 
   stopReasonDict () {
     return {
-      "stop": "The model stopped because it encountered a stop sequence specified in the `stop` parameter of the API request. This is used to stop generation when a particular substring is encountered.",
-      "length": "The model stopped because it reached the maximum number of tokens allowed for the response, as specified by the `max_tokens` parameter in the API request.",
-      "content_filter": "The model stopped because the generated content was flagged by the content filter as potentially unsafe or inappropriate.", 
-      null: "If the model completed its generation normally without encountering a stop sequence, reaching the max tokens limit, or being flagged by the content filter, the `finish_reason` will be `null`."
+      "stop": "The model generated a response that includes one or more stop sequences provided by the user.",
+      "length": "The response reached the specified maximum number of tokens.",
+      "null": "Likely an internal error or issue. If you encounter this frequently, it's best to contact OpenAI support." 
     }
   }
 

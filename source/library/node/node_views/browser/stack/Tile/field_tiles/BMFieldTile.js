@@ -268,9 +268,18 @@
         const valueView = this.valueView()
 
         const newValue = this.visibleValue()
+
         valueView.setValue(newValue)
         valueView.setIsEditable(node.valueIsEditable())
         valueView.setIsDisplayHidden(!node.valueIsVisible())
+
+
+        if (this.node().type() === "ChatInputNode" && newValue === "") {
+            console.log("BMChatInputTile syncValueFromNode(BMChatInputNode) newValue = [" + newValue + "]");
+            //debugger;
+            valueView.setValue(newValue);
+            //debugger;
+        }
 
         if (node.valueIsEditable()) {
             //valueView.setColor(this.editableColor())
@@ -284,7 +293,7 @@
             valueView.setColor(this.uneditableColor())
             //valueView.setBorder("1px solid rgba(255, 255, 255, 0.05)")
             valueView.setBorder(this.valueUneditableBorder())
-            valueView.setPaddingLeft("0em").setPaddingRight("0em")
+            //valueView.setPaddingLeft("0em").setPaddingRight("0em")
         }
 
         if (valueView.setCanHitEnter) {
@@ -292,6 +301,7 @@
                 //console.log("node.acceptsValueInput() = ", node.acceptsValueInput());
                 //debugger;
                 valueView.setCanHitEnter(node.acceptsValueInput());
+                //valueView.setCanHitEnter(true);
             } else {
                 valueView.setCanHitEnter(true);
             }

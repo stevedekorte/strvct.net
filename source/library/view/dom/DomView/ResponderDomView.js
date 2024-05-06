@@ -132,25 +132,11 @@
             return this;
         }
 
-        /*
-        //WebBrowserWindow.shared().storeSelectionRange();
-        //this.storeSelectionRange();
-        const isNumber = !Number.isNaN(parseInt(v, 10));
-        if (v.length && isNumber) {
-            const diff = oldValue.diff(v);
-            console.log("DIFF: ", JSON.stringify(diff, 2, 2));
-        }
-
-        console.log("'" + v.substring(0, 10) + "...' SET");
-        */
-
-
         if (this.isActiveElementAndEditable()) {
             //debugger;
         }
 
         //assert(this.element().innerHTML === v, "innerHTML was not set"); // doesn't work as it may reformat the html
-        //WebBrowserWindow.shared().restoreSelectionRange();
 
         updateElementHTML(this.element(), newValue);
 
@@ -170,7 +156,6 @@
                 //this.element().innerHTML = newValue;
                 //assert(this.restoreSelectionRange());
                 console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> restored selection");
-
 
             //this.focus();
         } else {

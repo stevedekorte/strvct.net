@@ -240,8 +240,21 @@
     if (json.usageMetadata) {
       this.setUsageOutputTokenCount(json.usageMetadata.totalTokenCount);
     }
-
   }
 
+  stopReasonDict () {
+    return {
+      "FINISH_REASON_UNSPECIFIED": "Default value. This value is unused.",
+      "STOP": "Natural stop point of the model or provided stop sequence.",
+      "MAX_TOKENS": "The maximum number of tokens as specified in the request was reached.",
+      "SAFETY": "The candidate content was flagged for safety reasons.",
+      "RECITATION": "The candidate content was flagged for recitation reasons.",
+      "OTHER": "Unknown reason."
+    }
+  }
+
+  stoppedDueToMaxTokens () {
+    return this.stopReason() === "MAX_TOKENS";
+  }
 
 }).initThisClass();

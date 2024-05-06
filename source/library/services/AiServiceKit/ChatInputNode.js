@@ -59,6 +59,12 @@
   }
   */
 
+  setValue (v) {
+    console.log("ChatInputNode setValue('" + v + "')");
+    super.setValue(v);
+    return this;
+  }
+
   // --- value change events ---
 
   onDidEditValue (valueView) {
@@ -83,6 +89,12 @@
     this.conversation().onChatInputValue(v);
     //debugger;
     this.setValue(""); // clear input view
+    //this.addTimeout(() => {
+      // there seems to be an issue sometimes with the view not getting the update 
+      // this timeout is a temporary fix
+      this.scheduleSyncToView();
+    //}, 1);
+    //this.scheduleSyncToView();
   }
 
   /*
@@ -106,14 +118,16 @@
   }
   */
 
+  /*
   disable () {
-    this.setValueIsEditable(false);
+    //this.setValueIsEditable(false);
     return this;
   }
 
   enable () {
-    this.setValueIsEditable(true);
+    //this.setValueIsEditable(true);
     return this;
   }
+  */
 
 }.initThisClass());

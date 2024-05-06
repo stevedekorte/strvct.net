@@ -12,7 +12,7 @@
         -- coaleses them (so the same message isn't sent twice to the same target)
         -- sends them
 
-    Thie NotificationCenter could be used to do this, but it would be heavier:
+    The NotificationCenter could be used to do this, but it would be heavier:
      - overhead of every receiver registering observations
      - overhead of matching observations with posts
      - potential garbage collection issues

@@ -81,7 +81,7 @@
   checkTokenCount () {
     this.updateTokenCount()
     const tc = this.tokenCount()
-    console.log("token count: ", tc)
+    //console.log("token count: ", tc)
     if (tc > this.maxContextTokenCount() * 0.9) {
       this.compactTokens()
     }
@@ -143,7 +143,7 @@
     userMsg.setContent(v);
     userMsg.setIsComplete(true);
     const responseMessage = userMsg.requestResponse();
-    this.footerNode().setValueIsEditable(false); // wait for response to enable again
+    //this.footerNode().setValueIsEditable(false); // wait for response to enable again
     SimpleSynth.clone().playSendBeep();
   }
 
