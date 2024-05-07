@@ -181,6 +181,8 @@
             range.setStart(range.endContainer, range.endOffset);
         }
 
+        this.didEdit();
+
         return this
     }
 

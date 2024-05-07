@@ -56,6 +56,10 @@
       const slot = this.newSlot("delegate", null);
     }
 
+    {
+      const slot = this.newSlot("error", null);
+    }
+
   }
 
   init () {
@@ -124,9 +128,24 @@
     this.parser().write(chunk);
   }
 
+  isValidEnd () {
+    let endNode = this.currentNode();
+    if (endNode.thisClass().isKindOf(StreamTextNode)) {
+      endNode = endNode.parent();
+     }
+     return endNode === this.rootNode();
+  }
+
   endHtmlStream () {
-      this.parser().end();
-      this.sendDelegate("onHtmlStreamReaderEnd", [this]);
+    // TODO: add check for unclosed tags and set some error state
+    if (!this.isValidEnd()) {
+      // need to pop if its a StreamTextNode
+      this.setError(new Error("HtmlStreamReader.endHtmlStream() did not end with a top node"));
+      console.warn(this.error().message);
+      debugger;
+    }
+    this.parser().end();
+    this.sendDelegate("onHtmlStreamReaderEnd", [this]);
   }
 
   // --- tags ---

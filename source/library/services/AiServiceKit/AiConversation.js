@@ -27,6 +27,9 @@
       const slot = this.newSlot("tokenBuffer", 400); // Buffer to ensure approximation doesn't exceed limit
     }
 
+    {
+      const slot = this.newSlot("service", null); // pointer to AiService instance
+    }
 
   }
 
@@ -43,6 +46,9 @@
   // -------- 
 
   service () {
+    if (this._service) {
+      return this._service;
+    }
     return this.conversations().service()
   }
 
@@ -51,7 +57,7 @@
   }
 
   conversations () {
-    return this.parentNode()
+    return this.parentNode();
   }
 
   // --- history ---
