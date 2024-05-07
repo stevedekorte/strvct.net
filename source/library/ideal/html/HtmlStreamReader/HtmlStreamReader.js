@@ -118,7 +118,6 @@
 
   // --- called by owner to input html stream ---
 
-
   beginHtmlStream () {
     this.pushTopNode();
     this.sendDelegate("onHtmlStreamReaderStart", [this]);
@@ -132,18 +131,19 @@
     let endNode = this.currentNode();
     if (endNode.thisClass().isKindOf(StreamTextNode)) {
       endNode = endNode.parent();
-     }
-     return endNode === this.rootNode();
+    }
+    return endNode === this.rootNode();
   }
 
   endHtmlStream () {
-    // TODO: add check for unclosed tags and set some error state
+    /*
     if (!this.isValidEnd()) {
       // need to pop if its a StreamTextNode
-      this.setError(new Error("HtmlStreamReader.endHtmlStream() did not end with a top node"));
+      this.setError(new Error("HtmlStreamReader.endHtmlStream() ended with unclosed elements"));
       console.warn(this.error().message);
       debugger;
     }
+    */
     this.parser().end();
     this.sendDelegate("onHtmlStreamReaderEnd", [this]);
   }
