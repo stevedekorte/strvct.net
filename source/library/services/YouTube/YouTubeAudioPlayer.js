@@ -179,7 +179,7 @@
   }
 
   async setupFrame () {
-    //debugger;
+    debugger;
     await EventManager.shared().firstUserEventPromise();
     await YouTubePlayerFrame.shared().frameReadyPromise();
     //this.playerPromise().beginTimeout(3000);

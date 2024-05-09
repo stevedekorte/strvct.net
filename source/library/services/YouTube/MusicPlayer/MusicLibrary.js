@@ -139,6 +139,7 @@
   }
 
   playTrackWithName (name) {
+    debugger;
     this.debugLog("playTrackWithName('" + name + "')");
     const track = this.trackWithName(name);
     if (!track) {

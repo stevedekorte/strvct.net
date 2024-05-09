@@ -56,7 +56,7 @@
       const firstMessage = messages.first();
       if (firstMessage.role === this.systemRoleName()) {
         bodyJson.system = firstMessage.content;
-        firstMessage.content = "Please begin the game now.";
+        firstMessage.content = "Please begin the game now. Remember not to make action decisions for the players, and to ask for initiative rolls before combat.";
         //messages.shift();
       }
     }

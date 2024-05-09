@@ -53,7 +53,7 @@ Object.defineSlots(typedArrayClass.prototype, {
         // generic storage of (non ProtoClass subclass) objects is not supported.
         
         assert(this.shouldStore());
-        debugger;
+        //debugger;
 
         // Any ProtoClass subclass will not call this method as it will use the ProtoClass_store.recordForStore method.
         // We just need to handle dictionaries here i.e.JSON dictionaries.
@@ -67,12 +67,12 @@ Object.defineSlots(typedArrayClass.prototype, {
             type = this.type();
         }
 
-        const entries = []
+        const entries = [];
 
         Object.keys(this).forEach((k) => {
             const v = this[k]
             entries.push([k, aStore.refValue(v)])
-        })
+        });
 
         // need to special case objects as they can also be used as JSON dictionaries.
         // if we have a dictionary, we need to store it as a dictionary, not as an object.
