@@ -49,7 +49,23 @@ Object.defineSlots(typedArrayClass.prototype, {
     }
 
     recordForStore (aStore) { // should only be called by Store
+        // NOTES: this is (typically) only for dictionaries, not for objects.
+        // generic storage of (non ProtoClass subclass) objects is not supported.
+        
         assert(this.shouldStore());
+        debugger;
+
+        // Any ProtoClass subclass will not call this method as it will use the ProtoClass_store.recordForStore method.
+        // We just need to handle dictionaries here i.e.JSON dictionaries.
+        // which *might* overide the type property.
+
+        // QUESTION: why would shouldStore be true for a dictionary?
+
+        let type = "Object";
+
+        if (Type.isFunction(this.type)) {
+            type = this.type();
+        }
 
         const entries = []
 
@@ -58,8 +74,11 @@ Object.defineSlots(typedArrayClass.prototype, {
             entries.push([k, aStore.refValue(v)])
         })
 
+        // need to special case objects as they can also be used as JSON dictionaries.
+        // if we have a dictionary, we need to store it as a dictionary, not as an object.
+        
         return {
-            type: this.type(), 
+            type: type, 
             entries: entries, 
         }
     }
@@ -91,6 +110,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     setShouldStore (aBool) {
         if (aBool != this._shouldStore) {
             //this.willMutate("shouldStore")
+            assert(this !== getGlobalThis());
             Object.defineSlot(this, "_shouldStore", aBool)
             //this.didMutate("shouldStore")
         }
@@ -98,7 +118,8 @@ Object.defineSlots(typedArrayClass.prototype, {
     }
  
     shouldStore () {
-        return this._shouldStore
+        return this._shouldStore;
+        //return Object.getOwnProperty(this._shouldStore)
     }
     
 }).initThisCategory();

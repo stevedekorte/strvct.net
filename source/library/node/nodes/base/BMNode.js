@@ -1114,7 +1114,7 @@
     jsonArchive () {
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true) 
         const dict = {
-        type: this.type()
+            type: this.type()
         }
 
         jsonArchiveSlots.forEach(slot => {
@@ -1137,6 +1137,82 @@
 
         const instance = aClass.clone().setJsonArchive(json)
         return instance
+    }
+
+    // --- JSON schema ---
+
+    static jsonSchemaTitle () {
+        return this.type();
+    }
+
+    static jsonSchemaDescription () {
+        return undefined;
+    }
+
+    static jsonSchemaSlots () {
+        const jsonArchiveSlots = this.prototype.slotsWithAnnotation("shouldJsonArchive", true) 
+        return jsonArchiveSlots;
+    }
+
+    static jsonSchemaProperties () {
+        const slots = this.jsonSchemaSlots();
+
+        if (slots.length === 0) {
+            return undefined;
+        }
+
+        const properties = {};
+
+        slots.forEach(slot => {
+            properties[slot.getterName()] = slot.asJsonSchema();
+        });
+
+        return properties;
+    }
+
+    static jsonSchemaRequired () {
+        const slots = this.jsonSchemaSlots();
+
+        if (slots.length === 0) {
+            return undefined;
+        }
+
+        const required = [];
+        
+        slots.forEach(slot => {
+            if (!slot.allowsNullValue()) {
+                required.push(slot.getterName());
+            }
+        })
+
+        return required;
+    }
+
+    // ---
+
+    static asRootJsonSchema () {
+        const json = {
+            "$schema": "http://json-schema.org/draft-07/schema#"
+        }
+        Object.assign(json, this.asJsonSchema()); // so schema is at top of dict
+        return json;
+    }
+
+    static asJsonSchema () {
+        //debugger;
+        const schema = {
+            type: "object",
+            title: this.jsonSchemaTitle(),
+            description: this.jsonSchemaDescription(),
+            properties: this.jsonSchemaProperties(),
+            required: this.jsonSchemaRequired()
+        }
+
+        return schema;
+    }
+
+    fromJsonSchema (json) {
+
     }
 
     // ---- shutdown ----

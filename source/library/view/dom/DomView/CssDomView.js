@@ -876,6 +876,39 @@
         return this.getCssProperty("transition")
     }
 
+    // --- transition duration ---
+
+    setTransitionDuration (s) {
+        this.setCssProperty("transition-duration", s);
+        return this;
+    }
+
+    transitionDuration () {
+        return this.getCssProperty("transition-duration");
+    }
+
+    // --- transition timing function ---
+
+    setTransitionTimingFunction (s) {
+        this.setCssProperty("transition-timing-function", s);
+        return this;
+    }
+
+    transitionTimingFunction () {
+        return this.getCssProperty("transition-timing-function");
+    }
+
+    // --- transition delay ---
+
+    setTransitionDelay (s) {
+        this.setCssProperty("transition-delay", s);
+        return this;
+    }
+
+    transitionDelay () {
+        return this.getCssProperty("transition-delay");
+    }
+
     // helper for hide/unhide transition
 
     isTransitionHidden () {

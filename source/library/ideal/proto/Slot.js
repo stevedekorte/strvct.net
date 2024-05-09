@@ -254,9 +254,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     computedValidValues () {
         if (this.validValues()) {
-            return this.validValues()
+            return this.validValues();
         } else if (this.validValuesClosure()) {
-            return this.validValuesClosure()()
+            return this.validValuesClosure()();
         }
         return null
     }
@@ -570,6 +570,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
                 */
 
+                if (typeof(finalInitProto) === "string") {
+                    const finalInitClass = getGlobalThis()[finalInitProto];
+                    assert(finalInitClass, "missing finalInitProto class '" + finalInitProto + "'");
+                    finalInitProto = finalInitClass;
+                }
+
                 const newValue = finalInitProto.clone()
                 this.onInstanceSetValue(anInstance, newValue)
 
@@ -723,6 +729,132 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return aBool
     }
     */
+
+    // --- JSON schema ---
+
+    /*
+        Valid JSON schema properties:
+
+        [
+        "$id",
+        "$schema",
+        "$ref",
+        "$comment",
+        "title",
+        "description",
+        "type",
+        "properties",
+        "items",
+        "required",
+        "additionalProperties",
+        "definitions",
+        "pattern",
+        "minLength",
+        "maxLength",
+        "minimum",
+        "maximum",
+        "enum",
+        "format",
+        "default",
+        "examples",
+        "dependencies",
+        "patternProperties",
+        "minItems",
+        "maxItems",
+        "uniqueItems",
+        "multipleOf"
+    ]
+    */
+
+    jsonSchemaType () {
+        const validTypeValues = ["null", "boolean", "object", "array", "number", "string", "integer"];
+
+        let type = this.slotType();
+
+        // what about integer?
+
+        const passThroughTypes = new Set(["String", "Number", "Boolean", "Array", "Action"])
+
+        if (passThroughTypes.has(type)) {
+            return type.toLowerCase();
+        }
+
+        if (type === "Action") {
+            return null;
+        }
+
+        if (type === "Pointer") {
+            return "object";
+        }
+
+        return "object";
+    }
+
+    jsonSchemaTitle () {
+        return this.name(); // slot name
+    }
+
+    jsonSchemaDescription () {
+        return this.comment() ? this.comment() : undefined;
+    }
+
+    jsonSchemaEnum () {
+        const enumArray = [];
+
+        const validValues = this.computedValidValues();
+        if (validValues) {
+            validValues.forEach(v => {
+                assert(Type.isJsonType(v));
+                if (v.label) {
+                    enumArray.push(v.label);
+                } else {
+                    enumArray.push(v);
+                }
+            });
+
+            if (this.allowsNullValue() && !validValues.includes(null)) {
+                enumArray.push(null);
+            }
+        }
+
+        return enumArray.length ? enumArray : undefined;
+    }
+
+    jsonSchemaProperties () {
+        const proto = this.finalInitProto();
+        if (proto) {
+            return proto.jsonSchemaProperties();
+        }
+        return undefined;
+    }
+
+    jsonSchemaRequired () {
+        const proto = this.finalInitProto();
+        if (proto) {
+            return proto.jsonSchemaRequired();
+        }
+        return undefined;
+    }
+
+    asJsonSchema () {
+        const type = this.jsonSchemaType();
+
+        const schema = {
+            type: this.jsonSchemaType(),
+            title: this.jsonSchemaTitle(),
+            description: this.jsonSchemaDescription(),
+            enum: this.jsonSchemaEnum(),
+            properties: this.jsonSchemaProperties(),
+            required: this.jsonSchemaRequired()
+        }
+
+        if (this.allowsMultiplePicks()) {
+            assert(schema.type === "array"); // sanity check
+            assert(schema.properties === undefined); // sanity check
+        }
+
+        return schema;
+    }
     
 }.initThisClass());
 
