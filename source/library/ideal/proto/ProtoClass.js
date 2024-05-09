@@ -91,6 +91,7 @@
         this.newClassSlot("isSingleton", false)
         this.newClassSlot("setterNameMap", new Map()) // TODO: share this between all classes
         this.newClassSlot("allProtoSlotsMap", new Map())
+        this.newClassSlot("jsonSchemaDescription", null)
 
         //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet())
         return this

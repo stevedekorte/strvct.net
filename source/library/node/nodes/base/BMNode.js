@@ -1139,14 +1139,10 @@
         return instance
     }
 
-    // --- JSON schema ---
+    // --- JSON schema properties ---
 
     static jsonSchemaTitle () {
         return this.type();
-    }
-
-    static jsonSchemaDescription () {
-        return undefined;
     }
 
     static jsonSchemaSlots () {
@@ -1188,7 +1184,7 @@
         return required;
     }
 
-    // ---
+    // --- json schema ---
 
     static asRootJsonSchema () {
         const json = {
@@ -1212,7 +1208,7 @@
     }
 
     fromJsonSchema (json) {
-
+        throw new Error("fromJsonSchema not implemented for " + this.type());
     }
 
     // ---- shutdown ----
