@@ -231,4 +231,13 @@
     return new Set(["overloaded_error", "server_overloaded_error", "service_unavailable_error"]);
   }
 
+  onXhrLoadEnd (event) {
+    const s = this.xhr().responseText;
+    if (s.endsWith("Internal Server Error")) {
+      this.setStopReason("internal_server_error");
+      this.setStopError(new Error("Anthropic Internal Server Error"));
+    }
+    return super.onXhrLoadEnd(event);
+  }
+
 }).initThisClass();
