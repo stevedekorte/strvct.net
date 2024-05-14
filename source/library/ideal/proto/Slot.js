@@ -142,6 +142,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         this.simpleNewSlot("actionMethodName", null); // used by slots that will be represented by ActionFields to store the methodName
         this.simpleNewSlot("annotations", null);
+        this.simpleNewSlot("fieldInspectorClassName", null);
     }
 
     // --- annotations ---
@@ -191,6 +192,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     removeAnnotation () {
         this.annotations().delete(key);
         return this
+    }
+
+    // --- indirect subnode field ---
+
+    setIsIndirectSubnodeField (aBool) {
+        this.setAnnotation("isIndirectSubnodeField", aBool);
+        return this
+    }
+
+    isIndirectSubnodeField () {
+        return this.getAnnotation("isIndirectSubnodeField");
     }
 
     // --- standard annotations ---
@@ -286,14 +298,15 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     defaultFieldInspectorClassName () {
-        const slotType = this.slotType() 
-        let fieldName = "BM" + slotType + "Field"
+        const slotType = this.slotType();
+        assert(!Type.isNull(slotType));
+        let fieldName = "BM" + slotType + "Field";
 
         if (this.validValues() || this.validValuesClosure()) {
-            fieldName = "BMOptionsNode"
+            fieldName = "BMOptionsNode";
         }
         
-        return fieldName
+        return fieldName;
     }
 
     newInspectorField () {
@@ -310,37 +323,37 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             */
 
             if (proto) {
-                const field = proto.clone()
+                const field = proto.clone();
 
-                field.setKey(this.name())
-                field.setKeyIsEditable(false)
-                field.setValueMethod(this.name())
-                field.setValueIsEditable(this.canEditInspection())
-                field.setCanDelete(false)
-                //assert(!field.canSelfAddSubnode())
+                field.setKey(this.name());
+                field.setKeyIsEditable(false);
+                field.setValueMethod(this.name());
+                field.setValueIsEditable(this.canEditInspection());
+                field.setCanDelete(false);
+                //assert(!field.canSelfAddSubnode());
 
                 if (this.label()) {
                     if (slotType === "Action") { // TODO: hack - find a uniform way to handle this
-                        field.setTitle(this.label())
-                        field.setMethodName(this.actionMethodName())
+                        field.setTitle(this.label());
+                        field.setMethodName(this.actionMethodName());
                     } else {
-                        field.setKey(this.label())
+                        field.setKey(this.label());
                     }
                 }
 
                 if (this.validValues()) {
-                    field.setValidValues(this.validValues())
-                    field.setAllowsMultiplePicks(this.allowsMultiplePicks())
-                    field.setNodeSubtitleIsChildrenSummary(true)
+                    field.setValidValues(this.validValues());
+                    field.setAllowsMultiplePicks(this.allowsMultiplePicks());
+                    field.setNodeSubtitleIsChildrenSummary(true);
                 } else if (this.validValuesClosure()) {
-                    field.setValidValuesClosure(this.validValuesClosure())
-                    field.setAllowsMultiplePicks(this.allowsMultiplePicks())
-                    field.setNodeSubtitleIsChildrenSummary(true)
+                    field.setValidValuesClosure(this.validValuesClosure());
+                    field.setAllowsMultiplePicks(this.allowsMultiplePicks());
+                    field.setNodeSubtitleIsChildrenSummary(true);
                 }
-                return field
+                return field;
             }
         }
-        return null
+        return null;
     }
 
     computedValidValues () {
@@ -349,7 +362,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         } else if (this.validValuesClosure()) {
             return this.validValuesClosure()();
         }
-        return null
+        return null;
     }
 
     validDuplicateOps () {

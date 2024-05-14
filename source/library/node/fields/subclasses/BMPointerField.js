@@ -12,13 +12,6 @@
 (class BMPointerField extends BMField {
     
     initPrototypeSlots () {
-        /*
-        {
-            const slot = this.newSlot("fieldSlotName", null)
-            slot.setCanInspect(true)
-            slot.setInspectorPath("Node/Field/Pointer")
-        }
-        */
     }
 
     init () {
@@ -45,7 +38,6 @@
     title () {
         const title = this.proxyGetter("title")
         return title
-        //return title ? title : this.fieldSlotName()
     }
 	
     subtitle () {

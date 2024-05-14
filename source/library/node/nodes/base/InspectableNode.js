@@ -176,15 +176,16 @@
     }
 
     addSubnodeFieldForSlot (slot) {
-        const name = slot.name()
-        const field = slot.newInspectorField()
+        const name = slot.name();
+        const field = slot.newInspectorField();
         if (!field) {
-            const className = slot.fieldInspectorClassName()
-            throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'")
+            const className = slot.fieldInspectorClassName();
+            throw new Error("no field class '" + className + "' found for slot '" + slot.name() + "' on type '" + this.type() + "'");
         }
 
         if (field.setFieldSlotName) {
-            field.setFieldSlotName(slot.name())
+            field.setFieldSlotName(slot.name()); //is this used?
+            debugger;
         }
 
         field.setShouldStore(false);
@@ -206,16 +207,16 @@
         }
         */
        
-        const pathNodes = this.createNodePath(slot.inspectorPath())
+        const pathNodes = this.createNodePath(slot.inspectorPath());
         pathNodes.forEach(node => {
             if (node !== this) {
-                node.setNodeSubtitleIsChildrenSummary(true)
+                node.setNodeSubtitleIsChildrenSummary(true);
                 node.setHasNewlineAferSummary(true)
                 if (node !== pathNodes.last()) {
-                    node.setHasNewLineSeparator(true)
+                    node.setHasNewLineSeparator(true);
                 }
             }
-        })
+        });
 
         /*
         const node = pathNodes.last()
@@ -224,7 +225,17 @@
         }
         */
 
-        pathNodes.last().addSubnode(field)
+        if (slot.isIndirectSubnodeField()) {
+            console.log("adding indirect field for slot " + slot.name());
+            const indirectNode = BMSummaryNode.clone().setTitle(slot.label());
+            indirectNode.addSubnode(field);
+            indirectNode.setNodeFillsRemainingWidth(true);
+
+            pathNodes.last().addSubnode(indirectNode);
+        } else {
+            //assert(slot.name() !== "completedPrompt");
+            pathNodes.last().addSubnode(field);
+        }
         return this
     }
 

@@ -138,7 +138,6 @@
     super.init();
     this.setContent("");
     this.setCanDelete(true);
-    //this.setAnnotations({});
   }
 
   finalInit () {

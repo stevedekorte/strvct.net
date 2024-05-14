@@ -22,14 +22,14 @@
 
         // key
         {
-            const slot = this.newSlot("key", "key")
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setCanInspect(true)
-            slot.setSlotType("String")
-            slot.setLabel("key")
-            slot.setInspectorPath("Node/Field/Key")
+            const slot = this.newSlot("key", "key");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("String");
+            slot.setLabel("key");
+            slot.setInspectorPath("Node/Field/Key");
         }
 
         {

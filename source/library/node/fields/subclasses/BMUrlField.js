@@ -54,14 +54,6 @@
         this.newSlot("isUpdatingHref", false)
     }
 
-    /*
-    initSlots () {
-        debugger;
-        super.initSlots()
-        assert(this.directSetProtocol)
-    }
-*/
-
     newStringSlotNamed (slotName, defaultValue) {
         //debugger
         const slot = this.newSlot(slotName, defaultValue)
