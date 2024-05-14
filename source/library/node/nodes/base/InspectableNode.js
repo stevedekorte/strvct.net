@@ -187,18 +187,18 @@
             field.setFieldSlotName(slot.name())
         }
 
-        field.setShouldStore(false)
-        field.setShouldStoreSubnodes(false) 
+        field.setShouldStore(false);
+        field.setShouldStoreSubnodes(false);
 
-        field.setTarget(this)
-        field.setNodeCanEditTitle(false)
+        field.setTarget(this);
+        field.setNodeCanEditTitle(false);
         field.setValueIsEditable(slot.canEditInspection());
-        field.setNodeCanReorderSubnodes(false)
-        field.setSummaryFormat(slot.summaryFormat())
-        field.setHasNewlineAferSummary(true)
-        field.setCanAdd(false)
-        field.setCanDelete(false)
-        field.setIsVisible(slot.isSubnodeFieldVisible())
+        field.setNodeCanReorderSubnodes(false);
+        field.setSummaryFormat(slot.summaryFormat());
+        field.setHasNewlineAferSummary(true);
+        field.setCanAdd(false);
+        field.setCanDelete(false);
+        field.setIsVisible(slot.isSubnodeFieldVisible());
         
         /*
         if (name === "isAvailable") {

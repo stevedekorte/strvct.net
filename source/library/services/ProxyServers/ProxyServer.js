@@ -15,7 +15,7 @@
   initPrototypeSlots() {
     {
       const slot = this.newSlot("isSecure", true);
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Secure")
       slot.setShouldStoreSlot(true)
@@ -28,7 +28,7 @@
 
     {
       const slot = this.newSlot("subdomain", "");
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Sudomain")
       slot.setShouldStoreSlot(true)
@@ -41,7 +41,7 @@
 
     {
       const slot = this.newSlot("domain", "");
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Domain")
       slot.setShouldStoreSlot(true)
@@ -54,7 +54,7 @@
 
     {
       const slot = this.newSlot("port", 0);
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Port")
       slot.setShouldStoreSlot(true)
@@ -67,7 +67,7 @@
 
     {
       const slot = this.newSlot("path", "");
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Path")
       slot.setShouldStoreSlot(true)
@@ -80,7 +80,7 @@
 
     {
       const slot = this.newSlot("parameterName", null);
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Parameter Name")
       slot.setShouldStoreSlot(true)
@@ -93,7 +93,7 @@
 
     {
       const slot = this.newSlot("error", "");
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setInspectorPath("")
       slot.setLabel("Error")
       slot.setShouldStoreSlot(true)

@@ -68,12 +68,12 @@
       // optional info
       {
         const slot = this.newSlot("label", null);
-        slot.setAnnotation("shouldJsonArchive", true);
+        slot.setShouldJsonArchive(true);
       }
 
       {
         const slot = this.newSlot("transcript", null);
-        slot.setAnnotation("shouldJsonArchive", true);
+        slot.setShouldJsonArchive(true);
       }
 
     */

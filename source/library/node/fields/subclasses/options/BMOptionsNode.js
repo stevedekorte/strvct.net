@@ -418,6 +418,15 @@
     */
 
     itemForValue (v) {
+        if (Type.isNull(v)) {
+            return {
+                label: "null",
+                subtitle: null,
+                value: null,
+                options: null
+            }
+        }   
+
         if (Type.isString(v) || Type.isNumber(v)) {
             //const isPicked = this.targetHasPick(v)
             return {

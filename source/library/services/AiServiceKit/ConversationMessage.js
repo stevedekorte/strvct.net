@@ -10,14 +10,14 @@
 
     {
       const slot = this.overrideSlot("key")
-      slot.setAnnotation("shouldJsonArchive", true);
+      slot.setShouldJsonArchive(true);
       slot.setCanInspect(true);
       slot.setSlotType("String");
     }
 
     {
       const slot = this.overrideSlot("value");
-      slot.setAnnotation("shouldJsonArchive", true);
+      slot.setShouldJsonArchive(true);
       slot.setCanInspect(true);
       slot.setInspectorPath("Node/Field/Value");
       slot.setSlotType("String");
@@ -31,7 +31,7 @@
 
     {
       const slot = this.newSlot("messageId", null);
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setCanInspect(true);
       slot.setInspectorPath("ConversationMessage");
       slot.setShouldStoreSlot(true);
@@ -44,7 +44,7 @@
       slot.setCanInspect(true);
       slot.setInspectorPath("ConversationMessage");
       slot.setShouldStoreSlot(true)
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
     }
 
     {
@@ -55,7 +55,7 @@
       slot.setInspectorPath("ConversationMessage");
       slot.setShouldStoreSlot(true)
       slot.setSlotType("String");
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
     }
 
     {
@@ -65,20 +65,20 @@
       slot.setInspectorPath("ConversationMessage");
       slot.setShouldStoreSlot(true)
       slot.setSlotType("Number");
-      //slot.setAnnotation("shouldJsonArchive", true)
+      //slot.setShouldJsonArchive(true)
     }
 
     /*
     {
       const slot = this.newSlot("annotations", null); // a place for any sort of extra JSON info
       slot.setShouldStoreSlot(true)
-      slot.setAnnotation("shouldJsonArchive", false)
+      slot.setShouldJsonArchive(false)
     }
     */
 
     {
       const slot = this.newSlot("isComplete", false);
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setCanInspect(true);
       //slot.setDoesHookSetter(true); // no longer needed?
       slot.setInspectorPath("ConversationMessage");

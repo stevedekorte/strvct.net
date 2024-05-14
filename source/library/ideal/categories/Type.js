@@ -175,6 +175,9 @@ getGlobalThis().Type = (class Type extends Object {
     }
 
     static isDictionary (value) {
+        if (Type.isNullOrUndefined(value)) {
+            return false;
+        }
         // WARNING: a good guess for our use cases, but not always correct!
         // e.g. 3rd party libraries and code may use Object instances as or like Objects instead of as Dictionaries (such as in JSON)
         return this.isObject(value) && (value.constructor === Object) 

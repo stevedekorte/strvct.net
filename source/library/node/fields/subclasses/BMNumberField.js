@@ -101,20 +101,17 @@
 
     setValue (v) {
         if (!Type.isNumber(v)) {
-            /*
             if (Type.isNull() && this.valueAllowsNull()) {
                 // ok
             } else {
                 // attempt to coerce to a number
                 v = Number(v);
-                asset(Type.isNaN(v) === false, "value must be a number")
+                assert(Type.isNaN(v), "value must be a number");
+                super.setValue(v);
             }
-            */
-            v = Number(v);
-            assert(Type.isNaN(v) === false, "value must be a number");
+        } else {
+            super.setValue(v);
         }
-        
-        super.setValue(v);
         return this
     }
 

@@ -68,49 +68,49 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     initPrototypeSlots () {
-        Object.defineSlot(this, "_slotNames", new Set())
+        Object.defineSlot(this, "_slotNames", new Set());
         
-        this.simpleNewSlot("owner", null) // typically a reference to a .prototype
-        this.simpleNewSlot("name", false)
-        this.simpleNewSlot("privateName", null)
-        this.simpleNewSlot("setterName", null)
-        this.simpleNewSlot("directSetterName", null)
-        this.simpleNewSlot("initValue", null) // needed?
+        this.simpleNewSlot("owner", null); // typically a reference to a .prototype
+        this.simpleNewSlot("name", false);
+        this.simpleNewSlot("privateName", null);
+        this.simpleNewSlot("setterName", null);
+        this.simpleNewSlot("directSetterName", null);
+        this.simpleNewSlot("initValue", null); // needed?
 
         // slot hook names
-        this.simpleNewSlot("methodForWillGet", null)
-        this.simpleNewSlot("methodForWillUpdate", null)
-        this.simpleNewSlot("methodForDidUpdate", null)
-        this.simpleNewSlot("methodForUndefinedGet", null)
-        this.simpleNewSlot("methodForOnFinalized", null)
-        this.simpleNewSlot("methodForShouldStoreSlot", null)
+        this.simpleNewSlot("methodForWillGet", null);
+        this.simpleNewSlot("methodForWillUpdate", null);
+        this.simpleNewSlot("methodForDidUpdate", null);
+        this.simpleNewSlot("methodForUndefinedGet", null);
+        this.simpleNewSlot("methodForOnFinalized", null);
+        this.simpleNewSlot("methodForShouldStoreSlot", null);
         //this.simpleNewSlot("methodNameCache", null)
 
         // getter
-        this.simpleNewSlot("ownsGetter", true)
-        this.simpleNewSlot("doesHookGetter", false)
+        this.simpleNewSlot("ownsGetter", true);
+        this.simpleNewSlot("doesHookGetter", false);
         //this.simpleNewSlot("hookedGetterIsOneShot", false) 
         //this.simpleNewSlot("isInGetterHook", false)
 
         // setter
-        this.simpleNewSlot("ownsSetter", true) // if true, we'll create the setter
-        this.simpleNewSlot("doesHookSetter", false) // if shouldStore, then auto post isDirty?
-        this.simpleNewSlot("ownsValue", false) // if true, and the owner instance gets (for example) a shutdown method, it propogates to the slot value
-        //this.simpleNewSlot("doesPostSetter", false) // posts a didUpdateSlot<SlotName> notification
+        this.simpleNewSlot("ownsSetter", true); // if true, we'll create the setter
+        this.simpleNewSlot("doesHookSetter", false); // if shouldStore, then auto post isDirty?
+        this.simpleNewSlot("ownsValue", false); // if true, and the owner instance gets (for example) a shutdown method, it propogates to the slot value
+        //this.simpleNewSlot("doesPostSetter", false); // posts a didUpdateSlot<SlotName> notification
 
         // storage related
-        this.simpleNewSlot("shouldStoreSlot", false) // should hook setter
-        this.simpleNewSlot("initProto", null) // clone this proto in init
-        this.simpleNewSlot("finalInitProto", null) // if not set (e.g. by deserialization), clone this proto in finalInit and add as subnode
-        //this.simpleNewSlot("shouldFinalInitAsSubnode", false) // if final init is used, it will add the init instance as a subnode use "isSubnode" instead
-        this.simpleNewSlot("isSubnode", null) // in finalInit, add value as subnode if not already present
-        this.simpleNewSlot("isSubnodeField", null) // in finalInit, create a field for the slot and add as subnode
-        this.simpleNewSlot("isSubnodeFieldVisible", true) // sets isVisible on Field when created
+        this.simpleNewSlot("shouldStoreSlot", false); // should hook setter
+        this.simpleNewSlot("initProto", null); // clone this proto in init
+        this.simpleNewSlot("finalInitProto", null); // if not set (e.g. by deserialization), clone this proto in finalInit and add as subnode
+        //this.simpleNewSlot("shouldFinalInitAsSubnode", false); // if final init is used, it will add the init instance as a subnode use "isSubnode" instead
+        this.simpleNewSlot("isSubnode", null); // in finalInit, add value as subnode if not already present
+        this.simpleNewSlot("isSubnodeField", null); // in finalInit, create a field for the slot and add as subnode
+        this.simpleNewSlot("isSubnodeFieldVisible", true); // sets isVisible on Field when created
 
-        this.simpleNewSlot("valueClass", null) // declare the value should be a kind of valueClass
-        //this.simpleNewSlot("field", null)
-        //this.simpleNewSlot("isLazy", false) // should hook getter
-        this.simpleNewSlot("isWeak", false) // should hook getter
+        this.simpleNewSlot("valueClass", null); // declare the value should be a kind of valueClass
+        //this.simpleNewSlot("field", null);
+        //this.simpleNewSlot("isLazy", false); // should hook getter
+        this.simpleNewSlot("isWeak", false); // should hook getter
 
         // debugging 
         //this.simpleNewSlot("doesBreakInGetter", false) // uses "debugger;"
@@ -119,30 +119,29 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         // copying behavior
         //this.simpleNewSlot("initOp", "copyValue")
         //this.simpleNewSlot("validInitOps", new Set(["null", "lazy", "proto", "nop", "copyValue", "duplicate"])) 
-        this.simpleNewSlot("duplicateOp", "nop")
-        this.simpleNewSlot("validDuplicateOps", new Set(["nop", "copyValue", "duplicate"])) 
-        this.simpleNewSlot("comment", null)
-        this.simpleNewSlot("isPrivate", false)
+        this.simpleNewSlot("duplicateOp", "nop");
+        this.simpleNewSlot("validDuplicateOps", new Set(["nop", "copyValue", "duplicate"]));
+        this.simpleNewSlot("comment", null);
+        this.simpleNewSlot("isPrivate", false);
 
         // inspector related
         // slotType is a string value, eg: "Boolean", "String", "Number", "Action" - can be used to find a class 
         // to create an inspector node for the slotValue
-        this.simpleNewSlot("slotType", null)
-        this.simpleNewSlot("canInspect", false)
-        this.simpleNewSlot("canEditInspection", true)
-        this.simpleNewSlot("label", null) // visible label on inspector
-        this.simpleNewSlot("allowsNullValue", null) // used for validation
-        this.simpleNewSlot("validValues", null) // used for options field and validation
-        this.simpleNewSlot("validValuesClosure", null) 
-        this.simpleNewSlot("allowsMultiplePicks", false)
-        this.simpleNewSlot("inspectorPath", null) // if non-null, uses to create a path for the slot inspector
-        this.simpleNewSlot("summaryFormat", "none") // passed into slot inspector node
+        this.simpleNewSlot("slotType", null);
+        this.simpleNewSlot("canInspect", false);
+        this.simpleNewSlot("canEditInspection", true);
+        this.simpleNewSlot("label", null); // visible label on inspector
+        this.simpleNewSlot("allowsNullValue", null); // used for validation
+        this.simpleNewSlot("validValues", null); // used for options field and validation
+        this.simpleNewSlot("validValuesClosure", null);
+        this.simpleNewSlot("allowsMultiplePicks", false);
+        this.simpleNewSlot("inspectorPath", null); // if non-null, uses to create a path for the slot inspector
+        this.simpleNewSlot("summaryFormat", "none"); // passed into slot inspector node
 
-        this.simpleNewSlot("syncsToView", false) // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
-        //this.simpleNewSlot("isDeserializing", false) // need to add it here as we don't inherit it
+        this.simpleNewSlot("syncsToView", false); // if true, will hook slot setter to call this.scheduleSyncToView() on slotValue change
 
-        this.simpleNewSlot("actionMethodName", null) // used by slots that will be represented by ActionFields to store the methodName
-        this.simpleNewSlot("annotations", null) 
+        this.simpleNewSlot("actionMethodName", null); // used by slots that will be represented by ActionFields to store the methodName
+        this.simpleNewSlot("annotations", null);
     }
 
     // --- annotations ---
@@ -166,6 +165,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
         return this
     }
+
+    // --- annotations ---
 
     annotations () {
         if (!this._annotations) {
@@ -192,9 +193,99 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this
     }
 
+    // --- standard annotations ---
+
+    setShouldJsonArchive (aBool) {
+        this.setAnnotation("shouldJsonArchive", aBool);
+        return this
+    }
+
+    shouldJsonArchive () {
+        return this.getAnnotation("shouldJsonArchive");
+    }
+
+    setDescription (s) {
+        this.setAnnotation("description", s);
+        return this;
+    }
+
+    description () {
+        return this.getAnnotation("description");
+    }
+
+    // --- required ---
+
+    setIsRequired (b) {
+        this.setAnnotation("isRequired", b);
+        return this;
+    }
+
+    isRequired () {
+        const b = this.getAnnotation("isRequired");
+        if (b === undefined) {
+            return true; //  default to true
+        }
+        return b;
+    }
+
+    // --- items type ---
+
+    validJsonSchemaItemsTypes () {
+        const validItemsTypes = ["null", "boolean", "object", "array", "number", "string", "integer"];
+        return validItemsTypes;
+    }
+
+    setJsonSchemaItemsType (s) {
+        assert(Type.isString("string"));
+        this.setAnnotation("jsonSchemaItemsType", s);
+        return this;
+    }
+
+    jsonSchemaItemsType () {
+        return this.getAnnotation("jsonSchemaItemsType");
+    }
+
+    // --- items description ---
+
+    setJsonSchemaItemsDescription (s) {
+        this.setAnnotation("jsonSchemaItemsDescription", s);
+        return this;
+    }
+
+    jsonSchemaItemsDescription () {
+        return this.getAnnotation("jsonSchemaItemsDescription");
+    }
+
+    setJsonSchemaItemsRef (s) {
+        this.setAnnotation("jsonSchemaItemsRef", s);
+        return this;
+    }
+
+    jsonSchemaItemsRef () {
+        return this.getAnnotation("jsonSchemaItemsRef");
+    }
+
+    // --- is in json schema ---
+
+    setIsInJsonSchema (b) {
+        this.setAnnotation("isInJsonSchema", b);
+        return this;
+    }
+
+    isInJsonSchema () {
+        return this.getAnnotation("isInJsonSchema");
+    }
+
     // --- inspector ---
 
     fieldInspectorClassName () {
+        if (Type.isString(this._fieldInspectorClassName)) {
+            return this._fieldInspectorClassName;
+        }
+        return this.defaultFieldInspectorClassName();
+    }
+
+    defaultFieldInspectorClassName () {
         const slotType = this.slotType() 
         let fieldName = "BM" + slotType + "Field"
 
@@ -773,7 +864,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         // what about integer?
 
-        const passThroughTypes = new Set(["String", "Number", "Boolean", "Array", "Action"])
+        const passThroughTypes = new Set(["String", "Number", "Boolean", "Array"])
 
         if (passThroughTypes.has(type)) {
             return type.toLowerCase();
@@ -795,7 +886,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     jsonSchemaDescription () {
-        return this.comment() ? this.comment() : undefined;
+        return this.description();
     }
 
     jsonSchemaEnum () {
@@ -805,7 +896,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (validValues) {
             validValues.forEach(v => {
                 assert(Type.isJsonType(v));
-                if (v.label) {
+                if (!Type.isNull(v) && v.label) {
                     enumArray.push(v.label);
                 } else {
                     enumArray.push(v);
@@ -839,13 +930,31 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     asJsonSchema () {
         const type = this.jsonSchemaType();
 
+        // it's a pointer to a class instance
+        const finalProto = this.finalInitProto();
+        if (finalProto) {
+            return finalProto.asJsonSchema();
+        }
+
+        // it's probably a base type
         const schema = {
             type: this.jsonSchemaType(),
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
             enum: this.jsonSchemaEnum(),
             properties: this.jsonSchemaProperties(),
-            required: this.jsonSchemaRequired()
+            required: this.jsonSchemaRequired(),
+        };
+
+        // handle array type
+        const itemsType = this.jsonSchemaItemsType();
+
+        if (itemsType) {
+            schema.items = {
+                "type": itemsType,
+                "description": this.jsonSchemaItemsDescription()
+                // TODO: enum
+            };
         }
 
         if (this.allowsMultiplePicks()) {
@@ -854,6 +963,62 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
 
         return schema;
+    }
+
+    acceptsValue (v) {
+        //const typeNames = Type.typeNamesForValue(value);
+
+
+        if (this.slotType() === "String") {
+            if (Type.isString(v)) {
+                return true;
+            }
+        }
+
+        if (this.slotType() === "Number") {
+            if (Type.isNumber(v)) {
+                return true;
+            }
+        }
+
+        if (this.slotType() === "Boolean") {
+            if (Type.isBoolean(v)) {
+                return true;
+            }
+        }
+
+        if (Type.isNull(v)) {
+            if (slot.allowsNullValue()) {
+                return true;
+            }
+        }
+
+        if (this.slotType() === "Array") {
+            if (Type.isArray(v)) {
+                return true;
+            }
+        }
+ 
+        return false;
+    }
+
+    onInstanceSetValueWithJsonSchemaTypeCheck (anInstance, v) {
+        const slot = this;
+        const value = slot.valueFromJson(jsonValue);
+
+        if (slot.finalInitProto()) {
+            const obj = slot.onInstanceGetValue(anInstance)
+            obj.fromJsonSchema(v); // this will do a type check?
+            return this;
+        }
+
+        if (slot.acceptsValue(value)) {
+            slot.onInstanceSetValue(anInstance, value);
+        } else {
+            throw new Error("fromJsonSchema type mismatch for key '" + this.name() + "'");
+        }
+
+        return this;
     }
     
 }.initThisClass());

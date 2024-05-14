@@ -1078,7 +1078,7 @@
     // --- jsonArchive ---
 
     setJsonArchive (json) {
-        // NOTE: use slot.setAnnotation("shouldJsonArchive", true) to set a slot to be json archived
+        // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
         
         //console.log(this.typeId() + ".setJsonArchive(" + JSON.stringify(json, 2, 2) + ")");
 
@@ -1141,12 +1141,18 @@
 
     // --- JSON schema properties ---
 
+    static jsonSchemaString () {
+        const schema = this.asRootJsonSchema();
+        const s = JSON.stringify(schema, 2, 2);
+        return s;
+    }
+
     static jsonSchemaTitle () {
         return this.type();
     }
 
     static jsonSchemaSlots () {
-        const jsonArchiveSlots = this.prototype.slotsWithAnnotation("shouldJsonArchive", true) 
+        const jsonArchiveSlots = this.prototype.slotsWithAnnotation("isInJsonSchema", true);
         return jsonArchiveSlots;
     }
 
@@ -1176,7 +1182,8 @@
         const required = [];
         
         slots.forEach(slot => {
-            if (!slot.allowsNullValue()) {
+            //if (!slot.allowsNullValue()) {
+            if (slot.isRequired()) {
                 required.push(slot.getterName());
             }
         })
@@ -1202,13 +1209,68 @@
             description: this.jsonSchemaDescription(),
             properties: this.jsonSchemaProperties(),
             required: this.jsonSchemaRequired()
-        }
+        };
 
         return schema;
     }
 
+    static instanceFromJson (json) {
+        const properties = json.properties;
+        assert(properties, "missing properties in json");
+
+        const className = properties.className;
+        assert(className, "missing className in json");
+
+        const aClass = getGlobalThis()[className];
+        assert(aClass, "missing class for className '" + className + "'");
+        const instance = aClass.fromJsonSchema(json);
+
+        return instance;
+    }
+
     fromJsonSchema (json) {
-        throw new Error("fromJsonSchema not implemented for " + this.type());
+        const slots = this.slotsWithAnnotation("isInJsonSchema", true);
+
+        const requiredSlots = slots.filter(slot => slot.isRequired());
+        const requiredSlotNamesSet = new Set(requiredSlots.map(slot => slot.getterName()));
+
+        Object.keys(json).forEach(key => {
+            const slot = slots.getSlot(key);
+            if (slot) {
+                assert(slot.isInJsonSchema(), "attempt to set slot not in json schema");
+
+                if (slot.name() === "subnodes") { // special case subnodes for now?
+                    //console.log("fromJsonSchema setting subnodes");
+                    const subnodes = json[key];
+                    this.removeAllSubnodes();
+                    subnodes.forEach(subnodeJson => {
+                        const subnode = BMNode.instanceFromJson(subnodeJson);
+                        const hasValidSubnodeClass = this.subnodeClasses().length === 0 || this.subnodeClasses().includes(subnode.thisClass());
+                        if (hasValidSubnodeClass) {
+                            this.addSubnode(subnode);
+                        } else {
+                            console.warn("fromJsonSchema subnode class '" + subnode.type() + "' not in subnodeClasses " + JSON.stringify(this.subnodeClasses().map(c => c.type())));
+                            debugger;
+                        }
+                    });
+                } else {
+                    const value = json[key];
+                    slot.onInstanceSetValueWithJsonSchemaTypeCheck(this, value);
+                }
+            } else {
+                console.warn("fromJsonSchema missing slot for key '" + key + "'");
+                debugger;
+            }
+            requiredSlotNamesSet.delete(key);
+        });
+
+        if (requiredSlotNamesSet.size > 0) {
+            // verify all required slots were set
+            console.warn("fromJsonSchema missing required slots: " + Array.from(requiredSlotNamesSet).join(", "));
+            debugger;
+        }
+
+        return this;
     }
 
     // ---- shutdown ----

@@ -26,7 +26,7 @@
 
     {
       const slot = this.newSlot("role", "user"); 
-      slot.setAnnotation("shouldJsonArchive", true)
+      slot.setShouldJsonArchive(true)
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
