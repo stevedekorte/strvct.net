@@ -96,27 +96,32 @@
     // --- helpful for setting up inspector paths ---
 
     createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
-        const pathNodes = [this]
+        const pathNodes = [this];
 
         if (aPath) {
-            const components = aPath.split("/")
-            let node = this
+            const components = aPath.split("/");
+            let node = this;
 
             components.forEach(component => {
+                /*
+                if (component === "[promptSuffix]") {
+                    debugger;
+                }
+                */
                 node = node.subnodeWithTitleIfAbsentInsertClosure(component, () => {
                     //debugger
-                    const nodeClass = Object.getClassNamed(pathSubnodeType)
-                    const newNode = nodeClass.clone()
-                    newNode.setNodeCanReorderSubnodes(false) // should this be here?
-                    newNode.setTitle(component)
-                    newNode.setCanAdd(false)
-                    return newNode
+                    const nodeClass = Object.getClassNamed(pathSubnodeType);
+                    const newNode = nodeClass.clone();
+                    newNode.setNodeCanReorderSubnodes(false); // should this be here?
+                    newNode.setTitle(component);
+                    newNode.setCanAdd(false);
+                    return newNode;
                 })
-                pathNodes.push(node)
+                pathNodes.push(node);
             })
         }
 
-        return pathNodes
+        return pathNodes;
     }
 
     // --- fields ---
@@ -207,7 +212,34 @@
         }
         */
        
-        const pathNodes = this.createNodePath(slot.inspectorPath());
+        const pathNodes = this.createInspectorNodePath(slot.inspectorPath());
+
+        /*
+        const node = pathNodes.last()
+        if (node !== this) {
+            node.setNodeSubtitleIsChildrenSummary(true)
+        }
+        */
+
+        field.setKeyIsVisible(slot.keyIsVisible() !== false);
+        /*
+        if (slot.isIndirectSubnodeField()) {
+            console.log("adding indirect field for slot " + slot.name());
+            const indirectNode = BMSummaryNode.clone().setTitle(slot.label());
+            indirectNode.addSubnode(field);
+            indirectNode.setNodeFillsRemainingWidth(true);
+
+            pathNodes.last().addSubnode(indirectNode);
+        } else {
+            */
+            //assert(slot.name() !== "completedPrompt");
+            pathNodes.last().addSubnode(field);
+        //}
+        return this
+    }
+
+    createInspectorNodePath (aPath) {
+        const pathNodes = this.createNodePath(aPath);
         pathNodes.forEach(node => {
             if (node !== this) {
                 node.setNodeSubtitleIsChildrenSummary(true);
@@ -217,26 +249,7 @@
                 }
             }
         });
-
-        /*
-        const node = pathNodes.last()
-        if (node !== this) {
-            node.setNodeSubtitleIsChildrenSummary(true)
-        }
-        */
-
-        if (slot.isIndirectSubnodeField()) {
-            console.log("adding indirect field for slot " + slot.name());
-            const indirectNode = BMSummaryNode.clone().setTitle(slot.label());
-            indirectNode.addSubnode(field);
-            indirectNode.setNodeFillsRemainingWidth(true);
-
-            pathNodes.last().addSubnode(indirectNode);
-        } else {
-            //assert(slot.name() !== "completedPrompt");
-            pathNodes.last().addSubnode(field);
-        }
-        return this
+        return pathNodes;
     }
 
 }.initThisClass());

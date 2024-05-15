@@ -196,13 +196,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // --- indirect subnode field ---
 
-    setIsIndirectSubnodeField (aBool) {
-        this.setAnnotation("isIndirectSubnodeField", aBool);
+    setKeyIsVisible (aBool) {
+        this.setAnnotation("keyIsVisible", aBool);
         return this
     }
 
-    isIndirectSubnodeField () {
-        return this.getAnnotation("isIndirectSubnodeField");
+    keyIsVisible () {
+        return this.getAnnotation("keyIsVisible") !== false;
     }
 
     // --- standard annotations ---
@@ -654,7 +654,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     onInstanceFinalInitSlot (anInstance) {
         const finalInitProto = this._finalInitProto
         if (finalInitProto) {
-            const oldValue = this.onInstanceGetValue(anInstance)
+            let oldValue = this.onInstanceGetValue(anInstance);
+
+            if (oldValue && oldValue.type() !== finalInitProto.type()) {
+                const warning = "slot '" + this.name() + "' finalInitProto type (" + finalInitProto.type() + ") does not match existing value (" + oldValue.type() + ") from Store";
+                console.warn(warning)
+                debugger;
+                //throw new Error(warning)
+                oldValue = null; // let the code below override it
+            }
+
             if (Type.isNullOrUndefined(oldValue)) {
             //if (oldValue === null) {
 
@@ -696,12 +705,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                     }
                 }
                 */
-            } else if (oldValue.type() !== finalInitProto.type()) {
-                const warning = "finalInitProto type (" + finalInitProto.type() + ") does not match existing value (" + oldValue.type() + ") from Store";
-                console.warn(warning)
-                debugger;
-                //throw new Error(warning)
-            }
+            } 
         }
 
         if (this.isSubnode()) { 
