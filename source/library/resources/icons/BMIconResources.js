@@ -17,8 +17,9 @@
 	}
 
 	setup () {
-        // subclasses need to use this to set ResourceClasses
-        this.setResourceClasses([SvgIconNode])
+        super.setup();
+        this.setResourceClasses([SvgIconNode]);
+		this.setSubnodeClasses([SvgIconNode]);
     }
 
 	// --- old code to add svg directly using a string ---

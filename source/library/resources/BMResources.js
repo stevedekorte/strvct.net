@@ -11,56 +11,56 @@
 (class BMResources extends BMStorableNode {
     
     static initClass () {
-        this.setIsSingleton(true)
-		return this
+        this.setIsSingleton(true);
+		return this;
     }
 
     initPrototypeSlots () {
-        //this.newSlot("themes", null)
-        this.newSlot("fonts", null)
-        this.newSlot("sounds", null)
-        this.newSlot("images", null)
-        this.newSlot("icons", null)
-        this.newSlot("json", null)
-        this.newSlot("files", null)
+        //this.newSlot("themes", null);
+        this.newSlot("fonts", null);
+        this.newSlot("sounds", null);
+        this.newSlot("images", null);
+        this.newSlot("icons", null);
+        this.newSlot("json", null);
+        this.newSlot("files", null);
     }
 
     init () {
-        super.init()
-        this.setShouldStore(false)
-        this.setTitle("Resources")
-        this.setSubtitle("")
-        this.setupSubnodes() // don't need to wait for appDidInit?
-        //this.watchOnceForNote("appDidInit")
+        super.init();
+        this.setShouldStore(false);
+        this.setTitle("Resources");
+        this.setSubtitle("");
+        this.setupSubnodes(); // don't need to wait for appDidInit?
+        //this.watchOnceForNote("appDidInit");
     }
 
     setupSubnodes () {
-        //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources)
-        //themes.setNodeCanReorderSubnodes(true)
-        //this.addSubnode(themes)
-        //let link = this.addLinkSubnode(themes)
-        //this.setThemes(themes)
-        //console.log("themes link = ", link.debugTypeId())
+        //const themes = this.defaultStore().rootSubnodeWithTitleForProto("Themes", BMThemeResources);
+        //themes.setNodeCanReorderSubnodes(true);
+        //this.addSubnode(themes);
+        //let link = this.addLinkSubnode(themes);
+        //this.setThemes(themes);
+        //console.log("themes link = ", link.debugTypeId());
 
-        this.setFiles(BMFileResources.shared())
-        this.addSubnode(this.files())
+        this.setFiles(BMFileResources.shared());
+        this.addSubnode(this.files());
 
-        this.setFonts(BMFontResources.shared())
-        this.addSubnode(this.fonts())
+        this.setFonts(BMFontResources.shared());
+        this.addSubnode(this.fonts());
 
-        this.setSounds(BMSoundResources.shared())
-        this.addSubnode(this.sounds())
+        this.setSounds(BMSoundResources.shared());
+        this.addSubnode(this.sounds());
 
-        this.setImages(BMImageResources.shared())
-        this.addSubnode(this.images())
+        this.setImages(BMImageResources.shared());
+        this.addSubnode(this.images());
 
-        this.setIcons(BMIconResources.shared())
-        this.addSubnode(this.icons())
+        this.setIcons(BMIconResources.shared());
+        this.addSubnode(this.icons());
 
-        this.setJson(BMJsonResources.shared())
-        this.addSubnode(this.json())
+        this.setJson(BMJsonResources.shared());
+        this.addSubnode(this.json());
 
-        return this
+        return this;
     }
 
     /*
@@ -80,7 +80,7 @@
     */
 
     resourceClassesForFileExtension (extension) {
-        return this.subnodes().forEach(sn => sn.resourceClassesForFileExtension(extension)).flatten()
+        return this.subnodes().map(sn => sn.resourceClassesForFileExtension(extension)).flat()
     }
 
     resourceClassForFileExtension (extension) {

@@ -8,24 +8,29 @@
 
 (class Services extends BMSummaryNode {
     
+    static initClass () {
+        this.setIsSingleton(true);
+        return this;
+    }
+
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("anthropicService", null)
+            const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(AnthropicService);
             slot.setIsSubnode(true);
         }
 
         {
-            const slot = this.newSlot("openAiService", null)
+            const slot = this.newSlot("openAiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(OpenAiService);
             slot.setIsSubnode(true);
         }
 
         {
-            const slot = this.newSlot("groqService", null)
+            const slot = this.newSlot("groqService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(GroqService);
             slot.setIsSubnode(true);
@@ -33,7 +38,7 @@
 
 
         {
-            const slot = this.newSlot("geminiService", null)
+            const slot = this.newSlot("geminiService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(GeminiService);
             slot.setIsSubnode(true);
@@ -98,6 +103,29 @@
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         return this
+    }
+
+    aiServices () {
+        return this.subnodes().filter(sn => sn.thisClass().isKindOf(AiService));
+    }
+
+    // --- ai model helpers ---
+
+    defaultChatModel () {
+        return this.aiServices().first().defaultChatModel();
+    }
+
+    chatModels () {
+        return this.aiServices().map(s => s.models().subnodes()).flat();
+    }
+
+    chatModelNames () {
+        const names = this.chatModels().map(m => m.modelName());
+        return names;
+    }
+
+    chatModelWithName (name) {
+        return this.chatModels().detect(m => m.modelName() === name);
     }
 	
 }.initThisClass());

@@ -115,8 +115,8 @@
 
   // --- send request -------------
 
-  selectedModel () {
-    return this.conversation().selectedModel()
+  chatModel () {
+    return this.conversation().chatModel()
   }
 
   service () {
@@ -183,7 +183,7 @@
     //request.setStreamTarget(this); // unify with delegate
 
     request.setBodyJson({
-      model: this.selectedModel(),
+      model: this.chatModel().modelName(),
       temperature: this.temperature(), 
       top_p: this.topP(),
       messages: jsonHistory

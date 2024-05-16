@@ -119,7 +119,16 @@
     }
 
     async promiseLoadUrlResource () {
-        const urlResource = await this.urlResource().promiseLoad();
+        /*
+        assert(this.path(), "path is null");
+        assert(this.path().length > 0, "path is empty");
+        assert(!this.path().startsWith("/"), "path should not start with /");
+        //assert(this.path().startsWith("/"), "path should start with /");
+        const urlResource = UrlResource.clone().setPath(ResourceManager.bootPath() + "/" + this.path());
+        this.setUrlResource(urlResource);
+        */
+
+        await this.urlResource().promiseLoad();
         const data = this.urlResource().data();
         assert(data.byteLength);
         this.setData(data);

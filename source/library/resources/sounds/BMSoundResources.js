@@ -14,8 +14,10 @@
     }
 
     setup () {
-        // subclasses need to use this to set ResourceClasses
-        this.setResourceClasses([WASound])
+        super.setup();
+        this.setResourceClasses([WASound]);
+        this.setSubnodeClasses([WASound]);
+        return this;
     }
 
     addSound (aSound) {

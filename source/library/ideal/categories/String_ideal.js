@@ -258,6 +258,16 @@ String.prototype._setterCacheMap = new Map();
         return results
     }
 
+    // --- replace ---
+
+    replaceMap (map) {
+        let s = this;
+        map.forEach((value, key) => {
+            s = s.replaceAll(key, value);
+        });
+        return s;
+    }
+
     // --- paths ---
 
     pathComponents () {

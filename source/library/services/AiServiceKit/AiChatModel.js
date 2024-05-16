@@ -44,6 +44,10 @@
     this.setHasNewlineAferSummary(true);
   }
 
+  service () {
+    return this.parentNode().parentNode();
+  }
+
   subtitle () {
     return this.modelName();
   }

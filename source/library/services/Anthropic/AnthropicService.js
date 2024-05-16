@@ -24,6 +24,32 @@
     this.setIsSingleton(true);
     return this;
   }
+
+  modelsJson () {
+    return [
+      {
+          "name": "claude-3-opus-20240229",
+          "title": "Claude 3 Opus",
+          "subtitle": "Largest/Slowest",
+          "contextWindow": 200000,
+          "notes": "This is the best model I've found so far."
+      },
+      {
+          "name": "claude-3-sonnet-20240229",
+          "title": "Claude 3 Sonnet",
+          "subtitle": "Medium size and speed",
+          "contextWindow": 200000,
+          "notes": "This model is missing opening description, doesn't make roll request json with required fields"
+      },
+      {
+          "name": "claude-3-haiku-20240307",
+          "title": "Claude 3 Haiku",
+          "subtitle": "Smallest/Fastest",
+          "contextWindow": 200000,
+          "notes": "This model also doesn't make roll request json with required fields"
+      }
+    ];
+  }
   
   initPrototypeSlots () {
   }

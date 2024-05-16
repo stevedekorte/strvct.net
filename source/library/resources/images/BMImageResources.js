@@ -9,15 +9,17 @@
 (class BMImageResources extends BMResourceGroup {
     
     init () {
-        super.init()
-        this.setTitle("Images")
-        this.setSubnodeClasses([BMURLImage])
+        super.init();
+        this.setTitle("Images");
+        this.setSubnodeClasses([BMURLImage]);
         return this
     }
 
     setup () {
-        // subclasses need to use this to set ResourceClasses
-        this.setResourceClasses([BMURLImage])
+        super.setup();
+        this.setResourceClasses([BMURLImage]);
+        this.setSubnodeClasses([BMURLImage]);
+        return this;
     }
 
 }.initThisClass());

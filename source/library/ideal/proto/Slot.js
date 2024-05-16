@@ -194,7 +194,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this
     }
 
-    // --- indirect subnode field ---
+    // --- subnode field helpers ---
+
+    setNodeFillsRemainingWidth (aBool) {
+        this.setAnnotation("nodeFillsRemainingWidth", aBool);
+        return this;
+    }
+
+    nodeFillsRemainingWidth () {
+        return this.getAnnotation("nodeFillsRemainingWidth") === true;
+    }
 
     setKeyIsVisible (aBool) {
         this.setAnnotation("keyIsVisible", aBool);

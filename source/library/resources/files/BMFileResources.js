@@ -4,6 +4,9 @@
 
     BMFileResources
 
+
+    BMFileResources.shared().setupSubnodesIfNeeded();
+
 */
 
 (class BMFileResources extends BMResourceGroup {
@@ -25,7 +28,8 @@
     /*
     setup () {
         // subclasses need to use this to set ResourceClasses
-        this.setResourceClasses([BMResourceFile])
+        this.setResourceClasses([BMResourceFile]);
+        this.setSubnodeClasses([BMResourceFile]);
     }
     */
 
@@ -35,6 +39,12 @@
         //this.setupSubnodes();
         //debugger;
         this.setupSubnodesIfNeeded();
+        //debugger;
+        /*
+        const paths = this.rootFolder().allResourceFiles().map(file => file.path());
+        console.log("paths = ", paths.join("\n"));
+        debugger;
+        */
         return this;
     }
 

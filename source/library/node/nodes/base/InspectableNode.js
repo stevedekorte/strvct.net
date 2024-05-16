@@ -103,11 +103,6 @@
             let node = this;
 
             components.forEach(component => {
-                /*
-                if (component === "[promptSuffix]") {
-                    debugger;
-                }
-                */
                 node = node.subnodeWithTitleIfAbsentInsertClosure(component, () => {
                     //debugger
                     const nodeClass = Object.getClassNamed(pathSubnodeType);
@@ -222,19 +217,12 @@
         */
 
         field.setKeyIsVisible(slot.keyIsVisible() !== false);
-        /*
-        if (slot.isIndirectSubnodeField()) {
-            console.log("adding indirect field for slot " + slot.name());
-            const indirectNode = BMSummaryNode.clone().setTitle(slot.label());
-            indirectNode.addSubnode(field);
-            indirectNode.setNodeFillsRemainingWidth(true);
 
-            pathNodes.last().addSubnode(indirectNode);
-        } else {
-            */
-            //assert(slot.name() !== "completedPrompt");
-            pathNodes.last().addSubnode(field);
-        //}
+        if (pathNodes.length > 1) {
+            pathNodes.last().setNodeFillsRemainingWidth(slot.nodeFillsRemainingWidth());
+            //field.setNodeFillsRemainingWidth(slot.nodeFillsRemainingWidth());
+        }
+        pathNodes.last().addSubnode(field);
         return this
     }
 

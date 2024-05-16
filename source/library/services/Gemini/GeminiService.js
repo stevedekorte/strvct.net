@@ -35,6 +35,16 @@
     this.setIsSingleton(true);
     return this;
   }
+
+  modelsJson () {
+    return [
+      {
+          "name": "gemini-1.5-pro-latest",
+          "title": "Gemini 1.5 Pro",
+          "contextWindow": 1000000
+      }
+    ];
+  }
   
   initPrototypeSlots () {
     {

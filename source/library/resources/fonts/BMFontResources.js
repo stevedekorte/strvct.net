@@ -27,8 +27,9 @@
     }
 
     setup () {
-        // subclasses need to use this to set ResourceClasses
-        this.setResourceClasses([BMFont])
+        super.setup();
+        this.setResourceClasses([BMFont]);
+        this.setSubnodeClasses([BMFontFamily]);
     }
 
     addResource (aResource) {

@@ -132,7 +132,7 @@ Object.defineSlot(Array.prototype, "promiseSerialTimeoutsForEach", async functio
             setTimeout(() => nextFunc(array, index+1), 0);
         }
 
-        nextFunc(this, 0);
+        await nextFunc(this, 0);
 });
 
 Object.defineSlot(Array.prototype, "promiseSerialForEach", async function (aBlock) {
@@ -158,13 +158,13 @@ class UrlResource {
     static _urlsLoaded = 0;
 
     static with (url) {
-        return this.clone().setPath(url)
+        return this.clone().setPath(url);
     }
 
     static clone () {
-        const obj = new this()
-        obj.init()
-        return obj
+        const obj = new this();
+        obj.init();
+        return obj;
     }
 	
     type () {
@@ -172,29 +172,29 @@ class UrlResource {
     }
 
     init () {
-        this._path = null
-        this._resourceHash = null
-        this._request = null
-        this._data = null
-        return this
+        this._path = null;
+        this._resourceHash = null;
+        this._request = null;
+        this._data = null;
+        return this;
     }
 
     setPath (aPath) {
-        this._path = aPath
-        return this
+        this._path = aPath;
+        return this;
     }
 
     path () {
-        return this._path
+        return this._path;
     }
 
     pathExtension () {
-        return this.path().split(".").pop()
+        return this.path().split(".").pop();
     }
 
     setResourceHash (h) {
-        this._resourceHash = h
-        return this
+        this._resourceHash = h;
+        return this;
     }
 
     resourceHash () {
@@ -206,7 +206,7 @@ class UrlResource {
         if (this.isZipFile()) {
             await this.promiseLoadUnzipIfNeeded();
         }
-        return this.promiseLoadFormCache()
+        return this.promiseLoadFormCache();
     }
 
     isDebugging () {
@@ -483,7 +483,7 @@ class ResourceManager {
         // load the boot resource index and start loading/evaling js files
         await this.promiseLoadIndex();
         await this.promiseLoadCamIfNeeded();
-        this.evalIndexResources();
+        await this.evalIndexResources();
         return this
     }
 
@@ -526,7 +526,8 @@ class ResourceManager {
                 const resource = await UrlResource.clone().setPath(path).promiseLoad();
                 const cam = resource.dataAsJson();
                 // this._cam = cam
-                await Reflect.ownKeys(cam).promiseSerialTimeoutsForEach((k) => { // use parallel?
+                await Reflect.ownKeys(cam).promiseSerialForEach((k) => { // use parallel? the UI progress works with this serial version
+                //await Reflect.ownKeys(cam).promiseSerialTimeoutsForEach((k) => { 
                     const v = cam[k];
                     return HashCache.shared().promiseAtPut(k, v);
                 });
@@ -613,11 +614,13 @@ class ResourceManager {
     }
 
     onDone () {
+        // not really done yet
         getGlobalThis().bootLoadingView = bootLoadingView;
         //bootLoadingView.close();
         this.markPageLoadTime();
 		//window.document.title = this.loadTimeDescription();
-		//this.postEvent("resourceLoaderDone", {}) 
+		//this.postEvent("resourceLoaderDone", {});
+        //debugger;
     }
 
     markPageLoadTime() {
@@ -685,7 +688,8 @@ class ResourceManager {
         const loadedResources = await urls.promiseParallelMap(url => UrlResource.with(url).promiseLoad());
         // but we have to eval the JS serially as order matters
         loadedResources.forEach(resource => resource.evalDataAsJS());
-        this.run();
+        await this.run();
+        //debugger;
         return this
     }
 }

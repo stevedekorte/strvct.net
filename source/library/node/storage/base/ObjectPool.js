@@ -100,7 +100,6 @@
         this.setMarkedSet(null);
         this.setNodeStoreDidOpenNote(this.newNoteNamed("nodeStoreDidOpen"));
         this.setIsDebugging(false);
-        //debugger;
         return this
     }
 
@@ -122,27 +121,32 @@
 
     // --- open ---
 
+    /*
     open () { // this class can also be used with synchronous AtomicMap
-        this.recordsMap().setName(this.name())
-        this.recordsMap().open()
-        this.onPoolOpenSuccess()
+        this.recordsMap().setName(this.name());
+        this.recordsMap().open();
+        debugger;
+        this.onPoolOpenSuccess();
         return this
     }
+    */
 
     async promiseOpen () { 
+        //debugger;
         const map = this.recordsMap();
         map.setName(this.name());
         try {
             await map.promiseOpen();
+            await this.onPoolOpenSuccess();
         } catch (error) {
             this.onPoolOpenFailure(error);
         }
     }
 
-    onPoolOpenSuccess () {
+    async onPoolOpenSuccess () {
         //debugger
         // here so subclasses can easily hook
-        this.onRecordsDictOpen()
+        await this.onRecordsDictOpen()
     }
 
     onPoolOpenFailure (error) {
@@ -172,10 +176,10 @@
         console.log("------")
     }
 
-    onRecordsDictOpen () {
+    async onRecordsDictOpen () {
         //debugger
         //this.show("ON OPEN")
-        this.promiseCollect()
+        await this.promiseCollect()
         //this.show("AFTER COLLECT")
         this.nodeStoreDidOpenNote().post()
         return this
@@ -754,6 +758,7 @@
     }
 
     async promiseCollect () {
+        //debugger;
         if (Type.isUndefined(this.rootPid())) {
             console.log("---- NO ROOT PID FOR COLLECT - clearing! ----");
             await this.recordsMap().promiseBegin();
@@ -765,7 +770,7 @@
         // this is an on-disk collection
         // in-memory objects aren't considered
         // so we make sure they're flushed to the db first 
-        await this.recordsMap().promiseCommit();
+        await this.recordsMap().promiseBegin();
         this.flushIfNeeded(); // store any dirty objects
 
         this.debugLog(() => "--- begin collect --- with " + this.recordsMap().count() + " pids");

@@ -149,5 +149,9 @@
         return this.fileWithName(aName)
     }
 
+    allResourceFiles () {
+        return this.leafSubnodes().filter(node => node.thisClass().isKindOf(BMResourceFile));
+    }
+
 
 }.initThisClass());

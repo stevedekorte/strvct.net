@@ -18,6 +18,29 @@
     this.setIsSingleton(true);
     return this;
   }
+
+  modelsJson () {
+    return [
+      {
+          "name": "gpt4-o",
+          "note": "Cheaper and faster than GPT-4 Turbo.",
+          "contextWindow": 128000
+      },
+      {
+          "name": "gpt-4-1106-preview",
+          "note": "better instruction following",
+          "contextWindow": 128000
+      },
+      {
+          "name": "gpt-4-turbo",
+          "contextWindow": 128000
+      },
+      {
+          "name": "gpt-4-turbo-2024-04-09",
+          "contextWindow": 128000
+      }
+    ];
+  }
   
   initPrototypeSlots () {
     {

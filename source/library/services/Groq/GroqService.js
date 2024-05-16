@@ -13,7 +13,28 @@
     this.setIsSingleton(true);
     return this;
   }
-  
+
+  modelsJson () {
+    return [
+      {
+          "name": "llama3-70b-8192",
+          "contextWindow": 8192
+      },
+      {
+          "name": "llama2-70b-4096",
+          "contextWindow": 4096
+      },
+      {
+          "name": "mixtral-8x7b-32768",
+          "contextWindow": 32768
+      },
+      {
+          "name": "gemma-7b-it",
+          "contextWindow": 8192
+      }
+    ];
+  }
+    
   initPrototypeSlots () {
   }
 

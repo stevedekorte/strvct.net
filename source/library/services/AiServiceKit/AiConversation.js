@@ -9,6 +9,12 @@
   
   initPrototypeSlots() {
 
+
+    {
+      const slot = this.newSlot("chatModel", null); // ref to AiChatModel
+    }
+
+
     {
       const slot = this.newSlot("initialMessagesCount", 3); // Number of initial messages to always keep
     }
@@ -46,25 +52,33 @@
   // -------- 
 
   service () {
-    if (this._service) {
-      return this._service;
-    }
-    return this.conversations().service()
+    return this.chatModel().service()
   }
 
-  selectedModel () {
-    return this.service().defaultChatModelName();
+  chatModel () {
+    if (this._chatModel) {
+      return this._chatModel;
+    }
+
+    if (this.conversations()) {
+      return this.conversations().service().defaultChatModel();
+    }
+    throw new Error("no chatModel");
+    return null;
   }
 
   conversations () {
-    return this.parentNode();
+    const p = this.parentNode();
+    if (p.thisClass().isKindOf(AiConversations)) {
+      return p;
+    }
+    return null;
   }
 
-  // --- history ---
   // --- summary ---
 
   maxContextTokenCount () {
-    return this.service().defaultChatModel().maxContextTokenCount();
+    return this.chatModel().maxContextTokenCount();
   }
 
   updateTokenCount () {
@@ -74,13 +88,6 @@
     */
     return this
   }
-
-  /*
-  trimConversation() {
-    // todo - implement
-    return this;
-  }
-  */
 
   // -- managing tokens ---
 
@@ -141,7 +148,7 @@
   // --- chat actions ---
 
   aiSpeakerName () {
-    return this.selectedModel().toUpperCase()
+    return this.chatModel().title().toUpperCase()
   }
 
   onChatInputValue (v) {

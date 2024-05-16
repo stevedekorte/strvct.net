@@ -11,7 +11,6 @@
 
   init() {
     super.init();
-    this.setTitle("Chat Models");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setCanAdd(true);
@@ -23,6 +22,7 @@
     this.setNoteIsSubnodeCount(true);
     this.setSubnodeClasses([AiChatModel]);
     this.setNodeSubtitleIsChildrenSummary(true);
+    this.setTitle("Models");
   }
 
   subviewsScrollSticksToBottom () {

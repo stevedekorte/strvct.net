@@ -14,6 +14,11 @@
 */
 
 (class AiService extends BMSummaryNode {
+
+  modelsJson () {
+    return [];
+  }
+
   initPrototypeSlots () {
 
     {
@@ -97,7 +102,6 @@
 
   init () {
     super.init();
-
   }
 
   finalInit () {
@@ -105,6 +109,7 @@
     this.setTitle("AI Service");
     this.setSubtitle("ai services");
     this.setModels(AiChatModels.clone());
+    this.setModelsJson(this.modelsJson());
 
     /*
     // add a default model, in case there are no models
@@ -113,7 +118,6 @@
     }
     */
 
-    this.models().setTitle("Models");
     this.fetchAndSetupInfo(); // can't just cache this as key or models may have changed
   }
 
@@ -155,6 +159,21 @@
     return this;
   }
 
+  /*
+  fetchAndSetupInfo () {
+    const resourcePath = "app/info/" + this.type() + ".json";
+    const resource = BMResources.shared().resourceForPath(resourcePath);
+    if (!resource) {
+      throw new Error("resource not found for path '" + resourcePath + "'");
+    }
+    const data = resource.data();
+    const info = JSON.parse(data);
+    this.setServiceInfo(info);
+    this.setupFromInfo();
+    return this;
+  }
+  */
+
   async fetchAndSetupInfo () {
     let info;
 
@@ -179,21 +198,18 @@
       this.setChatEndpoint(info.chatEndpoint);
     }
 
-    if (info.defaultChatModelName) {
-      this.defaultChatModel().setModelName(info.defaultChatModelName);
-    }
-
-    if (info.contextWindow) {
-      this.defaultChatModel().setMaxContextTokenCount(info.contextWindow);
-    }
-
     if (info.models) {
-      this.models().removeAllSubnodes();
-      info.models.forEach(modelInfo => {
-        const model = AiChatModel.clone().setJson(modelInfo);
-        this.models().addSubnode(model);
-      });
+      this.setModelsJson(info.models);
     }
+  }
+
+  setModelsJson (json) {
+    this.models().removeAllSubnodes();
+    json.forEach(modelInfo => {
+      const model = AiChatModel.clone().setJson(modelInfo);
+      this.models().addSubnode(model);
+    });
+    return this;
   }
 
   fetchInfoUrl () {
