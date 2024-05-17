@@ -1156,7 +1156,8 @@
         return jsonArchiveSlots;
     }
 
-    static jsonSchemaProperties () {
+    static jsonSchemaProperties (refSet) {
+        assert(refSet);
         const slots = this.jsonSchemaSlots();
 
         if (slots.length === 0) {
@@ -1166,7 +1167,7 @@
         const properties = {};
 
         slots.forEach(slot => {
-            properties[slot.getterName()] = slot.asJsonSchema();
+            properties[slot.getterName()] = slot.asJsonSchema(refSet);
         });
 
         return properties;
@@ -1194,24 +1195,44 @@
     // --- json schema ---
 
     static asRootJsonSchema () {
+        const refSet = new Set();
         const json = {
             "$schema": "http://json-schema.org/draft-07/schema#"
         }
-        Object.assign(json, this.asJsonSchema()); // so schema is at top of dict
+        Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
+
+        if (refSet.size) {
+            json.definitions = this.jsonSchemaDefinitionsForRefSet(refSet);
+        }
         return json;
     }
 
-    static asJsonSchema () {
+    static jsonSchemaDefinitionsForRefSet (refSet) {
+        const definitions = {};
+        refSet.forEach(aClass => {
+            definitions[aClass.type()] = aClass.asJsonSchema(refSet);
+        });
+        return definitions;
+    }
+
+    static asJsonSchema (refSet) {
+        assert(refSet);
         //debugger;
         const schema = {
             type: "object",
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
-            properties: this.jsonSchemaProperties(),
+            properties: this.jsonSchemaProperties(refSet),
             required: this.jsonSchemaRequired()
         };
 
         return schema;
+    }
+
+    static jsonSchemaRef (refSet) {
+        assert(Type.isSet(refSet));
+        refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
+        return "#/definitions/" + this.type();
     }
 
     static instanceFromJson (json) {

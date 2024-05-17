@@ -48,6 +48,10 @@
     {
       const slot = this.newSlot("jsonStreamReader", null);
     }
+    
+    {
+      const slot = this.newSlot("usageOutputTokenCount", null);
+    }
   }
 
   init () {

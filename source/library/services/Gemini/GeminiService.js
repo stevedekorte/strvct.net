@@ -41,7 +41,12 @@
       {
           "name": "gemini-1.5-pro-latest",
           "title": "Gemini 1.5 Pro",
-          "contextWindow": 1000000
+          "contextWindow": 1048576
+      },
+      {
+          "name": "gemini-1.5-flash-latest",
+          "title": "Gemini 1.5 Flash",
+          "contextWindow": 1048576
       }
     ];
   }

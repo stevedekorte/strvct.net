@@ -57,6 +57,10 @@
       const slot = this.newSlot("usageOutputTokenCount", 0);
     }
 
+    {
+      const slot = this.newSlot("betaVersion", "tools-2024-05-16"); // "messages-2023-12-15"
+    }
+
   }
 
   init () {
@@ -76,7 +80,7 @@
         //"Content-Type": "application/json",
         "Content-Type": "application/json; charset=UTF-8",
         "anthropic-version": "2023-06-01",
-        "anthropic-beta": "messages-2023-12-15",
+        "anthropic-beta": this.betaVersion(),
         "x-api-key": apiKey,
         'Accept-Encoding': 'identity'
       },

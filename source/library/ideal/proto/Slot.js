@@ -937,10 +937,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return enumArray.length ? enumArray : undefined;
     }
 
-    jsonSchemaProperties () {
+    jsonSchemaProperties (refSet) {
         const proto = this.finalInitProto();
         if (proto) {
-            return proto.jsonSchemaProperties();
+            return proto.jsonSchemaProperties(refSet);
         }
         return undefined;
     }
@@ -953,13 +953,14 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return undefined;
     }
 
-    asJsonSchema () {
+    asJsonSchema (refSet) {
+        assert(refSet);
         const type = this.jsonSchemaType();
 
         // it's a pointer to a class instance
         const finalProto = this.finalInitProto();
         if (finalProto) {
-            return finalProto.asJsonSchema();
+            return finalProto.asJsonSchema(refSet);
         }
 
         // it's probably a base type
@@ -968,7 +969,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
             enum: this.jsonSchemaEnum(),
-            properties: this.jsonSchemaProperties(),
+            properties: this.jsonSchemaProperties(refSet),
             required: this.jsonSchemaRequired(),
         };
 

@@ -30,9 +30,15 @@
     }
 
     jsonClasses () {
-        return [BMJsonArrayNode, BMBooleanField, BMJsonNullField, BMNumberField, BMJsonDictionaryNode, BMStringField]
+        return [
+            BMJsonArrayNode, 
+            BMBooleanField, 
+            BMJsonNullField, 
+            BMNumberField, 
+            BMJsonDictionaryNode, 
+            BMStringField
+        ];
     }
-    
 
     static jsonToProtoNameDict () {
         return {
@@ -59,18 +65,23 @@
         return null
     }
 
-    init () {
-        super.init()
-        this.setNodeCanEditTitle(true)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-        this.setNodeCanReorderSubnodes(true)
-        this.setCanDelete(true)
-        this.setNoteIconName("right-arrow")
+    initPrototype () {
+        //this.setSubnodeClasses(this.jsonClasses());
+    }
 
-        this.setCanAdd(true)
-        this.setSubnodeClasses(this.jsonClasses())
-        this.setTitle("JSON")
+    init () {
+        super.init();
+        this.setNodeCanEditTitle(true);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanReorderSubnodes(true);
+        this.setCanDelete(true);
+        this.setNoteIconName("right-arrow");
+
+        this.setCanAdd(true);
+        this.setTitle("JSON");
+        this.setSubnodeClasses(this.jsonClasses());
+
     }
 
     
