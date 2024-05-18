@@ -17,13 +17,13 @@
   }
 
   initPrototypeSlots() {
+    this.setSubnodeClasses([ProxyServer]);
   }
 
   init() {
     super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([ProxyServer]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }

@@ -21,8 +21,9 @@
       slot.setSlotType("String");
     }
 
-    this.setShouldStore(true)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(false);
+    this.setSubnodeClasses([MusicTrack, MusicFolder]);
   }
 
   init() {
@@ -33,7 +34,6 @@
     super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([MusicTrack, MusicFolder]);
     this.setCanAdd(true);
     this.setCanDelete(true);
     this.setNoteIsSubnodeCount(true);

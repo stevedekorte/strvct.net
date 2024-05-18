@@ -10,80 +10,99 @@
 (class BMJsonArrayNode extends BMJsonNode {
     
     static canOpenMimeType (mimeType) {
-        return false
+        return false;
     }
 
     static availableAsNodePrimitive () {
-        return true
+        return true;
+    }
+
+    static asJsonSchema (refSet) {
+        assert(Type.isSet(refSet));
+        const schema = {
+            type: "array",
+            title: this.jsonSchemaTitle(),
+            description: this.jsonSchemaDescription(),
+            items: this.prototype.jsonSchemaForSubnodes(refSet) // prototype method
+        };
+
+        return schema;
+    }
+
+    jsonSchemaForSubnodes (refSet) { // NOTE: method on prototype, not class
+        assert(refSet);
+        const items = {};
+        items.anyOf = this.subnodeClasses().map(subnodeClass => {
+            return { 
+                "#ref": subnodeClass.jsonSchemaRef(refSet)
+            };
+        });
+        return items;
     }
     
     initPrototypeSlots () {
     }
 
-    /*
-    init () {
-        super.init()
-    }
-    */
-
     subtitle () {
-        return "Array"
+        return "Array";
     }
+
+
 
     // --------------
 
     replaceSubnodeWith (oldNode, newNode) {
-        newNode = this.prepareSubnode(newNode)
-        return super.replaceSubnodeWith(oldNode, newNode)
+        newNode = this.prepareSubnode(newNode);
+        return super.replaceSubnodeWith(oldNode, newNode);
     }
 
     addSubnodeAt (aSubnode, anIndex) {
-        return super.addSubnodeAt(this.prepareSubnode(aSubnode), anIndex)
+        return super.addSubnodeAt(this.prepareSubnode(aSubnode), anIndex);
     }
 
     prepareSubnode (aSubnode) {
-        aSubnode.setCanDelete(true)
+        aSubnode.setCanDelete(true);
 
         if (aSubnode.keyIsVisible) {
-            aSubnode.setKey("")
-            aSubnode.setKeyIsVisible(false)
-            aSubnode.setKeyIsEditable(false)
-            const editableValueTypes = ["BMStringField", "BMNumberField", "BMBooleanField"]
+            aSubnode.setKey("");
+            aSubnode.setKeyIsVisible(false);
+            aSubnode.setKeyIsEditable(false);
+            const editableValueTypes = ["BMStringField", "BMNumberField", "BMBooleanField"];
             if (editableValueTypes.contains(aSubnode.type())) {
-                aSubnode.setValueIsEditable(true)
+                aSubnode.setValueIsEditable(true);
             }
          }
 
-        //aSubnode.setTitle(null)
-        aSubnode.setNodeCanEditTitle(false)
-        return aSubnode
+        //aSubnode.setTitle(null);
+        aSubnode.setNodeCanEditTitle(false);
+        return aSubnode;
     }
 
     // -------
 
     jsonArchive () {
-        return this.subnodes().map(sn => sn.jsonArchive())
+        return this.subnodes().map(sn => sn.jsonArchive());
     }
 
     setJson (json) {
-        let index = 0
+        let index = 0;
         json.forEach((v) => {
-            const aNode = BMJsonNode.nodeForJson(v)
-            //aNode.setTitle(index)
-            this.addSubnode(aNode)
-            index ++
-        })
-        return this
+            const aNode = BMJsonNode.nodeForJson(v);
+            //aNode.setTitle(index);
+            this.addSubnode(aNode);
+            index ++;
+        });
+        return this;
     }
 
     getBMDataUrl () {
-        //const json = this.node().copyArchiveDict() 
-        const json = this.jsonArchive() 
-        const bdd = BMDataUrl.clone()
-        bdd.setMimeType("application/json")
-        bdd.setFileName(this.title() + ".json")
-        bdd.setDecodedData(JSON.stringify(json, null, 4))
-        return bdd
+        //const json = this.node().copyArchiveDict();
+        const json = this.jsonArchive();
+        const d = BMDataUrl.clone();
+        d.setMimeType("application/json");
+        d.setFileName(this.title() + ".json");
+        d.setDecodedData(JSON.stringify(json, null, 4));
+        return d;
     }
 
 }.initThisClass());

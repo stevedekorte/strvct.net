@@ -28,7 +28,6 @@
     this.setSubtitle("")
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    //this.setSubnodeClasses([SttMessage]);
     this.setNodeCanReorderSubnodes(false);
     this.setIsDebugging(true)
   }

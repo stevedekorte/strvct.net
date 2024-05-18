@@ -161,6 +161,8 @@
         this.setShouldFocusSubnodeNote(this.newNoteNamed("shouldFocusSubnode"))
         this.setShouldFocusAndExpandSubnodeNote(this.newNoteNamed("shouldFocusAndExpandSubnode"))
         this.watchSubnodes()
+
+        this.setSubnodeClasses(this.thisPrototype().subnodeClasses().shallowCopy());
         return this
     }
 

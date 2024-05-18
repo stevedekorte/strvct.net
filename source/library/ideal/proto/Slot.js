@@ -225,6 +225,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this.getAnnotation("shouldJsonArchive");
     }
 
+    // --- description ---
+
     setDescription (s) {
         this.setAnnotation("description", s);
         return this;
@@ -233,6 +235,18 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     description () {
         return this.getAnnotation("description");
     }
+
+    // --- examples ---
+
+    setExamples (anArray) {
+        this.setAnnotation("examples", anArray);
+        return this;
+    }
+
+    examples () {
+        return this.getAnnotation("examples");
+    }
+    
 
     // --- required ---
 
@@ -915,6 +929,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this.description();
     }
 
+    jsonSchemaExamples () {
+        return this.examples();
+    }
+
     jsonSchemaEnum () {
         const enumArray = [];
 
@@ -969,6 +987,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
             enum: this.jsonSchemaEnum(),
+            examples: this.jsonSchemaExamples(),
             properties: this.jsonSchemaProperties(refSet),
             required: this.jsonSchemaRequired(),
         };

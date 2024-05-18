@@ -38,6 +38,8 @@
     // ------------------------------
 
     jsonArchive () {
+        // use asJson() if you want to get the json
+        // jsonAcrchive is for the storable or communication version
         throw new Error("unimplemented");
     }
 

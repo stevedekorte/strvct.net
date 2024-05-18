@@ -7,7 +7,7 @@
 
 (class SttMessages extends BMSummaryNode {
   initPrototypeSlots() {
-
+    this.setSubnodeClasses([SttMessage]);
   }
 
   init() {
@@ -15,7 +15,6 @@
     this.setTitle("log");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([SttMessage]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }

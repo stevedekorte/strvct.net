@@ -103,6 +103,8 @@
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false)
     }
+
+    //this.setSubnodeClasses([ProxyRequest]);
   }
 
   init() {
@@ -110,7 +112,6 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setTitle("Unnamed Proxy Server");
-    //this.setSubnodeClasses([ProxyRequest]);
     //this.setCanAdd(true);
   }
 

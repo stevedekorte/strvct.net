@@ -57,6 +57,7 @@
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
+    this.setSubnodeClasses([MusicFolder]);
   }
 
   init() {
@@ -69,7 +70,6 @@
     super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([MusicFolder]);
     this.setCanAdd(true);
     this.setTitle("Music Library");
     this.setupPlaylists();

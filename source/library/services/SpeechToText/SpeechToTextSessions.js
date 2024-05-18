@@ -7,7 +7,7 @@
 
 (class SpeechToTextSessions extends BMSummaryNode {
   initPrototypeSlots() {
-
+    this.setSubnodeClasses([SpeechToTextSession]);
   }
 
   init() {
@@ -15,7 +15,6 @@
     this.setSubtitle("speech-to-text service");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setSubnodeClasses([SpeechToTextSession]);
     this.setCanAdd(true);
     this.setNodeCanReorderSubnodes(true);
   }
