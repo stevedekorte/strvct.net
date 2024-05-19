@@ -933,6 +933,35 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this.examples();
     }
 
+    jsonSchemeAddRanges (schema) {
+        const a = this.jsonSchemaEnum()
+        if (a) {
+            const enumArray = a.shallowCopy();
+
+            if (schema.type === "number") {
+                enumArray.sort((a, b) => a - b)
+
+                const hasANonInteger = enumArray.filter(v => { return !Type.isInteger(v); }).length > 0;
+                if (!hasANonInteger) {
+                    schema.type = "integer";
+                }
+
+                const isContiguous = enumArray.length > 1 && enumArray.every((v, i, a) => { return i === 0 || v === a[i - 1] + 1; });
+                if (isContiguous) {
+                    // items were sorted, so we can just grab the first and last
+                    const min = enumArray.first();
+                    const max = enumArray.last();
+                    schema.minimum = min;
+                    schema.maximum = max;
+                } else {
+                    schema.enum = enumArray;
+                }
+            } else {
+                schema.enum = enumArray;
+            }
+        }
+    }
+
     jsonSchemaEnum () {
         const enumArray = [];
 
@@ -986,11 +1015,14 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             type: this.jsonSchemaType(),
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
-            enum: this.jsonSchemaEnum(),
+            //enum: this.jsonSchemaEnum(), // use jsonSchemeAddRanges instead
             examples: this.jsonSchemaExamples(),
             properties: this.jsonSchemaProperties(refSet),
             required: this.jsonSchemaRequired(),
         };
+
+        this.jsonSchemeAddRanges(schema);
+
 
         // handle array type
         const itemsType = this.jsonSchemaItemsType();
