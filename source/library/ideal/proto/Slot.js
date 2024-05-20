@@ -283,7 +283,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     setJsonSchemaItemsType (s) {
         assert(Type.isString("string"));
-        assert(this.validJsonSchemaItemsTypes().contains(s));
+        //assert(this.validJsonSchemaItemsTypes().contains(s));
         this.setAnnotation("jsonSchemaItemsType", s);
         return this;
     }
@@ -334,7 +334,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     defaultFieldInspectorClassName () {
         const slotType = this.slotType();
-        assert(!Type.isNull(slotType));
+        assert(!Type.isNull(slotType), "slotType is null for slot: " + this.name());
         let fieldName = "BM" + slotType + "Field";
 
         if (this.validValues() || this.validValuesClosure()) {
@@ -480,7 +480,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     copyFrom (aSlot) {
         // This is used by overrideSlot().
         // Need to be careful about non json slot values.
-        
+
         this._slotNames.forEach(slotName => {
             const privateName = "_" + slotName;
             let value = aSlot[privateName];
@@ -711,8 +711,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     // -----------------------------------------------------
 
     onInstanceFinalInitSlot (anInstance) {
-        const finalInitProto = this._finalInitProto
+        const finalInitProto = this._finalInitProto;
         if (finalInitProto) {
+            if (finalInitProto.type() === "SavingThrow") {
+                //debugger;
+            }
+
             let oldValue = this.onInstanceGetValue(anInstance);
 
             if (oldValue && oldValue.type() !== finalInitProto.type()) {
@@ -772,6 +776,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             assert(anInstance.shouldStoreSubnodes() === false)
             const value = this.onInstanceGetValue(anInstance)
             assert(value);
+            anInstance.assertValidSubnodeType(value); // tmp - this is also done in addSubnode
             anInstance.addSubnode(value)
         }
 
@@ -1077,10 +1082,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         if (itemsType) {
             schema.items = {
-                "type": itemsType, // type here is a primitive type
                 "description": this.jsonSchemaItemsDescription()
-                // TODO: enum
-            };
+            }
+
+           if (this.validJsonSchemaItemsTypes().contains(itemsType)) {
+                schema.items.type = itemsType; // it's a json type
+           } else {
+                // it's a class 
+                const aClass = getGlobalThis()[itemsType];
+                assert(aClass && aClass.isClass());
+                schema.items["#ref"] = aClass.jsonSchemaRef(refSet);
+            }
         }
 
         if (this.allowsMultiplePicks()) {

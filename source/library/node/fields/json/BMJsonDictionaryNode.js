@@ -90,6 +90,7 @@
     }
 
     prepareSubnode (aSubnode) {
+        this.assertValidSubnodeType(aSubnode);
         aSubnode.setCanDelete(true)
 
         if (aSubnode.keyIsVisible) {

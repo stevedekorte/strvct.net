@@ -281,9 +281,14 @@
         aSubnode.setParentNode(this)
         return aSubnode        
     }
+    
+    assertValidSubnodeType (aSubnode) {
+        assert(aSubnode.thisClass().isKindOf(BMNode), "Attempt to add subnode of type '" + aSubnode.type() + "' which does not inherit from BMNode (as subnodes are required to do)");
+    }
 
     addSubnodeAt (aSubnode, anIndex) {
-        assert(!this.hasSubnode(aSubnode))
+        assert(!this.hasSubnode(aSubnode));
+        this.assertValidSubnodeType(aSubnode);
 
         assert(anIndex >= 0)
         this.justAddSubnodeAt(aSubnode, anIndex)
@@ -328,8 +333,8 @@
     }
 
     addSubnode (aSubnode) {
-        assert(!this.hasSubnode(aSubnode))
-        return this.addSubnodeAt(aSubnode, this.subnodeCount())
+        assert(!this.hasSubnode(aSubnode));
+        return this.addSubnodeAt(aSubnode, this.subnodeCount());
     }
 
     addLinkSubnode (aNode) {

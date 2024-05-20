@@ -44,10 +44,12 @@
     }
 
     subtitle () {
-        return "Array";
+        const subtitle = super.subtitle();
+        if (subtitle) {
+            return subtitle;
+        }
+        return "Array"; // so we know it's an array when using the UI to assembly JSON
     }
-
-
 
     // --------------
 
