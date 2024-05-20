@@ -44,11 +44,11 @@
     }
 
     subtitle () {
-        const subtitle = super.subtitle();
-        if (subtitle) {
-            return subtitle;
+        if (this.thisClass().type() === "BMJsonArrayNode") {
+            return "Array"; // so we know it's an array when using the UI to assembly JSON
         }
-        return "Array"; // so we know it's an array when using the UI to assembly JSON
+
+        return super.subtitle();
     }
 
     // --------------
