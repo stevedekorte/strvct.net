@@ -179,14 +179,14 @@
   }
 
   setJsonArchive (json) {
-    assert(Type.isArray(json.messages)) // sanity check
+    assert(Type.isArray(json.messages)); // sanity check
 
-    this.removeAllSubnodes()
+    this.removeAllSubnodes();
 
     json.messages.forEach(msgJson => {
-      this.newMessageFromJson(msgJson)
+      this.newMessageFromJson(msgJson);
     });
-    return this
+    return this;
   }
   
   messageWithId (messageId) {

@@ -40,15 +40,15 @@
   }
 
   setupPrototypeSlotsForEntryProperties () {
-    const sample = this.sampleEntry()
-    const propertyNames = Object.keys(sample)
+    const sample = this.sampleEntry();
+    const propertyNames = Object.keys(sample);
     propertyNames.forEach(propertyName => {
-      const slotName = propertyName.uncapitalized()
-      const slot = this.newSlot(slotName, null)
-      const v = sample[propertyName]
-      const typeName = Type.typeName(v)
+      const slotName = propertyName.uncapitalized();
+      const slot = this.newSlot(slotName, null);
+      const v = sample[propertyName];
+      const typeName = Type.typeName(v);
       if (typeName === "String" || typeName === "Array") {
-        slot.setSlotType(typeName)
+        slot.setSlotType(typeName);
       }
       //console.log(this.type() + " added slot '" + slotName + "'")
     })

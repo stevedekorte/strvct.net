@@ -31,27 +31,27 @@ if (!getGlobalThis().ideal) {
 getGlobalThis().ideal.Slot = (class Slot extends Object { 
 
     setShouldStore (aBool) {
-        throw new Error("Slot.setShouldStore should not be called on Slot")
+        throw new Error("Slot.setShouldStore should not be called on Slot");
     }
 
     shouldStore () {
-        throw new Error("Slot.shouldStore should not be called on Slot")
+        throw new Error("Slot.shouldStore should not be called on Slot");
     }
 
-    simpleNewSlot (slotName, initialValue) { 
+    simpleNewSlot (slotName, initialValue) {  
         // TODO: unify with Object.newSlot by separating out bit that creates a Slot instance
         const privateName = "_" + slotName;
-        Object.defineSlot(this, privateName, initialValue)
+        Object.defineSlot(this, privateName, initialValue);
 
         if (!this[slotName]) {
             const simpleGetter = function () {
                 return this[privateName];
             }
 
-            Object.defineSlot(this, slotName, simpleGetter)
+            Object.defineSlot(this, slotName, simpleGetter);
         }
 
-        const setterName = "set" + slotName.capitalized()
+        const setterName = "set" + slotName.capitalized();
 
         if (!this[setterName]) {
             const simpleSetter = function (newValue) {
@@ -59,10 +59,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 return this;
             }
 
-            Object.defineSlot(this, setterName, simpleSetter)
+            Object.defineSlot(this, setterName, simpleSetter);
         }
 
-        this._slotNames.add(slotName)
+        this._slotNames.add(slotName);
         
         return this;
     }
@@ -263,6 +263,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return b;
     }
 
+    // --- json schema (to set directly) if value is raw json ---
+
+    setJsonSchema (schema) {
+        this.setAnnotation("jsonSchema", schema);
+        return this;
+    }
+
+    jsonSchema () {
+        return this.getAnnotation("jsonSchema");
+    }
+
     // --- items type ---
 
     validJsonSchemaItemsTypes () {
@@ -272,6 +283,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     setJsonSchemaItemsType (s) {
         assert(Type.isString("string"));
+        assert(this.validJsonSchemaItemsTypes().contains(s));
         this.setAnnotation("jsonSchemaItemsType", s);
         return this;
     }
@@ -466,9 +478,33 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     // ---
 
     copyFrom (aSlot) {
+        // This is used by overrideSlot().
+        // Need to be careful about non json slot values.
+        
         this._slotNames.forEach(slotName => {
             const privateName = "_" + slotName;
-            this[privateName] = aSlot[privateName]
+            let value = aSlot[privateName];
+
+            if (slotName === "owner") {
+                if (value.isPrototype()) {
+                    // assume this gets set after the copy if needed
+                }
+            } else if (slotName === "initProto") {
+                // ok to copy this
+            } else if (!Type.isJsonType(value)) {
+                if (Type.isSet(value)) {
+                    // check that set values are JSON types
+                    value.forEach(v => { assert(Type.isJsonType(v)) });
+                    value = value.copy();
+                } else {
+                    const m = "can't copy non-json value from slot: " + slotName;
+                    const error = new Error(m);
+                    console.warn(m);
+                    throw error;
+                }
+            }
+            
+            this[privateName] = aSlot[privateName];
             /*
             const setterName = "set" + slotName.capitalized()
             const v = aSlot[slotName].apply(aSlot)
@@ -1000,7 +1036,19 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return undefined;
     }
 
+
     asJsonSchema (refSet) {
+        if (this.jsonSchema()) {
+            // has a direct json schema
+            const schema = this.jsonSchema();
+            // need to recursively decend into the schema to find refs
+            // and add them to the refSet
+            
+            return schema;
+        }
+
+        //otherwise, compose one from the slot meta info
+
         assert(refSet);
         const type = this.jsonSchemaType();
 
@@ -1029,7 +1077,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         if (itemsType) {
             schema.items = {
-                "type": itemsType,
+                "type": itemsType, // type here is a primitive type
                 "description": this.jsonSchemaItemsDescription()
                 // TODO: enum
             };

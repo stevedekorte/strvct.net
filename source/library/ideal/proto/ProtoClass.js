@@ -291,11 +291,11 @@
     // -------------------------------------
 
     newSlotIfAbsent (slotName, initialValue) {
-        const slot = this.getSlot(slotName)
+        const slot = this.getSlot(slotName);
         if (slot) {
-            return slot
+            return slot;
         }
-        return this.justNewSlot(slotName, initialValue)
+        return this.justNewSlot(slotName, initialValue);
     }
 
     newSlot (slotName, initialValue, allowOnInstance=false) {
@@ -310,48 +310,48 @@
             // hack to avoid error for methods like Set isSubsetOf, which exist on only on some browsers
             // so we define ourselves.
             if(typeof(initialValue) === "function" && this[slotName + "_isOptional"] !== undefined) {
-                return null
+                return null;
             }
-            const msg = this.type() + " newSlot('" + slotName + "') - slot already exists"
-            console.log(msg)
-            debugger
-            throw new Error(msg)
+            const msg = this.type() + " newSlot('" + slotName + "') - slot already exists";
+            console.log(msg);
+            debugger;
+            throw new Error(msg);
         }
-        return this.justNewSlot(slotName, initialValue, allowOnInstance)
+        return this.justNewSlot(slotName, initialValue, allowOnInstance);
     }
 
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
-        const oldSlot = this.getSlot(slotName)
+        const oldSlot = this.getSlot(slotName);
         if (Type.isUndefined(oldSlot)) {
-            const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override"
-            console.log(msg)
-            throw new Error(msg)
+            const msg = this.type() + " newSlot('" + slotName + "') - no existing slot to override";
+            console.log(msg);
+            throw new Error(msg);
         }
-        const slot = this.justNewSlot(slotName, initialValue, allowOnInstance)
-        slot.copyFrom(oldSlot)
-        slot.setInitValue(initialValue)
-        slot.setOwner(this)
-        return slot
+        const slot = this.justNewSlot(slotName, initialValue, allowOnInstance);
+        slot.copyFrom(oldSlot);
+        slot.setInitValue(initialValue);
+        slot.setOwner(this);
+        return slot;
     }
 
     justNewSlot (slotName, initialValue, allowOnInstance=false) { // private
         if (!allowOnInstance) {
-            assert(this.isPrototype())
+            assert(this.isPrototype());
         }
-        assert(Type.isString(slotName))
+        assert(Type.isString(slotName));
 
         /*
         // TODO: we want to create the private slots and initial value on instances
         // but ONLY create method slots on classes, not instances...
-        const privateName = "_" + slotName
-        this[privateName] = initialValue
+        const privateName = "_" + slotName;
+        this[privateName] = initialValue;
         */
 
-        const slot = ideal.Slot.clone().setName(slotName).setInitValue(initialValue)
-        slot.setOwner(this)
-        this.slotsMap().set(slotName, slot)
-        this.allSlotsMap().set(slotName, slot)
-        return slot
+        const slot = ideal.Slot.clone().setName(slotName).setInitValue(initialValue);
+        slot.setOwner(this);
+        this.slotsMap().set(slotName, slot);
+        this.allSlotsMap().set(slotName, slot);
+        return slot;
     }
 
     newWeakSlot (slotName, initialValue) {

@@ -299,7 +299,13 @@
     }
     
     addActiveObject (anObject) {
-        assert(!anObject.isClass())
+        assert(!anObject.isClass());
+
+        if (anObject.type() === "PersistentObjectPool") {
+            console.log("addActiveObject() called with PersistentObjectPool");
+            debugger;
+            return false;
+        }
 
         if (!anObject.shouldStore()) {
             const msg = "attempt to addActiveObject '" + anObject.type() + "' but shouldStore is false"
@@ -568,53 +574,63 @@
     }
 
     activeObjectForPid (puuid) {
-        return this.activeObjects().get(puuid)
+        return this.activeObjects().get(puuid);
     }
 
     objectForPid (puuid) { // PRIVATE (except also used by StoreRef)
         //console.log("objectForPid " + puuid)
 
         // return active object for pid, if there is one
-        const activeObj = this.activeObjectForPid(puuid)
+        const activeObj = this.activeObjectForPid(puuid);
         if (activeObj) {
-            return activeObj
+            return activeObj;
         }
 
         // schedule didInitLoadingPids to occur at end of event loop 
 
         if (!this.isFinalizing() && this.loadingPids().count() === 0) {
-            SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids")
+            SyncScheduler.shared().scheduleTargetAndMethod(this, "didInitLoadingPids");
         }
 
-        this.loadingPids().add(puuid)
-        
-        const aRecord = this.recordForPid(puuid)
-        if (Type.isUndefined(aRecord)) {
-            return undefined
+        this.loadingPids().add(puuid);
+        /*
+        if (puuid === "ISkYj2Vrxc") {
+            debugger;
         }
-        const loadedObj = this.objectForRecord(aRecord)
-        return loadedObj
+        */
+        
+        const aRecord = this.recordForPid(puuid);
+        if (Type.isUndefined(aRecord)) {
+            console.log("missing record for " + puuid)
+            return undefined;
+        }
+        if (aRecord.type === "PersistentObjectPool") {
+            console.log("skipping PersistentObjectPool record for " + puuid);
+            return null;
+        }
+        const loadedObj = this.objectForRecord(aRecord);
+        return loadedObj;
     }
 
     didInitLoadingPids () {
-        assert(!this.isFinalizing()) // sanity check
-        this.setIsFinalizing(true)
+        assert(!this.isFinalizing()); // sanity check
+        this.setIsFinalizing(true);
         while (!this.loadingPids().isEmpty()) { // while there are still loading pids
-            const lastSet = this.loadingPids()
-            this.setLoadingPids(new Set())
+            const lastSet = this.loadingPids();
+            this.setLoadingPids(new Set());
 
             lastSet.forEach(loadedPid => { // sends didLoadFromStore to each matching object
-                const obj = this.activeObjectForPid(loadedPid)
+                const obj = this.activeObjectForPid(loadedPid);
                 if (Type.isUndefined(obj)) {
-                    const errorMsg = "missing activeObjectForPid " + loadedPid
-                    console.warn(errorMsg)
+                    const errorMsg = "missing activeObjectForPid " + loadedPid;
+                    console.warn(errorMsg);
                     //throw new Error(errorMsg)
                 } else if (obj.didLoadFromStore) {
-                    obj.didLoadFromStore() // should this be able to trigger an objectForPid() that would add to loadingPids?
+                    obj.didLoadFromStore(); // should this be able to trigger an objectForPid() that would add to loadingPids?
                 }
             })
         }
-        this.setIsFinalizing(false)
+        this.setIsFinalizing(false);
     }
 
     //

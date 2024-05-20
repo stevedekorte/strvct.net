@@ -259,12 +259,16 @@ getGlobalThis().Type = (class Type extends Object {
 
     static typeName (value) {
         if (value === null) {
-            return "Null"
+            return "Null";
         }
 
         if (Type.isObject(value)) {
             //return value.type()
-            return value.constructor.name
+            return value.constructor.name;
+        }
+
+        if (Type.isFunction(value)) {
+            return "function";
         }
 
         /*
@@ -274,15 +278,15 @@ getGlobalThis().Type = (class Type extends Object {
         }
         */
 
-        const typeNames = this.allTypeNames()
+        const typeNames = this.allTypeNames();
         for (let i = 0; i < typeNames.length; i++) {
-            const typeName = typeNames[i]
+            const typeName = typeNames[i];
             const methodName = "is" + typeName
             if (this[methodName].call(this, value)) {
                 return typeName
             }
         }
-        throw new Error("unable to identify type for value: ", value)
+        throw new Error("unable to identify type for value: ", value);
     }
 
     static typeNamesForValue (value) {

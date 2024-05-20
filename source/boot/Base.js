@@ -82,21 +82,21 @@ if (!String.prototype.capitalized) {
     }
 
     static type () {
-        return this.name
+        return this.name;
     }
 
     type () {
-        return this.constructor.name
+        return this.constructor.name;
     }
 
     static clone () {
-        const obj = new this()
-        obj.init() 
-        return obj
+        const obj = new this();
+        obj.init();
+        return obj;
     }
 
     initPrototype () {
-        this.newSlot("isDebugging", false)
+        this.newSlot("isDebugging", false);
     }
 
     init () {
@@ -109,7 +109,7 @@ if (!String.prototype.capitalized) {
         }
 
         if (initialValue === undefined) {
-            initialValue = null
+            initialValue = null;
         };
 
         const privateName = "_" + slotName;
@@ -121,7 +121,7 @@ if (!String.prototype.capitalized) {
             }
         }
 
-        const setterName = "set" + slotName.capitalized()
+        const setterName = "set" + slotName.capitalized();
 
         if (!this[setterName]) {
             this[setterName] = function (newValue) {
