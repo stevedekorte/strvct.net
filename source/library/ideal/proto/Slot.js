@@ -246,8 +246,18 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     examples () {
         return this.getAnnotation("examples");
     }
-    
 
+    // --- read only ---
+
+    setIsReadOnly (aBool) {
+        this.setAnnotation("readOnly", aBool);
+        return this;
+    }
+
+    isReadOnly () {
+        return this.getAnnotation("readOnly");
+    }
+    
     // --- required ---
 
     setIsRequired (b) {
@@ -302,6 +312,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     jsonSchemaItemsDescription () {
         return this.getAnnotation("jsonSchemaItemsDescription");
     }
+
+    // --- items ref ---
 
     setJsonSchemaItemsRef (s) {
         this.setAnnotation("jsonSchemaItemsRef", s);
@@ -1099,13 +1111,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
             //enum: this.jsonSchemaEnum(), // use jsonSchemeAddRanges instead
-            examples: this.jsonSchemaExamples(),
             properties: this.jsonSchemaProperties(refSet),
+            readOnly: this.isReadOnly(),
             required: this.jsonSchemaRequired(),
         };
 
-        this.jsonSchemeAddRanges(schema);
+        if (this.jsonSchemaExamples()) {
+            schema.examples = this.jsonSchemaExamples();
+        }
 
+        this.jsonSchemeAddRanges(schema);
 
         // handle array type
         const itemsType = this.jsonSchemaItemsType();
