@@ -1,3 +1,4 @@
 [
-    "JsonStreamReader/_imports.json"
+    "JsonStreamReader/_imports.json",
+    "JsonSchema/_imports.json"
 ]
