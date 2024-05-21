@@ -1,3 +1,4 @@
 [
-    "JsonSchema.js"
+    "JsonSchema.js",
+    "JsonSchemaNode.js"
 ]

@@ -34,7 +34,7 @@
         const items = {};
         items.anyOf = this.subnodeClasses().map(subnodeClass => {
             return { 
-                "#ref": subnodeClass.jsonSchemaRef(refSet)
+                "$ref": subnodeClass.jsonSchemaRef(refSet)
             };
         });
         return items;

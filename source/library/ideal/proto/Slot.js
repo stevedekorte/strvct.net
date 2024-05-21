@@ -312,6 +312,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this.getAnnotation("jsonSchemaItemsRef");
     }
 
+    // --- items is unique ---
+
+    setJsonSchemaItemsIsUnique (b) {
+        this.setAnnotation("jsonSchemaItemsIsUnique", b);
+        return this;
+    }
+
+    jsonSchemaItemsIsUnique () {
+        return this.getAnnotation("jsonSchemaItemsIsUnique");
+    }
+
     // --- is in json schema ---
 
     setIsInJsonSchema (b) {
@@ -1041,6 +1052,25 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return undefined;
     }
 
+    /*
+    setJsonSchemaTitle (title) {
+        debugger;
+        this.setName(title); // can't do this after initPrototype
+        return this;
+    }
+
+    setJsonSchema (schema) {
+        this.setJsonSchemaTitle(schema.description);
+        this.setJsonSchemaDescription(schema.description);
+        this.setJsonSchemaExamples(schema.examples);
+        this.setJsonSchemaEnum(schema.enum);
+        assert(!schema.properties); // only definitions schemas should have properties
+
+        //this.setSlotType(schema.type);
+        return this;
+    }
+    */
+
 
     asJsonSchema (refSet) {
         if (this.jsonSchema()) {
@@ -1082,7 +1112,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         if (itemsType) {
             schema.items = {
-                "description": this.jsonSchemaItemsDescription()
+                "description": this.jsonSchemaItemsDescription(),
+                "uniqueItems": this.jsonSchemaItemsIsUnique()
             }
 
            if (this.validJsonSchemaItemsTypes().contains(itemsType)) {
@@ -1091,8 +1122,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 // it's a class 
                 const aClass = getGlobalThis()[itemsType];
                 assert(aClass && aClass.isClass());
-                schema.items["#ref"] = aClass.jsonSchemaRef(refSet);
+                schema.items["$ref"] = aClass.jsonSchemaRef(refSet);
             }
+        
         }
 
         if (this.allowsMultiplePicks()) {
@@ -1102,6 +1134,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         return schema;
     }
+
+    // ----------------------------------------------------------
 
     acceptsValue (v) {
         //const typeNames = Type.typeNamesForValue(value);

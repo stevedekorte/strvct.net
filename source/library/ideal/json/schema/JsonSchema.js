@@ -19,7 +19,7 @@ getGlobalThis().JsonSchema = (class JsonSchema extends Object {
             } else if (Type.isObject(obj)) {
                 Object.keys(obj).forEach(k => {
                     const v = obj[k];
-                    if (k === "#ref") {
+                    if (k === "$ref") {
                         addRef(v);
                     } else {
                         addRefs(v);
