@@ -12,6 +12,18 @@
 
 (class ProtoClass extends Object {
 
+    static newSubclassWithName (newClassName) {
+        const newClass = class extends this {
+          static name = newClassName;
+          
+          constructor(...args) {
+            super(...args);
+          }
+        };
+        getGlobalThis()[newClassName] = newClass;
+        return newClass;
+      }
+
    // --- clone ---
 
    static preClone () {
