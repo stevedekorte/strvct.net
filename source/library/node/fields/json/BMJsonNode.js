@@ -80,8 +80,13 @@
 
         this.setCanAdd(true);
         this.setTitle("JSON");
-        this.setSubnodeClasses(this.jsonClasses());
+    }
 
+    finalInit () {
+        super.finalInit();
+        if (this.subnodeClasses().length === 0) {
+            this.setSubnodeClasses(this.jsonClasses());
+        }
     }
 
     

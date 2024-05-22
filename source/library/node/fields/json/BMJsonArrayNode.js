@@ -43,6 +43,14 @@
     initPrototypeSlots () {
     }
 
+    setupSubnodesSlotWithItemType (aClass) {
+        const slot = this.overrideSlot("subnodes");
+        slot.setIsInJsonSchema(true);
+        slot.setShouldJsonArchive(true);
+        slot.setJsonSchemaItemsType("CharacterClass");
+        this.setSubnodeClasses([CharacterClass]);
+    }
+
     subtitle () {
         if (this.thisClass().type() === "BMJsonArrayNode") {
             return "Array"; // so we know it's an array when using the UI to assembly JSON
