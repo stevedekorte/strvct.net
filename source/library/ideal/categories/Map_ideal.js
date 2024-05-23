@@ -133,6 +133,55 @@
         return JSON.stringify(this.asDict(), null, 2) // may throw error if values aren't json compatible
     }
 
+    // --- reordering ---
+
+    reorderKeyToBeBefore (keyToMove, beforeKey) {
+        if (!this.has(keyToMove) || !this.has(beforeKey)) {
+          return this;
+        }
+      
+        const value = this.get(keyToMove);
+        this.delete(keyToMove);
+      
+        const entries = Array.from(this.entries());
+        this.clear();
+      
+        let keyInserted = false;
+        for (const [key, val] of entries) {
+          if (key === beforeKey && !keyInserted) {
+            this.set(keyToMove, value);
+            keyInserted = true;
+          }
+          if (key !== keyToMove) {
+            this.set(key, val);
+          }
+        }
+      
+        return this;
+    };
+    
+    reorderKeyToBeAfter (keyToMove, afterKey) {
+        if (!this.has(keyToMove) || !this.has(afterKey)) {
+          return this;
+        }
+      
+        const value = this.get(keyToMove);
+        this.delete(keyToMove);
+      
+        const entries = Array.from(this.entries());
+        this.clear();
+      
+        for (const [key, val] of entries) {
+          this.set(key, val);
+          if (key === afterKey) {
+            this.set(keyToMove, value);
+          }
+        }
+      
+        return this;
+    }
+
+
 }).initThisCategory();
 
     
