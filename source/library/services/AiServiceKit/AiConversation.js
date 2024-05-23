@@ -158,6 +158,7 @@
     const responseMessage = userMsg.requestResponse();
     //this.footerNode().setValueIsEditable(false); // wait for response to enable again
     SimpleSynth.clone().playSendBeep();
+    return responseMessage; 
   }
 
   startWithPrompt (prompt) {

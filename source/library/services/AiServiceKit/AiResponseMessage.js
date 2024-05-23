@@ -67,6 +67,10 @@
       //slot.setShouldStoreSlot(true)
     }
 
+    {
+      const slot = this.newSlot("completionPromise", null);
+    }
+
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
   }
@@ -79,6 +83,14 @@
     this.setRole("assistant");
 
     this.setRequestClass(AiRequest); // subclasses should set this
+  }
+
+  finalInit () {
+    super.finalInit();
+    this.setCompletionPromise(Promise.clone());
+    if (this.isComplete()) {
+      this.completionPromise().callResolveFunc();
+    }
   }
 
   requestClass () {
@@ -229,6 +241,7 @@
 
   onComplete () {
     super.onComplete() // sends a delegate message
+    this.completionPromise().callResolveFunc();
     // to be overridden by subclasses
   }
 
