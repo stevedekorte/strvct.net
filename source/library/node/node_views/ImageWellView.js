@@ -4,88 +4,92 @@
 
     ImageWellView
 
-    - designed to contain an ImagineView
+    - designed to contain an ImageView
     - can have it's own frame and decoration
     - supports drag & drop of images 
 
 */
 
 (class ImageWellView extends NodeView {
+
     initPrototypeSlots () {
-        this.newSlot("imageView", null)
-        this.newSlot("isEditable", true)
+        this.newSlot("imageView", null);
+        this.newSlot("isEditable", true);
     }
 
     init () {
-        super.init()
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setJustifyContent("center")
-        this.setAlignItems("center")
-        this.setMinHeight("10em")
-        this.setMinWidth("10em")
-        this.setOverflowX("hidden")
-        this.setOverflowY("hidden")
-        this.setBorder("1px solid #444")
-        this.setColor("white")
-        this.setBackgroundColor("transparent")
+        super.init();
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setJustifyContent("center");
+        this.setAlignItems("center");
+        this.setMinHeight("10em");
+        this.setMinWidth("10em");
+        this.setOverflowX("hidden");
+        this.setOverflowY("hidden");
+        this.setBorder("1px solid #444");
+        this.setColor("white");
+        this.setBackgroundColor("transparent");
 
-        this.setIsRegisteredForBrowserDrop(true)
-        this.dragUnhighlight()
-        this.turnOffUserSelect()
-        this.autoFitParentWidth()
-        this.autoFitChildHeight()
-        this.setMinHeightPx(100)
-        this.setPadding("0px")
-        return this
+        this.setIsRegisteredForBrowserDrop(true);
+        this.dragUnhighlight();
+        this.turnOffUserSelect();
+        this.autoFitParentWidth();
+        this.autoFitChildHeight();
+        this.setMinHeightPx(100);
+        this.setPadding("0px");
+        return this;
     }
 
     syncToNode () {
-        super.syncToNode()
-        this.tellParentViews("didUpdateImageWellView", this)
+        super.syncToNode();
+        if (this.imageView()) {
+            this.node().setDataUrl(this.imageView().dataURL()); // untested
+        }
+        this.tellParentViews("didUpdateImageWellView", this);
         return this
     }
     
     isEditable () {
         // we need this to override the normal isContentEditable return value
-        return this._isEditable
+        return this._isEditable;
     }
     
     setIsEditable (aBool) {
-        this._isEditable = aBool
+        this._isEditable = aBool;
         if (this.imageView()) {
-            this.imageView().setIsEditable(aBool)
+            this.imageView().setIsEditable(aBool);
         }
-        return this
+        return this;
     }
     
     dragHighlight () {
-        this.setBackgroundColor("rgba(128, 128, 128, 0.5)")
+        this.setBackgroundColor("rgba(128, 128, 128, 0.5)");
     }
     
     dragUnhighlight () {
-        this.setBackgroundColor("transparent")
+        this.setBackgroundColor("transparent");
     }
     
     isFull () {
-        //console.log("this.imageView().dataURL()  = ", this.imageView().dataURL() )
-        return this.subviews().length > 0
+        //console.log("this.imageView().dataURL()  = ", this.imageView().dataURL() );
+        return this.subviews().length > 0;
     }
     
     acceptsDrop (event) {
-        return true
-        //return this.isEditable()        
+        return true;
+        //return this.isEditable();     
     }
 
     /*
     onBrowserDrop (event) {
-        return super.onBrowserDrop(event)
+        return super.onBrowserDrop(event);
     }
 
     onBrowserDragOver (event) {
-        const r =  super.onBrowserDragOver(event)
-        //console.log(this.debugTypeId() + " onBrowserDragOver() -> " + r)
-        return r
+        const r =  super.onBrowserDragOver(event);
+        //console.log(this.debugTypeId() + " onBrowserDragOver() -> " + r);
+        return r;
     }
     */
 
@@ -163,7 +167,7 @@
 
     droppedImageData (dataChunk) {
         this.setImageDataUrl(dataChunk.dataUrl())
-        this.scheduleSyncToNode() //this.syncToNode()
+        this.scheduleSyncToNode();
         return this        
     }
     

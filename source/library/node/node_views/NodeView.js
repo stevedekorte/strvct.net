@@ -294,6 +294,14 @@
         const color = coinFlip ? "red" : "blue"
         this.element().style.border = "1px dashed " + color 
     }
+
+    didUpdateSlot (aSlot, oldValue, newValue) {
+        super.didUpdateSlot(aSlot, oldValue, newValue);
+
+        if (aSlot.syncsToNode()) { 
+            this.scheduleSyncToNode();
+        }
+    }
     
     syncToNode () {
         const node = this.node()

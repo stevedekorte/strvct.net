@@ -48,7 +48,7 @@
     // --- edit ---
 
     didInput () {
-        this.scheduleSyncToNode()
+        this.scheduleSyncToNode();
     }
 
     // --- sync ---

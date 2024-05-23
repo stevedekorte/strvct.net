@@ -343,7 +343,7 @@
         const nw = Math.max(10, p.x() - f.x())
         //console.log("nw = ", nw)
         this.node().setNodeMinTileWidth(nw)
-        this.scheduleSyncToNode()
+        this.scheduleSyncToNode(); // is this needed as we already sent node.setNodeMinTileWidth?
         return this
     }
 
@@ -369,7 +369,7 @@
         const newHeight = Math.max(10, p.y() - f.y())
         //console.log("node " + this.node().title() + " newHeight = ", newHeight)
         this.node().setNodeMinTileHeight(newHeight)
-        this.scheduleSyncToNode()
+        this.scheduleSyncToNode(); // is this needed as we already sent node.setNodeMinTileHeight()?
         return this
     }
 
