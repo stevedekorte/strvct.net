@@ -273,6 +273,21 @@
         valueView.setIsEditable(node.valueIsEditable())
         valueView.setIsDisplayHidden(!node.valueIsVisible())
 
+        /*
+        if (this.keyView().innerText() === "Additional Notes") {
+            assert(node.valuePlaceholderText() !== null, "missing node.valuePlaceholderText()");
+            debugger;
+        }
+        */
+
+        if (valueView.setPlaceholderText) {
+            if (node.valuePlaceholderText) {
+                valueView.setPlaceholderText(node.valuePlaceholderText());
+            } else {
+                valueView.setPlaceholderText(null);
+            }
+        }
+
 
         /*
         if (this.node().type() === "ChatInputNode" && newValue === "") {

@@ -63,6 +63,10 @@
 
         this.newSlot("onBlurSelection", null)
 
+        {
+            const slot = this.newSlot("placeholderText", null);
+        }
+
     }
 
     init () {
@@ -229,8 +233,21 @@
         return this
     }
 
+    syncPlaceholderText () {
+        const pt = this.placeholderText();
+        if (pt && pt.length > 0) {
+            //debugger;
+            this.element().setAttribute('data-placeholder', pt);
+            assert(this.element().getAttribute('data-placeholder') === pt);
+        } else {
+            this.element().removeAttribute('data-placeholder');
+        }
+        return this;
+    }
+
     syncEditingControl () {
-        this.syncBorder()
+        this.syncBorder();
+        this.syncPlaceholderText();
 
         if (this.isEditable()) {
             if (this.usesDoubleTapToEdit()) {

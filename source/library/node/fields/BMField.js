@@ -87,6 +87,18 @@
             slot.setInspectorPath("Node/Field/Value")
         }
 
+        {
+            const slot = this.newSlot("valuePlaceholderText", null);
+            slot.setCanInspect(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setInspectorPath("Node/Field/Value");
+            slot.setLabel("placeholder text");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+        }
+
+
         /*
         {
             const slot = this.newSlot("valueAllowsNull", true)

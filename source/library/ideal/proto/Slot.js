@@ -195,6 +195,17 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return this
     }
 
+    // --- value placeholder ---
+
+    setValuePlaceholder (s) {
+        this.setAnnotation("valuePlaceholder", s);
+        return this;
+    }
+
+    valuePlaceholder () {
+        return this.getAnnotation("valuePlaceholder");
+    }
+
     // --- subnode field helpers ---
 
     setNodeFillsRemainingWidth (aBool) {
@@ -389,6 +400,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 field.setValueMethod(this.name());
                 field.setValueIsEditable(this.canEditInspection());
                 field.setCanDelete(false);
+
+                if (field.setValuePlaceholderText) {
+                    const p = this.valuePlaceholder();
+                    if (p) {
+                        field.setValuePlaceholderText(this.valuePlaceholder());
+                    }
+                }
                 //assert(!field.canSelfAddSubnode());
 
                 if (this.label()) {
