@@ -106,7 +106,7 @@
             } else {
                 // attempt to coerce to a number
                 v = Number(v);
-                assert(Type.isNaN(v), "value must be a number");
+                assert(!Type.isNaN(v), "value must be a number");
                 super.setValue(v);
             }
         } else {
