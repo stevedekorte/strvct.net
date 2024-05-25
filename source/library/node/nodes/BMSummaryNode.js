@@ -43,6 +43,17 @@
         }
 
         {
+            const slot = this.newSlot("hasNewlineBeforeSummary", false)
+            slot.setShouldStoreSlot(true)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setSlotType("Boolean")
+            slot.setLabel("begins with new line")
+            slot.setInspectorPath("Node/Summary")
+            slot.setSyncsToView(true)
+        }
+
+        {
             const slot = this.newSlot("hasNewlineAfterSummary", false)
             slot.setShouldStoreSlot(true)
             slot.setDuplicateOp("copyValue")
@@ -177,7 +188,8 @@
         */
 
         const f = this.summaryFormat()
-        let end = this.nodeSummarySuffixOut()
+        let end = this.nodeSummarySuffixOut();
+        const begin = this.hasNewlineBeforeSummary() ? "\n" : ""
 
         if (this.hasNewlineAfterSummary()) {
             //end = "<br>"
@@ -185,21 +197,21 @@
         }
 
         if (f === "key") { 
-            return k + end
+            return begin + k + end
         }
     
         if (f === "value") { 
-            return v + end
+            return begin + v + end
         }
 
         const kvSeparator = this.hasNewLineSeparator() ? "\n" : " "
 
         if (f === "key value") { 
-            return k + kvSeparator + v + end
+            return begin + k + kvSeparator + v + end
         }
 
         if (f === "value key") { 
-            return v + kvSeparator + k + end
+            return begin + v + kvSeparator + k + end
         }
 
         return ""
