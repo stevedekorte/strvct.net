@@ -43,7 +43,7 @@
         }
 
         {
-            const slot = this.newSlot("hasNewlineAferSummary", false)
+            const slot = this.newSlot("hasNewlineAfterSummary", false)
             slot.setShouldStoreSlot(true)
             slot.setDuplicateOp("copyValue")
             slot.setCanInspect(true)
@@ -179,7 +179,7 @@
         const f = this.summaryFormat()
         let end = this.nodeSummarySuffixOut()
 
-        if (this.hasNewlineAferSummary()) {
+        if (this.hasNewlineAfterSummary()) {
             //end = "<br>"
             end = "\n"
         }

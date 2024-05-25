@@ -196,7 +196,7 @@
         field.setValueIsEditable(slot.canEditInspection());
         field.setNodeCanReorderSubnodes(false);
         field.setSummaryFormat(slot.summaryFormat());
-        field.setHasNewlineAferSummary(true);
+        field.setHasNewlineAfterSummary(true);
         field.setCanAdd(false);
         field.setCanDelete(false);
         field.setIsVisible(slot.isSubnodeFieldVisible());
@@ -231,7 +231,7 @@
         pathNodes.forEach(node => {
             if (node !== this) {
                 node.setNodeSubtitleIsChildrenSummary(true);
-                node.setHasNewlineAferSummary(true)
+                node.setHasNewlineAfterSummary(true)
                 if (node !== pathNodes.last()) {
                     node.setHasNewLineSeparator(true);
                 }

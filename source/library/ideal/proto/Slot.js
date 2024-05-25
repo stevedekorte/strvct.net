@@ -672,7 +672,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     autoGetter () {
         const slot = this
-        return function () { 
+        return function (arg) { 
+            assert(Type.isUndefined(arg)); // TODO: remove this
             return this.getSlotValue(slot) 
         }
     }

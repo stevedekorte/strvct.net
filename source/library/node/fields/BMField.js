@@ -172,7 +172,7 @@
     init () {
         super.init()
         this.setSummaryFormat("key value")
-        this.setHasNewlineAferSummary(true)
+        this.setHasNewlineAfterSummary(true)
     }
 
     didLoadFromStore () { // move to finalInit?

@@ -31,7 +31,7 @@
         //this.setSubtitle("Dictionary");
         this.setSummaryFormat("key value");
         this.setHasNewLineSeparator(true);
-        this.setHasNewlineAferSummary(true);
+        this.setHasNewlineAfterSummary(true);
         //this.setNodeSummarySuffix("newline");
     }
 

@@ -41,7 +41,7 @@
     super.finalInit()
     this.setTitle("AI Model");
     this.setSummaryFormat("value");
-    this.setHasNewlineAferSummary(true);
+    this.setHasNewlineAfterSummary(true);
   }
 
   service () {

@@ -92,7 +92,7 @@
   finalInit () {
     super.finalInit();
     //this.setHasNewLineSeparator(true);
-    this.setHasNewlineAferSummary(true);
+    this.setHasNewlineAfterSummary(true);
   }
 
   didInit () {
