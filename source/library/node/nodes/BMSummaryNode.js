@@ -82,7 +82,7 @@
             slot.setCanInspect(true)
             slot.setSlotType("String")
             slot.setLabel("format")
-            slot.setValidValues(["none", "key", "value", "key value", "value key"])
+            slot.setValidValues(["none", "key", "value", "key value", "value key", "key: value"])
             slot.setSyncsToView(true)
             slot.setInspectorPath("Node/Summary")
         }
@@ -197,20 +197,43 @@
         }
 
         if (f === "key") { 
+            if (!k) {
+                return ""
+            }
             return begin + k + end
         }
+
+        if (v === "ally") {
+            debugger;
+        }
     
-        if (f === "value") { 
+        if (f === "value") {
+            if (!v) {
+                return ""
+            }
             return begin + v + end
         }
 
         const kvSeparator = this.hasNewLineSeparator() ? "\n" : " "
 
         if (f === "key value") { 
+            if (!k) {
+                return ""
+            }
             return begin + k + kvSeparator + v + end
         }
 
-        if (f === "value key") { 
+        if (f === "key: value") { 
+            if (!k) {
+                return ""
+            }
+            return begin + k + ":" + kvSeparator + v + end
+        }
+
+        if (f === "value key") {
+            if (!v) {
+                return ""
+            }
             return begin + v + kvSeparator + k + end
         }
 
