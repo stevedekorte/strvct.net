@@ -314,6 +314,13 @@ String.prototype._setterCacheMap = new Map();
         return extension;
     }
 
+    // --- indent ---
+
+    indent (n, spacer = " ") {
+        const indentation = spacer.repeat(n);
+        return this.split('\n').map(line => indentation + line).join('\n');
+    }
+
     // --- pad / strip -------
 
     padLeft (length, padding) {

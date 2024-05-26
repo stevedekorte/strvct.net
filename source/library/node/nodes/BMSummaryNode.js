@@ -147,7 +147,11 @@
 
     subtitle () {
         if (this.nodeSubtitleIsChildrenSummary()) {
-            return this.childrenSummary()
+            const s = this.childrenSummary()
+            if (Type.isString(s)) {
+                return s.indent(2);
+            }
+            return s
         }
 
         return super.subtitle()
