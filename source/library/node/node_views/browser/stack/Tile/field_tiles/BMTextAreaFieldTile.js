@@ -118,7 +118,7 @@
     
     syncValueFromNode () {
         super.syncValueFromNode();
-        const show = this.sendNodeDelegate("hasValueButton");
+        const show = this.getFromNodeDelegate("hasValueButton");
         if (show !== undefined) {
             this.sttButton().setParentViewIfTrue(this.valueViewContainer(), show);
             this.updateSttButton();

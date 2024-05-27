@@ -555,7 +555,25 @@
           }
         }
         return undefined;
-      }
+    }
     
+    getFromNodeDelegate (methodName, args = [], isStrict = false) {
+        const d = this.node();
+    
+        if (d) {
+          const f = d[methodName];
+          if (f) {
+            return f.apply(d, args);
+          }
+        } else {
+          if (isStrict) {
+            const error = this.type() + " delegate missing method '" + methodName + "'";
+            console.log(error);
+            debugger;
+            throw new Error(error);
+          }
+        }
+        return undefined;
+    }
 
 }.initThisClass());
