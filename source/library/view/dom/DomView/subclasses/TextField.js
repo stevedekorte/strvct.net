@@ -6,6 +6,10 @@
     
     A view for a single line of text. 
     For multi-line text, use TextArea.
+
+    On input, sends didEdit up parent view chain.
+    This typically goes to a BMFieldTile.onDidEdit(changedView) which sends this.scheduleSyncToNode().
+
     
     Behavior:
     (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent. 
@@ -387,32 +391,9 @@
         return super.setInnerText(s)
     }
 
-    chatInputTile () {
-        return this.parentViewsOfClass(HwChatInputTile).first();
-    }
-
     setValue (newValue) {
         newValue = this.cleanseNewValue(newValue);
 
-        /*
-        const oldValue = this.innerHtml();
-
-        if (newValue === "" && oldValue === "123") {
-            debugger;
-        }
-
-        if (newValue === "123" && oldValue === "") {
-            debugger;
-        }
-        *
-
-        /*
-        if (this.chatInputTile()) {
-            if (this.chatInputTile().node().acceptsValueInput) {
-                debugger;
-            }
-        }
-        */
         if (this.isMergeable()) {
             this.setValueWithMerge(newValue);
         } else {

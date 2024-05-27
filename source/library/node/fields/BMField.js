@@ -400,7 +400,7 @@
         this.setValue(json);
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
         if (!didSet) {
-            console.warn("Field " + this.key() + " setJson(" + json + ") failed to set value");
+            console.warn("Field '" + this.key() + "' setJson(" + json + ") failed to set value");
             debugger;
             this.setValue(json);
         }

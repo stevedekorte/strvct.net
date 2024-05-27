@@ -19,6 +19,7 @@
         this.setValueEditableBorder("none");
         //this.setWidth("-webkit-fill-available");
         this.setElementClassName("BMChatInputTile"); // not needed
+        this.valueView().setWhiteSpace("pre-wrap");
         return this
     }
 
