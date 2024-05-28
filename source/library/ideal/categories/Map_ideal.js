@@ -9,6 +9,17 @@
 */
 
 (class Map_ideal extends Map {
+
+    deepCopy (refMap = new Map()) { // refMap is used to deal with multiple refs to same object, this includes cycles
+        const m = new this.constructor();
+
+        this.forEachKV((k, v) => {
+            m.set(k, Type.deepCopyForValue(v, refMap));
+        });
+
+        return m;
+    }
+
     shallowCopy () {
         return new Map(this)
     }

@@ -199,6 +199,10 @@ getGlobalThis().Type = (class Type extends Object {
         return value instanceof Blob;
     }
 
+    static isSimpleType (v) {
+        return Type.isNumber(v) || Type.isString(v) || Type.isBoolean(v) || Type.isUndefined(v) || Type.isNull(v);
+    }
+
     // typed arrays 
 
     static valueHasConstructor (v, constructor) {  // private
@@ -367,6 +371,30 @@ getGlobalThis().Type = (class Type extends Object {
         throw new Error("unhandled type '" + Type.typeName(value) + "'")
     }
 
+    // --- copying ---
+
+    static deepCopyForValue (v, refMap = new Map()) {
+        if (refMap.has(v)) {
+            return refMap.get(v);
+        }
+
+        if (Type.isSimpleType(v)) {
+            return v;
+        } else if (Type.isObject(v)) {
+            if (v.deepCopy) {
+                const newValue = v.deepCopy(refMap);
+                refMap.set(v, newValue);
+                return newValue;
+            } else {
+                throw new Error("deepCopyForValue() error: value is object but has no deepCopy() method");
+            }
+        }
+
+        throw new Error("deepCopyForValue() error: value is not a simple type: " + Type.typeName(v));
+    }
+
+
+    // --- testing ---
 
     static test () { // private
         this.assertValueTypeNames(null, ["Null", "Object"])

@@ -533,20 +533,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
             } else if (slotName === "initProto") {
                 // ok to copy this
-            } else if (!Type.isJsonType(value)) {
-                if (Type.isSet(value)) {
-                    // check that set values are JSON types
-                    value.forEach(v => { assert(Type.isJsonType(v)) });
-                    value = value.copy();
-                } else {
-                    const m = "can't copy non-json value from slot: " + slotName;
-                    const error = new Error(m);
-                    console.warn(m);
-                    throw error;
-                }
+            //} else if (!Type.isJsonType(value)) {
+            } else {
+                value = Type.deepCopyForValue(value);
             }
             
-            this[privateName] = aSlot[privateName];
+            this[privateName] = value;
             /*
             const setterName = "set" + slotName.capitalized()
             const v = aSlot[slotName].apply(aSlot)

@@ -30,7 +30,17 @@
     }
 
     shallowCopy () {
-        return new Set(this)
+        return new Set(this);
+    }
+
+    deepCopy (refMap = new Map()) { // refMap is used to deal with multiple refs to same object, this includes cycles
+        const newSet = new this.constructor();
+
+        this.forEachV((v) => {
+            newSet.add(Type.deepCopyForValue(v, refMap));
+        });
+
+        return newSet;
     }
 
     // --- keys and values ---

@@ -237,15 +237,15 @@
     // --- update / sync system ----------------------------
     
     didUpdateSlot (aSlot, oldValue, newValue) {
-        super.didUpdateSlot(aSlot, oldValue, newValue)
+        super.didUpdateSlot(aSlot, oldValue, newValue);
 
         if (aSlot.syncsToView()) { 
-            this.scheduleSyncToView()
+            this.scheduleSyncToView(aSlot.name());
         }
     }
 
-    scheduleSyncToView () {
-        this.didUpdateNodeIfInitialized()
+    scheduleSyncToView (slotName) {
+        this.didUpdateNodeIfInitialized(this, slotName);
         return this
     }
 

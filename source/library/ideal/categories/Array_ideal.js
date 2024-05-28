@@ -12,6 +12,7 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
 
 (class Array_ideal extends Array {
 
+
     static withArray (anArray) {
         return this.clone().copyFrom(anArray)
     }
@@ -33,7 +34,22 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
     */
 
     duplicate () {
-        return this.shallowCopy()
+        return this.shallowCopy();
+    }
+
+    shallowCopy () {
+        return this.slice();
+    }
+
+    deepCopy (refMap = new Map()) { // refMap is used to deal with multiple refs to same object, this includes cycles
+        const newArray = new this.constructor();
+
+        this.forEachV(v => {
+            newArray.push(Type.deepCopyForValue(v, refMap));
+        });
+
+        assert(this.length === newArray.length, "deepCopy failed: new array length is different.");
+        return newArray;
     }
 
     clear () {
@@ -290,10 +306,6 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         }
 
         return null;
-    }
-
-    shallowCopy () {
-        return this.slice()
     }
 
     copy (copyDict) {
