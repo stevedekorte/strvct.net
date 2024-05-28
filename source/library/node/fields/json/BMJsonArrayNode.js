@@ -105,6 +105,10 @@
         return this;
     }
 
+    asJson () {
+        return this.subnodes().map(sn => sn.asJson());
+    }
+
     getBMDataUrl () {
         //const json = this.node().copyArchiveDict();
         const json = this.jsonArchive();
