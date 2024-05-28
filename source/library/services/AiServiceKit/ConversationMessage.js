@@ -90,7 +90,7 @@
     {
       const slot = this.newSlot("error", null);
       slot.setCanInspect(false);
-      slot.setShouldStoreSlot(true);
+      slot.setShouldStoreSlot(false);
     }
 
     {

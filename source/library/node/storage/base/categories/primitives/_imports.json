@@ -3,6 +3,7 @@
     "ArrayBuffer_store.js",
     "Blob_store.js",
     "Date_store.js",
+    "Error_store.js",
     "Map_store.js",
     "Set_store.js",
     "Object_store.js",

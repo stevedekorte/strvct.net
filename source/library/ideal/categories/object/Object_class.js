@@ -225,7 +225,7 @@
         Object.defineSlot(this, "_slotsMap", new Map())
         Object.defineSlot(this, "_allSlotsMap", new Map())
         //Object.defineSlot(this, "_cloneArguments", null)
-        this.setupAllSlotsMap()
+        this.setupAllSlotsMap();
 
         // We need to separate initPrototypeSlots, initSlots, initPrototype as
         // initializing some slots may depend on others already existing.
@@ -252,26 +252,37 @@
         return this._allSlotsMap
     }
 
-    setupAllSlotsMap () {
+    setupAllSlotsMap () { // called once when prototype is created
         //debugger;
         if (!this.isPrototype()) {
-            throw new Error("setupAllSlotsMap called on non-prototype")
+            throw new Error("setupAllSlotsMap called on non-prototype");
         }
 
-        const m = this.allSlotsMap()
+        const m = this.allSlotsMap();
         //console.log("*** " + this.type() + " setupAllSlotsMap")
+
+        const entriesToAdd = [];
 
         //assert(this.isPrototype())
         this.forEachSlot(slot => {
-            const k = slot.name()
-            if (!m.has(k)) { // to handle overrides
-                m.set(k, slot) 
+            const k = slot.name();
+            if (!m.has(k)) { // to handle overrides 
+                entriesToAdd.push([k, slot]);
             }
+        });
+
+        entriesToAdd.forEach(entry => {
+            m.set(entry[0], entry[1]);
         })
     }
 
     forEachSlotKV (fn) {
-        this.forEachSlot(slot => fn(slot.name(), slot))
+        // WARNING: overridden slots may be called multiple times using this method
+        // use allSlotsMap() to avoid this
+
+        this.forEachSlot(slot => {
+            fn(slot.name(), slot); 
+        });
     }
 
     forEachPrototype (fn) { // starts with this, and follows tree upwards

@@ -6,6 +6,14 @@
 */
 
 (class AiResponseMessage extends AiMessage {
+
+  /*
+  loadFromRecord (aRecord, aStore) {
+
+    return super.loadFromRecord(aRecord, aStore);
+  }
+  */
+
   initPrototypeSlots() {
 
     {

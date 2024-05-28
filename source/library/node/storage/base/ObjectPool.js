@@ -301,6 +301,17 @@
     addActiveObject (anObject) {
         assert(!anObject.isClass());
 
+        /*
+        if (anObject.type() === "Error") {
+            debugger;
+            return false;
+        }
+
+        if (anObject.type() === "Set") {
+            debugger;
+        }
+        */
+
         if (anObject.type() === "PersistentObjectPool") {
             console.log("addActiveObject() called with PersistentObjectPool");
             debugger;

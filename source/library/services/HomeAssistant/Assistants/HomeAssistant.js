@@ -86,7 +86,7 @@
       slot.setCanEditInspection(false);
       slot.setInspectorPath("")
       slot.setLabel("error");
-      slot.setShouldStoreSlot(true);
+      slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");

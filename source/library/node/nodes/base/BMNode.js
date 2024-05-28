@@ -549,35 +549,34 @@
     
     didUpdateNodeIfInitialized () {
         if (this.hasDoneInit()) {
-            this.didUpdateNode()
+            this.didUpdateNode();
         }
     }
 
     didUpdateNode () {
         if (!this.hasDoneInit()) {
-            return false
+            return false;
         }
 
-        const note = this.didUpdateNodeNote()
+        const note = this.didUpdateNodeNote();
 
         if (note) {
             //console.log("Node '" + this.title() + "' POST didUpdateNode")
-            note.post()
+            note.post();
         }
-
         
         // TODO: make this more efficient, as we don't always need it
         
         if (this.parentNode()) {
-            assert(this.parentNode() !== this)
-            this.parentNode().didUpdateNodeIfInitialized()
+            assert(this.parentNode() !== this);
+            this.parentNode().didUpdateNodeIfInitialized();
         }
 
-        return true
+        return true;
     }
 
     hasDuplicateSubnodes () {
-        return this.subnodes().hasDuplicates()
+        return this.subnodes().hasDuplicates();
     }
 
     indexOfSubnode (aSubnode) {
@@ -585,19 +584,19 @@
     }
 
     subnodeIndexInParent () {
-        const p = this.parentNode()
+        const p = this.parentNode();
         if (p) {
-            return p.indexOfSubnode(this)
+            return p.indexOfSubnode(this);
         }
-        return 0
+        return 0;
     }
 
     nodeDepth () {
-        const p = this.parentNode()
+        const p = this.parentNode();
         if (p) {
-            return p.nodeDepth() + 1
+            return p.nodeDepth() + 1;
         }
-        return 0
+        return 0;
     }
 
     // ---------------------------------------
@@ -605,8 +604,8 @@
     prepareToAccess () {
         // this should be called whenever subnodes need to be accessed? See willGetSlotSubnodes
         if (!this._didPrepareForFirstAccess) {
-            this._didPrepareForFirstAccess = true
-            this.prepareForFirstAccess()
+            this._didPrepareForFirstAccess = true;
+            this.prepareForFirstAccess();
         }
     }
 
@@ -624,49 +623,49 @@
     // --- parent chain notifications ---
     
     tellParentNodes (msg, aNode) {
-        const f = this[msg]
+        const f = this[msg];
         if (f && f.apply(this, [aNode])) {
-            return
+            return;
         }
 
-        const p = this.parentNode()
+        const p = this.parentNode();
         if (p) {
-            p.tellParentNodes(msg, aNode)
+            p.tellParentNodes(msg, aNode);
         }
     }
 
     parentChainNodes (chain = []) {
-        chain.unshift(this)
-        const p = this.parentNode()
+        chain.unshift(this);
+        const p = this.parentNode();
         if (p) {
-            p.parentChainNodes(chain)
+            p.parentChainNodes(chain);
         }
-        return chain
+        return chain;
     }
 
     parentChainNodeTo (node, chain = []) {
         if (this !== node) {
-            chain.unshift(this)
-            const p = this.parentNode()
+            chain.unshift(this);
+            const p = this.parentNode();
             if (p) {
-                p.parentChainNodeTo(node, chain)
+                p.parentChainNodeTo(node, chain);
             }
         }
-        return chain
+        return chain;
     }
 
     firstParentChainNodeOfClass (aClass) {
         //return this.firstParentChainNodeDetect(node => node.thisClass().isSubclassOf(aClass));
 
         if (this.thisClass().isSubclassOf(aClass)) {
-            return this
+            return this;
         }
 
         if (this.parentNode()) {
-            return this.parentNode().firstParentChainNodeOfClass(aClass)
+            return this.parentNode().firstParentChainNodeOfClass(aClass);
         }
 
-        return null
+        return null;
     }
 
     firstParentChainNodeThatRespondsTo (methodName) {
@@ -676,14 +675,14 @@
     firstParentChainNodeDetect (func) {
         // return this.parentChainNodes().detect(func);
         if (func(this)) {
-            return this
+            return this;
         }
 
         if (this.parentNode()) {
             return this.parentNode().firstParentChainNodeDetect(func);
         }
 
-        return null
+        return null;
     }
     
     // --- log ------------------------
@@ -691,76 +690,76 @@
     log (msg) {
         //const s = this.nodePathString() + " --  " + msg
         if (this.isDebugging()) {
-        	console.log("[" +  this.nodePathString() + "] " + msg)
+        	console.log("[" +  this.nodePathString() + "] " + msg);
         }
     }
 
     // --- post notifications ----------------------------------------
 
     postShouldFocusSubnode (aSubnode) {
-        assert(aSubnode)
-        this.shouldFocusSubnodeNote().setInfo(aSubnode).post()
-        return this
+        assert(aSubnode);
+        this.shouldFocusSubnodeNote().setInfo(aSubnode).post();
+        return this;
     }
 
     postShouldFocusAndExpandSubnode (aSubnode) {
         //debugger
-        assert(aSubnode)
-        this.shouldFocusAndExpandSubnodeNote().setInfo(aSubnode).post()
-        return this
+        assert(aSubnode);
+        this.shouldFocusAndExpandSubnodeNote().setInfo(aSubnode).post();
+        return this;
     }
 
     // -- adding subnodes by instantiating subnode class ----
     
     justAddAt (anIndex) {
-        const classes = this.subnodeClasses().shallowCopy()
+        const classes = this.subnodeClasses().shallowCopy();
 
-        let newSubnode = null
+        let newSubnode = null;
         if (classes.length === 0) {
-            newSubnode = null
+            newSubnode = null;
         } else if (classes.length === 1) {
-            newSubnode = classes.first().clone()
+            newSubnode = classes.first().clone();
         } else {
-            newSubnode = BMCreatorNode.clone()
-            newSubnode.addSubnodesForObjects(classes)
+            newSubnode = BMCreatorNode.clone();
+            newSubnode.addSubnodesForObjects(classes);
         }
 
         if (newSubnode) {
-            this.addSubnodeAt(newSubnode, anIndex)
+            this.addSubnodeAt(newSubnode, anIndex);
         }
-        return newSubnode
+        return newSubnode;
     }
 
     justAdd (anIndex) {  
-        return this.justAddAt(this.subnodeCount())
+        return this.justAddAt(this.subnodeCount());
     }
 
     addAt (anIndex) {
-        const newSubnode = this.justAddAt(anIndex)
+        const newSubnode = this.justAddAt(anIndex);
         if (newSubnode) {
-            this.didUpdateNodeIfInitialized()
-            this.postShouldFocusAndExpandSubnode(newSubnode)
+            this.didUpdateNodeIfInitialized();
+            this.postShouldFocusAndExpandSubnode(newSubnode);
         }
-        return newSubnode
+        return newSubnode;
     }
 
     add () {  
-        return this.addAt(this.subnodeCount())
+        return this.addAt(this.subnodeCount());
     }
 
     removeFromParentNode () {
-        const pn = this.parentNode()
+        const pn = this.parentNode();
         if (pn) {
-            pn.removeSubnode(this)
+            pn.removeSubnode(this);
         } else {
-            throw new Error("missing parentNode")
+            throw new Error("missing parentNode");
         }
-        return this
+        return this;
     }
 	
     delete () {
-        this.removeFromParentNode()
-        return this
+        this.removeFromParentNode();
+        return this;
     }
 
     /*
@@ -781,92 +780,92 @@
     */
 
     canSelfAddSubnode () {
-        return this.hasNodeAction("add")
+        return this.hasNodeAction("add");
     }
 
     // --- utility -----------------------------
     
     parentNodeOfType (className) {
         if (this.type() === className) {
-            return this
+            return this;
         }
         
         if (this.parentNode()) {
-            return this.parentNode().parentNodeOfType(className)
+            return this.parentNode().parentNodeOfType(className);
         }
         
-        return null
+        return null;
     }
 
     parentNodes () {
-        const node = this.parentNode()
-        const results = []
+        const node = this.parentNode();
+        const results = [];
 		
         while (node) {
-            results.push(node)
-            node = this.parentNode()
+            results.push(node);
+            node = this.parentNode();
         }
-        return results
+        return results;
     }
 	
     parentNodeTypes () {
-        return this.parentNodes().map(node => node.type())
+        return this.parentNodes().map(node => node.type());
     }
     
     // --- subnode lookup -----------------------------
     
     subnodesSans (aSubnode) {
-	    return this.subnodes().select(subnode => subnode !== aSubnode)
+	    return this.subnodes().select(subnode => subnode !== aSubnode);
     }
 	
     firstSubnodeOfType (obj) {
         // obj could be clas, prototype, or instance
-        return this.subnodes().detect(subnode => subnode.type() === obj.type())
+        return this.subnodes().detect(subnode => subnode.type() === obj.type());
     }
 
     setupSubnodeOfType (aClass) {
-        let subnode = this.firstSubnodeOfType(aClass)
+        let subnode = this.firstSubnodeOfType(aClass);
         if (!subnode) {
             subnode = aClass.clone();
             this.addSubnode(subnode);
         }
-        return subnode
+        return subnode;
     }
         
     sendRespondingSubnodes (aMethodName, argumentList) {
         this.subnodes().forEach((subnode) => { 
             if (subnode[aMethodName]) {
-                subnode[aMethodName].apply(subnode, argumentList)
+                subnode[aMethodName].apply(subnode, argumentList);
             }
         })
-        return this
+        return this;
     }
     
     // --- subnodes -----------------------------
     
     subnodesCount () {
-        return this.subnodes().length
+        return this.subnodes().length;
     }
 
     onDidMutateObject (anObject) {
         if (anObject === this._subnodes) {
             //assert(!this.subnodes().hasDuplicates())
-            this.didChangeSubnodeList()
+            this.didChangeSubnodeList();
         }
     }
 
     watchSubnodes () {
-        this._subnodes.addMutationObserver(this)
+        this._subnodes.addMutationObserver(this);
         return this
     }
 
     hasNullSubnodes () {
-        return this.subnodes().indexOf(null) !== -1
+        return this.subnodes().indexOf(null) !== -1;
     }
 
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
-            oldValue.removeMutationObserver(this)
+            oldValue.removeMutationObserver(this);
         }
 
         if (Type.isNullOrUndefined(newValue)) {
@@ -877,10 +876,10 @@
 
         if (newValue.type() !== "SubnodesArray") {
             //debugger;
-            this._subnodes = SubnodesArray.from(newValue)
-            newValue.removeDuplicates()
-            newValue = this._subnodes
-            assert(newValue.type() === "SubnodesArray")
+            this._subnodes = SubnodesArray.from(newValue);
+            newValue.removeDuplicates();
+            newValue = this._subnodes;
+            assert(newValue.type() === "SubnodesArray");
         } else {
             
             if (this.hasNullSubnodes()) {

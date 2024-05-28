@@ -284,7 +284,7 @@
         if (target[setter]) {
             target[setter].apply(target, [v])
 
-            target.didUpdateNode()
+            target.didUpdateNode(this.valueMethod()); // shouldn't this be done by the setter?
             this.validate()
         } else {
             console.warn(this.type() + " target " + target.type() + " missing slot '" + setter + "'")
@@ -403,6 +403,8 @@
             console.warn("Field '" + this.key() + "' setJson(" + json + ") failed to set value");
             debugger;
             this.setValue(json);
+            let v = this.value();
+            assert(v === json, "failed to set value");
         }
         assert(didSet);
         return this;

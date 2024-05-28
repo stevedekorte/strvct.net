@@ -9,7 +9,9 @@
             entries: [], 
         }
 
-        this.forEachSlotKV((slotName, slot) => {
+        this.allSlotsMap().forEachKV((slotName, slot) => {
+        //this.forEachSlotKV((slotName, slot) => {
+
             //if (slot.shouldStoreSlot()) {
             if (slot.shouldStoreSlotOnInstance(this)) {
                 const v = slot.onInstanceGetValue(this)
@@ -19,7 +21,7 @@
                 //assert(!Type.isUndefined(v))
                 aRecord.entries.push([slotName, aStore.refValue(v)])
             }
-        })
+        });
 
         return aRecord
     }
