@@ -32,11 +32,16 @@
     jsonSchemaForSubnodes (refSet) { // NOTE: method on prototype, not class
         assert(refSet);
         const items = {};
-        items.anyOf = this.subnodeClasses().map(subnodeClass => {
+        const refs = this.subnodeClasses().map(subnodeClass => {
             return { 
                 "$ref": subnodeClass.jsonSchemaRef(refSet)
             };
         });
+        if (refs.length > 0) {
+            items.anyOf = refs;
+        } else {
+            throw new Error("BMJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype().");
+        }
         return items;
     }
     

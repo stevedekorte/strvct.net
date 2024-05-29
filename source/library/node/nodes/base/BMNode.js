@@ -1232,6 +1232,8 @@
             required: this.jsonSchemaRequired()
         };
 
+        assert(schema.description, "missing json schema description for " + this.type());
+
         return schema;
     }
 

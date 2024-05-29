@@ -7,24 +7,26 @@
 
 (class HomeAssistantFolder extends BMSummaryNode {
   initPrototypeSlots() {
+    this.setTitle("folder");
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(true);
+    this.setNodeCanReorderSubnodes(true);
+    this.setSubnodeClasses([HomeAssistantFolder]);
+    this.setNoteIsSubnodeCount(true);
+    this.setNodeCanEditTitle(true);
+    this.setNodeCanEditSubtitle(true);
   }
 
   init() {
     super.init();
-    this.setTitle("folder");
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(true);
+
     this.setCanAdd(true);
-    this.setNodeCanReorderSubnodes(true);
-    this.setSubnodeClasses([HomeAssistantFolder]);
+
   }
 
   finalInit() {
     super.finalInit()
-    this.setNoteIsSubnodeCount(true);
     this.makeSortSubnodesByTitle();
-    this.setNodeCanEditTitle(true);
-    this.setNodeCanEditSubtitle(true);
     //this.setupSubnodeClasses();
   }
 
