@@ -67,19 +67,18 @@
 
     initPrototype () {
         //this.setSubnodeClasses(this.jsonClasses());
-    }
-
-    init () {
-        super.init();
         this.setNodeCanEditTitle(true);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
         this.setNodeCanReorderSubnodes(true);
         this.setCanDelete(true);
         this.setNoteIconName("right-arrow");
-
-        this.setCanAdd(true);
         this.setTitle("JSON");
+    }
+
+    init () {
+        super.init();
+        this.setCanAdd(true);
     }
 
     finalInit () {
