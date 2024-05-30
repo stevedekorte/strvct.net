@@ -65,7 +65,7 @@
   init () {
     super.init();
     this.setParser(this.newParser());
-    this.setIsDebugging(true);
+    //this.setIsDebugging(true);
   }
 
   newParser () {

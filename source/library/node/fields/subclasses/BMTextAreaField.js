@@ -41,7 +41,6 @@
 
     syncFromTarget () {
         super.syncFromTarget();
-        
         return this
     }
     

@@ -89,4 +89,21 @@
         return SyncScheduler.shared().scheduleTargetAndMethod(this, aMethodName, milliseconds)
     }
 
+    // --- who's watching who ---
+
+    watchers () {
+        // objects we are watching for notifications from 
+        return BMNotificationCenter.shared().observationsWithSender(this);
+    }
+
+    ourObservations () {
+        // observations we have registered
+        return BMNotificationCenter.shared().observationsWithObserver(this);
+    }
+
+    specificSendersWatched () {
+        // senders we are watching
+        return this.ourObservations().map(obs => obs.sender()).unique();
+    }
+
 }).initThisCategory();

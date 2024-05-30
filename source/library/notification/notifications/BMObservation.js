@@ -11,6 +11,7 @@
 */
 
 (class BMObservation extends ProtoClass {
+
     initPrototypeSlots () {
         this.newSlot("center", null) // NotificationCenter that owns this
         this.newSlot("name", null) // String 
@@ -21,7 +22,6 @@
         this.newWeakSlot("sender", null) // WeakRef to sender
 
         this.newSlot("noteHash", null) // null or string
-
     }
 
     init () {
@@ -139,15 +139,17 @@
     }
 
     sendNotification (note) {
-        if (this.center().isDebugging()) {
-            //console.log(this._observer + " received note " + note.name() + " from " + note.sender() )
-        }
-
         const obs = this.observer()
         if (obs === undefined) { // observer may have been collected
             console.log("OBSERVER COLLECTED ON: " + this.description())
             this.stopWatching()
             return
+        }
+
+        if (this.center().isDebugging() || this.isDebugging()) {
+        //if (note.name() === "onUpdatedNode") {
+            //console.log(this._observer + " receiving note " + note.name() + " from " + note.sender() )
+            console.log(note.sender().debugTypeId() + " sending note " + note.name() + " to " + this.observer().debugTypeId());
         }
 
         const method = this.sendName() ? obs[this.sendName()] : obs[note.name()];

@@ -231,8 +231,9 @@
 
         if (newValue) {
             //debugger;
-            this.setDidUpdateNodeObs(this.watchForNoteFrom("onUpdatedNode", newValue))
-            this.scheduleMethod("syncFromTarget")
+            this.setDidUpdateNodeObs(this.watchForNoteFrom("onUpdatedNode", newValue));
+            //this.didUpdateNodeObs().setIsDebugging(true);
+            this.scheduleMethod("syncFromTarget");
         } 
     }
 
@@ -248,6 +249,22 @@
     */
 
     onUpdatedNode (aNote) {
+        if (this.target()) {
+            console.log(this.type() + " for " + this.target().type()  + "." + this.key() + " onUpdatedNode(" + aNote.sender().type() + ")");
+        }
+
+        if (this.key() === "Stength") {
+            console.log(this.type() + " onUpdatedNode (key is Stength)");
+        }
+
+        if (this.key() === "Bonuses") {
+            console.log(this.type() + " onUpdatedNode (key is Bonuses)");
+        }
+
+        if (this.key() === "Total") {
+            console.log(this.type() + " onUpdatedNode (key is Total)");
+        }
+
         assert(aNote);
         // if it has a note, it was a post sent through notification center that the target node changed
         const aNode = aNote.sender()
@@ -260,75 +277,91 @@
     }
 
     syncFromTarget () {
+        if (this.key() === "Total") {
+            console.log(this.type() + " syncFromTarget (key is Total)");
+        }
+
+        /*
+        if (this.target()) {
+            this.setValue(this.getValueFromTarget());
+        }
+        */
+
+        this.value(); // triggers didUpdateNodeIfInitialized
+
         // up to subclasses to implement
         return this
     }
 
     didUpdateSlotValue (oldValue, newValue) {  // setValue() is called by View on edit
         if (this.target() && this.valueMethod()) {
-            this.setValueOnTarget(newValue)
+            this.setValueOnTarget(newValue);
         } else {
-            this.validate()
+            this.validate();
         }
 
-        this.didUpdateNodeIfInitialized()
+        this.didUpdateNodeIfInitialized();
     }
 
     setValueOnTarget (v) { // called by View on edit
         //console.log("setValue '" + v + "'")
-        const target = this.target()
-        const setter = this.setterNameForSlot(this.valueMethod())
+        const target = this.target();
+        const setter = this.setterNameForSlot(this.valueMethod());
 
-        v = this.normalizeThisValue(v)
+        v = this.normalizeThisValue(v);
         
         if (target[setter]) {
-            target[setter].apply(target, [v])
+            target[setter].apply(target, [v]);
 
             target.didUpdateNode(this.valueMethod()); // shouldn't this be done by the setter?
-            this.validate()
+            this.validate();
         } else {
-            console.warn(this.type() + " target " + target.type() + " missing slot '" + setter + "'")
+            console.warn(this.type() + " target " + target.type() + " missing slot '" + setter + "'");
             debugger;
         }
 		
-        return this
+        return this;
     }
 	
     normalizeThisValue (v) {
-	    return v
+	    return v;
     }
 	
     value () {
         if (this.target()) {
-            this._value = this.getValueFromTarget()
+            const newValue = this.getValueFromTarget();
+            if (this._value !== newValue) {
+                this._value = newValue;
+                this.didUpdateNodeIfInitialized();
+            }
         }
-        return this._value
+        return this._value;
     }
 
     getValueFromTarget () {
-        const target = this.target()
-        const slotName = this.valueMethod()
+        const target = this.target();
+        const slotName = this.valueMethod();
 
         //console.log("target = " + target.type() + " getter = '" + getter + "'")
         if (target[slotName]) {
-            const value = target[slotName].apply(target)
-            return value
+            const value = target[slotName].apply(target);
+            return value;
         } else {
-            console.warn(this.type() + " target " + target.type() + " missing slot '" + slotName + "'")
+            console.warn(this.type() + " target " + target.type() + " missing slot '" + slotName + "'");
         }
 
-        return null
+        return null;
     }
 	
     note () {
-        const target = this.target()
-        const slotName = this.noteMethod()
+        const target = this.target();
+        const slotName = this.noteMethod();
 
         if (target && slotName) {
             if (target[slotName]) {
-                return target[slotName].apply(target)
+                return target[slotName].apply(target);
             } else {
-                console.warn(this.type() + " target " + target.type() + " missing note getter slot '" + slotName + "'")
+                console.warn(this.type() + " target " + target.type() + " missing note getter slot '" + slotName + "'");
             }
         }
 
@@ -338,48 +371,48 @@
 	
     didUpdateView (aFieldView) {  
         debugger;      
-        let parentNode = this.parentNode()
+        let parentNode = this.parentNode();
         if (!parentNode) {
-            parentNode = this.target()
+            parentNode = this.target();
         }
 
         if (parentNode.didUpdateField) {
-            parentNode.didUpdateField(this) // what if it's down a path in an inspector?
+            parentNode.didUpdateField(this); // what if it's down a path in an inspector?
         }
 
         if (this.target() && this.target().didUpdateField) {
-            this.target().didUpdateField(this) // what if it's down a path in an inspector?
+            this.target().didUpdateField(this); // what if it's down a path in an inspector?
         }
         
-        return this
+        return this;
     }
 	
     visibleValue () {
-        return this.value()
+        return this.value();
     }
 
     validate () {
         // subclasses should override if needed
-        return true
+        return true;
     }
 	
     nodeTileLink () {
-        return null
+        return null;
     }
 
     summary () {
         if (!this.isVisible()) {
-            return ""
+            return "";
         }
-        return super.summary()
+        return super.summary();
     }
 
     summaryKey () {
-        return this.key()
+        return this.key();
     }
 
     summaryValue () {
-        return this.value()
+        return this.value();
     }
 
     setNodeSummaryShowsKey () {
@@ -390,7 +423,7 @@
 
     jsonArchive () {
         //console.log(this.typeId() + ".jsonArchive()")
-        return super.jsonArchive()
+        return super.jsonArchive();
     }
 
     // --- simplified JSON representation ---
@@ -417,14 +450,14 @@
     asJson () {
         // test used for Character sheet atm
         // separate fron jsonArchive 
-        return this.value()
+        return this.value();
     }
 
     /*
     setJson (json) {
-        this.setKey(json.key) 
-        this.setValue(json.value) 
-        return this
+        this.setKey(json.key);
+        this.setValue(json.value);
+        return this;
     }
 
     asJson () {
@@ -433,15 +466,15 @@
         return {
             key: this.key(),
             value: this.value()
-        }
+        };
     }
     */
 
     // ----------------
     
     setIsEditable (aBool) {
-        this.setValueIsEditable(false)
-        return this
+        this.setValueIsEditable(false);
+        return this;
     }
     
 }.initThisClass());

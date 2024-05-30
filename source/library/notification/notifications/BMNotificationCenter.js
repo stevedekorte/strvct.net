@@ -135,8 +135,16 @@
         return BMObservation.clone().setCenter(this);
     }
 
+    observationsWithSender (sender) {
+        return this.observations().filter(obs => obs.sender() === sender).map(obs => obs.observer());
+    }
+
     hasObservationsForSender (sender) {
-        return this.observations().canDetect(obs => obs.sender() === sender)
+        return this.observationsWithSender(sender).length > 0;
+    }
+
+    observationsWithObserver (observer) {
+        return this.observations().filter(obs => obs.observer() === observer)
     }
 
     /*
@@ -262,23 +270,25 @@
             //this.showObservers()
         }
         
-        const observations = this.observations().shallowCopy()  
-      
-        observations.forEach( (obs) => {
-            if (obs.matchesNotification(note)) {
-                if (showDebug) {
-                    //console.log(" >>> " + this.type() + " " + note.name() + " matches obs: " + obs.description())
-                    if (obs.observer.type() === "HwChatInputTile") {
-                        console.log(" >>> " +this.type() + " sending ", note.name() + " to observer " + obs.observer().typeId())
-                    }
+        const matching = this.observationsMatchingNotification(note);
+
+        matching.forEach(obs => {
+            if (showDebug) {
+                //console.log(" >>> " + this.type() + " " + note.name() + " matches obs: " + obs.description());
+                if (obs.observer.type() === "HwChatInputTile") {
+                    console.log(" >>> " +this.type() + " sending ", note.name() + " to observer " + obs.observer().typeId());
                 }
-            
-                obs.sendNotification(note)    
-                //obs.tryToSendNotification(note)   
             }
-        })        
         
-        this.setCurrentNote(null)
+            obs.sendNotification(note);
+            //obs.tryToSendNotification(note);  
+        });       
+        
+        this.setCurrentNote(null);
+    }
+
+    observationsMatchingNotification (note) {
+        return this.observations().filter(obs => obs.matchesNotification(note));
     }
 
     show () {
