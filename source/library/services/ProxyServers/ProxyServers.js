@@ -18,22 +18,17 @@
 
   initPrototypeSlots() {
     this.setSubnodeClasses([ProxyServer]);
-  }
-
-  init() {
-    super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
+    this.setNoteIsSubnodeCount(false);
+    this.setTitle("Proxies");
+    this.setSubtitle("web proxy servers");
   }
 
   finalInit() {
     super.finalInit()
-    this.setNoteIsSubnodeCount(false);
-
-    this.setTitle("Proxies");
-    this.setSubtitle("web proxy servers");
     this.addDefaultIfNeeded()
   }
 

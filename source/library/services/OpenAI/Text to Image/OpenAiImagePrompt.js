@@ -112,16 +112,13 @@
     {
       const slot = this.newSlot("delegate", null); 
     }
-  }
 
-  init() {
-    super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setSubnodeClasses([])
-    this.setNodeCanAddSubnode(false)
-    this.setCanDelete(true)
-    this.setNodeCanReorderSubnodes(false)
+    this.setSubnodeClasses([]);
+    this.setNodeCanAddSubnode(false);
+    this.setCanDelete(true);
+    this.setNodeCanReorderSubnodes(false);
   }
 
   title () {

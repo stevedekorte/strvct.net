@@ -74,12 +74,9 @@
         this.setCanDelete(true);
         this.setNoteIconName("right-arrow");
         this.setTitle("JSON");
-    }
-
-    init () {
-        super.init();
         this.setNodeCanAddSubnode(true);
     }
+
 
     finalInit () {
         super.finalInit();

@@ -79,16 +79,14 @@
         this.setNodeCanEditTitle(true)
 
         this.setNodeCanReorderSubnodes(true)
-    }
 
-    init () {
-        super.init()
-        this.setNodeCanAddSubnode(true)
-        this.setSummaryFormat("value")
-        this.setSubnodeProto(BMOptionNode)
-        this.setNoteIconName("right-arrow")
-    }
+        this.setNodeCanAddSubnode(true);
+        this.setSummaryFormat("value");
+        this.setNoteIconName("right-arrow");
+        this.setSubnodeProto(BMOptionNode);
 
+    }
+    
     /*
     setValue (v) {
         super.setValue(v)

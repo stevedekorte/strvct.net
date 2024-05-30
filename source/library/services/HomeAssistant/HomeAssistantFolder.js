@@ -15,19 +15,12 @@
     this.setNoteIsSubnodeCount(true);
     this.setNodeCanEditTitle(true);
     this.setNodeCanEditSubtitle(true);
-  }
-
-  init() {
-    super.init();
-
     this.setNodeCanAddSubnode(true);
-
   }
 
-  finalInit() {
-    super.finalInit()
+  finalInit () {
+    super.finalInit();
     this.makeSortSubnodesByTitle();
-    //this.setupSubnodeClasses();
   }
 
   /*
@@ -38,12 +31,5 @@
     this.setSubnodeClasses(classes);
   }
   */
-
-  /*
-  didInit () {
-    super.didInit()
-  }
-  */
-
 
 }.initThisClass());

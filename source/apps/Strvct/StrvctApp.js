@@ -16,6 +16,8 @@
     initPrototypeSlots () {
 
         /*
+        // for now, we won't store this object in order to avoid some
+        // chicken and egg problems
         {
             const slot = this.newSlot("rootContentNode", null)
             slot.setShouldStoreSlot(false)
@@ -23,24 +25,23 @@
         }
         */
 
-        // for now, we won't store this object in order to avoid some
-        // chicken and egg problems
+        {
+            // view
+            const slot = this.newSlot("browser", null);
+        }
 
-        this.setShouldStore(false)
-        this.setShouldStoreSubnodes(false)
-
-        // view
-        this.newSlot("browser", null)
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
+        //this.setNodeCanAddSubnode(true)
     }
 
     // ---
 
     init () {
         super.init()
-        this.setName("StrvctApp")
-        this.setVersion([0, 0, 0, 0])
-        this.setNodeCanReorderSubnodes(true)
-        //this.setNodeCanAddSubnode(true)
+        this.setName("StrvctApp");
+        this.setVersion([0, 0, 0, 0]);
+        this.setNodeCanReorderSubnodes(true);
         return this
     }
 

@@ -24,19 +24,13 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([MusicTrack, MusicFolder]);
-  }
-
-  init() {
-    super.init();
-  }
-
-  finalInit () {   
-    super.finalInit();
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
     this.setNodeCanAddSubnode(true);
     this.setCanDelete(true);
     this.setNoteIsSubnodeCount(true);
+  }
+
+  finalInit () {
+    super.finalInit();
     this.makeSortSubnodesByTitle();
   }
 

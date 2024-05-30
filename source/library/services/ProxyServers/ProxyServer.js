@@ -105,19 +105,11 @@
     }
 
     //this.setSubnodeClasses([ProxyRequest]);
-  }
 
-  init() {
-    super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setTitle("Unnamed Proxy Server");
-    //this.setNodeCanAddSubnode(true);
-  }
-
-  finalInit() {
-    super.finalInit()
-    this.setCanDelete(true)
+    this.setCanDelete(true);
     this.setNoteIsSubnodeCount(false);
     this.setNodeCanReorderSubnodes(false);
     this.setNodeCanEditTitle(true);

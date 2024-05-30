@@ -29,18 +29,14 @@
             slot.setFinalInitProto(HeaderNode)
             slot.setIsSubnode(true)
         }
-    }
 
-    init () {
-        super.init()
-        this.setTitle("Root Content Node")
-        this.setNodeCanReorderSubnodes(true)
-        this.setNodeMinTileHeight(75)
-        this.setNodeIsVertical(false) // not setting BrowserView to down direction - why?
-        this.setNodeCanReorderSubnodes(false)
-        this.setShouldStoreSubnodes(false)
-        this.setNodeCanAddSubnode(false)
-        return this
+        this.setTitle("Root Content Node");
+        this.setNodeCanReorderSubnodes(true);
+        this.setNodeMinTileHeight(75);
+        this.setNodeIsVertical(false); // not setting BrowserView to down direction - why?
+        this.setNodeCanReorderSubnodes(false);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanAddSubnode(false);
     }
 
 }.initThisClass());

@@ -70,32 +70,19 @@
             slot.setCanInspect(true)
             slot.setIsSubnode(true)
         }
-    }
 
-    // ---
-
-    init () {
-        super.init()
-        this.setNodeCanReorderSubnodes(true)
-        //this.setNodeCanAddSubnode(true)
-        //const node = BMFolderNode.clone() // FolderNode?
-        this.setNodeTileClassName("HeaderTile")
-        this.setNodeMinTileHeight(100)
-        this.setTitle("my app header")
-        this.setNodeCanEditTitle(true)
-        this.setNodeIsVertical(false) 
-        this.setCanDelete(false)
-        this.setNodeCanAddSubnode(false)
-        this.setShouldStoreSubnodes(false)
-        return this
+        this.setNodeCanReorderSubnodes(true);
+        //this.setNodeCanAddSubnode(true);
+        //const node = BMFolderNode.clone(); // FolderNode?
+        this.setNodeTileClassName("HeaderTile");
+        this.setNodeMinTileHeight(100);
+        this.setTitle("my app header");
+        this.setNodeCanEditTitle(true);
+        this.setNodeIsVertical(false);
+        this.setCanDelete(false);
+        this.setNodeCanAddSubnode(false);
+        this.setShouldStoreSubnodes(false);
     }
-
-    /*
-    finalInit () {
-        super.finalInit();
-        return this
-    }
-    */
 
     onTapOfNode () {
         super.onTapOfNode()

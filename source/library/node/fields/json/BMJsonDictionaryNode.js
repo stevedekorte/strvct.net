@@ -120,7 +120,7 @@
       if (sn.setIsEditable) {
         sn.setIsEditable(aBool);
         if (!aBool) {
-            if (sn.setCanAdd) {
+            if (sn.setNodeCanAddSubnode) {
                 sn.setNodeCanAddSubnode(false);
             }
         }

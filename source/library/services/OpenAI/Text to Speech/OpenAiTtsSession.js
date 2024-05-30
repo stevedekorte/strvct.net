@@ -186,10 +186,7 @@
     {
       const slot = this.newSlot("delegate", null); 
     }
-  }
 
-  init () {
-    super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
@@ -197,15 +194,21 @@
     this.setCanDelete(true);
     this.setNodeCanReorderSubnodes(false);
 
+    this.setNodeSubtitleIsChildrenSummary(true);
+    this.setTitle("Text to Speech Session");
+    this.setNoteIsSubnodeCount(true);
+    this.setCanDelete(true);
+  }
+
+  init () {
+    super.init();
     this.setTtsRequestQueue([]);
     //if (!this.audioQueue()) {
       this.setAudioQueue(AudioQueue.clone());
     //}
-    this.setNodeSubtitleIsChildrenSummary(true);
-    this.setTitle("Text to Speech Session");
-    this.setNoteIsSubnodeCount(true);
+    return this;
   }
-
+  
   /*
   title () {
     const p = this.prompt().clipWithEllipsis(30);
@@ -216,11 +219,6 @@
     return this.status()
   }
   */
-
-  finalInit() {
-    super.finalInit()
-    this.setCanDelete(true)
-  }
 
   ttsSessions () {
     return this.parentNode()

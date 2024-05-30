@@ -8,21 +8,17 @@
 (class RzSigServers extends BMSummaryNode {
   initPrototypeSlots() {
     this.setSubnodeClasses([RzSigServer]);
-  }
-
-  init() {
-    super.init();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
+    this.setTitle("PeerJS Signalling Servers");
+    this.setNoteIsSubnodeCount(true);
   }
 
   finalInit() {
-    super.finalInit()
-    this.setTitle("PeerJS Signalling Servers");
-    this.setNoteIsSubnodeCount(true);
-    this.setupDefaultServers()
+    super.finalInit();
+    this.setupDefaultServers();
   }
 
   setupDefaultServers () {

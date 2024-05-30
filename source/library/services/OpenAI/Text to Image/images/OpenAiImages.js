@@ -8,11 +8,6 @@
 (class OpenAiImages extends BMSummaryNode {
 
   initPrototypeSlots() {
-
-  }
-
-  init() {
-    super.init();
     this.setTitle("image results");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);

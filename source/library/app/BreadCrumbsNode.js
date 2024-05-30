@@ -18,23 +18,13 @@
             slot.setCanInspect(true)
         }
         */
-    }
 
-    init () {
-        super.init()
-        this.setNodeTileClassName("BreadCrumbsTile")
-        this.setCanDelete(false)
-        this.setNodeMinTileHeight(55)
-        this.setNodeCanReorderSubnodes(false)
-        this.setNodeIsVertical(true)
-        this.setNodeCanAddSubnode(false)
-        return this
+        this.setNodeTileClassName("BreadCrumbsTile");
+        this.setCanDelete(false);
+        this.setNodeMinTileHeight(55);
+        this.setNodeCanReorderSubnodes(false);
+        this.setNodeIsVertical(true);
+        this.setNodeCanAddSubnode(false);
     }
-
-    finalInit () {
-        super.finalInit()
-        this.setNodeMinTileHeight(55)
-    }
-
 
 }.initThisClass());

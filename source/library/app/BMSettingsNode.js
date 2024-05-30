@@ -22,15 +22,26 @@
 (class BMSettingsNode extends BMStorableNode {
     
     initPrototypeSlots () {
-        // model
-        this.newSlot("prototypes", null).setShouldStoreSlot(false) //.setInitProto(BMNode)
-        this.newSlot("resources", null).setShouldStoreSlot(false)  //.setInitProto(BMDataStore)
-        this.newSlot("storage", null).setShouldStoreSlot(false)  //.setInitProto(BMBlobs)
-        this.newSlot("blobs", null).setShouldStoreSlot(false)  //.setInitProto(BMBlobs)
-    }
 
-    init () {
-        super.init()
+        // TODO: move these to subnode slots?
+        
+        // model
+        {
+            const slot = this.newSlot("prototypes", null).setShouldStoreSlot(false); //.setInitProto(BMNode)
+        }
+
+        {
+            const slot = this.newSlot("resources", null).setShouldStoreSlot(false);  //.setInitProto(BMDataStore)
+        }
+
+        {
+            const slot = this.newSlot("storage", null).setShouldStoreSlot(false); //.setInitProto(BMBlobs)
+        }
+
+        {
+            const slot = this.newSlot("blobs", null).setShouldStoreSlot(false); //.setInitProto(BMBlobs)
+        }
+
         this.setNodeCanReorderSubnodes(false)
         this.setNodeCanAddSubnode(true)
 
@@ -39,7 +50,6 @@
 
         this.setShouldStore(false)
         this.setShouldStoreSubnodes(false)
-        return this
     }
 
     finalInit () {

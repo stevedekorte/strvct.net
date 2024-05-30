@@ -6,6 +6,7 @@
 */
 
 (class HomeAssistantGroup extends BMSummaryNode {
+
   initPrototypeSlots() {
     {
       this.newSlot("homeAssistant", null);
@@ -18,36 +19,26 @@
     {
       this.newSlot("idMap", null);
     }
-  }
 
-  init() {
-    super.init();
     this.setTitle("devices");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     //this.setSubnodeClasses([HomeAssistantDevice]);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
+    
+    this.setNoteIsSubnodeCount(true);
+  }
+
+  init() {
+    super.init();
     this.setIdMap(new Map());
   }
 
-  finalInit() {
-    super.finalInit()
-    this.setNoteIsSubnodeCount(true);
+  finalInit () {
+    super.finalInit();
     this.makeSortSubnodesByTitle();
   }
-
-  /*
-  didInit () {
-    super.didInit()
-  }
-  */
-
-  /*
-  service () {
-    return this.parentNode()
-  }
-  */
 
   objectWithId (id) {
     return this.idMap().get(id);

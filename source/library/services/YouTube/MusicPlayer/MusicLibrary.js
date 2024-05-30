@@ -58,20 +58,15 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([MusicFolder]);
-  }
 
-  init() {
-    super.init();
-    //this.setFolder(MusicFolder.clone());
-    this.setIsDebugging(true);
+    this.setNodeCanAddSubnode(true);
+    this.setTitle("Music Library");
+    //this.setIsDebugging(true);
+
   }
 
   finalInit() {
     super.finalInit();
-    this.setShouldStore(true);
-    this.setShouldStoreSubnodes(false);
-    this.setNodeCanAddSubnode(true);
-    this.setTitle("Music Library");
     this.setupPlaylists();
     this.folder().setName("Playlists");
   }

@@ -87,20 +87,12 @@
       const slot = this.newSlot("isLoading", false); // String
     }
 
-  }
-
-  init() {
-    super.init();
     this.setTitle("Image");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
     this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
-  }
-
-  finalInit() {
-    super.finalInit();
     this.setCanDelete(true);
     this.setNodeFillsRemainingWidth(true);
   }

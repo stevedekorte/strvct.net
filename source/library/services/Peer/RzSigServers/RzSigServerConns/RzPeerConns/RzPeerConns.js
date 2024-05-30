@@ -9,21 +9,17 @@
 (class RzPeerConns extends BMSummaryNode {
   initPrototypeSlots() {
     this.setSubnodeClasses([RzPeerConn]);
-  }
-
-  init() {
-    super.init();
     this.setTitle("connections to peers");
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
     this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(true);
+    this.setNoteIsSubnodeCount(true);
   }
 
   finalInit() {
     super.finalInit()
-    this.setNoteIsSubnodeCount(true);
-    assert(this.subnodeCount() === 0);
+    assert(this.subnodeCount() === 0); // sanity check
   }
 
   sigServerConn () {
