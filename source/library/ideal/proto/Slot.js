@@ -407,7 +407,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                         field.setValuePlaceholderText(this.valuePlaceholder());
                     }
                 }
-                //assert(!field.canSelfAddSubnode());
+                //assert(!field.nodeCanAddSubnode());
 
                 if (this.label()) {
                     if (slotType === "Action") { // TODO: hack - find a uniform way to handle this

@@ -20,7 +20,7 @@
   init() {
     super.init();
 
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
 
   }
 

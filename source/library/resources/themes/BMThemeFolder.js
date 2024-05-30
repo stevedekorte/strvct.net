@@ -20,7 +20,7 @@
         this.setNodeCanEditTitle(true)
         this.setTitle("Untitled " + this.thisClass().visibleClassName())
         this.setCanDelete(true)
-        this.setCanAdd(true)
+        this.setNodeCanAddSubnode(true)
         this.setSubnodeClasses([BMThemeFolder, BMThemeClass, BMStringField, BMNumberField])
         this.setNodeCanReorderSubnodes(true)
     }

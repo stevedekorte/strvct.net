@@ -4,7 +4,7 @@
 
     StyledNode
  
-    BMNode -> TitledNode -> ActionableNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
 
     For state and behavior specific to styling of views.
 

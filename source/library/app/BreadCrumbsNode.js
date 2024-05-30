@@ -27,7 +27,7 @@
         this.setNodeMinTileHeight(55)
         this.setNodeCanReorderSubnodes(false)
         this.setNodeIsVertical(true)
-        this.setCanAdd(false)
+        this.setNodeCanAddSubnode(false)
         return this
     }
 

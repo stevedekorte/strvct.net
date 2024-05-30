@@ -16,7 +16,7 @@
     this.setTitle("connections to sigserver");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
   }
 

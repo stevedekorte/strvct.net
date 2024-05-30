@@ -40,7 +40,7 @@
         this.setName("StrvctApp")
         this.setVersion([0, 0, 0, 0])
         this.setNodeCanReorderSubnodes(true)
-        //this.setCanAdd(true)
+        //this.setNodeCanAddSubnode(true)
         return this
     }
 

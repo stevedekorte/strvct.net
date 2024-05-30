@@ -17,7 +17,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([OpenAiImage]);
-    this.setCanAdd(false);
+    this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
     this.setNoteIsSubnodeCount(true);
   }

@@ -149,6 +149,11 @@
         }
 
         {
+            const slot = this.newSlot("nodeCanAddSubnode", false);
+            slot.setDuplicateOp("copyValue");
+        }
+
+        {
             const slot = this.newSlot("isVisible", true);
             slot.setSyncsToView(true);
         }
@@ -760,27 +765,6 @@
     delete () {
         this.removeFromParentNode();
         return this;
-    }
-
-    /*
-    nodeParentHasDeleteAction () {
-        const p = this.parentNode()
-        return p && p.hasNodeAction("delete")
-    }
-    */
-
-    /*
-    canDelete () {
-        if (this._canDelete) {
-            return true
-        }
-
-        return this.nodeParentHasDeleteAction()
-    }
-    */
-
-    canSelfAddSubnode () {
-        return this.hasNodeAction("add");
     }
 
     // --- utility -----------------------------

@@ -16,7 +16,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setSubnodeClasses([HomeAssistant]);
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
   }
 

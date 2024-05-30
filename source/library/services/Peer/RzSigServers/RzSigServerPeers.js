@@ -16,7 +16,7 @@
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
     //this.setSubnodeClasses([RzSigServer]);
-    this.setCanAdd(false);
+    this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
   }
 

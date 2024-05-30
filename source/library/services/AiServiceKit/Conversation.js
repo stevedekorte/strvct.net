@@ -73,7 +73,7 @@
     }
     //debugger;
     this.messages().forEach(m => m.setConversation(this));
-    this.setCanAdd(false);
+    this.setNodeCanAddSubnode(false);
     //this.setNodeFillsRemainingWidth(true);
     this.setNodeChildrenAlignment("flex-end");
     this.setCanDelete(true);

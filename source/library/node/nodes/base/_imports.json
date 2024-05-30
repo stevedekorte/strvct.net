@@ -1,7 +1,6 @@
 [
     "BMNode.js",
     "TitledNode.js",
-    "ActionableNode.js",
     "InspectableNode.js",
     "ViewableNode.js",
     "StyledNode.js",

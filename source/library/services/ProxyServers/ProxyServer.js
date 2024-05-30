@@ -112,7 +112,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setTitle("Unnamed Proxy Server");
-    //this.setCanAdd(true);
+    //this.setNodeCanAddSubnode(true);
   }
 
   finalInit() {

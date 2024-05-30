@@ -447,7 +447,7 @@
 
   async onOpen (peerId) {
     this.setPeerId(peerId)
-    this.debugLog("opened with peerId: '" + peerId + "'");
+    //this.debugLog("opened with peerId: '" + peerId + "'");
     this.setStatus("connected to server")
     //this.refreshPeers()
     this.sendDelegateMessage("onSigServerOpen", [this]);

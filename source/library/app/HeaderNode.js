@@ -77,7 +77,7 @@
     init () {
         super.init()
         this.setNodeCanReorderSubnodes(true)
-        //this.setCanAdd(true)
+        //this.setNodeCanAddSubnode(true)
         //const node = BMFolderNode.clone() // FolderNode?
         this.setNodeTileClassName("HeaderTile")
         this.setNodeMinTileHeight(100)
@@ -85,7 +85,7 @@
         this.setNodeCanEditTitle(true)
         this.setNodeIsVertical(false) 
         this.setCanDelete(false)
-        this.setCanAdd(false)
+        this.setNodeCanAddSubnode(false)
         this.setShouldStoreSubnodes(false)
         return this
     }

@@ -75,7 +75,7 @@
     addIfPossible () {
         const node = this.node()
 
-        if (node.canSelfAddSubnode()) {
+        if (node.nodeCanAddSubnode()) {
             const newNode = node.add()
             if (newNode) {
                 this.syncFromNode()

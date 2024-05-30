@@ -95,7 +95,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
     this.setSubnodeClasses([]);
-    this.setCanAdd(false);
+    this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(false);
   }
 

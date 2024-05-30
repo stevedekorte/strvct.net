@@ -26,7 +26,7 @@
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     //this.setSubnodeClasses([HomeAssistantDevice]);
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
     this.setIdMap(new Map());
   }

@@ -70,7 +70,7 @@
     super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
     this.setTitle("Music Library");
     this.setupPlaylists();
     this.folder().setName("Playlists");

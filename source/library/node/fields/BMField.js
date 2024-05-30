@@ -324,7 +324,7 @@
             const newValue = this.getValueFromTarget();
             if (this._value !== newValue) {
                 this._value = newValue;
-                this.didUpdateNodeIfInitialized();
+                //this.didUpdateNodeIfInitialized(); // this can cause sync action loops
             }
         }
         return this._value;

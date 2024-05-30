@@ -34,7 +34,7 @@
     super.finalInit();
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
     this.setCanDelete(true);
     this.setNoteIsSubnodeCount(true);
     this.makeSortSubnodesByTitle();

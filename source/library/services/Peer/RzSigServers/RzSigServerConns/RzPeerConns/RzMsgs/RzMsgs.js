@@ -17,7 +17,7 @@
     this.setTitle("peer messages");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
-    this.setCanAdd(true);
+    this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
   }
 

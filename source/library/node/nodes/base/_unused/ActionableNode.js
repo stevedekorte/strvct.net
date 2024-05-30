@@ -4,28 +4,24 @@
 
     ActionableNode
 
-    BMNode -> TitledNode -> ActionableNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
 
     Handles a list of actions the node can perform from the user interface (or other APIs).
 
 */
 
 (class ActionableNode extends TitledNode {
-    
+    /*
     initPrototypeSlots () {
+
         {
-            const slot = this.newSlot("nodeActions", null)
-            slot.setInitProto(Array)
+            const slot = this.newSlot("nodeActions", null);
+            slot.setInitProto(Array);
         }
+
+
     }
 
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
-    
     // --- standard actions -----------------------------
 
     setCanAdd (aBool) {
@@ -68,27 +64,10 @@
         return this[actionName].apply(this)
     }
 
-   
-    /*
-    nodeParentHasDeleteAction () {
-        const p = this.parentNode()
-        return p && p.hasNodeAction("delete")
-    }
-    */
-
-    /*
-    canDelete () {
-        if (this._canDelete) {
-            return true
-        }
-
-        return this.nodeParentHasDeleteAction()
-    }
-    */
-
     canSelfAddSubnode () {
         return this.hasNodeAction("add")
     }
+    */
 
 }.initThisClass());
 

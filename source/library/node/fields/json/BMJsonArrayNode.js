@@ -100,12 +100,18 @@
     }
 
     setJson (json) {
-        let index = 0;
+        //let index = 0;
         json.forEach((v) => {
-            const aNode = BMJsonNode.nodeForJson(v);
-            //aNode.setTitle(index);
-            this.addSubnode(aNode);
-            index ++;
+            if (this.subnodeClasses().length === 1) {
+                const aClass = this.subnodeClasses().first();
+                const aNode = aClass.clone().setJson(v);
+                this.addSubnode(aNode);
+            } else {
+                const aNode = BMJsonNode.nodeForJson(v);
+                //aNode.setTitle(index);
+                this.addSubnode(aNode);
+            }
+            //index ++;
         });
         return this;
     }

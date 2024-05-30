@@ -83,7 +83,7 @@
 
     init () {
         super.init()
-        this.setCanAdd(true)
+        this.setNodeCanAddSubnode(true)
         this.setSummaryFormat("value")
         this.setSubnodeProto(BMOptionNode)
         this.setNoteIconName("right-arrow")

@@ -16,7 +16,7 @@
     this.setTitle("connections to peers");
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);
-    this.setCanAdd(false);
+    this.setNodeCanAddSubnode(false);
     this.setNodeCanReorderSubnodes(true);
   }
 

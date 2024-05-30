@@ -4,14 +4,14 @@
 
     InspectableNode
  
-    BMNode -> TitledNode -> ActionableNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
 
     Handles creating inspector nodes and related fields.
     Slot has some logic for this too.
 
 */
 
-(class InspectableNode extends ActionableNode {
+(class InspectableNode extends TitledNode {
 
     initPrototypeSlots () {
         {
@@ -109,7 +109,7 @@
                     const newNode = nodeClass.clone();
                     newNode.setNodeCanReorderSubnodes(false); // should this be here?
                     newNode.setTitle(component);
-                    newNode.setCanAdd(false);
+                    newNode.setNodeCanAddSubnode(false);
                     return newNode;
                 })
                 pathNodes.push(node);
@@ -197,7 +197,7 @@
         field.setNodeCanReorderSubnodes(false);
         field.setSummaryFormat(slot.summaryFormat());
         field.setHasNewlineAfterSummary(true);
-        field.setCanAdd(false);
+        field.setNodeCanAddSubnode(false);
         field.setCanDelete(false);
         field.setIsVisible(slot.isSubnodeFieldVisible());
         

@@ -121,7 +121,7 @@
         sn.setIsEditable(aBool);
         if (!aBool) {
             if (sn.setCanAdd) {
-                sn.setCanAdd(false);
+                sn.setNodeCanAddSubnode(false);
             }
         }
         //console.log(sn.title() + " setIsEditable(" + aBool + ")");

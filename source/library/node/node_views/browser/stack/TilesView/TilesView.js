@@ -186,7 +186,7 @@
     duplicateSelectedTile () {
         const node = this.node()
         const tile = this.selectedTile()
-        const canAdd = node.canSelfAddSubnode() 
+        const canAdd = node.nodeCanAddSubnode() 
         if (tile && canAdd) {
             const canCopy = !Type.isNullOrUndefined(tile.node().copy)
             if (canCopy) { 
