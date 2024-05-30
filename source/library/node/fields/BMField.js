@@ -249,6 +249,7 @@
     */
 
     onUpdatedNode (aNote) {
+        /*
         if (this.target()) {
             console.log(this.type() + " for " + this.target().type()  + "." + this.key() + " onUpdatedNode(" + aNote.sender().type() + ")");
         }
@@ -264,6 +265,7 @@
         if (this.key() === "Total") {
             console.log(this.type() + " onUpdatedNode (key is Total)");
         }
+        */
 
         assert(aNote);
         // if it has a note, it was a post sent through notification center that the target node changed
@@ -277,17 +279,7 @@
     }
 
     syncFromTarget () {
-        if (this.key() === "Total") {
-            console.log(this.type() + " syncFromTarget (key is Total)");
-        }
-
-        /*
-        if (this.target()) {
-            this.setValue(this.getValueFromTarget());
-        }
-        */
-
-        this.value(); // triggers didUpdateNodeIfInitialized
+        //this.value(); // triggers didUpdateNodeIfInitialized
 
         // up to subclasses to implement
         return this
