@@ -871,9 +871,11 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         if (initProto) {
             const obj = initProto.clone()
             this.onInstanceSetValue(anInstance, obj)
-        } else if (this._initValue) {
+        } /*
+        else if (this._initValue) {
             this.onInstanceSetValue(anInstance, this._initValue)
         }
+        */
 
         /*
         if (this.field()) {
