@@ -245,7 +245,6 @@
         
     static initClass () {
         this.setIsSingleton(true)
-		return this
     }
 
     initPrototypeSlots () {

@@ -20,7 +20,6 @@
         this.setIsSingleton(true)
         Broadcaster.shared().addListenerForName(this, "firstUserEvent")
         //this.watchOnceForNote("onFirstUserEvent")
-        return this
     }
 
     static firstUserEvent (anEventListener) {

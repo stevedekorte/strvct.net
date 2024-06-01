@@ -11,45 +11,44 @@
 (class WebDocument extends ProtoClass {
     
     static initClass () {
-        this.setIsSingleton(true)
-        return this
+        this.setIsSingleton(true);
     }
     
     initPrototypeSlots () {
     }
 
     init () {
-        super.init()
-        return this
+        super.init();
+        return this;
     }
 
     body () {
-        return DocumentBody.shared()
+        return DocumentBody.shared();
     }
 
     styleSheets () {
         const elements = document.styleSheets;
-        const sheets = []
+        const sheets = [];
 
         for (let i = 0; i < elements.length; i ++) {
             const sheetElement = elements[i];
-            sheets.push(StyleSheet.clone().setSheetElement(sheetElement))
+            sheets.push(StyleSheet.clone().setSheetElement(sheetElement));
         }
 
-        return sheets
+        return sheets;
     }
 
     addStyleSheetString (cssCode) {
         const styleElement = document.createElement('style');
         styleElement.innerHTML = cssCode;
         document.head.appendChild(styleElement);
-        return this
+        return this;
     }
 
     show () {
-        this.debugLog(":")
-        this.styleSheets().forEach(sheet => sheet.show())
-        return this
+        this.debugLog(":");
+        this.styleSheets().forEach(sheet => sheet.show());
+        return this;
     }
 
 }.initThisClass());

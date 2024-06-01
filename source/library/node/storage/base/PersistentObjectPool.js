@@ -12,8 +12,7 @@
 (class PersistentObjectPool extends ObjectPool {
     
     static initClass () {
-        this.setIsSingleton(true)
-        return this
+        this.setIsSingleton(true);
     }
     
     initPrototypeSlots () {
@@ -27,15 +26,15 @@
     }
 
     init () {
-        super.init()
-        this.setName("defaultDataStore")
-        this.setRecordsMap(PersistentAtomicMap.clone())
-        //this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setName("defaultDataStore");
+        this.setRecordsMap(PersistentAtomicMap.clone());
+        //this.setIsDebugging(false);
+        return this;
     }
 
     open () {
-        throw new Error(this.type() + " synchronous open not available - use promiseOpen()")
+        throw new Error(this.type() + " synchronous open not available - use promiseOpen()");
     }
 
     async promiseSelfTest () {

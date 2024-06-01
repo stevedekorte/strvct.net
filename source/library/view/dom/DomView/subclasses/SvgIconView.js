@@ -22,7 +22,6 @@
     
     static initClass () {
         this.newClassSlot("sharedSvgMap", new Map()) // svgStringHash -> hidden svg element defined in document
-		return this
     }
 
     initPrototypeSlots () {

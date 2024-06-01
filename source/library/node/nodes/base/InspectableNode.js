@@ -58,31 +58,31 @@
         }
         
         slotNames.forEachV(slotName => {
-            const slot = slotsMap.at(slotName)
+            const slot = slotsMap.at(slotName);
             if (slot.canInspect()) {
-                const field = slot.newInspectorField()
-                let pathNodes = null
+                const field = slot.newInspectorField();
+                let pathNodes = null;
 
                 if (field) {
-                    field.setTarget(this)
-                    field.setCanDelete(false) 
-                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
-                    pathNodes.last().addSubnode(field)
+                    field.setTarget(this);
+                    field.setCanDelete(false);
+                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());
+                    pathNodes.last().addSubnode(field);
                 } else {
-                    const node = slot.onInstanceGetValue(this)
-                    if (Type.isBoolean(node) || Type.isNumber(node)) {
-                        // we assume slot value will be a node if not specified but it's not a node!
-                        throw new Error(this.type() + "." + slot.name() + " must have it's slotType set to be inspected")
+                    const node = slot.onInstanceGetValue(this);
+                    if (node === null || (Type.isObject(node) && node.thisClass().isKindOf(BMNode))) {
+                        // assume slotType is "Pointer"
+                        const linkNode = BMLinkNode.clone().setLinkedNode(node);
+                        linkNode.setCanDelete(false) ;
+                        pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());
+                        pathNodes.last().addSubnode(linkNode);
+                    } else {
+                        throw new Error(this.type() + "." + slot.name() + " must have it's slotType set to be inspected");
                     }
-                    assert(node === null || (Type.isObject(node) && node.thisClass().isKindOf(BMNode)));
-                    const linkNode = BMLinkNode.clone().setLinkedNode(node)
-                    linkNode.setCanDelete(false) 
-                    pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath())
-                    pathNodes.last().addSubnode(linkNode)
                 }
 
                 pathNodes.forEach(pathNode => { 
-                    pathNode.setCanDelete(false) 
+                    pathNode.setCanDelete(false) ;
                 })
             }
         })

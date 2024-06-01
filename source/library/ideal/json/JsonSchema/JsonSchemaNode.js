@@ -8,7 +8,6 @@
 (class JsonSchemaNode extends BMSummaryNode {
 
   static initClass () {
-    return this;
   }
 
   setupSlotsFromJsonSchema (schema) {

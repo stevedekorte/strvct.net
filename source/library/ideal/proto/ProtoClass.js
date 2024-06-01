@@ -108,7 +108,6 @@
         this.newClassSlot("jsonSchemaDescription", null)
 
         //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet())
-        return this
     }
 
     // --- class slots and variables ---

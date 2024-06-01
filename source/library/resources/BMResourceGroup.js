@@ -9,24 +9,23 @@
 (class BMResourceGroup extends BaseNode {
     
     static initClass () {
-        this.setIsSingleton(true)
-		return this
+        this.setIsSingleton(true);
     }
 
     initPrototypeSlots () {
-        this.newSlot("resourceClasses", [])
+        this.newSlot("resourceClasses", []);
     }
 
     initPrototype () {
+        this.setNoteIsSubnodeCount(true);
     }
 
     init () {
-        super.init()
-        this.setTitle(this.type())
-        this.setNoteIsSubnodeCount(true)
-        this.setResourceClasses([])
-        this.setup()
-        this.registerForAppDidInit()
+        super.init();
+        this.setTitle(this.type());
+        this.setResourceClasses([]);
+        this.setup();
+        this.registerForAppDidInit();
     }
 
     setup () {
