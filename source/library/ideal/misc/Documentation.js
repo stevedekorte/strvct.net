@@ -12,11 +12,9 @@
 
 (class Documentation extends ProtoClass {
     initPrototypeSlots () {
-
     }
-
-    init () {
-        super.init()
+  
+    initPrototype () {
     }
 
     classes () {

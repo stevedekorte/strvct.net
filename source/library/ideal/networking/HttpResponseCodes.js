@@ -13,7 +13,7 @@
 
 (class HttpResponseCodes extends ProtoClass {
   initPrototypeSlots () {
-    this.newSlot("codesMap", null)
+    this.newSlot("codesMap", null);
   }
 
   initPrototype () {

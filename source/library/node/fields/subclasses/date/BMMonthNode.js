@@ -9,11 +9,13 @@
 (class BMMonthNode extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("value", 1).setComment("month value starts with 1")
+        {
+            const slot = this.newSlot("value", 1);
+            slot.setComment("month value starts with 1");
+        }
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setNoteIconName("right-arrow")
 
         this.setCanDelete(false)

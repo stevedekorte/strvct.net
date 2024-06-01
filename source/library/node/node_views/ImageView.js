@@ -22,6 +22,9 @@
         this.newSlot("isEditable", false);
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init();
         this.setDisplay("flex");

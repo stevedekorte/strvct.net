@@ -14,7 +14,7 @@
   }
   */
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("request", null);

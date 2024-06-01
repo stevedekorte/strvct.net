@@ -7,7 +7,7 @@
 */
 
 (class SpeechToTextSession extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("recognition", null);
     }

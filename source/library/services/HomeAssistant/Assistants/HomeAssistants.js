@@ -7,7 +7,7 @@
 
 (class HomeAssistants extends BMSummaryNode {
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setTitle("Home Assistants");
     this.setNoteIsSubnodeCount(true);
     this.setSubtitle("home automation");

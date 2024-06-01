@@ -7,7 +7,7 @@
 */
 
 (class AzureSpeakers extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setShouldStore(true)
     this.setShouldStoreSubnodes(true)
   }

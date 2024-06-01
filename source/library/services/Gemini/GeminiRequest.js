@@ -44,7 +44,7 @@
 
 (class GeminiRequest extends AiRequest { 
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("jsonStreamReader", null);
     }

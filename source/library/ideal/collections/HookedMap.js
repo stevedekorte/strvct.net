@@ -27,7 +27,6 @@
         ])
     }
 
-
     static selfTest () {
         const a = this.clone()
         

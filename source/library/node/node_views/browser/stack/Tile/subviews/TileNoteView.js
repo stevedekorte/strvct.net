@@ -11,6 +11,9 @@
     initPrototypeSlots () {
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init()
         this.setFontSize("80%")

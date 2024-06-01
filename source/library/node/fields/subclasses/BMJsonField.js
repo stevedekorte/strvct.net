@@ -10,11 +10,12 @@
 (class BMJsonField extends BMField {
     
     initPrototypeSlots () {
-        this.newSlot("nodeTileLink", null)
+        {
+            const slot = this.newSlot("nodeTileLink", null);
+        }
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
         this.setKeyIsVisible(true)

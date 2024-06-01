@@ -24,6 +24,9 @@
         this.newSlot("noteHash", null) // null or string
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init()
         this.setSender(null)

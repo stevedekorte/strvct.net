@@ -7,7 +7,7 @@
 
 (class DefaultProxyServer extends ProxyServer {
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
   init() {

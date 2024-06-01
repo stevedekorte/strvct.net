@@ -11,7 +11,10 @@
 
 (class HashCache extends Base {
     initPrototypeSlots () {
-        this.newSlot("idb", null)
+        this.newSlot("idb", null);
+    }
+  
+    initPrototype () {
     }
 
     init () {

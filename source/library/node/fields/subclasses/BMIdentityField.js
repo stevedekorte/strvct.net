@@ -9,13 +9,11 @@
 (class BMIdentityField extends BMField {
     
     initPrototypeSlots () {
-
     }
 
-    init () {
-        super.init()
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(false)
+    initPrototype () {
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(false);
     }
 
     validate () {

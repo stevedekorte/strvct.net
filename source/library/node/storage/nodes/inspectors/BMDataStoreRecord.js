@@ -11,13 +11,12 @@
 (class BMDataStoreRecord extends BMFieldSetNode {
     
     initPrototypeSlots () {
-        this.newSlot("key", null)
-        this.newSlot("store", null)
+        this.newSlot("key", null);
+        this.newSlot("store", null);
     }
 
-    init () {
-        super.init()
-        this.setCanDelete(false) // too dangerous
+    initPrototype () {
+        this.setCanDelete(false); // too dangerous
     }
 
     prepareForFirstAccess () {

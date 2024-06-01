@@ -10,23 +10,20 @@
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("dataURL", null)
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("dataURL", null);
+            slot.setShouldStoreSlot(true);
         }
     }
 
     initPrototype () {
-        this.setNodeCanEditTitle(true)
-        this.setNodeCanEditSubtitle(false)
-        this.setTitle("Untitled")
-        this.setSubtitle(null)
-        this.setCanDelete(true)
+        this.setNodeCanEditTitle(true);
+        this.setNodeCanEditSubtitle(false);
+        this.setTitle("Untitled");
+        this.setSubtitle(null);
+        this.setCanDelete(true);
+        this.setNodeCanAddSubnode(true);
     }
 
-    init () {
-        super.init()
-        this.addNodeActions(["add"])
-    }
     
     onDidEditNode () {
         this.debugLog(" onDidEditNode")

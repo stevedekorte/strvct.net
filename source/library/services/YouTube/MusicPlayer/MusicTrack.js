@@ -12,7 +12,7 @@
 
 (class MusicTrack extends BMSummaryNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("name", "unnamed");
       slot.setLabel("name");

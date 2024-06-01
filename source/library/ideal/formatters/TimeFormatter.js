@@ -113,14 +113,10 @@ TimeFormatter
             slot.setSlotType("Boolean")
             slot.setCanInspect(true)
         }
-                
     }
-
-    /*
-    init () {
-        return super.init()
+  
+    initPrototype () {      
     }
-    */
 
     paddedNumber (n, padLength) {
         if (!padLength) {

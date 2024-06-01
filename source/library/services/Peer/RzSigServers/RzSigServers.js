@@ -6,7 +6,7 @@
 */
 
 (class RzSigServers extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setSubnodeClasses([RzSigServer]);
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);

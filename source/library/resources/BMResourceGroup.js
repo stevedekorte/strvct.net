@@ -17,6 +17,9 @@
         this.newSlot("resourceClasses", [])
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init()
         this.setTitle(this.type())

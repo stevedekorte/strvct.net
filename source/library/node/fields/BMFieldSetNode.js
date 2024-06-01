@@ -39,10 +39,6 @@
     initPrototype () {
         this.setShouldStoreSubnodes(false)
     }
-
-    init () {
-        super.init()
-    }
     
     didUpdateField (aField) {
         // override to implement hooks

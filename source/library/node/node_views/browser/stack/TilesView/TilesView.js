@@ -19,6 +19,9 @@
         //this.newSlot("isColumnInspecting", false)
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init()
         //this.setDisplay("block") // if block is used, there with be gaps between rows despite 0 margins!

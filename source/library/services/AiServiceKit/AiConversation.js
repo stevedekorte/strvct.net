@@ -7,7 +7,7 @@
 
 (class AiConversation extends Conversation {
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
 
     {

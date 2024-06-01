@@ -22,7 +22,7 @@
     ];
   }
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("role", "user"); 

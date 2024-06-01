@@ -70,7 +70,9 @@
             slot.setCanInspect(true)
             slot.setIsSubnode(true)
         }
-
+    }
+  
+    initPrototype () {
         this.setNodeCanReorderSubnodes(true);
         //this.setNodeCanAddSubnode(true);
         //const node = BMFolderNode.clone(); // FolderNode?

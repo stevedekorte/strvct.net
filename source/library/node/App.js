@@ -95,10 +95,8 @@
         this.newSlot("hasDoneAppInit", false)
         this.newSlot("rootView", null)
     }
-
-    init () {
-        super.init()
-        //console.log(ProtoClass.subclassesDescription())
+  
+    initPrototype () {
         this.setIsDebugging(true)
     }
 

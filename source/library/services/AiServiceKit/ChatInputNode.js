@@ -6,7 +6,7 @@
 */
 
 (class ChatInputNode extends BMTextAreaField {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("conversation", null); 

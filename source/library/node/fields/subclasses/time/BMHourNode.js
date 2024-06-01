@@ -12,9 +12,7 @@
         this.newSlot("value", 0).setComment("0 to 23")
     }
 
-    init () {
-        super.init()
-
+    initPrototype () {
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
 

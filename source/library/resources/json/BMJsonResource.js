@@ -15,6 +15,8 @@
     initPrototypeSlots () {
     }
 
+    initPrototype () {
+    }
 
 }.initThisClass());
 

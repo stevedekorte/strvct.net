@@ -17,11 +17,8 @@
         this.newSlot("noteHash", null)
     }
 
-    /*
-    init () {
-        super.init()
+    initPrototype () {
     }
-    */
 
     senderId () {
         return this.sender().debugTypeId()

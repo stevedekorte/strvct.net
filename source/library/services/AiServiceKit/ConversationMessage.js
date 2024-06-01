@@ -6,7 +6,7 @@
 */
 
 (class ConversationMessage extends BMTextAreaField {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.overrideSlot("key")

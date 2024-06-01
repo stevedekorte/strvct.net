@@ -30,7 +30,7 @@
 */
 
 (class HomeAssistantEntity extends HomeAssistantObject {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     /*
     {

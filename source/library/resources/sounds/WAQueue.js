@@ -34,16 +34,15 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  initPrototype () {
+    this.setCanDelete(true);
+  }
+
   init () {
     super.init();
     this.setTitle("Audio Queue");
     this.setAudioBlobQueue([]);
 
-  }
-
-  finalInit () {
-    super.finalInit();
-    this.setCanDelete(true);
   }
 
   isPlaying () {

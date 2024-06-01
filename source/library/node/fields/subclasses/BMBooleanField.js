@@ -14,14 +14,19 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("unsetVisibleValue", "unset")
+        {
+            const slot = this.overrideSlot("value", null);
+            slot.setInitValue(false);
+        }
+
+        {
+            const slot = this.newSlot("unsetVisibleValue", "unset");
+        }
     }
 
-    init () {
-        super.init()
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(false)
-        this.setValue(false) // why was this commented out?
+    initPrototype () {
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(false);
     }
 
     valueIsBool () {

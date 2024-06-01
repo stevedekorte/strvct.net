@@ -13,8 +13,7 @@
   initPrototypeSlots () {
   }
 
-  init () {
-    super.init();
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setNodeCanEditTitle(true);
@@ -26,6 +25,10 @@
     //this.setSubnodeClasses([BMThemeLevel]);
     this.setSubnodeClasses([BMThemeClass]);
     this.setNodeCanReorderSubnodes(true);
+  }
+
+  init () {
+    super.init();
     //this.setupSubnodes()
   }
 

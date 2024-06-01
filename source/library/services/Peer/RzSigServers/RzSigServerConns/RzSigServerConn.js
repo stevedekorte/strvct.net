@@ -8,7 +8,7 @@
 */
 
 (class RzSigServerConn extends BMStorableNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("name", null);

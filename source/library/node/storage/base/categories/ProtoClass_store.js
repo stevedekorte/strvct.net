@@ -50,7 +50,7 @@
                     if (!slot.hasSetterOnInstance(this)) {
                     // looks like the schema has changed 
                     // TODO: add something the schedule a didMutate?
-                    console.warn("no setter for slot?")
+                    console.warn("no setter for slot '"+ slot.name() + "'?")
                     debugger;
                 } else {
                     /*if (slot.isLazy()) {
@@ -66,7 +66,8 @@
                     }
                 }
             } else {
-                console.warn("loadFromRecord found missing slot '" + k + "' - did schema change?")
+                console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.type() + "' does not. Did schema change?");
+                debugger;
                 this.scheduleMethod("didMutate", 1000) // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete 
                 //debugger;
             }

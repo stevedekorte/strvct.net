@@ -6,7 +6,7 @@
 */
 
 (class AzureService extends BMStorableNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.newSlot("regionOptions", []);
 
     {

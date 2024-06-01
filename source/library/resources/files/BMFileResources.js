@@ -12,14 +12,17 @@
 (class BMFileResources extends BMResourceGroup {
     
     initPrototypeSlots () {
-        this.newSlot("rootPath", ".")
-        this.newSlot("hasSetupSubnodes", false)
+        this.newSlot("rootPath", ".");
+        this.newSlot("hasSetupSubnodes", false);
+    }
+
+    initPrototype () {
+        this.setTitle("FileResources");
+        this.setNoteIsSubnodeCount(true);
     }
 
     init () {
         super.init()
-        this.setTitle("FileResources")
-        this.setNoteIsSubnodeCount(true)
         //this.registerForAppDidInit() // BMResourceGroup does this
         //this.onFinishInit()
         return this

@@ -17,7 +17,9 @@
     
     /*
     initPrototypeSlots () {
+    }
 
+    initPrototype () {
     }
 
     init () {

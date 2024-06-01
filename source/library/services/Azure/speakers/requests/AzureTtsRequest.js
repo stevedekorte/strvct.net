@@ -6,7 +6,7 @@
 */
 
 (class AzureTtsRequest extends BMStorableNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("inputText", "");
       //slot.setInspectorPath("")

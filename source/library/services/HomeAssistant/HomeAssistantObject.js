@@ -6,7 +6,7 @@
 */
 
 (class HomeAssistantObject extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("group", null) // ref to HomeAssistantGroup subclass instance

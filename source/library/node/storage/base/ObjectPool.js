@@ -90,6 +90,9 @@
         this.newSlot("collectablePidSet", null) // used during collection to store keys before tx begins
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init()
         this.setRecordsMap(ideal.AtomicMap.clone());

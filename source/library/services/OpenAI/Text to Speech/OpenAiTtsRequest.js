@@ -7,7 +7,7 @@
 
 (class OpenAiTtsRequest extends BMSummaryNode {
  
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("delegate", null); // optional reference to service object that owns request 
     }

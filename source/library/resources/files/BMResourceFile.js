@@ -28,11 +28,13 @@
         this.newSlot("usesBlobCache", false)
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setTitle("File")
         this.setNoteIsSubnodeCount(true)
+    }
 
+    init () {
+        super.init()
         // notifications
         this.setLoadNote(this.newNoteNamed("fileResouceLoaded"))
         this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"))

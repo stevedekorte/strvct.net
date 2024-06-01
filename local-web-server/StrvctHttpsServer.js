@@ -19,6 +19,9 @@ const nodePath = require('path');
 		this.newSlot("certPath", null);
 		this.newSlot("isSecure", true);
 	}
+  
+	initPrototype () {
+	}
 
 	init () {
 		super.init();

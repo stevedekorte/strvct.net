@@ -6,7 +6,7 @@
 */
 
 (class OpenAiImagePrompt extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("prompt", "");

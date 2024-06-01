@@ -69,6 +69,9 @@
         }
     }
 
+    initPrototype () {
+    }
+
     // --- 
     // TODO: 
     // - add a Slot.validatorMethod or methodHook so this can be done dynamically?

@@ -12,7 +12,7 @@
 */
 
 (class AiConversations extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
   init() {

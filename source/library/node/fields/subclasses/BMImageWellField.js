@@ -31,21 +31,20 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("onlyShowsKeyWhenEmpty", false)
-        this.newSlot("isEditable", true)
+        this.newSlot("onlyShowsKeyWhenEmpty", false);
+        this.newSlot("isEditable", true);
         
-        this.overrideSlot("nodeMinTileHeight").setShouldStoreSlot(true)
+        {
+            const slot = this.overrideSlot("nodeMinTileHeight");
+            slot.setShouldStoreSlot(true);
+        }
     }
 
     initPrototype () {
-        this.setKey("Image title")
-        this.setKeyIsEditable(false)
-        this.setValueIsEditable(false)
-        this.setNodeCanEditTileHeight(true)
-    }
-
-    init () {
-        super.init()
+        this.setKey("Image title");
+        this.setKeyIsEditable(false);
+        this.setValueIsEditable(false);
+        this.setNodeCanEditTileHeight(true);
     }
 
     summaryValue () {

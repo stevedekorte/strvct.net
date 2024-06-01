@@ -7,7 +7,7 @@
 */
 
 (class SttMessage extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("result", "");      

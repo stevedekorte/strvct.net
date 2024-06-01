@@ -8,7 +8,7 @@
 
 (class RzMsgs extends BMSummaryNode {
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setSubnodeClasses([RzMsg]);
     this.setTitle("peer messages");
     this.setShouldStore(true);

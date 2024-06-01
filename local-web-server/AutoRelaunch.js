@@ -14,11 +14,10 @@ const { spawn } = require('child_process');
 		this.newSlot("keyPath", null);
 		this.newSlot("checkInterval", 5000);
 		this.newSlot("intervalId", null);
-	}
-
-    init () {
-        super.init();
     }
+  
+    initPrototype () {
+	}
 
     start () {
         console.log(this.type() + " started");

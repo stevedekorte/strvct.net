@@ -16,10 +16,8 @@
         this.newSlot("dataURL", "");
     }
 
-    init () {
-        super.init();
+    initPrototype () {
         this.setIsDebugging(false);
-        return this
     }
 
     title () {

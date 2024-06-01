@@ -11,12 +11,18 @@
 (class BMCreatorNode extends BMStorableNode {
     
     initPrototypeSlots () {
-        this.overrideSlot("subnodes").setShouldStoreSlot(false)
-        this.newSlot("typeChoices", []).setInitProto(Array)
-    }
+        {
+            const slot = this.overrideSlot("subnodes");
+            slot.setShouldStoreSlot(false);
+        }
 
-    init () {
-        super.init()
+        {
+            const slot = this.newSlot("typeChoices", []);
+            slot.setInitProto(Array);
+        }
+    }
+  
+    initPrototype () {
         this.setNodeCanEditTitle(false)
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)

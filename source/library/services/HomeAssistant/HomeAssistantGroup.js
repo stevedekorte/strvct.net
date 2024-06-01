@@ -7,7 +7,7 @@
 
 (class HomeAssistantGroup extends BMSummaryNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       this.newSlot("homeAssistant", null);
     }

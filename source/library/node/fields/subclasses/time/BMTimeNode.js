@@ -24,20 +24,20 @@
     }
 
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setNodeCanReorderSubnodes(false)
-        this.setCanDelete(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setCanDelete(true);
 
-        this.setTitle("Time")
+        this.setTitle("Time");
 
-        this.setNodeCanEditTitle(true)
-        this.setNodeCanEditSubtitle(false)
+        this.setNodeCanEditTitle(true);
+        this.setNodeCanEditSubtitle(false);
+        this.setNoteIconName("right-arrow");
     }
 
     init () {
         super.init()
-        this.setNoteIconName("right-arrow")
         this.setFormatter(TimeFormatter.clone())
         return this
     }

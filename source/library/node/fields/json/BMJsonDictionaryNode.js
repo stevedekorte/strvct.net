@@ -17,17 +17,15 @@
         {
             const slot = this.newSlot("shouldMerge", true);
         }
+    }
 
+    initPrototype () {
         this.setNodeCanEditTitle(true);
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
         this.setNodeCanReorderSubnodes(true);
         this.setCanDelete(true);
         this.setNoteIconName("right-arrow");
-    }
-
-    init () {
-        super.init()
         //this.setSubtitle("Dictionary");
         this.setSummaryFormat("key value");
         this.setHasNewLineSeparator(true);

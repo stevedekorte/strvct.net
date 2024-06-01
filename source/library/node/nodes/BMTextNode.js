@@ -54,14 +54,8 @@
         this.setNodeCanEditColumnWidth(true)
     }
 
-    /*
-    init () {
-        super.init()
-    }
-    */
-
     acceptedSubnodeTypes () {
-        return []
+        return [];
     }
 
 }.initThisClass());

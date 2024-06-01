@@ -10,7 +10,7 @@
 
 (class MusicLibrary extends BMSummaryNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("currentTrack", null);

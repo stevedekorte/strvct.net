@@ -27,7 +27,7 @@
 
 (class AiRequest extends BMStorableNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("delegate", null); // optional reference to object that owns request 
     }

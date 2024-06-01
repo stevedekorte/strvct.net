@@ -16,6 +16,9 @@
             const slot = this.newSlot("text", ""); // string
         }
     }
+  
+    initPrototype () {
+    }
 
     appendText (s) {
         assert(Type.isString(s));

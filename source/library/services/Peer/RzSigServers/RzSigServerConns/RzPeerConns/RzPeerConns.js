@@ -7,7 +7,7 @@
 */
 
 (class RzPeerConns extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setSubnodeClasses([RzPeerConn]);
     this.setTitle("connections to peers");
     this.setShouldStore(false);

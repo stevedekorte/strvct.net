@@ -8,7 +8,7 @@
 
 (class RzSigServerPeers extends BMSummaryNode {
   
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setTitle("peers");
     this.setShouldStore(false);
     this.setShouldStoreSubnodes(false);

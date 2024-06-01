@@ -18,7 +18,9 @@
             slot.setCanInspect(true)
         }
         */
-
+    }
+  
+    initPrototype () {
         this.setNodeTileClassName("BreadCrumbsTile");
         this.setCanDelete(false);
         this.setNodeMinTileHeight(55);

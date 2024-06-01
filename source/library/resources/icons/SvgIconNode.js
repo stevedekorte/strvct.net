@@ -22,6 +22,9 @@
     }
   }
 
+  initPrototype () {
+  }
+
   didLoad () {
     super.didLoad()
     //debugger

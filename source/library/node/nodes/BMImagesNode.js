@@ -11,9 +11,7 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init()
-
+    initPrototype () {
         this.setNodeViewClassName("ImageView")
         this.setSubnodeProto("ImageNode")
         
@@ -22,9 +20,8 @@
         this.setTitle(null)
         this.setSubtitle(null)
         
-        //this.addNodeActions(["add"])
+        //this.setNodeCanAddSubnode(true);
         //this.setCanDelete(true)
-
     }
     
 }.initThisClass());

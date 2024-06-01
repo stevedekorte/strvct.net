@@ -7,7 +7,7 @@
 
 (class RzMsg extends BMSummaryNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("id", null);

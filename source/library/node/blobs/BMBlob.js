@@ -52,13 +52,11 @@
             slot.setDoesHookSetter(true)
         }
     }
-
-    init () {
-        super.init()
+  
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(false)
         this.setCanDelete(true)
-        return this
     }
 
     age () {

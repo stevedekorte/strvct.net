@@ -6,7 +6,7 @@
 */
 
 (class HomeAssistantDevices extends HomeAssistantGroup {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
   }
 

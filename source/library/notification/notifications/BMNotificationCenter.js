@@ -90,6 +90,9 @@
         this.newSlot("noteSet", null) // Set used for fast lookup for matching note
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init()
         this.setObservations([]);

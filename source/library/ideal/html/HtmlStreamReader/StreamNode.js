@@ -25,7 +25,9 @@
         {
             const slot = this.newSlot("isClosed", false); // true if the stream has read the closing of the node
         }
-
+    }
+  
+    initPrototype () {
     }
 
     detectAncestor (func) {

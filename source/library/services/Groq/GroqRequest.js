@@ -14,7 +14,7 @@
 
 (class GroqRequest extends OpenAiRequest {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
   init () {

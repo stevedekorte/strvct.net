@@ -59,11 +59,6 @@
     }
   }
 
-  init () {
-    super.init();
-    //this.setIsDebugging(true);
-  }
-
   newParser () {
       const parser = clarinet.parser();
 

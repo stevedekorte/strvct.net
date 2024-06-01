@@ -12,24 +12,20 @@
 (class SyncAction extends ProtoClass {
 
     static ActionKeyForTargetAndMethod (target, method) {
-        return target.typeId() + "." + method
+        return target.typeId() + "." + method;
     }
 
     initPrototypeSlots () {
-        this.newSlot("target", null)
-        this.newSlot("method", null)
-        this.newSlot("order", 0)
-        this.newSlot("args", null)
-        this.newSlot("isUnscheduled", false)
-        this.newSlot("error", null)
+        this.newSlot("target", null);
+        this.newSlot("method", null);
+        this.newSlot("order", 0);
+        this.newSlot("args", null);
+        this.newSlot("isUnscheduled", false);
+        this.newSlot("error", null);
     }
 
-    /*
-    init () {
-        super.init()
-        this.setIsDebugging(false)
+    initPrototype () {
     }
-    */
 	
     tryToSend () {
         try {

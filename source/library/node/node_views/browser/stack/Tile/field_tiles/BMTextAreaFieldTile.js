@@ -19,6 +19,9 @@
         }
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init();
         this.keyView().hideDisplay();

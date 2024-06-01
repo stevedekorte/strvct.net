@@ -23,7 +23,10 @@
         this.newSlot("txId", null)
         this.newSlot("promiseForCommit", null)
         this.newSlot("promiseForFinished", null)
-        this.newSlot("timeoutInMs", 1000)
+        this.newSlot("timeoutInMs", 1000);
+    }
+  
+    initPrototype () {
     }
 
     init () {

@@ -6,7 +6,7 @@
 */
 
 (class AzureTtsRequests extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
   }
 

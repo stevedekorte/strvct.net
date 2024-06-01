@@ -43,7 +43,7 @@
 
 (class OpenAiRequest extends AiRequest {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
   }
 

@@ -37,28 +37,31 @@
 (class BMBlobs extends BMStorableNode {
     
     static initClass () {
-        this.setIsSingleton(true)
-		return this
+        this.setIsSingleton(true);
+		return this;
     }
     
     initPrototypeSlots () {
-        this.newSlot("store", null)
+        this.newSlot("store", null);
+    }
+  
+    initPrototype () {
+        this.setTitle("Blobs");
+        this.setNoteIsSubnodeCount(true);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setNodeCanReorderSubnodes(true);
     }
 
     init () {
-        super.init()
-        this.setTitle("Blobs")
-        this.setNoteIsSubnodeCount(true)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-        this.setNodeCanReorderSubnodes(true)
-        this.setStore(PersistentAsyncMap.clone().setName("BlobHashStore"))
-        return this
+        super.init();
+        this.setStore(PersistentAsyncMap.clone().setName("BlobHashStore"));
+        return this;
     }
 
     promiseOpen () {
-        debugger
-        return this.store().promiseOpen()
+        debugger;
+        return this.store().promiseOpen();
     }
 
     // --- lookup blob by name ---

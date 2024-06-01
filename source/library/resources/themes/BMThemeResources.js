@@ -35,11 +35,10 @@
 		return this
     }
 
-    static initPrototypeSlots () {
+    initPrototypeSlots () {
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setTitle("Themes")
 
         this.setShouldStore(true)

@@ -515,23 +515,23 @@
     }
 
     init () { 
-        super.init()
+        super.init();
         // subclasses should override to do initialization
-        //assert(this.isInstance())
-        this.initializeSlots()
+        //assert(this.isInstance());
+        this.initializeSlots();
     }
 
     initializeSlots () {
-        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this)) 
+        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceInitSlot(this));
     }
 
     finalInit () {
-        super.finalInit()
-        this.finalInitSlots()
+        super.finalInit();
+        this.finalInitSlots();
     }
 
     finalInitSlots () {
-        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this)) 
+        this.thisPrototype().allSlotsMap().forEach(slot => slot.onInstanceFinalInitSlot(this));
     }
 
     toString () {

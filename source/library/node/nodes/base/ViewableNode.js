@@ -155,15 +155,11 @@
             slot.setDuplicateOp("copyValue") // TODO: change to NavWidth
         }
 
-
-                
     }
 
-    /*
-    init () {
-        super.init()
+    initPrototype () {    
     }
-    */
+
 
     finalInit () {
         super.finalInit()

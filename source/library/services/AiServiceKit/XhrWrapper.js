@@ -53,7 +53,7 @@
 
 (class XhrWrapper extends BMStorableNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("delegate", null); // optional ref
     }

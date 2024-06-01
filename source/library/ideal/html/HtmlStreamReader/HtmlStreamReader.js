@@ -59,7 +59,9 @@
     {
       const slot = this.newSlot("error", null);
     }
-
+  }
+  
+  initPrototype () {
   }
 
   init () {

@@ -34,27 +34,18 @@
             const slot = this.newSlot("info", null)
             slot.setShouldStoreSlot(true)
         }
-
-        // inherits isEnabled and isEditable slots from Field
-
-        //this.newSlot("target", null)
     }
 
     initPrototype () {
+        // inherits isEnabled and isEditable slots from Field
+
+        //this.newSlot("target", null)
+
         this.setShouldStore(true)
         this.setNodeTileIsSelectable(true)
         this.setNodeCanInspect(true)
         this.setKeyIsVisible(false)
         this.setValueIsVisible(false)
-    }
-
-    init () {
-        super.init()
-    }
-
-    finalInit () {
-        super.finalInit()
-        this.initPrototype()
     }
 
     setTitle (s) {

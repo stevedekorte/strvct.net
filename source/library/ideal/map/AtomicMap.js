@@ -20,6 +20,9 @@ getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
         //this.newSlot("queuedSets", null);
         this.newSlot("beginPromiseFifoQueue", null); // first-in-first-out queue of promises, last in queue is was the earliest promise added
     }
+  
+    initPrototype () {
+    }
 
     init () {
         super.init();

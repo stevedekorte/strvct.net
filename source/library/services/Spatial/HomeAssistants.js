@@ -8,7 +8,7 @@
 
 (class HomeAssistants extends BMSummaryNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setSubnodeClasses([HomeAssistant]);
     this.setTitle("Home Assistants");
     this.setShouldStore(true);

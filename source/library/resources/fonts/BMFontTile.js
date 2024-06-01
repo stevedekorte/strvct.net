@@ -9,12 +9,9 @@
 (class BMFontTile extends TitledTile {
     
     initPrototypeSlots () {
-
     }
 
-    init () {
-        super.init();
-        return this;
+    initPrototype () {
     }
     
     updateSubviews () {

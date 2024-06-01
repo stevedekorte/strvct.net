@@ -12,8 +12,7 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setNodeCanEditTitle(true)
         this.setNodeCanEditSubtitle(false)
         this.setShouldStore(true)
@@ -35,7 +34,6 @@
     setJson (json) {
         return this
     }
-
 
     setValueIsEditable (aBool) {
         /*

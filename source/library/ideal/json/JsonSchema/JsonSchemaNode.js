@@ -53,7 +53,7 @@
     }
   }
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("schemaString", "");
@@ -69,29 +69,13 @@
       slot.setSyncsToView(true);
       slot.setNodeFillsRemainingWidth(true);
     }
-
   }
-
-  init() {
-    super.init();
+  
+  initPrototype () {
     this.setCanDelete(true);
     this.setShouldStoreSubnodes(false);
     this.setNodeCanEditTitle(false);
     this.setSummaryFormat("key");
-
-    //this.setAssistant(CharacterAssistant.clone());
-  }
-
-  /*
-  summary () {
-    debugger;
-    return super.summary();
-  }
-  */
-
-  finalInit () {
-    super.finalInit();
-    //this.setHasNewLineSeparator(true);
     this.setHasNewlineAfterSummary(true);
   }
 

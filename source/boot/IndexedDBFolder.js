@@ -20,11 +20,9 @@
         this.newSlot("lastTx", null) ;
         //this.newSlot("keyCacheSet", null);
         this.newSlot("version", 2); 
-
     }
-
-    init () {
-        super.init()
+  
+    initPrototype () {
         this.setIsDebugging(true)
     }
 

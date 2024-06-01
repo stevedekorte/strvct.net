@@ -8,7 +8,7 @@
 
 (class RzPeer extends BMStorableNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("peerId", "");      

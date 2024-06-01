@@ -60,6 +60,9 @@
         */
     }
 
+    initPrototype () {
+    }
+
     // --- udpates ---
 	
     didUpdateSlot (aSlot, oldValue, newValue) {

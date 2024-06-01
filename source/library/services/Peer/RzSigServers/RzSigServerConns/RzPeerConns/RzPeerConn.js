@@ -33,7 +33,7 @@
     }
   }
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("peerId", null);
       slot.setInspectorPath("")

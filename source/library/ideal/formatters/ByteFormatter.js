@@ -83,12 +83,10 @@
             ])
         }
     }
-
-    /*
-    init () {
-        super.init()
+  
+    initPrototype () {
     }
-    */
+
 
     formattedValue () {
         const b = Math.floor(this.value());

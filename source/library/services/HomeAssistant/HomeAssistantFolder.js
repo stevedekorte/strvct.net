@@ -6,7 +6,7 @@
 */
 
 (class HomeAssistantFolder extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setTitle("folder");
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);

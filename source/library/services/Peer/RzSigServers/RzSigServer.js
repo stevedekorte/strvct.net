@@ -23,7 +23,7 @@
 
   // --- prototype ---
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     /*
     {

@@ -6,7 +6,7 @@
 */
 
 (class YouTubeService extends BMStorableNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     /*
     {
       const slot = this.newSlot("musicLibrary", null)

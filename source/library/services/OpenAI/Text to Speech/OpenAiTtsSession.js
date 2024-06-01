@@ -37,7 +37,7 @@
     */
   }
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("prompt", "");

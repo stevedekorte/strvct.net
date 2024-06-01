@@ -35,12 +35,6 @@ TimePeriodFormatter
         })
     }
 
-    /*
-    init () {
-        return super.init()
-    }
-    */
-
     formattedValue () {
         const periods = this.periods()
 

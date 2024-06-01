@@ -16,8 +16,7 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init();
+    initPrototype () {
         this.setTitle("Json");
         this.setNoteIsSubnodeCount(true);
         return this;

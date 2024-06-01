@@ -6,7 +6,7 @@
 */
 
 (class HomeAssistant extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.newSlot("regionOptions", []);
 
     {

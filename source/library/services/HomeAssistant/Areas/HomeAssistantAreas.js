@@ -6,7 +6,7 @@
 */
 
 (class HomeAssistantAreas extends HomeAssistantGroup {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
   init() {

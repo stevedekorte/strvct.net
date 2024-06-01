@@ -77,13 +77,11 @@
         this.setNodeCanAddSubnode(true);
     }
 
-
     finalInit () {
         super.finalInit();
         if (this.subnodeClasses().length === 0) {
             this.setSubnodeClasses(this.jsonClasses());
         }
     }
-
     
 }.initThisClass());

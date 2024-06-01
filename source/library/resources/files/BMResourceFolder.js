@@ -13,13 +13,16 @@
 (class BMResourceFolder extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("path", null)
+        this.newSlot("path", null);
+    }
+
+    initPrototype () {
+        this.setTitle("BMFileSystemFolder");
+        this.setNoteIsSubnodeCount(true);
     }
 
     init () {
         super.init()
-        this.setTitle("BMFileSystemFolder")
-        this.setNoteIsSubnodeCount(true)
         //this.registerForAppDidInit()
         return this
     }

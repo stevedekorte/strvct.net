@@ -12,17 +12,14 @@
 (class StackFrame extends ProtoClass {
 
     initPrototypeSlots () {
-        this.newSlot("functionName", null)
-        this.newSlot("url", null)
-        this.newSlot("lineNumber", null)
-        this.newSlot("characterNumber", null)
+        this.newSlot("functionName", null);
+        this.newSlot("url", null);
+        this.newSlot("lineNumber", null);
+        this.newSlot("characterNumber", null);
     }
-
-    /*
-    init () {
-        super.init()
+  
+    initPrototype () {
     }
-    */
 
     fromLine (line) {
         line = line.after("at ")

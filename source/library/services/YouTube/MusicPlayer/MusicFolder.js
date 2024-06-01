@@ -10,7 +10,7 @@
 
 (class MusicFolder extends BMSummaryNode {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("name", null);
       slot.setLabel("name");

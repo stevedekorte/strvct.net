@@ -6,7 +6,7 @@
 */
 
 (class AiChatModels extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
   }
 
   init() {

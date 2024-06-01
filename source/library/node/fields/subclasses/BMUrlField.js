@@ -41,17 +41,20 @@
 
     initPrototypeSlots () {
         // scheme : // userinfo @host : port / path ? query # fragment
-        this.newStringSlotNamed("href", "")
+        this.newStringSlotNamed("href", "");
         
-        this.newStringSlotNamed("protocol", "http")
-        this.newStringSlotNamed("username", "")
-        this.newStringSlotNamed("password", "")
-        this.newStringSlotNamed("hostname", "hostname")
-        this.newStringSlotNamed("port", "")
-        this.newStringSlotNamed("pathname", "")
-        this.newStringSlotNamed("search", "")
-        this.newStringSlotNamed("hash", "")
-        this.newSlot("isUpdatingHref", false)
+        this.newStringSlotNamed("protocol", "http");
+        this.newStringSlotNamed("username", "");
+        this.newStringSlotNamed("password", "");
+        this.newStringSlotNamed("hostname", "hostname");
+        this.newStringSlotNamed("port", "");
+        this.newStringSlotNamed("pathname", "");
+        this.newStringSlotNamed("search", "");
+        this.newStringSlotNamed("hash", "");
+        this.newSlot("isUpdatingHref", false);
+    }
+
+    initPrototype () {
     }
 
     newStringSlotNamed (slotName, defaultValue) {

@@ -11,18 +11,21 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init()
-
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true) 
+    initPrototype () {
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
         
-        this.setNodeCanEditTitle(true)
-        this.setTitle("Untitled " + this.thisClass().visibleClassName())
-        this.setCanDelete(true)
-        this.setNodeCanAddSubnode(true)
-        this.setSubnodeClasses([BMThemeFolder, BMThemeClass, BMStringField, BMNumberField])
-        this.setNodeCanReorderSubnodes(true)
+        this.setNodeCanEditTitle(true);
+        this.setTitle("Untitled " + this.thisClass().visibleClassName());
+        this.setCanDelete(true);
+        this.setNodeCanAddSubnode(true);
+        this.setNodeCanReorderSubnodes(true);
+    }
+
+    init () {
+        super.init();
+        this.setSubnodeClasses([this.thisClass(), BMThemeClass, BMStringField, BMNumberField]);
+        return this;
     }
 
     styleMap () {

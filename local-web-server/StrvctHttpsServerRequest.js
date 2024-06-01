@@ -39,6 +39,9 @@ const https = require('https');
 		this.newSlot("path", null);
 		this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/");
 	}
+  
+	initPrototype () {
+	}
 
 	process () {
 		//this.response().write("request:\n, this.requestDescription(request))

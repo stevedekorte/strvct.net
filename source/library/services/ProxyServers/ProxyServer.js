@@ -12,7 +12,7 @@
 */
 
 (class ProxyServer extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("isSecure", true);
       slot.setShouldJsonArchive(true)

@@ -68,20 +68,18 @@
 (class SyncScheduler extends ProtoClass {
 
     static initClass () {
-        this.setIsSingleton(true)
-        return this
+        this.setIsSingleton(true);
+        return this;
     }
     
     initPrototypeSlots () {
-        this.newSlot("actions", new Map())
-        this.newSlot("hasTimeout", false)
-        this.newSlot("isProcessing", false)
-        this.newSlot("currentAction", null)
+        this.newSlot("actions", new Map());
+        this.newSlot("hasTimeout", false);
+        this.newSlot("isProcessing", false);
+        this.newSlot("currentAction", null);
     }
 
-    init () {
-        super.init()
-        //this.setIsDebugging(true)
+    initPrototype () {
     }
 
     newActionForTargetAndMethod (target, syncMethod, order) {

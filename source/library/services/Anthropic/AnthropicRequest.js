@@ -48,7 +48,7 @@
 
 (class AnthropicRequest extends AiRequest {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     {
       const slot = this.newSlot("usageInputTokenCount", 0);
     }

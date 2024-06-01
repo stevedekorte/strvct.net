@@ -41,7 +41,10 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("nameToListenersMap", null)  // dict to set
+        this.newSlot("nameToListenersMap", null);  // Map to set
+    }
+
+    initPrototype () {
     }
 
     init () {

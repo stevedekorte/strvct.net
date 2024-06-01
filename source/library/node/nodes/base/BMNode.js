@@ -157,7 +157,9 @@
             const slot = this.newSlot("isVisible", true);
             slot.setSyncsToView(true);
         }
+    }
 
+    initPrototype () {
     }
 
     init () {
@@ -748,7 +750,8 @@
         return newSubnode;
     }
 
-    add () {  
+    add (noArg) {  
+        assert(noArg === undefined);
         return this.addAt(this.subnodeCount());
     }
 

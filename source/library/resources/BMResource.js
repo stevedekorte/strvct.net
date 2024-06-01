@@ -50,11 +50,8 @@
         this.newSlot("urlResource", null);
     }
 
-    /*
-    init () {
-        super.init()
+    initPrototype () {
     }
-    */
 
     title () {
         return this.name();

@@ -30,12 +30,8 @@
         }
     }
 
-    /*
-    init () {
-        super.init()
-        return this
+    initPrototype () {
     }
-    */
 
 }.initThisClass());
 

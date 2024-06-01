@@ -10,6 +10,9 @@
     
     /*
     initPrototypeSlots () {
+            }
+
+    initPrototype () {
     }
 
     init () {

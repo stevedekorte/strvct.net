@@ -13,13 +13,11 @@
     }
 
     initPrototypeSlots () {
-        //this.newSlot("path", "")
-        this.newSlot("dataURL", "")
+        //this.newSlot("path", "");
+        this.newSlot("dataURL", "");
     }
 
-    init () {
-        super.init()
-        return this
+    initPrototype () {
     }
 
     title () {

@@ -9,11 +9,9 @@
 (class BMStampField extends BMField {
     
     initPrototypeSlots () {
-
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         //this.setKeyIsVisible(false)
         //this.setKey("drop images here")
         this.setKeyIsEditable(false)

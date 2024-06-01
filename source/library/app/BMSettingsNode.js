@@ -41,7 +41,9 @@
         {
             const slot = this.newSlot("blobs", null).setShouldStoreSlot(false); //.setInitProto(BMBlobs)
         }
-
+    }
+  
+    initPrototype () {
         this.setNodeCanReorderSubnodes(false)
         this.setNodeCanAddSubnode(true)
 

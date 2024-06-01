@@ -29,8 +29,7 @@
         this.newSlot("isMono", false);
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setKeyIsVisible(false);
     }
 

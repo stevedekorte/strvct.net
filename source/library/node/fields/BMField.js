@@ -166,13 +166,9 @@
     }
 
     initPrototype () {
-        this.setShouldStore(true)
-    }
-
-    init () {
-        super.init()
-        this.setSummaryFormat("key value")
-        this.setHasNewlineAfterSummary(true)
+        this.setShouldStore(true);
+        this.setSummaryFormat("key value");
+        this.setHasNewlineAfterSummary(true);
     }
 
     didLoadFromStore () { // move to finalInit?

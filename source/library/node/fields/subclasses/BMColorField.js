@@ -47,17 +47,13 @@
     }
 
     initPrototype () {
-        this.setNodeCanEditTitle(true)
-        this.setNodeCanEditSubtitle(false)
-        this.setTitle("color")
-        this.setSubtitle(null)
-        this.setCanDelete(true)
-        this.setNodeCanInspect(true) 
-    }
-
-    init () {
-        super.init()
-        this.addNodeActions(["add"])
+        this.setNodeCanEditTitle(true);
+        this.setNodeCanEditSubtitle(false);
+        this.setTitle("color");
+        this.setSubtitle(null);
+        this.setCanDelete(true);
+        this.setNodeCanInspect(true);
+        this.setNodeCanAddSubnode(true);
     }
 
     asCssColor () {

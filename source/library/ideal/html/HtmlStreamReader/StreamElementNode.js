@@ -25,7 +25,9 @@
       {
         const slot = this.newSlot("children", null); // array of child tags and strings
       }
-
+    }
+  
+    initPrototype () {
     }
   
     init () {

@@ -29,7 +29,9 @@
             // view
             const slot = this.newSlot("browser", null);
         }
-
+    }
+  
+    initPrototype () {
         this.setShouldStore(false);
         this.setShouldStoreSubnodes(false);
         //this.setNodeCanAddSubnode(true)

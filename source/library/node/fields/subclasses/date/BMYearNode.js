@@ -13,9 +13,7 @@
         this.newSlot("value", 0)
     }
 
-    init () {
-        super.init()
-
+    initPrototype () {
         this.setCanDelete(true)
         this.setNodeCanEditTitle(true)
 

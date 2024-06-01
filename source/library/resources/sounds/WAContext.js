@@ -33,6 +33,9 @@
         this.newSlot("setupPromise", null)
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init();
         this.setSetupPromise(Promise.clone());

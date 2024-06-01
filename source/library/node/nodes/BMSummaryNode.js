@@ -123,14 +123,13 @@
     }
 
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(true)
-
-        this.setTitle("title")
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(true);
+        this.setTitle("title");
     }
 
     init () {
-        super.init()
+        super.init();
     }
 
     didUpdateSlotSummaryFormat () {

@@ -16,12 +16,15 @@
     }
     
     initPrototypeSlots () {
-        //this.newSlot("extensions", ["ttf", "woff", "woff2"])
+        //this.newSlot("extensions", ["ttf", "woff", "woff2"]);
+    }
+
+    initPrototype () {
+        this.setTitle("Fonts")
     }
 
     init () {
         super.init()
-        this.setTitle("Fonts")
         //this.setExtensions(["ttf", "woff", "woff2"])
         return this
     }

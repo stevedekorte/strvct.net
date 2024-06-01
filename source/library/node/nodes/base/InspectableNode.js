@@ -25,12 +25,8 @@
         }
     }
 
-    /*
-    init () {
-        super.init()
-        return this
+    initPrototype () {
     }
-    */
 
     // --- node inspector ---
 

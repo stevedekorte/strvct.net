@@ -12,15 +12,11 @@
         this.newSlot("value", 1).setComment("day value starts with 1")
     }
 
-    init () {
-        super.init()
-
+    initPrototype () {
         this.setCanDelete(false)
         this.setNodeCanInspect(false)
-
         this.setTitle("a day")
         this.setNodeCanEditTitle(false)
-
         this.setNodeCanReorderSubnodes(false)
     }
 

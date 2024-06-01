@@ -30,7 +30,9 @@
             slot.setSlotType("Number")
             slot.setCanInspect(true)
         }
-
+    }
+  
+    initPrototype () {
     }
 
     formattedValue () {

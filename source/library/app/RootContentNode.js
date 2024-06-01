@@ -29,7 +29,9 @@
             slot.setFinalInitProto(HeaderNode)
             slot.setIsSubnode(true)
         }
-
+    }
+  
+    initPrototype () {
         this.setTitle("Root Content Node");
         this.setNodeCanReorderSubnodes(true);
         this.setNodeMinTileHeight(75);

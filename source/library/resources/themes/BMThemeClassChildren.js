@@ -11,8 +11,7 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true) 
         this.setNodeCanEditTitle(true)

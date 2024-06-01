@@ -33,7 +33,7 @@
 */
 
 (class HomeAssistantDevice extends HomeAssistantObject {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
   }
 

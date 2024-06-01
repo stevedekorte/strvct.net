@@ -78,7 +78,9 @@
             slot.setDuplicateOp("copyValue")
             slot.setShouldStoreSlot(true)
         }
+    }
 
+    initPrototype () {
     }
 
     // subtitle and note

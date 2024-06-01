@@ -57,14 +57,17 @@
             "set", // obj.x = y or obj[x] = y
             "setPrototypeOf", // Reflect.setPrototypeOf()
         ])
-        this.newSlot("noteNamesDict", null)
+        this.newSlot("noteNamesDict", null);
+    }
+  
+    initPrototype () {
+        this.setIsDebugging(false);
     }
 
     init () {
         super.init()
         this.setObservers([])
         this.setupNoteNames()
-        this.setIsDebugging(false)
         return this
     }
 

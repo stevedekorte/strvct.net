@@ -6,7 +6,7 @@
 */
 
 (class Conversation extends BMStorableNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("footerNode", null);

@@ -24,11 +24,10 @@
   }
 
   initPrototypeSlots () {
-    //this.newSlot("idb", null)
+    //this.newSlot("idb", null);
   }
-
-  init () {
-    super.init();
+  
+  initPrototype () {
   }
 
   audioContext () {

@@ -6,7 +6,7 @@
 */
 
 (class OpenAiImage extends BMSummaryNode {
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       const slot = this.newSlot("imageUrl", null);

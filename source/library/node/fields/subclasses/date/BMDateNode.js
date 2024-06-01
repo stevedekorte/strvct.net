@@ -61,8 +61,7 @@
         }
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         
         this.setNoteIconName("right-arrow")
 

@@ -32,7 +32,7 @@
 
 (class HomeAssistantState extends HomeAssistantObject {
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
 
     {
       //const slot = this.newSlot("entity", null);

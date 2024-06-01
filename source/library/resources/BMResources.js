@@ -25,11 +25,14 @@
         this.newSlot("files", null);
     }
 
-    init () {
-        super.init();
+    initPrototype () {
         this.setShouldStore(false);
         this.setTitle("Resources");
         this.setSubtitle("");
+    }
+
+    init () {
+        super.init();
         this.setupSubnodes(); // don't need to wait for appDidInit?
         //this.watchOnceForNote("appDidInit");
     }

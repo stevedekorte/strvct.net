@@ -110,6 +110,9 @@
         //this.newSlot("loopEnd", null);
     }
 
+    initPrototype () {
+    }
+
     init () {
         super.init();
         //this.setFetchPromise(Promise.clone());

@@ -14,8 +14,7 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init()
+    initPrototype () {
         this.setKeyIsEditable(false)
         this.setValueIsEditable(false)
         this.setKeyIsVisible(true)

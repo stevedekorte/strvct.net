@@ -16,7 +16,7 @@
     return this
   }
 
-  initPrototypeSlots() {
+  initPrototypeSlots () {
     this.setSubnodeClasses([ProxyServer]);
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);

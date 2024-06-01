@@ -48,6 +48,9 @@
     initPrototypeSlots () {
     }
 
+    initPrototype () {
+    }
+
     setupSubnodesSlotWithItemType (aClass) {
         const slot = this.overrideSlot("subnodes");
         slot.setIsInJsonSchema(true);

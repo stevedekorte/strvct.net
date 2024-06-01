@@ -13,12 +13,16 @@
     initPrototypeSlots () {
     }
 
+    initPrototype () {
+        this.setTitle("Prototypes");
+        this.setNodeCanReorderSubnodes(true);
+    }
+
     init () {
-        super.init()
-        this.setTitle("Prototypes")
-        this.setNodeCanReorderSubnodes(true)
-        //this.setupSubnodes()
-        return this
+        super.init();
+
+        //this.setupSubnodes();
+        return this;
     }
 
     setupSubnodes () {
