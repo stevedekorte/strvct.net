@@ -23,42 +23,41 @@
     
     initPrototypeSlots () {
 
-        // TODO: move these to subnode slots?
+        {
+            const slot = this.addSubnodeSlot("prototypes", BMNode);
+        }
+
+        {
+            const slot = this.addSubnodeSlot("resources", BMResources);
+        }
+
+        {
+            const slot = this.addSubnodeSlot("storage", BMDataStore);
+        }
+
+        {
+            const slot = this.addSubnodeSlot("blobs", BMBlobs);
+        }
         
-        // model
-        {
-            const slot = this.newSlot("prototypes", null).setShouldStoreSlot(false); //.setInitProto(BMNode)
-        }
+    }
 
-        {
-            const slot = this.newSlot("resources", null).setShouldStoreSlot(false);  //.setInitProto(BMDataStore)
-        }
-
-        {
-            const slot = this.newSlot("storage", null).setShouldStoreSlot(false); //.setInitProto(BMBlobs)
-        }
-
-        {
-            const slot = this.newSlot("blobs", null).setShouldStoreSlot(false); //.setInitProto(BMBlobs)
-        }
+    addSubnodeSlot (slotName, proto) {
+        const slot = this.newSlot(slotName, null);
+        slot.setShouldStoreSlot(true);
+        slot.setFinalInitProto(proto);
+        slot.setIsSubnode(true);
+        return slot;
     }
   
     initPrototype () {
-        this.setNodeCanReorderSubnodes(false)
-        this.setNodeCanAddSubnode(true)
+        this.setNodeCanReorderSubnodes(false);
+        this.setNodeCanAddSubnode(true);
 
         // settings are effectively a global node that references other globals
         // so we don't need to store it (for now)
 
-        this.setShouldStore(false)
-        this.setShouldStoreSubnodes(false)
-    }
-
-    finalInit () {
-        super.finalInit();
-        this.addSubnodeAndSetSlotForClass("Resources", BMResources)
-        this.addSubnodeAndSetSlotForClass("Storage", BMDataStore)
-        this.addSubnodeAndSetSlotForClass("Blobs", BMBlobs)
+        this.setShouldStore(false);
+        this.setShouldStoreSubnodes(false);
     }
 
 }.initThisClass());

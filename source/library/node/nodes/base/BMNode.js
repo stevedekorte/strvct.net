@@ -1151,6 +1151,8 @@
 
     static jsonSchemaProperties (refSet) {
         assert(refSet);
+        refSet.add(this);
+        
         const slots = this.jsonSchemaSlots();
 
         if (slots.length === 0) {
