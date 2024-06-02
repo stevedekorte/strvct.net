@@ -748,10 +748,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     onInstanceFinalInitSlot (anInstance) {
         const finalInitProto = this._finalInitProto;
         if (finalInitProto) {
-            if (finalInitProto.type() === "SavingThrow") {
-                //debugger;
-            }
-
             let oldValue = this.onInstanceGetValue(anInstance);
 
             if (oldValue && oldValue.type() !== finalInitProto.type()) {
