@@ -1152,7 +1152,7 @@
     static jsonSchemaProperties (refSet) {
         assert(refSet);
         refSet.add(this);
-        
+
         const slots = this.jsonSchemaSlots();
 
         if (slots.length === 0) {
@@ -1231,9 +1231,13 @@
     }
 
     static jsonSchemaRef (refSet) {
+        return this.jsonSchemaRefForTypeName(this.type(), refSet);
+    }
+
+    static jsonSchemaRefForTypeName (typeName, refSet) {
         assert(Type.isSet(refSet));
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
-        return "#/definitions/" + this.type();
+        return "#/definitions/" + typeName;
     }
 
     static instanceFromJson (json) {

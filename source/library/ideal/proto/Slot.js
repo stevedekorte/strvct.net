@@ -1061,9 +1061,15 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     jsonSchemaProperties (refSet) {
         const proto = this.finalInitProto();
         if (proto) {
-            return {
-                "$ref": proto.jsonSchemaRef(refSet)
-            };
+            if (Type.isString(proto)) {
+                return {
+                    "$ref": BMNode.jsonSchemaRefForTypeName(proto, refSet)
+                };
+            } else {
+                return {
+                    "$ref": proto.jsonSchemaRef(refSet)
+                };
+            }
             //return proto.jsonSchemaProperties(refSet);
         }
         return undefined;
