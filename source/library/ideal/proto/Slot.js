@@ -1111,13 +1111,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         assert(refSet);
         const type = this.jsonSchemaType();
-
-        // it's a pointer to a class instance
-        const finalProto = this.finalInitProto();
-        if (finalProto) {
-            return finalProto.asJsonSchema(refSet);
-        }
-
+        
         // it's probably a base type
         const schema = {
             type: this.jsonSchemaType(),

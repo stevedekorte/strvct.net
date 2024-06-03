@@ -253,7 +253,6 @@
     }
 
     setupAllSlotsMap () { // called once when prototype is created
-        //debugger;
         if (!this.isPrototype()) {
             throw new Error("setupAllSlotsMap called on non-prototype");
         }
@@ -267,13 +266,16 @@
         this.forEachSlot(slot => {
             const k = slot.name();
             if (!m.has(k)) { // to handle overrides 
-                entriesToAdd.push([k, slot]);
+                m.set(k, slot);
+                //entriesToAdd.push([k, slot]);
             }
         });
 
+        /*
         entriesToAdd.forEach(entry => {
             m.set(entry[0], entry[1]);
         })
+        */
     }
 
     forEachSlotKV (fn) {
