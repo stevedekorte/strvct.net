@@ -1116,18 +1116,30 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         //otherwise, compose one from the slot meta info
 
         assert(refSet);
+
+        const properties = this.jsonSchemaProperties(refSet);
+
+        if (properties !== undefined && properties["$ref"] !== undefined) {
+            // it's a reference
+            return properties;
+        }
+
         const type = this.jsonSchemaType();
-        
+
         // it's probably a base type
         const schema = {
             type: this.jsonSchemaType(),
-            title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
             //enum: this.jsonSchemaEnum(), // use jsonSchemeAddRanges instead
             properties: this.jsonSchemaProperties(refSet),
-            readOnly: this.isReadOnly(),
-            required: this.jsonSchemaRequired(),
+            readOnly: this.isReadOnly()
         };
+
+        const title = this.jsonSchemaTitle();
+
+        if (this.name() !== title) {
+            schema.title = title;
+        }
 
         if (this.jsonSchemaExamples()) {
             schema.examples = this.jsonSchemaExamples();
