@@ -1220,11 +1220,15 @@
         //debugger;
         const schema = {
             type: "object",
-            title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
             properties: this.jsonSchemaProperties(refSet),
             required: this.jsonSchemaRequired()
         };
+
+        const title = this.jsonSchemaTitle();
+        if (title != this.type()) {
+            schema.title = title;
+        }
 
         assert(schema.description, "missing json schema description for " + this.type());
         return schema;
