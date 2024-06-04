@@ -260,22 +260,13 @@
         const m = this.allSlotsMap();
         //console.log("*** " + this.type() + " setupAllSlotsMap")
 
-        const entriesToAdd = [];
-
         //assert(this.isPrototype())
         this.forEachSlot(slot => {
             const k = slot.name();
             if (!m.has(k)) { // to handle overrides 
                 m.set(k, slot);
-                //entriesToAdd.push([k, slot]);
             }
         });
-
-        /*
-        entriesToAdd.forEach(entry => {
-            m.set(entry[0], entry[1]);
-        })
-        */
     }
 
     forEachSlotKV (fn) {
