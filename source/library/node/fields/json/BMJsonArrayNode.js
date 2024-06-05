@@ -104,6 +104,8 @@
 
     setJson (json) {
         //let index = 0;
+        this.removeAllSubnodes();
+        
         json.forEach((v) => {
             if (this.subnodeClasses().length === 1) {
                 const aClass = this.subnodeClasses().first();
