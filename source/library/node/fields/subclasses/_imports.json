@@ -7,6 +7,7 @@
     "BMNumberField.js",
     "BMPointerField.js",
     "BMJsonField.js",
+    "BMArrayField.js",
     "BMStampField.js",
     "BMStringField.js",
     "BMTextAreaField.js",
