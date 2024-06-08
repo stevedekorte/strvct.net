@@ -14,13 +14,6 @@
         this.newSlot("sheetElement", null)
     }
 
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
-
     href () {
         return this.sheetElement().href
     }

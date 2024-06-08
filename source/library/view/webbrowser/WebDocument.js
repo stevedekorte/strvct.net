@@ -17,10 +17,6 @@
     initPrototypeSlots () {
     }
 
-    init () {
-        super.init();
-        return this;
-    }
 
     body () {
         return DocumentBody.shared();

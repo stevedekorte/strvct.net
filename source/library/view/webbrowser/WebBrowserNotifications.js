@@ -28,12 +28,7 @@
 
     initPrototypeSlots () {
         this.newSlot("permissionPromise", null);
-    }
-
-    init () {
-        super.init();
         this.setIsDebugging(true);
-        return this
     }
 
     // --- getting permission ---

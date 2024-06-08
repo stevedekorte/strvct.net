@@ -37,20 +37,13 @@
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
+
+    this.setNodeTileClassName("BMChatInputTile");
+    this.setKeyIsVisible(false);
+    this.setValue("");
+    this.setCanDelete(true);
   }
 
-  init () {
-    super.init();
-    this.setKeyIsVisible(false)
-    this.setValue("")
-    this.setCanDelete(true)
-  }
-
-  finalInit () {
-    super.finalInit();
-    this.setNodeTileClassName("BMChatInputTile")
-    this.setKeyIsVisible(false)
-  }
 
   /*
   didUpdateSlotValue (oldValue, newValue) {

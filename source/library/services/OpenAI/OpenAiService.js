@@ -21,7 +21,7 @@
   modelsJson () {
     return [
       {
-          "name": "gpt4-o",
+          "name": "gpt-4o",
           "note": "Cheaper and faster than GPT-4 Turbo.",
           "contextWindow": 128000
       },

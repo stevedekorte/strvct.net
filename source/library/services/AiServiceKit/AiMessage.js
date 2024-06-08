@@ -57,19 +57,13 @@
 
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
+    this.setCanDelete(true);
   }
 
   init () {
     super.init();
     this.setContent("");
-    this.setCanDelete(true);
   }
-
-  /*
-  finalInit () {
-    super.finalInit();
-  }
-  */
 
   isResponse () {
     return false;

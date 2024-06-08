@@ -115,13 +115,14 @@
       this.xhrPromise().callRejectFunc(new Error(json.error.message));
     } else if (
         json.choices &&
-        json.choices.length > 0 &&
-        json.choices[0].delta &&
-        json.choices[0].delta.content
+        json.choices.length > 0
       ) {
-        const newContent = json.choices[0].delta.content;
-        this.onNewContent(newContent);
-        //console.warn("CONTENT: ", newContent);
+        if (json.choices[0].delta && json.choices[0].delta.content) {
+          const newContent = json.choices[0].delta.content;
+          this.onNewContent(newContent);
+          //console.warn("CONTENT: ", newContent);
+          this.setStopReason(json.choices[0].finish_reason);
+        } 
         this.setStopReason(json.choices[0].finish_reason);
     } else {
       if (json.id) {
@@ -144,7 +145,11 @@
   }
 
   stoppedDueToMaxTokens () {
-    return this.stopReason() === "length";
+    const b = this.stopReason() === "length";
+    if (b) {
+      debugger;
+    }
+    return b;
   }
 
 }).initThisClass();
