@@ -39,14 +39,9 @@
 
   }
 
-  init() {
-    super.init();
+  initPrototype () {
     this.setSubnodeClasses([AiMessage]);
     this.setResponseMsgClass(AiResponseMessage);
-  }
-
-  finalInit () {
-    super.finalInit()
   }
 
   // -------- 

@@ -18,17 +18,22 @@
 
   }
 
+  initPrototype () {
+    this.setCanDelete(true);
+    this.setNodeCanEditTitle(true);
+    this.setTitle("Untitled");
+    this.setSubtitle("conversation");
+    this.setNodeCanReorderSubnodes(false);
+    this.setShouldStore(true);
+    this.setShouldStoreSubnodes(true);
+
+    this.setSubnodeClasses([]);
+    this.setNodeChildrenAlignment("flex-start"); // make the messages stick to the bottom
+
+  }
+
   init() {
     super.init();
-    this.setCanDelete(true)
-    this.setNodeCanEditTitle(true)
-    this.setTitle("Untitled")
-    this.setSubtitle("conversation")
-    this.setNodeCanReorderSubnodes(false)
-    this.setShouldStore(true)
-    this.setShouldStoreSubnodes(true)
-
-    this.setSubnodeClasses([])
 
     {
       const f = ChatInputNode.clone();
@@ -38,7 +43,6 @@
       this.setFooterNode(f);
     }
 
-    this.setNodeChildrenAlignment("flex-start") // make the messages stick to the bottom
   }
 
   onChatEditValue (v) {
