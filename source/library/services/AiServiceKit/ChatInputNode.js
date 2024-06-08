@@ -34,7 +34,9 @@
       const slot = this.newSlot("sttSession", null);
     }
     */
+  }
 
+  initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
 

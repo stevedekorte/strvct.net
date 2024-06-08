@@ -135,6 +135,12 @@
     this.setCanDelete(true);
   }
 
+  initPrototype () {
+    this.setNodeTileClassName("BMChatInputTile");
+    this.setKeyIsVisible(true);
+    this.setValueIsEditable(false);
+  }
+
   init () {
     super.init();
     this.setContent("");
@@ -142,10 +148,6 @@
 
   finalInit () {
     super.finalInit();
-    this.setNodeTileClassName("BMChatInputTile");
-    //this.setOverrideSubviewProto(this.nodeTileClass());
-    this.setKeyIsVisible(true);
-    this.setValueIsEditable(false);
     this.createIdIfAbsent();
   }
 
