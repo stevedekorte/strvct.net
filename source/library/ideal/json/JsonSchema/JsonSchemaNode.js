@@ -85,59 +85,6 @@
     return this;
   }
 
-  title () {
-    return this.basicInformation().name();
-
-    const name = this.basicInformation().name();
-    const health = this.combatStats().healthDescription();
-    if (health) {
-      return name + " (" + health + ")"
-    }
-
-    return name;
-  }
-
-
-  /*
-  setTitle (s) {
-    super.setTitle(s)
-    this.basicInformation().setName(s)
-    return this
-  }
-  */
-
-  name () {
-    return this.basicInformation().name();
-  }
-
-  subtitle () {
-    const parts = [this.basicInformation().description().trim()];
-    /*
-    if (this.basicInformation().creatureType() === "Humanoid") {
-      //parts.push("character");
-    }
-    */
-    return parts.join(" ")
-  }
-
-  characterId () {
-    return this.basicInformation().characterId()
-  }
-
-  playerProfile () {
-    if (this.parentNode()) {
-      return this.parentNode().parentNode();
-    }
-    else {
-      return null;
-    }
-  }
-
-  setCharacterId (cid) {
-    this.basicInformation().setCharacterId(cid)
-    return this
-  }
-
   setJsonArchive (json) {
     debugger;
     this.setJson(json)
