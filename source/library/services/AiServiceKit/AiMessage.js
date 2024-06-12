@@ -146,6 +146,7 @@
   }
 
   requestResponse () {
+    //debugger;
     const response = this.conversation().newMessageOfClass(this.responseMsgClass());
     this.conversation().addSubnode(response);
     response.setSpeakerName(this.conversation().aiSpeakerName());

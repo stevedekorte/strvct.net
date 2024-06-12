@@ -254,7 +254,7 @@
   }
 
   onRequestComplete (aRequest) {
-    debugger;
+   // debugger;
     //this.setRequest(null)
     //this.setStatus("complete")
     this.setIsComplete(true);
