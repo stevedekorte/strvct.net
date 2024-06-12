@@ -6,7 +6,7 @@
 */
 
 (class ConversationMessage extends BMTextAreaField {
-  
+
   initPrototypeSlots () {
 
     {
@@ -142,13 +142,6 @@
     this.setShouldStoreSubnodes(true);
     this.setCanDelete(true);
   }
-
-  /*
-  init () {
-    super.init();
-    this.setContent("");
-  }
-  */
 
   finalInit () {
     super.finalInit();
