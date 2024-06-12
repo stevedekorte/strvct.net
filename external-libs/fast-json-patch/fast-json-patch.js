@@ -956,16 +956,34 @@ JsonPatch.pathExists = function (obj, path) {
   }
 
 JsonPatch.ensurePathExists = function (jsonObject, path) {
-    let currentObject = jsonObject;
-    const pathSegments = path.split('/').slice(1); // Removing the leading slash
+    // Going to disable this and assume the AI can correctly use JSON patches now
+    // Below is the original code 
+
+    // ---------------------
+    // we want to ensure that the path exists in the jsonObject
+    // and have to make sure that we create the right type of object (array or dict) at each step
+    // to determine the type of object to create, we need to look at the next segment of the path
+    // if the next segment is a number, we (guess that we) need to create an array, otherwise we create a dictionary
+    // if the path already exists, we don't need to do anything
+
     let didCreatePath = false;
 
+    let currentObject = jsonObject;
+    const pathSegments = path.split('/').slice(1); // Removing the leading slash
+
     for (let i = 0; i < pathSegments.length; i++) {
-        const segment = pathSegments[i];
-        if (!(segment in currentObject)) {
-            const currentPath = pathSegments.slice(0, i + 1).join('/');
+        let segment = pathSegments[i];
+        if (Type.isNumber(segment)) {
+            segnment = Number(segnment);
+        }
+        if (Type.isUndefined(currentObject[segment])) {
+            const currentPath = pathSegments.slice(0, i + 1).join('/'); // doesn't include i+1 index
+            const nextSegment = i+1 < pathSegments.length ? pathSegments[i + 1] : undefined;
+            const nextSegmentIsNumber = Type.isNumber(nextSegment);
+            const nextObject = nextSegmentIsNumber ? [] : {}; // this is a guess and doesn't always work
+
             console.log("JsonPatch.ensurePathExists() Creating missing path: [" + currentPath + "]");
-            currentObject[segment] = {}; // Create a new dictionary if the path segment doesn't exist
+            currentObject[segment] = nextObject;
             didCreatePath = true;
         }
         currentObject = currentObject[segment];
@@ -975,6 +993,8 @@ JsonPatch.ensurePathExists = function (jsonObject, path) {
     if (didCreatePath) {
         //console.log("verified created path: " + path);
     }
+
+    return didCreatePath;
 }
 
 JsonPatch.applyPatchWithAutoCreation = function (jsonObject, patch) {

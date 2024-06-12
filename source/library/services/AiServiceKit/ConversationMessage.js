@@ -6,6 +6,7 @@
 */
 
 (class ConversationMessage extends BMTextAreaField {
+  
   initPrototypeSlots () {
 
     {
@@ -17,6 +18,7 @@
 
     {
       const slot = this.overrideSlot("value");
+      slot.setInitValue("");
       slot.setShouldJsonArchive(true);
       slot.setCanInspect(true);
       slot.setInspectorPath("Node/Field/Value");
@@ -129,23 +131,27 @@
       slot.setCanInspect(true)
       slot.setActionMethodName("deleteFollowingMessages");
     }
+  }
 
+  initPrototype () {
+    this.setNodeTileClassName("BMChatInputTile");
+    //this.setOverrideSubviewProto(this.nodeTileClass());
+    this.setKeyIsVisible(true);
+    this.setValueIsEditable(false);
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
     this.setCanDelete(true);
   }
 
+  /*
   init () {
     super.init();
     this.setContent("");
   }
+  */
 
   finalInit () {
     super.finalInit();
-    this.setNodeTileClassName("BMChatInputTile");
-    //this.setOverrideSubviewProto(this.nodeTileClass());
-    this.setKeyIsVisible(true);
-    this.setValueIsEditable(false);
     this.createIdIfAbsent();
   }
 

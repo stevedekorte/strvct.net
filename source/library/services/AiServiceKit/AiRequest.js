@@ -371,6 +371,10 @@
 
   async asyncSendAndStreamResponse () {
 
+    if (this.isContinuation()) {
+      debugger;
+    }
+
     this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
 
     this.setError(null); // clear error (in case we are retrying)
@@ -573,6 +577,7 @@
     this.setStopReason(null);
     this.setStatus("continuing");
 
+    debugger;
     this.setIsContinuation(true); // so the fullContent isn't cleared
     // send request again to continue where we left off
     this.asyncSendAndStreamResponse();

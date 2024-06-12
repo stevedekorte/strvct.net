@@ -254,6 +254,7 @@
   }
 
   onRequestComplete (aRequest) {
+    debugger;
     //this.setRequest(null)
     //this.setStatus("complete")
     this.setIsComplete(true);
@@ -281,6 +282,7 @@
   }
   
   onStreamEnd (request) {
+    debugger;
     //this.setContent(request.fullContent()); // all data has already been sent
     this.setIsComplete(true);
     this.sendDelegate("onMessageUpdate");
