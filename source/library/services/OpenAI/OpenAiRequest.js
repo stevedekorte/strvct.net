@@ -88,7 +88,7 @@
             const s = line.after("data:");
             if (line.includes("[DONE]")) {
               // skip, stream is done and will close
-              const errorFinishReasons = ["length", "stop"];
+              const errorFinishReasons = ["length", "content_filter", null];
               if (errorFinishReasons.includes(this.stopReason())) {
                 this.setError("finish reason: '" + this.stopReason() + "'");
               }
@@ -117,13 +117,19 @@
         json.choices &&
         json.choices.length > 0
       ) {
-        if (json.choices[0].delta && json.choices[0].delta.content) {
-          const newContent = json.choices[0].delta.content;
+        const choice = json.choices[0];
+        const stopReason = choice.finish_reason;
+
+        if (choice.delta && choice.delta.content) {
+          const newContent = choice.delta.content;
           this.onNewContent(newContent);
           //console.warn("CONTENT: ", newContent);
-          this.setStopReason(json.choices[0].finish_reason);
-        } 
-        this.setStopReason(json.choices[0].finish_reason);
+        }
+
+        if (stopReason) {
+          debugger;
+          this.setStopReason(stopReason);
+        }
     } else {
       if (json.id) {
         //console.warn("HEADER: ", JSON.stringify(json));
@@ -138,7 +144,7 @@
 
   stopReasonDict () {
     return {
-      "stop": "The model generated a response that includes one or more stop sequences provided by the user.",
+      "stop": "Natural end or encountered user specified stop sequence.",
       "length": "The response reached the specified maximum number of tokens.",
       "null": "Likely an internal error or issue. If you encounter this frequently, it's best to contact OpenAI support." 
     }
