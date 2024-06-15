@@ -372,7 +372,7 @@
   async asyncSendAndStreamResponse () {
 
     if (this.isContinuation()) {
-      debugger;
+      //console.log(this.typeId() + " asyncSendAndStreamResponse() isContinuation");
     }
 
     this.service().prepareToSendRequest(this); // give anthropic a chance to ensure alternating user/assistant messages
@@ -560,6 +560,8 @@
 
   continueRequest () {
     console.log("========================================== " + this.typeId() + " continueRequest() =====================================");
+    const lastBit = this.fullContent().slice(-100);
+    console.log("continuingn lastBit: [" + lastBit + "]");
     // add a continue message to the end of the messages array if needed
     //if (this.lastMessageIsContinueRequest()) {
     const messages = this.bodyJson().messages;
@@ -577,7 +579,7 @@
     this.setStopReason(null);
     this.setStatus("continuing");
 
-    debugger;
+   // debugger;
     this.setIsContinuation(true); // so the fullContent isn't cleared
     // send request again to continue where we left off
     this.asyncSendAndStreamResponse();
