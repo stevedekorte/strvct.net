@@ -215,7 +215,7 @@
 
     column () {
         const pv = this.parentView()
-        if (pv.isKindOf(TilesView)) {
+        if (pv && pv.isKindOf(TilesView)) {
             return pv
         }
         return null
