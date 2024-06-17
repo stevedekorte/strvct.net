@@ -7,22 +7,15 @@
 
 (class AiResponseMessage extends AiMessage {
 
-  /*
-  loadFromRecord (aRecord, aStore) {
-
-    return super.loadFromRecord(aRecord, aStore);
-  }
-  */
-
   initPrototypeSlots () {
 
     {
       const slot = this.newSlot("request", null);
-      slot.setLabel("request")
-      slot.setShouldStoreSlot(false)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Pointer")
-      slot.setCanInspect(true)
+      slot.setLabel("request");
+      slot.setShouldStoreSlot(false);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Pointer");
+      slot.setCanInspect(true);
     }
 
     {

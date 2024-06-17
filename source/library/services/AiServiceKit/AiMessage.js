@@ -178,4 +178,32 @@
     }
   }
 
+  cleanupIfIncomplete () {
+    super.cleanupIfIncomplete();
+    if (!this.isComplete()) {
+      if (this.role() === "user") {
+        this.cleanupUserMessage();
+      } else {
+        this.cleanupAssistantMessage();
+      }
+    }
+  }
+
+  cleanupAssistantMessage () {
+    if (this.type() !== "HwRollRequestMessage") {
+      debugger;
+      // TODO: add sanity check before deleting
+      this.deleteFollowingMessages(); 
+      this.setContent("");
+      this.makeRequest();
+    }
+  }
+
+  cleanupUserMessage () {
+    debugger;
+    // TODO: add sanity check before deleting
+    this.deleteFollowingMessages();
+    this.requestResponse();
+  }
+
 }.initThisClass());

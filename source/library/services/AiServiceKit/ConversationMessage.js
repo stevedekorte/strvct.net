@@ -324,4 +324,9 @@
     return false
   }
 
+  cleanupIfIncomplete () {
+    // called on startup to clean up any incomplete messages
+    // subclasses should override, as needed
+  }
+
 }.initThisClass());
