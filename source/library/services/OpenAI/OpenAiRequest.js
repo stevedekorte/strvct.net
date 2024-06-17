@@ -142,6 +142,10 @@
 
   // --- finish reason ---
 
+  okStopReasons () {
+    return [null, "stop"];
+  }
+
   stopReasonDict () {
     return {
       "stop": "Natural end or encountered user specified stop sequence.",

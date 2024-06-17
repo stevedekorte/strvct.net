@@ -227,6 +227,10 @@
     };
   }
 
+  okStopReasons () {
+    return [null, "end_turn"];
+  }
+  
   stoppedDueToMaxTokens () {
     return this.stopReason() === "max_tokens";
   }

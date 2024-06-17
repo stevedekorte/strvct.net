@@ -190,8 +190,9 @@
   }
 
   cleanupAssistantMessage () {
-    if (this.type() !== "HwRollRequestMessage") {
-      debugger;
+    if (this.type() === "AiResponseMessage") {
+    //if (this.type() !== "HwRollRequestMessage" && this.type() !== "HwImageMessage") {
+      //debugger;
       // TODO: add sanity check before deleting
       this.deleteFollowingMessages(); 
       this.setContent("");
@@ -200,7 +201,7 @@
   }
 
   cleanupUserMessage () {
-    debugger;
+    //debugger;
     // TODO: add sanity check before deleting
     this.deleteFollowingMessages();
     this.requestResponse();

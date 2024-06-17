@@ -784,8 +784,16 @@
 
   // --- stopping ---
 
+  okStopReasons () {
+    return [null];
+  }
+
+  hasStopError () {
+    return !this.okStopReasons().includes(this.stopReason());
+  }
+
   stopError () {
-    if (this.stopReason() !== null && this.stopReason() !== "end_turn") { // end_turn is Anthropic's way of saying "done" (need to move this)
+    if (this.hasStopError()) { 
       return new Error(this.stopReasonDescription());
     }
     return null;
