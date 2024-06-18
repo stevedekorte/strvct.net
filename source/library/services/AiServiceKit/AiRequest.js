@@ -516,7 +516,10 @@
   continueMessage () {
     return { 
       role: "user", 
-      content: "Your last request was truncated due to the response size limit. Please continue exactly where you left off."
+      content: `Your last request was truncated due to the response size limit. 
+      Please continue exactly where you left off. 
+      I will paste this message at the end of your last message in the conversation so it is critical that you continue exactly where you left off, so do not add any comments about the fact that you are continuing the prior response.
+      Such comments would break any structured data, such as JSON, that is being returned.`
     };
   }
 
@@ -561,7 +564,7 @@
   continueRequest () {
     console.log("========================================== " + this.typeId() + " continueRequest() =====================================");
     const lastBit = this.fullContent().slice(-100);
-    console.log("continuingn lastBit: [" + lastBit + "]");
+    console.log("continuing lastBit: [[[" + lastBit + "]]]");
     // add a continue message to the end of the messages array if needed
     //if (this.lastMessageIsContinueRequest()) {
     const messages = this.bodyJson().messages;

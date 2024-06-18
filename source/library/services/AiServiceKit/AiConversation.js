@@ -6,9 +6,16 @@
 */
 
 (class AiConversation extends Conversation {
+
+  /*
+  static oneShotRequest (prompt) {
+    const conversation = this.clone();
+    const responseMessage = conversation.startWithPrompt(prompt);
+    return responseMessage;
+  }
+  */
   
   initPrototypeSlots () {
-
 
     {
       const slot = this.newSlot("chatModel", null); // ref to AiChatModel
@@ -57,14 +64,19 @@
 
     if (this.conversations()) {
       return this.conversations().service().defaultChatModel();
+    } else {
+      const model = App.shared().services().defaultChatModel();
+      assert(model, "no default chat model");
+      return model;
     }
+
     throw new Error("no chatModel");
     return null;
   }
 
   conversations () {
     const p = this.parentNode();
-    if (p.thisClass().isKindOf(AiConversations)) {
+    if (p && p.thisClass().isKindOf(AiConversations)) {
       return p;
     }
     return null;
@@ -161,7 +173,7 @@
     const promptMsg = this.newSystemMessage();
     promptMsg.setContent(prompt);
     const responseMessage = promptMsg.requestResponse();
-    return this
+    return responseMessage;
   }
 
   onNewMessageFromUpdate (newMsg) {
@@ -192,7 +204,6 @@
     return this;
   } 
 
-
   shutdown () {
     this.messages().forEach(m => m.performIfResponding("shutdown"));
     return this;
@@ -200,9 +211,12 @@
 
   // search helpers
 
+  nonImageMessages () {
+    return this.messages().select(m => !m.thisClass().isKindOf(HwImageMessage));
+  }
+
   incompleteMessages () {
-    const nonImageMessages =this.messages().select(m => !m.thisClass().isKindOf(HwImageMessage));
-    return nonImageMessages.select(m => !m.isComplete());
+    return this.nonImageMessages().select(m => !m.isComplete());
   }
 
   hasIncompleteMessages () {

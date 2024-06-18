@@ -1189,7 +1189,13 @@
 
     // --- json schema ---
 
-    static asRootJsonSchema () {
+    static asRootJsonSchemaString (definitionsOnly = false) {
+        const json = this.asRootJsonSchema(definitionsOnly);
+        const s = JSON.stringify(json, 4, 4);
+        return s;
+    }
+
+    static asRootJsonSchema (definitionsOnly = false) {
         // NOTE: this uses a format of all definitions at the top level
 
         const refSet = new Set();
@@ -1197,13 +1203,17 @@
             "$schema": "http://json-schema.org/draft-07/schema#"
         };
         
-        //Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
-        this.asJsonSchema(refSet); // we only do this to set the refSet
-        refSet.add(this); // now we add ourselve and we're ready to just share all the definitions
+        if (definitionsOnly) {
+            this.asJsonSchema(refSet); // we only do this to set the refSet to include all classes with this object references
+            refSet.add(this); // now we add ourselve and we're ready to just share all the definitions
+        } else {
+            Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
+        }
 
         if (refSet.size) {
             json.definitions = this.jsonSchemaDefinitionsForRefSet(refSet);
         }
+
         return json;
     }
 

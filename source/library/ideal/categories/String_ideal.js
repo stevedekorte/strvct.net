@@ -528,7 +528,7 @@ String.prototype._setterCacheMap = new Map();
         return doc.body.innerHTML;
     }
 
-    diff  (otherString) {
+    diff (otherString) {
         const originalText = this;
         const modifiedText = otherString;
         let i = 0, j = 0;
@@ -571,6 +571,29 @@ String.prototype._setterCacheMap = new Map();
         element.innerHTML = this;        
         return element.innerHTML;
     }
+
+    contentOfElementsOfTag (tagName) {
+        function Element_hasParentWithTag (element, tagName) {
+          tagName = tagName.toLowerCase();
+          
+          while (element) {
+            if (element.tagName && element.tagName.toLowerCase() === tagName.toLowerCase()) {
+              return true;
+            }
+            element = element.parentNode;
+          }
+          
+          return false;
+        }
+    
+        const el = document.createElement("div");
+        el.innerHTML = this;
+        let matches = el.elementsOfTag(tagName);    
+        const results = [];
+        //matches = matches.select(e => !Element_hasParentWithTag(e, "thinking"));
+        matches.forEach((e) => results.push(e.innerHTML));
+        return results;
+      }
     
 }).initThisCategory();
 
