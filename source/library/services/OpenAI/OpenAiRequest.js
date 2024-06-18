@@ -127,7 +127,7 @@
         }
 
         if (stopReason) {
-          debugger;
+          //debugger;
           this.setStopReason(stopReason);
         }
     } else {
