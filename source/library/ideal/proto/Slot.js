@@ -1120,7 +1120,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         const properties = this.jsonSchemaProperties(refSet);
 
         if (properties !== undefined && properties["$ref"] !== undefined) {
-            // it's a reference
+            // it's a reference, so just return the properties
             return properties;
         }
 
@@ -1134,6 +1134,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             properties: this.jsonSchemaProperties(refSet),
             readOnly: this.isReadOnly()
         };
+
+        if (this.initValue() !== undefined) {
+            schema.default = this.initValue();
+        }
 
         const title = this.jsonSchemaTitle();
 

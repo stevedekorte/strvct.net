@@ -17,12 +17,17 @@
         return true;
     }
 
+    static jsonDefaultValue () {
+        return [];
+    }
+
     static asJsonSchema (refSet) {
         assert(Type.isSet(refSet));
         const schema = {
             type: "array",
             title: this.jsonSchemaTitle(),
             description: this.jsonSchemaDescription(),
+            default: this.jsonDefaultValue(),
             items: this.prototype.jsonSchemaForSubnodes(refSet) // prototype method
         };
 
