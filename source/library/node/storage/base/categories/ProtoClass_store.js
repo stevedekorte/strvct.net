@@ -67,7 +67,7 @@
                 }
             } else {
                 console.warn("loadFromRecord(aRecord), aRecord has slot '" + k + "' but '" + this.type() + "' does not. Did schema change?");
-                debugger;
+                //debugger;
                 this.scheduleMethod("didMutate", 1000) // to force it to save - use high priorty number to cause it to be done after mutations on loading objects are being ignored e.g. before scheduled didInitLoadingPids is complete 
                 //debugger;
             }

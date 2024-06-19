@@ -146,6 +146,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("fieldInspectorClassName", null);
     }
 
+    // --- label ---
+
+    setLabelToCapitalizedSlotName () {
+        let s = this.name().capitalized();
+        // If the name was camel case, we want to split it into words.
+        s = s.replace(/([A-Z])/g, ' $1').trim();
+        this.setLabel(s);
+        return this;
+    }
+
     // --- annotations ---
 
     setValidValues (v) {
@@ -246,6 +256,12 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     description () {
         return this.getAnnotation("description");
+    }
+
+    setDescriptionAndPlaceholder (s) {
+        this.setDescription(s);
+        this.setValuePlaceholder(s);
+        return this;
     }
 
     // --- examples ---
