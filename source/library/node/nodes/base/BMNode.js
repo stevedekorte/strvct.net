@@ -1151,6 +1151,7 @@
 
     static jsonSchemaProperties (refSet) {
         assert(refSet);
+        assert(this.asJsonSchema); // sanity check - we'll need this 
         refSet.add(this);
 
         const slots = this.jsonSchemaSlots();
@@ -1205,6 +1206,7 @@
         
         if (definitionsOnly) {
             this.asJsonSchema(refSet); // we only do this to set the refSet to include all classes with this object references
+            assert(this.asJsonSchema); // sanity check - we'll need this 
             refSet.add(this); // now we add ourselve and we're ready to just share all the definitions
         } else {
             Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
@@ -1250,6 +1252,7 @@
 
     static jsonSchemaRefForTypeName (typeName, refSet) {
         assert(Type.isSet(refSet));
+        assert(this.asJsonSchema); // sanity check - we'll need this 
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
         return "#/definitions/" + typeName;
     }

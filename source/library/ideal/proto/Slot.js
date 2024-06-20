@@ -761,8 +761,18 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     // -----------------------------------------------------
 
+    finalInitProtoClass () {
+        let finalInitProto = this._finalInitProto;
+        if (typeof(finalInitProto) === "string") {
+            const finalInitClass = getGlobalThis()[finalInitProto];
+            assert(finalInitClass, "missing finalInitProto class '" + finalInitProto + "'");
+            finalInitProto = finalInitClass;
+        }
+        return finalInitProto;
+    }
+
     onInstanceFinalInitSlot (anInstance) {
-        const finalInitProto = this._finalInitProto;
+        const finalInitProto = this.finalInitProtoClass(); //this._finalInitProto;
         if (finalInitProto) {
             let oldValue = this.onInstanceGetValue(anInstance);
 
@@ -793,11 +803,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
                 */
 
+                /*
                 if (typeof(finalInitProto) === "string") {
                     const finalInitClass = getGlobalThis()[finalInitProto];
                     assert(finalInitClass, "missing finalInitProto class '" + finalInitProto + "'");
                     finalInitProto = finalInitClass;
                 }
+                    */
 
                 const newValue = finalInitProto.clone()
                 this.onInstanceSetValue(anInstance, newValue)
@@ -1075,7 +1087,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     jsonSchemaProperties (refSet) {
-        const proto = this.finalInitProto();
+        const proto = this.finalInitProtoClass();
         if (proto) {
             if (Type.isString(proto)) {
                 return {

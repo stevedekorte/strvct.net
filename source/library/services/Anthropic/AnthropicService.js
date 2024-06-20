@@ -27,12 +27,21 @@
   modelsJson () {
     return [
       {
+        "name": "claude-3-5-sonnet-20240620",
+        "title": "Claude 3.5 Sonnet",
+        "subtitle": "Better than 3 with same context size.",
+        "contextWindow": 200000,
+        "notes": ""
+      },
+
+      {
           "name": "claude-3-opus-20240229",
           "title": "Claude 3 Opus",
           "subtitle": "Largest/Slowest",
           "contextWindow": 200000,
-          "notes": "This is the best model I've found so far."
+          "notes": ""
       },
+
       {
           "name": "claude-3-sonnet-20240229",
           "title": "Claude 3 Sonnet",

@@ -120,7 +120,7 @@
     {
       const slot = this.newSlot("status", null);      
       //slot.setInspectorPath("info")
-      slot.setLabel("status")
+      slot.setLabel("Status")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")

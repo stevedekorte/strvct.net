@@ -40,7 +40,7 @@
     {
       const slot = this.newSlot("stateName", "");
       slot.setInspectorPath("");
-      slot.setLabel("status");
+      slot.setLabel("Status");
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
