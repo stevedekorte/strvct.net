@@ -483,6 +483,31 @@ Object.defineSlot(Array.prototype, "_allowsNulls", false);
         return this.at(i);
     }
 
+    pickOneAtRandom () {
+        if (this.length === 0) {
+          return undefined;
+        }
+        
+        const randomBuffer = new Uint32Array(2);
+        crypto.getRandomValues(randomBuffer);
+        
+        // Pre-computed values
+        const SHIFT_AMOUNT = 21;
+        const MAX_SAFE_VALUE = 9007199254740991; // 2^53 - 1
+        
+        const randomValue = (randomBuffer[0] * (1 << SHIFT_AMOUNT)) + (randomBuffer[1] >>> (32 - SHIFT_AMOUNT));
+        const randomIndex = Math.floor((randomValue / MAX_SAFE_VALUE) * this.length);
+        
+        return this[randomIndex];
+    }
+
+    removeOneAtRandom () {
+        const pick = this.pickOneAtRandom();
+        this.remove(pick);
+        return pick;
+    }
+      
+
     // --- enumeration ---
 
     /*
