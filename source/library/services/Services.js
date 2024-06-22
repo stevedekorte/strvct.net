@@ -13,19 +13,17 @@
     }
 
     initPrototypeSlots () {
-
-        {
-            const slot = this.newSlot("openAiService", null);
-            slot.setShouldStoreSlot(true);
-            slot.setFinalInitProto(OpenAiService);
-            slot.setIsSubnode(true);
-        }
-
-        
         {
             const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);
             slot.setFinalInitProto(AnthropicService);
+            slot.setIsSubnode(true);
+        }
+        
+        {
+            const slot = this.newSlot("openAiService", null);
+            slot.setShouldStoreSlot(true);
+            slot.setFinalInitProto(OpenAiService);
             slot.setIsSubnode(true);
         }
 

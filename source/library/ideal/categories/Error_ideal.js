@@ -26,6 +26,9 @@
 
     static assert (v, errorMessage, errorName) {
         if (!Boolean(v)) {
+            if (typeof(errorMessage) === "function") {
+                errorMessage = errorMessage();
+            }
             const m = errorMessage ? errorMessage : "assert failed - false value";
             //debugger;
             const e = new Error(m);

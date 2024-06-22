@@ -101,7 +101,7 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(true)
-      slot.setSummaryFormat("")
+      slot.setSummaryFormat("none")
     }
 
     {

@@ -48,7 +48,7 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("");
+      slot.setSummaryFormat("none");
     }
 
     {
@@ -62,7 +62,7 @@
       slot.setSlotType("String")
       slot.setValidValues(validModels)
       slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("")
+      slot.setSummaryFormat("none")
     }
 
     {
@@ -141,14 +141,14 @@
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("Boolean")
       slot.setIsSubnodeField(true)
-      slot.setSummaryFormat("");
+      slot.setSummaryFormat("none");
     }
 
     {
       const slot = this.newSlot("ttsRequestQueue", null);
       slot.setDuplicateOp("copyValue")
       slot.setShouldStoreSlot(false);
-      slot.setSummaryFormat("");
+      slot.setSummaryFormat("none");
     }
 
     {
@@ -156,7 +156,7 @@
       slot.setDuplicateOp("copyValue")
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
-      slot.setSummaryFormat("");
+      slot.setSummaryFormat("none");
     }
 
     /*
@@ -176,7 +176,7 @@
       slot.setSlotType("String")
       slot.setIsSubnodeField(true)
       slot.setCanEditInspection(false);
-      slot.setSummaryFormat("");
+      slot.setSummaryFormat("none");
     }
 
     {

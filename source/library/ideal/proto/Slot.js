@@ -131,9 +131,10 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("canInspect", false);
         this.simpleNewSlot("canEditInspection", true);
         this.simpleNewSlot("label", null); // visible label on inspector
-        this.simpleNewSlot("allowsNullValue", null); // used for validation
+        this.simpleNewSlot("allowsNullValue", false); // used for validation
         this.simpleNewSlot("validValues", null); // used for options field and validation
         this.simpleNewSlot("validValuesClosure", null);
+        this.simpleNewSlot("validatesOnSet", true);
         this.simpleNewSlot("allowsMultiplePicks", false);
         this.simpleNewSlot("inspectorPath", null); // if non-null, uses to create a path for the slot inspector
         this.simpleNewSlot("summaryFormat", "none"); // passed into slot inspector node
@@ -686,18 +687,70 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
     }
 
-    autoSetter () {
-        const slot = this
-        return function (newValue) { 
-            return this.setSlotValue(slot, newValue) 
+    validateValue (v) {
+        if (v === null && this.allowsNullValue() === true) {
+            return true;
         }
+
+        //const validValues = this.computedValidValues(); // closure may reference unloaded classes...
+        const validValues = this.validValues();
+        
+        if (validValues === null) {
+            return true;
+        }
+        
+        if (validValues.includes(v)) {
+            return true;
+        }
+
+        function ValidValue_hasLabel (self, label) {
+            if (self.label === label) {
+                return true;
+            }
+            if (self.options) {
+                return ValidValues_haveLabel(self.options, label);
+            }
+            return false;
+        }
+
+        function ValidValues_haveLabel (validValues, label) {
+            return validValues.detect(vv => ValidValue_hasLabel(vv, v));
+        }
+
+        if (ValidValues_haveLabel(validValues, v)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    autoSetter () {
+        const slot = this;
+        return function (newValue) {
+            if (slot.validatesOnSet()) {
+                const isValid = slot.validateValue(newValue);
+                if(!isValid) {
+                    const validValues = slot.validValues();
+                    const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with invalid argument value (" + Type.typeName(newValue) + ") '" + newValue + "' not in valid values: " + validValues;
+                    console.log(errorMsg);
+                    let initValue = slot.initValue();
+                    //assert(initValue);
+                    console.log("RESOLUTION: setting value to initValue: ", initValue);
+                    //debugger;
+                    newValue = initValue; //validValues.first(); // not safe
+                    //throw new Error(errorMsg);
+                }
+            }
+
+            return this.setSlotValue(slot, newValue);
+        };
     }
 
     // --- setter ---
 
     makeDirectSetter () {
-        Object.defineSlot(this.owner(), this.setterName(), this.directSetter())
-        return this
+        Object.defineSlot(this.owner(), this.setterName(), this.directSetter());
+        return this;
     }
 
     directSetter () {
