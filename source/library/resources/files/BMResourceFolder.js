@@ -156,5 +156,23 @@
         return this.leafSubnodes().filter(node => node.thisClass().isKindOf(BMResourceFile));
     }
 
+    resourceAtPath (aPath) {
+        const pathArray = aPath.split("/");
+        // remove first component 
+        const first = pathArray.shift();
+        const localResource = this.fileWithName(first);
+
+        if (pathArray.length === 0) {
+            return localResource;
+        }
+
+        return localResource.resourceAtPath(pathArray.join("/"));
+        //return this.allResourceFiles().detect(file => file.path() === aPath);
+    }
+
+    resourcesWithName (aName) {
+        return this.allResourceFiles().filter(file => file.name() === aName);
+    }
+
 
 }.initThisClass());

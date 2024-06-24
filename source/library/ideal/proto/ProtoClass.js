@@ -87,6 +87,7 @@
         if (!this.hasShared()) {
             this.setShared(this.clone())
         }
+        assert(this.isKindOf(this._shared.thisClass()), this.type() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().type());
         return this._shared
     }
 

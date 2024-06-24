@@ -95,7 +95,7 @@
         if (!rClass) {
             // do we want this behavior?
             // What's the typical use case for this method
-            rClass = BMFileResource; 
+            rClass = BMResourceFile; 
         }
         */
         if (rClass) {
@@ -104,5 +104,6 @@
         }
         return null
     }
+
 
 }.initThisClass());

@@ -2,6 +2,7 @@
     "Mirror.js",
     "Type.js",
     "object/_imports.json",
+    "ArrayBuffer_ideal.js",
     "Array_ideal.js",
     "Date_ideal.js",
     "String_ideal.js",

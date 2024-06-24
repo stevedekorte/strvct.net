@@ -11,48 +11,67 @@
 
     For your application, create a subclass if needed.
 
+    NOTES
+
+    Originally planned to have a shared instance of App that would be the root of the object graph,
+    so we'd load the store and then call run on the App instance loaded from it.
+
+    But that felt difficult so instead we create an instance now, and ask it to load the object pool the store.
+
 */
 
 (class App extends TitledNode {
     
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     // --- shared ---
-    // We override sharedContext so all subclasses use the same shared value
-    // and anyone can call App.shared() to access it
 
+    /*
     static sharedContext () {
-        return App
+        // We override sharedContext so all subclasses use the same shared value
+        // and anyone can call App.shared() to access it
+        return App;
     }
+    */
 
     // --- store ---
     // we open store from app class since we might want to load app instance from store
 
-    static async loadAndRunShared () {
-        //debugger;
-        const store = this.defaultStore();
-        store.setName(this.type()); // name of the database
+    static loadAndRunShared () {
+      //  debugger;
+        const app = this.shared();
+        app.setStore(this.defaultStore());
+        app.store().setName(this.type()); // name of the database
+        app.loadFromStore();
+        return app;
+    }
+
+    async loadFromStore () {
         const clearFirst = false;
 
         if (clearFirst) {
-            console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<")
-            await store.promiseDeleteAll();
-            console.log(">>>>>>>>>>>>>>>> cleared db <<<<<<<<<<<<<<<")
-            //debugger
-            store.close();
-            this.scheduleMethod("justOpen");
+            await this.clearStore();
+            this.scheduleMethod("justOpen"); // is this needed to wait for tx to commit?
         } else {
             this.justOpen();
         }
     }
 
-    static async justOpen () {
-        const store = this.defaultStore();
+    async clearStore () {
+        console.log(">>>>>>>>>>>>>>>> clearing db <<<<<<<<<<<<<<<");
+        await this.store().promiseDeleteAll();
+        console.log(">>>>>>>>>>>>>>>> cleared db  <<<<<<<<<<<<<<<");
+    }
+
+    async justOpen () {
         try {
-            await store.promiseOpen();
-            this.onPoolOpenSuccess(this.defaultStore()) ;
+            await this.store().promiseOpen();
+            this.store().rootOrIfAbsentFromClosure(() => {
+                return this.thisClass().rootNodeProto().clone();
+            });
+            this.run();
         } catch (error) {
             console.warn("ERROR: ", error);
             debugger;
@@ -60,47 +79,49 @@
         }
     }
 
-    static promiseDeleteDefaultStore () {
-        return this.defaultStore().promiseDeleteAll()
-    }
-
-    static onPoolOpenSuccess (aPool) {
-        const store = this.defaultStore()
-
-        //console.log(this.type() + " onPoolOpenSuccess store count: ", store.count())
-        store.rootOrIfAbsentFromClosure(() => {
-            //debugger
-            return this.rootNodeProto().clone()
-        }) // create the root object
-        //const app = this.defaultStore().rootObject().subnodeWithTitleIfAbsentInsertProto(this.type(), this)
-        this.launchAppAfterOpen()
-    }
-
-    static launchAppAfterOpen () {
-        const app = this.clone()
-        this.setShared(app)
-        app.run()
-    }
-
     static rootNodeProto () {
-        return BMStorableNode
+        return BMStorableNode;
     }
 
     // ------
 
     initPrototypeSlots () {
-        this.newSlot("name", "App")
-        this.newSlot("version", [0, 0])
-        this.newSlot("hasDoneAppInit", false)
-        this.newSlot("rootView", null)
+
+        {
+            const slot = this.newSlot("store", null);
+        }
+
+        {
+            const slot = this.newSlot("name", "App");
+        }
+
+        {
+            const slot = this.newSlot("version", [0, 0]);
+        }
+
+        {
+            const slot = this.newSlot("hasDoneAppInit", false);
+        }
+
+        {
+            const slot = this.newSlot("rootView", null);
+        }
+
+        {
+            const slot = this.newSlot("didInitPromise", null);
+        }
     }
   
     initPrototype () {
-        this.setIsDebugging(true)
+        this.setIsDebugging(true);
+    }
+
+    init () {
+        this.setDidInitPromise(Promise.clone()); // here in case there are multiple Apps?
     }
 
     title () {
-        return this.name()
+        return this.name();
     }
     
     // run and setup sequence in order of which methods are called
@@ -108,7 +129,7 @@
 
     isBrowserCompatible () {
         // subclasses can override to do their own checks
-        return true
+        return true;
     }
 
     async run () {
@@ -172,7 +193,7 @@
         this.postNoteNamed("appDidInit")
 
         if (this.runTests) {
-		    this.runTests()
+		    this.runTests();
         }
 
         //Documentation.shared().show()
@@ -188,23 +209,21 @@
     // --- fonts ---
 
     waitForFontsToLoad () {
-        bootLoadingView.setTitle("Initializing...")
-        //this.onAllFontsLoaded()
+        bootLoadingView.setTitle("Loading fonts...");
 
         // NOTES: we really only want to wait for the font's currently displayed to be loaded.
         // What's the best way to do that?
         const done = BMResources.shared().fonts().hasLoadedAllFonts();
         if (done) {
-            this.onAllFontsLoaded()
+            this.onAllFontsLoaded();
             return;
         }
         //this.debugLog("not done loading fonts");
 
         setTimeout(() => {
-            bootLoadingView.setTitle(bootLoadingView.title() + ".")
-            this.waitForFontsToLoad()
+            //bootLoadingView.setTitle(bootLoadingView.title() + ".");
+            this.waitForFontsToLoad();
         }, 10);
-        
     }
 
     onAllFontsLoaded () {
@@ -214,18 +233,18 @@
         ResourceManager.shared().markPageLoadTime();
         document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
         //this.debugLog("done loading fonts! " + JSON.stringify(BMResources.shared().fonts().allFontNames()));
-        //this.afterAppDidInit()
         
-        bootLoadingView.close()
-        this.unhideRootView()
-        this.afterAppUiDidInit()
+        bootLoadingView.close();
+        this.unhideRootView();
+        this.afterAppUiDidInit();
     }
 
     afterAppUiDidInit () {
-        const searchParams = WebBrowserWindow.shared().pageUrl().searchParams
+        const searchParams = WebBrowserWindow.shared().pageUrl().searchParams;
         if (searchParams.keys().length !== 0) {
-            this.handleSearchParams(searchParams)
+            this.handleSearchParams(searchParams);
         }
+        this.didInitPromise().callResolveFunc(this);
     }
 
     handleSearchParams (searchParams) {

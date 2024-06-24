@@ -95,7 +95,7 @@ URL.with = function (path) {
 
 Object.defineSlot(URL.prototype, "promiseLoad", function () {
     const path = this.href
-    //console.log("loading ", path)
+    console.log("loading ", path)
     return new Promise((resolve, reject) => {
         const rq = new XMLHttpRequest();
         rq.responseType = "arraybuffer";
@@ -136,9 +136,9 @@ Object.defineSlot(Array.prototype, "promiseSerialTimeoutsForEach", async functio
 });
 
 Object.defineSlot(Array.prototype, "promiseSerialForEach", async function (aBlock) {
-    this.forEach(async (v) => {
-        await aBlock(v);
-    })
+    for (let i = 0; i < this.length; i++) {
+        await aBlock(this[i]);
+    }
 });
 
 
@@ -149,13 +149,13 @@ Object.defineSlot(Array.prototype, "promiseParallelMap", async function (aBlock)
     return values;
 });
 
-// -----------------------------------
+// --- UrlResource --------------------------------
 
 
 class UrlResource {
 
-    static _bytesLoaded = 0;
-    static _urlsLoaded = 0;
+    static _totalBytesLoaded = 0;
+    static _totalUrlsLoaded = 0;
 
     static with (url) {
         return this.clone().setPath(url);
@@ -206,7 +206,7 @@ class UrlResource {
         if (this.isZipFile()) {
             await this.promiseLoadUnzipIfNeeded();
         }
-        return this.promiseLoadFormCache();
+        return this.promiseLoadFromCache();
     }
 
     isDebugging () {
@@ -219,7 +219,7 @@ class UrlResource {
         }
     }
 
-    async promiseLoadFormCache () {
+    async promiseLoadFromCache () {
         const h = this.resourceHash() ;
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared();
@@ -246,40 +246,12 @@ class UrlResource {
         }
     }
 
-    /*
-        async promiseLoadFormCache () {
-        const h = this.resourceHash() ;
-        if (h && getGlobalThis().HashCache) {
-            const hc = HashCache.shared();
-            //const hasKey = await hc.promiseHasKey(h);
-            const data = await hc.promiseAt(h);
-
-            if (data !== undefined) {
-            //if (hasKey) {
-                    // if hashcache is available and has data, use it
-//                const data = await hc.promiseAt(h);
-                this._data = data;
-                return this;
-            } else {
-                // otherwise, load normally and cache result
-                this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                await this.promiseJustLoad();
-                await hc.promiseAtPut(h, this.data());
-                this.debugLog(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
-                return this;
-            }
-        } else {
-            return this.promiseJustLoad();
-        }
-    }
-    */
-
     async promiseJustLoad () {
         try {
             const data = await URL.with(this.path()).promiseLoad();
             this._data = data;
-            this.constructor._bytesLoaded += data.byteLength;
-            this.constructor._urlsLoaded += 1;
+            this.constructor._totalBytesLoaded += data.byteLength;
+            this.constructor._totalUrlsLoaded += 1;
         } catch (error) {
             debugger
             this._error = error;
@@ -630,8 +602,8 @@ class ResourceManager {
     loadTimeDescription () {
         return "" + 
             Math.round(this._pageLoadTime/100)/10 + "s, " + 
-            Math.round(UrlResource._bytesLoaded/1000) + "k, " + 
-            UrlResource._urlsLoaded + " files";
+            Math.round(UrlResource._totalBytesLoaded/1000) + "k, " + 
+            UrlResource._totalUrlsLoaded + " files";
     }
 
     // --- public API ---

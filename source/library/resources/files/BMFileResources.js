@@ -7,6 +7,13 @@
 
     BMFileResources.shared().setupSubnodesIfNeeded();
 
+    const fileOrFolderResource = BMFileResources.shared().rootFolder().resourceAtPath("path/to/resource");
+
+    const resources = MResourceFiles.shared().rootFolder().allResourceFiles().resourcesWithName(aName);
+
+    BMFileResources.shared().rootFolder().allResourceFiles().forEach(file => {
+        ...
+    });
 */
 
 (class BMFileResources extends BMResourceGroup {
@@ -81,13 +88,13 @@
             }) // will find path to last folder and insert resource
             this.setHasSetupSubnodes(true)
         }
-        return this
+        return this;
     }
 
     rootFolder () {
-        this.setupSubnodesIfNeeded()
+        this.setupSubnodesIfNeeded();
         //debugger
-        return this.subnodes().first()
+        return this.subnodes().first();
     }
 
 }.initThisClass());

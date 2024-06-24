@@ -29,29 +29,30 @@
     }
 
     initPrototype () {
-        this.setTitle("File")
-        this.setNoteIsSubnodeCount(true)
+        this.setTitle("File");
+        this.setNoteIsSubnodeCount(true);
+        this.setIsDebugging(true);
     }
 
     init () {
-        super.init()
+        super.init();
         // notifications
-        this.setLoadNote(this.newNoteNamed("fileResouceLoaded"))
-        this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"))
-        return this
+        this.setLoadNote(this.newNoteNamed("fileResouceLoaded"));
+        this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"));
+        return this;
     }
 
     name () {
-        return this.path().lastPathComponent()
+        return this.path().lastPathComponent();
     }
 
     title () {
-        return this.name()
+        return this.name();
     }
 
     setupSubnodes () {
-        //this.resourcePaths().forEach(path => this.addFontWithPath(path))
-        return this
+        //this.resourcePaths().forEach(path => this.addFontWithPath(path));
+        return this;
     }
 
     /*
@@ -64,39 +65,35 @@
     // move this loading code to parent BMResource?
 
     hasData () {
-        return this.data() !== null
+        return this.data() !== null;
+    }
+
+    urlResource () {
+        //const path = ResourceManager.bootPath() + this.path();
+        return UrlResource.with(this.path());
     }
 
     async promiseLoad () {
-        const r = await this.urlResource().promiseLoad();
+        const r = await this.urlResource().promiseLoad(); // will use cam cache if available
         this._data = r.data();
+        return this;
     }
 
-    // --- load data from cam ---
-
-    camPath () {
-        return this.path().sansPrefix("./")
-    }
-
-    camData () {
-        return ResourceManager.shared().camValueForPath(this.camPath())
-    }
-
-    loadFromCamData () {
-        this.setData(this.camData())
-        //console.log("loaded via cam for path: ", this.camPath())
-        this.postLoad()
+    async promiseData () {
+        if (!this.hasData()) {
+            await this.promiseLoad();
+        }
+        return this.data();
     }
 
     // --- load data from cached blob ---
 
+    /*
     hasCachedBlob () {
-        const h = this.resourceHash()
-        //debugger;
-        const b = h && BMBlobs.shared().hasBlobWithValueHash(h)
+        const h = this.resourceHash();
+        const b = h && BMBlobs.shared().hasBlobWithValueHash(h);
         //console.log("has cache for " + this.path() + ":" + b)
-        //debugger;
-        return b
+        return b;
     }
 
     async promiseLoadCachedBlob () {        
@@ -128,6 +125,7 @@
     onErrorReadingCachedBlob (blob) {
         console.log("error reading blob " + blob.name() + " for " + this.path())
     }
+    */
 
     // --- load data from url ---
 
