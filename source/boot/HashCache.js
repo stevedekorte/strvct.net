@@ -119,7 +119,7 @@
     }
 
     promiseClear () {
-        debugger
+        //debugger
         return this.idb().promiseClear()
     }
 

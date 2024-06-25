@@ -181,7 +181,7 @@
         // maybe register for note with object directly
         
         if (App.shared().hasDoneAppInit()) {
-            this.appDidInit()
+            this.appDidInit() // may be async
         } else {
             this.watchOnceForNote("appDidInit")
         }

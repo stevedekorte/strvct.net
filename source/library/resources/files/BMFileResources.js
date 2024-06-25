@@ -43,19 +43,14 @@
     }
     */
 
-    appDidInit () {
-        //this.debugLog(".appDidInit()");
-        //debugger;
-        //this.setupSubnodes();
-        //debugger;
-        this.setupSubnodesIfNeeded();
-        //debugger;
-        /*
+    async appDidInit () {
+        await this.setupSubnodesIfNeeded();
+        //this.cacheJsonFiles(); // this won't work in appDidInit as it's async and other appDidInit notifications may be sent before it's done
+    }
+
+    showPaths () {
         const paths = this.rootFolder().allResourceFiles().map(file => file.path());
         console.log("paths = ", paths.join("\n"));
-        debugger;
-        */
-        return this;
     }
 
     /*
@@ -66,7 +61,7 @@
     }
     */
     
-    setupSubnodesIfNeeded () {
+    async setupSubnodesIfNeeded () {
         if (!this.hasSetupSubnodes()) {
             const rootFolder = BMResourceFolder.clone().setPath(this.rootPath())
             this.addSubnode(rootFolder)
@@ -95,6 +90,19 @@
         this.setupSubnodesIfNeeded();
         //debugger
         return this.subnodes().first();
+    }
+
+    jsonFiles () {
+        const jsonFiles = this.rootFolder().allResourceFiles().select(file => file.pathExtension() === "json");
+        return jsonFiles;
+    }
+
+    async prechacheWhereAppropriate () {
+        //debugger;
+        this.setupSubnodesIfNeeded();
+        await this.rootFolder().allResourceFiles().promiseSerialForEach(async (file) => await file.prechacheWhereAppropriate());
+        //this.subnodes().promiseSerialForEach(async (node) => node.prechacheWhereAppropriate());
+        //debugger;
     }
 
 }.initThisClass());

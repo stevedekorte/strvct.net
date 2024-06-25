@@ -11,7 +11,7 @@
 (class BMFont extends BMResource {
     
     static supportedExtensions () {
-        return ["ttf", "woff", "woff2"]
+        return ["ttf", "woff", "woff2"];
     }
 
     static fontWeightMap () {
@@ -84,17 +84,13 @@
     // loading 
 
     async didLoad () { // called when resource data loaded
-        super.didLoad()
-        await this.promiseLoadFontFromData()
-        if (this.isDebugging()) {
-            //this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'")
-            //debugger;
-            //this.debugLog(".didLoad('" + this.name() + "')")
-        }
-        return this
+        await super.didLoad();
+        await this.promiseLoadFontFromData();
+        //this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'");
     }
 
     async promiseLoadFontFromData () {
+        console.log("BMFont.promiseLoadFontFromData() " + this.name())
         let name = this.name();
 
         if (Object.keys(this.options()).length === 0) {
@@ -105,13 +101,10 @@
         //console.log("BMFont load " + this.name() + " -> '" + name + "' options: ", this.options());
 
         const aFontFace = new FontFace(name, this.data(), this.options()); 
-        this.setFontFace(aFontFace)
+        this.setFontFace(aFontFace);
 
         try {
             const loadedFace = await aFontFace.load();
-            // can probably do this in the background, 
-            // but it's nice to know when it's complete
-            // this.didLoad();
             assert(loadedFace === aFontFace);
             document.fonts.add(loadedFace);
             //console.log("added font to document: ", this.name());

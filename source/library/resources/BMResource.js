@@ -45,9 +45,12 @@
         this.newSlot("data", null);
         this.newSlot("error", null);
         this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
-        this.newSlot("loadProgress", null); // null or a number 0 to 100
         this.newSlot("isLoaded", false);
         this.newSlot("urlResource", null);
+
+        {
+            //const slot = this.newSlot("loadPromise", null);
+        }
     }
 
     initPrototype () {
@@ -131,12 +134,15 @@
         this.setData(data);
         this.postNoteNamed("resourceLoaded");
         this.setLoadState("loaded");
-        this.didLoad();
+        await this.didLoad();
     }
     
-    didLoad () {
+    async didLoad () {
         this.setIsLoaded(true);
         this.postNoteNamed("didLoad");
+    }
+
+    async prechacheWhereAppropriate () {
     }
 
 }.initThisClass());

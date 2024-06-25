@@ -65,22 +65,6 @@
         return this;
     }
 
-    /*
-    appDidInit () {
-        this.findResources()
-    }
-
-    findResources () {
-        this.sendRespondingSubnodes("findResources")
-        return this
-    }
-
-    loadResources () {
-        this.sendRespondingSubnodes("loadResources")
-        return this
-    }
-    */
-
     resourceClassesForFileExtension (extension) {
         return this.subnodes().map(sn => sn.resourceClassesForFileExtension(extension)).flat()
     }
@@ -103,6 +87,11 @@
             return aResource
         }
         return null
+    }
+
+    async prechacheWhereAppropriate() {
+        console.log(this.type() + ".prechacheWhereAppropriate()");
+        await this.subnodes().promiseSerialForEach(async (node) => node.prechacheWhereAppropriate());
     }
 
 

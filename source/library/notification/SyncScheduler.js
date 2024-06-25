@@ -7,15 +7,15 @@
     SyncScheduler is sort of a lower level NotificationCenter.
     
     SyncScheduler essientially:
-        - receives requests of the form "send targetA messageB"
-        - and at the end of the event loop:
+        - receives requests of the form "send targetA messageB" (Note: often, the sender is also the target)
+        - and at the end of the event loop (via a timeout):
         -- coaleses them (so the same message isn't sent twice to the same target)
         -- sends them
 
     The NotificationCenter could be used to do this, but it would be heavier:
      - overhead of every receiver registering observations
      - overhead of matching observations with posts
-     - potential garbage collection issues
+     - potential garbage collection issues (may already be solved with weak references now)
 
     Motivation:
 
@@ -28,7 +28,7 @@
 
        example use:
     
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode")
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode");
 
     Automatic sync loop detection
 
@@ -39,7 +39,7 @@
 
     Scheduled actions can also be given a priority via an optional 3rd argument:
 
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1)
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1);
 
     Higher priorities will be performed *later* than lower ones. 
 
@@ -62,7 +62,16 @@
                 - view gets didUpdateNode and does syncFromNode which overwrites view state #2 causing an error!
             But the above would have been ok if the didUpdateNode was posted once at the end of the event loop.
 
-    	
+    Pause and Resume
+
+        SyncScheduler can be paused and resumed to prevent syncing from happening.
+        An example of when this is useful is when initializing the application (e.g. appDidInit) 
+        and you don't want any syncing to happen until the app is fully initialized.
+        Example use:
+
+            SyncScheduler.shared().pause()
+            SyncScheduler.shared().resume()
+
 */
 
 (class SyncScheduler extends ProtoClass {
@@ -76,10 +85,26 @@
         this.newSlot("hasTimeout", false);
         this.newSlot("isProcessing", false);
         this.newSlot("currentAction", null);
+        this.newSlot("isPaused", false);
     }
 
     initPrototype () {
     }
+
+    // --- pause/resume ---
+
+    pause () {
+        this.setIsPaused(true);
+        return this;
+    }
+
+    resume () {
+        this.setIsPaused(false);
+        this.setTimeoutIfNeeded();
+        return this;
+    }
+
+    // --- actions ---
 
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
@@ -184,14 +209,14 @@
     }
 	
     setTimeoutIfNeeded () {
-	    if (!this.hasTimeout()) {
-            this.setHasTimeout(true)
+	    if (!this.hasTimeout() && !this.isPaused() && this.actions().size > 0) {
+            this.setHasTimeout(true);
 	        this.addTimeout(() => { 
-	            this.setHasTimeout(false)
-	            this.processSets() 
-	        }, 1)
+	            this.setHasTimeout(false);
+	            this.processSets();
+	        }, 1);
 	    }
-	    return this
+	    return this;
     }
 	
     orderedActions () {
@@ -200,6 +225,10 @@
     }
 	
     processSets () {
+        if (this.isPaused()) {
+            return this;
+        }
+
         if (this.isProcessing()) {
             console.warn("WARNING: SynScheduler attempt to processSets before last set is completed")
             return this
@@ -249,6 +278,11 @@
     }
 
     fullSyncNow () {
+        if (this.isPaused()) {
+            console.log("SyncScheduler.fullSyncNow called while isPaused so SKIPPING")
+            return this
+            
+        }
         if (this.isProcessing()) {
             this.debugLog(() => "fullSyncNow called while isProcessing so SKIPPING")
             return this

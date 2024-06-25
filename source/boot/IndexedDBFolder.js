@@ -197,7 +197,7 @@
     }
 
     readWriteObjectStore () { // private
-        debugger
+        //debugger
         const tx = this.db().transaction([this.storeName()], "readwrite");
         
         tx.onerror = (event) => {

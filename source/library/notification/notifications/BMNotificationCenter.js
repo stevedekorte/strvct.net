@@ -70,6 +70,16 @@
 
         note: I think nodes try remove their observations when removed?
 
+    Pause and resume:
+
+        The NotificationCenter can be paused and resumed. When paused, it will not process any notifications.
+        This can be useful when you want to prevent notifications from being processed while doing things like
+        app initialization.
+
+        Example use:
+
+        BMNotificationCenter.shared().pause();
+        BMNotificationCenter.shared().resume();
 */
 
 (class BMNotificationCenter extends ProtoClass {
@@ -87,6 +97,7 @@
         this.newSlot("nameIndex", null) // dict of dicts
         this.newSlot("obsHighwaterCount", 100) // used
         this.newSlot("noteSet", null) // Set used for fast lookup for matching note
+        this.newSlot("isPaused", false);
     }
 
     initPrototype () {
@@ -98,6 +109,16 @@
         this.setNotifications([]);
         this.setNameIndex({});
         this.setNoteSet(new Set());
+    }
+
+    pause () {
+        this.setIsPaused(true);
+        return this;
+    }
+
+    resume () {
+        this.setIsPaused(false);
+        return this;
     }
 
     shortDescription () {
@@ -201,12 +222,17 @@
     }
 
     newNote () {
-        return BMNotification.clone().setCenter(this)
+        return BMNotification.clone().setCenter(this);
     }
     
     // --- timeout & posting ---
     
     processPostQueue () {
+        if (this.isPaused()) {
+            console.log("WARNING: BMNotificationCenter.processPostQueue() called while paused - SKIPPING")
+            return this
+        }
+
         // TODO: for performance, we could make an observationName->observations dictionary
         // but only worthwhile if observation list is sufficiently large
 

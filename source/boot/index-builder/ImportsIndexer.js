@@ -175,7 +175,7 @@ class IndexBuilder {
     }
 
     computeCam () {
-        const paths = this.pathsWithExtensions(["js", "css", "svg"])
+        const paths = this.pathsWithExtensions(["js", "css", "svg", "json", "txt"]); // file extensions to include in cam
         const cam = {}
         paths.forEach(path => {
             const fullPath = nodePath.join(process.cwd(), path)

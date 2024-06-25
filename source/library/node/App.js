@@ -156,49 +156,40 @@
     // 2. setup
 
     async setup () {
-        this.debugLog("Launching " + this.fullVersionString())
-        await this.setupModel()
-        await this.setupUi()
-        this.appDidInit()
-        return this
+        //debugger;
+        SyncScheduler.shared().pause();
+        BMNotificationCenter.shared().pause();
+
+        this.debugLog("Launching " + this.fullVersionString());
+        await this.setupModel();
+        await this.setupUi();
+        await this.appDidInit();
+        SyncScheduler.shared().resume();
+        BMNotificationCenter.shared().resume();
+        //debugger;
     }
 
     async setupModel () {
         // for subclasses to override
-        return this
     }
 
     async setupUi () {
-        this.setupDocTheme()
+        this.setupDocTheme();
         //this.addTimeout( () => this.showClasses(), 1)
-        return this        
     }
 
     hideRootView () {
         if (this.rootView()) {
             this.rootView().setIsDisplayHidden(true);
         }
-        return this
+        return this;
     }
 
     unhideRootView () {
         if (this.rootView()) {
             this.rootView().setIsDisplayHidden(false);
         }
-        return this
-    }
-
-    appDidInit () {
-        this.setHasDoneAppInit(true)
-        this.postNoteNamed("appDidInit")
-
-        if (this.runTests) {
-		    this.runTests();
-        }
-
-        //Documentation.shared().show()
-        //this.registerServiceWorker() // not working yet
-        this.waitForFontsToLoad();
+        return this;
     }
 
     showClasses () {
@@ -206,33 +197,23 @@
         console.log(s)
     }
 
-    // --- fonts ---
+    async appDidInit () {
+        this.setHasDoneAppInit(true);
+        //debugger;
+        this.postNoteNamed("appDidInit");
 
-    waitForFontsToLoad () {
-        bootLoadingView.setTitle("Loading fonts...");
-
-        // NOTES: we really only want to wait for the font's currently displayed to be loaded.
-        // What's the best way to do that?
-        const done = BMResources.shared().fonts().hasLoadedAllFonts();
-        if (done) {
-            this.onAllFontsLoaded();
-            return;
+        if (this.runTests) {
+		    this.runTests();
         }
-        //this.debugLog("not done loading fonts");
 
-        setTimeout(() => {
-            //bootLoadingView.setTitle(bootLoadingView.title() + ".");
-            this.waitForFontsToLoad();
-        }, 10);
-    }
+        //Documentation.shared().show()
+        //this.registerServiceWorker() // not working yet
 
-    onAllFontsLoaded () {
-        bootLoadingView.setTitle("onAllFontsLoaded")
+        bootLoadingView.setTitle("");
 
         document.body.style.display = "flex";
         ResourceManager.shared().markPageLoadTime();
         document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        //this.debugLog("done loading fonts! " + JSON.stringify(BMResources.shared().fonts().allFontNames()));
         
         bootLoadingView.close();
         this.unhideRootView();

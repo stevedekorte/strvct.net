@@ -9,23 +9,44 @@
 (class BMResourceFile extends BaseNode {
 
     initPrototypeSlots () {
-        this.newSlot("path", ".") // path from _index.json entry
-        this.newSlot("resourceHash", null) // hash from _index.json entry
-        this.newSlot("resourceSize", null) // size from _index.json entry
+        {
+            const slot = this.newSlot("path", "."); // path from _index.json entry
+        }
 
-        this.newSlot("data", null)
-        this.newSlot("encoding", "utf8")
-        this.newSlot("request", null) // this set back to null after request is successfully completed
-        this.newSlot("error", null) 
-        this.newSlot("promiseForLoad", null) // holds promise used for reading from URL request or indexedDB
+        {
+            const slot = this.newSlot("resourceHash", null); // hash from _index.json entry
+        }
+
+        {
+            const slot = this.newSlot("resourceSize", null); // size from _index.json entry
+        }
+
+        {
+            const slot = this.newSlot("data", null);
+        }
+
+        {
+            const slot = this.newSlot("value", null); // the value decoded from the data. e.g. value = JSON.parse(data)
+        }
+
+        //this.newSlot("encoding", "utf8")
+        //this.newSlot("request", null) // this set back to null after request is successfully completed
+
+        {
+            const slot = this.newSlot("error", null);
+        }
+
+        {
+            const slot = this.newSlot("promiseForLoad", null); // holds promise used for reading from URL request or indexedDB
+        }
 
         // notifications
         this.newSlot("isLoading", false)
         this.newSlot("isLoaded", false)
         this.newSlot("loadState", null) 
-        this.newSlot("loadNote", null) 
-        this.newSlot("loadErrorNote", null) 
-        this.newSlot("usesBlobCache", false)
+        //this.newSlot("loadNote", null) 
+        //this.newSlot("loadErrorNote", null) 
+        //this.newSlot("usesBlobCache", false)
     }
 
     initPrototype () {
@@ -37,8 +58,8 @@
     init () {
         super.init();
         // notifications
-        this.setLoadNote(this.newNoteNamed("fileResouceLoaded"));
-        this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"));
+        //this.setLoadNote(this.newNoteNamed("fileResouceLoaded"));
+        //this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"));
         return this;
     }
 
@@ -48,6 +69,10 @@
 
     title () {
         return this.name();
+    }
+
+    pathExtension () {
+        return this.path().pathExtension();
     }
 
     setupSubnodes () {
@@ -74,12 +99,20 @@
     }
 
     async promiseLoad () {
-        const r = await this.urlResource().promiseLoad(); // will use cam cache if available
+        const url = this.urlResource();
+        url.setResourceHash(this.resourceHash());
+        const r = await url.promiseLoad(); // will use cam cache if available
         this._data = r.data();
+        this.setValue(this.valueFromData());
         return this;
     }
 
-    async promiseData () {
+    async dataPromise () {
+        /*
+        if (!this._dataPromise) {
+            this._dataPromise = Promise.clone();
+        }
+        */
         if (!this.hasData()) {
             await this.promiseLoad();
         }
@@ -129,6 +162,7 @@
 
     // --- load data from url ---
 
+    /*
     loadRequestType () {
         return "arraybuffer"
         //return 'application/json'; // need to change for binary files?
@@ -155,12 +189,10 @@
             promise.callRejectFunc();
         }
 
-        /*        
-        rq.onload      = (event) => { this.onRequestLoad(event) }
-        rq.onabort     = (event) => { this.onRequestAbort(event) }
-        rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
-        rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
-        */
+        //rq.onload      = (event) => { this.onRequestLoad(event) }
+        //rq.onabort     = (event) => { this.onRequestAbort(event) }
+        //rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
+        //rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
 
         rq.onprogress = (event) => { 
             this.onRequestProgress(event) 
@@ -188,16 +220,16 @@
         if (h && this.usesBlobCache()) {
             console.log("writing to blob cache... " + h + " " + this.path())
 
-            /*
-            const buffer = this.data()
-            const str = new TextDecoder().decode(buffer);
-            console.log("path: '" + this.path() + "'")
-            console.log("size: '" + buffer.byteLength + "'")
-            console.log("hash: '" + h + "'")
-            console.log("type: '" + typeof(buffer) + "'")
-            console.log("slice: '" + str.slice(0, 6) + "'")
-            debugger;
-            */
+            if (false) {
+                const buffer = this.data()
+                const str = new TextDecoder().decode(buffer);
+                console.log("path: '" + this.path() + "'")
+                console.log("size: '" + buffer.byteLength + "'")
+                console.log("hash: '" + h + "'")
+                console.log("type: '" + typeof(buffer) + "'")
+                console.log("slice: '" + str.slice(0, 6) + "'")
+                debugger;
+            }
 
             const blob = BMBlobs.shared().createBlobWithNameAndValue(h, this.data())
             blob.setName(this.path())
@@ -225,7 +257,6 @@
         return this
     }
 
-    /*
     onRequestAbort (event) {
         this.setLoadState("aborted")
     }
@@ -236,7 +267,6 @@
     onRequestLoadStart (event) {
         this.setLoadState("started")
     }
-    */
 
     onRequestProgress (event) {
         if (event.lengthComputable) {
@@ -251,7 +281,6 @@
         this.setLoadState("timeout")
     }
 
-    /*
     onRequestLoad (event) {
         const request = event.currentTarget;
         const downloadedBuffer = request.response;  // may be array buffer, blob, or string, depending on request type
@@ -259,11 +288,36 @@
         //this.didLoad()
     }
 
-    
     didLoad () {
         this.setIsLoaded(true)
         this.postNoteNamed("didLoad")
     }
     */
+
+    precacheExtensions () {
+        //return ["js", "css", "json", "txt"];
+        //return ["json", "txt"]; // just cache the data files for now
+        return ["json", "txt", "ttf", "woff", "woff2"];
+    }
+
+    async prechacheWhereAppropriate () {
+        //console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
+        if (this.precacheExtensions().includes(this.pathExtension())) {
+            //console.log("precaching " + this.path())
+            await this.promiseLoad();
+            console.log("precached " + this.path())
+        }
+        return this;
+    }
+
+    valueFromData () {
+        const ext = this.pathExtension();
+        if (ext === "json") {
+            return JSON.parse(this.data().asString());
+        } else if (["js", "css", "txt"].includes(ext)) {
+            return this.data().asString();
+        }
+        return this.data();
+    }
 
 }.initThisClass());

@@ -48,17 +48,17 @@
     }
 
     async setupUi () {
-        await super.setupUi()
-        await this.setupModel()
-        BMResources.shared()
+        await super.setupUi();
+        await this.setupModel();
+        BMResources.shared(); // load resources
         
-        const browser = BrowserView.clone()
-        this.rootNode().setTitle("root node")
-        browser.setNode(this.rootNode())
-        browser.syncFromNode()
+        const browser = BrowserView.clone();
+        this.rootNode().setTitle("root node");
+        browser.setNode(this.rootNode());
+        browser.syncFromNode();
 
-        this.setBrowser(browser)
-        this.documentBodyView().addSubview(browser)
+        this.setBrowser(browser);
+        this.documentBodyView().addSubview(browser);
 
         //this.addTimeout( () => this.showClasses(), 1)
     }
@@ -71,23 +71,17 @@
 
     // --- setup model ---
 
+    /*
     async setupModel () {
-        //await BMBlobs.shared().promiseOpen();
-        this.appDidInit();
+        await this.setupModel()
         // settings
         //const settings = this.rootNode().subnodeWithTitleIfAbsentInsertProto("Settings", BMSettingsNode)
         //this.setSettings(settings)
-        //debugger;
         return this
     }
+    */
 
     // --- setup views ---
-
-    appDidInit () {
-        //this.rootNode().removeFirstSubnodeWithTitle("Themes")
-        super.appDidInit()
-
-    }
 
     // themes - temporary, until ThemesResources is ready
 

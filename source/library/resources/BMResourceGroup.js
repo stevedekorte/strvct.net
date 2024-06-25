@@ -32,9 +32,8 @@
         // subclasses should override this to set ResourceClasses
     }
 
-    appDidInit () {
-        this.setupSubnodes()
-        return this
+    async appDidInit () {
+        await this.setupSubnodes()
     }
 
     extensions () {
@@ -50,7 +49,7 @@
         return ResourceManager.shared().urlResourcesWithExtensions(this.extensions())
     }
 
-    setupSubnodes () {
+    async setupSubnodes () {
         //debugger
         this.urlResources().forEach(r => {
             const rClass = this.resourceClassForFileExtension(r.pathExtension())
@@ -106,6 +105,10 @@
 
     resourceNamed (name) {
         return this.resources().detect(r => r.name() == name)
+    }
+
+    async prechacheWhereAppropriate () {
+        await this.resources().promiseSerialForEach(async (r) => await r.prechacheWhereAppropriate());
     }
 
 }.initThisClass());

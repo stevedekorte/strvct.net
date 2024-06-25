@@ -141,15 +141,15 @@
     }
 
     files () {
-        return this.subnodes().filter(node => node.type() === this.fileClassName())
+        return this.subnodes().filter(sn => sn.thisClass().isKindOf(BMResourceFile));
     }
 
     fileWithName (aName) {
-        return this.subfolders().detect(subnode => subnode.name() === aName)
+        return this.subnodes().detect(sn => sn.name() === aName)
     }
 
     fileAt (aName) {
-        return this.fileWithName(aName)
+        return this.subnodes().detect(sn => sn.name() === name)
     }
 
     allResourceFiles () {
@@ -174,5 +174,9 @@
         return this.allResourceFiles().filter(file => file.name() === aName);
     }
 
+    async prechacheWhereAppropriate() {
+        console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
+        await this.subnodes().promiseSerialForEach(async (node) => node.prechacheWhereAppropriate());
+    }
 
 }.initThisClass());

@@ -95,7 +95,7 @@ URL.with = function (path) {
 
 Object.defineSlot(URL.prototype, "promiseLoad", function () {
     const path = this.href
-    console.log("loading ", path)
+    console.log("URL.promiseLoad() (over NETWORK) ", path)
     return new Promise((resolve, reject) => {
         const rq = new XMLHttpRequest();
         rq.responseType = "arraybuffer";
@@ -198,7 +198,7 @@ class UrlResource {
     }
 
     resourceHash () {
-        return this._resourceHash
+        return this._resourceHash;
     }
 
     async promiseLoad () {
@@ -219,10 +219,12 @@ class UrlResource {
         }
     }
 
-    async promiseLoadFromCache () {
-        const h = this.resourceHash() ;
+   async promiseLoadFromCache () {
+        //console.log("UrlResource.promiseLoadFromCache() " + this.path())
+        const h = this.resourceHash();
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared();
+            //await hc.promiseClear(); // clear cache for now
             const hasKey = await hc.promiseHasKey(h);
             //const data = await hc.promiseAt(h); // this seems to be not returning undefined for some absent keys???
 
@@ -232,16 +234,28 @@ class UrlResource {
                 const data = await hc.promiseAt(h);
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
+                console.log("UrlResource.promiseLoadFromCache() (from cache) " + this.path())
                 return this;
             } else {
                 // otherwise, load normally and cache result
                 this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
+                console.log("UrlResource.promiseLoadFromCache() (over NETWORK)" + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
-                this.debugLog(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
+                console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());
                 return this;
             }
         } else {
+            /*
+            if (!h) {
+                console.log("  no hash for " + this.path())
+                //debugger;
+            }
+            if (!getGlobalThis().HashCache) {
+                console.log("  no HashCache")
+            }
+            console.log("loading normally " + this.path() + " " + h)
+            */
             return this.promiseJustLoad();
         }
     }
@@ -466,7 +480,10 @@ class ResourceManager {
         const resource = await UrlResource.with(path).promiseLoad();
         this._index = resource.dataAsJson()
         this._indexResources = this._index.map((entry) => {
-            return UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash)
+            const resource = UrlResource.clone().setPath(entry.path).setResourceHash(entry.hash)
+            assert(resource.path() === entry.path);
+            assert(resource.resourceHash() === entry.hash);
+            return resource;
         });
     }
 

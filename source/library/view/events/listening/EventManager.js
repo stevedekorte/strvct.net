@@ -146,6 +146,7 @@
     }
 
     syncIfAppropriate () {
+        
         if (getGlobalThis().SyncScheduler) {
             /*
                 run scheduled events here to ensure that a UI event won't occur
