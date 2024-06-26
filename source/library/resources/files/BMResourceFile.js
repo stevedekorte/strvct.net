@@ -57,6 +57,7 @@
 
     init () {
         super.init();
+        this.setPromiseForLoad(Promise.clone());
         // notifications
         //this.setLoadNote(this.newNoteNamed("fileResouceLoaded"));
         //this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"));
@@ -80,13 +81,6 @@
         return this;
     }
 
-    /*
-    asObject () {
-        const sound = BMSoundResources.shared().resources().detect(r => r.path() == this.path())
-        return sound
-    }
-    */
-
     // move this loading code to parent BMResource?
 
     hasData () {
@@ -103,25 +97,64 @@
         url.setResourceHash(this.resourceHash());
         const r = await url.promiseLoad(); // will use cam cache if available
         this._data = r.data();
-        this.setValue(this.valueFromData());
+        this.promiseForLoad().callResolveFunc();
+        this.setValue(await this.asyncValueFromData());
         return this;
     }
 
     async dataPromise () {
-        /*
-        if (!this._dataPromise) {
-            this._dataPromise = Promise.clone();
-        }
-        */
         if (!this.hasData()) {
             await this.promiseLoad();
         }
         return this.data();
     }
 
-    // --- load data from cached blob ---
+    precacheExtensions () {
+        //return ["js", "css", "json", "txt"];
+        //return ["json", "txt"]; // just cache the data files for now
+        return ["json", "txt", "ttf", "woff", "woff2"];
+    }
+
+    async prechacheWhereAppropriate () {
+        //console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
+        if (this.precacheExtensions().includes(this.pathExtension())) {
+            //console.log("precaching " + this.path())
+            await this.promiseLoad();
+            console.log("precached " + this.path())
+        }
+        return this;
+    }
 
     /*
+    getValueResourceObject () {
+        const typeName = this.typeFromPathExtension();
+        const value = getGlobal()[typeName].clone().setData(this.data());
+        this.setValue(value);
+        return this.value();
+    }
+    */
+
+    async asyncValueFromData () {
+        const ext = this.pathExtension();
+        if (ext === "json") {
+            return JSON.parse(this.data().asString());
+        } else if (["js", "css", "txt"].includes(ext)) {
+            return this.data().asString();
+        }
+        return this.data();
+    }
+
+}.initThisClass());
+
+
+
+
+    /*
+
+    old blob code
+
+    // --- load data from cached blob ---
+
     hasCachedBlob () {
         const h = this.resourceHash();
         const b = h && BMBlobs.shared().hasBlobWithValueHash(h);
@@ -158,11 +191,9 @@
     onErrorReadingCachedBlob (blob) {
         console.log("error reading blob " + blob.name() + " for " + this.path())
     }
-    */
 
     // --- load data from url ---
 
-    /*
     loadRequestType () {
         return "arraybuffer"
         //return 'application/json'; // need to change for binary files?
@@ -285,39 +316,11 @@
         const request = event.currentTarget;
         const downloadedBuffer = request.response;  // may be array buffer, blob, or string, depending on request type
         this.setData(downloadedBuffer)
-        //this.didLoad()
+        //this.onDidLoad()
     }
 
-    didLoad () {
+    onDidLoad () {
         this.setIsLoaded(true)
         this.postNoteNamed("didLoad")
     }
     */
-
-    precacheExtensions () {
-        //return ["js", "css", "json", "txt"];
-        //return ["json", "txt"]; // just cache the data files for now
-        return ["json", "txt", "ttf", "woff", "woff2"];
-    }
-
-    async prechacheWhereAppropriate () {
-        //console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
-        if (this.precacheExtensions().includes(this.pathExtension())) {
-            //console.log("precaching " + this.path())
-            await this.promiseLoad();
-            console.log("precached " + this.path())
-        }
-        return this;
-    }
-
-    valueFromData () {
-        const ext = this.pathExtension();
-        if (ext === "json") {
-            return JSON.parse(this.data().asString());
-        } else if (["js", "css", "txt"].includes(ext)) {
-            return this.data().asString();
-        }
-        return this.data();
-    }
-
-}.initThisClass());

@@ -194,7 +194,7 @@
         return WAContext.shared().setupIfNeeded().audioContext();
     }
 
-    didLoad () {
+    onDidLoad () {
         this.promiseToDecode();
         return this;
     }
@@ -255,7 +255,6 @@
         if (this.shouldPlayOnLoad()) {
             this.play();
         }
-        //this.didLoad()
     }
 
     onDecodeError (e) {

@@ -30,7 +30,7 @@ if (!getGlobalThis().Image) {
         loadUrl (url) {
             this.crossOrigin = "Anonymous";
             this.onload = () => { 
-                this.didLoad() 
+                this.onDidLoad() 
             }
             this.onerror = () => { 
                 console.warn("error loading image " + url)
@@ -40,7 +40,7 @@ if (!getGlobalThis().Image) {
             return this
         }
 
-        didLoad () {
+        onDidLoad () {
             // create a canvas the size of the image
             const canvas = document.createElement("CANVAS");
             canvas.height = this.height;

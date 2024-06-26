@@ -100,7 +100,7 @@
     async prechacheWhereAppropriate () {
         //debugger;
         this.setupSubnodesIfNeeded();
-        await this.rootFolder().allResourceFiles().promiseSerialForEach(async (file) => await file.prechacheWhereAppropriate());
+        await this.rootFolder().allResourceFiles().promiseParallelMap(async (file) => await file.prechacheWhereAppropriate());
         //this.subnodes().promiseSerialForEach(async (node) => node.prechacheWhereAppropriate());
         //debugger;
     }

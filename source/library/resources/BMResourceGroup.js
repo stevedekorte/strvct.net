@@ -33,31 +33,31 @@
     }
 
     async appDidInit () {
-        await this.setupSubnodes()
+        await this.setupSubnodes();
     }
 
     extensions () {
-        const exts = this.resourceClasses().map(rClass => rClass.supportedExtensions()).flat().unique()
-        return exts
+        const exts = this.resourceClasses().map(rClass => rClass.supportedExtensions()).flat().unique();
+        return exts;
     }
 
     resourcePaths () {
-        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions())
+        return ResourceManager.shared().resourceFilePathsWithExtensions(this.extensions());
     }
 
     urlResources () {
-        return ResourceManager.shared().urlResourcesWithExtensions(this.extensions())
+        return ResourceManager.shared().urlResourcesWithExtensions(this.extensions());
     }
 
     async setupSubnodes () {
-        //debugger
-        this.urlResources().forEach(r => {
-            const rClass = this.resourceClassForFileExtension(r.pathExtension())
-            const aResource = rClass.clone().setPath(r.path())
-            aResource.setUrlResource(r)
+        await this.urlResources().promiseParallelMap(async (r) => {
+            const rClass = this.resourceClassForFileExtension(r.pathExtension());
+            const aResource = rClass.clone().setPath(r.path());
+            aResource.setUrlResource(r);
             //console.log("setup node '" + r.resourceHash() + "' '" + r.path() + "'")
-            aResource.load()
-            this.addResource(aResource)
+            //await aResource.asyncLoad();
+            aResource.asyncLoad(); // do this in parallel
+            this.addResource(aResource);
         })
 
         //this.resourcePaths().forEach(path => this.addResourceWithPath(path))
@@ -65,12 +65,12 @@
     }
 
     resourceClassesForFileExtension (ext) {
-        const extension = ext.toLowerCase()
-        return this.resourceClasses().select(rClass => rClass.canHandleExtension(ext))
+        const extension = ext.toLowerCase();
+        return this.resourceClasses().select(rClass => rClass.canHandleExtension(ext));
     }
 
     resourceClassForFileExtension (ext) {
-        return this.resourceClassesForFileExtension(ext).first()
+        return this.resourceClassesForFileExtension(ext).first();
     }
 
     resourceForPath (aPath) {
@@ -78,12 +78,11 @@
         if (!rClass) {
             debugger;
             this.resourceClassForFileExtension(aPath.pathExtension());
-
-            return null
+            return null;
         };
-        const aResource = rClass.clone().setPath(aPath)
-        aResource.load()
-        return aResource
+        const aResource = rClass.clone().setPath(aPath);
+        //aResource.asyncLoad(); // this is done in prechacheWhereAppropriate
+        return aResource;
     }
 
     /*
@@ -95,20 +94,20 @@
     */
 
     addResource (aResource) {
-        this.addSubnode(aResource)
-        return this
+        this.addSubnode(aResource);
+        return this;
     }
 
     resources () {
-        return this.subnodes()
+        return this.subnodes();
     }
 
     resourceNamed (name) {
-        return this.resources().detect(r => r.name() == name)
+        return this.resources().detect(r => r.name() == name);
     }
 
     async prechacheWhereAppropriate () {
-        await this.resources().promiseSerialForEach(async (r) => await r.prechacheWhereAppropriate());
+        await this.resources().promiseParallelMap(this.resources(), async (r) => await r.prechacheWhereAppropriate());
     }
 
 }.initThisClass());

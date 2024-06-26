@@ -43,13 +43,22 @@
     initPrototypeSlots () {
         this.newSlot("path", "");
         this.newSlot("data", null);
+
         this.newSlot("error", null);
         this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
         this.newSlot("isLoaded", false);
         this.newSlot("urlResource", null);
 
         {
-            //const slot = this.newSlot("loadPromise", null);
+            const slot = this.newSlot("loadDataPromise", null);
+        }
+
+        {
+            const slot = this.newSlot("decodeDataPromise", null);
+        }
+
+        {
+            const slot = this.newSlot("value", null);
         }
     }
 
@@ -72,16 +81,30 @@
         return this.path().lastPathComponent().sansExtension();
     }
 
+    // --- promises ---
+
+    loadDataPromise () {
+        if (!this._loadDataPromise) {
+            this.setLoadDataPromise(Promise.clone());
+        }
+        return this._loadDataPromise;
+    }
+
+    decodeDataPromise () {
+        if (!this._decodeDataPromise) {
+            this.setDecodeDataPromise(Promise.clone());
+        }
+        return this._decodeDataPromise;
+    }
+
     // --- resource file ---
 
     /*
     fileResource () {
-        const rootFolder = BMFileResources.shared().rootFolder();
-        const fileResource = rootFolder.nodeAtSubpathString(this.path());
-        return fileResource;
+        return BMFileResources.shared().rootFolder().nodeAtSubpathString(this.path());
     }
 
-    async promiseLoadFileResource () {        
+    async asyncLoadFileResource () {        
         this.setTitle(this.path().lastPathComponent().sansExtension());
         
         const fileResource = this.fileResource();
@@ -112,34 +135,52 @@
         return this;
     }
 
-    async load () {
-        await this.promiseLoadUrlResource();
-        //this.promiseLoadFileResource()
+    load () {
+        throw new Error("deprecated - use asyncLoad instead");
+    }
+
+    async asyncLoad () {
+        try {
+            this.setLoadState("loading");
+            await this.asyncLoadUrlResource();
+            this.setLoadState("loaded");
+            this.postNoteNamed("resourceLoaded");
+        } catch (error) {
+            this.setError(error);
+            this.postNoteNamed("loadError");
+            throw error;
+        }
+
+        try {
+            this.setLoadState("decoding");
+            await this.asyncDecodeData();
+            this.setLoadState("decoded");
+            this.postNoteNamed("resourceDecoded");
+        } catch (error) {
+            this.setError(error);
+            this.postNoteNamed("decodeError");
+            throw error;
+        }
         return this;
     }
 
-    async promiseLoadUrlResource () {
-        /*
-        assert(this.path(), "path is null");
-        assert(this.path().length > 0, "path is empty");
-        assert(!this.path().startsWith("/"), "path should not start with /");
-        //assert(this.path().startsWith("/"), "path should start with /");
-        const urlResource = UrlResource.clone().setPath(ResourceManager.bootPath() + "/" + this.path());
-        this.setUrlResource(urlResource);
-        */
-
-        await this.urlResource().promiseLoad();
-        const data = this.urlResource().data();
+    async asyncLoadUrlResource () {
+        const url = this.urlResource()
+        await url.promiseLoad();
+        const data = url.data();
         assert(data.byteLength);
         this.setData(data);
-        this.postNoteNamed("resourceLoaded");
-        this.setLoadState("loaded");
-        await this.didLoad();
+        await this.onDidLoad();
     }
     
-    async didLoad () {
+    async onDidLoad () {
         this.setIsLoaded(true);
         this.postNoteNamed("didLoad");
+    }
+
+    async asyncDecodeData () {
+        // for subclasses to override
+        return this;
     }
 
     async prechacheWhereAppropriate () {

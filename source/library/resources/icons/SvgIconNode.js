@@ -25,8 +25,8 @@
   initPrototype () {
   }
 
-  didLoad () {
-    super.didLoad()
+  onDidLoad () {
+    super.onDidLoad()
     //debugger
     this.setSvgString(this.urlResource().dataAsText())
     return this

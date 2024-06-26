@@ -28,8 +28,8 @@
         return this.path().pathExtension()
     }
 
-    didLoad () {
-        super.didLoad()
+    onDidLoad () {
+        super.onDidLoad()
         debugger;
         this.setDataUrl(this.data())
         return this

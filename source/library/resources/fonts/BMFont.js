@@ -83,14 +83,18 @@
 
     // loading 
 
-    async didLoad () { // called when resource data loaded
-        await super.didLoad();
-        await this.promiseLoadFontFromData();
+    async onDidLoad () { // called when resource data loaded
+        await super.onDidLoad();
+        await this.asyncLoadFontFromData();
         //this.debugLog(".didLoad('" + this.name() + "') '" + this.path() + "'");
     }
 
-    async promiseLoadFontFromData () {
-        console.log("BMFont.promiseLoadFontFromData() " + this.name())
+    async asyncLoadFontFromData () {
+        if (this.fontFace()) {
+            return this;
+        }
+
+        //console.log("BMFont.asyncLoadFontFromData() " + this.name())
         let name = this.name();
 
         if (Object.keys(this.options()).length === 0) {
@@ -100,18 +104,19 @@
 
         //console.log("BMFont load " + this.name() + " -> '" + name + "' options: ", this.options());
 
-        const aFontFace = new FontFace(name, this.data(), this.options()); 
-        this.setFontFace(aFontFace);
+        const face = new FontFace(name, this.data(), this.options()); 
+        this.setFontFace(face);
 
         try {
-            const loadedFace = await aFontFace.load();
-            assert(loadedFace === aFontFace);
+            const loadedFace = await face.load();
+            assert(loadedFace === face);
             document.fonts.add(loadedFace);
             //console.log("added font to document: ", this.name());
         } catch (error) {
             this.onLoadError(error);
             error.rethrow();
         }
+        return this;
     }
 
     onLoadError (error) {

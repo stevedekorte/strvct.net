@@ -176,7 +176,7 @@
 
     async prechacheWhereAppropriate() {
         console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
-        await this.subnodes().promiseSerialForEach(async (node) => node.prechacheWhereAppropriate());
+        await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());
     }
 
 }.initThisClass());

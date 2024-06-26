@@ -66,19 +66,23 @@ if (!String.prototype.capitalized) {
     }
 
     static initThisClass () {
+
+        // initPrototypeSlots is split from initPrototype as initPrototype may need to 
+        // access slots that are created in initPrototypeSlots. We can't just put the slot definitions at the top
+        // as subclasses may *override* the slot definitions.
         
         if (this.prototype.hasOwnProperty("initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
-            this.prototype.initPrototypeSlots()
+            this.prototype.initPrototypeSlots();
         }
 
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            this.prototype.initPrototype()
+            this.prototype.initPrototype();
         }
 
-        getGlobalThis()[this.type()] = this
-        return this
+        getGlobalThis()[this.type()] = this; // This isn't done automatically by JS class deifintions, so we do it here
+        return this;
     }
 
     static type () {

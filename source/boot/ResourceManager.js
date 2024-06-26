@@ -47,7 +47,7 @@ function getGlobalThis () {
 	}
 
 	// Note: this might still return the wrong result!
-	if (isDef(this)) {
+	if (isDef(this) && this.Math === Math) {
         return this;
     }
     
@@ -62,11 +62,6 @@ function evalStringFromSourceUrl (codeString, path) {
     const sourceUrl = `\n//# sourceURL=` + path + ``; // NOTE: this didn't work in Chrome if the path was inside single or double quotes
     const debugCode = codeString + sourceUrl;
     //console.log("eval: ", path);
-    /*
-    if (path.includes("clarinet")) {
-        debugger;
-    }
-    */
     eval(debugCode);
 }
 
@@ -152,7 +147,7 @@ Object.defineSlot(Array.prototype, "promiseParallelMap", async function (aBlock)
 // --- UrlResource --------------------------------
 
 
-class UrlResource {
+class UrlResource extends Object {
 
     static _totalBytesLoaded = 0;
     static _totalUrlsLoaded = 0;
@@ -206,7 +201,7 @@ class UrlResource {
         if (this.isZipFile()) {
             await this.promiseLoadUnzipIfNeeded();
         }
-        return this.promiseLoadFromCache();
+        return await this.asyncLoadFromCache();
     }
 
     isDebugging () {
@@ -219,8 +214,12 @@ class UrlResource {
         }
     }
 
-   async promiseLoadFromCache () {
-        //console.log("UrlResource.promiseLoadFromCache() " + this.path())
+   async asyncLoadFromCache () {
+        if (this._data) {
+            return this;
+        }
+
+        //console.log("UrlResource.asyncLoadFromCache() " + this.path())
         const h = this.resourceHash();
         if (h && getGlobalThis().HashCache) {
             const hc = HashCache.shared();
@@ -234,12 +233,12 @@ class UrlResource {
                 const data = await hc.promiseAt(h);
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
-                console.log("UrlResource.promiseLoadFromCache() (from cache) " + this.path())
+                console.log("UrlResource.asyncLoadFromCache() (from cache) " + this.path())
                 return this;
             } else {
                 // otherwise, load normally and cache result
                 this.debugLog(this.type() + " no cache for '" + this.resourceHash() + "' " + this.path());
-                console.log("UrlResource.promiseLoadFromCache() (over NETWORK)" + this.path())
+                console.log("UrlResource.asyncLoadFromCache() (over NETWORK)" + this.path())
                 await this.promiseJustLoad();
                 await hc.promiseAtPut(h, this.data());
                 console.log(this.type() + " stored cache for ", this.resourceHash() + " " + this.path());

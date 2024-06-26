@@ -166,6 +166,12 @@
         await this.appDidInit();
         SyncScheduler.shared().resume();
         BMNotificationCenter.shared().resume();
+
+
+        setTimeout(() => {
+            console.log("All synchronous operations completed");
+            this.afterFirstRender();
+          }, 2);
         //debugger;
     }
 
@@ -212,9 +218,9 @@
         bootLoadingView.setTitle("");
 
         document.body.style.display = "flex";
-        ResourceManager.shared().markPageLoadTime();
-        document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
-        
+        //ResourceManager.shared().markPageLoadTime();
+        //document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
+        //debugger;
         bootLoadingView.close();
         this.unhideRootView();
         this.afterAppUiDidInit();
@@ -231,6 +237,12 @@
     handleSearchParams (searchParams) {
         // for subclasses to implement
         return this
+    }
+
+    afterFirstRender () {
+        //debugger;
+        ResourceManager.shared().markPageLoadTime();
+        document.title = this.name() + " (" + ResourceManager.shared().loadTimeDescription() + ")";
     }
         
     // -- window and document ---
