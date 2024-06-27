@@ -893,7 +893,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         }
 
         if (this.isSubnodeField()) {
-            assert(anInstance.shouldStoreSubnodes() === false);
+            assert(anInstance.shouldStoreSubnodes() === false, "error on slot definition '" + this.name() + "' subnode fields are not supported with shouldStoreSubnodes");
             anInstance.addSubnodeFieldForSlot(this);
         }
     }

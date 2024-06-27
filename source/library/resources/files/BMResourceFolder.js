@@ -143,6 +143,10 @@
     files () {
         return this.subnodes().filter(sn => sn.thisClass().isKindOf(BMResourceFile));
     }
+    
+    fileNames () {
+        return this.files().map(file => file.name());
+    }
 
     fileWithName (aName) {
         return this.subnodes().detect(sn => sn.name() === aName)

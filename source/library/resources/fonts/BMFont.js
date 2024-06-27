@@ -111,6 +111,8 @@
             const loadedFace = await face.load();
             assert(loadedFace === face);
             document.fonts.add(loadedFace);
+            // it's safe to remove the data now
+            this.setData(null);
             //console.log("added font to document: ", this.name());
         } catch (error) {
             this.onLoadError(error);

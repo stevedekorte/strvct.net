@@ -13,6 +13,7 @@
     }
 
     initPrototypeSlots () {
+
         {
             const slot = this.newSlot("anthropicService", null);
             slot.setShouldStoreSlot(true);

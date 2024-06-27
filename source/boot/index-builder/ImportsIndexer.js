@@ -148,7 +148,7 @@ class IndexBuilder {
         const fullPath = nodePath.join(process.cwd(), path)
 
         if (!fs.existsSync(path)) {
-            throw new Error("missing path '" + path + "'")    
+            throw new Error("missing path '" + path + "'");
         }
 
         const data = fs.readFileSync(fullPath)
