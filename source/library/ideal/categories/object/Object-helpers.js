@@ -139,12 +139,10 @@ Object.defineSlotSafely = function(obj, slotName, slotValue) {
     }
 };
 
-Object.defineSlotsSafely = function (obj, dict) {
-    Object.keys(dict).forEach((slotName) => {
-        const slotValue = dict[slotName]
-        Object.defineSlotSafely(obj, slotName, slotValue)
-
-    })
+Object.defineSlotsSafelyFromMap = function (obj, aMap) {
+    for (const [slotName, slotValue] of aMap) {
+        Object.defineSlotSafely(obj, slotName, slotValue);
+    }
 };
 
 
@@ -155,20 +153,21 @@ Object.defineSlot(Object, "initThisCategory", function () {
     // This is a bit of a hack to implement class categories in Javascript
     // sanity check: check name to ensure we're only using this on a category
 
-    const hasTwoPartName = this.name.split("_").length === 2
+    const hasTwoPartName = this.name.split("_").length === 2;
     if (!hasTwoPartName) {
-        const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName-categoryName."
-        throw new Error(msg)
+        const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName-categoryName.";
+        throw new Error(msg);
     }
 
     // copy category methods to parent class
 
-    const getSlotsDictOn = (obj) => {
-        const keys = Reflect.ownKeys(obj)
-        const dict = {}
+
+    const getSlotsMapOn = (obj) => {
+        const keys = Reflect.ownKeys(obj);
+        const map = new Map();
         keys.forEach(k => {
-            const v = obj[k]
-            dict[k] = v
+            const v = obj[k];
+            map.set(k, v);
             /*
             // this doesn't seem to get the correct .name(?)
             if (typeof (v) === "function" && k !== "constructor") {
@@ -176,25 +175,34 @@ Object.defineSlot(Object, "initThisCategory", function () {
             }
             */
         })
-        return dict
+        return map;
     }
 
+    const parent = this.__proto__;
 
+    // copy prototype slots
+    const protoSlotsMap = getSlotsMapOn(this.prototype);
+    protoSlotsMap.delete("constructor");
+    protoSlotsMap.delete("prototype");
 
-    const parent = this.__proto__ //superClass()
+    if (protoSlotsMap.has("initPrototypeSlots")) {
+        protoSlotsMap.get("initPrototypeSlots").call(parent.prototype);
+        protoSlotsMap.delete("initPrototypeSlots");
+    }
 
-    // copy instance slots
-    const instanceSlotsDict = getSlotsDictOn(this.prototype)
-    delete instanceSlotsDict["constructor"]
-    delete instanceSlotsDict["prototype"]
-    Object.defineSlotsSafely(parent.prototype, instanceSlotsDict)
+    if (protoSlotsMap.has("initPrototype")) {
+        protoSlotsMap.get("initPrototype").call(parent.prototype);
+        protoSlotsMap.delete("initPrototype");
+    }
+
+    Object.defineSlotsSafelyFromMap(parent.prototype, protoSlotsMap); // throws if slot already exists
 
     // copy class slots
-    const classSlotsDict = getSlotsDictOn(this)
-    delete classSlotsDict["length"] // FIXME: hack for collection types
-    delete classSlotsDict["name"]
-    delete classSlotsDict["prototype"]
-    Object.defineSlotsSafely(parent, classSlotsDict)
+    const classSlotsMap = getSlotsMapOn(this);
+    classSlotsMap.delete("length"); // FIXME: hack for collection types
+    classSlotsMap.delete("name");
+    classSlotsMap.delete("prototype");
+    Object.defineSlotsSafelyFromMap(parent, classSlotsMap); // throws if slot already exists
 
     /*
     console.log("this.name = '" + this.name + "'")
