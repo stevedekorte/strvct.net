@@ -61,7 +61,7 @@ function getGlobalThis () {
 function evalStringFromSourceUrl (codeString, path) {
     const sourceUrl = `\n//# sourceURL=` + path + ``; // NOTE: this didn't work in Chrome if the path was inside single or double quotes
     const debugCode = codeString + sourceUrl;
-    console.log("eval: ", path);
+    //console.log("eval: ", path);
     eval(debugCode);
 }
 

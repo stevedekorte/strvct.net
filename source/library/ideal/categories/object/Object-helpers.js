@@ -286,7 +286,7 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
         //debugger;
     }
 
-    console.log("\n\n" + this.type() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
+    //console.log("\n\n" + this.type() + " allSlots: ", Array.from(this.allSlotsMap().keys()).sort() + "\n\n");
     return this;
 });
 
