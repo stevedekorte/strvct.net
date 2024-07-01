@@ -11,22 +11,6 @@
 
 (class Object_class extends Object {
 
-    static isClass () {
-        return true
-    }
-
-    static isInstance () {
-        return false
-    }
-
-    static isPrototype () {
-        return false
-    }
-
-    type () {
-        return this.constructor.name
-    }
-
     superClass () {
         return this.thisClass().superClass()
     }
@@ -40,23 +24,6 @@
         // otherwise, it's an instance
         return this.__proto__.constructor
     }
-
-    isInstance () {
-        return !this.isPrototype() && !this.isClass()
-    }
-
-    isPrototype () {
-        return this.constructor.prototype === this
-    }
- 
-    isInstance () {
-        return !this.isPrototype()
-    }
- 
-    isClass () {
-        return false
-    }
- 
  
     thisPrototype () {
         assert(this.isInstance())
@@ -68,30 +35,14 @@
     // --- class methods ---
 
     static clone () {
-        const obj = new this()
-        //assert(obj._cloneArguments === null)
-        //obj._cloneArguments = arguments
-        obj.init()
-        /*
-        if (obj.isDeserializing()) {
-            // finalInit will be call by the Store after loadFromRecord
-        } else {
-            obj.finalInit(); 
-        }
-        */
-        obj.finalInit()
-        obj.afterInit()
-
-        return obj
+        const obj = new this();
+        obj.init();
+        obj.finalInit();
+        obj.afterInit();
+        return obj;
     }
 
-    static type () {
-        return this.name
-    }
 
-    static isClass () {
-        return true
-    }
 
     static getClassNamed (aName) {
         if (Type.isNullOrUndefined(aName)) {
@@ -115,12 +66,34 @@
         return this
     }
 
+    // --- categories ---
+
+    /*
+    static categories () {
+        assert(this.isClass());
+        if (!this.hasOwnProperty("_categories")) {
+            this._categories = [];
+        }
+        return this._categories;
+    }
+
+    static addProtoCategory (aCategory) {
+        assert(this.isPrototype());
+        assert(!this.categories().includes(aCategory));
+        this.categories().push(aCategory);
+        return this;
+    }
+        */
+
+    // ---
+
     static globals () {
         return getGlobalThis()
     }
 
     static initClass () {
-        this.newClassSlot("allClassesSet", new Set())
+        this.newClassSlot("allClassesSet", new Set());
+        //this.newClassSlot("categories", null);
     }
 
     static findAncestorClasses () {
@@ -157,8 +130,8 @@
 
         // define getter
         {
-            const hasGetter = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, slotName))
-            assert(!hasGetter)
+            const hasGetter = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, slotName));
+            assert(!hasGetter);
             //const getterFunc = eval('function () { return this.' + ivarName + '; }');
             const getterFunc = function () { 
                 assert(arguments.length === 0);
@@ -175,81 +148,62 @@
 
         // define setter
         {
-
             const setterName = "set" + slotName.capitalized()
-            const setterFunc = function (v) { this[ivarName] = v; return this };
+            const setterFunc = function (v) { 
+                this[ivarName] = v; 
+                return this; 
+            };
             const descriptor = {
                 configurable: true,
                 enumerable: false,
                 value: setterFunc,
                 writable: true,
             }
-            Object.defineProperty(this, setterName, descriptor)
+            Object.defineProperty(this, setterName, descriptor);
         }
 
         return this
     }
 
     static initThisClass () { // called on every class which we create
-        this.defineClassGlobally()
+        this.defineClassGlobally();
 
         // setup ancestor list
         // could become invalid if class structure dynamically changes
-        this.newClassSlot("ancestorClasses", this.findAncestorClasses())
-        this.newClassSlot("childClasses", new Set())
+        this.newClassSlot("ancestorClasses", this.findAncestorClasses());
+        this.newClassSlot("childClasses", new Set());
 
         // add as class to parent
-        const p = this.parentClass()
+        const p = this.parentClass();
         if (p && p.addChildClass) {
-            p.addChildClass(this)
+            p.addChildClass(this);
         }
 
         if (this.hasOwnProperty("initClass")) {
             // Only called if method defined on this class.
             // This method should *not* call super.initClass().
-            this.initClass()
+            this.initClass();
         }
 
-        this.prototype.setupPrototype()
+        this.prototype.setupPrototype();
 
-        this.addToAllClasses()
-        return this
+        this.addToAllClasses();
+        return this;
     }
 
-    setupPrototype () {
-        if (!this.isPrototype()) {
-            throw new Error("setupPrototype called on non-prototype")
-        }
-
-        /// each proto has it's own set of slots - use justNewSlot as newSlot needs to check the slots list
-        Object.defineSlot(this, "_slotsMap", new Map())
-        Object.defineSlot(this, "_allSlotsMap", new Map())
-        //Object.defineSlot(this, "_cloneArguments", null)
-        this.setupAllSlotsMap();
-
-        // We need to separate initPrototypeSlots, initSlots, initPrototype as
-        // initializing some slots may depend on others already existing.
-        
-        // Slot init ordering may be important as well and why slots should be stored in 
-        // an array with a name->slot map used as an index.
-
-        if (this.hasOwnProperty("initPrototypeSlots")) {
-            // Only called if method defined on this class.
-            this.initPrototypeSlots() // This method should NOT call super
-        }
-
-        this.initSlots()
-
-        if (this.hasOwnProperty("initPrototype")) {
-            this.initPrototype() // This method should NOT call super
-        }
-
-        return this
-    }
-
-
+    /*
     allSlotsMap () {
-        return this._allSlotsMap
+        return this._allSlotsMap;
+    }
+
+    forEachSlot (fn) {
+        this.forEachPrototype(proto => {
+            if (Object.hasOwn(proto, "_slotsMap")) {
+                proto._slotsMap.forEach((slot, key, map) => {
+                    fn(slot)
+                })
+            }
+        })
     }
 
     setupAllSlotsMap () { // called once when prototype is created
@@ -268,6 +222,7 @@
             }
         });
     }
+    */
 
     forEachSlotKV (fn) {
         // WARNING: overridden slots may be called multiple times using this method
@@ -276,38 +231,6 @@
         this.forEachSlot(slot => {
             fn(slot.name(), slot); 
         });
-    }
-
-    forEachPrototype (fn) { // starts with this, and follows tree upwards
-        let proto = this
-        if(this.isInstance()) {
-            proto = this.__proto__
-        }
-
-        while (proto) {
-            fn(proto) 
-            //console.log("proto is ", proto.type())
-            if (proto === proto.__proto__) {
-                throw new Error("__proto__ loop detected in " + proto.type())
-                break;
-            } else {
-                proto = proto.__proto__
-            }
-        }
-    }
-
-    forEachSlot (fn) {
-        this.forEachPrototype(proto => {
-            if (Object.hasOwn(proto, "_slotsMap")) {
-                proto._slotsMap.forEach((slot, key, map) => {
-                    fn(slot)
-                })
-            }
-        })
-    }
-
-    initSlots () {
-        this.slotsMap().forEach(slot => slot.setupInOwner())
     }
 
     // ----------------------------------------
@@ -319,10 +242,6 @@
     initPrototype () {
         // called after setupInOwner is called on each slot
         // so we have a chance to initialize things after all slots are set up 
-    }
-
-    slotsMap () {
-        return this._slotsMap
     }
 
     static defineClassGlobally () {

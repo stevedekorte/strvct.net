@@ -19,25 +19,10 @@ Object.defineSlots(typedArrayClass.prototype, {
 
         //debugger;
         const instance = this.preClone ? this.preClone() : new this();
-
-        //const instance = new this();
-        //instance._isDeserializing = true;
-        //instance.setIsDeserializing(true);
         instance.init();
         // caller needs to call finalInit and afterInit
         return instance;
-        //return this.clone({ _isDeserializing: true, _store: aStore })
     }
-
-    /*
-    isDeserializing () { 
-        // e.g. this.initIsDeserializing.call(this, arguments)
-        const args = this._cloneArguments
-        assert(args !== undefined)
-        const isDeserializing = args && args.length && args[0]._isDeserializing
-        return isDeserializing
-    }
-    */
 
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
@@ -53,7 +38,6 @@ Object.defineSlots(typedArrayClass.prototype, {
         // generic storage of (non ProtoClass subclass) objects is not supported.
         
         assert(this.shouldStore());
-        //debugger;
 
         // Any ProtoClass subclass will not call this method as it will use the ProtoClass_store.recordForStore method.
         // We just need to handle dictionaries here i.e.JSON dictionaries.

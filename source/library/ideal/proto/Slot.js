@@ -612,14 +612,14 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     setupValue () {
-        Object.defineSlot(this.owner(), this.privateName(), this.initValue())
-        return this
+        Object.defineSlot(this.owner(), this.privateName(), this.initValue());
+        return this;
     }
 
     // getter
 
     alreadyHasGetter () {
-        return this.owner().hasOwnProperty(this.getterName()) // TODO: hasOwnProperty? 
+        return this.owner().hasOwnProperty(this.getterName()); // TODO: hasOwnProperty? 
     }
 
     setupGetter () {

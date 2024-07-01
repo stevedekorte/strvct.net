@@ -19,18 +19,22 @@ if (!String.prototype.capitalized) {
     constructor () {
     }
 
-    static initThisClass () {
-        
+    setupPrototype () { 
         if (this.prototype.hasOwnProperty("initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
             this.prototype.initPrototypeSlots()
         }
 
+        // this.initSlots();
+
         if (this.prototype.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
             this.prototype.initPrototype()
         }
+    }
 
+    static initThisClass () {
+        this.prototype.setupPrototype();
         getGlobalThis()[this.type()] = this
         return this
     }

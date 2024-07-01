@@ -32,15 +32,12 @@
         if (this.isSingleton() && this.hasShared()) {
             // kinda weird dealing with shared in clone like this
             // do we do this to deal with deserialization of singletons?
-            return this.shared() 
+            return this.shared();
         }
 
-        const obj = new this()
-        //assert(obj._cloneArguments === null)
-        //obj._cloneArguments = arguments
-
+        const obj = new this();
         if (this.isSingleton()) {
-            this.setShared(obj)
+            this.setShared(obj);
         }
 
         return obj;
@@ -48,14 +45,10 @@
     
     static clone () {
         const obj = this.preClone();
-
         obj.init();
         obj.finalInit();
         obj.afterInit();
-        
-        //obj._cloneArguments = null
         //this.allInstancesWeakSet().add(obj)
-
         return obj;
     }
 
@@ -268,7 +261,8 @@
     }
 
     hasSlot (slotName) {
-        return this.getSlot(slotName) !== undefined
+        //return this.hasOwnProperty(slotName);
+        return this.getSlot(slotName) !== undefined;
     }
 
     detectSlot (fn) { // returns undefined if no match
@@ -281,8 +275,6 @@
         })
         return matchingSlot
     }
-
-
 
     /*
     allSlotsRawValueMap () { // what about action slots?
@@ -333,6 +325,7 @@
         }
         return this.justNewSlot(slotName, initialValue, allowOnInstance);
     }
+
 
     overrideSlot (slotName, initialValue, allowOnInstance=false) {
         const oldSlot = this.getSlot(slotName);
