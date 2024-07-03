@@ -44,6 +44,14 @@
       const slot = this.newSlot("service", null); // pointer to AiService instance
     }
 
+    {
+      const slot = this.newSlot("tagDelegate", null); // delegate to receive tag messages from responses
+    }
+
+    {
+      const slot = this.newSlot("aiSpeakerName", null); // name of the AI speaker
+    }
+
   }
 
   initPrototype () {
@@ -155,6 +163,9 @@
   // --- chat actions ---
 
   aiSpeakerName () {
+    if (this._aiSpeakerName) {
+      return this._aiSpeakerName;
+    }
     return this.chatModel().title().toUpperCase()
   }
 

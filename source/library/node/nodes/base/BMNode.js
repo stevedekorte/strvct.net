@@ -181,7 +181,7 @@
         // TODO: generalize this for all notifications somehow
         // maybe register for note with object directly
         
-        if (App.shared().hasDoneAppInit()) {
+        if (App.hasShared() && App.shared().hasDoneAppInit()) {
             this.appDidInit() // may be async
         } else {
             this.watchOnceForNote("appDidInit")

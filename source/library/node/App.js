@@ -25,16 +25,19 @@
     static initClass () {
         this.setIsSingleton(true);
     }
+
+    static shared () {
+        //debugger;
+        return super.shared();
+    }
     
     // --- shared ---
 
-    /*
     static sharedContext () {
         // We override sharedContext so all subclasses use the same shared value
         // and anyone can call App.shared() to access it
         return App;
     }
-    */
 
     // --- store ---
     // we open store from app class since we might want to load app instance from store
@@ -161,6 +164,7 @@
         BMNotificationCenter.shared().pause();
 
         this.debugLog("Launching " + this.fullVersionString());
+        //debugger;
         await this.setupModel();
         await this.setupUi();
         await this.appDidInit();
