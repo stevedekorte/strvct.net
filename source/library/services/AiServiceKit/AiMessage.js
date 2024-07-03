@@ -69,6 +69,10 @@
     return false;
   }
 
+  isVisible () {
+    return this.role() !== "system";
+  }
+
   valueIsEditable () {
     return this.role() === "user";
   }
