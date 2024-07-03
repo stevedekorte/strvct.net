@@ -137,7 +137,7 @@
 
   newSystemMessage () {
     const m = this.newMessage();
-    m.setSpeakerName(this.aiSpeakerName());
+    m.setSpeakerName("System Message");
     m.setRole("system");
     m.setIsComplete(true);
     m.setIsVisibleToUser(false);
@@ -251,5 +251,15 @@
     // override Conversation implementation
     return !this.hasIncompleteMessages();
   }
+
+  /*
+  prepareForFirstAccess () {
+    super.prepareForFirstAccess();
+    const delegate = this.tagDelegate();
+    if (delegate && delegate.onConversationPrepareForFirstAccess) {
+      delegate.onConversationPrepareForFirstAccess(this);
+    }
+  }
+  */
 
 }.initThisClass());
