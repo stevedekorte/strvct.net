@@ -44,13 +44,28 @@
     // ------------------------------
 
     setJson (json) {
+        if (this.doesMatchJson(json)) {
+            return this;
+        }
+
         assert(Type.isDictionary(json));
 
+        const currentKeys = new Set(this.subnodes().map(sn => sn.title()));
+        const newKeys = new Set(Reflect.ownKeys(json));
+        const keysToRemove = Set.difference(currentKeys, newKeys);
+
+        // remove any keys that are no longer in the json
+        keysToRemove.forEach((k) => {
+            this.removeSubnode(this.firstSubnodeWithTitle(k));
+        });
+
+        // merge remaining keys
         json.ownForEachKV((k, v) => {
             const sn = this.firstSubnodeWithTitle(k); // do this if we want to merge
             if (this.shouldMerge() && sn) {
                 sn.setJson(v);
             } else {
+                console.log("BMJsonArrayNode.setJson() creating new node for hash: ", hash);
                 const aNode = this.thisClass().nodeForJson(v);
                 aNode.setTitle(k);
                 if (aNode.setKey) {
@@ -58,11 +73,18 @@
                 }
                 this.addSubnode(aNode);
             }
-        })
+        });
+
         return this;
     }
 
     asJson () {
+        /*
+        if (this.jsonCache()) {
+            return this.jsonCache();
+        }
+        */
+
         const dict = {};
         this.subnodes().forEach((sn) => {
             const key = sn.key ? sn.key() : sn.title();

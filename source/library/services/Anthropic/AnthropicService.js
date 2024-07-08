@@ -10,12 +10,6 @@
       AnthropicService.shared().setApiKey("sk-1234567890");
       const hasApiKey = AnthropicService.shared().hasApiKey();
 
-
-    MODEL NOTES:
-
-      claude-3-sonnet-20240229 // missing opening description, doesn't make roll request json with required fields
-      claude-3-haiku-20240307 // also doesn't make roll request json with required fields
-
 */
 
 (class AnthropicService extends AiService {
@@ -33,7 +27,6 @@
         "contextWindow": 200000,
         "notes": ""
       },
-
       {
           "name": "claude-3-opus-20240229",
           "title": "Claude 3 Opus",
@@ -41,7 +34,6 @@
           "contextWindow": 200000,
           "notes": ""
       },
-
       {
           "name": "claude-3-sonnet-20240229",
           "title": "Claude 3 Sonnet",

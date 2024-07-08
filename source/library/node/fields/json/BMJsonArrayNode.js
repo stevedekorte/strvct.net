@@ -107,8 +107,44 @@
         return this.subnodes().map(sn => sn.jsonArchive());
     }
 
+
     setJson (json) {
-        //let index = 0;
+        if (this.doesMatchJson(json)) {
+            return this;
+        }
+
+        const hashSubnodeMap = new Map();
+        this.subnodes().forEach(sn => {
+            hashSubnodeMap.set(sn.jsonHash(), sn);
+        });
+
+        const newSubnodes = [];
+
+        json.forEach((v) => {
+            const hash = JSON.stableStringify(v).hashCode();
+            const existingNode = hashSubnodeMap.get(hash);
+            if (existingNode) {
+                // use the existing node
+                newSubnodes.push(existingNode);
+                //hashSubnodeMap.delete(hash);
+            } else {
+                console.log("BMJsonArrayNode.setJson() creating new node for hash: ", hash);
+                // create a new node
+                if (this.subnodeClasses().length === 1) {
+                    const aClass = this.subnodeClasses().first();
+                    const aNode = aClass.clone().setJson(v);
+                    newSubnodes.push(aNode);
+                } else {
+                    const aNode = BMJsonNode.nodeForJson(v);
+                    newSubnodes.push(aNode);
+                }
+            }
+
+        });
+
+        this.setSubnodes(newSubnodes);
+
+        /*
         this.removeAllSubnodes();
         
         json.forEach((v) => {
@@ -121,8 +157,8 @@
                 //aNode.setTitle(index);
                 this.addSubnode(aNode);
             }
-            //index ++;
         });
+        */
         return this;
     }
 

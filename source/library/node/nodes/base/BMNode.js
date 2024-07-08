@@ -105,9 +105,9 @@
         }
 
         {
-            const slot = this.newSlot("subnodes", null)
-            slot.setInitProto(SubnodesArray)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("subnodes", null);
+            slot.setInitProto(SubnodesArray);
+            slot.setDoesHookSetter(true);
         }
 
         {
@@ -172,6 +172,15 @@
 
         this.setSubnodeClasses(this.thisPrototype().subnodeClasses().shallowCopy());
         return this
+    }
+
+    setSubnodes (subnodes) {
+        if (this._subnodes === null) {
+            this._subnodes = subnodes;
+        } else {
+            this._subnodes.copyFrom(subnodes);
+        }
+        return this;
     }
 
     registerForAppDidInit () {

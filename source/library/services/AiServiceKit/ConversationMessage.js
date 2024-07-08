@@ -176,7 +176,12 @@
 
   onComplete () {
     // to be overridden by subclasses
-    this.sendDelegate("onCompletedMessage")
+    this.sendDelegate("onCompletedMessage");
+  }
+
+  valueIsEditable () {
+    debugger;
+    return this._valueIsEditable && !this.isComplete();
   }
 
   setSendInConversation (v) {
