@@ -20,16 +20,16 @@ if (!String.prototype.capitalized) {
     }
 
     setupPrototype () { 
-        if (this.prototype.hasOwnProperty("initPrototypeSlots")) {
+        if (this.hasOwnProperty("initPrototypeSlots")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototypeSlots()
-            this.prototype.initPrototypeSlots()
+            this.initPrototypeSlots()
         }
 
         // this.initSlots();
 
-        if (this.prototype.hasOwnProperty("initPrototype")) {
+        if (this.hasOwnProperty("initPrototype")) {
             // each class inits it's own prototype, so make sure we only call our own initPrototype()
-            this.prototype.initPrototype()
+            this.initPrototype()
         }
     }
 
