@@ -477,15 +477,33 @@ String.prototype._setterCacheMap = new Map();
     }
 
     hashCode () {
-        let hash = 0;
+        return this.hashCode64();
+    }
 
+    // 32-bit version
+    hashCode32() {
+        let hash = 0;
         for (let i = 0; i < this.length; i++) {
-          const chr = this.charCodeAt(i);
-          hash  = ((hash << 5) - hash) + chr;
-          hash |= 0; // Convert to 32bit integer
+        const chr = this.charCodeAt(i);
+        hash = ((hash << 5) - hash) + chr;
+        hash |= 0; // Convert to 32bit integer
         }
         return hash;
     }
+    
+    // 64-bit version
+    hashCode64 () {
+        let h1 = 0xdeadbeef ^ 0, h2 = 0x41c6ce57 ^ 0;
+        for (let i = 0; i < this.length; i++) {
+        const chr = this.charCodeAt(i);
+        h1 = Math.imul(h1 ^ chr, 2654435761);
+        h2 = Math.imul(h2 ^ chr, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        return 4294967296 * (2097151 & h2) + (h1 >>> 0);
+    }
+
 
     promiseSha256Digest () {
         // example use: const hashBuffer = await "hello".promiseSha256Digest();

@@ -7,7 +7,7 @@
 
 */
         
-(class BMJsonNode extends BMSummaryNode {
+(class BMJsonNode extends BMJsonCachedNode {
     
     static canOpenMimeType (mimeType) {
         return mimeType === "application/json"
@@ -66,36 +66,9 @@
     }
 
     initPrototypeSlots () {
-
-        {
-            // the json that this node represents
-            // we update this when the node is edited
-            // the node is the truth and the json is derived from it
-            const slot = this.newSlot("jsonCache", null);
-        }
-
-        {
-            // a hash of JSON.stableStrigify(jsonCache)
-            const slot = this.newSlot("jsonHash", null);
-        }
     }
 
-    setJsonCache (json) {
-        this._jsonCache = json;
-        this.setJsonHash(JSON.stableStringify(json).hashCode());
-        return this;
-    }
-
-    updateJsonCache () {
-        //this.setJsonCache(null);
-        this.setJsonCache(this.asJson());
-        return this;
-    }
-
-    didUpdateNode () {
-        super.didUpdateNode();
-        this.updateJsonCache();
-    }
+    // -----------------------------------------
 
     initPrototype () {
         //this.setSubnodeClasses(this.jsonClasses());
@@ -114,16 +87,6 @@
         if (this.subnodeClasses().length === 0) {
             this.setSubnodeClasses(this.jsonClasses());
         }
-        this.updateJsonCache();
-    }
-
-    doesMatchJson (json) {
-        const b = JSON.stableStringify(this.asJson());
-        if (this.jsonHash()) {
-            return this.jsonHash() === b.hashCode();
-        }
-        const a = JSON.stableStringify(json); 
-        return a === b;
     }
     
 }.initThisClass());

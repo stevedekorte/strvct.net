@@ -128,18 +128,17 @@
                 newSubnodes.push(existingNode);
                 //hashSubnodeMap.delete(hash);
             } else {
-                console.log("BMJsonArrayNode.setJson() creating new node for hash: ", hash);
                 // create a new node
+                let aNode = null;
                 if (this.subnodeClasses().length === 1) {
                     const aClass = this.subnodeClasses().first();
-                    const aNode = aClass.clone().setJson(v);
-                    newSubnodes.push(aNode);
+                    aNode = aClass.clone().setJson(v);
                 } else {
-                    const aNode = BMJsonNode.nodeForJson(v);
-                    newSubnodes.push(aNode);
+                    aNode = BMJsonNode.nodeForJson(v);
                 }
+                newSubnodes.push(aNode);
+                console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for hash: ", hash);
             }
-
         });
 
         this.setSubnodes(newSubnodes);
@@ -159,10 +158,11 @@
             }
         });
         */
+        this.setJsonCache(json);
         return this;
     }
 
-    asJson () {
+    calcJson () {
         return this.subnodes().map(sn => sn.asJson());
     }
 

@@ -75,16 +75,12 @@
             }
         });
 
+        this.setJsonCache(json);
+
         return this;
     }
 
-    asJson () {
-        /*
-        if (this.jsonCache()) {
-            return this.jsonCache();
-        }
-        */
-
+    calcJson () {
         const dict = {};
         this.subnodes().forEach((sn) => {
             const key = sn.key ? sn.key() : sn.title();
@@ -93,7 +89,7 @@
                 const value = sn.asJson();
                 dict[key] = value;
             }
-        })
+        });
         return dict;
     }
 
