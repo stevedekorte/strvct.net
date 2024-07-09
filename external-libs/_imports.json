@@ -2,6 +2,7 @@
 [
     "js-sha256/_imports.json",
     "json-stable-stringify/_imports.json",
+    "jsondiffpatch/_imports.json",
     "pako/_imports.json",
     "fast-json-patch/_imports.json",
     "htmlparser2/_imports.json",
