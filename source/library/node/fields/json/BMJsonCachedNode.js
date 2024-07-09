@@ -83,6 +83,9 @@
 
     applyJsonPatches (jsonPatches) {
         let json = this.asJson();
+        assert(Type.isJsonType(json));
+        json = json.deepCopy();
+
         // if root node is replaced, json needs to update
         const results = JsonPatch.applyPatchWithAutoCreation(json, jsonPatches); // GPT sometimes forgets to define paths, so we do this to help it
         assert(results.newDocument, "Character.applyJsonPatches() results.newDocument missing");
@@ -110,6 +113,7 @@
         const newJsonString = JSON.stableStringify(json);
         const oldJsonString = JSON.stableStringify(this.asJson());
         if (newJsonString === oldJsonString) {
+            console.log("Character.applyJsonPatches() json applied correctly");
             debugger;
             return this; 
         } else {

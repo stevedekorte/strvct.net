@@ -29,18 +29,22 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     duplicate () {
         if (this.constructor === Object) {
             // it's a dictionary!
-            const deepCopyDict = JSON.parse(JSON.stringify(this)) // breaks for non-JSON!
-            //debugger;
+            const deepCopyDict = JSON.parse(JSON.stringify(this)); // breaks for non-JSON!
             return deepCopyDict;
+        } else {
+            assert(this.isInstance());
+            const instance = this.thisClass().clone().copyFrom(this);
+            instance.duplicateSlotValuesFrom(this); // TODO: what about lazy slots?
+            return instance;
         }
-        assert(this.isInstance())
-        const instance = this.thisClass().clone().copyFrom(this)
-        instance.duplicateSlotValuesFrom(this) // TODO: what about lazy slots?
-        return instance
     }
  
     copy () {
         return this.duplicate()
+    }
+
+    deepCopy () {
+        return this.copy();
     }
  
     copyFromAndIgnoreMissingSlots (anObject) { // prefer to use this externally so it's clear what it's doing
