@@ -200,27 +200,27 @@
             if (proto) {
                 return proto
             }
-            console.warn("no class found for nodeTileClassName:'" + name + "'")
+            console.warn("no class found for nodeTileClassName:'" + name + "'");
         }
 
-	  	return this.firstAncestorClassWithPostfix("Tile")
+	  	return this.firstAncestorClassWithPostfix("Tile");
     }
 
     onBrowserDropChunk (dataChunk) {
-        const mimeType = dataChunk.mimeType()
-        const canOpenNodes = BMNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType))
-        const okTypes = this.acceptedSubnodeTypes()
-        const canUseNodes = canOpenNodes /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
+        const mimeType = dataChunk.mimeType();
+        const canOpenNodes = BMNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
+        const okTypes = this.acceptedSubnodeTypes();
+        const canUseNodes = canOpenNodes; /// canOpenNodes.select(nodeType => okTypes.contains(nodeType))
 
         if (canUseNodes.length) {
 
             if (canUseNodes.length === 1) {
-                const match = canUseNodes.first()
-                const newNode = match.openMimeChunk(dataChunk)
-                this.addSubnode(newNode)
+                const match = canUseNodes.first();
+                const newNode = match.openMimeChunk(dataChunk);
+                this.addSubnode(newNode);
 
                 //if (this.acceptsAddingSubnode(match)) {
-                //    this.addSubnode(match)
+                //    this.addSubnode(match);
                 //}
                 
             } else {
@@ -242,7 +242,7 @@
 
     scheduleSyncToView (slotName) {
         this.didUpdateNodeIfInitialized(this, slotName);
-        return this
+        return this;
     }
 
 
@@ -250,15 +250,15 @@
 	
     /*
     shelfSubnodes () {
-        return []
+        return [];
     }
 
     shelfIconName () {
-	    return null
+	    return null;
     }
 	
     shelfIconUrl () {
-	    return null
+	    return null;
     }
     */
     
@@ -269,23 +269,23 @@
     // visibility
 	
     nodeBecameVisible () {
-	    return this
+	    return this;
     }
 
     // -- selection requests ---
 
     onRequestSelectionOfDecendantNode () {
-        return false // allow propogation up the parentNode line
+        return false; // allow propogation up the parentNode line
     }
 
     onRequestSelectionOfNode () {
-        this.tellParentNodes("onRequestSelectionOfDecendantNode", this)
-        return this
+        this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
+        return this;
     }
 
     onTapOfNode () {
-        this.tellParentNodes("onTapOfDecendantNode", this)
-        return this
+        this.tellParentNodes("onTapOfDecendantNode", this);
+        return this;
     }
 
 }.initThisClass());

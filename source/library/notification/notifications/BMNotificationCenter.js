@@ -323,7 +323,7 @@
         const nullSenderMatchSet = this.senderIndex().get(null) || emptySet;
         const senderMatchSet = this.senderIndex().get(note.sender()) || emptySet;
 
-        const nullNameMatchSet = this.nameIndex().get(note.name()) || emptySet;
+        const nullNameMatchSet = this.nameIndex().get(null) || emptySet;
         const nameMatchSet = this.nameIndex().get(note.name()) || emptySet;
 
         const fullSenderSet = nullSenderMatchSet.union(senderMatchSet);

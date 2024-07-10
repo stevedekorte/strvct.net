@@ -62,7 +62,7 @@
   // -------- 
 
   service () {
-    return this.chatModel().service()
+    return this.chatModel().service();
   }
 
   chatModel () {

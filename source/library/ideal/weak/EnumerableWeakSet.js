@@ -15,34 +15,34 @@
 getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
 
   constructor () {
-    this._refs = new EnumerableWeakMap()
+    this._refs = new EnumerableWeakMap();
   }
 
   assertValidValue (v) {
     if (v === undefined) {
-      throw new Error("values cannot be undefined as unref returns undefined after collection")
-      return
+      throw new Error("values cannot be undefined as unref returns undefined after collection");
+      return;
     }
   }
 
   add (v) {
-    this.assertValidValue(v)
+    this.assertValidValue(v);
 
-    const refs = this._refs
-    const pid = v.puuid()
+    const refs = this._refs;
+    const pid = v.puuid();
     if (!refs.has(pid)) {
-      refs.set(pid, v)
+      refs.set(pid, v);
     }
 
-    return this
+    return this;
   }
 
   clear () {
-    this._refs.clear()
+    this._refs.clear();
   }
 
   delete (v) {
-    this.assertValidValue(v)
+    this.assertValidValue(v);
 
     const hadValue = this.has(v)
     if (hadValue) {
