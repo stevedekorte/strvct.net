@@ -82,6 +82,8 @@
     }
 
     applyJsonPatches (jsonPatches) {
+        assert(Type.isJsonType(jsonPatches));
+
         let json = this.asJson();
         assert(Type.isJsonType(json));
         json = json.deepCopy();

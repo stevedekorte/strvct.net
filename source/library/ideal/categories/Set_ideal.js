@@ -192,6 +192,10 @@
         const value = iter.next().value;
         return value
     }
+    
+    asImmutable () {
+        return ImmutableSet.from(this);
+    }
 
 }).initThisCategory();
 

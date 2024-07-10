@@ -101,7 +101,8 @@
 
         this.newSlot("senderIndex", null);
         this.newSlot("nameIndex", null);
-
+        this.newSlot("nullSenderMatchSet", null);
+        this.newSlot("nullNameMatchSet", null);
     }
 
     initPrototype () {
@@ -228,7 +229,7 @@
             this.notifications().push(note);
 		    SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1);
         }
-        return this
+        return this;
     }
 
     newNote () {
@@ -300,6 +301,14 @@
 
         const nameIndex = this.observationsMap().indexedByMethod("name");
         this.setNameIndex(nameIndex);
+
+        const emptySet = ImmutableSet.emptySet();
+
+        const nullSenderMatchSet = this.senderIndex().get(null) || emptySet;
+        this.setNullSenderMatchSet(nullSenderMatchSet);
+
+        const nullNameMatchSet = this.nameIndex().get(null) || emptySet;
+        this.setNullNameMatchSet(nullNameMatchSet);
     }
     
     postNotificationNow (note) {
@@ -310,36 +319,26 @@
 
         this.setCurrentNote(note);
         
+        /*
         const showDebug = this.shouldDebugNote(note);
 
         if (showDebug) {
-            console.log(" >>> " + this.type() + " senderId " + note.senderId() + " posting " + note.name())
+            console.log(" >>> " + this.type() + " senderId " + note.senderId() + " posting " + note.name());
             //this.showObservers()
         }
-        
-        let matching; 
-        const emptySet = new Set();
+        */
 
-        const nullSenderMatchSet = this.senderIndex().get(null) || emptySet;
-        const senderMatchSet = this.senderIndex().get(note.sender()) || emptySet;
-
-        const nullNameMatchSet = this.nameIndex().get(null) || emptySet;
-        const nameMatchSet = this.nameIndex().get(note.name()) || emptySet;
-
-        const fullSenderSet = nullSenderMatchSet.union(senderMatchSet);
-        const fullNameSet = nullNameMatchSet.union(nameMatchSet);
-
-        matching = fullSenderSet.intersection(fullNameSet);
-
-        //const matching = this.observationsMatchingNotification(note);
+        const matching = this.observationsMatchingNotification(note);
 
         matching.forEach(obs => {
+            /*
             if (showDebug) {
                 //console.log(" >>> " + this.type() + " " + note.name() + " matches obs: " + obs.description());
                 if (obs.observer.type() === "HwChatInputTile") {
                     console.log(" >>> " +this.type() + " sending ", note.name() + " to observer " + obs.observer().typeId());
                 }
             }
+            */
         
             obs.sendNotification(note);
             //obs.tryToSendNotification(note);  
@@ -349,8 +348,26 @@
     }
 
     observationsMatchingNotification (note) {
+        // use our observation indexes for fast matching with the notification
+        // IMPORTANT: assumes calcIndexes() has been called before modifying observations
+
+        const emptySet = ImmutableSet.emptySet();
+
+        const senderMatchSet = this.senderIndex().get(note.sender()) || emptySet;
+        const nameMatchSet = this.nameIndex().get(note.name()) || emptySet;
+
+        const fullSenderMatchSet = this.nullSenderMatchSet().union(senderMatchSet);
+        const fullNameMatchSet = this.nullNameMatchSet().union(nameMatchSet);
+
+        const matching = fullSenderMatchSet.intersection(fullNameMatchSet);
+        return matching;
+    }
+
+    /*
+    observationsMatchingNotification (note) {
         return this.observations().filter(obs => obs.matchesNotification(note));
     }
+    */
 
     show () {
         console.log(this.type() + ":");
