@@ -163,9 +163,36 @@
     }
     */
 
+    getMatchMethod () {
+        const sender = this.sender();
+        const name = this.name();
+        const senderNull = Type.isNull(sender);
+        const nameNull = Type.isNull(name);
+
+        if (senderNull) {
+            if (nameNull) {
+                return (note) => { return true; }
+            }
+            return (note) => { return note.name() === name; }
+        }
+        if (nameNull) {
+            return (note) => { return note.sender() === sender; }
+        }
+        return (note) => { return note.noteHash() === this.noteHash(); }
+    }
+
     matchesNotification (note) {
-        const sender = this.sender()
-        const matchesSender = (sender === null) || (sender === note.sender()) 
+        if (!this._matchMethod) {
+            this._matchMethod = this.getMatchMethod();
+        }
+
+        return this._matchMethod.call(this, note);
+    }
+
+    /*
+    matchesNotification (note) {
+        const sender = this.sender();
+        const matchesSender = (sender === null) || (sender === note.sender());
         if (matchesSender) {
             const name = this.name();
             const matchesName = (name === null) || (note.name() === name);
@@ -173,6 +200,7 @@
         }
         return false;
     }
+    */
 
     tryToSendNotification (note) {
         try {

@@ -204,6 +204,21 @@
         return this;
     }
 
+    // --- indexes ---
+
+    indexedByMethod (methodName) { // returns a Map of (methodResult, Set of values)
+        const index = new Map();
+        this.valuesArray().forEach(v => {
+            const methodResult = v[methodName]();
+            let matchSet = index.get(methodResult);
+            if (!matchSet) {
+                matchSet = new Set();
+                index.set(methodResult, matchSet);
+            }
+            matchSet.add(v);
+        });
+        return index;
+    }
 
 }).initThisCategory();
 

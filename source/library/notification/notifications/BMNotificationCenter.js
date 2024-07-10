@@ -95,10 +95,13 @@
         this.newSlot("debugNoteName", "appDidInit")
         this.newSlot("currentNote", null)
         this.newSlot("isProcessing", false)
-        this.newSlot("nameIndex", null) // dict of dicts
         this.newSlot("obsHighwaterCount", 100) // used
         this.newSlot("noteSet", null) // Set used for fast lookup for matching note
         this.newSlot("isPaused", false);
+
+        this.newSlot("senderIndex", null);
+        this.newSlot("nameIndex", null);
+
     }
 
     initPrototype () {
@@ -109,7 +112,6 @@
         this.setObservations([]);
         this.setObservationsMap(new Map());
         this.setNotifications([]);
-        this.setNameIndex({});
         this.setNoteSet(new Set());
     }
 
@@ -257,6 +259,7 @@
 
         if (!this.isProcessing()) {
             this.setIsProcessing(true);
+            this.calcIndexes();
             //console.log("processPostQueue " + this.notifications().length);
             const notes = this.notifications();
             this.setNotifications([]);
@@ -290,6 +293,14 @@
     shouldDebugNote (note) {
         return note.isDebugging() || (this.isDebugging() === true && (this.debugNoteName() === null || this.debugNoteName() === note.name()));
     }
+
+    calcIndexes () {
+        const senderIndex = this.observationsMap().indexedByMethod("sender");
+        this.setSenderIndex(senderIndex);
+
+        const nameIndex = this.observationsMap().indexedByMethod("name");
+        this.setNameIndex(nameIndex);
+    }
     
     postNotificationNow (note) {
         // use a copy of the observations list in 
@@ -306,7 +317,21 @@
             //this.showObservers()
         }
         
-        const matching = this.observationsMatchingNotification(note);
+        let matching; 
+        const emptySet = new Set();
+
+        const nullSenderMatchSet = this.senderIndex().get(null) || emptySet;
+        const senderMatchSet = this.senderIndex().get(note.sender()) || emptySet;
+
+        const nullNameMatchSet = this.nameIndex().get(note.name()) || emptySet;
+        const nameMatchSet = this.nameIndex().get(note.name()) || emptySet;
+
+        const fullSenderSet = nullSenderMatchSet.union(senderMatchSet);
+        const fullNameSet = nullNameMatchSet.union(nameMatchSet);
+
+        matching = fullSenderSet.intersection(fullNameSet);
+
+        //const matching = this.observationsMatchingNotification(note);
 
         matching.forEach(obs => {
             if (showDebug) {

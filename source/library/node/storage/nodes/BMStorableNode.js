@@ -79,11 +79,13 @@
         
         // TODO: HACK, add a switch for this feature
         // TODO: find a way to avoid this?
+        /*
         if (newValue !== null && this._subnodes && this._subnodes.includes(oldValue)) { 
             newValue.setParentNode(this)
             this.subnodes().replaceOccurancesOfWith(oldValue, newValue)
             //this.debugLog(" this.subnodes().replaceOccurancesOfWith(", oldValue, ",", newValue, ")")
         }
+        */
     }
 
     /*

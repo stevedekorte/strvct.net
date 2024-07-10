@@ -57,17 +57,17 @@
     }
 
     hasPuuid () {
-        return Object.prototype.hasOwnProperty.call(this, "_puuid")
+        return Object.prototype.hasOwnProperty.call(this, "_puuid");
     }
 
     setPuuid (puuid) {
-        assert(!Type.isNullOrUndefined(puuid))
+        assert(!Type.isNullOrUndefined(puuid));
         if (this.hasPuuid()) {
-            const oldPid = this["_puuid"]
-            this.defaultStore().onObjectUpdatePid(this, oldPid, puuid)
+            const oldPid = this["_puuid"];
+            this.defaultStore().onObjectUpdatePid(this, oldPid, puuid);
         }
-        Object.defineSlot(this, "_puuid", puuid) // so _puuid isn't enumerable
-        return this
+        Object.defineSlot(this, "_puuid", puuid); // so _puuid isn't enumerable
+        return this;
     }
 
     typePuuid () {
