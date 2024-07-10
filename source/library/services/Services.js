@@ -98,10 +98,10 @@
     init () {
         super.init()
         this.setTitle("Services");
-        this.setNodeCanReorderSubnodes(false)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        return this
+        this.setNodeCanReorderSubnodes(false);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        return this;
     }
 
     aiServices () {

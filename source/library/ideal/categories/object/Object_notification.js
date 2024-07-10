@@ -93,7 +93,7 @@
 
     watchers () {
         // objects we are watching for notifications from 
-        return BMNotificationCenter.shared().observationsWithSender(this);
+        return BMNotificationCenter.shared().observersOfSender(this);
     }
 
     ourObservations () {

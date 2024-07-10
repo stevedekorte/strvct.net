@@ -57,7 +57,8 @@
 
     noteHash () {
         if (!this._noteHash) {
-            this._noteHash = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender())
+            const id = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender()); // must be implemented the same by BMObservation
+            this._noteHash = id.hashCode64();
         }
         return this._noteHash
     }

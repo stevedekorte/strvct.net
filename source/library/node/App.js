@@ -27,7 +27,6 @@
     }
 
     static shared () {
-        //debugger;
         return super.shared();
     }
     
@@ -58,7 +57,7 @@
             await this.clearStore();
             this.scheduleMethod("justOpen"); // is this needed to wait for tx to commit?
         } else {
-            this.justOpen();
+            await this.justOpen();
         }
     }
 
@@ -68,13 +67,31 @@
         console.log(">>>>>>>>>>>>>>>> cleared db  <<<<<<<<<<<<<<<");
     }
 
+    async asyncLogTimeToRun (block, label) {
+        const start = performance.now();
+        await block();
+        const end = performance.now();
+        const time = end - start;
+        console.log(" --- " + label + " " + Math.round(time/100)/10 + "s --- ");
+    }
+
     async justOpen () {
         try {
-            await this.store().promiseOpen();
-            this.store().rootOrIfAbsentFromClosure(() => {
-                return this.thisClass().rootNodeProto().clone();
-            });
-            this.run();
+            await this.asyncLogTimeToRun(async () => { 
+                await this.store().promiseOpen(); 
+            }, "store open");
+
+            await this.asyncLogTimeToRun(async () => { 
+                this.store().rootOrIfAbsentFromClosure(() => {
+                    return this.thisClass().rootNodeProto().clone();
+                });
+            }, "store read");
+
+            await this.asyncLogTimeToRun(async () => { 
+
+            await this.run();
+        }, "app run");
+
         } catch (error) {
             console.warn("ERROR: ", error);
             debugger;
@@ -136,12 +153,16 @@
     }
 
     async run () {
-        if (!this.isBrowserCompatible()) {
-            ResourceLoaderPanel.shared().setError("Sorry, this app only works on<br>Chrome, FireFox, and Brave browsers.")
-            return this
+        /*
+        if (true || !this.isBrowserCompatible()) {
+            const message = "Sorry, this app requires a Chrome, FireFox, or Brave browser.";
+            bootLoadingView.setErrorMessage(message);
+            //ResourceLoaderPanel.shared().setError(message);
+            throw new Error(message);
+            return this;
         }
-
-       await this.setup()
+        */
+        await this.setup()
     }
 
     /*
@@ -163,14 +184,23 @@
         SyncScheduler.shared().pause();
         BMNotificationCenter.shared().pause();
 
-        this.debugLog("Launching " + this.fullVersionString());
+        //this.debugLog("Launching " + this.fullVersionString());
         //debugger;
-        await this.setupModel();
-        await this.setupUi();
-        await this.appDidInit();
+
+        await this.asyncLogTimeToRun(async () => { 
+            await this.setupModel();
+        }, "setupModel");
+
+        await this.asyncLogTimeToRun(async () => { 
+            await this.setupUi();
+        }, "setupUi");
+
+        await this.asyncLogTimeToRun(async () => { 
+            await this.appDidInit();
+        }, "appDidInit");
+
         SyncScheduler.shared().resume();
         BMNotificationCenter.shared().resume();
-
 
         setTimeout(() => {
             console.log("All synchronous operations completed");

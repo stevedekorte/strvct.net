@@ -90,6 +90,7 @@
     
     initPrototypeSlots () {
         this.newSlot("observations", null) // array 
+        this.newSlot("observationsMap", null) // map of obsHash to observation 
         this.newSlot("notifications", null) // array 
         this.newSlot("debugNoteName", "appDidInit")
         this.newSlot("currentNote", null)
@@ -106,9 +107,15 @@
     init () {
         super.init()
         this.setObservations([]);
+        this.setObservationsMap(new Map());
         this.setNotifications([]);
         this.setNameIndex({});
         this.setNoteSet(new Set());
+    }
+
+    observations () {
+       // debugger;
+        return this.observationsMap().valuesArray();
     }
 
     pause () {
@@ -144,22 +151,28 @@
     */
     
     hasObservation (obs) {
-        return this.observations().canDetect(ob => ob.isEqual(obs)) 
+        return this.observationsMap().has(obs.obsHash());
+        //return this.observations().canDetect(ob => ob.isEqual(obs));
     }
     
     addObservation (obs) {
         if (!this.hasObservation(obs)) {
-            this.observations().push(obs)
+            this.observationsMap().set(obs.obsHash(), obs);
+            //this.observations().push(obs);
         }
-        return this
+        return this;
     }
 
     newObservation () {
         return BMObservation.clone().setCenter(this);
     }
 
+    observersOfSender (sender) {
+        return this.observationsWithSender(sender).map(obs => obs.observer());
+    }
+
     observationsWithSender (sender) {
-        return this.observations().filter(obs => obs.sender() === sender).map(obs => obs.observer());
+        return this.observations().filter(obs => obs.sender() === sender);
     }
 
     hasObservationsForSender (sender) {
@@ -167,7 +180,7 @@
     }
 
     observationsWithObserver (observer) {
-        return this.observations().filter(obs => obs.observer() === observer)
+        return this.observations().filter(obs => obs.observer() === observer);
     }
 
     /*
@@ -178,22 +191,17 @@
     */
     
     removeObservation (anObservation) {
+        this.observationsMap().delete(anObservation.obsHash());
+        /*
         const filtered = this.observations().filter(obs => !obs.isEqual(anObservation))
-        //const filtered = this.observations().filter(obs => obs !== anObservation)
         this.setObservations(filtered)
+        */
         return this
     }
     
     removeObserver (anObserver) {        
-        const filtered = this.observations().filter(obs => obs.observer() !== anObserver)
-        this.setObservations(filtered)
+        this.observationsMap().selectInPlaceKV((key, obs) => obs.observer() !== anObserver);
         return this;
-    }
-
-    // --- helpers ---
-
-    observersForName (name) {
-        return this.nameToObservers()[name] // returns a set
     }
 
     // --- notifying ----
@@ -214,9 +222,9 @@
                 console.log("NotificationCenter '" + note.sender().title() + "' " + note.name())
             }
             */
-            this.noteSet().add(note)
-            this.notifications().push(note)
-		    SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1)
+            this.noteSet().add(note);
+            this.notifications().push(note);
+		    SyncScheduler.shared().scheduleTargetAndMethod(this, "processPostQueue", -1);
         }
         return this
     }
@@ -229,8 +237,8 @@
     
     processPostQueue () {
         if (this.isPaused()) {
-            console.log("WARNING: BMNotificationCenter.processPostQueue() called while paused - SKIPPING")
-            return this
+            console.log("WARNING: BMNotificationCenter.processPostQueue() called while paused - SKIPPING");
+            return this;
         }
 
         // TODO: for performance, we could make an observationName->observations dictionary
@@ -245,38 +253,38 @@
         this.show()
         console.log(" ")
         */
-        this.setCurrentNote(null)
+        this.setCurrentNote(null);
 
         if (!this.isProcessing()) {
-            this.setIsProcessing(true)
-            //console.log("processPostQueue " + this.notifications().length)
-            const notes = this.notifications()
-            this.setNotifications([])
+            this.setIsProcessing(true);
+            //console.log("processPostQueue " + this.notifications().length);
+            const notes = this.notifications();
+            this.setNotifications([]);
             notes.forEach(note => {
-                this.noteSet().delete(note)
-                this.postNotificationNow(note)
+                this.noteSet().delete(note);
+                this.postNotificationNow(note);
             })
-            //notes.forEach(note => this.tryToPostNotificationNow(note))
-            this.setIsProcessing(false)
+            //notes.forEach(note => this.tryToPostNotificationNow(note));
+            this.setIsProcessing(false);
         } else {
-            Error.showCurrentStack()
-            console.warn("WARNING: attempt to call processPostQueue recursively while on note: ", this._currentNote)
+            Error.showCurrentStack();
+            console.warn("WARNING: attempt to call processPostQueue recursively while on note: ", this._currentNote);
         }
 
-        //console.log(" --- " + this.type() + " processPostQueue END ---")
+        //console.log(" --- " + this.type() + " processPostQueue END ---");
 
-        return this
+        return this;
     }
 
     tryToPostNotificationNow (note) {
         try { 
-            this.postNotificationNow(note)
+            this.postNotificationNow(note);
             //this.debugLog("   <- posting " + note.description() )
         } catch (error) {
-            console.log(this.type() + " caught exception while posting: " + note.description())
-            return error
+            console.log(this.type() + " caught exception while posting: " + note.description());
+            return error;
         }
-        return null
+        return null;
     }
 
     shouldDebugNote (note) {
@@ -289,9 +297,9 @@
         //
         // TODO: add an dictionary index for efficiency
 
-        this.setCurrentNote(note)
+        this.setCurrentNote(note);
         
-        const showDebug = this.shouldDebugNote(note)
+        const showDebug = this.shouldDebugNote(note);
 
         if (showDebug) {
             console.log(" >>> " + this.type() + " senderId " + note.senderId() + " posting " + note.name())
@@ -320,26 +328,26 @@
     }
 
     show () {
-        console.log(this.type() + ":")
-        console.log("  posting notes:")
-        console.log(this.notesDescription())
-        console.log("  observations:")
-        console.log(this.observersDescription())
+        console.log(this.type() + ":");
+        console.log("  posting notes:");
+        console.log(this.notesDescription());
+        console.log("  observations:");
+        console.log(this.observersDescription());
     }
 
     notesDescription () {
-        return this.notifications().map(note => "    " + note.description()).join("\n")
+        return this.notifications().map(note => "    " + note.description()).join("\n");
     }
 
     observersDescription () {
-        return this.observations() .map(obs => "    " + obs.description()).join("\n") 
+        return this.observations() .map(obs => "    " + obs.description()).join("\n");
     }
     
     showCurrentNoteStack () {
         if (this.currentNote() === null) {
             //console.log("BMNotificationCenter.showCurrentNoteStack() warning - no current post")
         } else {
-            console.log("current post sender stack: ", this.currentNote().senderStack())
+            console.log("current post sender stack: ", this.currentNote().senderStack());
         }
     }
 

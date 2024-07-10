@@ -329,46 +329,35 @@ getGlobalThis().Type = (class Type extends Object {
 
     static isJsonType (value) {
         // Note: this doesn't walk the collection types to see if their values are also JSON
-        const jsonTypes = new Set(["String", "Number", "Object", "Array", "Boolean", "Null"])
-        return jsonTypes.has(Type.typeName(value))
+        const jsonTypes = new Set(["String", "Number", "Object", "Array", "Boolean", "Null"]);
+        return jsonTypes.has(Type.typeName(value));
     }
 
     static typeUniqueId (value) {
-        /*
-        const String_simpleHash = function (str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-              const char = str.charCodeAt(i);
-              hash = (hash << 5) - hash + char;
-              hash |= 0; // Convert to 32bit integer
-            }
-            return hash;
-        }
-        */
-
-        if (Type.isObject(value)) {
-            // Array, Set, {}, Object, etc but not numbers, strings, null, or undefined
-            return "O" + value.puuid()
-        }
-
-        if (Type.isNumber(value)) {
-            return "N" + value
-        }
-
-        if (Type.isString(value)) {
-            return "S" + value
-            //return "S" + String_simpleHash(value)
-        }
 
         if (Type.isUndefined(value)) {
-            return "u"
+            return "u";
         }
 
         if (Type.isNull(value)) {
-            return "n"
+            return "n";
         }
 
-        throw new Error("unhandled type '" + Type.typeName(value) + "'")
+        if (Type.isObject(value)) {
+            // Array, Set, {}, Object, etc but not numbers, strings, null, or undefined
+            return "O" + value.puuid();
+        }
+
+        if (Type.isNumber(value)) {
+            return "N" + value;
+        }
+
+        if (Type.isString(value)) {
+            return "S" + value.hashCode64();
+            //return "S" + String_simpleHash(value)
+        }
+
+        throw new Error("unhandled type '" + Type.typeName(value) + "'");
     }
 
     // --- copying ---

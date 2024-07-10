@@ -138,9 +138,8 @@ Object.defineSlot(Array.prototype, "promiseSerialForEach", async function (aBloc
 
 
 Object.defineSlot(Array.prototype, "promiseParallelMap", async function (aBlock) {
-    const promises = this.map(v => aBlock(v))
+    const promises = this.map(v => aBlock(v));
     const values = await Promise.all(promises);
-    //debugger;
     return values;
 });
 
@@ -233,7 +232,7 @@ class UrlResource extends Object {
                 const data = await hc.promiseAt(h);
                 assert(data !== undefined, "hashcache has undefined data for " + h);
                 this._data = data;
-                console.log("UrlResource.asyncLoadFromCache() (from cache) " + this.path())
+                //console.log("UrlResource.asyncLoadFromCache() (from cache) " + this.path())
                 return this;
             } else {
                 // otherwise, load normally and cache result
@@ -385,6 +384,11 @@ class BootLoadingView {
     return this.titleElement().innerText;
   }
 
+  setErrorMessage (s) {
+    this.setTitle(s);
+    this.titleElement().style.color = "red";
+  }
+
   setBarRatio (r) {
     if (r < 0 || r > 1) {
         throw new Error("invalid ratio")
@@ -413,7 +417,7 @@ class BootLoadingView {
   }
 }
 
-const bootLoadingView = new BootLoadingView();
+getGlobalThis().bootLoadingView = new BootLoadingView();
 
 // ------------------------------------------------------------------------
 

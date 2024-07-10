@@ -120,7 +120,7 @@
         if (this.precacheExtensions().includes(this.pathExtension())) {
             //console.log("precaching " + this.path())
             await this.promiseLoad();
-            console.log("precached " + this.path())
+            //console.log("precached " + this.path())
         }
         return this;
     }
@@ -135,13 +135,26 @@
     */
 
     async asyncValueFromData () {
-        const ext = this.pathExtension();
-        if (ext === "json") {
-            return JSON.parse(this.data().asString());
-        } else if (["js", "css", "txt"].includes(ext)) {
-            return this.data().asString();
+        if (this.path() === "./app/info/AnthropicService.json") {
+          //  debugger;
         }
-        return this.data();
+
+        try {
+            const ext = this.pathExtension();
+            const data = this.data();
+            if (ext === "json") {
+                const jsonString = data.asString();
+                return JSON.parse(jsonString);
+            } else if (["js", "css", "txt"].includes(ext)) {
+                const textString = data.asString();
+                return textString;
+            }
+            return this.data();
+        } catch (error) {
+            console.error(this.type() + ".asyncValueFromData() error loading value from data for " + this.path() + " : " + error.message);
+            debugger;
+            throw error;
+        }
     }
 
 }.initThisClass());

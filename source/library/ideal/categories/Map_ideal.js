@@ -87,15 +87,27 @@
         return Set.fromIterator(this.values())
     }
 
-    // ---
+    // --- merge ---
 
     mergeInto (aMap) {
         this.forEachKV((k, v) => aMap.set(k, v))
     }
 
-
     merge (aMap) {
         aMap.forEachKV((k, v) => this.set(k, v))
+    }
+
+    // --- filtering ---
+
+    selectInPlaceKV (fn) {
+        const keys = this.keysArray();
+        keys.forEach(k => {
+            const v = this.get(k);
+            if (!fn(k, v)) {
+                m.delete(k);
+            }
+        })
+        return this;
     }
 
     select (fn) {

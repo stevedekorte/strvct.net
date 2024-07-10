@@ -107,7 +107,8 @@
     }
 
     async prechacheWhereAppropriate () {
-        await this.resources().promiseParallelMap(this.resources(), async (r) => await r.prechacheWhereAppropriate());
+        await this.resources().promiseParallelMap(this.resources(), async (r) => r.prechacheWhereAppropriate());
+        //await this.resources().promiseParallelMap(this.resources(), async (r) => await r.prechacheWhereAppropriate());
     }
 
 }.initThisClass());

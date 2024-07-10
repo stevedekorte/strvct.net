@@ -21,6 +21,7 @@
         this.newWeakSlot("observer", null) // WeakRef slot to observer
         this.newWeakSlot("sender", null) // WeakRef to sender
 
+        this.newSlot("obsHash", null) // null or string
         this.newSlot("noteHash", null) // null or string
     }
 
@@ -52,7 +53,42 @@
         return this
     }
 
-    // --- noteHash ---
+    // --- clearing hashes ---
+
+    didUpdateSlotSender () {
+        this.clearHashes();
+    }
+
+    didUpdateSlotObserver () {
+        this.clearHashes();
+    }
+
+    didUpdateSlotName () {
+        this.clearHashes();
+    }
+
+    clearHashes () {
+        this.clearNoteHash();
+        this.clearObsHash();
+        return this;
+    }
+
+    // --- observation hash ---
+
+    clearObsHash () {
+        this._obsHash = null;
+        return this
+    }
+
+    obsHash () {
+        if (!this._noteHash) {
+            const id = Type.typeUniqueId(this.name()) + Type.typeUniqueId(this.observer()) + Type.typeUniqueId(this.sender()); // needs to be unique for each observation
+            this._obsHash = id.hashCode64();
+        }
+        return this._obsHash
+    }
+
+    // --- notification hash ---
 
     clearNoteHash () {
         this._noteHash = null;
@@ -61,9 +97,23 @@
 
     noteHash () {
         if (!this._noteHash) {
-            this._noteHash = Type.typeUniqueId(this.name()) + Type.typeUniqueId(this.sender())
+            const id = Type.typeUniqueId(this.name()) + " " + Type.typeUniqueId(this.sender()); // must be implemented the same by BMNotification
+            this._noteHash = id.hashCode64();
         }
         return this._noteHash
+    }
+
+    // --- equality ---
+
+    isEqual (obs) {
+        return this.obsHash() === obs.obsHash();
+
+        /*
+        const sameName = this.name() === obs.name();
+        const sameObserver = this.observer() === obs.observer();
+        const sameSender = this.sender() === obs.sender();
+        return sameName && sameObserver && sameSender;
+        */
     }
 
     // --- private helpers ---
@@ -117,11 +167,11 @@
         const sender = this.sender()
         const matchesSender = (sender === null) || (sender === note.sender()) 
         if (matchesSender) {
-            const name = this.name()
-            const matchesName = (name === null) || (note.name() === name) 
-            return matchesName
+            const name = this.name();
+            const matchesName = (name === null) || (note.name() === name);
+            return matchesName;
         }
-        return false
+        return false;
     }
 
     tryToSendNotification (note) {
@@ -169,13 +219,6 @@
         if (this.isOneShot()) {
             this.stopWatching()
         }
-    }
-
-    isEqual (obs) {
-        const sameName = this.name() === obs.name()
-        const sameObserver = this.observer() === obs.observer()
-        const sameSender = this.sender() === obs.sender()
-        return sameName && sameObserver && sameSender
     }
 
     startWatching () {

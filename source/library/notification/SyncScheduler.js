@@ -279,7 +279,7 @@
 
     fullSyncNow () {
         if (this.isPaused()) {
-            console.log("SyncScheduler.fullSyncNow called while isPaused so SKIPPING")
+            //console.log("SyncScheduler.fullSyncNow called while isPaused so SKIPPING")
             return this
             
         }
