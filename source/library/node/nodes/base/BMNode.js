@@ -878,7 +878,7 @@
             newValue = this._subnodes;
             assert(newValue.type() === "SubnodesArray");
         } else {
-            
+            /*
             if (this.hasNullSubnodes()) {
                 console.warn(this.debugTypeId() + " hasNullSubnodes - removing nulls and continuing:", this.subnodes())
                 this.subnodes().removeOccurancesOf(null)
@@ -890,6 +890,7 @@
                 debugger
                 newValue.removeDuplicates()
             }
+            */
         }
 
         assert(newValue.owner() === null)
@@ -1210,7 +1211,22 @@
         // NOTE: this uses a format of all definitions at the top level
 
         const refSet = new Set();
+        /*
+        // useful for debugging classes put in the refSet
+        refSet._add = refSet.add;
+        refSet.add = function (aClass) {
+            if (!aClass.jsonSchemaDescription || aClass.jsonSchemaDescription() === null) {
+                debugger;
+            }
+            if (!this.has(aClass)) {
+                this._add(aClass);
+                console.log("refSet.add(" + aClass.type() + ") size ", this.size);
+            }
+        }
+        */
+
         const json = {
+            "$id": this.type(),
             "$schema": "http://json-schema.org/draft-07/schema#"
         };
         
@@ -1220,26 +1236,68 @@
             refSet.add(this); // now we add ourselve and we're ready to just share all the definitions
         } else {
             Object.assign(json, this.asJsonSchema(refSet)); // so schema is at top of dict
-        }
+            refSet.delete(this); // don't include ourself in the definitions, as we're the root schema
+        }        
 
         if (refSet.size) {
             json.definitions = this.jsonSchemaDefinitionsForRefSet(refSet);
+            console.log("Object.keys(json.definitions).length = ", Object.keys(json.definitions).length);
         }
 
         return json;
     }
 
     static jsonSchemaDefinitionsForRefSet (refSet) {
+        assert(refSet);
         const definitions = {};
-        refSet.forEach(aClass => {
-            definitions[aClass.type()] = aClass.asJsonSchema(refSet);
+
+        // iterate to grab all the definitions - simple but a bit inefficient. Not used in tight loops, so no problem.
+        let done = false;
+        const classNameToSchemaMap = new Map(); 
+        while (!done) {
+            done = true;
+            Array.from(refSet).forEach(aClass => {
+                const className = aClass.type();
+                if (!classNameToSchemaMap.has(className)) {
+                    classNameToSchemaMap.set(className, aClass.asJsonSchema(refSet));
+                    done = false;
+                }
+            });
+        }
+
+        // let's define them in alphabetical order to (possibly) make looking at the JSON easier (AI needs to look at this)
+        const orderedClassNames = classNameToSchemaMap.keysArray().sort();
+        orderedClassNames.forEach((className) => {
+            const jsonSchema = classNameToSchemaMap.get(className);
+            definitions[className] = jsonSchema;
         });
+
+        /*
+        // as we write out the definitions, we'll get encounter more refs, 
+        // so we need to queue them to be added too
+
+        const definedClasses = new Set();
+        let undefinedClasses = new Set(refSet);
+
+        while (undefinedClasses.size) {
+            const newRefSet = new Set();
+            undefinedClasses.forEach(aClass => {
+                const schemaDef = aClass.asJsonSchema(newRefSet);
+                assert(!Type.isNullOrUndefined(schemaDef), "missing schemaDef for " + aClass.type());
+                definitions[aClass.type()] = schemaDef;
+                definedClasses.add(aClass);
+            });
+            undefinedClasses = newRefSet.difference(definedClasses); // returns set with items in newRefSet but not in definedClasses
+        }
+        const definedClassNames = Array.from(definedClasses).map(c => c.type());
+        console.log("definedClasses: [" + definedClassNames.join(", ") + "]");
+        console.log("definitions: [" + Object.keys(definitions).join(", ") + "]");
+        */
         return definitions;
     }
 
     static asJsonSchema (refSet) {
         assert(refSet);
-        //debugger;
         const schema = {
             type: "object",
             description: this.jsonSchemaDescription(),
@@ -1257,12 +1315,14 @@
     }
 
     static jsonSchemaRef (refSet) {
+        assert(refSet);
         return this.jsonSchemaRefForTypeName(this.type(), refSet);
     }
 
     static jsonSchemaRefForTypeName (typeName, refSet) {
         assert(Type.isSet(refSet));
         assert(this.asJsonSchema); // sanity check - we'll need this 
+        assert(this.jsonSchemaDescription(), "missing jsonSchemaDescription for " + this.type());
         refSet.add(this); // all classes in this set will be added to the "definitions" section of the root schema
         return "#/definitions/" + typeName;
     }

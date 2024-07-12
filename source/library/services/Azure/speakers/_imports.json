@@ -1,6 +1,5 @@
 [
     "requests/_imports.json",
-    "queue/_imports.json",
     "AzureSpeaker.js",
     "AzureSpeakers.js"
 ]

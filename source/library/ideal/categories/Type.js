@@ -333,6 +333,21 @@ getGlobalThis().Type = (class Type extends Object {
         return jsonTypes.has(Type.typeName(value));
     }
 
+    static isDeepJsonType (value) {
+        // Note: this doesn't walk the collection types to see if their values are also JSON
+        const jsonTypes = new Set(["String", "Number", "Object", "Array", "Boolean", "Null"]);
+        if (jsonTypes.has(Type.typeName(value))) {
+            if (Type.isArray(value)) {
+                return value.every(v => Type.isDeepJsonType(v));
+            }
+            if (Type.isObject(value)) {
+                return Object.values(value).every(v => Type.isDeepJsonType(v));
+            }
+            return true;
+        }
+        return false;
+    }
+
     static typeUniqueId (value) {
 
         if (Type.isUndefined(value)) {

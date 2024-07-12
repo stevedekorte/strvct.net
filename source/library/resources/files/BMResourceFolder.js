@@ -178,6 +178,12 @@
         return this.allResourceFiles().filter(file => file.name() === aName);
     }
 
+    resourceWithName (aName) {
+        const files = this.resourcesWithName(aName)
+        assert(files.length === 1, "expected one file with name '" + aName + "', got: " + files.length);
+        return files.first();
+    }
+
     async prechacheWhereAppropriate() {
         console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());

@@ -1140,6 +1140,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     jsonSchemaProperties (refSet) {
+        assert(refSet);
         const proto = this.finalInitProtoClass();
         if (proto) {
             if (Type.isString(proto)) {
@@ -1185,6 +1186,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
 
     asJsonSchema (refSet) {
+        assert(refSet);
         if (this.jsonSchema()) {
             // has a direct json schema
             const schema = this.jsonSchema();

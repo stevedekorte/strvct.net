@@ -268,7 +268,7 @@ class UrlResource extends Object {
             debugger
             this._error = error;
             error.cause = error;
-            throw error
+            throw error;
         }
         return this;
     }
@@ -281,26 +281,26 @@ class UrlResource extends Object {
 
     eval () {
         if (this.pathExtension() === "js") {
-            this.evalDataAsJS()
+            this.evalDataAsJS();
         } else if (this.pathExtension() === "css") {
-            this.evalDataAsCss()
+            this.evalDataAsCss();
         }
     }
 
     evalDataAsJS () {
         //console.log("UrlResource eval ", this.path())
-        evalStringFromSourceUrl(this.dataAsText(), this.path())
-        return this
+        evalStringFromSourceUrl(this.dataAsText(), this.path());
+        return this;
     }
 
     evalDataAsCss () {
         const cssString = this.dataAsText(); // default decoding is to utf8
-        const sourceUrl = "\n\n//# sourceURL=" + this.path() + " \n"
-        const debugCssString = cssString + sourceUrl
+        const sourceUrl = "\n\n//# sourceURL=" + this.path() + " \n";
+        const debugCssString = cssString + sourceUrl;
         //console.log("eval css: " +  entry.path)
         const element = document.createElement('style');
         element.type = 'text/css';
-        element.appendChild(document.createTextNode(debugCssString))
+        element.appendChild(document.createTextNode(debugCssString));
         document.head.appendChild(element);
     }
 
@@ -311,24 +311,24 @@ class UrlResource extends Object {
     dataAsText () {
         let data = this.data()
         if (typeof(data) === "string") {
-            return data
+            return data;
         }
 
         if (this.isZipFile()) {
-            data = this.unzippedData()
+            data = this.unzippedData();
         } 
 
         return new TextDecoder().decode(data); // default decoding is to utf8
     }
 
     dataAsJson () {
-        return JSON.parse(this.dataAsText())
+        return JSON.parse(this.dataAsText());
     }
 
     // --- zip ---
 
     isZipFile () {
-        return this.pathExtension() === "zip"
+        return this.pathExtension() === "zip";
     }
 
     unzippedData () {
@@ -337,7 +337,7 @@ class UrlResource extends Object {
 
     async promiseLoadUnzipIfNeeded () {
         if (!getGlobalThis().pako) {
-            await UrlResource.clone().setPath(ResourceManager.bootPath() + "/pako.js").promiseLoadAndEval()
+            await UrlResource.clone().setPath(ResourceManager.bootPath() + "/pako.js").promiseLoadAndEval();
         }
     }
 }
@@ -374,7 +374,7 @@ class BootLoadingView {
 
   setTitle (s) {
     if (!this.isAvailable()) {
-        return
+        return;
     }
     this.titleElement().innerText = s;
     return this;
@@ -391,12 +391,12 @@ class BootLoadingView {
 
   setBarRatio (r) {
     if (r < 0 || r > 1) {
-        throw new Error("invalid ratio")
+        throw new Error("invalid ratio");
     }
 
     const v = Math.round(100 * r)/100; // limit to 2 decimals
     this.barElement().style.width = 10 * v + "em";
-    return this
+    return this;
   }
 
   setBarToNofM (n, count) {
@@ -432,7 +432,7 @@ class ResourceManager {
     }
 
     bootPath () {
-        return ResourceManager.bootPath()
+        return ResourceManager.bootPath();
     }
 
     static shared () {
@@ -441,39 +441,39 @@ class ResourceManager {
             this._shared = obj;
             obj.init();
         }
-        return this._shared
+        return this._shared;
     }
 
     /*
     static shared () {
         if (!this._shared) {
-            this._shared = (new this).init()
+            this._shared = (new this).init();
         }
-        return this._shared
+        return this._shared;
     }
     */
 
     isInBrowser () {
-        return (typeof(document) !== 'undefined')
+        return (typeof(document) !== 'undefined');
     }
 
     init () {
-        this._index = null
-        this._indexResources = null
-        this._idb = null
-        this._evalCount = 0
-		this._doneTime = null
-        this._promiseForLoadCam = null
-        return this
+        this._index = null;
+        this._indexResources = null;
+        this._idb = null;
+        this._evalCount = 0;
+		this._doneTime = null;
+        this._promiseForLoadCam = null;
+        return this;
     }
 
     async run () {
-        this.onProgress("", 0)
+        this.onProgress("", 0);
         // load the boot resource index and start loading/evaling js files
         await this.promiseLoadIndex();
         await this.promiseLoadCamIfNeeded();
         await this.evalIndexResources();
-        return this
+        return this;
     }
 
     // --- load index ---
@@ -541,6 +541,13 @@ class ResourceManager {
         return this.indexResources().filter(r => r.pathExtension() === ext)
     }
 
+    //example use: ResourceManager.shared().asyncDataForResourceAtPath(path);
+    async asyncDataForResourceAtPath (path) {
+        const resourceUrl = UrlResource.clone().setPath(ResourceManager.bootPath() + "/" + path);
+        await resourceUrl.promiseLoad();
+        return resourceUrl.data();
+    }
+
     jsResources () {
         return this.resourcesWithExtension("js")
     }
@@ -556,17 +563,19 @@ class ResourceManager {
         // promiseSerialForEach promiseSerialTimeoutsForEach
         let count = 0
 
-        await this.cssResources().promiseSerialTimeoutsForEach(r => {
-            // NOTE: can't do in parallel as the order in which CSS files are loaded matters
-            return r.promiseLoadAndEval();
+        //await this.cssResources().promiseSerialTimeoutsForEach(r => {
+        await this.cssResources().promiseSerialForEach(async (r) => {
+                // NOTE: can't do in parallel as the order in which CSS files are loaded matters
+            return await r.promiseLoadAndEval();
         });
 
-        await this.jsResources().promiseSerialTimeoutsForEach(r => {
-            count ++;
+        await this.jsResources().promiseSerialForEach(async (r) => {
+        //await this.jsResources().promiseSerialTimeoutsForEach(r => {
+                count ++;
             bootLoadingView.setBarToNofM(count, this.jsResources().length);
             //debugger;
             //console.log("count: " + count + " / " + this.jsResources().length)
-            return r.promiseLoadAndEval()
+            return await r.promiseLoadAndEval()
         });
 
         this.onDone();

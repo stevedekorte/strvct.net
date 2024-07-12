@@ -11,6 +11,7 @@
 
     "blobs/_imports.json",
     "network/_imports.json",
+    "audio/_imports.json",
 
     "App.js"
 ]

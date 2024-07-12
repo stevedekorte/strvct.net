@@ -309,10 +309,6 @@
             debugger;
             return false;
         }
-
-        if (anObject.type() === "Set") {
-            debugger;
-        }
         */
 
         if (anObject.type() === "PersistentObjectPool") {

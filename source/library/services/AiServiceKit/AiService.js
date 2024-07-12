@@ -206,7 +206,7 @@
   setModelsJson (json) {
     this.models().removeAllSubnodes();
     json.forEach(modelInfo => {
-      const model = AiChatModel.clone().setJson(modelInfo);
+      const model = AiChatModel.clone().setJson(modelInfo).setService(this);
       this.models().addSubnode(model);
     });
     return this;

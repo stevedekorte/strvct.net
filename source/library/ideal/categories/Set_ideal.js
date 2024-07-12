@@ -194,7 +194,7 @@
     }
     
     asImmutable () {
-        return ImmutableSet.from(this);
+        return new ImmutableSet(this);
     }
 
 }).initThisCategory();

@@ -55,14 +55,18 @@
     }
 
     {
-      const slot = this.newSlot("imageSize", "1024x1024");
+      const slot = this.newSlot("imageSize", "1792x1024");
       slot.setInspectorPath("")
       slot.setLabel("image size")
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
-      slot.setValidValues(["1024x1024", "1792x1024", "1024x1792"])
+      slot.setValidValues([
+        "1024x1024", // 1:1 (square)
+        "1792x1024", // 16:9 (wide)
+        "1024x1792"  // 9:16 (tall)
+      ])
       slot.setIsSubnodeField(true)
     }
 

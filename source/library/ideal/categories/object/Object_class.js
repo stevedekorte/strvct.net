@@ -12,24 +12,24 @@
 (class Object_class extends Object {
 
     superClass () {
-        return this.thisClass().superClass()
+        return this.thisClass().superClass();
     }
 
     thisClass () {
         if (this.isPrototype()) {
             // it's an prototype
-            return this.constructor
+            return this.constructor;
         }
 
         // otherwise, it's an instance
-        return this.__proto__.constructor
+        return this.__proto__.constructor;
     }
  
     thisPrototype () {
-        assert(this.isInstance())
-        const prototype = this.__proto__
-        assert(prototype.isPrototype)
-        return prototype
+        assert(this.isInstance());
+        const prototype = this.__proto__;
+        assert(prototype.isPrototype);
+        return prototype;
     }
 
     // --- class methods ---
@@ -46,24 +46,24 @@
 
     static getClassNamed (aName) {
         if (Type.isNullOrUndefined(aName)) {
-            return undefined
+            return undefined;
         }
-        return getGlobalThis()[aName]
+        return getGlobalThis()[aName];
     }
 
     static parentClass () {
-        const p = this.__proto__
+        const p = this.__proto__;
 
         if (p && p.type) {
-            return p
+            return p;
         }
 
-        return null
+        return null;
     }
 
     static addChildClass (aClass) {
-        this.childClasses().add(aClass)
-        return this
+        this.childClasses().add(aClass);
+        return this;
     }
 
     // --- categories ---
@@ -88,7 +88,7 @@
     // ---
 
     static globals () {
-        return getGlobalThis()
+        return getGlobalThis();
     }
 
     static initClass () {
@@ -97,35 +97,35 @@
     }
 
     static findAncestorClasses () {
-        const results = []
-        let aClass = this.parentClass()
+        const results = [];
+        let aClass = this.parentClass();
         while (aClass && aClass.parentClass) {
-            results.push(aClass)
-            aClass = aClass.parentClass()
+            results.push(aClass);
+            aClass = aClass.parentClass();
         }
-        return results
+        return results;
     }
 
 
     static newClassSlot (slotName, slotValue) {
-        const ivarName = "_" + slotName
+        const ivarName = "_" + slotName;
         const assert = function (aBool) {
             if (!aBool) {
-                throw new Error("failed assert")
+                throw new Error("failed assert");
             }
         }
 
         // define ivar
         {
-            const hasIvar = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, ivarName))
-            assert(!hasIvar)
+            const hasIvar = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, ivarName));
+            assert(!hasIvar);
             const descriptor = {
                 configurable: true,
                 enumerable: false,
                 value: slotValue,
                 writable: true,
             }
-            Object.defineProperty(this, ivarName, descriptor)
+            Object.defineProperty(this, ivarName, descriptor);
         }
 
         // define getter
@@ -143,12 +143,12 @@
                 value: getterFunc,
                 writable: true,
             }
-            Object.defineProperty(this, slotName, descriptor)
+            Object.defineProperty(this, slotName, descriptor);
         }
 
         // define setter
         {
-            const setterName = "set" + slotName.capitalized()
+            const setterName = "set" + slotName.capitalized();
             const setterFunc = function (v) { 
                 this[ivarName] = v; 
                 return this; 
@@ -245,76 +245,73 @@
     }
 
     static defineClassGlobally () {
-        const className = this.type()
+        const className = this.type();
         if (Type.isUndefined(this.globals()[className])) {
-            this.globals()[className] = this
-            //console.log(this.type() + ".initThisClass()")
+            this.globals()[className] = this;
+            //console.log(this.type() + ".initThisClass()");
         } else if (this.type() !== "Object") {
-            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + className + "']"
-            console.warn(msg)
-            throw new Error(msg)
+            const msg = "WARNING: Attempt to redefine getGlobalThis()['" + className + "']";
+            console.warn(msg);
+            throw new Error(msg);
         }
     }
 
     static superClass () {
-        return this.__proto__
+        return this.__proto__;
     }
 
     static addToAllClasses () {
         //console.log("addToAllClasses '" + this.type() + "'")
         if (this.allClassesSet().has(this)) {
-            throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'")
+            throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'");
         }
-        this.allClassesSet().add(this)
-        return this
+        this.allClassesSet().add(this);
+        return this;
     }
 
     static allSubclasses () {
-        return this.allClassesSet().select(aClass => aClass.hasAncestorClass(this))
+        return this.allClassesSet().select(aClass => aClass.hasAncestorClass(this));
     }
 
     static subclasses () {
-        return this.allClassesSet().select(aClass => aClass.superClass() === this)
+        return this.allClassesSet().select(aClass => aClass.superClass() === this);
     }
 
     static hasAncestorClass (aClass) {
-        const sc = this.superClass()
+        const sc = this.superClass();
 
         if (sc === aClass) {
-            return true
+            return true;
         }
 
         if (sc === Object || !sc.hasAncestorClass) {
-            return false
+            return false;
         }
 
-        return sc.hasAncestorClass(aClass)
+        return sc.hasAncestorClass(aClass);
     }
 
     static eachSlot (obj, fn) {
-        Object.keys(obj).forEach(k => fn(k, obj[k]))
+        Object.keys(obj).forEach(k => fn(k, obj[k]));
     }
 
     static isKindOf (aClass) {
-        //assert(this.isClass())
-        //assert(aClass.isClass())
-
         if (this.name === "") {
             // anything touching the root "" class seems to crash Chrome,
             // so let's be carefull to leave it alone
-            return false
+            return false;
         }
 
         if (this === aClass) {
-            return true
+            return true;
         }
 
-        let proto = this.__proto__
+        let proto = this.__proto__;
         if (proto && proto.name !== "") {
-            return proto.isKindOf.call(proto, aClass)
+            return proto.isKindOf.call(proto, aClass);
         }
 
-        return false
+        return false;
     }
 
 }).initThisCategory();

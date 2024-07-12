@@ -4,7 +4,7 @@
 
     BMResources
 
-    BMResources.shared().files().resourceForPath("./app/sessions/session/Settings/prompt/MainPrompt_Claude3.txt") 
+    BMResources.shared().files().resourceForPath("./app/info/.../data.txt") 
 
 */
 

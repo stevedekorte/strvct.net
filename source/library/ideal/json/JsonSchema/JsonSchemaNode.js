@@ -144,7 +144,7 @@
   }
 
   static jsonSchemaProperties (refSet) {
-    //debugger;
+    assert(refSet);
     const json = super.jsonSchemaProperties(refSet);
     /*
     if (!Type.isUndefined(json)) {

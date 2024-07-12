@@ -9,6 +9,10 @@
   initPrototypeSlots () {
 
     {
+      const slot = this.newSlot("service", null);
+    }
+
+    {
       const slot = this.newSlot("modelName", null);
       //slot.setInspectorPath("");
       slot.setLabel("name");
@@ -45,6 +49,9 @@
   }
 
   service () {
+    if (this._service) {
+      return this._service;
+    }
     return this.parentNode().parentNode();
   }
 
