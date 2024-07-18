@@ -8,7 +8,7 @@
     TODO: 
         Move internal representation to array e.g.
 
-        this.newSlot("valueArray", new Array(0, 0, 0, 0))
+        const slot = this.newSlot("valueArray", new Array(0, 0, 0, 0))
 
         x () {
             return this._valueArray[0]
@@ -23,18 +23,12 @@
 
 (class Point extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("x", 0)
-        this.newSlot("y", 0)
-        this.newSlot("z", 0)
-        this.newSlot("t", 0)
+        const dimensionNames = ["x", "y", "z", "t"];
+        dimensionNames.forEach(slotName => {
+            const slot = this.newSlot(slotName, 0);
+            slot.setSlotType("Number");
+        });
     }
-
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
 
     valueArray () {
         return [this._x, this._y, this._z]

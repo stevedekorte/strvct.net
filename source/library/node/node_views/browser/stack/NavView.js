@@ -9,30 +9,58 @@
 (class NavView extends NodeView {
 
     initPrototypeSlots () {
-        this.newSlot("stackView", null)
-        this.newSlot("headerView", null) // placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
-        this.newSlot("scrollView", null) // ScrollView fits NavView size, and contains TilesView which may be larger
-        this.newSlot("footerView", null) // placed in bottom of NavView, set to display:none if no node.footerNode() 
-        this.newSlot("tilesView", null) // is inside scrollView
-        this.newSlot("isCollapsed", false)
-        this.newSlot("animatesCollapse", true)
-        this.newSlot("beforeEdgePanBorderBottom", null) // private
-        this.newSlot("beforeEdgePanBorderRight", null) // private
+        {
+            const slot = this.newSlot("stackView", null);
+            slot.setSlotType("StackView");
+        }
+            
+        {
+            const slot = this.newSlot("headerView", null); // placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("scrollView", null); // ScrollView fits NavView size, and contains TilesView which may be larger
+            slot.setSlotType("ScrollView");
+        }
+        {
+            const slot = this.newSlot("footerView", null); // placed in bottom of NavView, set to display:none if no node.footerNode() 
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("tilesView", null); // is inside scrollView
+            slot.setSlotType("TilesView");
+        }
+        {
+            const slot = this.newSlot("isCollapsed", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("animatesCollapse", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("beforeEdgePanBorderBottom", null); // private
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("beforeEdgePanBorderRight", null); // private
+            slot.setSlotType("String");
+        }
     }
 
     targetWidth () {
-        const defaultWidth = 300
+        const defaultWidth = 400;
         if (this.node()) {
-            const minWidth = this.node().nodeMinTileWidth()
-            const maxWidth = 600
-            let w = defaultWidth
-            w = Math.max(defaultWidth, minWidth)
-            w = Math.min(w, maxWidth)
+            const minWidth = this.node().nodeMinTileWidth();
+            const maxWidth = 600;
+            let w = defaultWidth;
+            w = Math.max(defaultWidth, minWidth);
+            w = Math.min(w, maxWidth);
             if (w) {
-                return w
+                return w;
             }
         }
-        return defaultWidth
+        return defaultWidth;
     }
 
     targetHeight () {

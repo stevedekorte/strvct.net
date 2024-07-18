@@ -15,17 +15,19 @@
       //slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       //slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
+      slot.setSlotType("Object");
       //slot.setCanInspect(true)
     }
 
     {
       const slot = this.newSlot("hasValueButton", false);
+      slot.setSlotType("Boolean");
       slot.setSyncsToView(true);
     }
 
     {
       const slot = this.newSlot("isMicOn", false);
+      slot.setSlotType("Boolean");
       slot.setSyncsToView(true);
     }
 

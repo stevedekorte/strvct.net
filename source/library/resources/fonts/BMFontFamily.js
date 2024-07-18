@@ -10,8 +10,14 @@
 (class BMFontFamily extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("name", null);
-        this.newSlot("fonts", null);
+        {
+            const slot = this.newSlot("name", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("fonts", null);
+            slot.setSlotType("Array");
+        }
     }
 
     initPrototype () {

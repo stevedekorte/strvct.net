@@ -22,53 +22,110 @@
     
     initPrototypeSlots () {
 
-        this.newSlot("lastMergeValue", null); // for merge support
-        this.newSlot("isMergeable", false); // for merge support
-        this.newSlot("htmlStreamReader", null); // for merge support
+        {
+            const slot = this.newSlot("lastMergeValue", null); // for merge support
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("isMergeable", false); // for merge support
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("htmlStreamReader", null); // for merge support
+            slot.setSlotType("HtmlStreamReader");
+        }
         
-        this.newSlot("selectedColor", null)
-        this.newSlot("unselectedColor", null)
-        this.newSlot("doesClearOnReturn", false)
-        this.newSlot("doesHoldFocusOnReturn", false)
-        this.newSlot("doesTrim", false)
-        //this.newSlot("didTextInputNote", null)
-        //this.newSlot("didTextEditNote", null)
+        {
+            const slot = this.newSlot("selectedColor", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("unselectedColor", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("doesClearOnReturn", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("doesHoldFocusOnReturn", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("doesTrim", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /*
+            const slot = this.newSlot("didTextInputNote", null)
+            const slot = this.newSlot("didTextEditNote", null)
+        */
 
         {
             const slot = this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("canHitEnter", false); // if true, enter key is muted and opacity is reduced
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
         }
 
-        this.newSlot("allowsHtml", false) // 
-        this.newSlot("allowsSetStringWhileFocused", false)
+        {
+            const slot = this.newSlot("allowsHtml", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            const slot = this.newSlot("allowsSetStringWhileFocused", false);
+            slot.setSlotType("Boolean");
+        }
 
         // has to start false for proper state setup
-        this.newSlot("usesDoubleTapToEdit", false) 
+        {
+            const slot = this.newSlot("usesDoubleTapToEdit", false) ;
+            slot.setSlotType("Boolean");
+        }
 
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
         {
             const slot = this.newSlot("isEditable", false);
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
         }
 
-        this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)")
-        this.newSlot("uneditableBorder", "none")
-        this.newSlot("showsBorderWhenEditable", false)
-        this.newSlot("mutationObserver", null)
-        this.newSlot("isMultiline", false);
-
-        this.newSlot("onBlurSelection", null)
-
+        {
+            const slot = this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("uneditableBorder", "none");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("showsBorderWhenEditable", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("mutationObserver", null);
+            slot.setSlotType("MutationObserver");
+        }
+        {
+            const slot = this.newSlot("isMultiline", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("onBlurSelection", null);
+            slot.setSlotType("Boolean");
+        }
         {
             const slot = this.newSlot("placeholderText", null);
+            slot.setSlotType("String");
         }
 
     }

@@ -31,9 +31,14 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("onlyShowsKeyWhenEmpty", false);
-        this.newSlot("isEditable", true);
-        
+        {
+            const slot = this.newSlot("onlyShowsKeyWhenEmpty", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isEditable", true);
+            slot.setSlotType("Boolean");
+        }
         {
             const slot = this.overrideSlot("nodeMinTileHeight");
             slot.setShouldStoreSlot(true);

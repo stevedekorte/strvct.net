@@ -7,7 +7,10 @@
 
 (class HomeAssistant extends BMSummaryNode {
   initPrototypeSlots () {
-    this.newSlot("regionOptions", []);
+    {
+      const slot = this.newSlot("regionOptions", []);
+      slot.setSlotType("Array");
+    }
 
     {
       const slot = this.newSlot("protocol", "wss");

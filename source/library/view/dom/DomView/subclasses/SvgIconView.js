@@ -25,15 +25,42 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("svgElement", null)
-        this.newSlot("svgString", "")
-        this.newSlot("url", null)
-        this.newSlot("iconName", null)
-        
-        this.newSlot("doesMatchParentColor", false).setDoesHookSetter(true)
-        this.newSlot("strokeColor", "white").setDoesHookSetter(true)
-        this.newSlot("fillColor", "white").setDoesHookSetter(true)
-        this.newSlot("strokeWidth", 1).setDoesHookSetter(true)
+        {
+            const slot = this.newSlot("svgElement", null);
+            slot.setSlotType("Element");
+        }
+        {
+            const slot = this.newSlot("svgString", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("url", null);
+            slot.setSlotType("URL");
+        }
+        {
+            const slot = this.newSlot("iconName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("doesMatchParentColor", false);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("strokeColor", "white");
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("fillColor", "white");
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("strokeWidth", 1);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Number");
+        }
     }
 
     init () {

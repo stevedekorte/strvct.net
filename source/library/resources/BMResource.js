@@ -41,24 +41,45 @@
     // ---
 
     initPrototypeSlots () {
-        this.newSlot("path", "");
-        this.newSlot("data", null);
+        {
+            const slot = this.newSlot("path", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("data", null);
+            slot.setSlotType("Object");
+        }
 
-        this.newSlot("error", null);
-        this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
-        this.newSlot("isLoaded", false);
-        this.newSlot("urlResource", null);
+        {
+            const slot = this.newSlot("error", null);
+            slot.setSlotType("Error");
+        }
+        {
+            const slot = this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("isLoaded", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("urlResource", null);
+            slot.setSlotType("BMUrlResource");
+        }
 
         {
             const slot = this.newSlot("loadDataPromise", null);
+            slot.setSlotType("Promise");
         }
 
         {
             const slot = this.newSlot("decodeDataPromise", null);
+            slot.setSlotType("Promise");
         }
 
         {
             const slot = this.newSlot("value", null);
+            slot.setSlotType("Object");
         }
     }
 

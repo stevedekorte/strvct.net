@@ -9,10 +9,22 @@
 (class PanelView extends DomView { 
     
     initPrototypeSlots () {
-        this.newSlot("titleView", null)
-        this.newSlot("subtitleView", null)
-        this.newSlot("button1", null)
-        this.newSlot("isDragging", false)
+        {
+            const slot = this.newSlot("titleView", null);
+            slot.setSlotType("TextField");
+        }
+        {
+            const slot = this.newSlot("subtitleView", null);
+            slot.setSlotType("TextField");
+        }
+        {
+            const slot = this.newSlot("button1", null);
+            slot.setSlotType("ButtonView");
+        }
+        {
+            const slot = this.newSlot("isDragging", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     setCssOnSubview (view) {

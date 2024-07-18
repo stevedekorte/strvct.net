@@ -10,81 +10,91 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("delegate", null); // optional reference to service object that owns request 
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("requestId", null); // needed?
+      slot.setSlotType("String");
     }
 
     {
       const slot = this.newSlot("apiUrl", null);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+      slot.setSlotType("JSON Object");
     }
 
     {
       const slot = this.newSlot("body", null); 
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     // fetching
 
     {
       const slot = this.newSlot("fetchRequest", null);
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("isFetchActive", false);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("fetchAbortController", null);
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setSlotType("Error");
     }
 
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("fetchPromise", null);
+      slot.setSlotType("Promise");
     }
 
     {
       const slot = this.newSlot("audioBlob", null);
+      slot.setSlotType("Blob");
     }
 
     {
       const slot = this.newSlot("sound", null); // WASound
+      slot.setSlotType("WASound");
     }
 
-    this.setShouldStore(false)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(false);
+    this.setShouldStoreSubnodes(false);
   }
 
   init () {

@@ -165,7 +165,13 @@ String.prototype._setterCacheMap = new Map();
     }
 
     asNumber () {
-        return Number(this);
+    if (value === "" || value === null || value === undefined) {
+        return NaN;
+        }
+        
+        const number = Number(value);
+        
+        return isNaN(number) ? NaN : number;
     }
 
     /*
@@ -544,6 +550,23 @@ String.prototype._setterCacheMap = new Map();
         // Iterate over each tag name and remove the corresponding elements
         tagNames.forEach(tagName => {
             doc.querySelectorAll(tagName).forEach(el => el.remove());
+        });
+    
+        // Serialize the document back to a string
+        return doc.body.innerHTML;
+    }
+
+    replaceContentOfHtmlTagMap (tagNameToContentMap) {
+        // Parse the HTML string into a DOM object
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(this, 'text/html');
+    
+        // Iterate over each tag name and remove the corresponding elements
+        tagNames.forEach(tagName => {
+            const newContent = tagNameToContentMap.get(tagName);
+            doc.querySelectorAll(tagName).forEach(el => {
+                el.innerHTML = newContent;
+            });
         });
     
         // Serialize the document back to a string

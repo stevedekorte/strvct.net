@@ -40,7 +40,10 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("nameToListenersMap", null);  // Map to set
+        {
+            const slot = this.newSlot("nameToListenersMap", null);  // Map to set
+            slot.setSlotType("Map");
+        }
     }
 
     initPrototype () {

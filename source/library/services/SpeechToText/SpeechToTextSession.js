@@ -10,10 +10,12 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("recognition", null);
+      slot.setSlotType("SpeechRecognition");
     }
 
     {
       const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
     }
 
     {
@@ -46,19 +48,20 @@
 
     {
       const slot = this.newSlot("inputTimeoutId", null);
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("inputTimeoutMs", 1500);      
-      slot.setInspectorPath("settings")
-      slot.setLabel("inputTimeoutMs")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Number")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(true)
-      slot.setSummaryFormat("key value")
+      slot.setInspectorPath("settings");
+      slot.setLabel("inputTimeoutMs");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSummaryFormat("key value");
     }
 
 
@@ -70,15 +73,15 @@
       */
 
       const slot = this.newSlot("isContinuous", true);      
-      slot.setInspectorPath("settings")
-      slot.setLabel("Don't break on Pauses")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(true)
-      slot.setSummaryFormat("key value")
+      slot.setInspectorPath("settings");
+      slot.setLabel("Don't break on Pauses");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSummaryFormat("key value");
     }
 
     {
@@ -88,23 +91,23 @@
       They allow you to show what the system is recognizing in real-time as the user is speaking.
       */
       const slot = this.newSlot("getInterimResults", true);      
-      slot.setInspectorPath("settings")
-      slot.setLabel("Shares Interim Results")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(true)
-      slot.setSummaryFormat("key value")
+      slot.setInspectorPath("settings");
+      slot.setLabel("Shares Interim Results");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(true);
+      slot.setSummaryFormat("key value");
     }
 
 
     {
       const slot = this.newSlot("interimTranscript", "");      
-      slot.setInspectorPath("")
-      slot.setLabel("interim transcript")
-      slot.setShouldStoreSlot(true)
+      slot.setInspectorPath("");
+      slot.setLabel("interim transcript");
+      slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
       slot.setSlotType("String")
@@ -167,6 +170,7 @@
 
     {
       const slot = this.newSlot("transcriptPromise", null);
+      slot.setSlotType("Promise");
     }
 
   }

@@ -26,35 +26,41 @@
 
 (class DomTransitions extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("properties", null)
-        this.newSlot("domView", null)
+        {
+            const slot = this.newSlot("properties", null);
+            slot.setSlotType("Object"); // JSON Object
+        }
+        {
+            const slot = this.newSlot("domView", null);
+            slot.setSlotType("DomView");
+        }
     }
 
     init () {
-        super.init()
-        this.setProperties({})
+        super.init();
+        this.setProperties({});
     }
 
     at (aName) {
-        const d = this.properties()
+        const d = this.properties();
         if (!d.hasOwnProperty(name)) {
-            d[name] = DomTransition.clone().setProperty(aName).setTransitions(this)
+            d[name] = DomTransition.clone().setProperty(aName).setTransitions(this);
         }
-        return d[name]
+        return d[name];
     }
 
     propertiesAsList () {
-        return Object.values(this.properties())
+        return Object.values(this.properties());
     }
 
     asString () {
-        return this.propertiesAsList().map(t => t.asString()).join(", ")
+        return this.propertiesAsList().map(t => t.asString()).join(", ");
     }
 
     syncToDomView () {
-        //console.log(".setTransition('" + this.asString() + "')")
-        this.domView().justSetTransition(this.asString())
-        return this
+        //console.log(".setTransition('" + this.asString() + "')");
+        this.domView().justSetTransition(this.asString());
+        return this;
     }
 
     syncFromDomView () {

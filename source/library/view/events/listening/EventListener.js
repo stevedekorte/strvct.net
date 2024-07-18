@@ -51,19 +51,50 @@ let listenCount = 0;
     }
 
     initPrototypeSlots () {
-        //this.newSlot("listenerSet", null) // possible owner
+        //this.newSlot("listenerSet", null); // possible owner
 
-        this.newSlot("listenTarget", null)
-        this.newSlot("delegate", null)
-        this.newSlot("isListening", false)
-
-        this.newSlot("eventName", null)
-        this.newSlot("methodName", null)
-        this.newSlot("fullMethodName", null) // calculated when methodName is set, and cached in ivar
-        this.newSlot("handlerFunc", null)
-        this.newSlot("isUserInteraction", null) // set to match eventName
-        this.newSlot("useCapture", false).setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree")
-        this.newSlot("methodSuffix", "")
+        {
+            const slot = this.newSlot("listenTarget", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("delegate", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("isListening", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("eventName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("methodName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("fullMethodName", null); // calculated when methodName is set, and cached in ivar
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("handlerFunc", null);
+            slot.setSlotType("Function");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("isUserInteraction", null); // set to match eventName
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("useCapture", false);
+            slot.setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree");
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("methodSuffix", "");
+            slot.setSlotType("String");
+        }
     }
 
     init () {

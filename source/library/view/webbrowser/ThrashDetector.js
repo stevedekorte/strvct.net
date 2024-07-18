@@ -29,7 +29,7 @@
     https://gist.github.com/paulirish/5d52fb081b3570c81e3a
 
     All style properties:
-    this.newSlot("styleProperties", new Set(
+    const slot = this.newSlot("styleProperties", new Set(
                 "color",
                 "border",
                 "margin",
@@ -250,7 +250,7 @@
     initPrototypeSlots () {
 
         /*
-        this.newSlot("writeStyleProperties", new Set([
+        const slot = this.newSlot("writeStyleProperties", new Set([
                 "border",
                 "margin",
                 "font-style",
@@ -435,95 +435,120 @@
         ]))
         */
         
-        this.newSlot("readOpSet", new Set([
-            // on Elements
-            "offsetTop", "offsetLeft", "offsetWidth", "offsetHeight", "offsetParent", // offset
-            "scrollTop", "scrollLeft", "scrollWidth", "scrollHeight", // scroll
-            "scrollBy", "scrollTo", "scrollIntoView", "scrollIntoViewIfNeeded", // scroll animations
-            "clientTop", "clientLeft", "clientWidth", "clientHeight", // client
-            "getComputedStyle", 
-            "getClientRects", "getBoundingClientRect", // rects
-            "computeRole", "computedName", "innerText",
+        {
+            const slot = this.newSlot("readOpSet", new Set([
+                // on Elements
+                "offsetTop", "offsetLeft", "offsetWidth", "offsetHeight", "offsetParent", // offset
+                "scrollTop", "scrollLeft", "scrollWidth", "scrollHeight", // scroll
+                "scrollBy", "scrollTo", "scrollIntoView", "scrollIntoViewIfNeeded", // scroll animations
+                "clientTop", "clientLeft", "clientWidth", "clientHeight", // client
+                "getComputedStyle", 
+                "getClientRects", "getBoundingClientRect", // rects
+                "computeRole", "computedName", "innerText",
 
-            // on Window
-            "scrollX", "scrollY", "innerHeight", "innerWidth", "visualViewPort", // window
-            //"getComputedStyle", 
+                // on Window
+                "scrollX", "scrollY", "innerHeight", "innerWidth", "visualViewPort", // window
+                //"getComputedStyle", 
 
-            // on Document
-            "scrollingElement", "elementFromPoint", // document
+                // on Document
+                "scrollingElement", "elementFromPoint", // document
 
-            /*
-            // on Forms
-            "focus", "select", // on inputElement
-            "select" // on textAreaElement
-            */
+                /*
+                // on Forms
+                "focus", "select", // on inputElement
+                "select" // on textAreaElement
+                */
 
-            // on Mouse Event
-            "layerX", "layerY", "offsetX", "offsetY",
+                // on Mouse Event
+                "layerX", "layerY", "offsetX", "offsetY",
 
-            // on Range
-            //"getClientRects", "getBoundingClientRect", // rects
+                // on Range
+                //"getClientRects", "getBoundingClientRect", // rects
 
-            // on SVG
+                // on SVG
 
-            "computeCTM", "getBBox", "getCharNumAtPosition", "getComputedTextLength", 
-            "getEndPositionOfChar", "getExtentOfChar", "getNumberOfChars", "getRotationOfChar", 
-            "getStartPositionOfChar", "getSubStringLength", "selectSubString", "instanceRoot"
-        ]))
+                "computeCTM", "getBBox", "getCharNumAtPosition", "getComputedTextLength", 
+                "getEndPositionOfChar", "getExtentOfChar", "getNumberOfChars", "getRotationOfChar", 
+                "getStartPositionOfChar", "getSubStringLength", "selectSubString", "instanceRoot"
+            ]));
+            slot.setSlotType("Set");
+        }
 
-        this.newSlot("writeOpSet", new Set([
-            "focus",
-            "appendChild",
-            "atInsertElement",
-            "removeChild",
-            "className",
-            "display",
-            "position",
-            "width",
-            "height",
-            "min-width",
-            "min-height",
-            "max-width",
-            "max-height"
-        ]))
+        {
+            const slot = this.newSlot("writeOpSet", new Set([
+                "focus",
+                "appendChild",
+                "atInsertElement",
+                "removeChild",
+                "className",
+                "display",
+                "position",
+                "width",
+                "height",
+                "min-width",
+                "min-height",
+                "max-width",
+                "max-height"
+            ]));
+            slot.setSlotType("Set");
+        }
 
-        this.newSlot("noReflowWriteOpSet", new Set(
-            "color",
-            "backface-visibility",
-            "background",
-            "background-attachment",
-            "background-blend-mode",
-            "background-clip",
-            "background-color",
-            "background-image",
-            "background-origin",
-            "background-position",
-            "background-repeat",
-            "background-size",
-            "border-left-color",
-            "border-left-style",
-            "border-radius",
-            "border-right",
-            "border-right-color",
-            "border-right-style",
-            "border-style",
-            "border-top-color",
-            "border-top-left-radius",
-            "border-top-right-radius",
-            "border-top-style",
-            "caret-color",               
-            "color",
-            "filter",
-            "outline-color",
-            "scroll-behavior",
-            "user-select"
-        ))
+        
+        {
+            const slot = this.newSlot("noReflowWriteOpSet", new Set(
+                "color",
+                "backface-visibility",
+                "background",
+                "background-attachment",
+                "background-blend-mode",
+                "background-clip",
+                "background-color",
+                "background-image",
+                "background-origin",
+                "background-position",
+                "background-repeat",
+                "background-size",
+                "border-left-color",
+                "border-left-style",
+                "border-radius",
+                "border-right",
+                "border-right-color",
+                "border-right-style",
+                "border-style",
+                "border-top-color",
+                "border-top-left-radius",
+                "border-top-right-radius",
+                "border-top-style",
+                "caret-color",               
+                "color",
+                "filter",
+                "outline-color",
+                "scroll-behavior",
+                "user-select"
+            ));
+            slot.setSlotType("Set");
+        }
 
-        this.newSlot("needsReflow", false)
-        this.newSlot("reflowCount", false)
-        this.newSlot("triggers", null)
-        this.newSlot("lastWrite", null)
-        this.newSlot("enabled", false)
+        {
+            const slot = this.newSlot("needsReflow", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("reflowCount", false);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("triggers", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("lastWrite", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("enabled", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     beginFrame () {
@@ -538,19 +563,19 @@
         if (this.readOpSet().has(opName)) {
             //console.log(this.type() + ".didRead('" + opName + "')")
             if (this.needsReflow()) {
-                this.setReflowCount(this.reflowCount() + 1)
-                this.setNeedsReflow(false)
-                let m = opName 
+                this.setReflowCount(this.reflowCount() + 1);
+                this.setNeedsReflow(false);
+                let m = opName ;
                 if (optionalView) {
-                    m = optionalView.debugTypeId() + " get " + opName
+                    m = optionalView.debugTypeId() + " get " + opName;
                 }
-                const s = this.lastWrite() + " -> " + m
+                const s = this.lastWrite() + " -> " + m;
                 //console.log(s)
-                this.triggers().push(s)
-                this.onThrash()
+                this.triggers().push(s);
+                this.onThrash();
             }
         } 
-        return this
+        return this;
     }
 
     didWrite (opName, optionalView) {

@@ -10,8 +10,14 @@
 (class SubviewsDomView extends CssDomView {
     
     initPrototypeSlots () {
-        this.newSlot("parentView", null)
-        this.newSlot("subviews", null)
+        {
+            const slot = this.newSlot("parentView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("subviews", null);
+            slot.setSlotType("Array");
+        }
     }
 
     init () {

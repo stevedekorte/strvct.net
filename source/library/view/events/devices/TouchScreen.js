@@ -20,18 +20,35 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("currentEvent", null)
-        this.newSlot("lastEvent", null)
-        this.newSlot("touchListener", null)
-        this.newSlot("isSupported", null)
-        //this.newSlot("isVisualDebugging", false)
+        {
+            const slot = this.newSlot("currentEvent", null);
+            slot.setSlotType("TouchEvent");
+        }
+        {
+            const slot = this.newSlot("lastEvent", null);
+            slot.setSlotType("TouchEvent");
+        }
+        {
+            const slot = this.newSlot("touchListener", null);
+            slot.setSlotType("TouchListener");
+        }
+        {
+            const slot = this.newSlot("isSupported", null);
+            slot.setSlotType("Boolean");
+        }
+        /*
+        {
+            const slot = this.newSlot("isVisualDebugging", false);
+            slot.setSlotType("Boolean");
+        }
+        */
     }
 
     isSupported () {
         if (this._isSupported === null) {
-            this._isSupported = this.calcIsSupported()
+            this._isSupported = this.calcIsSupported();
         }
-        return this._isSupported
+        return this._isSupported;
     }
 
     calcIsSupported () {

@@ -33,22 +33,28 @@
     
     initPrototypeSlots () {
         //this.newSlot("gamePadListener", null)
-        this.newSlot("gamePadsDict", null)
-        this.newSlot("pollPeriod", 1000).setComment("milliseconds")
+        {
+            const slot = this.newSlot("gamePadsDict", null); // TODO: move to a Map
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("pollPeriod", 1000);
+            slot.setComment("milliseconds");
+        }
     }
 
     init () {
-        super.init()
-        this.setIsDebugging(false)
-        this.setGamePadsDict({})
-        //this.startListening()
-        this.startPollingIfSupported() // could delay this until connection if listen API is supported
-        return this
+        super.init();
+        this.setIsDebugging(false);
+        this.setGamePadsDict({});
+        //this.startListening();
+        this.startPollingIfSupported(); // could delay this until connection if listen API is supported
+        return this;
     }
 
     connectedGamePads () {
-        const dict = this.gamePadsDict()
-        return Object.keys(dict).map(k => dict[k])
+        const dict = this.gamePadsDict();
+        return Object.keys(dict).map(k => dict[k]);
     }
     
     /*
@@ -80,17 +86,17 @@
 
     startPollingIfSupported () {
         if (this.isSupported()) {
-            this.startPolling()
+            this.startPolling();
         }
     }
 
     isSupported () {
-        return this.navigatorGamepads() !== null
+        return this.navigatorGamepads() !== null;
     }
 
     navigatorGamepads () {
         if (navigator.getGamepads) {
-            return navigator.getGamepads()
+            return navigator.getGamepads();
         } 
         
         if (navigator.webkitGetGamepads) {
@@ -104,7 +110,7 @@
         if (!this._intervalId) {
             console.log(this.type() + ".startPolling()")
             this._intervalId = setInterval(() => { 
-                this.poll() 
+                this.poll();
             }, this.pollPeriod());
         }
     }
@@ -112,12 +118,12 @@
     stopPolling () {
         if (this.intervalId()) {
             clearInterval(this.intervalId());
-            this.setIntervalId(null)
+            this.setIntervalId(null);
         }
     }
 
     newGamePad (index) {
-        return GamePad.clone().setGamePadManager(this)
+        return GamePad.clone().setGamePadManager(this);
     }
 
     poll () {

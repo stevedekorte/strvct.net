@@ -22,17 +22,23 @@ TimePeriodFormatter
 
 (class TimePeriodFormatter extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("valueInSeconds", 0)
+        {
+            const slot = this.newSlot("valueInSeconds", 0);
+            slot.setSlotType("Number");
+        }
 
-        // TODO: move periods to a Map
-        this.newSlot("periods", { 
-            seconds: "s", 
-            minutes: "m", 
-            hours: "h", 
-            days: "d", 
-            months: "months", 
-            years: "years"
-        })
+        {
+            // TODO: move periods to a Map
+            const slot = this.newSlot("periods", { 
+                seconds: "s", 
+                minutes: "m", 
+                hours: "h", 
+                days: "d", 
+                months: "months", 
+                years: "years"
+            });
+            slot.setSlotType("Object"); // JSON Object
+        }
     }
 
     formattedValue () {

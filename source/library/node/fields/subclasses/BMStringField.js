@@ -15,6 +15,7 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("unsetVisibleValue", "");
+            slot.setSlotType("String");
         }
     }
 

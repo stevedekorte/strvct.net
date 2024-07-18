@@ -25,32 +25,40 @@
 (class LongPressGestureRecognizer extends GestureRecognizer {
     
     initPrototypeSlots () {
-        this.newSlot("timePeriod", 500).setComment("milliseconds")
-        this.newSlot("timeoutId", null).setIsPrivate(true)
+        {
+            const slot = this.newSlot("timePeriod", 500);
+            slot.setComment("milliseconds");
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("timeoutId", null);
+            slot.setIsPrivate(true);
+            slot.setSlotType("Number");
+        }
     }
 
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses())
-        this.setIsDebugging(false) 
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
+        this.setIsDebugging(false);
 
-        this.setMinFingersRequired(1)
-        this.setMaxFingersAllowed(1)
-        this.setMinDistToBegin(null)
-        return this
+        this.setMinFingersRequired(1);
+        this.setMaxFingersAllowed(1);
+        this.setMinDistToBegin(null);
+        return this;
     }
 
     // --- timer ---
 
     startTimer () {
         if (this.hasTimer()) {
-            this.stopTimer()
+            this.stopTimer();
         }
 
         const tid = this.addTimeout(() => { this.onLongPress() }, this.timePeriod());
-        this.setTimeoutId(tid)
-        this.startDocListeners() // didFinish will stop listening
-        return this
+        this.setTimeoutId(tid);
+        this.startDocListeners(); // didFinish will stop listening
+        return this;
     }
 
     stopTimer () {

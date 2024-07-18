@@ -16,11 +16,13 @@
     initPrototypeSlots () {
         {
             const slot = this.overrideSlot("value", null);
+            slot.setSlotType("Boolean");
             slot.setInitValue(false);
         }
 
         {
             const slot = this.newSlot("unsetVisibleValue", "unset");
+            slot.setSlotType("String");
         }
     }
 
@@ -30,48 +32,50 @@
     }
 
     valueIsBool () {
-        const b = this.value()
+        const b = this.value();
         return Type.isBoolean(b);
     }
 	
     validate () {
-        const isValid = this.valueIsBool()
+        const isValid = this.valueIsBool();
 		
         if (!isValid) {
             const targetName = this.target() ? this.target().debugTypeId() : "<no target>";
             const s = "Field '" + this.key() + "' on target '" + targetName + "' needs to be a boolean (true or false) not a " + Type.typeName(this.value());
-            console.warn(s)
+            console.warn(s);
             debugger;
             this.setValue(false);
-            this.setValueError(s)
+            this.setValueError(s);
         } else {
-            this.setValueError(null)
+            this.setValueError(null);
         } 
 		
-        return isValid
+        return isValid;
     }
 	
     normalizeThisValue (v) {
-	    if (v === true || v === "t" || v === "true" | v === 1) { return true; }
-	    return false
+	    if (v === true || v === "t" || v === "true" | v === 1) { 
+            return true; 
+        }
+	    return false;
     }
 	
     didUpdateNode () {
-        assert(this.hasDoneInit())
+        assert(this.hasDoneInit());
         //if (this.hasDoneInit()) { 
-            this.validate()
+            this.validate();
         //}
-        return super.didUpdateNode()
+        return super.didUpdateNode();
     }
 
     jsonArchive () {
-        return this.value() ? true : false
+        return this.value() ? true : false;
     }
 
     setJson (json) {
-        assert(Type.isBoolean(json))
-        this.setValue(json) 
-        return this
+        assert(Type.isBoolean(json));
+        this.setValue(json);
+        return this;
     }
 
 }.initThisClass());

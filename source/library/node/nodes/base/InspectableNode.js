@@ -15,13 +15,15 @@
 
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("nodeCanInspect", true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("nodeCanInspect", true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("nodeInspector", null)
-            slot.setDuplicateOp("nop")
+            const slot = this.newSlot("nodeInspector", null);
+            slot.setDuplicateOp("nop");
+            slot.setSlotType("BMNode");
         }
     }
 
@@ -71,7 +73,6 @@
                 } else {
                     const node = slot.onInstanceGetValue(this);
                     if (node === null || (Type.isObject(node) && node.thisClass().isKindOf(BMNode))) {
-                        // assume slotType is "Pointer"
                         const linkNode = BMLinkNode.clone().setLinkedNode(node);
                         linkNode.setCanDelete(false) ;
                         pathNodes = this.nodeInspector().createNodePath(slot.inspectorPath());

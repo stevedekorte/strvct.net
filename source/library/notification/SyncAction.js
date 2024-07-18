@@ -16,12 +16,30 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("target", null);
-        this.newSlot("method", null);
-        this.newSlot("order", 0);
-        this.newSlot("args", null);
-        this.newSlot("isUnscheduled", false);
-        this.newSlot("error", null);
+        {
+            const slot = this.newSlot("target", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("method", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("order", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("args", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("isUnscheduled", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("error", null);
+            slot.setSlotType("Error");
+        }
     }
 
     initPrototype () {

@@ -110,16 +110,6 @@
         return this
     }
 
-    // --- stored slots ---
-    
-    initStoredSubnodeSlotWithProto (name, proto) {
-        const obj = proto.clone()
-        this.newSlot(name, obj)
-        this.justAddSubnode(obj)
-        this.addStoredSlot(name)
-        return this
-    }
-	
     // subnodes
     
     subnodeCount () {

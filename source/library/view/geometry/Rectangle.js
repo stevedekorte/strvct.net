@@ -19,8 +19,14 @@
 
 (class Rectangle extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("origin", null)
-        this.newSlot("size", null)
+        {
+            const slot = this.newSlot("origin", null);
+            slot.setSlotType("Point");
+        }
+        {
+            const slot = this.newSlot("size", null);
+            slot.setSlotType("Point");
+        }
     }
 
     init () {

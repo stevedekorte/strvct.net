@@ -36,10 +36,19 @@
 (class SlideGestureRecognizer extends GestureRecognizer {
     
     initPrototypeSlots () {
-        this.newSlot("direction", "left")
-        this.newSlot("validDirectionsDict", { left: 1, right: 2, up: 3, down: 4 })
-        this.newSlot("maxPerpendicularDistToBegin", 10) // will not begin if this is exceeded
-        //downPositionInTarget: null,
+        {
+            const slot = this.newSlot("direction", "left");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("validDirectionsDict", { left: 1, right: 2, up: 3, down: 4 }); // TODO: move to Map
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("maxPerpendicularDistToBegin", 10) // will not begin if this is exceeded
+            slot.setSlotType("Number")
+        }
+        //downPositionInTarget: null, Point
     }
 
     init () {

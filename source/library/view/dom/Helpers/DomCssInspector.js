@@ -12,7 +12,10 @@
 (class DomCssInspector extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("idName", "DomCssInspector")
+        {
+            const slot = this.newSlot("idName", "DomCssInspector");
+            slot.setSlotType("String");
+        }
     }
 
     testElement () {

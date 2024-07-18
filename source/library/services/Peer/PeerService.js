@@ -18,6 +18,7 @@
       slot.setFinalInitProto(RzSigServers)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
+      slot.setSlotType("RzSigServers");
     }
 
     this.setShouldStore(true);

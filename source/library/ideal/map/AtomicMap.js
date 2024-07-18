@@ -9,16 +9,48 @@
 getGlobalThis().ideal.AtomicMap = class AtomicMap extends ProtoClass {
 
     initPrototypeSlots () {
-        this.newSlot("isInTx", false); // public read, private write - Bool, true during a tx
-        this.newSlot("map", null); // public read, private write - Map, contains current state of map
-        this.newSlot("snapshot", null); // private - Map, contains shallow copy of map before tx which we can revert to if tx is cancelled
-        this.newSlot("isOpen", true); // public read, private write
-        this.newSlot("changedKeySet", null); // private method
-        this.newSlot("keysAndValuesAreStrings", true); // private method - Bool, if true, runs assertString on all input keys and values
-        this.newSlot("totalBytesCache", null); // private
-        //this.newSlot("currentTxPromise", null); // private
-        //this.newSlot("queuedSets", null);
-        this.newSlot("beginPromiseFifoQueue", null); // first-in-first-out queue of promises, last in queue is was the earliest promise added
+        {
+            const slot = this.newSlot("isInTx", false); 
+            slot.setDescription("Public read, private write. Boolean, true during a tx.");
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("map", null); // public read, private write - Map, contains current state of map
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("snapshot", null); // private - Map, contains shallow copy of map before tx which we can revert to if tx is cancelled
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("isOpen", true); // public read, private write
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("changedKeySet", null); // private method
+            slot.setSlotType("Set");
+        }
+        {
+            const slot = this.newSlot("keysAndValuesAreStrings", true); // private method - Bool, if true, runs assertString on all input keys and values
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("totalBytesCache", null); // private
+            slot.setSlotType("Number");
+            slot.setAllowsNullValue(true);
+        }
+        /*
+        {
+            const slot = this.newSlot("currentTxPromise", null); // private
+        }
+        {
+            const slot = this.newSlot("queuedSets", null);
+        }
+        */
+        {
+            const slot = this.newSlot("beginPromiseFifoQueue", null); // first-in-first-out queue of promises, last in queue is was the earliest promise added
+            slot.setSlotType("Array");
+        }
     }
   
     initPrototype () {

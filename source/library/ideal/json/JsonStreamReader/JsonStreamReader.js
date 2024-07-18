@@ -32,30 +32,36 @@
   initPrototypeSlots () {
     {
         const slot = this.newSlot("parser", null);
+        slot.setSlotType("clarinet.parser");
     }
 
     // NOTE: a "container" is a node that can have children (such as Object or Array)
 
     {
       const slot = this.newSlot("containerStack", null);
+      slot.setSlotType("Array");
     }
 
     {
       const slot = this.newSlot("currentContainer", null);
+      slot.setSlotType("Object");
     }
 
     // stack of keys for objects
 
     {
       const slot = this.newSlot("keyStack", null);
+      slot.setSlotType("Array");
     }
 
     {
       const slot = this.newSlot("currentKey", null);
+      slot.setSlotType("String");
     }
 
     {
-      const slot = this.newSlot("delegate", null);
+      const slot = this.newSlot("delegate", null);      
+      slot.setSlotType("Object");
     }
   }
 
@@ -134,7 +140,7 @@
   }
 
   show () {
-    const s = JSON.stringify(this.rootContainer());
+    const s = JSON.stableStringify(this.rootContainer());
     console.log("root: ", s);
   }
     
@@ -149,7 +155,7 @@
     this.containerStack().push(container);
     this.sendDelegate("onJsonStreamReaderPushContainer", [this, container]);
 
-    //this.debugLog("push ", JSON.stringify(container));
+    //this.debugLog("push ", JSON.stableStringify(container));
     //this.show();
     return this;
   }
@@ -202,7 +208,7 @@
       container[this.currentKey()] = v;
       this.popKey();
     }
-    //this.debugLog("v " + JSON.stringify(v));
+    //this.debugLog("v " + JSON.stableStringify(v));
   }
 
   onOpenObject (key) {    
@@ -216,7 +222,7 @@
   onCloseObject () {
     assert(this.containerStack().length > 1, "can't close root object");
     const item = this.popContainer();
-    //this.debugLog("onCloseObject ", JSON.stringify(item));
+    //this.debugLog("onCloseObject ", JSON.stableStringify(item));
   }
 
   onOpenArray () {
@@ -229,7 +235,7 @@
   onCloseArray () {
     assert(this.containerStack().length > 1, "can't close root array");
     const item = this.popContainer();
-    //this.debugLog("onCloseArray ", JSON.stringify(item));
+    //this.debugLog("onCloseArray ", JSON.stableStringify(item));
   }
 
   onEnd () {
@@ -279,13 +285,13 @@ const testJsonReader = function () {
 
   // Simulate random breaks in the HTML content
   reader.beginJsonStream();
-  const s = JSON.stringify(jsonInput);
+  const s = JSON.stableStringify(jsonInput);
   reader.onStreamJson(s);
   reader.endJsonStream();
   //reader.show();
 
-  console.log("input: ", JSON.stringify(jsonInput));
-  console.log("output: ", JSON.stringify(reader.rootContainer()));
+  console.log("input: ", JSON.stableStringify(jsonInput));
+  console.log("output: ", JSON.stableStringify(reader.rootContainer()));
   debugger;
 
   console.log(

@@ -28,6 +28,7 @@
         {
             // view
             const slot = this.newSlot("browser", null);
+            slot.setSlotType("BrowserView");
         }
     }
   

@@ -42,7 +42,6 @@
     initPrototypeSlots () {
         // scheme : // userinfo @host : port / path ? query # fragment
         this.newStringSlotNamed("href", "");
-        
         this.newStringSlotNamed("protocol", "http");
         this.newStringSlotNamed("username", "");
         this.newStringSlotNamed("password", "");
@@ -51,7 +50,11 @@
         this.newStringSlotNamed("pathname", "");
         this.newStringSlotNamed("search", "");
         this.newStringSlotNamed("hash", "");
-        this.newSlot("isUpdatingHref", false);
+
+        {
+            const slot = this.newSlot("isUpdatingHref", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {

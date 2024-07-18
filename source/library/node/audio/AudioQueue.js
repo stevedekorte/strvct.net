@@ -17,14 +17,17 @@
 
     {
       const slot = this.newSlot("isMuted", false);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("currentSound", null);
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("queue", null); // FIFO (first in first out) queue
+      slot.setSlotType("Array");
     }
 
     this.setNodeSubtitleIsChildrenSummary(true)

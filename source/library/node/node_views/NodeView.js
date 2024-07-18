@@ -9,11 +9,27 @@
 (class NodeView extends StyledDomView {
     
     initPrototypeSlots () {
-        this.newSlot("node", null) //.setDuplicateOp("duplicate")
-        this.newSlot("defaultSubviewProto", null)
-        this.newSlot("overrideSubviewProto", null)
-        this.newSlot("nodeObservation", null)
-        this.newSlot("isInspecting", false)
+        {
+            const slot = this.newSlot("node", null); 
+            //slot.setDuplicateOp("duplicate");
+            slot.setSlotType("BMNode")
+        }
+        {
+            const slot = this.newSlot("defaultSubviewProto", null);
+            slot.setSlotType("Class");
+        }
+        {
+            const slot = this.newSlot("overrideSubviewProto", null);
+            slot.setSlotType("Class");
+        }
+        {
+            const slot = this.newSlot("nodeObservation", null);
+            slot.setSlotType("BMObservation");
+        }
+        {
+            const slot = this.newSlot("isInspecting", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {

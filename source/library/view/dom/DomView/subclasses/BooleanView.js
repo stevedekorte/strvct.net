@@ -18,12 +18,30 @@
 (class BooleanView extends StyledDomView {
     
     initPrototypeSlots () {
-        this.newSlot("doesClearOnReturn", false)  // needed?
-        this.newSlot("doesHoldFocusOnReturn", false)  // needed?
-        this.newSlot("value", false)
-        this.newSlot("isEditable", false)
-        this.newSlot("innerCheckView", null)
-        this.newSlot("outerCheckView", null)
+        {
+            const slot = this.newSlot("doesClearOnReturn", false); // needed?
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("doesHoldFocusOnReturn", false);  // needed?
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("value", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isEditable", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("innerCheckView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("outerCheckView", null);
+            slot.setSlotType("DomView");
+        }
     }
 
     init () {

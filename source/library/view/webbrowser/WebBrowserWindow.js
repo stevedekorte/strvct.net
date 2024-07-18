@@ -21,11 +21,13 @@
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("windowListener", null)
+            const slot = this.newSlot("windowListener", null);
+            slot.setSlotType("WindowListener");
         }
 
         {
             const slot = this.newSlot("storedSelectionRange", null);
+            slot.setSlotType("Range");
         }
     }
     

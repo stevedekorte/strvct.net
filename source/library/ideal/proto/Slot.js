@@ -147,6 +147,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         this.simpleNewSlot("fieldInspectorClassName", null);
     }
 
+    setFinalInitProto (aProto) {
+        this._finalInitProto = aProto;
+        if (aProto && this.slotType() === null) {
+            this.setSlotType(aProto.type()); // hack
+        }
+        return this;
+    }
     // --- label ---
 
     setLabelToCapitalizedSlotName () {
@@ -169,7 +176,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 const isOptionsDict = Type.isArray(v) && v.length && v.first().label;
                 if (!isOptionsDict) {
                     console.log("ERROR Slot.setValidValues:")
-                    const s = "this._validValues: " + JSON.stringify(this._validValues) + " doesn't contain '" + this.initValue() + "'";
+                    const s = "this._validValues: " + JSON.stableStringify(this._validValues) + " doesn't contain '" + this.initValue() + "'";
                     console.log(s)
                     debugger;
                     //throw new Error("valid values constraint not met: " + s)
@@ -397,17 +404,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     newInspectorField () {
-        const slotType = this.slotType() 
+        const slotType = this.slotType();
         if (slotType /*&& this.canInspect()*/) {
-            const fieldName = this.fieldInspectorClassName()
-            let proto = getGlobalThis()[fieldName]
+            const fieldName = this.fieldInspectorClassName();
+            let proto = getGlobalThis()[fieldName];
 
-            /*
             if (!proto) {
-                let nodeName = "BM" + slotType + "Node"
-                proto = getGlobalThis()[nodeName]
+                //let nodeName = "BM" + slotType + "Node";
+                const nodeName = "BMPointerField";
+                proto = getGlobalThis()[nodeName];
             }
-            */
 
             if (proto) {
                 const field = proto.clone();
@@ -663,27 +669,27 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     directGetter () {
         assert(arguments.length === 0);
-        const privateName = this.privateName()
+        const privateName = this.privateName();
         const func = function () {
-            return this[privateName]
+            return this[privateName];
         }
-        return func
+        return func;
     }
 
     // hooked getter
 
     makeDirectGetterOnInstance (anInstance) {
-        Object.defineSlot(anInstance, this.getterName(), this.directGetter())
-        return this   
+        Object.defineSlot(anInstance, this.getterName(), this.directGetter());
+        return this;
     }
 
     // ----------------------------------------
 
     autoGetter () {
-        const slot = this
+        const slot = this;
         return function (arg) { 
-            assert(Type.isUndefined(arg)); // TODO: remove this
-            return this.getSlotValue(slot) 
+           // assert(Type.isUndefined(arg)); // TODO: remove this
+            return this.getSlotValue(slot);
         }
     }
 
@@ -729,7 +735,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         return function (newValue) {
             if (slot.validatesOnSet()) {
                 const isValid = slot.validateValue(newValue);
-                if(!isValid) {
+                if (!isValid) {
                     const validValues = slot.validValues();
                     const errorMsg = "WARNING: " + this.type() + "." + slot.setterName() +  "() called with invalid argument value (" + Type.typeName(newValue) + ") '" + newValue + "' not in valid values: " + validValues;
                     console.log(errorMsg);
@@ -825,6 +831,8 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     onInstanceFinalInitSlot (anInstance) {
+        assert(this.slotType() !== null, " slotType is null for " + anInstance.type() + "." + this.name());
+
         const finalInitProto = this.finalInitProtoClass(); //this._finalInitProto;
         if (finalInitProto) {
             let oldValue = this.onInstanceGetValue(anInstance);
@@ -1053,7 +1061,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     */
 
     jsonSchemaType () {
-        const validTypeValues = ["null", "boolean", "object", "array", "number", "string", "integer"];
+        //const validJsonTypeValues = ["null", "boolean", "object", "array", "number", "string", "integer"];
 
         let type = this.slotType();
 
@@ -1067,10 +1075,6 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
         if (type === "Action") {
             return null;
-        }
-
-        if (type === "Pointer") {
-            return "object";
         }
 
         return "object";

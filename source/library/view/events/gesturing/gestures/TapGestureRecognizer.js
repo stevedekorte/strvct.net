@@ -31,11 +31,27 @@
 (class TapGestureRecognizer extends GestureRecognizer {
     
     initPrototypeSlots () {
-        this.newSlot("maxHoldPeriod", 1000).setComment("milliseconds per tap down hold")
-        this.newSlot("timeoutId", null) // private
-        this.newSlot("numberOfTapsRequired", 1)
-        this.newSlot("numberOfFingersRequired", 1)
-        this.newSlot("tapCount", 0)
+        {
+            const slot = this.newSlot("maxHoldPeriod", 1000);
+            slot.setComment("milliseconds per tap down hold");
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("timeoutId", null); // private
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("numberOfTapsRequired", 1);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("numberOfFingersRequired", 1);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("tapCount", 0);
+            slot.setSlotType("Number");
+        }
     }
 
     init () {

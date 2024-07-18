@@ -10,10 +10,12 @@
 
     {
       const slot = this.newSlot("footerNode", null);
+      slot.setSlotType("BMNode");
     }
 
     {
       //const slot = this.newSlot("delegate", null);
+      //slot.setSlotType("Object");
     }
 
   }
@@ -29,7 +31,6 @@
 
     this.setSubnodeClasses([]);
     this.setNodeChildrenAlignment("flex-start"); // make the messages stick to the bottom
-
   }
 
   init() {

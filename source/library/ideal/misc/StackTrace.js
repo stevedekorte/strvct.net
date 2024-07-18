@@ -12,10 +12,22 @@
 (class StackFrame extends ProtoClass {
 
     initPrototypeSlots () {
-        this.newSlot("functionName", null);
-        this.newSlot("url", null);
-        this.newSlot("lineNumber", null);
-        this.newSlot("characterNumber", null);
+        {
+            const slot = this.newSlot("functionName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("url", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("lineNumber", null);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("characterNumber", null);
+            slot.setSlotType("Number");
+        }
     }
   
     initPrototype () {
@@ -61,8 +73,14 @@
 
 (class StackTrace extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("error", null)
-        this.newSlot("stackFrames", [])
+        {
+            const slot = this.newSlot("error", null);
+            slot.setSlotType("Error");
+        }
+        {
+            const slot = this.newSlot("stackFrames", []);
+            slot.setSlotType("Array");
+        }
     }
 
     init () {

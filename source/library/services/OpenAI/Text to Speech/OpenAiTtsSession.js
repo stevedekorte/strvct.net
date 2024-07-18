@@ -41,13 +41,13 @@
 
     {
       const slot = this.newSlot("prompt", "");
-      slot.setInspectorPath("")
-      //slot.setLabel("prompt")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      //slot.setLabel("prompt");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
       slot.setSummaryFormat("none");
     }
 
@@ -149,6 +149,8 @@
       slot.setDuplicateOp("copyValue")
       slot.setShouldStoreSlot(false);
       slot.setSummaryFormat("none");
+      slot.setSlotType("Array");
+
     }
 
     {
@@ -156,6 +158,7 @@
       slot.setDuplicateOp("copyValue")
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
+      slot.setSlotType("AudioQueue");
       slot.setSummaryFormat("none");
     }
 
@@ -164,6 +167,7 @@
       const slot = this.newSlot("outputAudioBlob", null)
       slot.setShouldStoreSlot(false);
       //slot.setIsSubnode(true);
+      slot.setSlotType("Blob");
     }
     */
 
@@ -181,10 +185,12 @@
 
     {
       const slot = this.newSlot("sound", null); // latest sound being generated
+      slot.setSlotType("WASound");
     }
 
     {
       const slot = this.newSlot("delegate", null); 
+      slot.setSlotType("Object");
     }
 
     this.setShouldStore(true);

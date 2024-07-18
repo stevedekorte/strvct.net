@@ -86,75 +86,93 @@
     initPrototypeSlots () {
  
         {
-            const slot = this.newSlot("nodeType", null)
-            slot.setCanInspect(true)
-            slot.setLabel("type")
-            slot.setInspectorPath("Node")
-            slot.setSlotType("String")
-            slot.setCanEditInspection(false)
+            const slot = this.newSlot("nodeType", null);
+            slot.setCanInspect(true);
+            slot.setLabel("type");
+            slot.setInspectorPath("Node");
+            slot.setSlotType("String");
+            slot.setCanEditInspection(false);
         }
 
         // parent node, subnodes
 
         {
-            const slot = this.newSlot("parentNode", null)
+            const slot = this.newSlot("parentNode", null);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("BMNode");
         }
 
         {
-            const slot = this.newSlot("nodeCanReorderSubnodes", false)
+            const slot = this.newSlot("nodeCanReorderSubnodes", false);
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("subnodes", null);
             slot.setInitProto(SubnodesArray);
             slot.setDoesHookSetter(true);
+            slot.setSlotType("SubnodesArray");
         }
 
         {
             // this allows us to effectively override the subnode's Slot's shouldStore property
             // if null, it uses the subnode's Slot object's value
-            const slot = this.newSlot("shouldStoreSubnodes", null) 
-            slot.setDuplicateOp("duplicate") //.setShouldStore(true)
+            const slot = this.newSlot("shouldStoreSubnodes", null);
+            slot.setDuplicateOp("duplicate"); //.setShouldStore(true)
+            slot.setSlotType("Boolean");
+            slot.setAllowsNullValue(true);
         }
 
         {
-            const slot = this.newSlot("subnodeClasses", []) //.setInitProto([]) // ui will present creator node if more than one option
+            const slot = this.newSlot("subnodeClasses", []); //.setInitProto([]) // ui will present creator node if more than one option
+            slot.setAllowsNullValue(false);
+            slot.setSlotType("Array");
         }
 
         // notification notes
 
         {
-            const slot = this.newSlot("didUpdateNodeNote", null) // private
+            const slot = this.newSlot("didUpdateNodeNote", null); // private
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("BMNotification");
         }
 
         {
-            const slot = this.newSlot("shouldFocusSubnodeNote", null) // private
+            const slot = this.newSlot("shouldFocusSubnodeNote", null); // private
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("BMNotification");
         }
 
         {
-            const slot = this.newSlot("shouldFocusAndExpandSubnodeNote", null) // private
-
+            const slot = this.newSlot("shouldFocusAndExpandSubnodeNote", null); // private
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("BMNotification");
         }
 
         // view related, but computed on node
 
         {
             const slot = this.newSlot("nodeVisibleClassName", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
             slot.setDuplicateOp("copyValue");
         }
 
         {
             const slot = this.newSlot("canDelete", false);
+            slot.setSlotType("Boolean");
             slot.setDuplicateOp("copyValue");
         }
 
         {
             const slot = this.newSlot("nodeCanAddSubnode", false);
+            slot.setSlotType("Boolean");
             slot.setDuplicateOp("copyValue");
         }
 
         {
             const slot = this.newSlot("isVisible", true);
+            slot.setSlotType("Boolean");
             slot.setSyncsToView(true);
         }
     }
@@ -1084,7 +1102,7 @@
     setJsonArchive (json) {
         // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
         
-        //console.log(this.typeId() + ".setJsonArchive(" + JSON.stringify(json, 2, 2) + ")");
+        //console.log(this.typeId() + ".setJsonArchive(" + JSON.stableStringify(json, 2, 2) + ")");
 
         const keys = Object.keys(json).select(key => key !== "type");
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true);
@@ -1127,7 +1145,7 @@
             dict[k] = v;
         })
 
-        //console.log(this.typeId() + ".jsonArchive() = " + JSON.stringify(dict, 2, 2));
+        //console.log(this.typeId() + ".jsonArchive() = " + JSON.stableStringify(dict, 2, 2));
 
         return dict
     }
@@ -1147,7 +1165,7 @@
 
     static jsonSchemaString () {
         const schema = this.asRootJsonSchema();
-        const s = JSON.stringify(schema, 2, 2);
+        const s = JSON.stableStringify(schema, 2, 2);
         return s;
     }
 
@@ -1203,7 +1221,7 @@
 
     static asRootJsonSchemaString (definitionsOnly = false) {
         const json = this.asRootJsonSchema(definitionsOnly);
-        const s = JSON.stringify(json, 4, 4);
+        const s = JSON.stableStringify(json, 4, 4);
         return s;
     }
 
@@ -1362,7 +1380,7 @@
                         if (hasValidSubnodeClass) {
                             this.addSubnode(subnode);
                         } else {
-                            console.warn("fromJsonSchema subnode class '" + subnode.type() + "' not in subnodeClasses " + JSON.stringify(this.subnodeClasses().map(c => c.type())));
+                            console.warn("fromJsonSchema subnode class '" + subnode.type() + "' not in subnodeClasses " + JSON.stableStringify(this.subnodeClasses().map(c => c.type())));
                             debugger;
                         }
                     });

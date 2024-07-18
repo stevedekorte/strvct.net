@@ -27,7 +27,7 @@
       slot.setLabel("info");
       slot.setShouldStoreSlot(false);
       slot.setDuplicateOp("duplicate");
-      //slot.setSlotType("String");
+      slot.setSlotType("JSON Object");
       slot.setIsSubnodeField(false);
 
       //slot.setValidValues(values);
@@ -56,44 +56,51 @@
       // Role names
 
       {
-        const slot = this.newSlot("systemRoleName", "system"); 
+        const slot = this.newSlot("systemRoleName", "system");
+        slot.setSlotType("String");
       }
   
       {
-        const slot = this.newSlot("assistantRoleName", "assistant"); 
+        const slot = this.newSlot("assistantRoleName", "assistant");
+        slot.setSlotType("String");
       }
   
       {
-        const slot = this.newSlot("userRoleName", "user"); 
+        const slot = this.newSlot("userRoleName", "user");
+        slot.setSlotType("String");
       }
 
 
     {
-      const slot = this.newSlot("models", null)
-      slot.setFinalInitProto(AiChatModels)
+      const slot = this.newSlot("models", null);
+      slot.setFinalInitProto(AiChatModels);
       slot.setShouldStoreSlot(true); // will need to sync when loading from json
       slot.setIsSubnode(true);
+      slot.setSlotType("AiChatModels");
     }
 
     {
-      const slot = this.newSlot("conversations", null)
-      slot.setFinalInitProto(AiConversations)
+      const slot = this.newSlot("conversations", null);
+      slot.setFinalInitProto(AiConversations);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
+      slot.setSlotType("AiConversations");
     }
 
     {
-      const slot = this.newSlot("imagesPrompts", null)
-      //slot.setFinalInitProto(OpenAiImagePrompts)
+      const slot = this.newSlot("imagesPrompts", null);
+      //slot.setFinalInitProto(OpenAiImagePrompts);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(false);
+      slot.setSlotType("OpenAiImagePrompts");
     }
 
     {
-      const slot = this.newSlot("ttsSessions", null)
-      //slot.setFinalInitProto(OpenAiTtsSessions)
+      const slot = this.newSlot("ttsSessions", null);
+      //slot.setFinalInitProto(OpenAiTtsSessions);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(false);
+      slot.setSlotType("OpenAiTtsSessions");
     }
 
     this.setShouldStore(true);

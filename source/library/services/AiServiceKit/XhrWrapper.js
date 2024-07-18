@@ -98,13 +98,14 @@
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
+      slot.setSlotType("JSON Dictionary");  // TODO: make this a dictionary
       slot.setIsSubnodeField(false);
       slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("requestOptions", null); // this will contain the model choice and messages
+      slot.setSlotType("JSON Dictionary");  // TODO: make this a dictionary
     }
 
     {
@@ -122,72 +123,75 @@
 
     {
       const slot = this.newSlot("isStreaming", false); // external read-only
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
     } 
 
     {
       const slot = this.newSlot("xhr", null);
+      slot.setSlotType("XMLHttpRequest");
     }
 
     {
       const slot = this.newSlot("xhrPromise", null); 
+      slot.setSlotType("Promise");
     }
 
     {
       const slot = this.newSlot("requestId", null);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("readIndex", 0);
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Number");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("fullContent", null); 
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setSlotType("Error");
     }
 
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath("")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setInspectorPath("");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
-    this.setShouldStore(false)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(false);
+    this.setShouldStoreSubnodes(false);
   }
 
   init () {

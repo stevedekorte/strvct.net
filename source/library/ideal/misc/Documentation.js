@@ -70,7 +70,7 @@
             */
         })
         /*
-        const s = JSON.stringify(this.asJson(), 2, 2)
+        const s = JSON.stableStringify(this.asJson(), 2, 2)
         */
         console.log("DOCUMENTATION:\n\n", lines.join("\n"))
     }

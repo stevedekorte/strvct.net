@@ -19,11 +19,26 @@
 (class TitledTile extends Tile {
     
     initPrototypeSlots () {
-        this.newSlot("titleView", null)
-        this.newSlot("subtitleView", null)
-        this.newSlot("noteView", null)
-        this.newSlot("noteIconView", null) // created lazily
-        this.newSlot("thumbnailView", null)
+        {
+            const slot = this.newSlot("titleView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("subtitleView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("noteView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("noteIconView", null); // created lazily
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("thumbnailView", null);
+            slot.setSlotType("DomView");
+        }
     }
 
     static titleLeftPadding () {

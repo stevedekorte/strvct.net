@@ -17,14 +17,36 @@
 (class WebBrowserNotification extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("title", "");
-        this.newSlot("body", null);
-        this.newSlot("icon", null).setComment("a url to an image");
-        this.newSlot("actions", null);
+        {
+            const slot = this.newSlot("title", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("body", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("icon", null);
+            slot.setComment("a url to an image");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("actions", null);
+            slot.setSlotType("Array");
+        }
 
-        this.newSlot("notificationRef", null);
-        this.newSlot("error", null);
-        this.newSlot("choice", null);
+        {
+            const slot = this.newSlot("notificationRef", null);
+            slot.setSlotType("BMNotification");
+        }
+        {
+            const slot = this.newSlot("error", null);
+            slot.setSlotType("Error");
+        }
+        {
+            const slot = this.newSlot("choice", null); // Event.action
+            slot.setSlotType("String");
+        }
     }
 
     init () {

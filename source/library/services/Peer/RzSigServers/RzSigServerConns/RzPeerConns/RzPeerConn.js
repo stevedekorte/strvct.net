@@ -49,52 +49,54 @@
 
     {
       const slot = this.newSlot("connOptions", null);
-      slot.setInspectorPath("")
-      //slot.setLabel("connection options")
-      slot.setShouldStoreSlot(true)
-      slot.setDuplicateOp("duplicate")
+      slot.setInspectorPath("");
+      //slot.setLabel("connection options");
+      slot.setShouldStoreSlot(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("JSON Object");
     }
 
 
     {
       const slot = this.newSlot("status", "");
-      slot.setInspectorPath("")
-      //slot.setLabel("prompt")
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
-      //slot.setSummaryFormat("value")
+      slot.setInspectorPath("");
+      //slot.setLabel("prompt");
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
+      //slot.setSummaryFormat("value");
     }
 
     // --- error and reconnect ---
 
     {
       const slot = this.newSlot("error", null); 
-      slot.setShouldStoreSlot(false)
-      slot.setCanEditInspection(false)
+      slot.setShouldStoreSlot(false);
+      slot.setCanEditInspection(false);
+      slot.setSlotType("Error");
     }
 
     {
       const slot = this.newSlot("didInitiateConnection", false); // if we initiated, it's up to us to try to reconnect
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setSlotType("Boolean")
-      slot.setCanEditInspection(false)
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setSlotType("Boolean");
+      slot.setCanEditInspection(false);
     }
 
     {
-      const slot = this.newSlot("shouldAutoReconnect", true) // (if didInitiateConnection is also true)
+      const slot = this.newSlot("shouldAutoReconnect", true); // (if didInitiateConnection is also true)
       slot.setShouldStoreSlot(true);
-      slot.setSlotType("Boolean")
+      slot.setSlotType("Boolean");
     }
 
     {
-      const slot = this.newSlot("reconnectAttemptCount", 0)
+      const slot = this.newSlot("reconnectAttemptCount", 0);
       slot.setShouldStoreSlot(true);
-      slot.setSlotType("Number")
+      slot.setSlotType("Number");
     }
 
     // -------------------------
@@ -104,6 +106,7 @@
       slot.setFinalInitProto(RzMsgs);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
+      slot.setSlotType("RzMsgs");
     }
 
     {
@@ -122,59 +125,69 @@
 
     {
       const slot = this.newSlot("connectAction", null);
-      slot.setInspectorPath("")
-      slot.setLabel("Connect")
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Action")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setLabel("Connect");
+      //slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
       slot.setActionMethodName("connect");
     }
     
     {
       const slot = this.newSlot("sigServerConn", null);
+      slot.setSlotType("RzSigServerConn");
     }
 
     {
       const slot = this.newSlot("conn", null);
+      slot.setSlotType("DataConnection"); 
     }
 
     {
       const slot = this.newSlot("info", null);
+      slot.setSlotType("JSON Object");
     }
 
     {
       const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
     }
 
 
     {
       const slot = this.newSlot("useMessageLog", false);
+      slot.setSlotType("Boolean");
     }
 
     // --- ping pong keepalive ---
 
     {
       const slot = this.newSlot("useKeepAlive", false);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("nextPingTimeout", null);
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("gotPong", false);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("nextPingTimeoutMs", 30*1000); 
+      slot.setSlotType("Number");
     }
 
     // --- msg chunking --
 
     {
       const slot = this.newSlot("chunks", null); 
+      slot.setSlotType("Map");
     }
 
 

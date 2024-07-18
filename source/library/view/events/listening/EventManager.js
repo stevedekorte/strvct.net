@@ -34,11 +34,29 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("eventLevelCount", 0)
-        this.newSlot("hasReceivedUserEvent", false) // we only care about this for user events, but event manager handles timeouts too
-        this.newSlot("beginUserEventDate", null)
-        this.newSlot("currentEvent", null)
-        this.newSlot("firstUserEventPromise", null)
+        {
+            const slot = this.newSlot("eventLevelCount", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("hasReceivedUserEvent", false); // we only care about this for user events, but event manager handles timeouts too
+            slot.setSlotType("Boolean");
+        }
+        /*
+        {
+            const slot = this.newSlot("beginUserEventDate", null);
+            slot.setSlotType("Date");
+        }
+        */
+        {
+            const slot = this.newSlot("currentEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("firstUserEventPromise", null);
+            slot.setSlotType("Promise");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     init () {

@@ -19,8 +19,15 @@
 (class BMFileResources extends BMResourceGroup {
     
     initPrototypeSlots () {
-        this.newSlot("rootPath", ".");
-        this.newSlot("hasSetupSubnodes", false);
+        {
+            const slot = this.newSlot("rootPath", ".");
+            slot.setSlotType("String");
+        }
+
+        {
+            const slot = this.newSlot("hasSetupSubnodes", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {

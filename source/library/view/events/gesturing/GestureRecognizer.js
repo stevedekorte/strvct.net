@@ -67,63 +67,173 @@
 (class GestureRecognizer extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("viewTarget", null)
-        this.newSlot("shouldRemoveOnComplete", false)
+        {
+            const slot = this.newSlot("viewTarget", null);
+            slot.setSlotType("DomeView");
+        }
+        {
+            const slot = this.newSlot("shouldRemoveOnComplete", false);
+            slot.setSlotType("Boolean");
+        }
 
         // listener classes
 
-        this.newSlot("listenerClasses", null)
-        this.newSlot("moveListenerClasses", ["MouseMoveListener", "TouchMoveListener"])
-        this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"])
+        {
+            const slot = this.newSlot("listenerClasses", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("moveListenerClasses", ["MouseMoveListener", "TouchMoveListener"]);
+            slot.setSlotType("Array");
+        }
+
+        {
+            const slot = this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"]);
+            slot.setSlotType("Array");
+        }
 
         // listeners
 
-        this.newSlot("viewListeners", null)
-        this.newSlot("docListeners", null)
+        {
+            const slot = this.newSlot("viewListeners", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("docListeners", null);
+            slot.setSlotType("Array");
+        }
 
         // move listeners
 
-        this.newSlot("viewMoveListeners", null)
-        this.newSlot("docMoveListeners", null)
+        {
+            const slot = this.newSlot("viewMoveListeners", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("docMoveListeners", null);
+            slot.setSlotType("Array");
+        }
 
         // events
 
-        this.newSlot("overEvent", null)
-        this.newSlot("leaveEvent", null)
-        this.newSlot("didBegin", false)
-        this.newSlot("downEvent", null)
-        this.newSlot("beginEvent", null)
-        this.newSlot("currentEvent", null)
-        this.newSlot("lastEvent", null)
-        this.newSlot("upEvent", null)
+        {
+            const slot = this.newSlot("overEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("leaveEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("didBegin", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("downEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("beginEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("currentEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("lastEvent", null);
+            slot.setSlotType("Event");
+        }
+        {
+            const slot = this.newSlot("upEvent", null);
+            slot.setSlotType("Event");
+        }
 
         // standard messages
 
-        this.newSlot("gestureName", null) // sets <GestureType> name used for messages
-        this.newSlot("acceptMessage", null)  //"accepts<GestureType>"
-        this.newSlot("beginMessage", null) //"on<GestureType>Begin",
-        this.newSlot("moveMessage", null) //"on<GestureType>Move",
-        this.newSlot("requestCancelMessage", null) // "on<GestureType>RequestCancel"
-        this.newSlot("cancelledMessage", null) // "on<GestureType>Cancelled",
-        this.newSlot("completeMessage", null) // "on<GestureType>Complete",
+        {
+            const slot = this.newSlot("gestureName", null); // sets <GestureType> name used for messages
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("acceptMessage", null);  //"accepts<GestureType>"
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("beginMessage", null); //"on<GestureType>Begin",
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("moveMessage", null); //"on<GestureType>Move",
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("requestCancelMessage", null); // "on<GestureType>RequestCancel"
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("cancelledMessage", null); // "on<GestureType>Cancelled",
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("completeMessage", null); // "on<GestureType>Complete",
+            slot.setSlotType("String");
+        }
         
         // debugging
 
-        this.newSlot("isEmulatingTouch", false) // assumes touch and mouse events aren't mixed
-        this.newSlot("isVisualDebugging", false)
-        this.newSlot("fingerViewDict", null)
+        {
+            const slot = this.newSlot("isEmulatingTouch", false); // assumes touch and mouse events aren't mixed
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isVisualDebugging", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("fingerViewDict", null); // TODO move to Map?
+            slot.setSlotType("Object");
+        }
 
         // begin pressing 
 
-        this.newSlot("isPressing", false).setDoesHookSetter(true)
-        this.newSlot("minFingersRequired", 2)
-        this.newSlot("maxFingersAllowed", 4)
-        this.newSlot("minDistToBegin", 10)
-        this.newSlot("allowsKeyboardKeys", false)
-        this.newSlot("requiresKeyboardKeys", null)
-        this.newSlot("shouldRequestActivation", true)
-        this.newSlot("shouldAcceptCancelRequest", true)
-        this.newSlot("isActive", false) // only used if shouldRequestActivation === false
+        {
+            const slot = this.newSlot("isPressing", false);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("minFingersRequired", 2);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("maxFingersAllowed", 4);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("minDistToBegin", 10);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("allowsKeyboardKeys", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("requiresKeyboardKeys", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("shouldRequestActivation", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("shouldAcceptCancelRequest", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isActive", false); // only used if shouldRequestActivation === false
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {
@@ -150,39 +260,39 @@
     // -- event helpers --
 
     clearEvents () {
-        this.setDownEvent(null)
-        this.setBeginEvent(null)
-        this.setCurrentEvent(null)
-        return this
+        this.setDownEvent(null);
+        this.setBeginEvent(null);
+        this.setCurrentEvent(null);
+        return this;
     }
     
     setCurrentEvent (event) {
         if (this._currentEvent !== event) {
-            this.setLastEvent(this._currentEvent)
-            this._currentEvent = event
+            this.setLastEvent(this._currentEvent);
+            this._currentEvent = event;
         }
-        return this
+        return this;
     }
 
     currentPosition () {
-        return this.pointsForEvent(this.currentEvent()).first()
+        return this.pointsForEvent(this.currentEvent()).first();
     }
 
     downPosition () {
-        return this.pointsForEvent(this.downEvent()).first()
+        return this.pointsForEvent(this.downEvent()).first();
     }
 
     beginPosition () {
-        return this.pointsForEvent(this.beginEvent()).first()
+        return this.pointsForEvent(this.beginEvent()).first();
     }
 
     upPosition () {
-        return this.pointsForEvent(this.upEvent()).first()
+        return this.pointsForEvent(this.upEvent()).first();
     }
 
     numberOfFingersDown () {
-        const points = this.pointsForEvent(this.currentEvent())
-        return points.length
+        const points = this.pointsForEvent(this.currentEvent());
+        return points.length;
     }
 
     currentEventIsOnTargetView () {

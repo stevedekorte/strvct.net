@@ -14,12 +14,30 @@
 
 (class DomBorderRadius extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("divView", null)
-        this.newSlot("topLeft", 0)
-        this.newSlot("topRight", 0)
-        this.newSlot("bottomRight", 0)
-        this.newSlot("bottomLeft", 0)
-        this.newSlot("partNames", ["topLeft", "topRight", "bottomRight", "bottomLeft"])
+        {
+            const slot = this.newSlot("divView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("topLeft", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("topRight", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("bottomRight", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("bottomLeft", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("partNames", ["topLeft", "topRight", "bottomRight", "bottomLeft"]);
+            slot.setSlotType("Array");
+        }
     }
 
     /*

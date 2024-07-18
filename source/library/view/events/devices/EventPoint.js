@@ -16,12 +16,30 @@
 
 (class EventPoint extends Point {
     initPrototypeSlots () {
-        this.newSlot("id", null)
-        this.newSlot("state", null)
-        this.newSlot("target", null)
-        this.newSlot("isDown", false)
-        this.newSlot("overView", null)
-        this.newSlot("event", null)
+        {
+            const slot = this.newSlot("id", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("state", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("target", null);
+            slot.setSlotType("Element");
+        }
+        {
+            const slot = this.newSlot("isDown", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("overView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("event", null);
+            slot.setSlotType("Event");
+        }
     }
    
     /*

@@ -28,31 +28,31 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("value", 0)
-            slot.setShouldStoreSlot(false)
-            slot.setSlotType("Number")
-            slot.setCanInspect(false)
+            const slot = this.newSlot("value", 0);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Number");
+            slot.setCanInspect(false);
         }
 
         {
-            const slot = this.newSlot("usePostfix", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("usePostfix", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
 
         {
-            const slot = this.newSlot("useSpace", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("useSpace", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
 
         {
-            const slot = this.newSlot("useLongNames", false)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Boolean")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("useLongNames", false);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
+            slot.setCanInspect(true);
         }
 
         {
@@ -66,7 +66,7 @@
                 "E", 
                 "Z", 
                 "Y"
-            ])
+            ]);
         }
         
         {
@@ -80,7 +80,7 @@
                 "exabytes", 
                 "zettabytes", 
                 "yottabytes"
-            ])
+            ]);
         }
     }
   

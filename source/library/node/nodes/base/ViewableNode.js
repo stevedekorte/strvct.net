@@ -18,7 +18,9 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("nodeViewClassName", null)
+            const slot = this.newSlot("nodeViewClassName", null);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("String");
         }
         
     
@@ -57,102 +59,119 @@
         */
 
         {
-            const slot = this.newSlot("nodeThumbnailUrl", null)
+            const slot = this.newSlot("nodeThumbnailUrl", null);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("String");
         }
 
         {
-            const slot = this.newSlot("nodeIsVertical", true)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setLabel("is vertical")
-            slot.setSlotType("Boolean")
-            slot.setInspectorPath("Node/Viewable/Children Layout")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("nodeIsVertical", true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setLabel("is vertical");
+            slot.setSlotType("Boolean");
+            slot.setInspectorPath("Node/Viewable/Children Layout");
+            slot.setShouldStoreSlot(true);
         }
 
         {
-            const slot = this.newSlot("nodeChildrenAlignment", "flex-start")
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setLabel("alignment")
-            slot.setSlotType("String")
-            slot.setValidValues(["flex-start", "center", "flex-end", "space-between", "space-around"])
-            slot.setInspectorPath("Node/Viewable/Children Layout")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("nodeChildrenAlignment", "flex-start");
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setLabel("alignment");
+            slot.setSlotType("String");
+            slot.setValidValues(["flex-start", "center", "flex-end", "space-between", "space-around"]);
+            slot.setInspectorPath("Node/Viewable/Children Layout");
+            slot.setShouldStoreSlot(true);
         }
 
         {
-            const slot = this.newSlot("nodeTileIsSelectable", true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("nodeTileIsSelectable", true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("nodeTilesStartAtBottom", false)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("nodeTilesStartAtBottom", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("nodeNavBorderHint", true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("nodeNavBorderHint", true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("nodeMinTileHeight", 0)
-            slot.setDuplicateOp("copyValue")
-            slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("Node/Viewable/Style")
+            const slot = this.newSlot("nodeMinTileHeight", 0);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setInspectorPath("Node/Viewable/Style");
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("nodeMinTileWidth", 0)
-            slot.setDuplicateOp("copyValue")
-            slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("Node/Viewable/Style")
+            const slot = this.newSlot("nodeMinTileWidth", 0);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setInspectorPath("Node/Viewable/Style");
+            slot.setSlotType("Number");
         }
 
         // html
 
         {
-            const slot = this.newSlot("acceptsFileDrop", false)
+            const slot = this.newSlot("acceptsFileDrop", false);
+            slot.setSlotType("Boolean");
         }
 
         // input hook
 
         {
-            const slot = this.newSlot("nodeInputFieldMethod", null)
+            const slot = this.newSlot("nodeInputFieldMethod", null);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("String");
         }
 
         // column settings - TODO: auto adjust to fit?
 
-        //this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue") // no longer used - we calc sizes of tiles instead
+        /*
+        {
+            const slot = this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue") // no longer used - we calc sizes of tiles instead
+        }
+        */
         
         {
-            const slot = this.newSlot("nodeFillsRemainingWidth", false).setDuplicateOp("copyValue")
-            slot.setSlotType("Boolean")
-            slot.setLabel("fills remaining")
-            slot.setCanEditInspection(false)
-            slot.setCanInspect(false)
-            slot.setInspectorPath("Node/Viewable/Children Layout")
+            const slot = this.newSlot("nodeFillsRemainingWidth", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
+            slot.setLabel("fills remaining");
+            slot.setCanEditInspection(false);
+            slot.setCanInspect(false);
+            slot.setInspectorPath("Node/Viewable/Children Layout");
         }
 
         {
-            const slot = this.newSlot("nodeFillsWindow", false)
-            slot.setSlotType("Boolean")
-            slot.setLabel("fills window")
-            slot.setCanEditInspection(true)
-            slot.setCanInspect(true)
-            slot.setShouldStoreSlot(true)
-            slot.setInspectorPath("Node/Viewable/Children Layout")
+            const slot = this.newSlot("nodeFillsWindow", false);
+            slot.setSlotType("Boolean");
+            slot.setLabel("fills window");
+            slot.setCanEditInspection(true);
+            slot.setCanInspect(true);
+            slot.setShouldStoreSlot(true);
+            slot.setInspectorPath("Node/Viewable/Children Layout");
         }
 
         {
-            const slot = this.newSlot("nodeCanEditTileHeight", false)
-            slot.setDuplicateOp("copyValue") // TODO: change to NavHeight
+            const slot = this.newSlot("nodeCanEditTileHeight", false);
+            slot.setDuplicateOp("copyValue"); // TODO: change to NavHeight
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("nodeCanEditColumnWidth", false)
-            slot.setDuplicateOp("copyValue") // TODO: change to NavWidth
+            const slot = this.newSlot("nodeCanEditColumnWidth", false);
+            slot.setDuplicateOp("copyValue"); // TODO: change to NavWidth
+            slot.setSlotType("Boolean");
         }
 
     }

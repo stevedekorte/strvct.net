@@ -15,7 +15,10 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("lastSyncTime", 0)
+        {
+            const slot = this.newSlot("lastSyncTime", 0);
+            slot.setSlotType("Number");
+        }
     }
 
     init () {
@@ -69,7 +72,7 @@
         subnode.setTitle(aRecord.id)
         subnode.setKey(aRecord.id)
         subnode.setStore(this.store())
-        const size = JSON.stringify(aRecord).length
+        const size = JSON.stableStringify(aRecord).length
         subnode.setSubtitle(size.byteSizeDescription())
 
         const classNode = this.subnodeForClassName(aRecord.type)

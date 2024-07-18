@@ -22,19 +22,23 @@
     {
       const slot = this.newSlot("element", null);
       slot.setSyncsToView(true);
+      slot.setSlotType("Element");
     }
     
     { 
       const slot = this.newSlot("playerPromise", null); // resolves once player is available
+      slot.setSlotType("Promise");
     }
 
     {
       const slot = this.newSlot("playPromise", null);
+      slot.setSlotType("Promise");
     }
 
     {
       const slot = this.newSlot("player", null); // reference to store the YouTube player
       slot.setSyncsToView(true);
+      slot.setSlotType("Object");
     }
 
     {

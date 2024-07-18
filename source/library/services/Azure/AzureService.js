@@ -7,7 +7,10 @@
 
 (class AzureService extends BMStorableNode {
   initPrototypeSlots () {
-    this.newSlot("regionOptions", []);
+    {
+      const slot = this.newSlot("regionOptions", []);
+      slot.setSlotType("Array");
+    }
 
     {
       const slot = this.newSlot("apiKey", "");

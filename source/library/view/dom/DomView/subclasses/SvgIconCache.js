@@ -15,16 +15,22 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("hashToElementMap", new Map())
-        this.newSlot("svgCacheElement", null)
+        {
+            const slot = this.newSlot("hashToElementMap", new Map());
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("svgCacheElement", null);
+            slot.setSlotType("Element");
+        }
     }
 
     svgIdForString (s) {
-        return "SvgId-" + s.hashCode()
+        return "SvgId-" + s.hashCode();
     }
 
     svgContentIdForString (s) {
-        return "SvgContentId-" + s.hashCode()
+        return "SvgContentId-" + s.hashCode();
     }
 
     cacheSvgForStringIfNeeded (s) {

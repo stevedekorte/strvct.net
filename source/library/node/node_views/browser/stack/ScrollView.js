@@ -29,14 +29,17 @@
 
         {
             const slot = this.newSlot("sticksToBottom", false); // turn on/off behavior
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("wasAtBottom", false); // on user onScroll events, marked to true if at bottom
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("lastScrollHeight", 0);
+            slot.setSlotType("Number");
         }
 
     }

@@ -26,11 +26,17 @@
         
 */
 
-(class ScreenEdgePanGestureRecognizer extends PanGestureRecognizer {
+(class ScreenEdgePanGestureRecognizer extends PanGestureRecognizer { // TODO abstract PanEdgeGestureRecognizer
     
     initPrototypeSlots () {
-        this.newSlot("edgeName", null)
-        this.newSlot("maxStartDistance", 15)
+        {
+            const slot = this.newSlot("edgeName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("maxStartDistance", 15);
+            slot.setSlotType("Number");
+        }
     }
 
     init () {

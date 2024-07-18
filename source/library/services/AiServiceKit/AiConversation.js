@@ -19,37 +19,45 @@
 
     {
       const slot = this.newSlot("chatModel", null); // ref to AiChatModel
+      slot.setSlotType("AiChatModel");
     }
 
 
     {
       const slot = this.newSlot("initialMessagesCount", 3); // Number of initial messages to always keep
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("responseMsgClass", null); 
+      slot.setSlotType("AiResponseMessage");
     }
 
     // token counting
 
     {
       const slot = this.newSlot("tokenCount", 0); // sum of tokens of all messages
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("tokenBuffer", 400); // Buffer to ensure approximation doesn't exceed limit
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("service", null); // pointer to AiService instance
+      slot.setSlotType("AiService");
     }
 
     {
       const slot = this.newSlot("tagDelegate", null); // delegate to receive tag messages from responses
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("aiSpeakerName", null); // name of the AI speaker
+      slot.setSlotType("String");
     }
 
   }
@@ -261,5 +269,41 @@
     }
   }
   */
+
+  sessionStateTagNames () {
+    return ["session-json", "session-update"];
+  }
+
+  sessionStateTagMap () {
+    const m = new Map();
+    m.set("session-json", "{content removed as it has been outdated. See session-json tag in the last message of the conversation for the latest session state}");
+    m.set("session-update", "{content removed as the patch is already applied. See session-json tag in the last message of the conversation for the latest session state}");
+    return m;
+  }
+
+  sessionJson () {
+    return null;
+  }
+
+  onFilterJsonHistory (messages) {
+    // subclasses can override this to modify the history sent with the request
+    const json = this.sessionJson();
+    if (json) {
+
+      const lastMessage = messages.last();
+      const jsonHistory = messages.map(m => {
+        if (m !== lastMessage) {
+          m.content = m.content.replaceContentOfHtmlTagMap(this.sessionStateTagMap());
+        } else {
+            const sessionJsonString = JSON.stableStringify(json, 2, 2);
+            m.content = m.content + "\n\n" +"<session-json>" + sessionJsonString + "</session-json>";
+          }
+        return m;
+      });
+      return jsonHistory;
+    }
+
+    return messages;
+  }
 
 }.initThisClass());

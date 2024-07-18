@@ -14,27 +14,30 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("dataViewClass", SceneView);
+        {
+            const slot = this.newSlot("dataViewClass", SceneView);
+            slot.setSlotType("Class");
+        }
     }
 
     init () {
-        super.init()
-        this.valueViewContainer().flexCenterContent()
-        this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px")
-        this.valueView().setPaddingTop("0px").setPaddingBottom("0px")
+        super.init();
+        this.valueViewContainer().flexCenterContent();
+        this.valueViewContainer().setPaddingTop("0px").setPaddingBottom("0px");
+        this.valueView().setPaddingTop("0px").setPaddingBottom("0px");
 
-        //this.keyView().setElementClassName("BMImageWellKeyField")
-        //this.valueView().setIsEditable(false)
-        this.turnOffUserSelect()
-        this.keyView().setTransition("color 0.3s")
-        //this.valueViewContainer().setPadding("0px")
-        return this
+        //this.keyView().setElementClassName("BMImageWellKeyField");
+        //this.valueView().setIsEditable(false);
+        this.turnOffUserSelect();
+        this.keyView().setTransition("color 0.3s");
+        //this.valueViewContainer().setPadding("0px");
+        return this;
     }
 
     createValueView () {
-        const instance = this.dataViewClass().clone()
-        //instance.setWidth("100%").setHeight("fit-content")
-        return instance
+        const instance = this.dataViewClass().clone();
+        //instance.setWidth("100%").setHeight("fit-content");
+        return instance;
     }
 
     syncFromNode () {

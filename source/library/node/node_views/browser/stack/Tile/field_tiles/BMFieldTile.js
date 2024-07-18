@@ -16,40 +16,88 @@
 (class BMFieldTile extends Tile {
     
     initPrototypeSlots () {
-        this.newSlot("allowsCursorNavigation", false)
-        this.newSlot("vPadding",  "0.1em")
-
-        this.newSlot("kvSection", null)
-        this.newSlot("keyViewContainer", null)
-        this.newSlot("valueViewContainer", null)
-
-        this.newSlot("errorViewContainer", null)
-        this.newSlot("noteViewContainer", null)
-
-        this.newSlot("keyView", null)
-        this.newSlot("valueView", null)
-        this.newSlot("errorView", null)
-        this.newSlot("noteView", null)
-
-        this.newSlot("editableColor", "#aaa")
-        this.newSlot("uneditableColor", "#888")
-        this.newSlot("errorColor", "red")
-
-        this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)")
-        //this.newSlot("valueEditableBorder", "none")
-        this.newSlot("valueUneditableBorder", "none")
+        {
+            const slot = this.newSlot("allowsCursorNavigation", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("vPadding",  "0.1em");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("kvSection", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("keyViewContainer", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("valueViewContainer", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("errorViewContainer", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("noteViewContainer", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("keyView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("valueView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("errorView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("noteView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("editableColor", "#aaa");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("uneditableColor", "#888");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("errorColor", "red");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)");
+            slot.setSlotType("String");
+        }
+        /*
+        {
+            const slot = this.newSlot("valueEditableBorder", "none");
+            slot.setSlotType("String");
+        }
+        */
+        {
+            const slot = this.newSlot("valueUneditableBorder", "none");
+            slot.setSlotType("String");
+        }
     }
 
     setupTileContentView () {
-        super.setupTileContentView()
+        super.setupTileContentView();
 
-        const cv = this.contentView()
-        cv.setMinHeight("5em")
-        //cv.setPaddingTop("0.5em")
-        //cv.setPaddingBottom("0.5em")
-        cv.setJustifyContent("center") // alignment perpendicular to flex
-        cv.setFlexDirection("column")
-        return this
+        const cv = this.contentView();
+        cv.setMinHeight("5em");
+        //cv.setPaddingTop("0.5em");
+        //cv.setPaddingBottom("0.5em");
+        cv.setJustifyContent("center"); // alignment perpendicular to flex
+        cv.setFlexDirection("column");
+        return this;
     }
 
     init () {

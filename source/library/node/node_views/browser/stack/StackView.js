@@ -54,12 +54,32 @@
 (class StackView extends NodeView {
 
     initPrototypeSlots () {
-        this.newSlot("navView", null)
-        this.newSlot("otherView", null)
-        this.newSlot("direction", "down").setDoesHookSetter(true) // valid values: left, right, up, down
-        this.newSlot("lastPathString", null)
-        this.newSlot("onStackViewPathChangeNote", null)
-        this.newSlot("nodeToStackCache", null)
+        {
+            const slot = this.newSlot("navView", null);
+            slot.setSlotType("NavView");
+        }
+        {
+            const slot = this.newSlot("otherView", null);
+            slot.setSlotType("FlexDomView");
+        }
+        {
+            const slot = this.newSlot("direction", "down");
+            slot.setDoesHookSetter(true); // valid values: left, right, up, down
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("lastPathString", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("onStackViewPathChangeNote", null);
+            slot.setSlotType("BMNotification");
+        }
+        {
+            const slot = this.newSlot("nodeToStackCache", null);
+            slot.setSlotType("Map");
+        }
     }
 
     init () {
@@ -306,7 +326,7 @@
             console.log("debug info:")
             console.log("  looking for node: ", node.debugTypeId())
             const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId())
-            console.log("  subnodes:" + JSON.stringify(subnodeIds) )
+            console.log("  subnodes:" + JSON.stableStringify(subnodeIds) )
 
             debugger;
             return false

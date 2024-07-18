@@ -12,11 +12,26 @@
 (class BMDataUrl extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("dataUrl", null) // for drop
-        this.newSlot("transferMimeType", "DownloadURL") // for drag
-        this.newSlot("fileName", "file.txt") // for drag
-        this.newSlot("mimeType", null)
-        this.newSlot("decodedData", "") // non-base64 version
+        {
+            const slot = this.newSlot("dataUrl", null); // for drop
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("transferMimeType", "DownloadURL"); // for drag
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("fileName", "file.txt"); // for drag
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("mimeType", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("decodedData", ""); // non-base64 version
+            slot.setSlotType("String");
+        }
     }
 
     mimeTypeDescription () {

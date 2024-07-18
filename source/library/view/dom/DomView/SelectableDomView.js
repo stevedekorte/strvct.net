@@ -12,6 +12,7 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("storedSelectionRange", null);
+            slot.setSlotType("Range");
         }
     }
 

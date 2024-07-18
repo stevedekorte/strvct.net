@@ -70,95 +70,126 @@
         //this.newSlot("item", null)
 
         // the set of views that will be dragged
-        this.newSlot("items", [])
+        {
+            const slot = this.newSlot("items", []);
+            slot.setSlotType("Array");
+        }
 
         // a place for the source to store any extra info about the drag operation,
         // such as the indexes of the items
-        this.newSlot("info", null)
+        {
+            const slot = this.newSlot("info", null);
+            slot.setSlotType("Object");
+        }
 
         // the view which is the owner of the view being dragged that implements the source protocol
-        this.newSlot("source", null)
+        {
+            const slot = this.newSlot("source", null);
+            slot.setSlotType("DomView"); // TODO: make this a protocol
+        }
 
         // the view on which the item is dropped
-        this.newSlot("destination", null)
+        {
+            const slot = this.newSlot("destination", null);
+            slot.setSlotType("DomView");
+        }
 
-        this.newSlot("validOperations", new Set(["move", "copy", "link", "delete"]))
+        {
+            const slot = this.newSlot("validOperations", new Set(["move", "copy", "link", "delete"]));
+            slot.setSlotType("Set");
+        }
 
         // a list of views that self is currently hovering over
-        this.newSlot("hoverViews", null)
+        {
+            const slot = this.newSlot("hoverViews", null);
+            slot.setSlotType("Array");
+        }
 
         // start position in screen coordinates 
-        this.newSlot("dragStartPos", null)
+        {
+            const slot = this.newSlot("dragStartPos", null);
+            slot.setSlotType("Point");
+        }
 
         // the drag operation type: move, copy, link, delete
-        this.newSlot("dragOperation", "move").setDoesHookSetter(true)
+        {
+            const slot = this.newSlot("dragOperation", "move")
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("String");
+        }
 
-        this.newSlot("slideBackPeriod", 0.2) // seconds
-        this.newSlot("isClosed", false) 
+        {
+            const slot = this.newSlot("slideBackPeriod", 0.2); // seconds
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("isClosed", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     didUpdateSlotDragOperation () {
-        assert(this.validOperations().has(this.dragOperation()))
+        assert(this.validOperations().has(this.dragOperation()));
     }
 
     init () {
-        super.init()
-        this.setHoverViews([])
+        super.init();
+        this.setHoverViews([]);
 
-        this.setDisplay("flex")
-        this.setPosition("absolute")
-        this.turnOffUserSelect()
-        this.setOverflow("hidden")
-        this.setMinWidthPx(10)
-        this.setMinHeightPx(10)
-        this.setWidth("fit-content")
-        this.setMinHeight("fit-content")
-        this.setOpacity(0.9)
-        this.setInfo({})
+        this.setDisplay("flex");
+        this.setPosition("absolute");
+        this.turnOffUserSelect();
+        this.setOverflow("hidden");
+        this.setMinWidthPx(10);
+        this.setMinHeightPx(10);
+        this.setWidth("fit-content");
+        this.setMinHeight("fit-content");
+        this.setOpacity(0.9);
+        this.setInfo({});
 
-        this.setIsDebugging(false)
-        return this
+        this.setIsDebugging(false);
+        return this;
     }
 
     // operation type helpers
 
     isCopyOp () {
-        return this.dragOperation() === "copy"
+        return this.dragOperation() === "copy";
     }
 
     isMoveOp () {
-        return this.dragOperation() === "move"
+        return this.dragOperation() === "move";
     }
 
     isLinkOp () {
-        return this.dragOperation() === "link"
+        return this.dragOperation() === "link";
     }
 
     isDeleteOp () {
-        return this.dragOperation() === "delete"
+        return this.dragOperation() === "delete";
     }
 
     // ----
 
     setItem (aView) {
-        this.setItems([aView])
-        return this
+        this.setItems([aView]);
+        return this;
     }
 
     item () {
-        return this.items().first()
+        return this.items().first();
     }
 
     // ----
 
     setupView () {
         if (this.items().length === 1) {
-            this.setupSingleItemView()
+            this.setupSingleItemView();
         } else {
-            this.setupMultiItemView()
+            this.setupMultiItemView();
         }
-        this.setZIndex(10)
-        return this
+        this.setZIndex(10);
+        return this;
     }
 
     setupMultiItemView () {

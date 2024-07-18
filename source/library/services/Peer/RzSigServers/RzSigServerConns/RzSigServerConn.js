@@ -66,6 +66,7 @@
       const slot = this.newSlot("peer", null);
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(false);
+      slot.setSlotType("Peer");
     }
 
     {
@@ -217,10 +218,12 @@
 
     {
       const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setSlotType("Error");
     }
 
     this.setShouldStoreSubnodes(false);
@@ -228,18 +231,18 @@
 
   init() {
     super.init();
-    this.setIsDebugging(true)
-    this.setCanDelete(true)
+    this.setIsDebugging(true);
+    this.setCanDelete(true);
     return this
   }
 
   finalInit () {
-    super.finalInit()
-    this.setSubtitle("server connection")
-    this.setPeerId("")
-    this.setStatus("unconnected")
-    this.setCanDelete(true)
-    this.setShouldStore(true)
+    super.finalInit();
+    this.setSubtitle("server connection");
+    this.setPeerId("");
+    this.setStatus("unconnected");
+    this.setCanDelete(true);
+    this.setShouldStore(true);
   }
 
   // --- peer connection class ---

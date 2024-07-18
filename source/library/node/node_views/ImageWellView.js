@@ -13,8 +13,14 @@
 (class ImageWellView extends NodeView {
 
     initPrototypeSlots () {
-        this.newSlot("imageView", null);
-        this.newSlot("isEditable", true);
+        {
+            const slot = this.newSlot("imageView", null);
+            slot.setSlotType("ImageView");
+        }
+        {
+            const slot = this.newSlot("isEditable", true);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {

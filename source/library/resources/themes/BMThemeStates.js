@@ -8,12 +8,15 @@
 
 (class BMThemeStates extends BMThemeFolder {
   initPrototypeSlots () {
-      this.newSlot("standardStateNames", [
+    {
+      const slot =this.newSlot("standardStateNames", [
         "disabled",
         "unselected", 
         "selected", 
         "active"
       ]);
+      slot.setSlotType("Array");
+    }
   }
 
   init () {

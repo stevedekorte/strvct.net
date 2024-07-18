@@ -107,57 +107,61 @@
         return this.subnodes().map(sn => sn.jsonArchive());
     }
 
+    newSubnodeForJson (json) {
+        let aNode = null;
+        if (this.subnodeClasses().length === 1) {
+            const aClass = this.subnodeClasses().first();
+            aNode = aClass.clone().setJson(json);
+        } else {
+            aNode = BMJsonNode.nodeForJson(json);
+        }
+        return aNode;
+    }
 
     setJson (json) {
+        // in order to merge json properly, we need to look at the jsonIds and match them up
+
         if (this.doesMatchJson(json)) {
             return this;
         }
 
+        /*
         const hashSubnodeMap = new Map();
         this.subnodes().forEach(sn => {
             hashSubnodeMap.set(sn.jsonHash(), sn);
+        });
+        */
+
+        const jsonIdToSubnodeMap = new Map();
+        this.subnodes().forEach(sn => {
+            jsonIdToSubnodeMap.set(sn.jsonId(), sn);
         });
 
         const newSubnodes = [];
 
         json.forEach((v) => {
-            const hash = JSON.stableStringify(v).hashCode();
-            const existingNode = hashSubnodeMap.get(hash);
+            //assert(v.jsonId);
+            if (!v.jsonId) {
+                console.warn("BMJsonArrayNode.setJson() missing jsonId: ", v);
+            }
+
+            const jsonId = v.jsonId;
+            const existingNode = jsonIdToSubnodeMap.get(jsonId);
+
             if (existingNode) {
                 // use the existing node
+                existingNode.setJson(v);
                 newSubnodes.push(existingNode);
-                //hashSubnodeMap.delete(hash);
             } else {
                 // create a new node
-                let aNode = null;
-                if (this.subnodeClasses().length === 1) {
-                    const aClass = this.subnodeClasses().first();
-                    aNode = aClass.clone().setJson(v);
-                } else {
-                    aNode = BMJsonNode.nodeForJson(v);
-                }
+                const aNode = this.newSubnodeForJson(v);
                 newSubnodes.push(aNode);
-                console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for hash: ", hash);
+                console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: ", jsonId);
+                //debugger;
             }
         });
 
         this.setSubnodes(newSubnodes);
-
-        /*
-        this.removeAllSubnodes();
-        
-        json.forEach((v) => {
-            if (this.subnodeClasses().length === 1) {
-                const aClass = this.subnodeClasses().first();
-                const aNode = aClass.clone().setJson(v);
-                this.addSubnode(aNode);
-            } else {
-                const aNode = BMJsonNode.nodeForJson(v);
-                //aNode.setTitle(index);
-                this.addSubnode(aNode);
-            }
-        });
-        */
         this.setJsonCache(json);
         return this;
     }
@@ -172,7 +176,7 @@
         const d = BMDataUrl.clone();
         d.setMimeType("application/json");
         d.setFileName(this.title() + ".json");
-        d.setDecodedData(JSON.stringify(json, null, 4));
+        d.setDecodedData(JSON.stableStringify(json, null, 4));
         return d;
     }
 

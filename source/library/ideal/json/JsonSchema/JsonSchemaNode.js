@@ -81,7 +81,7 @@
   didInit () {
     super.didInit()
     const json = this.thisClass().asRootJsonSchema(); //TODO
-    this.setSchemaString(JSON.stringify(json, 2, 2)); //TODO
+    this.setSchemaString(JSON.stableStringify(json, 2, 2)); //TODO
     return this;
   }
 
@@ -140,7 +140,7 @@
   }
 
   jsonString () {
-    return JSON.stringify(this.asJson(), 2, 2);
+    return JSON.stableStringify(this.asJson(), 2, 2);
   }
 
   static jsonSchemaProperties (refSet) {
@@ -148,7 +148,7 @@
     const json = super.jsonSchemaProperties(refSet);
     /*
     if (!Type.isUndefined(json)) {
-      const s = JSON.stringify(json, 2, 2);
+      const s = JSON.stableStringify(json, 2, 2);
       assert(!s.includes("schemaString"));
     }
     */

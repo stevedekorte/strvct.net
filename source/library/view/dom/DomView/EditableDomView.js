@@ -10,16 +10,17 @@
 (class EditableDomView extends SelectableDomView {
     
     initPrototypeSlots () {
-        //this.newSlot("unfocusOnEnterKey", false)
-        //this.newSlot("showsHaloWhenEditable", false)
+        /*
+        {
+            const slot = this.newSlot("unfocusOnEnterKey", false);
+            slot.setSlotType("Boolean");    
+        }
+        {
+            const slot = this.newSlot("showsHaloWhenEditable", false);
+            slot.setSlotType("Boolean");
+        }
+        */
     }
-
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
 
     /*
     onEnterKeyDown (event) {

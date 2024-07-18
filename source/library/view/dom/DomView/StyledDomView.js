@@ -36,18 +36,39 @@
 (class StyledDomView extends FlexDomView {
     
     initPrototypeSlots () {
-        this.newSlot("themeClassName", null)
-        this.newSlot("isSelected", false).setOwnsSetter(true).setDoesHookSetter(true)
-        this.newSlot("isActive", false).setOwnsSetter(true).setDoesHookSetter(true)
-        this.newSlot("isDisabled", false).setOwnsSetter(true).setDoesHookSetter(true)
-        this.newSlot("lockedStyleAttributeSet", null)
+        {
+            const slot = this.newSlot("themeClassName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("isSelected", false);
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isActive", false);
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isDisabled", false);
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("lockedStyleAttributeSet", null);
+            slot.setSlotType("Set");
+        }
     }
 
     init () {
         super.init()
-        this.setLockedStyleAttributeSet(new Set())
-        Broadcaster.shared().addListenerForName(this, "onActivateView") // NOTE: do we want *every* view to do this 
-        return this
+        this.setLockedStyleAttributeSet(new Set());
+        Broadcaster.shared().addListenerForName(this, "onActivateView"); // NOTE: do we want *every* view to do this 
+        return this;
     }
 
     syncStateFrom (aView) {

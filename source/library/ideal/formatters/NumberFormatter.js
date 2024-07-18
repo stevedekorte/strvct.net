@@ -18,17 +18,17 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("value", 0)
-            slot.setShouldStoreSlot(false)
-            slot.setSlotType("Number")
-            slot.setCanInspect(false)
+            const slot = this.newSlot("value", 0);
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Number");
+            slot.setCanInspect(false);
         }
 
         {
-            const slot = this.newSlot("significantDigits", 2)
-            slot.setShouldStoreSlot(true)
-            slot.setSlotType("Number")
-            slot.setCanInspect(true)
+            const slot = this.newSlot("significantDigits", 2);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Number");
+            slot.setCanInspect(true);
         }
     }
   

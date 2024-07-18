@@ -11,22 +11,27 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("path", "."); // path from _index.json entry
+            slot.setSlotType("String");
         }
 
         {
             const slot = this.newSlot("resourceHash", null); // hash from _index.json entry
+            slot.setSlotType("String");
         }
 
         {
             const slot = this.newSlot("resourceSize", null); // size from _index.json entry
+            slot.setSlotType("Number");
         }
 
         {
             const slot = this.newSlot("data", null);
+            slot.setSlotType("Object");
         }
 
         {
             const slot = this.newSlot("value", null); // the value decoded from the data. e.g. value = JSON.parse(data)
+            slot.setSlotType("Object");
         }
 
         //this.newSlot("encoding", "utf8")
@@ -34,16 +39,30 @@
 
         {
             const slot = this.newSlot("error", null);
+            slot.setSlotType("Error");
         }
 
         {
-            const slot = this.newSlot("promiseForLoad", null); // holds promise used for reading from URL request or indexedDB
+            const slot = this.newSlot("promiseForLoad", null); 
+            slot.setDescription("holds promise used for reading from URL request or indexedDB");
+            slot.setSlotType("Promise");
         }
 
         // notifications
-        this.newSlot("isLoading", false)
-        this.newSlot("isLoaded", false)
-        this.newSlot("loadState", null) 
+
+        {
+            const slot = this.newSlot("isLoading", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+             const slot = this.newSlot("isLoaded", false);
+             slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("loadState", null);
+            slot.setSlotType("String");
+        }
+        
         //this.newSlot("loadNote", null) 
         //this.newSlot("loadErrorNote", null) 
         //this.newSlot("usesBlobCache", false)

@@ -10,7 +10,10 @@
 (class ListenerDomView extends SubviewsDomView {
     
     initPrototypeSlots () {
-        this.newSlot("eventListenersMap", null)
+        {
+            const slot = this.newSlot("eventListenersMap", null);
+            slot.setSlotType("Map");
+        }
     }
 
     init () {

@@ -9,7 +9,10 @@
 (class BMTextNodeTile extends Tile {
     
     initPrototypeSlots () {
-        this.newSlot("textView", null)
+        {
+            const slot = this.newSlot("textView", null);
+            slot.setSlotType("TextField");
+        }
     }
 
     init () {

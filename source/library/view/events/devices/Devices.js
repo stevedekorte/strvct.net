@@ -21,12 +21,32 @@
     }
     
     initPrototypeSlots () {
-        //this.newSlot("gamePadListener", null)
-        this.newSlot("keyboard", null)
-        this.newSlot("mouse", null)
-        this.newSlot("touchScreen", null)
-        this.newSlot("gamePadManager", null)
-        this.newSlot("isSetup", false)
+        /*
+        {
+            const slot = this.newSlot("gamePadListener", null);
+            slot.setSlotType("GamePadListener");
+        }
+        */
+        {
+            const slot = this.newSlot("keyboard", null);
+            slot.setSlotType("BMKeyboard");
+        }
+        {
+            const slot = this.newSlot("mouse", null);
+            slot.setSlotType("Mouse");
+        }
+        {
+            const slot = this.newSlot("touchScreen", null);
+            slot.setSlotType("TouchScreen");
+        }
+        {
+            const slot = this.newSlot("gamePadManager", null);
+            slot.setSlotType("GamePadManager");
+        }
+        {
+            const slot = this.newSlot("isSetup", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {

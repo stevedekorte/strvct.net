@@ -83,11 +83,26 @@ const max3 = function(a, b, c) {
     
     initPrototypeSlots () {
         // values between 0.0 and 1.0
-        this.newSlot("red", 0)
-        this.newSlot("green", 0)
-        this.newSlot("blue", 0)
-        this.newSlot("opacity", 1)
-        this.newSlot("colorCacheMap", 1)
+        {
+            const slot = this.newSlot("red", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("green", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("blue", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("opacity", 1);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("colorCacheMap", null);
+            slot.setSlotType("Map");
+        }
         //isMutable: true,
     }
     

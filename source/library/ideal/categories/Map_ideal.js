@@ -153,7 +153,7 @@
     }
 
     description () {
-        return JSON.stringify(this.asDict(), null, 2) // may throw error if values aren't json compatible
+        return JSON.stableStringify(this.asDict(), null, 2) // may throw error if values aren't json compatible
     }
 
     // --- reordering ---

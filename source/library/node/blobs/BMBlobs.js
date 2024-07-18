@@ -41,7 +41,10 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("store", null);
+        {
+            const slot = this.newSlot("store", null);
+            slot.setSlotType("PersistentObjectPool");
+        }
     }
   
     initPrototype () {

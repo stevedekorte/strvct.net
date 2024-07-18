@@ -20,63 +20,71 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("title", null)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("title", null);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("String");
         }
 
         {
-            const slot = this.newSlot("subtitle", null)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setLabel("value")
-            slot.setSlotType("String")
-            slot.setInspectorPath("Node/Subtitle")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("subtitle", null);
+            slot.setAllowsNullValue(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setLabel("value");
+            slot.setSlotType("String");
+            slot.setInspectorPath("Node/Subtitle");
+            slot.setShouldStoreSlot(true);
         }
 
         {
-            const slot = this.newSlot("note", null)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("copyValue")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("note", null);
+            slot.setAllowsNullValue(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("BMNotification");
         }
 
         {
-            const slot = this.newSlot("noteIconName", null)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setLabel("icon")
-            slot.setSlotType("String")
-            slot.setValidValuesClosure((instance) => BMIconResources.shared().iconNames())
-            slot.setInspectorPath("Node/Note")
+            const slot = this.newSlot("noteIconName", null);
+            slot.setAllowsNullValue(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setLabel("icon");
+            slot.setSlotType("String");
+            slot.setValidValuesClosure((instance) => BMIconResources.shared().iconNames());
+            slot.setInspectorPath("Node/Note");
         }
 
         {
-            const slot = this.newSlot("nodeCanEditTitle", false)
-            slot.setDuplicateOp("copyValue")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("nodeCanEditTitle", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("nodeCanEditSubtitle", false)
-            slot.setDuplicateOp("copyValue")
-            slot.setCanInspect(true)
-            slot.setLabel("editable")
-            slot.setSlotType("Boolean")
-            slot.setInspectorPath("Node/Subtitle")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("nodeCanEditSubtitle", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setCanInspect(true);
+            slot.setLabel("editable");
+            slot.setSlotType("Boolean");
+            slot.setInspectorPath("Node/Subtitle");
+            slot.setShouldStoreSlot(true);
         }
 
         {
-            const slot = this.newSlot("subtitleIsSubnodeCount", false)
-            slot.setDuplicateOp("copyValue")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("subtitleIsSubnodeCount", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
         }
 
         {
-            const slot = this.newSlot("noteIsSubnodeCount", false)
-            slot.setDuplicateOp("copyValue")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("noteIsSubnodeCount", false);
+            slot.setDuplicateOp("copyValue");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Boolean");
         }
     }
 

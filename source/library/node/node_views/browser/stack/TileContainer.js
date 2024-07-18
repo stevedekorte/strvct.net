@@ -9,7 +9,10 @@
 (class TileContainer extends NodeView {
 
     initPrototypeSlots () {
-        this.newSlot("tile", null)
+        {
+            const slot = this.newSlot("tile", null);
+            slot.setSlotType("Tile");
+        }
     }
 
     init () {

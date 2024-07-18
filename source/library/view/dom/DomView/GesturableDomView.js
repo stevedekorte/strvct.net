@@ -13,12 +13,24 @@
         // Array - not a map as we might have multiple GRs of same type, but...
         // would it be better to give GRs labels to use for map key?
         // this could replace "default" gesture ivars?
-        this.newSlot("gestureRecognizers", null) // array
+        {
+            const slot = this.newSlot("gestureRecognizers", null); // array
+            slot.setSlotType("Array");
+        }
 
         // default gestures with typical settings 
-        this.newSlot("defaultTapGesture", null)
-        this.newSlot("defaultDoubleTapGesture", null)
-        this.newSlot("defaultPanGesture", null)
+        {
+            const slot = this.newSlot("defaultTapGesture", null);
+            slot.setSlotType("TapGestureRecognizer");
+        }
+        {
+            const slot = this.newSlot("defaultDoubleTapGesture", null);
+            slot.setSlotType("TapGestureRecognizer");
+        }
+        {
+            const slot = this.newSlot("defaultPanGesture", null);
+            slot.setSlotType("PanGestureRecognizer");
+        }
     }
 
     /*
@@ -156,53 +168,53 @@
     // default double tap gesture
 
     newDoubleTapGestureRecognizer () { // private
-        const tg = TapGestureRecognizer.clone()
-        tg.setNumberOfTapsRequired(2)
-        tg.setNumberOfFingersRequired(1)
-        tg.setGestureName("DoubleTap")
+        const tg = TapGestureRecognizer.clone();
+        tg.setNumberOfTapsRequired(2);
+        tg.setNumberOfFingersRequired(1);
+        tg.setGestureName("DoubleTap");
 
         // Do we want this, which allows single tap event and double tap, or do
         // we want to wait to send single tap until double tap wait period expires?
-        tg.setShouldAcceptCancelRequest(false) // so single click doesn't cancel double click. 
-        return tg
+        tg.setShouldAcceptCancelRequest(false); // so single click doesn't cancel double click. 
+        return tg;
     }
 
     addDefaultDoubleTapGesture () { 
         if (!this.defaultDoubleTapGesture()) {
-            const gr = this.newDoubleTapGestureRecognizer()
-            this.setDefaultDoubleTapGesture(gr)
-            this.addGestureRecognizer(gr)
+            const gr = this.newDoubleTapGestureRecognizer();
+            this.setDefaultDoubleTapGesture(gr);
+            this.addGestureRecognizer(gr);
         }
-        return this.defaultDoubleTapGesture()
+        return this.defaultDoubleTapGesture();
     }
 
     removeDefaultDoubleTapGesture () { 
         if (this.defaultDoubleTapGesture()) {
-            this.removeGestureRecognizer(this.defaultDoubleTapGesture())
-            this.setDefaultDoubleTapGesture(null)
+            this.removeGestureRecognizer(this.defaultDoubleTapGesture());
+            this.setDefaultDoubleTapGesture(null);
         }
-        return this
+        return this;
     }
 
     // default pan gesture
 
     addDefaultPanGesture () {
         if (!this._defaultPanGesture) {
-            this._defaultPanGesture = this.addGestureRecognizer(PanGestureRecognizer.clone()) 
+            this._defaultPanGesture = this.addGestureRecognizer(PanGestureRecognizer.clone());
         }
-        return this._defaultPanGesture
+        return this._defaultPanGesture;
     }
 
     defaultPanGesture () {
-        return this._defaultPanGesture
+        return this._defaultPanGesture;
     }
 
     removeDefaultPanGesture () {
         if (this._defaultPanGesture) {
-            this.removeGestureRecognizer(this._defaultPanGesture)
-            this._defaultPanGesture = null
+            this.removeGestureRecognizer(this._defaultPanGesture);
+            this._defaultPanGesture = null;
         }
-        return this
+        return this;
     }
 
     // orient testing

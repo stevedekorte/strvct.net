@@ -36,11 +36,26 @@
 (class ButtonView extends FlexDomView {
     
     initPrototypeSlots () {
-        this.newSlot("titleView", null)
-        this.newSlot("subtitleView", null)
-        this.newSlot("isEnabled", true)
-        this.newSlot("iconView", null)
-        this.newSlot("info", null)
+        {
+            const slot = this.newSlot("titleView", null);
+            slot.setSlotType("TextField");
+        }
+        {
+            const slot = this.newSlot("subtitleView", null);
+            slot.setSlotType("TextField");
+        }
+        {
+            const slot = this.newSlot("isEnabled", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("iconView", null);
+            slot.setSlotType("SvgIconView");
+        }
+        {
+            const slot = this.newSlot("info", null);
+            slot.setSlotType("Object");
+        }
     }
 
     init () {

@@ -81,11 +81,30 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("actions", new Map());
-        this.newSlot("hasTimeout", false);
-        this.newSlot("isProcessing", false);
-        this.newSlot("currentAction", null);
-        this.newSlot("isPaused", false);
+        {
+            const slot = this.newSlot("actions", new Map());
+            slot.setSlotType("Map");
+        }
+
+        {
+            const slot = this.newSlot("hasTimeout", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            const slot = this.newSlot("isProcessing", false);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            const slot = this.newSlot("currentAction", null);
+            slot.setSlotType("SyncAction");
+        }
+
+        {
+            const slot = this.newSlot("isPaused", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {

@@ -10,19 +10,32 @@
 
 (class ViewAnimator extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("startValue", 0)
-        this.newSlot("targetValue", 0)
-        this.newSlot("viewProperty", "")
-        this.newSlot("duration", 200).setComment("milliseconds")
-        this.newSlot("easing", "linear")
-        this.newSlot("view", null)
+        {
+            const slot = this.newSlot("startValue", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("targetValue", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("viewProperty", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("duration", 200);
+            slot.setComment("milliseconds");
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("easing", "linear");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("view", null);
+            slot.setSlotType("DomView");
+        }
     }
-
-    /*
-    init () {
-        super.init()
-    }
-    */
 
     currentValue () {
         const view = this.view()

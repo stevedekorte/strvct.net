@@ -19,20 +19,38 @@
 (class EventSetListener extends ProtoClass {
 
     initPrototypeSlots () {
-        this.newSlot("listenTarget", null) // DOM Element (EventTarget)
-        this.newSlot("delegate", null)
-        this.newSlot("isListening", false)
-        this.newSlot("useCapture", false).setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree")
-        this.newSlot("methodSuffix", "")
-
-        this.newSlot("listenersMap", null) // Map of eventName -> EventListener entries
+        {
+            const slot = this.newSlot("listenTarget", null) // DOM Element (EventTarget)
+            slot.setSlotType("Element");
+        }
+        {
+            const slot = this.newSlot("delegate", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("isListening", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("useCapture", false);
+            slot.setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree");
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("methodSuffix", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("listenersMap", null) // Map of eventName -> EventListener entries
+            slot.setSlotType("Map");
+        }
     }
 
     init () {
-        super.init()
-        this.setListenersMap(new Map())
-        this.setupListeners()
-        return this
+        super.init();
+        this.setListenersMap(new Map());
+        this.setupListeners();
+        return this;
     }
 
     setupListeners () {

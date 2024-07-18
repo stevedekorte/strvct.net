@@ -10,7 +10,7 @@
   initPrototypeSlots () {
 
     {
-      const slot = this.overrideSlot("key")
+      const slot = this.overrideSlot("key");
       slot.setShouldJsonArchive(true);
       slot.setCanInspect(true);
       slot.setSlotType("String");
@@ -29,6 +29,7 @@
       const slot = this.newSlot("conversation", null);
       slot.setCanInspect(false);
       slot.setShouldStoreSlot(false);
+      slot.setSlotType("Conversation");
     }
 
     {
@@ -45,8 +46,9 @@
       slot.setSlotType("String");
       slot.setCanInspect(true);
       slot.setInspectorPath("ConversationMessage");
-      slot.setShouldStoreSlot(true)
-      slot.setShouldJsonArchive(true)
+      slot.setShouldStoreSlot(true);
+      slot.setShouldJsonArchive(true);
+      slot.setSlotType("String");
     }
 
     {
@@ -93,6 +95,7 @@
       const slot = this.newSlot("error", null);
       slot.setCanInspect(false);
       slot.setShouldStoreSlot(false);
+      slot.setSlotType("Error");
     }
 
     {
@@ -106,6 +109,7 @@
 
     {
       const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
       slot.setCanInspect(false);
       slot.setShouldStoreSlot(false)
     }

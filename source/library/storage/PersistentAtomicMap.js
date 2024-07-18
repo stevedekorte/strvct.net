@@ -34,10 +34,22 @@
 
 (class PersistentAtomicMap extends ideal.AtomicMap {
     initPrototypeSlots () {
-        this.newSlot("name", null)
-        this.newSlot("idb", null)
-        this.newSlot("txCount", 0)
-        this.newSlot("isApplying", false)
+        {
+            const slot = this.newSlot("name", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("idb", null);
+            slot.setSlotType("IndexedDBFolder");
+        }
+        {
+            const slot = this.newSlot("txCount", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("isApplying", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {

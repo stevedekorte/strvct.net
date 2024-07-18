@@ -13,8 +13,16 @@
     }
 
     initPrototypeSlots () {
-        //this.newSlot("path", "");
-        this.newSlot("dataURL", "");
+        /*
+        {
+            const slot = this.newSlot("path", "");
+            slot.setSlotType("String");
+        }
+        */
+        {
+            const slot = this.newSlot("dataURL", "");
+            slot.setSlotType("String");
+        }
     }
 
     initPrototype () {

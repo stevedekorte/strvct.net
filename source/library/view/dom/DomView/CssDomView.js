@@ -11,16 +11,43 @@
     
     initPrototypeSlots () {
         // css hidden values
-        this.newSlot("hiddenDisplayMode", false)
-        this.newSlot("hiddenDisplayValue", null)
+        {
+            const slot = this.newSlot("hiddenDisplayMode", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("hiddenDisplayValue", null);
+            slot.setSlotType("String");
+        }
         /*
-        this.newSlot("hiddenMinHeight", undefined)
-        this.newSlot("hiddenMaxHeight", undefined)
+        {
+            const slot = this.newSlot("hiddenMinHeight", undefined);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("hiddenMaxHeight", undefined);
+            slot.setSlotType("String");
+        }
         */
-        this.newSlot("hiddenTransitionValue", undefined)
-        //this.newSlot("pushedAttributes", undefined)
-        //this.newSlot("pushedSlotValues", undefined)
-        this.newSlot("cachedSize", null)
+        {
+            const slot = this.newSlot("hiddenTransitionValue", undefined);
+            slot.setSlotType("String");
+        }
+        /*
+        {
+            const slot = this.newSlot("pushedAttributes", undefined);
+            slot.setSlotType("Array");
+
+        }
+        {
+            const slot = this.newSlot("pushedSlotValues", undefined);
+            slot.setSlotType("Array");
+        }
+        */
+        {
+            const slot = this.newSlot("cachedSize", null);
+            slot.setSlotType("Point");
+        }
     }
 
     
@@ -121,17 +148,17 @@
 
     stylesheetWithClassName (className) {
         for (let i = 0; i < document.styleSheets.length; i++) {
-            const stylesheet = document.styleSheets[i]
+            const stylesheet = document.styleSheets[i];
 
             if ("cssRules" in stylesheet) {
                 try {
-                    const rules = stylesheet.cssRules
+                    const rules = stylesheet.cssRules;
                     for (let j = 0; j < rules.length; j++) {
-                        const rule = rules[j]
-                        const ruleClassName = rule.selectorText.split(" ")[0]
-                        console.log("rule.selectorText: ", rule.selectorText)
+                        const rule = rules[j];
+                        const ruleClassName = rule.selectorText.split(" ")[0];
+                        console.log("rule.selectorText: ", rule.selectorText);
                         if (ruleClassName === className) {
-                            return stylesheet
+                            return stylesheet;
                         }
                     }
                 } catch (e) {
@@ -139,7 +166,7 @@
                 }
             }
         }
-        return null
+        return null;
     }
 
     setCssDict (aDict) {

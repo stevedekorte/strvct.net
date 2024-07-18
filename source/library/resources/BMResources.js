@@ -15,13 +15,36 @@
     }
 
     initPrototypeSlots () {
-        //this.newSlot("themes", null);
-        this.newSlot("fonts", null);
-        this.newSlot("sounds", null);
-        this.newSlot("images", null);
-        this.newSlot("icons", null);
-        this.newSlot("json", null);
-        this.newSlot("files", null);
+        /*
+        {
+            const slot = this.newSlot("themes", null);
+            slot.setSlotType("BMThemeResources");
+        }
+        */
+        {
+            const slot = this.newSlot("fonts", null);
+            slot.setSlotType("BMFontResources");
+        }
+        {
+            const slot = this.newSlot("sounds", null);
+            slot.setSlotType("BMSoundResources");
+        }
+        {
+            const slot = this.newSlot("images", null);
+            slot.setSlotType("BMImageResources");
+        }
+        {
+            const slot = this.newSlot("icons", null);
+            slot.setSlotType("BMIconResources");
+        }
+        {
+            const slot = this.newSlot("json", null);
+            slot.setSlotType("BMJsonResources");
+        }
+        {
+            const slot = this.newSlot("files", null);
+            slot.setSlotType("BMFileResources");
+        }
     }
 
     initPrototype () {

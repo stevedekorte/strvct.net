@@ -9,10 +9,22 @@
 (class KeyboardKey extends Device {
     
     initPrototypeSlots () {
-        this.newSlot("isDown", false)
-        this.newSlot("code", null)
-        this.newSlot("name", "")
-        this.newSlot("keyboard", null)
+        {
+            const slot = this.newSlot("isDown", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("code", null);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("name", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("keyboard", null);
+            slot.setSlotType("BMKeyboard");
+        }
     }
 
     init () {

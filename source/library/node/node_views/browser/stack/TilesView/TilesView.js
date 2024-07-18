@@ -12,11 +12,28 @@
 (class TilesView extends ScrollContentView {
     
     initPrototypeSlots () {
-        this.newSlot("tiles", null)
-        this.newSlot("allowsCursorNavigation", true)
-        this.newSlot("tilePlaceHolder", null)
-        this.newSlot("hasPausedSync", false)
-        //this.newSlot("isColumnInspecting", false)
+        {
+            const slot = this.newSlot("tiles", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("allowsCursorNavigation", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("tilePlaceHolder", null);
+            slot.setSlotType("Tile");
+        }
+        {
+            const slot = this.newSlot("hasPausedSync", false);
+            slot.setSlotType("Boolean");
+        }
+        /*
+        {
+            const slot = this.newSlot("isColumnInspecting", false);
+            slot.setSlotType("Boolean");
+        }
+        */
     }
 
     initPrototype () {

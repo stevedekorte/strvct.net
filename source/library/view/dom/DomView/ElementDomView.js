@@ -50,10 +50,22 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("elementClassName", "")
-        this.newSlot("elementType", "div")
-        this.newSlot("element", null)
-        this.newSlot("usesSmoothScrolling", false)
+        {
+            const slot = this.newSlot("elementClassName", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("elementType", "div");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("element", null);
+            slot.setSlotType("Element");
+        }
+        {
+            const slot = this.newSlot("usesSmoothScrolling", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {

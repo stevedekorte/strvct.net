@@ -15,21 +15,30 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("acceptsFirstResponder", false)
+        {
+            const slot = this.newSlot("acceptsFirstResponder", false);
+            slot.setSlotType("Boolean");
+        }
 
         // browser looks at element.tabindex to find next element 
         // to focus on tab press, but we may want more behavior
-        //this.newSlot("interceptsTab", true)
-        this.newSlot("nextKeyView", null)
-        //this.newSlot("canMakeKey", true)
+        /*
+        {
+            const slot = this.newSlot("interceptsTab", true);
+            slot.setSlotType("Boolean");
+        }
+        */
+        {
+            const slot = this.newSlot("nextKeyView", null);
+            slot.setSlotType("ResponderDomView");
+        }
+        /*
+        {
+            const slot = this.newSlot("canMakeKey", true);
+            slot.setSlotType("Boolean");
+        }
+        */
     }
-
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
 
     // --- focus ---
 
@@ -40,16 +49,16 @@
             // only need timeout when create dom element in same event?
             this.addTimeout(() => { 
                 this.setIsRegisteredForFocus(true); 
-            }, 0) 
+            }, 0);
         }
     }
 
     hasFocusedDecendantView () {
-        const focusedView = WebBrowserWindow.shared().activeDomView()
+        const focusedView = WebBrowserWindow.shared().activeDomView();
         if (focusedView) {
-            return this.hasSubviewDescendant(focusedView)
+            return this.hasSubviewDescendant(focusedView);
         }
-        return false
+        return false;
     }
 
     focus () {
@@ -73,9 +82,9 @@
             //this.addTimeout(() => { this.element().focus() }, 0)
 
             //ThrashDetector.shared().didWrite("focus", this)
-            this.element().focus()
+            this.element().focus();
         }
-        return this
+        return this;
     }
 
     focusAfterDelay (seconds) {

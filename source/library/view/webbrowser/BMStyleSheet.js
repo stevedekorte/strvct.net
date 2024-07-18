@@ -11,7 +11,10 @@
 (class BMStyleSheet extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("sheetElement", null)
+        {
+            const slot = this.newSlot("sheetElement", null);
+            slot.setSlotType("CSSStyleSheet");
+        }
     }
 
     href () {

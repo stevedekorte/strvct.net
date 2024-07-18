@@ -13,11 +13,14 @@
 
 (class HttpResponseCodes extends ProtoClass {
   initPrototypeSlots () {
-    this.newSlot("codesMap", null);
+    {
+      const slot = this.newSlot("codesMap", null);
+      slot.setSlotType("Map");
+    }
   }
 
   initPrototype () {
-    this.setCodesMap(this.codesAsMap())
+    this.setCodesMap(this.codesAsMap());
   }
 
   init () {
@@ -29,9 +32,9 @@
     const json = this.jsonCodes();
     Object.keys(json).forEach(code => {
       const value = json[code];
-      m.set(code, value)
+      m.set(code, value);
     });
-    return m
+    return m;
   }
 
   infoForCode (code) {
@@ -119,7 +122,7 @@
       "508": {"type": "Server Error", "description": "Loop Detected"},
       "510": {"type": "Server Error", "description": "Not Extended"},
       "511": {"type": "Server Error", "description": "Network Authentication Required"}
-    }
+    };
   }
 
 }.initThisClass());

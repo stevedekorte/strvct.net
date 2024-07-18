@@ -10,6 +10,7 @@
 
     {
       const slot = this.newSlot("service", null);
+      slot.setSlotType("AiService");
     }
 
     {

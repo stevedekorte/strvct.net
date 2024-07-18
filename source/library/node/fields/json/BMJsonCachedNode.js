@@ -12,16 +12,57 @@
     initPrototypeSlots () {
 
         {
+            // a unique id for this json node
+            // we'll need this in order to merge json changes properly
+            const slot = this.newSlot("jsonId", null);
+            slot.setIsInJsonSchema(true);
+            slot.setDescription("A unique id for this json node");
+            slot.setSlotType("String");
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setSyncsToView(true);
+            slot.setShouldJsonArchive(true);
+        }
+
+        {
             // the json that this node represents
             // we update this when the node is edited
             // the node is the truth and the json is derived from it
             const slot = this.newSlot("jsonCache", null);
+            slot.setSlotType("JSON Object");
         }
 
         {
             // a hash of JSON.stableStrigify(jsonCache)
             const slot = this.newSlot("jsonHash", null);
+            slot.setSlotType("String");
         }
+
+    }
+
+    initPrototype () {
+
+    }
+
+    finalInit () {
+        super.finalInit();
+        this.createJsonIdIfAbsent();
+    }
+
+    // --- json id ---
+
+    createJsonIdIfAbsent () {
+        if (this.jsonId() === null) {
+            this.createJsonId();
+        }
+        return this;
+    }
+
+    
+    createJsonId () {
+        assert(this.jsonId() === null);
+        this.setJsonId(Object.newUuid());
+        return this;
     }
 
     // --- json cache ---

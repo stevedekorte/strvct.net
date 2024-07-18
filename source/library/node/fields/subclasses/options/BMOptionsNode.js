@@ -45,25 +45,44 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("syncedValidItemsJsonString", null)
+            const slot = this.newSlot("syncedValidItemsJsonString", null);
+            slot.setSlotType("String");
         }
 
         {
-            const slot = this.newSlot("allowsMultiplePicks", false)
-            slot.setLabel("Multiple picks").setCanInspect(true).setSlotType("Boolean")
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("allowsMultiplePicks", false);
+            slot.setLabel("Multiple picks");
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setShouldStoreSlot(true);
         }
 
         {
             //const slot = this.newSlot("isSettingUp", false) // doesn't appear to be needed
+            //slot.setSlotType("Boolean");
         }
 
-        this.overrideSlot("key", "").setShouldStoreSlot(true)
+        {
+            const slot = this.overrideSlot("key", "");
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+        }
 
         //this.newSlot("optionsSource", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")  // this could be stored...
         //this.newSlot("optionsSourceMethod", null).setShouldStoreSlot(false).setDuplicateOp("copyValue") // this could be stored...
-        this.newSlot("validValues", null).setShouldStoreSlot(false).setDuplicateOp("copyValue")
-        this.newSlot("validValuesClosure", null).setShouldStoreSlot(false).setDuplicateOp("copyValue") // this can't be stored
+        {
+            const slot = this.newSlot("validValues", null);
+            slot.setShouldStoreSlot(false);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Array");
+        }
+
+        {
+            const slot = this.newSlot("validValuesClosure", null);
+            slot.setShouldStoreSlot(false);
+            slot.setDuplicateOp("copyValue"); // this can't be stored
+            slot.setSlotType("Function");
+        }
     }
 
 

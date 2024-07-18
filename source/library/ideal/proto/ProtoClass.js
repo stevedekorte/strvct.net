@@ -199,9 +199,15 @@
     // --- instance ---
 
     initPrototypeSlots () {
-        this.newSlot("isDebugging", false)
-        this.newSlot("lazyRefsMap", null)
-        Object.defineSlot(this, "_timeoutNameToIdMap", null)
+        {
+            const slot = this.newSlot("isDebugging", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("lazyRefsMap", null);
+            slot.setSlotType("Map");
+        }
+        Object.defineSlot(this, "_timeoutNameToIdMap", null);
     }
 
     lazyRefsMap () {

@@ -17,10 +17,26 @@
     initPrototypeSlots () {
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
-        this.newSlot("hour", null).setShouldStoreSlot(true)
-        this.newSlot("minute", null).setShouldStoreSlot(true)
-        this.newSlot("timezone", null).setShouldStoreSlot(true)
-        this.newSlot("formatter", null).setShouldStoreSlot(true)
+        {
+            const slot = this.newSlot("hour", null);
+            slot.setShouldStoreSlot(true);
+        }
+        {
+            const slot = this.newSlot("minute", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("timezone", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("formatter", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("TimeFormatter");
+            slot.setFinalInitProto(TimeFormatter);
+        }
     }
 
     initPrototype () {
@@ -34,12 +50,6 @@
         this.setNodeCanEditTitle(true);
         this.setNodeCanEditSubtitle(false);
         this.setNoteIconName("right-arrow");
-    }
-
-    init () {
-        super.init()
-        this.setFormatter(TimeFormatter.clone())
-        return this
     }
 
     hasTime () {

@@ -11,25 +11,28 @@
 
     {
       const slot = this.newSlot("request", null);
+      slot.setAllowsNullValue(true);
       slot.setLabel("request");
       slot.setShouldStoreSlot(false);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Pointer");
+      slot.setSlotType("AiRequest");
       slot.setCanInspect(true);
     }
 
     {
       const slot = this.newSlot("requestClass", null);
-      slot.setLabel("Request Class")
-      slot.setShouldStoreSlot(false)
-      slot.setDuplicateOp("duplicate")
-      slot.setCanInspect(false)
+      slot.setAllowsNullValue(true);
+      slot.setLabel("Request Class");
+      slot.setShouldStoreSlot(false);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("AiRequest Class");
+      slot.setCanInspect(false);
     }
 
     {
       const slot = this.newSlot("isResponse", false);
-      slot.setSlotType("Boolean")
       slot.setShouldStoreSlot(true)
+      slot.setSlotType("Boolean")
       slot.setCanInspect(true);
       slot.setInspectorPath(this.type());
     }
@@ -69,6 +72,7 @@
 
     {
       const slot = this.newSlot("completionPromise", null);
+      slot.setSlotType("Promise");
     }
 
     this.setShouldStore(true);
@@ -155,10 +159,8 @@
     return this
   }
 
-  newRequest () {
-    const messages = this.visiblePreviousMessages(); 
-    const jsonHistory = messages.map(m => m.messagesJson());
-
+  /*
+  historySummary () {
     const lines = [];
     messages.forEach((m, i) => { 
       const v = m.isVisibleToAi() ? "V" : "X";
@@ -186,8 +188,21 @@
     //console.log(this.type() + ".newRequest() history:"); 
     //console.log(lines.join("\n"));
     //debugger;
-    this.visiblePreviousMessages(); // TODO : REMOVE AFTER DEBUGGING
+    //this.visiblePreviousMessages(); // TODO : REMOVE AFTER DEBUGGING
+  } 
+  */
 
+  jsonHistory () {
+    // subclasses can override this to modify the history sent with the request
+    const messages = this.visiblePreviousMessages();
+    let jsonHistory = messages.map(m => m.messagesJson());
+    if (this.conversation().filterJsonHistory) {
+      jsonHistory = this.conversation().onFilterJsonHistory(jsonHistory);
+    }
+    return jsonHistory;
+  }
+
+  newRequest () {
     const request = this.requestClass().clone();
     request.setService(this.service());
 
@@ -198,7 +213,7 @@
       model: this.chatModel().modelName(),
       temperature: this.temperature(), 
       top_p: this.topP(),
-      messages: jsonHistory
+      messages: this.jsonHistory()
     });
     return request;
   }

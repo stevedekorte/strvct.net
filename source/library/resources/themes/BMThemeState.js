@@ -96,8 +96,12 @@
     }
 
     initPrototypeSlots () {
-        const styleSlots = []
-        this.newSlot("styleSlots", styleSlots)
+        const styleSlots = [];
+
+        {
+            const slot = this.newSlot("styleSlots", styleSlots);
+            slot.setSlotType("Array");
+        }
 
         // -----------------
 
@@ -200,9 +204,20 @@
         */
 
         //this.newSlot("paddingStyleSlots", styleSlots.select(slot => slot.name().beginsWith("padding"))); // cached for efficiency
-        this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border") || slot.name().beginsWith("margin"))); // cached for efficiency
-        this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !(slot.name().beginsWith("border") || slot.name().beginsWith("margin")))); // cached for efficiency
-        this.newSlot("styleCacheMap", null);
+        {
+            const slot = this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border") || slot.name().beginsWith("margin"))); // cached for efficiency
+            slot.setSlotType("Array");
+        }
+
+        {
+            const slot = this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !(slot.name().beginsWith("border") || slot.name().beginsWith("margin")))); // cached for efficiency
+            slot.setSlotType("Array");
+        }
+        
+        {
+            const slot = this.newSlot("styleCacheMap", null);
+            slot.setSlotType("Map");
+        }
     }
 
     init () {

@@ -28,8 +28,14 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("audioContext", null)
-        this.newSlot("setupPromise", null)
+        {
+            const slot = this.newSlot("audioContext", null);
+            slot.setSlotType("AudioContext");
+        }
+        {
+            const slot = this.newSlot("setupPromise", null);
+            slot.setSlotType("Promise");
+        }
     }
 
     initPrototype () {

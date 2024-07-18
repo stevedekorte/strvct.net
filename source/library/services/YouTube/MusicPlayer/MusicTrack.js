@@ -61,6 +61,7 @@
 
     {
       const slot = this.newSlot("shouldPlayOnAccess", true);
+      slot.setSlotType("Boolean");
     }
 
     /*
@@ -69,11 +70,13 @@
       {
         const slot = this.newSlot("label", null);
         slot.setShouldJsonArchive(true);
+        slot.setSlotType("String");
       }
 
       {
         const slot = this.newSlot("transcript", null);
         slot.setShouldJsonArchive(true);
+        slot.setSlotType("String");
       }
 
     */
@@ -81,10 +84,12 @@
     {
       const slot = this.newSlot("isPlaying", false);
       slot.setSyncsToView(true);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("delegateSet", null);
+      slot.setSlotType("Set");
     }
 
     this.setShouldStore(true);

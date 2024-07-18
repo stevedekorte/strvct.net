@@ -46,18 +46,22 @@
   initPrototypeSlots () {
     {
         const slot = this.newSlot("parser", null);
+        slot.setSlotType("htmlparser2.Parser");
     }
 
     {
         const slot = this.newSlot("currentNode", null);
+        slot.setSlotType("StreamElementNode");
     }
 
     {
       const slot = this.newSlot("delegate", null);
+      slot.setSlotType("Object");
     }
 
     {
       const slot = this.newSlot("error", null);
+      slot.setSlotType("Error");
     }
   }
   

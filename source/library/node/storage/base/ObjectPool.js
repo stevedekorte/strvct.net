@@ -52,42 +52,87 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("name", "defaultDataStore")
-        this.newSlot("rootObject", null)
+        {
+            const slot = this.newSlot("name", "defaultDataStore");
+            slot.setSlotType("String");
+        }
 
-        // AtomicMap
-        this.newSlot("recordsMap", null) 
 
-        // Map - objects known to the pool (previously loaded or referenced)
-        this.newSlot("activeObjects", null) 
+        {
+            const slot = this.newSlot("rootObject", null);
+            slot.setSlotType("Object");
+        }
 
-        // Map - subset of activeObjects containing objects with mutations that need to be stored
-        this.newSlot("dirtyObjects", null)
+        {
+            const slot = this.newSlot("recordsMap", null);
+            slot.setSlotType("AtomicMap");
+        }
 
-        // Set - pids of objects that we're loading in this event loop
-        this.newSlot("loadingPids", null)
+        {
+            const slot = this.newSlot("activeObjects", null);
+            slot.setDescription("objects known to the pool (previously loaded or referenced)");
+            slot.setSlotType("Map");
+        }
 
-        // Set - pids of objects that we're storing in this event loop
-        this.newSlot("storingPids", null)
+        {
+            const slot = this.newSlot("dirtyObjects", null);
+            slot.setDescription("subset of activeObjects containing objects with mutations that need to be stored");
+            slot.setSlotType("Map");
+        }
 
-        // Date - WARNING: vulnerable to system time changes/differences
-        this.newSlot("lastSyncTime", null)
+        {
+            const slot = this.newSlot("loadingPids", null);
+            slot.setDescription("pids of objects that are currently being loaded");
+            slot.setSlotType("Set");
+        }
 
-        //this.newSlot("isReadOnly", false)
+        {
+            const slot = this.newSlot("storingPids", null);
+            slot.setDescription("pids of objects that are currently being stored");
+            slot.setSlotType("Set");
+        }
 
-        // Set of puuids
-        this.newSlot("markedSet", null) 
+        {
+            const slot = this.newSlot("lastSyncTime", null);
+            slot.setDescription("Time of last sync. WARNING: vulnerable to system time changes/differences");
+            slot.setSlotType("Date");
+        }
 
-        // Notification - sent after pool opens - TODO: change name to objectPoolDidOpen?
-        this.newSlot("nodeStoreDidOpenNote", null)
+        /*
+        {
+            const slot = this.newSlot("isReadOnly", false);
+        }
+        */
 
-        // Bool - set to true during method didInitLoadingPids() - used to ignore mutations during this period
-        this.newSlot("isFinalizing", false)
+        {
+            const slot = this.newSlot("markedSet", null);
+            slot.setDescription("Set of puuids used during collection to mark objects that are reachable from the root");
+            slot.setSlotType("Set");
+        }
+
+        // TODO: change name to objectPoolDidOpen?
+        {
+            const slot = this.newSlot("nodeStoreDidOpenNote", null);
+            slot.setDescription("Notification sent after pool opens");
+            slot.setSlotType("BMNotification");
+        }
+
+        {
+            const slot = this.newSlot("isFinalizing", false);
+            slot.setDescription("Set to true during method didInitLoadingPids() - used to ignore mutations during this period");
+            slot.setSlotType("Boolean");
+        }
 
         // String or Error
-        this.newSlot("error", null) // most recent error, if any
+        {
+            const slot = this.newSlot("error", null); // most recent error, if any
+            slot.setSlotType("Error");
+        }
 
-        this.newSlot("collectablePidSet", null) // used during collection to store keys before tx begins
+        {
+            const slot = this.newSlot("collectablePidSet", null); // used during collection to store keys before tx begins
+            slot.setSlotType("Set");
+        }
     }
 
     initPrototype () {
@@ -611,7 +656,7 @@
         
         const aRecord = this.recordForPid(puuid);
         if (Type.isUndefined(aRecord)) {
-            console.log("missing record for " + puuid)
+            console.log("missing record for " + puuid);
             return undefined;
         }
         if (aRecord.type === "PersistentObjectPool") {
@@ -646,97 +691,97 @@
     //
 
     headerKey () {
-        return "header" // no other key looks like this as they all use PUUID format
+        return "header"; // no other key looks like this as they all use PUUID format
     }
 
     allPidsSet () {
-        const keySet = this.recordsMap().keysSet()
-        keySet.delete(this.headerKey())
-        return keySet
+        const keySet = this.recordsMap().keysSet();
+        keySet.delete(this.headerKey());
+        return keySet;
     }
 
     allPids () {
-        const keys = this.recordsMap().keysArray()
-        keys.remove(this.rootKey())
-        return keys
+        const keys = this.recordsMap().keysArray();
+        keys.remove(this.rootKey());
+        return keys;
     }
 
     activeLazyPids () { // returns a set of pids
-        const pids = new Set()
+        const pids = new Set();
         this.activeObjects().forEachKV((pid, obj) => {
             if (obj.lazyPids) {
-                obj.lazyPids(pids)
+                obj.lazyPids(pids);
             }
         })
-        return pids
+        return pids;
     }
 
     // --- references ---
 
     refForPid (aPid) {
-        return { "*": this.pid() }
+        return { "*": this.pid() };
     }
 
     pidForRef (aRef) {
-        return aRef.getOwnProperty("*")
+        return aRef.getOwnProperty("*");
     }
 
     unrefValueIfNeeded (v) {
-        return this.unrefValue(v)
+        return this.unrefValue(v);
     }
 
     unrefValue (v) {
         if (Type.isLiteral(v)) {
-            return v
+            return v;
         }
-        const puuid = v.getOwnProperty("*")
-        assert(puuid)
-        const obj = this.objectForPid(puuid)
-        return obj
+        const puuid = v.getOwnProperty("*");
+        assert(puuid);
+        const obj = this.objectForPid(puuid);
+        return obj;
     }
 
     refValue (v) {
-        assert(!Type.isPromise(v))
+        assert(!Type.isPromise(v));
 
         if (Type.isLiteral(v)) {
-            return v
+            return v;
         }
 
-        assert(!v.isClass())
+        assert(!v.isClass());
 
         if (!v.shouldStore()) {
-            console.log("WARNING: called refValue on " + v.type() + " which has shouldStore=false")
+            console.log("WARNING: called refValue on " + v.type() + " which has shouldStore=false");
          //   debugger;
-            return null
+            return null;
         }
 
         if (!this.hasActiveObject(v)) {
-            this.addActiveObject(v)
-            this.addDirtyObject(v)
+            this.addActiveObject(v);
+            this.addDirtyObject(v);
         }
-        const ref = { "*": v.puuid() }
-        return ref
+        const ref = { "*": v.puuid() };
+        return ref;
     }
 
     // read a record
 
     recordForPid (puuid) { // private
         if (!this.recordsMap().hasKey(puuid)) {
-            return undefined
+            return undefined;
         }
-        const jsonString = this.recordsMap().at(puuid)
-        assert(Type.isString(jsonString))
-        const aRecord = JSON.parse(jsonString)
-        aRecord.id = puuid
-        return aRecord
+        const jsonString = this.recordsMap().at(puuid);
+        assert(Type.isString(jsonString));
+        const aRecord = JSON.parse(jsonString);
+        aRecord.id = puuid;
+        return aRecord;
     }
 
     // write an object
 
     async kvPromiseForObject (obj) {
-        const record = await obj.asyncRecordForStore(this)
-        const jsonString = JSON.stringify(record)
-        return [obj.puuid(), jsonString]
+        const record = await obj.asyncRecordForStore(this);
+        const jsonString = JSON.stringify(record);
+        return [obj.puuid(), jsonString];
     }
 
     storeObject (obj) {

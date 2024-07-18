@@ -9,15 +9,18 @@
 
   initPrototypeSlots () {
     {
-      this.newSlot("homeAssistant", null);
+      const slot = this.newSlot("homeAssistant", null);
+      slot.setSlotType("HomeAssistant");
     }
 
     {
-      this.newSlot("getMessageType", null);
+      const slot = this.newSlot("getMessageType", null);
+      slot.setSlotType("String");
     }
 
     {
-      this.newSlot("idMap", null);
+      const slot = this.newSlot("idMap", null);
+      slot.setSlotType("Map");
     }
 
     this.setTitle("devices");
@@ -26,7 +29,6 @@
     //this.setSubnodeClasses([HomeAssistantDevice]);
     this.setNodeCanAddSubnode(true);
     this.setNodeCanReorderSubnodes(true);
-    
     this.setNoteIsSubnodeCount(true);
   }
 

@@ -10,15 +10,42 @@
 (class DragBarView extends DomView {
     
     initPrototypeSlots () {
-        this.newSlot("isEnabled", true)
-        this.newSlot("isHighlighted", false)
-        this.newSlot("isDragging", false)
-        this.newSlot("normalColor", "#333")
-        this.newSlot("highlightColor", "#555")
-        this.newSlot("dragColor", "#999")
-        this.newSlot("delegate", null)
-        this.newSlot("thickness", 2)
-        this.newSlot("isVerticalDrag", true)
+        {
+            const slot = this.newSlot("isEnabled", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isHighlighted", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("isDragging", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("normalColor", "#333");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("highlightColor", "#555");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("dragColor", "#999");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("delegate", null);
+            slot.setSlotType("Object"); //<DragBarViewDelegate>
+        }
+        {
+            const slot = this.newSlot("thickness", 2);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("isVerticalDrag", true);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {

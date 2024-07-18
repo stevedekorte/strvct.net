@@ -29,11 +29,14 @@
 
   initPrototypeSlots () {
     {
-      const slot = this.newSlot("delegate", null); // optional reference to object that owns request 
+      const slot = this.newSlot("delegate", null); // optional reference to object that owns request
+      slot.setSlotType("Object");
     }
 
     {
-      const slot = this.newSlot("service", null); 
+      const slot = this.newSlot("service", null);
+      slot.setSlotType("AiService");
+
     }
 
     {
@@ -44,12 +47,13 @@
       slot.setInspectorPath("");
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
-      slot.setSlotType("String");
+      slot.setSlotType("Boolean");
       slot.setSyncsToView(true);
     }
 
     {
       const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+      slot.setSlotType("JSON Object");
     }
 
     {
@@ -66,6 +70,7 @@
 
     {
       const slot = this.newSlot("json", null);
+      slot.setSlotType("JSON Object");
     }
 
     // streaming
@@ -73,6 +78,7 @@
 
     {
       const slot = this.newSlot("xhr", null);
+      slot.setSlotType("XMLHttpRequest");
     }
 
     {
@@ -87,6 +93,7 @@
 
     {
       const slot = this.newSlot("xhrPromise", null); 
+      slot.setSlotType("Promise");
     }
 
     {
@@ -106,13 +113,14 @@
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
+      slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
 
     {
       const slot = this.newSlot("readLines", null);
+      slot.setSlotType("Array");
     }
 
     {
@@ -135,7 +143,7 @@
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      slot.setSlotType("Boolean");
+      slot.setSlotType("Number");
       slot.setIsSubnodeField(true);
       slot.setCanEditInspection(false);
     }
@@ -175,29 +183,30 @@
 
     {
       const slot = this.newSlot("error", null);
+      slot.setSlotType("Error");
     }
 
     {
       const slot = this.newSlot("status", "");
       slot.setInspectorPath(this.type());
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("String")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("String");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
 
     {
       const slot = this.newSlot("didAbort", false);
       slot.setInspectorPath(this.type());
-      slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Boolean")
-      slot.setIsSubnodeField(true)
-      slot.setCanEditInspection(false)
+      slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Boolean");
+      slot.setIsSubnodeField(true);
+      slot.setCanEditInspection(false);
     }
 
     {
@@ -233,9 +242,8 @@
       slot.setActionMethodName("copyMessages");
     }
 
-
-    this.setShouldStore(false)
-    this.setShouldStoreSubnodes(false)
+    this.setShouldStore(false);
+    this.setShouldStoreSubnodes(false);
   }
 
 

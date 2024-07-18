@@ -26,7 +26,10 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("isMono", false);
+        {
+            const slot = this.newSlot("isMono", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {

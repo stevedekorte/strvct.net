@@ -12,8 +12,14 @@
 (class CloseButton extends FlexDomView {
     
     initPrototypeSlots () {
-        this.newSlot("isEnabled", true)
-        this.newSlot("iconView", null)
+        {
+            const slot = this.newSlot("isEnabled", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("iconView", null);
+            slot.setSlotType("SvgIconView");
+        }
     }
 
     init () {

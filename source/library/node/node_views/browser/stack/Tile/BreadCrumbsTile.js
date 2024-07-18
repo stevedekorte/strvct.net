@@ -18,25 +18,37 @@
 (class BreadCrumbsTile extends Tile {
     
     initPrototypeSlots () {
-        this.newSlot("path", null)
-        this.newSlot("separatorString", "/")
-        this.newSlot("onStackViewPathChangeObs", null)
-        this.newSlot("crumbObservations", null)
+        {
+            const slot = this.newSlot("path", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("separatorString", "/");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("onStackViewPathChangeObs", null);
+            slot.setSlotType("BMObservation");
+        }
+        {
+            const slot = this.newSlot("crumbObservations", null);
+            slot.setSlotType("Array");
+        }
     }
 
     init () {
-        super.init()
-        this.setThemeClassName("BreadCrumbsTile")
-        this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this))
-        //this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding()
-        this.setWidth("100%")
+        super.init();
+        this.setThemeClassName("BreadCrumbsTile");
+        this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this));
+        //this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding();
+        this.setWidth("100%");
 
-        //this.updateSubviews()
-        this.setIsSelectable(true)
-        this.setIsRegisteredForWindowResize(true)
+        //this.updateSubviews();
+        this.setIsSelectable(true);
+        this.setIsRegisteredForWindowResize(true);
 
-        this.setCrumbObservations([])
-        return this
+        this.setCrumbObservations([]);
+        return this;
     }
 
     makeOrientationDown () { // this is a special case where the item is full width

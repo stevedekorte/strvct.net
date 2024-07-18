@@ -109,26 +109,32 @@
 
         {
             const slot = this.newSlot("store", null);
+            slot.setSlotType("PersistentObjectPool");
         }
 
         {
             const slot = this.newSlot("name", "App");
+            slot.setSlotType("String");
         }
 
         {
             const slot = this.newSlot("version", [0, 0]);
+            slot.setSlotType("Array");
         }
 
         {
             const slot = this.newSlot("hasDoneAppInit", false);
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("rootView", null);
+            slot.setSlotType("DomView");
         }
 
         {
             const slot = this.newSlot("didInitPromise", null);
+            slot.setSlotType("Promise");
         }
     }
   

@@ -15,8 +15,9 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("isEnabled", true)
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("isEnabled", true);
+            slot.setSyncsToView(true);
+            slot.setSlotType("Boolean");
         }
 
 
@@ -33,58 +34,60 @@
         }
 
         {
-            const slot = this.newSlot("keyIsVisible", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setCanInspect(true)
-            slot.setSlotType("Boolean")
-            slot.setLabel("visible")
-            slot.setInspectorPath("Node/Field/Key")
+            const slot = this.newSlot("keyIsVisible", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("visible");
+            slot.setInspectorPath("Node/Field/Key");
         }
 
         {
-            const slot = this.newSlot("keyIsEditable", false)
-            slot.setCanInspect(true)
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setSlotType("Boolean")
-            slot.setLabel("editable")
-            slot.setInspectorPath("Node/Field/Key")
+            const slot = this.newSlot("keyIsEditable", false);
+            slot.setCanInspect(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setSlotType("Boolean");
+            slot.setLabel("editable");
+            slot.setInspectorPath("Node/Field/Key");
         }
 
         // value
         {
-            const slot = this.newSlot("value", null)
-            slot.setCanInspect(true)
-            slot.setInspectorPath("Node/Field/Value")
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            //slot.setSlotType("String") // might be boolean or number, so use overrideSlot() on field types
+            const slot = this.newSlot("value", null);
+            slot.setCanInspect(true);
+            slot.setInspectorPath("Node/Field/Value");
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            //slot.setSlotType("String"); // might be boolean or number, so use overrideSlot() on field types
         }
 
         {
-            const slot = this.newSlot("valueIsVisible", true)
-            slot.setInspectorPath("Node/Field/Value")
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setCanInspect(true)
-            slot.setSlotType("Boolean")
-            slot.setLabel("visible")
+            const slot = this.newSlot("valueIsVisible", true);
+            slot.setInspectorPath("Node/Field/Value");
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("visible");
         }
 
         {
-            const slot = this.newSlot("valueIsEditable", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setCanInspect(true)
-            slot.setSlotType("Boolean")
-            slot.setLabel("editable")
-            slot.setInspectorPath("Node/Field/Value")
+            const slot = this.newSlot("valueIsEditable", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("editable");
+            slot.setInspectorPath("Node/Field/Value");
         }
 
         {
@@ -101,67 +104,83 @@
 
         /*
         {
-            const slot = this.newSlot("valueAllowsNull", true)
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
-            slot.setCanInspect(true)
-            slot.setSlotType("Boolean")
-            slot.setLabel("editable")
-            slot.setInspectorPath("Node/Field/Value")
+            const slot = this.newSlot("valueAllowsNull", true);
+            slot.setShouldStoreSlot(true);
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("editable");
+            slot.setInspectorPath("Node/Field/Value");
         }
         */
 
         {
-            const slot = this.newSlot("valueCanHitEnter", true)
-            slot.setSyncsToView(true)
-        }
-
-        this.newSlot("link", null)
-        this.newSlot("ownsLink", null)
-
-        {
-            const slot = this.newSlot("valuePrefix", null)
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
+            const slot = this.newSlot("valueCanHitEnter", true);
+            slot.setSlotType("Boolean");
+            slot.setSyncsToView(true);
         }
 
         {
-            const slot = this.newSlot("valuePostfix", null)
-            slot.setShouldStoreSlot(true)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
+            const slot = this.newSlot("link", null);
+            slot.setSlotType("Object");
         }
 
         {
-            const slot = this.newSlot("valueMethod", null)
-            slot.setSyncsToView(true)
-            slot.setDuplicateOp("duplicate")
+            const slot = this.newSlot("ownsLink", null);
+            slot.setSlotType("Boolean");
+        }
+
+        {
+            const slot = this.newSlot("valuePrefix", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+        }
+
+        {
+            const slot = this.newSlot("valuePostfix", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
+        }
+
+        {
+            const slot = this.newSlot("valueMethod", null);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
+            slot.setDuplicateOp("duplicate");
         }
         
         {
-            const slot = this.newSlot("noteMethod", null)  // fetches note from a parent node method
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("noteMethod", null);  // fetches note from a parent node method
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
         }
         
         {
-            const slot = this.newSlot("keyError", null)
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("keyError", null);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
         }
         
         {
-            const slot = this.newSlot("valueError", null)
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("valueError", null);
+            slot.setSlotType("String");
+            slot.setSyncsToView(true);
         }
         
         {
-            const slot = this.newSlot("target", null)
-            slot.setSyncsToView(true)
+            const slot = this.newSlot("target", null);
+            slot.setSlotType("BMNode");
+            slot.setSyncsToView(true);
         }
 
         {
-            const slot = this.newSlot("didUpdateNodeObs", null)
+            const slot = this.newSlot("didUpdateNodeObs", null);
+            slot.setSlotType("BMObservation");
         }
     }
 

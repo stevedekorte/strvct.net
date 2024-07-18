@@ -18,29 +18,28 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.overrideSlot("title", null)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setSlotType("String")
-            slot.setLabel("Title")
+            const slot = this.overrideSlot("title", null);
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setSlotType("String");
+            slot.setLabel("Title");
         }
 
         {
-            const slot = this.newSlot("methodName", null)
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("methodName", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
         }
 
         {
-            const slot = this.newSlot("info", null)
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("info", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("JSON Object");
         }
     }
 
     initPrototype () {
         // inherits isEnabled and isEditable slots from Field
-
-        //this.newSlot("target", null)
-
         this.setShouldStore(true)
         this.setNodeTileIsSelectable(true)
         this.setNodeCanInspect(true)

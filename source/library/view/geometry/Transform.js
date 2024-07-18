@@ -9,17 +9,28 @@
 
 (class Transform extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("position", null).setComment("in px units") 
-        this.newSlot("rotation", null).setComment("in degrees units") 
-        this.newSlot("scale", null)
+        {
+            const slot = this.newSlot("position", null);
+            slot.setComment("in px units");
+            slot.setSlotType("Point");
+        }
+        {
+            const slot = this.newSlot("rotation", null);
+            slot.setComment("in degrees units");
+            slot.setSlotType("Point");
+        }
+        {
+            const slot = this.newSlot("scale", null);
+            slot.setSlotType("Point");
+        }
     }
 
     init () {
-        super.init()
-        this.setPosition(Point.clone())
-        this.setRotation(Point.clone())
-        this.setScale(Point.clone().setX(1).setY(1).setZ(1))
-        return this
+        super.init();
+        this.setPosition(Point.clone());
+        this.setRotation(Point.clone());
+        this.setScale(Point.clone().setX(1).setY(1).setZ(1));
+        return this;
     }
 
     // css

@@ -21,22 +21,40 @@
 (class DomTextTapeMeasure extends ProtoClass {
     
     initPrototypeSlots () {
-        this.newSlot("document", null)
-        this.newSlot("testElement", null)
+        {
+            const slot = this.newSlot("document", null);
+            slot.setSlotType("Document");
+        }
+        {
+            const slot = this.newSlot("testElement", null);
+            slot.setSlotType("Element");
+        }
 
-        this.newSlot("stylesToCopy", [
-            "fontSize",
-            "fontStyle", 
-            "fontWeight", 
-            "fontFamily",
-            "lineHeight", 
-            "textTransform", 
-            "letterSpacing"
-        ])
+        {
+            const slot = this.newSlot("stylesToCopy", [
+                "fontSize",
+                "fontStyle", 
+                "fontWeight", 
+                "fontFamily",
+                "lineHeight", 
+                "textTransform", 
+                "letterSpacing"
+            ]);
+            slot.setSlotType("Array");
+        }
         
-        this.newSlot("cache", new Map())
-        this.newSlot("cacheKeys", new Array())
-        this.newSlot("maxCacheKeys", 100)
+        {
+            const slot = this.newSlot("cache", new Map());
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("cacheKeys", new Array());
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("maxCacheKeys", 100);
+            slot.setSlotType("Number");
+        }
     }
 
     document () {

@@ -33,10 +33,22 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("name", null)
-        this.newSlot("options", null)
-        this.newSlot("fontFace", null) // reference to browser FontFace object
-        this.newSlot("weightMap", BMFont.fontWeightMap()) 
+        {
+            const slot = this.newSlot("name", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("options", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("fontFace", null); // reference to browser FontFace object
+            slot.setSlotType("FontFace");
+        }
+        {
+            const slot = this.newSlot("weightMap", BMFont.fontWeightMap());
+            slot.setSlotType("Map");
+        }
     }
 
     initPrototype () {

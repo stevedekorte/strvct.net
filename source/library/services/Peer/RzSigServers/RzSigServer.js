@@ -137,6 +137,7 @@
       slot.setFinalInitProto(RzSigServerPeers);
       slot.setShouldStoreSlot(false);
       slot.setIsSubnode(true);
+      slot.setSlotType("RzSigServerPeers");
     }
 
     {
@@ -144,17 +145,18 @@
       slot.setFinalInitProto(RzSigServerConns);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
+      slot.setSlotType("RzSigServerConns");
     }
 
     {
       const slot = this.newSlot("refreshAction", null);
-      slot.setInspectorPath("")
-      slot.setLabel("Refresh Peers")
-      //slot.setShouldStoreSlot(true)
-      slot.setSyncsToView(true)
-      slot.setDuplicateOp("duplicate")
-      slot.setSlotType("Action")
-      slot.setIsSubnodeField(true)
+      slot.setInspectorPath("");
+      slot.setLabel("Refresh Peers");
+      //slot.setShouldStoreSlot(true);
+      slot.setSyncsToView(true);
+      slot.setDuplicateOp("duplicate");
+      slot.setSlotType("Action");
+      slot.setIsSubnodeField(true);
       slot.setActionMethodName("refreshPeers");
     }
 

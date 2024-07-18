@@ -13,7 +13,10 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("dataURL", "");
+        {
+            const slot = this.newSlot("dataURL", "");
+            slot.setSlotType("String");
+        }
     }
 
     initPrototype () {

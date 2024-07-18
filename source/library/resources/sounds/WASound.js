@@ -31,83 +31,111 @@
 
         {
             const slot = this.newSlot("arrayBufferPromise", null);
+            slot.setSlotType("Promise");
         }
 
         // fetching
 
         {
             const slot = this.newSlot("fetchPromise", null);
+            slot.setSlotType("Promise");
         }
 
         // decoding 
 
         {
             const slot = this.newSlot("decodePromise", null);
+            slot.setSlotType("Promise");
         }
 
         {
             const slot = this.newSlot("decodedBuffer", null);
+            slot.setSlotType("AudioBuffer");
         }
 
         // playing
 
         {
             const slot = this.newSlot("shouldPlayOnLoad", false);
+            slot.setSlotType("Boolean");
         }
         
         {
             const slot = this.newSlot("shouldPlayOnAccess", true);
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("playPromise", null);
+            slot.setSlotType("Promise");
         }
 
         {
             const slot = this.newSlot("source", null); // AudioBufferSourceNode 
+            slot.setSlotType("AudioBufferSourceNode");
         }
 
         // source attributes
 
         {
             const slot = this.newSlot("loop", false);
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("playbackRate", 1);
+            slot.setSlotType("Number");
         }
 
         {
             const slot = this.newSlot("whenToPlay", 0);
+            slot.setSlotType("Number");
         }
 
         {
             const slot = this.newSlot("offsetInSeconds", 0);
+            slot.setSlotType("Number");
         }
 
-        //this.newSlot("durationInSeconds", undefined);
+        /*
+        {
+            const slot = this.newSlot("durationInSeconds", undefined);
+        }
+        */
 
         {
             const slot = this.newSlot("isPlaying", false);
+            slot.setSlotType("Boolean");
         }
 
         {
             const slot = this.newSlot("delegateSet", null);
+            slot.setSlotType("Set");
         }
 
         // optional info
         {
             const slot = this.newSlot("label", null);
             slot.setShouldJsonArchive(true);
+            slot.setSlotType("String");
         }
 
         {
             const slot = this.newSlot("transcript", null);
             slot.setShouldJsonArchive(true);
+            slot.setSlotType("String");
         }
 
-        //this.newSlot("loopStart", null);
-        //this.newSlot("loopEnd", null);
+        /*
+        {
+            const slot = this.newSlot("loopStart", null);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("loopEnd", null);
+            slot.setSlotType("Number");
+        }
+        */
     }
 
     initPrototype () {

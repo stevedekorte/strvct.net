@@ -85,6 +85,7 @@
 
     {
       const slot = this.newSlot("isLoading", false); // String
+      slot.setSlotType("Boolean");
     }
 
     this.setTitle("Image");

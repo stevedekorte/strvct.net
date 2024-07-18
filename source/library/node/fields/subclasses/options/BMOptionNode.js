@@ -11,21 +11,36 @@
 (class BMOptionNode extends BMStorableNode {
     
     initPrototypeSlots () {
-        this.newSlot("label", "Option Title").setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        this.newSlot("value", null).setShouldStoreSlot(true).setDuplicateOp("copyValue")
-        this.newSlot("isPicked", false).setShouldStoreSlot(true).setDuplicateOp("copyValue")
+        {
+            const slot = this.newSlot("label", "Option Title");
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("value", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("isPicked", false);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setNodeCanReorderSubnodes(false)
-        this.setCanDelete(true)
-        this.setNodeCanEditTitle(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setCanDelete(true);
+        this.setNodeCanEditTitle(true);
     }
 
     debugTypeId () {
-        return this.typeId() + "_'" + this.label() + "'"
+        return this.typeId() + "_'" + this.label() + "'";
     }
     
     /*
@@ -35,70 +50,70 @@
     */
 
     justSetIsPicked (aBool) {
-        assert(Type.isBoolean(aBool))
-        this._isPicked = aBool
-        return this
+        assert(Type.isBoolean(aBool));
+        this._isPicked = aBool;
+        return this;
     }
 
     optionsNode () {
         //debugger
-        return this.firstParentChainNodeOfClass(BMOptionsNode)
+        return this.firstParentChainNodeOfClass(BMOptionsNode);
     }
 
     didUpdateSlotIsPicked (oldValue, newValue) {
-        const optionsNode = this.optionsNode()
+        const optionsNode = this.optionsNode();
         if (optionsNode) {
-            optionsNode.didToggleOption(this)
-            this.didUpdateNodeIfInitialized()
+            optionsNode.didToggleOption(this);
+            this.didUpdateNodeIfInitialized();
         } else {
             debugger;
             // if this is called, the stack views might not have properly synced 
             // after the OptionsNode removed it's subnodes
-            console.log("parent: ", this.parentNode().title())
-            console.log("grand parent: ", this.parentNode().parentNode().title())
-            console.log("great grand parent: ", this.parentNode().parentNode().parentNode().title())
-            const result = this.firstParentChainNodeOfClass(BMOptionsNode)
-            console.log("result: ", result.title())
-            throw new Error("missing BMOptionsNode")
+            console.log("parent: ", this.parentNode().title());
+            console.log("grand parent: ", this.parentNode().parentNode().title());
+            console.log("great grand parent: ", this.parentNode().parentNode().parentNode().title());
+            const result = this.firstParentChainNodeOfClass(BMOptionsNode);
+            console.log("result: ", result.title());
+            throw new Error("missing BMOptionsNode");
         }
     }
 
     toggle () { 
         // The OptionNodeTile knows to call this
-        this.setIsPicked(!this.isPicked())
-        return this
+        this.setIsPicked(!this.isPicked());
+        return this;
     }
 
     setTitle (aString) {
-        this.setLabel(aString)
-        return this
+        this.setLabel(aString);
+        return this;
     }
     
     title () {
-        return this.label()
+        return this.label();
     }
 
     value () {
-        return this.title()
+        return this.title();
     }
 
     /*
     subtitle () {
-        return null
+        return null;
     }
     */
 
     summary () {
-        return this.title()
+        return this.title();
     }
 
     note () {
-        return this.isPicked() ? "✓" : ""
+        return this.isPicked() ? "✓" : "";
     }
 
     /*
     didUpdateSlotParentNode (oldValue, newValue) {
-        super.didUpdateSlotParentNode(oldValue, newValue) 
+        super.didUpdateSlotParentNode(oldValue, newValue);
         if (newValue === null) {
             debugger;
         }

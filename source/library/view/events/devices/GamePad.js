@@ -10,22 +10,46 @@
 (class GamePad extends Device {
     
     initPrototypeSlots () {
-        this.newSlot("gamePadManager", null)
-        this.newSlot("index", null)
-        this.newSlot("id", null)
-        this.newSlot("timestamp", null)
-        this.newSlot("buttons", null)
-        this.newSlot("axes", null)
-        this.newSlot("isConnected", false)
-        this.newSlot("shouldSendNotes", false)
+        {
+            const slot = this.newSlot("gamePadManager", null);
+            slot.setSlotType("GamePadManager");
+        }
+        {
+            const slot = this.newSlot("index", null);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("id", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("timestamp", null);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("buttons", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("axes", null);
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("isConnected", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("shouldSendNotes", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {
-        super.init()
-        this.setButtons([])
-        this.setAxes([])
-        this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setButtons([]);
+        this.setAxes([]);
+        this.setIsDebugging(false);
+        return this;
     }
 
     updateData (gp) {

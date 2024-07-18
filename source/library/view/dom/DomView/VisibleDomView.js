@@ -10,17 +10,19 @@
 (class VisibleDomView extends ListenerDomView {
     
     initPrototypeSlots () {
-        this.newSlot("isRegisteredForVisibility", false)
-        this.newSlot("intersectionObserver", null)
-        this.newSlot("onVisibilityCallback", null)
+        {
+            const slot = this.newSlot("isRegisteredForVisibility", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("intersectionObserver", null);
+            slot.setSlotType("IntersectionObserver");
+        }
+        {
+            const slot = this.newSlot("onVisibilityCallback", null);
+            slot.setSlotType("Function");
+        }
     }
-
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
 
     // visibility event
 

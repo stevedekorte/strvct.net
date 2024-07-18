@@ -9,12 +9,36 @@
 (class BMNotification extends ProtoClass {
 
     initPrototypeSlots () {
-        this.newSlot("name", null)
-        this.newSlot("sender", null)
-        this.newSlot("info", null)
-        this.newSlot("center", null) // NotificationCenter that owns this
-        this.newSlot("senderStack", null)
-        this.newSlot("noteHash", null)
+        {
+            const slot = this.newSlot("name", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("sender", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("info", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("center", null); // NotificationCenter that owns this
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("BMNotificationCenter");
+        }
+        {
+            const slot = this.newSlot("senderStack", null);
+            slot.setAllowsNullValue(true);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("noteHash", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     initPrototype () {

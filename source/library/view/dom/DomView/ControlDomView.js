@@ -11,8 +11,16 @@
     
     initPrototypeSlots () {
         // Targetable - target / action
-        this.newSlot("target", null)
-        this.newSlot("action", null)
+        {
+            const slot = this.newSlot("target", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("action", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     /*

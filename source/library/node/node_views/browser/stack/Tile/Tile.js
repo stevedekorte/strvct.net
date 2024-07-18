@@ -30,22 +30,63 @@
 (class Tile extends NodeView {
     
     initPrototypeSlots () {
-        this.newSlot("isSelectable", true) //.setDuplicateOp("copyValue")
-        this.newSlot("closeButtonView", null)
-        this.newSlot("defaultHeight", 30)
-        this.newSlot("restCloseButtonOpacity", 0.4)
-        this.newSlot("transitionStyle", "all 0s")
-        this.newSlot("selectedFlashColor", "#ccc")
-        this.newSlot("shouldShowFlash", false)
-        this.newSlot("shouldCenterCloseButton", true)
+        {
+            const slot = this.newSlot("isSelectable", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("closeButtonView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("defaultHeight", 30);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("restCloseButtonOpacity", 0.4);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("transitionStyle", "all 0s");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("selectedFlashColor", "#ccc");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("shouldShowFlash", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("shouldCenterCloseButton", true);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("contentView", null);
+            slot.setSlotType("DomView");
+        }
 
-        this.newSlot("contentView", null)
-    
-        this.newSlot("slideDeleteOffset", 0)
-        this.newSlot("dragDeleteButtonView", null)
-        this.newSlot("isDeleting", false)
-        this.newSlot("lastTapDate", null)
-        this.newSlot("lastSelectionDate", null)
+        {
+            const slot = this.newSlot("slideDeleteOffset", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("dragDeleteButtonView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("isDeleting", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("lastTapDate", null);
+            slot.setSlotType("Date");
+        }
+        {
+            const slot = this.newSlot("lastSelectionDate", null);
+            slot.setSlotType("Date");
+        }
     }
 
     applyStyles () {

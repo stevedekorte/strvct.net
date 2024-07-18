@@ -15,9 +15,20 @@
 (class CanvasTextTapeMeasure extends ProtoClass {
     
     initPrototypeSlots () {
-        //this.newSlot("cache", new Map())
-        this.newSlot("canvas", null)
-        this.newSlot("context", null)
+        /*
+        {
+            const slot = this.newSlot("cache", new Map());
+            slot.setSlotType("Map");
+        }
+        */
+        {
+            const slot = this.newSlot("canvas", null);
+            slot.setSlotType("Element");
+        }
+        {
+            const slot = this.newSlot("context", null);
+            slot.setSlotType("CanvasRenderingContext2D");
+        }
     }
 	
     init () {

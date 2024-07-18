@@ -22,18 +22,36 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("isDown", false)
-        this.newSlot("downEvent", null)
-        this.newSlot("currentEvent", null)
-        this.newSlot("upEvent", null)
-        this.newSlot("mouseListener", null)
-        this.newSlot("mouseMoveListener", null)
+        {
+            const slot = this.newSlot("isDown", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("downEvent", null);
+            slot.setSlotType("MouseEvent");
+        }
+        {
+            const slot = this.newSlot("currentEvent", null);
+            slot.setSlotType("MouseEvent");
+        }
+        {
+            const slot = this.newSlot("upEvent", null);
+            slot.setSlotType("MouseEvent");
+        }
+        {
+            const slot = this.newSlot("mouseListener", null);
+            slot.setSlotType("MouseListener");
+        }
+        {
+            const slot = this.newSlot("mouseMoveListener", null);
+            slot.setSlotType("MouseMoveListener");
+        }
     }
 
     init () {
-        super.init()
-        this.startListening()
-        return this
+        super.init();
+        this.startListening();
+        return this;
     }
 
     /*

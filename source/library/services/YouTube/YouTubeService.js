@@ -28,6 +28,7 @@
         slot.setShouldStoreSlot(true);
         slot.setFinalInitProto(YouTubeAudioPlayer);
         slot.setIsSubnode(true);
+        slot.setSlotType("YouTubeAudioPlayer");
     }
 
     this.setShouldStore(true);

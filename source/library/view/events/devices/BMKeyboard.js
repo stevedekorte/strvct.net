@@ -45,18 +45,28 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("codeToKeys", null).setComment("dictionary of KeyboardKey objects")
-        this.newSlot("keyboardListener", null)
-        this.newSlot("allModifierKeys", null)
+        {
+            const slot = this.newSlot("codeToKeys", null); // TODO: move to MAp
+            slot.setComment("dictionary of KeyboardKey objects");
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("keyboardListener", null);
+            slot.setSlotType("KeyboardListener");
+        }
+        {
+            const slot = this.newSlot("allModifierKeys", null);
+            slot.setSlotType("Array");
+        }
     }
 
     init () {
-        super.init()
-        this.setupCodeToKeys()
-        this.startListening()
-        this.setIsDebugging(false)
-        this.setAllModifierKeys(this.allModifierNames().map(kn => this.keyForName(kn)))
-        return this
+        super.init();
+        this.setupCodeToKeys();
+        this.startListening();
+        this.setIsDebugging(false);
+        this.setAllModifierKeys(this.allModifierNames().map(kn => this.keyForName(kn)));
+        return this;
     }
 
     startListening () {

@@ -59,18 +59,6 @@
         })
     }
 
-    /*
-    flexSplitIntoTilesNamed (nameList) {
-        this.flexSplitIntoTiles(nameList.length)
-        for (let i = 0; i < nameList.length; i++) {
-            const name = nameList.at(i)
-            const subview = this.subviews().at(i)
-            this.newSlot(name, subview, true)
-        }
-        return this
-    }
-    */
-
     flexSplitIntoTiles (count) {
         assert(this.canSplit()) // temporary
         this.setDisplay("flex")

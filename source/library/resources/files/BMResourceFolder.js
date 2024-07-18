@@ -13,7 +13,10 @@
 (class BMResourceFolder extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("path", null);
+        {
+            const slot = this.newSlot("path", null);
+            slot.setSlotType("String");
+        }
     }
 
     initPrototype () {

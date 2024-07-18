@@ -13,7 +13,10 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("resourceClasses", []);
+        {
+            const slot = this.newSlot("resourceClasses", []);
+            slot.setSlotType("Array");
+        }
     }
 
     initPrototype () {

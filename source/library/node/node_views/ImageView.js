@@ -9,17 +9,31 @@
 (class ImageView extends NodeView {
     
     initPrototypeSlots () {
-        this.newSlot("imageContainer", null);
-        this.newSlot("rawImageView", null);
-        this.newSlot("closeButtonView", null);
-        this.newSlot("srcUrl", null);
-
+        {
+            const slot = this.newSlot("imageContainer", null);
+            slot.setSlotType("FlexDomView");
+        }
+        {
+            const slot = this.newSlot("rawImageView", null);
+            slot.setSlotType("FlexDomView");
+        }
+        {
+            const slot = this.newSlot("closeButtonView", null);
+            slot.setSlotType("FlexDomView");
+        }
+        {
+            const slot = this.newSlot("srcUrl", null);
+            slot.setSlotType("String");
+        }
         {
             const slot = this.newSlot("dataURL", null);
             slot.setSyncsToNode(true);
+            slot.setSlotType("String");
         }
-
-        this.newSlot("isEditable", false);
+        {
+            const slot = this.newSlot("isEditable", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     initPrototype () {

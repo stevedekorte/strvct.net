@@ -89,20 +89,58 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("observations", null) // array 
-        this.newSlot("observationsMap", null) // map of obsHash to observation 
-        this.newSlot("notifications", null) // array 
-        this.newSlot("debugNoteName", "appDidInit")
-        this.newSlot("currentNote", null)
-        this.newSlot("isProcessing", false)
-        this.newSlot("obsHighwaterCount", 100) // used
-        this.newSlot("noteSet", null) // Set used for fast lookup for matching note
-        this.newSlot("isPaused", false);
-
-        this.newSlot("senderIndex", null);
-        this.newSlot("nameIndex", null);
-        this.newSlot("nullSenderMatchSet", null);
-        this.newSlot("nullNameMatchSet", null);
+        {
+            const slot = this.newSlot("observations", null); // array 
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("observationsMap", null); // map of obsHash to observation 
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("notifications", null); // array 
+            slot.setSlotType("Array");
+        }
+        {
+            const slot = this.newSlot("debugNoteName", "appDidInit");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("currentNote", null);
+            slot.setSlotType("BMNotification");
+        }
+        {
+            const slot = this.newSlot("isProcessing", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("obsHighwaterCount", 100); // used
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("noteSet", null); // Set used for fast lookup for matching note
+            slot.setSlotType("Set");
+        }
+        {
+            const slot = this.newSlot("isPaused", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("senderIndex", null);
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("nameIndex", null);
+            slot.setSlotType("Map");
+        }
+        {
+            const slot = this.newSlot("nullSenderMatchSet", null);
+            slot.setSlotType("Set");
+        }
+        {
+            const slot = this.newSlot("nullNameMatchSet", null);
+            slot.setSlotType("Set");
+        }
     }
 
     initPrototype () {

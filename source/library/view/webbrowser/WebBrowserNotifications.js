@@ -27,7 +27,10 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("permissionPromise", null);
+        {
+            const slot = this.newSlot("permissionPromise", null);
+            slot.setSlotType("Promise");
+        }
         this.setIsDebugging(true);
     }
 

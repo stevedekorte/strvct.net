@@ -10,38 +10,60 @@
     
     initPrototypeSlots () {
         this.setElementType("canvas");
-        this.newSlot("dataUrl", null);
-
-        this.newSlot("ajs", null);
-        this.newSlot("engine", null);
-        this.newSlot("scene", null);
-        this.newSlot("camera", null);
-        //this.newSlot("clearColor", null);
-
-        this.newSlot("closeButtonView", null);
-        this.newSlot("isEditable", false);
+        {
+            const slot = this.newSlot("dataUrl", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("ajs", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("engine", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("scene", null);
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("camera", null);
+            slot.setSlotType("Object");
+        }
+        {
+            //const slot = this.newSlot("clearColor", null);
+            //slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("closeButtonView", null);
+            slot.setSlotType("DomView");
+        }
+        {
+            const slot = this.newSlot("isEditable", false);
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {
-        super.init()
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setJustifyContent("center")
-        this.setAlignItems("center")
-        this.setOverflow("hidden")
-        this.setWidth("100%")
-        this.setHeight("100%")
-        //this.setIsRegisteredForBrowserDrop(false)
+        super.init();
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setJustifyContent("center");
+        this.setAlignItems("center");
+        this.setOverflow("hidden");
+        this.setWidth("100%");
+        this.setHeight("100%");
+        //this.setIsRegisteredForBrowserDrop(false);
 
         // close button
-        const cb = this.newCloseButtonView()
-        this.setCloseButtonView(cb)
-        this.addSubview(cb)
+        const cb = this.newCloseButtonView();
+        this.setCloseButtonView(cb);
+        this.addSubview(cb);
 
-        this.setIsEditable(false)
-        this.dragUnhighlight()
-        this.turnOffUserSelect()
-        return this
+        this.setIsEditable(false);
+        this.dragUnhighlight();
+        this.turnOffUserSelect();
+        return this;
     }
 
     newCloseButtonView () {

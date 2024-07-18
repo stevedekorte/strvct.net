@@ -33,6 +33,8 @@
       slot.setDuplicateOp("duplicate");
       slot.setFinalInitProto(MusicFolder);
       slot.setIsSubnode(true)
+      slot.setSlotType("MusicFolder");
+
     }
 
     {
@@ -42,7 +44,8 @@
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      slot.setIsSubnode(true)
+      slot.setIsSubnode(true);
+      slot.setSlotType("YouTubeAudioPlayer");
     }
 
     {
@@ -52,7 +55,8 @@
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
-      slot.setIsSubnode(true)
+      slot.setIsSubnode(true);
+      slot.setSlotType("YouTubeAudioPlayer");
     }
 
     this.setShouldStore(true);

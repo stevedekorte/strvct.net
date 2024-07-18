@@ -14,16 +14,12 @@
         // needed for ScrollView sticksToBottom feature
         {
             const slot = this.newSlot("contentMutationObserver", null); // setup onContentMutations() event, within which we scroll to bottom if needed
+            slot.setSlotType("MutationObserver");
         }
 
     }
 
-    init () {
-        super.init();
-    }
-
     // -----
-
 
     prepareToRetire () {
         super.prepareToRetire();

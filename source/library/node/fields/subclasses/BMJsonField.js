@@ -12,6 +12,7 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("nodeTileLink", null);
+            slot.setSlotType("BMJsonNode");
         }
     }
 

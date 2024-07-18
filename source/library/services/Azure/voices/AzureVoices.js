@@ -24,10 +24,22 @@
 (class AzureVoices extends BMSummaryNode {
 
   initPrototypeSlots () {
-    this.newSlot("voicesJson", null)
-    this.newSlot("indexes", null)
-    this.newSlot("voices", null)
-    this.newSlot("locales", null)
+    {
+      const slot = this.newSlot("voicesJson", null);
+      slot.setSlotType("Array"); // JSON Array
+    }
+    {
+      const slot = this.newSlot("indexes", null);
+      slot.setSlotType("Map");
+    }
+    {
+      const slot = this.newSlot("voices", null);
+      slot.setSlotType("Array");
+    }
+    {
+      const slot = this.newSlot("locales", null);
+      slot.setSlotType("Array");
+    }
   }
 
   init () {

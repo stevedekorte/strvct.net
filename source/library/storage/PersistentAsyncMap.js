@@ -28,8 +28,15 @@
 
 (class PersistentAsyncMap extends ProtoClass {
     initPrototypeSlots () {
-        this.newSlot("name", "PersistentAsyncDictionary")
-        this.newSlot("idb", null)
+        {
+            const slot = this.newSlot("name", "PersistentAsyncDictionary");
+            slot.setSlotType("String");
+        }
+
+        {
+            const slot = this.newSlot("idb", null);
+            slot.setSlotType("IndexedDBFolder");
+        }
     }
 
     init () {

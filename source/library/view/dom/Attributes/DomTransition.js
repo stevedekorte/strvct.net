@@ -25,12 +25,32 @@
     }
 
     initPrototypeSlots () {
-        this.newSlot("global", null)
-        this.newSlot("property", "")
-        this.newSlot("duration", 0)
-        this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
-        this.newSlot("delay", 0) // set to number type (unit = seconds)
-        this.newSlot("transitions", null)
+        {
+            const slot = this.newSlot("global", null);
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("property", "");
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("duration", 0);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("delay", 0) // set to number type (unit = seconds)
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("transitions", null);
+            slot.setSlotType("DomTransitions");
+            slot.setAllowsNullValue(true);
+        }
     }
 
     /*

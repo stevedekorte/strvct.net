@@ -28,14 +28,23 @@
     }
     
     initPrototypeSlots () {
-        this.newSlot("activeGesture", null) // aGesture
-        this.newSlot("begunGestures", null) // dict
-        this.newSlot("isPaused", false) // used to pause gestures while editing text fields
+        {
+            const slot = this.newSlot("activeGesture", null); // aGesture
+            slot.setSlotType("Gesture");
+        }
+        {
+            const slot = this.newSlot("begunGestures", null) // dict TODO: move to Map
+            slot.setSlotType("Object");
+        }
+        {
+            const slot = this.newSlot("isPaused", false); // used to pause gestures while editing text fields
+            slot.setSlotType("Boolean");
+        }
     }
 
     init () {
-        super.init()
-        this.setBegunGestures({})
+        super.init();
+        this.setBegunGestures({});
         return this
     }
 

@@ -53,10 +53,12 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("projectId", null);
+      slot.setSlotType("String");
     }
 
     {
       const slot = this.newSlot("locationId", null);
+      slot.setSlotType("String");
     }
   }
 

@@ -99,6 +99,7 @@
       slot.setFinalInitProto(OpenAiImages)
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
+      slot.setSlotType("Array");
     }
 
 
@@ -115,6 +116,7 @@
 
     {
       const slot = this.newSlot("delegate", null); 
+      slot.setSlotType("Object");
     }
 
     this.setShouldStore(true);

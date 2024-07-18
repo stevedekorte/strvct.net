@@ -9,7 +9,11 @@
 (class BMHourNode extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("value", 0).setComment("0 to 23")
+        {
+            const slot = this.newSlot("value", 0);
+            slot.setComment("0 to 23");
+            slot.setSlotType("Number");
+        }
     }
 
     initPrototype () {

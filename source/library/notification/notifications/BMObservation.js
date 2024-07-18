@@ -13,20 +13,49 @@
 (class BMObservation extends ProtoClass {
 
     initPrototypeSlots () {
-        this.newSlot("center", null) // NotificationCenter that owns this
-        this.newSlot("name", null) // String 
-        this.newSlot("sendName", null) // String 
-        this.newSlot("isOneShot", false) // Boolean
-        this.newSlot("didFinalizeStop", false) // Boolean
-        this.newWeakSlot("observer", null) // WeakRef slot to observer
-        this.newWeakSlot("sender", null) // WeakRef to sender
-
-        this.newSlot("obsHash", null) // null or string
-        this.newSlot("noteHash", null) // null or string
+    
+        {
+            const slot = this.newSlot("center", null); // NotificationCenter that owns this
+            slot.setSlotType("BMNotificationCenter");
+        }
+        {
+            const slot = this.newSlot("name", null);
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("sendName", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("isOneShot", false);
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newSlot("didFinalizeStop", false); 
+            slot.setSlotType("Boolean");
+        }
+        {
+            const slot = this.newWeakSlot("observer", null); // WeakRef slot to observer
+            slot.setSlotType("Object"); // TODO: add observer protocol
+        }
+        {
+            const slot = this.newWeakSlot("sender", null); // WeakRef to sender
+            slot.setSlotType("Object");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("obsHash", null); 
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
+        {
+            const slot = this.newSlot("noteHash", null); 
+            slot.setSlotType("String");
+            slot.setAllowsNullValue(true);
+        }
     }
 
-    initPrototype () {
-    }
 
     init () {
         super.init()

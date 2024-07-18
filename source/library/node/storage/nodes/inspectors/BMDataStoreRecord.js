@@ -11,8 +11,14 @@
 (class BMDataStoreRecord extends BMFieldSetNode {
     
     initPrototypeSlots () {
-        this.newSlot("key", null);
-        this.newSlot("store", null);
+        {
+            const slot = this.newSlot("key", null);
+            slot.setSlotType("String");
+        }
+        {
+            const slot = this.newSlot("store", null);
+            slot.setSlotType("Object"); // TODO: add store protocol
+        }
     }
 
     initPrototype () {
@@ -40,7 +46,7 @@
     }
 
     recordString () {
-        return JSON.stringify(this.record(), null, 2)
+        return JSON.stableStringify(this.record(), null, 2)
     }
 
     referencedRecords () {
@@ -65,7 +71,7 @@
         //subnode.setTitle(aRecord.id)
         subnode.setKey(aRecord.id)
         subnode.setStore(this.defaultStore()) //// <-------------------- avoid this?
-        const size = JSON.stringify(aRecord).length
+        const size = JSON.stableStringify(aRecord).length
         subnode.setSubtitle(size.byteSizeDescription())
         return subnode
     }

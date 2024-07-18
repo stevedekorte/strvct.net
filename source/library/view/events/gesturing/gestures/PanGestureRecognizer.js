@@ -19,16 +19,22 @@
 (class PanGestureRecognizer extends GestureRecognizer {
     
     initPrototypeSlots () {
-        this.newSlot("minNumberOfFingersRequired", 1)
-        this.newSlot("maxNumberOfFingersAllowed", 1)
-        //downPositionInTarget: null,
+        {
+            const slot = this.newSlot("minNumberOfFingersRequired", 1);
+            slot.setSlotType("Number");
+        }
+        {
+            const slot = this.newSlot("maxNumberOfFingersAllowed", 1);
+            slot.setSlotType("Number");
+        }
+        //downPositionInTarget: null, Point
     }
 
     init () {
-        super.init()
-        this.setListenerClasses(this.defaultListenerClasses()) 
-        //this.setIsDebugging(false)
-        return this
+        super.init();
+        this.setListenerClasses(this.defaultListenerClasses());
+        //this.setIsDebugging(false);
+        return this;
     }
 
     // --- events --------------------------------------------------------------------
@@ -36,10 +42,10 @@
     // tap events
 
     hasOkFingerCount () {
-        const n = this.numberOfFingersDown()
-        const min = this.minNumberOfFingersRequired()
-        const max = this.maxNumberOfFingersAllowed()
-        return (n >= min && n <= max)
+        const n = this.numberOfFingersDown();
+        const min = this.minNumberOfFingersRequired();
+        const max = this.maxNumberOfFingersAllowed();
+        return (n >= min && n <= max);
     }
 
     isReadyToBegin () {
@@ -47,23 +53,23 @@
     }
 
     doPress (event) { 
-        this.debugLog("doPress")
-        this.setIsPressing(true)
-        this.setDownEvent(event)
-        this.startDocListeners()
-        return this
+        this.debugLog("doPress");
+        this.setIsPressing(true);
+        this.setDownEvent(event);
+        this.startDocListeners();
+        return this;
     }
 
     onDown (event) {
-        super.onDown(event)
+        super.onDown(event);
 
         if (!this.isPressing()) {
             if (this.isReadyToBegin()) {
-                this.doPress(event)
+                this.doPress(event);
             }
         }
         
-        return this
+        return this;
     }
 
     attemptBegin () {

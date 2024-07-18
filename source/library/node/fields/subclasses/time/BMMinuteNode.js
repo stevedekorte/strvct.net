@@ -9,7 +9,10 @@
 (class BMMinuteNode extends BaseNode {
     
     initPrototypeSlots () {
-        this.newSlot("value", 1);
+        {
+            const slot = this.newSlot("value", 1);
+            slot.setSlotType("Number");
+        }
     }
 
     initPrototype () {
