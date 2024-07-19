@@ -14,27 +14,29 @@
         {
             const slot = this.overrideSlot("subnodes");
             slot.setShouldStoreSlot(false);
+            slot.setSlotType("Array");
         }
 
         {
             const slot = this.newSlot("typeChoices", []);
             slot.setInitProto(Array);
+            slot.setSlotType("Array");
         }
     }
   
     initPrototype () {
-        this.setNodeCanEditTitle(false)
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setNodeCanReorderSubnodes(false)
-        this.setCanDelete(true)
-        this.setNoteIconName("right-arrow")
-        this.setTitle("Chose type")
+        this.setNodeCanEditTitle(false);
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setNodeCanReorderSubnodes(false);
+        this.setCanDelete(true);
+        this.setNoteIconName("right-arrow");
+        this.setTitle("Chose type");
     }
 
     prepareForFirstAccess () {
-        super.prepareForFirstAccess()
-        this.setupSubnodes()
+        super.prepareForFirstAccess();
+        this.setupSubnodes();
     }
 
     static fieldTypes () {
@@ -55,7 +57,7 @@
             "BMTimeNode",
             "BMLinkNode",
             "BMUrlField",
-        ]
+        ];
     }
 
     protoObjects () {

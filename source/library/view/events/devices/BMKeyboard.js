@@ -41,14 +41,14 @@
 (class BMKeyboard extends Device {
 
     static initClass () {
-        this.setIsSingleton(true)
+        this.setIsSingleton(true);
     }
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("codeToKeys", null); // TODO: move to MAp
+            const slot = this.newSlot("codeToKeysMap", null); 
             slot.setComment("dictionary of KeyboardKey objects");
-            slot.setSlotType("Object");
+            slot.setSlotType("Map");
         }
         {
             const slot = this.newSlot("keyboardListener", null);
@@ -77,31 +77,32 @@
     }
 
     setupCodeToKeys () {
-        const dict = {}
-        const c2k = this.keyCodesToNamesDict()
+        const map = new Map();
+        const c2k = this.keyCodesToNamesDict();
         Object.keys(c2k).forEach((code) => {
-            const name = c2k[code]
-            dict[code] = KeyboardKey.clone().setName(name).setCode(code).setKeyboard(this)
+            const name = c2k[code];
+            const key = KeyboardKey.clone().setName(name).setCode(code).setKeyboard(this);
+            map.set(code, key);
         })
-        this.setCodeToKeys(dict)
+        this.setCodeToKeysMap(map);
         return this
     }
 
     keyForCode (aCode) {
-        return this.codeToKeys()[aCode]
+        return this.codeToKeysMap().get(aCode);
     }
 
     keyForName (aName) {
-        const code = this.keyCodeForName(aName)
-        return this.keyForCode(code)
+        const code = this.keyCodeForName(aName);
+        return this.keyForCode(code);
     }
 
     nameForKeyCode (aCode) {
-        const key = this.keyForCode(aCode)
+        const key = this.keyForCode(aCode);
         if (key) {
-            return key.name()
+            return key.name();
         }
-        return null
+        return null;
     }
 
     k2c () {
@@ -313,36 +314,32 @@
     }
     */
 
-    keyForCode (aCode) {
-        return this.codeToKeys()[aCode]
-    }
-
     // -- events ---
 
     showCodeToKeys () {
-        const c2k = this.keyCodesToNamesDict()
+        const c2k = this.keyCodesToNamesDict();
 
-        //const s = JSON.stringify(c2k, null, 4)
+        //const s = JSON.stringify(c2k, null, 4);
 
         const lines = Object.keys(c2k).map((code) => {
-            return "    " + code + ": \"" + this.codeToKeys()[code].name() + "\""
+            return "    " + code + ": \"" + this.codeToKeysMap().get(code).name() + "\"";
         })
-        const s = "{\n" + lines.join(",\n") + "}\n"
-        console.log("c2k:", s)
+        const s = "{\n" + lines.join(",\n") + "}\n";
+        console.log("c2k:", s);
 
         /*
         console.log("Keyboard:")
-        Object.keys(this.codeToKeys()).forEach((code) => {
-            console.log("  code: ", code + " key name: ", this.codeToKeys()[code].name())
-        })
+        this.codeToKeysMap().forEachKV((code, key) => {
+            console.log("  code: ", code + " key name: ", this.keyForCode(code).name())
+        });
         */
-        return this
+        return this;
     }
 
     keyForEvent (event) {
-        const code = event.keyCode
-        const key = this.codeToKeys()[code]
-        return key
+        const code = event.keyCode;
+        const key = this.keyForCode(code);
+        return key;
     }
 
     onKeyDownCapture (event) {
@@ -501,23 +498,23 @@
     }
 
     currentlyDownKeys () {
-        return Object.values(this.codeToKeys()).select(key => key.isDown())
+        return this.codeToKeys().valuesArray().select(key => key.isDown());
     }
 
     currentlyUpKeys () {
-        return Object.values(this.codeToKeys()).select(key => !key.isDown())
+        return this.codeToKeys().valuesArray().select(key => !key.isDown());
     }
 
     hasKeysDown () {
-        return this.currentlyDownKeys().length !== 0
+        return this.currentlyDownKeys().length !== 0;
     }
 
     downKeyNames () {
-        return BMKeyboard.shared().currentlyDownKeys().map(k => k.name())
+        return BMKeyboard.shared().currentlyDownKeys().map(k => k.name());
     }
 
     show () {
-        this.debugLog(" downKeys: ", this.downKeyNames())
+        this.debugLog(" downKeys: ", this.downKeyNames());
     }
 
     allModifierNames () {
@@ -528,7 +525,7 @@
             "MetaLeft", 
             "MetaRight", 
             "Shift", 
-        ]
+        ];
     }
 
     modifierNamesForEvent (event) {

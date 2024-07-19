@@ -11,22 +11,24 @@
 (class BMLinkNode extends BMSummaryNode {
     
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("linkedNode", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("linkedNode", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("BMNode");
         }
         
         {
-            const slot = this.newSlot("willDuplicateLinkedObject", false)
-            slot.setShouldStoreSlot(true)
-            slot.setCanInspect(true)
-            slot.setSlotType("Boolean")
-            slot.setLabel("Will duplicate linked object")
+            const slot = this.newSlot("willDuplicateLinkedObject", false);
+            slot.setShouldStoreSlot(true);
+            slot.setCanInspect(true);
+            slot.setSlotType("Boolean");
+            slot.setLabel("Will duplicate linked object");
+            slot.setSlotType("Boolean");
         }
     }
 

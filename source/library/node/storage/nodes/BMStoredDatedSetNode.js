@@ -11,24 +11,27 @@
     
     initPrototypeSlots () {
         {
-            const slot = this.newSlot("maxAgeInSeconds", 30*24*60*60)
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("maxAgeInSeconds", 30*24*60*60);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("autoCheckPeriod", 1*60*60)
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("autoCheckPeriod", 1*60*60);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("dict", null)
-            slot.setShouldStoreSlot(true)
+            const slot = this.newSlot("dict", null);
+            slot.setShouldStoreSlot(true);
+            slot.setSlotType("Object");
         }
     }
 
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
     }
 
     init () {

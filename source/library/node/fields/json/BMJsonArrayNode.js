@@ -45,7 +45,7 @@
         if (refs.length > 0) {
             items.anyOf = refs;
         } else {
-            throw new Error("BMJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype().");
+            throw new Error("BMJsonArrayNode.jsonSchemaForSubnodes() no subnode classes. Make sure setSubnodeClasses() is called in initPrototype.");
         }
         return items;
     }

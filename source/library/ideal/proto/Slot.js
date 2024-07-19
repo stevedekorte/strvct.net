@@ -1270,7 +1270,45 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     acceptsValue (v) {
         //const typeNames = Type.typeNamesForValue(value);
+        const valueType = Type.typeName(v);
+        const slotType = this.slotType();
 
+        if (slotType === valueType) {
+            return true;
+        }
+
+        if (Type.isNull(v)) {
+            if (slot.allowsNullValue()) {
+                return true;
+            }
+        }
+
+        if (slotType === "JSON Object") {
+            debugger;
+        }
+
+
+        if (slotType.hasSuffix(" Class")) {
+            debugger;
+        }
+
+        if (slotType === "Action") {
+            return true;
+        }
+
+        const slotTypeClass = getGlobalThis()[slotType];
+
+        /*
+        if (v.thisClass().classNameSet().has(slotType)) {
+            return true;
+        }
+        */
+
+        if (v.thisClass().isKindOf(slotTypeClass)) {
+            return true;
+        }
+
+        /*
 
         if (this.slotType() === "String") {
             if (Type.isString(v)) {
@@ -1290,17 +1328,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             }
         }
 
-        if (Type.isNull(v)) {
-            if (slot.allowsNullValue()) {
-                return true;
-            }
-        }
 
         if (this.slotType() === "Array") {
             if (Type.isArray(v)) {
                 return true;
             }
         }
+        */
  
         return false;
     }
@@ -1321,6 +1355,15 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             throw new Error("fromJsonSchema type mismatch for key '" + this.name() + "'");
         }
 
+        return this;
+    }
+
+    assertValidValueOnInstance (anInstance) {
+        assert(this.slotType() !== null, "slotType is null for slot: " + this.name());
+        const v = this.onInstanceGetValue(anInstance);
+        if (v !== null) {
+            assert(this.acceptsValue(v), "slot value type mismatch for key '" + this.name() + "'");
+        }
         return this;
     }
     

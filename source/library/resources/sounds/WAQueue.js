@@ -20,14 +20,17 @@
 
     {
       const slot = this.newSlot("isMuted", false);
+      slot.setSlotType("Boolean");
     }
 
     {
       const slot = this.newSlot("currentSound", null);
+      slot.setSlotType("Object"); // TODO use protocol
     }
 
     {
       const slot = this.newSlot("soundQueue", null);
+      slot.setSlotType("Array");
     }
 
     this.setNodeSubtitleIsChildrenSummary(true);

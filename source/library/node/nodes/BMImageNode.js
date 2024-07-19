@@ -12,6 +12,7 @@
         {
             const slot = this.newSlot("dataURL", null);
             slot.setShouldStoreSlot(true);
+            slot.setSlotType("String");
         }
     }
 

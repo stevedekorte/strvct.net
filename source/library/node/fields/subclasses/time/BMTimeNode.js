@@ -20,6 +20,7 @@
         {
             const slot = this.newSlot("hour", null);
             slot.setShouldStoreSlot(true);
+            slot.setSlotType("Number");
         }
         {
             const slot = this.newSlot("minute", null);

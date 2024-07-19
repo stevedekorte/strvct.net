@@ -86,26 +86,31 @@
 
     {
       const slot = this.newSlot("connectPromise", null);
+      slot.setSlotType("Promise");
     }
 
     // --- get id retries ---
 
     {
-      const slot = this.newSlot("getIdRetryCount", 0);   
+      const slot = this.newSlot("getIdRetryCount", 0); 
+      slot.setSlotType("Number");
     }
 
     {
-      const slot = this.newSlot("getIdRetryDelayMs", 100);   
+      const slot = this.newSlot("getIdRetryDelayMs", 100);
+      slot.setSlotType("Number");
     }
 
     {
-      const slot = this.newSlot("getIdMaxRetries", 100);   
+      const slot = this.newSlot("getIdMaxRetries", 100);
+      slot.setSlotType("Number"); 
     }
 
     // --- connect retries ---
 
     {
-      const slot = this.newSlot("connectRetryDelayMs", 5000);   
+      const slot = this.newSlot("connectRetryDelayMs", 5000);
+      slot.setSlotType("Number");
     }
 
     {
@@ -165,6 +170,7 @@
       slot.setFinalInitProto(RzPeerConns);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
+      slot.setSlotType("RzPeerConns");
     }
 
     {

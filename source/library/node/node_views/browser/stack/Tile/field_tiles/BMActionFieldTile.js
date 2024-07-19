@@ -11,6 +11,7 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("buttonView", null);
+            slot.setSlotType("ButtonView");
         }
     }
 

@@ -11,53 +11,57 @@
 (class BMDateNode extends BMSummaryNode {
     
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
     
     initPrototypeSlots () {        
 
         {
-            const slot = this.overrideSlot("subnodes")
-            slot.setShouldStoreSlot(false)
+            const slot = this.overrideSlot("subnodes");
+            slot.setShouldStoreSlot(false);
+            slot.setSlotType("Array");
         }
 
         {
-            const slot = this.newSlot("year", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("year", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("month", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("month", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("day", null)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
-            slot.setDuplicateOp("copyValue")
+            const slot = this.newSlot("day", null);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setDuplicateOp("copyValue");
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("startYear", 2000)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
-            slot.setCanInspect(true)
-            slot.setSlotType("Number")
-            slot.setLabel("Start year")
+            const slot = this.newSlot("startYear", 2000);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setCanInspect(true);
+            slot.setSlotType("Number");
+            slot.setLabel("Start year");
         }
 
         {
-            const slot = this.newSlot("yearRange", 20)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
-            slot.setCanInspect(true)
-            slot.setSlotType("Number")
-            slot.setLabel("Year range")
+            const slot = this.newSlot("yearRange", 20);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setCanInspect(true);
+            slot.setSlotType("Number");
+            slot.setLabel("Year range");
         }
     }
 

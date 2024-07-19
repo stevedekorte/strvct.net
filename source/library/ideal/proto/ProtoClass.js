@@ -81,38 +81,38 @@
             this.setShared(this.clone())
         }
         //assert(this.isKindOf(this._shared.thisClass()), this.type() + ".shared() not a kind of existing shared instance class " + this._shared.thisClass().type());
-        return this._shared
+        return this._shared;
     }
 
     static setShared (v) {
-        this.sharedContext()._shared = v
-        return this
+        this.sharedContext()._shared = v;
+        return this;
     }
 
     // --- init ---
 
     static initClass () { // called only once when class is created
 
-        //console.log(this.type() + " initThisClass")
-        Object.defineSlot(this, "_shared", undefined)
-        //this.newClassSlot("shared", undefined)
-        this.newClassSlot("isSingleton", false)
-        this.newClassSlot("setterNameMap", new Map()) // TODO: share this between all classes
-        this.newClassSlot("allProtoSlotsMap", new Map())
-        this.newClassSlot("jsonSchemaDescription", null)
+        //console.log(this.type() + " initThisClass");
+        Object.defineSlot(this, "_shared", undefined);
+        //this.newClassSlot("shared", undefined);
+        this.newClassSlot("isSingleton", false);
+        this.newClassSlot("setterNameMap", new Map()); // TODO: share this between all classes
+        this.newClassSlot("allProtoSlotsMap", new Map());
+        this.newClassSlot("jsonSchemaDescription", null);
 
-        //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet())
+        //this.newClassSlot("allInstancesWeakSet", new EnumerableWeakSet());
     }
 
     // --- class slots and variables ---
 
 
     static ancestorClassesTypesIncludingSelf () {
-        return this.ancestorClassesIncludingSelf().map(c => c.type())
+        return this.ancestorClassesIncludingSelf().map(c => c.type());
     }
 
     static ancestorClassesTypes () {
-        return this.ancestorClasses().map(c => c.type())
+        return this.ancestorClasses().map(c => c.type());
     }
 
     /*
@@ -129,37 +129,37 @@
     */
 
     static isSubclassOf (aClass) {
-        assert(aClass.isClass())
-        return this.ancestorClassesIncludingSelf().contains(aClass)
+        //assert(aClass.isClass())
+        return this.ancestorClassesIncludingSelf().contains(aClass);
     }
 
     static ancestorClassesIncludingSelf () {
-        const results = this.ancestorClasses().shallowCopy()
-        results.atInsert(0, this)
-        return results
+        const results = this.ancestorClasses().shallowCopy();
+        results.atInsert(0, this);
+        return results;
     }
 
     static descendantClasses (results = []) {
-        const children = this.childClasses()
+        const children = this.childClasses();
         children.forEach(child => {
-            results.push(child)
-            child.descendantClasses(results)
+            results.push(child);
+            child.descendantClasses(results);
         })
-        return results
+        return results;
     }
 
     static superClass () {
-        return Object.getPrototypeOf(this)
+        return Object.getPrototypeOf(this);
     }
 
     static subclassesDescription (level, traversed) {
 
         if (Type.isUndefined(level)) {
-            level = 0
+            level = 0;
         }
 
         if (Type.isUndefined(traversed)) {
-            traversed = new Set()
+            traversed = new Set();
         }
 
         /*
@@ -173,27 +173,27 @@
         //const prefix = "<div class=level" + level + ">"
         //const postfix = "</div>"
 
-        const prefix = ""
-        const postfix = ""
+        const prefix = "";
+        const postfix = "";
 
-        const spacer = "  ".repeat(level)
-        const lines = []
+        const spacer = "  ".repeat(level);
+        const lines = [];
         if (level === 1) {
             //lines.append("----")
         }
-        const path = ""
-        lines.append(prefix + spacer + this.type() + " " + path + postfix)
+        const path = "";
+        lines.append(prefix + spacer + this.type() + " " + path + postfix);
         /*
         if (this.parentClass()) { // for UML diagram
             lines.append("[" + this.type() + "] -> [" + this.parentClass().type() + "]")
         }
         */
-        const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()))
+        const sortedSubclasses = this.subclasses().sort((a, b) => a.type().localeCompare(b.type()));
         const subclassLines = sortedSubclasses.map((subclass) => {
-            return subclass.subclassesDescription(level + 1, traversed) 
+            return subclass.subclassesDescription(level + 1, traversed);
         })
-        lines.appendItems(subclassLines)
-        return lines.join("\n")
+        lines.appendItems(subclassLines);
+        return lines.join("\n");
     }
 
     // --- instance ---
@@ -212,23 +212,21 @@
 
     lazyRefsMap () {
         if (!this._lazyRefsMap) {
-            this._lazyRefsMap = new Map()
+            this._lazyRefsMap = new Map();
         }
-        return this._lazyRefsMap
+        return this._lazyRefsMap;
     }
 
-
-
     setType (aString) {
-        this.constructor.name = aString
-        return this
+        this.constructor.name = aString;
+        return this;
     }
 
     // --- slots ---
 
     slotsWithAnnotation (key, value) {
-        assert(this.isPrototype())
-        return this.allSlotsMap().valuesArray().select(slot => slot.getAnnotation(key) === value)
+        assert(this.isPrototype());
+        return this.allSlotsMap().valuesArray().select(slot => slot.getAnnotation(key) === value);
     }
 
     slotNamed (slotName) {
@@ -367,44 +365,51 @@
         return slot;
     }
 
+    assertProtoSlotsHaveType () {
+        console.log(this.type() + " assertProtoSlotsHaveType slotsMap size:", this.slotsMap().size);
+        this.slotsMap().forEachKV((slotName, slot) => {
+            assert(Type.isString(slot.slotType()), this.type() + " slot " + slotName + " has no type");
+        });
+    }
+
     newWeakSlot (slotName, initialValue) {
-        const slot = this.newSlot(slotName, initialValue)
-        slot.setIsWeak(true)
+        const slot = this.newSlot(slotName, initialValue);
+        slot.setIsWeak(true);
         return slot;
     }
 
     // --- weak slot ---
 
     onFinalizedSlot (aSlot) {
-        this[aSlot.privateName()] = undefined // replace the weak ref with undefined
+        this[aSlot.privateName()] = undefined; // replace the weak ref with undefined
 
         // only called on weak slot
-        const k = aSlot.methodForOnFinalized()
-        const m = this[k]
+        const k = aSlot.methodForOnFinalized();
+        const m = this[k];
         if (m) {
-            m.apply(this)
+            m.apply(this);
         }
     }
 
     getWeakSlotValue (aSlot) {
-        const privateName = aSlot.privateName()  // fix this value
-        const weakRef = this[privateName]
+        const privateName = aSlot.privateName(); // fix this value
+        const weakRef = this[privateName];
 
         if (weakRef === null) {
-            return null
+            return null;
         }
 
         if (weakRef === undefined) {
-            return undefined
+            return undefined;
         }
 
         // if we got here, it's a weakref
-        const v = weakRef.deref()
+        const v = weakRef.deref();
         if (v === undefined) {
             // it must have been collected
-            this.onFinalizedSlot(aSlot)
+            this.onFinalizedSlot(aSlot);
         }
-        return v
+        return v;
     }
 
     setWeakSlotValue (aSlot, newValue) {
@@ -425,39 +430,38 @@
 
     baseGetSlotValue (aSlot) {
         if (aSlot.isWeak()) {
-            return this.getWeakSlotValue(aSlot)
+            return this.getWeakSlotValue(aSlot);
         } else {
-            //const privateName = aSlot.privateName() 
-            //return this[privateName]
-            return this[aSlot._privateName]
+            //const privateName = aSlot.privateName();
+            //return this[privateName];
+            return this[aSlot._privateName];
         }
     }
 
     baseSetSlotValue (aSlot, newValue) {
-        const privateName = aSlot.privateName() 
+        const privateName = aSlot.privateName();
         if (aSlot.isWeak()) {
-            this.setWeakSlotValue(aSlot, newValue)
+            this.setWeakSlotValue(aSlot, newValue);
         } else {
-            this[privateName] = newValue
+            this[privateName] = newValue;
         }
-        //this[privateName]
-        return this
+        //this[privateName];
+        return this;
     }
 
     // --- auto getter setter ---
 
     getSlotValue (aSlot) { //testing this
-        const v = this.baseGetSlotValue(aSlot)
+        const v = this.baseGetSlotValue(aSlot);
 
         /*
         if (v === undefined) {
-            this.onUndefinedGetSlot(aSlot)
+            this.onUndefinedGetSlot(aSlot);
         }
         */
 
-        this.willGetSlot(aSlot)
-
-        return this.baseGetSlotValue(aSlot)
+        this.willGetSlot(aSlot);
+        return this.baseGetSlotValue(aSlot);
     }
 
     /*
@@ -479,10 +483,10 @@
    
     willGetSlot (aSlot) {
         // e.g.: slot "subnodes" -> willGetSlotSubnodes()
-        const s = aSlot.methodForWillGet()
-        const f = this[s]
+        const s = aSlot.methodForWillGet();
+        const f = this[s];
         if (f) {
-            f.apply(this)
+            f.apply(this);
         }
     }
 

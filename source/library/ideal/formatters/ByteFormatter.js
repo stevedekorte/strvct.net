@@ -67,6 +67,7 @@
                 "Z", 
                 "Y"
             ]);
+            slot.setSlotType("Array");
         }
         
         {
@@ -81,6 +82,7 @@
                 "zettabytes", 
                 "yottabytes"
             ]);
+            slot.setSlotType("Array");
         }
     }
   

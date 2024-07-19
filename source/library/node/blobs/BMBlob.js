@@ -11,52 +11,58 @@
     initPrototypeSlots () {
 
         {
-            const slot = this.newSlot("name", null)
-            slot.setSyncsToView(true)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("name", null);
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("String");
         }
 
         {
-            const slot = this.newSlot("valueHash", null)
-            slot.setSyncsToView(true)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("valueHash", null);
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("String");
         }
 
         {
-            const slot = this.newSlot("valueSize", null)
-            slot.setSyncsToView(true)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("valueSize", null);
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("lastModifiedTime", null)
-            slot.setSyncsToView(true)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("lastModifiedTime", null);
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Number");
         }
 
         {
-            const slot = this.newSlot("expirationDate", null)
-            slot.setSyncsToView(true)
-            slot.setShouldStoreSlot(true)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("expirationDate", null);
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Date");
         }
 
         {
-            const slot = this.newSlot("value", null)
-            slot.setSyncsToView(true)
-            slot.setShouldStoreSlot(false)
-            slot.setDoesHookSetter(true)
+            const slot = this.newSlot("value", null);
+            slot.setSyncsToView(true);
+            slot.setShouldStoreSlot(false);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("ArrayBuffer");
         }
     }
   
     initPrototype () {
-        this.setShouldStore(true)
-        this.setShouldStoreSubnodes(false)
-        this.setCanDelete(true)
+        this.setShouldStore(true);
+        this.setShouldStoreSubnodes(false);
+        this.setCanDelete(true);
     }
 
     age () {

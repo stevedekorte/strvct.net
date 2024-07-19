@@ -12,6 +12,7 @@
         {
             const slot = this.newSlot("value", 1);
             slot.setComment("month value starts with 1");
+            slot.setSlotType("Number");
         }
     }
 

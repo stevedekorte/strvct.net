@@ -16,6 +16,7 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("shouldMerge", true);
+            slot.setSlotType("Boolean");
         }
     }
 

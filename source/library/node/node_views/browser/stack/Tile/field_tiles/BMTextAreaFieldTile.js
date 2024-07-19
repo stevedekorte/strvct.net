@@ -12,10 +12,12 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("sttButton", null); // Button, for speech to text
+            slot.setSlotType("ButtonView");
         }
 
         {
-            const slot = this.newSlot("sttSession", null); // SpeechToTextSession
+            const slot = this.newSlot("sttSession", null); 
+            slot.setSlotType("SpeechToTextSession");
         }
     }
 

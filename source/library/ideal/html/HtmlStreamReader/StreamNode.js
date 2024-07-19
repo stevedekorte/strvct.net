@@ -16,14 +16,18 @@
 
         {
             const slot = this.newSlot("parent", null); // parent tag
+            slot.setSlotType("StreamNode");
+            slot.setAllowsNullValue(true);
         }
 
         {
             const slot = this.newSlot("domNode", null); // HTMLElement or TextNode
+            slot.setSlotType("HTMLElement");
         }
 
         {
             const slot = this.newSlot("isClosed", false); // true if the stream has read the closing of the node
+            slot.setSlotType("Boolean");
         }
     }
   

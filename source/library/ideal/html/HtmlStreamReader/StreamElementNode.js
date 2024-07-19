@@ -12,18 +12,22 @@
     initPrototypeSlots () {
       {
           const slot = this.newSlot("name", ""); // string
+          slot.setSlotType("String");
       }
   
       {
-          const slot = this.newSlot("attributes", null); // dictionary
+          const slot = this.newSlot("attributes", null); // dictionary TODO: make this a Map
+          slot.setSlotType("Object");
       }
   
       {
           const slot = this.newSlot("text", ""); // string
+          slot.setSlotType("String");
       }
 
       {
         const slot = this.newSlot("children", null); // array of child tags and strings
+        slot.setSlotType("Array");
       }
     }
   

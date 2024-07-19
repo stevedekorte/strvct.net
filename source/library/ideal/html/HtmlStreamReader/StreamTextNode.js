@@ -14,6 +14,7 @@
     initPrototypeSlots () {
         {
             const slot = this.newSlot("text", ""); // string
+            slot.setSlotType("String");
         }
     }
   

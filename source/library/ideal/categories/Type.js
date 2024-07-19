@@ -285,25 +285,25 @@ getGlobalThis().Type = (class Type extends Object {
         const typeNames = this.allTypeNames();
         for (let i = 0; i < typeNames.length; i++) {
             const typeName = typeNames[i];
-            const methodName = "is" + typeName
+            const methodName = "is" + typeName;
             if (this[methodName].call(this, value)) {
-                return typeName
+                return typeName;
             }
         }
         throw new Error("unable to identify type for value: ", value);
     }
 
     static typeNamesForValue (value) {
-        const matches = []
-        const typeNames = this.allTypeNames()
+        const matches = [];
+        const typeNames = this.allTypeNames();
         for (let i = 0; i < typeNames.length; i++) {
-            const typeName = typeNames[i]
-            const methodName = "is" + typeName
+            const typeName = typeNames[i];
+            const methodName = "is" + typeName;
             if (this[methodName].apply(this, [value])) {
-                matches.push(typeName)
+                matches.push(typeName);
             }
         }
-        return matches
+        return matches;
     }
 
     static assertValueTypeNames (v, validTypeNames) {

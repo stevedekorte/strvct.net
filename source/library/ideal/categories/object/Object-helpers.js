@@ -250,7 +250,6 @@ Object.defineSlot(Object.prototype, "initSlots", function () { // setup property
 
     this.slotsMap().forEach((slot) => {
         slot.setupInOwner();
-
         assert(this.hasOwnProperty([slot.name()]) && this.hasOwnProperty(["_" + slot.name()]), this.type() + " missing " + slot.name() + " slot");
     });
 });
@@ -282,6 +281,16 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
 
     if (this.hasOwnProperty("initPrototype")) {
         this.initPrototype(); // This method should NOT call super
+
+        if (this.assertProtoSlotsHaveType) {
+            console.log("calling assertProtoSlotsHaveType on " + this.type());
+            this.assertProtoSlotsHaveType();
+        } else {
+            console.log(this.type() + " missing assertProtoSlotsHaveType");
+            if (this.type() !== "Object") {
+                 debugger;
+            }
+        }
     } else {
         //debugger;
     }
