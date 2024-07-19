@@ -78,14 +78,14 @@
 
     setupCodeToKeys () {
         const map = new Map();
-        const c2k = this.keyCodesToNamesDict();
-        Object.keys(c2k).forEach((code) => {
-            const name = c2k[code];
+        this.keyCodesToNamesMap().forEachKV((code, name) => {
+            //const name = c2k[code];
             const key = KeyboardKey.clone().setName(name).setCode(code).setKeyboard(this);
-            map.set(code, key);
-        })
+            assert(Type.isNumber(code));
+            map.set(Number(code), key);
+        });
         this.setCodeToKeysMap(map);
-        return this
+        return this;
     }
 
     keyForCode (aCode) {
@@ -107,128 +107,122 @@
 
     k2c () {
         if (!this._k2c) {
-            this._k2c = {}
-            const c2k = this.keyCodesToNamesDict()
-            Object.keys(c2k).forEach((c) => {
-                const k = c2k[c]
-                this._k2c[k] = c
-            })
+            this._k2c = this.keyCodesToNamesMap().inverted();
         }
         return this._k2c
     }
 
     keyCodeForName (aName) {
-        return this.k2c()[aName]
+        return this.k2c().get(aName);
     }
-
     
     eventIsJustModifierKey (event) {
         const name = this.nameForKeyCode(event.keyCode)
         return this.allModifierNames().contains(name)
     }
 
-    keyCodesToNamesDict () {
-        return {
-            8: "Backspace",
-            9: "Tab",
-            13: "Enter",
-            16: "Shift",
-            17: "Control",
-            18: "Alternate",
-            19: "PauseBreak",
-            20: "Capslock",
-            27: "Escape",
-            32: "Space",
-            33: "PageUp",
-            34: "PageDown",
-            35: "End",
-            36: "Home",
-            37: "LeftArrow",
-            38: "UpArrow",
-            39: "RightArrow",
-            40: "DownArrow",
-            45: "Insert",
-            46: "Delete",
-            48: "0",
-            49: "1",
-            50: "2",
-            51: "3",
-            52: "4",
-            53: "5",
-            54: "6",
-            55: "7",
-            56: "8",
-            57: "9",
-            65: "a", // characters are the same code for upper and lower case in JS
-            66: "b",
-            67: "c",
-            68: "d",
-            69: "e",
-            70: "f",
-            71: "g",
-            72: "h",
-            73: "i",
-            74: "j",
-            75: "k",
-            76: "l",
-            77: "m",
-            78: "n",
-            79: "o",
-            80: "p",
-            81: "q",
-            82: "r",
-            83: "s",
-            84: "t",
-            85: "u",
-            86: "v",
-            87: "w",
-            88: "x",
-            89: "y",
-            90: "z",
-            91: "MetaLeft",
-            92: "RightWindow", // correct?
-            93: "MetaRight",
-            96: "NumberPad0",
-            97: "NumberPad1",
-            98: "NumberPad2",
-            99: "NumberPad3",
-            100: "NumberPad4",
-            101: "NumberPad5",
-            102: "NumberPad6",
-            103: "NumberPad7",
-            104: "NumberPad8",
-            105: "NumberPad9",
-            106: "Multiply",
-            107: "Plus",
-            109: "Minus",
-            110: "DecimalPoint",
-            111: "Divide",
-            112: "Function1",
-            113: "Function2",
-            114: "Function3",
-            115: "Function4",
-            116: "Function5",
-            117: "Function6",
-            118: "Function7",
-            119: "Function8",
-            120: "Function9",
-            121: "Function10",
-            122: "Function11",
-            123: "Function12",
-            144: "NumberLock",
-            145: "ScrollLock",
-            186: "Semicolon",
-            187: "EqualsSign",
-            188: "Comma",
-            189: "Dash",
-            190: "Period",
-            191: "ForwardSlash",
-            192: "GraveAccent",
-            219: "OpenBracket",
-            220: "Backslash",
-            221: "CloseBracket",
-            222: "SingleQuote",
-        }
+    keyCodesToNamesMap () {
+        return new Map([
+            [8, "Backspace"],
+            [9, "Tab"],
+            [13, "Enter"],
+            [16, "Shift"],
+            [17, "Control"],
+            [18, "Alternate"],
+            [19, "PauseBreak"],
+            [20, "Capslock"],
+            [27, "Escape"],
+            [32, "Space"],
+            [33, "PageUp"],
+            [34, "PageDown"],
+            [35, "End"],
+            [36, "Home"],
+            [37, "LeftArrow"],
+            [38, "UpArrow"],
+            [39, "RightArrow"],
+            [40, "DownArrow"],
+            [45, "Insert"],
+            [46, "Delete"],
+            [48, "0"],
+            [49, "1"],
+            [50, "2"],
+            [51, "3"],
+            [52, "4"],
+            [53, "5"],
+            [54, "6"],
+            [55, "7"],
+            [56, "8"],
+            [57, "9"],
+            [65, "a"],
+            [66, "b"],
+            [67, "c"],
+            [68, "d"],
+            [69, "e"],
+            [70, "f"],
+            [71, "g"],
+            [72, "h"],
+            [73, "i"],
+            [74, "j"],
+            [75, "k"],
+            [76, "l"],
+            [77, "m"],
+            [78, "n"],
+            [79, "o"],
+            [80, "p"],
+            [81, "q"],
+            [82, "r"],
+            [83, "s"],
+            [84, "t"],
+            [85, "u"],
+            [86, "v"],
+            [87, "w"],
+            [88, "x"],
+            [89, "y"],
+            [90, "z"],
+            [91, "MetaLeft"],
+            [92, "RightWindow"],
+            [93, "MetaRight"],
+            [96, "NumberPad0"],
+            [97, "NumberPad1"],
+            [98, "NumberPad2"],
+            [99, "NumberPad3"],
+            [100, "NumberPad4"],
+            [101, "NumberPad5"],
+            [102, "NumberPad6"],
+            [103, "NumberPad7"],
+            [104, "NumberPad8"],
+            [105, "NumberPad9"],
+            [106, "Multiply"],
+            [107, "Plus"],
+            [109, "Minus"],
+            [110, "DecimalPoint"],
+            [111, "Divide"],
+            [112, "Function1"],
+            [113, "Function2"],
+            [114, "Function3"],
+            [115, "Function4"],
+            [116, "Function5"],
+            [117, "Function6"],
+            [118, "Function7"],
+            [119, "Function8"],
+            [120, "Function9"],
+            [121, "Function10"],
+            [122, "Function11"],
+            [123, "Function12"],
+            [144, "NumberLock"],
+            [145, "ScrollLock"],
+            [186, "Semicolon"],
+            [187, "EqualsSign"],
+            [188, "Comma"],
+            [189, "Dash"],
+            [190, "Period"],
+            [191, "ForwardSlash"],
+            [192, "GraveAccent"],
+            [219, "OpenBracket"],
+            [220, "Backslash"],
+            [221, "CloseBracket"],
+            [222, "SingleQuote"]
+          ]);
     }
 
     /*
@@ -317,11 +311,11 @@
     // -- events ---
 
     showCodeToKeys () {
-        const c2k = this.keyCodesToNamesDict();
+        const c2k = this.keyCodesToNamesMap();
 
         //const s = JSON.stringify(c2k, null, 4);
 
-        const lines = Object.keys(c2k).map((code) => {
+        const lines = c2k.keysArray().map((code) => {
             return "    " + code + ": \"" + this.codeToKeysMap().get(code).name() + "\"";
         })
         const s = "{\n" + lines.join(",\n") + "}\n";
@@ -345,20 +339,22 @@
     onKeyDownCapture (event) {
         //console.log("event.metaKey = ", event.metaKey)
         
-        const shouldPropogate = true
-        const key = this.keyForEvent(event)
+        const shouldPropogate = true;
+        const key = this.keyForEvent(event);
 
         if (key) {
-            key.onKeyDown(event)
+            key.onKeyDown(event);
 
             if (this.isDebugging()) {
-                this.debugLog(" " + this.downMethodNameForEvent(event))
+                this.debugLog(" " + this.downMethodNameForEvent(event));
             }
         } else {
-            console.warn("BMKeyboard.shared() no key found for event ", event)
+            console.warn("BMKeyboard.shared() no key found for event ", event);
+            debugger;
+            this.keyForEvent(event);
         }
             
-        return shouldPropogate
+        return shouldPropogate;
     }
 
     onKeyUpCapture (event) {

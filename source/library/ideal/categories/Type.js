@@ -333,6 +333,7 @@ getGlobalThis().Type = (class Type extends Object {
         return jsonTypes.has(Type.typeName(value));
     }
 
+    /*
     static isDeepJsonType (value) {
         // Note: this doesn't walk the collection types to see if their values are also JSON
         const jsonTypes = new Set(["String", "Number", "Object", "Array", "Boolean", "Null"]);
@@ -347,6 +348,38 @@ getGlobalThis().Type = (class Type extends Object {
         }
         return false;
     }
+    */
+
+    static isDeepJsonType (value) {
+        const seen = new Set();
+      
+        function checkValue(v) {
+          if (v === null) return true;
+      
+          const type = typeof v;
+      
+          if (['string', 'number', 'boolean'].includes(type)) return true;
+      
+          if (type === 'object') {
+            if (seen.has(v)) return false; // Circular reference
+            seen.add(v);
+      
+            if (Array.isArray(v)) {
+              return v.every(checkValue);
+            } else {
+              return Object.keys(v).every(key => {
+                if (typeof key !== 'string') return false;
+                return checkValue(v[key]);
+              });
+            }
+          }
+      
+          return false; // Functions, undefined, symbols, etc.
+        }
+      
+        return checkValue(value);
+    }
+
 
     static typeUniqueId (value) {
 

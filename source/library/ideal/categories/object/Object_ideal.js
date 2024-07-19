@@ -6,6 +6,10 @@
     
     Some added state and behavior on Object prototype. 
 
+    NOTES:
+
+    Object keys always get turned into strings.
+
 */
 
 (class Object_ideal extends Object {
@@ -76,21 +80,21 @@
     // --- enumeration ---
  
     ownKVMap (fn) {
-        return Object.keys(this).map(k => fn(k, this[k]));
+        return Object.entries(this).map(entry => fn(entry[0], entry[1]));
     }
  
     ownForEachValue (fn) {
-        Object.keys(this).forEach(k => fn(this[k]));
+        Object.entries(this).forEach(entry => fn(entry[1])); 
         return this;
     }
  
     ownForEachKey(fn) {
-        Object.keys(this).forEach(k => fn(k));
+        Object.entries(this).forEach(entry => fn(entry[0])); 
         return this;
     }
  
     ownForEachKV (fn) {
-        Object.keys(this).forEach(k => fn(k, this[k]));
+        Object.entries(this).forEach(entry => fn(entry[0], entry[1])); 
         return this;
     }
  
@@ -100,13 +104,17 @@
         // compare like we would two dictionaries
         // only checks enumerable properties
         // for ProtoClass, we'll compare slot values instead
-        const keys = Object.keys(this);
-        const otherKeys = Object.keys(anObject);
-        if (keys.length !== otherKeys.length) {
+        const entries = Object.entries(this);
+        const otherEntries = Object.entries(anObject);
+        if (entries.length !== otherEntries.length) {
             return false;
         }
  
-        return keys.canDetect(k => this.getOwnProperty(k) !== anObject.getOwnProperty(k));
+        return entries.canDetect(entry => {
+            const k = entry[0];
+            const v = entry[1];
+            return v !== anObject.getOwnProperty(k);
+        });
     }
  
     getOwnProperty (key) {

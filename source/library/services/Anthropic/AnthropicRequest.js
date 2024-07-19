@@ -51,14 +51,17 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("usageInputTokenCount", 0);
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("usageOutputTokenCount", 0);
+      slot.setSlotType("Number");
     }
 
     {
       const slot = this.newSlot("betaVersion", "tools-2024-05-16"); // "messages-2023-12-15"
+      slot.setSlotType("NumbeStringr");
     }
 
   }
@@ -82,7 +85,7 @@
         "anthropic-version": "2023-06-01",
         "anthropic-beta": this.betaVersion(),
         "x-api-key": apiKey,
-        'Accept-Encoding': 'identity'
+        'Accept-Encoding': "identity"
       },
       body: JSON.stringify(this.bodyJson()),
     };

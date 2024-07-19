@@ -220,6 +220,14 @@
         return index;
     }
 
+    inverted () {
+        const invertedMap = new Map();
+        this.forEachKV((k, v) => {
+            invertedMap.set(v, k);
+        });
+        return invertedMap;
+    }
+
 }).initThisCategory();
 
     
