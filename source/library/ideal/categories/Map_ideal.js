@@ -56,45 +56,45 @@
     // --- enumeration ---
 
     forEachKV (fn) {
-        this.forEach((v, k, self) => fn(k, v, self))
+        this.forEach((v, k, self) => fn(k, v, self));
     }
 
     forEachK (fn) {
-        this.forEach((v, k) => fn(k))
+        this.forEach((v, k) => fn(k));
     }
 
     forEachV (fn) {
-        this.forEach(v => fn(v))
+        this.forEach((v, k) => fn(v));
     }
 
     // --- keys ---
 
     keysArray () {
-        return Array.fromIterator(this.keys())
+        return Array.fromIterator(this.keys());
     }
 
     keysSet () {
-        return Set.fromIterator(this.keys())
+        return Set.fromIterator(this.keys());
     }
 
     // --- values ---
 
     valuesArray () {
-        return Array.fromIterator(this.values())
+        return Array.fromIterator(this.values());
     }
 
     valuesSet () {
-        return Set.fromIterator(this.values())
+        return Set.fromIterator(this.values());
     }
 
     // --- merge ---
 
     mergeInto (aMap) {
-        this.forEachKV((k, v) => aMap.set(k, v))
+        this.forEachKV((k, v) => aMap.set(k, v));
     }
 
     merge (aMap) {
-        aMap.forEachKV((k, v) => this.set(k, v))
+        aMap.forEachKV((k, v) => this.set(k, v));
     }
 
     // --- filtering ---

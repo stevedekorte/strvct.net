@@ -10,11 +10,12 @@
 (class GesturableDomView extends VisibleDomView {
     
     initPrototypeSlots () {
-        // Array - not a map as we might have multiple GRs of same type, but...
-        // would it be better to give GRs labels to use for map key?
-        // this could replace "default" gesture ivars?
         {
-            const slot = this.newSlot("gestureRecognizers", null); // array
+            // Array - not a map as we might have multiple GRs of same type, but...
+            // would it be better to give GRs labels to use for map key?
+            // this could replace "default" gesture ivars?
+            // Set would make for faster lookup, but we may need to maintain order
+            const slot = this.newSlot("gestureRecognizers", null);
             slot.setSlotType("Array");
         }
 
@@ -33,52 +34,14 @@
         }
     }
 
-    /*
-    init () {
-        super.init()
-        return this
-    }
-    */
-
     // gestures
 
     gestureRecognizers () {
         if (this._gestureRecognizers === null) {
-            this._gestureRecognizers = []
+            this._gestureRecognizers = [];
         }
-        return this._gestureRecognizers
+        return this._gestureRecognizers;
     }
-
-    /*
-
-    // deprecated - GestureRecognizers are now used instead of direct touch events
-
-    isRegisteredForTouch () {
-        return this.touchListener().isListening()
-    }
-
-    setIsRegisteredForTouch (aBool) {
-        this.touchListener().setIsListening(aBool)
-
-        if (aBool) {
-            this.setTouchAction("none") // testing
-        }
-
-        return this
-    }
-
-    onTouchStart (event) {
-    }
-
-    onTouchMove (event) {
-    }
-
-    onTouchCancel (event) {
-    }
-
-    onTouchEnd (event) {
-    }
-    */
 
     // --- GestureRecognizers ---
 

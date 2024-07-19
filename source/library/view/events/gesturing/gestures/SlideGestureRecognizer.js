@@ -41,8 +41,13 @@
             slot.setSlotType("String");
         }
         {
-            const slot = this.newSlot("validDirectionsDict", { left: 1, right: 2, up: 3, down: 4 }); // TODO: move to Map
-            slot.setSlotType("Object");
+            const slot = this.newSlot("validDirectionsMap", new Map([
+                ["left", 1], 
+                ["right", 2], 
+                ["up", 3], 
+                ["down", 4]
+            ]));
+            slot.setSlotType("Map");
         }
         {
             const slot = this.newSlot("maxPerpendicularDistToBegin", 10) // will not begin if this is exceeded
@@ -62,7 +67,7 @@
     }
 
     setDirection (directionName) {
-        assert(this.validDirectionsDict().hasOwnProperty(directionName));
+        assert(this.validDirectionsMap().has(directionName));
         this._direction = directionName
         return this
     }

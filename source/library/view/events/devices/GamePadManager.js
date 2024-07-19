@@ -34,8 +34,8 @@
     initPrototypeSlots () {
         //this.newSlot("gamePadListener", null)
         {
-            const slot = this.newSlot("gamePadsDict", null); // TODO: move to a Map
-            slot.setSlotType("Object");
+            const slot = this.newSlot("gamePadsMap", null);
+            slot.setSlotType("Map");
         }
         {
             const slot = this.newSlot("pollPeriod", 1000);
@@ -46,15 +46,14 @@
     init () {
         super.init();
         this.setIsDebugging(false);
-        this.setGamePadsDict({});
+        this.setGamePadsMap(new Map());
         //this.startListening();
         this.startPollingIfSupported(); // could delay this until connection if listen API is supported
         return this;
     }
 
     connectedGamePads () {
-        const dict = this.gamePadsDict();
-        return Object.keys(dict).map(k => dict[k]);
+        return this.gamePadsMap().valuesArray();
     }
     
     /*
@@ -108,7 +107,7 @@
 
     startPolling () {
         if (!this._intervalId) {
-            console.log(this.type() + ".startPolling()")
+            console.log(this.type() + ".startPolling()");
             this._intervalId = setInterval(() => { 
                 this.poll();
             }, this.pollPeriod());
@@ -127,21 +126,21 @@
     }
 
     poll () {
-        const gamepads = this.navigatorGamepads()
-        //console.log(this.type() + ".poll() gamepads.length = ", gamepads.length)
-        const padDict = this.gamePadsDict()
+        const gamepads = this.navigatorGamepads();
+        //console.log(this.type() + ".poll() gamepads.length = ", gamepads.length);
+        const padsMap = this.gamePadsMap();
 
         for (let i = 0; i < gamepads.length; i++) {
             const gp = gamepads[i];
-            let gamePad = padDict[i]
+            let gamePad = padsMap.get(i);
 
             if (gp) {
                 if (!gamePad) {
-                    gamePad = this.newGamePad().setIndex(i).setId(gp.id)
-                    gamePad.onConnected()
-                    this.gamePadsDict().atPut(i, gamePad)
+                    gamePad = this.newGamePad().setIndex(i).setId(gp.id);
+                    gamePad.onConnected();
+                    padsMap.set(i, gamePad);
                 }
-                gamePad.updateData(gp)
+                gamePad.updateData(gp);
 
                 if (this.isDebugging()) {
                     console.log("Gamepad index:" + gp.index + " id:" + gp.id + 
@@ -149,8 +148,8 @@
                 }
             } else {
                 if (gamePad) {
-                    gamePad.onDisconnected()
-                    padDict.atPut(i, null)
+                    gamePad.onDisconnected();
+                    padsMap.set(i, null);
                 }
             }
         }

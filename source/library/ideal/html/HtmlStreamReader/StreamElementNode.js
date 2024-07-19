@@ -44,11 +44,6 @@
       return false;
     }
 
-    setAttributes (dict) {
-      this._attributes = dict;
-      return this;
-    }
-
     lastTextNode () {
       const last = this.children().last();
       if (last && last.isTextNode()) {
@@ -65,7 +60,7 @@
     }
   
     attributesString () {
-      const parts = []
+      const parts = [];
       for (const [key, value] of Object.entries(this.attributes())) {
         parts.push(key + '="' + value + '"');
       }
@@ -119,7 +114,7 @@
           newNode.setAttribute(key, value);
         }
       }
-      return newNode
+      return newNode;
     }
 
     // --- helpers ---

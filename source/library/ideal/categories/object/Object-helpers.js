@@ -283,12 +283,11 @@ Object.defineSlot(Object.prototype, "setupPrototype", function () {
         this.initPrototype(); // This method should NOT call super
 
         if (this.assertProtoSlotsHaveType) {
-            console.log("calling assertProtoSlotsHaveType on " + this.type());
             this.assertProtoSlotsHaveType();
         } else {
-            console.log(this.type() + " missing assertProtoSlotsHaveType");
             if (this.type() !== "Object") {
-                 debugger;
+                console.log(this.type() + " missing assertProtoSlotsHaveType");
+                debugger;
             }
         }
     } else {

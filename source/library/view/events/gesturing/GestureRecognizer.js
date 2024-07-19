@@ -191,8 +191,8 @@
             slot.setSlotType("Boolean");
         }
         {
-            const slot = this.newSlot("fingerViewDict", null); // TODO move to Map?
-            slot.setSlotType("Object");
+            const slot = this.newSlot("fingerViewMap", null);
+            slot.setSlotType("Map");
         }
 
         // begin pressing 
@@ -249,7 +249,7 @@
         //this.setGestureName(this.type().before("GestureRecognizer"))
         this.autoSetMessageNames()
         this.setIsEmulatingTouch(true)
-        this.setFingerViewDict({})
+        this.setFingerViewMap(new Map())
 
         this.setIsDebugging(false)
         //this.setIsVisualDebugging(true)
@@ -959,24 +959,24 @@
     }
 
     viewForFingerId (id) {
-        const fvs = this.fingerViewDict()
-        let v = fvs.at(id)
+        const fvs = this.fingerViewMap();
+        let v = fvs.get(id);
         if (!v) {
-            v = this.newFingerView()
-            DocumentBody.shared().addSubview(v)
-            fvs.atPut(id, v)
+            v = this.newFingerView();
+            DocumentBody.shared().addSubview(v);
+            fvs.atPut(id, v);
         }
-        return v
+        return v;
     }
 
     removeFingerViews () {
-        const dict = this.fingerViewDict()
-        Object.keys(dict).forEach((id) => {
-            const fingerView = dict[id]
-            fingerView.removeFromParentView()
+        const map = this.fingerViewMap();
+        map.keysArray().forEach((id) => {
+            const fingerView = map.get(id);
+            fingerView.removeFromParentView();
         })
-        this.setFingerViewDict({})
-        return this
+        map.clear();
+        return this;
     }
 
     titleForFingerNumber (n) {
@@ -985,102 +985,102 @@
 
     showFingers () {
         const points = this.pointsForEvent(this.currentEvent());
-        const idsToRemove = Object.keys(this.fingerViewDict()) // TODO: move to dict
+        const idsToRemoveSet = this.fingerViewMap().keysSet(); 
         let count = 1
 
         points.forEach((point) => {
-            const id = point.id()
+            const id = point.id();
             const v = this.viewForFingerId(id);
-            idsToRemove.remove(id) 
+            idsToRemoveSet.delete(id);
             const nx = point.x() - v.clientWidth()/2;
             const ny = point.y() - v.clientHeight()/2;
             v.setLeftPx(nx);
             v.setTopPx(ny);
-            v.setInnerHtml(this.titleForFingerNumber(count))
-            v.setBorder("1px dashed white")
+            v.setInnerHtml(this.titleForFingerNumber(count));
+            v.setBorder("1px dashed white");
             if (this.isPressing()) {
-                v.setBorder("1px solid white")
-                v.setColor("white")
+                v.setBorder("1px solid white");
+                v.setColor("white");
             } else {
-                v.setBorder("1px dashed #888")
-                v.setColor("#888")
+                v.setBorder("1px dashed #888");
+                v.setColor("#888");
             }
-            count ++
+            count ++;
         })
 
-        const fvd = this.fingerViewDict()
-        idsToRemove.forEach((id) => {
-            const fingerView = fvd[id]
-            assert(fingerView)
-            fingerView.removeFromParentView()
-            delete fvd[id]
+        const fvd = this.fingerViewMap();
+        idsToRemoveSet.forEach((id) => {
+            const fingerView = fvd.get(id);
+            assert(fingerView);
+            fingerView.removeFromParentView();
+            fvd.delete(id);
         })
 
-        return this
+        return this;
     }
 
     updateFingerViews () {
         if (this.shouldShowVisualDebugger()) {
-            this.showFingers()
+            this.showFingers();
         } else {            
-            this.removeFingerViews()
+            this.removeFingerViews();
         }
 
-        return this
+        return this;
     }
 
     updateDebugger () {
-        this.updateOutlineView() 
-        this.updateFingerViews()
+        this.updateOutlineView();
+        this.updateFingerViews();
         if (this.viewTarget()) {
-            console.log(this.viewTarget().typeId() + ".updateDebugger")
+            console.log(this.viewTarget().typeId() + ".updateDebugger");
         }
     }
 
     updateDebuggerTimeoutName () {
-        return "updateDebugger"
+        return "updateDebugger";
     }
 
     updateDebuggerTimeoutSeconds () {
-        return 0.1
+        return 0.1;
     }
 
     updateDebugTimer () {
-        const ms = this.updateDebuggerTimeoutSeconds() * 1000
-        this.addTimeout(() => this.updateDebugger(), ms, this.updateDebuggerTimeoutName())
-        return this
+        const ms = this.updateDebuggerTimeoutSeconds() * 1000;
+        this.addTimeout(() => this.updateDebugger(), ms, this.updateDebuggerTimeoutName());
+        return this;
     }
 
     // down points
 
     hasDownPointsInView () {
         if (!this.viewTarget()) {
-            return false
+            return false;
         }
 
         const view = this.viewTarget();
         const points = this.allDownPoints();
         //console.log("all points.length:", points.length, " has match:", match != null)
-        return points.canDetect(p => view.containsPoint(p)) 
+        return points.canDetect(p => view.containsPoint(p));
     }
 
     allPoints () { // TODO: some better abstraction for Touch+Mouse?
-        const points = []
-        points.appendItems(TouchScreen.shared().currentPoints())
-        points.appendItems(Mouse.shared().currentPoints())
-        return points
+        const points = [];
+        points.appendItems(TouchScreen.shared().currentPoints());
+        points.appendItems(Mouse.shared().currentPoints());
+        return points;
     }
 
     allDownPoints () { // TODO: some better abstraction for Touch+Mouse?
-        return this.allPoints().select(p => p.isDown())
+        return this.allPoints().select(p => p.isDown());
     }
 
     shortTypeId () {
-        return this.typeId().replaceAll("GestureRecognizer", "")
+        return this.typeId().replaceAll("GestureRecognizer", "");
     }
 
     description () {
-        return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target")
+        return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target");
     }
     
 }.initThisClass());

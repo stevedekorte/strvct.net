@@ -77,25 +77,27 @@
     // retiring
 
     gestureRecognizerListeners () {
-        const results = this.gestureRecognizers().map(gr => gr.allEventListeners()).flat()
+        const results = this.gestureRecognizers().map(gr => gr.allEventListeners()).flat();
+        /*
         results.forEach(result => {
-            assert(result.thisClass().isKindOf(EventListener))
-        })
-        return results
+            assert(result.thisClass().isKindOf(EventListener));
+        });
+        */
+        return results;
     }
 
     allEventListeners () {
-        const results = [this.eventListeners(), this.gestureRecognizerListeners()].flat()
+        const results = [this.eventListeners(), this.gestureRecognizerListeners()].flat();
         /*
         results.forEach(result => {
             assert(result.thisClass().isKindOf(EventListener))
         })
         */
-        return results
+        return results;
     }
 
     fullActiveEventListenerCount () {
-        return this.allEventListeners().filter(v => v.isListening()).length
+        return this.allEventListeners().filter(v => v.isListening()).length;
     }
 
     externalFullActiveEventListenerCount () {
@@ -123,53 +125,53 @@
 
     prepareToRetire () {
         //debugger;
-        console.log(this.typeId() + " prepareToRetire")
-        assert(!this.hasParentView())
+        console.log(this.typeId() + " prepareToRetire");
+        assert(!this.hasParentView());
 
         // if view has no parent at the end of event loop, 
         // our policy is to retire the view
 
-        this.setIsRegisteredForVisibility(false) // this one isn't a listener
+        this.setIsRegisteredForVisibility(false); // this one isn't a listener
         
-        this.retireSubviewTree()
+        this.retireSubviewTree();
 
         // do this after removing subviews, just in case events where added by those changes
-        this.removeAllGestureRecognizers()
-        this.removeAllListeners()
-        this.cancelAllTimeouts()
+        this.removeAllGestureRecognizers();
+        this.removeAllListeners();
+        this.cancelAllTimeouts();
 
-        //this.assertEventListenerCountsMatch()
+        //this.assertEventListenerCountsMatch();
 
         /*
         if (this.externalFullActiveEventListenerCount()) {
-            console.warn(this.typeId() + " was unable to remove the following event listeners:")
-            EventListener.showActiveForOwner(this)
-            debugger
+            console.warn(this.typeId() + " was unable to remove the following event listeners:");
+            EventListener.showActiveForOwner(this);
+            debugger;
         }
         */
 
-        //assert(!EventListener.activeOwners().has(this))
+        //assert(!EventListener.activeOwners().has(this));
 
-        SyncScheduler.shared().unscheduleTarget(this)
+        SyncScheduler.shared().unscheduleTarget(this);
 
         //if (this.isFirstResponder()) {
-        //    this.blur() / is this needed?
+        //    this.blur(); / is this needed?
         //}
 
-        this.detachFromElement()
+        this.detachFromElement();
 
-        super.prepareToRetire() // call on super
-        return this
+        super.prepareToRetire(); // call on super
+        return this;
     }
 
     detachFromElement () {
-        const e = this.element()
+        const e = this.element();
         //e.style.transition = "all 0s" // probably not needed
         if (e) {
-            e.setDomView(null)
-            this._element = null
+            e.setDomView(null);
+            this._element = null;
         }
-        e.removeAllChildren()
+        e.removeAllChildren();
     }
 
     retireSubviewTree () {

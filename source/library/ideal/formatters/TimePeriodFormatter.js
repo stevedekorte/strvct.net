@@ -28,42 +28,42 @@ TimePeriodFormatter
         }
 
         {
-            // TODO: move periods to a Map
-            const slot = this.newSlot("periods", { 
+            const slot = this.newSlot("periodsMap", new Map(Object.entries({ 
                 seconds: "s", 
                 minutes: "m", 
                 hours: "h", 
                 days: "d", 
                 months: "months", 
                 years: "years"
-            });
-            slot.setSlotType("Object"); // JSON Object
+            })));
+            slot.setSlotType("Object"); 
         }
     }
 
     formattedValue () {
-        const periods = this.periods()
+        const periods = this.periodsMap();
 
-        const seconds = this.valueInSeconds()
+        const seconds = this.valueInSeconds();
         if (seconds === null) {
-            return "?"
+            return "?";
         }
 
         if (seconds < 60) {
-            return Math.floor(seconds) + periods.seconds
+            return Math.floor(seconds) + periods.get("seconds");
         }
         
-        const minutes = Math.floor(seconds/60)
+        const minutes = Math.floor(seconds/60);
         if (minutes < 60) {
-            return minutes + periods.hours
+            return minutes + periods.get("minutes");
         }
 
-        const hours = Math.floor(minutes/60)
+        const hours = Math.floor(minutes/60);
         if (hours < 24) {
-            return hours + periods.hours
+            return hours + periods.get("hours");
         }
         
-        const days = Math.floor(hours/24)
-        return days + periods.days
+        const days = Math.floor(hours/24);
+        return days + periods.get("days");
     }
+    
 }.initThisClass());

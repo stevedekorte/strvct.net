@@ -366,9 +366,8 @@
     }
 
     assertProtoSlotsHaveType () {
-        console.log(this.type() + " assertProtoSlotsHaveType slotsMap size:", this.slotsMap().size);
         this.slotsMap().forEachKV((slotName, slot) => {
-            assert(Type.isString(slot.slotType()), this.type() + " slot " + slotName + " has no type");
+            assert(Type.isString(slot.slotType()), () => { return this.type() + " slot " + slotName + " has no type" });
         });
     }
 
