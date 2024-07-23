@@ -1,15 +1,21 @@
 
-## local web server
+# local web server
+
+## command line to run the server
 
 This is a minimal HTTPS web server for local testing. 
-The command to run in the console is:
+The command to run in the console is (if running from a parent folder containing the strvct/local-wab-server):
 
-  node local-web-server/main.js
+  node strvct/local-web-server/main.js --secure true --port 8000 --async-stack-traces 
 
-  which should be run in the root of the folder which the web server is allowed access to as
-  the server will not allow access to paths that are parents of the current working directory of the web server process.
-  
-  The server will look for it's https cert and keys in the keys folder of the folder that main.js is in (__dirname).
+Note: this should be run in the root of the folder which the web server is allowed access to as
+the server will not allow access to paths that are parents of the current working directory of the web server process.
+
+The server will look for it's https cert and keys in the keys folder of the folder that main.js is in (via __dirname).
+
+## notes on SSL/TLS certificates (for https)
+
+## using self signed certs with browsers
 
 You may need to run your web browser in a special mode (such as --disable-web-security for Chrome) to get it to accept a self generated cert.
 Here's an example Visual Studio Code browser debugger launch script:
@@ -28,7 +34,7 @@ Here's an example Visual Studio Code browser debugger launch script:
 
 In Chrome, the first time you open the page, you'll get a warning and need click the "advanced" link and then click the "Proceed to localhost (unsafe)" link.
 
-# generating a certificate
+## creating a self signed certificate
 
 There should already be a self signed cerififcate in this folder,
 but if not, or if it's expired, here's how to generate a new one:

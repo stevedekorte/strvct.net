@@ -35,4 +35,18 @@ server.setIsSecure(argv.secure);
 //console.log("========= argv.secure:", argv.secure);
 //console.log("========= server.isSecure():", server.isSecure());
 
-server.run()
+server.run();
+
+
+// need these to catch errors that can occur on requests, like DNS lookup failures 
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('main.js: Unhandled Rejection at:', promise, 'reason:', reason);
+    console.error('Stack trace:', reason.stack);
+});
+
+process.on('uncaughtException', (error) => {
+    console.error('main.js: Uncaught Exception:', error);
+    console.error('Stack trace:');
+    console.error(error.stack);
+});
