@@ -137,15 +137,18 @@
             jsonIdToSubnodeMap.set(sn.jsonId(), sn);
         });
 
+        const hasOldSubnodes = this.subnodes().length > 0;
+
         const newSubnodes = [];
 
         json.forEach((v) => {
             //assert(v.jsonId);
-            if (!v.jsonId) {
+            const jsonId = v.jsonId;
+
+            if (hasOldSubnodes && !jsonId) {
                 console.warn("BMJsonArrayNode.setJson() missing jsonId: ", v);
             }
 
-            const jsonId = v.jsonId;
             const existingNode = jsonIdToSubnodeMap.get(jsonId);
 
             if (existingNode) {

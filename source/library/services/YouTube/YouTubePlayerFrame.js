@@ -19,6 +19,7 @@
   initPrototypeSlots () {
     {
       const slot = this.newSlot("frameReadyPromise", null);
+      slot.setSlotType("Promise");
     }
 
     this.setIsDebugging(false);

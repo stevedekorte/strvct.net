@@ -165,12 +165,11 @@ String.prototype._setterCacheMap = new Map();
     }
 
     asNumber () {
-    if (value === "" || value === null || value === undefined) {
-        return NaN;
+        if (this === "" || this === null || this === undefined) {
+            return NaN;
         }
         
-        const number = Number(value);
-        
+        const number = Number(this);
         return isNaN(number) ? NaN : number;
     }
 

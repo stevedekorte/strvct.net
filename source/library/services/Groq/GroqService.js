@@ -16,12 +16,16 @@
   modelsJson () {
     return [
       {
-          "name": "llama3-70b-8192",
-          "contextWindow": 8192
+        "name": "llama-3.1-405b-reasoning",
+        "contextWindow": 131072 
       },
       {
-          "name": "llama2-70b-4096",
-          "contextWindow": 4096
+          "name": "llama-3.1-70b-versatile",
+          "contextWindow": 131072
+      },
+      {
+          "name": "llama-3.1-8b-instant",
+          "contextWindow": 131072
       },
       {
           "name": "mixtral-8x7b-32768",
