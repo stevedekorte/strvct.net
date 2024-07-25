@@ -39,52 +39,53 @@
 (class BMNode extends ProtoClass {
     
     static availableAsNodePrimitive () {
-        return true
+        return true;
     }
 
     static primitiveNodeClasses () {
-        const classes = BMNode.allSubclasses()
-        return classes.filter(aClass => aClass.availableAsNodePrimitive())
+        const classes = BMNode.allSubclasses();
+        return classes.filter(aClass => aClass.availableAsNodePrimitive());
     }
 
     // --- for CreatorNode Prototypes ---
 
     static visibleClassName () {
-        let name = this.type()
-        name = name.sansPrefix("BM")
-        name = name.sansSuffix("Field")
-        name = name.sansSuffix("Node")
-        return name
+        let name = this.type();
+        name = name.sansPrefix("BM");
+        name = name.sansSuffix("Field");
+        name = name.sansSuffix("Node");
+        return name;
     }
 
     static availableAsNodePrimitive () {
-        return false
+        return false;
     }
 
     static nodeCreate () {
         // we implemnet this on BMNode class and prototype so 
         // it works for both instance and class creator prototypes
-        return this.clone()
+        return this.clone();
     }
 
     static nodeCreateName () {
-        return this.visibleClassName()
+        return this.visibleClassName();
     }
 
     // --- mime types ---
 
     static canOpenMimeType (mimeTypeString) {
-        return false
+        return false;
     }
 
     static openMimeChunk (dataChunk) {
-        return null
+        return null;
     }
 
     // ----
 
     initPrototypeSlots () {
  
+        /*
         {
             const slot = this.newSlot("nodeType", null);
             slot.setCanInspect(true);
@@ -93,6 +94,7 @@
             slot.setSlotType("String");
             slot.setCanEditInspection(false);
         }
+        */
 
         // parent node, subnodes
 
@@ -182,11 +184,11 @@
     }
 
     init () {
-        super.init()
-        this.setDidUpdateNodeNote(this.newNoteNamed("onUpdatedNode"))
-        this.setShouldFocusSubnodeNote(this.newNoteNamed("shouldFocusSubnode"))
-        this.setShouldFocusAndExpandSubnodeNote(this.newNoteNamed("shouldFocusAndExpandSubnode"))
-        this.watchSubnodes()
+        super.init();
+        this.setDidUpdateNodeNote(this.newNoteNamed("onUpdatedNode"));
+        this.setShouldFocusSubnodeNote(this.newNoteNamed("shouldFocusSubnode"));
+        this.setShouldFocusAndExpandSubnodeNote(this.newNoteNamed("shouldFocusAndExpandSubnode"));
+        this.watchSubnodes();
 
         this.setSubnodeClasses(this.thisPrototype().subnodeClasses().shallowCopy());
         return this
@@ -209,20 +211,19 @@
         // maybe register for note with object directly
         
         if (App.hasShared() && App.shared().hasDoneAppInit()) {
-            this.appDidInit() // may be async
+            this.appDidInit(); // may be async
         } else {
-            this.watchOnceForNote("appDidInit")
+            this.watchOnceForNote("appDidInit");
         }
     }
 
     shouldStoreSlotSubnodes () {
         // called by subnodes slot when persisting instance
-        //debugger
-        return this.shouldStoreSubnodes()
+        return this.shouldStoreSubnodes();
     }
 
     nodeType () {
-        return this.type()
+        return this.type();
     }
 
     /*
@@ -235,39 +236,39 @@
     nodeCreate () {
         // we implemnet this on BMNode class and prototype so 
         // it works for both instance and class creator prototypes
-        return this.duplicate()
+        return this.duplicate();
     }
     
     nodeCreateName () {
-        return this.title()
+        return this.title();
     }
 
     duplicate () {
-        const dup = super.duplicate()
+        const dup = super.duplicate();
         if (!this.shouldStore() || this.shouldStoreSubnodes()) {
-            dup.copySubnodes(this.subnodes().map(sn => sn.duplicate()))
+            dup.copySubnodes(this.subnodes().map(sn => sn.duplicate()));
         }
-        return dup
+        return dup;
     }
 
     pid () { // TODO: unify with puuid?
-        return this.puuid()
+        return this.puuid();
     }
 
     // -----------------------
     
     nodeVisibleClassName () {
         if (this._nodeVisibleClassName) {
-            return this._nodeVisibleClassName
+            return this._nodeVisibleClassName;
         }
 		
-        return this.type().sansPrefix("BM")
+        return this.type().sansPrefix("BM");
     }
 
     // --- subnodes ----------------------------------------
     
     setParentNode (aNode) {
-        assert(aNode !== this) // sanity check
+        assert(aNode !== this); // sanity check
 
         if (aNode !== this._parentNode) { 
             if (this._parentNode && aNode) {
@@ -275,11 +276,11 @@
                 console.warn("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             }
             
-            const oldNode = this._parentNode
-            this._parentNode = aNode
-            this.didUpdateSlotParentNode(oldNode, aNode)
+            const oldNode = this._parentNode;
+            this._parentNode = aNode;
+            this.didUpdateSlotParentNode(oldNode, aNode);
         }
-        return this
+        return this;
     }
 
     didUpdateSlotParentNode (oldValue, newValue) {
@@ -287,34 +288,34 @@
     }
 
     rootNode () {
-        const pn = this.parentNode()
+        const pn = this.parentNode();
         if (pn) {
-            return pn.rootNode()
+            return pn.rootNode();
         }
-        return this
+        return this;
     }
 
     // subnodes
 
     subnodeCount () {
-        return this._subnodes.length
+        return this._subnodes.length;
     }
 
     hasSubnodes () {
-        return this.subnodeCount() > 0
+        return this.subnodeCount() > 0;
     }
 
     justAddSubnode (aSubnode) {
-        assert(!this.hasSubnode(aSubnode))
-        return this.justAddSubnodeAt(aSubnode, this.subnodeCount())
+        assert(!this.hasSubnode(aSubnode));
+        return this.justAddSubnodeAt(aSubnode, this.subnodeCount());
     }
 	
     justAddSubnodeAt (aSubnode, anIndex) {
-        assert(aSubnode)
-        assert(!this.hasSubnode(aSubnode))
-        this.subnodes().atInsert(anIndex, aSubnode)
-        aSubnode.setParentNode(this)
-        return aSubnode        
+        assert(aSubnode);
+        assert(!this.hasSubnode(aSubnode));
+        this.subnodes().atInsert(anIndex, aSubnode);
+        aSubnode.setParentNode(this);
+        return aSubnode;
     }
     
     assertValidSubnodeType (aSubnode) {
@@ -325,41 +326,41 @@
         assert(!this.hasSubnode(aSubnode));
         this.assertValidSubnodeType(aSubnode);
 
-        assert(anIndex >= 0)
-        this.justAddSubnodeAt(aSubnode, anIndex)
-        //this.didChangeSubnodeList() // happens automatically from hooked array
-        return aSubnode
+        assert(anIndex >= 0);
+        this.justAddSubnodeAt(aSubnode, anIndex);
+        //this.didChangeSubnodeList(); // happens automatically from hooked array
+        return aSubnode;
     }
 
     subnodeBefore (aSubnode) {
-        const index = this.indexOfSubnode(aSubnode)
-        assert(index !== -1)
+        const index = this.indexOfSubnode(aSubnode);
+        assert(index !== -1);
         if (index > 0) {
-            return this.subnodes().at(index - 1)
+            return this.subnodes().at(index - 1);
         }
-        return null
+        return null;
     }
 
     replaceSubnodeWith (aSubnode, newSubnode) {
-        assert(!this.hasSubnode(newSubnode))
+        assert(!this.hasSubnode(newSubnode));
 
-        const index = this.indexOfSubnode(aSubnode)
-        assert(index !== -1)
-        this.removeSubnode(aSubnode)
-        this.addSubnodeAt(newSubnode, index)
-        return newSubnode
+        const index = this.indexOfSubnode(aSubnode);
+        assert(index !== -1);
+        this.removeSubnode(aSubnode);
+        this.addSubnodeAt(newSubnode, index);
+        return newSubnode;
     }
 
     replaceSubnodeWithSubnodes (aSubnode, newSubnodes) {
-        let index = this.indexOfSubnode(aSubnode)
-        assert(index !== -1)
-        this.removeSubnode(aSubnode)
+        let index = this.indexOfSubnode(aSubnode);
+        assert(index !== -1);
+        this.removeSubnode(aSubnode);
 
         newSubnodes.forEach(sn => {
-            this.addSubnodeAt(sn, index)
-            index ++
+            this.addSubnodeAt(sn, index);
+            index ++;
         })
-        return this
+        return this;
     }
 
     moveSubnodesToIndex (movedSubnodes, anIndex) {
@@ -378,75 +379,75 @@
             console.warn("adding a link subnode to a node with no parent (yet)")
         }
         */
-        const link = BMLinkNode.clone().setLinkedNode(aNode)
-        this.addSubnode(link)
-        return link
+        const link = BMLinkNode.clone().setLinkedNode(aNode);
+        this.addSubnode(link);
+        return link;
     }
 
     addSubnodes (subnodes) {
-        subnodes.forEach(subnode => this.addSubnode(subnode))
-        return this
+        subnodes.forEach(subnode => this.addSubnode(subnode));
+        return this;
     }
 
     addSubnodesIfAbsent (subnodes) {
-        subnodes.forEach(subnode => this.addSubnodeIfAbsent(subnode))
-        return this
+        subnodes.forEach(subnode => this.addSubnodeIfAbsent(subnode));
+        return this;
     }
     
     addSubnodeIfAbsent (aSubnode) {
         if (!this.hasSubnode(aSubnode)) {
-            this.addSubnode(aSubnode)
-            return true
+            this.addSubnode(aSubnode);
+            return true;
         }
-        return false
+        return false;
     }
 
     subnodeProto () {
-        return this.subnodeClasses().first()
+        return this.subnodeClasses().first();
     }
 
     setSubnodeProto (aProto) {
-        this.subnodeClasses().removeAll()
-        this.subnodeClasses().appendIfAbsent(aProto)
-        return this
+        this.subnodeClasses().removeAll();
+        this.subnodeClasses().appendIfAbsent(aProto);
+        return this;
     }
 
     acceptedSubnodeTypes () {
-        const types = []
-        this.subnodeClasses().forEach(c => types.push(c.type()))
-        return types
+        const types = [];
+        this.subnodeClasses().forEach(c => types.push(c.type()));
+        return types;
     }
 
     acceptsAddingSubnode (aSubnode) {
         if (aSubnode === this) {
-            return false
+            return false;
         }
 
         /*
         if (this.hasSubnode(aSubnode)) {
-            return false
+            return false;
         }
         */
-        //const type = aSunode.type()
-        const ancestors = aSubnode.thisClass().ancestorClassesTypesIncludingSelf()
-        return this.acceptedSubnodeTypes().canDetect(type => ancestors.contains(type))
+        //const type = aSunode.type();
+        const ancestors = aSubnode.thisClass().ancestorClassesTypesIncludingSelf();
+        return this.acceptedSubnodeTypes().canDetect(type => ancestors.contains(type));
     }
 
     forEachSubnodeRecursively (fn) {
         this.subnodes().forEach(sn => {
-            fn(sn)
-            sn.forEachSubnodeRecursively(fn)
+            fn(sn);
+            sn.forEachSubnodeRecursively(fn);
         })
     }
 
     selectSubnodesRecursively (fn) {
-        const results = []
+        const results = [];
         this.forEachSubnodeRecursively(subnode => {
             if (fn(subnode)) {
-                results.push(subnode)
+                results.push(subnode);
             }
         })
-        return results
+        return results;
     }
 
     // --------
@@ -468,116 +469,116 @@
     // --------
 	
     isEqual (aNode) {
-	    return this === aNode
+	    return this === aNode;
     }
 
     hash () {
         // don't assume hash() always returns the puuid as
         // subclasses can override to measure equality in their own way
-        return this.puuid()
+        return this.puuid();
     }
 
     createSubnodesIndex () {
-        this.subnodes().setIndexClosure( v => v.hash() )
+        this.subnodes().setIndexClosure( v => v.hash());
         return this
     }
 	
     hasSubnode (aSubnode) {
-        const subnodes = this.subnodes()
+        const subnodes = this.subnodes();
         if (subnodes.length > 100) {
-            this.createSubnodesIndex()
-            return subnodes.indexHasItem(aSubnode) 
+            this.createSubnodesIndex();
+            return subnodes.indexHasItem(aSubnode);
         }
-        //return subnodes.detect(subnode => subnode === aSubnode)
-        return subnodes.detect(subnode => subnode.isEqual(aSubnode))
+        //return subnodes.detect(subnode => subnode === aSubnode);
+        return subnodes.detect(subnode => subnode.isEqual(aSubnode));
     }
     
     justRemoveSubnode (aSubnode) { // private method 
-        this.subnodes().remove(aSubnode)
+        this.subnodes().remove(aSubnode);
         
         if (aSubnode.parentNode() === this) {
-            aSubnode.setParentNode(null)
+            aSubnode.setParentNode(null);
         }
         
-        return aSubnode
+        return aSubnode;
     }
     
     removeSubnode (aSubnode) {
-        this.justRemoveSubnode(aSubnode)
-        //this.didChangeSubnodeList() handled by hooked array
-        return aSubnode
+        this.justRemoveSubnode(aSubnode);
+        //this.didChangeSubnodeList(); // handled by hooked array
+        return aSubnode;
     }
 
     removeSubnodes (subnodeList) {
-        subnodeList.forEach(sn => this.removeSubnode(sn))
-        return this
+        subnodeList.forEach(sn => this.removeSubnode(sn));
+        return this;
     }
     
     removeAllSubnodes () {
 	    if (this.subnodeCount()) {
     		this.subnodes().slice().forEach((subnode) => {
-    			this.justRemoveSubnode(subnode)
+    			this.justRemoveSubnode(subnode);
     		})
     		
             //this.didChangeSubnodeList() handled by hooked array but this could be more efficient
         }
-        return this
+        return this;
     }
 
     didReorderParentSubnodes () {
     }
 
     onDidReorderSubnodes () {
-        this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
+        this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes());
     }
 
     didChangeSubnodeList () {
-        //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)) // TODO: remove after debugging
-        this.scheduleMethod("onDidReorderSubnodes")
-        //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes())
+        //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)); // TODO: remove after debugging
+        this.scheduleMethod("onDidReorderSubnodes");
+        //this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes());
         if (this.hasDoneInit()) {
-            this.didUpdateNode()
+            this.didUpdateNode();
         }
-        return this
+        return this;
     }
 
     copySubnodes (newSubnodes) {
-        this.subnodes().copyFrom(newSubnodes)
-        return this
+        this.subnodes().copyFrom(newSubnodes);
+        return this;
     }
 
     nodeReorderSudnodesTo (newSubnodes) {
-        this.copySubnodes(newSubnodes)
-        return this
+        this.copySubnodes(newSubnodes);
+        return this;
     }
 
     orderFirst () {
-        this.parentNode().orderSubnodeFirst(this)
-        return this
+        this.parentNode().orderSubnodeFirst(this);
+        return this;
     }
 
     orderLast () {
-        this.parentNode().orderSubnodeLast(this)
-        return this  
+        this.parentNode().orderSubnodeLast(this);
+        return this;
     }
 
     orderSubnodeFirst (aSubnode) {
-        assert(aSubnode)
-        assert(this.hasSubnode(aSubnode))
-        const subnodes = this.subnodes().shallowCopy()
-        subnodes.remove(aSubnode)
-        subnodes.atInsert(0, aSubnode)
-        this.nodeReorderSudnodesTo(subnodes)
-        return this
+        assert(aSubnode);
+        assert(this.hasSubnode(aSubnode));
+        const subnodes = this.subnodes().shallowCopy();
+        subnodes.remove(aSubnode);
+        subnodes.atInsert(0, aSubnode);
+        this.nodeReorderSudnodesTo(subnodes);
+        return this;
     }
 
     orderSubnodeLast (aSubnode) {
-        assert(this.hasSubnode(aSubnode))
-        const subnodes = this.subnodes().shallowCopy()
-        subnodes.remove(aSubnode)
-        subnodes.push(aSubnode)
-        this.nodeReorderSudnodesTo(subnodes)
-        return this
+        assert(this.hasSubnode(aSubnode));
+        const subnodes = this.subnodes().shallowCopy();
+        subnodes.remove(aSubnode);
+        subnodes.push(aSubnode);
+        this.nodeReorderSudnodesTo(subnodes);
+        return this;
     }
     
     // --- update / sync system ----------------------------
@@ -650,8 +651,7 @@
 
     /*
     willGetSlotSubnodes () {
-        debugger
-        this.prepareToAccess() // infinite loop?
+        this.prepareToAccess(); // infinite loop?
     }
     */
     

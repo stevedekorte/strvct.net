@@ -150,6 +150,7 @@
   finalInit () {
     super.finalInit();
     this.createIdIfAbsent();
+    //this. (BMTextAreaFieldTile);
   }
 
   createIdIfAbsent () {

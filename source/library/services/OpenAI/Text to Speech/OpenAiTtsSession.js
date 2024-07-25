@@ -10,7 +10,7 @@
 (class OpenAiTtsSession extends BMSummaryNode {
 
   speedOptionsJson () {
-    return [1, 1.25, 1.5, 1.75, 2];
+    return [1, 1.05, 1.10, 1.15, 1.2, 1.25, 1.5, 1.75, 2];
     /*
     return [
       {

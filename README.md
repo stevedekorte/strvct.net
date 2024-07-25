@@ -1,73 +1,150 @@
-# STRVCT
+# Strvct Overview
 
-direct manipulation of structured content
+Applications are typically composed of 3 layers:
 
-##Getting started
+- User interface
+- Model
+- Persistence
 
----
+The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and persistence layers (and the synchronization between all 3 layers) to be handled automatically. This involves choosing uniform but flexible building blocks for each of the layers.
 
-FOR NEW REPOS:
+## Building Blocks
 
-To set up strvct submodule, from within project folder run:
+### Model Layer
 
-    git submodule add https://github.com/stevedekorte/strvct.net.git strvct
+- The model is (basically) composed of `BMNode` (and subclasses) instances.
+- These are the units of persistence, and the UI is largely a mirror of their structure.
+- Strvct nodes have no references to views, but views can have references to nodes.
+- `BMNodes` post notifications of their changes which the other layers can observe.
 
-If you want to deploy your app on Github Pages, you'll need to add a .nojekyll file to your root folder.
+### UI Layer
 
----
+- The UI is (basically) composed of `NodeView` (and subclasses) instances.
+- Each `NodeView` points to a `BMNode` and watches for notifications from it.
+- Multiple `NodeViews` may (and often do) point to the same `BMNode` instance.
+- It's up to the views to sync their state with the node when they see a change from it, and to sync their state to the node when the user interacts with them.
 
-Build system is currently setup for VSCode. To open the project, open this root source folder in VSCode.
+### Persistence Layer
 
-First, you'll need to start the local HTTPS web server by running:
+The app has a `PersistentObjectPool` which automatically:
 
-    	node local-web-server/main.js
+- Monitors model (`BMNode` instance) mutations and stores changes
+- Bundles changes within an event loop into transactions which are stored atomically
+- Handles automatic garbage collection on the stored object graph
 
-in the root source folder. VSCode should have a "launch local HTTPS" run option you can now use to launch the app. It will launch Chrome, and the first time you'll need to select a button to tell it to ignore the lack of a proper SSL setup (as we are using a local server).
+## Uniform UI Structure
 
-To work on debugging or writting code, you'll want to install the following VCCode extensions:
+### StackViews and Tile Views
 
-- ESLint (from Microsoft),
-- JavaScript Debugger nightly (from Microsoft)
-- json (by ZainChen)
+Strvct has a unified UI model based on `StackViews`.
 
-### getting ESLint working
+- A `StackView` contains a `navView` and `otherView` which can be oriented left/right or top/bottom.
+- `navView` typically contains a column (or row, if orientation is horizontal) of Tile views.
+- When the user clicks on a Tile in a `navView`, it typically causes a new stack view to be created and placed inside the `StackView's` `otherView` (and its `navView` to be populated with the subnodes of the node the Tile represented).
 
-You may need to install eslint if you don't already have it.
+### Fields
 
+Fields are a type of node that can sync to a slot value via their `target` and `valueMethod` slots.
+Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
+
+### Node Subnodes
+
+- Every node has a `subnodes` slot which is an array of nodes.
+- Each node has a `parent` slot which points to its parent node.
+- There are two ways subnodes typically get used:
+
+#### Fields
+
+- Stored fields (not a slot value, just free-floating)
+- Unstored fields (set up on init, and have `target` & `valueMethod` to auto-sync with owner slot)
+
+#### Non-Fields
+
+- Stored (not a slot value, just free-floating)
+- Unstored (may be added on init value of slot if `slot.setIsSubnode(true)`)
+
+## Uniform Persistence Structure
+
+- The storage system is a key/value store where the keys are unique object IDs and object records stored as JSON.
+- Object records have a standard way of representing pointers to other objects (via their IDs), and using these, the store can do automatic on-disk garbage collection.
+- Object records are JSON dicts containing a type (a class name) and a payload.
+- On load, the record type is used to find a class reference, and then the class is asked to unserialize itself from the payload.
+- The payload has a format that uses a standard way of referencing pointers to other object records, and during deserialization, the new instance can request the objects for these object IDs.
+
+## Getting Started
+
+### For New Repos:
+
+To set up the STRVCT submodule, run the following command from within your project folder:
+
+```
+git submodule add https://github.com/stevedekorte/strvct.net.git strvct
+```
+
+If you plan to deploy your app on GitHub Pages, add a `.nojekyll` file to your root folder.
+
+### Setup
+
+The build system is currently configured for Visual Studio Code (VSCode). To open the project, open the root source folder in VSCode.
+
+1. Start the local HTTPS web server by running:
+
+   ```
+   node local-web-server/main.js
+   ```
+
+   in the root source folder.
+
+2. Use the "launch local HTTPS" run option in VSCode to launch the app. It will open Chrome, and you'll need to ignore the SSL warning the first time (as we're using a local server).
+
+### Recommended VSCode Extensions
+
+To facilitate debugging and coding, install these VSCode extensions:
+
+- ESLint (from Microsoft)
+- JavaScript Debugger Nightly (from Microsoft)
+- JSON (by ZainChen)
+
+### Setting Up ESLint
+
+If you don't have ESLint installed:
+
+```
 npm init @eslint/config -g
-The above line installs it gloablly. For more info, see: https://eslint.org/docs/latest/user-guide/getting-started
+```
 
-To get Eslint to work with Ecmascript6 (which this project uses), you may need to add a .eslintrc configuration file to your home directory. Here's mine:
+This installs it globally. For more information, visit: https://eslint.org/docs/latest/user-guide/getting-started
 
+To use ESLint with ECMAScript 6 (ES6), add a `.eslintrc` configuration file to your home directory:
+
+```json
 {
-"env": {
-"es6": true
+  "env": {
+    "es6": true
+  }
 }
-}
+```
 
-If this doesn't work, you may need to check your VSCode settings, like verifying this setting:
+If issues persist:
 
-    	eslint.enable: true
+1. Verify this VSCode setting: `eslint.enable: true`
+2. Run: `eslint init`
 
-And you may need to run:
-eslint init
-Sorry I don't have better eslint instructions. I got it working but may have forgotten how.
+## Project Framework Overview
 
-// ----------------------------------
+This project required the development of several custom frameworks:
 
-Some frameworks which had to be written to build this:
-
-- meta object framework (slots)
-- extensive OO extensions to common classes
-- desktop like web OO UI framework
-- architecture and protocol for model-to-view naked object UI, standard field components
-- miller column insired stacking UI framework
-- notifications system
-- auto syncing system/protocol between model and views
-- integrated theming system
-- client side object persistence / object pool framework
-- gesture recognition framework
-- package builder & boot and client side caching system
-- auto resource management, loading, and caching system
-- common protocol for resources such as fonts, sounds, images, icons, json data files
-- transparent mutation observers for common classes
+- Meta object framework (slots)
+- Extensive OO extensions to common classes
+- Desktop-like web OO UI framework
+- Architecture and protocol for model-to-view naked object UI, standard field components
+- Miller column-inspired stacking UI framework
+- Notifications system
+- Auto-syncing system/protocol between model and views
+- Integrated theming system
+- Client-side object persistence / object pool framework
+- Gesture recognition framework
+- Package builder & boot and client-side caching system
+- Auto resource management, loading, and caching system
+- Common protocol for resources (fonts, sounds, images, icons, JSON data files)
+- Transparent mutation observers for common classes
