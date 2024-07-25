@@ -8,29 +8,38 @@ Applications are typically composed of 3 layers:
 
 The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and persistence layers (and the synchronization between all 3 layers) to be handled automatically. This involves choosing uniform but flexible building blocks for each of the layers.
 
+## Terminology
+
+slots: objects that manage instance variables. They hold metadata about the instance variable, such as:
+
+- whether it should be persisted (only supported on BMStorableNode subclasses)
+- whether it should schedule a synchronization (model-to-storage, model-to-view, or view-to-model) when changed
+- what are the valid types (ranges, values) which can be held in the instance variable
+
 ## Building Blocks
 
 ### Model Layer
 
-- The model is (basically) composed of `BMNode` (and subclasses) instances.
+- The model is (basically) composed of a graph of `BMNode` (and subclasses) instances.
 - These are the units of persistence, and the UI is largely a mirror of their structure.
-- Strvct nodes have no references to views, but views can have references to nodes.
+- BMNodes have no references to views, but views can have references to nodes.
 - `BMNodes` post notifications of their changes which the other layers can observe.
+- slots (i.e. ivars) on nodes
 
 ### UI Layer
 
 - The UI is (basically) composed of `NodeView` (and subclasses) instances.
 - Each `NodeView` points to a `BMNode` and watches for notifications from it.
 - Multiple `NodeViews` may (and often do) point to the same `BMNode` instance.
-- It's up to the views to sync their state with the node when they see a change from it, and to sync their state to the node when the user interacts with them.
+- Slots on Views can be marked such that changes to them will schedule the view to sync it's state with the node.
 
 ### Persistence Layer
 
 The app has a `PersistentObjectPool` which automatically:
 
-- Monitors model (`BMNode` instance) mutations and stores changes
-- Bundles changes within an event loop into transactions which are stored atomically
-- Handles automatic garbage collection on the stored object graph
+- Monitors model (`BMNode` instance) mutations and stores changes.
+- Bundles changes within an event loop into transactions which are stored atomically.
+- Handles automatic garbage collection on the stored object graph.
 
 ## Uniform UI Structure
 
@@ -70,6 +79,11 @@ Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
 - Object records are JSON dicts containing a type (a class name) and a payload.
 - On load, the record type is used to find a class reference, and then the class is asked to unserialize itself from the payload.
 - The payload has a format that uses a standard way of referencing pointers to other object records, and during deserialization, the new instance can request the objects for these object IDs.
+
+## Synchronization
+
+BMNotificationCenter
+SyncScheduler
 
 ## Getting Started
 
