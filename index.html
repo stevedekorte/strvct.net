@@ -44,7 +44,7 @@
         async function loadAndRenderMarkdown() {
             try {
                 // Fetch the content of ReadMe.md
-                const response = await fetch('ReadMe.md');
+                const response = await fetch('README.md');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
