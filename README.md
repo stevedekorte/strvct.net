@@ -2,29 +2,28 @@
 
 Applications are typically composed of 3 layers:
 
-- User interface
+- UI
 - Model
-- Persistence
+- Storage
 
-The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and persistence layers (and the synchronization between all 3 layers) to be handled automatically. This involves choosing uniform but flexible building blocks for each of the layers.
+The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and Storage layers (and the synchronization between all 3 layers) to be handled automatically.
+Effectively, you write the model and the rest is handled for you. This involves choosing uniform but flexible building blocks for each of the layers.
 
 ## Terminology
 
-slots: objects that manage instance variables. They hold metadata about the instance variable, such as:
-
-- whether it should be persisted (only supported on BMStorableNode subclasses)
-- whether it should schedule a synchronization (model-to-storage, model-to-view, or view-to-model) when changed
-- what are the valid types (ranges, values) which can be held in the instance variable
+slots: objects which hold metadata about the instance variable related to type, persistance, synchronization.
+nodes:
 
 ## Building Blocks
 
 ### Model Layer
 
-- The model is (basically) composed of a graph of `BMNode` (and subclasses) instances.
-- These are the units of persistence, and the UI is largely a mirror of their structure.
-- BMNodes have no references to views, but views can have references to nodes.
-- `BMNodes` post notifications of their changes which the other layers can observe.
-- slots (i.e. ivars) on nodes
+- The model is composed of a graph of objects which inherit from BMNode (we'll call these "nodes").
+- THe UI is largely a mirror of this grpah structure.
+- The nodes are the unit of storage (one record per node).
+- nodes have no references to views, but views can have references to nodes.
+- nodes post notifications of their changes which the other layers can observe.
+  -- the storage layer automatically observes objects read from storage
 
 ### UI Layer
 

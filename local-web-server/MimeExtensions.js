@@ -381,6 +381,7 @@
 			".mc1": "application/vnd.medcalcdata",
 			".mcd": "application/vnd.mcd",
 			".mcurl": "text/vnd.curl.mcurl",
+			".md": "text/x-markdown",
 			".mdb": "application/x-msaccess",
 			".mdi": "image/vnd.ms-modi",
 			".me": "text/troff",
