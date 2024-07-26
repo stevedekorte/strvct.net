@@ -3,36 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marked with CSS Example - Loading from ReadMe.md</title>
+    <title>Strvct</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Helvetica LT W01 Roman", Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            font-size: 16px;
+            background-color: #191919;
+            color: #aaa;
             max-width: 800px;
-            margin: 0 auto;
+            margin-top: max(3em, 10%);
+            margin-left: max(5em, 10%);
             padding: 20px;
         }
         h1, h2, h3 {
-            color: #2c3e50;
+          color: #f4f4ec;
+        }
+        h1 {
+          font-size: 80px;
+        }
+        h2 {
+          opacity: 0.8;
+          font-size: 40px;
+        }
+        h3 {
+          opacity: 0.7;
+          font-size: 24px;
         }
         code {
-            background-color: #f4f4f4;
             padding: 2px 4px;
             border-radius: 4px;
         }
         pre {
-            background-color: #f4f4f4;
-            padding: 10px;
-            border-radius: 4px;
-            overflow-x: auto;
+          background-color: rgba(255, 255, 255, 0.1);
+          padding: 10px;
+          border-radius: 4px;
+          overflow-x: auto;
         }
         blockquote {
             border-left: 4px solid #ccc;
             padding-left: 20px;
             margin-left: 0;
             font-style: italic;
+        }
+
+
+        /* Custom styles */
+        a:link, a:visited {
+          font-family: "Helvetica LT W01 Roman", sans-serif;
+          color: #999;
+          text-decoration: none;
+          transition: background-color .15s linear, color .15s linear;
+        }
+
+        a:hover {
+          color: #fff;
+          text-shadow: 0px 0px 1px white;
+          transition: .2s text-shadow;
         }
     </style>
 </head>
