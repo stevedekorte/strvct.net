@@ -16,126 +16,126 @@ weight tips from https://www.udacity.com/blog/2021/01/html-css-font-weight.html
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Black.ttf') format('truetype');
+    src: URL('BarlowCondensed Black.ttf') format('truetype');
     font-weight: 900;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-BlackItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed Black Italic.ttf') format('truetype');
     font-weight: 900;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Bold.ttf') format('truetype');
+    src: URL('BarlowCondensed Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-BoldItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed Bold Italic.ttf') format('truetype');
     font-weight: 700;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-ExtraBold.ttf') format('truetype');
+    src: URL('BarlowCondensed ExtraBold.ttf') format('truetype');
     font-weight: 800;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-ExtraBoldItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed ExtraBold Italic.ttf') format('truetype');
     font-weight: 800;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-ExtraLight.ttf') format('truetype');
+    src: URL('BarlowCondensed ExtraLight.ttf') format('truetype');
     font-weight: 200;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-ExtraLightItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed ExtraLight Italic.ttf') format('truetype');
     font-weight: 200;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Italic.ttf') format('truetype');
+    src: URL('BarlowCondensed Italic.ttf') format('truetype');
     font-weight: 400;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Light.ttf') format('truetype');
+    src: URL('BarlowCondensed Light.ttf') format('truetype');
     font-weight: 300;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-LightItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed Light Italic.ttf') format('truetype');
     font-weight: 300;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Medium.ttf') format('truetype');
+    src: URL('BarlowCondensed Medium.ttf') format('truetype');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-MediumItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed Medium Italic.ttf') format('truetype');
     font-weight: 500;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Regular.ttf') format('truetype');
+    src: URL('BarlowCondensed Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-SemiBold.ttf') format('truetype');
+    src: URL('BarlowCondensed SemiBold.ttf') format('truetype');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-SemiBoldItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed SemiBold Italic.ttf') format('truetype');
     font-weight: 600;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-Thin.ttf') format('truetype');
+    src: URL('BarlowCondensed Thin.ttf') format('truetype');
     font-weight: 100;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Barlow Condensed';
-    src: URL('BarlowCondensed-ThinkItalic.ttf') format('truetype');
+    src: URL('BarlowCondensed Thin Italic.ttf') format('truetype');
     font-weight: 100;
     font-style: italic;
 }

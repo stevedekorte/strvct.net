@@ -190,14 +190,14 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     annotations () {
         if (!this._annotations) {
-            this._annotations = new Map()
+            this._annotations = new Map();
         }
-        return this._annotations
+        return this._annotations;
     }
 
     setAnnotation (key, value) {
         this.annotations().set(key, value);
-        return this
+        return this;
     }
 
     hasAnnotation (key) {
@@ -466,13 +466,13 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     validDuplicateOps () {
-        return new Set(["nop", "copyValue", "duplicate"])
+        return new Set(["nop", "copyValue", "duplicate"]);
     }
     
     setDuplicateOp (aString) {
-        assert(this.validDuplicateOps().has(aString))
-        this._duplicateOp = aString
-        return this
+        assert(this.validDuplicateOps().has(aString));
+        this._duplicateOp = aString;
+        return this;
     }
 
     /*
@@ -495,48 +495,48 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     */
 
     setName (aName) {
-        assert(Type.isString(aName) && aName.trim().length > 0)
-        this._name = aName
-        const n = this.name().capitalized()
-        this.setPrivateName("_" + aName)
-        this.setSetterName("set" + n)
+        assert(Type.isString(aName) && aName.trim().length > 0);
+        this._name = aName;
+        const n = this.name().capitalized();
+        this.setPrivateName("_" + aName);
+        this.setSetterName("set" + n);
 
-        //this.updateCachedMethodNames()
+        //this.updateCachedMethodNames();
 
-        this.setDirectSetterName("directSet" + n) // -> getCachedMethodNameFor("directSet")
-        this.setMethodForWillGet("willGetSlot" + n)
-        this.setMethodForDidUpdate("didUpdateSlot" + n)
-        this.setMethodForWillUpdate("willUpdateSlot" + n)
-        this.setMethodForUndefinedGet("onUndefinedGet" + n) // for lazy slots
-        this.setMethodForOnFinalized("onFinalizedSlot" + n) // for weak slots
-        this.setMethodForShouldStoreSlot("shouldStoreSlot" + n) // for weak slots
-        return this 
+        this.setDirectSetterName("directSet" + n); // -> getCachedMethodNameFor("directSet")
+        this.setMethodForWillGet("willGetSlot" + n);
+        this.setMethodForDidUpdate("didUpdateSlot" + n);
+        this.setMethodForWillUpdate("willUpdateSlot" + n);
+        this.setMethodForUndefinedGet("onUndefinedGet" + n); // for lazy slots
+        this.setMethodForOnFinalized("onFinalizedSlot" + n); // for weak slots
+        this.setMethodForShouldStoreSlot("shouldStoreSlot" + n); // for weak slots
+        return this;
     }
 
     // --- method name cache ---
 
     /*
     addCachedMethodName (k) {
-        this.methodNameCache().set(k, k + this.name().capitalized())
+        this.methodNameCache().set(k, k + this.name().capitalized());
         return this
     }
 
     updateCachedMethodNames () {
-        this.addCachedMethodName("directSet" )
-        this.addCachedMethodName("willGetSlot")
-        this.addCachedMethodName("didUpdateSlot")
-        this.addCachedMethodName("willUpdateSlot")
-        this.addCachedMethodName("onUndefinedGet") // for lazy slots
-        this.addCachedMethodName("onFinalizedSlot") // for weak slots
-        this.addCachedMethodName("shouldStoreSlot") // for weak slots
+        this.addCachedMethodName("directSet" );
+        this.addCachedMethodName("willGetSlot");
+        this.addCachedMethodName("didUpdateSlot");
+        this.addCachedMethodName("willUpdateSlot");
+        this.addCachedMethodName("onUndefinedGet") ;// for lazy slots
+        this.addCachedMethodName("onFinalizedSlot"); // for weak slots
+        this.addCachedMethodName("shouldStoreSlot") ;// for weak slots
     }
 
     getCachedMethodNameFor (k) {
-        const result = this.methodNameCache().set(k, v)
+        const result = this.methodNameCache().set(k, v);
         if(typeof(result) === "string") {
-            throw new Error("missing method name cache for '" + k + "'")
+            throw new Error("missing method name cache for '" + k + "'");
         }
-        return result
+        return result;
     }
     */
 
@@ -556,7 +556,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
             } else if (slotName === "initProto") {
                 // ok to copy this
-            //} else if (!Type.isJsonType(value)) {
+            //} else if (!Type.isDeepJsonType(value)) {
             } else {
                 value = Type.deepCopyForValue(value);
             }
@@ -567,20 +567,20 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             const v = aSlot[slotName].apply(aSlot)
             this[setterName].call(this, v)
             */
-        })
-        return this
+        });
+        return this;
     }
 
     autoSetGetterSetterOwnership () {
-        this.setOwnsGetter(!this.alreadyHasGetter())
-        this.setOwnsSetter(!this.alreadyHasSetter())
-        return this
+        this.setOwnsGetter(!this.alreadyHasGetter());
+        this.setOwnsSetter(!this.alreadyHasSetter());
+        return this;
     }
 
     hookNames () {
-        const hookMethodNames = this._slotNames.filter(n => n.beginsWith("methodFor"))
-        const hookNames = hookMethodNames.map(n => this[n].apply(this))
-        return hookNames
+        const hookMethodNames = this._slotNames.filter(n => n.beginsWith("methodFor"));
+        const hookNames = hookMethodNames.map(n => this[n].apply(this));
+        return hookNames;
     }
 
     ownerImplemnentsdHooks () {
@@ -593,28 +593,28 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     setDoesHookSetter (aBool) {
         if (this._doesHookSetter !== aBool) {
-            this._doesHookSetter = aBool
+            this._doesHookSetter = aBool;
             if (aBool) {
                 if (this.alreadyHasSetter() && !this.ownsSetter()) {
-                    const msg = this.owner().type() + "." + this.setterName() + "() exists, so we can't hook it - fix by calling slot.setOwnsSetter(true)"
-                    console.log(msg)
-                    throw new Error(msg)
+                    const msg = this.owner().type() + "." + this.setterName() + "() exists, so we can't hook it - fix by calling slot.setOwnsSetter(true)";
+                    console.log(msg);
+                    throw new Error(msg);
                 } 
-                // this.setOwnsSetter(true)
+                // this.setOwnsSetter(true);
             }
-            //this.setupSetter()
+            //this.setupSetter();
         }
-        return this 
+        return this;
     }
 
     // setup
 
     setupInOwner () {
-        this.autoSetGetterSetterOwnership()
-        this.setupValue()
-        this.setupGetter()
-        this.setupSetter()
-        return this
+        this.autoSetGetterSetterOwnership();
+        this.setupValue();
+        this.setupGetter();
+        this.setupSetter();
+        return this;
     }
 
     setupValue () {
@@ -631,40 +631,40 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     setupGetter () {
         if (this.ownsGetter()) {
             if (this.ownerImplemnentsdHooks()) {
-                Object.defineSlot(this.owner(), this.getterName(), this.autoGetter())
+                Object.defineSlot(this.owner(), this.getterName(), this.autoGetter());
             } else {
-                this.makeDirectGetter()
+                this.makeDirectGetter();
             }
         }
-        return this
+        return this;
     }
 
     alreadyHasSetter () {
-        return this.owner().hasOwnProperty(this.setterName())  // TODO: hasOwnProperty? 
+        return this.owner().hasOwnProperty(this.setterName());  // TODO: hasOwnProperty? 
     }
 
     setupSetter () {
         if (this.ownsSetter()) {
             if (this.ownerImplemnentsdHooks()) {
-                Object.defineSlot(this.owner(), this.setterName(), this.autoSetter())
+                Object.defineSlot(this.owner(), this.setterName(), this.autoSetter());
             } else {
-                this.makeDirectSetter()
+                this.makeDirectSetter();
             }
-            //Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter())
+            //Object.defineSlot(this.owner(), this.directSetterName(), this.directSetter());
         }
     }
 
     // --- getter ---
 
     getterName () {
-        return this.name()
+        return this.name();
     }
 
     // direct getter
 
     makeDirectGetter () {
-        Object.defineSlot(this.owner(), this.getterName(), this.directGetter())
-        return this
+        Object.defineSlot(this.owner(), this.getterName(), this.directGetter());
+        return this;
     }
 
     directGetter () {
@@ -760,62 +760,62 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     directSetter () {
-        const privateName = this.privateName()
+        const privateName = this.privateName();
         const func = function (newValue) {
-            this[privateName] = newValue
-            return this
+            this[privateName] = newValue;
+            return this;
         }
-        return func
+        return func;
     }
 
     // call helpers
 
     onInstanceRawGetValue (anInstance) {
-        return anInstance[this.privateName()]
+        return anInstance[this.privateName()];
     }
 
     onInstanceGetValue (anInstance) {
-        return anInstance[this.getterName()].apply(anInstance)
+        return anInstance[this.getterName()].apply(anInstance);
     }
 
     onInstanceSetValue (anInstance, aValue) {
         const m = anInstance[this._setterName];
         if (Type.isUndefined(m)) {
-            throw new Error(anInstance.type() + " is missing setter '" + this._setterName + "'")
+            throw new Error(anInstance.type() + " is missing setter '" + this._setterName + "'");
         }
-        return m.call(anInstance, aValue) // not consistent with rawset to return this...
+        return m.call(anInstance, aValue); // not consistent with rawset to return this...
     }
 
     onInstanceRawSetValue (anInstance, aValue) {
         anInstance[this._privateName] = aValue;
-        return this
+        return this;
     }
 
     // --- StoreRefs for lazy slots ---
 
     onInstanceSetValueRef (anInstance, aRef) {
-        anInstance.lazyRefsMap().set(this.name(), aRef) 
-        return this
+        anInstance.lazyRefsMap().set(this.name(), aRef);
+        return this;
     }
 
     onInstanceGetValueRef (anInstance, aRef) {
-        return anInstance.lazyRefsMap().get(this.name()) 
+        return anInstance.lazyRefsMap().get(this.name());
     }
 
     copyValueFromInstanceTo (anInstance, otherInstance) {
         /*
         if (this.isLazy()) {
-            const valueRef = this.onInstanceGetValueRef(anInstance)
+            const valueRef = this.onInstanceGetValueRef(anInstance);
             if (valueRef) {
-                this.onInstanceSetValueRef(otherInstance, valueRef)
-                return this
+                this.onInstanceSetValueRef(otherInstance, valueRef);
+                return this;
             }
         }
         */
 
-        const v = this.onInstanceGetValue(anInstance)
-        this.onInstanceSetValue(otherInstance, v)
-        return this
+        const v = this.onInstanceGetValue(anInstance);
+        this.onInstanceSetValue(otherInstance, v);
+        return this;
     }
 
     // -----------------------------------------------------
@@ -839,9 +839,9 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
             if (oldValue && oldValue.type() !== finalInitProto.type()) {
                 const warning = "slot '" + this.name() + "' finalInitProto type (" + finalInitProto.type() + ") does not match existing value (" + oldValue.type() + ") from Store";
-                console.warn(warning)
+                console.warn(warning);
                 debugger;
-                //throw new Error(warning)
+                //throw new Error(warning);
                 oldValue = null; // let the code below override it
             }
 
@@ -851,16 +851,16 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 /*
                 let newValue;
                 if (this.isSubnode()) { // see if it's already a subnode
-                    const oldSubnode = anInstance.firstSubnodeOfType(finalInitProto)
+                    const oldSubnode = anInstance.firstSubnodeOfType(finalInitProto);
                     if (oldSubnode) {
-                        newValue = oldSubnode
+                        newValue = oldSubnode;
                     } else {
                         const newSubnode = finalInitProto.clone();
                         this.addSubnode(newSubnode);
-                        newValue = newSubnode
+                        newValue = newSubnode;
                     }
                 } else {
-                    newValue = finalInitProto.clone()
+                    newValue = finalInitProto.clone();
                 }
                 */
 
@@ -872,19 +872,19 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
                 }
                     */
 
-                const newValue = finalInitProto.clone()
-                this.onInstanceSetValue(anInstance, newValue)
+                const newValue = finalInitProto.clone();
+                this.onInstanceSetValue(anInstance, newValue);
 
                 /*
                 if (this.shouldFinalInitAsSubnode()) {
-                    anInstance.addSubnode(newValue)
+                    anInstance.addSubnode(newValue);
                     
-                    const title = this.finalInitTitle()
+                    const title = this.finalInitTitle();
                     if (title) {
-                        newValue.setTitle(title)
-                        anInstance.subnodeWithTitleIfAbsentInsertProto(title, finalInitProto)
+                        newValue.setTitle(title);
+                        anInstance.subnodeWithTitleIfAbsentInsertProto(title, finalInitProto);
                     } else {
-                        anInstance.addSubnode(newValue)
+                        anInstance.addSubnode(newValue);
                     }
                 }
                 */
@@ -908,57 +908,57 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
 
     onInstanceInitSlot (anInstance) {
         //assert(Reflect.has(anInstance, this.privateName())) // make sure slot is defined - this is true even if it's value is undefined
-        let defaultValue = anInstance[this._privateName]
+        let defaultValue = anInstance[this._privateName];
 
         /*
-        const op = this.initOp()
-        assert(this.validInitOps().contains(op)) // TODO: put on setter instead
+        const op = this.initOp();
+        assert(this.validInitOps().contains(op)); // TODO: put on setter instead
 
         const opMethods = {
             "null" : () => { 
-                this.onInstanceSetValue(anInstance, null)
+                this.onInstanceSetValue(anInstance, null);
             },
 
             "lazy" : () => { 
-                const obj = this.initProto().clone()
-                anInstance[this.privateName()] = obj
+                const obj = this.initProto().clone();
+                anInstance[this.privateName()] = obj;
             },
 
             "proto" : () => { 
-                const obj = this.initProto().clone()
-                this.onInstanceSetValue(anInstance, obj)
+                const obj = this.initProto().clone();
+                this.onInstanceSetValue(anInstance, obj);
             },
 
             "nop" : () => { 
             },
 
             "copyValue" : () => { 
-                this.onInstanceSetValue(anInstance, defaultValue)
+                this.onInstanceSetValue(anInstance, defaultValue);
             },
     
             "duplicate" : () => { 
                 if (defaultValue) {
-                    const obj = defaultValue.duplicate()
-                    this.onInstanceSetValue(anInstance, obj)
+                    const obj = defaultValue.duplicate();
+                    this.onInstanceSetValue(anInstance, obj);
                 }
             },
         }
 
-        opMethods[op].apply(this)
+        opMethods[op].apply(this);
         */
 
-        const initProto = this._initProto
+        const initProto = this._initProto;
         /*
         if (this.isLazy()) {
-            const obj = initProto.clone()
-            anInstance[this._privateName] = obj
+            const obj = initProto.clone();
+            anInstance[this._privateName] = obj;
         } else */ 
         if (initProto) {
-            const obj = initProto.clone()
-            this.onInstanceSetValue(anInstance, obj)
+            const obj = initProto.clone();
+            this.onInstanceSetValue(anInstance, obj);
         } /*
         else if (this._initValue) {
-            this.onInstanceSetValue(anInstance, this._initValue)
+            this.onInstanceSetValue(anInstance, this._initValue);
         }
         */
 
@@ -967,60 +967,60 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
             // duplicate the field instance owned by the slot,
             // add it as a subnode to the instance,
             // and sync it to the instance's slot value
-            const newField = this.field().duplicate()
-            anInstance.addSubnode(newField)
-            newField.getValueFromTarget()
+            const newField = this.field().duplicate();
+            anInstance.addSubnode(newField);
+            newField.getValueFromTarget();
         }
         */
     }
 
     onInstanceLoadRef (anInstance) {
-        const storeRef = this.onInstanceGetValueRef(anInstance)
+        const storeRef = this.onInstanceGetValueRef(anInstance);
         if (storeRef) {
             
-            //console.warn(anInstance.typeId() + "." + this.name() + " [" + anInstance.title() + "] - loading storeRef")
-            //console.warn(anInstance.title() + " loading storeRef for " + this.name())
-            const obj = storeRef.unref()
+            //console.warn(anInstance.typeId() + "." + this.name() + " [" + anInstance.title() + "] - loading storeRef");
+            //console.warn(anInstance.title() + " loading storeRef for " + this.name());
+            const obj = storeRef.unref();
             /*
-            //console.warn("   loaded: " + obj.type())
-            anInstance[this.privateName()] = obj // is this safe? what about initialization?
-            //this.onInstanceSetValue(anInstance, obj)
-            this.onInstanceSetValueRef(anInstance, null)
+            //console.warn("   loaded: " + obj.type());
+            anInstance[this.privateName()] = obj; // is this safe? what about initialization?
+            //this.onInstanceSetValue(anInstance, obj);
+            this.onInstanceSetValueRef(anInstance, null);
             */
 
-            const setter = anInstance[this.setterName()]
-            setter.apply(anInstance, [obj]) // WARNING: this may mark objects as dirty
+            const setter = anInstance[this.setterName()];
+            setter.apply(anInstance, [obj]); // WARNING: this may mark objects as dirty
 
         } else {
-            //console.warn(anInstance.typeId() + " unable to load storeRef - not found")
-            //console.warn(anInstance.typeId() + ".shouldStoreSubnodes() = " + anInstance.shouldStoreSubnodes())
-            //throw new Error("")
+            //console.warn(anInstance.typeId() + " unable to load storeRef - not found");
+            //console.warn(anInstance.typeId() + ".shouldStoreSubnodes() = " + anInstance.shouldStoreSubnodes());
+            //throw new Error("");
         }
     }
 
     hasSetterOnInstance (anInstance) {
-        return Type.isFunction(anInstance[this.setterName()])
+        return Type.isFunction(anInstance[this.setterName()]);
     }
 
     // --- should store on instance ---
 
     shouldStoreSlotOnInstance (anInstance) {
-        const methodName = this.methodForShouldStoreSlot()
-        const method = anInstance[methodName]
+        const methodName = this.methodForShouldStoreSlot();
+        const method = anInstance[methodName];
         if (method) {
-            const v = method.apply(anInstance)
+            const v = method.apply(anInstance);
             if (Type.isBoolean(v)) { // allows instance to result null to use slot's own value
-                return v
+                return v;
             }
         }
-        return this.shouldStoreSlot()
+        return this.shouldStoreSlot();
     }
 
     /*
     setShouldStoreSlotOnInstance (anInstance, aBool) {
-        const k = this.shouldStoreSlotOnInstancePrivateName()
-        Object.defineSlot(anInstance, k, aBool)
-        return aBool
+        const k = this.shouldStoreSlotOnInstancePrivateName();
+        Object.defineSlot(anInstance, k, aBool);
+        return aBool;
     }
     */
 
@@ -1057,7 +1057,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         "maxItems",
         "uniqueItems",
         "multipleOf"
-    ]
+    ];
     */
 
     jsonSchemaType () {
@@ -1093,7 +1093,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
     }
 
     jsonSchemeAddRanges (schema) {
-        const a = this.jsonSchemaEnum()
+        const a = this.jsonSchemaEnum();
         if (a) {
             const enumArray = a.shallowCopy();
 
@@ -1127,7 +1127,7 @@ getGlobalThis().ideal.Slot = (class Slot extends Object {
         const validValues = this.computedValidValues();
         if (validValues) {
             validValues.forEach(v => {
-                assert(Type.isJsonType(v));
+                assert(Type.isDeepJsonType(v));
                 if (!Type.isNull(v) && v.label) {
                     enumArray.push(v.label);
                 } else {

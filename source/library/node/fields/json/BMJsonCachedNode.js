@@ -123,37 +123,39 @@
     }
 
     applyJsonPatches (jsonPatches) {
-        assert(Type.isJsonType(jsonPatches));
-
-        let json = this.asJson();
-        assert(Type.isJsonType(json));
-        json = json.deepCopy();
+        assert(Type.isDeepJsonType(jsonPatches));
+        const oldJson = this.asJson().deepCopy();
 
         // if root node is replaced, json needs to update
-        const results = JsonPatch.applyPatchWithAutoCreation(json, jsonPatches); // GPT sometimes forgets to define paths, so we do this to help it
+        const results = JsonPatch.applyPatchWithAutoCreation(oldJson, jsonPatches); // GPT sometimes forgets to define paths, so we do this to help it
         assert(results.newDocument, "Character.applyJsonPatches() results.newDocument missing");
-        json = results.newDocument;
-        assert(!json.newDocument, "Character.applyJsonPatches() json.newDocument should not have newDocument");
+        
+        const newJson = results.newDocument;
+        assert(Type.isUndefined(newJson.newDocument), "Character.applyJsonPatches() json.newDocument should not have newDocument");
 
         if (jsonPatches.length === 0) {
             console.log("no patches to apply");
             debugger;
             return this;
         }
-        // verify patch paths exist
+
+        /*
+        // verify patch add paths exist
         jsonPatches.forEach(patch => {
             const path = patch.path;
-            if (!this.jsonHasPath(json, path)) {
-            const errorMessage = this.type() + " applyJsonPatches( ) missing patched path: " + path;
-            console.warn(errorMessage);
+            if (patch.op === "add" && !this.jsonHasPath(newJson, path)) {
+                const errorMessage = this.type() + " applyJsonPatches( ) missing patched path: " + path;
+                console.warn(errorMessage);
 
-            // let's try it again so we can step through with the debugger
-            //debugger
-            JsonPatch.applyPatchWithAutoCreation(json, [patch]);
+                // let's try it again so we can step through with the debugger
+                //debugger
+                JsonPatch.applyPatchWithAutoCreation(newJson, [patch]);
             }
         });
+        */
 
-        const newJsonString = JSON.stableStringify(json);
+        /*
+        const newJsonString = JSON.stableStringify(newJson);
         const oldJsonString = JSON.stableStringify(this.asJson());
         if (newJsonString === oldJsonString) {
             console.log("Character.applyJsonPatches() json applied correctly");
@@ -163,10 +165,11 @@
             const delta = jsondiffpatch.diff(json, this.asJson());
             console.log("ERROR: asJson doesn't match json! Here's the delta: ", delta);
         }
+        */
         // apply new json
-        this.setJson(json);
-        assert (JSON.stableStringify(json) === JSON.stableStringify(this.asJson()), "Character.applyJsonPatches() json did not apply correctly");
-        this.setLastJson(json);
+        this.setJson(newJson);
+        assert(JSON.stableStringify(newJson) === JSON.stableStringify(this.asJson()), "Character.applyJsonPatches() setJson() did not apply correctly");
+        this.setLastJson(newJson);
         return this;
     }
 
@@ -178,10 +181,10 @@
             const prop = properties[i];
 
             if (currentObj.hasOwnProperty(prop)) {
-            currentObj = currentObj[prop];
+                currentObj = currentObj[prop];
             } else {
-            //debugger;
-            return false;
+                //debugger;
+                return false;
             }
         }
 

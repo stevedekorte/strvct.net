@@ -322,7 +322,7 @@ var objOps = {
         return { newDocument: document };
     },
     test: function (obj, key, document) {
-        return { newDocument: document, test: _areEquals(obj[key], this.value) };
+        return { newDocument: document, test: _areEquals( this.valueobj[key],) };
     },
     _get: function (obj, key, document) {
         this.value = obj[key];
@@ -513,6 +513,8 @@ function applyOperation(document, operation, validateOperation, mutateDocument, 
                 if (t >= len) {
                     var returnValue = objOps[operation.op].call(operation, obj, key, document); // Apply patch
                     if (returnValue.test === false) {
+                        debugger;
+                        objOps[operation.op].call(operation, obj, key, document);
                         throw new exports.JsonPatchError("Test operation failed", 'TEST_OPERATION_FAILED', index, operation, document);
                     }
                     return returnValue;

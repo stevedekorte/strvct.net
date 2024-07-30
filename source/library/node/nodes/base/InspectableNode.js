@@ -46,21 +46,22 @@
     }
 
     setupInspectorFromSlots () {
-        const slotsMap = this.thisPrototype().allSlotsMap()
-        const slotNames = slotsMap.keysArray()
+        const slotsMap = this.thisPrototype().allSlotsMap();
+        const slotNames = slotsMap.keysArray();
         
-        this.nodeInspector().setTitle(this.title() + " inspector")
+        this.nodeInspector().setTitle(this.title() + " inspector");
+
         {
             // move "type" slot to first item
-            const s = "nodeType"
-            if (slotNames.indexOf(s !== -1)) {
-                slotNames.remove(s)
-                slotNames.unshift(s)
+            const s = "nodeType";
+            if (slotNames.includes(s)) {
+                slotNames.remove(s);
+                slotNames.unshift(s);
             }
         }
         
         slotNames.forEachV(slotName => {
-            const slot = slotsMap.at(slotName);
+            const slot = slotsMap.get(slotName);
             if (slot.canInspect()) {
                 const field = slot.newInspectorField();
                 let pathNodes = null;
