@@ -10,15 +10,17 @@
     <link href="resources/fonts/BarlowCondensed/font.css" rel="stylesheet" type="text/css">
     <style>
         body {
-            font-family: "Helvetica LT W01 Roman", Helvetica, Arial, sans-serif;
+            font-family: "Helvetica", Helvetica, Arial, sans-serif;
+            font-weight: 300;
             line-height: 1.6;
             font-size: 16px;
             background-color: #191919;
             color: #aaa;
             max-width: 800px;
             margin-top: max(3em, 10%);
-            margin-left: max(5em, 10%);
-            padding: 20px;
+            margin-left: max(1em, 10%);
+            margin-right: max(1em, 10%);
+            padding: 0;
         }
 
         h1, h2, h3 {
@@ -27,21 +29,25 @@
 
         h1 {
           font-size: 3em;
+          font-family: "Blender Pro", "Helvetica", sans-serif;
+          text-transform: uppercase;
         }
 
         h2 {
           opacity: 0.8;
           font-size: 1.5em;
+          font-weight: 300;
         }
 
-        h3 {
+        h3, h4 {
           opacity: 0.8;
           font-size: 1em;
+          font-weight: 300;
         }
 
         code {
             border-radius: 4px;
-            font-family: "Barlow Condensed", "Blender Pro", "Courier New", Courier, monospace;
+            font-family: "Blender Pro", monospace;
             font-size: 1.1em;
             opacity: 0.8;
         }
@@ -51,6 +57,7 @@
           padding: 10px;
           border-radius: 4px;
           overflow-x: auto;
+          white-space: pre-wrap;
         }
 
         blockquote {
@@ -63,7 +70,7 @@
 
         /* Custom styles */
         a:link, a:visited {
-          font-family: "Helvetica LT W01 Roman", sans-serif;
+          font-family: "Helvetica", sans-serif;
           color: #999;
           text-decoration: none;
           transition: background-color .15s linear, color .15s linear;

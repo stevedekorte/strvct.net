@@ -238,6 +238,16 @@ String.prototype._setterCacheMap = new Map();
         return count
     }
 
+    characters () {
+        // return as an array of single character strings
+        return Array.from(this);
+    }
+
+    characterCodes () {
+        // return as an array of character code numbers
+        return Array.from(this, char => char.charCodeAt(0));
+    }
+
     forEachCharacter (fn) {
         for (let i = 0; i < this.length; i++) {
             const c = this.charAt(i)

@@ -42,25 +42,25 @@
     
     setNode (aNode) {
         if (this._node !== aNode) {
-            this.stopWatchingNode()
-            this._node = aNode
-            this.startWatchingNode()
+            this.stopWatchingNode();
+            this._node = aNode;
+            this.startWatchingNode();
 
-            this.updateElementIdLabel()
-            this.didChangeNode()
+            this.updateElementIdLabel();
+            this.didChangeNode();
         }
 		
-        return this
+        return this;
     }
 
     themeClassName () {
         if (this.node()) {
-            const name = this.node().themeClassName()
+            const name = this.node().themeClassName();
             if (name) {
-                return name
+                return name;
             }
         }
-        return super.themeClassName()
+        return super.themeClassName();
     }
 
     updateElementIdLabel () {
@@ -78,134 +78,139 @@
  
     startWatchingNode () {
         if (this.node()) {
-            //console.log("startWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
-            this.nodeObservation().setSender(this.node()).startWatching()
-            //this.node().onStartObserving()
+            /*
+            if (this.node().type() === "HwLocations") {
+                console.log(this.typeId() + " startWatchingNode " + this.node().typeId());
+                //console.log(this.typeId() + " startWatchingNode " + this.node().typeId() + " observation count = " + BMNotificationCenter.shared().observations().length);
+            }
+            */
+            this.nodeObservation().setSender(this.node()).startWatching();
+            //this.node().onStartObserving();
         }
-        return this
+        return this;
     }
        
     stopWatchingNode () {
         if (this.node()) {
-            //console.log("stopWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length)
-            this.nodeObservation().stopWatching()
-            //this.nodeObservation().setSender(null)
-            //this.node().onStopObserving()
+            //console.log("stopWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length);
+            this.nodeObservation().stopWatching();
+            //this.nodeObservation().setSender(null);
+            //this.node().onStopObserving();
         }
         return this
     }
     
     willRemove () {
-        super.willRemove()
-        this.stopWatchingNode()
-        return this
+        super.willRemove();
+        this.stopWatchingNode();
+        return this;
     }
     
     subviewProto () {
         debugger;
         //console.log("looking for subviewProto")
         if (this.node()) {
-            const vc = this.node().nodeTileClass()
+            const vc = this.node().nodeTileClass();
             if (vc) { 
-                return vc
+                return vc;
             }
         }
-        return super.subviewProto()
+        return super.subviewProto();
     }
 
     // --- syncing ---
 
     subviewForNode (aNode) {
-        assert(this._subnodeToSubview)
-        return this._subnodeToSubview[aNode]
+        assert(this._subnodeToSubview);
+        return this._subnodeToSubview[aNode];
     }
 
     updateSubnodeToSubviewMap () {
         // TODO: make this more efficient with add/remove hooks
-        const dict = {}
+        const dict = {};
         this.subviews().forEach(sv => {
             if (sv.node) { 
-                dict.atSlotPut(sv.node(), sv) 
+                dict.atSlotPut(sv.node(), sv);
             } 
         })
-        this._subnodeToSubview = dict
-        return this
+        this._subnodeToSubview = dict;
+        return this;
     }
 
     subviewProtoForSubnode (aSubnode) {
-        let proto = this.overrideSubviewProto()
+        let proto = this.overrideSubviewProto();
 		
         if (!proto) {
-		    proto = aSubnode.nodeViewClass()
+		    proto = aSubnode.nodeViewClass();
         }
 
         if (!proto) {
-            proto = this.defaultSubviewProto()
+            proto = this.defaultSubviewProto();
         }
 				
-        return proto      
+        return proto;
     }
 
     newSubviewForSubnode (aSubnode) {
         if (!aSubnode) {
-            throw new Error("null aSubnode")
+            throw new Error("null aSubnode");
         }
 
         //console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
-        const proto = this.subviewProtoForSubnode(aSubnode) // this is fast
+        const proto = this.subviewProtoForSubnode(aSubnode); // this is fast
 
         if (!proto) {
             debugger;
             //aSubnode.nodeViewClass() // used to step into to debug
-            throw new Error("no subviewProto for subnode " + aSubnode.typeId())
+            throw new Error("no subviewProto for subnode " + aSubnode.typeId());
         }
 
-        const instance = proto.clone()
+        const instance = proto.clone();
 
-        instance.setNode(aSubnode) // this is fast
-        return instance
+        instance.setNode(aSubnode); // this is fast
+        return instance;
     }
 
     updateSubviews () {
         // for subclasses to override
-        return this
+        return this;
     }
 
     flattenedSubnodes (depth) {
         if (Type.isUndefined(depth)) {
-            depth = 0
+            depth = 0;
         }
-        const subnodes = this.node().subnodes()
-        const flattened = []
+        const subnodes = this.node().subnodes();
+        const flattened = [];
         subnodes.forEach(subnode => {
-            flattened.push(subnode)
+            flattened.push(subnode);
             if (depth > 0) {
-                subnode.subnodes().forEach(sub => flattened.push(sub))
+                subnode.subnodes().forEach(sub => flattened.push(sub));
             }
         })
 
-        return flattened
+        return flattened;
     }
     
     visibleSubnodes () {
         const node = this.node();
-        return node.subnodes()
+        return node.subnodes();
     }
 
     syncCssFromNode () {
-        const node = this.node()
+        const node = this.node();
 
         if (node && node.cssVariableDict) {
-            const dict = node.cssVariableDict()
+            const dict = node.cssVariableDict();
             if (dict) {
-                this.applyCssVariableDict(dict)
+                this.applyCssVariableDict(dict);
             }
         }
-        return this
+        return this;
     }
 
     applyCssVariableDict (dict) {
-        const el = this.element()
+        const el = this.element();
         Object.keys(dict).forEach(k => {
             const v = dict[k];
             //el.style.setProperty('--example-variable', v);
@@ -229,21 +234,23 @@
         //this.setIsDisplayHidden(!node.isVisible())
         this.syncCssFromNode();
 
-        //console.log("> " + this.debugTypeId() + " syncFromNode")
+        //console.log("> " + this.debugTypeId() + " syncFromNode");
         
-        node.prepareToSyncToView()
-        this.updateSubnodeToSubviewMap() // not ideal - move this to update on subview add/remove
+        node.prepareToSyncToView();
+        this.updateSubnodeToSubviewMap(); // not ideal - move this to update on subview add/remove
        
-        const newSubviews = []
+        const newSubviews = [];
         
         // only replace subviews if sync requires it,
         // and reuse subviews for subnodes which are still present 
 
-        assert(!this.visibleSubnodes().hasDuplicates())
+        if(this.visibleSubnodes().hasDuplicates()) {
+            throw new Error("visibleSubnodes has duplicates");
+        }
         
         //debugger;
 
-        this.visibleSubnodes().forEach((subnode) => {
+        this.visibleSubnodes().forEach(subnode => {
             let subview = undefined;
 
             subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
@@ -270,21 +277,21 @@
             }
             */
 
-        })
+        });
 
         /*
         if (!node.isVisible()) {
             debugger;
         }
 
-        this.setIsDisplayHidden(!node.isVisible())
+        this.setIsDisplayHidden(!node.isVisible());
         */
 
         /*
         const oldSubviews = this.subviews().shallowCopy()
         const removedSubviews = newSubviews.difference(oldSubviews)
         removedSubviews.forEach(sv => {
-            sv.prepareToRetire()
+            sv.prepareToRetire();
         })
         */
 
@@ -292,23 +299,23 @@
         
         if (!newSubviews.isEqual(this.subviews())) {
             subnodesDidChange = true
-            //this.removeAllSubviews() 
-            this.removeAllSubviews()
-            this.addSubviews(newSubviews)
-            this.updateSubnodeToSubviewMap()
+            //this.removeAllSubviews() ;
+            this.removeAllSubviews();
+            this.addSubviews(newSubviews);
+            this.updateSubnodeToSubviewMap();
             // since node's don't hold a view reference, 
             // subviews no longer referenced in subviews list will be collected
         }
 
-        this.subviews().forEach(subview => subview.syncFromNodeNow())
+        this.subviews().forEach(subview => subview.syncFromNodeNow());
 
-        return subnodesDidChange
+        return subnodesDidChange;
     }
 
     flipBorderColor () {
-        const coinFlip = (Math.floor(Math.random() * 10) % 2 === 0)
-        const color = coinFlip ? "red" : "blue"
-        this.element().style.border = "1px dashed " + color 
+        const coinFlip = (Math.floor(Math.random() * 10) % 2 === 0);
+        const color = coinFlip ? "red" : "blue";
+        this.element().style.border = "1px dashed " + color;
     }
 
     didUpdateSlot (aSlot, oldValue, newValue) {
@@ -320,142 +327,142 @@
     }
     
     syncToNode () {
-        const node = this.node()
+        const node = this.node();
         if (node) {
-            //node.didUpdateNodeIfInitialized() // is this needed? Shouldn't the slot hooks cover this?
+            //node.didUpdateNodeIfInitialized(); // is this needed? Shouldn't the slot hooks cover this?
         }
-        return this
+        return this;
     }
 
     onUpdatedNode (aNote) {
-        assert(aNote)
-        //this.debugLog(" didUpdateNode " + this.node().type())
-        this.scheduleSyncFromNode()
+        assert(aNote);
+        //this.debugLog(" didUpdateNode " + this.node().type());
+        this.scheduleSyncFromNode();
     }
     
     scheduleSyncToNode (priority = 0) {
         if (this.hasScheduleSyncFromNode()) {
-            this.hasScheduleSyncFromNode()
-            console.log("SKIPPING scheduleSyncToNode because hasScheduleSyncFromNode")
-            this.unscheduleSyncFromNode()
-            return this
+            this.hasScheduleSyncFromNode();
+            console.log("SKIPPING scheduleSyncToNode because hasScheduleSyncFromNode");
+            this.unscheduleSyncFromNode();
+            return this;
         }
         
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", priority)
-        return this
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", priority);
+        return this;
     }
     
     hasScheduleSyncToNode () {
-        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode")
+        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode");
     }
 
     hasScheduleSyncFromNode () {
-        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
+        return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode");
     }
 
     scheduleSyncFromNode () {
-        assert(!this.hasScheduleSyncToNode())
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2) // let posts happen first
-        return this
+        assert(!this.hasScheduleSyncToNode());
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2); // let posts happen first
+        return this;
     }
 
     unscheduleSyncFromNode () {
-        SyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode")
+        SyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode");
     }
 
     syncFromNodeNow () { // unschedule syncFromNode if scheduled, and call syncFromNode now
-        this.unscheduleSyncFromNode()
-        this.syncFromNode()
+        this.unscheduleSyncFromNode();
+        this.syncFromNode();
     }
 
     // logging 
     
     logName () {
-        return this.type()
+        return this.type();
     }
     
     log (msg) {
-        const s = "[" + this.logName() + "] " + msg
-        console.log(s)
-        return this
+        const s = "[" + this.logName() + "] " + msg;
+        console.log(s);
+        return this;
     }
     
     // visibility
     
     onVisibility () {
-	    super.onVisibility()
-	    //this.debugLog(".onVisibility()")
-	    const node = this.node()
+	    super.onVisibility();
+	    //this.debugLog(".onVisibility()");
+	    const node = this.node();
 	    if (node && node.nodeBecameVisible) {
-	        node.nodeBecameVisible()
+	        node.nodeBecameVisible();
 	    }
 
-	    return this
+	    return this;
     }
     
     // value
     
     setValue (newValue) {
-        this.setInnerHtml(newValue)			
-        return this
+        this.setInnerHtml(newValue);
+        return this;
     }
     
     value () {
-        return this.innerHtml()
+        return this.innerHtml();
     }
 
     // ---
 
     resyncAllViews () {
         if (!this.hasScheduleSyncToNode()) {
-            this.scheduleSyncFromNode()
+            this.scheduleSyncFromNode();
         }
-        this.subviews().forEach(sv => sv.resyncAllViews())
-        //super.resyncAllViews() // skip this as it calls updateSubviews, but we'll do that in syncFromNode
-        return this
+        this.subviews().forEach(sv => sv.resyncAllViews());
+        //super.resyncAllViews(); // skip this as it calls updateSubviews, but we'll do that in syncFromNode
+        return this;
     }
 
     // --- debugging ---
 
     nodeTitle () {
-        const node = this.node()
+        const node = this.node();
         if (node) {
-            return node.title()
+            return node.title();
         }
-        return null
+        return null;
     }
     
     // --- helpers ---
 
     nodeDescription () {
-        const node = this.node()
+        const node = this.node();
         if (node) {
-            return node.debugTypeId()
+            return node.debugTypeId();
         }
-        return null
+        return null;
     }
 
     nodeId () {
-        const node = this.node()
-        const nodeId = node ? node.debugTypeId() : "null"
-        return nodeId
+        const node = this.node();
+        const nodeId = node ? node.debugTypeId() : "null";
+        return nodeId;
     }
 
     debugTypeId () {
-        //return this.nodeDescription()
-        //return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription() + " theme:" + this.themeClassName()
+        //return this.nodeDescription();
+        //return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription() + " theme:" + this.themeClassName();
 
-        let s = "view:'" + this.typeId() + "'"
-        s += " node:'" + this.nodeId() + "'"
-        s += " themeClass:'" +this.themeClassName() + "'"
+        let s = "view:'" + this.typeId() + "'";
+        s += " node:'" + this.nodeId() + "'";
+        s += " themeClass:'" +this.themeClassName() + "'";
         if (this.node()) {
-            s += " nodeTileClassName:'" + this.node().nodeTileClassName() + "'"
+            s += " nodeTileClassName:'" + this.node().nodeTileClassName() + "'";
         }
 
         if (this.isVertical) {
-            s += " isVertical:" + this.isVertical()
+            s += " isVertical:" + this.isVertical();
         }
-        return s
+        return s;
     }
 
 }.initThisClass());

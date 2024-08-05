@@ -40,7 +40,8 @@
       {
           "name": "gemini-1.5-pro-latest",
           "title": "Gemini 1.5 Pro",
-          "contextWindow": 1048576
+          "contextWindow": 2097152,
+          "outputTokenLimit": 8192
       },
       {
           "name": "gemini-1.5-flash-latest",

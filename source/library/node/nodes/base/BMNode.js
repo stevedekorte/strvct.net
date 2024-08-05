@@ -597,7 +597,12 @@
         const note = this.didUpdateNodeNote();
 
         if (note) {
-            //console.log("Node '" + this.title() + "' POST didUpdateNode")
+            if (this.type() === "HwLocations") {
+                if (!BMNotificationCenter.shared().hasNotification(note)) {
+                    console.log(this.typeId() + " '" + this.title() + "' POST didUpdateNode - subnodesCount: " + this.subnodesCount());
+                    debugger;
+                }
+            }
             note.post();
         }
         
@@ -902,13 +907,13 @@
                 this.subnodes().removeOccurancesOf(null)
                 //debugger
             }
+            */
 
             if(this.hasDuplicateSubnodes()) {
                 console.warn(this.debugTypeId() + " hasDuplicateSubnodes - removing duplicates and continuing")
                 debugger
                 newValue.removeDuplicates()
             }
-            */
         }
 
         assert(newValue.owner() === null)

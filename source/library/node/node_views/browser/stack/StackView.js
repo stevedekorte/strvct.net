@@ -85,100 +85,100 @@
     init () {
         super.init()
 
-        this.setNodeToStackCache(null)
+        this.setNodeToStackCache(null);
         
-        this.setDisplay("flex")
-        this.setPosition("relative")
-        this.setWidth("100%")
-        this.setHeight("100%")
-        this.setMinHeight("100%")
+        this.setDisplay("flex");
+        this.setPosition("relative");
+        this.setWidth("100%");
+        this.setHeight("100%");
+        this.setMinHeight("100%");
 
-        this.setFlexDirection("row")
-        this.setFlexWrap("nowrap")
-        this.setOverflow("hidden")
+        this.setFlexDirection("row");
+        this.setFlexWrap("nowrap");
+        this.setOverflow("hidden");
 
-        this.setupNavView()
-        this.setupOtherView()
+        this.setupNavView();
+        this.setupOtherView();
 
-        //this.setBorder("1px dashed white")
+        //this.setBorder("1px dashed white");
 
-        this.setFlexBasis("fit-content")
-        this.setFlexBasis("auto")
-        this.setFlexGrow(1)
-        this.setFlexShrink(0)
+        this.setFlexBasis("fit-content");
+        this.setFlexBasis("auto");
+        this.setFlexGrow(1);
+        this.setFlexShrink(0);
 
         // events
-        this.setIsRegisteredForWindowResize(true)
-        //this.addGestureRecognizer(LeftEdgePanGestureRecognizer.clone()) 
-        //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
-        this.setOnStackViewPathChangeNote(this.newNoteNamed("onStackViewPathChange"))
+        this.setIsRegisteredForWindowResize(true);
+        //this.addGestureRecognizer(LeftEdgePanGestureRecognizer.clone());
+        //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone());
+        this.setOnStackViewPathChangeNote(this.newNoteNamed("onStackViewPathChange"));
 
-        this.syncOrientation()
-        return this
+        this.syncOrientation();
+        return this;
     }
 
     /*
     didUpdateSlotParentView (oldValue, newValue) { 
-        super.didUpdateSlotParentView(oldValue, newValue)
-        console.log(this.typeId() + ".didUpdateSlotParentView(", oldValue.typeId(), ",", newValue.typeId(), ")")
-        return this
+        super.didUpdateSlotParentView(oldValue, newValue);
+        console.log(this.typeId() + ".didUpdateSlotParentView(", oldValue.typeId(), ",", newValue.typeId(), ")");
+        return this;
     }
     */
 
     setupNavView () {
-        const v = NavView.clone()
-        v.setStackView(this)
-        this.setNavView(v)
-        this.addSubview(v)
-        return this
+        const v = NavView.clone();
+        v.setStackView(this);
+        this.setNavView(v);
+        this.addSubview(v);
+        return this;
     }
 
     setupOtherView () {
-        const v = FlexDomView.clone()
-        v.setFlexGrow(1)
-        v.setFlexShrink(1)
-        v.setFlexDirection("column")
-        v.setWidth("100%")
-        v.setHeight("100%")
-        this.setOtherView(v)
-        this.addSubview(v)
-        this.clearOtherView()
-        return this
+        const v = FlexDomView.clone();
+        v.setFlexGrow(1);
+        v.setFlexShrink(1);
+        v.setFlexDirection("column");
+        v.setWidth("100%");
+        v.setHeight("100%");
+        this.setOtherView(v);
+        this.addSubview(v);
+        this.clearOtherView();
+        return this;
     }
 
     // --- direction ---
 
     didUpdateSlotDirection () {
-        this.syncOrientation()
+        this.syncOrientation();
     }
 
     syncOrientation () {
-        const d = this.direction()
-        const nv = this.navView()
+        const d = this.direction();
+        const nv = this.navView();
         if (d === "right") {
-            this.makeOrientationRight()
+            this.makeOrientationRight();
         } else if (d == "down") {
-            this.makeOrientationLeft()
+            this.makeOrientationLeft();
         } else {
-            throw new Error("unimplmented direction '" + d + "'")
+            throw new Error("unimplmented direction '" + d + "'");
         }
-        this.navView().syncOrientation()
+        this.navView().syncOrientation();
     }
 
     makeOrientationRight () {
-        this.setFlexDirection("row")
-        return this
+        this.setFlexDirection("row");
+        return this;
     }
 
     makeOrientationLeft () {
-        this.setFlexDirection("column")
-        return this
+        this.setFlexDirection("column");
+        return this;
     }
 
     /*
     verifyOrientation () {
-        const d = this.direction()
-        if (d == "right")
+        const d = this.direction();
+        if (d == "right");
     }
     */
     
@@ -187,176 +187,176 @@
         if (this.flexDirection() === "column" && v == "row") {
             debugger; // why are we switching back to row?
         }
-        super.setFlexDirection(v)
-        return this
+        super.setFlexDirection(v);
+        return this;
     }
     */
 
     setNode (aNode) {
         if (aNode !== this.node()) {
             if (aNode && this.node() && this.previousStackView() && this.previousStackView().isCaching()) {
-                throw new Error("this might invalidate a cache")
+                throw new Error("this might invalidate a cache");
             }
             if (aNode) {
-                this._nodePathString = aNode.nodePathString()
+                this._nodePathString = aNode.nodePathString();
             }
-            super.setNode(aNode)
+            super.setNode(aNode);
         }
-        return this
+        return this;
     }
 
     didChangeNode () {
-        super.didChangeNode()
-        this.navView().setNode(this.node())
-        return this
+        super.didChangeNode();
+        this.navView().setNode(this.node());
+        return this;
     }
 
     syncFromNode () {
-        this.setDirection(this.node().nodeOrientation())
+        this.setDirection(this.node().nodeOrientation());
 
-        this.syncOrientation()
-        //this.navView().syncFromNodeNow()
-        this.syncFromNavSelection()
+        this.syncOrientation();
+        //this.navView().syncFromNodeNow();
+        this.syncFromNavSelection();
 
-        //this.setupColumnGroupColors()
-        //this.fitColumns()
-        return this
+        //this.setupColumnGroupColors();
+        //this.fitColumns();
+        return this;
     }
 
     onWindowResize (event) {
         /*
         if (this.isRootStackView()) {
-            this.safeUpdateCompactionChain()
+            this.safeUpdateCompactionChain();
         }
         */
         // TODO: change so only top stack view registers for resize
-        this.updateCompaction()
-        return this
+        this.updateCompaction();
+        return this;
     }
 
     setOtherViewContent (v) {
-        const ov = this.otherView()
-        ov.setFlexBasis(null)
-        ov.setFlexGrow(1)
-        ov.setFlexShrink(1)
+        const ov = this.otherView();
+        ov.setFlexBasis(null);
+        ov.setFlexGrow(1);
+        ov.setFlexShrink(1);
         
         /*
         if (ov.subviews().length) {
-            const names = ov.subviews().map(ov => ov.typeId())
-            //console.log("removing subviews: ", names)
+            const names = ov.subviews().map(ov => ov.typeId());
+            //console.log("removing subviews: ", names);
             debugger;
         }
         */
         
-        ov.removeAllSubviews().addSubview(v)
-        return this
+        ov.removeAllSubviews().addSubview(v);
+        return this;
     }
 
     clearOtherView () {
-        const ov = this.otherView()
-        ov.setFlexBasis("0px")
-        ov.setFlexGrow(0)
-        ov.setFlexShrink(0)
+        const ov = this.otherView();
+        ov.setFlexBasis("0px");
+        ov.setFlexGrow(0);
+        ov.setFlexShrink(0);
 
         /*
         if (ov.subviews().length) {
-            const names = ov.subviews().map(ov => ov.typeId())
-            //console.log("removing subviews: ", names)
+            const names = ov.subviews().map(ov => ov.typeId());
+            //console.log("removing subviews: ", names);
             //debugger;
         }
         */
         
-        ov.removeAllSubviews()
-        return this
+        ov.removeAllSubviews();
+        return this;
     }
 
     otherViewContent () {
-        return this.nextStackView()
+        return this.nextStackView();
     }
 
     // notifications
     
     tilesView () {
-        return this.navView().tilesView()
+        return this.navView().tilesView();
     }
 
     selectNodePathArray (nodePathArray) {  
         if (nodePathArray.length === 0) { 
             //console.log("- only one node in pathArray and it is ours, so unselecting all subtiles and we're done!")
             // no selections left so unselect next
-            this.tilesView().unselectAllTiles()
-            this.syncFromNavSelection()
-            return true
+            this.tilesView().unselectAllTiles();
+            this.syncFromNavSelection();
+            return true;
         }
 
-        nodePathArray = nodePathArray.shallowCopy()
+        nodePathArray = nodePathArray.shallowCopy();
         // the path should start with the node *after* this one
         
-        //const p = nodePathArray.map(n => n.title()).join("/")
-        //console.log("--- selectNodePathArray ---")
-        //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")")
-        const node = nodePathArray.shift() // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
-        //console.warn("- popped '" + node.title() + "'")
+        //const p = nodePathArray.map(n => n.title()).join("/");
+        //console.log("--- selectNodePathArray ---");
+        //console.log(this.type() + " " + this.node().nodePathString() + " selectNodePathArray(" + nodePathArray.map(node => "'" + node.title() + "'").join(", ") + ")");
+        const node = nodePathArray.shift(); // pop the first node off (it should be us) and select the next one from our tiles, then pass remaining paths to the tile's stackview
+        //console.warn("- popped '" + node.title() + "'");
 
-        //this.syncFromNodeNow()
-        assert(node !== this.node())
+        //this.syncFromNodeNow();
+        assert(node !== this.node());
 
         /*
-        console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes())
-        this.tilesView().syncFromNodeNow() //test
-        console.log("2 this.tilesView().subviews(): ", this.tilesView().subviews())
+        console.log("1 this.tilesView().node().subnodes(): ", this.tilesView().node().subnodes());
+        this.tilesView().syncFromNodeNow(); //test
+        console.log("2 this.tilesView().subviews(): ", this.tilesView().subviews());
         */
 
-        let selectedTile = this.tilesView().selectTileWithNode(node)
+        let selectedTile = this.tilesView().selectTileWithNode(node);
 
         if (!selectedTile) {
             // if we didn't find the tile but the node is a subnode, sync the tilesView and look again
             if (this.tilesView().node().subnodes().contains(node)) {
-                //console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!")
-               // console.log("- so syncFromNodeNow and see if we can find it")
-                this.tilesView().syncFromNodeNow()
-                selectedTile = this.tilesView().selectTileWithNode(node)
-                assert(selectedTile)
+                //console.warn("- the tilesView node's subnodes contain the path node, but there's no matching view!");
+               // console.log("- so syncFromNodeNow and see if we can find it");
+                this.tilesView().syncFromNodeNow();
+                selectedTile = this.tilesView().selectTileWithNode(node);
+                assert(selectedTile);
             }
         }
 
         if (!selectedTile) { // INVALID PATH ERROR
-            console.log("- invalid path - can't find tile for node: " + node.title())
+            console.log("- invalid path - can't find tile for node: " + node.title());
 
-            console.log("debug info:")
-            console.log("  looking for node: ", node.debugTypeId())
-            const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId())
-            console.log("  subnodes:" + JSON.stableStringify(subnodeIds) )
+            console.log("debug info:");
+            console.log("  looking for node: ", node.debugTypeId());
+            const subnodeIds = this.tilesView().node().subnodes().map(node => node.debugTypeId());
+            console.log("  subnodes:" + JSON.stableStringify(subnodeIds) );
 
             debugger;
-            return false
+            return false;
         }
 
-        //this.syncFromNavSelection()
-        //console.log("- selectedTile '" + selectedTile.node().title() + "'")
+        //this.syncFromNavSelection();
+        //console.log("- selectedTile '" + selectedTile.node().title() + "'");
 
-        const childStack = this.nextStackView()
+        const childStack = this.nextStackView();
         if (childStack) {
-            childStack.selectNodePathArray(nodePathArray)
+            childStack.selectNodePathArray(nodePathArray);
         }
-        return true
+        return true;
     }
 
     selectedNodePathArray () {
         // grab the whole chain of stack view
-        const parts = this.stackViewSubchain().shallowCopy() 
+        const parts = this.stackViewSubchain().shallowCopy();
         
         // last one might not have a node
         while (parts.last() && Type.isNullOrUndefined(parts.last().node())) {
             //debugger;
-            parts.removeLast()
+            parts.removeLast();
         }
 
         return parts.map(sv => {
             if (!sv.node()) {
                 debugger;
             }
-            return sv.node()
+            return sv.node();
         })
     }
 
@@ -372,218 +372,218 @@
     */
 
     isRootStackView () {
-        return this === this.rootStackView()
+        return this === this.rootStackView();
     }
 
     topDidChangeNavSelection () {
         // broadcast path change to listeners, like bread crumb view
-        //console.log("topDidChangeNavSelection")
+        //console.log("topDidChangeNavSelection");
         //debugger;
         if (!this.rootStackView()) {
             debugger;
-            return this
+            return this;
         }
 
-        const currentPathString = this.selectedPathTitlesString()
+        const currentPathString = this.selectedPathTitlesString();
         // TODO: change to node matching as path isn't unique and names can change
         if (this.lastPathString() !== currentPathString) {
-            this.setLastPathString(currentPathString)
-            this.didChangePath()
+            this.setLastPathString(currentPathString);
+            this.didChangePath();
         }
-        return this
+        return this;
     }
 
     didChangeNavSelection () {
-        this.rootStackView().topDidChangeNavSelection()
-        //this.syncFromNavSelection()
-        this.syncFromNavSelection()
-        //this.scheduleSyncFromNode()
-        return true
+        this.rootStackView().topDidChangeNavSelection();
+        //this.syncFromNavSelection();
+        this.syncFromNavSelection();
+        //this.scheduleSyncFromNode();
+        return true;
     }
 
     // --- set path titles ----
 
     setSelectedPathTitlesArray (titles) {
-        let title = titles.shift()
-        const pathArray = []
-        let node = this.node()
+        let title = titles.shift();
+        const pathArray = [];
+        let node = this.node();
         while (title) {
-            node = node.firstSubnodeWithTitle(title)
-            pathArray.push(node)
-            title = titles.shift()
+            node = node.firstSubnodeWithTitle(title);
+            pathArray.push(node);
+            title = titles.shift();
         }
-        this.selectNodePathArray(pathArray)
-        return this
+        this.selectNodePathArray(pathArray);
+        return this;
     }
 
     setSelectedPathTitlesString (s) {
-        console.log("setSelectedPathTitlesString:'" + s + "'")
-        const titles = s.split("/")
-        this.setSelectedPathTitlesArray(titles)
-        return this
+        console.log("setSelectedPathTitlesString:'" + s + "'");
+        const titles = s.split("/");
+        this.setSelectedPathTitlesArray(titles);
+        return this;
     }
 
     // --- get path titles ----
 
     selectedPathTitlesArray () {
         const titles = this.selectedNodePathArray().map(node => {
-            return node.title()
+            return node.title();
         })
-        titles.shift()
-        return titles
+        titles.shift();
+        return titles;
     }
 
     selectedPathTitlesString () {
-        return this.selectedPathTitlesArray().join("/")
+        return this.selectedPathTitlesArray().join("/");
     }
 
     // --- this view's path string ---
 
     pathString () {
-        return this.stackViewSuperChain().reverse().map(sv => sv.node().title()).join("/")
+        return this.stackViewSuperChain().reverse().map(sv => sv.node().title()).join("/");
     }
 
     // --- selected path changes ---
 
     didChangePath () {
-        this.onStackViewPathChangeNote().post()
-        return this
+        this.onStackViewPathChangeNote().post();
+        return this;
     }
     
     // ----------------
 
     scheduleSyncFromNode () {
      //   debugger;
-        super.scheduleSyncFromNode()
+        super.scheduleSyncFromNode();
     }
 
     syncFromNavSelection () {
         // update otherViewContent view to match selected tile
 
-        const tile = this.navView().tilesView().selectedTile() // this may get called before tilesView has synced to current subnodes,
-        //console.log("StackView syncFromNavSelection " + this.node().title() + " -> " + (tile ? tile.nodeTitle() : null))
+        const tile = this.navView().tilesView().selectedTile(); // this may get called before tilesView has synced to current subnodes,
+        //console.log("StackView syncFromNavSelection " + this.node().title() + " -> " + (tile ? tile.nodeTitle() : null));
         //debugger;
         // in which case, the tile may be about to be removed
         if (tile && tile.nodeTileLink()) {
-            const oNode = tile.nodeTileLink()
-            const ovc = this.otherViewContent()
+            const oNode = tile.nodeTileLink();
+            const ovc = this.otherViewContent();
             if (!ovc || (ovc.node() !== oNode)) {
-                const ov = this.otherViewContentForNode(oNode)
-                this.setOtherViewContent(ov)
+                const ov = this.otherViewContentForNode(oNode);
+                this.setOtherViewContent(ov);
             }
         } else {
-            this.clearOtherView()
+            this.clearOtherView();
         }
 
-        this.safeUpdateCompactionChain()
+        this.safeUpdateCompactionChain();
     }
 
     // stack view chain
 
     previousStackView () {
         // this stackView -> otherView -> previousStackView
-        const otherView = this.parentView()
+        const otherView = this.parentView();
         if (otherView) {
-            const previousStackView = otherView.parentView()
+            const previousStackView = otherView.parentView();
             if (previousStackView && previousStackView.previousStackView) {
                 //if (previousStackView.isSubclassOf(StackView)) {
-                return previousStackView
+                return previousStackView;
             }
         }
         /*
         if (p && p.previousStackView) {
-            return p.parentView()
+            return p.parentView();
         }
         */
-        return null
+        return null;
     }
 
     nextStackView () {
-        return this.otherView().subviews().first()
+        return this.otherView().subviews().first();
     }
 
     rootStackView () {
-        let p = this
+        let p = this;
         while (p.previousStackView()) {
-            p = p.previousStackView()
+            p = p.previousStackView();
         }
-        return p
+        return p;
     }
 
     // --- compaction (adjusts number of visible stack areas to fit top stack view)
 
     safeUpdateCompactionChain () {
-        //this.bottomStackView().updateCompactionChain()
-        this.updateCompactionChain()
+        //this.bottomStackView().updateCompactionChain();
+        this.updateCompactionChain();
     }
 
     updateCompactionChain () {
-        this.updateCompaction() 
-        this.tellParentViews("updateCompaction") 
+        this.updateCompaction();
+        this.tellParentViews("updateCompaction");
     }
 
     updateCompaction () {
-        this.compactNavAsNeeded()
-        return this
+        this.compactNavAsNeeded();
+        return this;
     }
 
     /*
     firstParentWithDifferentDirection () {
-        const d = this.direction()
+        const d = this.direction();
         let current = this
         while (current) {
-            const p = current.previousStackView() 
+            const p = current.previousStackView();
             if (p && p.direction() !== d) {
-                break
+                break;
             }
-            current = p
+            current = p;
         }
-        return current
+        return current;
     }
     */
 
     stackViewSuperChain () {
         // returns list of self and StackViews above
-        const chain = []
-        let current = this
+        const chain = [];
+        let current = this;
         while (current) {
-            chain.push(current)
-            const p = current.previousStackView()
-            current = p
+            chain.push(current);
+            const p = current.previousStackView();
+            current = p;
         }
-        return chain
+        return chain;
     }
 
     stackViewDepth () {
-        return this.stackViewSuperChain().length - 1
+        return this.stackViewSuperChain().length - 1;
     }
 
     bottomStackView () {
-        let current = this
+        let current = this;
 
         while (current) {
-            const next = current.nextStackView()
+            const next = current.nextStackView();
             if (next) {
-                current = next
+                current = next;
             }
         }
-        return current
+        return current;
     }
 
     stackViewSubchain () {
         // returns self and all StackViews below 
-        const chain = []
-        let current = this
+        const chain = [];
+        let current = this;
 
         while (current) {
-            chain.push(current)
-            current = current.nextStackView()
+            chain.push(current);
+            current = current.nextStackView();
         }
-        return chain
+        return chain;
     }
 
     navViewSubchain () {
-        return this.stackViewSubchain().map(sv => sv.navView())
+        return this.stackViewSubchain().map(sv => sv.navView());
     }
 
     sumOfNavWidths () { 
@@ -598,57 +598,57 @@
         //   we treat all vertical nav view compactions 
         //   as if they are part of the same Miller Column.
 
-        const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical())
-        const w = verticalNavViews.sum(nv => nv.targetWidth())
-        return w
+        const verticalNavViews = this.navViewSubchain().filter(nv => nv.isVertical());
+        const w = verticalNavViews.sum(nv => nv.targetWidth());
+        return w;
 
         /*
-        let w = 0
-        const views = this.stackViewSubchain()
+        let w = 0;
+        const views = this.stackViewSubchain();
         for (let i = 0; i < views.length; i++) { // use loop so we can break
-            const sv = views[i]
+            const sv = views[i];
 
             //if (sv.direction() !== this.direction()) {
-            //    break 
+            //    break;
             //}
 
             if (sv.navView().isVertical()) {
-                w += sv.navView().targetWidth()
+                w += sv.navView().targetWidth();
             }
         }
-        return w
+        return w;
         */
     }
 
     topViewWidth () {
-        const view = this.rootStackView()
+        const view = this.rootStackView();
         if (view.parentView() === DocumentBody.shared()) {
-            return window.innerWidth // assume it fills the window? what about margins, padding?
+            return window.innerWidth; // assume it fills the window? what about margins, padding?
         }
-        return view.size().width() // clientWidth works here, but maybe all cases
-        //return this.rootStackView().calcSize().width()
+        return view.size().width(); // clientWidth works here, but maybe all cases
+        //return this.rootStackView().calcSize().width();
     }
 
     compactNavAsNeeded () {
         if (this.direction() === "right") {
-            //console.log("StackView " + this.node().title() + " compactNavAsNeeded")
+            //console.log("StackView " + this.node().title() + " compactNavAsNeeded");
 
-            const maxWidth = this.topViewWidth()
-            const sum = this.sumOfNavWidths()
+            const maxWidth = this.topViewWidth();
+            const sum = this.sumOfNavWidths();
 
             if (sum > maxWidth) {
-                //console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE")
+                //console.log("  " + this.node().title() + " sum " + sum + " > win " + maxWidth + " COLLAPSE");
                 //debugger;
-                //this.topViewWidth()
+                //this.topViewWidth();
 
-                this.navView().collapse()
+                this.navView().collapse();
             } else {
-                //console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE")
-                this.navView().uncollapse()
+                //console.log("  " + this.node().title() + " sum " + sum + " < win " + maxWidth + " UNCOLLAPSE");
+                this.navView().uncollapse();
             }
         }
 
-        return false
+        return false;
     }
 
     // --- caching during dragging ---
@@ -657,108 +657,108 @@
 
     onStackChildDragSourceEnter (dragView) {
         if (!this.isCaching()) {
-            console.log(this.debugTypeId() + " onStackChildDragSourceEnter")
-            this.watchOnceForNoteFrom("onDragViewClose", dragView)
-            //this.beginCaching()
-            this.rootStackView().beginCaching()
+            console.log(this.debugTypeId() + " onStackChildDragSourceEnter");
+            this.watchOnceForNoteFrom("onDragViewClose", dragView);
+            //this.beginCaching();
+            this.rootStackView().beginCaching();
         }
     }
 
     onDragViewClose (aNote) {
-        console.log(this.debugTypeId() + " onDragViewClose")
-        //this.endCaching()
-        this.rootStackView().endCaching()
+        console.log(this.debugTypeId() + " onDragViewClose");
+        //this.endCaching();
+        this.rootStackView().endCaching();
     }
 
     // begin / end caching
 
     isCaching () {
-        return !Type.isNull(this.nodeToStackCache())
+        return !Type.isNull(this.nodeToStackCache());
     }
 
     beginCaching () {
         // begins caching on all chained substacks
         if(!this.isCaching()) {
-            //console.log(this.debugTypeId() + " beginCaching -----------------")
+            //console.log(this.debugTypeId() + " beginCaching -----------------");
             //debugger;
-            this.setNodeToStackCache(new Map())
+            this.setNodeToStackCache(new Map());
 
-            const ov = this.otherViewContent()
+            const ov = this.otherViewContent();
             if (ov && ov.cacheId) {
-                this.cacheView(ov)
-                ov.beginCaching()
+                this.cacheView(ov);
+                ov.beginCaching();
             }
         }
-        return this
+        return this;
     }
 
     endCaching () {
         // ends caching on all chained substacks
         if(this.isCaching()) {
-            //console.log(this.debugTypeId() + " endCaching -----------------")
-            //this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv))
-            this.setNodeToStackCache(null)
+            //console.log(this.debugTypeId() + " endCaching -----------------");
+            //this.nodeToStackCache().valuesArray().forEach(sv => this.uncacheView(sv));
+            this.setNodeToStackCache(null);
 
-            const ov = this.otherViewContent()
+            const ov = this.otherViewContent();
             if (ov && ov.cacheId) {
-                //this.uncacheView(ov)
-                ov.endCaching()
+                //this.uncacheView(ov);
+                ov.endCaching();
             }
         }
-        return this
+        return this;
     }
 
     // --- node to StackView cache ---
 
     cacheId () { // used atm in StackView cache
-        return this.node().typeId()
+        return this.node().typeId();
     }
 
     hasCache () {
-        return !Type.isNull(this.nodeToStackCache())
+        return !Type.isNull(this.nodeToStackCache());
     }
 
     cacheView (aView) {
-        const cache = this.nodeToStackCache()
-        const k = aView.cacheId()
+        const cache = this.nodeToStackCache();
+        const k = aView.cacheId();
         if (!cache.hasKey(k)) {
-            cache.atPut(k, aView)
+            cache.atPut(k, aView);
         }
         return this
     }
 
     /*
     uncacheView (stackView) {
-        const cache = this.nodeToStackCache()
-        const k = aView.cacheId()
+        const cache = this.nodeToStackCache();
+        const k = aView.cacheId();
         if (cache.hasKey(k)) {
-            cache.removeKey(k)
+            cache.removeKey(k);
         }
-        return this
+        return this;
     }
     */
 
     cachedViewForNode (aNode) {
         if (this.hasCache() && aNode) {
-            const k = aNode.typeId()
-            return this.nodeToStackCache().at(k, this)
+            const k = aNode.typeId();
+            return this.nodeToStackCache().at(k, this);
         }
-        return null
+        return null;
     }
 
     otherViewContentForNode (aNode) {
-        let sv = this.cachedViewForNode(aNode)
+        let sv = this.cachedViewForNode(aNode);
 
         if (!sv) {
             // what if node is null now and set *after* this?
             // things like a path change can alter node?
-            sv = StackView.clone().setNode(aNode)
+            sv = StackView.clone().setNode(aNode);
             if (this.isCaching()) {
-                sv.beginCaching()
+                sv.beginCaching();
             }
         }
 
-        return sv
+        return sv;
     }
         
 }.initThisClass());

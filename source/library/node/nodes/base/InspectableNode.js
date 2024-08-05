@@ -107,6 +107,7 @@
                     const newNode = nodeClass.clone();
                     newNode.setNodeCanReorderSubnodes(false); // should this be here?
                     newNode.setTitle(component);
+                    newNode.setSubtitle(null);
                     newNode.setNodeCanAddSubnode(false);
                     return newNode;
                 })

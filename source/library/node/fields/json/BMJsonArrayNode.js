@@ -133,7 +133,7 @@
         */
 
         const jsonIdToSubnodeMap = new Map();
-        this.subnodes().forEach(sn => {
+        this.subnodes().forEach(sn => { // TODO: check for duplicat ids
             jsonIdToSubnodeMap.set(sn.jsonId(), sn);
         });
 
@@ -141,9 +141,19 @@
 
         const newSubnodes = [];
 
+        const seenJsonIds = new Set();
+
+
         json.forEach((v) => {
             //assert(v.jsonId);
             const jsonId = v.jsonId;
+
+            if (seenJsonIds.has(jsonId)) {
+                console.warn("BMJsonArrayNode.setJson() attempt to add duplicate jsonId: ", jsonId);
+                return;
+            } else {
+                seenJsonIds.add(jsonId);
+            }
 
             if (hasOldSubnodes && !jsonId) {
                 console.warn("BMJsonArrayNode.setJson() missing jsonId: ", v);
@@ -159,13 +169,20 @@
                 // create a new node
                 const aNode = this.newSubnodeForJson(v);
                 newSubnodes.push(aNode);
-                console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: ", jsonId);
+                console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
                 //debugger;
             }
         });
 
-        this.setSubnodes(newSubnodes);
-        this.setJsonCache(json);
+        if (true) {
+            this.subnodes().clear();
+            this.subnodes().appendItems(newSubnodes);
+        } else {
+            this.setSubnodes(newSubnodes);
+        }
+
+        //this.setJsonCache(json); // not safe as we might have removed duplicates
+        //this.didUpdateNode();
         return this;
     }
 

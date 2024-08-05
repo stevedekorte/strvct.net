@@ -15,6 +15,7 @@
     "Function_ideal.js",
     "Image_ideal.js",
     "TypedArray-ideal.js",
-    "ImmutableSet.js"
+    "ImmutableSet.js",
+    "JSON_ideal.js"
 ]
 

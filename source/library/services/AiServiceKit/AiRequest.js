@@ -44,7 +44,7 @@
       slot.setCanInspect(true);
       slot.setCanEditInspection(false);
       slot.setDuplicateOp("duplicate");
-      slot.setInspectorPath("");
+      slot.setInspectorPath(this.type());
       slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Boolean");
@@ -58,10 +58,10 @@
 
     {
       const slot = this.newSlot("body", null); 
-      slot.setCanInspect(false);
+      slot.setCanInspect(true);
       slot.setCanEditInspection(false);
-      slot.setInspectorPath("");
-      slot.setIsSubnodeField(false);
+      slot.setInspectorPath(this.type() + "/body");
+      slot.setIsSubnodeField(true);
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -83,7 +83,7 @@
 
     {
       const slot = this.newSlot("isStreaming", false); // external read-only
-      slot.setInspectorPath("")
+      slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
       slot.setDuplicateOp("duplicate")
@@ -98,7 +98,7 @@
 
     {
       const slot = this.newSlot("requestId", null);
-      slot.setInspectorPath("");
+      slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -109,7 +109,7 @@
 
     {
       const slot = this.newSlot("readIndex", 0); // current read index in the responseText
-      slot.setInspectorPath("");
+      slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -172,7 +172,7 @@
 
     {
       const slot = this.newSlot("fullContent", null); 
-      slot.setInspectorPath(this.type());
+      slot.setInspectorPath(this.type() + "/fullContent");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -256,7 +256,7 @@
   }
 
   subtitle () {
-    return this.status();
+    return [this.fullContent().length + " bytes", this.status()].join("\n");
   }
 
   // --- service properties ---

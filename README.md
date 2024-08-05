@@ -1,13 +1,16 @@
-# Strvct Overview
+# Strvct
 
-Applications are typically composed of 3 layers:
+## Abstract
 
-- UI
-- Model
-- Storage
+Strvct is a JavaScript framework for creating low-code, full-featured client-side web applications in which only the domain model objects need to be defined. It is implemented as a hybrid Miller column user interface on top of naked objects with transparent persistence, where all synchronization between these layers is handled automatically.While Strvct's runtime-generated user interfaces may not be suitable for highly specialized applications like games or graphic design tools, it works well for a wide range of standard web applications and can significantly reduce development time for many common use cases.
 
-The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and Storage layers (and the synchronization between all 3 layers) to be handled automatically.
-Effectively, you write the model and the rest is handled for you. This involves choosing uniform but flexible building blocks for each of the layers.
+Instance variable annotations on a common model base class are used to support automatic synchronization (via mutation tracking and notifications) between the model and the storage and user interface layers. A unique view system based on hierarchical Miller Columns whose orientation can be changed at each level is used to provide a scalable and flexible UI navigation and presentation system.
+
+## Introduction
+
+Applications are typically composed of 3 layers: UI, Model, and Storage. Much of the code (and potential bugs) that make up the custom code in complex real world applications is the "glue" code that synchronizes these layers.
+
+The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and Storage layers (and the synchronization between all 3 layers) to be handled automatically. So you write the model and the rest is handled for you (though you can add custom views if needed). This involves choosing uniform but flexible building blocks for each of the layers.
 
 ## Terminology
 
@@ -16,23 +19,23 @@ nodes:
 
 ## Building Blocks
 
-### Model Layer
+### Model
 
 - The model is composed of a graph of objects which inherit from BMNode (we'll call these "nodes").
-- THe UI is largely a mirror of this grpah structure.
+- The UI is largely a mirror of this graph structure.
 - The nodes are the unit of storage (one record per node).
 - nodes have no references to views, but views can have references to nodes.
 - nodes post notifications of their changes which the other layers can observe.
   -- the storage layer automatically observes objects read from storage
 
-### UI Layer
+### UI
 
-- The UI is (basically) composed of `NodeView` (and subclasses) instances.
+- The UI is (primarily) composed of `NodeView` (and subclasses) instances.
 - Each `NodeView` points to a `BMNode` and watches for notifications from it.
 - Multiple `NodeViews` may (and often do) point to the same `BMNode` instance.
 - Slots on Views can be marked such that changes to them will schedule the view to sync it's state with the node.
 
-### Persistence Layer
+### Storage
 
 The app has a `PersistentObjectPool` which automatically:
 
@@ -73,11 +76,11 @@ Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
 
 ## Uniform Persistence Structure
 
-- The storage system is a key/value store where the keys are unique object IDs and object records stored as JSON.
-- Object records have a standard way of representing pointers to other objects (via their IDs), and using these, the store can do automatic on-disk garbage collection.
-- Object records are JSON dicts containing a type (a class name) and a payload.
+- The storage system is a key/value store where the keys are unique object IDs and the values are object records.
+- Object records are JSON dicts containing a type and payload.
 - On load, the record type is used to find a class reference, and then the class is asked to unserialize itself from the payload.
 - The payload has a format that uses a standard way of referencing pointers to other object records, and during deserialization, the new instance can request the objects for these object IDs.
+- Object records have a standard way of representing pointers to other objects (via their IDs), and using these, the store can do automatic on-disk garbage collection.
 
 ## Synchronization
 

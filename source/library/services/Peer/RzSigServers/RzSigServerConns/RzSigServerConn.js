@@ -237,7 +237,7 @@
 
   init() {
     super.init();
-    this.setIsDebugging(true);
+    this.setIsDebugging(false);
     this.setCanDelete(true);
     return this
   }
