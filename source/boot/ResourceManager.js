@@ -58,11 +58,38 @@ function getGlobalThis () {
 
 // --- eval source url --------------------------------
 
+/*
 function evalStringFromSourceUrl (codeString, path) {
     const sourceUrl = `\n//# sourceURL=` + path + ``; // NOTE: this didn't work in Chrome if the path was inside single or double quotes
     const debugCode = codeString + sourceUrl;
     //console.log("eval: ", path);
     eval(debugCode);
+}
+*/
+
+function evalStringFromSourceUrl(codeString, path) {
+    // Sanitize the path to ensure it's safe for use in the sourceURL comment
+    const sanitizedPath = path.replace(/[^a-zA-Z0-9\/\-_.]/g, ''); // Remove any characters that might break the comment
+
+    // Ensure the path starts with a protocol or slash for proper debugging context
+    const normalizedPath = !/^https?:\/\//i.test(sanitizedPath) && !/^\//.test(sanitizedPath) 
+        ? '/' + sanitizedPath 
+        : sanitizedPath;
+
+    // Construct the sourceURL comment
+    const sourceUrlComment = `\n//# sourceURL=${JSON.stringify(normalizedPath)}`;
+
+    // Combine the code string with the sourceURL comment
+    const debugCode = codeString + sourceUrlComment;
+
+    // Evaluate the code
+    const result = eval(debugCode);
+
+    // Log the result for debugging purposes
+    console.log("Eval result:", result);
+
+    // Return the result of the evaluation
+    return result;
 }
 
 // --- Object defineSlot ---

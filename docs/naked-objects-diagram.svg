@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+  <style>
+    :root {
+      --font-family: Arial, sans-serif;
+      --font-size-large: 1.5em;
+      --color-line: #666;
+      --color-font: #999;
+      --stroke-width-thick: 1px;
+    }
+  </style>
+  
+  <!-- Tile View -->
+  <rect x="50" y="20" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)"/>
+  <text x="200" y="75" font-family="var(--font-family)" font-size="var(--font-size-large)" text-anchor="middle" fill="var(--color-font)">View</text>
+
+  <!-- Naked Object -->
+  <rect x="50" y="170" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)"/>
+  <text x="200" y="225" font-family="var(--font-family)" font-size="var(--font-size-large)" text-anchor="middle" fill="var(--color-font)">Domain Object</text>
+
+  <!-- Storage Record -->
+  <rect x="50" y="320" width="300" height="100" fill="none" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)"/>
+  <text x="200" y="375" font-family="var(--font-family)" font-size="var(--font-size-large)" text-anchor="middle" fill="var(--color-font)">Storage Record</text>
+
+  <!-- Bidirectional Arrows -->
+  <path d="M 200 120 L 200 170" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" fill="none" marker-end="url(#arrowhead-down)" marker-start="url(#arrowhead-up)"/>
+  <path d="M 200 270 L 200 320" stroke="var(--color-line)" stroke-width="var(--stroke-width-thick)" fill="none" marker-end="url(#arrowhead-down)" marker-start="url(#arrowhead-up)"/>
+  
+  <!-- Arrowhead definitions -->
+  <defs>
+    <marker id="arrowhead-down" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="var(--color-line)" />
+    </marker>
+    <marker id="arrowhead-up" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+      <polygon points="10 0, 0 3.5, 10 7" fill="var(--color-line)" />
+    </marker>
+  </defs>
+</svg>

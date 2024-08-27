@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 211 321" preserveAspectRatio="xMidYMid meet" class="ge-export-svg-dark">
+	<defs>
+		<style type="text/css">
+			svg.ge-export-svg-dark:not(mjx-container &gt; svg) { filter: invert(100%) hue-rotate(180deg); }&#xa;svg.ge-export-svg-dark foreignObject img,&#xa;svg.ge-export-svg-dark image:not(svg.ge-export-svg-dark switch image),&#xa;svg.ge-export-svg-dark svg:not(mjx-container &gt; svg)&#xa;{ filter: invert(100%) hue-rotate(180deg) }
+		</style>
+	</defs>
+	<g>
+		<g data-cell-id="0">
+			<g data-cell-id="1">
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-1">
+					<g>
+						<rect x="0" y="0" width="210" height="320" fill="none" stroke="#aaaaaa" pointer-events="all" />
+					</g>
+				</g>
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-2">
+					<g>
+						<rect x="0" y="40" width="210" height="280" fill="none" stroke="#aaaaaa" stroke-dasharray="3 3" pointer-events="all" />
+					</g>
+				</g>
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-3">
+					<g>
+						<rect x="10" y="50" width="190" height="40" fill="none" stroke="#aaaaaa" pointer-events="all" />
+					</g>
+					<g>
+						<g transform="translate(-0.5 -0.5)">
+							<switch>
+								<foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+									<div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 188px; height: 1px; padding-top: 70px; margin-left: 11px;">
+										<div data-drawio-colors="color: #AAAAAA; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+											<div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(170, 170, 170); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+												tile
+											</div>
+										</div>
+									</div>
+								</foreignObject>
+								<text x="105" y="74" fill="#AAAAAA" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+									tile
+								</text>
+							</switch>
+						</g>
+					</g>
+				</g>
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-6">
+					<g>
+						<rect x="0" y="0" width="210" height="40" fill="none" stroke="#aaaaaa" stroke-dasharray="3 3" pointer-events="all" />
+					</g>
+					<g>
+						<g transform="translate(-0.5 -0.5)">
+							<switch>
+								<foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+									<div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 208px; height: 1px; padding-top: 16px; margin-left: 1px;">
+										<div data-drawio-colors="color: #AAAAAA; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+											<div style="display: inline-block; font-size: 24px; font-family: Helvetica; color: rgb(170, 170, 170); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+												<font style="font-size: 12px;">
+													header
+												</font>
+											</div>
+										</div>
+									</div>
+								</foreignObject>
+								<text x="105" y="23" fill="#AAAAAA" font-family="&quot;Helvetica&quot;" font-size="24px" text-anchor="middle">
+									header
+								</text>
+							</switch>
+						</g>
+					</g>
+				</g>
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-7">
+					<g>
+						<rect x="0" y="280" width="210" height="40" fill="none" stroke="#aaaaaa" stroke-dasharray="3 3" pointer-events="all" />
+					</g>
+					<g>
+						<g transform="translate(-0.5 -0.5)">
+							<switch>
+								<foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+									<div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 208px; height: 1px; padding-top: 296px; margin-left: 1px;">
+										<div data-drawio-colors="color: #AAAAAA; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+											<div style="display: inline-block; font-size: 24px; font-family: Helvetica; color: rgb(170, 170, 170); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+												<font style="font-size: 12px;">
+													footer
+												</font>
+											</div>
+										</div>
+									</div>
+								</foreignObject>
+								<text x="105" y="303" fill="#AAAAAA" font-family="&quot;Helvetica&quot;" font-size="24px" text-anchor="middle">
+									footer
+								</text>
+							</switch>
+						</g>
+					</g>
+				</g>
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-9">
+					<g>
+						<rect x="10" y="100" width="190" height="40" fill="none" stroke="#aaaaaa" pointer-events="all" />
+					</g>
+					<g>
+						<g transform="translate(-0.5 -0.5)">
+							<switch>
+								<foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+									<div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 188px; height: 1px; padding-top: 120px; margin-left: 11px;">
+										<div data-drawio-colors="color: #AAAAAA; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+											<div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(170, 170, 170); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+												tile
+											</div>
+										</div>
+									</div>
+								</foreignObject>
+								<text x="105" y="124" fill="#AAAAAA" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+									tile
+								</text>
+							</switch>
+						</g>
+					</g>
+				</g>
+				<g data-cell-id="-bHN_EeqZ7_Te_X9vZEj-10">
+					<g>
+						<rect x="10" y="150" width="190" height="40" fill="none" stroke="#aaaaaa" pointer-events="all" />
+					</g>
+					<g>
+						<g transform="translate(-0.5 -0.5)">
+							<switch>
+								<foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
+									<div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 188px; height: 1px; padding-top: 170px; margin-left: 11px;">
+										<div data-drawio-colors="color: #AAAAAA; " style="box-sizing: border-box; font-size: 0px; text-align: center;">
+											<div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(170, 170, 170); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
+												tile
+											</div>
+										</div>
+									</div>
+								</foreignObject>
+								<text x="105" y="174" fill="#AAAAAA" font-family="&quot;Helvetica&quot;" font-size="12px" text-anchor="middle">
+									tile
+								</text>
+							</switch>
+						</g>
+					</g>
+				</g>
+			</g>
+		</g>
+	</g>
+</svg>

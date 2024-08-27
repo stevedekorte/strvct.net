@@ -48,7 +48,6 @@
   finalInit () {
     super.finalInit()
     this.setTitle("Groq");
-
     this.setSystemRoleName("user"); // only replaced in outbound request json
   }
 

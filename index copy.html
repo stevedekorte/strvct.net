@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Strvct</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.2/marked.min.js"></script>
+    <link href="resources/fonts/ShareTechMono/font.css" rel="stylesheet" type="text/css">
+    <link href="resources/fonts/Blender Pro/font.css" rel="stylesheet" type="text/css">
+    <link href="resources/fonts/BarlowCondensed/font.css" rel="stylesheet" type="text/css">
+    <style>
+        body {
+            font-family: "Helvetica", Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            line-height: 1.6;
+            font-size: 16px;
+            background-color: #191919;
+            color: #aaa;
+            max-width: 800px;
+            margin-top: max(3em, 10%);
+            margin-left: max(1em, 10%);
+            margin-right: max(1em, 10%);
+            padding: 0;
+        }
+
+        h1, h2, h3, h4, h5 {
+          color: #f4f4ec;
+        }
+
+        h1 {
+          margin-top: 0em;
+          font-size: 3em;
+          font-family: "Blender Pro", "Helvetica", sans-serif;
+          text-transform: uppercase;
+        }
+
+        h2 {
+          margin-top: 2.5em;
+          opacity: 0.8;
+          font-size: 1.5em;
+          font-weight: 300;
+        }
+
+        h3, h4, h5 {
+          margin-top: 2em;
+          opacity: 0.9;
+          font-size: 1.1em;
+          font-weight: 300;
+        }
+
+        h4 {
+          font-size: 1em;
+        }
+
+        hr {
+          margin-top: 2em;
+          margin-bottom: 2em;
+          opacity: 0.2;
+        }
+
+        code {
+            border-radius: 0.5em;
+            font-family: "Helvetica", "Blender Pro", monospace;
+            /*
+            font-size: 1.1em;
+            */
+            opacity: 0.7;
+        }
+
+        pre {
+          background-color: rgba(255, 255, 255, 0.1);
+          padding: 0.5em;
+          padding-left: 1em;
+          border-radius: 4px;
+          overflow-x: auto;
+          white-space: pre-wrap;
+        }
+
+        blockquote {
+            border-left: 4px solid #ccc;
+            margin-left: 0;
+            font-style: italic;
+        }
+
+
+        /* Custom styles */
+        a:link, a:visited {
+          font-family: "Helvetica", sans-serif;
+          color: #999;
+          text-decoration: none;
+          transition: background-color .15s linear, color .15s linear;
+        }
+
+        a:hover {
+          color: #fff;
+          text-shadow: 0px 0px 1px white;
+          transition: .2s text-shadow;
+        }
+    </style>
+</head>
+<body>
+    <div id="content">Loading...</div>
+
+    <script>
+        // Function to load and render the Markdown content
+        async function loadAndRenderMarkdown() {
+            try {
+                // Fetch the content of ReadMe.md
+                const response = await fetch('README.md');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const markdown = await response.text();
+
+                // Parse the Markdown and insert the resulting HTML into the page
+                document.getElementById('content').innerHTML = marked.parse(markdown);
+            } catch (error) {
+                console.error('Error loading Markdown:', error);
+                document.getElementById('content').innerHTML = 'Error loading content. Please check the console for details.';
+            }
+        }
+
+        // Call the function when the page loads
+        window.onload = loadAndRenderMarkdown;
+    </script>
+</body>
+</html>

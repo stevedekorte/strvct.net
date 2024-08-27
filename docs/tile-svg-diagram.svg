@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 200">
+  <style>
+    :root {
+      --font-weight: 300;
+      --font-family: Helvetica, Arial, sans-serif;
+      --font-size-title: 24px;
+      --font-size-subtitle: 18px;
+      --font-color: #555;
+      --line-width: 1;
+      --line-color: #666;
+      
+      --caret-color: #666666;
+      --caret-size: 20;
+      --caret-stroke-width: 2;
+      --caret-scale: 1;
+      --caret-offset-x: 1300;
+      --caret-offset-y: 0;
+    }
+  </style>
+  
+  <rect x="10" y="10" width="480" height="180" 
+        fill="none" 
+        stroke="var(--line-color)" 
+        stroke-width="var(--line-width)"/>
+  
+  <text x="40" y="60" 
+        font-family="var(--font-family)"
+        font-size="var(--font-size-title)" 
+        fill="var(--font-color)">title</text>
+  
+  <text x="40" y="90" 
+        font-weight="var(--font-weight)"
+        font-family="var(--font-family)"
+        font-size="var(--font-size-subtitle)" 
+        fill="var(--font-color)">subtitle</text>
+
+  <text x="40" y="120" 
+        font-weight="var(--font-weight)"
+        font-family="var(--font-family)"
+        font-size="var(--font-size-subtitle)"
+        opacity="0.5"
+        fill="red">error message</text>
+
+
+  <text x="440" y="120" 
+        font-weight="var(--font-weight)"
+        font-family="var(--font-family)"
+        font-size="var(--font-size-subtitle)"
+        opacity="0.5"
+        fill="red">note</text>
+
+  <g transform="scale(0.6) translate(460, 70)">
+    <path d="M250,80 L270,100 L250,120" 
+          fill="none"
+          stroke="var(--caret-color)"
+          stroke-width="var(--caret-stroke-width)"
+          stroke-linecap="round"
+          stroke-linejoin="round"/>
+  </g>
+</svg>

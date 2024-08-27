@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600">
+  <style>
+    :root {
+      --background-color: transparent;
+      --text-color: #999;
+      --line-color: #666;
+      --nav-item-color: #999;
+      --line-width: 1px;
+    }
+    rect {
+      fill: var(--background-color);
+      stroke: var(--line-color);
+      stroke-width: var(--line-width);
+    }
+    line {
+      stroke: var(--line-color);
+      stroke-width: var(--line-width);
+    }
+    .nav-item {
+      stroke: var(--nav-item-color);
+    }
+  </style>
+
+  <!-- Level 1 (Horizontal) -->
+  <rect x="10" y="10" width="780" height="580"/>
+  <line x1="10" y1="60" x2="790" y2="60" stroke-dasharray="5,5"/>
+  <!-- Level 1 Navigation Items -->
+  <rect class="nav-item" x="20" y="20" width="80" height="30"/>
+  <rect class="nav-item" x="110" y="20" width="80" height="30"/>
+  <rect class="nav-item" x="200" y="20" width="80" height="30"/>
+  
+  <!-- Level 2 (Horizontal) -->
+  <rect x="20" y="70" width="760" height="510"/>
+  <line x1="20" y1="120" x2="780" y2="120" stroke-dasharray="5,5"/>
+  <!-- Level 2 Navigation Items -->
+  <rect class="nav-item" x="30" y="80" width="80" height="30"/>
+  <rect class="nav-item" x="120" y="80" width="80" height="30"/>
+  <rect class="nav-item" x="210" y="80" width="80" height="30"/>
+  
+  <!-- Level 3 (Vertical) -->
+  <rect x="30" y="130" width="740" height="440"/>
+  <line x1="180" y1="130" x2="180" y2="570" stroke-dasharray="5,5"/>
+  <!-- Level 3 Navigation Items -->
+  <rect class="nav-item" x="40" y="140" width="130" height="30"/>
+  <rect class="nav-item" x="40" y="180" width="130" height="30"/>
+  <rect class="nav-item" x="40" y="220" width="130" height="30"/>
+  
+  <!-- Level 4 (Vertical) -->
+  <rect x="190" y="140" width="570" height="420"/>
+  <line x1="340" y1="140" x2="340" y2="560" stroke-dasharray="5,5"/>
+  <!-- Level 4 Navigation Items -->
+  <rect class="nav-item" x="200" y="150" width="130" height="30"/>
+  <rect class="nav-item" x="200" y="190" width="130" height="30"/>
+  <rect class="nav-item" x="200" y="230" width="130" height="30"/>
+</svg>

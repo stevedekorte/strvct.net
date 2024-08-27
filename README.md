@@ -1,21 +1,144 @@
+   <style>
+        .outlined-text {
+            font-size: 48px;
+            font-weight: bold;
+            color: transparent;
+            -webkit-text-stroke: 1px white;
+            text-stroke: 1px white;
+        }
+    </style>
+
 # Strvct
+
+<span style="color: yellow;">This document is a work in progress... and probably not worth reading yet.</span>
 
 ## Abstract
 
-Strvct is a JavaScript framework for creating low-code, full-featured client-side web applications in which only the domain model objects need to be defined. It is implemented as a hybrid Miller column user interface on top of naked objects with transparent persistence, where all synchronization between these layers is handled automatically.While Strvct's runtime-generated user interfaces may not be suitable for highly specialized applications like games or graphic design tools, it works well for a wide range of standard web applications and can significantly reduce development time for many common use cases.
+By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes. While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework that implements it.
 
-Instance variable annotations on a common model base class are used to support automatic synchronization (via mutation tracking and notifications) between the model and the storage and user interface layers. A unique view system based on hierarchical Miller Columns whose orientation can be changed at each level is used to provide a scalable and flexible UI navigation and presentation system.
+<!--
+
+## Overview
+
+Strvct is a client-side JavaScript framework for creating single page web applications using a transparently persisted Naked Objects system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
+-->
+
+## Domain Model
+
+In our system, the domain model is a cyclic graph of domain objects.
+Each domain object has:
+
+- properties and actions
+- a **subnodes** property containing an ordered unique collection of child domain objects
+- a **parentNode** property pointing to its parent domain object
+- annotations on properties and actions which allow for the automatic handling of UI and storage mechanisms.
+
+<!--
+Explain what the domain model is and how it's objects are mapped to UI and storage.
+
+- domain model is a cyclic graph of objects
+- domain objects should be "behaviourally complete", not needed controllers to perform relevant actions.
+- domain objects are mapped to UI views and storage records
+- UI navigates the domain object graph
+- UI can present multiple views of a domain object in the same screen
+- use of Domain collection classes to represent collections of domain objects
+- UI, a stack of tiles, where each tile is a node that can be navigated
+- assumptions of storage, a graph of objects, stored in local storage
+- mention using annotations for auto-generated UI and storage
+
+[overview diagram of domain objects graph, UI, and storage]
+-->
+
+## User Interface
+
+### Tiles
+
+The core navigational elements, referred to as **Tiles**, each represent a single domain object or property inspector for a domain object. When serving a navigation role, a Tile provides a summary of the domain object they represent. These summaries are dynamically composed, and capable of including information from multiple sub-levels based on annotations within the object hierarchy.
+
+<div style="display: inline-block; min-width: 20em; width: 48%; max-width: 100%; padding-right: 1em;">
+Field Tile<br>
+<object type="image/svg+xml" data="docs/tile.svg">Your browser does not support SVG</object>
+</div>
+<div style="display: inline-block; min-width: 20em; width: 48%; max-width: 100%;">
+Summary Tile<br>
+<object type="image/svg+xml" data="docs/tile.svg">Your browser does not support SVG</object>
+</div>
+
+When representing properties, they typically include a label and editable value or control. This allows users to interact with object properties seamlessly within the navigation flow. Inline properties also support notes, error messages, and optional left and right sidebars useful for displaying metadata such as icons, avatars, subnode counts, item status, etc.
+
+[editable properties example]
+
+#### Dynamic Inspectors
+
+Properties with complex structures, like sets of valid values or valid values organized in a tree structure may dynamically create a model structure when accessed which can be navigated as if they were part of the model.
+
+[editable properties example]
+
+### Summary Customization
+
+A notable feature of the Tiles is their ability to generate summaries that reflect deeper levels of the hierarchy. This is controlled by annotations on the Tiles' slots, which dictate whether or not sub-item summaries should be included. This provides a powerful way to condense information, giving users a quick overview of nested structures without requiring deep navigation.
+
+[summaries examples]
+
+### Master-Detail Views
+
+The user interface is composed of nested master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a scrollable set of tile views. The detail view presents the domain object for the selected tile.
+
+#### Headers and Footers
+
+Master views support optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
+
+<div style="display: inline-block; min-width: 10em; width: 100%; max-width: 100%; text-align: center;">
+<object type="image/svg+xml" data="docs/header-footer2.svg">Your browser does not support SVG</object>
+</div>
+
+#### Flexible Orientation
+
+Both the orientation of the master tiles (top-to-bottom or left-to-right), and the detail view (right-of, or below the master) can be requested by the domain object they are presenting or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
+
+<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%; margin: 1em;">
+<object type="image/svg+xml" data="docs/master-detail.svg">Your browser does not support SVG</object>
+</div>
+</div>
+
+### Nesting
+
+<!--
+can be used to navigate the domain model.
+-->
+
+By nesting these master-detail views with a combination of orientations, a flexible navigation structure is formed which maps well to many common application design patterns.
+
+<!--
+like classic Miller Columns, or horizontally, similar to menu systems, offering adaptability based on the content, display size, and user preference.
+-->
+
+<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%;">
+Vertical<br>
+<object type="image/svg+xml" data="docs/vertical-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+</div>
+<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%;">
+Horizontal<br>
+<object type="image/svg+xml" data="docs/horizontal-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+</div>
+<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%;">
+Hybrid<br>
+<object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+</div>
+
+<!--
+<div style="width: 100%; text-align: center;">
+<object style="height: 15em; width: auto;" type="image/svg+xml" data="docs/naked-objects-diagram.svg">Your browser does not support SVG</object>
+</div>
+-->
+
+<!--
 
 ## Introduction
 
 Applications are typically composed of 3 layers: UI, Model, and Storage. Much of the code (and potential bugs) that make up the custom code in complex real world applications is the "glue" code that synchronizes these layers.
 
 The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and Storage layers (and the synchronization between all 3 layers) to be handled automatically. So you write the model and the rest is handled for you (though you can add custom views if needed). This involves choosing uniform but flexible building blocks for each of the layers.
-
-## Terminology
-
-slots: objects which hold metadata about the instance variable related to type, persistance, synchronization.
-nodes:
 
 ## Building Blocks
 
@@ -164,3 +287,6 @@ This project required the development of several custom frameworks:
 - Auto resource management, loading, and caching system
 - Common protocol for resources (fonts, sounds, images, icons, JSON data files)
 - Transparent mutation observers for common classes
+-->
+
+[1]: http://downloads.nakedobjects.net/resources/Pawson_and_Matthews_Thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
