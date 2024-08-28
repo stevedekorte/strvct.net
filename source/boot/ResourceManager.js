@@ -77,7 +77,7 @@ function evalStringFromSourceUrl(codeString, path) {
         : sanitizedPath;
 
     // Construct the sourceURL comment
-    const sourceUrlComment = `\n//# sourceURL=${JSON.stringify(normalizedPath)}`;
+    const sourceUrlComment = `\n//# sourceURL=${encodeURI(normalizedPath)}`;
 
     // Combine the code string with the sourceURL comment
     const debugCode = codeString + sourceUrlComment;
