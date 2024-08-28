@@ -1,10 +1,14 @@
+<head>
+  <title>Strvct</title>
+</head>
+
 # Strvct
 
-<span style="color: yellow;">This document is a work in progress... and probably not worth reading yet.</span>
+<span style="color: yellow;">This document is under construction.</span>
 
 ## Abstract
 
-By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes. While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework that implements it.
+By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes. While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net)that implements it.
 
 ## Overview
 
@@ -26,12 +30,11 @@ Each domain object has:
 - a **subnodes** property containing an ordered unique collection of child domain objects
 - a **parentNode** property pointing to its parent domain object
 - property annotations which allow for the automatic handling of UI and storage mechanisms.
-
-Domain objects in this system are "behaviourally complete", so they do not need controllers to integrate into the system or perform relevant actions.
+- **title** and **subtitle** properties
 
 ### Collections
 
-Domain objects often reference collections of other domain objects, and to support behaviourally completeness, these are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
+Domain objects often reference collections of other domain objects. These collections are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
 
 <!--
 Explain what the domain model is and how it's objects are mapped to UI and storage.
@@ -55,29 +58,25 @@ Explain what the domain model is and how it's objects are mapped to UI and stora
 
 The core navigational elements, referred to as **Tiles**, are used to represent either:
 
-- a domain object
-- a property of a domain object
+- a domain object (via a Summary Tile)
+- a property of a domain object (via a Property Tile)
 
 #### Summary Tiles
 
-When representing a domain object, a tile is used to display a summary of the object and navigate to it's details. These summaries are dynamically composed, and capable of including information from multiple sub-levels based on annotations within the object hierarchy.
+Summary Tiles are used to represent domain objects and are used to navigate the domain model. They typically display:
 
-[example summary tile]
-
-<!--
-<div style="display: inline-block; min-width: 20em; width: 48%; max-width: 100%; padding-right: 1em;">
-Field Tile<br>
-<object type="image/svg+xml" data="docs/tile.svg">Your browser does not support SVG</object>
-</div>
-<div style="display: inline-block; min-width: 20em; width: 48%; max-width: 100%;">
-Summary Tile<br>
-<object type="image/svg+xml" data="docs/tile.svg">Your browser does not support SVG</object>
-</div>
--->
+- title
+- subtitle (which many be a dynamic summary of descendants)
+- optional left and right sidebars (useful for displaying additional text or icons)
 
 #### Property Tiles
 
-When representing properties, they typically include a label and editable value or control. This allows users to interact with object properties seamlessly within the navigation flow. Inline properties also support notes, error messages, and optional left and right sidebars useful for displaying metadata such as icons, avatars, subnode counts, item status, etc.
+Property tiles present a property of a domain object and typically display:
+
+- key (the property name or label)
+- value (which may be editable)
+- note
+- error
 
 [editable properties example]
 
@@ -85,6 +84,7 @@ When representing properties, they typically include a label and editable value 
 
 Properties with complex structures, like sets of valid values or valid values organized in a tree structure may dynamically create a temporary model structure when accessed which can be navigated as if they were part of the model.
 
+<!--
 [editable properties example]
 
 ### Summary Customization
@@ -92,13 +92,14 @@ Properties with complex structures, like sets of valid values or valid values or
 A notable feature of the Tiles is their ability to generate summaries that reflect deeper levels of the hierarchy. This is controlled by annotations on the Tiles' slots, which dictate whether or not sub-item summaries should be included. This provides a powerful way to condense information, giving users a quick overview of nested structures without requiring deep navigation.
 
 [summaries examples]
+-->
 
 ### Master-Detail Views
 
 The user interface is composed of nested master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a scrollable set of tile views. The detail view presents the domain object for the selected tile. Master views support optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
 
 <diagram>
-<object type="image/svg+xml" data="docs/header-footer2.svg">Your browser does not support SVG</object>
+<object type="image/svg+xml" data="docs/header-footer2.svg" style="width: 100%; height: auto;">Your browser does not support SVG</object>
 </diagram>
 
 #### Flexible Orientation
@@ -109,17 +110,17 @@ Both the orientation of the master tiles (top-to-bottom or left-to-right), and t
 <object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">Your browser does not support SVG</object>
 </diagram>
 
+#### Auto Collapsing and Expanding
+
+Master-Detail views have the default behaviour of automatically collapsing and expandas needed during navigation in order to best fit on screen. This makes supporting even very small screens, such as watches, easy.
+
 ### Nesting
 
 <!--
 can be used to navigate the domain model.
 -->
 
-By nesting these master-detail views with a combination of orientations, a flexible navigation structure is formed which maps well to many common application design patterns.
-
-<!--
-like classic Miller Columns, or horizontally, similar to menu systems, offering adaptability based on the content, display size, and user preference.
--->
+By nesting these master-detail views with a combination of orientations, a flexible navigation structure is formed which maps well to many common application design patterns. This flexibility can be used to automatically adapt the layout based on the content, display size, and user preference.
 
 <diagram>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
@@ -135,6 +136,37 @@ like classic Miller Columns, or horizontally, similar to menu systems, offering 
   <object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
   </div>
 </diagram>
+
+### Navigation
+
+[selected tiles path and leaf selection can be highlighted based on themes]
+
+### Adding and Deleting
+
+...
+
+### Moving and Reordering via Drag-and-Drop
+
+...
+
+###
+
+## Advantages of a Unifified UI
+
+As the entire UI is composed of these Tile Stack views, features implemented for the Master-Detail views are immeditately available for the entire UI, such as:
+
+- consistent navigation, visual structure, interactions
+
+Every tile stack can support:
+
+- moving and reordering (via drag and drop)
+- search
+
+other:
+
+- Orientation (horizontal/vertical)
+- arbitrary depth navigation
+- responsive design
 
 <!--
 <div style="width: 100%; text-align: center;">

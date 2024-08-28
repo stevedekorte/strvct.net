@@ -23,6 +23,7 @@ body {
  margin-bottom: max(3em, 10%);
 
  padding: 0;
+ box-sizing: content-box;
 }
 hr {
   width: 100%;
@@ -90,7 +91,6 @@ a:hover {
   margin-top: 2em;
   border-top: 1px solid #444;
   padding-top: 1em;
-  width: calc(100% + 2em);
 }
 .reference-item {
   margin-bottom: 0.5em;
@@ -136,8 +136,17 @@ async function loadAndRenderMarkdown() {
     const referenceList = [];
     const toc = [];
 
+    // Extract title from markdown
+    const titleMatch = markdown.match(/<head>\s*<title>([^<]+)<\/title>\s*<\/head>/);
+    if (titleMatch) {
+      document.title = titleMatch[1].trim();
+    }
+
+    // Remove the title section from the markdown
+    const contentWithoutTitle = markdown.replace(/<head>[\s\S]*?<\/head>/, '');
+
     // First pass: extract references
-    const lines = markdown.split('\n');
+    const lines = contentWithoutTitle.split('\n');
     const contentLines = lines.filter(line => {
       const match = line.match(/^\[(.+)\]:\s*(.+?)\s*(?:"(.+)")?$/);
       if (match) {
@@ -203,22 +212,14 @@ async function loadAndRenderMarkdown() {
     const tocPlaceholder = '<!--TOC_PLACEHOLDER-->';
     const contentWithPlaceholder = contentLines.join('\n').replace('[TOC]', tocPlaceholder);
 
-    console.log("Content with placeholder:", contentWithPlaceholder.includes(tocPlaceholder));
-
     // Parse the content
     let content = marked.parse(contentWithPlaceholder);
-
-    console.log("After parsing - Content includes placeholder:", content.includes(tocPlaceholder));
 
     // Generate table of contents
     const tocHtml = generateTOC(toc);
 
-    console.log("Table of contents HTML:", tocHtml);
-
-    console.log("Before replacement:", content.includes(tocPlaceholder));
     // Replace the placeholder with the table of contents
     content = content.replace(tocPlaceholder, `<table-of-contents>\n${tocHtml}\n</table-of-contents>`);
-    console.log("After replacement:", content.includes(tocPlaceholder));
 
     // Add references section
     const referencesSection = referenceList.length > 0
