@@ -1,13 +1,3 @@
-   <style>
-        .outlined-text {
-            font-size: 48px;
-            font-weight: bold;
-            color: transparent;
-            -webkit-text-stroke: 1px white;
-            text-stroke: 1px white;
-        }
-    </style>
-
 # Strvct
 
 <span style="color: yellow;">This document is a work in progress... and probably not worth reading yet.</span>
@@ -16,11 +6,15 @@
 
 By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes. While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework that implements it.
 
-<!--
-
 ## Overview
 
+<!--
+
 Strvct is a client-side JavaScript framework for creating single page web applications using a transparently persisted Naked Objects system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
+
+<diagram>
+<object type="image/svg+xml" data="docs/mvs.svg">Your browser does not support SVG</object>
+</diagram>
 -->
 
 ## Domain Model
@@ -28,10 +22,16 @@ Strvct is a client-side JavaScript framework for creating single page web applic
 In our system, the domain model is a cyclic graph of domain objects.
 Each domain object has:
 
-- properties and actions
+- properties (instance variables) and actions (methods)
 - a **subnodes** property containing an ordered unique collection of child domain objects
 - a **parentNode** property pointing to its parent domain object
-- annotations on properties and actions which allow for the automatic handling of UI and storage mechanisms.
+- property annotations which allow for the automatic handling of UI and storage mechanisms.
+
+Domain objects in this system are "behaviourally complete", so they do not need controllers to integrate into the system or perform relevant actions.
+
+### Collections
+
+Domain objects often reference collections of other domain objects, and to support behaviourally completeness, these are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
 
 <!--
 Explain what the domain model is and how it's objects are mapped to UI and storage.
@@ -53,8 +53,18 @@ Explain what the domain model is and how it's objects are mapped to UI and stora
 
 ### Tiles
 
-The core navigational elements, referred to as **Tiles**, each represent a single domain object or property inspector for a domain object. When serving a navigation role, a Tile provides a summary of the domain object they represent. These summaries are dynamically composed, and capable of including information from multiple sub-levels based on annotations within the object hierarchy.
+The core navigational elements, referred to as **Tiles**, are used to represent either:
 
+- a domain object
+- a property of a domain object
+
+#### Summary Tiles
+
+When representing a domain object, a tile is used to display a summary of the object and navigate to it's details. These summaries are dynamically composed, and capable of including information from multiple sub-levels based on annotations within the object hierarchy.
+
+[example summary tile]
+
+<!--
 <div style="display: inline-block; min-width: 20em; width: 48%; max-width: 100%; padding-right: 1em;">
 Field Tile<br>
 <object type="image/svg+xml" data="docs/tile.svg">Your browser does not support SVG</object>
@@ -63,6 +73,9 @@ Field Tile<br>
 Summary Tile<br>
 <object type="image/svg+xml" data="docs/tile.svg">Your browser does not support SVG</object>
 </div>
+-->
+
+#### Property Tiles
 
 When representing properties, they typically include a label and editable value or control. This allows users to interact with object properties seamlessly within the navigation flow. Inline properties also support notes, error messages, and optional left and right sidebars useful for displaying metadata such as icons, avatars, subnode counts, item status, etc.
 
@@ -70,7 +83,7 @@ When representing properties, they typically include a label and editable value 
 
 #### Dynamic Inspectors
 
-Properties with complex structures, like sets of valid values or valid values organized in a tree structure may dynamically create a model structure when accessed which can be navigated as if they were part of the model.
+Properties with complex structures, like sets of valid values or valid values organized in a tree structure may dynamically create a temporary model structure when accessed which can be navigated as if they were part of the model.
 
 [editable properties example]
 
@@ -82,24 +95,19 @@ A notable feature of the Tiles is their ability to generate summaries that refle
 
 ### Master-Detail Views
 
-The user interface is composed of nested master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a scrollable set of tile views. The detail view presents the domain object for the selected tile.
+The user interface is composed of nested master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a scrollable set of tile views. The detail view presents the domain object for the selected tile. Master views support optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
 
-#### Headers and Footers
-
-Master views support optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
-
-<div style="display: inline-block; min-width: 10em; width: 100%; max-width: 100%; text-align: center;">
+<diagram>
 <object type="image/svg+xml" data="docs/header-footer2.svg">Your browser does not support SVG</object>
-</div>
+</diagram>
 
 #### Flexible Orientation
 
 Both the orientation of the master tiles (top-to-bottom or left-to-right), and the detail view (right-of, or below the master) can be requested by the domain object they are presenting or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
-<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%; margin: 1em;">
-<object type="image/svg+xml" data="docs/master-detail.svg">Your browser does not support SVG</object>
-</div>
-</div>
+<diagram>
+<object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">Your browser does not support SVG</object>
+</diagram>
 
 ### Nesting
 
@@ -113,18 +121,20 @@ By nesting these master-detail views with a combination of orientations, a flexi
 like classic Miller Columns, or horizontally, similar to menu systems, offering adaptability based on the content, display size, and user preference.
 -->
 
-<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%;">
-Vertical<br>
-<object type="image/svg+xml" data="docs/vertical-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
-</div>
-<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%;">
-Horizontal<br>
-<object type="image/svg+xml" data="docs/horizontal-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
-</div>
-<div style="display: inline-block; min-width: 10em; width: 32%; max-width: 100%;">
-Hybrid<br>
-<object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
-</div>
+<diagram>
+  <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
+  Vertical<br>
+  <object type="image/svg+xml" data="docs/vertical-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+  </div>
+  <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
+  Horizontal<br>
+  <object type="image/svg+xml" data="docs/horizontal-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+  </div>
+  <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
+  Hybrid<br>
+  <object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+  </div>
+</diagram>
 
 <!--
 <div style="width: 100%; text-align: center;">
@@ -289,4 +299,4 @@ This project required the development of several custom frameworks:
 - Transparent mutation observers for common classes
 -->
 
-[1]: http://downloads.nakedobjects.net/resources/Pawson_and_Matthews_Thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
+[1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"

@@ -19,10 +19,13 @@ body {
  max-width: 800px;
  margin-top: max(3em, 10%);
  margin-left: max(1em, 10%);
- margin-right: max(1em, 10%);
+ margin-right: max(3em, 10%);
  margin-bottom: max(3em, 10%);
 
  padding: 0;
+}
+hr {
+  width: 100%;
 }
 h1, h2, h3, h4, h5 {
  color: #f4f4ec;
@@ -87,10 +90,35 @@ a:hover {
   margin-top: 2em;
   border-top: 1px solid #444;
   padding-top: 1em;
+  width: calc(100% + 2em);
 }
 .reference-item {
   margin-bottom: 0.5em;
 }
+diagram {
+  display: flex;  
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1em; 
+  padding: 1em;
+  border: 0px solid #333;
+  overflow: hidden;
+  height: fit-content;
+  width: 100%;
+  text-align: center;
+}
+
+object {
+  display: flex;
+  border: 0px none red;
+  height: auto;
+  width: fit-content;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0em;
+  padding: 0em;
+}
+
 </style>
 </head>
 <body>
@@ -106,6 +134,7 @@ async function loadAndRenderMarkdown() {
 
     const referenceMap = new Map();
     const referenceList = [];
+    const toc = [];
 
     // First pass: extract references
     const lines = markdown.split('\n');
@@ -123,6 +152,13 @@ async function loadAndRenderMarkdown() {
     // Custom renderer
     const renderer = new marked.Renderer();
 
+    // Override heading renderer to add IDs and collect TOC items
+    renderer.heading = function(text, level) {
+      const slug = text.toLowerCase().replace(/[^\w]+/g, '-');
+      toc.push({ text, level, slug });
+      return `<h${level} id="${slug}">${text}</h${level}>`;
+    };
+
     // Override the paragraph renderer to add links to citations
     renderer.paragraph = function(text) {
       const citationRegex = /\[(\d+)\]/g;
@@ -137,17 +173,70 @@ async function loadAndRenderMarkdown() {
 
     marked.use({ renderer });
 
-    const content = marked.parse(contentLines.join('\n'));
+    // Generate table of contents
+    function generateTOC(items) {
+      let currentLevel = 1;
+      let html = '<ul>';
+      items.forEach(item => {
+        if (item.level > currentLevel) {
+          html += '<ul>'.repeat(item.level - currentLevel);
+        } else if (item.level < currentLevel) {
+          html += '</ul>'.repeat(currentLevel - item.level);
+        }
+        html += `<li><a href="#${item.slug}">${item.text}</a></li>`;
+        currentLevel = item.level;
+      });
+      html += '</ul>'.repeat(currentLevel);
+      return html;
+    }
+
+    // Function to decode URL-encoded strings
+    function decodeURL(url) {
+      try {
+        return decodeURIComponent(url.replace(/\+/g, ' '));
+      } catch (e) {
+        return url; // Return original URL if decoding fails
+      }
+    }
+
+    // Replace [TOC] with a unique HTML comment placeholder
+    const tocPlaceholder = '<!--TOC_PLACEHOLDER-->';
+    const contentWithPlaceholder = contentLines.join('\n').replace('[TOC]', tocPlaceholder);
+
+    console.log("Content with placeholder:", contentWithPlaceholder.includes(tocPlaceholder));
+
+    // Parse the content
+    let content = marked.parse(contentWithPlaceholder);
+
+    console.log("After parsing - Content includes placeholder:", content.includes(tocPlaceholder));
+
+    // Generate table of contents
+    const tocHtml = generateTOC(toc);
+
+    console.log("Table of contents HTML:", tocHtml);
+
+    console.log("Before replacement:", content.includes(tocPlaceholder));
+    // Replace the placeholder with the table of contents
+    content = content.replace(tocPlaceholder, `<table-of-contents>\n${tocHtml}\n</table-of-contents>`);
+    console.log("After replacement:", content.includes(tocPlaceholder));
 
     // Add references section
     const referencesSection = referenceList.length > 0
       ? `<div class="reference-list">
            <h2>References</h2>
-           ${referenceList.map(({ key, url, title }) => `<div class="reference-item" id="ref-${key}">[${key}] <a href="${url}" target="_blank">${url}</a>${title ? ` "${title}"` : ''}</div>`).join('')}
+           ${referenceList.map(({ key, url, title }) => `
+             <div class="reference-item" id="ref-${key}">
+               ${key}. ${title ? `${title}` : ''}
+               <br>
+               <a href="${url}" target="_blank">${decodeURL(url)}</a>
+             </div>`).join('')}
          </div>`
       : '';
 
-    document.getElementById('content').innerHTML = content + referencesSection;
+    document.getElementById('content').innerHTML = `
+      ${content}
+      ${referencesSection}
+    `;
   } catch (error) {
     console.error('Error loading Markdown:', error);
     document.getElementById('content').innerHTML = 'Error loading content. Please check the console for details.';

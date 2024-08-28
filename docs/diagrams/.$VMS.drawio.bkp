@@ -105,9 +105,9 @@
             <mxPoint x="299.5" y="120" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="O1Du5qdraZDRNB3JbQGC-6" value="auto gen and sync" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#B3B3B3;labelPosition=center;verticalLabelPosition=middle;" vertex="1" connectable="0" parent="O1Du5qdraZDRNB3JbQGC-5">
+        <mxCell id="O1Du5qdraZDRNB3JbQGC-6" value="auto gen and sync" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontColor=#B3B3B3;" vertex="1" connectable="0" parent="O1Du5qdraZDRNB3JbQGC-5">
           <mxGeometry x="0.1" y="1" relative="1" as="geometry">
-            <mxPoint x="1" as="offset" />
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
       </root>
