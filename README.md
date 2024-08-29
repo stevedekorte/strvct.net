@@ -2,7 +2,7 @@
   <title>Strvct</title>
 </head>
 
-<div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">This document is under construction.</div>
+<div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">incomplete draft</div>
 
 # Strvct
 
@@ -34,9 +34,9 @@ Each domain object has:
 - property annotations which allow for the automatic handling of UI and storage mechanisms.
 - **title** and **subtitle** properties
 
-### Collections
+### Doman Object Collections
 
-Domain objects often reference collections of other domain objects. These collections are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
+Domain objects may reference collections of other domain objects. These collections are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
 
 <!--
 Explain what the domain model is and how it's objects are mapped to UI and storage.
@@ -69,20 +69,25 @@ Summary Tiles are used to represent domain objects and are used to navigate the 
 
 - title
 - subtitle (which many be a dynamic summary of descendants)
-- optional left and right sidebars (useful for displaying additional text or icons)
+- optional left and right sidebars (for additional text or icons)
+
+<diagram>
+Summary Tile
+<object type="image/svg+xml" data="docs/summary-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+</diagram>
 
 #### Property Tiles
 
 Property tiles present a property of a domain object and typically display:
 
-- key (the property name or label)
-- value (which may be editable)
+- property name
+- inline value view (which may be editable)
 - note
-- error
+- error (e.g. validation or action error)
 
 <diagram>
 Property Tile
-<object type="image/svg+xml" data="docs/tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/property-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Dynamic Inspectors
@@ -99,6 +104,7 @@ A notable feature of the Tiles is their ability to generate summaries that refle
 
 Tiles are composed into scrollable stack views. Stack views support:
 
+- flexible orientation (top-to-bottom or left-to-right)
 - gestures for:
   - adding (tap-empty-area, pinch-apart tiles<!--, pull-down-from-top, pull-up-from-bottom-->)
   - removing (swipe-left)
@@ -118,21 +124,27 @@ The user interface is composed of nested master-detail views, each of which pres
 
 <diagram>
 Master-Detail View
-<object type="image/svg+xml" data="docs/header-footer2.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Flexible Orientation
 
-The orientation of the master tiles (top-to-bottom or left-to-right), and the detail view (right-of, or below the master) can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
+Detail View can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
-<diagram>
-Orientations
-<object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<diagram style="  position: relative;
+  width: 100%;
+  padding-bottom: 47.57%;">
+<object type="image/svg+xml" data="docs/orientations.svg" style="  display: inline-block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;">[SVG diagram]</object>
 </diagram>
 
 #### Auto Collapsing and Expanding
 
-Master-Detail views have the default behaviour of automatically collapsing and expandas needed during navigation in order to best fit on screen. This makes supporting even small screens, such as watches, relatively easy.
+Master-Detail views have the default behaviour of automatically collapsing and expandas needed during navigation in order to best fit on screen. For example, on very small screens, such as watches, it might collapse to only show the last Tile Stack, while larger screens as many of the right most Tile Stacks as possible.
 
 ### Nesting
 
