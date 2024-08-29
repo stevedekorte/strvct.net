@@ -11,7 +11,7 @@
         border: 1px solid yellow;
         padding: 1em;
         border-radius: 1em;
-        box-sizing: border-box;">incomplete draft</div>
+        box-sizing: border-box;">early draft</div>
 
 # Strvct
 
@@ -149,11 +149,15 @@ Master-Detail View
 
 Detail View can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
-<diagram style="  position: relative;
+<diagram style="position: relative;
   width: 100%;
-  padding-bottom: 47.57%; overflow: visible;">
+  overflow: hidden; 
+  border: 0px solid white;
+  margin: 0em auto;
+  box-sizing: border-box;
+   ">
+Orientations
 <object type="image/svg+xml" data="docs/orientations.svg" style="  display: inline-block;
-  position: absolute;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -189,7 +193,7 @@ By nesting these master-detail views with a combination of orientations, a flexi
 - selected tiles on navigation path are highlighted
 - active tile (most recently selected) tile is highlghted differently
 
-### Composable UI Benefits
+### UI Advantages
 
 As the entire UI is composed of these Tile Stack views, features implemented for the Master-Detail views are immeditately available for the entire UI, such as:
 
@@ -208,20 +212,26 @@ As the entire UI is composed of these Tile Stack views, features implemented for
 
 ## Storage
 
-All persistence is handled automatically in Strvct. To support this, domain objects must declare:
+### Requirements
 
-- if they are persistent
-- which of their properties are persistent
+Domain object classes must declare:
 
-How persistence works:
+- If their instances are persistent
+- Which of their properties are persistent
 
-- each domain object has a unique persistence ID
-- each domain object is stored as a single JSON record
-- mutations on persistent properties cause the domain object to be queued for storage
-- mutations are bundled into a transaction which is committed at the end of the event loop
-- on-disk automatic garbage collection on the stored object graph is performed on startup or when requested
-- Javascript collections (Arrays, Maps, ArrayBuffers) are stored as their own records and assigned unique persistence IDs
-- only objects reachable from the root domain object are stored
+### Persistence Mechanism
+
+- Each persistent domain object and referenced JavaScript collection (Arrays, ArrayBuffers, Maps, Sets, Dictionaries) is:
+
+  - Assigned a unique persistence ID
+  - Stored as a single JSON record
+
+- Mutations on persistent properties (or collections) auto queue the object for storage
+
+- new or updated object records are committed in a single transaction at the end of the event loop
+
+- Automatic garbage collection of the stored object graph occurs, on startup or when requested
+- Only objects reachable from the root domain object are stored. That is, an object is not queued for storage unless it is set in a persistent property or as a member of a persistent collection.
 
 <!--
 - the database is a IndexedDB Object Store indexed by the Domain Object's unique ID

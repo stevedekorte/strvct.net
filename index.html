@@ -18,8 +18,7 @@ body {
  color: #aaa;
  max-width: 800px;
  margin: 0 auto;
- padding: 20px;
-
+ margin-bottom: 3em;
  padding: 0;
  box-sizing: content-box;
 }
@@ -290,6 +289,8 @@ async function loadAndRenderMarkdown() {
         html += `<li><a href="#${item.slug}">${item.text}</a></li>`;
         currentLevel = item.level;
       });
+      // Add References to TOC
+      html += `<li><a href="#references">References</a></li>`;
       html += '</ul>'.repeat(currentLevel);
       return html;
     }
@@ -326,7 +327,7 @@ async function loadAndRenderMarkdown() {
     // Add references section
     const referencesSection = referenceList.length > 0
       ? `<div class="reference-list">
-           <h2>References</h2>
+           <h2 id="references">References</h2>
            ${referenceList.map(({ key, url, title }) => `
              <div class="reference-item" id="ref-${key}">
                ${key}. <a href="${url}" target="_blank">${title || decodeURL(url)}</a>
