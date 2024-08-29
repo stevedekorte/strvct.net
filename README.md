@@ -208,13 +208,25 @@ As the entire UI is composed of these Tile Stack views, features implemented for
 
 ## Storage
 
-The app has a `PersistentObjectPool` which automatically:
+All persistence is handled automatically in Strvct. To support this, domain objects must declare:
 
-- domain objects can be set to persistent or transient
-- domain object properties can be set to persistent or transient
+- if they are persistent
+- which of their properties are persistent
 
-- mutations of persistent domain object properties are queued to be persisted
-- mutations are bundled into transactions which are stored atomically at the end of the event loop
-- Handles automatic garbage collection on the stored object graph.
+How persistence works:
+
+- each domain object has a unique persistence ID
+- each domain object is stored as a single JSON record
+- mutations on persistent properties cause the domain object to be queued for storage
+- mutations are bundled into a transaction which is committed at the end of the event loop
+- on-disk automatic garbage collection on the stored object graph is performed on startup or when requested
+- Javascript collections (Arrays, Maps, ArrayBuffers) are stored as their own records and assigned unique persistence IDs
+- only objects reachable from the root domain object are stored
+
+<!--
+- the database is a IndexedDB Object Store indexed by the Domain Object's unique ID
+-->
+
+In addition, garbage collection of persistent objects which become unreachable is performed automatically.
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
