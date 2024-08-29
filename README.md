@@ -2,13 +2,15 @@
   <title>Strvct</title>
 </head>
 
-# Strvct
+<div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">This document is under construction.</div>
 
-<span style="color: yellow;">This document is under construction.</span>
+# Strvct
 
 ## Abstract
 
-By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes. While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net)that implements it.
+By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes.
+
+While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
 
 ## Overview
 
@@ -17,7 +19,7 @@ By exposing domain objects directly to users and automatically generating user i
 Strvct is a client-side JavaScript framework for creating single page web applications using a transparently persisted Naked Objects system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
 
 <diagram>
-<object type="image/svg+xml" data="docs/mvs.svg">Your browser does not support SVG</object>
+<object type="image/svg+xml" data="docs/mvs.svg">[SVG diagram]</object>
 </diagram>
 -->
 
@@ -78,41 +80,59 @@ Property tiles present a property of a domain object and typically display:
 - note
 - error
 
-[editable properties example]
+<diagram>
+Property Tile
+<object type="image/svg+xml" data="docs/tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+</diagram>
 
 #### Dynamic Inspectors
 
 Properties with complex structures, like sets of valid values or valid values organized in a tree structure may dynamically create a temporary model structure when accessed which can be navigated as if they were part of the model.
 
 <!--
-[editable properties example]
-
 ### Summary Customization
 
 A notable feature of the Tiles is their ability to generate summaries that reflect deeper levels of the hierarchy. This is controlled by annotations on the Tiles' slots, which dictate whether or not sub-item summaries should be included. This provides a powerful way to condense information, giving users a quick overview of nested structures without requiring deep navigation.
-
-[summaries examples]
 -->
+
+### Tiles Stack
+
+Tiles are composed into scrollable stack views. Stack views support:
+
+- gestures for:
+  - adding (tap-empty-area, pinch-apart tiles<!--, pull-down-from-top, pull-up-from-bottom-->)
+  - removing (swipe-left)
+  - reordering (tap-hold to drag-and-drop)
+  - developer inspection (option-tap)
+
+Note: the UI framework supports it's own gesture handling which unifies mouse and touch events.
+
+<diagram>
+Tiles Stack
+<object type="image/svg+xml" data="docs/tiles.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+</diagram>
 
 ### Master-Detail Views
 
 The user interface is composed of nested master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a scrollable set of tile views. The detail view presents the domain object for the selected tile. Master views support optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
 
 <diagram>
-<object type="image/svg+xml" data="docs/header-footer2.svg" style="width: 100%; height: auto;">Your browser does not support SVG</object>
+Master-Detail View
+<object type="image/svg+xml" data="docs/header-footer2.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Flexible Orientation
 
-Both the orientation of the master tiles (top-to-bottom or left-to-right), and the detail view (right-of, or below the master) can be requested by the domain object they are presenting or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
+The orientation of the master tiles (top-to-bottom or left-to-right), and the detail view (right-of, or below the master) can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
 <diagram>
-<object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">Your browser does not support SVG</object>
+Orientations
+<object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Auto Collapsing and Expanding
 
-Master-Detail views have the default behaviour of automatically collapsing and expandas needed during navigation in order to best fit on screen. This makes supporting even very small screens, such as watches, easy.
+Master-Detail views have the default behaviour of automatically collapsing and expandas needed during navigation in order to best fit on screen. This makes supporting even small screens, such as watches, relatively easy.
 
 ### Nesting
 
@@ -125,21 +145,22 @@ By nesting these master-detail views with a combination of orientations, a flexi
 <diagram>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
   Vertical<br>
-  <object type="image/svg+xml" data="docs/vertical-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+  <object type="image/svg+xml" data="docs/vertical-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
   Horizontal<br>
-  <object type="image/svg+xml" data="docs/horizontal-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+  <object type="image/svg+xml" data="docs/horizontal-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
   Hybrid<br>
-  <object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">Your browser does not support SVG</object>
+  <object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
 </diagram>
 
 ### Navigation
 
-[selected tiles path and leaf selection can be highlighted based on themes]
+- selected navigation path is highlighted based on themes
+- active tile can be highlghted differently than selected path tiles
 
 ### Adding and Deleting
 
@@ -170,7 +191,7 @@ other:
 
 <!--
 <div style="width: 100%; text-align: center;">
-<object style="height: 15em; width: auto;" type="image/svg+xml" data="docs/naked-objects-diagram.svg">Your browser does not support SVG</object>
+<object style="height: 15em; width: auto;" type="image/svg+xml" data="docs/naked-objects-diagram.svg">[SVG diagram]</object>
 </div>
 -->
 
