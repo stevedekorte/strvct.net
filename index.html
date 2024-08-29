@@ -17,10 +17,8 @@ body {
  background-color: #191919;
  color: #aaa;
  max-width: 800px;
- margin-top: max(3em, 10%);
- margin-left: max(1em, 10%);
- margin-right: max(1em, 10%);
- margin-bottom: max(3em, 10%);
+ margin: 0 auto;
+ padding: 20px;
 
  padding: 0;
  box-sizing: content-box;
@@ -33,12 +31,14 @@ h1, h2, h3, h4, h5 {
 }
 h1 {
  margin-top: 0em;
+ margin-bottom: 0em;
+ padding-bottom: 0;
  font-size: 3em;
  font-family: "Blender Pro", "Helvetica", sans-serif;
  text-transform: uppercase;
 }
 h2 {
- margin-top: 2.5em;
+ margin-top: 2em;
  opacity: 0.8;
  font-size: 1.5em;
  font-weight: 300;
@@ -119,10 +119,57 @@ object {
   padding: 0em;
 }
 
+table-of-contents {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  opacity: 1;
+  transition: opacity 0.3s ease-out;
+}
+
+table-of-contents.collapsed {
+  opacity: 0.5;
+}
+
+table-of-contents ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+table-of-contents > ul {
+  padding-left: 0;
+}
+
+.toc-toggle {
+  cursor: pointer;
+  user-select: none;
+}
+
+.toc-toggle:before {
+  content: '▼';
+  display: inline-block;
+  transition: transform 0.3s;
+  margin-right: 0.5em;  /* Add space after the triangle */
+}
+
+.toc-toggle.collapsed:before {
+  transform: rotate(-90deg);
+}
+
+.toc-content {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.toc-content.collapsed {
+  max-height: 0;
+}
+
 </style>
 </head>
 <body>
-<div id="content">Loading...</div>
+<div id="content">Loading markdown...</div>
 <script>
 async function loadAndRenderMarkdown() {
   try {
@@ -182,6 +229,54 @@ async function loadAndRenderMarkdown() {
 
     marked.use({ renderer });
 
+    // Add CSS to the page
+    const style = document.createElement('style');
+    style.textContent = `
+      body {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      table-of-contents {
+        display: block;
+        margin-bottom: 20px;
+        opacity: 1;
+        transition: opacity 0.3s ease-out;
+      }
+      table-of-contents.collapsed {
+        opacity: 0.5;
+      }
+      table-of-contents ul {
+        list-style-type: none;
+        padding-left: 20px;
+      }
+      table-of-contents > ul {
+        padding-left: 0;
+      }
+      .toc-toggle {
+        cursor: pointer;
+        user-select: none;
+      }
+      .toc-toggle:before {
+        content: '▼';
+        display: inline-block;
+        transition: transform 0.3s;
+        margin-right: 0.5em;
+      }
+      .toc-toggle.collapsed:before {
+        transform: rotate(-90deg);
+      }
+      .toc-content {
+        max-height: 1000px;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+      .toc-content.collapsed {
+        max-height: 0;
+      }
+    `;
+    document.head.appendChild(style);
+
     // Generate table of contents
     function generateTOC(items) {
       let currentLevel = 1;
@@ -218,8 +313,15 @@ async function loadAndRenderMarkdown() {
     // Generate table of contents
     const tocHtml = generateTOC(toc);
 
-    // Replace the placeholder with the table of contents
-    content = content.replace(tocPlaceholder, `<table-of-contents>\n${tocHtml}\n</table-of-contents>`);
+    // Replace the placeholder with the collapsible table of contents (collapsed by default)
+    content = content.replace(tocPlaceholder, `
+      <table-of-contents class="collapsed">
+        <div class="toc-toggle collapsed">Table of Contents</div>
+        <div class="toc-content collapsed">
+          ${tocHtml}
+        </div>
+      </table-of-contents>
+    `);
 
     // Add references section
     const referencesSection = referenceList.length > 0
@@ -236,6 +338,21 @@ async function loadAndRenderMarkdown() {
       ${content}
       ${referencesSection}
     `;
+
+    // Add event listener for toggling table of contents
+    setTimeout(() => {
+      const tocElement = document.querySelector('table-of-contents');
+      const tocToggle = document.querySelector('.toc-toggle');
+      const tocContent = document.querySelector('.toc-content');
+      if (tocToggle && tocContent && tocElement) {
+        tocToggle.addEventListener('click', () => {
+          tocToggle.classList.toggle('collapsed');
+          tocContent.classList.toggle('collapsed');
+          tocElement.classList.toggle('collapsed');
+        });
+      }
+    }, 0);
+
   } catch (error) {
     console.error('Error loading Markdown:', error);
     document.getElementById('content').innerHTML = 'Error loading content. Please check the console for details.';

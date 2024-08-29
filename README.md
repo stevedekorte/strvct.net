@@ -15,15 +15,20 @@
 
 # Strvct
 
+[TOC]
+
 ## Abstract
 
 By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes.
 
 While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
 
-## Overview
+## Introduction
+
+This paper is intended to be a high level overview of the Strvct framework. It is not intended to be a comprehensive technical reference. For more details, please refer to the [source code](https://github.com/stevedekorte/strvct.net/README_technical.md).
 
 <!--
+## Overview
 
 Strvct is a client-side JavaScript framework for creating single page web applications using a transparently persisted Naked Objects system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
 
@@ -202,5 +207,14 @@ As the entire UI is composed of these Tile Stack views, features implemented for
   - flexible layout
 
 ## Storage
+
+The app has a `PersistentObjectPool` which automatically:
+
+- domain objects can be set to persistent or transient
+- domain object properties can be set to persistent or transient
+
+- mutations of persistent domain object properties are queued to be persisted
+- mutations are bundled into transactions which are stored atomically at the end of the event loop
+- Handles automatic garbage collection on the stored object graph.
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"

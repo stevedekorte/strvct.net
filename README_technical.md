@@ -19,7 +19,7 @@ The basic idea of Strvct is to put enough meta-information in the model layer to
 - The model is composed of a graph of objects which inherit from BMNode (we'll call these "nodes").
 - The UI is largely a mirror of this graph structure.
 - The nodes are the unit of storage (one record per node).
-- nodes have no references to views, but views can have references to nodes.
+- views can have refs to nodes, but nodes have no refs to views
 - nodes post notifications of their changes which the other layers can observe.
   -- the storage layer automatically observes objects read from storage
 
