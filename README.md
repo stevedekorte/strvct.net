@@ -65,7 +65,7 @@ The core navigational elements, referred to as **Tiles**, are views used to repr
 
 #### Summary Tiles
 
-Summary Tiles are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
+**Summary Tiles** are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
 
 <diagram>
 Summary Tile
@@ -74,7 +74,7 @@ Summary Tile
 
 #### Property Tiles
 
-Property tiles present a property of a domain object and typically display a name, value, note, and error (i.e. validation error).
+**Property Tiles** present a property of a domain object and typically display a name, value, note, and error (i.e. validation error).
 
 <diagram>
 Property Tile
@@ -93,7 +93,7 @@ A notable feature of the Tiles is their ability to generate summaries that refle
 
 ### Tile Stacks
 
-**Tile Stacks** are scrollable stacks of Tiles which support flexible orientation, and gestures for adding, removing, reordering tiles. Optional support for grid or outline layout patterns could be added, but these are not currently supported. These views are used to present the subnodes of a domain object.
+A **Tile Stack** is a scrollable stacks of **Tiles** which are used to present the subnodes of a domain object. They support flexible orientation, and gestures for adding, removing, and reordering tiles. Optional support for grid or outline layouts could be added, but are not currently supported.
 
 <diagram>
 Tile Stack
@@ -102,7 +102,9 @@ Tile Stack
 
 ### Master-Detail Views
 
-Master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a **Tile Stack** with optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The detail view presents the domain object for the selected tile (which itself may be a master-detail view).
+A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile (which itself may be a master-detail view).
+
+The master section supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
 
 <diagram>
 Master-Detail View
