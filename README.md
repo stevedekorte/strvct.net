@@ -19,7 +19,7 @@
 
 ## Abstract
 
-By exposing domain objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes.
+By exposing domain (business) objects indirectly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes.
 
 While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
 
@@ -42,31 +42,15 @@ Strvct is a client-side JavaScript framework for creating single page web applic
 In our system, the domain model is a cyclic graph of domain objects.
 Each domain object has:
 
-- properties (instance variables) and actions (methods)
+- **properties** (instance variables) and **actions** (methods)
 - a **subnodes** property containing an ordered unique collection of child domain objects
 - a **parentNode** property pointing to its parent domain object
-- property annotations which allow for the automatic handling of UI and storage mechanisms.
+- property **annotations** which allow for the automatic handling of UI and storage mechanisms.
 - **title** and **subtitle** properties
 
 ### Doman Object Collections
 
 Domain objects may reference collections of other domain objects. These collections are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
-
-<!--
-Explain what the domain model is and how it's objects are mapped to UI and storage.
-
-- domain model is a cyclic graph of objects
-- domain objects should be "behaviourally complete", not needed controllers to perform relevant actions.
-- domain objects are mapped to UI views and storage records
-- UI navigates the domain object graph
-- UI can present multiple views of a domain object in the same screen
-- use of Domain collection classes to represent collections of domain objects
-- UI, a stack of tiles, where each tile is a node that can be navigated
-- assumptions of storage, a graph of objects, stored in local storage
-- mention using annotations for auto-generated UI and storage
-
-[overview diagram of domain objects graph, UI, and storage]
--->
 
 ## User Interface
 
@@ -74,18 +58,14 @@ At a glance, Strvct uses nested master detail views, where navigation nodes are 
 
 ### Tiles
 
-The core navigational elements, referred to as **Tiles**, are used to represent either:
+The core navigational elements, referred to as **Tiles**, are views used to represent either:
 
 - a domain object (via a Summary Tile)
 - a property of a domain object (via a Property Tile)
 
 #### Summary Tiles
 
-Summary Tiles are used to represent domain objects and are used to navigate the domain model. They typically display:
-
-- title
-- subtitle (which many be a dynamic summary of descendants)
-- optional left and right sidebars (for additional text or icons)
+Summary Tiles are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
 
 <diagram>
 Summary Tile
@@ -94,12 +74,7 @@ Summary Tile
 
 #### Property Tiles
 
-Property tiles present a property of a domain object and typically display:
-
-- property name
-- inline value view (which may be editable)
-- note
-- error (e.g. validation or action error)
+Property tiles present a property of a domain object and typically display a name, value, note, and error (i.e. validation error).
 
 <diagram>
 Property Tile
@@ -116,29 +91,18 @@ Properties with complex structures, like sets of valid values or valid values or
 A notable feature of the Tiles is their ability to generate summaries that reflect deeper levels of the hierarchy. This is controlled by annotations on the Tiles' slots, which dictate whether or not sub-item summaries should be included. This provides a powerful way to condense information, giving users a quick overview of nested structures without requiring deep navigation.
 -->
 
-### Tiles Stack
+### Tile Stacks
 
-Tiles are composed into scrollable stack views. Stack views support:
-
-- flexible orientation (top-to-bottom or left-to-right)
-- gestures for:
-
-  - adding (tap-empty-area, pinch-apart tiles<!--, pull-down-from-top, pull-up-from-bottom-->)
-  - removing (swipe-left)
-  - reordering (tap-hold to drag-and-drop)
-  - developer inspection (option-tap)
-
-Tile Stacks views could also be implemented to grid or other layout patterns, but this is currently not supported.
-Note: the UI framework supports it's own gesture handling which unifies mouse and touch events.
+**Tile Stacks** are scrollable stacks of Tiles which support flexible orientation, and gestures for adding, removing, reordering tiles. Optional support for grid or outline layout patterns could be added, but these are not currently supported. These views are used to present the subnodes of a domain object.
 
 <diagram>
-Tiles Stack
+Tile Stack
 <object type="image/svg+xml" data="docs/tiles.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 ### Master-Detail Views
 
-The user interface is composed of nested master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a scrollable set of tile views. The detail view presents the domain object for the selected tile. Master views support optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
+Master-detail views, each of which presents a domain object. Each master view presents the subnodes of the domain object as a **Tile Stack** with optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The detail view presents the domain object for the selected tile (which itself may be a master-detail view).
 
 <diagram>
 Master-Detail View
@@ -147,7 +111,7 @@ Master-Detail View
 
 #### Flexible Orientation
 
-Detail View can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
+Detail Views can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
 <diagram style="position: relative;
   width: 100%;
