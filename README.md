@@ -56,6 +56,8 @@ Explain what the domain model is and how it's objects are mapped to UI and stora
 
 ## User Interface
 
+At a glance, Strvct uses nested master detail views, where navigation nodes are domain objects and leaf nodes are domain object property values.
+
 ### Tiles
 
 The core navigational elements, referred to as **Tiles**, are used to represent either:
@@ -106,11 +108,13 @@ Tiles are composed into scrollable stack views. Stack views support:
 
 - flexible orientation (top-to-bottom or left-to-right)
 - gestures for:
+
   - adding (tap-empty-area, pinch-apart tiles<!--, pull-down-from-top, pull-up-from-bottom-->)
   - removing (swipe-left)
   - reordering (tap-hold to drag-and-drop)
   - developer inspection (option-tap)
 
+Tile Stacks views could also be implemented to grid or other layout patterns, but this is currently not supported.
 Note: the UI framework supports it's own gesture handling which unifies mouse and touch events.
 
 <diagram>
@@ -174,17 +178,7 @@ By nesting these master-detail views with a combination of orientations, a flexi
 - selected navigation path is highlighted based on themes
 - active tile can be highlghted differently than selected path tiles
 
-### Adding and Deleting
-
-...
-
-### Moving and Reordering via Drag-and-Drop
-
-...
-
-###
-
-## Advantages of a Unifified UI
+## Composable UI Benefits
 
 As the entire UI is composed of these Tile Stack views, features implemented for the Master-Detail views are immeditately available for the entire UI, such as:
 

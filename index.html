@@ -227,9 +227,7 @@ async function loadAndRenderMarkdown() {
            <h2>References</h2>
            ${referenceList.map(({ key, url, title }) => `
              <div class="reference-item" id="ref-${key}">
-               ${key}. ${title ? `${title}` : ''}
-               <br>
-               <a href="${url}" target="_blank">${decodeURL(url)}</a>
+               ${key}. <a href="${url}" target="_blank">${title || decodeURL(url)}</a>
              </div>`).join('')}
          </div>`
       : '';
