@@ -25,7 +25,7 @@ While functionally complete, these systems often lack the interface patterns and
 
 ## Introduction
 
-This paper is intended to be a high level overview of the Strvct framework. For a technical details, please refer to [technical documentation](https://github.com/stevedekorte/strvct.net/README_technical.md) and the [source code](https://github.com/stevedekorte/strvct.net/).
+This paper is intended to be a high level overview of the Strvct framework. For a technical details, please refer to [technical documentation](https://github.com/stevedekorte/strvct.net/docs/Technical.md) and the [source code](https://github.com/stevedekorte/strvct.net/).
 
 <!--
 ## Overview
@@ -33,7 +33,7 @@ This paper is intended to be a high level overview of the Strvct framework. For 
 Strvct is a client-side JavaScript framework for creating single page web applications using a transparently persisted Naked Objects system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
 
 <diagram>
-<object type="image/svg+xml" data="docs/mvs.svg">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/diagrams/svg/mvs.svg">[SVG diagram]</object>
 </diagram>
 -->
 
@@ -49,9 +49,11 @@ Each domain object has:
 - **title** and **subtitle** properties
 - a **unique ID**
 
-### Doman Object Collections
+### A Note on Collections
 
-Domain objects may reference collections of other domain objects. These collections are often managed by their own domain object. For example, a Server class might have a guestConnections property which references an instance of ServerConnections whose subnodes are of type GuestConnection. Such domain objects are aware of their valid types and can override default behaviours for adding, removing, and reordering items.
+Often, a property of a domain object will reference a collection of domain objects. As these collections tend to have their own **domain logic** associated with them (i.e. for adding, deleting, reording, sorting, searching, and moving items, as well as validation and enforcement of constraints, etc.), they should naturally be managed by their own domain object.
+
+For example, a Server class might have a guestConnections property which references an instance of GuestConnections whose subnodes are of type GuestConnection. Use of this pattern is essential to being able to decompose domain models onto this framework.
 
 ## User Interface
 
@@ -70,7 +72,7 @@ The core navigational elements, referred to as **Tiles**, are views used to repr
 
 <diagram>
 Summary Tile
-<object type="image/svg+xml" data="docs/summary-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/diagrams/svg/summary-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Property Tiles
@@ -79,7 +81,7 @@ Summary Tile
 
 <diagram>
 Property Tile
-<object type="image/svg+xml" data="docs/property-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/diagrams/svg/property-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Dynamic Inspectors
@@ -98,7 +100,7 @@ A **Tile Stack** is a scrollable stacks of **Tiles** which are used to present t
 
 <diagram>
 Tile Stack
-<object type="image/svg+xml" data="docs/tiles.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/diagrams/svg/tiles.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 ### Master-Detail Views
@@ -107,7 +109,7 @@ A **Master-Detail View** is used to present a domain object. Its master section 
 
 <diagram>
 Master-Detail View
-<object type="image/svg+xml" data="docs/master-detail.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="docs/diagrams/svg/master-detail.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
 #### Flexible Orientation
@@ -122,7 +124,7 @@ Detail Views can be oriented to be be right-of, or below the Master View (which 
   box-sizing: border-box;
    ">
 Master-Detail Orientations
-<object type="image/svg+xml" data="docs/orientations.svg" style="  display: inline-block;
+<object type="image/svg+xml" data="docs/diagrams/svg/orientations.svg" style="  display: inline-block;
   width: 100%;
   height: 100%;
   box-sizing: border-box;
@@ -132,7 +134,7 @@ Master-Detail Orientations
 
 #### Auto Collapsing and Expanding
 
-Master-Detail views, which have the detail view on the right, follow the policy of collapsing the left most master views until there is space for the remaining views. This allows for responsive and efficient use across a very wide range of window/display sizes.
+Master-Detail views, which have the detail view on the right, have the policy of collapsing/expanding the left most master views until there is space for the remaining views. This allows for responsive and efficient use across a very wide range of window/display sizes.
 
 ### Nesting
 
@@ -141,15 +143,15 @@ By nesting these master-detail views with a combination of orientations, a flexi
 <diagram>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
   Vertical<br>
-  <object type="image/svg+xml" data="docs/vertical-hierarchical-miller-columns.svg">[SVG diagram]</object>
+  <object type="image/svg+xml" data="docs/diagrams/svg/vertical-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
   Horizontal<br>
-  <object type="image/svg+xml" data="docs/horizontal-hierarchical-miller-columns.svg">[SVG diagram]</object>
+  <object type="image/svg+xml" data="docs/diagrams/svg/horizontal-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
   Hybrid<br>
-  <object type="image/svg+xml" data="docs/hybrid-hierarchical-miller-columns.svg">[SVG diagram]</object>
+  <object type="image/svg+xml" data="docs/diagrams/svg/hybrid-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
 </diagram>
 
