@@ -47,6 +47,7 @@ Each domain object has:
 - a **parentNode** property pointing to its parent domain object
 - property **annotations** which allow for the automatic handling of UI and storage mechanisms.
 - **title** and **subtitle** properties
+- a **unique ID**
 
 ### Doman Object Collections
 
@@ -74,7 +75,7 @@ Summary Tile
 
 #### Property Tiles
 
-**Property Tiles** present a property of a domain object and typically display a name, value, note, and error (i.e. validation error).
+**Property Tiles** present a property of a domain object and typically display a name and value, and optionally a note, and/or error (i.e. validation error).
 
 <diagram>
 Property Tile
@@ -102,9 +103,7 @@ Tile Stack
 
 ### Master-Detail Views
 
-A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile (which itself may be a master-detail view).
-
-The master section supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
+A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view.The master section also supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
 
 <diagram>
 Master-Detail View
@@ -122,7 +121,7 @@ Detail Views can be oriented to be be right-of, or below the Master View (which 
   margin: 0em auto;
   box-sizing: border-box;
    ">
-Orientations
+Master-Detail Orientations
 <object type="image/svg+xml" data="docs/orientations.svg" style="  display: inline-block;
   width: 100%;
   height: 100%;
@@ -159,6 +158,7 @@ By nesting these master-detail views with a combination of orientations, a flexi
 - selected tiles on navigation path are highlighted
 - active tile (most recently selected) tile is highlghted differently
 
+<!--
 ### UI Advantages
 
 As the entire UI is composed of these Tile Stack views, features implemented for the Master-Detail views are immeditately available for the entire UI, such as:
@@ -175,15 +175,11 @@ As the entire UI is composed of these Tile Stack views, features implemented for
   - responsive design
   - arbitrary depth navigation
   - flexible layout
+  -->
 
 ## Storage
 
-### Requirements
-
-Domain object classes must declare:
-
-- If their instances are persistent
-- Which of their properties are persistent
+Domain objects each have a property which determines if it is persisted. Also, they also have property annotations which determine which properties are persisted. Using this metainformation, the system automatically persists and retrieves domain objects and their properties.
 
 ### Persistence Mechanism
 
@@ -196,7 +192,7 @@ Domain object classes must declare:
 
 - new or updated object records are committed in a single transaction at the end of the event loop
 
-- Automatic garbage collection of the stored object graph occurs, on startup or when requested
+- Automatic garbage collection of the stored object graph occurs on startup, or when requested.
 - Only objects reachable from the root domain object are stored. That is, an object is not queued for storage unless it is set in a persistent property or as a member of a persistent collection.
 
 <!--
