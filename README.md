@@ -49,6 +49,10 @@ Each domain object has:
 - **title** and **subtitle** properties
 - a **unique ID**
 
+<!--
+The parentNode property expresses ownership of child nodes and is used for the chaining of certain notifications.
+-->
+
 ### A Note on Collections
 
 Often, a property of a domain object will reference a collection of domain objects. As these collections tend to have their own **domain logic** associated with them (i.e. for adding, deleting, reording, sorting, searching, and moving items, as well as validation and enforcement of constraints, etc.), they should naturally be managed by their own domain object.
@@ -181,14 +185,23 @@ As the entire UI is composed of these Tile Stack views, features implemented for
 
 ## Storage
 
-Domain objects each have a property which determines if it is persisted. Also, they also have property annotations which determine which properties are persisted. Using this metainformation, the system automatically persists and retrieves domain objects and their properties.
+Domain objects each have a property which determines if it is persisted, as well as property annotations which determine which properties are persisted. Using this metainformation, the system automatically storage of domain objects.
 
-### Persistence Mechanism
+### Native Collections
 
-- Each persistent domain object and referenced JavaScript collection (Arrays, ArrayBuffers, Maps, Sets, Dictionaries) is:
+JavaScript collections such as:
 
-  - Assigned a unique persistence ID
-  - Stored as a single JSON record
+- Array
+- ArrayBuffer
+- TypedArray
+- Map
+- Sets
+- Dictionary (Object)
+
+referenced by domain object properties are also automatically persisted.
+
+- Assigned a unique persistence ID
+- Stored as a single JSON record
 
 - Mutations on persistent properties (or collections) auto queue the object for storage
 
@@ -198,6 +211,8 @@ Domain objects each have a property which determines if it is persisted. Also, t
 - Only objects reachable from the root domain object are stored. That is, an object is not queued for storage unless it is set in a persistent property or as a member of a persistent collection.
 
 <!--
+### Notes on Indexes
+
 - the database is a IndexedDB Object Store indexed by the Domain Object's unique ID
 -->
 
