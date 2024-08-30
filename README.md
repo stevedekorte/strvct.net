@@ -25,7 +25,7 @@ While functionally complete, these systems often lack the interface patterns and
 
 ## Introduction
 
-This paper is intended to be a high level overview of the Strvct framework. For a technical details, please refer to [technical documentation](https://github.com/stevedekorte/strvct.net/docs/Technical.md) and the [source code](https://github.com/stevedekorte/strvct.net/).
+This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [technical documentation](./docs/Technical.md) and [source code](https://github.com/stevedekorte/strvct.net/).
 
 <!--
 ## Overview
@@ -61,16 +61,21 @@ For example, a Server class might have a guestConnections property which referen
 
 ## User Interface
 
-At a glance, Strvct uses nested master detail views, where navigation nodes are domain objects and leaf nodes are domain object property values.
+At a glance, Strvct uses stacks of **Tile** views to present domain objects and their properties, and nested master-detail views to organize and navigate and them. Note: the wire-frame diagrams below illustrate the layout concepts but not the actual visual appearance in the application.
 
 ### Tiles
+
+<!--
 
 The core navigational elements, referred to as **Tiles**, are views used to represent either:
 
 - a domain object (via a Summary Tile)
 - a property of a domain object (via a Property Tile)
+-->
 
-#### Summary Tiles
+<!--
+### Summary Tiles
+-->
 
 **Summary Tiles** are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
 
@@ -79,7 +84,9 @@ Summary Tile
 <object type="image/svg+xml" data="docs/diagrams/svg/summary-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
 
-#### Property Tiles
+<!--
+### Property Tiles
+-->
 
 **Property Tiles** present a property of a domain object and typically display a name and value, and optionally a note, and/or error (i.e. validation error).
 
@@ -185,37 +192,24 @@ As the entire UI is composed of these Tile Stack views, features implemented for
 
 ## Storage
 
-Domain objects each have a property which determines if it is persisted, as well as property annotations which determine which properties are persisted. Using this metainformation, the system automatically storage of domain objects.
-
-### Native Collections
-
-JavaScript collections such as:
-
-- Array
-- ArrayBuffer
-- TypedArray
-- Map
-- Sets
-- Dictionary (Object)
-
-referenced by domain object properties are also automatically persisted.
-
-- Assigned a unique persistence ID
-- Stored as a single JSON record
-
-- Mutations on persistent properties (or collections) auto queue the object for storage
-
-- new or updated object records are committed in a single transaction at the end of the event loop
-
-- Automatic garbage collection of the stored object graph occurs on startup, or when requested.
-- Only objects reachable from the root domain object are stored. That is, an object is not queued for storage unless it is set in a persistent property or as a member of a persistent collection.
+Domain objects each have a property which determines whether they are persisted, as well as property annotations which determine which properties are persisted. Using this metainformation, the system automatically manages the storage of domain objects. Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.
 
 <!--
-### Notes on Indexes
+### Native Collections
 
-- the database is a IndexedDB Object Store indexed by the Domain Object's unique ID
+Native JavaScript collections (of Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by domain object persistent properties are also automatically persisted in their own records.
+
+### Local Storage
+
+Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. The only index is on the unique ID.
 -->
 
-In addition, garbage collection of persistent objects which become unreachable is performed automatically.
+### Transactional Persistence
+
+Mutations on persistent properties of persistent domeain objects cause them to be auto queued for storage. All objects in this queue are bundled into a single IndexedDB transaction which is committed at the end of the event loop in which the mutation occurs.
+
+### Garbage Collection
+
+Automatic garbage collection of the stored object graph occurs on startup, or when requested. Only objects reachable from the root domain object remain after garbage collection.
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
