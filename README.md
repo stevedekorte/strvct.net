@@ -19,13 +19,13 @@
 
 ## Abstract
 
-By exposing domain (business) objects indirectly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted the adoption of naked objects to internal tools and prototypes.
+By exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted it's adoption to internal tools and prototypes.
 
-While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
+While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called **[Strvct](https://github.com/stevedekorte/strvct.net)** that implements it.
 
 ## Introduction
 
-This paper is intended to be a high level overview of the Strvct framework. It is not intended to be a comprehensive technical reference. For more details, please refer to the [source code](https://github.com/stevedekorte/strvct.net/README_technical.md).
+This paper is intended to be a high level overview of the Strvct framework. For a technical details, please refer to [technical documentation](https://github.com/stevedekorte/strvct.net/README_technical.md) and the [source code](https://github.com/stevedekorte/strvct.net/).
 
 <!--
 ## Overview
@@ -132,7 +132,7 @@ Master-Detail Orientations
 
 #### Auto Collapsing and Expanding
 
-Master-Detail views have the default behaviour of automatically collapsing and expandas needed during navigation in order to best fit on screen. For example, on very small screens, such as watches, it might collapse to only show the last Tile Stack, while larger screens as many of the right most Tile Stacks as possible.
+Master-Detail views, which have the detail view on the right, follow the policy of collapsing the left most master views until there is space for the remaining views. This allows for responsive and efficient use across a very wide range of window/display sizes.
 
 ### Nesting
 
