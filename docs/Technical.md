@@ -4,7 +4,26 @@
 
 <div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">incomplete draft</div>
 
-# Strvct
+# Strvct: Technical Guide
+
+## Project Framework Overview
+
+This project required the development of several custom frameworks:
+
+- Meta object framework (slots)
+- Extensive OO extensions to common classes
+- Desktop-like web OO UI framework
+- Architecture and protocol for model-to-view naked object UI, standard field components
+- Miller column-inspired stacking UI framework
+- Notifications system
+- Auto-syncing system/protocol between model and views
+- Integrated theming system
+- Client-side object persistence / object pool framework
+- Gesture recognition framework
+- Package builder & boot and client-side caching system
+- Auto resource management, loading, and caching system
+- Common protocol for resources (fonts, sounds, images, icons, JSON data files)
+- Transparent mutation observers for common classes
 
 ## Introduction
 

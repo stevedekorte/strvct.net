@@ -1,7 +1,9 @@
-
 async function loadAndRenderMarkdown() {
   try {
-    const response = await fetch('README.md');
+    const contentDiv = document.getElementById('content');
+    const markdownSource = contentDiv.getAttribute('source') || 'README.md';
+    
+    const response = await fetch(markdownSource);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

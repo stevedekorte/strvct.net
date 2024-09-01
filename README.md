@@ -25,7 +25,7 @@ While functionally complete, these systems often lack the interface patterns and
 
 ## Introduction
 
-This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [technical documentation](./docs/Technical.md) and [source code](https://github.com/stevedekorte/strvct.net/).
+This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [technical documentation](./docs/Technical.html), [source code](https://github.com/stevedekorte/strvct.net/), and [Getting Started Guide](./docs/GettingStartedGuide.html).
 
 <!--
 ## Overview
@@ -65,17 +65,7 @@ At a glance, Strvct uses stacks of **Tile** views to present domain objects and 
 
 ### Tiles
 
-<!--
-
-The core navigational elements, referred to as **Tiles**, are views used to represent either:
-
-- a domain object (via a Summary Tile)
-- a property of a domain object (via a Property Tile)
--->
-
-<!--
-### Summary Tiles
--->
+The core navigational elements, referred to as **Tiles**. Tile subclasses can be used to customize the appearance of domain objects and properties and domain objects can request specific tiles to be used to represent them or their properties.
 
 **Summary Tiles** are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
 
@@ -116,7 +106,7 @@ Tile Stack
 
 ### Master-Detail Views
 
-A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view.The master section also supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions.
+A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view. The master section also supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The divider between the master and detail sections can be dragged to resize the sections if the domain object allows it.
 
 <diagram>
 Master-Detail View
@@ -143,10 +133,6 @@ Master-Detail Orientations
   left: 0;">[SVG diagram]</object>
 </diagram>
 
-#### Auto Collapsing and Expanding
-
-Master-Detail views, which have the detail view on the right, have the policy of collapsing/expanding the left most master views until there is space for the remaining views. This allows for responsive and efficient use across a very wide range of window/display sizes.
-
 ### Nesting
 
 By nesting these master-detail views with a combination of orientations, a flexible navigation structure is formed which maps well to many common application design patterns. This flexibility can be used to automatically adapt the layout based on the content, display size, and user preference.
@@ -166,10 +152,22 @@ By nesting these master-detail views with a combination of orientations, a flexi
   </div>
 </diagram>
 
+#### Auto Collapsing and Expanding
+
+Master-Detail views, which have the detail view on the right, have the policy of collapsing/expanding the left most master views until there is space for the remaining views. This allows for responsive and efficient use across a very wide range of window/display sizes.
+
 ### Navigation
 
 - selected tiles on navigation path are highlighted
 - active tile (most recently selected) tile is highlghted differently
+
+### Synchronization of Model with UI
+
+Domain objects never have references to views but can post change notifications when their properties change. Mutations to domain objects properties will post a change notificaiton on change and will automatically post change notifications if. These notifications are coalesced and sent at the end of the event loop. Views in the UI may listen for these and update themselves accordingly. The notification system monitors for infinite loops and will throw an error if one is detected.
+
+### Synchronization of UI with Model
+
+Changes to a view
 
 <!--
 ### UI Advantages
@@ -204,9 +202,9 @@ Native JavaScript collections (of Array, ArrayBuffer, Map, Object, Set, and Type
 Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. The only index is on the unique ID.
 -->
 
-### Transactional Persistence
+### Synchronization and Transactions
 
-Mutations on persistent properties of persistent domeain objects cause them to be auto queued for storage. All objects in this queue are bundled into a single IndexedDB transaction which is committed at the end of the event loop in which the mutation occurs.
+Mutations on persistent properties of persistent domain objects cause them to be auto queued for storage. Objects in this queue are bundled into a single IndexedDB transaction which is committed at the end of the event loop in which the mutation occurs.
 
 ### Garbage Collection
 
