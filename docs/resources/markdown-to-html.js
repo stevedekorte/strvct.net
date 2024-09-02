@@ -13,10 +13,10 @@ async function loadAndRenderMarkdown() {
     const referenceList = [];
     const toc = [];
 
-    // Extract title from markdown
-    const titleMatch = markdown.match(/<head>\s*<title>([^<]+)<\/title>\s*<\/head>/);
-    if (titleMatch) {
-      document.title = titleMatch[1].trim();
+    // Extract H1 title from markdown
+    const h1Match = markdown.match(/^#\s+(.+)$/m);
+    if (h1Match) {
+      document.title = h1Match[1].trim();
     }
 
     // Remove the title section from the markdown
@@ -62,10 +62,25 @@ async function loadAndRenderMarkdown() {
     // Add CSS to the page
     const style = document.createElement('style');
     style.textContent = `
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
       body {
+        display: flex;
+        flex-direction: column;
         max-width: 800px;
         margin: 0 auto;
         padding: 20px;
+        box-sizing: border-box;
+      }
+      #content {
+        flex: 1 0 auto;
+        margin-bottom: 6em; /* Set bottom margin to 6em */
+      }
+      .footer-spacer {
+        height: 6em; /* Adjust footer spacer to 6em */
       }
       table-of-contents {
         display: block;
@@ -120,8 +135,15 @@ async function loadAndRenderMarkdown() {
         html += `<li><a href="#${item.slug}">${item.text}</a></li>`;
         currentLevel = item.level;
       });
-      // Add References to TOC
-      html += `<li><a href="#references">References</a></li>`;
+      // Add References to TOC as level 2
+      if (referenceList.length > 0) {
+        if (currentLevel > 2) {
+          html += '</ul>'.repeat(currentLevel - 2);
+        } else if (currentLevel < 2) {
+          html += '<ul>'.repeat(2 - currentLevel);
+        }
+        html += `<li><a href="#references">References</a></li>`;
+      }
       html += '</ul>'.repeat(currentLevel);
       return html;
     }
@@ -184,6 +206,9 @@ async function loadAndRenderMarkdown() {
         });
       }
     }, 0);
+
+    // Add a footer spacer div
+    document.getElementById('content').innerHTML += '<div class="footer-spacer"></div>';
 
   } catch (error) {
     console.error('Error loading Markdown:', error);

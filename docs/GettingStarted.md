@@ -1,14 +1,16 @@
-<head>
-  <title>Strvct: Getting Started Guide</title>
-</head>
-
 <div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">incomplete draft</div>
 
-# Strvct: Getting Started Guide
+# Strvct: Getting Started Guide (for developers)
+
+[TOC]
 
 ## Introduction
 
-Strvct is designed to be used as a submodule in new projects.
+Strvct is designed to be used as a submodule within your projects.
+
+## Setup
+
+### Strvct submodule
 
 To set up the **Strvct** git submodule, run the following command from within your project folder:
 
@@ -18,9 +20,20 @@ git submodule add https://github.com/stevedekorte/strvct.net.git strvct
 
 If you plan to deploy your app on GitHub Pages, add a `.nojekyll` file to your root folder.
 
-### How to Build and Run with your project
+### Build System
+
+#### How it works
+
+Strvct is designed to manage your project's resource loading and build system. You'll need to configure your project to use it. This involves adding '\_imports.json' files to each of your project's source folders which contain files you want to be loaded by Strvct. Strvct's VSCode build script will find these import files and:
+
+- create an `build/index.json` file containing an ordered index of the imported files with entries recording each files path, size, and content hash
+- create a `build/\_cam.json.zip` file containing a compressed version of a dictionary of file-hash:file-content entries
+
+#### Setting up your build script
 
 The build system is currently configured for Visual Studio Code (VSCode) or forks of VSCode, such as [Cursor](https://cursor.sh/). To open the project, open the root source folder in VSCode.
+
+## Running / Debugging
 
 #### Start the Local Web Server
 
@@ -36,7 +49,7 @@ The build system is currently configured for Visual Studio Code (VSCode) or fork
 
 2. Use the "launch local HTTPS" run option in VSCode to launch the app. It will open Chrome, and you'll need to ignore the SSL warning the first time (as we're using a local server).
 
-### Recommended VSCode Extensions
+## Recommended VSCode Extensions
 
 To help with debugging and coding, install these VSCode extensions:
 
