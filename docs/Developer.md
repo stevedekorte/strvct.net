@@ -1,10 +1,6 @@
-<head>
-  <title>Strvct Documentation</title>
-</head>
+<div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">draft</div>
 
-<div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">incomplete draft</div>
-
-# Strvct: Technical Guide
+# Strvct: Developer Documentation
 
 ## Project Framework Overview
 
@@ -98,5 +94,6 @@ Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
 
 ## Synchronization
 
-BMNotificationCenter
-SyncScheduler
+- BMNotificationCenter
+- SyncScheduler
+- Broadcaster
