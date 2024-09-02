@@ -154,7 +154,7 @@ Nesting of master-detail views with flexible orientations allows for navigation 
 
 #### Auto Collapsing and Expanding
 
-Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use across a very wide range of viewport sizes.
+Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use of display space across a wide range of viewport sizes.
 
 #### Navigation
 
@@ -163,11 +163,11 @@ Chains of Master-Detail views automatically collapse/expand their tile views unt
 
 ### Synchronization
 
-#### Model with UI
+#### Model to UI
 
 Domain objects never have references to views but can post change notifications when their properties change. Mutations to domain objects properties will post a change notificaiton on change and will automatically post change notifications if. These notifications are coalesced and sent at the end of the event loop. Views in the UI may listen for these and update themselves accordingly. The notification system monitors for infinite loops and will throw an error if one is detected.
 
-#### UI with Model
+#### UI to Model
 
 Changes to a view..
 
@@ -192,6 +192,8 @@ As the entire UI is composed of these Tile Stack views, features implemented for
 
 ## Storage
 
+### Annotations
+
 Domain object classes each have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. The system automatically manages persistence using this metainformation. <!-- Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.-->
 
 <!--
@@ -204,7 +206,7 @@ Native JavaScript collections (of Array, ArrayBuffer, Map, Object, Set, and Type
 Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. The only index is on the unique ID.
 -->
 
-### Synchronization and Transactions
+### Transactions
 
 Mutations on persistent properties of persistent domain objects cause them to be auto queued for storage. Objects in this queue are bundled into a single IndexedDB transaction which is committed at the end of the event loop in which the mutation occurs.
 
