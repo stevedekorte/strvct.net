@@ -25,7 +25,7 @@ While functionally complete, these systems often lack the interface patterns and
 
 ## Introduction
 
-This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [technical documentation](./docs/Technical.html), [source code](https://github.com/stevedekorte/strvct.net/), and [Getting Started Guide](./docs/GettingStartedGuide.html).
+This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [Developer Documentation](./docs/Developer.html), [Getting Started Guide](./docs/GettingStartedGuide.html), and [source code](https://github.com/stevedekorte/strvct.net/).
 
 <!--
 ## Overview
@@ -53,11 +53,11 @@ Each domain object has:
 The parentNode property expresses ownership of child nodes and is used for the chaining of certain notifications.
 -->
 
-### A Note on Collections
+### Collection Managers
 
 Often, a property of a domain object will reference a collection of domain objects. As these collections tend to have their own **domain logic** associated with them (i.e. for adding, deleting, reording, sorting, searching, and moving items, as well as validation and enforcement of constraints, etc.), they should naturally be managed by their own domain object.
 
-For example, a Server class might have a guestConnections property which references an instance of GuestConnections whose subnodes are of type GuestConnection. Use of this pattern is essential to being able to decompose domain models onto this framework.
+For example, a Server class might have a guestConnections property which references an instance of GuestConnections (which is a subclass of DomainObject, and not of a native collection type) whose subnodes are of type GuestConnection. Use of this pattern is essential to being able to decompose domain models onto this framework.
 
 ## User Interface
 
@@ -133,9 +133,9 @@ Master-Detail Orientations
   left: 0;">[SVG diagram]</object>
 </diagram>
 
-### Nesting
+#### Nesting
 
-By nesting these master-detail views with a combination of orientations, a flexible navigation structure is formed which maps well to many common application design patterns. This flexibility can be used to automatically adapt the layout based on the content, display size, and user preference.
+Nesting of master-detail views with flexible orientations allows for navigation structures which fitmany common application design patterns.
 
 <diagram>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
@@ -154,20 +154,22 @@ By nesting these master-detail views with a combination of orientations, a flexi
 
 #### Auto Collapsing and Expanding
 
-Master-Detail views, which have the detail view on the right, have the policy of collapsing/expanding the left most master views until there is space for the remaining views. This allows for responsive and efficient use across a very wide range of window/display sizes.
+Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use across a very wide range of viewport sizes.
 
-### Navigation
+#### Navigation
 
 - selected tiles on navigation path are highlighted
 - active tile (most recently selected) tile is highlghted differently
 
-### Synchronization of Model with UI
+### Synchronization
+
+#### Model with UI
 
 Domain objects never have references to views but can post change notifications when their properties change. Mutations to domain objects properties will post a change notificaiton on change and will automatically post change notifications if. These notifications are coalesced and sent at the end of the event loop. Views in the UI may listen for these and update themselves accordingly. The notification system monitors for infinite loops and will throw an error if one is detected.
 
-### Synchronization of UI with Model
+#### UI with Model
 
-Changes to a view
+Changes to a view..
 
 <!--
 ### UI Advantages
@@ -190,7 +192,7 @@ As the entire UI is composed of these Tile Stack views, features implemented for
 
 ## Storage
 
-Domain objects each have a property which determines whether they are persisted, as well as property annotations which determine which properties are persisted. Using this metainformation, the system automatically manages the storage of domain objects. Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.
+Domain object classes each have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. The system automatically manages persistence using this metainformation. <!-- Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.-->
 
 <!--
 ### Native Collections
