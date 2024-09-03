@@ -45,6 +45,17 @@ async function loadAndRenderMarkdown() {
       return `<h${level} id="${slug}">${text}</h${level}>`;
     };
 
+    // Override link renderer to change local .md links to .html
+    renderer.link = function(href, title, text) {
+      if (href && href.endsWith('.md')) {
+        href = href.slice(0, -3) + '.html';
+      }
+      if (title) {
+        return `<a href="${href}" title="${title}">${text}</a>`;
+      }
+      return `<a href="${href}">${text}</a>`;
+    };
+
     // Override the paragraph renderer to add links to citations
     renderer.paragraph = function(text) {
       const citationRegex = /\[(\d+)\]/g;

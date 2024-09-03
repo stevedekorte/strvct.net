@@ -9,7 +9,7 @@
         border-radius: 1em;
         box-sizing: border-box;">early draft</div>
 
-# Strvct
+# Strvct: Project Overview
 
 [TOC]
 
