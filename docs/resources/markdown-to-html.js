@@ -83,15 +83,15 @@ async function loadAndRenderMarkdown() {
         flex-direction: column;
         max-width: 800px;
         margin: 0 auto;
-        padding: 20px;
+        padding: 6em 20px 20px; /* Add top padding instead of margin */
         box-sizing: border-box;
       }
       #content {
         flex: 1 0 auto;
-        margin-bottom: 6em; /* Set bottom margin to 6em */
+        margin-bottom: 6em; /* Keep bottom margin */
       }
       .footer-spacer {
-        height: 6em; /* Adjust footer spacer to 6em */
+        height: 6em; /* Keep footer spacer */
       }
       table-of-contents {
         display: block;
