@@ -13,10 +13,19 @@ async function loadAndRenderMarkdown() {
     const referenceList = [];
     const toc = [];
 
-    // Extract H1 title from markdown
+    // Extract H1 title from markdown and remove HTML formatting
     const h1Match = markdown.match(/^#\s+(.+)$/m);
     if (h1Match) {
-      document.title = h1Match[1].trim();
+      const h1Content = h1Match[1].trim();
+      // Remove HTML tags
+      const plainTextH1 = h1Content.replace(/<[^>]*>/g, '');
+      // Decode HTML entities
+      const decodedH1 = plainTextH1.replace(/&[^;]+;/g, match => {
+        const span = document.createElement('span');
+        span.innerHTML = match;
+        return span.textContent;
+      });
+      document.title = decodedH1;
     }
 
     // Remove the title section from the markdown
@@ -38,6 +47,17 @@ async function loadAndRenderMarkdown() {
     // Custom renderer
     const renderer = new marked.Renderer();
 
+    // Function to process citations
+    function processCitations(text) {
+      const citationRegex = /\[(\d+)\]/g;
+      return text.replace(citationRegex, (match, p1) => {
+        if (referenceMap.has(p1)) {
+          return `<a href="#ref-${p1}" style="text-decoration: none;">${match}</a>`;
+        }
+        return match;
+      });
+    }
+
     // Override heading renderer to add IDs and collect TOC items
     renderer.heading = function(text, level) {
       const slug = text.toLowerCase().replace(/[^\w]+/g, '-');
@@ -58,14 +78,14 @@ async function loadAndRenderMarkdown() {
 
     // Override the paragraph renderer to add links to citations
     renderer.paragraph = function(text) {
-      const citationRegex = /\[(\d+)\]/g;
-      const linkedText = text.replace(citationRegex, (match, p1) => {
-        if (referenceMap.has(p1)) {
-          return `<a href="#ref-${p1}" style="text-decoration: none;">${match}</a>`;
-        }
-        return match;
-      });
+      const linkedText = processCitations(text);
       return `<p>${linkedText}</p>`;
+    };
+
+    // Override the list item renderer to add links to citations
+    renderer.listitem = function(text) {
+      const linkedText = processCitations(text);
+      return `<li>${linkedText}</li>`;
     };
 
     marked.use({ renderer });
@@ -112,16 +132,27 @@ async function loadAndRenderMarkdown() {
       .toc-toggle {
         cursor: pointer;
         user-select: none;
+        display: flex;
+        align-items: center;
+        width: fit-content;
+        max-width: 100%;  /* Ensure it doesn't overflow its container */
       }
+
       .toc-toggle:before {
+        content: none;  /* Explicitly remove any content before */
+      }
+
+      .toc-toggle:after {
         content: '▼';
         display: inline-block;
         transition: transform 0.3s;
-        margin-right: 0.5em;
+        margin-left: 0.5em;  /* Add space before the triangle */
       }
-      .toc-toggle.collapsed:before {
+
+      .toc-toggle.collapsed:after {
         transform: rotate(-90deg);
       }
+
       .toc-content {
         max-height: 1000px;
         overflow: hidden;
@@ -175,6 +206,14 @@ async function loadAndRenderMarkdown() {
     // Parse the content
     let content = marked.parse(contentWithPlaceholder);
 
+    // Extract H1 title from parsed HTML and remove HTML formatting
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = content;
+    const h1Element = tempDiv.querySelector('h1');
+    if (h1Element) {
+      document.title = h1Element.textContent.trim();
+    }
+
     // Generate table of contents
     const tocHtml = generateTOC(toc);
 
@@ -203,6 +242,35 @@ async function loadAndRenderMarkdown() {
       ${content}
       ${referencesSection}
     `;
+
+    // Function to recursively get text content
+    function getTextContent(element) {
+      let text = '';
+      for (let node of element.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE) {
+          text += node.textContent;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          text += getTextContent(node);
+        }
+      }
+      return text;
+    }
+
+    // Set the page title after the content has been added to the DOM
+    setTimeout(() => {
+      const h1Element = document.querySelector('h1');
+      console.log('H1 element:', h1Element);
+      if (h1Element) {
+        console.log('H1 innerHTML:', h1Element.innerHTML);
+        console.log('H1 textContent:', h1Element.textContent);
+        const extractedText = getTextContent(h1Element).trim();
+        console.log('Extracted H1 text:', extractedText);
+        document.title = extractedText;
+        console.log('Set document title to:', document.title);
+      } else {
+        console.log('No H1 element found');
+      }
+    }, 100);
 
     // Add event listener for toggling table of contents
     setTimeout(() => {

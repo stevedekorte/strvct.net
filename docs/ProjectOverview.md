@@ -8,20 +8,12 @@
 
 By exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted it's adoption to internal tools and prototypes.
 
-While functionally complete, these systems often lack the interface patterns <!--and visual appeal--> expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called **[Strvct](https://github.com/stevedekorte/strvct.net)** that implements it.
+While functionally complete, these systems often lack the interface patterns <!--and visual appeal--> expected in end-user applications. This paper describes (at a high level) a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called **[Strvct](https://github.com/stevedekorte/strvct.net)** that implements it.
 
+<!--
 ## Introduction
 
 This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [Developer Documentation](Developer.html), [Getting Started Guide](GettingStartedGuide.html), and [source code](https://github.com/stevedekorte/strvct.net/).
-
-<!--
-## Overview
-
-Strvct is a client-side JavaScript framework for creating single page web applications using a transparently persisted Naked Objects system in which only the domain model objects need to be defined and the user interfaces and storage are handled automatically.
-
-<diagram>
-<object type="image/svg+xml" data="diagrams/svg/mvs.svg">[SVG diagram]</object>
-</diagram>
 -->
 
 ## Domain Model
@@ -32,7 +24,7 @@ Each domain object has:
 - **Properties** (instance variables) and **actions** (methods)
 - a `subnodes` property containing an ordered unique collection of child domain objects
 - a `parentNode` property pointing to its parent domain object
-- property `annotations` which allow for the automatic handling of UI and storage mechanisms
+- property `annotations` [2] which allow for the automatic handling of UI and storage mechanisms
 - `title` and `subtitle` properties
 - a unique ID
 
@@ -53,6 +45,8 @@ At a glance, Strvct uses stacks of **Tile** views to present domain objects and 
 ### Tiles
 
 The core navigational elements, referred to as **Tiles**. Tile subclasses can be used to customize the appearance of domain objects and properties and domain objects can request specific tiles to be used to represent them or their properties.
+
+#### Domain Object Tiles
 
 **Summary Tiles** are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
 
@@ -91,7 +85,7 @@ Tile Stack
 
 ### Master-Detail Views
 
-A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view. The master section also supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The divider between the master and detail sections can be dragged to resize the sections if the domain object allows it.
+A **Master-Detail View** is used to present a domain object. Its master section contains a **Tile Stack** presenting the subnodes of the domain object and its detail section presents the domain object for the selected subnode tile, which itself may be a master-detail view. The master section supports optional header and footer views which can be used to flexibly implement features like search, message input, or group actions. The divider between the master and detail sections can also be dragged to resize the sections if the domain object allows it.
 
 <diagram>
 Master-Detail View
@@ -141,10 +135,9 @@ Nesting of master-detail views with flexible orientations allows for navigation 
 
 Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use of display space across a wide range of viewport sizes.
 
-#### Navigation
+#### Navigation Path
 
-- selected tiles on navigation path are highlighted
-- active tile (most recently selected) tile is highlghted differently
+The navigation system employs visual cues to guide users along the selected path. Tiles that form part of the chosen route are highlighted, making the path easy to follow. To further enhance navigation, the active/focused tile - which represents the most recently selected location - is distinguished with a unique highlight. This differentiation allows users to quickly identify their current position within the overall navigation sequence. These highlights and other visual attributes are customizable via themes.
 
 ### Synchronization
 
@@ -191,3 +184,4 @@ Automatic garbage collection of the stored object graph occurs on startup, or wh
 Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by persistent properties of domain objects are also automatically persisted in their own records.
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
+[2]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (1995). Annotating Objects for Transport to Other Worlds"

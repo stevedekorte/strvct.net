@@ -1,6 +1,8 @@
 <draft>DRAFT</draft>
 
-# <a href="../index.html">Strvct</a> / Developer Documentation
+# <a href="../index.html">Strvct</a> / Developer Docs
+
+[TOC]
 
 ## Project Framework Overview
 
