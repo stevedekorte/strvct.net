@@ -155,3 +155,21 @@ body {
  .toc-content.collapsed {
    max-height: 0;
  }
+
+ draft {
+  z-index: 1000;
+  position: fixed;
+  color: yellow;
+  margin: 0em;
+  top: 0;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #444;
+  background-color: #444;
+  color: #aaa;
+  padding: 0.5em;
+  border-radius: 0em;
+  box-sizing: border-box;
+  font-weight: normal;
+ }

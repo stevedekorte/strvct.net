@@ -1,6 +1,6 @@
-<div style="color: yellow; margin-bottom: 5em; width:100%; text-align: center; border: 1px solid yellow; padding: 1em; border-radius: 1em;">draft</div>
+<draft>DRAFT</draft>
 
-# Strvct: Getting Started Guide
+# Strvct Getting Started Guide
 
 [TOC]
 
