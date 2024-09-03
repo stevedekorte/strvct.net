@@ -1,6 +1,6 @@
 <draft>DRAFT</draft>
 
-# Strvct Project Overview
+# <a href="../index.html">Strvct</a> / Project Overview
 
 [TOC]
 
@@ -8,7 +8,7 @@
 
 By exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted it's adoption to internal tools and prototypes.
 
-While functionally complete, these systems often lack the interface patterns and visual appeal expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called **[Strvct](https://github.com/stevedekorte/strvct.net)** that implements it.
+While functionally complete, these systems often lack the interface patterns <!--and visual appeal--> expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called **[Strvct](https://github.com/stevedekorte/strvct.net)** that implements it.
 
 ## Introduction
 
@@ -120,7 +120,7 @@ Master-Detail Orientations
 
 #### Nesting
 
-Nesting of master-detail views with flexible orientations allows for navigation structures which fitmany common application design patterns.
+Nesting of master-detail views with flexible orientations allows for navigation structures which fit many common application design patterns.
 
 <diagram>
   <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
@@ -148,38 +148,25 @@ Chains of Master-Detail views automatically collapse/expand their tile views unt
 
 ### Synchronization
 
+Views often have references to domain objects they are presenting but domain objects never have references to views. Instead they post notifications to communicate with listeners, such as views. Views automatically register as listeners with the domain objects they present.
+
 #### Model to UI
 
-Domain objects never have references to views but can post change notifications when their properties change. Mutations to domain objects properties will post a change notificaiton on change and will automatically post change notifications if. These notifications are coalesced and sent at the end of the event loop. Views in the UI may listen for these and update themselves accordingly. The notification system monitors for infinite loops and will throw an error if one is detected.
+Mutations on domain object properties annotated to be synchronized will automatically post change notifications when mutated. These notifications are coalesced and sent at the end of the event loop. Views in the UI may listen for these and update themselves accordingly.
 
 #### UI to Model
 
-Changes to a view..
+Properties of views can be annotated to be synchronized. On mutations, they will queue the view to sync to the domain object at the end of the event loop.
 
-<!--
-### UI Advantages
+#### Notification System
 
-As the entire UI is composed of these Tile Stack views, features implemented for the Master-Detail views are immeditately available for the entire UI, such as:
-
-- consistent:
-
-  - navigation
-  - visual structure
-  - interactions
-    - adding, removing, reordering
-    - search
-
-- every level has:
-  - responsive design
-  - arbitrary depth navigation
-  - flexible layout
-  -->
+The notification system has mechanisms to monitor for potential infinite synchronization loops in order to halt them and present the developer with a report to identify their source. Observation objects use weak references for both the sender and observer in order to prevent them from preventing garbage collection. Observing objects automatically register their observations as needed, and unregister when they shut down.
 
 ## Storage
 
 ### Annotations
 
-Domain object classes each have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. The system automatically manages persistence using this metainformation. <!-- Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.-->
+Domain objects have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. Using this information, the system automatically manages persistence. <!-- Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.-->
 
 <!--
 ### Native Collections
@@ -193,7 +180,7 @@ Persistent domain objects are stored client side in IndexedDB in a single Object
 
 ### Transactions
 
-Mutations on persistent properties of persistent domain objects cause them to be auto queued for storage. Objects in this queue are bundled into a single IndexedDB transaction which is committed at the end of the event loop in which the mutation occurs.
+Mutations on persistent properties will automatically queue the affected domain object for storage. Objects in this queue are bundled into a transaction committed at the end of the same event loop in which the mutation occurs.
 
 ### Garbage Collection
 

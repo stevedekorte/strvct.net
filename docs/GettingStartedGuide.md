@@ -1,6 +1,6 @@
 <draft>DRAFT</draft>
 
-# Strvct Getting Started Guide
+# <a href="../index.html">Strvct</a> / Getting Started Guide
 
 [TOC]
 
