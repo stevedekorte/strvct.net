@@ -19,10 +19,13 @@ body {
   color: #f4f4ec;
  }
  h1 {
+  display: block;
+  line-height: 1em;
   margin-top: 0em;
   margin-bottom: 0em;
   padding-bottom: 0;
   font-size: 3em;
+  /*font-weight: normal;*/
   font-family: "Blender Pro", "Helvetica", sans-serif;
   text-transform: uppercase;
  }
@@ -170,7 +173,16 @@ body {
   background-color: #444;
   color: #aaa;
   padding: 0.5em;
+  padding-top: 0.6em;
   border-radius: 0em;
   box-sizing: border-box;
   font-weight: normal;
  }
+
+ /*
+ top {
+  display: block;
+  background-color: #444;
+  width:100%;
+ }
+  */ 

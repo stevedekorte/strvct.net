@@ -4,30 +4,46 @@
 
 [TOC]
 
-## Project Framework Overview
-
-This project required the development of several custom frameworks:
-
-- Meta object framework (slots)
-- Extensive OO extensions to common classes
-- Desktop-like web OO UI framework
-- Architecture and protocol for model-to-view naked object UI, standard field components
-- Miller column-inspired stacking UI framework
-- Notifications system
-- Auto-syncing system/protocol between model and views
-- Integrated theming system
-- Client-side object persistence / object pool framework
-- Gesture recognition framework
-- Package builder & boot and client-side caching system
-- Auto resource management, loading, and caching system
-- Common protocol for resources (fonts, sounds, images, icons, JSON data files)
-- Transparent mutation observers for common classes
-
 ## Introduction
 
-Applications are typically composed of 3 layers: UI, Model, and Storage. Much of the code (and potential bugs) that make up the custom code in complex real world applications is the "glue" code that synchronizes these layers.
+This document is intended to be read after reading the [Project Overview](ProjectOverview.md), which outlines the goals and structure of the Strvct framework. Here we'll go into the technical details of our specific implementation and how the various parts work together.
 
-The basic idea of Strvct is to put enough meta-information in the model layer to allow for the UI and Storage layers (and the synchronization between all 3 layers) to be handled automatically. So you write the model and the rest is handled for you (though you can add custom views if needed). This involves choosing uniform but flexible building blocks for each of the layers.
+Much of the documentation for the clasess and how they work together is in the form of inline comments in the source code, but this document attempts to give a high-level overview of how the various parts fit together and introduce the important classes and their key implementation details.
+
+<!--
+Applications are typically composed of **UI**, **Model**, and **Storage** layers. Much of the code and potential bugs that make up the custom code in complex real world applications is the "glue" code that synchronizes these layers.
+
+The basic idea of Strvct is to put enough meta-information in the model layer (through meta properties and the use of property annotations) to allow for the UI and Storage layers (and the synchronization between the layers) to be handled automatically. So you write the model and the rest is handled for you (though you can add custom views if needed). This involves choosing uniform but flexible building blocks for each of the layers.
+-->
+
+## Build System
+
+## Resource Loading / Caching
+
+## Key Model Classes
+
+- `BMNode`
+- `BMSummaryNode`
+
+Fields:
+
+- `BMStringField`
+- `BMNumberField`
+- `BMImageWellField`
+
+Synchronization:
+
+- `SyncScheduler`
+- `BMNotificationCenter`
+- `Broadcaster`
+
+Storage:
+
+- `BMPersistentObjectPool`
+
+## Key View Classes
+
+## Storage System
 
 ## Building Blocks
 
@@ -99,3 +115,25 @@ Examples: `BMStringField`, `BMNumberField`, `BMImageWellField`
 - BMNotificationCenter
 - SyncScheduler
 - Broadcaster
+
+<!--
+## Component Frameworks
+
+This project required the development of several custom frameworks:
+
+- Meta object framework (slots)
+- Extensive OO extensions to common classes
+- Desktop-like web OO UI framework
+- Architecture and protocol for model-to-view naked object UI, standard field components
+- Miller column-inspired stacking UI framework
+- Notifications system
+- Auto-syncing system/protocol between model and views
+- Integrated theming system
+- Client-side object persistence / object pool framework
+- Gesture recognition framework
+- Package builder & boot and client-side caching system
+- Auto resource management, loading, and caching system
+- Common protocol for resources (fonts, sounds, images, icons, JSON data files)
+- Transparent mutation observers for common classes
+
+-->

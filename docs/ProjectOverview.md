@@ -1,8 +1,16 @@
 <draft>DRAFT</draft>
 
-# <a href="../index.html">Strvct</a> / Project Overview
+<top>
+
+# <a href="../index.html">STRVCT</a> / Project Overview
+
+<!--
+# <div style="font-size: 0.5em; text-transform: none;"> / Project Overview </div>
+-->
 
 [TOC]
+
+</top>
 
 ## Abstract
 

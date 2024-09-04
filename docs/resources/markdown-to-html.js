@@ -1,4 +1,4 @@
-async function loadAndRenderMarkdown() {
+async function loadAndRenderMarkdown() { 
   try {
     const contentDiv = document.getElementById('content');
     const markdownSource = contentDiv.getAttribute('source') || 'README.md';
@@ -61,7 +61,9 @@ async function loadAndRenderMarkdown() {
     // Override heading renderer to add IDs and collect TOC items
     renderer.heading = function(text, level) {
       const slug = text.toLowerCase().replace(/[^\w]+/g, '-');
-      toc.push({ text, level, slug });
+      if (level > 1) { // Only add to TOC if level is greater than 1 (i.e., not H1)
+        toc.push({ text, level, slug });
+      }
       return `<h${level} id="${slug}">${text}</h${level}>`;
     };
 
@@ -166,7 +168,7 @@ async function loadAndRenderMarkdown() {
 
     // Generate table of contents
     function generateTOC(items) {
-      let currentLevel = 1;
+      let currentLevel = 2; // Start at level 2 since we're excluding H1
       let html = '<ul>';
       items.forEach(item => {
         if (item.level > currentLevel) {
@@ -181,12 +183,10 @@ async function loadAndRenderMarkdown() {
       if (referenceList.length > 0) {
         if (currentLevel > 2) {
           html += '</ul>'.repeat(currentLevel - 2);
-        } else if (currentLevel < 2) {
-          html += '<ul>'.repeat(2 - currentLevel);
         }
         html += `<li><a href="#references">References</a></li>`;
       }
-      html += '</ul>'.repeat(currentLevel);
+      html += '</ul>'.repeat(currentLevel - 1); // Adjust closing tags
       return html;
     }
 
