@@ -30,20 +30,26 @@ While functionally complete, these systems often lack the interface patterns exp
 </div>
 </div>
 
-As user interface components are no longer bespoke to the application in a naked objects system, a major challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is not only that this is possible, but that well designed (informationally oriented) user interfaces effectively _must do so_ if they are to fully follow well accepted design guidelines such as:
+In a naked objects system, as user interface components are no longer bespoke to the application, the challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is that not only is this _possible_, but that it is _required_ for information-oriented user interfaces of complex domain models to practically follow well accepted design guidelines such as:
 
 - Consistency
+- Accessibility
+- Responsive layout
 - Clear hierarchy and navigation
 - User control and freedom
-- Flexibility and efficiency of use
-- Aesthetic and minimalist design
-- Accessibility
 
 <!--
+- Aesthetic and minimalist design
+
+- Flexibility and efficiency of use
 - Help users recognize, diagnose, and recover from errors
 - Recognition rather than recall
 - Visibility of system status
   -->
+
+That is, each of these guidelines benefits from the use of a small set of of well chosen components. For example, a small set of components implies consistency, and this consistency supports clarity. User control and freedom is difficult to achieve when each action requires a separate implementation but is supported by default when the system is only composed of a few components with a common protocol e.g. reordering and drag-and-drop is supported everywhere one finds a list in Strvct. Accessibiliy is also easier when these few components support it e.g. all navigation supports keyboard control. Likewise, responsiveness is easier when the system is composed of nested visual components which can follow simple rules to automatically adapt to the viewport size.
+
+Each of these guidelines can individually be challenging to achieve when a system is saddled with a large number of disparate bespoke components comminly found in traditional systems, and impractical to achieve them together for a domain model of any complexity. Therefore, greatly reducing the number of visual components by finding a small set of well composable ones may be the only practical way to achieve these goals.
 
 ## Domain Model
 
@@ -57,7 +63,7 @@ Each domain object has:
 - `title` and `subtitle` properties
 - a unique ID
 
-Together, these describe a domain model which can be seen as an ownership tree of domain objects, potientially with non-ownership links between them.
+Together, these describe a domain model which can be seen as an ownership tree of domain objects, which may also contain non-ownership links between them.
 
 <!--
 The parentNode property expresses ownership of child nodes and is used for the chaining of certain notifications.
@@ -65,17 +71,21 @@ The parentNode property expresses ownership of child nodes and is used for the c
 
 ### Collection Managers
 
-When a property of a domain object references a collection of domain objects with their own domain logic (i.e., for adding, deleting, reordering, sorting, searching, and moving items, validation, etc.), they should, following object-oriented principles, have a Collection Manager domain object which contains that logic and whose subnodes are the collection being managed.
+While this pattern isn't always used in traditional systems, it's important to note that the Collection Manager pattern is essential for properly expressing domain models within Strvct.
 
-For example, a Server class might have a guestConnections property which references an instance of GuestConnections (a descendant of DomainObject) and whose subnodes are instances of GuestConnection.
+When a property of a domain object references a collection of domain objects with their own domain logic (e.g., for adding, deleting, reordering, searching, and moving items, validation, etc.), it should, following object-oriented principles, have a Collection Manager domain object. This object contains that logic and its subnodes constitute the collection being managed.
 
-The use of this pattern is essential to properly expressing domain models within this framework.
+For example, a Server class might have a guestConnections property that references an instance of GuestConnections (a descendant of DomainObject) whose subnodes are instances of GuestConnection.
 
 ## User Interface
 
-Strvct uses stacks of **Tile** views to present domain objects and their properties, and nested master-detail views to organize and navigate them. By selecting paths of these tiles, the user can explore the domain model. Noteably, due to the uniformity of the system, advanced operations like re-ordering, and drag-and-drop work are supported throughout the system without any developer effort beyond setting an annotation in the relevent domain object that these operations are permitting and with which types.
+Strvct uses stacks of **Tile** views to present domain objects and their properties, and nested master-detail views to organize and navigate them. By selecting paths of these tiles, the user can explore the domain model.
 
-<i>Note: the following diagrams illustrate the layout concepts but not their actual appearance in the application.</i>
+<!--
+Noteably, due to the uniformity of the system, advanced operations like re-ordering, and drag-and-drop work are supported throughout the system without any developer effort beyond setting an annotation in the relevent domain object that these operations are permitting and with which types.
+-->
+
+<i>Note: the following diagrams only illustrate the view layouts and do not reflect the actual appearance in the application.</i>
 
 ### Tiles
 
@@ -83,12 +93,14 @@ The core navigational elements, referred to as **Tiles**. Tile subclasses can be
 
 #### Domain Object Tiles
 
-**Summary Tiles** are used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
+**Summary Tiles** are the default tiles used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
 
 <diagram>
 Summary Tile
 <object type="image/svg+xml" data="diagrams/svg/summary-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
+
+More specialized tiles can be also used to represent domain objects. For example, for a domain model representing a Markdown document, and composed of domain objects such as **Heading**, **Paragraph** objects, with corresponding **HeadingTile** and **ParagraphTile** objects to represent each element in the document.
 
 #### Property Tiles
 
@@ -98,6 +110,8 @@ Summary Tile
 Property Tile
 <object type="image/svg+xml" data="diagrams/svg/property-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
 </diagram>
+
+Strvct includes a number of specialized property tiles for common property types, such as Strings, Numbers, Dates, Times, and Images.
 
 #### Dynamic Inspectors
 
