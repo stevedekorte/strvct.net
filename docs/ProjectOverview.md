@@ -149,7 +149,7 @@ The navigation system employs visual cues to guide users along the selected path
 
 ### Synchronization
 
-Views often have references to domain objects they are presenting but domain objects never have references to views. Instead they post notifications to communicate with listeners, such as views. Views automatically register as listeners with the domain objects they present.
+Views often have references to domain objects they are presenting but domain objects never have references to views. Instead they post notifications to communicate with listeners, such as views. Views automatically observe the domain objects they present.
 
 #### Model to UI
 
@@ -192,4 +192,4 @@ Automatic garbage collection of the stored object graph occurs on startup, or wh
 Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by persistent properties of domain objects are also automatically persisted in their own records.
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
-[2]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (1995). Annotating Objects for Transport to Other Worlds"
+[2]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (OOPSLA 1995). Annotating Objects for Transport to Other Worlds. In Proceedings of the Tenth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '95). Austin, TX, USA. ACM Press."

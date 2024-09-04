@@ -38,11 +38,13 @@ body {
  h3, h4, h5 {
   margin-top: 1.5em;
   opacity: 0.9;
-  font-size: 1.1em;
+  font-size: 1.2em;
   font-weight: 300;
  }
- h4 {
+ h4, h5 {
   font-size: 1em;
+  opacity: 0.9;
+
  }
  hr {
   margin-top: 2em;
@@ -116,46 +118,57 @@ body {
 
    display: block;
    margin-top: 1em;
-   margin-bottom: 1em;
+   margin-bottom: 20px;
    opacity: 1;
-   transition: opacity 0.3s ease-out;
+   transition: opacity 0.5s ease-in-out;
+   font-weight: normal;
+   color: #bbb;
  }
- 
+
  table-of-contents.collapsed {
    opacity: 0.5;
  }
- 
+
  table-of-contents ul {
    list-style-type: none;
    padding-left: 20px;
  }
- 
+
  table-of-contents > ul {
    padding-left: 0;
  }
- 
+
+ .toc-content ul li a {
+   color: #bbb;
+ }
+
  .toc-toggle {
    cursor: pointer;
    user-select: none;
+   display: flex;
+   align-items: center;
+   width: fit-content;
+   max-width: 100%;
  }
- 
+
  .toc-toggle:before {
-   content: '▼';
+   content: '☰';  /* Hamburger icon */
    display: inline-block;
-   transition: transform 0.3s;
-   margin-right: 0.5em;  /* Add space after the triangle */
+   margin-right: 0.5em;  /* Space between icon and text */
+   font-size: 1em;
+   line-height: 1;
  }
- 
- .toc-toggle.collapsed:before {
-   transform: rotate(-90deg);
+
+ .toc-toggle:after {
+   content: none;  /* Remove the content from :after */
  }
- 
+
  .toc-content {
    max-height: 1000px;
    overflow: hidden;
    transition: max-height 0.3s ease-out;
  }
- 
+
  .toc-content.collapsed {
    max-height: 0;
  }
@@ -186,3 +199,85 @@ body {
   width:100%;
  }
   */ 
+
+/* Add the following styles */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 6em 20px 20px;
+  box-sizing: border-box;
+}
+
+#content {
+  flex: 1 0 auto;
+  margin-bottom: 6em;
+}
+
+.footer-spacer {
+  height: 6em;
+}
+
+table-of-contents {
+  display: block;
+  margin-bottom: 20px;
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+  font-weight: normal;
+  color: #bbb;
+}
+
+table-of-contents.collapsed {
+  opacity: 0.5;
+}
+
+table-of-contents ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+table-of-contents > ul {
+  padding-left: 0;
+}
+
+.toc-content ul li a {
+  color: #bbb;
+}
+
+.toc-toggle {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.toc-toggle:before {
+  content: '☰';  /* Hamburger icon */
+  display: inline-block;
+  margin-right: 0.5em;  /* Space between icon and text */
+  font-size: 1em;
+  line-height: 1;
+}
+
+.toc-toggle:after {
+  content: none;  /* Remove the content from :after */
+}
+
+.toc-content {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.toc-content.collapsed {
+  max-height: 0;
+}
