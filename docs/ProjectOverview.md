@@ -14,14 +14,14 @@
 
 ## Abstract
 
-Naked objects 1 aimed to simplify and accelerate software development by exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage. Despite these advantages, usability limitations have restricted its adoption to internal tools and prototypes.
+Naked objects [1] aimed to simplify and accelerate software development by exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage. Despite these advantages, usability limitations have restricted its adoption to internal tools and prototypes.
 
-While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes (at a high level) a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net)\*\* that implements it.
+While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net)\*\* that implements it.
 
 <!--
 ## Introduction
 
-This paper is intended to be a high level overview of the approach taken by the Strvct framework. For technical details, please refer to the [Developer Documentation](Developer.html), [Getting Started Guide](GettingStartedGuide.html), and [source code](https://github.com/stevedekorte/strvct.net/).
+The challenge of replicating user interface patterns within a naked objects systems comes, in part, from the neccessity of naked object systems to bring some level of consistency and uniformity...
 -->
 
 ## Domain Model
@@ -35,6 +35,8 @@ Each domain object has:
 - property `annotations` [2] which allow for the automatic handling of UI and storage mechanisms
 - `title` and `subtitle` properties
 - a unique ID
+
+Together, these describe a domain model which can be seen as an ownership tree of domain objects, potientially with non-ownership links between them.
 
 <!--
 The parentNode property expresses ownership of child nodes and is used for the chaining of certain notifications.
