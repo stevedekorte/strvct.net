@@ -16,13 +16,34 @@
 
 Naked objects [1] aimed to simplify and accelerate software development by exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage. Despite these advantages, usability limitations have restricted its adoption to internal tools and prototypes.
 
-While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net)\*\* that implements it.
+While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
 
-<!--
 ## Introduction
 
-The challenge of replicating user interface patterns within a naked objects systems comes, in part, from the neccessity of naked object systems to bring some level of consistency and uniformity...
--->
+<div class="no-markdown">
+
+<div class="epigraph">
+<i>"Everything has its pattern," Freddy put in.<br>
+"If you find it, the great can be contained within the small."</i><br>
+- Clive Barker, <i>Weaveworld</i>
+
+</div>
+</div>
+
+As user interface components are no longer bespoke to the application in a naked objects system, a major challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is not only that this is possible, but that well designed (informationally oriented) user interfaces effectively _must do so_ if they are to fully follow well accepted design guidelines such as:
+
+- Consistency
+- Clear hierarchy and navigation
+- User control and freedom
+- Flexibility and efficiency of use
+- Aesthetic and minimalist design
+- Accessibility
+
+<!--
+- Help users recognize, diagnose, and recover from errors
+- Recognition rather than recall
+- Visibility of system status
+  -->
 
 ## Domain Model
 
@@ -46,11 +67,15 @@ The parentNode property expresses ownership of child nodes and is used for the c
 
 When a property of a domain object references a collection of domain objects with their own domain logic (i.e., for adding, deleting, reordering, sorting, searching, and moving items, validation, etc.), they should, following object-oriented principles, have a Collection Manager domain object which contains that logic and whose subnodes are the collection being managed.
 
-For example, a Server class might have a guestConnections property which references an instance of GuestConnections (a descendant of DomainObject) and whose subnodes are instances of GuestConnection. The use of this pattern is essential to properly expressing domain models within this framework.
+For example, a Server class might have a guestConnections property which references an instance of GuestConnections (a descendant of DomainObject) and whose subnodes are instances of GuestConnection.
+
+The use of this pattern is essential to properly expressing domain models within this framework.
 
 ## User Interface
 
-At a glance, Strvct uses stacks of **Tile** views to present domain objects and their properties, and nested master-detail views to organize and navigate and them. Note: the wire-frame diagrams below abstractly illustrate the layout concepts and not their actual visual appearance in the application.
+Strvct uses stacks of **Tile** views to present domain objects and their properties, and nested master-detail views to organize and navigate them. By selecting paths of these tiles, the user can explore the domain model. Noteably, due to the uniformity of the system, advanced operations like re-ordering, and drag-and-drop work are supported throughout the system without any developer effort beyond setting an annotation in the relevent domain object that these operations are permitting and with which types.
+
+<i>Note: the following diagrams illustrate the layout concepts but not their actual appearance in the application.</i>
 
 ### Tiles
 

@@ -281,3 +281,12 @@ table-of-contents > ul {
 .toc-content.collapsed {
   max-height: 0;
 }
+
+.epigraph {
+  font-family: Times;
+  font-style: normal;
+  font-weight: light;
+  padding-left: 2em;
+  padding-right: 2em;
+  margin-bottom: 2em;
+}
