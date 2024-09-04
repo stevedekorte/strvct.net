@@ -30,7 +30,7 @@ While functionally complete, these systems often lack the interface patterns exp
 </div>
 </div>
 
-In a naked objects system, as user interface components are no longer bespoke to the application, the challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is that not only is this _possible_, but that it is _required_ for information-oriented user interfaces of complex domain models to practically follow well accepted design guidelines such as:
+In a naked objects system, as user interface components are no longer bespoke to the application, the challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is that not only _possible_, but effectively _required_ for information-oriented user interfaces of complex domain models to follow user interface design guidelines such as:
 
 - Consistency
 - Accessibility
@@ -49,7 +49,7 @@ In a naked objects system, as user interface components are no longer bespoke to
 
 That is, each of these guidelines benefits from the use of a small set of of well chosen components. For example, a small set of components implies consistency, and this consistency supports clarity. User control and freedom is difficult to achieve when each action requires a separate implementation but is supported by default when the system is only composed of a few components with a common protocol e.g. reordering and drag-and-drop is supported everywhere one finds a list in Strvct. Accessibiliy is also easier when these few components support it e.g. all navigation supports keyboard control. Likewise, responsiveness is easier when the system is composed of nested visual components which can follow simple rules to automatically adapt to the viewport size.
 
-Each of these guidelines can individually be challenging to achieve when a system is saddled with a large number of disparate bespoke components comminly found in traditional systems, and impractical to achieve them together for a domain model of any complexity. Therefore, greatly reducing the number of visual components by finding a small set of well composable ones may be the only practical way to achieve these goals.
+These guidelines can be challenging to achieve when a system is saddled with a large number of disparate bespoke components commonly found in traditional systems, for a domain model of any complexity. Therefore, greatly reducing the number of visual components by finding a small set of well composable ones may be the only practical way to achieve these goals.
 
 ## Domain Model
 
@@ -184,9 +184,28 @@ Nesting of master-detail views with flexible orientations allows for navigation 
 
 Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use of display space across a wide range of viewport sizes.
 
+<diagram>
+Expanded on Large Viewport
+<object type="image/svg+xml" data="diagrams/svg/expanded.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+</diagram>
+
+<diagram>
+Collapsed on Small Viewport
+<object type="image/svg+xml" data="diagrams/svg/collapsed.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+</diagram>
+
 #### Navigation Path
 
-The navigation system employs visual cues to guide users along the selected path. Tiles that form part of the chosen route are highlighted, making the path easy to follow. To further enhance navigation, the active/focused tile - which represents the most recently selected location - is distinguished with a unique highlight. This differentiation allows users to quickly identify their current position within the overall navigation sequence. These highlights and other visual attributes are customizable via themes.
+The navigation system employs visual cues to guide users along the selected path. Tiles that form part of the chosen route are highlighted, and the focused tile - which represents the most recently selected location - is distinguished with a unique highlight. This differentiation allows users to quickly identify their current position within the overall navigation sequence. These highlights and other visual attributes are customizable via themes.
+
+<diagram>
+Navigation Path
+<object type="image/svg+xml" data="diagrams/svg/path.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+</diagram>
+
+#### Breadcrumbs
+
+#### Menus
 
 ### Synchronization
 
