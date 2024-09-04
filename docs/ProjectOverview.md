@@ -14,9 +14,9 @@
 
 ## Abstract
 
-By exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage, naked objects [1] aimed to simplify and accelerate software development. Despite these advantages, usability limitations have restricted it's adoption to internal tools and prototypes.
+Naked objects 1 aimed to simplify and accelerate software development by exposing domain (business) objects directly to users and automatically generating user interfaces and handling storage. Despite these advantages, usability limitations have restricted its adoption to internal tools and prototypes.
 
-While functionally complete, these systems often lack the interface patterns <!--and visual appeal--> expected in end-user applications. This paper describes (at a high level) a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called **[Strvct](https://github.com/stevedekorte/strvct.net)** that implements it.
+While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes (at a high level) a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net)\*\* that implements it.
 
 <!--
 ## Introduction
@@ -42,9 +42,9 @@ The parentNode property expresses ownership of child nodes and is used for the c
 
 ### Collection Managers
 
-When a property of a domain object references a collection of domain objects which have their own **domain logic** associated with them (i.e. for adding, deleting, reording, sorting, searching, and moving items, validation, etc.), they should, following object oriented principles, have a **Collection Manager** domain object which contains that logic and whose subnodes are the collection being managed.
+When a property of a domain object references a collection of domain objects with their own domain logic (i.e., for adding, deleting, reordering, sorting, searching, and moving items, validation, etc.), they should, following object-oriented principles, have a Collection Manager domain object which contains that logic and whose subnodes are the collection being managed.
 
-For example, a Server class might have a guestConnections property which references an instance of GuestConnections (a decendant of DomainObject) and whose subnodes are instances of GuestConnection. The use of this pattern is essential to properly expressing domain models within this framework.
+For example, a Server class might have a guestConnections property which references an instance of GuestConnections (a descendant of DomainObject) and whose subnodes are instances of GuestConnection. The use of this pattern is essential to properly expressing domain models within this framework.
 
 ## User Interface
 
