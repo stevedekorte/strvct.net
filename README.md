@@ -7,4 +7,5 @@ Strvct is a client-side JavaScript framework for creating single page web applic
 [Project Overview](./docs/ProjectOverview.md)<br>
 [Developer Documentation](./docs/Developer.md)<br>
 [Getting Started Guide](./docs/GettingStartedGuide.md)<br>
+[Case Study](CaseStudy.md)<br>
 [Source Code](https://github.com/stevedekorte/strvct.net/)

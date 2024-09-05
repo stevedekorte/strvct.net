@@ -97,7 +97,7 @@ The core navigational elements, referred to as **Tiles**. Tile subclasses can be
 
 <diagram>
 Summary Tile
-<object type="image/svg+xml" data="diagrams/svg/summary-tile.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="diagrams/svg/summary-tile.svg">[SVG diagram]</object>
 </diagram>
 
 More specialized tiles can be also used to represent domain objects. For example, for a domain model representing a Markdown document, and composed of domain objects such as **Heading**, **Paragraph** objects, with corresponding **HeadingTile** and **ParagraphTile** objects to represent each element in the document.
@@ -129,7 +129,7 @@ A **Tile Stack** is a scrollable stacks of **Tiles** which are used to present t
 
 <diagram>
 Tile Stack
-<object type="image/svg+xml" data="diagrams/svg/tiles.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="diagrams/svg/tiles.svg">[SVG diagram]</object>
 </diagram>
 
 ### Master-Detail Views
@@ -138,27 +138,16 @@ A **Master-Detail View** is used to present a domain object. Its master section 
 
 <diagram>
 Master-Detail View
-<object type="image/svg+xml" data="diagrams/svg/master-detail.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="diagrams/svg/master-detail.svg">[SVG diagram]</object>
 </diagram>
 
 #### Flexible Orientation
 
 Detail Views can be oriented to be be right-of, or below the Master View (which contains theTiles Stack). Both can be requested by the related domain object or overridden by the user interface, offering adaptability based on the content, display size, and user preference.
 
-<diagram style="position: relative;
-  width: 100%;
-  overflow: hidden; 
-  border: 0px solid white;
-  margin: 0em auto;
-  box-sizing: border-box;
-   ">
+<diagram>
 Master-Detail Orientations
-<object type="image/svg+xml" data="diagrams/svg/orientations.svg" style="  display: inline-block;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  top: 0;
-  left: 0;">[SVG diagram]</object>
+<object type="image/svg+xml" data="diagrams/svg/orientations.svg">[SVG diagram]</object>
 </diagram>
 
 #### Nesting
@@ -166,15 +155,15 @@ Master-Detail Orientations
 Nesting of master-detail views with flexible orientations allows for navigation structures which fit many common application design patterns.
 
 <diagram>
-  <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
+  <div style="display: inline-block; height: fit-content; width: 30%;">
   Vertical<br>
   <object type="image/svg+xml" data="diagrams/svg/vertical-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
-  <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
+  <div style="display: inline-block; height: fit-content; width: 30%;">
   Horizontal<br>
   <object type="image/svg+xml" data="diagrams/svg/horizontal-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
-  <div style="display: inline-block; height: fit-content; width: 30%; max-width: 100%;">
+  <div style="display: inline-block; height: fit-content; width: 30%;">
   Hybrid<br>
   <object type="image/svg+xml" data="diagrams/svg/hybrid-hierarchical-miller-columns.svg">[SVG diagram]</object>
   </div>
@@ -185,13 +174,12 @@ Nesting of master-detail views with flexible orientations allows for navigation 
 Chains of Master-Detail views automatically collapse/expand their tile views until there is space for the remaining master-details views. This allows for responsive and efficient use of display space across a wide range of viewport sizes.
 
 <diagram>
-Expanded on Large Viewport
-<object type="image/svg+xml" data="diagrams/svg/expanded.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+Expanded
+<object type="image/svg+xml" data="diagrams/svg/expanded.svg">[SVG diagram]</object>
 </diagram>
 
 <diagram>
-Collapsed on Small Viewport
-<object type="image/svg+xml" data="diagrams/svg/collapsed.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+Collapsed<object type="image/svg+xml" data="diagrams/svg/collapsed.svg">[SVG diagram]</object>
 </diagram>
 
 #### Navigation Path
@@ -200,7 +188,7 @@ The navigation system employs visual cues to guide users along the selected path
 
 <diagram>
 Navigation Path
-<object type="image/svg+xml" data="diagrams/svg/path.svg" style="width: 100%; height: auto;">[SVG diagram]</object>
+<object type="image/svg+xml" data="diagrams/svg/path.svg">[SVG diagram]</object>
 </diagram>
 
 #### Breadcrumbs
