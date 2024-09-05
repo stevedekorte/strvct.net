@@ -10,6 +10,8 @@ This document is intended to be read after reading the [Project Overview](Projec
 
 Much of the documentation for the classess and how they work together is in the form of inline comments in the source code, but this document attempts to give a high-level overview of how the various parts fit together and introduce the important classes and their key implementation details.
 
+(add discussion of the additional frameworks that are included with Strvct, such as the AI framework, the gesture framework, the resource management framework, etc.)
+
 <!--
 Applications are typically composed of **UI**, **Model**, and **Storage** layers. Much of the code and potential bugs that make up the custom code in complex real world applications is the "glue" code that synchronizes these layers.
 
