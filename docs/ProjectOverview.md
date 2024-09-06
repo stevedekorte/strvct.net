@@ -18,6 +18,7 @@ Naked objects [1] aimed to simplify and accelerate software development by expos
 
 While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
 
+<!--
 ## Introduction
 
 <div class="no-markdown">
@@ -30,26 +31,8 @@ While functionally complete, these systems often lack the interface patterns exp
 </div>
 </div>
 
-In a naked objects system, as user interface components are no longer bespoke to the application, the challenge is to find a small set of components which can efficiently express a large range of useful interface patterns. Strvct's perspective on this problem is that not only _possible_, but effectively _required_ for information-oriented user interfaces of complex domain models to follow user interface design guidelines such as:
-
-- Consistency
-- Accessibility
-- Responsive layout
-- Clear hierarchy and navigation
-- User control and freedom
-
-<!--
-- Aesthetic and minimalist design
-
-- Flexibility and efficiency of use
-- Help users recognize, diagnose, and recover from errors
-- Recognition rather than recall
-- Visibility of system status
-  -->
-
-That is, each of these guidelines benefits from the use of a small set of of well chosen components. For example, a small set of components implies consistency, and this consistency supports clarity. User control and freedom is difficult to achieve when each action requires a separate implementation but is supported by default when the system is only composed of a few components with a common protocol e.g. reordering and drag-and-drop is supported everywhere one finds a list in Strvct. Accessibiliy is also easier when these few components support it e.g. all navigation supports keyboard control. Likewise, responsiveness is easier when the system is composed of nested visual components which can follow simple rules to automatically adapt to the viewport size.
-
-These guidelines can be challenging to achieve when a system is saddled with a large number of disparate bespoke components commonly found in traditional systems, for a domain model of any complexity. Therefore, greatly reducing the number of visual components by finding a small set of well composable ones may be the only practical way to achieve these goals.
+In a naked objects system, as user interface components are no longer bespoke to the application, the major challenge is to find a small set of components which can efficiently express a large range of useful interface patterns.
+-->
 
 ## Domain Model
 
@@ -63,44 +46,38 @@ Each domain object has:
 - `title` and `subtitle` properties
 - a unique ID
 
-Together, these describe a domain model which can be seen as an ownership tree of domain objects, which may also contain non-ownership links between them.
-
-<!--
-The parentNode property expresses ownership of child nodes and is used for the chaining of certain notifications.
--->
+The domain model can be seen as an ownership tree of domain objects, which may also contain non-ownership links between nodes.
 
 ### Collection Managers
 
-While this pattern isn't always used in traditional systems, it's important to note that the Collection Manager pattern is essential for properly expressing domain models within Strvct.
+Complex collections of domain objects use Collection Manager domain objects to encapsulate collection-specific logic and data. This pattern is essential for properly expressing domain models within Strvct.
 
-When a property of a domain object references a collection of domain objects with their own domain logic (e.g., for adding, deleting, reordering, searching, and moving items, validation, etc.), it should, following object-oriented principles, have a Collection Manager domain object. This object contains that logic and its subnodes constitute the collection being managed.
+For example, a Server class might have a guestConnections property referencing a GuestConnections instance (a DomainObject descendant) whose subnodes are GuestConnection instances.
 
-For example, a Server class might have a guestConnections property that references an instance of GuestConnections (a descendant of DomainObject) whose subnodes are instances of GuestConnection.
+### Indirect UI Coupling
+
+The domain model operates independently of UI, allowing for "headless" execution. It can however, use annotations to provide optional UI hints without direct coupling. This is possible because model objects hold no references to UI objects and can only communicate with them via notifications.
 
 ## User Interface
 
-Strvct uses stacks of **Tile** views to present domain objects and their properties, and nested master-detail views to organize and navigate them. By selecting paths of these tiles, the user can explore the domain model.
-
-<!--
-Noteably, due to the uniformity of the system, advanced operations like re-ordering, and drag-and-drop work are supported throughout the system without any developer effort beyond setting an annotation in the relevent domain object that these operations are permitting and with which types.
--->
-
-<i>Note: the following diagrams only illustrate the view layouts and do not reflect the actual appearance in the application.</i>
+<i>Note: the following diagrams are designed to illustrate view layouts and not their actual appearance.</i>
 
 ### Tiles
 
-The core navigational elements, referred to as **Tiles**. Tile subclasses can be used to customize the appearance of domain objects and properties and domain objects can request specific tiles to be used to represent them or their properties.
+The core navigational elements, referred to as **Tiles** are used to present a single domain object or a single domain property. Tile subclasses can be used to customize the appearance of and interaction with these. Domain objects annotations can be used to request specific tiles to be used to represent them or their properties.
 
 #### Domain Object Tiles
 
-**Summary Tiles** are the default tiles used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars.
+**Summary Tiles** are the default tiles used to represent domain objects and to navigate the domain model. They typically display a title, subtitle, and optional left and right sidebars. More specialized tiles can be also used to represent domain objects.
 
 <diagram>
 Summary Tile
 <object type="image/svg+xml" data="diagrams/svg/summary-tile.svg">[SVG diagram]</object>
 </diagram>
 
-More specialized tiles can be also used to represent domain objects. For example, for a domain model representing a Markdown document, and composed of domain objects such as **Heading**, **Paragraph** objects, with corresponding **HeadingTile** and **ParagraphTile** objects to represent each element in the document.
+<!--
+For example, for a domain model representing a Markdown document, and composed of domain objects such as **Heading**, **Paragraph** objects, with corresponding **HeadingTile** and **ParagraphTile** objects to represent each element in the document.
+-->
 
 #### Property Tiles
 
@@ -184,7 +161,9 @@ Collapsed<object type="image/svg+xml" data="diagrams/svg/collapsed.svg">[SVG dia
 
 #### Navigation Path
 
-The navigation system employs visual cues to guide users along the selected path. Tiles that form part of the chosen route are highlighted, and the focused tile - which represents the most recently selected location - is distinguished with a unique highlight. This differentiation allows users to quickly identify their current position within the overall navigation sequence. These highlights and other visual attributes are customizable via themes.
+Tiles on the selected are highlighted, and the focused tile - which represents the most recently selected location - is distinguished with a unique highlight.
+
+These highlights and other visual attributes are customizable via themes.
 
 <diagram>
 Navigation Path
@@ -193,43 +172,43 @@ Navigation Path
 
 #### Breadcrumbs
 
+A BreadcrumbTile can be used to represent the current navigation path. It automatically compacts and expands to reveal more of the path based on the current viewport size, replacing the compacted path with a back arrow.
+
+<diagram style="width: 50%; height: auto;">
+Breadcrumbs
+<object type="image/svg+xml" data="diagrams/svg/breadcrumbs.svg">[SVG diagram]</object>
+</diagram>
+
 #### Menus
 
-### Synchronization
+Tile navigation is very similar to menu navigation, and multiple levels of traditional menus can be constructed using various orientations of master-detail views.
 
-Views often have references to domain objects they are presenting but domain objects never have references to views. Instead they post notifications to communicate with listeners, such as views. Views automatically observe the domain objects they present.
+<diagram style="width: 50%; height: auto;">
+Horizontal Menus
+<object type="image/svg+xml" data="diagrams/svg/horizontal-menus.svg">[SVG diagram]</object>
+</diagram>
 
-#### Model to UI
+### UI Synchronization
 
-Mutations on domain object properties annotated to be synchronized will automatically post change notifications when mutated. These notifications are coalesced and sent at the end of the event loop. Views in the UI may listen for these and update themselves accordingly.
+Model-view synchronization is effectively managed by the views, which either pull or push changes to the domain objects. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only properties in views and domain objects which have the "sync" annotation will trigger sync operations. Both domain object change notifications and view syncToDomainObject messages are coalesced and sent at the end of the event loop and have ordering guarantees.
 
-#### UI to Model
+#### Sync Loop Avoidance
 
-Properties of views can be annotated to be synchronized. On mutations, they will queue the view to sync to the domain object at the end of the event loop.
+Bidirectional sync stops automatically as property changes trigger sync operations only when values actually differ, preventing infinite loops. If such secondary changes do occur, the notification system detects the loop, halts it, and identifies the source.
 
-#### Notification System
+#### Reference Loop Avoidance
 
-The notification system has mechanisms to monitor for potential infinite synchronization loops in order to halt them and present the developer with a report to identify their source. Observation objects use weak references for both the sender and observer in order to prevent them from preventing garbage collection. Observing objects automatically register their observations as needed, and unregister when they shut down.
+Observations use weak references, allowing garbage collection of both posters and listeners. The Notification system automatically removes observerations when the listener is collected.
 
 ## Storage
 
 ### Annotations
 
-Domain objects have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. Using this information, the system automatically manages persistence. <!-- Each domain object is stored as an individual JSON record. Storage is done of the client side using IndexedDB.-->
-
-<!--
-### Native Collections
-
-Native JavaScript collections (of Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by domain object persistent properties are also automatically persisted in their own records.
-
-### Local Storage
-
-Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. The only index is on the unique ID.
--->
+Domain objects have a property which determines whether the object persisted, as well as property annotations which determine which properties are persisted. Using this information, the system automatically manages persistence.
 
 ### Transactions
 
-Mutations on persistent properties will automatically queue the affected domain object for storage. Objects in this queue are bundled into a transaction committed at the end of the same event loop in which the mutation occurs.
+Mutations on persistent properties auto-queue domain objects for storage. Queued objects are bundled into a transaction committed at the end of the current event loop.
 
 ### Garbage Collection
 
@@ -238,6 +217,26 @@ Automatic garbage collection of the stored object graph occurs on startup, or wh
 ### Native Collections
 
 Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedArray) referenced by persistent properties of domain objects are also automatically persisted in their own records.
+
+### Local Storage
+
+Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. Currently, the only index is on the unique ID.
+
+<!--
+## Importing and Exporting
+
+Drag and drop of domain objects into the UI and out of it for export is also supported.
+Domain objects can register for which MIME type they can exported to and imported from.
+
+### JSON Schema
+
+Domain objects can automatically generate JSON Schema for the object based on it's annotations. These schemas are  be used to export meta data about the domain model to  Large Language Models.
+
+### Themes
+
+Themes can be used to customize the appearance of the UI.
+
+-->
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
 [2]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (OOPSLA 1995). Annotating Objects for Transport to Other Worlds. In Proceedings of the Tenth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '95). Austin, TX, USA. ACM Press."

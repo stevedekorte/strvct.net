@@ -123,6 +123,7 @@ diagram {
   width: 100%;
   margin: 0em auto;
   text-align: center;
+  margin-top: 2em;
   margin-bottom: 2.5em;
   box-sizing: border-box;
 
@@ -170,7 +171,7 @@ table-of-contents>ul {
 }
 
 .toc-content ul li a {
-  color: #bbb;
+  color: #f4f4ec;
 }
 
 .toc-toggle {
