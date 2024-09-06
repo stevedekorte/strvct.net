@@ -188,13 +188,26 @@ Horizontal Menus
 <object type="image/svg+xml" data="diagrams/svg/horizontal-menus.svg">[SVG diagram]</object>
 </diagram>
 
+### Themes
+
+Themes can be used to customize the appearance of the UI. Domain objects can also request object specific styles to be applied to them.
+
+### Importing and Exporting
+
+Drag and drop of domain objects into the UI and out of it for export is also supported.
+Domain objects can register for which MIME type they can exported to and imported from. For example, if a domain object supports it, it can be dragged out of one browser window unto a user's desktop, or even dropped into another Strvct app that accepts that MIME type. Domain objects have a standard property which lists it's valid subnode types, and this can be used validate drops and auto generate subnodes for imported data.
+
+### JSON Schema
+
+Domain objects can automatically generate JSON Schema for themselves based on their properties and annotations. These schemas are be used to export meta data about the domain model, which is particularly usefule when interacting with Large Language Models.
+
 ### UI Synchronization
 
-Model-view synchronization is effectively managed by the views, which either pull or push changes to the domain objects. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only properties in views and domain objects which have the "sync" annotation will trigger sync operations. Both domain object change notifications and view syncToDomainObject messages are coalesced and sent at the end of the event loop and have ordering guarantees.
+Model-view synchronization is managed by views, which either pull or push changes to the domain objects they are presenting. Views push changes when a view property changes, and pull changes from domain objects when those objects post change notifications. Only properties in views and domain objects which have the "sync" annotation will trigger sync operations. Both domain object change notifications and view push messages are coalesced and sent at the end of the event loop. <!-- These have different ordering priorities to ensure safe execution. -->
 
 #### Sync Loop Avoidance
 
-Bidirectional sync stops automatically as property changes trigger sync operations only when values actually differ, preventing infinite loops. If such secondary changes do occur, the notification system detects the loop, halts it, and identifies the source.
+Bidirectional sync stops automatically as property changes trigger sync operations only when values actually differ, preventing infinite loops. If secondary changes do occur, the notification system detects the loop, halts it, and identifies the source.
 
 #### Reference Loop Avoidance
 
@@ -221,22 +234,6 @@ Native JavaScript collections (Array, ArrayBuffer, Map, Object, Set, and TypedAr
 ### Local Storage
 
 Persistent domain objects are stored client side in IndexedDB in a single Object Store of records whose keys are the domain object unique ID and values are the domain objects JSON records. Currently, the only index is on the unique ID.
-
-<!--
-## Importing and Exporting
-
-Drag and drop of domain objects into the UI and out of it for export is also supported.
-Domain objects can register for which MIME type they can exported to and imported from.
-
-### JSON Schema
-
-Domain objects can automatically generate JSON Schema for the object based on it's annotations. These schemas are  be used to export meta data about the domain model to  Large Language Models.
-
-### Themes
-
-Themes can be used to customize the appearance of the UI.
-
--->
 
 [1]: http://downloads.nakedobjects.net/resources/Pawson%20thesis.pdf "Pawson, R., & Matthews, R. (2000). Naked Objects (Technical Report)"
 [2]: https://bluishcoder.co.nz/self/transporter.pdf "David Ungar. (OOPSLA 1995). Annotating Objects for Transport to Other Worlds. In Proceedings of the Tenth Annual Conference on Object-Oriented Programming Systems, Languages, and Applications (OOPSLA '95). Austin, TX, USA. ACM Press."
