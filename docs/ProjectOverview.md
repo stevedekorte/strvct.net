@@ -18,9 +18,13 @@ Naked objects [1] aimed to simplify and accelerate software development by expos
 
 While functionally complete, these systems often lack the interface patterns expected in end-user applications. This paper describes a new approach to help address these limitations and introduces an open-source JavaScript client-side framework called [Strvct](https://github.com/stevedekorte/strvct.net) that implements it.
 
-<!--
 ## Introduction
 
+### A Few Notes on Implementation
+
+Strvct is different enough from other UI frameworks that it may be worth starting with a description of how it differs in order to over confusion when the reader makes a mental model of how the system works.
+
+<!--
 <div class="no-markdown">
 
 <div class="epigraph">

@@ -1,3 +1,31 @@
+
+@font-face {
+  font-family: 'Share Tech Mono';
+  src: url('../resources/fonts/ShareTechMono/font.woff2') format('woff2'),
+       url('../resources/fonts/ShareTechMono/font.woff') format('woff'),
+       url('../resources/fonts/ShareTechMono/font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Blender Pro';
+  src: url('../resources/fonts/Blender Pro/font.woff2') format('woff2'),
+       url('../resources/fonts/Blender Pro/font.woff') format('woff'),
+       url('../resources/fonts/Blender Pro/font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Barlow Condensed';
+  src: url('../resources/fonts/BarlowCondensed/font.woff2') format('woff2'),
+       url('../resources/fonts/BarlowCondensed/font.woff') format('woff'),
+       url('../resources/fonts/BarlowCondensed/font.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 body {
   font-family: "Helvetica", Helvetica, Arial, sans-serif;
   font-weight: 300;
