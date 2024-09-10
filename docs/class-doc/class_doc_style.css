@@ -1,0 +1,246 @@
+body {
+    font-family: Helvetica,Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5em;
+    color: #333;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+class {
+    display: block;
+    border: 0px solid #ddd;
+    margin-top: 4em;
+    margin-bottom: 4em;
+    margin-left: 2em;
+}
+
+/* --- extends --- */
+
+extends {
+    display: block;
+    font-style: italic;
+    color: #7f8c8d;
+    font-weight: bold;
+    font-style: italic;
+}
+
+extends:before {
+    content: "extends: ";
+    font-weight: bold;
+    font-style: italic;
+}
+
+/* --- filePath --- */
+
+filepath {
+    display: block;
+    color: #7f8c8d;
+    font-weight: bold;
+    font-style: italic;
+}
+
+filepath:before {
+    content: "path: ";
+    font-weight: bold;
+    font-style: italic;
+}
+
+
+
+/* --- description --- */
+
+description {
+    display: block;
+    font-weight: 200;
+}
+
+methods {
+    display: block;
+}
+
+methods:before {
+    content: "Instance Methods: ";
+    font-weight: bold;
+    font-size: 1.25em;
+    font-style: normal;
+    margin-left: -2em;
+}
+
+method {
+    display: block;
+    border-bottom: 0px solid #eee;
+    margin-top: 2.5em;
+    font-weight: lighter;
+
+}
+
+method > name {
+    display: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+method > isAsync {
+    display: none;
+    background-color: #2ecc71;
+    color: #fff;
+    padding: 2px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+method > lineno {
+    display: none;
+    color: #95a5a6;
+    font-size: 12px;
+    margin-left: 10px;
+}
+
+method > fullMethodName {
+    display: block;
+    padding: 0;
+    margin-top: 1em;
+    margin-bottom: 0em;
+    font-weight: bold;
+}
+
+parameters {
+    display: none;
+    margin-top: 10px;
+}
+
+parameter {
+    display: none;
+    margin-left: 20px;
+}
+
+parameter > name {
+    font-weight: bold;
+}
+
+parameter > default {
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+method > description {
+    display: block;
+    margin-top: 0em;
+    font-style: normal;
+}
+
+author, version {
+    display: block;
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+method > fullMethodName[async]::before {
+    content: "async ";
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+classInfo {
+    display: block;
+    margin-bottom: 0em;
+    line-height: 1.5em;
+}
+
+classInfo > className {
+    display: block;
+    margin-left: -2em;
+    margin-bottom: 2em;
+    font-size: 2em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+classInfo > extends {
+    display: block;
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+classInfo > description {
+    display: block;
+    margin-top: 3em;
+}
+
+
+classInfo > description:before {
+    display: block;
+    content: "Class Description: ";
+    font-weight: bold;
+    font-size: 1.25em;
+    font-style: normal;
+    margin-left: -2em;
+    margin-bottom: 1.5em;
+}
+
+/* --- throws --- */
+
+throws {
+    display: block;
+    color: #7f8c8d;
+    font-style: italic;
+    font-weight: lighter;
+}
+
+throws:before {
+    content: "throws: ";
+    font-style: italic;
+    font-weight: lighter;
+}
+
+/* --- returns --- */
+
+returns {
+    display: block;
+    color: #7f8c8d;
+    font-style: italic;
+    font-weight: lighter;
+}
+
+returns:before {
+    content: "returns: ";
+    font-style: italic;
+    font-weight: lighter;
+}
+
+/* --- author --- */
+
+author {
+    display: none;
+    color: #7f8c8d;
+}
+
+author:before {
+    content: "author: ";
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* --- version --- */
+
+version {
+    display: none;
+    color: #7f8c8d;
+}
+
+version:before {
+    content: "version: ";
+    font-weight: normal;
+    font-style: normal;
+}
+

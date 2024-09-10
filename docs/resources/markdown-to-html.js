@@ -1,7 +1,9 @@
-async function loadAndRenderMarkdown() { 
+async function loadAndRenderMarkdown() {
   try {
     const contentDiv = document.getElementById('content');
-    const markdownSource = contentDiv.getAttribute('source') || 'README.md';
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const markdownSource = urlParams.get('path') || './README.md';
     
     const response = await fetch(markdownSource);
     if (!response.ok) {
@@ -9,17 +11,25 @@ async function loadAndRenderMarkdown() {
     }
     const markdown = await response.text();
 
+    const svgPlaceholderRegex = /(<object\s+type="image\/svg\+xml"\s+data="([^"]+)"(?:\s+style="[^"]*")?\s*>[^<]*<\/object>)/g;
+    let svgCounter = 0;
+    const svgMap = new Map();
+    
+    const preprocessedMarkdown = markdown.replace(svgPlaceholderRegex, (match, fullTag, svgPath) => {
+      const placeholder = `{{SVG_PLACEHOLDER_${svgCounter}:${svgPath}}}`;
+      svgMap.set(svgCounter, fullTag);
+      svgCounter++;
+      return placeholder;
+    });
+
     const referenceMap = new Map();
     const referenceList = [];
     const toc = [];
 
-    // Extract H1 title from markdown and remove HTML formatting
     const h1Match = markdown.match(/^#\s+(.+)$/m);
     if (h1Match) {
       const h1Content = h1Match[1].trim();
-      // Remove HTML tags
       const plainTextH1 = h1Content.replace(/<[^>]*>/g, '');
-      // Decode HTML entities
       const decodedH1 = plainTextH1.replace(/&[^;]+;/g, match => {
         const span = document.createElement('span');
         span.innerHTML = match;
@@ -28,10 +38,8 @@ async function loadAndRenderMarkdown() {
       document.title = decodedH1;
     }
 
-    // Remove the title section from the markdown
     const contentWithoutTitle = markdown.replace(/<head>[\s\S]*?<\/head>/, '');
 
-    // First pass: extract references
     const lines = contentWithoutTitle.split('\n');
     const contentLines = lines.filter(line => {
       const match = line.match(/^\[(.+)\]:\s*(.+?)\s*(?:"(.+)")?$/);
@@ -44,10 +52,8 @@ async function loadAndRenderMarkdown() {
       return true;
     });
 
-    // Custom renderer
     const renderer = new marked.Renderer();
 
-    // Function to process citations
     function processCitations(text) {
       const citationRegex = /\[(\d+)\]/g;
       return text.replace(citationRegex, (match, p1) => {
@@ -58,43 +64,96 @@ async function loadAndRenderMarkdown() {
       });
     }
 
-    // Override heading renderer to add IDs and collect TOC items
     renderer.heading = function(text, level) {
       const slug = text.toLowerCase().replace(/[^\w]+/g, '-');
-      if (level > 1) { // Only add to TOC if level is greater than 1 (i.e., not H1)
+      if (level > 1) {
         toc.push({ text, level, slug });
       }
       return `<h${level} id="${slug}">${text}</h${level}>`;
     };
 
-    // Override link renderer to change local .md links to .html
+    function transformLocalPath(path) {
+      if (path && !path.startsWith('http') && !path.startsWith('#')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentPath = urlParams.get('path') || './README.md';
+        
+        const currentDir = currentPath.split('/').slice(0, -1).join('/');
+        
+        let newPath = `${currentDir}/${path}`;
+        
+        newPath = newPath.split('/').reduce((acc, part) => {
+          if (part === '..') acc.pop();
+          else if (part !== '.' && part !== '') acc.push(part);
+          return acc;
+        }, []).join('/');
+        
+        if (currentPath.startsWith('docs/') && !newPath.startsWith('docs/')) {
+          newPath = `docs/${newPath}`;
+        }
+        
+        if (newPath.endsWith('.md')) {
+          newPath = `index.html?path=${encodeURIComponent(newPath)}`;
+        }
+        
+        return newPath;
+      }
+      return path;
+    }
+
     renderer.link = function(href, title, text) {
-      if (href && href.endsWith('.md')) {
-        href = href.slice(0, -3) + '.html';
-      }
+      let transformedHref = transformLocalPath(href);
+      
       if (title) {
-        return `<a href="${href}" title="${title}">${text}</a>`;
+        return `<a href="${transformedHref}" title="${title}">${text}</a>`;
+      } else {
+        return `<a href="${transformedHref}">${text}</a>`;
       }
-      return `<a href="${href}">${text}</a>`;
     };
 
-    // Override the paragraph renderer to add links to citations
+    const svgPlaceholderTokenizer = {
+      name: 'svgPlaceholder',
+      level: 'inline',
+      start(src) { return src.match(/{{SVG_PLACEHOLDER_/)?.index; },
+      tokenizer(src, tokens) {
+        const match = src.match(/{{SVG_PLACEHOLDER_(\d+):([^}]+)}}/);
+        if (match) {
+          return {
+            type: 'svgPlaceholder',
+            raw: match[0],
+            id: parseInt(match[1]),
+            path: match[2]
+          };
+        }
+      },
+      renderer(token) {
+        const originalTag = svgMap.get(token.id);
+        if (originalTag) {
+          const transformedPath = transformLocalPath(token.path);
+          return originalTag.replace(/data="([^"]+)"/, `data="${transformedPath}"`);
+        }
+        const transformedPath = transformLocalPath(token.path);
+        return `<object type="image/svg+xml" data="${transformedPath}">[SVG diagram]</object>`;
+      }
+    };
+
+    marked.use({
+      extensions: [svgPlaceholderTokenizer]
+    });
+
+    marked.use({ renderer });
+
     renderer.paragraph = function(text) {
       const linkedText = processCitations(text);
       return `<p>${linkedText}</p>`;
     };
 
-    // Override the list item renderer to add links to citations
     renderer.listitem = function(text) {
       const linkedText = processCitations(text);
       return `<li>${linkedText}</li>`;
     };
 
-    marked.use({ renderer });
-
-    // Generate table of contents
     function generateTOC(items) {
-      let currentLevel = 2; // Start at level 2 since we're excluding H1
+      let currentLevel = 2;
       let html = '<ul>';
       items.forEach(item => {
         if (item.level > currentLevel) {
@@ -105,34 +164,39 @@ async function loadAndRenderMarkdown() {
         html += `<li><a href="#${item.slug}">${item.text}</a></li>`;
         currentLevel = item.level;
       });
-      // Add References to TOC as level 2
       if (referenceList.length > 0) {
         if (currentLevel > 2) {
           html += '</ul>'.repeat(currentLevel - 2);
         }
         html += `<li><a href="#references">References</a></li>`;
       }
-      html += '</ul>'.repeat(currentLevel - 1); // Adjust closing tags
+      html += '</ul>'.repeat(currentLevel - 1);
       return html;
     }
 
-    // Function to decode URL-encoded strings
     function decodeURL(url) {
       try {
         return decodeURIComponent(url.replace(/\+/g, ' '));
       } catch (e) {
-        return url; // Return original URL if decoding fails
+        return url;
       }
     }
 
-    // Replace [TOC] with a unique HTML comment placeholder
     const tocPlaceholder = '<!--TOC_PLACEHOLDER-->';
     const contentWithPlaceholder = contentLines.join('\n').replace('[TOC]', tocPlaceholder);
 
-    // Parse the content
-    let content = marked.parse(contentWithPlaceholder);
+    let content = marked.parse(preprocessedMarkdown);
 
-    // Extract H1 title from parsed HTML and remove HTML formatting
+    content = content.replace(/{{SVG_PLACEHOLDER_(\d+):([^}]+)}}/g, (match, id, path) => {
+      const originalTag = svgMap.get(parseInt(id));
+      if (originalTag) {
+        const transformedPath = transformLocalPath(path);
+        return originalTag.replace(/data="([^"]+)"/, `data="${transformedPath}"`);
+      }
+      const transformedPath = transformLocalPath(path);
+      return `<object type="image/svg+xml" data="${transformedPath}">[SVG diagram]</object>`;
+    });
+
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = content;
     const h1Element = tempDiv.querySelector('h1');
@@ -140,11 +204,9 @@ async function loadAndRenderMarkdown() {
       document.title = h1Element.textContent.trim();
     }
 
-    // Generate table of contents
     const tocHtml = generateTOC(toc);
 
-    // Replace the placeholder with the collapsible table of contents (collapsed by default)
-    content = content.replace(tocPlaceholder, `
+    content = content.replace('[TOC]', `
       <table-of-contents class="collapsed">
         <div class="toc-toggle collapsed">Table of Contents</div>
         <div class="toc-content collapsed">
@@ -153,7 +215,6 @@ async function loadAndRenderMarkdown() {
       </table-of-contents>
     `);
 
-    // Add references section
     const referencesSection = referenceList.length > 0
       ? `<div class="reference-list">
            <h2 id="references">References</h2>
@@ -169,7 +230,6 @@ async function loadAndRenderMarkdown() {
       ${referencesSection}
     `;
 
-    // Function to recursively get text content
     function getTextContent(element) {
       let text = '';
       for (let node of element.childNodes) {
@@ -182,23 +242,14 @@ async function loadAndRenderMarkdown() {
       return text;
     }
 
-    // Set the page title after the content has been added to the DOM
     setTimeout(() => {
       const h1Element = document.querySelector('h1');
-      console.log('H1 element:', h1Element);
       if (h1Element) {
-        console.log('H1 innerHTML:', h1Element.innerHTML);
-        console.log('H1 textContent:', h1Element.textContent);
         const extractedText = getTextContent(h1Element).trim();
-        console.log('Extracted H1 text:', extractedText);
         document.title = extractedText;
-        console.log('Set document title to:', document.title);
-      } else {
-        console.log('No H1 element found');
       }
     }, 100);
 
-    // Add event listener for toggling table of contents
     setTimeout(() => {
       const tocElement = document.querySelector('table-of-contents');
       const tocToggle = document.querySelector('.toc-toggle');
@@ -212,7 +263,6 @@ async function loadAndRenderMarkdown() {
       }
     }, 0);
 
-    // Add a footer spacer div
     document.getElementById('content').innerHTML += '<div class="footer-spacer"></div>';
 
   } catch (error) {
