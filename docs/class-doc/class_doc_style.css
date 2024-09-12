@@ -8,6 +8,14 @@ body {
     padding: 20px;
 }
 
+a:link,
+a:visited {
+  color: #77b;
+  text-decoration: none;
+  transition: background-color .15s linear, color .15s linear;
+}
+
+
 h1 {
     color: #2c3e50;
 }
@@ -46,18 +54,26 @@ filepath {
 }
 
 filepath:before {
-    content: "path: ";
+    content: "source: ";
     font-weight: bold;
     font-style: italic;
 }
 
+filepath a {
+    color: #7f8c8d;
+    text-decoration: none;
+}
 
+filepath a:hover {
+    text-decoration: underline;
+}
 
 /* --- description --- */
 
 description {
     display: block;
     font-weight: 200;
+    white-space: pre-wrap; /* Preserve whitespace */
 }
 
 methods {
@@ -98,11 +114,19 @@ method > isAsync {
     margin-left: 10px;
 }
 
+method > isAsync:before {
+    content: "async";
+}
+
 method > lineno {
     display: none;
     color: #95a5a6;
     font-size: 12px;
     margin-left: 10px;
+}
+
+method > methodName {
+    display: none;
 }
 
 method > fullMethodName {
@@ -114,27 +138,57 @@ method > fullMethodName {
 }
 
 parameters {
-    display: none;
-    margin-top: 10px;
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
 }
 
 parameter {
-    display: none;
-    margin-left: 20px;
+    display: block;
+    margin-left: 1em;
+    width: fit-content;
 }
 
 parameter > name {
-    font-weight: bold;
+    display: inline-block;
+    color: #7f8c8d;
+    font-weight: normal;
+}
+
+paramname {
+    display: inline-block;
+    color: #7f8c8d;
+    font-weight: normal;
+}
+
+paramtype {
+    display: inline-block;
+    color: #7f8c8d;
+    font-weight: normal;
+}
+
+parameter > type {
+    display: inline-block;
+    font-style: italic;
+    color: #7f8c8d;
 }
 
 parameter > default {
+    display: inline-block;
+    font-style: italic;
+    color: #7f8c8d;
+}
+
+parameter > description {
+    display: inline-block;
     font-style: italic;
     color: #7f8c8d;
 }
 
 method > description {
-    display: block;
+    display: inline-block;
     margin-top: 0em;
+    margin-bottom: 0.25em;
     font-style: normal;
 }
 
@@ -153,8 +207,8 @@ method > fullMethodName[async]::before {
 
 classInfo {
     display: block;
-    margin-bottom: 0em;
     line-height: 1.5em;
+    margin-bottom: 5em;
 }
 
 classInfo > className {
@@ -175,6 +229,7 @@ classInfo > extends {
 classInfo > description {
     display: block;
     margin-top: 3em;
+    white-space: pre-wrap; /* Preserve whitespace */
 }
 
 
@@ -200,7 +255,7 @@ throws {
 throws:before {
     content: "throws: ";
     font-style: italic;
-    font-weight: lighter;
+    font-weight: normal;
 }
 
 /* --- returns --- */
@@ -215,7 +270,7 @@ returns {
 returns:before {
     content: "returns: ";
     font-style: italic;
-    font-weight: lighter;
+    font-weight: normal;
 }
 
 /* --- author --- */
@@ -243,4 +298,34 @@ version:before {
     font-weight: normal;
     font-style: normal;
 }
+
+/* --- access --- */
+
+method > access {
+    display: none;
+    font-style: italic;
+    color: #7f8c8d;
+    margin-right: 10px;
+}
+
+method > access[static]::before {
+    content: "static ";
+    font-weight: bold;
+}
+
+method > access[private]::before {
+    content: "private ";
+    font-weight: bold;
+}
+
+method > access[constructor]::before {
+    content: "constructor ";
+    font-weight: bold;
+}
+
+isstatic {
+    display: none;
+}
+
+/* ... (rest of the existing styles) */
 

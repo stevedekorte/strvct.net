@@ -3,68 +3,49 @@ class JsClassParser {
         this.code = code;
         this.lines = code.split('\n'); 
         this.filePath = filePath;
+        this.comments = [];
     }
 
     parse() {
         console.log("Starting to parse file:", this.filePath);
-        const ast = acorn.parse(this.code, { ecmaVersion: 2020, sourceType: 'module', locations: true });
-        
+        const ast = acorn.parse(this.code, { ecmaVersion: 2020, sourceType: 'module', locations: true, onComment: this.comments });
+
         const result = {
             classInfo: {
                 className: '',
                 extends: '',
                 filePath: this.filePath,
-                description: ''
+                description: 'Undocumented' // Default to "Undocumented"
             },
             methods: []
         };
 
+        // Find the first class declaration or expression
+        let classNode = null;
         acorn.walk.simple(ast, {
             ClassDeclaration: (node) => {
-                console.log("Found ClassDeclaration:", node.id.name);
-                result.classInfo.className = node.id.name;
-                if (node.superClass) {
-                    result.classInfo.extends = node.superClass.name;
-                }
-                
-                const comments = this.getLeadingComments(node.start);
-                console.log("Leading comments:", comments);
-                const { description, entries } = this.extractJSDocInfo(comments);
-                result.classInfo.description = description;
-                Object.assign(result.classInfo, entries);
+                if (!classNode) classNode = node;
             },
             ClassExpression: (node) => {
-                console.log("Found ClassExpression:", node);
-                if (node.id) {
-                    result.classInfo.className = node.id.name;
-                }
-                if (node.superClass) {
-                    result.classInfo.extends = node.superClass.name;
-                }
-                
-                const comments = this.getLeadingComments(node.start);
-                console.log("Leading comments:", comments);
-                const { description, entries } = this.extractJSDocInfo(comments);
-                result.classInfo.description = description;
-                Object.assign(result.classInfo, entries);
-            },
+                if (!classNode) classNode = node;
+            }
+        });
+
+        if (classNode) {
+            console.log("Found class node:", classNode);
+            console.log("Code around class node:", this.code.slice(classNode.start - 50, classNode.start + 50));
+            // Extract class-level comments
+            const classComments = this.getClassComments(classNode.start);
+            console.log("Class-level comments:", classComments);
+            const { description, entries } = this.extractJSDocInfo(classComments);
+            result.classInfo.description = description || 'Undocumented'; // Set the description directly
+
+            this.handleClassNode(classNode, result);
+        }
+
+        acorn.walk.simple(ast, {
             MethodDefinition: (node) => {
-                console.log("Found MethodDefinition:", node.key.name);
-                const method = {
-                    methodName: node.key.name,
-                    fullMethodName: this.getFullMethodName(node),
-                    isAsync: node.value.async,
-                    parameters: this.getMethodParameters(node),
-                    lineno: node.loc.start.line,
-                    description: ''
-                };
-
-                const methodComments = this.getMethodComments(node);
-                const { description, entries } = this.extractJSDocInfo(methodComments);
-                method.description = description || entries.description || 'Undocumented';
-                Object.assign(method, entries);
-
-                result.methods.push(method);
+                this.handleMethodNode(node, result);
             }
         });
 
@@ -72,160 +53,183 @@ class JsClassParser {
         return result;
     }
 
-    getFullMethodName(node) {
-        const asyncPrefix = node.value.async ? 'async ' : '';
-        const methodName = node.key.name;
-        const params = node.value.params.map(param => {
-            if (param.type === 'AssignmentPattern') {
-                return `${param.left.name} = ${this.code.slice(param.right.start, param.right.end)}`;
-            }
-            return param.name;
-        }).join(', ');
-        return `${asyncPrefix}${methodName}${params ? `(${params})` : ''}`;
-    }
-
-    getLeadingComments(start) {
-        const lines = this.code.slice(0, start).split('\n').reverse();
-        const comments = [];
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (trimmed.startsWith('//') || trimmed.startsWith('*')) {
-                comments.unshift(trimmed.replace(/^\/\/|\*/, '').trim());
-            } else if (trimmed === '') {
-                continue;
-            } else {
-                break;
-            }
+    handleClassNode(node, result) {
+        if (node.id) {
+            result.classInfo.className = node.id.name;
         }
-        return comments.join('\n');
+        if (node.superClass) {
+            result.classInfo.extends = node.superClass.name;
+        }
+        // Remove this line as we'll handle filepath in jsonToXml
+        // result.classInfo.filepath = this.filePath;
     }
 
-    getMethodComments(node) {
-        const leadingComments = this.getLeadingComments(node.start);
-        const bodyComments = this.getBodyComments(node.value.body);
-        return this.cleanComments(leadingComments + '\n' + bodyComments.join('\n'));
+    handleMethodNode(node, result) {
+        const methodName = node.key.name;
+        const methodComments = this.getMethodComments(node.start);
+        console.log(`Method comments for – "${methodName}" – :`, methodComments);
+        const { description, entries } = this.extractJSDocInfo(methodComments);
+
+        // Get the method arguments
+        const args = node.value.params.map(param => param.name).join(', ');
+        const fullMethodName = args ? `${methodName}(${args})` : methodName;
+
+        const methodInfo = {
+            methodName,
+            fullMethodName: `${node.value.async ? 'async ' : ''}${fullMethodName}`,
+            isAsync: node.value.async,
+            parameters: entries.params || [],
+            access: this.getAccessModifier(node),
+            isStatic: node.static || false,
+            description: description || 'Undocumented',
+            example: entries.example || null,
+            deprecated: entries.deprecated || null,
+            since: entries.since || null
+        };
+
+        // Only include throws if it's not null or empty
+        if (entries.throws && entries.throws.trim() !== '') {
+            methodInfo.throws = entries.throws;
+        }
+
+        // Only include returns if it's not null or empty
+        if (entries.returns && (entries.returns.returnType || entries.returns.description)) {
+            methodInfo.returns = entries.returns;
+        }
+
+        result.methods.push(methodInfo);
     }
 
-    getBodyComments(body) {
-        const comments = this.code.slice(body.start + 1, body.end - 1).match(/\/\*[\s\S]*?\*\/|\/\/.*/g) || [];
-        return comments.map(comment => this.cleanComment(comment));
+    getAccessModifier(node) {
+        if (node.kind === 'constructor') return 'constructor';
+        if (node.static) return 'static';
+        if (node.key.name.startsWith('_')) return 'private';
+        return 'public';
     }
 
-    cleanComments(comments) {
-        return comments.split('\n')
-            .map(line => this.cleanComment(line))
+    getClassComments(classStart) {
+        return this.comments
+            .filter(comment => comment.end < classStart)
+            .map(comment => comment.value)
             .join('\n');
     }
 
-    cleanComment(comment) {
-        // Remove // from single-line comments
-        if (comment.trim().startsWith('//')) {
-            return comment.replace(/^\s*\/\/\s?/, '');
+    getMethodComments(methodStart) {
+        const relevantComments = this.comments
+            .filter(comment => comment.end < methodStart && comment.type === 'Block')
+            .sort((a, b) => b.end - a.end);
+
+        if (relevantComments.length > 0) {
+            const closestComment = relevantComments[0];
+            // Remove the comment from the list to avoid reusing it for other methods
+            this.comments = this.comments.filter(comment => comment !== closestComment);
+            return closestComment.value;
         }
-        // For multi-line comments, you might want to remove the * at the start of each line
-        return comment.replace(/^\s*\*\s?/gm, '');
+
+        return '';
     }
 
-    extractJSDocInfo(comments) {
-        const lines = comments.split('\n');
-        let description = '';
-        const entries = {};
+    extractJSDocInfo(comment) {
+        const lines = comment.split('\n').map(line => line.trim().replace(/^\*+/, '').trim());
+        const description = [];
+        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null };
         let currentTag = null;
+        let currentTagContent = [];
 
-        for (const line of lines) {
-            const trimmedLine = line.trim();
-            if (trimmedLine.startsWith('@')) {
-                const [tagPart, ...valueParts] = trimmedLine.split(/\s+/);
-                const tag = tagPart.slice(1); // Remove the @ symbol
-                if (tag) {
-                    currentTag = tag.toLowerCase();
-                    entries[currentTag] = valueParts.join(' ').trim();
+        lines.forEach(line => {
+            const tagMatch = line.match(/^@(\w+)/);
+            if (tagMatch) {
+                if (currentTag) {
+                    this.processTag(currentTag, currentTagContent.join(' '), entries);
                 }
+                currentTag = tagMatch[1];
+                currentTagContent = [line.slice(tagMatch[0].length).trim()];
             } else if (currentTag) {
-                entries[currentTag] += ' ' + trimmedLine;
-            } else if (trimmedLine !== '') {
-                description += (description ? ' ' : '') + trimmedLine;
+                currentTagContent.push(line);
+            } else {
+                description.push(line);
             }
+        });
+
+        if (currentTag) {
+            this.processTag(currentTag, currentTagContent.join(' '), entries);
         }
 
-        // Clean up entries
-        for (const key in entries) {
-            entries[key] = entries[key].trim().replace(/\/+$/, '');
-        }
-
-        return { description, entries };
+        return {
+            description: description.join(' ').trim(),
+            entries
+        };
     }
 
-    getMethodParameters(node) {
-        return node.value.params.map(param => {
-            if (param.type === 'AssignmentPattern') {
-                return {
-                    paramName: param.left.name,
-                    default: this.code.slice(param.right.start, param.right.end)
+    processTag(tag, content, entries) {
+        switch (tag) {
+            case 'param':
+                const [paramType, paramName, ...paramDesc] = content.split(' ');
+                entries.params.push({
+                    paramName: paramName.replace('-', '').trim(),
+                    paramType: paramType.replace(/[{}]/g, '').trim(),
+                    description: paramDesc.join(' ').trim().replace(/^- /, '') // Remove leading "- "
+                });
+                break;
+            case 'returns':
+                const [returnType, ...returnDesc] = content.split(' ');
+                entries.returns = {
+                    returnType: returnType.replace(/[{}]/g, '').trim(),
+                    description: returnDesc.join(' ').trim()
                 };
-            }
-            return { paramName: param.name };
-        });
+                break;
+            case 'throws':
+                entries.throws = content.trim();
+                break;
+            case 'example':
+                entries.example = content.trim();
+                break;
+            case 'deprecated':
+                entries.deprecated = content.trim();
+                break;
+            case 'since':
+                entries.since = content.trim();
+                break;
+        }
     }
 }
 
-function jsonToXml(obj, indent = '') {
+function jsonToXml(json) {
     let xml = '';
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            const value = obj[key];
-            if (key === 'classInfo') {
-                xml += `${indent}<classInfo>\n`;
-                // Ensure specific order for className, extends, and filePath
-                xml += `${indent}  <className>${escapeXml(value.className)}</className>\n`;
-                if (value.extends) {
-                    xml += `${indent}  <extends>${escapeXml(value.extends)}</extends>\n`;
-                }
-                xml += `${indent}  <filePath>${escapeXml(value.filePath)}</filePath>\n`;
-                // Add the rest of the classInfo properties
-                for (const classInfoKey in value) {
-                    if (!['className', 'extends', 'filePath'].includes(classInfoKey)) {
-                        xml += `${indent}  <${classInfoKey}>${escapeXml(value[classInfoKey])}</${classInfoKey}>\n`;
-                    }
-                }
-                xml += `${indent}</classInfo>\n`;
-            } else if (key === 'methods') {
-                xml += `${indent}<methods>\n`;
-                for (const method of value) {
-                    xml += `${indent}  <method>\n`;
-                    xml += `${indent}    <name>${escapeXml(method.methodName)}</name>\n`;
-                    xml += `${indent}    <fullMethodName>${escapeXml(method.fullMethodName)}</fullMethodName>\n`;
-                    xml += `${indent}    <isAsync>${method.isAsync}</isAsync>\n`;
-                    xml += `${indent}    <lineno>${method.lineno}</lineno>\n`;
-                    if (method.parameters.length > 0) {
-                        xml += `${indent}    <parameters>\n`;
-                        for (const param of method.parameters) {
-                            xml += `${indent}      <parameter>\n`;
-                            if (param.paramName) {
-                                xml += `${indent}        <name>${escapeXml(param.paramName)}</name>\n`;
-                            }
-                            if (param.default !== undefined) {
-                                xml += `${indent}        <default>${escapeXml(param.default)}</default>\n`;
-                            }
-                            xml += `${indent}      </parameter>\n`;
-                        }
-                        xml += `${indent}    </parameters>\n`;
-                    }
-                    if (method.description) {
-                        xml += `${indent}    <description>${escapeXml(method.description)}</description>\n`;
-                    }
-                    for (const tag in method) {
-                        if (!['isAsync', 'methodName', 'fullMethodName', 'parameters', 'description', 'lineno'].includes(tag)) {
-                            xml += `${indent}    <${tag}>${escapeXml(method[tag])}</${tag}>\n`;
-                        }
-                    }
-                    xml += `${indent}  </method>\n`;
-                }
-                xml += `${indent}</methods>\n`;
+    for (const key in json) {
+        if (json.hasOwnProperty(key)) {
+            const value = json[key];
+            if (key === 'methods') {
+                xml += '<methods>\n';
+                value.forEach((method) => {
+                    xml += `<method>\n${jsonToXml(method)}</method>\n`;
+                });
+                xml += '</methods>\n';
+            } else if (key === 'parameters') {
+                xml += '<parameters>\n';
+                value.forEach((param) => {
+                    xml += `<parameter>\n${jsonToXml(param)}</parameter>\n`;
+                });
+                xml += '</parameters>\n';
             } else if (typeof value === 'object' && value !== null) {
-                xml += `${indent}<${key}>\n${jsonToXml(value, indent + '  ')}${indent}</${key}>\n`;
+                xml += `<${key}>${jsonToXml(value)}</${key}>\n`;
             } else if (value !== undefined && value !== '') {
-                xml += `${indent}<${key}>${escapeXml(value)}</${key}>\n`;
+                if (typeof value === 'boolean') {
+                    xml += `<${key}>${value ? 'true' : 'false'}</${key}>\n`;
+                } else if (key === 'fullMethodName') {
+                    const methodName = value.replace('async ', '');
+                    xml += `<${key}${value.startsWith('async ') ? ' async="true"' : ''}>${escapeXml(methodName)}</${key}>\n`;
+                } else if (key === 'filePath') {
+                    xml += `<filepath><a href="${escapeXml(value)}">${escapeXml(value)}</a></filepath>\n`;
+                } else if (key === 'throws') {
+                    xml += `<${key}>${escapeXml(value)}</${key}>\n`;
+                } else if (['access', 'isStatic', 'example', 'deprecated', 'since', 'returns'].includes(key)) {
+                    if (value && (typeof value === 'string' ? value.trim() !== '' : Object.keys(value).length > 0)) {
+                        xml += `<${key}>${jsonToXml(value)}</${key}>\n`;
+                    }
+                } else {
+                    xml += `<${key}>${escapeXml(value)}</${key}>\n`;
+                }
             }
         }
     }
@@ -244,26 +248,15 @@ function escapeXml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
-function displayClassInfo(classInfo) {
-    const output = document.getElementById('output');
-    output.innerHTML = `
-        <h1>${classInfo.className}</h1>
-        ${classInfo.classDescription ? `<p>${classInfo.classDescription}</p>` : ''}
-        <h2>Methods:</h2>
-        <ul>
-            ${classInfo.methods.map(method => `
-                <li>${method.name}(${method.params.join(', ')})</li>
-            `).join('')}
-        </ul>
-    `;
+function displayClassInfo(result) {
+    const outputElement = document.getElementById('output');
+    const xmlOutput = jsonToXml(result);
+    outputElement.innerHTML = `<class>${xmlOutput}</class>`;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log("DOM content loaded");
     const urlParams = new URLSearchParams(window.location.search);
     const path = urlParams.get('path');
-
-    console.log("Path from URL:", path);
 
     if (!path) {
         console.error('No path parameter provided');
@@ -271,23 +264,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
-        console.log("Fetching file:", path);
         const response = await fetch(path);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const code = await response.text();
-        console.log("File content fetched successfully");
         
         const parser = new JsClassParser(code, path);
         const result = parser.parse();
 
-        console.log("Parsing result:", result);
-
-        const xmlOutput = jsonToXml(result);
-        const outputElement = document.getElementById('output');
-        outputElement.innerHTML = `<class>${xmlOutput}</class>`;
-        console.log("XML output generated and inserted into DOM");
+        displayClassInfo(result);
     } catch (error) {
         console.error('Error:', error);
     }
