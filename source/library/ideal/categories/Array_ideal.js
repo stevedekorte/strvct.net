@@ -1,11 +1,10 @@
 "use strict";
 
-/*
+/** 
 
-    Array_ideal
-
+    @class Array_ideal
+    
     Some extra methods for the Javascript Array primitive.
-
 */
 
 Object.defineSlot(Array.prototype, "_allowsNulls", false);

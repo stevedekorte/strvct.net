@@ -1,7 +1,6 @@
 "use strict";
 
 /**
- * PersistentAsyncMap
  * 
  * An async Map wrapper for IndexedDB.
  * 

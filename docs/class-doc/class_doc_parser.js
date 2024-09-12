@@ -54,20 +54,44 @@ class JsClassParser {
     }
 
     handleClassNode(node, result) {
+        console.log("Entering handleClassNode");
         if (node.id) {
             result.classInfo.className = node.id.name;
+            console.log("Class name from AST:", result.classInfo.className);
         }
         if (node.superClass) {
             result.classInfo.extends = node.superClass.name;
+            console.log("Extends from AST:", result.classInfo.extends);
         }
-        // Remove this line as we'll handle filepath in jsonToXml
-        // result.classInfo.filepath = this.filePath;
+        
+        const classComments = this.getClassComments(node.start);
+        console.log("Raw class comments:", classComments);
+        
+        const { description, entries } = this.extractJSDocInfo(classComments);
+        console.log("Extracted description:", description);
+        console.log("Extracted entries:", entries);
+        
+        result.classInfo.description = description;
+        if (entries.class) {
+            result.classInfo.className = entries.class;
+            console.log("Class name from JSDoc:", entries.class);
+        }
+        if (entries.extends) {
+            result.classInfo.extends = entries.extends;
+            console.log("Extends from JSDoc:", entries.extends);
+        }
+        result.classInfo.filePath = this.filePath;
+        console.log("Final classInfo:", result.classInfo);
     }
 
     handleMethodNode(node, result) {
         const methodName = node.key.name;
         const methodComments = this.getMethodComments(node.start);
-        console.log(`Method comments for – "${methodName}" – :`, methodComments);
+        if (!methodComments) {
+            console.log(`No JSDoc comment found for method "${methodName}"`);
+        } else {
+            console.log(`Method comments for – "${methodName}" – :`, methodComments);
+        }
         const { description, entries } = this.extractJSDocInfo(methodComments);
 
         // Get the method arguments
@@ -116,7 +140,12 @@ class JsClassParser {
 
     getMethodComments(methodStart) {
         const relevantComments = this.comments
-            .filter(comment => comment.end < methodStart && comment.type === 'Block')
+            .filter(comment => 
+                comment.end < methodStart && 
+                comment.type === 'Block' &&
+                comment.value.startsWith('*') &&
+                this.isImmediatelyBeforeMethod(comment.end, methodStart)
+            )
             .sort((a, b) => b.end - a.end);
 
         if (relevantComments.length > 0) {
@@ -129,16 +158,25 @@ class JsClassParser {
         return '';
     }
 
+    isImmediatelyBeforeMethod(commentEnd, methodStart) {
+        const codeInBetween = this.code.slice(commentEnd, methodStart).trim();
+        return codeInBetween === '' || codeInBetween === '{';
+    }
+
     extractJSDocInfo(comment) {
+        console.log("Entering extractJSDocInfo with comment:", comment);
         const lines = comment.split('\n').map(line => line.trim().replace(/^\*+/, '').trim());
-        const description = [];
-        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null };
+        console.log("Processed comment lines:", lines);
+        
+        let description = [];
+        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, class: null };
         let currentTag = null;
         let currentTagContent = [];
 
         lines.forEach(line => {
             const tagMatch = line.match(/^@(\w+)/);
             if (tagMatch) {
+                console.log("Found tag:", tagMatch[1]);
                 if (currentTag) {
                     this.processTag(currentTag, currentTagContent.join(' '), entries);
                 }
@@ -146,7 +184,7 @@ class JsClassParser {
                 currentTagContent = [line.slice(tagMatch[0].length).trim()];
             } else if (currentTag) {
                 currentTagContent.push(line);
-            } else {
+            } else if (line.trim() !== '') {
                 description.push(line);
             }
         });
@@ -154,6 +192,18 @@ class JsClassParser {
         if (currentTag) {
             this.processTag(currentTag, currentTagContent.join(' '), entries);
         }
+
+        // If there's a @class tag, use its content as the class name and the rest as the description
+        if (entries.class) {
+            const classNameAndDesc = entries.class.split(/\s+(.+)/);
+            entries.class = classNameAndDesc[0];
+            if (classNameAndDesc[1]) {
+                description.unshift(classNameAndDesc[1]);
+            }
+        }
+
+        console.log("Final description:", description);
+        console.log("Final entries:", entries);
 
         return {
             description: description.join(' ').trim(),
@@ -190,6 +240,12 @@ class JsClassParser {
             case 'since':
                 entries.since = content.trim();
                 break;
+            case 'class':
+                entries.class = content.trim();
+                break;
+            case 'extends':
+                entries.extends = content.trim();
+                break;
         }
     }
 }
@@ -211,6 +267,16 @@ function jsonToXml(json) {
                     xml += `<parameter>\n${jsonToXml(param)}</parameter>\n`;
                 });
                 xml += '</parameters>\n';
+            } else if (key === 'classInfo') {
+                xml += '<classInfo>\n';
+                for (const classKey in value) {
+                    if (classKey === 'filePath') {
+                        xml += `<filePath><a href="${escapeXml(value[classKey])}">${escapeXml(value[classKey])}</a></filePath>\n`;
+                    } else {
+                        xml += `<${classKey}>${escapeXml(value[classKey])}</${classKey}>\n`;
+                    }
+                }
+                xml += '</classInfo>\n';
             } else if (typeof value === 'object' && value !== null) {
                 xml += `<${key}>${jsonToXml(value)}</${key}>\n`;
             } else if (value !== undefined && value !== '') {
@@ -219,10 +285,6 @@ function jsonToXml(json) {
                 } else if (key === 'fullMethodName') {
                     const methodName = value.replace('async ', '');
                     xml += `<${key}${value.startsWith('async ') ? ' async="true"' : ''}>${escapeXml(methodName)}</${key}>\n`;
-                } else if (key === 'filePath') {
-                    xml += `<filepath><a href="${escapeXml(value)}">${escapeXml(value)}</a></filepath>\n`;
-                } else if (key === 'throws') {
-                    xml += `<${key}>${escapeXml(value)}</${key}>\n`;
                 } else if (['access', 'isStatic', 'example', 'deprecated', 'since', 'returns'].includes(key)) {
                     if (value && (typeof value === 'string' ? value.trim() !== '' : Object.keys(value).length > 0)) {
                         xml += `<${key}>${jsonToXml(value)}</${key}>\n`;
