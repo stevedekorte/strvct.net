@@ -10,6 +10,9 @@
 
 (class IndexedDBTx extends Base {
 
+    /** 
+     * test 
+    */
     initPrototypeSlots () {
         this.newSlot("dbFolder", null)
         this.newSlot("objectStore", null)

@@ -194,6 +194,12 @@ Horizontal Menus
 <object type="image/svg+xml" data="diagrams/svg/horizontal-menus.svg">[SVG diagram]</object>
 </diagram>
 
+### Screenshots
+
+Strvct framework as used in an AI based interactive fiction game.
+
+<img src="resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 50%; height: auto;">
+
 ### Themes
 
 Themes can be used to customize the appearance of the UI. Domain objects can also request object specific styles to be applied to them.
