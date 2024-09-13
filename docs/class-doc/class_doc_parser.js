@@ -10,11 +10,43 @@ class JsClassParser {
         console.log("Starting to parse file:", this.filePath);
         let ast;
         try {
-            ast = acorn.parse(this.code, { ecmaVersion: 2020, sourceType: 'module', locations: true, onComment: this.comments });
+            // First, try to parse the entire file
+            ast = acorn.parse(this.code, { 
+                ecmaVersion: 2020, 
+                sourceType: 'module', 
+                locations: true, 
+                onComment: this.comments 
+            });
         } catch (error) {
             console.error("Parsing error:", error);
-            // If parsing fails, try to extract as much information as possible
-            return this.fallbackParse();
+            console.error("Error location:", error.loc);
+            console.error("Problematic code:", this.code.split('\n')[error.loc.line - 1]);
+            
+            // If parsing fails, try to extract the class definition
+            const classMatch = this.code.match(/class\s+(\w+)[\s\S]*?{([\s\S]*?)}\s*\)\s*\.initThisCategory\(\);/);
+            if (classMatch) {
+                const className = classMatch[1];
+                const classBody = classMatch[2];
+                
+                // Create a valid class syntax for parsing
+                const validClassCode = `class ${className} { ${classBody} }`;
+                
+                try {
+                    ast = acorn.parse(validClassCode, { 
+                        ecmaVersion: 2020, 
+                        sourceType: 'module', 
+                        locations: true, 
+                        onComment: this.comments 
+                    });
+                } catch (innerError) {
+                    console.error("Failed to parse extracted class:", innerError);
+                    this.parseError = `${error.message} at line ${error.loc.line}, column ${error.loc.column}`;
+                    return this.fallbackParse();
+                }
+            } else {
+                this.parseError = `${error.message} at line ${error.loc.line}, column ${error.loc.column}`;
+                return this.fallbackParse();
+            }
         }
 
         const result = {
@@ -22,12 +54,12 @@ class JsClassParser {
                 className: '',
                 extends: '',
                 filePath: this.filePath,
-                description: 'Undocumented' // Default to "Undocumented"
+                description: 'Undocumented'
             },
             methods: []
         };
 
-        // Find the first class declaration or expression
+        // Find the class declaration or expression
         let classNode = null;
         acorn.walk.simple(ast, {
             ClassDeclaration: (node) => {
@@ -35,24 +67,38 @@ class JsClassParser {
             },
             ClassExpression: (node) => {
                 if (!classNode) classNode = node;
+            },
+            CallExpression: (node) => {
+                // Check for .initThisCategory() call
+                if (node.callee.property && node.callee.property.name === 'initThisCategory') {
+                    // The class might be the object before .initThisCategory()
+                    if (node.callee.object.type === 'ClassExpression') {
+                        classNode = node.callee.object;
+                    }
+                }
             }
         });
 
         if (classNode) {
             console.log("Found class node:", classNode);
-            console.log("Code around class node:", this.code.slice(classNode.start - 50, classNode.start + 50));
-            // Extract class-level comments
             const classComments = this.getClassComments(classNode.start);
             console.log("Class-level comments:", classComments);
             const { description, entries } = this.extractJSDocInfo(classComments);
-            result.classInfo.description = description || 'Undocumented'; // Set the description directly
+            result.classInfo.description = description || 'Undocumented';
 
             this.handleClassNode(classNode, result);
         }
 
+        // Parse methods
         acorn.walk.simple(ast, {
             MethodDefinition: (node) => {
                 this.handleMethodNode(node, result);
+            },
+            Property: (node) => {
+                // Handle methods defined as properties (e.g., arrow functions)
+                if (typeof node.value === 'function' || node.value.type === 'FunctionExpression' || node.value.type === 'ArrowFunctionExpression') {
+                    this.handleMethodNode(node, result);
+                }
             }
         });
 
@@ -67,7 +113,7 @@ class JsClassParser {
                 className: 'Unknown',
                 extends: '',
                 filePath: this.filePath,
-                description: 'Unable to fully parse the class due to syntax errors.'
+                description: `Unable to fully parse the class due to syntax errors: ${this.parseError}`
             },
             methods: []
         };
@@ -92,7 +138,7 @@ class JsClassParser {
                     paramType: 'unknown',
                     description: 'Parameter extracted during fallback parsing.'
                 })),
-                description: 'Method extracted during fallback parsing.',
+                description: `Parse error: ${this.parseError}. Method extracted during fallback parsing.`,
                 isAsync: false,
                 access: isStatic ? 'static' : 'public',
                 isStatic: isStatic
@@ -134,23 +180,22 @@ class JsClassParser {
     }
 
     handleMethodNode(node, result) {
-        const methodName = node.key.name;
+        const methodName = node.key ? node.key.name : node.method ? node.method.name : 'anonymous';
         const methodComments = this.getMethodComments(node.start);
-        if (!methodComments) {
-            console.log(`No JSDoc comment found for method "${methodName}"`);
-        } else {
-            console.log(`Method comments for – "${methodName}" – :`, methodComments);
-        }
+        console.log(`Method comments for "${methodName}":`, methodComments);
         const { description, entries } = this.extractJSDocInfo(methodComments);
 
         // Get the method arguments
-        const args = node.value.params.map(param => param.name).join(', ');
+        const args = node.value && node.value.params ? 
+            node.value.params.map(param => param.name).join(', ') :
+            node.params ? node.params.map(param => param.name).join(', ') : '';
+
         const fullMethodName = args ? `${methodName}(${args})` : methodName;
 
         const methodInfo = {
             methodName,
-            fullMethodName: `${node.value.async ? 'async ' : ''}${fullMethodName}`,
-            isAsync: node.value.async,
+            fullMethodName: `${node.value && node.value.async ? 'async ' : ''}${fullMethodName}`,
+            isAsync: node.value ? node.value.async : false,
             parameters: entries.params || [],
             access: this.getAccessModifier(node),
             isStatic: node.static || false,
@@ -160,12 +205,10 @@ class JsClassParser {
             since: entries.since || null
         };
 
-        // Only include throws if it's not null or empty
         if (entries.throws && entries.throws.trim() !== '') {
             methodInfo.throws = entries.throws;
         }
 
-        // Only include returns if it's not null or empty
         if (entries.returns && (entries.returns.returnType || entries.returns.description)) {
             methodInfo.returns = entries.returns;
         }
@@ -176,7 +219,7 @@ class JsClassParser {
     getAccessModifier(node) {
         if (node.kind === 'constructor') return 'constructor';
         if (node.static) return 'static';
-        if (node.key.name.startsWith('_')) return 'private';
+        if (node.key && node.key.name.startsWith('_')) return 'private';
         return 'public';
     }
 

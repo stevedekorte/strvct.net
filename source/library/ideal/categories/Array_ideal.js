@@ -6,8 +6,7 @@
  */
 class Array_ideal extends Array {
     /**
-     * @method withArray
-     * @description Creates a new instance of Array_ideal and copies the elements from the provided array.
+     * Creates a new instance of Array_ideal and copies the elements from the provided array.
      * @param {Array} anArray - The array to copy elements from.
      * @returns {Array_ideal} A new instance of Array_ideal with the copied elements.
      */
@@ -16,8 +15,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method fromIterator
-     * @description Creates a new array from an iterator.
+     * Creates a new array from an iterator.
      * @param {Iterator} iterator - The iterator to create the array from.
      * @returns {Array} A new array containing the values from the iterator.
      */
@@ -32,8 +30,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method duplicate
-     * @description Creates a shallow copy of the array.
+     * Creates a shallow copy of the array.
      * @returns {Array_ideal} A shallow copy of the array.
      */
     duplicate() {
@@ -41,8 +38,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method shallowCopy
-     * @description Creates a shallow copy of the array.
+     * Creates a shallow copy of the array.
      * @returns {Array_ideal} A shallow copy of the array.
      */
     shallowCopy() {
@@ -50,8 +46,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method deepCopy
-     * @description Creates a deep copy of the array.
+     * Creates a deep copy of the array.
      * @param {Map} [refMap=new Map()] - A map used to handle circular references.
      * @returns {Array_ideal} A deep copy of the array.
      */
@@ -67,8 +62,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method clear
-     * @description Removes all elements from the array.
+     * Removes all elements from the array.
      * @returns {Array_ideal} The cleared array.
      */
     clear() {
@@ -79,8 +73,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method copyFrom
-     * @description Copies the elements from the provided array into the current array.
+     * Copies the elements from the provided array into the current array.
      * @param {Array} anArray - The array to copy elements from.
      * @returns {Array_ideal} The current array with the copied elements.
      */
@@ -91,8 +84,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method safeForEach
-     * @description Iterates over the elements of the array in a safe manner.
+     * Iterates over the elements of the array in a safe manner.
      * @param {Function} func - The function to call for each element.
      */
     safeForEach(func) {
@@ -100,8 +92,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method forEachV
-     * @description Iterates over the elements of the array.
+     * Iterates over the elements of the array.
      * @param {Function} func - The function to call for each element.
      */
     forEachV(func) {
@@ -109,8 +100,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method forEachKV
-     * @description Iterates over the elements of the array with their indices.
+     * Iterates over the elements of the array with their indices.
      * @param {Function} func - The function to call for each element.
      */
     forEachKV(func) {
@@ -122,8 +112,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method reverseForEachKV
-     * @description Iterates over the elements of the array in reverse order with their indices.
+     * Iterates over the elements of the array in reverse order with their indices.
      * @param {Function} func - The function to call for each element.
      */
     reverseForEachKV(func) {
@@ -135,8 +124,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method isEmpty
-     * @description Checks if the array is empty.
+     * Checks if the array is empty.
      * @returns {boolean} True if the array is empty, false otherwise.
      */
     isEmpty() {
@@ -144,8 +132,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method isEqual
-     * @description Checks if the array is equal to another array.
+     * Checks if the array is equal to another array.
      * @param {Array} otherArray - The array to compare with.
      * @returns {boolean} True if the arrays are equal, false otherwise.
      */
@@ -164,8 +151,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method size
-     * @description Returns the number of elements in the array.
+     * Returns the number of elements in the array.
      * @returns {number} The number of elements in the array.
      */
     size() {
@@ -173,8 +159,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method atWrap
-     * @description Returns the element at the specified index, wrapping around if the index is negative.
+     * Returns the element at the specified index, wrapping around if the index is negative.
      * @param {number} index - The index of the element to retrieve.
      * @returns {*} The element at the specified index.
      */
@@ -187,8 +172,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeAt
-     * @description Removes the element at the specified index.
+     * Removes the element at the specified index.
      * @param {number} index - The index of the element to remove.
      * @returns {Array_ideal} The current array after removing the element.
      */
@@ -201,8 +185,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method atPut
-     * @description Sets the element at the specified index.
+     * Sets the element at the specified index.
      * @param {number} index - The index to set the element at.
      * @param {*} v - The value to set.
      * @returns {Array_ideal} The current array after setting the element.
@@ -218,8 +201,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method first
-     * @description Returns the first element of the array.
+     * Returns the first element of the array.
      * @returns {*} The first element of the array.
      */
     first() {
@@ -227,8 +209,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method second
-     * @description Returns the second element of the array.
+     * Returns the second element of the array.
      * @returns {*} The second element of the array.
      */
     second() {
@@ -236,8 +217,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method rest
-     * @description Returns a new array containing all elements except the first one.
+     * Returns a new array containing all elements except the first one.
      * @returns {Array_ideal} A new array containing all elements except the first one.
      */
     rest() {
@@ -245,8 +225,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method last
-     * @description Returns the last element of the array.
+     * Returns the last element of the array.
      * @returns {*} The last element of the array.
      */
     last() {
@@ -254,8 +233,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method lastN
-     * @description Returns the last N elements of the array.
+     * Returns the last N elements of the array.
      * @param {number} n - The number of elements to return.
      * @returns {Array_ideal} A new array containing the last N elements.
      */
@@ -272,8 +250,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method secondToLast
-     * @description Returns the second to last element of the array.
+     * Returns the second to last element of the array.
      * @returns {*} The second to last element of the array.
      */
     secondToLast() {
@@ -281,8 +258,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method contains
-     * @description Checks if the array contains the specified element.
+     * Checks if the array contains the specified element.
      * @param {*} element - The element to check for.
      * @returns {boolean} True if the element is found, false otherwise.
      */
@@ -291,8 +267,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method containsAny
-     * @description Checks if the array contains any of the elements in the provided array.
+     * Checks if the array contains any of the elements in the provided array.
      * @param {Array} anArray - The array of elements to check for.
      * @returns {boolean} True if any of the elements are found, false otherwise.
      */
@@ -301,8 +276,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeDuplicates
-     * @description Removes duplicate elements from the array.
+     * Removes duplicate elements from the array.
      * @returns {Array_ideal} The current array after removing duplicates.
      */
     removeDuplicates() {
@@ -314,8 +288,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method hasDuplicates
-     * @description Checks if the array has duplicate elements.
+     * Checks if the array has duplicate elements.
      * @returns {boolean} True if duplicates are found, false otherwise.
      */
     hasDuplicates() {
@@ -327,8 +300,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method hasDuplicates_setImplementation
-     * @description Checks if the array has duplicate elements using a Set implementation.
+     * Checks if the array has duplicate elements using a Set implementation.
      * @returns {boolean} True if duplicates are found, false otherwise.
      */
     hasDuplicates_setImplementation() {
@@ -346,8 +318,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method hasDuplicates_indexOfImplementation
-     * @description Checks if the array has duplicate elements using indexOf implementation.
+     * Checks if the array has duplicate elements using indexOf implementation.
      * @returns {boolean} True if duplicates are found, false otherwise.
      */
     hasDuplicates_indexOfImplementation() {
@@ -362,8 +333,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method hasPrefix
-     * @description Checks if the array has the specified prefix.
+     * Checks if the array has the specified prefix.
      * @param {Array} otherArray - The array to check for as a prefix.
      * @returns {boolean} True if the array has the specified prefix, false otherwise.
      */
@@ -382,8 +352,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method itemAfter
-     * @description Returns the element after the specified element in the array.
+     * Returns the element after the specified element in the array.
      * @param {*} v - The element to find the next element after.
      * @returns {*} The element after the specified element, or null if not found.
      */
@@ -408,8 +377,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method itemBefore
-     * @description Returns the element before the specified element in the array.
+     * Returns the element before the specified element in the array.
      * @param {*} v - The element to find the previous element before.
      * @returns {*} The element before the specified element, or null if not found.
      */
@@ -434,8 +402,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method copy
-     * @description Creates a deep copy of the array, calling the copy method on each element if it exists.
+     * Creates a deep copy of the array, calling the copy method on each element if it exists.
      * @param {Object} copyDict - An optional dictionary to pass to the copy method.
      * @returns {Array_ideal} A deep copy of the array.
      */
@@ -450,8 +417,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method split
-     * @description Splits the array into multiple sub-arrays.
+     * Splits the array into multiple sub-arrays.
      * @param {number} subArrayCount - The number of sub-arrays to create.
      * @returns {Array<Array_ideal>} An array of sub-arrays.
      */
@@ -474,8 +440,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method atInsert
-     * @description Inserts an element at the specified index.
+     * Inserts an element at the specified index.
      * @param {number} i - The index to insert the element at.
      * @param {*} e - The element to insert.
      * @returns {Array_ideal} The current array after inserting the element.
@@ -486,8 +451,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method atInsertItems
-     * @description Inserts multiple elements at the specified index.
+     * Inserts multiple elements at the specified index.
      * @param {number} i - The index to insert the elements at.
      * @param {Array} items - The elements to insert.
      * @returns {Array_ideal} The current array after inserting the elements.
@@ -502,8 +466,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method append
-     * @description Appends one or more elements to the end of the array.
+     * Appends one or more elements to the end of the array.
      * @param {...*} elements - The elements to append.
      * @returns {Array_ideal} The current array after appending the elements.
      */
@@ -513,8 +476,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method appendItems
-     * @description Appends multiple elements to the end of the array.
+     * Appends multiple elements to the end of the array.
      * @param {Array} elements - The elements to append.
      * @returns {Array_ideal} The current array after appending the elements.
      */
@@ -524,8 +486,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method appendItemsIfAbsent
-     * @description Appends multiple elements to the end of the array if they are not already present.
+     * Appends multiple elements to the end of the array if they are not already present.
      * @param {Array} elements - The elements to append.
      * @returns {Array_ideal} The current array after appending the elements.
      */
@@ -535,8 +496,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method moveItemsToIndex
-     * @description Moves multiple items to a specified index in the array.
+     * Moves multiple items to a specified index in the array.
      * @param {Array} movedItems - The items to move.
      * @param {number} anIndex - The index to move the items to.
      * @returns {Array_ideal} The current array after moving the items.
@@ -568,8 +528,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method prepend
-     * @description Prepends an element to the beginning of the array.
+     * Prepends an element to the beginning of the array.
      * @param {*} e - The element to prepend.
      * @returns {Array_ideal} The current array after prepending the element.
      */
@@ -579,8 +538,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method appendIfAbsent
-     * @description Appends one or more elements to the end of the array if they are not already present.
+     * Appends one or more elements to the end of the array if they are not already present.
      * @param {...*} elements - The elements to append.
      * @returns {boolean} True if any elements were appended, false otherwise.
      */
@@ -599,8 +557,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeAll
-     * @description Removes all elements from the array.
+     * Removes all elements from the array.
      * @returns {Array_ideal} The current array after removing all elements.
      */
     removeAll() {
@@ -611,8 +568,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeAt
-     * @description Removes the element at the specified index.
+     * Removes the element at the specified index.
      * @param {number} i - The index of the element to remove.
      * @returns {Array_ideal} The current array after removing the element.
      */
@@ -624,8 +580,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method remove
-     * @description Removes the specified element from the array.
+     * Removes the specified element from the array.
      * @param {*} e - The element to remove.
      * @returns {Array_ideal} The current array after removing the element.
      */
@@ -638,8 +593,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method emptiesRemoved
-     * @description Returns a new array with all empty values removed.
+     * Returns a new array with all empty values removed.
      * @returns {Array_ideal} A new array with all empty values removed.
      */
     emptiesRemoved() {
@@ -647,8 +601,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeFirst
-     * @description Removes and returns the first element of the array.
+     * Removes and returns the first element of the array.
      * @returns {*} The first element of the array.
      */
     removeFirst() {
@@ -656,8 +609,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeLast
-     * @description Removes and returns the last element of the array.
+     * Removes and returns the last element of the array.
      * @returns {*} The last element of the array.
      */
     removeLast() {
@@ -665,8 +617,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeItems
-     * @description Removes multiple elements from the array.
+     * Removes multiple elements from the array.
      * @param {Array} elements - The elements to remove.
      * @returns {Array_ideal} The current array after removing the elements.
      */
@@ -676,8 +627,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method empty
-     * @description Removes all elements from the array.
+     * Removes all elements from the array.
      * @returns {Array_ideal} The current array after removing all elements.
      */
     empty() {
@@ -686,8 +636,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method shuffle
-     * @description Shuffles the elements of the array in-place.
+     * Shuffles the elements of the array in-place.
      * @returns {Array_ideal} The shuffled array.
      */
     shuffle() {
@@ -709,8 +658,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method atRandom
-     * @description Returns a random element from the array.
+     * Returns a random element from the array.
      * @returns {*} A random element from the array.
      */
     atRandom() {
@@ -719,8 +667,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method pickOneAtRandom
-     * @description Returns a random element from the array using a cryptographically secure random number generator.
+     * Returns a random element from the array using a cryptographically secure random number generator.
      * @returns {*} A random element from the array.
      */
     pickOneAtRandom() {
@@ -741,8 +688,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method removeOneAtRandom
-     * @description Removes and returns a random element from the array.
+     * Removes and returns a random element from the array.
      * @returns {*} The removed random element.
      */
     removeOneAtRandom() {
@@ -752,8 +698,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method forEachPerformIfResponds
-     * @description Iterates over the elements of the array and calls the specified method on each element if it exists.
+     * Iterates over the elements of the array and calls the specified method on each element if it exists.
      * @param {string} methodName - The name of the method to call.
      * @param {*} arg1 - The first argument to pass to the method.
      * @param {*} arg2 - The second argument to pass to the method.
@@ -773,8 +718,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method forEachPerform
-     * @description Iterates over the elements of the array and calls the specified method on each element.
+     * Iterates over the elements of the array and calls the specified method on each element.
      * @param {string} methodName - The name of the method to call.
      * @param {*} arg1 - The first argument to pass to the method.
      * @param {*} arg2 - The second argument to pass to the method.
@@ -796,8 +740,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method sortPerform
-     * @description Sorts the elements of the array in-place based on the specified method.
+     * Sorts the elements of the array in-place based on the specified method.
      * @param {string} functionName - The name of the method to call on each element.
      * @returns {Array_ideal} The sorted array.
      */
@@ -816,8 +759,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method mapProperty
-     * @description Returns a new array containing the values of the specified property for each element.
+     * Returns a new array containing the values of the specified property for each element.
      * @param {string} propertyName - The name of the property to map.
      * @returns {Array} A new array containing the mapped values.
      */
@@ -826,8 +768,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method uniqueIndexMapForProperty
-     * @description Creates a Map where the keys are unique values of the specified property and the values are the corresponding elements.
+     * Creates a Map where the keys are unique values of the specified property and the values are the corresponding elements.
      * @param {string} propertyName - The name of the property to use as keys.
      * @param {boolean} [ignoreCollisions=false] - Whether to ignore collisions (duplicate keys) or throw an error.
      * @returns {Map} A Map containing the unique index.
@@ -850,8 +791,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method indexMapForProperty
-     * @description Creates a Map where the keys are values of the specified property and the values are arrays of corresponding elements.
+     * Creates a Map where the keys are values of the specified property and the values are arrays of corresponding elements.
      * @param {string} propertyName - The name of the property to use as keys.
      * @returns {Map} A Map containing the index.
      */
@@ -870,8 +810,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method indexMapForMethodName
-     * @description Creates a Map where the keys are the results of calling the specified method on each element and the values are arrays of corresponding elements.
+     * Creates a Map where the keys are the results of calling the specified method on each element and the values are arrays of corresponding elements.
      * @param {string} methodName - The name of the method to call on each element.
      * @returns {Map} A Map containing the index.
      */
@@ -890,8 +829,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method canDetect
-     * @description Checks if the array contains an element that satisfies the specified condition.
+     * Checks if the array contains an element that satisfies the specified condition.
      * @param {Function} func - The condition function to check for.
      * @returns {boolean} True if an element satisfies the condition, false otherwise.
      */
@@ -901,8 +839,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method detect
-     * @description Returns the first element that satisfies the specified condition.
+     * Returns the first element that satisfies the specified condition.
      * @param {Function} func - The condition function to check for.
      * @returns {*} The first element that satisfies the condition, or null if not found.
      */
@@ -918,8 +855,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method reverseDetect
-     * @description Returns the first element that satisfies the specified condition, starting from the end of the array.
+     * Returns the first element that satisfies the specified condition, starting from the end of the array.
      * @param {Function} func - The condition function to check for.
      * @returns {*} The first element that satisfies the condition, or null if not found.
      */
@@ -935,8 +871,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method detectAndReturnValue
-     * @description Returns the first non-false return value of the specified function.
+     * Returns the first non-false return value of the specified function.
      * @param {Function} func - The function to call for each element.
      * @returns {*} The first non-false return value, or null if not found.
      */
@@ -953,8 +888,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method detectPerform
-     * @description Returns the first element that satisfies the specified method call.
+     * Returns the first element that satisfies the specified method call.
      * @param {string} functionName - The name of the method to call.
      * @param {...*} args - The arguments to pass to the method.
      * @returns {*} The first element that satisfies the method call, or null if not found.
@@ -967,8 +901,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method detectProperty
-     * @description Returns the first element that has the specified property value.
+     * Returns the first element that has the specified property value.
      * @param {string} slotName - The name of the property to check.
      * @param {*} slotValue - The value of the property to check for.
      * @returns {*} The first element that has the specified property value, or null if not found.
@@ -985,8 +918,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method detectIndex
-     * @description Returns the index of the first element that satisfies the specified condition.
+     * Returns the index of the first element that satisfies the specified condition.
      * @param {Function} func - The condition function to check for.
      * @returns {number} The index of the first element that satisfies the condition, or null if not found.
      */
@@ -1001,8 +933,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method nullsRemoved
-     * @description Returns a new array with all null values removed.
+     * Returns a new array with all null values removed.
      * @returns {Array_ideal} A new array with all null values removed.
      */
     nullsRemoved() {
@@ -1010,8 +941,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method reject
-     * @description Returns a new array containing only the elements that do not satisfy the specified condition.
+     * Returns a new array containing only the elements that do not satisfy the specified condition.
      * @param {Function} func - The condition function to check for.
      * @returns {Array_ideal} A new array containing only the elements that do not satisfy the condition.
      */
@@ -1020,8 +950,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method maxEntry
-     * @description Returns an array containing the index and value of the maximum element in the array.
+     * Returns an array containing the index and value of the maximum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @returns {Array} An array containing the index and value of the maximum element.
      */
@@ -1045,8 +974,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method maxIndex
-     * @description Returns the index of the maximum element in the array.
+     * Returns the index of the maximum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @returns {number} The index of the maximum element.
      */
@@ -1055,8 +983,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method maxValue
-     * @description Returns the value of the maximum element in the array.
+     * Returns the value of the maximum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @param {*} [theDefault] - An optional default value to return if the array is empty.
      * @returns {*} The value of the maximum element.
@@ -1066,8 +993,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method maxItem
-     * @description Returns the maximum element in the array.
+     * Returns the maximum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @returns {*} The maximum element.
      */
@@ -1076,8 +1002,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method minEntry
-     * @description Returns an array containing the index and value of the minimum element in the array.
+     * Returns an array containing the index and value of the minimum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @returns {Array} An array containing the index and value of the minimum element.
      */
@@ -1101,8 +1026,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method minIndex
-     * @description Returns the index of the minimum element in the array.
+     * Returns the index of the minimum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @returns {number} The index of the minimum element.
      */
@@ -1111,8 +1035,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method minValue
-     * @description Returns the value of the minimum element in the array.
+     * Returns the value of the minimum element in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before comparing.
      * @returns {*} The value of the minimum element.
      */
@@ -1121,8 +1044,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method sum
-     * @description Returns the sum of all elements in the array.
+     * Returns the sum of all elements in the array.
      * @param {Function} [optionalFunc] - An optional function to apply to each element before summing.
      * @returns {number} The sum of all elements.
      */
@@ -1143,8 +1065,7 @@ class Array_ideal extends Array {
     }
 
     /**
-     * @method average
-     * @description Returns the average of all elements in the array.
+     * Returns the average of all elements in the array.
      * @returns {number} The average of all elements.
      */
     average() {
@@ -1153,44 +1074,35 @@ class Array_ideal extends Array {
         }
         return this.sum() / this.length;
     }
-}
-    JS now has Array "flat" method
-    flatten (maxDepth = 1) {
-        const result = [];
-        let needsFlatten = true
-        let depth = 0
-        while (needsFlatten && depth < maxDepth) {
-            depth ++
-            needsFlatten = false
-            this.forEach((item) {
-                if (item === this) {
-                    throw new Error("attempt to flatten recursive array")
-                }
-                if (Type.isArray(item)) { // TODO: generalize to enumerables?
-                    result.appendItems(array)
-                    needsFlatten = true
-                } else {
-                    result.append(item)
-                }
-            });
-        }
-        return result;
-     }
-    */
 
-
+    /**
+     * Returns a new array with duplicate elements removed.
+     * @returns {Array_ideal} A new array containing only unique elements.
+     */
     unique () {
         return Array.from(new Set(this));
     }
 
+    /**
+     * Converts the array to a Set object.
+     * @returns {Set} A new Set containing the array's elements.
+     */
     asSet () {
         return new Set(this)
     }
 
+    /**
+     * Returns a new array with the elements in reverse order.
+     * @returns {Array_ideal} A new array with the elements reversed.
+     */
     reversed () {
         return this.shallowCopy().reverse();
     }
 
+    /**
+     * Converts the array to a path string.
+     * @returns {string} A string representation of the array as a path.
+     */
     asPath () {
         if (this.length === 1 && this.first() === "") {
             return "/";
@@ -1200,14 +1112,27 @@ class Array_ideal extends Array {
         }
     }
 
+    /**
+     * Checks if the array represents an absolute path.
+     * @returns {boolean} True if the array represents an absolute path, false otherwise.
+     */
     isAbsolutePath () {
         return this.first() === "";
     }
 
+    /**
+     * Checks if the array represents a relative path.
+     * @returns {boolean} True if the array represents a relative path, false otherwise.
+     */
     isRelativePath () {
         return this.first() !== "";
     }
 
+    /**
+     * Filters the array in-place, removing elements that do not satisfy the specified condition.
+     * @param {Function} func - The condition function to check for.
+     * @returns {Array_ideal} The filtered array.
+     */
     filterInPlace (func) {
         for (let i = this.length - 1; i >= 0; i--) {
             const v = this.at(i);
@@ -1218,10 +1143,20 @@ class Array_ideal extends Array {
         return this
     }
 
+    /**
+     * Returns a new array containing only the elements that satisfy the specified condition.
+     * @param {Function} func - The condition function to check for.
+     * @returns {Array_ideal} A new array containing only the elements that satisfy the condition.
+     */
     select (func) {
         return this.filter(func)
     }
 
+    /**
+     * Returns a new array containing all elements after the specified element.
+     * @param {*} v - The element to search for.
+     * @returns {Array_ideal} A new array containing all elements after the specified element.
+     */
     after (v) {
         const index = this.indexOf(v);
 
@@ -1232,6 +1167,11 @@ class Array_ideal extends Array {
         return this.slice(index + 1);
     }
 
+    /**
+     * Returns a new array containing all elements before the specified element.
+     * @param {*} v - The element to search for.
+     * @returns {Array_ideal} A new array containing all elements before the specified element.
+     */
     before (v) {
         const index = this.indexOf(v);
 
@@ -1242,6 +1182,12 @@ class Array_ideal extends Array {
         return this.slice(0, index);
     }
 
+    /**
+     * Replaces all occurrences of a specified value with a new value in the array.
+     * @param {*} oldValue - The value to replace.
+     * @param {*} newValue - The new value to replace with.
+     * @returns {Array_ideal} The modified array.
+     */
     replaceOccurancesOfWith (oldValue, newValue) {
         // isMutator
         for (let i = 0; i < this.length; i++) {
@@ -1252,6 +1198,11 @@ class Array_ideal extends Array {
         return this
     }
 
+    /**
+     * Removes all occurrences of a specified value from the array.
+     * @param {*} e - The value to remove.
+     * @returns {Array_ideal} The modified array.
+     */
     removeOccurancesOf (e) {
         // isMutator
         for (let i = this.length - 1; i >= 0; i--) {
@@ -1263,6 +1214,11 @@ class Array_ideal extends Array {
         return this;
     }
 
+    /**
+     * Joins the elements of the array into a new array, inserting a separator between each element.
+     * @param {Function} aFunc - The function to call for each element to get the separator.
+     * @returns {Array} A new array containing the joined elements.
+     */
     joinWithFunc (aFunc) {
         // not a mutator
         // like join, but calls aFunc with the array and index as arguments
@@ -1279,20 +1235,11 @@ class Array_ideal extends Array {
         return joined
     }
 
-    /*
-    wrap (obj) {
-        if (obj === null || obj === undefined) {
-            return [];
-        }
-        else if (obj.isArray) {
-            return obj;
-        }
-        else {
-            return [obj];
-        }
-     }
-    */
-
+    /**
+     * Returns a new array containing all elements before the specified element.
+     * @param {*} item - The element to search for.
+     * @returns {Array_ideal} A new array containing all elements before the specified element.
+     */
     itemsBefore (item) {
         const index = this.indexOf(item);
         if (index !== -1) {
@@ -1301,17 +1248,21 @@ class Array_ideal extends Array {
         return this
     }
 
-    /*
-    const setDifference = (a, b) => new Set([...a].filter(x => !b.has(x)));
-    const setIntersection = (a, b) => new Set([...a].filter(x => b.has(x)));
-    const setUnion = (a, b) => new Set([...a, ...b]);
-    */
-
+    /**
+     * Returns a new array containing the union of the elements in this array and another array.
+     * @param {Array_ideal} other - The other array.
+     * @returns {Array_ideal} A new array containing the union of the elements.
+     */
     union (other) {
         let r = this.concat(other).unique()
         return r;
     }
 
+    /**
+     * Returns a new array containing the intersection of the elements in this array and another array.
+     * @param {Array_ideal} other - The other array.
+     * @returns {Array_ideal} A new array containing the intersection of the elements.
+     */
     intersection (other) { // returns all items that are present in both
         const thisSet = new Set(this)
         return other.filter((v) => {
@@ -1319,11 +1270,21 @@ class Array_ideal extends Array {
         });
     }
 
+    /**
+     * Returns a new array containing the elements in another array that are not present in this array.
+     * @param {Array_ideal} other - The other array.
+     * @returns {Array_ideal} A new array containing the difference of the elements.
+     */
     difference (other) { // returns items in other that are not in self
         const thisSet = new Set(this)
         return other.filter(v => !thisSet.has(v));
     }
 
+    /**
+     * Returns a new array containing the elements that are present in either this array or another array, but not in both.
+     * @param {Array_ideal} other - The other array.
+     * @returns {Array_ideal} A new array containing the symmetric difference of the elements.
+     */
     symmetricDifference (other) { // returns items in either not present in the other
         let all = this.concat(other)
         const thisSet = new Set(this)
@@ -1331,23 +1292,11 @@ class Array_ideal extends Array {
         return all.filter(v => !thisSet.has(v) || !otherSet.has(v));
     }
 
-    /*
-    intersectionWithSelector (a, methodName) {
-        return this.select((e1) => { 
-            return a.detect(e2 => e1[methodName].apply(e1) === e2[methodName].apply(e2)) !== null 
-        })
-     }
-     
-    diffWithSelector (otherArray, methodName) {
-        let thisIdSet = new Set(this.map(v => v[methodName].apply(v)))
-        let otherIdSet = new Set(otherArray.map(v => v[methodName].apply(v)))
-    
-        return otherArray.select(v => !idSet.has(v.id()) )
-     }
-    */
-
-    // --- equality ---
-
+    /**
+     * Checks if this array is equal to another array.
+     * @param {Array_ideal} array - The other array.
+     * @returns {boolean} True if the arrays are equal, false otherwise.
+     */
     equals (array /*, visited = new Set()*/) {
         // we want this to work on any object that confroms to the array protocol, 
         // not just objects of the same JS type
@@ -1395,6 +1344,11 @@ class Array_ideal extends Array {
     }
 
 
+    /**
+     * Checks if this array contains an element that is equal to a given element.
+     * @param {*} b - The element to check for.
+     * @returns {boolean} True if the array contains an equal element, false otherwise.
+     */
     containsEquals (b) {
         for (let i = 0, l = this.length; i < l; i++) {
             let a = this.at(i)
@@ -1409,15 +1363,6 @@ class Array_ideal extends Array {
         }
         return true;
     }
-
-    /*
-    asImmutable () {
-        // doesn't raise exception on write - they just fail silently - too dangerous to use
-        //const obj = this.shallowCopy()
-        //Object.freeze(obj)
-        //return obj
-     }
-    */
 
 }).initThisCategory();
 
