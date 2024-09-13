@@ -1,25 +1,17 @@
 "use strict";
 
-/*
-
-    HookedArray
-
-    A subclass of Array that maintains that hooks the base getters and setters.
-en
-    For this to work, you need to use method alternative to the non-method
-    array operations:
-    
-        a[i] -> instead use a.at(i) 
-        a[i] = b -> instead use a.atPut(i, b)
-        delete a[i] -> instead use a.removeAt(i)
-    
-    
-    Example use:
-
-
-*/
-
-
+/**
+ * A subclass of Array that hooks the base getters and setters.
+ * 
+ * For this to work, you need to use method alternatives to the non-method
+ * array operations:
+ * 
+ *     a[i] -> instead use a.at(i) 
+ *     a[i] = b -> instead use a.atPut(i, b)
+ *     delete a[i] -> instead use a.removeAt(i)
+ * 
+ * @extends Array
+ */
 (class HookedArray extends Array {
 
     initPrototypeSlots () {
@@ -30,27 +22,10 @@ en
     }
 
     // ------------------------------
-    
-    /*
-    willMutate (slotName, args) {
-        const result = super.willMutate(slotName, args)
-        if (this._allowsNulls === false) {
-            if (slotName === ... 
-        }
-        return result
-    }
-    */
 
-    /*
-    nonMutatorMethodNames () {
-        // this doesn't cover operators, such as comparison
-        const allNames = Object.getOwnPropertyNames(Array.prototype)
-        const mutatorNames = mutatorMethodNames
-        const getterNames = allNames.filter(name => !mutatorNames.contains(name))
-        return getterNames
-    }
-    */
-
+    /**
+     * @returns {Set<string>} A set of method names that mutate the array
+     */
     mutatorMethodNamesSet () {
         // we can't hook []= or delete[] but we can hook these
         // and use hooked methods instead of operators for those
@@ -66,7 +41,9 @@ en
         ])
     }
 
-
+    /**
+     * @returns {HookedArray} A read-only shallow copy of the array
+     */
     asReadOnlyShalowCopy () {
         const obj = this.thisClass().withArray(this)
         obj.willMutate = () => {
@@ -75,7 +52,10 @@ en
         return obj
     }
 
-
+    /**
+     * Performs a self-test of the HookedArray class
+     * @returns {typeof HookedArray} The HookedArray class
+     */
     static selfTest () {
         const a = this.clone()
 

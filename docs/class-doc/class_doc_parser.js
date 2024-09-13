@@ -166,7 +166,7 @@ class JsClassParser {
         console.log("Extracted description:", description);
         console.log("Extracted entries:", entries);
         
-        result.classInfo.description = description;
+        result.classInfo.description = description || 'Undocumented';
         if (entries.class) {
             result.classInfo.className = entries.class;
             console.log("Class name from JSDoc:", entries.class);
@@ -207,6 +207,11 @@ class JsClassParser {
             deprecated: entries.deprecated || null,
             since: entries.since || null
         };
+
+        // Remove the class description from the method if it matches
+        if (methodInfo.description === result.classInfo.description) {
+            methodInfo.description = 'Undocumented';
+        }
 
         if (entries.throws && entries.throws.trim() !== '') {
             methodInfo.throws = entries.throws;
@@ -286,7 +291,7 @@ class JsClassParser {
         console.log("Final entries:", entries);
 
         return {
-            description: description.join(' '),
+            description: description.join(' ') || '',  // Return empty string if no description
             entries
         };
     }
