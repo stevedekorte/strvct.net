@@ -1,11 +1,29 @@
+  
+ :root {
+    --responsive-margin: 0;
+
+ }
+
+ @media (max-width: 600px) {
+    :root {
+    --responsive-margin: 0;
+    }
+  }
+  
+  @media (min-width: 800px) {
+    :root {
+    --responsive-margin: -24px;
+    }
+  }
+
 body {
     font-family: Helvetica,Arial, sans-serif;
     font-size: 14px;
     line-height: 1.5em;
     color: #333;
-    max-width: 800px;
+    max-width: 45em;
     margin: 0 auto;
-    padding: 20px;
+    padding: 0;
 }
 
 a:link,
@@ -25,7 +43,7 @@ class {
     border: 0px solid #ddd;
     margin-top: 4em;
     margin-bottom: 4em;
-    margin-left: 2em;
+    margin-left: 1em;
 }
 
 /* --- extends --- */
@@ -86,7 +104,7 @@ classmethods:before {
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
-    margin-left: -2em;
+    margin-left:  var(--responsive-margin);
 }
 
 
@@ -99,7 +117,7 @@ instancemethods:before {
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
-    margin-left: -2em;
+    margin-left:  var(--responsive-margin);
 }
 
 method {
@@ -115,7 +133,6 @@ method > name {
     font-size: 18px;
     font-weight: bold;
     color: #3498db;
-    margin-bottom: 10px;
 }
 
 method > isAsync {
@@ -125,7 +142,6 @@ method > isAsync {
     padding: 2px 5px;
     border-radius: 3px;
     font-size: 12px;
-    margin-left: 10px;
 }
 
 method > isAsync:before {
@@ -136,7 +152,6 @@ method > lineno {
     display: none;
     color: #95a5a6;
     font-size: 12px;
-    margin-left: 10px;
 }
 
 method > methodName {
@@ -202,7 +217,7 @@ parameter > description {
 method > description {
     display: inline-block;
     margin-top: 0em;
-    margin-bottom: 0.25em;
+    /*margin-bottom: 0.25em;*/
     font-style: normal;
 }
 
@@ -226,7 +241,7 @@ classInfo {
 
 classInfo > className {
     display: block;
-    margin-left: -2em;
+    margin-left: var(--responsive-margin);
     margin-bottom: 2em;
     font-size: 2em;
     font-weight: bold;
@@ -253,7 +268,7 @@ classInfo > description:before {
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
-    margin-left: -2em;
+    margin-left:  var(--responsive-margin);
     margin-bottom: 1.5em;
 }
 
