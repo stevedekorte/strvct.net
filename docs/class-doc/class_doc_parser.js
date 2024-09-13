@@ -8,7 +8,14 @@ class JsClassParser {
 
     parse() {
         console.log("Starting to parse file:", this.filePath);
-        const ast = acorn.parse(this.code, { ecmaVersion: 2020, sourceType: 'module', locations: true, onComment: this.comments });
+        let ast;
+        try {
+            ast = acorn.parse(this.code, { ecmaVersion: 2020, sourceType: 'module', locations: true, onComment: this.comments });
+        } catch (error) {
+            console.error("Parsing error:", error);
+            // If parsing fails, try to extract as much information as possible
+            return this.fallbackParse();
+        }
 
         const result = {
             classInfo: {
@@ -50,6 +57,48 @@ class JsClassParser {
         });
 
         console.log("Parsing complete. Result:", result);
+        return result;
+    }
+
+    fallbackParse() {
+        console.log("Falling back to partial parsing");
+        const result = {
+            classInfo: {
+                className: 'Unknown',
+                extends: '',
+                filePath: this.filePath,
+                description: 'Unable to fully parse the class due to syntax errors.'
+            },
+            methods: []
+        };
+
+        // Try to extract class name and methods using regex
+        const classMatch = this.code.match(/class\s+(\w+)/);
+        if (classMatch) {
+            result.classInfo.className = classMatch[1];
+        }
+
+        const methodRegex = /(static\s+)?(\w+)\s*\(([^)]*)\)\s*{/g;
+        let match;
+        while ((match = methodRegex.exec(this.code)) !== null) {
+            const isStatic = !!match[1];
+            const methodName = match[2];
+            const parameters = match[3].split(',').map(param => param.trim()).filter(param => param);
+            result.methods.push({
+                methodName: methodName,
+                fullMethodName: `${isStatic ? 'static ' : ''}${methodName}(${match[3]})`,
+                parameters: parameters.map(param => ({
+                    paramName: param,
+                    paramType: 'unknown',
+                    description: 'Parameter extracted during fallback parsing.'
+                })),
+                description: 'Method extracted during fallback parsing.',
+                isAsync: false,
+                access: isStatic ? 'static' : 'public',
+                isStatic: isStatic
+            });
+        }
+
         return result;
     }
 
@@ -313,8 +362,9 @@ function escapeXml(unsafe) {
 function displayClassInfo(result) {
     const outputElement = document.getElementById('output');
     
-    const classMethods = result.methods.filter(method => method.isStatic);
-    const instanceMethods = result.methods.filter(method => !method.isStatic);
+    // Separate class methods from instance methods
+    const classMethods = result.methods.filter(method => method.isStatic || method.access === 'static');
+    const instanceMethods = result.methods.filter(method => !method.isStatic && method.access !== 'static');
     
     const xmlOutput = `
         <class>
@@ -329,9 +379,11 @@ function displayClassInfo(result) {
                 ${classMethods.map(method => generateMethodXml(method)).join('')}
             </classmethods>
             ` : ''}
-            <methods>
+            ${instanceMethods.length > 0 ? `
+            <instancemethods>
                 ${instanceMethods.map(method => generateMethodXml(method)).join('')}
-            </methods>
+            </instancemethods>
+            ` : ''}
         </class>
     `;
     outputElement.innerHTML = xmlOutput;
@@ -340,13 +392,13 @@ function displayClassInfo(result) {
 function generateMethodXml(method) {
     return `
         <method>
-            <name>${escapeXml(method.name)}</name>
-            <fullMethodName>${escapeXml(method.fullMethodName)}</fullMethodName>
+            <name>${escapeXml(method.methodName)}</name>
+            <fullMethodName>${escapeXml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>
             <isAsync>${method.isAsync}</isAsync>
             <access>${escapeXml(method.access)}</access>
             <isStatic>${method.isStatic}</isStatic>
             <description>${escapeXml(method.description)}</description>
-            <params>${method.parameters.map(param => `
+            <params>${(method.parameters || []).map(param => `
                 <param>
                     <paramName>${escapeXml(param.paramName)}</paramName>
                     <paramType>${escapeXml(param.paramType)}</paramType>

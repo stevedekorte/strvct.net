@@ -90,11 +90,11 @@ classmethods:before {
 }
 
 
-methods {
+instancemethods {
     display: block;
 }
 
-methods:before {
+instancemethods:before {
     content: "Instance Methods ";
     font-weight: bold;
     font-size: 1.25em;
