@@ -182,8 +182,11 @@ class JsClassParser {
     handleMethodNode(node, result) {
         const methodName = node.key ? node.key.name : node.method ? node.method.name : 'anonymous';
         const methodComments = this.getMethodComments(node.start);
-        console.log(`Method comments for "${methodName}":`, methodComments);
+        console.log(`Raw method comments for "${methodName}":`, methodComments);
+
         const { description, entries } = this.extractJSDocInfo(methodComments);
+        console.log(`Extracted description for "${methodName}":`, description);
+        console.log(`Extracted entries for "${methodName}":`, entries);
 
         // Get the method arguments
         const args = node.value && node.value.params ? 
@@ -213,6 +216,7 @@ class JsClassParser {
             methodInfo.returns = entries.returns;
         }
 
+        console.log(`Processed method info for "${methodName}":`, methodInfo);
         result.methods.push(methodInfo);
     }
 
@@ -235,8 +239,7 @@ class JsClassParser {
             .filter(comment => 
                 comment.end < methodStart && 
                 comment.type === 'Block' &&
-                comment.value.startsWith('*') &&
-                this.isImmediatelyBeforeMethod(comment.end, methodStart)
+                comment.value.trim().startsWith('*')
             )
             .sort((a, b) => b.end - a.end);
 
@@ -250,76 +253,40 @@ class JsClassParser {
         return '';
     }
 
-    isImmediatelyBeforeMethod(commentEnd, methodStart) {
-        const codeInBetween = this.code.slice(commentEnd, methodStart).trim();
-        return codeInBetween === '' || codeInBetween === '{';
-    }
-
     extractJSDocInfo(comment) {
         console.log("Entering extractJSDocInfo with comment:", comment);
-        const lines = comment.split('\n').map(line => line.replace(/^\s*\*\s?/, ''));
+        const lines = comment.split('\n').map(line => line.trim().replace(/^\*\s?/, ''));
         console.log("Processed comment lines:", lines);
         
         let description = [];
-        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, class: null };
+        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null };
         let currentTag = null;
         let currentTagContent = [];
-        let inCodeBlock = false;
-        let codeBlockContent = [];
 
-        lines.forEach((line, index) => {
-            if (line.trim().startsWith('```')) {
-                if (inCodeBlock) {
-                    // End of code block
-                    description.push('```' + codeBlockContent.join('\n') + '```');
-                    codeBlockContent = [];
+        lines.forEach(line => {
+            const tagMatch = line.match(/^@(\w+)/);
+            if (tagMatch) {
+                if (currentTag) {
+                    this.processTag(currentTag, currentTagContent.join(' '), entries);
                 }
-                inCodeBlock = !inCodeBlock;
-            } else if (inCodeBlock) {
-                codeBlockContent.push(line);
-            } else {
-                const tagMatch = line.match(/^@(\w+)/);
-                if (tagMatch) {
-                    console.log("Found tag:", tagMatch[1]);
-                    if (currentTag) {
-                        this.processTag(currentTag, currentTagContent.join('\n'), entries);
-                    }
-                    currentTag = tagMatch[1];
-                    currentTagContent = [line.slice(tagMatch[0].length).trim()];
-                } else if (currentTag) {
-                    currentTagContent.push(line);
-                } else {
-                    // Preserve empty lines in the description
-                    if (line.trim() === '' && index > 0 && lines[index - 1].trim() !== '') {
-                        description.push('');
-                    }
-                    if (line.trim() !== '') {
-                        description.push(line);
-                    }
-                }
+                currentTag = tagMatch[1];
+                currentTagContent = [line.slice(tagMatch[0].length).trim()];
+            } else if (currentTag) {
+                currentTagContent.push(line);
+            } else if (line.trim() !== '') {
+                description.push(line);
             }
         });
 
-        // Handle case where code block is at the end of the comment
-        if (inCodeBlock) {
-            description.push('```' + codeBlockContent.join('\n') + '```');
-        }
-
         if (currentTag) {
-            this.processTag(currentTag, currentTagContent.join('\n'), entries);
-        }
-
-        // If there's a @description tag, use its content as the description
-        if (entries.description) {
-            description = [entries.description];
-            delete entries.description;
+            this.processTag(currentTag, currentTagContent.join(' '), entries);
         }
 
         console.log("Final description:", description);
         console.log("Final entries:", entries);
 
         return {
-            description: description.join('\n'),
+            description: description.join(' '),
             entries
         };
     }
