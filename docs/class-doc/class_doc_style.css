@@ -76,12 +76,26 @@ description {
     white-space: pre-wrap; /* Preserve whitespace */
 }
 
+classmethods {
+    display: block;
+    margin-bottom: 3.5em;
+}
+
+classmethods:before {
+    content: "Class Methods ";
+    font-weight: bold;
+    font-size: 1.25em;
+    font-style: normal;
+    margin-left: -2em;
+}
+
+
 methods {
     display: block;
 }
 
 methods:before {
-    content: "Instance Methods: ";
+    content: "Instance Methods ";
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
@@ -208,7 +222,6 @@ method > fullMethodName[async]::before {
 classInfo {
     display: block;
     line-height: 1.5em;
-    margin-bottom: 5em;
 }
 
 classInfo > className {
@@ -230,12 +243,13 @@ classInfo > description {
     display: block;
     margin-top: 3em;
     white-space: pre-wrap; /* Preserve whitespace */
+    margin-bottom: 3.5em;
 }
 
 
 classInfo > description:before {
     display: block;
-    content: "Class Description: ";
+    content: "Class Description ";
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
@@ -271,6 +285,20 @@ returns:before {
     content: "returns: ";
     font-style: italic;
     font-weight: normal;
+}
+
+returns > returntype {
+    display: inline-block;
+    color: #7f8c8d;
+    font-style: italic;
+    font-weight: normal;
+}
+
+returns > description {
+    display: inline-block;
+    color: #7f8c8d;
+    font-style: italic;
+    font-weight: lighter;
 }
 
 /* --- author --- */

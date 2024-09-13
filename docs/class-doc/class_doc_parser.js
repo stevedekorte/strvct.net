@@ -312,8 +312,59 @@ function escapeXml(unsafe) {
 
 function displayClassInfo(result) {
     const outputElement = document.getElementById('output');
-    const xmlOutput = jsonToXml(result);
-    outputElement.innerHTML = `<class>${xmlOutput}</class>`;
+    
+    const classMethods = result.methods.filter(method => method.isStatic);
+    const instanceMethods = result.methods.filter(method => !method.isStatic);
+    
+    const xmlOutput = `
+        <class>
+            <classInfo>
+                <className>${escapeXml(result.classInfo.className)}</className>
+                <extends>${escapeXml(result.classInfo.extends)}</extends>
+                <filePath>${escapeXml(result.classInfo.filePath)}</filePath>
+                <description>${escapeXml(result.classInfo.description)}</description>
+            </classInfo>
+            ${classMethods.length > 0 ? `
+            <classmethods>
+                ${classMethods.map(method => generateMethodXml(method)).join('')}
+            </classmethods>
+            ` : ''}
+            <methods>
+                ${instanceMethods.map(method => generateMethodXml(method)).join('')}
+            </methods>
+        </class>
+    `;
+    outputElement.innerHTML = xmlOutput;
+}
+
+function generateMethodXml(method) {
+    return `
+        <method>
+            <name>${escapeXml(method.name)}</name>
+            <fullMethodName>${escapeXml(method.fullMethodName)}</fullMethodName>
+            <isAsync>${method.isAsync}</isAsync>
+            <access>${escapeXml(method.access)}</access>
+            <isStatic>${method.isStatic}</isStatic>
+            <description>${escapeXml(method.description)}</description>
+            <params>${method.parameters.map(param => `
+                <param>
+                    <paramName>${escapeXml(param.paramName)}</paramName>
+                    <paramType>${escapeXml(param.paramType)}</paramType>
+                    <description>${escapeXml(param.description)}</description>
+                </param>
+            `).join('')}</params>
+            ${method.returns ? `
+                <returns>
+                    <returnType>${escapeXml(method.returns.returnType)}</returnType>
+                    <description>${escapeXml(method.returns.description)}</description>
+                </returns>
+            ` : ''}
+            ${method.throws ? `<throws>${escapeXml(method.throws)}</throws>` : ''}
+            ${method.example ? `<example>${escapeXml(method.example)}</example>` : ''}
+            ${method.deprecated ? `<deprecated>${escapeXml(method.deprecated)}</deprecated>` : ''}
+            ${method.since ? `<since>${escapeXml(method.since)}</since>` : ''}
+        </method>
+    `;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
