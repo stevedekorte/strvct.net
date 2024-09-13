@@ -82,6 +82,7 @@ classInfo > description {
     margin-top: 3em;
     white-space: pre-wrap; /* Preserve whitespace */
     margin-bottom: 3.5em;
+    font-weight: lighter;
 }
 
 

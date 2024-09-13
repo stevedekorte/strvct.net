@@ -266,13 +266,10 @@ class JsClassParser {
             this.processTag(currentTag, currentTagContent.join('\n'), entries);
         }
 
-        // If there's a @class tag, use its content as the class name and the rest as the description
-        if (entries.class) {
-            const classNameAndDesc = entries.class.split(/\s+(.+)/);
-            entries.class = classNameAndDesc[0];
-            if (classNameAndDesc[1]) {
-                description.unshift(classNameAndDesc[1]);
-            }
+        // If there's a @description tag, use its content as the description
+        if (entries.description) {
+            description = [entries.description];
+            delete entries.description;
         }
 
         console.log("Final description:", description);
@@ -307,6 +304,7 @@ class JsClassParser {
             case 'since':
             case 'class':
             case 'extends':
+            case 'description':
                 entries[tag] = content.trim();
                 break;
         }
@@ -427,6 +425,10 @@ function displayClassInfo(result) {
 }
 
 function generateMethodXml(method) {
+    console.log(`Generating XML for method: ${method.methodName}`);
+    console.log(`Method description: ${method.description}`);
+    console.log(`Method returns: `, method.returns);
+
     let xml = '<method>\n';
     xml += `  <name>${method.methodName}</name>\n`;
     xml += `  <fullMethodName>${method.fullMethodName.replace(/^static\s+/, '')}</fullMethodName>\n`;
@@ -447,8 +449,17 @@ function generateMethodXml(method) {
     }
     
     // Output method description after params
-    if (method.description) {
-        xml += `  <description>${method.description}</description>\n`;
+    if (method.description || method.returns) {
+        console.log('Method has description or returns');
+        if (method.description) {
+            console.log('Adding method description to XML');
+            xml += `  <description>${method.description}</description>\n`;
+        } else {
+            console.log('Method has returns but no description');
+        }
+    } else {
+        console.log('Adding "Undocumented" to XML');
+        xml += `  <description>Undocumented</description>\n`;
     }
     
     // Output returns if present
@@ -477,6 +488,8 @@ function generateMethodXml(method) {
         xml += `  <throws>${method.throws}</throws>\n`;
     }
     xml += '</method>\n';
+
+    console.log('Final XML:', xml);
     return xml;
 }
 
