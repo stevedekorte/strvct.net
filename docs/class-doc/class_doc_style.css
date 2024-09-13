@@ -118,18 +118,15 @@ method > name {
     margin-bottom: 10px;
 }
 
-method > isAsync {
-    display: none;
-    background-color: #2ecc71;
-    color: #fff;
-    padding: 2px 5px;
-    border-radius: 3px;
-    font-size: 12px;
-    margin-left: 10px;
+method > async {
+    display: inline-block;
 }
 
-method > isAsync:before {
-    content: "async";
+method > async:before {
+    content: "async ";
+    color: #2ecc71;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
 method > lineno {
