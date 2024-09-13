@@ -10,7 +10,7 @@
 
     If hash argument is non-null, then it looks in BMBlobs for a blob whose name matches the hash. 
     If found, it asks the blob to load it's value from indexeddb (if not already loaded).
-    Wehn ready, it calls resolve.
+    When ready, it calls resolve.
 
     If hash is null, or no matching blob is found, a XMLHttpRequest tries to load the url.
     After loading, it will verify the hash (and error if it doesn't match), store the value in a blob and

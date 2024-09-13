@@ -6,23 +6,26 @@
 
     Example use:
 
+    ```
     BMNetworkCache.shared().asyncRequestDataForUrlAndHash(url, hash, resolve, reject)
+    ```
 
-    If hash argument is non-null, then it looks in BMBlobs for a blob whose name matches the hash. 
-    If found, it asks the blob to load it's value from indexeddb (if not already loaded).
-    Wehn ready, it calls resolve.
+    If hash argument is non-null, then it looks in BMBlobs for a blob whose 
+    name matches the hash. If found, it asks the blob to load it's value from 
+    indexeddb (if not already loaded).When ready, it calls resolve.
 
-    If hash is null, or no matching blob is found, a XMLHttpRequest tries to load the url.
-    After loading, it will verify the hash (and error if it doesn't match), store the value in a blob and
-    call resolve with the data. 
+    If hash is null, or no matching blob is found, a XMLHttpRequest tries to 
+    load the url. After loading, it will verify the hash (and error if it doesn't match), 
+    store the value in a blob and call resolve with the data. 
 
-    NOTES:
+    Notes:
 
-    If two requests to the same hash or URL occur at the same (before one has resolved),
-    we want them share the XMLHttpRequest and/or indexeddb request, so both should have a way of
-    maintaining a set of resolve functions to be called when completed. 
+    If two requests to the same hash or URL occur at the same (before one has 
+    resolved),we want them share the XMLHttpRequest and/or indexeddb request, 
+    so both should have a way of maintaining a set of resolve functions to 
+    be called when completed. 
 
-    QUESTIONS:
+    Questions:
 
     Should this also look in Cam.js?
 

@@ -214,32 +214,56 @@ class JsClassParser {
 
     extractJSDocInfo(comment) {
         console.log("Entering extractJSDocInfo with comment:", comment);
-        const lines = comment.split('\n').map(line => line.trim().replace(/^\*+/, '').trim());
+        const lines = comment.split('\n').map(line => line.replace(/^\s*\*\s?/, ''));
         console.log("Processed comment lines:", lines);
         
         let description = [];
         const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, class: null };
         let currentTag = null;
         let currentTagContent = [];
+        let inCodeBlock = false;
+        let codeBlockContent = [];
 
-        lines.forEach(line => {
-            const tagMatch = line.match(/^@(\w+)/);
-            if (tagMatch) {
-                console.log("Found tag:", tagMatch[1]);
-                if (currentTag) {
-                    this.processTag(currentTag, currentTagContent.join(' '), entries);
+        lines.forEach((line, index) => {
+            if (line.trim().startsWith('```')) {
+                if (inCodeBlock) {
+                    // End of code block
+                    description.push('```' + codeBlockContent.join('\n') + '```');
+                    codeBlockContent = [];
                 }
-                currentTag = tagMatch[1];
-                currentTagContent = [line.slice(tagMatch[0].length).trim()];
-            } else if (currentTag) {
-                currentTagContent.push(line);
-            } else if (line.trim() !== '') {
-                description.push(line);
+                inCodeBlock = !inCodeBlock;
+            } else if (inCodeBlock) {
+                codeBlockContent.push(line);
+            } else {
+                const tagMatch = line.match(/^@(\w+)/);
+                if (tagMatch) {
+                    console.log("Found tag:", tagMatch[1]);
+                    if (currentTag) {
+                        this.processTag(currentTag, currentTagContent.join('\n'), entries);
+                    }
+                    currentTag = tagMatch[1];
+                    currentTagContent = [line.slice(tagMatch[0].length).trim()];
+                } else if (currentTag) {
+                    currentTagContent.push(line);
+                } else {
+                    // Preserve empty lines in the description
+                    if (line.trim() === '' && index > 0 && lines[index - 1].trim() !== '') {
+                        description.push('');
+                    }
+                    if (line.trim() !== '') {
+                        description.push(line);
+                    }
+                }
             }
         });
 
+        // Handle case where code block is at the end of the comment
+        if (inCodeBlock) {
+            description.push('```' + codeBlockContent.join('\n') + '```');
+        }
+
         if (currentTag) {
-            this.processTag(currentTag, currentTagContent.join(' '), entries);
+            this.processTag(currentTag, currentTagContent.join('\n'), entries);
         }
 
         // If there's a @class tag, use its content as the class name and the rest as the description
@@ -255,7 +279,7 @@ class JsClassParser {
         console.log("Final entries:", entries);
 
         return {
-            description: description.join(' ').trim(),
+            description: description.join('\n'),
             entries
         };
     }
@@ -263,7 +287,7 @@ class JsClassParser {
     processTag(tag, content, entries) {
         switch (tag) {
             case 'param':
-                const [paramType, paramName, ...paramDesc] = content.split(' ');
+                const [paramType, paramName, ...paramDesc] = content.split(/\s+/);
                 entries.params.push({
                     paramName: paramName.replace('-', '').trim(),
                     paramType: paramType.replace(/[{}]/g, '').trim(),
@@ -271,29 +295,19 @@ class JsClassParser {
                 });
                 break;
             case 'returns':
-                const [returnType, ...returnDesc] = content.split(' ');
+                const [returnType, ...returnDesc] = content.split(/\s+/);
                 entries.returns = {
                     returnType: returnType.replace(/[{}]/g, '').trim(),
                     description: returnDesc.join(' ').trim()
                 };
                 break;
             case 'throws':
-                entries.throws = content.trim();
-                break;
             case 'example':
-                entries.example = content.trim();
-                break;
             case 'deprecated':
-                entries.deprecated = content.trim();
-                break;
             case 'since':
-                entries.since = content.trim();
-                break;
             case 'class':
-                entries.class = content.trim();
-                break;
             case 'extends':
-                entries.extends = content.trim();
+                entries[tag] = content.trim();
                 break;
         }
     }
@@ -321,6 +335,8 @@ function jsonToXml(json) {
                 for (const classKey in value) {
                     if (classKey === 'filePath') {
                         xml += `<filePath><a href="${escapeXml(value[classKey])}">${escapeXml(value[classKey])}</a></filePath>\n`;
+                    } else if (classKey === 'description') {
+                        xml += `<description>${escapeXmlPreserveWhitespace(value[classKey])}</description>\n`;
                     } else {
                         xml += `<${classKey}>${escapeXml(value[classKey])}</${classKey}>\n`;
                     }
@@ -338,6 +354,8 @@ function jsonToXml(json) {
                     if (value && (typeof value === 'string' ? value.trim() !== '' : Object.keys(value).length > 0)) {
                         xml += `<${key}>${jsonToXml(value)}</${key}>\n`;
                     }
+                } else if (key === 'description') {
+                    xml += `<${key}>${escapeXmlPreserveWhitespace(value)}</${key}>\n`;
                 } else {
                     xml += `<${key}>${escapeXml(value)}</${key}>\n`;
                 }
@@ -359,6 +377,25 @@ function escapeXml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
+function escapeXmlPreserveWhitespace(unsafe) {
+    if (unsafe === undefined || unsafe === null) {
+        return '';
+    }
+    let inCodeBlock = false;
+    return unsafe.toString()
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\n/g, "&#10;")  // Preserve line breaks
+        .replace(/\r/g, "&#13;")  // Preserve carriage returns
+        .replace(/\t/g, "&#9;")   // Preserve tabs
+        .replace(/```([\s\S]*?)```/g, (match, content) => {
+            return `<code>${content}</code>`;
+        });
+}
+
 function displayClassInfo(result) {
     const outputElement = document.getElementById('output');
     
@@ -372,7 +409,7 @@ function displayClassInfo(result) {
                 <className>${escapeXml(result.classInfo.className)}</className>
                 <extends>${escapeXml(result.classInfo.extends)}</extends>
                 <filePath><a href="${escapeXml(result.classInfo.filePath)}">${escapeXml(result.classInfo.filePath)}</a></filePath>
-                <description>${escapeXml(result.classInfo.description)}</description>
+                <description>${escapeXmlPreserveWhitespace(result.classInfo.description)}</description>
             </classInfo>
             ${classMethods.length > 0 ? `
             <classmethods>
@@ -397,24 +434,24 @@ function generateMethodXml(method) {
             <isAsync>${method.isAsync}</isAsync>
             <access>${escapeXml(method.access)}</access>
             <isStatic>${method.isStatic}</isStatic>
-            <description>${escapeXml(method.description)}</description>
+            <description>${escapeXmlPreserveWhitespace(method.description)}</description>
             <params>${(method.parameters || []).map(param => `
                 <param>
                     <paramName>${escapeXml(param.paramName)}</paramName>
                     <paramType>${escapeXml(param.paramType)}</paramType>
-                    <description>${escapeXml(param.description)}</description>
+                    <description>${escapeXmlPreserveWhitespace(param.description)}</description>
                 </param>
             `).join('')}</params>
             ${method.returns ? `
                 <returns>
                     <returnType>${escapeXml(method.returns.returnType)}</returnType>
-                    <description>${escapeXml(method.returns.description)}</description>
+                    <description>${escapeXmlPreserveWhitespace(method.returns.description)}</description>
                 </returns>
             ` : ''}
-            ${method.throws ? `<throws>${escapeXml(method.throws)}</throws>` : ''}
-            ${method.example ? `<example>${escapeXml(method.example)}</example>` : ''}
-            ${method.deprecated ? `<deprecated>${escapeXml(method.deprecated)}</deprecated>` : ''}
-            ${method.since ? `<since>${escapeXml(method.since)}</since>` : ''}
+            ${method.throws ? `<throws>${escapeXmlPreserveWhitespace(method.throws)}</throws>` : ''}
+            ${method.example ? `<example>${escapeXmlPreserveWhitespace(method.example)}</example>` : ''}
+            ${method.deprecated ? `<deprecated>${escapeXmlPreserveWhitespace(method.deprecated)}</deprecated>` : ''}
+            ${method.since ? `<since>${escapeXmlPreserveWhitespace(method.since)}</since>` : ''}
         </method>
     `;
 }

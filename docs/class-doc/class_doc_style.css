@@ -1,27 +1,27 @@
   
- :root {
+:root {
     --responsive-margin: 0;
+    --code-font-size: 11px;
+}
 
- }
-
- @media (max-width: 600px) {
+@media (max-width: 600px) {
     :root {
-    --responsive-margin: 0;
+        --responsive-margin: 0;
     }
-  }
+}
   
-  @media (min-width: 800px) {
+@media (min-width: 800px) {
     :root {
-    --responsive-margin: -24px;
+        --responsive-margin: -24px;
     }
-  }
+}
 
 body {
     font-family: Helvetica,Arial, sans-serif;
     font-size: 14px;
     line-height: 1.5em;
     color: #333;
-    max-width: 45em;
+    max-width: min(45em, 100%);
     margin: 0 auto;
     padding: 0;
 }
@@ -38,12 +38,61 @@ h1 {
     color: #2c3e50;
 }
 
+code {
+    display: block;
+    font-family: monospace;
+    font-size: 11px;
+    line-height: 1.5em;
+    color: #333;
+    background-color: #f0f0f0;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    border-radius: 5px;
+    margin-left: 1em;
+}
+
+/* --- class --- */
+
 class {
     display: block;
     border: 0px solid #ddd;
     margin-top: 4em;
     margin-bottom: 4em;
     margin-left: 1em;
+    margin-right: 1em;
+}
+
+
+classInfo {
+    display: block;
+    line-height: 1.5em;
+}
+
+classInfo > className {
+    display: block;
+    margin-left: var(--responsive-margin);
+    margin-bottom: 2em;
+    font-size: 2em;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+classInfo > description {
+    display: block;
+    margin-top: 3em;
+    white-space: pre-wrap; /* Preserve whitespace */
+    margin-bottom: 3.5em;
+}
+
+
+classInfo > description:before {
+    display: block;
+    content: "Class Description ";
+    font-weight: bold;
+    font-size: 1.25em;
+    font-style: normal;
+    margin-left:  var(--responsive-margin);
+    margin-bottom: 1em;
 }
 
 /* --- extends --- */
@@ -83,13 +132,7 @@ filepath a:hover {
     text-decoration: underline;
 }
 
-/* --- description --- */
-
-description {
-    display: block;
-    font-weight: 200;
-    white-space: pre-wrap; /* Preserve whitespace */
-}
+/* --- class methods --- */
 
 classmethods {
     display: block;
@@ -104,6 +147,7 @@ classmethods:before {
     margin-left:  var(--responsive-margin);
 }
 
+/* --- instance methods --- */
 
 instancemethods {
     display: block;
@@ -117,12 +161,19 @@ instancemethods:before {
     margin-left:  var(--responsive-margin);
 }
 
+/* --- method --- */
+
 method {
     display: block;
     border-bottom: 0px solid #eee;
     margin-top: 2.5em;
     font-weight: lighter;
+}
 
+method > description {
+    display: block;
+    font-weight: 200;
+    white-space: pre-wrap; /* Preserve whitespace */
 }
 
 method > name {
@@ -163,53 +214,46 @@ method > fullMethodName {
     font-weight: bold;
 }
 
-parameters {
+/* --- parameters --- */
+
+params {
     display: block;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-}
-
-parameter {
-    display: block;
     margin-left: 1em;
-    width: fit-content;
 }
 
-parameter > name {
-    display: inline-block;
-    color: #7f8c8d;
-    font-weight: normal;
+param {
+    display: block;
+    margin-left: 0em;
+    width: fit-content;
 }
 
 paramname {
     display: inline-block;
-    color: #7f8c8d;
     font-weight: normal;
 }
 
 paramtype {
     display: inline-block;
-    color: #7f8c8d;
-    font-weight: normal;
 }
 
-parameter > type {
-    display: inline-block;
-    font-style: italic;
-    color: #7f8c8d;
+paramtype:before {
+    content: "{";
 }
 
-parameter > default {
-    display: inline-block;
-    font-style: italic;
-    color: #7f8c8d;
+paramtype:after {
+    content: "}";
 }
+
 
 parameter > description {
     display: inline-block;
     font-style: italic;
     color: #7f8c8d;
 }
+
+/* --- method --- */
 
 method > description {
     display: inline-block;
@@ -231,38 +275,6 @@ method > fullMethodName[async]::before {
     font-weight: bold;
 }
 
-classInfo {
-    display: block;
-    line-height: 1.5em;
-}
-
-classInfo > className {
-    display: block;
-    margin-left: var(--responsive-margin);
-    margin-bottom: 2em;
-    font-size: 2em;
-    font-weight: bold;
-    color: #2c3e50;
-}
-
-classInfo > description {
-    display: block;
-    margin-top: 3em;
-    white-space: pre-wrap; /* Preserve whitespace */
-    margin-bottom: 3.5em;
-}
-
-
-classInfo > description:before {
-    display: block;
-    content: "Class Description ";
-    font-weight: bold;
-    font-size: 1.25em;
-    font-style: normal;
-    margin-left:  var(--responsive-margin);
-    margin-bottom: 1em;
-}
-
 /* --- throws --- */
 
 throws {
@@ -282,29 +294,28 @@ throws:before {
 
 returns {
     display: block;
-    color: #7f8c8d;
-    font-style: italic;
+    font-style: normal;
     font-weight: lighter;
 }
 
 returns:before {
     content: "returns: ";
-    font-style: italic;
-    font-weight: normal;
 }
 
 returns > returntype {
     display: inline-block;
-    color: #7f8c8d;
-    font-style: italic;
-    font-weight: normal;
+}
+
+returns > returntype:before {
+    content: "{";
+}
+
+returns > returntype:after {
+    content: "}";
 }
 
 returns > description {
     display: inline-block;
-    color: #7f8c8d;
-    font-style: italic;
-    font-weight: lighter;
 }
 
 /* --- author --- */
@@ -333,33 +344,11 @@ version:before {
     font-style: normal;
 }
 
-/* --- access --- */
-
-method > access {
-    display: none;
-    font-style: italic;
-    color: #7f8c8d;
-    margin-right: 10px;
-}
-
-method > access[static]::before {
-    content: "static ";
-    font-weight: bold;
-}
-
-method > access[private]::before {
-    content: "private ";
-    font-weight: bold;
-}
-
-method > access[constructor]::before {
-    content: "constructor ";
-    font-weight: bold;
-}
-
 isstatic {
     display: none;
 }
 
-/* ... (rest of the existing styles) */
 
+access {
+    display: none;
+}
