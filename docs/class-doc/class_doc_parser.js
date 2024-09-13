@@ -321,7 +321,7 @@ function displayClassInfo(result) {
             <classInfo>
                 <className>${escapeXml(result.classInfo.className)}</className>
                 <extends>${escapeXml(result.classInfo.extends)}</extends>
-                <filePath>${escapeXml(result.classInfo.filePath)}</filePath>
+                <filePath><a href="${escapeXml(result.classInfo.filePath)}">${escapeXml(result.classInfo.filePath)}</a></filePath>
                 <description>${escapeXml(result.classInfo.description)}</description>
             </classInfo>
             ${classMethods.length > 0 ? `
