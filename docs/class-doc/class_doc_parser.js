@@ -202,7 +202,7 @@ class JsClassParser {
             parameters: entries.params || [],
             access: this.getAccessModifier(node),
             isStatic: node.static || false,
-            description: description || 'Undocumented',
+            description: description || (entries.returns ? '' : 'Undocumented'),
             example: entries.example || null,
             deprecated: entries.deprecated || null,
             since: entries.since || null
@@ -305,7 +305,7 @@ class JsClassParser {
                 const [returnType, ...returnDesc] = content.split(/\s+/);
                 entries.returns = {
                     returnType: returnType.replace(/[{}]/g, '').trim(),
-                    description: returnDesc.join(' ').trim()
+                    description: returnDesc.join(' ').trim() || null // Change here
                 };
                 break;
             case 'throws':
