@@ -86,7 +86,7 @@ class JsClassParser {
             const parameters = match[3].split(',').map(param => param.trim()).filter(param => param);
             result.methods.push({
                 methodName: methodName,
-                fullMethodName: (isStatic ? 'static ' : '') + methodName + '(' + match[3] + ')',
+                fullMethodName: `${isStatic ? 'static ' : ''}${methodName}(${match[3]})`,
                 parameters: parameters.map(param => ({
                     paramName: param,
                     paramType: 'unknown',
@@ -332,7 +332,7 @@ function jsonToXml(json) {
                 if (typeof value === 'boolean') {
                     xml += `<${key}>${value ? 'true' : 'false'}</${key}>\n`;
                 } else if (key === 'fullMethodName') {
-                    const methodName = value.replace(/^(static|async)\s+/, '');
+                    const methodName = value.replace('async ', '');
                     xml += `<${key}${value.startsWith('async ') ? ' async="true"' : ''}>${escapeXml(methodName)}</${key}>\n`;
                 } else if (['access', 'isStatic', 'example', 'deprecated', 'since', 'returns'].includes(key)) {
                     if (value && (typeof value === 'string' ? value.trim() !== '' : Object.keys(value).length > 0)) {
@@ -393,24 +393,28 @@ function generateMethodXml(method) {
     return `
         <method>
             <name>${escapeXml(method.methodName)}</name>
-            ${method.isStatic ? `<static>` : ''}
-            ${method.isAsync ? `<async>` : ''}
-            <fullMethodName>${escapeXml(method.fullMethodName.replace(/^(static|async)\s+/, ''))}</fullMethodName>
-            ${method.isAsync ? `</async>` : ''}
-            ${method.isStatic ? `</static>` : ''}
-        </method>
-    `;
-}
-
-function generateMethodXml(method) {
-    return `
-        <method>
-            <name>${escapeXml(method.methodName)}</name>
-            ${method.isStatic ? `<static>` : ''}
-            ${method.isAsync ? `<async>` : ''}
-            <fullMethodName>${escapeXml(method.fullMethodName.replace(/^(static|async)\s+/, ''))}</fullMethodName>
-            ${method.isAsync ? `</async>` : ''}
-            ${method.isStatic ? `</static>` : ''}
+            <fullMethodName>${escapeXml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>
+            <isAsync>${method.isAsync}</isAsync>
+            <access>${escapeXml(method.access)}</access>
+            <isStatic>${method.isStatic}</isStatic>
+            <description>${escapeXml(method.description)}</description>
+            <params>${(method.parameters || []).map(param => `
+                <param>
+                    <paramName>${escapeXml(param.paramName)}</paramName>
+                    <paramType>${escapeXml(param.paramType)}</paramType>
+                    <description>${escapeXml(param.description)}</description>
+                </param>
+            `).join('')}</params>
+            ${method.returns ? `
+                <returns>
+                    <returnType>${escapeXml(method.returns.returnType)}</returnType>
+                    <description>${escapeXml(method.returns.description)}</description>
+                </returns>
+            ` : ''}
+            ${method.throws ? `<throws>${escapeXml(method.throws)}</throws>` : ''}
+            ${method.example ? `<example>${escapeXml(method.example)}</example>` : ''}
+            ${method.deprecated ? `<deprecated>${escapeXml(method.deprecated)}</deprecated>` : ''}
+            ${method.since ? `<since>${escapeXml(method.since)}</since>` : ''}
         </method>
     `;
 }
