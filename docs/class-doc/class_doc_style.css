@@ -50,35 +50,32 @@ class {
 
 extends {
     display: block;
-    font-style: italic;
-    color: #7f8c8d;
-    font-weight: bold;
-    font-style: italic;
+    font-style: normal;
+    font-weight: normal;
+    font-style: normal;
 }
 
 extends:before {
-    content: "extends: ";
+    content: "Extends: ";
     font-weight: bold;
-    font-style: italic;
+    font-style: normal;
 }
 
 /* --- filePath --- */
 
 filepath {
     display: block;
-    color: #7f8c8d;
-    font-weight: bold;
-    font-style: italic;
+    font-weight: normal;
+    font-style: normal;
 }
 
 filepath:before {
-    content: "source: ";
+    content: "Source: ";
     font-weight: bold;
-    font-style: italic;
+    font-style: normal;
 }
 
 filepath a {
-    color: #7f8c8d;
     text-decoration: none;
 }
 
@@ -248,12 +245,6 @@ classInfo > className {
     color: #2c3e50;
 }
 
-classInfo > extends {
-    display: block;
-    font-style: italic;
-    color: #7f8c8d;
-}
-
 classInfo > description {
     display: block;
     margin-top: 3em;
@@ -269,7 +260,7 @@ classInfo > description:before {
     font-size: 1.25em;
     font-style: normal;
     margin-left:  var(--responsive-margin);
-    margin-bottom: 1.5em;
+    margin-bottom: 1em;
 }
 
 /* --- throws --- */
