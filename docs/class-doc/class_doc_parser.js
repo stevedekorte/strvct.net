@@ -260,7 +260,7 @@ class JsClassParser {
 
     extractJSDocInfo(comment) {
         console.log("Entering extractJSDocInfo with comment:", comment);
-        const lines = comment.split('\n').map(line => line.trim().replace(/^\*\s?/, ''));
+        const lines = comment.split('\n');
         console.log("Processed comment lines:", lines);
         
         let description = [];
@@ -269,29 +269,30 @@ class JsClassParser {
         let currentTagContent = [];
 
         lines.forEach(line => {
-            const tagMatch = line.match(/^@(\w+)/);
+            const trimmedLine = line.trim().replace(/^\*\s?/, '');
+            const tagMatch = trimmedLine.match(/^@(\w+)/);
             if (tagMatch) {
                 if (currentTag) {
-                    this.processTag(currentTag, currentTagContent.join(' '), entries);
+                    this.processTag(currentTag, currentTagContent.join('\n'), entries);
                 }
                 currentTag = tagMatch[1];
-                currentTagContent = [line.slice(tagMatch[0].length).trim()];
+                currentTagContent = [trimmedLine.slice(tagMatch[0].length).trim()];
             } else if (currentTag) {
-                currentTagContent.push(line);
-            } else if (line.trim() !== '') {
-                description.push(line);
+                currentTagContent.push(trimmedLine);
+            } else if (trimmedLine !== '') {
+                description.push(trimmedLine);
             }
         });
 
         if (currentTag) {
-            this.processTag(currentTag, currentTagContent.join(' '), entries);
+            this.processTag(currentTag, currentTagContent.join('\n'), entries);
         }
 
         console.log("Final description:", description);
         console.log("Final entries:", entries);
 
         return {
-            description: description.join(' ') || '',  // Return empty string if no description
+            description: description.join('\n'),
             entries
         };
     }
@@ -394,15 +395,12 @@ function escapeXmlPreserveWhitespace(unsafe) {
     if (unsafe === undefined || unsafe === null) {
         return '';
     }
-    let inCodeBlock = false;
     return unsafe.toString()
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;")
-        .replace(/\n/g, "&#10;")  // Preserve line breaks
-        .replace(/\r/g, "&#13;")  // Preserve carriage returns
         .replace(/\t/g, "&#9;")   // Preserve tabs
         .replace(/```([\s\S]*?)```/g, (match, content) => {
             return `<code>${content}</code>`;

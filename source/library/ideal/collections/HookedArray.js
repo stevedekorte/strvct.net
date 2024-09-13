@@ -14,6 +14,9 @@
  */
 (class HookedArray extends Array {
 
+    /**
+     * Initializes prototype slots and sets up mutator hooks.
+     */
     initPrototypeSlots () {
         //Object.defineSlot(this, "_allowsNulls", false)
 
