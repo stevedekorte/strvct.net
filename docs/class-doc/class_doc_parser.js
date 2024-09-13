@@ -427,33 +427,57 @@ function displayClassInfo(result) {
 }
 
 function generateMethodXml(method) {
-    return `
-        <method>
-            <name>${escapeXml(method.methodName)}</name>
-            <fullMethodName>${escapeXml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>
-            <isAsync>${method.isAsync}</isAsync>
-            <access>${escapeXml(method.access)}</access>
-            <isStatic>${method.isStatic}</isStatic>
-            <description>${escapeXmlPreserveWhitespace(method.description)}</description>
-            <params>${(method.parameters || []).map(param => `
-                <param>
-                    <paramName>${escapeXml(param.paramName)}</paramName>
-                    <paramType>${escapeXml(param.paramType)}</paramType>
-                    <description>${escapeXmlPreserveWhitespace(param.description)}</description>
-                </param>
-            `).join('')}</params>
-            ${method.returns ? `
-                <returns>
-                    <returnType>${escapeXml(method.returns.returnType)}</returnType>
-                    <description>${escapeXmlPreserveWhitespace(method.returns.description)}</description>
-                </returns>
-            ` : ''}
-            ${method.throws ? `<throws>${escapeXmlPreserveWhitespace(method.throws)}</throws>` : ''}
-            ${method.example ? `<example>${escapeXmlPreserveWhitespace(method.example)}</example>` : ''}
-            ${method.deprecated ? `<deprecated>${escapeXmlPreserveWhitespace(method.deprecated)}</deprecated>` : ''}
-            ${method.since ? `<since>${escapeXmlPreserveWhitespace(method.since)}</since>` : ''}
-        </method>
-    `;
+    let xml = '<method>\n';
+    xml += `  <name>${method.methodName}</name>\n`;
+    xml += `  <fullMethodName>${method.fullMethodName.replace(/^static\s+/, '')}</fullMethodName>\n`;
+    
+    // Output params first
+    if (method.parameters && method.parameters.length > 0) {
+        xml += '  <params>\n';
+        method.parameters.forEach(param => {
+            xml += '    <param>\n';
+            xml += `      <paramname>${param.paramName}</paramname>\n`;
+            xml += `      <paramtype>${param.paramType}</paramtype>\n`;
+            if (param.description) {
+                xml += `      <description>${param.description}</description>\n`;
+            }
+            xml += '    </param>\n';
+        });
+        xml += '  </params>\n';
+    }
+    
+    // Output method description after params
+    if (method.description) {
+        xml += `  <description>${method.description}</description>\n`;
+    }
+    
+    // Output returns if present
+    if (method.returns) {
+        xml += '  <returns>\n';
+        xml += `    <returntype>${method.returns.returnType}</returntype>\n`;
+        if (method.returns.description) {
+            xml += `    <description>${method.returns.description}</description>\n`;
+        }
+        xml += '  </returns>\n';
+    }
+    
+    xml += `  <isAsync>${method.isAsync}</isAsync>\n`;
+    xml += `  <access>${method.access}</access>\n`;
+    xml += `  <isStatic>${method.isStatic}</isStatic>\n`;
+    if (method.example) {
+        xml += `  <example>${method.example}</example>\n`;
+    }
+    if (method.deprecated) {
+        xml += `  <deprecated>${method.deprecated}</deprecated>\n`;
+    }
+    if (method.since) {
+        xml += `  <since>${method.since}</since>\n`;
+    }
+    if (method.throws) {
+        xml += `  <throws>${method.throws}</throws>\n`;
+    }
+    xml += '</method>\n';
+    return xml;
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
