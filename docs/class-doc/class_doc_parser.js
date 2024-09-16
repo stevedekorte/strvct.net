@@ -404,6 +404,9 @@ function escapeXmlPreserveWhitespace(unsafe) {
 function displayClassInfo(result) {
     const outputElement = document.getElementById('output');
     
+    // Set the page title to the class name
+    document.title = result.classInfo.className;
+    
     // Separate class methods from instance methods
     const classMethods = result.methods.filter(method => method.isStatic || method.access === 'static');
     const instanceMethods = result.methods.filter(method => !method.isStatic && method.access !== 'static');
