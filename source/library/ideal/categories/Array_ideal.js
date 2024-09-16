@@ -1,10 +1,9 @@
 "use strict";
 
 /**
- * @class Array_ideal
- * @description Extends the native Array with additional utility methods.
+ * Extends the native Array with additional utility methods.
  */
-class Array_ideal extends Array {
+(class Array_ideal extends Array {
     /**
      * Creates a new instance of Array_ideal and copies the elements from the provided array.
      * @param {Array} anArray - The array to copy elements from.

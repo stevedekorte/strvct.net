@@ -15,7 +15,9 @@ class JsClassParser {
                 ecmaVersion: 2020, 
                 sourceType: 'module', 
                 locations: true, 
-                onComment: this.comments 
+                onComment: (isBlock, text, start, end) => {
+                    this.comments.push({ type: isBlock ? 'Block' : 'Line', value: text, start, end });
+                }
             });
         } catch (error) {
             console.error("Parsing error:", error);
@@ -23,28 +25,34 @@ class JsClassParser {
             console.error("Problematic code:", this.code.split('\n')[error.loc.line - 1]);
             
             // If parsing fails, try to extract the class definition
-            const classMatch = this.code.match(/class\s+(\w+)[\s\S]*?{([\s\S]*?)}\s*\)\s*\.initThisCategory\(\);/);
+            const classMatch = this.code.match(/\/\*\*([\s\S]*?)\*\/\s*\(class\s+(\w+)[\s\S]*?{([\s\S]*?)}\s*\)\s*\.initThisCategory\(\);/);
             if (classMatch) {
-                const className = classMatch[1];
-                const classBody = classMatch[2];
+                const classComment = classMatch[1];
+                const className = classMatch[2];
+                const classBody = classMatch[3];
                 
                 // Create a valid class syntax for parsing
-                const validClassCode = `class ${className} { ${classBody} }`;
+                const validClassCode = `
+                    /**${classComment}*/
+                    class ${className} {
+                        ${classBody}
+                    }
+                `;
                 
                 try {
                     ast = acorn.parse(validClassCode, { 
                         ecmaVersion: 2020, 
                         sourceType: 'module', 
                         locations: true, 
-                        onComment: this.comments 
+                        onComment: (isBlock, text, start, end) => {
+                            this.comments.push({ type: isBlock ? 'Block' : 'Line', value: text, start, end });
+                        }
                     });
                 } catch (innerError) {
                     console.error("Failed to parse extracted class:", innerError);
-                    this.parseError = `${error.message} at line ${error.loc.line}, column ${error.loc.column}`;
                     return this.fallbackParse();
                 }
             } else {
-                this.parseError = `${error.message} at line ${error.loc.line}, column ${error.loc.column}`;
                 return this.fallbackParse();
             }
         }
@@ -67,25 +75,11 @@ class JsClassParser {
             },
             ClassExpression: (node) => {
                 if (!classNode) classNode = node;
-            },
-            CallExpression: (node) => {
-                // Check for .initThisCategory() call
-                if (node.callee.property && node.callee.property.name === 'initThisCategory') {
-                    // The class might be the object before .initThisCategory()
-                    if (node.callee.object.type === 'ClassExpression') {
-                        classNode = node.callee.object;
-                    }
-                }
             }
         });
 
         if (classNode) {
             console.log("Found class node:", classNode);
-            const classComments = this.getClassComments(classNode.start);
-            console.log("Class-level comments:", classComments);
-            const { description, entries } = this.extractJSDocInfo(classComments);
-            result.classInfo.description = description || 'Undocumented';
-
             this.handleClassNode(classNode, result);
         }
 
@@ -152,11 +146,9 @@ class JsClassParser {
         console.log("Entering handleClassNode");
         if (node.id) {
             result.classInfo.className = node.id.name;
-            console.log("Class name from AST:", result.classInfo.className);
         }
         if (node.superClass) {
             result.classInfo.extends = node.superClass.name;
-            console.log("Extends from AST:", result.classInfo.extends);
         }
         
         const classComments = this.getClassComments(node.start);
@@ -169,14 +161,11 @@ class JsClassParser {
         result.classInfo.description = description || 'Undocumented';
         if (entries.class) {
             result.classInfo.className = entries.class;
-            console.log("Class name from JSDoc:", entries.class);
         }
         if (entries.extends) {
             result.classInfo.extends = entries.extends;
-            console.log("Extends from JSDoc:", entries.extends);
         }
         result.classInfo.filePath = this.filePath;
-        console.log("Final classInfo:", result.classInfo);
     }
 
     handleMethodNode(node, result) {
@@ -233,10 +222,15 @@ class JsClassParser {
     }
 
     getClassComments(classStart) {
-        return this.comments
-            .filter(comment => comment.end < classStart)
-            .map(comment => comment.value)
-            .join('\n');
+        const relevantComments = this.comments
+            .filter(comment => comment.end <= classStart && comment.type === 'Block')
+            .sort((a, b) => b.end - a.end);
+
+        if (relevantComments.length > 0) {
+            return relevantComments[0].value;
+        }
+
+        return '';
     }
 
     getMethodComments(methodStart) {

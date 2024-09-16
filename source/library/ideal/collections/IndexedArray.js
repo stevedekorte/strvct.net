@@ -1,58 +1,53 @@
 "use strict";
 
-/*
-
-    IndexedArray
-
-    A subclass of Array that maintains an dictionary index of the 
-    elements of the list via a index closure. The index closure should return 
-    a string. For this to work, you need to avoid using the Array 
-    operations which can't be overridden:
-    
-        a[i] -> instead use a.at(i) 
-        a[i] = b -> instead use a.atPut(i, b)
-        delete a[i] -> instead use a.removeAt(i)
-    
-    Efficiency:
-
-        The index is produced lazily, so there's (practically) no cost if it isn't used.
-        TODO: This could be improved by removing didMutate method until needed? 
-        Mutations to the array will set needsReindex property to true.
-        On accessing the index (e.g. calling itemForIndexKey(key)), the 
-        index will be updated, if needed.
-
-        This could be optimized by overloading some of the mutation operations
-        and adding and removing the index as needed without setting the needsReindex to true.
-    
-    Example use:
-
-        const ia = IndexedArray.clone()
-        ia.setIndexClosure(item => item.hash())
-        ia.push(someItem) // this will trigger reindex
-        const hasItem = is.itemForIndexKey(someHash) // this is an O(1) operation
-
-*/
-
+/**
+ * IndexedArray
+ * 
+ * A subclass of Array that maintains a dictionary index of the 
+ * elements of the list via an index closure. The index closure should return 
+ * a string. For this to work, you need to avoid using the Array 
+ * operations which can't be overridden:
+ * 
+ *     a[i] -> instead use a.at(i) 
+ *     a[i] = b -> instead use a.atPut(i, b)
+ *     delete a[i] -> instead use a.removeAt(i)
+ * 
+ * @extends HookedArray
+ */
 (class IndexedArray extends HookedArray {
 
+    /**
+     * Initialize prototype slots
+     * @private
+     */
     initPrototypeSlots () {
         Object.defineSlot(this, "_index", null);
         Object.defineSlot(this, "_indexClosure", null);
         Object.defineSlot(this, "_needsReindex", false);
     }
 
+    /**
+     * Initialize the IndexedArray
+     */
     init () {
         super.init();
         this.setIndex(new Map());
     }
 
-    // index
-
+    /**
+     * Set the index Map
+     * @param {Map} aMap - The Map to use as the index
+     * @returns {IndexedArray} - Returns this for chaining
+     */
     setIndex (aMap) {
         this._index = aMap;
         return this;
     }
 
+    /**
+     * Get the current index, reindexing if necessary
+     * @returns {Map} - The current index
+     */
     index () {
         if (this._needsReindex) {
             this.reindex();
@@ -60,8 +55,11 @@
         return this._index;
     }
 
-    // index closure
-
+    /**
+     * Set the index closure function
+     * @param {Function} aFunction - The function to use for indexing
+     * @returns {IndexedArray} - Returns this for chaining
+     */
     setIndexClosure (aFunction) {
         if (aFunction !== this._indexClosure) {
             this._indexClosure = aFunction;
@@ -70,25 +68,44 @@
         return this;
     }
 
+    /**
+     * Get the current index closure function
+     * @returns {Function|null} - The current index closure function
+     */
     indexClosure () {
         return this._indexClosure;
     }
 
+    /**
+     * Check if the array is indexed
+     * @returns {boolean} - True if the array has an index closure function
+     */
     isIndexed () {
         return Type.isFunction(this._indexClosure);
     }
 
-    // --- lazy reindexing ---
-
+    /**
+     * Set whether the array needs reindexing
+     * @param {boolean} aBool - Whether reindexing is needed
+     * @returns {IndexedArray} - Returns this for chaining
+     */
     setNeedsReindex (aBool) {
         this._needsReindex = aBool;
         return this;
     }
 
+    /**
+     * Check if the array needs reindexing
+     * @returns {boolean} - True if reindexing is needed
+     */
     needsReindex () {
         return this._needsReindex;
     }
 
+    /**
+     * Reindex the array
+     * @returns {IndexedArray} - Returns this for chaining
+     */
     reindex () {
         this.setNeedsReindex(false); // do this first to avoid infinite loop
         this._index.clear();
@@ -96,11 +113,21 @@
         return this;
     }
 
+    /**
+     * Check if an item is in the index
+     * @param {*} anObject - The item to check
+     * @returns {boolean} - True if the item is in the index
+     */
     hasIndexedItem (anObject) {
         const key = this.indexKeyForItem(anObject);
         return !Type.isUndefined(this.itemForIndexKey(key));
     }
 
+    /**
+     * Handle mutations to the array
+     * @param {string} slotName - The name of the slot that was mutated
+     * @param {*} optionalValue - The value involved in the mutation
+     */
     didMutate (slotName, optionalValue) {
         super.didMutate(slotName, optionalValue);
 
@@ -136,46 +163,76 @@
         this.setNeedsReindex(true);
     }
 
-    // accessing index - public
-
-    itemForIndexKey (key) { // public
-        //if (this.hasIndexKey(key)) {
+    /**
+     * Get an item from the index by its key
+     * @param {string} key - The index key
+     * @returns {*} - The item corresponding to the key
+     */
+    itemForIndexKey (key) {
         return this.index().get(key);
-        //}
     }
 
-    indexHasItem (v) { // public
+    /**
+     * Check if an item is in the index
+     * @param {*} v - The item to check
+     * @returns {boolean} - True if the item is in the index
+     */
+    indexHasItem (v) {
         assert(this.isIndexed());
         const key = this.indexClosure()(v);
         return this.hasIndexKey(key);
     }
 
-    // indexing - private
-
-    hasIndexKey (key) { // private
+    /**
+     * Check if a key exists in the index
+     * @private
+     * @param {string} key - The key to check
+     * @returns {boolean} - True if the key exists in the index
+     */
+    hasIndexKey (key) {
         return this._index.has(key);
     }
 
-    indexKeyForItem (v) { // private
+    /**
+     * Get the index key for an item
+     * @private
+     * @param {*} v - The item to get the key for
+     * @returns {string} - The index key for the item
+     */
+    indexKeyForItem (v) {
         const key = this.indexClosure()(v);
         return key;
     }
 
-    addItemToIndex (v) { // private
+    /**
+     * Add an item to the index
+     * @private
+     * @param {*} v - The item to add
+     * @returns {IndexedArray} - Returns this for chaining
+     */
+    addItemToIndex (v) {
         const key = this.indexKeyForItem(v);
         assert(Type.isString(key));
         this._index.set(key, v);
         return this;
     }
 
-    removeItemFromIndex (v) { // private
+    /**
+     * Remove an item from the index
+     * @private
+     * @param {*} v - The item to remove
+     * @returns {IndexedArray} - Returns this for chaining
+     */
+    removeItemFromIndex (v) {
         const key = this.indexKeyForItem(v);
         this._index.delete(key);
         return this;
     }
 
-    // --------------------------------
-
+    /**
+     * Run self-test for IndexedArray
+     * @returns {IndexedArray} - Returns this for chaining
+     */
     static selfTest () {
         let ia = IndexedArray.clone();
         ia.setIndexClosure(v => v.toString());
@@ -185,6 +242,6 @@
         return this;
     }
 
-}.initThisClass()); 
+}.initThisClass());
 
 //IndexedArray.selfTest()
