@@ -10,7 +10,10 @@ async function findJsFiles(dir) {
   for (const file of files) {
     const fullPath = path.join(dir, file.name);
     if (file.isDirectory()) {
-      jsFiles.push(...await findJsFiles(fullPath));
+      // Skip directories named "_unused"
+      if (file.name !== "_unused") {
+        jsFiles.push(...await findJsFiles(fullPath));
+      }
     } else if (file.name.endsWith('.js')) {
       jsFiles.push(fullPath);
     }
