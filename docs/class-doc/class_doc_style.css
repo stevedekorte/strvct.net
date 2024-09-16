@@ -280,14 +280,13 @@ method > fullMethodName[async]::before {
 
 throws {
     display: block;
-    color: #7f8c8d;
-    font-style: italic;
+    font-style: normal;
     font-weight: lighter;
 }
 
 throws:before {
     content: "throws: ";
-    font-style: italic;
+    font-style: normal;
     font-weight: normal;
 }
 
@@ -301,6 +300,8 @@ returns {
 
 returns:before {
     content: "returns: ";
+    font-style: normal;
+    font-weight: normal;
 }
 
 returns > returntype {
