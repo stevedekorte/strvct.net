@@ -1,7 +1,4 @@
-
 "use strict";
-
-// ------------------------------------------------------------------
 
 Object.defineSlot = function (obj, slotName, slotValue) {
     const descriptor = {
@@ -27,22 +24,31 @@ if (!String.prototype.capitalized) {
         }
     )
 }
-// ------------------------------------------------------------------
-// a quick and dirty base class used for bootstrapping a more
-// full featured ProtoClass base class & Object categories
-// ------------------------------------------------------------------
 
+/**
+ * Base class with helpful methods for cloning and slot creation.
+ */
 (class Base {
-    // Base class with helpful methods for cloning and slot creation 
-
+    /**
+     * Checks if the code is running in a browser environment.
+     * @returns {boolean} True if running in a browser, false otherwise.
+     */
     static isInBrowser () {
         return (typeof (document) !== 'undefined')
     }
 
+    /**
+     * Instance method to check if running in a browser environment.
+     * @returns {boolean} True if running in a browser, false otherwise.
+     */
     isInBrowser () {
         return (typeof (document) !== 'undefined')
     }
 
+    /**
+     * Returns a shared instance of the class.
+     * @returns {Base} The shared instance of the class.
+     */
     static shared () {
         if (!Object.hasOwn(this, "_shared")) {
             const obj = new this();
@@ -52,21 +58,19 @@ if (!String.prototype.capitalized) {
         return this._shared
     }
 
-    /*
-    static shared () {
-        if (!this._shared) {
-            this._shared = this.clone()
-        }
-        return this._shared
-    }
-    */
-
+    /**
+     * Returns the name of the class.
+     * @returns {string} The name of the class.
+     */
     static type () {
         return this.name
     }
 
+    /**
+     * Initializes the class by setting up prototype slots and methods.
+     * @returns {typeof Base} The class itself.
+     */
     static initThisClass () {
-
         // initPrototypeSlots is split from initPrototype as initPrototype may need to 
         // access slots that are created in initPrototypeSlots. We can't just put the slot definitions at the top
         // as subclasses may *override* the slot definitions.
@@ -85,28 +89,44 @@ if (!String.prototype.capitalized) {
         return this;
     }
 
-    static type () {
-        return this.name;
-    }
-
+    /**
+     * Returns the name of the class.
+     * @returns {string} The name of the class.
+     */
     type () {
         return this.constructor.name;
     }
 
+    /**
+     * Creates and initializes a new instance of the class.
+     * @returns {Base} A new instance of the class.
+     */
     static clone () {
         const obj = new this();
         obj.init();
         return obj;
     }
 
+    /**
+     * Initializes the prototype. Subclasses should override this method.
+     */
     initPrototype () {
         this.newSlot("isDebugging", false);
     }
 
+    /**
+     * Initializes the instance. Subclasses should override this method.
+     */
     init () {
         // subclasses should override to initialize
     }
 
+    /**
+     * Creates a new slot with a getter and setter.
+     * @param {string} slotName - The name of the slot to create.
+     * @param {*} [initialValue=null] - The initial value of the slot.
+     * @returns {Base} The instance itself for method chaining.
+     */
     newSlot (slotName, initialValue) {
         if (typeof (slotName) !== "string") {
             throw new Error("slot name must be a string");
@@ -137,21 +157,19 @@ if (!String.prototype.capitalized) {
         return this;
     }
 
-    /*
-    debugLog (s) {
-        if (this.isDebugging()) {
-            if (typeof(s) === "function") {
-                s = s()
-            }
-            console.log(s)
-        }
-    }
-    */
-
+    /**
+     * Returns a string identifier for debugging purposes.
+     * @returns {string} The type of the instance.
+     */
     debugTypeId () {
         return this.type()
     }
 
+    /**
+     * Logs a debug message if debugging is enabled.
+     * @param {string|function} s - The message to log or a function that returns the message.
+     * @returns {Base} The instance itself for method chaining.
+     */
     debugLog (s) {
         if (this.isDebugging()) {
             if (typeof(s) === "function") {
