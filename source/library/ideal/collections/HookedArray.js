@@ -1,14 +1,19 @@
 "use strict";
 
 /**
- * A subclass of Array that hooks the base getters and setters.
+ * A subclass of Array that hooks the base mutation methods so we can
+ * track mutations to the array and call willMutate and didMutate hooks.
  * 
  * For this to work, you need to use method alternatives to the non-method
  * array operations:
  * 
- *     a[i] -> instead use a.at(i) 
- *     a[i] = b -> instead use a.atPut(i, b)
- *     delete a[i] -> instead use a.removeAt(i)
+ *   - a[i] -> instead use a.at(i) 
+ *   - a[i] = b -> instead use a.atPut(i, b)
+ *   - delete a[i] -> instead use a.removeAt(i)
+ * 
+ * To do this without using method alternatives, we would need to use
+ * a Proxy to intercept the array operations, which would be safer, 
+ * but also slower and more memory intensive.
  * 
  * @extends Array
  */
