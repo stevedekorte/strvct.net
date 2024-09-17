@@ -1,15 +1,17 @@
 "use strict";
 
-/*
-
-    Error_ideal
-
-    Some extra methods for the Javascript Error primitive.
-
-*/
-
+/**
+ * @module ideal
+ * @class Error_ideal
+ * @extends Error
+ * @description Extended Error class with additional utility methods.
+ */
 (class Error_ideal extends Error {
 
+    /**
+     * Rethrows the error, setting the cause if it's undefined.
+     * @throws {Error} This error
+     */
     rethrow () {
         if (this.cause === undefined && typeof(Error.cause) === 'function') {
             this.cause = this;
@@ -17,13 +19,14 @@
         throw this;
     }
 
-    /*
-    JS seems to have this slot
-    static stackTraceLimit () {
-        return 100 // looks like default on Chrome is 10?
-    }
-    */
-
+    /**
+     * Asserts that a value is truthy, throwing an error if it's not.
+     * @param {*} v - The value to assert
+     * @param {string|function} [errorMessage] - The error message or a function that returns it
+     * @param {string} [errorName] - The name of the error
+     * @returns {*} The asserted value
+     * @throws {Error} If the assertion fails
+     */
     static assert (v, errorMessage, errorName) {
         if (!Boolean(v)) {
             if (typeof(errorMessage) === "function") {
@@ -43,6 +46,12 @@
         return v;
     }
 
+    /**
+     * Asserts that a value is not undefined.
+     * @param {*} v - The value to check
+     * @returns {*} The asserted value
+     * @throws {Error} If the value is undefined
+     */
     static assertDefined (v) {
         if (v === undefined) {
             throw new Error("assert failed - undefined value");
@@ -50,6 +59,9 @@
         return v;
     }
 
+    /**
+     * Logs the current stack trace to the console.
+     */
     static showCurrentStack () {
         const e = new Error();
         e.name = "STACK TRACE";
@@ -57,6 +69,11 @@
         console.log( e.stack );
     }
 
+    /**
+     * Asserts that a function throws an error when called.
+     * @param {Function} func - The function to test
+     * @throws {Error} If the function doesn't throw
+     */
     static assertThrows (func) {
         assert(Type.isFunction(func));
 
@@ -76,6 +93,10 @@
         assert(didThrow);
     }
 
+    /**
+     * Executes a function and shows any error that occurs.
+     * @param {Function} func - The function to execute
+     */
     static try (func) {
         try {
             func();
@@ -84,13 +105,17 @@
         }
     }
 
+    /**
+     * Gets the URL of the calling script.
+     * @returns {string} The URL of the calling script
+     */
     static callingScriptURL () {
         const urls = new Error().stackURLs();
         return urls[1];
     }
 
     
-    stackURLs (v) {
+    stackURLs () {
         let urls = this.stack.split("at");
         urls.removeFirst();
         urls = urls.map(url => {
@@ -109,8 +134,10 @@
         return urls;
     }
 
-    // ------------------------
-
+    /**
+     * Generates a formatted description of the error.
+     * @returns {string} A formatted description of the error
+     */
     description () {
         const error = this;
         const lines = error.stack.split("\n");
@@ -151,6 +178,9 @@
         return s;
     }
 	
+    /**
+     * Logs the error description to the console.
+     */
     show () {
         console.warn(this.description());
     }
@@ -159,14 +189,33 @@
 
 // --- helper functions ---
 
+/**
+ * Global assert function.
+ * @param {*} v - The value to assert
+ * @param {string|function} [errorMessage] - The error message or a function that returns it
+ * @returns {*} The asserted value
+ * @throws {Error} If the assertion fails
+ */
 getGlobalThis().assert = function assert(v, errorMessage) {
     return Error.assert(v, errorMessage);
 }
 
+/**
+ * Global assertDefined function.
+ * @param {*} v - The value to check
+ * @param {string|function} [errorMessage] - The error message or a function that returns it
+ * @returns {*} The asserted value
+ * @throws {Error} If the value is undefined
+ */
 getGlobalThis().assertDefined = function assertDefined(v, errorMessage) {
     return Error.assertDefined(v, errorMessage);
 }
 
+/**
+ * Global assertThrows function.
+ * @param {Function} func - The function to test
+ * @throws {Error} If the function doesn't throw
+ */
 getGlobalThis().assertThrows = function assertThrows(func) {
     Error.assertThrows(func);
 }

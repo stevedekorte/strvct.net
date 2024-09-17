@@ -1,13 +1,18 @@
 "use strict";
 
-/*
-
-    ImmutableSet
-    
-*/
+/**
+ * @module ideal
+ * @class ImmutableSet
+ * @extends Set
+ * @description An immutable version of the JavaScript Set primitive with additional methods
+ */
 
 (class ImmutableSet extends Set {
 
+    /**
+     * Returns an empty ImmutableSet instance
+     * @returns {ImmutableSet} An empty ImmutableSet
+     */
     static emptySet () {
         if (this._emptySet === undefined) {
             this._emptySet = new this();
@@ -15,11 +20,20 @@
         return this._emptySet;
     }
 
+    /**
+     * Creates a new ImmutableSet
+     * @param {Iterable} [values] - The initial values for the set
+     */
     constructor (values) {
         const self = super(values);
         self._isImmutable = true;
     }
 
+    /**
+     * Attempts to add a value to the set (throws an error if immutable)
+     * @param {*} v - The value to add
+     * @throws {Error} If the set is immutable
+     */
     add (v) {
         if (this._isImmutable) {
             this.onMutationError("add");
@@ -28,6 +42,10 @@
         }
     }
 
+    /**
+     * Attempts to clear the set (throws an error if immutable)
+     * @throws {Error} If the set is immutable
+     */
     clear () {
         if (this._isImmutable) {
             this.onMutationError("clear");
@@ -36,6 +54,11 @@
         }
     }
 
+    /**
+     * Attempts to delete a value from the set (throws an error if immutable)
+     * @param {*} v - The value to delete
+     * @throws {Error} If the set is immutable
+     */
     delete (v) {
         if (this._isImmutable) {
             this.onMutationError("delete");
@@ -44,15 +67,25 @@
         }
     }
 
+    /**
+     * Throws an error when a mutation method is called on an immutable set
+     * @param {string} methodName - The name of the method that was called
+     * @throws {Error} Always throws an error
+     * @private
+     */
     onMutationError (methodName) {
         throw new Error("attempt to call mutation method '" + methodName + "' on ImmutableSet");
     }
 
+    /**
+     * Runs a self-test to ensure the immutability of the set
+     * @throws {Error} If the self-test fails
+     */
     static selfTest () {
         let didThrow = false;
         try {
             const set = new ImmutableSet(new Set([1, 2, 3]));
-            set.clear(); // throws Error: attempt to call mutation method 'clear' on ImmutableSet
+            set.clear(); // should throw Error: attempt to call mutation method 'clear' on ImmutableSet
         } catch (e) {
             didThrow = true;
         }

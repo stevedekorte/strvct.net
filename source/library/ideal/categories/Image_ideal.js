@@ -1,32 +1,42 @@
 "use strict";
 
-/*
 
-    Image-ideal
-
-    Some extra methods for the Javascript Image primitive.
-
-    Delegate protocol:
-
-        didFetchDataUrl(data) // sent after load
-
-*/
 
 if (!getGlobalThis().Image) {
     console.log("WARNING: no Image object found - maybe we are not in browser?")
 } else {
 
+    /**
+     * @module ideal
+     * @class Image_ideal
+     * @extends Image
+     * @description Some extra methods for the Javascript Image primitive
+     */
     (class Image_ideal extends Image {
 
+        /**
+         * Sets the delegate object for this image.
+         * @param {Object} anObject - The delegate object
+         * @returns {Image_ideal} This image instance
+         */
         setDelegate (anObject) {
             Object.defineSlot(this, "_delegate", anObject)
             return this
         }
 
+        /**
+         * Gets the delegate object for this image.
+         * @returns {Object|undefined} The delegate object
+         */
         delegate () {
             return this._delegate
         }
 
+        /**
+         * Loads an image from a given URL.
+         * @param {string} url - The URL of the image to load
+         * @returns {Image_ideal} This image instance
+         */
         loadUrl (url) {
             this.crossOrigin = "Anonymous";
             this.onload = () => { 
@@ -40,6 +50,11 @@ if (!getGlobalThis().Image) {
             return this
         }
 
+        /**
+         * Handles the image load event.
+         * Converts the loaded image to a data URL and notifies the delegate.
+         * @returns {Image_ideal} This image instance
+         */
         onDidLoad () {
             // create a canvas the size of the image
             const canvas = document.createElement("CANVAS");
@@ -55,18 +70,14 @@ if (!getGlobalThis().Image) {
 
             // tell the delegate about the loaded data
             if (this._delegate) {
+                /**
+                 * Callback function for the delegate when the image data URL is fetched.
+                 * @callback didFetchDataUrl
+                 * @param {string} data - The image data URL
+                 */
                 this._delegate.didFetchDataUrl(data)
             }
 
-            /*
-                // test data
-
-                if (img.complete || img.complete === undefined) {
-                    img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-                    img.src = src;
-                }
-            */
-        
             return this
         }
 
