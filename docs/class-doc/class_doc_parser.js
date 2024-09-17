@@ -158,7 +158,7 @@ class JsClassParser {
         console.log("Extracted description:", description);
         console.log("Extracted entries:", entries);
         
-        result.classInfo.description = description || 'Undocumented';
+        result.classInfo.description = entries.description || description || 'Undocumented';
         if (entries.class) {
             result.classInfo.className = entries.class;
         }
@@ -258,7 +258,7 @@ class JsClassParser {
         console.log("Processed comment lines:", lines);
         
         let description = [];
-        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null };
+        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, description: null };
         let currentTag = null;
         let currentTagContent = [];
 
@@ -286,7 +286,7 @@ class JsClassParser {
         console.log("Final entries:", entries);
 
         return {
-            description: description.join('\n'),
+            description: entries.description || description.join('\n'),
             entries
         };
     }
@@ -305,7 +305,7 @@ class JsClassParser {
                 const [returnType, ...returnDesc] = content.split(/\s+/);
                 entries.returns = {
                     returnType: returnType.replace(/[{}]/g, '').trim(),
-                    description: returnDesc.join(' ').trim() || null // Change here
+                    description: returnDesc.join(' ').trim() || null
                 };
                 break;
             case 'throws':
