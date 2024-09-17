@@ -1,3 +1,5 @@
+// class_hierarchy.js
+
 const fs = require('fs').promises;
 const path = require('path');
 const acorn = require('acorn');

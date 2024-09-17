@@ -1,10 +1,10 @@
 "use strict";
 
 /**
- * ArrayBuffer_ideal
- * 
- * Extends the JavaScript ArrayBuffer primitive with additional methods.
+ * @module ideal
+ * @class ArrayBuffer_ideal
  * @extends ArrayBuffer
+ * Extends the JavaScript ArrayBuffer primitive with additional methods.
  */
 (class ArrayBuffer_ideal extends ArrayBuffer {
 

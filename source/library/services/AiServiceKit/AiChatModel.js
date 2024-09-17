@@ -1,8 +1,10 @@
 "use strict";
 
-/* 
-    AiChatModel
-
+/**
+ * @module AiServiceKit
+ * @class
+ * @memberof module:AiServiceKit
+ * @extends BMSummaryNode
 */
 
 (class AiChatModel extends BMSummaryNode {

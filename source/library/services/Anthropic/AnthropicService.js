@@ -1,15 +1,20 @@
 "use strict";
 
-/* 
-    AnthropicService
-
-    AnthropicService is a BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
-
-    Example:
-
-      AnthropicService.shared().setApiKey("sk-1234567890");
-      const hasApiKey = AnthropicService.shared().hasApiKey();
-
+/** 
+ *  @module AiServiceKit.Anthropic
+ *  @class AnthropicService
+ *  @memberof module:AiServiceKit.Anthropic
+ *  @extends AiService
+ * 
+ *  @description
+ *  A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
+ * 
+ *  @example
+ * 
+ *  AnthropicService.shared().setApiKey("sk-1234567890");
+ *  const hasApiKey = AnthropicService.shared().hasApiKey();
+ * 
+ * 
 */
 
 (class AnthropicService extends AiService {
