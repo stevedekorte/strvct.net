@@ -2,7 +2,8 @@
 "use strict"; 
 
 /*
-    
+    @module ideal.object
+
     Weird JS things:
 
     Some of the primitives such as Array, Set, Map have constructors which 

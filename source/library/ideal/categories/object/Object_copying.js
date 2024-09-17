@@ -1,31 +1,41 @@
 "use strict";
 
-/*
-
-    Object_copying
-    
-    copying related behavior 
-
-*/
+/**
+ * Custom error class for missing slots.
+ * @module ideal.object
+ * @class MissingSlotError
+ * @extends Error
+ */
 
 getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
     constructor(message) {
       super(message);
-      //debugger;
-      this.name = "MissingSlotError"; // not sure why this isn't already set...
+      this.name = "MissingSlotError";
     }
 });
   
+/**
+ * Adds copying related behaviors for Object class.
+ * @module ideal.object
+ * @class Object_copying
+ * @extends Object
+ */
 
 (class Object_copying extends Object {
 
-    // --- copying ---
-
+    /**
+     * Creates a shallow copy of the object.
+     * @returns {Object} A shallow copy of the object.
+     */
     shallowCopy () {
         const copy = Object.assign({}, this);
         return copy
     }
  
+    /**
+     * Creates a deep copy of the object.
+     * @returns {Object} A deep copy of the object.
+     */
     duplicate () {
         if (this.constructor === Object) {
             // it's a dictionary!
@@ -39,33 +49,50 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
         }
     }
  
+    /**
+     * Alias for duplicate method.
+     * @returns {Object} A deep copy of the object.
+     */
     copy () {
         return this.duplicate()
     }
 
+    /**
+     * Alias for copy method.
+     * @returns {Object} A deep copy of the object.
+     */
     deepCopy () {
         return this.copy();
     }
  
-    copyFromAndIgnoreMissingSlots (anObject) { // prefer to use this externally so it's clear what it's doing
-        return this.copyFrom (anObject, true) 
+    /**
+     * Copies values from another object, ignoring missing slots.
+     * @param {Object} anObject - The object to copy from.
+     * @returns {Object} This object after copying.
+     */
+    copyFromAndIgnoreMissingSlots (anObject) {
+        return this.copyFrom(anObject, true) 
     }
     
-    copyFrom (anObject, ingoreMissingSlots = false) { 
-        // externally, when you need:
-        //   copyFrom (anObject, true) 
-        // please use: 
-        //   copyFromAndIgnoreMissingSlots() e
-        // instead
-        //
-        // WARNING: subclasses will need to customize this
-        this.duplicateSlotValuesFrom(anObject, ingoreMissingSlots)
+    /**
+     * Copies values from another object.
+     * @param {Object} anObject - The object to copy from.
+     * @param {boolean} [ignoreMissingSlots=false] - Whether to ignore missing slots.
+     * @returns {Object} This object after copying.
+     */
+    copyFrom (anObject, ignoreMissingSlots = false) { 
+        this.duplicateSlotValuesFrom(anObject, ignoreMissingSlots)
         return this
     }
  
-    duplicateSlotValuesFrom (otherObject, ingoreMissingSlots = false) {
-        // TODO: add a type check of some kind?
- 
+    /**
+     * Duplicates slot values from another object.
+     * @param {Object} otherObject - The object to duplicate from.
+     * @param {boolean} [ignoreMissingSlots=false] - Whether to ignore missing slots.
+     * @returns {Object} This object after duplicating slot values.
+     * @throws {MissingSlotError} If a slot is missing and ignoreMissingSlots is false.
+     */
+    duplicateSlotValuesFrom (otherObject, ignoreMissingSlots = false) {
         this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().slotNamed(slotName)
             const hasSlot = !Type.isNullOrUndefined(otherSlot)
@@ -74,25 +101,29 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
                 if (dop === "nop") {
                     // skip
                 } else {
-                    const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazzy slots?
+                    const v = otherSlot.onInstanceGetValue(otherObject) // TODO: what about lazy slots?
         
                     if (dop === "copyValue") {
                         mySlot.onInstanceSetValue(this, v)
                     } else if (dop === "duplicate") {
-                         //&& v && v.duplicate) {
                         const dup = v === null ? v : v.duplicate()
                         mySlot.onInstanceSetValue(this, dup)
                     } else {
                         throw new Error("unsupported slot duplicate operation: '" +  dop + "'")
                     }
                 }
-            } else if (!ingoreMissingSlots) {
+            } else if (!ignoreMissingSlots) {
                 throw new MissingSlotError()
             }
         })
         return this
     }
  
+    /**
+     * Copies slot values from another object.
+     * @param {Object} otherObject - The object to copy from.
+     * @returns {Object} This object after copying slot values.
+     */
     copySlotValuesFrom (otherObject) {
         this.thisPrototype().allSlotsMap().forEachKV((slotName, mySlot) => {
             const otherSlot = otherObject.thisPrototype().slotNamed(slotName)

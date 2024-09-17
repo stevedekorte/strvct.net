@@ -1,9 +1,7 @@
 "use strict";
 
 /*
-
-    Blob_store 
-
+    
     Notes:
 
     It seems there's no way to synchronously serialize a Blob 

@@ -1,23 +1,31 @@
 "use strict";
 
-/*
-
-    Object_class
-    
-    Some added state and behavior on Object class. 
-
-*/
-
+/**
+ * Object_class
+ * 
+ * Some added state and behavior on Object class.
+ * @module ideal.object
+ * @class Object_class
+ * @extends Object
+ */
 
 (class Object_class extends Object {
 
+    /**
+     * Gets the superclass of this class.
+     * @returns {Function} The superclass.
+     */
     superClass () {
         return this.thisClass().superClass();
     }
 
+    /**
+     * Gets the class of this object.
+     * @returns {Function} The class of this object.
+     */
     thisClass () {
         if (this.isPrototype()) {
-            // it's an prototype
+            // it's a prototype
             return this.constructor;
         }
 
@@ -25,6 +33,11 @@
         return this.__proto__.constructor;
     }
  
+    /**
+     * Gets the prototype of this instance.
+     * @returns {Object} The prototype of this instance.
+     * @throws {Error} If called on a non-instance.
+     */
     thisPrototype () {
         assert(this.isInstance());
         const prototype = this.__proto__;
@@ -34,6 +47,10 @@
 
     // --- class methods ---
 
+    /**
+     * Creates a new instance of the class, initializes it, and returns it.
+     * @returns {Object} A new instance of the class.
+     */
     static clone () {
         const obj = new this();
         obj.init();
@@ -42,8 +59,11 @@
         return obj;
     }
 
-
-
+    /**
+     * Gets the class with the given name from the global scope.
+     * @param {string} aName - The name of the class to get.
+     * @returns {Function|undefined} The class with the given name, or undefined if not found.
+     */
     static getClassNamed (aName) {
         if (Type.isNullOrUndefined(aName)) {
             return undefined;
@@ -51,6 +71,10 @@
         return getGlobalThis()[aName];
     }
 
+    /**
+     * Gets the parent class of this class.
+     * @returns {Function|null} The parent class, or null if there is no parent.
+     */
     static parentClass () {
         const p = this.__proto__;
 
@@ -61,41 +85,35 @@
         return null;
     }
 
+    /**
+     * Adds a child class to this class.
+     * @param {Function} aClass - The child class to add.
+     * @returns {Function} This class.
+     */
     static addChildClass (aClass) {
         this.childClasses().add(aClass);
         return this;
     }
 
-    // --- categories ---
-
-    /*
-    static categories () {
-        assert(this.isClass());
-        if (!this.hasOwnProperty("_categories")) {
-            this._categories = [];
-        }
-        return this._categories;
-    }
-
-    static addProtoCategory (aCategory) {
-        assert(this.isPrototype());
-        assert(!this.categories().includes(aCategory));
-        this.categories().push(aCategory);
-        return this;
-    }
-        */
-
-    // ---
-
+    /**
+     * Gets the global object.
+     * @returns {Object} The global object.
+     */
     static globals () {
         return getGlobalThis();
     }
 
+    /**
+     * Initializes class-level properties.
+     */
     static initClass () {
         this.newClassSlot("allClassesSet", new Set());
-        //this.newClassSlot("categories", null);
     }
 
+    /**
+     * Finds all ancestor classes of this class.
+     * @returns {Array<Function>} An array of ancestor classes.
+     */
     static findAncestorClasses () {
         const results = [];
         let aClass = this.parentClass();
@@ -106,7 +124,12 @@
         return results;
     }
 
-
+    /**
+     * Creates a new class-level slot.
+     * @param {string} slotName - The name of the slot.
+     * @param {*} slotValue - The initial value of the slot.
+     * @returns {Function} This class.
+     */
     static newClassSlot (slotName, slotValue) {
         const ivarName = "_" + slotName;
         const assert = function (aBool) {
@@ -132,7 +155,6 @@
         {
             const hasGetter = !Type.isUndefined(Object.getOwnPropertyDescriptor(this, slotName));
             assert(!hasGetter);
-            //const getterFunc = eval('function () { return this.' + ivarName + '; }');
             const getterFunc = function () { 
                 assert(arguments.length === 0);
                 return this[ivarName]; 
@@ -165,7 +187,11 @@
         return this
     }
 
-    static initThisClass () { // called on every class which we create
+    /**
+     * Initializes this class. Called on every class which we create.
+     * @returns {Function} This class.
+     */
+    static initThisClass () {
         this.defineClassGlobally();
 
         // setup ancestor list
@@ -191,39 +217,10 @@
         return this;
     }
 
-    /*
-    allSlotsMap () {
-        return this._allSlotsMap;
-    }
-
-    forEachSlot (fn) {
-        this.forEachPrototype(proto => {
-            if (Object.hasOwn(proto, "_slotsMap")) {
-                proto._slotsMap.forEach((slot, key, map) => {
-                    fn(slot)
-                })
-            }
-        })
-    }
-
-    setupAllSlotsMap () { // called once when prototype is created
-        if (!this.isPrototype()) {
-            throw new Error("setupAllSlotsMap called on non-prototype");
-        }
-
-        const m = this.allSlotsMap();
-        //console.log("*** " + this.type() + " setupAllSlotsMap")
-
-        //assert(this.isPrototype())
-        this.forEachSlot(slot => {
-            const k = slot.name();
-            if (!m.has(k)) { // to handle overrides 
-                m.set(k, slot);
-            }
-        });
-    }
-    */
-
+    /**
+     * Iterates over each slot key-value pair.
+     * @param {Function} fn - The function to call for each slot.
+     */
     forEachSlotKV (fn) {
         // WARNING: overridden slots may be called multiple times using this method
         // use allSlotsMap() to avoid this
@@ -233,22 +230,22 @@
         });
     }
 
-    // ----------------------------------------
-
-
-    // ----------------------------------------
-
-
+    /**
+     * Initializes the prototype.
+     */
     initPrototype () {
         // called after setupInOwner is called on each slot
         // so we have a chance to initialize things after all slots are set up 
     }
 
+    /**
+     * Defines this class globally.
+     * @throws {Error} If attempting to redefine a class that's not Object.
+     */
     static defineClassGlobally () {
         const className = this.type();
         if (Type.isUndefined(this.globals()[className])) {
             this.globals()[className] = this;
-            //console.log(this.type() + ".initThisClass()");
         } else if (this.type() !== "Object") {
             const msg = "WARNING: Attempt to redefine getGlobalThis()['" + className + "']";
             console.warn(msg);
@@ -256,12 +253,20 @@
         }
     }
 
+    /**
+     * Gets the superclass of this class.
+     * @returns {Function} The superclass.
+     */
     static superClass () {
         return this.__proto__;
     }
 
+    /**
+     * Adds this class to the set of all classes.
+     * @returns {Function} This class.
+     * @throws {Error} If attempting to call initThisClass twice on the same class.
+     */
     static addToAllClasses () {
-        //console.log("addToAllClasses '" + this.type() + "'")
         if (this.allClassesSet().has(this)) {
             throw new Error("attempt to call initThisClass twice on class '" + this.type() + "'");
         }
@@ -269,14 +274,27 @@
         return this;
     }
 
+    /**
+     * Gets all subclasses of this class.
+     * @returns {Set<Function>} A set of all subclasses.
+     */
     static allSubclasses () {
         return this.allClassesSet().select(aClass => aClass.hasAncestorClass(this));
     }
 
+    /**
+     * Gets direct subclasses of this class.
+     * @returns {Set<Function>} A set of direct subclasses.
+     */
     static subclasses () {
         return this.allClassesSet().select(aClass => aClass.superClass() === this);
     }
 
+    /**
+     * Checks if this class has the given class as an ancestor.
+     * @param {Function} aClass - The class to check.
+     * @returns {boolean} True if aClass is an ancestor, false otherwise.
+     */
     static hasAncestorClass (aClass) {
         const sc = this.superClass();
 
@@ -291,14 +309,24 @@
         return sc.hasAncestorClass(aClass);
     }
 
+    /**
+     * Iterates over each slot of an object.
+     * @param {Object} obj - The object to iterate over.
+     * @param {Function} fn - The function to call for each slot.
+     */
     static eachSlot (obj, fn) {
         Object.keys(obj).forEach(k => fn(k, obj[k]));
     }
 
+    /**
+     * Checks if this class is a kind of the given class.
+     * @param {Function} aClass - The class to check against.
+     * @returns {boolean} True if this class is a kind of aClass, false otherwise.
+     */
     static isKindOf (aClass) {
         if (this.name === "") {
             // anything touching the root "" class seems to crash Chrome,
-            // so let's be carefull to leave it alone
+            // so let's be careful to leave it alone
             return false;
         }
 

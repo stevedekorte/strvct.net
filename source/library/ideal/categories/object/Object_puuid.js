@@ -1,23 +1,17 @@
 "use strict";
 
-
+/**
+ * Extends Object with UUID (Universally Unique Identifier) functionality.
+ * @module ideal.object
+ * @class Object_puuid
+ * @extends Object
+ */
 (class Object_puuid extends Object {
 
-    /*
-    static newUniqueInstanceId () {
-        const uuid_a = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
-        const uuid_b = Math.floor(Math.random() * Math.pow(10, 17)).toBase64()
-        return uuid_a + uuid_b
-    }
-
-    static newUuid () {
-        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-            let r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-        });
-    }
-    */
-
+    /**
+     * Generates a new UUID.
+     * @returns {string} A new UUID.
+     */
     static newUuid () {
         const length = 10
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -33,21 +27,11 @@
         return result.join('');
     }
 
-    /*
-    static newUuid () { 
-        // TODO: move this JS UUID when it's added to JS standard lib
-        const uuidPart = () => { 
-            const bigFloat = Math.random() * Math.pow(10, 17)
-            const bigInt = Math.floor(bigFloat)
-            const b64 = bigInt.toBase64()
-            return b64
-        }
-        return uuidPart() + uuidPart()
-    }
-    */
-
-   // _puuid: undefined,
-
+    /**
+     * Gets the PUUID (Persistent Universally Unique Identifier) of the object.
+     * If the object doesn't have a PUUID, it generates a new one.
+     * @returns {string} The PUUID of the object.
+     */
     puuid () {
         if (!this.hasPuuid()) {
             this.setPuuid(Object.newUuid())
@@ -56,10 +40,20 @@
         return this["_puuid"]
     }
 
+    /**
+     * Checks if the object has a PUUID.
+     * @returns {boolean} True if the object has a PUUID, false otherwise.
+     */
     hasPuuid () {
         return Object.prototype.hasOwnProperty.call(this, "_puuid");
     }
 
+    /**
+     * Sets the PUUID of the object.
+     * @param {string} puuid - The PUUID to set.
+     * @throws {Error} If the provided PUUID is null or undefined.
+     * @returns {Object_puuid} This object.
+     */
     setPuuid (puuid) {
         assert(!Type.isNullOrUndefined(puuid));
         if (this.hasPuuid()) {
@@ -70,6 +64,10 @@
         return this;
     }
 
+    /**
+     * Gets the type-specific PUUID of the object.
+     * @returns {string} The type-specific PUUID.
+     */
     typePuuid () {
         const puuid = this.puuid()
         if (Type.isFunction(this.type)) {
@@ -78,10 +76,18 @@
         return Type.typeName(this) + "_" + puuid
     }
 
+    /**
+     * Gets the type ID of the object.
+     * @returns {string} The type ID.
+     */
     typeId () {
         return this.typePuuid()
     }
 
+    /**
+     * Gets a debug-friendly type ID of the object.
+     * @returns {string} A debug-friendly type ID.
+     */
     debugTypeId () {
         const puuid = this.puuid().substr(0,3)
 
@@ -91,6 +97,10 @@
         return Type.typeName(this) + "_" + puuid
     }
 
+    /**
+     * Gets the spacer used in debug type IDs.
+     * @returns {string} The debug type ID spacer.
+     */
     debugTypeIdSpacer () {
         return " -> "
     }

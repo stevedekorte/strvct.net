@@ -2,6 +2,8 @@
 
 /**
  * Extends the ArrayBuffer class with storage-related functionality.
+ * @module ideal
+ * @class ArrayBuffer_store
  * @extends ArrayBuffer
  */
 (class ArrayBuffer_store extends ArrayBuffer {
