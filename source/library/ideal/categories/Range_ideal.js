@@ -1,14 +1,18 @@
 "use strict";
 
-/*
-
-    Range_ideal
-
-    Some extra methods for the Javascript Range primitive.
-
-*/
-
+/**
+ * @module ideal
+ * @class Range_ideal
+ * @extends Range
+ * @description Extended Range class with additional utility methods.
+ */
 (class Range_ideal extends Range {
+
+   /**
+    * Checks if this range is equal to another range.
+    * @param {Range} otherRange - The range to compare with
+    * @returns {boolean} True if the ranges are equal, false otherwise
+    */
    isEqual (otherRange) {
     if (this === otherRange) {
       return true;

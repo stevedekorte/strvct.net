@@ -1,16 +1,15 @@
 "use strict";
 
-/*
+/**
+ * @module ideal
+ */
 
-    Number-ideal
-
-    Some extra methods for the Javascript Number primitive.
-
-*/
-
-{
-
-const Base64 = (function () { // FIXME: move this to a Number class method?
+/**
+ * @namespace Base64
+ * @description Utility for converting between integers and base64 strings
+ * @private
+ */
+const Base64 = (function () {
     const digitsStr = 
     //   0       8       16      24      32      40      48      56     63
     //   v       v       v       v       v       v       v       v      v
@@ -43,20 +42,42 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
     };
 })();
 
+/**
+ * @class Number_ideal
+ * @extends Number
+ * @description Extended Number class with additional utility methods.
+ */
 (class Number_ideal extends Number {
 
+    /**
+     * Returns a duplicate of the number (which is the number itself for primitives)
+     * @returns {number} The number
+     */
     duplicate () {
         return this;
     }
     
+    /**
+     * Returns a copy of the number (which is the number itself for primitives)
+     * @returns {number} The number
+     */
     copy () {
         return this;
     }
 
+    /**
+     * Returns a shallow copy of the number (which is the number itself for primitives)
+     * @returns {number} The number
+     */
     shallowCopy () {
         return this;
     }
 
+    /**
+     * Repeats a function the number of times specified by this number
+     * @param {function(number): (boolean|void)} func - The function to repeat
+     * @returns {Number_ideal} This number instance
+     */
     repeat (func) {
         for (let i = 0; i < this; i++) {
             if (func(i) === false) {
@@ -66,6 +87,10 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         return this;
     }
 
+    /**
+     * Iterates from 0 to this number (exclusive), calling the provided function for each number
+     * @param {function(number): void} func - The function to call for each number
+     */
     forEach (func) {
         assert(Number.isInteger(this))
         for (let i = 0; i < this; i++) {
@@ -73,31 +98,45 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         }
     }
 
+    /**
+     * Iterates from this number - 1 to 0, calling the provided function for each number
+     * @param {function(number): void} func - The function to call for each number
+     */
     reverseForEach (func) {
         assert(Number.isInteger(this))
-        for (let i = this - 1; i >= 0; i++) {
+        for (let i = this - 1; i >= 0; i--) {
             func(i);
         }
     }
 
+    /**
+     * Throws an error if called (placeholder for potential future implementation)
+     * @throws {Error} Always throws an error
+     */
     map () {
         throw new Error("Number map is actually used?");
-        
-        const a = [];
-        for (let i = 0; i < this; i++) {
-            a.push(i);
-        }
-        return Array.prototype.map.apply(a, arguments);
     }
 
+    /**
+     * Checks if the number is even
+     * @returns {boolean} True if the number is even, false otherwise
+     */
     isEven () {
         return this % 2 === 0;
     }
 
+    /**
+     * Checks if the number is odd
+     * @returns {boolean} True if the number is odd, false otherwise
+     */
     isOdd () {
         return this % 2 !== 0;
     }
 
+    /**
+     * Returns the ordinal suffix for the number
+     * @returns {string} The ordinal suffix ('st', 'nd', 'rd', or 'th')
+     */
     ordinalSuffix () {
         const i = this;
         let j = i % 10;
@@ -115,24 +154,45 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         return "th";
     }
 
+    /**
+     * Converts the number to a base64 string
+     * @returns {string} The base64 representation of the number
+     */
     toBase64 () {
         return Base64.fromInt(this);
     }
 
+    /**
+     * Converts a base64 string to a number
+     * @param {string} base64String - The base64 string to convert
+     * @returns {number} The number represented by the base64 string
+     */
     fromBase64 (base64String) {
         // need to call like: 
         // Number.prototype.fromBase64("...")
         return Base64.toInt(base64String);
     }
 
+    /**
+     * Returns a human-readable string describing the byte size
+     * @returns {string} A formatted string representing the byte size
+     */
     byteSizeDescription () {
         return ByteFormatter.clone().setValue(this).formattedValue();
     }
 
+    /**
+     * Returns the number with its ordinal indicator
+     * @returns {string} The number followed by its ordinal indicator
+     */
     withOrdinalIndicator () {
         return this + "" + this.ordinalIndicator()
     }
 
+    /**
+     * Returns the ordinal indicator for the number
+     * @returns {string} The ordinal indicator ('st', 'nd', 'rd', or 'th')
+     */
     ordinalIndicator () {
         const num = this;
 
@@ -159,6 +219,11 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         }
     }
 
+    /**
+     * Returns a string representation of the number as a count for a given label
+     * @param {string} label - The label to use for the count
+     * @returns {string} A formatted string representing the count
+     */
     asCountForLabel (label) {
         const count = this;
         if (count === 0) {
@@ -169,13 +234,16 @@ const Base64 = (function () { // FIXME: move this to a Number class method?
         return count + " " + label + "s";
     }
 
+    /**
+     * Returns a random number between this number and another number
+     * @param {number} other - The other number to use as a range boundary
+     * @returns {number} A random number between this number and the other number
+     */
     randomBetween (other) {
         const min = Math.min(this, other);
         const max = Math.max(this, other);
         const randomValue = Math.random() * (max - min) + min;
         return randomValue;
-      }
+    }
     
 }).initThisCategory();
-
-}; // wrapper to keep Base64 (at top of this file) from being a global
