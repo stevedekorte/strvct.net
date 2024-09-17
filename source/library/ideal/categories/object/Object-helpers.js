@@ -308,7 +308,7 @@ Object.defineSlot(Object, "initThisCategory", function () {
 
     const hasTwoPartName = this.name.split("_").length === 2;
     if (!hasTwoPartName) {
-        const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName-categoryName.";
+        const msg = "category class name '" + this.type() + "' doesn't match expected pattern of ClassName_categoryName.";
         throw new Error(msg);
     }
 

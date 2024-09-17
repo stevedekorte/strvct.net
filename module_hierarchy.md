@@ -324,7 +324,6 @@
   - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
   - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
   - [StreamTextNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamTextNode.js)
-  - [String_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FString_ideal.js)
   - [String_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
   - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
@@ -431,3 +430,4 @@
   - [Map_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FMap_ideal.js)
   - [Range_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FRange_ideal.js)
   - [Set_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FSet_ideal.js)
+  - [String_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FString_ideal.js)
