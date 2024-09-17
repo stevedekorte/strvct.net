@@ -1,7 +1,7 @@
 "use strict";
 
-/*
-
+/** 
+ * @module ideal
     Some code for adding categories to all the typed array types. 
 
 */
@@ -10,8 +10,8 @@ Type.typedArrayTypeNames().forEach((name) => {
     const aClass = getGlobalThis()[name]
 
     if (Type.isUndefined(aClass)) {
-        console.warn("TypeArray-store error: missing type " + name)
-        return
+        console.warn("TypeArray-store error: missing type " + name);
+        return;
     }
 
     /*
@@ -25,7 +25,7 @@ Type.typedArrayTypeNames().forEach((name) => {
         },
     })
 
-})
+});
 
 Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
     base64Encoded: function (aRecord, aStore) {
@@ -33,7 +33,7 @@ Object.defineSlots(ArrayBuffer.prototype, { // TODO: move to ArrayBuffer_ideal
     },
 
     promiseSha256Digest: function () {
-        return crypto.subtle.digest("SHA-256", this)
+        return crypto.subtle.digest("SHA-256", this);
      }
 });
 

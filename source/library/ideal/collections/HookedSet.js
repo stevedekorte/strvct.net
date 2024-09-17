@@ -1,24 +1,31 @@
 "use strict";
 
-/*
-
-    HookedSet
-
-    A subclass of Set that maintains that hooks the base mutation methods.
-
-    For this to work, you need to use method alternatives to the non-method
-    (operator) operation.
-
-*/
+/**
+ * A subclass of Set that hooks the base mutation methods.
+ * 
+ * For this to work, you need to use method alternatives to the non-method
+ * (operator) operations.
+ * @module ideal.collections
+ * @class HookedSet
+ * @extends Set
+ */
 
 (class HookedSet extends Set {
 
+    /**
+     * Sets up mutator hooks.
+     */
     initPrototypeSlots () {
         this.setupMutatorHooks()
     }
 
     // ------------------------------
 
+    /**
+     * Returns a Set of mutator method names that should be hooked.
+     * These include add, clear, and delete.
+     * @returns {Set<string>} A Set containing the names of mutator methods.
+     */
     mutatorMethodNamesSet () {
         return new Set([
             "add",
@@ -27,6 +34,10 @@
         ])
     }
 
+    /**
+     * Performs a self-test of the HookedSet class.
+     * @returns {boolean} True if the self-test passes, false otherwise.
+     */
     static selfTest () {
         const a = this.clone()
         

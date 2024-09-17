@@ -1,35 +1,35 @@
 "use strict";
 
-/*
-    
-TimeFormatter 
-
-    Takes a javascript Date and can produces a formatted string description
-    following the object's format option properties. 
-
-	Example use:
-
-    const formatter = TimeFormatter.clone()
-    formatter.setIs24Hour(false)          // this is the default
-    formatter.setShowsMeridiem(true)      // this is the default
-    formatter.setUppercaseMeridiem(false) // this is the default
-    formatter.setAmString("am")           // this is the default
-    formatter.setPmString("am")           // this is the default
-    formatter.setShowsSeconds(false)      // this is the default
-    formatter.setShowsMilliseconds(false) // this is the default
-    formatter.setHourMinuteSpacer(":")    // this is the default
-    formatter.setDate(new Date())
-    const aDateString = formatter.formattedValue()
-
-    example output:
-
-        "10:11am"
-
-
-*/
-
+/**
+ * TimeFormatter takes a JavaScript Date and produces a formatted string description
+ * following the object's format option properties.
+ *
+ * @example
+ * const formatter = TimeFormatter.clone()
+ * formatter.setIs24Hour(false)          // this is the default
+ * formatter.setShowsMeridiem(true)      // this is the default
+ * formatter.setUppercaseMeridiem(false) // this is the default
+ * formatter.setAmString("am")           // this is the default
+ * formatter.setPmString("pm")           // this is the default
+ * formatter.setShowsSeconds(false)      // this is the default
+ * formatter.setShowsMilliseconds(false) // this is the default
+ * formatter.setHourMinuteSpacer(":")    // this is the default
+ * formatter.setDate(new Date())
+ * const aDateString = formatter.formattedValue()
+ *
+ * // example output: "10:11am"
+ *
+ * @module ideal.formatters
+ * @class TimeFormatter
+ * @extends ProtoClass
+ */
 (class TimeFormatter extends ProtoClass {
     initPrototypeSlots () {
+        /**
+         * The date to be formatted.
+         * @type {Date}
+         * @default null
+         */
         {
             const slot = this.newSlot("date", null) // temp value which will be formatted
             slot.setShouldStoreSlot(false)
@@ -37,6 +37,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
 
+        /**
+         * Whether to use 24-hour format.
+         * @type {boolean}
+         * @default false
+         */
         {
             const slot = this.newSlot("is24Hour", false)
             slot.setShouldStoreSlot(true)
@@ -44,6 +49,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
 
+        /**
+         * Whether to show meridiem (AM/PM).
+         * @type {boolean}
+         * @default true
+         */
         {
             const slot = this.newSlot("showsMeridiem", true)
             slot.setShouldStoreSlot(true)
@@ -51,6 +61,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
 
+        /**
+         * Whether to uppercase the meridiem.
+         * @type {boolean}
+         * @default false
+         */
         {
             const slot = this.newSlot("uppercaseMeridem", false)
             slot.setShouldStoreSlot(true)
@@ -58,6 +73,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
             
+        /**
+         * The string to use for AM.
+         * @type {string}
+         * @default "am"
+         */
         {
             const slot = this.newSlot("amString", "am")
             slot.setShouldStoreSlot(true)
@@ -65,6 +85,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * The string to use for PM.
+         * @type {string}
+         * @default "pm"
+         */
         {
             const slot = this.newSlot("pmString", "pm")
             slot.setShouldStoreSlot(true)
@@ -72,6 +97,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * Whether to pad hours with zeros.
+         * @type {boolean}
+         * @default false
+         */
         {
             const slot = this.newSlot("doesPadHours", false)
             slot.setShouldStoreSlot(true)
@@ -79,6 +109,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * Whether to show hours.
+         * @type {boolean}
+         * @default true
+         */
         {
             const slot = this.newSlot("showsHours", true)
             slot.setShouldStoreSlot(true)
@@ -86,6 +121,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * The spacer between hours and minutes.
+         * @type {string}
+         * @default ":"
+         */
         {
             const slot = this.newSlot("hourMinuteSpacer", ":")
             slot.setShouldStoreSlot(true)
@@ -93,6 +133,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * Whether to show minutes.
+         * @type {boolean}
+         * @default true
+         */
         {
             const slot = this.newSlot("showsMinutes", true)
             slot.setShouldStoreSlot(true)
@@ -100,6 +145,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * Whether to show seconds.
+         * @type {boolean}
+         * @default false
+         */
         {
             const slot = this.newSlot("showsSeconds", false)
             slot.setShouldStoreSlot(true)
@@ -107,6 +157,11 @@ TimeFormatter
             slot.setCanInspect(true)
         }
                 
+        /**
+         * Whether to show milliseconds.
+         * @type {boolean}
+         * @default false
+         */
         {
             const slot = this.newSlot("showsMilliseconds", false)
             slot.setShouldStoreSlot(true)
@@ -118,6 +173,12 @@ TimeFormatter
     initPrototype () {      
     }
 
+    /**
+     * Pads a number with leading zeros to a specified length.
+     * @param {number} n - The number to pad.
+     * @param {number} [padLength=2] - The desired length of the padded number.
+     * @returns {string} The padded number as a string.
+     */
     paddedNumber (n, padLength) {
         if (!padLength) {
             padLength = 2
@@ -129,6 +190,10 @@ TimeFormatter
         return s
     }
 
+    /**
+     * Gets the hours in 12-hour format.
+     * @returns {number} The hours in 12-hour format.
+     */
     getTwelveHours () {
         let h = this.date().getHours()
         if (h > 12) { h -= 12 }
@@ -136,10 +201,18 @@ TimeFormatter
         return h
     }
 
+    /**
+     * Gets the date in zero-padded US format (HH:MM).
+     * @returns {string} The date in zero-padded US format.
+     */
     zeroPaddedUSDate () {
         return this.paddedNumber(this.getTwelveHours()) + ":" + this.paddedNumber(this.getMinutes())
     }
 
+    /**
+     * Gets the hours string based on the formatter's settings.
+     * @returns {string} The hours string.
+     */
     hoursString () {
         let h = this.date().getHours()
 
@@ -154,19 +227,34 @@ TimeFormatter
         return "" + h
     }
 
+    /**
+     * Gets the minutes string.
+     * @returns {string} The minutes string.
+     */
     minutesString () {
         return this.paddedNumber(this.date().getMinutes())
-
     }
 
+    /**
+     * Gets the seconds string.
+     * @returns {string} The seconds string.
+     */
     secondsString () {
         return this.paddedNumber(this.date().getSeconds())
     }
 
+    /**
+     * Gets the milliseconds string.
+     * @returns {string} The milliseconds string.
+     */
     millisecondsString () {
         return this.paddedNumber(this.date().getMilliseconds() % 1000)
     }
 
+    /**
+     * Gets the meridiem string (AM/PM) based on the formatter's settings.
+     * @returns {string} The meridiem string.
+     */
     meridiemString () {
         let s = ""
         
@@ -183,6 +271,10 @@ TimeFormatter
         return s
     }
 
+    /**
+     * Formats the date value into a string based on the formatter's settings.
+     * @returns {string} The formatted date string.
+     */
     formattedValue () {
         assert(this.date())
         let s = ""

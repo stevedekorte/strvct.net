@@ -1,28 +1,29 @@
 "use strict";
 
 /** 
- *  @module AiServiceKit.Anthropic
- *  @class AnthropicService
- *  @memberof module:AiServiceKit.Anthropic
- *  @extends AiService
+ * @module AiServiceKit.Anthropic
+ * @class AnthropicService
+ * @extends AiService
+ * @description A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
  * 
- *  @description
- *  A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
- * 
- *  @example
- * 
- *  AnthropicService.shared().setApiKey("sk-1234567890");
- *  const hasApiKey = AnthropicService.shared().hasApiKey();
- * 
- * 
+ * @example
+ * AnthropicService.shared().setApiKey("sk-1234567890");
+ * const hasApiKey = AnthropicService.shared().hasApiKey();
 */
 
 (class AnthropicService extends AiService {
 
+  /**
+   * Initializes the class as a singleton.
+   */
   static initClass () {
     this.setIsSingleton(true);
   }
 
+  /**
+   * Returns an array of model configurations.
+   * @returns {Array<Object>} An array of model configuration objects.
+   */
   modelsJson () {
     return [
       {
@@ -56,27 +57,51 @@
     ];
   }
   
+  /**
+   * Initializes the prototype slots.
+   */
+
   initPrototypeSlots () {
   }
 
+  /**
+   * Initializes the service.
+   */
   init () {
     super.init();
   }
 
+  /**
+   * Performs final initialization steps.
+   */
   finalInit () {
     super.finalInit()
     this.setTitle("Anthropic");
     //this.setSystemRoleName("user"); // only replaced in outbound request json // we now move this message into the system property
   }
 
+  /**
+   * Validates the API key format.
+   * @param {string} s - The API key to validate.
+   * @returns {boolean} True if the API key is valid, false otherwise.
+   */
   validateKey (s) {
     return s.startsWith("sk-");
   }
 
+  /**
+   * Checks if a valid API key is set.
+   * @returns {boolean} True if a valid API key is set, false otherwise.
+   */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }
 
+  /**
+   * Prepares the request before sending it to the API.
+   * @param {Object} aRequest - The request object to prepare.
+   * @returns {AnthropicService} The service instance.
+   */
   prepareToSendRequest (aRequest) {
     const bodyJson = aRequest.bodyJson();
     let messages = bodyJson.messages;

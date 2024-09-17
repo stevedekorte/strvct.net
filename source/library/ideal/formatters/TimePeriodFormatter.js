@@ -1,32 +1,38 @@
 "use strict";
 
-/*
-    
-TimePeriodFormatter 
-
-    Takes a number of seconds and formats in a compact format.
-
-	Example use:
-
-	const stringVersion = TimePeriodFormatter.clone().setValueInSeconds(seconds).formattedValue()
-
-	Example output:
-
-	if seconds was 10, stringVersion would be 10s.
-	if seconds was 60, stringVersion would be 1m.
-	if seconds was 3600, stringVersion would be 1h.
-	if seconds was 172800, stringVersion would be 2d.
-	etc.
-
-*/
-
+/**
+ * TimePeriodFormatter takes a number of seconds and formats it in a compact format.
+ *
+ * @example
+ * const stringVersion = TimePeriodFormatter.clone().setValueInSeconds(seconds).formattedValue()
+ *
+ * @example
+ * // Output examples:
+ * // if seconds was 10, stringVersion would be 10s.
+ * // if seconds was 60, stringVersion would be 1m.
+ * // if seconds was 3600, stringVersion would be 1h.
+ * // if seconds was 172800, stringVersion would be 2d.
+ *
+ * @module ideal.formatters
+ * @class TimePeriodFormatter
+ * @extends ProtoClass
+ */
 (class TimePeriodFormatter extends ProtoClass {
     initPrototypeSlots () {
+        /**
+         * The number of seconds to format.
+         * @type {number}
+         * @default 0
+         */
         {
             const slot = this.newSlot("valueInSeconds", 0);
             slot.setSlotType("Number");
         }
 
+        /**
+         * A map of time periods to their abbreviated forms.
+         * @type {Map<string, string>}
+         */
         {
             const slot = this.newSlot("periodsMap", new Map(Object.entries({ 
                 seconds: "s", 
@@ -40,6 +46,10 @@ TimePeriodFormatter
         }
     }
 
+    /**
+     * Formats the time period into a compact string representation.
+     * @returns {string} The formatted time period string.
+     */
     formattedValue () {
         const periods = this.periodsMap();
 

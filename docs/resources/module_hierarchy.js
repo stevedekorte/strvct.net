@@ -33,7 +33,7 @@ function parseModules(content) {
         comments.push({ value: text, loc: { start: startLoc, end: endLoc } });
       }
     },
-    locations: true // Enable location tracking
+    locations: true
   });
   const modules = new Map();
 
@@ -49,12 +49,8 @@ function parseModules(content) {
         const moduleName = getModuleName(node, comments) || 'globals';
         addToModule(modules, moduleName, className);
       }
-    },
-    FunctionDeclaration(node) {
-      const functionName = node.id.name;
-      const moduleName = getModuleName(node, comments) || 'globals';
-      addToModule(modules, moduleName, functionName);
     }
+    // Remove the FunctionDeclaration handler
   });
 
   return modules;

@@ -1,9 +1,10 @@
 "use strict";
 
 /**
- * IndexedArray
- * 
- * A subclass of Array that maintains a dictionary index of the 
+ * @module ideal.collections
+ * @class IndexedArray
+ * @extends HookedArray
+ * @description A subclass of Array that maintains a dictionary index of the 
  * elements of the list via an index closure. The index closure should return 
  * a string. For this to work, you need to avoid using the Array 
  * operations which can't be overridden:
@@ -12,7 +13,6 @@
  *     a[i] = b -> instead use a.atPut(i, b)
  *     delete a[i] -> instead use a.removeAt(i)
  * 
- * @extends HookedArray
  */
 (class IndexedArray extends HookedArray {
 
