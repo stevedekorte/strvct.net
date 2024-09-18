@@ -195,7 +195,6 @@
   - [HomeAssistantState](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
   - [HomeAssistantStates](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
   - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
-  - [HtmlStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FHtmlStreamReader.js)
   - [HttpResponseCodes](./class_doc.html?path=source%2Flibrary%2Fideal%2Fnetworking%2FHttpResponseCodes.js)
   - [ImageView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageView.js)
   - [ImageWellView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageWellView.js)
@@ -291,9 +290,6 @@
   - [StackTrace](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
   - [StackView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackView.js)
   - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
-  - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
-  - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
-  - [StreamTextNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamTextNode.js)
   - [String_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
   - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
@@ -358,6 +354,9 @@
   - [YouTubeAudioPlayer](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeAudioPlayer.js)
   - [YouTubePlayerFrame](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubePlayerFrame.js)
   - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
+- html
+  - HtmlStreamReader
+    - [StreamTextNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamTextNode.js)
 - ideal
   - [ArrayBuffer_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FArrayBuffer_ideal.js)
   - [ArrayBuffer_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArrayBuffer_store.js)
@@ -383,6 +382,10 @@
     - [NumberFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FNumberFormatter.js)
     - [TimeFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FTimeFormatter.js)
     - [TimePeriodFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FTimePeriodFormatter.js)
+  - html
+    - HtmlStreamReader
+      - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
+      - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
   - object
     - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
     - [Object_class](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)
@@ -400,6 +403,10 @@
     - [HeaderNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FHeaderNode.js)
   - audio
     - [SimpleSynth](./class_doc.html?path=source%2Flibrary%2Faudio%2FSimpleSynth.js)
+  - ideal
+    - html
+      - HtmlStreamReader
+        - [HtmlStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FHtmlStreamReader.js)
 - node
   - storage
     - base
