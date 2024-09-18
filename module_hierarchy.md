@@ -30,8 +30,6 @@
   - [BMActionField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMActionField.js)
   - [BMActionFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
   - [BMArrayField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMArrayField.js)
-  - [BMBlob](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlob.js)
-  - [BMBlobs](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlobs.js)
   - [BMBooleanField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMBooleanField.js)
   - [BMBooleanFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMBooleanFieldTile.js)
   - [BMChatInputTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMChatInputTile.js)
@@ -157,14 +155,11 @@
   - [EdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2FEdgePanGestureRecognizer.js)
   - [EditableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FEditableDomView.js)
   - [ElementDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FElementDomView.js)
-  - [EnumerableWeakMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakMap.js)
-  - [EnumerableWeakSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakSet.js)
   - [Error_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
   - [EventListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventListener.js)
   - [EventManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventManager.js)
   - [EventPoint](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FEventPoint.js)
   - [EventSetListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventSetListener.js)
-  - [FirewallProxy](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproxies%2FFirewallProxy.js)
   - [FlexDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FFlexDomView.js)
   - [FocusListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FFocusListener.js)
   - [Folder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FResourceIndexer.js)
@@ -219,7 +214,6 @@
   - [Number_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
   - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
   - [Object_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FObject_store.js)
-  - [ObservableProxy](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproxies%2FObservableProxy.js)
   - [OpenAiImage](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImage.js)
   - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
   - [OpenAiImagePrompts](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompts.js)
@@ -411,7 +405,16 @@
       - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
       - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
       - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
+    - proxies
+      - [FirewallProxy](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproxies%2FFirewallProxy.js)
+      - [ObservableProxy](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproxies%2FObservableProxy.js)
+    - weak
+      - [EnumerableWeakMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakMap.js)
+      - [EnumerableWeakSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakSet.js)
   - node
+    - blobs
+      - [BMBlob](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlob.js)
+      - [BMBlobs](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlobs.js)
     - storage
       - base
         - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)

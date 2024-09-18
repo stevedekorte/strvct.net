@@ -2,9 +2,6 @@
 
 /**
  * @module library.ideal.weak
- */
-
-/**
  * @class EnumerableWeakSet
  * @extends WeakSet
  * @classdesc A Set with WeakRef values internally, but external API looks normal (gets and sets values).

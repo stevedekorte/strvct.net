@@ -2,9 +2,6 @@
 
 /**
  * @module library.ideal.proxies
- */
-
-/**
  * @class FirewallProxy
  * @extends ObservableProxy
  * @classdesc
