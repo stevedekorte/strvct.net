@@ -1,40 +1,49 @@
+/**
+ * @module library.audio
+ * @class SimpleSynth
+ * @extends ProtoClass
+ * @classdesc
+ * SimpleSynth
+ *
+ * Example usess:
+ *
+ * SimpleSynth.clone().playSendBeep()
+ * SimpleSynth.clone().playReceiveBeep()
+ *
+ * SimpleSynth.clone().playButtonTap()
+ *
+ * SimpleSynth.clone().playButtonDown()
+ * SimpleSynth.clone().playButtonUp()
+ * SimpleSynth.clone().playButtonCancelled()
+ */
 "use strict";
-
-/* 
-    SimpleSynth
-
-    Example usess:
-
-    SimpleSynth.clone().playSendBeep()
-    SimpleSynth.clone().playReceiveBeep()
-
-    SimpleSynth.clone().playButtonTap()
-
-    SimpleSynth.clone().playButtonDown()
-    SimpleSynth.clone().playButtonUp()
-    SimpleSynth.clone().playButtonCancelled()
-
-*/
 
 (class SimpleSynth extends ProtoClass {
 
-  static initClass () {
+  static initClass() {
     this.setIsSingleton(true);
   }
 
-  initPrototypeSlots () {
+  initPrototypeSlots() {
     //this.newSlot("idb", null);
   }
-  
-  initPrototype () {
+
+  initPrototype() {
   }
 
-  audioContext () {
+  /**
+   * @description Creates a new AudioContext object for generating sound.
+   * @returns {AudioContext} The new AudioContext object.
+   */
+  audioContext() {
     const context = new (window.AudioContext || window.webkitAudioContext)();
     return context;
   }
 
-  playOminousSound () {
+  /**
+   * @description Plays an ominous sound using the Web Audio API.
+   */
+  playOminousSound() {
     const audioContext = this.audioContext();
 
     const notes = [110, 123.47, 130.81, 146.83]; // Frequencies for notes A2, B2, C3, and D3
@@ -57,7 +66,11 @@
     });
   }
 
-  playNotes (notes) {
+  /**
+   * @description Plays an array of notes using the Web Audio API.
+   * @param {number[]} notes - An array of frequencies (in Hz) to play.
+   */
+  playNotes(notes) {
     /*
     The given function playNotes plays an array of notes using the Web Audio API. 
     Each note in the array is played for a duration of 0.1 seconds (100 milliseconds) with a delay of 0.1 seconds between each note. 
@@ -84,49 +97,83 @@
     });
   }
 
-  playSendBeep () {
+  /**
+   * @description Plays a send beep sound.
+   */
+  playSendBeep() {
     this.playNotes([330, 290]);
   }
 
-  playReceiveBeep () {
+  /**
+   * @description Plays a receive beep sound.
+   */
+  playReceiveBeep() {
     this.playNotes([290, 330]);
   }
 
-  playButtonTap () {
+  /**
+   * @description Plays a button tap sound.
+   */
+  playButtonTap() {
     //this.playNotes([440]);
     this.playTrackNamed("buttonPress");
   }
 
-  playButtonDown () {
+  /**
+   * @description Plays a button down sound.
+   */
+  playButtonDown() {
     //this.playNotes([400]);
     this.playTrackNamed("buttonPress");
   }
 
-  playButtonUp () {
+  /**
+   * @description Plays a button up sound.
+   */
+  playButtonUp() {
     this.playNotes([480]);
   }
 
-  playButtonCancelled () {
+  /**
+   * @description Plays a button cancelled sound.
+   */
+  playButtonCancelled() {
     this.playNotes([440, 330]);
   }
 
-  playNetworkConnected () {
+  /**
+   * @description Plays a network connected sound.
+   */
+  playNetworkConnected() {
     this.playNotes([300, 400, 500]);
   }
 
-  playNetworkDisconnected () {
+  /**
+   * @description Plays a network disconnected sound.
+   */
+  playNetworkDisconnected() {
     this.playNotes([500, 400, 300]);
   }
 
-  playWarning () {
+  /**
+   * @description Plays a warning sound.
+   */
+  playWarning() {
     this.playNotes([420, 450]);
   }
 
-  playAlert () {
+  /**
+   * @description Plays an alert sound.
+   */
+  playAlert() {
     playNotes([600, 660, 600]);
   }
 
-  playTrackNamed (trackName) {
+  /**
+   * @description Plays a named track of notes.
+   * @param {string} trackName - The name of the track to play.
+   */
+  playTrackNamed(trackName) {
     const notes = this.tracksJson()[trackName];
 
     if (!notes) {
@@ -137,7 +184,11 @@
     this.playTrackNotes(notes)
   }
 
-  playTrackNotes (notes) {
+  /**
+   * @description Plays a track of notes.
+   * @param {Object[]} notes - An array of note objects with properties like pitch, lengthMs, oscillator, delayMs, and volume.
+   */
+  playTrackNotes(notes) {
     const context = this.audioContext();
     let currentTime = context.currentTime;
 
@@ -167,7 +218,11 @@
     });
   }
 
-  tracksJson () {
+  /**
+   * @description Returns an object containing various tracks of notes.
+   * @returns {Object} An object with track names as keys and arrays of note objects as values.
+   */
+  tracksJson() {
     return {
       "buttonPress": [
         { "pitch": 400, "lengthMs": 100, "oscillator": "sine", "delayMs": 100, "volume": 0.7 }
@@ -200,6 +255,5 @@
       ]
     };
   }
-  
-}.initThisClass());
 
+}.initThisClass());

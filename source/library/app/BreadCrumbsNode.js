@@ -1,15 +1,17 @@
+/**
+ * @module library.app
+ * @class BreadCrumbsNode
+ * @extends BMFolderNode
+ * @classdesc BreadCrumbsNode is a class that extends BMFolderNode and represents a breadcrumb node.
+ */
 "use strict";
 
-/*
-    
-    BreadCrumbsNode
-    
-
-*/
-
 (class BreadCrumbsNode extends BMFolderNode {
-    
-    initPrototypeSlots () {
+    /**
+     * Initializes the prototype slots of the BreadCrumbsNode class.
+     * @description This method is used to initialize the prototype slots of the BreadCrumbsNode class.
+     */
+    initPrototypeSlots() {
         /*
         {
             const slot = this.newSlot("blobs", null)
@@ -19,8 +21,12 @@
         }
         */
     }
-  
-    initPrototype () {
+
+    /**
+     * Initializes the prototype of the BreadCrumbsNode class.
+     * @description This method is used to initialize the prototype of the BreadCrumbsNode class.
+     */
+    initPrototype() {
         this.setNodeTileClassName("BreadCrumbsTile");
         this.setCanDelete(false);
         this.setNodeMinTileHeight(55);

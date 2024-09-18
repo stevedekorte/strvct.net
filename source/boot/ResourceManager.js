@@ -86,7 +86,7 @@ function evalStringFromSourceUrl(codeString, path) {
     const result = eval(debugCode);
 
     // Log the result for debugging purposes
-    console.log("Eval result:", result);
+    //console.log("Eval result:", result);
 
     // Return the result of the evaluation
     return result;

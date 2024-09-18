@@ -1,19 +1,17 @@
-
-
+/**
+ * @module ideal.html.HtmlStreamReader
+ * @class StreamNode
+ * @classdesc Base class for StreamTextNode and StreamElementNode
+ * @extends ProtoClass
+ */
 "use strict";
-
-/*
-
-    StreamNode
-
-    Base class for StreamTextNode and StreamElementNode
-
-*/
 
 (class StreamNode extends ProtoClass {
 
-    initPrototypeSlots () {
-
+    /**
+     * Initializes the prototype slots.
+     */
+    initPrototypeSlots() {
         {
             const slot = this.newSlot("parent", null); // parent tag
             slot.setSlotType("StreamNode");
@@ -30,11 +28,20 @@
             slot.setSlotType("Boolean");
         }
     }
-  
-    initPrototype () {
+
+    /**
+     * Initializes the prototype.
+     */
+    initPrototype() {
     }
 
-    detectAncestor (func) {
+    /**
+     * Detects an ancestor node that satisfies the given function.
+     * @description Checks if the current node satisfies the provided function. If not, recursively checks the parent node until a match is found or the root node is reached.
+     * @param {Function} func The function to test each node against.
+     * @returns {StreamNode|null} The ancestor node that satisfies the function, or null if none is found.
+     */
+    detectAncestor(func) {
         if (func(this)) {
             return this;
         }
@@ -44,7 +51,12 @@
         return null;
     }
 
-    onOpen () {
+    /**
+     * Handles the opening of the node.
+     * @description Creates and sets the domNode property based on the `asDomNode` method.
+     * @returns {StreamNode} The current instance.
+     */
+    onOpen() {
         const domNode = this.asDomNode();
         /*
         // parent responsible for calling appendChild
@@ -56,34 +68,64 @@
         return this;
     }
 
-    onClose () {
+    /**
+     * Handles the closing of the node.
+     * @description Sets the `isClosed` property to true.
+     * @returns {StreamNode} The current instance.
+     */
+    onClose() {
         // called by HtmlStreamReader
         this.setIsClosed(true);
         return this;
     }
 
-    rootNode () {
+    /**
+     * Retrieves the root node of the node tree.
+     * @description Returns the current node if it has no parent, otherwise recursively calls the `rootNode` method on the parent node.
+     * @returns {StreamNode} The root node of the node tree.
+     */
+    rootNode() {
         if (this.parent()) {
             return this.parent().rootNode();
         }
         return this;
     }
 
-    tagPath () {
+    /**
+     * Retrieves the tag path from the root node to the current node.
+     * @description Constructs an array of nodes representing the path from the root node to the current node, including the current node.
+     * @returns {StreamNode[]} An array of nodes representing the tag path.
+     */
+    tagPath() {
         const path = this.parent() ? this.parent().tagPath() : [];
         path.push(this);
         return path;
     }
 
-    numberPath () {
+    /**
+     * Retrieves the number path from the root node to the current node.
+     * @description Constructs an array of child indices representing the path from the root node to the current node.
+     * @returns {number[]} An array of child indices representing the number path.
+     */
+    numberPath() {
         return this.tagPath().map(tag => tag.childIndex());
     }
 
-    depth () {
+    /**
+     * Retrieves the depth of the current node in the node tree.
+     * @description Calculates the depth of the current node by counting the number of nodes in the tag path.
+     * @returns {number} The depth of the current node in the node tree.
+     */
+    depth() {
         return this.tagPath().length;
     }
 
-    depthSpacer () {
+    /**
+     * Generates a string of spaces based on the depth of the current node.
+     * @description Creates a string with a number of spaces equal to twice the depth of the current node.
+     * @returns {string} A string of spaces representing the depth of the current node.
+     */
+    depthSpacer() {
         return "  ".repeat(this.depth());
     }
 

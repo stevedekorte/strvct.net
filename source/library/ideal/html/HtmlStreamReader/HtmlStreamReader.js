@@ -1,65 +1,52 @@
+/**
+ * @module library.ideal.html.HtmlStreamReader
+ * @class HtmlStreamReader
+ * @extends ProtoClass
+ * @classdesc Wrapper over htmlparser2 library which:
+ *   - deals with TextNodes (instead of just elements)
+ *   - constructs virtual DOM during streaming
+ *   - virtual DOM also manages a real DOM
+ *   IMPORTANT:
+ *   Unlike the real DOM, when the virtual DOM node is asked for it's HTML (via asHtml() or innerHtml()), it:
+ *   - does not close any (as yet) unclosed elements or text
+ *   This ensures that each call to, say:
+ *    reader.rootNode().innerHtml()
+ *   Will being with the exact value of the last call to it. 
+ *   This is helpful for doing proper incremental merging.
+ */
 "use strict";
-
-/*
-
-    HtmlStreamReader
-
-    Wrapper over htmlparser2 library which:
-    - deals with TextNodes (instead of just elements)
-    - constructs virtual DOM during streaming
-    - virtual DOM also manages a real DOM
-
-    IMPORTANT:
-
-    Unlike the real DOM, when the virtual DOM node is asked for it's HTML (via asHtml() or innerHtml()), it:
-    - does not close any (as yet) unclosed elements or text
-    This ensures that each call to, say:
-
-     reader.rootNode().innerHtml()
-
-    Will being with the exact value of the last call to it. 
-    This is helpful for doing proper incremental merging.
-
-
-    Example use:
-
-    const reader = HtmlStreamReader.clone();
-    reader.setDelegate(this);
-    reader.beginHtmlStream();
-    reader.onStreamHtml(chunk1);
-    reader.onStreamHtml(chunk2);
-    ...
-    reader.onStreamHtml(lastChunk);
-    reader.endHtmlStream();
-
-    // delegate protocol
-
-      onHtmlStreamReaderStart (reader)
-      onHtmlStreamReaderPushNode (reader, streamNode)
-      onHtmlStreamReaderPopNode (reader, streamNode) 
-      onHtmlStreamReaderEnd (reader)
-
-*/
 
 (class HtmlStreamReader extends ProtoClass { 
 
   initPrototypeSlots () {
     {
+        /**
+         * @type {htmlparser2.Parser}
+         */
         const slot = this.newSlot("parser", null);
         slot.setSlotType("htmlparser2.Parser");
     }
 
     {
+        /**
+         * @type {StreamElementNode}
+         */
         const slot = this.newSlot("currentNode", null);
         slot.setSlotType("StreamElementNode");
     }
 
     {
+      /**
+       * @type {Object}
+       */
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
 
     {
+      /**
+       * @type {Error}
+       */
       const slot = this.newSlot("error", null);
       slot.setSlotType("Error");
     }
@@ -74,22 +61,42 @@
     //this.setIsDebugging(true);
   }
 
+  /**
+   * @description Creates a new htmlparser2 parser instance with custom event handlers
+   * @returns {htmlparser2.Parser}
+   */
   newParser () {
       const self = this;
       const parser = new htmlparser2.Parser(
       {
+        /**
+         * @description Handler for opening tags
+         * @param {string} tagName - The name of the opening tag
+         * @param {Object} attributes - The attributes of the opening tag
+         */
         onopentag (tagName, attributes) {
           self.onOpenElement(tagName, attributes)
         },
 
+        /**
+         * @description Handler for text nodes
+         * @param {string} text - The text content
+         */
         ontext (text) {
           self.onText(text)
         },
 
+        /**
+         * @description Handler for closing tags
+         * @param {string} tagname - The name of the closing tag
+         */
         onclosetag (tagname) {
           self.onCloseElement(tagname)
         },
 
+        /**
+         * @description Handler for the end of the stream
+         */
         onend () {
           self.onEnd()
         }
@@ -104,35 +111,59 @@
       return parser;
   }
 
+  /**
+   * @description Shuts down the HtmlStreamReader instance
+   * @returns {HtmlStreamReader}
+   */
   shutdown () {
     this.setParser(null);
     return this;
   }
 
+  /**
+   * @description Creates a new StreamElementNode instance
+   * @returns {StreamElementNode}
+   */
   newElement () {
     return StreamElementNode.clone();
   }
 
+  /**
+   * @description Pushes a new top node to the stream
+   */
   pushTopNode () {
     const topNode = this.newElement().setName("top").onOpen();
     this.setCurrentNode(topNode); 
   }
 
+  /**
+   * @description Returns the real DOM node of the root element
+   * @returns {Node}
+   */
   rootElement () {
     return this.rootNode().domNode();
   }
 
-  // --- called by owner to input html stream ---
-
+  /**
+   * @description Starts the HTML stream
+   */
   beginHtmlStream () {
     this.pushTopNode();
     this.sendDelegate("onHtmlStreamReaderStart", [this]);
   }
 
+  /**
+   * @description Processes a chunk of HTML stream
+   * @param {string} chunk - The HTML chunk
+   */
   onStreamHtml (chunk) {
     this.parser().write(chunk);
   }
 
+  /**
+   * @description Checks if the current node is a valid end node
+   * @returns {boolean}
+   */
   isValidEnd () {
     let endNode = this.currentNode();
     if (endNode.thisClass().isKindOf(StreamTextNode)) {
@@ -141,6 +172,9 @@
     return endNode === this.rootNode();
   }
 
+  /**
+   * @description Ends the HTML stream
+   */
   endHtmlStream () {
     /*
     if (!this.isValidEnd()) {
@@ -154,8 +188,11 @@
     this.sendDelegate("onHtmlStreamReaderEnd", [this]);
   }
 
-  // --- tags ---
-
+  /**
+   * @description Pushes a new node to the stream
+   * @param {StreamElementNode} newNode - The new node to push
+   * @returns {StreamElementNode}
+   */
   pushNode (newNode) {
     const currentNode = this.currentNode();
     //console.log("PUSH " + newNode.asHtml());
@@ -166,6 +203,10 @@
     return newNode;
   }
 
+  /**
+   * @description Pops the current node from the stream
+   * @returns {StreamElementNode}
+   */
   popNode () {
     const n = this.currentNode();
     //console.log("POP " + n.asHtml());
@@ -180,10 +221,17 @@
     return n;
   }
 
+  /**
+   * @description Returns the root node of the stream
+   * @returns {StreamElementNode}
+   */
   rootNode () {
     return this.currentNode().rootNode();
   }
 
+  /**
+   * @description Logs the current state of the stream
+   */
   show () {
     const line = "-".repeat(20);
     console.log(line + " " + this.type() + " " + line);
@@ -192,12 +240,17 @@
     //debugger;
   }
 
+  /**
+   * @description Returns the previous tag node
+   * @returns {StreamElementNode}
+   */
   previousTag () {
     return this.currentNode().parent();
   }
 
-  // --- htmlparser2 events ---
-
+  /**
+   * @description Pops the current node if it is a text node
+   */
   popIfCurrentNodeIsText () {
     const n = this.currentNode();
     if (n.isTextNode()) {
@@ -205,8 +258,11 @@
     }
   }
 
-  // --- open and close element ---
-
+  /**
+   * @description Handles the opening of an element
+   * @param {string} tagName - The name of the opening tag
+   * @param {Object} attributes - The attributes of the opening tag
+   */
   onOpenElement (tagName, attributes) {
     //console.log("onOpenElement(" + tagName + ", " + JSON.stringify(attributes) + ")");
 
@@ -221,6 +277,10 @@
     this.pushNode(e);
   }
 
+  /**
+   * @description Handles the closing of an element
+   * @param {string} tagName - The name of the closing tag
+   */
   onCloseElement (tagName) {
     //console.log("onCloseElement(" + tagName + ")");
 
@@ -236,8 +296,10 @@
     }
   }
 
-  // ---------------------------------
-
+  /**
+   * @description Handles text nodes
+   * @param {string} text - The text content
+   */
   onText (text) {
     //console.log("onText '" + text + "'");
     const n = this.currentNode();
@@ -250,12 +312,19 @@
     }
   }
 
+  /**
+   * @description Opens a new text node
+   * @param {string} text - The text content
+   */
   onOpenText (text) {
     //console.log("onOpenText '" + text + "'");
     const newNode = StreamTextNode.clone().setText(text).onOpen();
     this.pushNode(newNode);
   }
 
+  /**
+   * @description Closes the current text node
+   */
   onCloseText () {
     const n = this.currentNode();
     //console.log("onCloseText '" + n.text() + "'");
@@ -263,12 +332,19 @@
     this.popNode();
   }
 
-  // --------------------------------
-
+  /**
+   * @description Handles the end of the stream
+   */
   onEnd () {
     this.popIfCurrentNodeIsText();
   }
 
+  /**
+   * @description Sends a message to the delegate
+   * @param {string} methodName - The name of the delegate method
+   * @param {Array} [args=[this]] - Additional arguments to pass to the delegate method
+   * @returns {boolean} - Returns true if the delegate method was called successfully, false otherwise
+   */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate();
 
@@ -298,6 +374,9 @@
 }.initThisClass());
 
 
+/**
+ * @description Test function for HtmlStreamReader
+ */
 const testSentenceReader = function () {
 
   console.log(

@@ -16,8 +16,6 @@
   - [AnimationListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FAnimationListener.js)
   - [AnthropicRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicRequest.js)
   - [App](./class_doc.html?path=source%2Flibrary%2Fnode%2FApp.js)
-  - [ArrayBuffer_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArrayBuffer_store.js)
-  - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
   - [AtomicMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmap%2FAtomicMap.js)
   - [AudioQueue](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
   - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
@@ -96,7 +94,6 @@
   - [BMResourceFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFolder.js)
   - [BMResourceGroup](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResourceGroup.js)
   - [BMResources](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResources.js)
-  - [BMSettingsNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FBMSettingsNode.js)
   - [BMSoundResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FBMSoundResources.js)
   - [BMStampField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStampField.js)
   - [BMStorableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2FBMStorableNode.js)
@@ -126,7 +123,6 @@
   - [Boolean_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
   - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [BottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FBottomEdgePanGestureRecognizer.js)
-  - [BreadCrumbsNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FBreadCrumbsNode.js)
   - [BreadCrumbsTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBreadCrumbsTile.js)
   - [Broadcaster](./class_doc.html?path=source%2Flibrary%2Fnotification%2FBroadcaster.js)
   - [BrowserView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2FBrowserView.js)
@@ -185,7 +181,6 @@
   - [GroqRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqRequest.js)
   - [GroqService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
   - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
-  - [HeaderNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FHeaderNode.js)
   - [HeaderTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FHeaderTile.js)
   - [HomeAssistant](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAssistants%2FHomeAssistant.js)
   - [HomeAssistantArea](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantArea.js)
@@ -285,7 +280,6 @@
   - [SelectableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSelectableDomView.js)
   - [Services](./class_doc.html?path=source%2Flibrary%2Fservices%2FServices.js)
   - [Set_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FSet_store.js)
-  - [SimpleSynth](./class_doc.html?path=source%2Flibrary%2Faudio%2FSimpleSynth.js)
   - [SlideGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FSlideGestureRecognizer.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
   - [SpatialModelNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSpatialModelsNode.js)
@@ -366,6 +360,7 @@
   - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
 - ideal
   - [ArrayBuffer_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FArrayBuffer_ideal.js)
+  - [ArrayBuffer_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArrayBuffer_store.js)
   - [Array_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FArray_ideal.js)
   - [Boolean_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FBoolean_ideal.js)
   - [Date_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FDate_ideal.js)
@@ -398,3 +393,14 @@
     - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
     - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
     - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
+- library
+  - app
+    - [BMSettingsNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FBMSettingsNode.js)
+    - [BreadCrumbsNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FBreadCrumbsNode.js)
+    - [HeaderNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FHeaderNode.js)
+  - audio
+    - [SimpleSynth](./class_doc.html?path=source%2Flibrary%2Faudio%2FSimpleSynth.js)
+- node
+  - storage
+    - base
+      - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)

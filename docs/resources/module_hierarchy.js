@@ -23,37 +23,44 @@ async function findJsFiles(dir) {
   return jsFiles;
 }
 
-function parseModules(content) {
+function parseModules(content, fileName) {
   const comments = [];
-  const ast = acorn.parse(content, {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    onComment: (block, text, start, end, startLoc, endLoc) => {
-      if (block && text.startsWith('*')) {
-        comments.push({ value: text, loc: { start: startLoc, end: endLoc } });
-      }
-    },
-    locations: true
-  });
-  const modules = new Map();
+  try {
+    const ast = acorn.parse(content, {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      onComment: (block, text, start, end, startLoc, endLoc) => {
+        if (block && text.startsWith('*')) {
+          comments.push({ value: text, loc: { start: startLoc, end: endLoc } });
+        }
+      },
+      locations: true
+    });
+    const modules = new Map();
 
-  walk.simple(ast, {
-    ClassDeclaration(node) {
-      const className = node.id.name;
-      const moduleName = getModuleName(node, comments) || 'globals';
-      addToModule(modules, moduleName, className);
-    },
-    ClassExpression(node) {
-      if (node.id) {
+    walk.simple(ast, {
+      ClassDeclaration(node) {
         const className = node.id.name;
         const moduleName = getModuleName(node, comments) || 'globals';
         addToModule(modules, moduleName, className);
+      },
+      ClassExpression(node) {
+        if (node.id) {
+          const className = node.id.name;
+          const moduleName = getModuleName(node, comments) || 'globals';
+          addToModule(modules, moduleName, className);
+        }
       }
-    }
-    // Remove the FunctionDeclaration handler
-  });
+      // Remove the FunctionDeclaration handler
+    });
 
-  return modules;
+    return modules;
+  } catch (error) {
+    console.error(`Error parsing file: ${fileName}`);
+    console.error(`Error message: ${error.message}`);
+    console.error(`Error location: Line ${error.loc.line}, Column ${error.loc.column}`);
+    throw error; // Re-throw the error after logging
+  }
 }
 
 function getModuleName(node, comments) {
@@ -137,7 +144,9 @@ async function main(folderPath) {
 
     for (const file of jsFiles) {
       const content = await fs.readFile(file, 'utf-8');
-      const modules = parseModules(content);
+      console.log(`Processing file: ${file}`); // Log the file being processed
+      console.log(`File content preview: ${content.slice(0, 100)}...`); // Log the first 100 characters of the file content
+      const modules = parseModules(content, path.basename(file));
       
       for (const [moduleName, items] of modules) {
         if (!allModules.has(moduleName)) {

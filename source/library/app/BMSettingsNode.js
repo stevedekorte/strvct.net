@@ -1,28 +1,16 @@
+/**
+ * @module library.app
+ * @class BMSettingsNode
+ * @extends BMStorableNode
+ * @classdesc Represents a settings node in the application.
+ */
 "use strict";
 
-/*
-    
-    BMSettingsNode
-
-    Do we want:
-    - a static set of slots whose values are shown as subnodes?
-    - just have some accessors that look up subnodes by title?
-
-    Using slots might allow better use of slot meta data, and 
-    we already have inspector for slot meta data...
-
-    slot.setIsSubnodeTitled(title)
-    - on didInit() (after deserialization) we enumerate these slots and:
-    -- foreach slot with subnodeTitle:
-    --- if subnode is present, set slot value to subnode 
-    --- else alloc slot via initProto and add then add subnode for it
-
-*/
-
 (class BMSettingsNode extends BMStorableNode {
-    
-    initPrototypeSlots () {
-
+    /**
+     * Initializes the prototype slots for the settings node.
+     */
+    initPrototypeSlots() {
         {
             const slot = this.addSubnodeSlot("prototypes", BMNode);
         }
@@ -38,18 +26,26 @@
         {
             const slot = this.addSubnodeSlot("blobs", BMBlobs);
         }
-        
     }
 
-    addSubnodeSlot (slotName, proto) {
+    /**
+     * Adds a subnode slot with the given name and prototype.
+     * @param {string} slotName - The name of the slot.
+     * @param {Object} proto - The prototype for the subnode.
+     * @returns {Object} The added slot.
+     */
+    addSubnodeSlot(slotName, proto) {
         const slot = this.newSlot(slotName, null);
         slot.setShouldStoreSlot(true);
         slot.setFinalInitProto(proto);
         slot.setIsSubnode(true);
         return slot;
     }
-  
-    initPrototype () {
+
+    /**
+     * Initializes the prototype for the settings node.
+     */
+    initPrototype() {
         this.setNodeCanReorderSubnodes(false);
         this.setNodeCanAddSubnode(true);
 
