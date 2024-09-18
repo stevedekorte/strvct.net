@@ -202,9 +202,6 @@
   - [IndexedDBFolder](./class_doc.html?path=source%2Fboot%2FIndexedDBFolder.js)
   - [IndexedDBTx](./class_doc.html?path=source%2Fboot%2FIndexedDBTx.js)
   - [InspectableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FInspectableNode.js)
-  - [JsonSchema](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchema.js)
-  - [JsonSchemaNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchemaNode.js)
-  - [JsonStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonStreamReader%2FJsonStreamReader.js)
   - [KeyboardKey](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FKeyboardKey.js)
   - [KeyboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FKeyboardListener.js)
   - [LeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FLeftEdgePanGestureRecognizer.js)
@@ -395,6 +392,11 @@
         - [HtmlStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FHtmlStreamReader.js)
         - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
         - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
+    - json
+      - JsonSchema
+        - [JsonSchema](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchema.js)
+      - JsonStreamReader
+        - [JsonStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonStreamReader%2FJsonStreamReader.js)
     - object
       - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
       - [Object_class](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)
@@ -405,6 +407,8 @@
       - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
       - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
       - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
+- library/ideal/json/JsonSchema/JsonSchemaNode
+  - [JsonSchemaNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchemaNode.js)
 - node
   - storage
     - base

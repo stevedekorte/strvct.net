@@ -1,47 +1,52 @@
 "use strict";
 
-/*
+/**
+ * @module library.ideal.json.JsonStreamReader
+ * @class JsonStreamReader
+ * @extends ProtoClass
+ * @classdesc Wrapper over clarinet library which constructs JSON while reading stream.
+ *
+ * Example use:
+ *
+ *   const reader = JsonStreamReader.clone();
+ *   reader.setDelegate(this);
+ *   reader.beginJsonStream();
+ *   reader.onStreamJson(firstChunk);
+ *   ...
+ *   reader.onStreamJson(lastChunk);
+ *   reader.endJsonStream();
+ *
+ * // delegate protocol
+ *
+ *   //onJsonStreamReaderStart (reader)
+ *   onJsonStreamReaderPushContainer (reader, json)
+ *   onJsonStreamReaderPopBaseContainer (reader, json)
+ *   //onJsonStreamReaderEnd (reader)
+ */
 
-    JsonStreamReader
-
-    Wrapper over clarinet library which:
-    - constructs JSON while reading stream
-
-
-    Example use:
-
-      const reader = JsonStreamReader.clone();
-      reader.setDelegate(this);
-      reader.beginJsonStream();
-      reader.onStreamJson(firstChunk);
-      ...
-      reader.onStreamJson(lastChunk);
-      reader.endJsonStream();
-
-    // delegate protocol
-
-      //onJsonStreamReaderStart (reader)
-      onJsonStreamReaderPushContainer (reader, json)
-      onJsonStreamReaderPopBaseContainer (reader, json) 
-      //onJsonStreamReaderEnd (reader)
-
-*/
-
-(class JsonStreamReader extends ProtoClass { 
-
-  initPrototypeSlots () {
+(class JsonStreamReader extends ProtoClass {
+  initPrototypeSlots() {
+    /**
+     * @type {clarinet.parser}
+     */
     {
-        const slot = this.newSlot("parser", null);
-        slot.setSlotType("clarinet.parser");
+      const slot = this.newSlot("parser", null);
+      slot.setSlotType("clarinet.parser");
     }
 
     // NOTE: a "container" is a node that can have children (such as Object or Array)
 
+    /**
+     * @type {Array}
+     */
     {
       const slot = this.newSlot("containerStack", null);
       slot.setSlotType("Array");
     }
 
+    /**
+     * @type {Object}
+     */
     {
       const slot = this.newSlot("currentContainer", null);
       slot.setSlotType("Object");
@@ -49,108 +54,152 @@
 
     // stack of keys for objects
 
+    /**
+     * @type {Array}
+     */
     {
       const slot = this.newSlot("keyStack", null);
       slot.setSlotType("Array");
     }
 
+    /**
+     * @type {String}
+     */
     {
       const slot = this.newSlot("currentKey", null);
       slot.setSlotType("String");
     }
 
+    /**
+     * @type {Object}
+     */
     {
-      const slot = this.newSlot("delegate", null);      
+      const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
   }
 
-  newParser () {
-      const parser = clarinet.parser();
+  /**
+   * @description Creates a new clarinet parser.
+   * @returns {clarinet.parser}
+   */
+  newParser() {
+    const parser = clarinet.parser();
 
-      parser.onerror = (e) => {
-        // an error happened. e is the error.
-        this.onError(e);
-      };
+    parser.onerror = (e) => {
+      // an error happened. e is the error.
+      this.onError(e);
+    };
 
-      parser.onvalue = (v) => {
-        // got some value.  v is the value. can be string, double, bool, or null.
-        this.onValue(v);
-      };
+    parser.onvalue = (v) => {
+      // got some value.  v is the value. can be string, double, bool, or null.
+      this.onValue(v);
+    };
 
-      parser.onopenobject = (key) => {
-        // opened an object. key is the first key.
-        this.onOpenObject(key);
-      };
+    parser.onopenobject = (key) => {
+      // opened an object. key is the first key.
+      this.onOpenObject(key);
+    };
 
-      parser.onkey = (key) => {
-        // got a subsequent key in an object.
-        this.onKey(key);
-      };
+    parser.onkey = (key) => {
+      // got a subsequent key in an object.
+      this.onKey(key);
+    };
 
-      parser.oncloseobject = () => {
-        this.onCloseObject();
-      };
+    parser.oncloseobject = () => {
+      this.onCloseObject();
+    };
 
-      parser.onopenarray = () => {
-        this.onOpenArray();
-      };
+    parser.onopenarray = () => {
+      this.onOpenArray();
+    };
 
-      parser.onclosearray = () => {
-        this.onCloseArray();
-      };
+    parser.onclosearray = () => {
+      this.onCloseArray();
+    };
 
-      parser.onend = () => {
-        // parser stream is done, and ready to have more stuff written to it.
-        this.onEnd();
-      };
+    parser.onend = () => {
+      // parser stream is done, and ready to have more stuff written to it.
+      this.onEnd();
+    };
 
-      //parser.write('{"foo": "bar"}').close();
-      
-      return parser;
+    //parser.write('{"foo": "bar"}').close();
+
+    return parser;
   }
 
-  beginJsonStream () {
+  /**
+   * @description Begins a new JSON stream.
+   */
+  beginJsonStream() {
     this.setParser(this.newParser());
     this.setContainerStack([]);
     this.setKeyStack([]);
     this.pushContainer([]); // root container
   }
 
-  endJsonStream () {
+  /**
+   * @description Ends the current JSON stream.
+   */
+  endJsonStream() {
     // check stack is empty?
     //this.popContainer();
     //this.rootContainer(); // should be an array of all the json objects we've read
   }
 
-  onStreamJson (data) {
+  /**
+   * @description Processes the given JSON data chunk.
+   * @param {string} data - The JSON data chunk to process.
+   * @returns {JsonStreamReader} The instance of JsonStreamReader.
+   */
+  onStreamJson(data) {
     assert(Type.isString(data), "data must be a string");
     console.log("onStreamJson('" + data + "')");
     this.parser().write(data);
     return this;
   }
 
-  shutdown () {
+  /**
+   * @description Shuts down the JsonStreamReader.
+   * @returns {JsonStreamReader} The instance of JsonStreamReader.
+   */
+  shutdown() {
     this.setParser(null);
     return this;
   }
 
-  rootContainer () {
+  /**
+   * @description Gets the root container of the JSON stream.
+   * @returns {*} The root container.
+   */
+  rootContainer() {
     return this.containerStack().first();
   }
 
-  show () {
+  /**
+   * @description Logs the root container to the console.
+   */
+  show() {
     const s = JSON.stableStringify(this.rootContainer());
     console.log("root: ", s);
   }
-    
-  // --- conatiner stack ---
-    
-  currentContainer () {
+
+  // --- container stack ---
+
+  /**
+   * @description Gets the current container.
+   * @returns {Object|Array|null} The current container, or null if none.
+   */
+  currentContainer() {
     return this.containerStack().last();
   }
 
-  pushContainer (container) {
+  /**
+   * @description Pushes a new container onto the container stack.
+   * @param {Object|Array} container - The container to push.
+   * @returns {JsonStreamReader} The instance of JsonStreamReader.
+   */
+  pushContainer(container) {
     assert(container, "container is null");
     this.containerStack().push(container);
     this.sendDelegate("onJsonStreamReaderPushContainer", [this, container]);
@@ -160,7 +209,11 @@
     return this;
   }
 
-  popContainer () {
+  /**
+   * @description Pops the current container from the container stack.
+   * @returns {Object|Array} The popped container.
+   */
+  popContainer() {
     assert(this.containerStack().length > 1, "can't close root array");
     const item = this.containerStack().pop();
     this.sendDelegate("onJsonStreamReaderPopContainer", [this, item]);
@@ -169,17 +222,30 @@
 
   // --- key stack ---
 
-  currentKey () {
+  /**
+   * @description Gets the current key.
+   * @returns {string|null} The current key, or null if none.
+   */
+  currentKey() {
     return this.keyStack().last();
   }
 
-  pushKey (key) {
+  /**
+   * @description Pushes a new key onto the key stack.
+   * @param {string} key - The key to push.
+   * @returns {JsonStreamReader} The instance of JsonStreamReader.
+   */
+  pushKey(key) {
     assert(Type.isString(key), "key must be a string");
     this.keyStack().push(key);
     return this;
   }
 
-  popKey () {  
+  /**
+   * @description Pops the current key from the key stack.
+   * @returns {JsonStreamReader} The instance of JsonStreamReader.
+   */
+  popKey() {
     assert(this.keyStack().length > 0, "can't pop empty key stack");
     this.keyStack().pop();
     return this;
@@ -187,18 +253,30 @@
 
   // --- parser events ---
 
+  /**
+   * @description Handles an error event from the clarinet parser.
+   * @param {Error} e - The error that occurred.
+   */
   onError(e) {
     console.log(this.type() + " error: " + e);
     debugger;
     this.sendDelegate("onJsonStreamReaderError", [this, e]);
   }
-  
-  onKey (key) {
+
+  /**
+   * @description Handles a key event from the clarinet parser.
+   * @param {string} key - The key that was encountered.
+   */
+  onKey(key) {
     this.pushKey(key);
     //this.debugLog("k '" + key + "'");
   }
 
-  onValue (v) {
+  /**
+   * @description Handles a value event from the clarinet parser.
+   * @param {*} v - The value that was encountered.
+   */
+  onValue(v) {
     const container = this.currentContainer();
     assert(container, "no current container");
     if (Type.isArray(container)) {
@@ -211,7 +289,11 @@
     //this.debugLog("v " + JSON.stableStringify(v));
   }
 
-  onOpenObject (key) {    
+  /**
+   * @description Handles an open object event from the clarinet parser.
+   * @param {string} key - The key of the opened object.
+   */
+  onOpenObject(key) {
     const item = {};
     this.onValue(item);
     this.pushContainer(item);
@@ -219,32 +301,50 @@
     this.onKey(key);
   }
 
-  onCloseObject () {
+  /**
+   * @description Handles a close object event from the clarinet parser.
+   */
+  onCloseObject() {
     assert(this.containerStack().length > 1, "can't close root object");
     const item = this.popContainer();
     //this.debugLog("onCloseObject ", JSON.stableStringify(item));
   }
 
-  onOpenArray () {
+  /**
+   * @description Handles an open array event from the clarinet parser.
+   */
+  onOpenArray() {
     const item = [];
     this.onValue(item);
     this.pushContainer(item);
     //this.debugLog("onOpenArray ");
   }
 
-  onCloseArray () {
+  /**
+   * @description Handles a close array event from the clarinet parser.
+   */
+  onCloseArray() {
     assert(this.containerStack().length > 1, "can't close root array");
     const item = this.popContainer();
     //this.debugLog("onCloseArray ", JSON.stableStringify(item));
   }
 
-  onEnd () {
+  /**
+   * @description Handles an end event from the clarinet parser.
+   */
+  onEnd() {
     this.popIfCurrentNodeIsText();
   }
 
   // --------------------------------
 
-  sendDelegate (methodName, args = [this]) {
+  /**
+   * @description Sends a message to the delegate object, if one is set.
+   * @param {string} methodName - The name of the method to call on the delegate.
+   * @param {Array} [args=[this]] - The arguments to pass to the method.
+   * @returns {boolean} True if the delegate method was called successfully, false otherwise.
+   */
+  sendDelegate(methodName, args = [this]) {
     const d = this.delegate();
 
     /*
@@ -254,10 +354,10 @@
     */
 
     if (d) {
-      const f = d[methodName]
+      const f = d[methodName];
       if (f) {
-        f.apply(d, args)
-        return true
+        f.apply(d, args);
+        return true;
       }
     } else {
       /*
@@ -267,9 +367,8 @@
       throw new Error(error);
       */
     }
-    return false
+    return false;
   }
-
 }.initThisClass());
 
 /*

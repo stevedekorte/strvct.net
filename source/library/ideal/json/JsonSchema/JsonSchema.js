@@ -1,9 +1,21 @@
 "use strict";
 
+/**
+ * @module library.ideal.json.JsonSchema
+ * @class JsonSchema
+ * @classdesc This class provides utility methods for working with JSON schemas.
+ * @extends Object
+ */
 
 getGlobalThis().JsonSchema = (class JsonSchema extends Object {
 
-    static definitionRefsInJsonSchema (schema) {
+    /**
+     * @description Finds all definition references in a given JSON schema.
+     * @static
+     * @param {Object} schema - The JSON schema to search for definition references.
+     * @returns {Set} A set of all the definition references found in the schema.
+     */
+    static definitionRefsInJsonSchema(schema) {
         const refs = new Set();
         const addRef = (ref) => {
             if (ref) {
@@ -32,9 +44,16 @@ getGlobalThis().JsonSchema = (class JsonSchema extends Object {
         return refs;
     }
 
-    static classesForRefs (definitionRefs) {
+    /**
+     * @description Finds classes for a given set of definition references.
+     * @static
+     * @param {Set} definitionRefs - A set of definition references to find classes for.
+     * @returns {Set} A set of classes corresponding to the given definition references.
+     * @throws {Error} If a class is not found for any of the given definition references.
+     */
+    static classesForRefs(definitionRefs) {
         const classes = new Set();
-        refs.forEach(ref => {
+        definitionRefs.forEach(ref => {
             const cls = this.classForRef(ref);
             if (cls) {
                 classes.add(cls);
@@ -45,19 +64,39 @@ getGlobalThis().JsonSchema = (class JsonSchema extends Object {
         return classes;
     }
 
-    static classForRef (ref) {
+    /**
+     * @description Finds the class for a given definition reference.
+     * @static
+     * @param {string} ref - The definition reference to find the class for.
+     * @returns {Class|undefined} The class corresponding to the given definition reference, or undefined if no class is found.
+     */
+    static classForRef(ref) {
         const className = this.classNameForRef(ref);
         const cls = this.classForClassName(className);
         return cls;
     }
 
-    static classNameForRef (ref) {
+    /**
+     * @description Extracts the class name from a given definition reference.
+     * @static
+     * @private
+     * @param {string} ref - The definition reference to extract the class name from.
+     * @returns {string} The class name extracted from the definition reference.
+     */
+    static classNameForRef(ref) {
         const parts = ref.split("/");
         const className = parts[parts.length - 1];
         return className;      
     }
 
-    static classForClassName (className) {
+    /**
+     * @description Finds the class for a given class name.
+     * @static
+     * @private
+     * @param {string} className - The name of the class to find.
+     * @returns {Class|undefined} The class corresponding to the given class name, or undefined if no class is found.
+     */
+    static classForClassName(className) {
         const aClass = getGlobalThis()[className];
         return aClass;
     }

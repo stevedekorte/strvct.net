@@ -1,15 +1,26 @@
 "use strict";
 
-/* 
-    JsonSchemaNode
-
-*/
+/**
+ * @module library/ideal/json/JsonSchema/JsonSchemaNode
+ * @class JsonSchemaNode
+ * @extends BMSummaryNode
+ * @classdesc JsonSchemaNode is a class that extends BMSummaryNode and is used to manage JSON schema representations and related operations.
+ */
 
 (class JsonSchemaNode extends BMSummaryNode {
 
+  /**
+   * Initializes the class
+   * @static
+   */
   static initClass () {
   }
 
+  /**
+   * Sets up slots from a given JSON schema
+   * @description Sets up slots from a JSON schema object, creating slots for each property and handling nested schemas
+   * @param {Object} schema - The JSON schema object to set up slots from
+   */
   setupSlotsFromJsonSchema (schema) {
 
     const properties = schema.properties;
@@ -52,6 +63,10 @@
     }
   }
 
+  /**
+   * Initializes prototype slots
+   * @description Sets up the "schemaString" slot on the prototype
+   */
   initPrototypeSlots () {
 
     {
@@ -70,6 +85,10 @@
     }
   }
   
+  /**
+   * Initializes the prototype
+   * @description Sets up the initial state of the prototype
+   */
   initPrototype () {
     this.setCanDelete(true);
     this.setShouldStoreSubnodes(false);
@@ -78,6 +97,11 @@
     this.setHasNewlineAfterSummary(true);
   }
 
+  /**
+   * Performs post-initialization tasks
+   * @description Initializes the schemaString slot with the root JSON schema for this class
+   * @returns {JsonSchemaNode} This instance
+   */
   didInit () {
     super.didInit()
     const json = this.thisClass().asRootJsonSchema(); //TODO
@@ -85,12 +109,24 @@
     return this;
   }
 
+  /**
+   * Sets the JSON archive for this instance
+   * @description Sets the JSON archive for this instance
+   * @param {Object} json - The JSON object to set as the archive
+   * @returns {JsonSchemaNode} This instance
+   */
   setJsonArchive (json) {
     debugger;
     this.setJson(json)
     return this
   }
 
+  /**
+   * Updates the JSON for this instance
+   * @description Updates the JSON for this instance, applying patches if the input is an array or updating the entire JSON if it's an object
+   * @param {Object|Array} json - The JSON object or array of patches to apply
+   * @returns {JsonSchemaNode} This instance
+   */
   updateJson (json) {
     // we assume it's a patch if it's an array
     if (Type.isArray(json)) { 
@@ -101,6 +137,10 @@
     return this
   }
 
+  /**
+   * Handles post-update tasks
+   * @description Schedules a UI update if the update was triggered by user input and a player is associated with this instance
+   */
   didUpdateNode () {
     super.didUpdateNode()
 
@@ -113,11 +153,20 @@
     }
   }
 
+  /**
+   * Shares the UI update with the player's session
+   * @description Shares the UI update with the player's session, if a player is associated with this instance
+   */
   shareUiUpdate () {
     console.log(this.type() + " '" + this.name() + "' shareUiUpdate")
     this.player().session().onLocalUiUpdateCharacter(this)
   }
 
+  /**
+   * Sets up this instance as a sample
+   * @description Sets up this instance and its subnodes as a sample
+   * @returns {JsonSchemaNode} This instance
+   */
   setupAsSample () {
     this.subnodes().forEach(sn => {
       if (sn.setupAsSample) {
@@ -127,6 +176,11 @@
     return this
   }
 
+  /**
+   * Updates the message JSON
+   * @description Creates a JSON object containing the necessary information to update the character on the server
+   * @returns {Object} The message JSON object
+   */
   updateMsgJson () {
     const json = {
       name: "updateCharacter",
@@ -139,10 +193,22 @@
     return json;
   }
 
+  /**
+   * Returns the JSON string representation of this instance
+   * @description Returns the JSON string representation of this instance
+   * @returns {String} The JSON string representation
+   */
   jsonString () {
     return JSON.stableStringify(this.asJson(), 2, 2);
   }
 
+  /**
+   * Returns the JSON schema properties for this class
+   * @description Returns the JSON schema properties for this class, using the JSON schema properties from the superclass and excluding the "schemaString" property
+   * @param {Set} refSet - A set of references to include in the schema
+   * @returns {Object} The JSON schema properties
+   * @static
+   */
   static jsonSchemaProperties (refSet) {
     assert(refSet);
     const json = super.jsonSchemaProperties(refSet);
@@ -155,6 +221,11 @@
     return json;
   }
 
+  /**
+   * Returns the JSON representation of this instance
+   * @description Returns the JSON representation of this instance, including only the slots that are JSON archivable
+   * @returns {Object} The JSON representation
+   */
   asJson () {
     // we want to limit to just the slots that are json archivable
 
