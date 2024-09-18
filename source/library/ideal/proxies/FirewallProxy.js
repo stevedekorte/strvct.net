@@ -1,42 +1,65 @@
 "use strict";
 
-/*
+/**
+ * @module library.ideal.proxies
+ */
 
-    FirewallProxy
-
-    Usefull for passing references to objects but limiting
-    how it can be accessed e.g. which methods can be called on it.
-
-    An example use case would be an immutable proxy for an array.
-    So an object that owns the array can share an immutable proxy for it
-    that doesn't allow other's to mutate it.
-        
-    Example:
-
-        const array = ["a", "b", "c"]
-        const proxyRef = FirewallProxy.newProxyFor(array)
-        proxyRef.observable().setProtectedMethodNames(new Set([...]))
-        proxyRef.observable().setProtectedTrapNames(new Set([...]))
-    
-*/
-
+/**
+ * @class FirewallProxy
+ * @extends ObservableProxy
+ * @classdesc
+ * FirewallProxy
+ *
+ * Useful for passing references to objects but limiting
+ * how it can be accessed e.g. which methods can be called on it.
+ *
+ * An example use case would be an immutable proxy for an array.
+ * So an object that owns the array can share an immutable proxy for it
+ * that doesn't allow others to mutate it.
+ *
+ * Example:
+ *
+ *     const array = ["a", "b", "c"]
+ *     const proxyRef = FirewallProxy.newProxyFor(array)
+ *     proxyRef.observable().setProtectedMethodNames(new Set([...]))
+ *     proxyRef.observable().setProtectedTrapNames(new Set([...]))
+ */
 (class FirewallProxy extends ObservableProxy {
-    
-    initPrototypeSlots () {
+    /**
+     * @description Initializes prototype slots
+     */
+    initPrototypeSlots() {
         {
+            /**
+             * @property protectedTraps
+             * @type {Set}
+             * @description Set of protected traps
+             */
             const slot = this.newSlot("protectedTraps", null);
             slot.setSlotType("Set");
         }
         {
+            /**
+             * @property protectedMethods
+             * @type {Set}
+             * @description Set of protected methods
+             */
             const slot = this.newSlot("protectedMethods", null);
             slot.setSlotType("Set");
         }
     }
-  
-    initPrototype () {
+
+    /**
+     * @description Initializes the prototype
+     */
+    initPrototype() {
     }
 
-    init () {
+    /**
+     * @description Initializes the instance
+     * @returns {FirewallProxy} The initialized instance
+     */
+    init() {
         super.init()
         this.setProtectedTraps(this.defaultProtectedTraps().shallowCopy())
         this.setProtectedMethods(this.defaultProtectedMethods().shallowCopy())
@@ -44,7 +67,11 @@
         return this
     }
 
-    defaultProtectedTraps () {
+    /**
+     * @description Returns the default set of protected traps
+     * @returns {Set} The set of protected traps
+     */
+    defaultProtectedTraps() {
         return new Set([
             "defineProperty", // Object.defineProperty
             "deleteProperty", // Object.deleteProperty
@@ -54,17 +81,25 @@
         ])
     }
 
-    defaultProtectedMethods () {
+    /**
+     * @description Returns the default set of protected methods
+     * @returns {Set} The set of protected methods
+     */
+    defaultProtectedMethods() {
         return new Set([
         ])
     }
 
-    // need to hook GET so we return special functions to hook protected method calls
-
-    postForTrap (trapName, propertyName) {
-        // instead of posting to observers, 
+    /**
+     * @description Post processing for a trap
+     * @param {string} trapName - The name of the trap
+     * @param {string} propertyName - The name of the property
+     * @returns {boolean} True if the trap is not protected, false otherwise
+     */
+    postForTrap(trapName, propertyName) {
+        // instead of posting to observers,
         // just check if it's a protected trap and, if so, raise an exception
-        // TODO: abstract non posting behavior from ObservableProxy and 
+        // TODO: abstract non posting behavior from ObservableProxy and
         // use as parent class of both ObservableProxy and Firewall
         if (this.protectedTraps().has(trapName)) {
             const msg = " blocked proxy trap '" + trapName + "' on property '" + propertyName + "'"
@@ -76,13 +111,24 @@
         return true
     }
 
-    onProtectedMethodCall (propertyName, argsList) {
+    /**
+     * @description Called when a protected method is called
+     * @param {string} propertyName - The name of the method
+     * @param {Arguments} argsList - The arguments passed to the method
+     */
+    onProtectedMethodCall(propertyName, argsList) {
         const msg = " blocked method call '" + propertyName + "' "
         this.debugLog(msg)
         throw new Error(this.typeId() + msg)
     }
 
-    get (target, propertyName) {
+    /**
+     * @description The `get` trap for the proxy
+     * @param {Object} target - The target object
+     * @param {string} propertyName - The name of the property
+     * @returns {*} The value of the property
+     */
+    get(target, propertyName) {
         if (propertyName === "observable") {
             const self = this
             return () => { return self }
@@ -106,7 +152,10 @@
         return Reflect.get(target, propertyName, target);
     }
 
-    static selfTest () {
+    /**
+     * @description Self-test for FirewallProxy
+     */
+    static selfTest() {
         // test array
         const array = ["a", "b", "c"]
         const ap = array.asReadOnly()
@@ -125,7 +174,7 @@
         assertThrows(() => sp.delete("foo"))
 
         // test map
-        const map = new Map([ ["foo", 1], ["bar", 2] ])
+        const map = new Map([["foo", 1], ["bar", 2]])
         const mp = set.asReadOnly()
         assertThrows(() => mp.clear())
         assertThrows(() => mp.delete("foo"))
@@ -146,10 +195,13 @@
 // ------------------------------------------------------------------
 
 Object.defineSlots(Object.prototype, {
-    
-    mutatorMethodNamesSet () {
+    /**
+     * @description Returns a set of mutator method names
+     * @returns {Set} A set of mutator method names
+     */
+    mutatorMethodNamesSet() {
         return new Set([
-            "__defineGetter__",  
+            "__defineGetter__",
             "__defineSetter__",
         ])
     }
@@ -157,8 +209,11 @@ Object.defineSlots(Object.prototype, {
 })
 
 Object.defineSlots(Set.prototype, {
-    
-    mutatorMethodNamesSet () {
+    /**
+     * @description Returns a set of mutator method names
+     * @returns {Set} A set of mutator method names
+     */
+    mutatorMethodNamesSet() {
         return new Set([
             "add",
             "clear",
@@ -170,7 +225,11 @@ Object.defineSlots(Set.prototype, {
 
 Object.defineSlots(Map.prototype, {
 
-    mutatorMethodNamesSet () {
+    /**
+     * @description Returns a set of mutator method names
+     * @returns {Set} A set of mutator method names
+     */
+    mutatorMethodNamesSet() {
         return new Set([
             "clear",
             "delete",
@@ -182,7 +241,11 @@ Object.defineSlots(Map.prototype, {
 
 Object.defineSlots(Array.prototype, {
 
-    mutatorMethodNamesSet () {
+    /**
+     * @description Returns a set of mutator method names
+     * @returns {Set} A set of mutator method names
+     */
+    mutatorMethodNamesSet() {
         return new Set([
             "copyWithin",
             "pop",
@@ -199,7 +262,11 @@ Object.defineSlots(Array.prototype, {
 
 Object.defineSlots(Date.prototype, {
     
-    mutatorMethodNamesSet () {
+    /**
+     * @description Returns a set of mutator method names
+     * @returns {Set} A set of mutator method names
+     */
+    mutatorMethodNamesSet() {
         return new Set([
             "setDate",
             "setFullYear",
@@ -224,7 +291,11 @@ Object.defineSlots(Date.prototype, {
 
 Object.defineSlots(Object.prototype, {
 
-    asReadOnly () {
+    /**
+     * @description Creates a read-only proxy for the object
+     * @returns {FirewallProxy} A read-only proxy for the object
+     */
+    asReadOnly() {
         const obj = FirewallProxy.newProxyFor(this)
         obj.observable().setProtectedMethods(this.mutatorMethodNamesSet())
         return obj
