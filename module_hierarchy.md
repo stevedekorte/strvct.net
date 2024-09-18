@@ -193,7 +193,6 @@
   - [HomeAssistantState](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
   - [HomeAssistantStates](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
   - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
-  - [HttpResponseCodes](./class_doc.html?path=source%2Flibrary%2Fideal%2Fnetworking%2FHttpResponseCodes.js)
   - [ImageView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageView.js)
   - [ImageWellView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageWellView.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)
@@ -400,6 +399,8 @@
     - misc
       - [Documentation](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FDocumentation.js)
       - [NamespaceSearch](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FNamespaceSearch.js)
+    - networking
+      - [HttpResponseCodes](./class_doc.html?path=source%2Flibrary%2Fideal%2Fnetworking%2FHttpResponseCodes.js)
     - object
       - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
       - [Object_class](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)

@@ -1,33 +1,48 @@
+/**
+ * @module library.ideal.networking
+ * @class HttpResponseCodes
+ * @extends ProtoClass
+ * @classdesc The HttpResponseCodes class provides a convenient way to retrieve information about HTTP response codes.
+ */
 "use strict";
 
-/* 
-    HttpResponseCodes
-
-    Example use:
-
-    const info = HttpResponseCodes.shared().infoForCode(426)
-
-    // info contains: { "type": "Client Error", "description": "Upgrade Required" }
-
-*/
-
 (class HttpResponseCodes extends ProtoClass {
-  initPrototypeSlots () {
+  /**
+   * Initializes the prototype slots.
+   * @private
+   */
+  initPrototypeSlots() {
     {
+      /**
+       * @property {Map} codesMap - A map of HTTP response codes and their corresponding information.
+       */
       const slot = this.newSlot("codesMap", null);
       slot.setSlotType("Map");
     }
   }
 
-  initPrototype () {
+  /**
+   * Initializes the prototype by setting the codesMap.
+   * @private
+   */
+  initPrototype() {
     this.setCodesMap(this.codesAsMap());
   }
 
-  init () {
+  /**
+   * Initializes the instance.
+   * @private
+   */
+  init() {
     super.init();
   }
 
-  codesAsMap () {
+  /**
+   * Creates a Map of HTTP response codes and their corresponding information.
+   * @returns {Map} A Map object containing HTTP response codes as keys and their corresponding information as values.
+   * @private
+   */
+  codesAsMap() {
     const m = new Map();
     const json = this.jsonCodes();
     Object.keys(json).forEach(code => {
@@ -37,12 +52,25 @@
     return m;
   }
 
-  infoForCode (code) {
+  /**
+   * Retrieves the information for a given HTTP response code.
+   * @param {number} code - The HTTP response code.
+   * @returns {Object} An object containing the type and description of the HTTP response code, or undefined if the code is not found.
+   * @static
+   */
+  infoForCode(code) {
     const info = this.codesMap().get("" + code);
     return info;
   }
 
-  stringForCode (code) {
+  /**
+   * Generates a string representation of the HTTP response code information.
+   * @param {number} code - The HTTP response code.
+   * @returns {string} A string containing the HTTP response code, type, and description.
+   * @static
+   * @description Retrieves the information for a given HTTP response code and formats it as a string.
+   */
+  stringForCode(code) {
     const info = this.infoForCode(code);
     if (info) {
       return "HTTP Response Code '" + code + "': " + info.type + ": " + info.description;
@@ -50,8 +78,14 @@
     return "Unknown HTTP Response code: '" + code + "'";
   }
 
-
-  shortStringForCode (code) {
+  /**
+   * Generates a shorter string representation of the HTTP response code information.
+   * @param {number} code - The HTTP response code.
+   * @returns {string} A string containing the type and description of the HTTP response code.
+   * @static
+   * @description Retrieves the information for a given HTTP response code and formats it as a shorter string.
+   */
+  shortStringForCode(code) {
     const info = this.infoForCode(code);
     if (info) {
       return info.type + ": " + info.description;
@@ -59,7 +93,13 @@
     return "Unknown HTTP Response code: '" + code + "'";
   }
 
-  jsonCodes () {
+  /**
+   * Retrieves the HTTP response codes and their corresponding information as a JSON object.
+   * @returns {Object} A JSON object containing HTTP response codes as keys and their corresponding information as values.
+   * @static
+   * @private
+   */
+  jsonCodes() {
     return {
       "100": {"type": "Informational", "description": "Continue"},
       "101": {"type": "Informational", "description": "Switching Protocols"},
@@ -126,4 +166,3 @@
   }
 
 }.initThisClass());
-
