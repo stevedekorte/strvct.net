@@ -2,7 +2,7 @@
 
 /**
  * Custom error class for missing slots.
- * @module ideal.object
+ * @module library.ideal.object
  * @class MissingSlotError
  * @extends Error
  */
@@ -16,7 +16,7 @@ getGlobalThis().MissingSlotError = (class MissingSlotError extends Error {
   
 /**
  * Adds copying related behaviors for Object class.
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_copying
  * @extends Object
  */

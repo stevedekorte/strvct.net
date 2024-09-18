@@ -2,7 +2,7 @@
 "use strict"; 
 
 /*
-    @module ideal.object
+    @module library.ideal.object
 
     Weird JS things:
 

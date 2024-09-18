@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal.collections
+ * @module library.ideal.collections
  * @class IndexedArray
  * @extends HookedArray
  * @description A subclass of Array that maintains a dictionary index of the 

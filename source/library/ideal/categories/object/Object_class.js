@@ -4,7 +4,7 @@
  * Object_class
  * 
  * Some added state and behavior on Object class.
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_class
  * @extends Object
  */

@@ -21,7 +21,7 @@
  * - appDidInit (when the Application posts an appDidInit notification)
  *   Implement an appDidInit() method, and in init() call this.listenForAppDidInit().
  * 
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_init
  * @extends Object
  */

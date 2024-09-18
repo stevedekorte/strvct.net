@@ -1,5 +1,5 @@
 /**
- * @module ideal.html.HtmlStreamReader
+ * @module library.ideal.html.HtmlStreamReader
  * @class StreamNode
  * @classdesc Base class for StreamTextNode and StreamElementNode
  * @extends ProtoClass

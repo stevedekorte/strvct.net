@@ -19,7 +19,7 @@
  *
  * // example output: "10:11am"
  *
- * @module ideal.formatters
+ * @module library.ideal.formatters
  * @class TimeFormatter
  * @extends ProtoClass
  */

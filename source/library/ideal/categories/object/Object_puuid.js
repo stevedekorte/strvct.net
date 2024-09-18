@@ -2,7 +2,7 @@
 
 /**
  * Extends Object with UUID (Universally Unique Identifier) functionality.
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_puuid
  * @extends Object
  */

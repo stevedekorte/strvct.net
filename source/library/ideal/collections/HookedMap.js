@@ -6,7 +6,7 @@
  * The JS Map object holds key-value pairs and remembers the original insertion order of the keys.
  * For this to work, you need to use method alternatives to the non-method (operator) operations.
  *
- * @module ideal.collections
+ * @module library.ideal.collections
  * @class HookedMap
  * @extends Map
  */

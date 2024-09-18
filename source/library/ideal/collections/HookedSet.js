@@ -5,7 +5,7 @@
  * 
  * For this to work, you need to use method alternatives to the non-method
  * (operator) operations.
- * @module ideal.collections
+ * @module library.ideal.collections
  * @class HookedSet
  * @extends Set
  */

@@ -5,7 +5,7 @@
  * 
  * Note:Object keys always get turned into strings.
  * 
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_ideal
  * @extends Object
  * 

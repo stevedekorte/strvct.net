@@ -7,7 +7,7 @@
  * const stringVersion = NumberFormatter.clone().setValue(1234).setSignificantDigits(2).formattedValue();
  * // stringVersion will be "1.2K"
  *
- * @module ideal.formatters
+ * @module library.ideal.formatters
  * @class NumberFormatter
  * @extends ProtoClass
  */

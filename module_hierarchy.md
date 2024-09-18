@@ -371,31 +371,6 @@
   - [Set_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FSet_ideal.js)
   - [String_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FString_ideal.js)
   - [Type](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FType.js)
-  - collections
-    - [HookedArray](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FHookedArray.js)
-    - [HookedMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FHookedMap.js)
-    - [HookedSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FHookedSet.js)
-    - [IndexedArray](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FIndexedArray.js)
-    - [SortedArray](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FSortedArray.js)
-  - formatters
-    - [ByteFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FByteFormatter.js)
-    - [NumberFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FNumberFormatter.js)
-    - [TimeFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FTimeFormatter.js)
-    - [TimePeriodFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FTimePeriodFormatter.js)
-  - html
-    - HtmlStreamReader
-      - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
-      - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
-  - object
-    - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
-    - [Object_class](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)
-    - [Object_copying](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
-    - [Object_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_ideal.js)
-    - [Object_init](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_init.js)
-    - [Object_mutation](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_mutation.js)
-    - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
-    - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
-    - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
 - library
   - app
     - [BMSettingsNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FBMSettingsNode.js)
@@ -404,9 +379,32 @@
   - audio
     - [SimpleSynth](./class_doc.html?path=source%2Flibrary%2Faudio%2FSimpleSynth.js)
   - ideal
+    - collections
+      - [HookedArray](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FHookedArray.js)
+      - [HookedMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FHookedMap.js)
+      - [HookedSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FHookedSet.js)
+      - [IndexedArray](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FIndexedArray.js)
+      - [SortedArray](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcollections%2FSortedArray.js)
+    - formatters
+      - [ByteFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FByteFormatter.js)
+      - [NumberFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FNumberFormatter.js)
+      - [TimeFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FTimeFormatter.js)
+      - [TimePeriodFormatter](./class_doc.html?path=source%2Flibrary%2Fideal%2Fformatters%2FTimePeriodFormatter.js)
     - html
       - HtmlStreamReader
         - [HtmlStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FHtmlStreamReader.js)
+        - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
+        - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
+    - object
+      - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
+      - [Object_class](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)
+      - [Object_copying](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
+      - [Object_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_ideal.js)
+      - [Object_init](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_init.js)
+      - [Object_mutation](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_mutation.js)
+      - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
+      - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
+      - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
 - node
   - storage
     - base

@@ -7,7 +7,7 @@
  * but scheduler runs while still in (but at the end of) the current event.
  * Also, we sometimes need timeout delays.
  *
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_timeouts
  * @extends Object
  */

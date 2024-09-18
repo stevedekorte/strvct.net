@@ -13,7 +13,7 @@
  * // if seconds was 3600, stringVersion would be 1h.
  * // if seconds was 172800, stringVersion would be 2d.
  *
- * @module ideal.formatters
+ * @module library.ideal.formatters
  * @class TimePeriodFormatter
  * @extends ProtoClass
  */

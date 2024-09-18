@@ -15,7 +15,7 @@
  * a Proxy to intercept the array operations, which would be safer, 
  * but also slower and more memory intensive.
  * 
- * @module ideal.collections
+ * @module library.ideal.collections
  * @class HookedArray
  * @extends Array
  */

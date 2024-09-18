@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal.collections
+ * @module library.ideal.collections
  * @class SortedArray
  * @extends IndexedArray
  * @description A subclass of IndexedArray that maintains its subnodes in sorted order.

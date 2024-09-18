@@ -3,7 +3,7 @@
 /**
  * Object category to support notification and observation functionality.
  * 
- * @module ideal.object
+ * @module library.ideal.object
  * @class Object_notification
  * @extends Object
  */
