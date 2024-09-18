@@ -1,31 +1,44 @@
 "use strict";
 
-/*
+/**
+ * @module library.ideal.weak
+ */
 
-  EnumerableWeakSet
-
-  A Set with WeakRef values internally, but external API looks normal (gets and sets values).
-  Unlike WeakSet, it's values are enumerable.
-  
-  Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
-  implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
-
-*/
-
+/**
+ * @class EnumerableWeakSet
+ * @extends WeakSet
+ * @classdesc A Set with WeakRef values internally, but external API looks normal (gets and sets values).
+ * Unlike WeakSet, it's values are enumerable.
+ * 
+ * Internally, a EnumerableWeakMap of value puuid keys to weakrefs is used so we can
+ * implement add(), has(), delete() etc quickly (i.e. without enumerating all weakref values).
+ */
 getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
 
-  constructor () {
+  /**
+   * @constructor
+   */
+  constructor() {
     this._refs = new EnumerableWeakMap();
   }
 
-  assertValidValue (v) {
+  /**
+   * @description Asserts that the provided value is valid (not undefined).
+   * @param {*} v - The value to assert.
+   */
+  assertValidValue(v) {
     if (v === undefined) {
       throw new Error("values cannot be undefined as unref returns undefined after collection");
       return;
     }
   }
 
-  add (v) {
+  /**
+   * @description Adds a value to the EnumerableWeakSet.
+   * @param {*} v - The value to add.
+   * @returns {EnumerableWeakSet} This instance.
+   */
+  add(v) {
     this.assertValidValue(v);
 
     const refs = this._refs;
@@ -37,11 +50,19 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
     return this;
   }
 
-  clear () {
+  /**
+   * @description Clears all values from the EnumerableWeakSet.
+   */
+  clear() {
     this._refs.clear();
   }
 
-  delete (v) {
+  /**
+   * @description Deletes a value from the EnumerableWeakSet.
+   * @param {*} v - The value to delete.
+   * @returns {boolean} True if the value was present and removed, false otherwise.
+   */
+  delete(v) {
     this.assertValidValue(v);
 
     const hadValue = this.has(v)
@@ -51,54 +72,94 @@ getGlobalThis().EnumerableWeakSet = (class EnumerableWeakSet {
     return hadValue
   }
 
-  has (v) {
+  /**
+   * @description Checks if the EnumerableWeakSet has a given value.
+   * @param {*} v - The value to check for.
+   * @returns {boolean} True if the value is present, false otherwise.
+   */
+  has(v) {
     this.assertValidValue(v)
     return this._refs.has(v.puuid())
   }
 
-  keys () {
+  /**
+   * @description Returns an array of the values in the EnumerableWeakSet.
+   * @returns {Array} An array of the values.
+   */
+  keys() {
     return this.valuesArray()
   }
 
-  values () {
+  /**
+   * @description Returns an array of the values in the EnumerableWeakSet.
+   * @returns {Array} An array of the values.
+   */
+  values() {
     return this.valuesArray()
   }
 
-  count () {
-    return this._refs.count() // IMPORTANT: due to nature of WeakRefs, size may be smaller when actually used
+  /**
+   * @description Returns the count of values in the EnumerableWeakSet.
+   * @returns {number} The count of values.
+   * @description IMPORTANT: due to the nature of WeakRefs, the size may be smaller when actually used.
+   */
+  count() {
+    return this._refs.count()
   }
 
-  forEach (fn) {
+  /**
+   * @description Executes a provided function once for each value in the EnumerableWeakSet.
+   * @param {Function} fn - The function to execute for each value.
+   */
+  forEach(fn) {
     this._refs.forEach(v => fn(v, v, this))
   }
 
   // --- extras ---
 
-  entries () {
+  /**
+   * @description Unimplemented method.
+   * @throws {Error} Throws an error indicating that the method is unimplemented.
+   */
+  entries() {
     throw new Error("unimplemented")
   }
 
-  clearCollected () {
+  /**
+   * @description Clears any collected (stale) WeakRefs from the EnumerableWeakSet.
+   */
+  clearCollected() {
     this.forEach(v => {}) // forEach will remove any stale weakrefs
   }
 
-  valuesSet () {
+  /**
+   * @description Returns a Set containing all values in the EnumerableWeakSet.
+   * @returns {Set} A Set containing all values.
+   */
+  valuesSet() {
     const set = new Set()
     this.forEach(v => set.add(v))
     return set
   }
 
-  valuesArray () {
+  /**
+   * @description Returns an array containing all values in the EnumerableWeakSet.
+   * @returns {Array} An array containing all values.
+   */
+  valuesArray() {
     const a = new Array()
     this.forEach(v => a.push(v))
     return a
   }
 
-  keysArray () {
+  /**
+   * @description Returns an array containing all keys (puuid values) in the EnumerableWeakSet.
+   * @returns {Array} An array containing all keys.
+   */
+  keysArray() {
     return this._refs.keysArray()
   }
 
 });
 
 //EnumerableWeakSet.selfTest()
-

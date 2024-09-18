@@ -1,139 +1,176 @@
 "use strict";
 
-/*
-
-  EnumerableWeakMap
-
-  A Map with WeakRef values internally, but external API looks normal (gets and sets values).
-  Unlike WeakMap, the keys can be strings, and it's entries are enumerable.
-
-  Unlike WeakMap, keys can be primitives such as strings and numbers.
-  All values should be objects (or null, numbers, strings) but cannot be undefined.
-
-*/
-
+/**
+ * @module library.ideal.weak
+ * @class EnumerableWeakMap
+ * @classdesc A Map with WeakRef values internally, but external API looks normal (gets and sets values).
+ * Unlike WeakMap, the keys can be strings, and it's entries are enumerable.
+ * Unlike WeakMap, keys can be primitives such as strings and numbers.
+ * All values should be objects (or null, numbers, strings) but cannot be undefined.
+ * @extends Map
+ */
 getGlobalThis().EnumerableWeakMap = (class EnumerableWeakMap {
 
+  /**
+   * Creates an instance of EnumerableWeakMap.
+   */
   constructor() {
-    this._refs = new Map()
+    this._refs = new Map();
   }
 
-  assertValidValue (v) {
+  /**
+   * Asserts that the provided value is valid (not undefined).
+   * @param {*} v - The value to assert.
+   * @throws {Error} - If the value is undefined.
+   * @description Throws an error if the provided value is undefined because unref returns undefined after collection.
+   */
+  assertValidValue(v) {
     if (v === undefined) {
-      throw new Error("values cannot be undefined as unref returns undefined after collection")
-      return
+      throw new Error("values cannot be undefined as unref returns undefined after collection");
+      return;
     }
   }
 
-  clear () {
-    this._refs.clear()
+  /**
+   * Clears the EnumerableWeakMap instance.
+   * @description Removes all key-value pairs from the EnumerableWeakMap instance.
+   */
+  clear() {
+    this._refs.clear();
   }
 
-  has (k) {
-    return this.get(k) !== undefined
+  /**
+   * Checks if the EnumerableWeakMap instance has the specified key.
+   * @param {*} k - The key to check.
+   * @returns {boolean} - True if the key exists, false otherwise.
+   * @description Returns true if the specified key exists in the EnumerableWeakMap instance, false otherwise.
+   */
+  has(k) {
+    return this.get(k) !== undefined;
   }
 
-  get (k) {
-    const refs = this._refs
-    const wr = refs.get(k)
-    if (wr) { 
+  /**
+   * Retrieves the value associated with the specified key.
+   * @param {*} k - The key to retrieve the value for.
+   * @returns {*} - The value associated with the key, or undefined if the key does not exist or the value has been garbage collected.
+   * @description Retrieves the value associated with the specified key. If the key does not exist or the value has been garbage collected, it returns undefined.
+   */
+  get(k) {
+    const refs = this._refs;
+    const wr = refs.get(k);
+    if (wr) {
       // make sure it's not collected yet
-      const v = wr.deref()
+      const v = wr.deref();
       if (v === undefined) {
-        refs.delete(k)
-        return undefined
+        refs.delete(k);
+        return undefined;
       }
-      return v
+      return v;
     }
-    return undefined
+    return undefined;
   }
 
-  set (k, v) {
-    this.assertValidValue(v)
+  /**
+   * Sets the value for the specified key.
+   * @param {*} k - The key to set the value for.
+   * @param {*} v - The value to set.
+   * @returns {EnumerableWeakMap} - The EnumerableWeakMap instance.
+   * @description Sets the value for the specified key. If the key already exists and the value is different, it creates a new WeakRef and updates the value.
+   */
+  set(k, v) {
+    this.assertValidValue(v);
 
     if (this.get(k) !== v) {
-      this._refs.set(k, new WeakRef(v))
+      this._refs.set(k, new WeakRef(v));
     }
-    return this
+    return this;
   }
 
-  delete (k) {
-    const hasKey = this.has(k) // this may delete it if weakref is stale
+  /**
+   * Removes the specified key from the EnumerableWeakMap instance.
+   * @param {*} k - The key to remove.
+   * @returns {boolean} - True if the key existed and was removed, false otherwise.
+   * @description Removes the specified key from the EnumerableWeakMap instance and returns a boolean indicating whether the key existed and was removed.
+   */
+  delete(k) {
+    const hasKey = this.has(k); // this may delete it if weakref is stale
     if (hasKey) {
-      this._refs.delete(k)
+      this._refs.delete(k);
     }
-    return hasKey
+    return hasKey;
   }
 
-  forEach (fn) { // fn (value, key, map)
+  /**
+   * Executes the provided function once for each key-value pair in the EnumerableWeakMap instance.
+   * @param {Function} fn - The function to execute for each key-value pair.
+   * @description Executes the provided function once for each key-value pair in the EnumerableWeakMap instance. The function is passed the value, key, and the EnumerableWeakMap instance itself. Also removes collected keys during iteration.
+   */
+  forEach(fn) { // fn (value, key, map)
     // also removes collected keys
-    const refs = this._refs
-    let keysToRemove = null
+    const refs = this._refs;
+    let keysToRemove = null;
     // fn(value, key, set)
     if (refs.size) {
       refs.forEach((wr, k) => {
-        const v = wr.deref()
+        const v = wr.deref();
         if (v !== undefined) {
-          fn(v, k, this)
+          fn(v, k, this);
         } else {
           if (!keysToRemove) {
-            keysToRemove = []
+            keysToRemove = [];
           }
-          keysToRemove.push(k)
+          keysToRemove.push(k);
         }
-      })
+      });
     }
     if (keysToRemove) {
-      keysToRemove.forEach(k => refs.delete(k))
+      keysToRemove.forEach(k => refs.delete(k));
     }
   }
 
-  removeCollectedValues () {
-    const refs = this._refs
-    const keysToRemove = []
+  /**
+   * Removes collected values from the EnumerableWeakMap instance.
+   * @description Removes collected values (values that have been garbage collected) from the EnumerableWeakMap instance.
+   */
+  removeCollectedValues() {
+    const refs = this._refs;
+    const keysToRemove = [];
     if (refs.size) {
       refs.forEach((wr, k) => {
-        const v = wr.deref()
+        const v = wr.deref();
         if (v === undefined) {
-          keysToRemove.push(k)
+          keysToRemove.push(k);
         }
-      })
+      });
     }
-    keysToRemove.forEach(k => refs.delete(k))
+    keysToRemove.forEach(k => refs.delete(k));
   }
 
-  count () {
-    this.removeCollectedValues()
-    // since weakrefs are only removed after a collection cycle, 
-    // actual size of reachable objects may be lower than this 
-    return this._refs.size 
+  /**
+   * Returns the number of key-value pairs in the EnumerableWeakMap instance.
+   * @returns {number} - The number of key-value pairs in the EnumerableWeakMap instance.
+   * @description Returns the number of key-value pairs in the EnumerableWeakMap instance. Note that since WeakRefs are only removed after a collection cycle, the actual size of reachable objects may be lower than this.
+   */
+  count() {
+    this.removeCollectedValues();
+    // since weakrefs are only removed after a collection cycle,
+    // actual size of reachable objects may be lower than this
+    return this._refs.size;
   }
 
-  keysArray () {
-    const keys = []
+  /**
+   * Returns an array of keys in the EnumerableWeakMap instance.
+   * @returns {Array} - An array of keys in the EnumerableWeakMap instance.
+   * @description Returns an array of keys in the EnumerableWeakMap instance.
+   */
+  keysArray() {
+    const keys = [];
     this.forEach((v, k) => {
-      keys.push(k)
-    })
-    return keys
+      keys.push(k);
+    });
+    return keys;
     //return this._refs.keysArray()
   }
-
-  /*
-  valuesSet () {
-    return new Set(this._refs.values())
-  }
-
-  hasValue (v) {
-    return this.valuesSet().has(v)
-  }
-
-  values () {
-    const weakValues = this._refs.values()
-    const values = weakValues.map(ref => ref.deref())
-    return values.filter(v => v !== undefined)
-  }
-  */
 });
 
 //EnumerableWeakMap.selfTest()
-
