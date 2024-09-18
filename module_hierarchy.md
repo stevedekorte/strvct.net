@@ -16,7 +16,6 @@
   - [AnimationListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FAnimationListener.js)
   - [AnthropicRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicRequest.js)
   - [App](./class_doc.html?path=source%2Flibrary%2Fnode%2FApp.js)
-  - [AtomicMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmap%2FAtomicMap.js)
   - [AudioQueue](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
   - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
   - [AzureLocale](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocale.js)
@@ -143,7 +142,6 @@
   - [Devices](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevices.js)
   - [DocumentBody](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDocumentBody.js)
   - [DocumentListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDocumentListener.js)
-  - [Documentation](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FDocumentation.js)
   - [DomBorderRadius](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomBorderRadius.js)
   - [DomCssInspector](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FDomCssInspector.js)
   - [DomTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FDomTextTapeMeasure.js)
@@ -216,7 +214,6 @@
   - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
   - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
   - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
-  - [NamespaceSearch](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FNamespaceSearch.js)
   - [NavView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FNavView.js)
   - [NodeView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FNodeView.js)
   - [Number_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
@@ -395,8 +392,14 @@
     - json
       - JsonSchema
         - [JsonSchema](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchema.js)
+        - [JsonSchemaNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchemaNode.js)
       - JsonStreamReader
         - [JsonStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonStreamReader%2FJsonStreamReader.js)
+    - map
+      - [AtomicMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmap%2FAtomicMap.js)
+    - misc
+      - [Documentation](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FDocumentation.js)
+      - [NamespaceSearch](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FNamespaceSearch.js)
     - object
       - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
       - [Object_class](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_class.js)
@@ -407,9 +410,7 @@
       - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
       - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
       - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
-- library/ideal/json/JsonSchema/JsonSchemaNode
-  - [JsonSchemaNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchemaNode.js)
-- node
-  - storage
-    - base
-      - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
+  - node
+    - storage
+      - base
+        - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)

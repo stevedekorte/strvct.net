@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library/ideal/json/JsonSchema/JsonSchemaNode
+ * @module library.ideal.json.JsonSchema
  * @class JsonSchemaNode
  * @extends BMSummaryNode
  * @classdesc JsonSchemaNode is a class that extends BMSummaryNode and is used to manage JSON schema representations and related operations.

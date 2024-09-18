@@ -1,38 +1,62 @@
 "use strict";
 
+/**
+ * @module library.ideal.misc
+ */
+
 /*
-    
     StackTrace
-    
     Class that can parse a JS stack trace, into StackFrame objects.
-
-
 */
 
+/**
+ * @class
+ * @extends ProtoClass
+ * @classdesc Represents a single stack frame from a JavaScript stack trace.
+ */
 (class StackFrame extends ProtoClass {
-
+    /**
+     * Initializes the prototype slots for the StackFrame class.
+     */
     initPrototypeSlots () {
         {
             const slot = this.newSlot("functionName", null);
             slot.setSlotType("String");
+            /**
+             * @property {string} functionName - The name of the function in the stack frame.
+             */
         }
         {
             const slot = this.newSlot("url", null);
             slot.setSlotType("String");
+            /**
+             * @property {string} url - The URL or file path of the script containing the function.
+             */
         }
         {
             const slot = this.newSlot("lineNumber", null);
             slot.setSlotType("Number");
+            /**
+             * @property {number} lineNumber - The line number in the script where the function was called.
+             */
         }
         {
             const slot = this.newSlot("characterNumber", null);
             slot.setSlotType("Number");
+            /**
+             * @property {number} characterNumber - The character position on the line where the function was called.
+             */
         }
     }
   
     initPrototype () {
     }
 
+    /**
+     * @description Parses a single line from a stack trace and sets the properties of the StackFrame object accordingly.
+     * @param {string} line - A single line from a JavaScript stack trace.
+     * @returns {StackFrame} The current StackFrame instance.
+     */
     fromLine (line) {
         line = line.after("at ")
 
@@ -59,10 +83,17 @@
         return this
     }
 
+    /**
+     * @description Returns a string representation of the StackFrame object.
+     * @returns {string} A string describing the stack frame.
+     */
     description () {
         return "  " + this.functionName() + "() line " + this.lineNumber()
     }
 
+    /**
+     * @description Logs the string representation of the StackFrame object to the console.
+     */
     show () {
         console.log(this.description())
     }
@@ -71,22 +102,44 @@
 
 // -----------------------------------------------------------------
 
+/**
+ * @class
+ * @extends ProtoClass
+ * @classdesc Represents a JavaScript stack trace, containing an array of StackFrame objects.
+ */
 (class StackTrace extends ProtoClass {
+    /**
+     * Initializes the prototype slots for the StackTrace class.
+     */
     initPrototypeSlots () {
         {
             const slot = this.newSlot("error", null);
             slot.setSlotType("Error");
+            /**
+             * @property {Error} error - The Error object associated with the stack trace.
+             */
         }
         {
             const slot = this.newSlot("stackFrames", []);
             slot.setSlotType("Array");
+            /**
+             * @property {StackFrame[]} stackFrames - An array of StackFrame objects representing the stack trace.
+             */
         }
     }
 
+    /**
+     * @description Initializes the StackTrace instance.
+     */
     init () {
         super.init()
     }
-	
+
+    /**
+     * @description Sets the Error object associated with the stack trace and parses the stack trace into an array of StackFrame objects.
+     * @param {Error} error - The Error object to associate with the stack trace.
+     * @returns {StackTrace} The current StackTrace instance.
+     */
     setError (error) {
         this._error = error
 
@@ -101,11 +154,17 @@
         return this
     }
 
+    /**
+     * @description Logs a string representation of the stack trace to the console.
+     */
     show () {
         console.log(this.type() + ": '" + this.error().message + "'")
         this.stackFrames().forEach(frame => frame.show())
     }
 
+    /**
+     * @description Tests the functionality of the StackTrace class by generating an Error and logging its stack trace.
+     */
     test () {
         const f1 = function () {
             try {

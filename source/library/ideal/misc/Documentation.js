@@ -1,126 +1,77 @@
 "use strict";
 
-/*
-
-    Documentation
-
-    An simple in-memory documentation system.
-    
-    TODO: Rename to something more unique.
-
-*/
-
+/**
+ * @module library.ideal.misc
+ * @class Documentation
+ * @extends ProtoClass
+ * @classdesc An simple in-memory documentation system.
+ * 
+ * TODO: Rename to something more unique.
+ */
 (class Documentation extends ProtoClass {
-    initPrototypeSlots () {
-    }
-  
-    initPrototype () {
+    initPrototypeSlots() {
     }
 
-    classes () {
-        return ProtoClass.allClassesSet().asArray()
+    initPrototype() {
     }
 
-    methodsDocsForClass (aClass) {
-        const methods = []
+    /**
+     * @description Returns an array of all the classes.
+     * @returns {Array} An array of all the classes.
+     */
+    classes() {
+        return ProtoClass.allClassesSet().asArray();
+    }
+
+    /**
+     * @description Returns an array of objects containing information about the methods of the given class.
+     * @param {ProtoClass} aClass - The class for which to get the method documentation.
+     * @returns {Array} An array of objects containing information about the methods of the given class.
+     */
+    methodsDocsForClass(aClass) {
+        const methods = [];
         Object.getOwnPropertyNames(aClass).forEach((methodName) => {
-            const v = aClass[methodName]
-            //const docs = v._docs
+            const v = aClass[methodName];
             if (Type.isFunction(v) && methodName !== "constructor") {
-                const source = v.toString()
-                let argNames = source.after("(").before(")").split(",").map(s => s.trim())
-                if (argNames[0] === "") { 
-                    argNames = [] 
+                const source = v.toString();
+                let argNames = source.after("(").before(")").split(",").map(s => s.trim());
+                if (argNames[0] === "") {
+                    argNames = [];
                 }
-                methods.push({ name: methodName, argNames: argNames, comments: v.extractComments() })
+                methods.push({ name: methodName, argNames: argNames, comments: v.extractComments() });
             }
-        })
-        return methods
+        });
+        return methods;
     }
 
-    asJson () {
-        const classes = []
+    /**
+     * @description Returns a JSON representation of the documentation for all classes and their methods.
+     * @returns {Object} A JSON representation of the documentation for all classes and their methods.
+     */
+    asJson() {
+        const classes = [];
         this.classes().forEach((aClass) => {
-            const classDict = {}
-            classDict.name = aClass.type()
-            const superclass = aClass.superClass()
+            const classDict = {};
+            classDict.name = aClass.type();
+            const superclass = aClass.superClass();
             if (superclass.type) {
-                classDict.superClass = superclass.type()
+                classDict.superClass = superclass.type();
             }
-            classes.push(classDict)
-            classDict.methods = this.methodsDocsForClass(aClass)
-            //classDict.comments = aClass.comments()
-        })
-        return classes
+            classes.push(classDict);
+            classDict.methods = this.methodsDocsForClass(aClass);
+        });
+        return classes;
     }
 
-    show () {
-        const classes = this.asJson()
-        const lines = []
+    /**
+     * @description Logs a summary of the documentation for all classes and their methods to the console.
+     */
+    show() {
+        const classes = this.asJson();
+        const lines = [];
         classes.forEach((aClass) => {
-            lines.push(aClass.name + " : " + aClass.superClass)
-            /*
-            aClass.methods.forEach((aMethod) => {
-                let argsString = ""
-                if (aMethod.argNames.length > 0) {
-                    argsString = "(" + aMethod.argNames.join(",") + ")"
-                }
-                lines.push("  - " + aMethod.name + argsString + " " + aMethod.comments)
-            })
-            */
-        })
-        /*
-        const s = JSON.stableStringify(this.asJson(), 2, 2)
-        */
-        console.log("DOCUMENTATION:\n\n", lines.join("\n"))
+            lines.push(aClass.name + " : " + aClass.superClass);
+        });
+        console.log("DOCUMENTATION:\n\n", lines.join("\n"));
     }
 }.initThisClass());
-
-
-/*
-// --- Object category -------------------------------------
-
-Object.defineSlots(Object.prototype, {
-
-    docs: function () {
-        if (!this._docs) {
-            this._docs = {}
-        }
-        return this._docs
-    },
-
-    setDocs: function (name, description) {
-        const docs = this.docs()
-        docs._name = methodName
-        docs._description = description
-        return this
-    },
-    
-})
-
-// --- Function category -------------------------------------
-
-Object.defineSlots(Function.prototype, {
-
-    docs: function () {
-        if (!this._docs) {
-            this._docs = {}
-        }
-        return this._docs
-    },
-
-    setDocs: function (name, description, returns) {
-        const docs = this.docs()
-        docs._name = name
-        docs._description = description
-        docs._returns = returns 
-        return this
-    },
-
-    extractComments: function () {
-        const commentPattern = new RegExp("(\\/\\*([^*]|[\\r\\n]|(\\*+([^*\/]|[\\r\\n])))*\\*+\/)|(\/\/.*)", "g");
-        return this.toString().match(commentPattern)
-    },
-})
-
-*/

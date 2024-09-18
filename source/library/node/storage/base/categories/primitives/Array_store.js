@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module node.storage.base
+ * @module library.node.storage.base
  * @class Array_store
  * @extends Array
  * @description A custom Array class with additional methods for storage and serialization.
