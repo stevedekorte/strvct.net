@@ -1,7 +1,7 @@
 "use strict";
 
 /** 
- * @module ideal
+ * @module library.ideal
     Some code for adding categories to all the typed array types. 
 
 */

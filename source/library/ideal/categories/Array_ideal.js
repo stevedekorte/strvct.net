@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class
  * @extends Array
  * Extends the native Array with additional utility methods.

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class Date_ideal
  * @extends Date
  * @description Extended Date class with additional utility methods.

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class ImmutableSet
  * @extends Set
  * @description An immutable version of the JavaScript Set primitive with additional methods

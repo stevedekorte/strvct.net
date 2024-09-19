@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class Set_ideal
  * @extends Set
  * @description Extended Set class with additional utility methods.

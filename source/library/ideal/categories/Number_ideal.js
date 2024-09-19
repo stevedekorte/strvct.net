@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @namespace Base64
  * @description Utility for converting between integers and base64 strings
  * @private

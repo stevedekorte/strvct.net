@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class Error_ideal
  * @extends Error
  * @description Extended Error class with additional utility methods.

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class ArrayBuffer_ideal
  * @extends ArrayBuffer
  * Extends the JavaScript ArrayBuffer primitive with additional methods.

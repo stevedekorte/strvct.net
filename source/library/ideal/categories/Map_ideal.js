@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class Map_ideal
  * @extends Map
  * @description Extended Map class with additional utility methods.

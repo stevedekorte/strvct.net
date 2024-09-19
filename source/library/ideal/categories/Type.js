@@ -1,7 +1,7 @@
 "use strict";
 
 /** 
- * @module ideal
+ * @module library.ideal
  * @class Type
  * @description Value/reference type related functions.
 

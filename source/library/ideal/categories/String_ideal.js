@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class String_ideal
  * @extends String
  * @description Extended String class with additional utility methods.

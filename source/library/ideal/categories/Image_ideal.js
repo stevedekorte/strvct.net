@@ -7,7 +7,7 @@ if (!getGlobalThis().Image) {
 } else {
 
     /**
-     * @module ideal
+     * @module library.ideal
      * @class Image_ideal
      * @extends Image
      * @description Some extra methods for the Javascript Image primitive

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module strvct.source.library.node.fields.subclasses.options
+ * @module library.node.fields.subclasses.options
  * @class BMOptionsNode
  * @extends BMField
  * @classdesc

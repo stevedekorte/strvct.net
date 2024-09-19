@@ -1,14 +1,21 @@
+/**
+ * @module library.node.fields.subclasses.time
+ * @class BMMeridiemNode
+ * @extends BaseNode
+ * @classdesc BMMeridiemNode represents a meridiem (AM/PM) node in a time-related structure.
+ */
 "use strict";
-
-/*
-
-    BMMeridiemNode 
-    
-*/
 
 (class BMMeridiemNode extends BaseNode {
     
+    /**
+     * Initializes the prototype slots for the BMMeridiemNode.
+     * @method
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Number} value - The value of the meridiem (1 for AM, 2 for PM).
+         */
         {
             const slot = this.newSlot("value", 1);
             slot.setSlotType("Number");

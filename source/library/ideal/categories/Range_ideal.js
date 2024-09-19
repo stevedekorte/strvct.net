@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module ideal
+ * @module library.ideal
  * @class Range_ideal
  * @extends Range
  * @description Extended Range class with additional utility methods.
