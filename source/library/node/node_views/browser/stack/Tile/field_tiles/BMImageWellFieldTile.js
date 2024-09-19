@@ -1,22 +1,34 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles
+ * @class BMImageWellFieldTile
+ * @extends BMFieldTile
+ * @classdesc Represents an image well field tile in the browser stack.
+ */
 "use strict";
-
-/*
-
-    BMImageWellFieldTile
-
-*/
 
 (class BMImageWellFieldTile extends BMFieldTile {
     
+    /**
+     * @description Checks if the given mime type can be opened.
+     * @param {string} mimeType - The mime type to check.
+     * @returns {boolean} True if the mime type can be opened, false otherwise.
+     */
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
         return mimeType.startsWith("image/")
     }
 
+    /**
+     * @description Initializes the prototype slots.
+     */
     initPrototypeSlots () {
 
     }
 
+    /**
+     * @description Initializes the BMImageWellFieldTile.
+     * @returns {BMImageWellFieldTile} The initialized instance.
+     */
     init () {
         super.init()
         this.valueViewContainer().flexCenterContent()
@@ -31,16 +43,28 @@
         return this
     }
 
+    /**
+     * @description Creates and returns a value view.
+     * @returns {ImageWellView} The created image well view.
+     */
     createValueView () {
         const imageWellView = ImageWellView.clone()
         //imageWellView.setWidth("100%").setHeight("fit-content")
         return imageWellView
     }
 	
+    /**
+     * @description Returns the image well view.
+     * @returns {ImageWellView} The image well view.
+     */
     imageWellView () {
         return this.valueView()
     }
 
+    /**
+     * @description Synchronizes the tile from the node.
+     * @returns {BMImageWellFieldTile} The synchronized instance.
+     */
     syncFromNode () {
         super.syncFromNode()
 
@@ -54,6 +78,10 @@
         return this
     }
 
+    /**
+     * @description Synchronizes the tile to the node.
+     * @returns {BMImageWellFieldTile} The synchronized instance.
+     */
     syncToNode () {
         const field = this.node()
 				
@@ -71,14 +99,27 @@
         return this
     }
 
+    /**
+     * @description Returns the data URL of the image.
+     * @returns {string|null} The data URL of the image.
+     */
     dataUrl () {
         return this.imageWellView().imageDataUrl()
     }
 
+    /**
+     * @description Checks if the image well is empty.
+     * @returns {boolean} True if empty, false otherwise.
+     */
     isEmpty () {
         return Type.isNull(this.dataUrl())
     }
     
+    /**
+     * @description Handles the update of the image well view.
+     * @param {ImageWellView} anImageWell - The updated image well view.
+     * @returns {BMImageWellFieldTile} The current instance.
+     */
     didUpdateImageWellView (anImageWell) {
         //this.debugLog(".didUpdateImageWellView()")
         this.scheduleSyncToNode() 

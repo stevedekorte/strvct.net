@@ -1,29 +1,49 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles
+ * @class BMTextAreaFieldTile
+ * @extends BMFieldTile
+ * @classdesc BMTextAreaFieldTile is a specialized field tile for text area input.
+ * It includes functionality for speech-to-text input.
+ */
+
 "use strict";
-
-/*
-
-    BMTextAreaFieldTile
-
-    
-*/
 
 (class BMTextAreaFieldTile extends BMFieldTile {
     
+    /**
+     * Initializes the prototype slots for the BMTextAreaFieldTile.
+     * @method
+     */
     initPrototypeSlots () {
+        /**
+         * @property {ButtonView} sttButton - Button for speech to text functionality.
+         */
         {
-            const slot = this.newSlot("sttButton", null); // Button, for speech to text
+            const slot = this.newSlot("sttButton", null);
             slot.setSlotType("ButtonView");
         }
 
+        /**
+         * @property {SpeechToTextSession} sttSession - Session for managing speech to text conversion.
+         */
         {
             const slot = this.newSlot("sttSession", null); 
             slot.setSlotType("SpeechToTextSession");
         }
     }
 
+    /**
+     * Initializes the prototype.
+     * @method
+     */
     initPrototype () {
     }
 
+    /**
+     * Initializes the BMTextAreaFieldTile instance.
+     * @method
+     * @returns {BMTextAreaFieldTile} The initialized instance.
+     */
     init () {
         super.init();
         this.keyView().hideDisplay();
@@ -34,25 +54,12 @@
         return this
     }
 
+    /**
+     * Creates and configures the value view for the text area.
+     * @method
+     * @returns {TextField} The configured value view.
+     */
     createValueView () {
-        /* old css:
-        .BMTextAreaFieldValueView {
-            display: flex;
-            position: relative;
-            padding: 0;
-            margin: 0;
-            width: auto;
-            min-height: auto;
-
-            word-break: break-all;
-            unicode-bidi: embed;
-            white-space: pre-wrap;
-
-            font-weight: normal;
-            text-align: left;
-        }
-        */
-
         const v = TextField.clone().setElementClassName("BMTextAreaFieldValueView");
         v.setDisplay("block");
         v.setPosition("relative");
@@ -63,20 +70,20 @@
         v.setMargin("0em");
         v.setOverflowX("hidden");
         v.setOverflowY("scroll");
-        //v.setFontFamily("Mono");
-        //v.setDoesHoldFocusOnReturn(true);
         v.setDoesInput(false);
         v.setIsMultiline(true);
         return v;
     }
 
+    /**
+     * Sets up the button for the value view.
+     * @method
+     */
     setupValueViewButton () {
         this.valueViewContainer().setGap("1em");
 
-        //const v = ButtonView.clone().setTitle("STT").setHasOutline(true);
         const bv = ButtonView.clone().setElementClassName("BMActionFieldView");
         bv.setBorderRadius("0.4em");
-        //bv.setTitle("x");
         bv.setMaxHeight("2.1em");
         bv.setHeight("2.1em");
         bv.setMinHeight(null);
@@ -85,42 +92,16 @@
 	    bv.setBorder("1px solid rgba(128, 128, 128, 0.5)");
         bv.setPadding("0px");
         bv.setMarginTop("1px");
-        //bv.setDisplay("none");
-        //bv.setIconName("Mic Off");
         bv.titleView().setIsDisplayHidden(true);
         bv.setAttribute("title", "Speech to text input")
         this.setSttButton(bv);
         this.updateSttButton();
-        //this.valueViewContainer().addSubview(bv);
     }
 
-    /*
-    updateSubviews () {   
-        super.updateSubviews()
-        return this
-    }
-    */
-
-    /*
-	
-    fillBottomOfColumnIfAvailable () {
-        if (this.column().tiles().last() === this) {
-            //this.debugLog(" update height")
-            this.setMinAndMaxHeightPercentage(100)
-            this.setFlexGrow(100)
-            this.setBorderBottom("0em")
-
-            this.valueView().setHeight("100%")
-        } else {
-            this.setFlexGrow(1)
-            this.setBorderBottom("1px solid rgba(125, 125, 125, 0.5)")
-        }
-        return this
-    }
-    */
-
-    // --- text to speech button ---
-    
+    /**
+     * Synchronizes the value from the node and updates the STT button visibility.
+     * @method
+     */
     syncValueFromNode () {
         super.syncValueFromNode();
         const show = this.getFromNodeDelegate("hasValueButton");
@@ -130,6 +111,11 @@
         }
     }
 
+    /**
+     * Checks if the microphone is currently active.
+     * @method
+     * @returns {boolean} True if the microphone is on, false otherwise.
+     */
     isMicOn () {
         if (!this.sttSession()) {
             return false;
@@ -137,11 +123,19 @@
         return this.sttSession().isRecording();
     }
 
+    /**
+     * Updates the STT button icon based on the microphone state.
+     * @method
+     */
     updateSttButton () {
         const iconName = this.isMicOn() ? "Mic On" : "Mic Off";
         this.sttButton().setIconName(iconName);
     }
 
+    /**
+     * Handles the click event on the value button.
+     * @method
+     */
     onClickValueButton () {
         console.log("this.isMicOn():", this.isMicOn());
         if (!this.isMicOn()) {
@@ -153,6 +147,10 @@
         this.updateSttButton();
     }
 
+    /**
+     * Sets up the STT session if it hasn't been created yet.
+     * @method
+     */
     setupSttSessionIfNeeded () {
         if (!this.sttSession()) {
           const stt = SpeechToTextSession.clone().setDelegate(this).setSessionLabel("ChatInputNode STT input");
@@ -160,36 +158,57 @@
         }
     }
 
+    /**
+     * Handles interim speech recognition results.
+     * @method
+     * @param {SpeechToTextSession} sttSession - The STT session.
+     */
     onSpeechInterimResult (sttSession) {
         const text = this.sttSession().interimTranscript();
         this.valueView().setString(text);
         console.log("onSpeechInterimResult('" + text + "')");
     }
 
+    /**
+     * Handles final speech recognition results.
+     * @method
+     * @param {SpeechToTextSession} sttSession - The STT session.
+     */
     onSpeechFinal (sttSession) {
 
     }
 
+    /**
+     * Handles speech input and updates the value view.
+     * @method
+     * @param {SpeechToTextSession} sttSession - The STT session.
+     */
     onSpeechInput (sttSession) {
         const text = this.sttSession().fullTranscript();
         console.log("onSpeechInput('" + text + "')");
-        //debugger;
         if (text.length > 0) {
             const textField = this.valueView();
-            //textField.setString(text);
             textField.setValue(text);
             textField.afterEnter(null);
-            //textField.didInput();
-            //this.sttSession().stop();
         }
         assert(!sttSession.isRecording());
         this.updateSttButton();
     }
 
+    /**
+     * Handles the end of speech recognition.
+     * @method
+     * @param {SpeechToTextSession} sttSession - The STT session.
+     */
     onSpeechEnd (sttSession) {
         this.updateSttButton()
     }
 
+    /**
+     * Handles the end of the STT session.
+     * @method
+     * @param {SpeechToTextSession} sttSession - The STT session.
+     */
     onSessionEnd (sttSession) {
         this.updateSttButton()
     }

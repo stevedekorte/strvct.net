@@ -1,15 +1,23 @@
+/**
+ * @module library.node.node_views.browser.stack.TilesView
+ * @class TilesView_gestures
+ * @extends TilesView
+ * @classdesc
+ * TilesView_gestures
+ * 
+ * This class extends TilesView to add gesture handling functionality.
+ */
 "use strict";
-
-/*
-    
-    TilesView_gestures
-    
-*/
 
 (class TilesView_gestures extends TilesView {
     
     // --- tap ---
 
+    /**
+     * @description Handles the completion of a tap gesture.
+     * @param {Object} aGesture - The tap gesture object.
+     * @returns {boolean|TilesView_gestures} Returns true or the instance itself.
+     */
     onTapComplete (aGesture) {
         //console.log(this.typeId() + " " + this.node().title() + " .onTapComplete() shouldRequestActivation: ", aGesture.shouldRequestActivation())
         
@@ -35,10 +43,18 @@
 
     // --- reorder ---
 
+    /**
+     * @description Checks if tiles can be reordered.
+     * @returns {boolean} Whether tiles can be reordered.
+     */
     canReorderTiles () {
         return this.node().nodeTileLink().nodeCanReorderSubnodes()
     }
 
+    /**
+     * @description Handles the reordering of tiles.
+     * @returns {TilesView_gestures} The instance itself.
+     */
     didReorderTiles () { 
         if (!this.node() || !this.isInBrowser()) {
             return this
@@ -52,6 +68,11 @@
 
     // --- pinch apart to create a tile ---
 
+    /**
+     * @description Finds the tile containing a given point.
+     * @param {Object} aPoint - The point to check.
+     * @returns {Object|undefined} The tile containing the point, or undefined if not found.
+     */
     tileContainingPoint (aPoint) {
         // potentially faster:
         //const topElement = document.elementFromPoint(aPoint.x(), aPoint.y())
@@ -62,6 +83,11 @@
         })
     }
 
+    /**
+     * @description Handles the beginning of a pinch gesture.
+     * @param {Object} aGesture - The pinch gesture object.
+     * @returns {TilesView_gestures} The instance itself.
+     */
     onPinchBegin (aGesture) { // pinch apart to insert a new tile
         // TODO: move tile specific code to Tile
 
@@ -113,6 +139,10 @@
         }        
     }
     
+    /**
+     * @description Handles the movement of a pinch gesture.
+     * @param {Object} aGesture - The pinch gesture object.
+     */
     onPinchMove (aGesture) {
         if (this._temporaryPinchSubnode) {
             let s = Math.floor(aGesture.spreadY())
@@ -148,6 +178,10 @@
         // do we need to restack views?
     }
 
+    /**
+     * @description Handles the completion of a pinch gesture.
+     * @param {Object} aGesture - The pinch gesture object.
+     */
     onPinchComplete (aGesture) {
         //this.debugLog(".onPinchCompleted()")
         // if pinch is tall enough, keep new tile
@@ -169,6 +203,10 @@
         }
     }
 
+    /**
+     * @description Handles the cancellation of a pinch gesture.
+     * @param {Object} aGesture - The pinch gesture object.
+     */
     onPinchCancelled (aGesture) {
         //this.debugLog(".onPinchCancelled()")
         if (this._temporaryPinchSubnode) {

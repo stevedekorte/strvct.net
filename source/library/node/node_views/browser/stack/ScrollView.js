@@ -1,174 +1,187 @@
+/**
+ * @module library.node.node_views.browser.stack
+ */
+
 "use strict";
 
-/*
-
-    ScrollView
-
-*/
-
+/**
+ * @class ScrollView
+ * @extends DomView
+ * @classdesc
+ * ScrollView is a specialized view that provides scrolling functionality.
+ * It implements a sticks-to-bottom behavior and handles content mutations.
+ * 
+ * Notes:
+ * - isAtBottom is a computed property that checks if scroll is at bottom now
+ * - wasAtBottom tracks if scroll was at bottom before content change
+ * 
+ * When user scrolls or setScrollHeight:
+ * - update wasAtBottom (using isAtBottom)
+ * - update lastScrollHeight (may be used elsewhere later)
+ * 
+ * When content changes:
+ * - auto scroll if wasAtBottom true
+ * - update lastScrollHeight to bottom (may be used elsewhere later)
+ */
 (class ScrollView extends DomView { 
     
+    /**
+     * @description Initializes the prototype slots for the ScrollView
+     */
     initPrototypeSlots () {
-
-        /* 
-        Slots for implementing sticks-to-bottom behavior
-
-        Notes:
-        
-        - isAtBottom is a computed property that checks if scroll is at bottom now
-        - wasAtBottom tracks if scroll was at bottom before content change
-
-        When user scrolls or setScrollHeight:
-        - update wasAtBottom (using isAtBottom)
-        - update lastScrollHeight (may be used elsewhere later)
-
-        When content changes:
-        - auto scroll if wasAtBottom true
-        - update lastScrollHeight to bottom (may be used elsewhere later)
-        */
-
+        /**
+         * @property {Boolean} sticksToBottom - Determines if the view should stick to the bottom
+         */
         {
-            const slot = this.newSlot("sticksToBottom", false); // turn on/off behavior
+            const slot = this.newSlot("sticksToBottom", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {Boolean} wasAtBottom - Tracks if the view was at the bottom before content change
+         */
         {
-            const slot = this.newSlot("wasAtBottom", false); // on user onScroll events, marked to true if at bottom
+            const slot = this.newSlot("wasAtBottom", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {Number} lastScrollHeight - Stores the last scroll height
+         */
         {
             const slot = this.newSlot("lastScrollHeight", 0);
             slot.setSlotType("Number");
         }
-
     }
 
+    /**
+     * @description Initializes the ScrollView
+     * @returns {ScrollView} The initialized ScrollView instance
+     */
     init () {
         super.init()
         this.setDisplay("block")
         this.setPosition("relative")
         this.setTopPx(null)
-        //this.makeVertical()
-        this.setMsOverflowStyle("none") // removes scrollbars on IE 10+ 
-        this.setOverflow("-moz-scrollbars-none") // removes scrollbars on Firefox 
+        this.setMsOverflowStyle("none")
+        this.setOverflow("-moz-scrollbars-none")
         this.setBackgroundColor("transparent")
-        //this.setBorder("1px solid purple")
         return this
     }
 
+    /**
+     * @description Returns the first subview as the scroll content view
+     * @returns {DomView} The scroll content view
+     */
     scrollContentView () {
         return this.subviews().first()
     }
 
-
-    // --- scroll events ---
-
+    /**
+     * @description Starts listening for scroll events
+     */
     listenForScroll () {
-        this.scrollListener().setIsListening(true) // start listing for scroll events
-        /*
-        this.element().addEventListener('scroll', (event) => { 
-            this.onScroll(event) 
-        });
-        */
+        this.scrollListener().setIsListening(true)
     }
 
+    /**
+     * @description Returns the first subview as the content view
+     * @returns {DomView} The content view
+     */
     contentView () {
         return this.subviews().first();
     }   
 
-    // --- sticks to bottom ---
-
+    /**
+     * @description Sets whether the view should stick to the bottom
+     * @param {Boolean} aBool - Whether to stick to the bottom
+     */
     setSticksToBottom (aBool) {
         if (this._sticksToBottom !== aBool) {
             this._sticksToBottom = aBool;
             if (aBool) {
                 this.listenForScroll();
                 this.updateScrollTracking();
-                this.contentView().startContentMutationObserverIfNeeded(); // only starts if it's not already started
-            } else {
-                //this.scrollListener().setIsListening(false); // can't do this as something else might need it...
-                //this.stopContentMutationObserver(); // not safe as we don't know if this is needed elsewhere
+                this.contentView().startContentMutationObserverIfNeeded();
             }
         }
     }
 
-
+    /**
+     * @description Handles scroll events
+     * @param {Event} event - The scroll event
+     */
     onScroll (event) {
-        //debugger;
-        /*
-        const cv = this.contentView();
-        if (cv && cv.onScrollViewScroll) {
-            cv.onScrollViewScroll(this)
-        }
-        */
         this.updateScrollTracking()
     }
 
+    /**
+     * @description Handles content view mutations
+     * @param {MutationRecord[]} mutations - The mutations that occurred
+     */
     onContentViewMutations (mutations) {
-        // sent from contentView when it mutates
         if (this.sticksToBottom()) {
             if (this.wasAtBottom()) {
                 this.immediatelyScrollToBottom();
-                //this.contentView().scrollToBottom();
-                this.setWasAtBottom(true); // since we will be scrolling to bottom, we can set this to true now, so even if it's in progress on next mutation, it will be true
+                this.setWasAtBottom(true);
                 this.setLastScrollHeight(this.clientHeight());
             }
         }
     }
 
-    // --- is at bottom calc ---
-
+    /**
+     * @description Checks if the view is currently at the bottom
+     * @returns {Boolean} Whether the view is at the bottom
+     */
     isAtBottom () {
         const e = this.element();
-        // Check if the content is at the bottom before adding new content
-        const tolerance = this.computeScrollTolerance(); // Tolerance value to account for subpixel values and rounding errors, cache this?
+        const tolerance = this.computeScrollTolerance();
         const difference = e.scrollHeight - (e.scrollTop + e.clientHeight);
-        //this.setWasAtBottom(difference <= tolerance)
         return difference <= tolerance;
     }
 
+    /**
+     * @description Computes the scroll tolerance
+     * @returns {Number} The computed scroll tolerance
+     */
     computeScrollTolerance () {
-        return 10; // was 5
-        /*
-        const e = this.element();
-        const style = window.getComputedStyle(e);
-    
-        // Get border widths
-        const borderTop = parseFloat(style.borderTopWidth);
-        const borderBottom = parseFloat(style.borderBottomWidth);
-    
-        // Get paddings
-        const paddingTop = parseFloat(style.paddingTop);
-        const paddingBottom = parseFloat(style.paddingBottom);
-    
-        // Potential subpixel discrepancies
-        const subpixelTolerance = 1 / (window.devicePixelRatio || 1);
-    
-        // Total tolerance is the sum of all the factors
-        return borderTop + borderBottom + paddingTop + paddingBottom + subpixelTolerance;
-        */
+        return 10;
     }
 
+    /**
+     * @description Sets the scroll height and updates scroll tracking
+     * @param {Number} v - The new scroll height
+     * @returns {ScrollView} The ScrollView instance
+     */
     setScrollHeight (v) {
         super.setScrollHeight(v)
         this.updateScrollTracking()
         return this
     }
 
-    // -- updates ---
-
+    /**
+     * @description Updates scroll tracking
+     * @returns {ScrollView} The ScrollView instance
+     */
     updateScrollTracking () {
         this.updateLastScrollHeight()
         this.updateWasAtBottom()
         return this
     }
 
+    /**
+     * @description Updates the last scroll height
+     * @returns {ScrollView} The ScrollView instance
+     */
     updateLastScrollHeight () {
         this.setLastScrollHeight(this.scrollHeight())
         return this
     }
 
+    /**
+     * @description Updates whether the view was at the bottom
+     * @returns {ScrollView} The ScrollView instance
+     */
     updateWasAtBottom () {
         if (this.wasAtBottom() !== this.isAtBottom()) {
             this.setWasAtBottom(this.isAtBottom())
@@ -177,5 +190,3 @@
     }
 
 }.initThisClass());
-
-

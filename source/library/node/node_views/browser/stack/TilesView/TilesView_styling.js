@@ -1,13 +1,19 @@
-"use strict";
+/**
+ * @module library.node.node_views.browser.stack.TilesView
+ * @class TilesView_styling
+ * @extends TilesView
+ * @classdesc TilesView_styling class for handling styling of tiles view.
+ */
 
-/*
-    
-    TilesView_styling
-    
-*/
+"use strict";
 
 (class TilesView_styling extends TilesView {
     
+    /**
+     * Applies styles to the tiles view.
+     * @description This method applies styles to the tiles view and its components.
+     * @returns {TilesView_styling} Returns the instance of TilesView_styling.
+     */
     applyStyles () {
         //this.debugLog(".applyStyles()")
         super.applyStyles()

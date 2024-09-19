@@ -1,25 +1,32 @@
-"use strict";
-
-/*
-    TileTitleView
-
-    A title element in a Tile. 
-
-    Reasons not to just use setElementClassName() on a TextField instead:
-    - to automatically get the full class hierarchy in the div name
-    - a place to (potentially) override interaction behaviors
-
-*/
-
+/**
+ * @module library.node.node_views.browser.stack.Tile.subviews
+ * @class TileTitleView
+ * @extends TextField
+ * @classdesc A title element in a Tile. 
+ * 
+ * Reasons not to just use setElementClassName() on a TextField instead:
+ * - to automatically get the full class hierarchy in the div name
+ * - a place to (potentially) override interaction behaviors
+ */
 (class TileTitleView extends TextField {
     
+    /**
+     * @description Initializes prototype slots for the TileTitleView.
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the prototype for the TileTitleView.
+     */
     initPrototype () {
 
     }
 
+    /**
+     * @description Initializes the TileTitleView instance.
+     * @returns {TileTitleView} The initialized instance.
+     */
     init () {
         super.init()
         this.setDisplay("block")
@@ -43,6 +50,10 @@
     }
     */
 
+    /**
+     * @description Selects the next key view.
+     * @returns {boolean} Always returns true.
+     */
     selectNextKeyView () {
         /*
         this.debugLog(".selectNextKeyView()")

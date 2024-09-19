@@ -1,43 +1,58 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles
+ * @class BMChatInputTile
+ * @extends BMTextAreaFieldTile
+ * @classdesc BMChatInputTile is a specialized tile for chat input functionality.
+ */
+
 "use strict";
-
-/*
-
-    BMChatInputTile 
-
-    
-*/
 
 (class BMChatInputTile extends BMTextAreaFieldTile {
     
+    /**
+     * @description Initializes prototype slots.
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the BMChatInputTile instance.
+     * @returns {BMChatInputTile} The initialized instance.
+     */
     init () {
         super.init();
         this.keyView().hideDisplay();
         this.setValueUneditableBorder("none");
         this.setValueEditableBorder("none");
-        //this.setWidth("-webkit-fill-available");
-        this.setElementClassName("BMChatInputTile"); // not needed
-        //this.valueView().setWhiteSpace("pre-wrap");
+        this.setElementClassName("BMChatInputTile");
         return this
     }
 
+    /**
+     * @description Returns speakable elements.
+     * @returns {Array} An array of speakable elements.
+     */
     speakableElements () {
         return this.valueView().element().elementsOfTags(this.node().tagsToSpeak());
     }
 
+    /**
+     * @description Finds a speakable element with the given text.
+     * @param {string} text - The text to search for.
+     * @returns {Element|undefined} The found element or undefined.
+     */
     speakableElementWithText (text) {
         return this.speakableElements().detect(e => e.textContent === text || e.textContent.trim() === text);
     }
 
+    /**
+     * @description Handles the speaking text event.
+     * @param {Object} aNote - The notification object.
+     */
     onSpeakingText (aNote) {
-        //debugger;
         const text = aNote.info();
-        //console.log(this.typeId() + " onSpeakingText: [" + text.clipWithEllipsis(15) + "]");
 
         if (text.includes("<break time=")) {
-            // no need to highlight breaks as they are not in the text
             return;
         }
 
@@ -47,18 +62,23 @@
         this.highlightElement(e);
     }
 
+    /**
+     * @description Unhighlights all sentences.
+     * @returns {BMChatInputTile} The current instance.
+     */
     unhighlightAllSentences () {
         this.speakableElements().forEach(el => this.unhighlightElement(el));
         return this;
     }
 
+    /**
+     * @description Handles the spoke text event.
+     * @param {Object} aNote - The notification object.
+     */
     onSpokeText (aNote) {
-        //debugger;
         const text = aNote.info();
-        //console.log(this.type() + " onSpokeText: [" + text.clipWithEllipsis(15) + "]");
 
         if (text.includes("<break time=")) {
-            // no need to highlight breaks as they are not in the text
             return;
         }
 
@@ -67,12 +87,22 @@
         this.unhighlightElement(e);
     }
 
+    /**
+     * @description Highlights the given element.
+     * @param {Element} e - The element to highlight.
+     * @returns {BMChatInputTile} The current instance.
+     */
     highlightElement (e) {
         e.style.opacity = 1;
         e.style.color = "rgba(255, 255, 0, 1)";
         return this;
     }
 
+    /**
+     * @description Unhighlights the given element.
+     * @param {Element} e - The element to unhighlight.
+     * @returns {BMChatInputTile} The current instance.
+     */
     unhighlightElement (e) {
         e.style.fontWeight = "";
         e.style.opacity = "";
@@ -80,23 +110,14 @@
         return this;
     }
 
-    /*
-    highlightText (text) {
-
-    }
-
-
-    unhighlightText (text) {
-
-    }
-    */
-
+    /**
+     * @description Creates and configures the value view.
+     * @returns {TextField} The configured value view.
+     */
     createValueView () {
-     //   debugger;
-
         const v = TextField.clone().setElementClassName("BMChatInputTileValueView");
         
-        v.setIsMergeable(true); // needed to avoid recreating DOM elements when updating the value 
+        v.setIsMergeable(true);
         v.setDisplay("block")
         v.setPosition("relative")
         v.setWordWrap("normal")
@@ -114,13 +135,10 @@
         v.setPaddingRight("0.4em")
         v.setPaddingBottom("0.4em")
 
-        // ---- narration text ---
         v.setPaddingTop("0.4em");
         v.setPaddingBottom("0.4em");
         v.setPaddingLeft("0.8em");
         v.setPaddingRight("0.8em");
-
-        // ----
 
         v.setAllowsHtml(true)
         v.setWhiteSpace("normal");
@@ -128,7 +146,6 @@
         v.setIsMultiline(true);
         v.setDoesInput(true);
         
-        // hack to disable theme application
         v.setPaddingTop = () => { return this }
         v.setPaddingLeft = () => { return this }
         v.setPaddingRight = () => { return this }
@@ -136,29 +153,30 @@
         
         v.setBackgroundColor = () => { return this }
         v.setBorder = () => {
-            //debugger;
             return this
         }
         v.syncBorder = () => {
-            // avoiding changing border
             return this
         }
         
-       /*
-        v.setValueEditableBorder("1px solid white")
-        v.setValueUneditableBorder("1px solid white")
-        */
-        //v.setFontFamily("Mono")
         v.setDoesHoldFocusOnReturn(true);
         v.setDoesInput(true);
-        //v.setDoesClearOnReturn(true);
         return v
     }
 
+    /**
+     * @description Handles the updated node event.
+     * @param {Object} aNote - The notification object.
+     * @returns {*} The result of the super call.
+     */
     onUpdatedNode (aNote) {
         return super.onUpdatedNode(aNote)
     }
 
+    /**
+     * @description Synchronizes the tile with its node.
+     * @returns {BMChatInputTile} The current instance.
+     */
     syncFromNode () {
         const node = this.node();
         this.watchSender(node);
@@ -167,10 +185,14 @@
         return this;
     }
 
+    /**
+     * @description Synchronizes the dots display based on the node's state.
+     * @returns {BMChatInputTile} The current instance.
+     */
     syncDotsFromNode () {
         const node = this.node();
         if (node) {
-            if (node.isComplete) { // only for responding nodes
+            if (node.isComplete) {
                 if (node.isComplete()) {
                     this.hideDots();
                 } else {
@@ -181,28 +203,26 @@
         return this;
     }
 
-    // Support for animated trailing dots using CSS "after" style and CSS animation.
-    // It's toggled using CSS variables "--div-after-display" and "--div-after-animation".
-    // See CSS BMChatInputTileValueView class settings.
-
+    /**
+     * @description Shows the animated dots.
+     * @returns {BMChatInputTile} The current instance.
+     */
     showDots () {
-        const view = this.valueView(); // this is a TextField
+        const view = this.valueView();
         view.setCssProperty("--div-after-display", "inline-block");
         view.setCssProperty("--div-after-animation", "dotty steps(1,end) 1s infinite");
         return this;
     }
 
+    /**
+     * @description Hides the animated dots.
+     * @returns {BMChatInputTile} The current instance.
+     */
     hideDots () {
         const view = this.valueView();
         view.setCssProperty("--div-after-display", "none");
         view.setCssProperty("--div-after-animation", "none");
         return this;
     }
-
-    /*
-    centerDotsHtml () {
-        return `<span class="dots"><span class="dot dot3">.</span><span class="dot dot2">.</span><span class="dot dot1">.</span><span class="dot dot2">.</span><span class="dot dot3">.</span>`;
-    }
-    */
     
 }.initThisClass());

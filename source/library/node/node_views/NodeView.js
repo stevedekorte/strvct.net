@@ -1,45 +1,81 @@
 "use strict";
 
-/*
-
-    NodeView
-
-*/
-
+/**
+ * @module strvct.source.library.node.node_views
+ * @class NodeView
+ * @extends StyledDomView
+ * @classdesc
+ * NodeView represents a view for a node in the application.
+ * It handles the synchronization between the node model and its visual representation.
+ */
 (class NodeView extends StyledDomView {
     
+    /**
+     * @description Initializes the prototype slots for the NodeView.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {BMNode} node
+         * @description The node associated with this view.
+         */
         {
             const slot = this.newSlot("node", null); 
-            //slot.setDuplicateOp("duplicate");
             slot.setSlotType("BMNode")
         }
+
+        /**
+         * @property {Class} defaultSubviewProto
+         * @description The default prototype for subviews.
+         */
         {
             const slot = this.newSlot("defaultSubviewProto", null);
             slot.setSlotType("Class");
         }
+
+        /**
+         * @property {Class} overrideSubviewProto
+         * @description The override prototype for subviews.
+         */
         {
             const slot = this.newSlot("overrideSubviewProto", null);
             slot.setSlotType("Class");
         }
+
+        /**
+         * @property {BMObservation} nodeObservation
+         * @description The observation object for the node.
+         */
         {
             const slot = this.newSlot("nodeObservation", null);
             slot.setSlotType("BMObservation");
         }
+
+        /**
+         * @property {boolean} isInspecting
+         * @description Indicates if the view is in inspection mode.
+         */
         {
             const slot = this.newSlot("isInspecting", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Initializes the NodeView.
+     * @returns {NodeView} The current instance.
+     */
     init () {
         super.init()
-        //this.setNodeObservation(BMNotificationCenter.shared().newObservation().setName("didUpdateNodeNote").setObserver(this))
-        this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this)) // observe all posts from node
+        this.setNodeObservation(BMNotificationCenter.shared().newObservation().setObserver(this))
         this.updateSubnodeToSubviewMap()
         return this
-    } //.setDocs("init", "initializes the object", "returns this"),
+    }
     
+    /**
+     * @description Sets the node for this view.
+     * @param {BMNode} aNode - The node to set.
+     * @returns {NodeView} The current instance.
+     */
     setNode (aNode) {
         if (this._node !== aNode) {
             this.stopWatchingNode();
@@ -53,6 +89,10 @@
         return this;
     }
 
+    /**
+     * @description Gets the theme class name for this view.
+     * @returns {string} The theme class name.
+     */
     themeClassName () {
         if (this.node()) {
             const name = this.node().themeClassName();
@@ -63,52 +103,64 @@
         return super.themeClassName();
     }
 
+    /**
+     * @description Updates the element ID label.
+     * @returns {NodeView} The current instance.
+     */
     updateElementIdLabel () {
         this.element().id = this.debugTypeId()
         return this
     }
     
+    /**
+     * @description Handles changes to the node.
+     * @returns {NodeView} The current instance.
+     */
     didChangeNode () {
         if (this.node()) {
-            //this.syncFromNode()
             this.scheduleSyncFromNode()
         }
         return this
     }
  
+    /**
+     * @description Starts watching the node for changes.
+     * @returns {NodeView} The current instance.
+     */
     startWatchingNode () {
         if (this.node()) {
-            /*
-            if (this.node().type() === "HwLocations") {
-                console.log(this.typeId() + " startWatchingNode " + this.node().typeId());
-                //console.log(this.typeId() + " startWatchingNode " + this.node().typeId() + " observation count = " + BMNotificationCenter.shared().observations().length);
-            }
-            */
             this.nodeObservation().setSender(this.node()).startWatching();
-            //this.node().onStartObserving();
         }
         return this;
     }
        
+    /**
+     * @description Stops watching the node for changes.
+     * @returns {NodeView} The current instance.
+     */
     stopWatchingNode () {
         if (this.node()) {
-            //console.log("stopWatchingNode " + this.node() + " observation count = " + BMNotificationCenter.shared().observations().length);
             this.nodeObservation().stopWatching();
-            //this.nodeObservation().setSender(null);
-            //this.node().onStopObserving();
         }
         return this
     }
     
+    /**
+     * @description Prepares the view for removal.
+     * @returns {NodeView} The current instance.
+     */
     willRemove () {
         super.willRemove();
         this.stopWatchingNode();
         return this;
     }
     
+    /**
+     * @description Gets the prototype for subviews.
+     * @returns {Class} The subview prototype.
+     */
     subviewProto () {
         debugger;
-        //console.log("looking for subviewProto")
         if (this.node()) {
             const vc = this.node().nodeTileClass();
             if (vc) { 
@@ -118,15 +170,21 @@
         return super.subviewProto();
     }
 
-    // --- syncing ---
-
+    /**
+     * @description Gets the subview for a given node.
+     * @param {BMNode} aNode - The node to get the subview for.
+     * @returns {NodeView} The subview for the node.
+     */
     subviewForNode (aNode) {
         assert(this._subnodeToSubview);
         return this._subnodeToSubview[aNode];
     }
 
+    /**
+     * @description Updates the map of subnodes to subviews.
+     * @returns {NodeView} The current instance.
+     */
     updateSubnodeToSubviewMap () {
-        // TODO: make this more efficient with add/remove hooks
         const dict = {};
         this.subviews().forEach(sv => {
             if (sv.node) { 
@@ -137,6 +195,11 @@
         return this;
     }
 
+    /**
+     * @description Gets the subview prototype for a subnode.
+     * @param {BMNode} aSubnode - The subnode to get the prototype for.
+     * @returns {Class} The subview prototype.
+     */
     subviewProtoForSubnode (aSubnode) {
         let proto = this.overrideSubviewProto();
 		
@@ -151,31 +214,41 @@
         return proto;
     }
 
+    /**
+     * @description Creates a new subview for a subnode.
+     * @param {BMNode} aSubnode - The subnode to create a subview for.
+     * @returns {NodeView} The new subview.
+     */
     newSubviewForSubnode (aSubnode) {
         if (!aSubnode) {
             throw new Error("null aSubnode");
         }
 
-        //console.log(this.debugTypeId() + ".newSubviewForSubnode(" + aSubnode.debugTypeId() + ")")
-        const proto = this.subviewProtoForSubnode(aSubnode); // this is fast
+        const proto = this.subviewProtoForSubnode(aSubnode);
 
         if (!proto) {
-            debugger;
-            //aSubnode.nodeViewClass() // used to step into to debug
             throw new Error("no subviewProto for subnode " + aSubnode.typeId());
         }
 
         const instance = proto.clone();
 
-        instance.setNode(aSubnode); // this is fast
+        instance.setNode(aSubnode);
         return instance;
     }
 
+    /**
+     * @description Updates the subviews.
+     * @returns {NodeView} The current instance.
+     */
     updateSubviews () {
-        // for subclasses to override
         return this;
     }
 
+    /**
+     * @description Gets the flattened subnodes.
+     * @param {number} [depth=0] - The depth to flatten to.
+     * @returns {Array<BMNode>} The flattened subnodes.
+     */
     flattenedSubnodes (depth) {
         if (Type.isUndefined(depth)) {
             depth = 0;
@@ -192,11 +265,19 @@
         return flattened;
     }
     
+    /**
+     * @description Gets the visible subnodes.
+     * @returns {Array<BMNode>} The visible subnodes.
+     */
     visibleSubnodes () {
         const node = this.node();
         return node.subnodes();
     }
 
+    /**
+     * @description Syncs CSS from the node.
+     * @returns {NodeView} The current instance.
+     */
     syncCssFromNode () {
         const node = this.node();
 
@@ -209,18 +290,24 @@
         return this;
     }
 
+    /**
+     * @description Applies CSS variables from a dictionary.
+     * @param {Object} dict - The dictionary of CSS variables.
+     */
     applyCssVariableDict (dict) {
         const el = this.element();
         Object.keys(dict).forEach(k => {
             const v = dict[k];
-            //el.style.setProperty('--example-variable', v);
             el.style.setProperty(k, v);
         })
     }
 
+    /**
+     * @description Syncs the view from the node.
+     * @returns {boolean} True if subnodes changed, false otherwise.
+     */
     syncFromNode () {
         let subnodesDidChange = false;
-        // override this method if the view manages it's own subviews
         const node = this.node();
 
         if (!node) { 
@@ -231,29 +318,21 @@
             return false;
         }
 
-        //this.setIsDisplayHidden(!node.isVisible())
         this.syncCssFromNode();
-
-        //console.log("> " + this.debugTypeId() + " syncFromNode");
         
         node.prepareToSyncToView();
-        this.updateSubnodeToSubviewMap(); // not ideal - move this to update on subview add/remove
+        this.updateSubnodeToSubviewMap();
        
         const newSubviews = [];
         
-        // only replace subviews if sync requires it,
-        // and reuse subviews for subnodes which are still present 
-
         if(this.visibleSubnodes().hasDuplicates()) {
             throw new Error("visibleSubnodes has duplicates");
         }
         
-        //debugger;
-
         this.visibleSubnodes().forEach(subnode => {
             let subview = undefined;
 
-            subview = this.subviewForNode(subnode) // get the current view for the node, if there is one
+            subview = this.subviewForNode(subnode)
 
             if (!subview) {
                 subview = this.newSubviewForSubnode(subnode)
@@ -263,48 +342,14 @@
                 throw new Error("null subview")
             }
             
-            //assert(!newSubviews.contains(subview))
             newSubviews.push(subview)
-
-            /*
-            // this sets the display attribute which my be set elsewhere...
-
-            subview.setIsDisplayHidden(!subnode.isVisible())
-
-            if (!subnode.isVisible()) {
-                debugger;
-                console.log("subnode " + subnode.title() + " isDisplayHidden: " + subview.isDisplayHidden())
-            }
-            */
-
         });
 
-        /*
-        if (!node.isVisible()) {
-            debugger;
-        }
-
-        this.setIsDisplayHidden(!node.isVisible());
-        */
-
-        /*
-        const oldSubviews = this.subviews().shallowCopy()
-        const removedSubviews = newSubviews.difference(oldSubviews)
-        removedSubviews.forEach(sv => {
-            sv.prepareToRetire();
-        })
-        */
-
-        //debugger;
-        
         if (!newSubviews.isEqual(this.subviews())) {
             subnodesDidChange = true
-            //this.removeAllSubviews() ;
             this.removeAllSubviews();
             this.addSubviews(newSubviews);
             this.updateSubnodeToSubviewMap();
-            // since node's don't hold a view reference, 
-            // subviews no longer referenced in subviews list will be collected
         }
 
         this.subviews().forEach(subview => subview.syncFromNodeNow());
@@ -312,12 +357,21 @@
         return subnodesDidChange;
     }
 
+    /**
+     * @description Flips the border color of the view.
+     */
     flipBorderColor () {
         const coinFlip = (Math.floor(Math.random() * 10) % 2 === 0);
         const color = coinFlip ? "red" : "blue";
         this.element().style.border = "1px dashed " + color;
     }
 
+    /**
+     * @description Handles updates to slots.
+     * @param {Object} aSlot - The slot that was updated.
+     * @param {*} oldValue - The old value of the slot.
+     * @param {*} newValue - The new value of the slot.
+     */
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue);
 
@@ -326,20 +380,32 @@
         }
     }
     
+    /**
+     * @description Syncs the view to the node.
+     * @returns {NodeView} The current instance.
+     */
     syncToNode () {
         const node = this.node();
         if (node) {
-            //node.didUpdateNodeIfInitialized(); // is this needed? Shouldn't the slot hooks cover this?
+            //node.didUpdateNodeIfInitialized();
         }
         return this;
     }
 
+    /**
+     * @description Handles node updates.
+     * @param {Object} aNote - The notification object.
+     */
     onUpdatedNode (aNote) {
         assert(aNote);
-        //this.debugLog(" didUpdateNode " + this.node().type());
         this.scheduleSyncFromNode();
     }
     
+    /**
+     * @description Schedules a sync to the node.
+     * @param {number} [priority=0] - The priority of the sync.
+     * @returns {NodeView} The current instance.
+     */
     scheduleSyncToNode (priority = 0) {
         if (this.hasScheduleSyncFromNode()) {
             this.hasScheduleSyncFromNode();
@@ -352,46 +418,72 @@
         return this;
     }
     
+    /**
+     * @description Checks if a sync to node is scheduled.
+     * @returns {boolean} True if a sync to node is scheduled, false otherwise.
+     */
     hasScheduleSyncToNode () {
         return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncToNode");
     }
 
+    /**
+     * @description Checks if a sync from node is scheduled.
+     * @returns {boolean} True if a sync from node is scheduled, false otherwise.
+     */
     hasScheduleSyncFromNode () {
         return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode");
     }
 
+    /**
+     * @description Schedules a sync from the node.
+     * @returns {NodeView} The current instance.
+     */
     scheduleSyncFromNode () {
         assert(!this.hasScheduleSyncToNode());
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2); // let posts happen first
+        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncFromNode", 2);
         return this;
     }
 
+    /**
+     * @description Unschedules a sync from the node.
+     */
     unscheduleSyncFromNode () {
         SyncScheduler.shared().unscheduleTargetAndMethod(this, "syncFromNode");
     }
 
-    syncFromNodeNow () { // unschedule syncFromNode if scheduled, and call syncFromNode now
+    /**
+     * @description Syncs from the node immediately.
+     */
+    syncFromNodeNow () {
         this.unscheduleSyncFromNode();
         this.syncFromNode();
     }
 
-    // logging 
-    
+    /**
+     * @description Gets the log name for this view.
+     * @returns {string} The log name.
+     */
     logName () {
         return this.type();
     }
     
+    /**
+     * @description Logs a message.
+     * @param {string} msg - The message to log.
+     * @returns {NodeView} The current instance.
+     */
     log (msg) {
         const s = "[" + this.logName() + "] " + msg;
         console.log(s);
         return this;
     }
     
-    // visibility
-    
+    /**
+     * @description Handles visibility changes.
+     * @returns {NodeView} The current instance.
+     */
     onVisibility () {
 	    super.onVisibility();
-	    //this.debugLog(".onVisibility()");
 	    const node = this.node();
 	    if (node && node.nodeBecameVisible) {
 	        node.nodeBecameVisible();
@@ -400,30 +492,40 @@
 	    return this;
     }
     
-    // value
-    
+    /**
+     * @description Sets the value of the view.
+     * @param {*} newValue - The new value to set.
+     * @returns {NodeView} The current instance.
+     */
     setValue (newValue) {
         this.setInnerHtml(newValue);
         return this;
     }
     
+    /**
+     * @description Gets the value of the view.
+     * @returns {*} The value of the view.
+     */
     value () {
         return this.innerHtml();
     }
 
-    // ---
-
+    /**
+     * @description Resyncs all views.
+     * @returns {NodeView} The current instance.
+     */
     resyncAllViews () {
         if (!this.hasScheduleSyncToNode()) {
             this.scheduleSyncFromNode();
         }
         this.subviews().forEach(sv => sv.resyncAllViews());
-        //super.resyncAllViews(); // skip this as it calls updateSubviews, but we'll do that in syncFromNode
         return this;
     }
 
-    // --- debugging ---
-
+    /**
+     * @description Gets the title of the node.
+     * @returns {string|null} The title of the node, or null if there is no node.
+     */
     nodeTitle () {
         const node = this.node();
         if (node) {
@@ -432,8 +534,10 @@
         return null;
     }
     
-    // --- helpers ---
-
+    /**
+     * @description Gets the description of the node.
+     * @returns {string|null} The description of the node, or null if there is no node.
+     */
     nodeDescription () {
         const node = this.node();
         if (node) {
@@ -442,16 +546,21 @@
         return null;
     }
 
+    /**
+     * @description Gets the ID of the node.
+     * @returns {string} The ID of the node, or "null" if there is no node.
+     */
     nodeId () {
         const node = this.node();
         const nodeId = node ? node.debugTypeId() : "null";
         return nodeId;
     }
 
+    /**
+     * @description Gets the debug type ID for this view.
+     * @returns {string} The debug type ID.
+     */
     debugTypeId () {
-        //return this.nodeDescription();
-        //return super.debugTypeId() + this.debugTypeIdSpacer() + this.nodeDescription() + " theme:" + this.themeClassName();
-
         let s = "view:'" + this.typeId() + "'";
         s += " node:'" + this.nodeId() + "'";
         s += " themeClass:'" +this.themeClassName() + "'";

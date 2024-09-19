@@ -1,11 +1,9 @@
-"use strict";
-
-/*
-
-    BMStringFieldTile
-
-*/
-
+/**
+ * @module browser.stack.Tile.field_tiles
+ * @class BMStringFieldTile
+ * @extends BMFieldTile
+ * @classdesc BMStringFieldTile class for handling string field tiles.
+ */
 (class BMStringFieldTile extends BMFieldTile {
     
     /*
@@ -21,6 +19,11 @@
     }
     */
 
+    /**
+     * Creates and configures a value view for the string field tile.
+     * @returns {TextField} The configured TextField instance.
+     * @description Creates a TextField instance and sets its display properties.
+     */
     createValueView () {
         const v = TextField.clone()
         v.setDisplay("block")

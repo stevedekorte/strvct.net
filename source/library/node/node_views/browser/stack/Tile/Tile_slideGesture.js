@@ -1,41 +1,54 @@
+/**
+ * @module browser.stack.Tile
+ */
+
 "use strict";
 
-/*
-    
-    Tile_slideGesture
-
-*/
-
+/**
+ * @class Tile_slideGesture
+ * @extends Tile
+ * @classdesc Extends Tile functionality with slide gesture capabilities for deletion.
+ */
 (class Tile_slideGesture extends Tile {
 
-
-    // -- slide gesture ---
-
-    acceptsSlide () {
+    /**
+     * @description Checks if the tile accepts slide gestures.
+     * @returns {boolean} True if the tile can be deleted, false otherwise.
+     */
+    acceptsSlide() {
         return this.canDelete()
     }
 
-    onSlideBegin () {
-        //this.debugLog(".onSlideBegin()")
+    /**
+     * @description Initializes the slide gesture.
+     * @returns {Tile_slideGesture} The current instance.
+     */
+    onSlideBegin() {
         this.setSlideDeleteOffset(this.clientWidth() * 0.5);
         this.contentView().setTransition("all 0s") 
         this.setupSlide() 
         return this
     }
 
-    underContentViewColor () {
+    /**
+     * @description Returns the color of the view under the content.
+     * @returns {string} The color value.
+     */
+    underContentViewColor() {
         return "black"
     }
 
-    setupSlide () {
+    /**
+     * @description Sets up the slide gesture elements.
+     * @returns {Tile_slideGesture} The current instance.
+     */
+    setupSlide() {
         if (!this.dragDeleteButtonView()) {
             const h = this.clientHeight()
 
-            // need to do this because we re-route setBackgroundColor
             this.element().style.backgroundColor = this.underContentViewColor()
             const cb = CloseButton.clone().setOpacity(0).setTransition("opacity 0.1s").setPosition("absolute")
             this.addSubview(cb)
-            //cb.setBorder("1px dashed white")
 
             const size = 10
             cb.setMinAndMaxWidthAndHeight(size)
@@ -47,7 +60,10 @@
         return this
     }
 
-    cleanupSlide () {
+    /**
+     * @description Cleans up the slide gesture elements.
+     */
+    cleanupSlide() {
         if (this.dragDeleteButtonView()) {
             this.dragDeleteButtonView().removeFromParentView()
             this.setDragDeleteButtonView(null)
@@ -55,7 +71,11 @@
         this.setTouchRight(null)
     }
 	
-    onSlideMove (slideGesture) {
+    /**
+     * @description Handles the slide movement.
+     * @param {Object} slideGesture - The slide gesture object.
+     */
+    onSlideMove(slideGesture) {
         const d = slideGesture.distance()
         const isReadyToDelete = d >= this._slideDeleteOffset
 
@@ -66,15 +86,19 @@
         }
     }
 
-    setTouchRight (v) {
-        //this.setTransform("translateX(" + (v) + "px)");
-        //this.setLeftPx(-v)
-        //this.setRightPx(v)
+    /**
+     * @description Sets the right position of the touch point.
+     * @param {number} v - The right position value.
+     */
+    setTouchRight(v) {
         this.contentView().setRightPx(v)
     }
 	
-    onSlideComplete (slideGesture) {
-        //console.log(">>> " + this.type() + " onSlideComplete")
+    /**
+     * @description Handles the completion of the slide gesture.
+     * @param {Object} slideGesture - The slide gesture object.
+     */
+    onSlideComplete(slideGesture) {
         const d = slideGesture.distance()
         const isReadyToDelete  = d >= this._slideDeleteOffset
 
@@ -87,16 +111,22 @@
         }
     }
 
-    onSlideCancelled (aGesture) {
+    /**
+     * @description Handles the cancellation of the slide gesture.
+     * @param {Object} aGesture - The gesture object.
+     */
+    onSlideCancelled(aGesture) {
         this.slideBack()
     }
 
-    finishSlideAndDelete () {
+    /**
+     * @description Finishes the slide gesture and deletes the tile.
+     */
+    finishSlideAndDelete() {
         this.setIsDeleting(true)
         const dt = 0.08 // seconds
         this.contentView().setTransition("right " + dt + "s")
         this.setTransition(this.transitionStyle())
-        //this.contentView().animationListener().setDelegate(this).setMethodSuffix().setIsListening(true)
 
         this.addTimeout(() => {
             this.setTouchRight(this.clientWidth())
@@ -107,18 +137,10 @@
         }, 0)
     }
 
-    /*
-    onAnimationStart (event) {
-        console.log(this.debugTypeId() + " onAnimationStart")
-    }
-
-    onAnimationEnd (event) {
-        console.log(this.debugTypeId() + " onAnimationEnd")
-        this.contentView().animationListener().setIsListening(false)
-    }
-    */
-
-    slideBack () {
+    /**
+     * @description Slides the tile back to its original position.
+     */
+    slideBack() {
         this.disableTilesViewUntilTimeout(400)
 
         this.contentView().setTransition("left 0.2s ease, right 0.2s ease")
@@ -133,18 +155,28 @@
         }, 300)
     }
 
-    
-    disableTilesViewUntilTimeout (ms) {
+    /**
+     * @description Disables pointer events on the tiles view for a specified duration.
+     * @param {number} ms - The duration in milliseconds.
+     */
+    disableTilesViewUntilTimeout(ms) {
         this.navView().disablePointerEventsUntilTimeout(ms) 
         this.setPointerEvents("none")
     }
 
-    didCompleteSlide () {
+    /**
+     * @description Performs actions after completing the slide.
+     */
+    didCompleteSlide() {
         this.cleanupSlide()
     }
     
-    hasCloseButton () {
+    /**
+     * @description Checks if the tile has a close button.
+     * @returns {boolean} True if the tile has a close button, false otherwise.
+     */
+    hasCloseButton() {
         return this.closeButtonView() && this.closeButtonView().target() != null
     }
-
+    
 }.initThisCategory());

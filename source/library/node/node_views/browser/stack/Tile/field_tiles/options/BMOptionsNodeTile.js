@@ -1,17 +1,15 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles.options
+ * @class BMOptionsNodeTile
+ * @extends TitledTile
+ * @classdesc View for BMOptionsNode
+ * 
+ * BMOptionsNode -> BMOptionsNodeTile
+ *     BMOption -> BMSingleOptionTile
+ *     BMMultiOption -> BMMultiOptionTile
+ */
+
 "use strict";
-
-/*
-
-    BMOptionsNodeTile 
-
-    View for BMOptionsNode
-
-    BMOptionsNode -> BMOptionsNodeTile
-        BMOption -> BMSingleOptionTile
-        BMMultiOption -> BMMultiOptionTile
-
-*/
-
 
 (class BMOptionsNodeTile extends TitledTile {
     
@@ -28,6 +26,10 @@
     }
     */
 
+    /**
+     * @description Synchronizes the tile with its associated node
+     * @returns {BMOptionsNodeTile} Returns this instance for method chaining
+     */
     syncFromNode () {
         super.syncFromNode()
 

@@ -1,16 +1,25 @@
+/**
+ * @module library.node.node_views.browser.stack
+ * @class StackScrollView
+ * @extends ScrollView
+ * @classdesc StackScrollView is a specialized ScrollView that can be configured for vertical or horizontal scrolling.
+ */
 "use strict";
-
-/*
-
-    StackScrollView
-
-*/
 
 (class StackScrollView extends ScrollView {
     
+    /**
+     * Initialize prototype slots for the StackScrollView.
+     * @method initPrototypeSlots
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * Initialize the StackScrollView.
+     * @method init
+     * @returns {StackScrollView} The initialized StackScrollView instance.
+     */
     init () {
         super.init()
         /*
@@ -26,6 +35,12 @@
         return this
     }
 
+    /**
+     * Set the scroll direction of the StackScrollView.
+     * @method setIsVertical
+     * @param {boolean} aBool - True for vertical scrolling, false for horizontal scrolling.
+     * @returns {StackScrollView} The StackScrollView instance.
+     */
     setIsVertical (aBool) {
         if (aBool) {
             this.makeVertical()
@@ -35,6 +50,11 @@
         return this
     }
 
+    /**
+     * Configure the StackScrollView for vertical scrolling.
+     * @method makeVertical
+     * @returns {StackScrollView} The StackScrollView instance.
+     */
     makeVertical () {
         this.setWidth("100%")
         this.setFlexGrow(1);
@@ -43,6 +63,11 @@
         return this
     }
 
+    /**
+     * Configure the StackScrollView for horizontal scrolling.
+     * @method makeHorizontal
+     * @returns {StackScrollView} The StackScrollView instance.
+     */
     makeHorizontal () {
         this.setWidth("null")
         this.setHeight("100%")
@@ -54,5 +79,3 @@
 
     
 }.initThisClass());
-
-

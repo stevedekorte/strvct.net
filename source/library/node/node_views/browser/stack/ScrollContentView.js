@@ -1,48 +1,52 @@
+/**
+ * @module library.node.node_views.browser.stack
+ */
+
 "use strict";
 
-/*
-    
-    ScrollContentView
-    
-*/
-
+/**
+ * @class ScrollContentView
+ * @extends NodeView
+ * @classdesc Represents a scrollable content view within a scroll view.
+ */
 (class ScrollContentView extends NodeView {
 
+    /**
+     * Initialize prototype slots for the ScrollContentView.
+     * @description Sets up the contentMutationObserver slot for the ScrollView sticksToBottom feature.
+     */
     initPrototypeSlots () {
-
-
-        // needed for ScrollView sticksToBottom feature
-        {
-            const slot = this.newSlot("contentMutationObserver", null); // setup onContentMutations() event, within which we scroll to bottom if needed
-            slot.setSlotType("MutationObserver");
-        }
-
+        /**
+         * @property {MutationObserver} contentMutationObserver - Observer for content mutations, triggers onContentMutations() event.
+         */
+        const slot = this.newSlot("contentMutationObserver", null);
+        slot.setSlotType("MutationObserver");
     }
 
-    // -----
-
+    /**
+     * Prepare the view for retirement.
+     * @description Stops the content mutation observer and calls the superclass method.
+     * @returns {ScrollContentView} The current instance.
+     */
     prepareToRetire () {
         super.prepareToRetire();
         this.stopContentMutationObserver();
         return this;
     }
 
+    /**
+     * Get the parent scroll view.
+     * @returns {NodeView} The parent scroll view.
+     */
     scrollView () {
         return this.parentView()
     }
 
-    /*
-    onRequestScrollToBottom (aNote) {
-        this.addTimeout(() => { 
-            this.parentView().immediatelyScrollToBottom()
-        }, 1);
-        this.setWasAtBottom(true)
-        this.setLastScrollHeight(this.clientHeight())
-    }
-    */
-
-    // --- scroll events ---
-
+    /**
+     * Synchronize the view with its node.
+     * @description Updates the sticksToBottom property of the scroll view if the node has it.
+     * @returns {ScrollContentView} The current instance.
+     */
     syncFromNode () {
         super.syncFromNode()
         const node = this.node()
@@ -52,48 +56,38 @@
         return this
     }
 
+    /**
+     * Set the node for this view.
+     * @param {Object} aNode - The node to set.
+     * @returns {ScrollContentView} The current instance.
+     */
     setNode (aNode) {
         const didChange = this.node() !== aNode;
         super.setNode(aNode);
-        //debugger;
 
         if (didChange && aNode && aNode.subviewsScrollSticksToBottom && aNode.subviewsScrollSticksToBottom()) {
-            //this.setHeight(null)
             this.setJustifyContent("flex-end")
-            //this.setHeight("fit-content")
-            ///this.setMinHeight(null)
-            ///this.setMaxHeight(null)
-            ///this.setMarginTop("auto")
             this.addTimeout(() => { this.scrollToBottom() }, 0);
-            
         }
         return this
     }
 
+    /**
+     * Handle scroll events from the scroll view.
+     * @param {Event} event - The scroll event.
+     */
     onScrollViewScroll (event) {
 
     }
 
-    // --- code to do auto stick-to-bottom type behavior ---
-
-
-    // --- content mutation observer ---
-
-    /*
-    didUpdateSlotElement (oldValue, newValue) {
-        super.didUpdateSlotElement(newValue)
-        if (newValue) {
-            this.startContentMutationObserverIfNeeded();
-        } else {
-            this.stopContentMutationObserver();
-        }
-    }
-    */
-
+    /**
+     * Start the content mutation observer if it hasn't been started yet.
+     * @returns {ScrollContentView} The current instance.
+     */
     startContentMutationObserverIfNeeded () {
         if (!this.contentMutationObserver()) {
             const observer = new MutationObserver((mutations) => {
-                this.onContentMutations(mutations) // do we need to wrap this event?
+                this.onContentMutations(mutations)
             });
 
             this.setContentMutationObserver(observer);
@@ -108,6 +102,10 @@
         return this
     }
 
+    /**
+     * Stop the content mutation observer.
+     * @returns {ScrollContentView} The current instance.
+     */
     stopContentMutationObserver () {
         const obs = this.contentMutationObserver();
         if (obs) {
@@ -117,6 +115,11 @@
         return this;
     }
 
+    /**
+     * Handle content mutations.
+     * @param {MutationRecord[]} mutations - The array of mutation records.
+     * @returns {ScrollContentView} The current instance.
+     */
     onContentMutations (mutations) {
         const scrollView = this.scrollView();
         if (scrollView) {

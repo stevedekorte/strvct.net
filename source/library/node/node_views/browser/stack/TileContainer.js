@@ -1,42 +1,46 @@
+/**
+ * @module library.node.node_views.browser.stack
+ * @class TileContainer
+ * @extends NodeView
+ * @classdesc TileContainer is a container for Tile objects. It manages the layout and orientation of tiles based on its parent view.
+ */
 "use strict";
-
-/*
-    
-    TileContainer
-    
-*/
 
 (class TileContainer extends NodeView {
 
     initPrototypeSlots () {
+        /**
+         * @property {Tile} tile - The tile contained in this container
+         */
         {
             const slot = this.newSlot("tile", null);
             slot.setSlotType("Tile");
         }
     }
 
+    /**
+     * @description Initializes the TileContainer with default styles and settings
+     * @returns {TileContainer} The initialized TileContainer instance
+     */
     init () {
         super.init()
-        //this.setDisplay("block")
         this.setDisplay("flex")
         this.setPosition("relative")
         this.setFlexDirection("column")
         this.setFlexGrow(1)
-        //this.setOpacity(0)
         this.setOverflow("hidden")
         this.setUserSelect("none")
-        //this.setTransition("opacity 0.5s ease-in-out")
-        //this.setTransition("flex-basis 0.1s")
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
-        //this.setMinAndMaxHeight("fit-content")
         this.makeOrientationRight()
         this.setIsDisplayHidden(true)
 
         return this
     }
 
-    // --- orientation ---
-
+    /**
+     * @description Checks if the container's orientation is vertical
+     * @returns {boolean|null} True if vertical, false if horizontal, null if no parent view
+     */
     isVertical () {
         const sv = this.parentView()
         if (!sv) {
@@ -45,6 +49,10 @@
         return sv.isVertical()
     }
 
+    /**
+     * @description Synchronizes the container's orientation with its parent view
+     * @returns {TileContainer} The current TileContainer instance
+     */
     syncOrientation () {
         if (this.isVertical()) {
             this.makeOrientationRight()
@@ -54,40 +62,26 @@
         return this
     }
 
-    // ---
-
+    /**
+     * @description Sets the orientation to right (for vertical layout)
+     */
     makeOrientationRight () {
-        /*
-        // stack view is left to right, so nav items are top to bottom
-        this.setFlexDirection("column")
-        //this.setFlexBasis(this.targetWidth() + "px")
-        this.setFlexGrow(0)
-        this.setFlexShrink(0)
-
-        // this are handled in sync to node
-        this.setMinAndMaxWidth("17em") // syncFromNode can override if node requests a sizes
-        this.setMinAndMaxHeight("100%")
-        */
         this.setWidth("-webkit-fill-available")
         this.setHeight("fit-content")
     }
 
+    /**
+     * @description Sets the orientation to down (for horizontal layout)
+     */
     makeOrientationDown () {
-        /*
-        // stack view is top to bottom, so nav items are left to right
-
-        this.setFlexDirection("row")
-        //this.setFlexBasis(this.targetHeight() + "px")
-        this.setFlexGrow(0)
-        this.setFlexShrink(0)
-
-        this.setMinAndMaxWidth("100%")
-        this.setMinAndMaxHeight("5em")
-        */
         this.setWidth("fit-content")
         this.setHeight("-webkit-fill-available")
     }
 
+    /**
+     * @description Removes the current tile from the container
+     * @returns {TileContainer} The current TileContainer instance
+     */
     removeTile () {
         const oldTile = this.tile()
         if (oldTile) {
@@ -97,6 +91,11 @@
         return this
     }
 
+    /**
+     * @description Sets the node for the container and updates the tile accordingly
+     * @param {Object|null} aNode - The node to set
+     * @returns {TileContainer} The current TileContainer instance
+     */
     setNode (aNode) {
         super.setNode(aNode)
 
@@ -118,9 +117,13 @@
         return this
     }
 
+    /**
+     * @description Sets up a new tile for the current node
+     * @returns {TileContainer} The current TileContainer instance
+     */
     setupTile () {
         this.removeTile()
-        const tileClass = this.node().nodeTileClass() // we need this to get tile versions of view
+        const tileClass = this.node().nodeTileClass()
         assert(tileClass)
         const newTile = tileClass.clone()
         newTile.setNode(this.node())
@@ -129,12 +132,15 @@
         return this
     }
 
+    /**
+     * @description Synchronizes the container and its tile with the current node
+     * @returns {TileContainer} The current TileContainer instance
+     */
     syncFromNode () {
         this.syncOrientation()
         if (this.tile()) {
             this.tile().syncFromNode()
         }
-        //this.applyStyles()
         return this
     }
 

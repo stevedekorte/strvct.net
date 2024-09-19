@@ -1,35 +1,53 @@
+/**
+ * @module library.node.node_views
+ * @class ImageView
+ * @extends NodeView
+ * @classdesc ImageView is a specialized view for displaying images with additional features like a close button and editability.
+ */
 "use strict";
-
-/*
-
-    ImageView
-
-*/
 
 (class ImageView extends NodeView {
     
     initPrototypeSlots () {
+        /**
+         * @property {FlexDomView} imageContainer - Container for the image
+         */
         {
             const slot = this.newSlot("imageContainer", null);
             slot.setSlotType("FlexDomView");
         }
+        /**
+         * @property {FlexDomView} rawImageView - View for the raw image
+         */
         {
             const slot = this.newSlot("rawImageView", null);
             slot.setSlotType("FlexDomView");
         }
+        /**
+         * @property {FlexDomView} closeButtonView - View for the close button
+         */
         {
             const slot = this.newSlot("closeButtonView", null);
             slot.setSlotType("FlexDomView");
         }
+        /**
+         * @property {String} srcUrl - Source URL of the image
+         */
         {
             const slot = this.newSlot("srcUrl", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} dataURL - Data URL of the image
+         */
         {
             const slot = this.newSlot("dataURL", null);
             slot.setSyncsToNode(true);
             slot.setSlotType("String");
         }
+        /**
+         * @property {Boolean} isEditable - Indicates if the image view is editable
+         */
         {
             const slot = this.newSlot("isEditable", false);
             slot.setSlotType("Boolean");
@@ -39,6 +57,10 @@
     initPrototype () {
     }
 
+    /**
+     * @description Initializes the ImageView
+     * @returns {ImageView} The initialized ImageView instance
+     */
     init () {
         super.init();
         this.setDisplay("flex");
@@ -66,6 +88,10 @@
         return this;
     }
 
+    /**
+     * @description Creates a new close button view
+     * @returns {ButtonView} The created close button view
+     */
     newCloseButtonView () {
         const v = ButtonView.clone().setElementClassName("ImageCloseButton");
         v.setDisplay("flex");
@@ -78,6 +104,10 @@
         return v;
     }
 
+    /**
+     * @description Creates a new image view container
+     * @returns {FlexDomView} The created image view container
+     */
     newImageViewContainer () {
         const v = FlexDomView.clone().setElementClassName("ImageViewImageContainer");
         v.setDisplay("flex");
@@ -90,28 +120,46 @@
         return v;
     }
 
+    /**
+     * @description Sets whether the view is registered for browser drop (not implemented)
+     * @param {Boolean} aBool - Whether to register for browser drop
+     * @throws {Error} Always throws an error as this method shouldn't be called
+     */
     setIsRegisteredForBrowserDrop(aBool) {
         throw new Error("shouldn't be called");
     }
 
-    // --- editable ---
-    
+    /**
+     * @description Sets whether the image view is editable
+     * @param {Boolean} aBool - Whether the image view is editable
+     * @returns {ImageView} The ImageView instance
+     */
     setIsEditable (aBool) {
         this.closeButtonView().setIsDisplayHidden(!aBool);
         return this;
     }
 
+    /**
+     * @description Sets whether the image view is editable (placeholder method)
+     * @param {Boolean} aBool - Whether the image view is editable
+     * @returns {ImageView} The ImageView instance
+     */
     setEditable (aBool) {
         // to avoid editable content?
         return this;
     }
     
+    /**
+     * @description Checks if the view accepts drops
+     * @returns {Boolean} Always returns false
+     */
     acceptsDrop () {
         return false;
     }
 
-    // --- close button ---
-
+    /**
+     * @description Collapses the image view
+     */
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null);
         this.setOpacity(0);
@@ -125,6 +173,9 @@
         this.setMarginRightPx(0);
     }
     
+    /**
+     * @description Closes the image view with an animation
+     */
     close () {
         const seconds = 0.3;
 		
@@ -138,12 +189,19 @@
         }, seconds * 1000);
     }
 
-    // --- sync ---
-
+    /**
+     * @description Checks if the view has a specific image URL
+     * @param {String} url - The URL to check
+     * @returns {Boolean} Whether the view has the specified image URL
+     */
     hasImageUrl (url) {
         return (url === v.dataURL() || url === v.srcUrl());
     }
     
+    /**
+     * @description Removes the raw image view
+     * @returns {ImageView} The ImageView instance
+     */
     removeRawImageView () {
         if (this.rawImageView()) {
             this.imageContainer().removeSubview(this.rawImageView());
@@ -152,6 +210,11 @@
         return this;
     }
     
+    /**
+     * @description Fetches the data URL from a source URL
+     * @param {String} src - The source URL
+     * @returns {ImageView} The ImageView instance
+     */
     fetchDataURLFromSrc (src) {
         if (src.startsWith("data:")) {
 	        this.setFromDataURL(src);
@@ -165,11 +228,21 @@
         return this;
     }
     
+    /**
+     * @description Callback for when the data URL is fetched
+     * @param {String} dataURL - The fetched data URL
+     * @returns {ImageView} The ImageView instance
+     */
     didFetchDataUrl (dataURL) {
         this.setFromDataURL(dataURL);
         return this;
     }
 
+    /**
+     * @description Creates a new raw image view for a given image
+     * @param {Image} image - The image to create a view for
+     * @returns {FlexDomView} The created raw image view
+     */
     newRawImageViewForImage (image) {
         const v = FlexDomView.clone().setElement(image).setElementClassName("RawImageView");
         v.setDisplay("flex");
@@ -183,6 +256,11 @@
         return v;
     }
 
+    /**
+     * @description Sets the image from a data URL
+     * @param {String} dataURL - The data URL of the image
+     * @returns {ImageView} The ImageView instance
+     */
     setFromDataURL (dataURL) {
         //console.log("setFromDataURL: ", dataURL);
         assert(!Type.isNull(dataURL));

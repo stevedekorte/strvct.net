@@ -1,50 +1,50 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile
+ */
+
 "use strict";
 
-/*
-    
-    Tile_gestures
-
-*/
-
+/**
+ * @class Tile_gestures
+ * @extends Tile
+ * @classdesc Extends Tile with gesture handling functionality.
+ */
 (class Tile_gestures extends Tile {
     
     // --- tap gesture -------- 
 
+    /**
+     * @description Determines if the tile accepts tap begin gesture.
+     * @param {Object} aGesture - The gesture object.
+     * @returns {boolean} Always returns true.
+     */
     acceptsTapBegin (aGesture) {
         return true
     }
 
+    /**
+     * @description Handles the completion of a tap gesture.
+     * @param {Object} aGesture - The gesture object.
+     * @returns {Tile_gestures} The instance of the class.
+     */
     onTapComplete (aGesture) {
-        //console.log(this.debugTypeId() + " onTapComplete")
         this.setLastTapDate(new Date())
         const keyModifiers = BMKeyboard.shared().modifierNamesForEvent(aGesture.upEvent());
-        ///const hasThreeFingersDown = aGesture.numberOfFingersDown() === 3;
-        //const isAltTap = keyModifiers.contains("Alternate");
 
-        //if (keyModifiers.length) {
-            // TODO: abstract this to DomView or GestureRecognizer?
-            const methodName = "just" + keyModifiers.join("") + "Tap"
-            //this.debugLog(" tap method " + methodName)
-            if (this[methodName]) {
-                this[methodName].apply(this)
-                return this
-            }
-        //} 
-        
-        /*
-        if (hasThreeFingersDown || isAltTap) {
-            this.justInspect()
-        } else {
-            this.setIsInspecting(false)
-            this.justTap()
+        const methodName = "just" + keyModifiers.join("") + "Tap"
+        if (this[methodName]) {
+            this[methodName].apply(this)
+            return this
         }
-        */
 
         return this
     }
 
     // -- just taps ---
 
+    /**
+     * @description Handles a simple tap gesture.
+     */
     justTap () {
         this.setIsInspecting(false)
 
@@ -52,47 +52,48 @@
             this.column().didTapItem(this)
         }
 
-        //console.log(this.debugTypeId() + " justTap")
         if (this.isSelectable()) {
             const node = this.node()
             if (node) {
                 node.onTapOfNode()
                 node.onRequestSelectionOfNode(this)
             }
-
-            /*
-            if (this.isFocused() && node.nodeUrlLink) {
-                // TODO: move to specialized view (something like UrlLinkTile?) 
-                if (!BMKeyboard.shared().hasKeysDown()) {
-                    const url = node.nodeUrlLink()
-                    window.open(url, "_blank")
-                }
-            }
-            */
         }
     }
 
+    /**
+     * @description Handles a shift-tap gesture.
+     */
     justShiftTap () {
         this.setIsInspecting(false)
         this.column().didShiftTapItem(this)
     }
 
+    /**
+     * @description Handles an alternate-tap gesture.
+     */
     justAlternateTap () {
         this.debugLog(".justInspect()")
         if (this.node().nodeCanInspect()) { 
-            this.setIsInspecting(true) // will call didUpdateSlotIsInspecting and update nav
+            this.setIsInspecting(true)
             this.column().didTapItem(this)
         }
     }
 
+    /**
+     * @description Handles a meta-tap gesture.
+     */
     justMetaTap () {
         this.setIsInspecting(false)
         this.toggleSelection()
     }
 
     // --- tap hold ---
-    // TODO: move to GestureRecognizer or DomView?
 
+    /**
+     * @description Determines if the tile accepts long press.
+     * @returns {boolean} True if the column can reorder tiles, false otherwise.
+     */
     acceptsLongPress () {
         if (!this.column()) {
             console.log("missing parent view on: " + this.typeId())
@@ -104,24 +105,34 @@
         return false
     }
     
+    /**
+     * @description Handles the beginning of a long press gesture.
+     * @param {Object} aGesture - The gesture object.
+     */
     onLongPressBegin (aGesture) {
         if (this.isRegisteredForBrowserDrag()) {
-            aGesture.cancel() // don't allow in-browser drag when we're doing a drag outside
+            aGesture.cancel()
         }
     }
 
+    /**
+     * @description Handles the cancellation of a long press gesture.
+     * @param {Object} aGesture - The gesture object.
+     */
     onLongPressCancelled (aGesture) {
     }
 
+    /**
+     * @description Determines if the gesture is a tap-long press.
+     * @returns {boolean} True if it's a tap-tap-hold, false otherwise.
+     */
     isTapLongPress () {
-        // ok, now we need to figure out if this is a tap-hold or tap-tap-hold
-        const maxDt = 0.7 // between tap time + long tap hold time before complete is triggered
+        const maxDt = 0.7
         let isTapTapHold = false
         const t1 = this.lastTapDate()
         const t2 = new Date()
         if (t1) {
             const dtSeconds = (t2.getTime() - t1.getTime())/1000
-            //console.log("dtSeconds = " + dtSeconds)
             
             if (dtSeconds < maxDt) {
                 isTapTapHold = true
@@ -130,10 +141,14 @@
         return isTapTapHold
     }
 
+    /**
+     * @description Handles the completion of a long press gesture.
+     * @param {Object} longPressGesture - The long press gesture object.
+     */
     onLongPressComplete (longPressGesture) {
-        longPressGesture.deactivate() // needed?
+        longPressGesture.deactivate()
 
-        const isTapLongPress = this.isTapLongPress() // is tap-hold
+        const isTapLongPress = this.isTapLongPress()
 
         if (!this.isSelected()) {
             this.column().unselectAllTilesExcept(this)
@@ -144,7 +159,7 @@
 
         if (isTapLongPress) {
             dv.setDragOperation("copy")
-        } else { // otherwise, it's just a normal long press
+        } else {
             dv.setDragOperation("move")
         }
         
@@ -153,6 +168,10 @@
 
     // --- handle pan gesture ---
 
+    /**
+     * @description Determines if the tile accepts pan gesture.
+     * @returns {boolean} The value of _isReordering.
+     */
     acceptsPan () {
         return this._isReordering
     }
@@ -160,6 +179,10 @@
 
     // --- bottom edge pan ---
 
+    /**
+     * @description Determines if the tile accepts bottom edge pan.
+     * @returns {boolean} True if the node can edit tile height, false otherwise.
+     */
     acceptsBottomEdgePan () {
         if (this.node().nodeCanEditTileHeight) {
             if (this.node().nodeCanEditTileHeight()) {
@@ -169,14 +192,23 @@
         return false
     }
 
+    /**
+     * @description Handles the beginning of a bottom edge pan gesture.
+     * @param {Object} aGesture - The gesture object.
+     */
     onBottomEdgePanBegin (aGesture) {
         this._beforeEdgePanBorderBottom = this.borderBottom()
         this.setBorderBottom("1px dashed red")
         this.setTransition("min-height 0s, max-height 0s")
     }
 
+    /**
+     * @description Handles the movement of a bottom edge pan gesture.
+     * @param {Object} aGesture - The gesture object.
+     * @returns {Tile_gestures} The instance of the class.
+     */
     onBottomEdgePanMove (aGesture) {
-        const p = aGesture.currentPosition() // position in document coords
+        const p = aGesture.currentPosition()
         const f = this.frameInDocument()
         const newHeight = p.y() - f.y()
         const minHeight = this.node() ? this.node().nodeMinTileHeight() : 10;
@@ -186,16 +218,13 @@
         this.node().setNodeMinTileHeight(newHeight)
         this.updateSubviews()
 
-        /*
-            this.node().setNodeMinTileHeight(h)
-            this.updateSubviews()
-            //this.setMinAndMaxHeight(newHeight) // what about contentView?
-            //this.contentView().autoFitParentHeight()
-        */
-
         return this
     }
 
+    /**
+     * @description Handles the completion of a bottom edge pan gesture.
+     * @param {Object} aGesture - The gesture object.
+     */
     onBottomEdgePanComplete (aGesture) {
         this.setBorderBottom(this._beforeEdgePanBorderBottom)
     }

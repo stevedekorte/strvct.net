@@ -1,10 +1,13 @@
-"use strict";
+/**
+ * @module library.node.node_views.browser.stack.TilesView
+ * @class TilesView_helpers
+ * @extends TilesView
+ * @classdesc
+ * TilesView_helpers class provides helper methods for TilesView.
+ * This class includes methods for debugging and displaying tiles and nodes.
+ */
 
-/*
-    
-    TilesView_helpers
-    
-*/
+"use strict";
 
 (class TilesView_helpers extends TilesView {
     
@@ -114,7 +117,12 @@
 
     // --- debugging ---
 
-    showTiles (tiles) {
+    /**
+     * @description Displays the tiles in the console.
+     * @param {Array} tiles - The array of tiles to be displayed.
+     * @returns {TilesView_helpers} Returns this instance for method chaining.
+     */
+    showTiles(tiles) {
         console.log("tiles: ", tiles.map(r => {
             if (r.node) {
                 return r.node().title() + (r.display() !== "block" ? ("-" + r.display()) : "")
@@ -124,7 +132,12 @@
         return this
     }
 
-    showNodes (nodes) {
+    /**
+     * @description Displays the nodes in the console.
+     * @param {Array} nodes - The array of nodes to be displayed.
+     * @returns {TilesView_helpers} Returns this instance for method chaining.
+     */
+    showNodes(nodes) {
         console.log("nodes: ", nodes.map(node => {
             return node.title()
         }).join(", "))

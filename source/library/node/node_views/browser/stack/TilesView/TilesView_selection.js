@@ -1,15 +1,18 @@
 "use strict";
 
-/*
-    
-    TilesView_selection
-    
-*/
-
+/**
+ * @module strvct.source.library.node.node_views.browser.stack.TilesView
+ * @class TilesView_selection
+ * @extends TilesView
+ * @classdesc
+ * TilesView_selection extends TilesView to handle selection-related functionality.
+ */
 (class TilesView_selection extends TilesView {
     
-    // --- column ---
-
+    /**
+     * @description Unselects tiles in the next column.
+     * @returns {TilesView_selection} The current instance.
+     */
     unselectTilesInNextColumn () {
         const c = this.nextColumn()
         if (c) {
@@ -18,27 +21,20 @@
         return this
     }
 
-    /*
-    didSelectItem (itemView) {
-        console.log(this.typeId() + " didSelectItem")
-        this.subviews().forEach(sv => {
-            if (sv === itemView) {
-                //sv.select()
-            } else {
-                sv.unselect()
-            }
-        })
-    
-        return false
-    }
-    */
-
+    /**
+     * @description Gets the last selected tile.
+     * @returns {Tile} The last selected tile.
+     */
     lastSelectedTile () {
         return this.selectedTiles().maxItem(tile => tile.lastSelectionDate().getTime())
     }
 
-    // -- update isSelected ---
-	
+    /**
+     * @description Handles updates to the isSelected slot.
+     * @param {boolean} oldValue - The old value of isSelected.
+     * @param {boolean} newValue - The new value of isSelected.
+     * @returns {TilesView_selection} The current instance.
+     */
     didUpdateSlotIsSelected (oldValue, newValue) {
         debugger;
         super.didUpdateSlotIsSelected(oldValue, newValue)
@@ -46,7 +42,6 @@
         if (this.isSelected()) {
             const focusedView = WebBrowserWindow.shared().activeDomView()
 
-            // TODO: need a better solution to this problem
             if (!focusedView || (focusedView && !this.hasFocusedDecendantView())) {
                 this.focus()    
             }
@@ -57,8 +52,11 @@
         return this
     }
 
-    // --- tile tapping ---
-
+    /**
+     * @description Selects a node.
+     * @param {BMNode} aNode - The node to select.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectNode (aNode) {
         const sv = this.subviewForSubnode(aNode)
         if (sv) {
@@ -67,23 +65,25 @@
         return this
     }
 
+    /**
+     * @description Handles tapping on an item.
+     * @param {Tile} anItem - The tapped item.
+     */
     didTapItem (anItem) {
-        //debugger;
-        // if the item is already selected, this won't trigger a resync, so unselect first?
-        //anItem.unselect()
-        //debugger; 
         anItem.activate() 
         if (!anItem.hasFocusedDecendantView()) {
             anItem.focus()
-            // anItem seems to already be focused somehow
         }
         this.unselectAllTilesExcept(anItem)
         this.unselectTilesInNextColumn()
-        //this.tilesView().didChangeNavSelection()
-
-        this.didChangeNavSelection() // this may already have been sent - but only if selection bool changed
+        this.didChangeNavSelection()
     }
     
+    /**
+     * @description Handles shift-tapping on an item.
+     * @param {Tile} anItem - The shift-tapped item.
+     * @returns {TilesView_selection} The current instance.
+     */
     didShiftTapItem (anItem) {
         let lastItem = this.lastSelectedTile()
 
@@ -108,16 +108,22 @@
         return this
     }
 
+    /**
+     * @description Handles meta-tapping on an item.
+     * @param {Tile} anItem - The meta-tapped item.
+     */
     didMetaTapItem (anItem) {
         anItem.toggleSelection()
     }
 
-    // --- unselecting tiles ---
-        
+    /**
+     * @description Unselects all tiles except the specified one.
+     * @param {Tile} selectedTile - The tile to keep selected.
+     * @returns {TilesView_selection} The current instance.
+     */
     unselectAllTilesExcept (selectedTile) {
         const tiles = this.tiles()
 
-        // unselect all other tiles
         tiles.forEach(tile => {
             if (tile !== selectedTile) {
                 if (tile.unselect) {
@@ -131,10 +137,14 @@
         return this
     }
 
+    /**
+     * @description Unselects all tiles except the specified ones.
+     * @param {Array<Tile>} tilesToSelect - The tiles to keep selected.
+     * @returns {TilesView_selection} The current instance.
+     */
     unselectAllTilesExceptTiles (tilesToSelect) {
         const tiles = this.tiles()
 
-        // unselect all other tiles
         tiles.forEach(tile => {
             if (tilesToSelect.contains(tile)) {
                 tile.performIfResponding("select") 
@@ -146,31 +156,28 @@
         return this
     }
 
-    // --- selection ---
-
-    /*
-    didSelectTile (aTile) {
-        this.didChangeNavSelection()
-    }
-
-    didUnselectTile (aTile) {
-        this.didChangeNavSelection()
-
-    }
-    */
-
+    /**
+     * @description Checks if there are multiple selections.
+     * @returns {boolean} True if there are multiple selections, false otherwise.
+     */
     hasMultipleSelections () {
         return this.selectedTiles().length > 0
     }
 
-    // --- selected tiles ---
-
+    /**
+     * @description Gets the selected tiles.
+     * @returns {Array<Tile>} An array of selected tiles.
+     */
     selectedTiles () {
         let tiles = this.tiles().filter(tile => tile.thisClass().isSubclassOf(Tile))
         const selected = tiles.filter(tile => tile.isSelected())
         return selected
     }
 
+    /**
+     * @description Gets the selected tile.
+     * @returns {Tile|null} The selected tile, or null if none or multiple are selected.
+     */
     selectedTile () {
         const sr = this.selectedTiles()
         if (sr.length === 1) {
@@ -179,27 +186,38 @@
         return null
     }
 
-    // --- selected nodes ---
-
+    /**
+     * @description Gets the selected nodes.
+     * @returns {Array<BMNode>} An array of selected nodes.
+     */
     selectedNodes () {
         return this.selectedTiles().map(tile => tile.node())
     }
 
+    /**
+     * @description Gets the selected node.
+     * @returns {BMNode|null} The selected node, or null if none is selected.
+     */
     selectedNode () {
         const r = this.selectedTile()
         return r ? r.node() : null
     }
     
+    /**
+     * @description Gets the index of the selected tile.
+     * @returns {number} The index of the selected tile, or -1 if none is selected.
+     */
     selectedTileIndex () { 
-        // returns -1 if no tiles selected
         return this.tiles().indexOf(this.selectedTile())
     }
 
-    // --- selecting tiles ---
-    
+    /**
+     * @description Sets the selected tile by index.
+     * @param {number} index - The index of the tile to select.
+     * @returns {TilesView_selection} The current instance.
+     */
     setSelectedTileIndex (index) {
         const oldIndex = this.selectedTileIndex()
-        //console.log("this.setSelectedTileIndex(" + index + ") oldIndex=", oldIndex)
         if (index !== oldIndex) {
             const tiles = this.tiles()
             if (index >= 0 && index < tiles.length) {
@@ -210,22 +228,39 @@
         return this
     }
   
+    /**
+     * @description Gets the index of the tile with the specified node.
+     * @param {BMNode} aNode - The node to find the tile for.
+     * @returns {number} The index of the tile, or -1 if not found.
+     */
     indexOfTileWithNode (aNode) {
         return this.tiles().detectIndex(tile => tile.node() === aNode)
     }
 
+    /**
+     * @description Selects all tiles.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectAllTiles () {
         this.tiles().forEachPerformIfResponds("select")
         return this
     }
 
+    /**
+     * @description Unselects all tiles.
+     * @returns {TilesView_selection} The current instance.
+     */
     unselectAllTiles () {
         this.tiles().forEachPerformIfResponds("unselect")
         return this
     }
 
+    /**
+     * @description Selects the tile with the specified node.
+     * @param {BMNode} aNode - The node to select the tile for.
+     * @returns {Tile|null} The selected tile, or null if not found.
+     */
     selectTileWithNode (aNode) {
-        //console.log(">>> column " + this.node().title() + " select tile " + aNode.title())
         const selectedTile = this.tileWithNode(aNode)
 		
         if (selectedTile) {
@@ -241,6 +276,10 @@
         return selectedTile
     }
     
+    /**
+     * @description Gets the title of the selected tile.
+     * @returns {string|null} The title of the selected tile, or null if none is selected.
+     */
     selectedTileTitle () {
         const tile = this.selectedTile()
         if (tile) { 
@@ -249,20 +288,19 @@
         return null
     }
 
+    /**
+     * @description Shows the selected tile.
+     * @returns {TilesView_selection} The current instance.
+     */
     showSelected () {
-        /*
-        TODO: add check if visible
-        if (this.selectedTile()) {
-            this.selectedTile().scrollIntoView()
-        }
-        */
-        //this.didChangeNavSelection()
         return this	    
     }
 
-     // nextTile
-
-     nextTile () {
+    /**
+     * @description Gets the next tile.
+     * @returns {Tile|null} The next tile, or null if there is no next tile.
+     */
+    nextTile () {
         const si = this.selectedTileIndex()
         if (si !== -1 && si < this.tiles().length) {
             const nextTile = this.tiles()[si +1]
@@ -271,11 +309,19 @@
         return null
     }
     
+    /**
+     * @description Selects the first tile.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectFirstTile () {
         this.setSelectedTileIndex(0)
         return this
     }
 
+    /**
+     * @description Gets the first tile.
+     * @returns {Tile|null} The first tile, or null if there are no tiles.
+     */
     firstTile () {
         if (this.tiles().length > 0) {
             return this.tiles()[0]
@@ -283,6 +329,10 @@
         return null
     }
 
+    /**
+     * @description Selects the next tile.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectNextTile () {
         const si = this.selectedTileIndex()
         if (si === -1) {
@@ -293,6 +343,10 @@
         return this
     }
     
+    /**
+     * @description Selects the previous tile.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectPreviousTile () {
         const si = this.selectedTileIndex()
         if (si === -1) {
@@ -303,13 +357,20 @@
         return this
     }
 
-    // --- focus / selection ---
-    
+    /**
+     * @description Checks if the view is in a browser.
+     * @returns {boolean} True if the view is in a browser, false otherwise.
+     */
     isInBrowser () {
         return !Type.isNull(this.parentView())
     }
 
-    shouldFocusAndExpandSubnode (aNote) { // focus & expand tile - can be activated by note from node
+    /**
+     * @description Focuses and expands a subnode.
+     * @param {BMNotification} aNote - The notification containing the subnode info.
+     * @returns {TilesView_selection} The current instance.
+     */
+    shouldFocusAndExpandSubnode (aNote) {
         if (!this.isInBrowser()) {
             return this
         }
@@ -326,8 +387,6 @@
             this.selectTileWithNode(subnode)
             subview.scrollIntoView()
             subview.justTap()
-            //this.didChangeNavSelection()
-		    //subview.dynamicScrollIntoView()
         } else {
             console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldSelectSubnode " + subnode.typeId())
 	    }
@@ -335,7 +394,12 @@
 	    return this 
     }
 
-    shouldFocusSubnode (aNote) { //  focus but don't expand tile
+    /**
+     * @description Focuses a subnode without expanding it.
+     * @param {BMNotification} aNote - The notification containing the subnode info.
+     * @returns {TilesView_selection} The current instance.
+     */
+    shouldFocusSubnode (aNote) {
 	    const subnode = aNote.info()
 
 	    let subview = this.subviewForNode(subnode)
@@ -349,23 +413,18 @@
             this.selectTileWithNode(subnode)
             subview.scrollIntoView()
 
-            // just focus the tile without expanding it
-            /*
-            if (this.previousItemSet()) {
-                this.previousItemSet().didChangeNavSelection()
-            }
-            */
-
             this.didChangeNavSelection()
-		    //subview.dynamicScrollIntoView()
         } else {
             console.warn(this.type() + " for node " + this.node().typeId() + " has no matching subview for shouldFocusSubnode " + subnode.typeId())
-            //console.log("tile nodes = ", this.tiles().map(tile => tile.node().typeId()) )
 	    }
 
 	    return this 
     }
 
+    /**
+     * @description Notifies that the navigation selection has changed.
+     * @returns {TilesView_selection} The current instance.
+     */
     didChangeNavSelection () {
         const sv = this.stackView()
         if (sv) {
@@ -374,16 +433,22 @@
         return this
     }
 	
-    // --- scrolling ---
-
+    /**
+     * @description Scrolls to a specific subnode.
+     * @param {BMNode} aSubnode - The subnode to scroll to.
+     * @returns {TilesView_selection} The current instance.
+     */
     scrollToSubnode (aSubnode) {
-	    //this.debugLog(".scrollToSubnode")
 	    const subview = this.subviewForNode(aSubnode)
 	    assert(subview)
 	    this.navView().scrollView().setScrollTop(subview.offsetTop())
 	    return this 	    
     }
 
+    /**
+     * @description Scrolls to the bottom of the view.
+     * @returns {TilesView_selection} The current instance.
+     */
     scrollToBottom () {
         const last = this.tiles().last()
 
@@ -394,55 +459,38 @@
         return this
     }
 
-    // --------------
-
-    /*
-    focus () {
-        super.focus()
-		
-	    if (this.selectedTileIndex() === -1) {
-            const sr = this.tiles().first()
-            if (sr) {
-                sr.setShouldShowFlash(true)
-            }
-            this.setSelectedTileIndex(0)
-        }
-
-        //this.debugLog(" focus")
-        return this
-    }
-    */
-    
+    /**
+     * @description Selects the next column.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectNextColumn () {
         const nextColumn = this.nextColumn()
         if (nextColumn) {
             this.blur()
-            //console.log("nextColumn.focus()")
-            /*
-            const sr = nextColumn.selectedTile()
-            if (sr) {
-                sr.setShouldShowFlash(true)
-            }
-            */
             nextColumn.focus()
             nextColumn.selectFirstTile()
         }
         return this
     }
 
+    /**
+     * @description Selects the previous column.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectPreviousColumn () {
-        //this.log("selectPreviousColumn this.columnIndex() = " + this.columnIndex())
         const prevColumn = this.previousItemSet()
         if (prevColumn) {
             this.blur()
             prevColumn.focus()
-            //this.didChangeNavSelection()
         }
         return this
     }
 
-    // --- select nodes ---
-
+    /**
+     * @description Selects and focuses on specified nodes.
+     * @param {Array<BMNode>} nodes - The nodes to select and focus.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectAndFocusNodes (nodes) {
         const selectTiles = this.tilesWithNodes(nodes)
         this.unselectAllTilesExceptTiles(selectTiles)
@@ -453,8 +501,10 @@
         return this
     }
 
-    // --- key views ---
-    
+    /**
+     * @description Selects the next key view.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectNextKeyView () {
         const nextTile = this.nextTile()
         if (nextTile) {
@@ -470,8 +520,10 @@
         return this
     }
 
-    // --- helpers ---
-
+    /**
+     * @description Selects the first tile.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectFirstTile () {
         if (this.subviews().length) {
             this.setSelectedTileIndex(0)
@@ -479,6 +531,10 @@
         return this
     }
 
+    /**
+     * @description Selects the last tile.
+     * @returns {TilesView_selection} The current instance.
+     */
     selectLastTile () {
         const count = this.subviews().length
         if (count) {

@@ -1,11 +1,11 @@
 "use strict";
 
-/*
-
-    BMBooleanFieldTile
-
-*/
-
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles
+ * @class BMBooleanFieldTile
+ * @extends BMFieldTile
+ * @classdesc Represents a boolean field tile in the browser stack.
+ */
 (class BMBooleanFieldTile extends BMFieldTile {
     
     /*
@@ -13,6 +13,10 @@
     }
     */
 
+    /**
+     * @description Initializes the BMBooleanFieldTile.
+     * @returns {BMBooleanFieldTile} The initialized instance.
+     */
     init () {
         super.init()
         
@@ -40,15 +44,27 @@
         return this
     }
 
+    /**
+     * @description Creates and returns a BooleanView for the value.
+     * @returns {BooleanView} The created BooleanView instance.
+     */
     createValueView () {
         const bv = BooleanView.clone()
         return bv
     }
 	
+    /**
+     * @description Returns the BooleanView used for the value.
+     * @returns {BooleanView} The BooleanView instance.
+     */
     booleanView () {
         return this.valueView()
     }
 
+    /**
+     * @description Synchronizes the tile with its associated node and updates the appearance.
+     * @returns {BMBooleanFieldTile} The current instance.
+     */
     syncFromNode () {
         super.syncFromNode()
         this.booleanView().updateAppearance()

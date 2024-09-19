@@ -1,11 +1,9 @@
-"use strict";
-
-/*
-    
-    TileNoteView
-    
-*/
-
+/**
+ * @module library.node.node_views.browser.stack.Tile.subviews
+ * @class TileNoteView
+ * @extends TextField
+ * @classdesc TileNoteView is a specialized TextField for displaying notes in a Tile.
+ */
 (class TileNoteView extends TextField {
 
     initPrototypeSlots () {
@@ -14,6 +12,10 @@
     initPrototype () {
     }
 
+    /**
+     * @description Initializes the TileNoteView with specific styling.
+     * @returns {TileNoteView} The initialized instance.
+     */
     init () {
         super.init()
         this.setFontSize("80%")
@@ -24,11 +26,21 @@
         return this
     } 
     
+    /**
+     * @description Sets the background color of the TileNoteView to transparent.
+     * @param {string} s - The color string (ignored in this implementation).
+     * @returns {TileNoteView} The current instance.
+     */
     setBackgroundColor (s) {
         super.setBackgroundColor("tranparent")
         return this
     }
 
+    /**
+     * @description Sets the transition for the TileNoteView.
+     * @param {string} s - The transition string.
+     * @returns {*} The result of the super class's setTransition method.
+     */
     setTransition (s) {
         //debugger;
         return super.setTransition(s)

@@ -1,20 +1,32 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile
+ * @class BMTextNodeTile
+ * @extends Tile
+ * @classdesc BMTextNodeTile represents a tile for displaying and editing text nodes.
+ */
 "use strict";
-
-/*
-    
-    BMTextNodeTile
-    
-*/
 
 (class BMTextNodeTile extends Tile {
     
+    /**
+     * Initializes the prototype slots for the BMTextNodeTile.
+     * @method
+     */
     initPrototypeSlots () {
         {
+            /**
+             * @property {TextField} textView - The text view for displaying and editing text.
+             */
             const slot = this.newSlot("textView", null);
             slot.setSlotType("TextField");
         }
     }
 
+    /**
+     * Initializes the BMTextNodeTile.
+     * @method
+     * @returns {BMTextNodeTile} The initialized instance.
+     */
     init () {
         super.init()
 
@@ -44,18 +56,32 @@
     
     // ---
 
+    /**
+     * Calculates the desired width of the tile.
+     * @method
+     * @returns {number} The desired width.
+     */
     desiredWidth () {
         return this.calcWidth()
     }
 
     // --- edit ---
 
+    /**
+     * Handles input events.
+     * @method
+     */
     didInput () {
         this.scheduleSyncToNode();
     }
 
     // --- sync ---
 
+    /**
+     * Synchronizes the tile's content to the node.
+     * @method
+     * @returns {BMTextNodeTile} The current instance.
+     */
     syncToNode () {   
         //console.log("syncToNode")
         const node = this.node()
@@ -63,6 +89,11 @@
         return this
     }
     
+    /**
+     * Synchronizes the tile's content from the node.
+     * @method
+     * @returns {BMTextNodeTile} The current instance.
+     */
     syncFromNode () {
         const node = this.node()
         if (!node) {
@@ -75,6 +106,11 @@
         return this
     }
 
+    /**
+     * Applies styles to the tile.
+     * @method
+     * @returns {BMTextNodeTile} The current instance.
+     */
     applyStyles () {
         console.log(this.type() + " themeClassName ", this.node().themeClassName())
         super.applyStyles()

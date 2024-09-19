@@ -1,19 +1,32 @@
 "use strict";
 
-/*
-    
-    TileSubtitleView
-    
-*/
-
+/**
+ * @module library.node.node_views.browser.stack.Tile.subviews
+ * @class TileSubtitleView
+ * @extends TextField
+ * @classdesc TileSubtitleView is a specialized TextField for displaying subtitles in a Tile.
+ */
 (class TileSubtitleView extends TextField {
     
+    /**
+     * @description Initializes the prototype slots for the TileSubtitleView.
+     * @method initPrototypeSlots
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the prototype for the TileSubtitleView.
+     * @method initPrototype
+     */
     initPrototype () {
     }
 
+    /**
+     * @description Initializes the TileSubtitleView with default styles and properties.
+     * @method init
+     * @returns {TileSubtitleView} The initialized instance of TileSubtitleView.
+     */
     init () {
         super.init()
         this.setDisplay("block")
@@ -32,5 +45,3 @@
     }
 
 }.initThisClass());
-
-

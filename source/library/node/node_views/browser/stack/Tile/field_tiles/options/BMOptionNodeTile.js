@@ -1,36 +1,18 @@
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles.options
+ * @class BMOptionNodeTile
+ * @extends TitledTile
+ * @classdesc BMOptionNodeTile represents an option node tile in the browser stack.
+ */
 "use strict";
-
-/*
-
-    BMOptionNodeTile 
-
- 
-*/
 
 (class BMOptionNodeTile extends TitledTile {
     
-    /*
-    initPrototypeSlots () {
-
-    }
-
-    init () {
-        super.init()
-        //this.setHasSubtitle(true)
-        return this
-    }
-    */
-
-    /*
-    activate () {
-        super.activate()
-        this.toggle()
-        return this
-    }
-    */
-
+    /**
+     * @description Toggles the option state if editable
+     * @returns {BMOptionNodeTile} Returns this instance
+     */
     toggle () {
-        //debugger
         const canToggle = this.node().optionsNode().valueIsEditable();
         if (canToggle) {
             this.node().toggle()
@@ -38,22 +20,33 @@
         return this
     }
 
+    /**
+     * @description Handles the enter key up event
+     * @param {Event} event - The key up event
+     * @returns {BMOptionNodeTile} Returns this instance
+     */
     onEnterKeyUp (event) {
-        //debugger;
         super.onEnterKeyUp(event)
         this.toggle()
         event.stopPropagation()
         return this
     }
     
+    /**
+     * @description Handles the tap complete gesture
+     * @param {Object} aGesture - The tap gesture object
+     * @returns {BMOptionNodeTile} Returns this instance
+     */
     onTapComplete (aGesture) {
-        //debugger;
         super.onTapComplete(aGesture)
         this.toggle()
-        //event.stopPropagation() // is this correct? this prevents tiles from doing selection?
         return this
     }
 
+    /**
+     * @description Synchronizes the tile with its node
+     * @returns {BMOptionNodeTile} Returns this instance
+     */
     syncToNode () {
         super.syncToNode()
         

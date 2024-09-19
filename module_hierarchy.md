@@ -4,6 +4,13 @@
   - [AiChatModel](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModel.js)
   - Anthropic
     - [AnthropicService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicService.js)
+- browser
+  - stack
+    - Tile
+      - [Tile_styling](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_styling.js)
+      - field_tiles
+        - [BMActionFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
+        - [BMStringFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
   - [AiChatModels](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModels.js)
   - [AiConversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversation.js)
@@ -27,9 +34,6 @@
   - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
   - [AzureVoice](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoice.js)
   - [AzureVoices](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoices.js)
-  - [BMActionFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
-  - [BMBooleanFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMBooleanFieldTile.js)
-  - [BMChatInputTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMChatInputTile.js)
   - [BMDataStore](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStore.js)
   - [BMDataStoreRecord](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStoreRecord.js)
   - [BMDataUrl](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
@@ -49,7 +53,6 @@
   - [BMImageResourcesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMImagesNode.js)
   - [BMImageTile](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageTile.js)
   - [BMImageWellField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMImageWellField.js)
-  - [BMImageWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMImageWellFieldTile.js)
   - [BMJsonDictionaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonDictionaryNode.js)
   - [BMJsonNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonNode.js)
   - [BMJsonNullField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonNullField.js)
@@ -65,9 +68,6 @@
   - [BMNumberField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMNumberField.js)
   - [BMObservation](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMObservation.js)
   - [BMOptionNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Foptions%2FBMOptionNode.js)
-  - [BMOptionNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2Foptions%2FBMOptionNodeTile.js)
-  - [BMOptionsNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2Foptions%2FBMOptionsNodeTile.js)
-  - [BMPointerFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMPointerFieldTile.js)
   - [BMPrototypesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMPrototypesNode.js)
   - [BMResource](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResource.js)
   - [BMResourceFile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFile.js)
@@ -77,12 +77,9 @@
   - [BMSoundResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FBMSoundResources.js)
   - [BMStorableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2FBMStorableNode.js)
   - [BMStringField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStringField.js)
-  - [BMStringFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
   - [BMStyleSheet](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FBMStyleSheet.js)
   - [BMSummaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMSummaryNode.js)
-  - [BMTextAreaFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMTextAreaFieldTile.js)
   - [BMTextNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMTextNode.js)
-  - [BMTextNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBMTextNodeTile.js)
   - [BMTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMTheme.js)
   - [BMThemeClass](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClass.js)
   - [BMThemeClassChildren](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClassChildren.js)
@@ -167,8 +164,6 @@
   - [HomeAssistantState](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
   - [HomeAssistantStates](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
   - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
-  - [ImageView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageView.js)
-  - [ImageWellView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageWellView.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)
   - [IndexedDBFolder](./class_doc.html?path=source%2Fboot%2FIndexedDBFolder.js)
   - [IndexedDBTx](./class_doc.html?path=source%2Fboot%2FIndexedDBTx.js)
@@ -187,8 +182,6 @@
   - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
   - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
   - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
-  - [NavView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FNavView.js)
-  - [NodeView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FNodeView.js)
   - [Number_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
   - [Number_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
   - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
@@ -252,7 +245,6 @@
   - [SpeechToTextSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSession.js)
   - [SpeechToTextSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSessions.js)
   - [StackFrame](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
-  - [StackScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackScrollView.js)
   - [StackTrace](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
   - [StackView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackView.js)
   - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
@@ -275,23 +267,10 @@
   - [TextField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FTextField.js)
   - [ThrashDetector](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FThrashDetector.js)
   - [Tile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile.js)
-  - [TileContainer](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTileContainer.js)
-  - [TileNoteView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileNoteView.js)
-  - [TileSubtitleView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileSubtitleView.js)
-  - [TileTitleView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileTitleView.js)
   - [Tile_dragging](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_dragging.js)
   - [Tile_gestures](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_gestures.js)
   - [Tile_keyboard](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_keyboard.js)
   - [Tile_slideGesture](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_slideGesture.js)
-  - [Tile_styling](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_styling.js)
-  - [TilesView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView.js)
-  - [TilesView_dragViewProtocol](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_dragViewProtocol.js)
-  - [TilesView_gestures](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_gestures.js)
-  - [TilesView_helpers](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_helpers.js)
-  - [TilesView_keyboard](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_keyboard.js)
-  - [TilesView_orientation](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_orientation.js)
-  - [TilesView_selection](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_selection.js)
-  - [TilesView_styling](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_styling.js)
   - [TitledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FTitledNode.js)
   - [TitledTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTitledTile.js)
   - [TopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FTopEdgePanGestureRecognizer.js)
@@ -423,6 +402,47 @@
           - [BMMeridiemNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Ftime%2FBMMeridiemNode.js)
           - [BMMinuteNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Ftime%2FBMMinuteNode.js)
           - [BMTimeNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Ftime%2FBMTimeNode.js)
+    - node_views
+      - [ImageView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageView.js)
+      - [ImageWellView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageWellView.js)
+      - browser
+        - stack
+          - [NavView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FNavView.js)
+          - [StackScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackScrollView.js)
+          - [TileContainer](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTileContainer.js)
+          - Tile
+            - [BMTextNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBMTextNodeTile.js)
+            - field_tiles
+              - [BMBooleanFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMBooleanFieldTile.js)
+              - [BMChatInputTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMChatInputTile.js)
+              - [BMImageWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMImageWellFieldTile.js)
+              - [BMPointerFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMPointerFieldTile.js)
+              - [BMTextAreaFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMTextAreaFieldTile.js)
+              - options
+                - [BMOptionNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2Foptions%2FBMOptionNodeTile.js)
+                - [BMOptionsNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2Foptions%2FBMOptionsNodeTile.js)
+            - subviews
+              - [TileNoteView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileNoteView.js)
+              - [TileSubtitleView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileSubtitleView.js)
+              - [TileTitleView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Fsubviews%2FTileTitleView.js)
+          - TilesView
+            - [TilesView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView.js)
+            - [TilesView_dragViewProtocol](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_dragViewProtocol.js)
+            - [TilesView_gestures](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_gestures.js)
+            - [TilesView_helpers](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_helpers.js)
+            - [TilesView_keyboard](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_keyboard.js)
+            - [TilesView_orientation](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_orientation.js)
+            - [TilesView_styling](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_styling.js)
     - storage
       - base
         - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
+- strvct
+  - source
+    - library
+      - node
+        - node_views
+          - [NodeView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FNodeView.js)
+          - browser
+            - stack
+              - TilesView
+                - [TilesView_selection](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_selection.js)

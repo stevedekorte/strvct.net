@@ -1,29 +1,39 @@
 "use strict";
 
-/*
-    
-    TilesView
-
-    Contains array of Tile (and Tile decendant class) views.
-    Parent is a StackScrollView, whose parent is a NavView.
-    
-*/
-
+/**
+ * @module library.node.node_views.browser.stack.TilesView
+ * @class TilesView
+ * @extends ScrollContentView
+ * @classdesc Contains array of Tile (and Tile decendant class) views.
+ * Parent is a StackScrollView, whose parent is a NavView.
+ */
 (class TilesView extends ScrollContentView {
     
     initPrototypeSlots () {
+        /**
+         * @property {Array} tiles
+         */
         {
             const slot = this.newSlot("tiles", null);
             slot.setSlotType("Array");
         }
+        /**
+         * @property {Boolean} allowsCursorNavigation
+         */
         {
             const slot = this.newSlot("allowsCursorNavigation", true);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {Tile} tilePlaceHolder
+         */
         {
             const slot = this.newSlot("tilePlaceHolder", null);
             slot.setSlotType("Tile");
         }
+        /**
+         * @property {Boolean} hasPausedSync
+         */
         {
             const slot = this.newSlot("hasPausedSync", false);
             slot.setSlotType("Boolean");
@@ -39,6 +49,10 @@
     initPrototype () {
     }
 
+    /**
+     * @description Initializes the TilesView
+     * @returns {TilesView}
+     */
     init () {
         super.init()
         //this.setDisplay("block") // if block is used, there with be gaps between rows despite 0 margins!
@@ -81,6 +95,10 @@
     // --- helpers ---
     // subview path: StackView -> NavView -> ScrollView -> TilesView -> Tiles
 
+    /**
+     * @description Gets the NavView
+     * @returns {NavView|null}
+     */
     navView () {
         const sv = this.scrollView()
         if (!sv) {
@@ -89,6 +107,10 @@
         return sv.parentView()
     }
 
+    /**
+     * @description Gets the StackView
+     * @returns {StackView|null}
+     */
     stackView () {
         const nv = this.navView()
         if (!nv) {
@@ -105,46 +127,93 @@
 
     // --- title ---
     
+    /**
+     * @description Gets the title
+     * @returns {string}
+     */
     title () {
         return this.node() ? this.node().title() : ""
     }
 
     // --- accessing tiles ---
     
+    /**
+     * @description Gets the tiles
+     * @returns {Array}
+     */
     tiles () {
         return this.subviews()
     }
 
+    /**
+     * @description Adds a tile
+     * @param {Tile} v - The tile to add
+     * @returns {Tile}
+     */
     addTile (v) {
         return this.addSubview(v)
     }
 
+    /**
+     * @description Removes a tile
+     * @param {Tile} v - The tile to remove
+     * @returns {Tile}
+     */
     removeTile (v) {
         return this.removeSubview(v)
     }
 
+    /**
+     * @description Gets tiles with nodes
+     * @param {Array} nodeArray - Array of nodes
+     * @returns {Array}
+     */
     tilesWithNodes (nodeArray) {
         return nodeArray.map(node => this.tileWithNode(node))
     }
 
+    /**
+     * @description Gets tile with node
+     * @param {Node} aNode - The node
+     * @returns {Tile|undefined}
+     */
     tileWithNode (aNode) {
         return this.tiles().detect(tile => tile.node() === aNode)
     }
 
+    /**
+     * @description Gets index of tile
+     * @param {Tile} aTile - The tile
+     * @returns {number}
+     */
     indexOfTile (aTile) {
         // we might want this to be based on flex view order instead, 
         // so best to keep it abstract
         return this.indexOfSubview(aTile)
     }
 
+    /**
+     * @description Gets tile at index
+     * @param {number} anIndex - The index
+     * @returns {Tile}
+     */
     tileAtIndex (anIndex) {
         return this.subviews().at(anIndex)
     }
 
+    /**
+     * @description Gets tile with node
+     * @param {Node} aNode - The node
+     * @returns {Tile|undefined}
+     */
     tileWithNode (aNode) {
         return this.tiles().detect(tile => tile.node().nodeTileLink() === aNode)
     }
 
+    /**
+     * @description Gets max tile width
+     * @returns {number}
+     */
     maxTileWidth () {
         if (this.tiles().length === 0) {
             return 0
@@ -156,6 +225,10 @@
 	
     // --- sync ---
 
+    /**
+     * @description Syncs from node
+     * @returns {TilesView}
+     */
     syncFromNode () {
         this.syncOrientation() // implemented in Tiles_orientation.js
         super.syncFromNode() 
@@ -174,7 +247,11 @@
         return this
     }
 
-
+    /**
+     * @description Gets subview proto for subnode
+     * @param {Node} aSubnode - The subnode
+     * @returns {Tile}
+     */
     subviewProtoForSubnode (aSubnode) {
         let proto = aSubnode.nodeTileClass() // we need this to get tile versions of view
 		
@@ -185,6 +262,10 @@
         return proto      
     }
 
+    /**
+     * @description Called when node changes
+     * @returns {TilesView}
+     */
     didChangeNode () {
         super.didChangeNode()
 
@@ -203,6 +284,9 @@
 
     // --- duplicating tiles ---
 
+    /**
+     * @description Duplicates selected tile
+     */
     duplicateSelectedTile () {
         const node = this.node()
         const tile = this.selectedTile()
@@ -220,6 +304,10 @@
         }
     }
 
+    /**
+     * @description Duplicates selected tiles
+     * @returns {TilesView}
+     */
     duplicateSelectedTiles () {
         const newNodes = []
 
@@ -245,6 +333,10 @@
 
     // --- inspecting ---
 
+    /**
+     * @description Checks if inspecting
+     * @returns {boolean}
+     */
     isInspecting () {
         /*
         if (this.isColumnInspecting()) {
@@ -274,12 +366,20 @@
 
     // -----------------------------
 
+    /**
+     * @description Gets column index
+     * @returns {number}
+     */
     columnIndex () {
         return this.parentViewsOfClass(StackView).length
     }
 
     // next column
     
+    /**
+     * @description Gets next column
+     * @returns {TilesView|null}
+     */
     nextColumn () {
         const nsv = this.stackView().nextStackView()
         if (nsv) {
@@ -290,6 +390,10 @@
 
     // previous column
 	
+    /**
+     * @description Gets previous item set
+     * @returns {TilesView|null}
+     */
     previousItemSet () {
         if (this.stackView()) {
             const ps = this.stackView().previousStackView()
@@ -302,6 +406,11 @@
 
     // --- editing ---
 
+    /**
+     * @description Handles double click event
+     * @param {Event} event - The double click event
+     * @returns {boolean}
+     */
     onDoubleClick (event) {
         //this.debugLog(".onDoubleClick()")
         return true
@@ -322,6 +431,10 @@
 
     // --- browser drop ---
 
+    /**
+     * @description Handles browser drop chunk
+     * @param {Object} dataChunk - The data chunk
+     */
     onBrowserDropChunk (dataChunk) {
         const node = this.node()
 

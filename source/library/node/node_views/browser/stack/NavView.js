@@ -1,53 +1,93 @@
 "use strict";
 
-/*
-    
-    NavView
-    
-*/
-
+/**
+ * @module library.node.node_views.browser.stack
+ * @class NavView
+ * @extends NodeView
+ * @classdesc NavView is a component for navigation in a stack-based layout. It includes header, footer, and scrollable content areas.
+ */
 (class NavView extends NodeView {
 
     initPrototypeSlots () {
+        /**
+         * @property {StackView} stackView
+         */
         {
             const slot = this.newSlot("stackView", null);
             slot.setSlotType("StackView");
         }
             
+        /**
+         * @property {DomView} headerView - Placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
+         */
         {
-            const slot = this.newSlot("headerView", null); // placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
+            const slot = this.newSlot("headerView", null);
             slot.setSlotType("DomView");
         }
+
+        /**
+         * @property {ScrollView} scrollView - ScrollView fits NavView size, and contains TilesView which may be larger
+         */
         {
-            const slot = this.newSlot("scrollView", null); // ScrollView fits NavView size, and contains TilesView which may be larger
+            const slot = this.newSlot("scrollView", null);
             slot.setSlotType("ScrollView");
         }
+
+        /**
+         * @property {DomView} footerView - Placed in bottom of NavView, set to display:none if no node.footerNode()
+         */
         {
-            const slot = this.newSlot("footerView", null); // placed in bottom of NavView, set to display:none if no node.footerNode() 
+            const slot = this.newSlot("footerView", null);
             slot.setSlotType("DomView");
         }
+
+        /**
+         * @property {TilesView} tilesView - Is inside scrollView
+         */
         {
-            const slot = this.newSlot("tilesView", null); // is inside scrollView
+            const slot = this.newSlot("tilesView", null);
             slot.setSlotType("TilesView");
         }
+
+        /**
+         * @property {Boolean} isCollapsed
+         */
         {
             const slot = this.newSlot("isCollapsed", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} animatesCollapse
+         */
         {
             const slot = this.newSlot("animatesCollapse", true);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {String} beforeEdgePanBorderBottom
+         * @private
+         */
         {
-            const slot = this.newSlot("beforeEdgePanBorderBottom", null); // private
+            const slot = this.newSlot("beforeEdgePanBorderBottom", null);
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} beforeEdgePanBorderRight
+         * @private
+         */
         {
-            const slot = this.newSlot("beforeEdgePanBorderRight", null); // private
+            const slot = this.newSlot("beforeEdgePanBorderRight", null);
             slot.setSlotType("String");
         }
     }
 
+    /**
+     * @description Calculates the target width for the NavView
+     * @returns {number} The calculated target width
+     */
     targetWidth () {
         const defaultWidth = 400;
         if (this.node()) {
@@ -63,6 +103,10 @@
         return defaultWidth;
     }
 
+    /**
+     * @description Calculates the target height for the NavView
+     * @returns {number} The calculated target height
+     */
     targetHeight () {
         if (this.node()) {
             const h = this.node().nodeMinTileHeight()
@@ -73,27 +117,19 @@
         return 64
     }
 
+    /**
+     * @description Initializes the NavView
+     * @returns {NavView} The initialized NavView instance
+     */
     init () {
         super.init()
-        //this.setDisplay("block")
         this.setDisplay("flex")
         this.setPosition("relative")
         this.setFlexDirection("column")
         this.setFlexGrow(1)
-        //this.setOpacity(0)
         this.setOverflow("hidden")
         this.setUserSelect("none")
-        //this.setTransition("opacity 0.5s ease-in-out")
-        //this.setTransition("flex-basis 0.1s")
         this.setTransition("opacity 0.5s ease-in-out, flex-basis 0s")
-
-        /*
-        this.setHeaderClass(ColumnGroupHeader)
-        this.setMiddleClass(BrowserScrollView)
-        this.setFooterClass(ColumnGroupFooter)
-        this.setupHeaderMiddleFooterViews()
-        this.footerView().hideDisplay()
-        */
 
         const borderStyle = "1px solid rgba(255, 255, 255, 0.1)"
         const backgroundColor = "rgba(255, 255, 255, 0.03)"
@@ -123,10 +159,13 @@
         this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) // for adjusting width
         this.addGestureRecognizer(BottomEdgePanGestureRecognizer.clone()) // for adjusting height
 
-        //this.addGestureRecognizer(RightEdgePanGestureRecognizer.clone()) 
         return this
     }
 
+    /**
+     * @description Checks if the NavView is vertical
+     * @returns {boolean|null} True if vertical, false if horizontal, null if stackView is not set
+     */
     isVertical () {
         const sv = this.stackView()
         if (!sv) {
@@ -135,6 +174,10 @@
         return sv.direction() === "right"
     }
 
+    /**
+     * @description Synchronizes the orientation of the NavView
+     * @returns {NavView} The NavView instance
+     */
     syncOrientation () {
         if (this.isVertical()) {
             this.makeOrientationRight()
@@ -144,12 +187,18 @@
         return this
     }
 
-    // --- border ---
-
+    /**
+     * @description Gets the border color for the NavView
+     * @returns {string} The border color
+     */
     borderColor () {
         return "rgba(255, 255, 255, 0.3)"
     }
 
+    /**
+     * @description Checks if the NavView should have a border
+     * @returns {boolean} True if the NavView should have a border, false otherwise
+     */
     hasBorder () {
         const node = this.node()
         if (node) {
@@ -161,6 +210,10 @@
         return true
     }
 
+    /**
+     * @description Gets the border style for the NavView
+     * @returns {string|null} The border style or null if no border
+     */
     borderStyle () {
         if (this.hasBorder()) {
             return "0px solid " + this.borderColor() + " inset"
@@ -168,38 +221,29 @@
         return null
     }
 
-    // ---
-
+    /**
+     * @description Sets the orientation of the NavView to right (vertical)
+     */
     makeOrientationRight () {
-        // stack view is left to right, so nav items are top to bottom
         this.setFlexDirection("column")
-        //this.setFlexBasis(this.targetWidth() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
 
-        // this are handled in sync to node
-        this.setMinAndMaxWidth("17em") // syncFromNode can override if node requests a sizes
+        this.setMinAndMaxWidth("17em")
         this.setMinAndMaxHeight("100%")
 
         if (this.node()) {
             if (this.node().nodeFillsRemainingWidth() && this.isLastNavView()) {
-                //debugger;
-                //this.setMinWidth("fit-content") // should only do this if it's the last node?
-                this.setMinWidth("17em") // should only do this if it's the last node?
+                this.setMinWidth("17em")
                 this.setWidth("-webkit-fill-available")
-                this.setMaxWidth("-webkit-fill-available") // should only do this if it's the last node?
+                this.setMaxWidth("-webkit-fill-available")
             }
         }
 
-        /*
-        this.setBorderBottom(null)
-        this.setBorderRight(this.borderStyle())
-        */
         this.setBorderRight("1px solid #333")
         this.setBorderBottom(null)
 
         this.scrollView().setIsVertical(true)
-        //this.setBoxShadow("inset -10px 0 20px rgba(0, 0, 0, 0.05)")
 
         if (this.headerView()) {
             const v = this.headerView()
@@ -214,11 +258,11 @@
         }
     }
 
+    /**
+     * @description Sets the orientation of the NavView to down (horizontal)
+     */
     makeOrientationDown () {
-        // stack view is top to bottom, so nav items are left to right
-
         this.setFlexDirection("row")
-        //this.setFlexBasis(this.targetHeight() + "px")
         this.setFlexGrow(0)
         this.setFlexShrink(0)
 
@@ -231,16 +275,10 @@
             }
         }
 
-        /*
-        this.setBorderRight(null)
-        this.setBorderBottom(this.borderStyle())
-        */
         this.setBorderRight(null)
         this.setBorderBottom("1px solid #333")
 
         this.scrollView().setIsVertical(false)
-        //this.setBoxShadow("inset 0 -10px 40px #222")
-
 
         if (this.headerView()) {
             const v = this.headerView()
@@ -255,6 +293,11 @@
         }
     }
 
+    /**
+     * @description Sets the node for the NavView
+     * @param {Object} aNode - The node to set
+     * @returns {NavView} The NavView instance
+     */
     setNode (aNode) {
         super.setNode(aNode)
         this.tilesView().setNode(aNode)
@@ -264,41 +307,40 @@
         }
 
         if (aNode.footerNode) {
-        //    debugger;
             this.footerView().setNode(aNode.footerNode())
         }
 
         return this
     }
 
+    /**
+     * @description Checks if this NavView is the last one in the stack
+     * @returns {boolean} True if this is the last NavView, false otherwise
+     */
     isLastNavView () {
         return Type.isNullOrUndefined(this.stackView().nextStackView())
     }
 
+    /**
+     * @description Synchronizes the NavView with its node
+     * @returns {NavView} The NavView instance
+     */
     syncFromNode () {
         this.syncOrientation()
-        //this.tilesView().syncFromNode()
         this.applyStyles()
 
         if (this.isVertical()) {
             const w = this.node().nodeMinTileWidth()
             if (w && !Type.isNullOrUndefined(w)) {
-                //this.setMinAndMaxWidth(w)
                 this.setMinWidth(w)
-                //const maxw = this.isLastNavView() ? "-webkit-fill-available" : null;
-                //this.setMaxWidth(maxw)
                 this.setMinAndMaxHeight("100%")
             } 
         } else {
-            //debugger;
             const h = this.node().nodeMinTileHeight()
             if (h && !Type.isNullOrUndefined(h)) {
                 this.setMinAndMaxWidth("100%")
                 this.setMinAndMaxHeight(h)
-            } /*else {
-                this.setMinAndMaxWidth("100%")
-                this.setMinAndMaxHeight("5em")
-            }*/
+            }
         }
 
         this.headerView().syncFromNode()
@@ -306,39 +348,9 @@
         return this
     }
 
-    /*
-    applyStyles () {
-        super.applyStyles()
-        
-        if (this.isVertical()) {
-            this.applyColumnStyle()
-        }
-        return this
-    }
-
-    applyColumnStyle () {
-        this.setBorder("")
-        const themeClass = this.currentThemeClass()
-        if (themeClass) {
-            const columns = themeClass.firstSubnodeWithTitle("columns")
-            //debugger;
-            if (columns) {
-                const colorFields = columns.subnodes().select(sn => sn.thisClass().isSubclassOf(Object.getClassNamed("BMStringField")) || sn.type() === "BMField")
-                const count = colorFields.length
-                if (count) {
-                    let i = this.stackView().stackViewDepth()
-                    let ci = i % count
-                    const color = colorFields.at(ci).value()
-                    console.log("column " + i + " color index " + ci + " color " + color)
-                    this.setBackgroundColor(color)
-                }
-            }
-        }
-    }
-    */
-
-    // --- collpase / uncollapse ---
-
+    /**
+     * @description Collapses the NavView
+     */
     collapse () {
         if (!this.isCollapsed()) {
             this.hideDisplay()
@@ -346,6 +358,9 @@
         }
     }
 
+    /**
+     * @description Uncollapses the NavView
+     */
     uncollapse () {
         if (this.isCollapsed()) {
             this.unhideDisplay()
@@ -354,27 +369,41 @@
         }
     }
 
-    // --- right edge gesture ---
-
+    /**
+     * @description Gets the border style for edge movement
+     * @returns {string} The border style for edge movement
+     */
     edgeMoveBorderStyle () {
         return "1px rgba(255, 255, 255, 0.5) inset"
     }
 
+    /**
+     * @description Handles the beginning of a right edge pan gesture
+     * @param {Object} aGesture - The gesture object
+     */
     onRightEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderRight(this.borderRight())
         this.setBorderRight(this.edgeMoveBorderStyle())
     }
 
+    /**
+     * @description Handles the movement of a right edge pan gesture
+     * @param {Object} aGesture - The gesture object
+     * @returns {NavView} The NavView instance
+     */
     onRightEdgePanMove (aGesture) {
-        const p = aGesture.currentPosition() // position in document coords
+        const p = aGesture.currentPosition()
         const f = this.frameInDocument()
         const nw = Math.max(10, p.x() - f.x())
-        //console.log("nw = ", nw)
         this.node().setNodeMinTileWidth(nw)
-        this.scheduleSyncToNode(); // is this needed as we already sent node.setNodeMinTileWidth?
+        this.scheduleSyncToNode();
         return this
     }
 
+    /**
+     * @description Handles the completion of a right edge pan gesture
+     * @param {Object} aGesture - The gesture object
+     */
     onRightEdgePanComplete (aGesture) {
         this.onRightEdgePanMove(aGesture)
         this.setBorderRight(this.beforeEdgePanBorderRight())
@@ -382,36 +411,39 @@
         this.unhideTransition()
     }
 
-    // --- bottom edge gesture ---
-
+    /**
+     * @description Handles the beginning of a bottom edge pan gesture
+     * @param {Object} aGesture - The gesture object
+     */
     onBottomEdgePanBegin (aGesture) {
         this.setBeforeEdgePanBorderBottom(this.borderBottom())
         this.setBorderBottom(this.edgeMoveBorderStyle())
-        //this.setTransition("min-height 0s, max-height 0s")
         this.hideTransition()
     }
 
+    /**
+     * @description Handles the movement of a bottom edge pan gesture
+     * @param {Object} aGesture - The gesture object
+     * @returns {NavView} The NavView instance
+     */
     onBottomEdgePanMove (aGesture) {
-        const p = aGesture.currentPosition() // position in document coords
+        const p = aGesture.currentPosition()
         const f = this.frameInDocument()
         const newHeight = Math.max(10, p.y() - f.y())
-        //console.log("node " + this.node().title() + " newHeight = ", newHeight)
         this.node().setNodeMinTileHeight(newHeight)
-        this.scheduleSyncToNode(); // is this needed as we already sent node.setNodeMinTileHeight()?
+        this.scheduleSyncToNode();
         return this
     }
 
+    /**
+     * @description Handles the completion of a bottom edge pan gesture
+     * @param {Object} aGesture - The gesture object
+     */
     onBottomEdgePanComplete (aGesture) {
         this.onBottomEdgePanMove(aGesture)
         this.setBorderBottom(this.beforeEdgePanBorderBottom())
         this.setBeforeEdgePanBorderBottom(null)
         this.unhideTransition()
     }
-/*
-    removeAllGestureRecognizers () {
-        //debugger;
-        return super.removeAllGestureRecognizers()
-    }
-    */
 
 }.initThisClass());

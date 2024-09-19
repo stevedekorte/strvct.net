@@ -1,15 +1,20 @@
 "use strict";
 
-/*
-    
-    TilesView_dragViewProtocol
-    
-*/
-
+/**
+ * @module library.node.node_views.browser.stack.TilesView
+ * @class TilesView_dragViewProtocol
+ * @extends TilesView
+ * @classdesc Handles the drag and drop protocol for TilesView
+ */
 (class TilesView_dragViewProtocol extends TilesView {
     
     // -- messages sent by DragView to the parent/owner of the view it's dragging ---
 
+    /**
+     * @description Handles the beginning of a drag operation
+     * @param {Object} dragView - The view being dragged
+     * @returns {TilesView_dragViewProtocol} The current instance
+     */
     onDragSourceBegin (dragView) {
         this.setHasPausedSync(true)
         //ElementDomView.pauseRetires()
@@ -52,6 +57,10 @@
         return this
     }
 
+    /**
+     * @description Handles the cancellation of a drag operation
+     * @param {Object} dragView - The view being dragged
+     */
     onDragSourceCancelled (dragView) {
         /*
         dragView.items().forEach(subview => {
@@ -62,17 +71,28 @@
         //this.removeTilePlaceHolder()
     }
 
-
+    /**
+     * @description Handles when the drag source enters the view
+     * @param {Object} dragView - The view being dragged
+     */
     onDragSourceEnter (dragView) {
         this.onDragDestinationHover(dragView)
         this.stackView().rootStackView().onStackChildDragSourceEnter(dragView)
     }
 
+    /**
+     * @description Handles when the drag source hovers over the view
+     * @param {Object} dragView - The view being dragged
+     */
     onDragSourceHover (dragView) {
         this.onDragDestinationHover(dragView)
         this.indexOfTilePlaceHolder()
     }
 
+    /**
+     * @description Handles when the drag source exits the view
+     * @param {Object} dragView - The view being dragged
+     */
     onDragSourceExit (dragView) {
         this.onDragDestinationHover(dragView)
     }
@@ -80,6 +100,10 @@
 
     // -- DragView dropping ---
 
+    /**
+     * @description Handles when the drag source is dropped
+     * @param {Object} dragView - The view being dragged
+     */
     onDragSourceDropped (dragView) {
         //console.log(this.debugTypeId() + " --- onDragSourceDropped ---")
         //debugger;
@@ -121,6 +145,10 @@
         this.selectAndFocusNodes(movedNodes)
     }
 
+    /**
+     * @description Handles when an item is dropped on the destination
+     * @param {Object} dragView - The view being dragged
+     */
     onDragDestinationDropped (dragView) {
         //debugger;
         
@@ -148,6 +176,10 @@
         this.selectAndFocusNodes(movedNodes)
     }
 
+    /**
+     * @description Handles the end of a drag operation
+     * @param {Object} dragView - The view being dragged
+     */
     onDragSourceEnd (dragView) {
         this.endDropMode()
         //ElementDomView.unpauseRetires()
@@ -155,6 +187,11 @@
 
     // -- messages sent by DragView to the potential drop view, if not the source ---
 
+    /**
+     * @description Checks if the view accepts a drop hover
+     * @param {Object} dragView - The view being dragged
+     * @returns {boolean} Whether the drop hover is accepted
+     */
     acceptsDropHover (dragView) {
         //return true 
 
@@ -178,6 +215,11 @@
 
     /// --- tile place holder ---
 
+    /**
+     * @description Creates a new tile placeholder
+     * @param {Object} dragView - The view being dragged
+     * @returns {Object} The tile placeholder
+     */
     newTilePlaceHolder (dragView) {
         //this.debugLog("newTilePlaceHolder")
         if (!this.tilePlaceHolder()) {
@@ -193,6 +235,11 @@
         return this.tilePlaceHolder()
     }
 
+    /**
+     * @description Syncs the size of the tile placeholder
+     * @param {Object} dragView - The view being dragged
+     * @returns {TilesView_dragViewProtocol} The current instance
+     */
     syncTilePlaceHolderSize (dragView) {
         const ph = this.tilePlaceHolder()
         //const period = 0.1
@@ -212,6 +259,10 @@
         return this
     }
 
+    /**
+     * @description Gets the index of the tile placeholder
+     * @returns {number} The index of the tile placeholder
+     */
     indexOfTilePlaceHolder () {
         const sortMethod = this.isVertical() ? "topPx" : "leftPx"
         const orderedTiles = this.tiles().shallowCopy().sortPerform(sortMethod) 
@@ -225,6 +276,10 @@
 
     // --- drag destination ---
 
+    /**
+     * @description Handles when the drag destination is entered
+     * @param {Object} dragView - The view being dragged
+     */
     onDragDestinationEnter (dragView) {
         this.setHasPausedSync(true)
 
@@ -236,6 +291,10 @@
         }
     }
 
+    /**
+     * @description Handles when the drag destination is hovered over
+     * @param {Object} dragView - The view being dragged
+     */
     onDragDestinationHover (dragView) {
         // move place holder view
         const ph = this.tilePlaceHolder()
@@ -257,23 +316,42 @@
         }
     }
     
+    /**
+     * @description Handles when the drag destination is exited
+     * @param {Object} dragView - The view being dragged
+     */
     onDragDestinationExit (dragView) {
         this.endDropMode()
     }
 
+    /**
+     * @description Handles the end of the drag destination
+     * @param {Object} aDragView - The view being dragged
+     */
     onDragDestinationEnd (aDragView) {
         this.endDropMode()
     }
 
+    /**
+     * @description Checks if the view accepts a complete drop hover
+     * @param {Object} aDragView - The view being dragged
+     * @returns {boolean} Whether the complete drop hover is accepted
+     */
     acceptsDropHoverComplete (aDragView) {
         return this.acceptsDropHover(aDragView);
     }
 
+    /**
+     * @description Gets the document frame for the drop complete action
+     * @returns {Object} The document frame
+     */
     dropCompleteDocumentFrame () {
         return this.tilePlaceHolder().frameInDocument()
     }
 
-
+    /**
+     * @description Removes the tile placeholder
+     */
     removeTilePlaceHolder () {
         this.debugLog("removeTilePlaceHolder")
 
@@ -287,6 +365,10 @@
         }
     }
 
+    /**
+     * @description Animates the removal of the tile placeholder
+     * @param {Function} resolve - The resolve function to call after animation
+     */
     animateRemoveTilePlaceHolderAndThen (resolve) {
         this.debugLog("animateRemoveTilePlaceHolder")
 
@@ -302,6 +384,10 @@
         }
     }
 
+    /**
+     * @description Ends the drop mode
+     * @returns {TilesView_dragViewProtocol} The current instance
+     */
     endDropMode () {
         this.debugLog("endDropMode")
         //this.unstackTiles()
@@ -342,6 +428,10 @@
 
     // Browser drop from desktop
 
+    /**
+     * @description Checks if the view accepts drops
+     * @returns {boolean} Whether drops are accepted
+     */
     acceptsDrop () {
         return true
     }

@@ -1,60 +1,96 @@
+/**
+ * @module browser.stack.Tile
+ */
+
+/**
+ * @class TitledTile
+ * @extends Tile
+ * @classdesc 
+ * TitledTile
+ * 
+ * Adds a few subviews for typical tile functionality:
+ * 
+ *     - titleView
+ *     - subtitleView
+ *     - noteView
+ *     - noteIconView
+ *     - thumbnailView
+ * 
+ * Most of these can easily be disabled, if not needed.
+ */
 "use strict";
-
-/*
-    
-    TitledTile
-
-    Adds a few subviews for typical tile functionality:
-
-        - titleView
-        - subtitleView
-        - noteView
-        - noteIconView
-        - thumbnailView
-
-    Most of these can easily be disabled, if not needed.
-    
-*/
 
 (class TitledTile extends Tile {
     
     initPrototypeSlots () {
+        /**
+         * @property {DomView} titleView
+         */
         {
             const slot = this.newSlot("titleView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {DomView} subtitleView
+         */
         {
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {DomView} noteView
+         */
         {
             const slot = this.newSlot("noteView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {DomView} noteIconView - created lazily
+         */
         {
-            const slot = this.newSlot("noteIconView", null); // created lazily
+            const slot = this.newSlot("noteIconView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {DomView} thumbnailView
+         */
         {
             const slot = this.newSlot("thumbnailView", null);
             slot.setSlotType("DomView");
         }
     }
 
+    /**
+     * @static
+     * @description Returns the left padding for the title
+     * @returns {string}
+     */
     static titleLeftPadding () {
         return "30px"
     }
 
+    /**
+     * @description Returns the top content area
+     * @returns {DomView}
+     */
     topContentArea () {
         let lv = this.contentView().subviews().at(0)
         return lv
     }
 
+    /**
+     * @description Returns the bottom content area
+     * @returns {DomView}
+     */
     bottomContentArea () {
         let lv = this.contentView().subviews().at(1)
         return lv
     }
 
+    /**
+     * @description Initializes the TitledTile
+     * @returns {TitledTile}
+     */
     init () {
         super.init()
         const cv = this.contentView()
@@ -108,6 +144,10 @@
         return this
     }
 
+    /**
+     * @description Sets up the thumbnail view if it doesn't exist
+     * @returns {TitledTile}
+     */
     setupThumbnailViewIfAbsent () {
         if (!this.thumbnailView()) {
             const tv = DomView.clone().setElementClassName("TileThumbnailView")
@@ -136,6 +176,10 @@
         return this
     }
     
+    /**
+     * @description Checks if the tile has a subtitle
+     * @returns {boolean}
+     */
     hasSubtitle () {
         const node = this.node()
 
@@ -152,6 +196,10 @@
         return false
     }
 
+    /**
+     * @description Updates the subviews of the tile
+     * @returns {TitledTile}
+     */
     updateSubviews () {
         super.updateSubviews()
 	
@@ -196,6 +244,10 @@
         return this
     }
 
+    /**
+     * @description Synchronizes styles to subviews
+     * @returns {TitledTile}
+     */
     syncStylesToSubviews () {
         const b = this.isSelected()
         this.titleView().syncStateFrom(this)
@@ -209,19 +261,24 @@
         return this
     }
 
-    // noteView
-
+    /**
+     * @description Shows the note view
+     */
     showNoteView () {
         this.noteView().unhideDisplay()   
         this.noteView().setString(this.node().note())
     }
 
+    /**
+     * @description Hides the note view
+     */
     hideNoteView () {
         this.noteView().hideDisplay()     
     }
 
-    // noteIconView
-
+    /**
+     * @description Shows the note icon view
+     */
     showNoteIconView () {
         const v = this.noteIconView()
         if (v.iconName() != this.node().noteIconName()) {
@@ -240,12 +297,17 @@
         //v.updateAppearance()
     }
 
+    /**
+     * @description Hides the note icon view
+     */
     hideNoteIconView () {
         this.noteIconView().hideDisplay()  
     }
 
-    // ---
-
+    /**
+     * @description Calculates the desired width of the tile
+     * @returns {number}
+     */
     desiredWidth () {
         /*
         const tw = this.titleView().calcWidth()
@@ -257,18 +319,25 @@
         return this.calcWidth()
     }
 
-    // --- edit ---
-
+    /**
+     * @description Handles input events
+     */
     didInput () {
         this.scheduleSyncToNode()
     }
 
+    /**
+     * @description Handles edit events
+     * @param {DomView} aView - The view that was edited
+     */
     onDidEdit (aView) {
         super.onDidEdit() 
     }
 
-    // --- sync ---
-
+    /**
+     * @description Synchronizes the tile to its node
+     * @returns {TitledTile}
+     */
     syncToNode () {   
         //console.log("syncToNode")
         const node = this.node()
@@ -277,6 +346,10 @@
         return this
     }
 
+    /**
+     * @description Synchronizes the tile from its node
+     * @returns {TitledTile}
+     */
     syncFromNode () {
         super.syncFromNode()
         const node = this.node()
@@ -290,8 +363,10 @@
         return this
     }
     
-    // arrow
-    
+    /**
+     * @description Makes the note view a right arrow
+     * @returns {TitledTile}
+     */
     makeNoteRightArrow () {
         //debugger;
         const nv = this.noteView()
@@ -305,6 +380,10 @@
         return this		
     }
 
+    /**
+     * @description Handles the enter key up event
+     * @param {Event} event - The keyboard event
+     */
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")
 

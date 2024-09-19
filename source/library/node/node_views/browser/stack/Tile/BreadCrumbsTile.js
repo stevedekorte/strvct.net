@@ -1,73 +1,96 @@
+/**
+ * @module browser.stack.Tile
+ */
+
 "use strict";
 
-/*
-    
-    BreadCrumbsTile
-
-    View for a typical bread crumbs path e.g.:
-
-        a / b / c / d
-
-    Supports compacting path to fit in view size (using back arrow) as needed.
-
-    Registers for onStackViewPathChange notifications (sent by top StackView) to auto update path.
-    TODO: register *only* for our own top stack view.
-    
-*/
-
+/**
+ * @class BreadCrumbsTile
+ * @extends Tile
+ * @classdesc View for a typical bread crumbs path e.g.: a / b / c / d
+ * Supports compacting path to fit in view size (using back arrow) as needed.
+ * Registers for onStackViewPathChange notifications (sent by top StackView) to auto update path.
+ * TODO: register *only* for our own top stack view.
+ */
 (class BreadCrumbsTile extends Tile {
     
     initPrototypeSlots () {
+        /**
+         * @property {String} path
+         */
         {
             const slot = this.newSlot("path", null);
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} separatorString
+         */
         {
             const slot = this.newSlot("separatorString", "/");
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {BMObservation} onStackViewPathChangeObs
+         */
         {
             const slot = this.newSlot("onStackViewPathChangeObs", null);
             slot.setSlotType("BMObservation");
         }
+
+        /**
+         * @property {Array} crumbObservations
+         */
         {
             const slot = this.newSlot("crumbObservations", null);
             slot.setSlotType("Array");
         }
     }
 
+    /**
+     * @description Initializes the BreadCrumbsTile
+     * @returns {BreadCrumbsTile}
+     */
     init () {
         super.init();
         this.setThemeClassName("BreadCrumbsTile");
         this.setOnStackViewPathChangeObs(BMNotificationCenter.shared().newObservation().setName("onStackViewPathChange").setObserver(this));
-        //this.contentView().setPaddingLeft("1.5em") // TitledTile.titleLeftPadding();
         this.setWidth("100%");
-
-        //this.updateSubviews();
         this.setIsSelectable(true);
         this.setIsRegisteredForWindowResize(true);
-
         this.setCrumbObservations([]);
         return this;
     }
 
-    makeOrientationDown () { // this is a special case where the item is full width
+    /**
+     * @description Makes the orientation down and sets the width to 100%
+     * @returns {BreadCrumbsTile}
+     */
+    makeOrientationDown () {
         super.makeOrientationDown()
         this.setMinAndMaxWidth(null)
         this.setWidth("100%")
         return this
     }
 
-    rootStackView () { // move to Tile class?
+    /**
+     * @description Gets the root stack view
+     * @returns {StackView|null}
+     */
+    rootStackView () {
         return this.parentView() ? this.parentView().stackView().rootStackView() : null
     }
 
+    /**
+     * @description Gets the target stack view
+     * @returns {StackView|null}
+     */
     targetStackView () {
         const col = this.column()
         if (col) {
             const nc = col.nextColumn()
             if (nc) {
-                //debugger;
                 const sv = nc.stackView()
                 return sv
             }
@@ -75,6 +98,9 @@
         return null
     }
 
+    /**
+     * @description Watches the root stack view
+     */
     watchRootStackView () {
         const obs = this.onStackViewPathChangeObs()
         if (!obs.isWatching()) {
@@ -83,12 +109,15 @@
                 obs.setSender(target)
                 obs.startWatching()
             } else {
-                //debugger;
-                obs.stopWatching() // needed?
+                obs.stopWatching()
             }
         }
     }
   
+    /**
+     * @description Gets the path nodes
+     * @returns {Array}
+     */
     pathNodes () {
         if (this.targetStackView()) {
             const nodes = this.targetStackView().selectedNodePathArray()
@@ -97,10 +126,18 @@
         return []
     }
 
+    /**
+     * @description Synchronizes the path to the stack
+     */
     syncPathToStack () {
         this.scheduleMethod("setupPathViews")
     }
 
+    /**
+     * @description Sets the height of the tile
+     * @param {string|number} v - The height value
+     * @returns {BreadCrumbsTile}
+     */
     setHeight (v) {
         if (v === "100%") {
             debugger;
@@ -108,19 +145,13 @@
         return super.setHeight(v)
     }
 
-    // --- events ---
-
-    /*
-    onMouseDown (event) {
-        const result = super.onMouseDown(event)
-        const t = this.targetStackView()
-        t.selectNodePathArray([])
-        this.setupPathViews() // needed or does the StackView send a note?
-        return result
-    }
-    */
-
-    didUpdateSlotParentView (oldValue, newValue) {  // hook this to do the initial setup
+    /**
+     * @description Handles the update of the parent view slot
+     * @param {*} oldValue - The old value of the slot
+     * @param {*} newValue - The new value of the slot
+     * @returns {BreadCrumbsTile}
+     */
+    didUpdateSlotParentView (oldValue, newValue) {
         super.didUpdateSlotParentView(oldValue, newValue)
         if (this.parentView()) {
             this.watchRootStackView()
@@ -129,69 +160,94 @@
         return this
     }
 
+    /**
+     * @description Handles the stack view path change notification
+     * @param {*} aNote - The notification object
+     */
     onStackViewPathChange (aNote) {
-        //debugger;
         this.syncPathToStack()
     }
 
+    /**
+     * @description Handles the click event on a path component
+     * @param {*} aPathComponentView - The clicked path component view
+     * @returns {BreadCrumbsTile}
+     */
     onClickPathComponent (aPathComponentView) {
         const nodePathArray = aPathComponentView.info()
         if (nodePathArray.length === 0) {
             debugger;
         }
         console.log("select path: " + nodePathArray.map(n => n.title()).join("/"))
-        //const ourPath = this.node().nodePath()
-        //console.log("our path: " + ourPath.map(n => n.title()).join("/"))
-        //debugger;
-
         const t = this.targetStackView()
         t.selectNodePathArray(nodePathArray)
-    //    debugger;
-        this.setupPathViews() // needed or does the StackView send a note?
+        this.setupPathViews()
         return this
     }
 
+    /**
+     * @description Handles the window resize event
+     * @param {Event} event - The resize event
+     * @returns {BreadCrumbsTile}
+     */
     onWindowResize (event) {
         this.updateCompaction()
         return this
     }
 
+    /**
+     * @description Handles the click event on the back button
+     * @param {*} backButton - The back button object
+     */
     onClickBackButton (backButton) {
-        //const crumb = this.lastHiddenCrumb()
         const crumb = this.previousCrumb()
         if (crumb) {
-            //console.log("select crumb: ", crumb.title())
             crumb.sendActionToTarget()
         }
     }
 
-    // crumb buttons
-
+    /**
+     * @description Gets the previous crumb
+     * @returns {*|null}
+     */
     previousCrumb () {
-        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/") // previous crumb
+        const crumbs = this.crumbs().select(crumb => crumb.title() !== "/")
         if (crumbs.length > 1) {
             return crumbs[crumbs.length - 2]
         }
         return null
     }
 
+    /**
+     * @description Gets all the crumbs
+     * @returns {Array}
+     */
     crumbs () {
         return this.subviews().first().subviews()
     }
 
+    /**
+     * @description Gets the hidden crumbs
+     * @returns {Array}
+     */
     hiddenCrumbs () {
         return this.crumbs().detect(sv => sv._isCrumb && sv.isDisplayHidden())
     }
 
+    /**
+     * @description Gets the last hidden crumb
+     * @returns {*|null}
+     */
     lastHiddenCrumb () {
         return this.hiddenCrumbs().last()
     }
     
-    // --- path component views --- 
-
+    /**
+     * @description Creates a new unpadded button
+     * @returns {ButtonView}
+     */
     newUnpaddedButton () {
         const v = ButtonView.clone()
-        //const v = BreadCrumbButton.clone()
         v.setDisplay("inline-block")
         v.titleView().setOverflow("visible")
         v.setHeightPercentage(100)
@@ -200,10 +256,14 @@
         v.setPaddingRight("0em")
         v.titleView().setPaddingLeft("0em")
         v.titleView().setPaddingRight("0em")
-        //v.debugTypeId = function () { return "crumbView" }
         return v
     }
 
+    /**
+     * @description Creates a button for a given name
+     * @param {string} aName - The name for the button
+     * @returns {ButtonView}
+     */
     buttonForName (aName) {
         const v = this.newUnpaddedButton()
         v.setTitle(aName)
@@ -213,11 +273,13 @@
         return v
     }
 
+    /**
+     * @description Creates a new back button
+     * @returns {ButtonView}
+     */
     newBackButton () {
         const v = this.newUnpaddedButton()
-        //v.setTitle("&lt;")
         v.setTitle("←")
-        //v.setTitle("&#8592;")
         v.titleView().setPaddingLeft("0em")
         v.titleView().setPaddingRight("0.5em")
         v.setTarget(this)
@@ -225,6 +287,10 @@
         return v
     }
 
+    /**
+     * @description Creates a new separator view
+     * @returns {ButtonView}
+     */
     newSeparatorView () {
         const v = this.newUnpaddedButton()
         v.titleView().setPaddingLeft("0.5em")
@@ -233,30 +299,39 @@
         return v
     }
 
+    /**
+     * @description Creates a crumb view for a given node
+     * @param {*} node - The node object
+     * @param {number} i - The index of the node
+     * @param {Array} pathNodes - The array of path nodes
+     * @returns {ButtonView}
+     */
     crumbViewForNode (node, i, pathNodes) {
         const name = node.title()
         const crumb = this.buttonForName(name)
         if (crumb.setNode) {
             crumb.setNode(node)
         }
-        // not efficient to get pathNodes
-        // just get the path to the crumb node itself
-        //console.log("pathNodes: " + pathNodes.map(n => n.title()).join("/"))
-        const crumbNodePath = pathNodes.slice(0, i+1) // we WANT our own crumbview node to be the first in this path
-        //console.log("crumbNodePath [" + i + "]: " + crumbNodePath.map(n => n.title()).join("/"))
-
-        //debugger;
+        const crumbNodePath = pathNodes.slice(0, i+1)
         crumb.setInfo(crumbNodePath)
         return crumb
     }
 
+    /**
+     * @description Creates new path component views
+     * @returns {Array}
+     */
     newPathComponentViews () {
         const pathNodes = this.pathNodes()
-        pathNodes.shift() // remove self from list
+        pathNodes.shift()
         const views = pathNodes.map((node, i, pathNodes) => this.crumbViewForNode(node, i, pathNodes))
         return views
     }
 
+    /**
+     * @description Sets up the path views
+     * @returns {BreadCrumbsTile}
+     */
     setupPathViews () {
         const views = this.newPathComponentViews()
         const separatedViews = views.joinWithFunc((view, index) => this.newSeparatorView())
@@ -265,25 +340,35 @@
         this.contentView().removeAllSubviews()
         this.contentView().addSubviews(separatedViews)
         this.updateCompaction()
-
         this.watchPathNodes()
         return this
     }
 
+    /**
+     * @description Calculates the width of given views
+     * @param {Array} views - The array of views
+     * @returns {number}
+     */
     widthOfViews (views) {
         return views.sum(v => v.calcWidth())
     }
 
-    // --- 
-
+    /**
+     * @description Gets the crumb views
+     * @returns {Array}
+     */
     crumbViews () {
         return this.contentView().subviews()
     }
 
-    sumOfPathWidths () { // private - IMPORTANT: uses cachedSize
+    /**
+     * @description Calculates the sum of path widths
+     * @returns {number}
+     * @private
+     */
+    sumOfPathWidths () {
         const rightMargin = 15
         return this.crumbViews().sum(view => { 
-            //const w = view.calcWidth()
             const w = view.cachedSize().width()
             if (Type.isNaN(w)) { 
                 debugger; 
@@ -293,20 +378,20 @@
         })
     }
 
+    /**
+     * @description Updates the compaction of the bread crumbs
+     */
     updateCompaction () {
         const padding = 20
-        //const maxWidth =  this.calcSize().width() //this.frameInDocument().width()
         const maxWidth = this.frameInDocument().width()
-        //console.log("maxWidth: ", maxWidth)
         const views = this.crumbViews()
         views.forEach(view => view.unhideDisplay())
         views.forEach(view => view.cacheClientSize())
 
-        let didHide = false // to track if we need back button
+        let didHide = false
         for (let i = 1; i < views.length -1; i++) {
             const view = views[i]
             const sum = this.sumOfPathWidths() + padding
-            //console.log("sum: ", this.sumOfPathWidths())
             const isSeparator = view.title() === "/"
             if (isSeparator && views[i-1].isDisplayHidden()) {
                 view.hideDisplay()
@@ -320,22 +405,31 @@
         }
 
         if (!didHide) {
-            // if we hid anything, we need a back button
             const backButton = views.first()
             backButton.hideDisplay()
         }
     }
 
-    // ---
-
+    /**
+     * @description Gets the desired width
+     * @returns {number}
+     */
     desiredWidth () {
         return Number.MAX_VALUE
     }
 
+    /**
+     * @description Handles the updated node notification
+     * @param {*} aNote - The notification object
+     */
     onUpdatedNode (aNote) {
         this.scheduleMethod("setupPathViews")
     }
 
+    /**
+     * @description Watches the path nodes
+     * @returns {BreadCrumbsTile}
+     */
     watchPathNodes () {
         this.unwatchPathNodes()
         this.pathNodes().forEach(node => {
@@ -345,6 +439,10 @@
         return this
     }
 
+    /**
+     * @description Unwatches the path nodes
+     * @returns {BreadCrumbsTile}
+     */
     unwatchPathNodes () {
         this.crumbObservations().forEach(obs => {
             obs.stopWatching()
