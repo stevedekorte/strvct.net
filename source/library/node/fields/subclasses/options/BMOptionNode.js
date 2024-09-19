@@ -1,28 +1,41 @@
+/**
+ * @module library.node.fields.subclasses.options
+ */
+
 "use strict";
 
-/*
-
-    BMOptionNode
-    
-    A single option from a set of options choices.
-
-*/
-        
+/**
+ * @class BMOptionNode
+ * @extends BMStorableNode
+ * @classdesc A single option from a set of options choices.
+ */
 (class BMOptionNode extends BMStorableNode {
     
+    /**
+     * @description Initializes the prototype slots for the BMOptionNode.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {string} label - The title of the option.
+         */
         {
             const slot = this.newSlot("label", "Option Title");
             slot.setShouldStoreSlot(true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("String");
         }
+        /**
+         * @property {Object} value - The value associated with the option.
+         */
         {
             const slot = this.newSlot("value", null);
             slot.setShouldStoreSlot(true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Object");
         }
+        /**
+         * @property {boolean} isPicked - Indicates whether the option is selected.
+         */
         {
             const slot = this.newSlot("isPicked", false);
             slot.setShouldStoreSlot(true);
@@ -31,6 +44,9 @@
         }
     }
 
+    /**
+     * @description Initializes the prototype of the BMOptionNode.
+     */
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(false);
@@ -39,27 +55,38 @@
         this.setNodeCanEditTitle(true);
     }
 
+    /**
+     * @description Returns a debug type identifier for the node.
+     * @returns {string} The debug type identifier.
+     */
     debugTypeId () {
         return this.typeId() + "_'" + this.label() + "'";
     }
-    
-    /*
-    init () {
-        super.init()
-    }
-    */
 
+    /**
+     * @description Sets the isPicked property without triggering side effects.
+     * @param {boolean} aBool - The boolean value to set.
+     * @returns {BMOptionNode} The current instance.
+     */
     justSetIsPicked (aBool) {
         assert(Type.isBoolean(aBool));
         this._isPicked = aBool;
         return this;
     }
 
+    /**
+     * @description Retrieves the parent BMOptionsNode.
+     * @returns {BMOptionsNode|null} The parent BMOptionsNode or null if not found.
+     */
     optionsNode () {
-        //debugger
         return this.firstParentChainNodeOfClass(BMOptionsNode);
     }
 
+    /**
+     * @description Handles the update of the isPicked slot.
+     * @param {boolean} oldValue - The previous value of isPicked.
+     * @param {boolean} newValue - The new value of isPicked.
+     */
     didUpdateSlotIsPicked (oldValue, newValue) {
         const optionsNode = this.optionsNode();
         if (optionsNode) {
@@ -78,46 +105,56 @@
         }
     }
 
+    /**
+     * @description Toggles the isPicked state of the option.
+     * @returns {BMOptionNode} The current instance.
+     */
     toggle () { 
         // The OptionNodeTile knows to call this
         this.setIsPicked(!this.isPicked());
         return this;
     }
 
+    /**
+     * @description Sets the title (label) of the option.
+     * @param {string} aString - The new title.
+     * @returns {BMOptionNode} The current instance.
+     */
     setTitle (aString) {
         this.setLabel(aString);
         return this;
     }
     
+    /**
+     * @description Retrieves the title (label) of the option.
+     * @returns {string} The title of the option.
+     */
     title () {
         return this.label();
     }
 
+    /**
+     * @description Retrieves the value of the option.
+     * @returns {string} The title of the option.
+     */
     value () {
         return this.title();
     }
 
-    /*
-    subtitle () {
-        return null;
-    }
-    */
-
+    /**
+     * @description Retrieves a summary of the option.
+     * @returns {string} The title of the option.
+     */
     summary () {
         return this.title();
     }
 
+    /**
+     * @description Retrieves a note indicating whether the option is picked.
+     * @returns {string} A checkmark if the option is picked, otherwise an empty string.
+     */
     note () {
         return this.isPicked() ? "✓" : "";
     }
-
-    /*
-    didUpdateSlotParentNode (oldValue, newValue) {
-        super.didUpdateSlotParentNode(oldValue, newValue);
-        if (newValue === null) {
-            debugger;
-        }
-    }
-    */
 
 }.initThisClass());

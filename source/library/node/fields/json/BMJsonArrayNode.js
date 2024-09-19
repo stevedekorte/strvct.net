@@ -1,26 +1,47 @@
 "use strict";
 
-/*
-
-    BMJsonArrayNode
-    
-
-*/
-        
+/**
+ * @module library.node.fields.json
+ * @class BMJsonArrayNode
+ * @extends BMJsonNode
+ * @classdesc Represents a JSON array node in the object tree.
+ */
 (class BMJsonArrayNode extends BMJsonNode {
     
+    /**
+     * @static
+     * @description Checks if the node can open a specific MIME type.
+     * @param {string} mimeType - The MIME type to check.
+     * @returns {boolean} Always returns false for this class.
+     */
     static canOpenMimeType (mimeType) {
         return false;
     }
 
+    /**
+     * @static
+     * @description Checks if the node is available as a primitive.
+     * @returns {boolean} Always returns true for this class.
+     */
     static availableAsNodePrimitive () {
         return true;
     }
 
+    /**
+     * @static
+     * @description Returns the default JSON value for this node type.
+     * @returns {Array} An empty array.
+     */
     static jsonDefaultValue () {
         return [];
     }
 
+    /**
+     * @static
+     * @description Generates a JSON schema for this node type.
+     * @param {Set} refSet - A set of references.
+     * @returns {Object} The JSON schema object.
+     */
     static asJsonSchema (refSet) {
         assert(Type.isSet(refSet));
         const schema = {
@@ -34,6 +55,11 @@
         return schema;
     }
 
+    /**
+     * @description Generates a JSON schema for subnodes.
+     * @param {Set} refSet - A set of references.
+     * @returns {Object} The JSON schema object for subnodes.
+     */
     jsonSchemaForSubnodes (refSet) { // NOTE: method on prototype, not class
         assert(refSet);
         const items = {};
@@ -50,12 +76,22 @@
         return items;
     }
     
+    /**
+     * @description Initializes the prototype slots.
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the prototype.
+     */
     initPrototype () {
     }
 
+    /**
+     * @description Sets up the subnodes slot with a specific item type.
+     * @param {Function} aClass - The class to use for subnodes.
+     */
     setupSubnodesSlotWithItemType (aClass) {
         const slot = this.overrideSlot("subnodes");
         slot.setIsInJsonSchema(true);
@@ -64,6 +100,10 @@
         this.setSubnodeClasses([CharacterClass]);
     }
 
+    /**
+     * @description Returns the subtitle for the node.
+     * @returns {string} The subtitle.
+     */
     subtitle () {
         if (this.thisClass().type() === "BMJsonArrayNode") {
             return "Array"; // so we know it's an array when using the UI to assembly JSON
@@ -72,17 +112,32 @@
         return super.subtitle();
     }
 
-    // --------------
-
+    /**
+     * @description Replaces a subnode with a new one.
+     * @param {BMJsonNode} oldNode - The node to replace.
+     * @param {BMJsonNode} newNode - The new node to insert.
+     * @returns {BMJsonNode} The prepared new node.
+     */
     replaceSubnodeWith (oldNode, newNode) {
         newNode = this.prepareSubnode(newNode);
         return super.replaceSubnodeWith(oldNode, newNode);
     }
 
+    /**
+     * @description Adds a subnode at a specific index.
+     * @param {BMJsonNode} aSubnode - The subnode to add.
+     * @param {number} anIndex - The index at which to add the subnode.
+     * @returns {BMJsonNode} The added subnode.
+     */
     addSubnodeAt (aSubnode, anIndex) {
         return super.addSubnodeAt(this.prepareSubnode(aSubnode), anIndex);
     }
 
+    /**
+     * @description Prepares a subnode for addition to this node.
+     * @param {BMJsonNode} aSubnode - The subnode to prepare.
+     * @returns {BMJsonNode} The prepared subnode.
+     */
     prepareSubnode (aSubnode) {
         aSubnode.setCanDelete(true);
 
@@ -96,17 +151,23 @@
             }
          }
 
-        //aSubnode.setTitle(null);
         aSubnode.setNodeCanEditTitle(false);
         return aSubnode;
     }
 
-    // -------
-
+    /**
+     * @description Creates a JSON archive of this node.
+     * @returns {Array} The JSON archive.
+     */
     jsonArchive () {
         return this.subnodes().map(sn => sn.jsonArchive());
     }
 
+    /**
+     * @description Creates a new subnode for a given JSON object.
+     * @param {Object} json - The JSON object to create a subnode for.
+     * @returns {BMJsonNode} The new subnode.
+     */
     newSubnodeForJson (json) {
         let aNode = null;
         if (this.subnodeClasses().length === 1) {
@@ -118,22 +179,18 @@
         return aNode;
     }
 
+    /**
+     * @description Sets the JSON for this node.
+     * @param {Array} json - The JSON array to set.
+     * @returns {BMJsonArrayNode} This node.
+     */
     setJson (json) {
-        // in order to merge json properly, we need to look at the jsonIds and match them up
-
         if (this.doesMatchJson(json)) {
             return this;
         }
 
-        /*
-        const hashSubnodeMap = new Map();
-        this.subnodes().forEach(sn => {
-            hashSubnodeMap.set(sn.jsonHash(), sn);
-        });
-        */
-
         const jsonIdToSubnodeMap = new Map();
-        this.subnodes().forEach(sn => { // TODO: check for duplicat ids
+        this.subnodes().forEach(sn => {
             jsonIdToSubnodeMap.set(sn.jsonId(), sn);
         });
 
@@ -143,9 +200,7 @@
 
         const seenJsonIds = new Set();
 
-
         json.forEach((v) => {
-            //assert(v.jsonId);
             const jsonId = v.jsonId;
 
             if (seenJsonIds.has(jsonId)) {
@@ -162,15 +217,12 @@
             const existingNode = jsonIdToSubnodeMap.get(jsonId);
 
             if (existingNode) {
-                // use the existing node
                 existingNode.setJson(v);
                 newSubnodes.push(existingNode);
             } else {
-                // create a new node
                 const aNode = this.newSubnodeForJson(v);
                 newSubnodes.push(aNode);
                 console.log("BMJsonArrayNode.setJson() creating new node " + aNode.type() + " for jsonId: " + jsonId + " (" + aNode.jsonId() + ")");
-                //debugger;
             }
         });
 
@@ -181,17 +233,22 @@
             this.setSubnodes(newSubnodes);
         }
 
-        //this.setJsonCache(json); // not safe as we might have removed duplicates
-        //this.didUpdateNode();
         return this;
     }
 
+    /**
+     * @description Calculates the JSON representation of this node.
+     * @returns {Array} The JSON representation.
+     */
     calcJson () {
         return this.subnodes().map(sn => sn.asJson());
     }
 
+    /**
+     * @description Gets the BMDataUrl for this node.
+     * @returns {BMDataUrl} The BMDataUrl object.
+     */
     getBMDataUrl () {
-        //const json = this.node().copyArchiveDict();
         const json = this.jsonArchive();
         const d = BMDataUrl.clone();
         d.setMimeType("application/json");

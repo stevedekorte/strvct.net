@@ -1,26 +1,40 @@
+/**
+ * @module library.node.fields.subclasses
+ */
+
 "use strict";
 
-/*
-
-    BMNumberField
-
-    A named number field that validates that the 
-    value is a number and shows an appropraite error message.
-
-*/
-        
+/**
+ * @class BMNumberField
+ * @extends BMField
+ * @classdesc A named number field that validates that the 
+ * value is a number and shows an appropraite error message.
+ */
 (class BMNumberField extends BMField {
     
+    /**
+     * @static
+     * @returns {boolean} True if available as a node primitive
+     */
     static availableAsNodePrimitive () {
         return true
     }
 
+    /**
+     * @description Initialize prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {string} unsetVisibleValue
+         */
         {
             const slot = this.newSlot("unsetVisibleValue", "unset");
             slot.setSlotType("String");
         }
 
+        /**
+         * @property {boolean} isInteger
+         */
         {
             const slot = this.newSlot("isInteger", false)
             slot.setDuplicateOp("copyValue")
@@ -33,6 +47,9 @@
             //slot.setSyncsToView(true)
         }
 
+        /**
+         * @property {boolean} hasLimits
+         */
         {
             const slot = this.newSlot("hasLimits", false)
             slot.setDuplicateOp("copyValue")
@@ -45,6 +62,9 @@
             //slot.setSyncsToView(true)
         }
 
+        /**
+         * @property {number} minValue
+         */
         {
             const slot = this.newSlot("minValue", 0)
             slot.setDuplicateOp("copyValue")
@@ -57,6 +77,9 @@
             //slot.setSyncsToView(true)
         }
 
+        /**
+         * @property {number} maxValue
+         */
         {
             const slot = this.newSlot("maxValue", 1)
             slot.setDuplicateOp("copyValue")
@@ -70,6 +93,9 @@
         }
     }
 
+    /**
+     * @description Initialize prototype
+     */
     initPrototype () {
     }
 
@@ -77,24 +103,39 @@
     // TODO: 
     // - add a Slot.validatorMethod or methodHook so this can be done dynamically?
 
+    /**
+     * @description Handle update of isInteger slot
+     */
     didUpdateSlotIsInteger () {
         this.validate()
     }
 
+    /**
+     * @description Handle update of hasLimits slot
+     */
     didUpdateSlotHasLimits () {
         this.validate()
     }
 
+    /**
+     * @description Handle update of minValue slot
+     */
     didUpdateSlotMinValue () {
         this.validate()
     }
 
+    /**
+     * @description Handle update of maxValue slot
+     */
     didUpdateSlotMaxValue () {
         this.validate()
     }
 
     // ----
 
+    /**
+     * @description Initialize the instance
+     */
     init () {
         super.init()
         this.setKey("Number title")
@@ -103,6 +144,11 @@
         this.setValue(0)
     }
 
+    /**
+     * @description Set the value of the field
+     * @param {*} v - The value to set
+     * @returns {BMNumberField} The instance
+     */
     setValue (v) {
         if (!Type.isNumber(v)) {
             if (Type.isNull() && this.valueAllowsNull()) {
@@ -119,11 +165,19 @@
         return this
     }
 
+    /**
+     * @description Check if the value is numeric
+     * @returns {boolean} True if the value is numeric
+     */
     valueIsNumeric () {
         const n = this.value();
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 	
+    /**
+     * @description Validate the field value
+     * @returns {boolean} True if the value is valid
+     */
     validate () {
         const v = Number(this.value())
         const errors = []

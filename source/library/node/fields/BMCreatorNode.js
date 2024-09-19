@@ -1,22 +1,29 @@
 "use strict";
 
-/*
-
-    BMCreatorNode
-    
-    A stand-in node that let's the user select field to replace it with.
-
-*/
-        
+/**
+ * @module library.node.fields
+ * @class BMCreatorNode
+ * @extends BMStorableNode
+ * @classdesc A stand-in node that lets the user select a field to replace it with.
+ */
 (class BMCreatorNode extends BMStorableNode {
     
+    /**
+     * @description Initializes the prototype slots for the BMCreatorNode.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Array} subnodes - Overrides the subnodes slot.
+         */
         {
             const slot = this.overrideSlot("subnodes");
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Array");
         }
 
+        /**
+         * @property {Array} typeChoices - An array of type choices.
+         */
         {
             const slot = this.newSlot("typeChoices", []);
             slot.setInitProto(Array);
@@ -24,6 +31,9 @@
         }
     }
   
+    /**
+     * @description Initializes the prototype with default values and settings.
+     */
     initPrototype () {
         this.setNodeCanEditTitle(false);
         this.setShouldStore(true);
@@ -34,11 +44,19 @@
         this.setTitle("Chose type");
     }
 
+    /**
+     * @description Prepares the node for first access by setting up subnodes.
+     */
     prepareForFirstAccess () {
         super.prepareForFirstAccess();
         this.setupSubnodes();
     }
 
+    /**
+     * @description Returns an array of field types.
+     * @returns {string[]} An array of field type names.
+     * @static
+     */
     static fieldTypes () {
         return [
             "BMActionField", 
@@ -60,6 +78,10 @@
         ];
     }
 
+    /**
+     * @description Returns an array of prototype objects.
+     * @returns {Array} An empty array (commented out code suggests it could return prototype objects).
+     */
     protoObjects () {
         return []
         /*
@@ -70,6 +92,10 @@
         */
     }
 
+    /**
+     * @description Sets up subnodes if they don't exist.
+     * @returns {BMCreatorNode} The current instance.
+     */
     setupSubnodes () {
         if (this.subnodes().length == 0) {
             this.addSubnodesForObjects(BMNode.primitiveNodeClasses())
@@ -78,6 +104,10 @@
         return this
     }
     
+    /**
+     * @description Adds subnodes for the given objects.
+     * @param {Array} objects - An array of objects to create subnodes for.
+     */
     addSubnodesForObjects (objects) {
         const newSubnodes = objects.map((aClass) => {
             const newNode = BMFolderNode.clone()
@@ -92,6 +122,11 @@
         this.addSubnodes(newSubnodes)
     }
 
+    /**
+     * @description Handles the choice of a new node type.
+     * @param {Object} actionNode - The node that was chosen.
+     * @returns {BMCreatorNode} The current instance.
+     */
    didChoose (actionNode) {
         const obj = actionNode.info()
         const newNode = obj.nodeCreate()
@@ -100,6 +135,10 @@
         return this
    }
 
+    /**
+     * @description Replaces this node with a new node in the parent's subnodes.
+     * @param {Object} newNode - The new node to replace this one with.
+     */
     replaceSelfWithNode (newNode) {
         const parentNode = this.parentNode()
         assert(parentNode)
@@ -107,6 +146,10 @@
         parentNode.postShouldFocusAndExpandSubnode(newNode) 
     }
 
+    /**
+     * @description Returns a summary of the node.
+     * @returns {string} An empty string.
+     */
     nodeSummary () {
         return ""
     }

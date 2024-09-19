@@ -1,16 +1,24 @@
 "use strict";
 
-/*
-
-    BMStampField
-
-*/
-
+/**
+ * @module library.node.fields.subclasses
+ * @class BMStampField
+ * @extends BMField
+ * @classdesc BMStampField class for handling stamp fields.
+ */
 (class BMStampField extends BMField {
     
+    /**
+     * @description Initializes prototype slots for the BMStampField.
+     * @method initPrototypeSlots
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the prototype of the BMStampField.
+     * @method initPrototype
+     */
     initPrototype () {
         //this.setKeyIsVisible(false)
         //this.setKey("drop images here")

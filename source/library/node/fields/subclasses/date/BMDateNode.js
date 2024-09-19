@@ -1,27 +1,38 @@
 "use strict";
 
-/*
-
-    BMDateNode
-    
-    
-
-*/
-        
+/**
+ * @module library.node.fields.subclasses.date
+ * @class BMDateNode
+ * @extends BMSummaryNode
+ * @classdesc BMDateNode represents a date field in the application. It provides functionality to select and display dates.
+ */
 (class BMDateNode extends BMSummaryNode {
     
+    /**
+     * @static
+     * @returns {boolean} True if this node is available as a primitive.
+     */
     static availableAsNodePrimitive () {
         return true;
     }
     
+    /**
+     * @description Initializes the prototype slots for the BMDateNode.
+     */
     initPrototypeSlots () {        
 
+        /**
+         * @property {Array} subnodes
+         */
         {
             const slot = this.overrideSlot("subnodes");
             slot.setShouldStoreSlot(false);
             slot.setSlotType("Array");
         }
 
+        /**
+         * @property {Number} year
+         */
         {
             const slot = this.newSlot("year", null);
             slot.setShouldStoreSlot(true);
@@ -30,6 +41,9 @@
             slot.setSlotType("Number");
         }
 
+        /**
+         * @property {Number} month
+         */
         {
             const slot = this.newSlot("month", null);
             slot.setShouldStoreSlot(true);
@@ -38,6 +52,9 @@
             slot.setSlotType("Number");
         }
 
+        /**
+         * @property {Number} day
+         */
         {
             const slot = this.newSlot("day", null);
             slot.setShouldStoreSlot(true);
@@ -46,6 +63,9 @@
             slot.setSlotType("Number");
         }
 
+        /**
+         * @property {Number} startYear
+         */
         {
             const slot = this.newSlot("startYear", 2000);
             slot.setShouldStoreSlot(true);
@@ -55,6 +75,9 @@
             slot.setLabel("Start year");
         }
 
+        /**
+         * @property {Number} yearRange
+         */
         {
             const slot = this.newSlot("yearRange", 20);
             slot.setShouldStoreSlot(true);
@@ -65,6 +88,9 @@
         }
     }
 
+    /**
+     * @description Initializes the prototype of the BMDateNode.
+     */
     initPrototype () {
         
         this.setNoteIconName("right-arrow")
@@ -80,10 +106,18 @@
         this.setNodeCanInspect(true)
     }
 
+    /**
+     * @description Checks if a date has been set.
+     * @returns {boolean} True if a date has been set, false otherwise.
+     */
     hasDate () {
         return !Type.isNull(this.year())
     }
 
+    /**
+     * @description Creates a JavaScript Date object from the stored date.
+     * @returns {Date|null} A Date object if a date has been set, null otherwise.
+     */
     jsDate () {
         //new Date(year, month, day, hours, minutes, seconds, milliseconds)
         if (this.hasDate()) {
@@ -94,6 +128,10 @@
         return null
     }
 
+    /**
+     * @description Generates a subtitle for the node.
+     * @returns {string} A string representation of the date or "No date selected".
+     */
     subtitle () {
         if (this.hasDate()) {
             const d = this.jsDate()
@@ -106,6 +144,9 @@
         return "No date selected"
     }
 
+    /**
+     * @description Prepares the node for syncing to view.
+     */
     prepareToSyncToView () {
         // called after DateNode is selected
         if (!this.hasSubnodes()) {
@@ -113,6 +154,9 @@
         }
     }
 
+    /**
+     * @description Sets up the subnodes for year selection.
+     */
     setupSubnodes () {
         this.removeAllSubnodes()
         
@@ -128,6 +172,11 @@
         this.setSubnodes(years)
     }
 
+    /**
+     * @description Handles tap events on descendant nodes.
+     * @param {Object} aNode - The tapped node.
+     * @returns {boolean} Always returns true.
+     */
     onTapOfDecendantNode (aNode) {
         if (aNode.type() === "BMDayNode") {
             const dayNode = aNode
@@ -142,14 +191,25 @@
         return true
     }
 
+    /**
+     * @description Calculates the end year based on start year and range.
+     * @returns {number} The end year.
+     */
     endYear () {
         return this.startYear() + this.yearRange()
     }
 
+    /**
+     * @description Checks if the year range is valid.
+     * @returns {boolean} True if the year range is valid, false otherwise.
+     */
     yearRangeOk () {
         return this.startYear() <= this.endYear()
     }
 
+    /**
+     * @description Handles updates to the startYear slot.
+     */
     didUpdateSlotStartYear () {
         if (!this.hasDoneInit()) { // so we ignore the initial setup as a change
             return
@@ -161,6 +221,9 @@
         this.setupSubnodes()
     }
 
+    /**
+     * @description Handles updates to the endYear slot.
+     */
     didUpdateSlotEndYear () {
         if (!this.hasDoneInit()) {
             return
@@ -172,6 +235,10 @@
         this.setupSubnodes()
     }
 
+    /**
+     * @description Creates a JSON archive of the date.
+     * @returns {string|null} A string representation of the date or null if no date is set.
+     */
     jsonArchive () {
         const d = this.jsDate()
         return d ? d.toString() : null

@@ -1,22 +1,30 @@
 "use strict";
 
-/*
-
-    BMActionField
-    
-    An abstraction of a UI visible action that can be performed on an object.
-    the value is the action method name, the target is the field owner.
-
-*/
-
+/**
+ * @module library.node.fields.subclasses
+ * @class BMActionField
+ * @extends BMField
+ * @classdesc An abstraction of a UI visible action that can be performed on an object.
+ * The value is the action method name, the target is the field owner.
+ */
 (class BMActionField extends BMField {
     
+    /**
+     * @static
+     * @returns {boolean} True if the class is available as a node primitive
+     */
     static availableAsNodePrimitive () {
         return true
     }
     
+    /**
+     * @description Initializes the prototype slots for the class
+     */
     initPrototypeSlots () {
 
+        /**
+         * @property {string} title - The title of the action field
+         */
         {
             const slot = this.overrideSlot("title", null);
             slot.setShouldStoreSlot(true);
@@ -25,12 +33,18 @@
             slot.setLabel("Title");
         }
 
+        /**
+         * @property {string} methodName - The name of the method to be called
+         */
         {
             const slot = this.newSlot("methodName", null);
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
         }
 
+        /**
+         * @property {Object} info - Additional information for the action field
+         */
         {
             const slot = this.newSlot("info", null);
             slot.setShouldStoreSlot(true);
@@ -38,6 +52,9 @@
         }
     }
 
+    /**
+     * @description Initializes the prototype
+     */
     initPrototype () {
         // inherits isEnabled and isEditable slots from Field
         this.setShouldStore(true)
@@ -47,26 +64,47 @@
         this.setValueIsVisible(false)
     }
 
+    /**
+     * @description Sets the title of the action field
+     * @param {string} s - The title to set
+     * @returns {BMActionField} This instance
+     */
     setTitle (s) {
         super.setTitle(s)
         return this
     }
     
+    /**
+     * @description Returns a summary of the action field
+     * @returns {string} An empty string
+     */
     summary () {
         return ""
     }
 
+    /**
+     * @description Gets the target of the action
+     * @returns {Object} The target object
+     */
     target () {
         const t = this._target;
         return t ? t : this.parentNode()
     }
 
+    /**
+     * @description Checks if the action can be performed
+     * @returns {boolean} True if the action can be performed
+     */
     canDoAction () {
         const t = this.target()
         const m = this.methodName()
         return t && t[m]
     }
 
+    /**
+     * @description Performs the action
+     * @returns {BMActionField} This instance
+     */
     doAction () {
         if (this.canDoAction()) {
             const func = this.target()[this.methodName()]
@@ -74,7 +112,6 @@
             if (Type.isFunction(func)) {
                 func.call(this.target(), this)
             } else {
-                //this.setValueError("no method with this name")
                 console.warn("no method with this name")
             }
         } else {
@@ -84,6 +121,9 @@
 	    return this
     }
 
+    /**
+     * @description Synchronizes the action field with its target
+     */
     syncFromTarget () {
         super.syncFromTarget()
     
@@ -98,16 +138,22 @@
         }
     }
 
+    /**
+     * @description Prepares the action field for access
+     * @returns {BMActionField} This instance
+     */
     prepareToAccess () {
-        //debugger
         super.prepareToAccess()
         this.syncFromTarget()
         return this
     }
     
+    /**
+     * @description Sets the action info
+     * @param {Object} infoDict - The action info dictionary
+     * @returns {BMActionField} This instance
+     */
     setActionInfo (infoDict) {
-        //if (JSON.stableStringify(infoDict) != JSON.stableStringify(this.actionInfo())) {
-
         {
             const v = infoDict.isEnabled;
             if (v !== undefined) {
@@ -144,12 +190,13 @@
             }
         }
 
-        // this.didUpdateNodeIfInitialized();
-        // }
-
         return this
     }
 
+    /**
+     * @description Gets the action info
+     * @returns {Object} The action info dictionary
+     */
     actionInfo () {
         return {
             isEnabled: this.isEnabled(),

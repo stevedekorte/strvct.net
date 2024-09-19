@@ -1,21 +1,36 @@
 "use strict";
 
-/*
-
-    BMIdentityField
-
-*/
-
+/**
+ * @module library.node.fields.subclasses
+ * @class BMIdentityField
+ * @extends BMField
+ * @classdesc Represents an identity field for Bitcoin-related operations.
+ * This field is used to handle and validate Bitcoin public keys.
+ */
 (class BMIdentityField extends BMField {
     
+    /**
+     * @description Initializes prototype slots for the BMIdentityField.
+     * @method
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the prototype of the BMIdentityField.
+     * Sets the key and value as non-editable.
+     * @method
+     */
     initPrototype () {
         this.setKeyIsEditable(false);
         this.setValueIsEditable(false);
     }
 
+    /**
+     * @description Validates the current value of the field.
+     * Sets an error if the value is not a valid Bitcoin public key.
+     * @method
+     */
     validate () {
         if (!bitcore.PublicKey.isValid(this.value())) {
             this.setValueError("invalid address")
@@ -24,6 +39,13 @@
         }
     }
 	
+    /**
+     * @description Sets the value of the field.
+     * Processes the input value to extract a valid Bitcoin public key.
+     * @method
+     * @param {*} inValue - The input value to be set.
+     * @returns {BMIdentityField} Returns the instance of the field.
+     */
     setValue (inValue) { // called by View on edit
         if (Type.isNull(inValue)) {
             console.log("WARNING: " + this.type() + " setValue(null)")
