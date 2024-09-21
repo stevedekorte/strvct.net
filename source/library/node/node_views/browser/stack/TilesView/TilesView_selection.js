@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module strvct.source.library.node.node_views.browser.stack.TilesView
+ * @module library.node.node_views.browser.stack.TilesView
  * @class TilesView_selection
  * @extends TilesView
  * @classdesc

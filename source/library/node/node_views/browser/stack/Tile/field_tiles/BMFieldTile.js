@@ -1,8 +1,10 @@
 "use strict";
 
-/*
-
-    BMFieldTile
+/**
+ * @module library.node.node_views.browser.stack.Tile.field_tiles
+ * @class BMFieldTile
+ * @extends Tile
+ * @classdesc
 
     Field views are tiles that present nodes which have key/value pairs, 
     such as those representing slots, or other named properties.
@@ -17,62 +19,107 @@
     
     initPrototypeSlots () {
         {
+            /** @property {boolean} allowsCursorNavigation
+             * @description Indicates if cursor navigation is allowed.
+             */
             const slot = this.newSlot("allowsCursorNavigation", false);
             slot.setSlotType("Boolean");
         }
         {
+            /** @property {string} vPadding
+             * @description The vertical padding for the tile.
+             */
             const slot = this.newSlot("vPadding",  "0.1em");
             slot.setSlotType("String");
         }
         {
+            /** @property {DomView} kvSection
+             * @description The key-value section view.
+             */
             const slot = this.newSlot("kvSection", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} keyViewContainer
+             * @description The container for the key view.
+             */
             const slot = this.newSlot("keyViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} valueViewContainer
+             * @description The container for the value view.
+             */
             const slot = this.newSlot("valueViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} errorViewContainer
+             * @description The container for the error view.
+             */
             const slot = this.newSlot("errorViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} noteViewContainer
+             * @description The container for the note view.
+             */
             const slot = this.newSlot("noteViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} keyView
+             * @description The key view.
+             */
             const slot = this.newSlot("keyView", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} valueView
+             * @description The value view.
+             */
             const slot = this.newSlot("valueView", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} errorView
+             * @description The error view.
+             */
             const slot = this.newSlot("errorView", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {DomView} noteView
+             * @description The note view.
+             */
             const slot = this.newSlot("noteView", null);
             slot.setSlotType("DomView");
         }
         {
+            /** @property {string} editableColor
+             * @description The color for editable text.
+             */
             const slot = this.newSlot("editableColor", "#aaa");
             slot.setSlotType("String");
         }
         {
+            /** @property {string} uneditableColor
+             * @description The color for uneditable text.
+             */
             const slot = this.newSlot("uneditableColor", "#888");
             slot.setSlotType("String");
         }
         {
+            /** @property {string} errorColor
+             * @description The color for error text.
+             */
             const slot = this.newSlot("errorColor", "red");
             slot.setSlotType("String");
         }
         {
+            /** @property {string} valueEditableBorder
+             * @description The border for editable value.
+             */
             const slot = this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)");
             slot.setSlotType("String");
         }
@@ -83,11 +130,18 @@
         }
         */
         {
+            /** @property {string} valueUneditableBorder
+             * @description The border for uneditable value.
+             */
             const slot = this.newSlot("valueUneditableBorder", "none");
             slot.setSlotType("String");
         }
     }
 
+    /**
+     * @description Sets up the content view for the tile.
+     * @returns {BMFieldTile} The current instance.
+     */
     setupTileContentView () {
         super.setupTileContentView();
 
@@ -100,6 +154,10 @@
         return this;
     }
 
+    /**
+     * @description Initializes the tile.
+     * @returns {BMFieldTile} The current instance.
+     */
     init () {
         super.init()
         this.makeCursorDefault()
@@ -145,6 +203,10 @@
         return this
     }
 
+    /**
+     * @description Sets up the key view.
+     * @returns {DomView} The key view.
+     */
     setupKeyView () {
         const v = TextField.clone().setElementClassName("BMFieldKeyView")
         if (!v.themeClassName()) {
@@ -169,6 +231,10 @@
         return v
     }
 
+    /**
+     * @description Sets up the value view.
+     * @returns {DomView} The value view.
+     */
     setupValueView () {
         const v = this.createValueView()
         if (!v.themeClassName()) {
@@ -187,6 +253,10 @@
         return v
     }
 
+    /**
+     * @description Sets up the note view.
+     * @returns {DomView} The note view.
+     */
     setupNoteView () {
         const v = DomView.clone().setElementClassName("BMFieldTileNoteViewView")
         v.setDisplay("block")
@@ -205,6 +275,10 @@
         return v
     }
 
+    /**
+     * @description Sets up the error view.
+     * @returns {DomView} The error view.
+     */
     setupErrorView () {
         const v = DomView.clone().setElementClassName("BMFieldTileErrorView")
         v.setUserSelect("text")
@@ -218,6 +292,10 @@
         return v 
     }
 
+    /**
+     * @description Creates the value view.
+     * @returns {DomView} The value view.
+     */
     createValueView () {
         const v = TextField.clone().setElementClassName("BMFieldValueView")
         v.setDisplay("flex")
@@ -243,23 +321,44 @@
 
     // colors
 
+    /**
+     * @description Gets the current background CSS color.
+     * @returns {CssColor} The current background color.
+     */
     currentBackgroundCssColor () {
         const bg = this.navView().computedBackgroundColor()
         return CssColor.clone().setCssColorString(bg)
     }
 
+    /**
+     * @description Gets the value background CSS color.
+     * @returns {CssColor} The value background color.
+     */
     valueBackgroundCssColor () {
         return this.currentBackgroundCssColor().contrastComplement(0.2)
     }
+
+    /**
+     * @description Gets the value background color.
+     * @returns {string} The value background color.
+     */
 
     valueBackgroundColor () {
         return this.valueBackgroundCssColor().cssColorString()
     }
 
+    /**
+     * @description Gets the editable color.
+     * @returns {string} The editable color.
+     */
     editableColor () {
         return this.valueBackgroundCssColor().contrastComplement(0.2).cssColorString()
     }
 
+    /**
+     * @description Gets the key view color.
+     * @returns {string} The key view color.
+     */
     keyViewColor () {
         //console.log(this.node().title() + " " + this.typeId() + ".isSelected() = ", this.isSelected())
         return this.currentColor()
@@ -268,22 +367,40 @@
 
 	
     // visible key and value
-    
+    /**
+     * @description Gets the visible value.
+     * @returns {string} The visible value.
+     */
     visibleValue () {
         return this.node().visibleValue()
     }
 	
+    /**
+     * @description Gets the visible key.
+     * @returns {string} The visible key.
+     */
     visibleKey () {
         return this.node().key()
     }
 
     // sync 
     
+    /**
+     * @description Updates the slot isSelected.
+     * @param {boolean} oldValue - The old value.
+     * @param {boolean} newValue - The new value.
+     * @returns {BMFieldTile} The current instance.
+     */
     didUpdateSlotIsSelected (oldValue, newValue) {
         super.didUpdateSlotIsSelected(oldValue, newValue)
         this.syncFromNodeNow() // need this to update selection color on fields?
         return this
     }
+
+    /**
+     * @description Syncs from the node.
+     * @returns {BMFieldTile} The current instance.
+     */
 
     syncFromNode () {
         super.syncFromNode()
@@ -300,6 +417,10 @@
         return this
     }
 
+    /**
+     * @description Syncs the key from the node.
+     * @returns {BMFieldTile} The current instance.
+     */
     syncKeyFromNode () {
         const node = this.node()
         const keyView = this.keyView()
@@ -311,6 +432,10 @@
         keyView.setColor(this.keyViewColor())
     }
 
+    /**
+     * @description Syncs the value from the node.
+     * @returns {BMFieldTile} The current instance.
+     */
     syncValueFromNode () {
         const node = this.node()
         const valueView = this.valueView()
@@ -371,6 +496,10 @@
         }
     }
 
+    /**
+     * @description Syncs the error from the node.
+     * @returns {BMFieldTile} The current instance.
+     */
     syncErrorFromNode () {
         const node = this.node()
         const valueView = this.valueView()
@@ -397,6 +526,10 @@
         }
     }
 
+    /**
+     * @description Syncs the note from the node.
+     * @returns {BMFieldTile} The current instance.
+     */
     syncNoteFromNode () {
         const node = this.node()
         const noteView = this.noteView()
@@ -413,10 +546,18 @@
 
     // ----------------------
 
+    /**
+     * @description Gets the visible note.
+     * @returns {string} The visible note.
+     */
     visibleNote () {
         return this.node().note()
     }
     
+    /**
+     * @description Syncs to the node.
+     * @returns {BMFieldTile} The current instance.
+     */
     syncToNode () {
         const node = this.node()
 
@@ -432,6 +573,11 @@
         return this
     }
     
+    /**
+     * @description Called when an edit occurs.
+     * @param {DomView} changedView - The changed view.
+     * @returns {BMFieldTile} The current instance.
+     */
     onDidEdit (changedView) { // sent up subview chain when an edit occurs
         this.scheduleSyncToNode();
         if (changedView === this.valueView()) {
@@ -443,6 +589,11 @@
         return true
     }
 
+    /**
+     * @description Called when an input occurs.
+     * @param {DomView} changedView - The changed view.
+     * @returns {BMFieldTile} The current instance.
+     */
     onDidInput (changedView) { // sent up subview chain when an input occurs
         if (changedView === this.valueView()) {
             const node = this.node()
@@ -453,6 +604,10 @@
         }
     }
 
+    /**
+     * @description Syncs styles to subviews.
+     * @returns {BMFieldTile} The current instance.
+     */
     syncStylesToSubviews () {
         super.syncStylesToSubviews()
         this.keyView().syncStateFrom(this)
@@ -460,6 +615,10 @@
         return this
     }
 
+    /**
+     * @description Updates the subviews.
+     * @returns {BMFieldTile} The current instance.
+     */
     updateSubviews () {
         super.updateSubviews()
         this.syncStylesToSubviews()
@@ -481,13 +640,22 @@
         return this
     }
 
+    /**
+     * @description Applies styles to the tile.
+     * @returns {BMFieldTile} The current instance.
+     */
     applyStyles () {
         super.applyStyles()
         //this.keyView().applyStyles()
         //this.valueView().applyStyles()
         return this
     }
-    
+
+    /**
+     * @description Called when the enter key is pressed.
+     * @param {Event} event - The event.
+     * @returns {BMFieldTile} The current instance.
+     */
     onEnterKeyUp (event) {
         //this.debugLog(".onEnterKeyUp()")
         if (this.valueView().activate) {
@@ -496,6 +664,11 @@
         return this
     }
 
+    /**
+     * @description Sets the background color.
+     * @param {string} c - The color.
+     * @returns {BMFieldTile} The current instance.
+     */
     setBackgroundColor (c) {
         /*
         this.debugLog(".setBackgroundColor ", c)
@@ -507,11 +680,19 @@
         return this
     }
 
+    /**
+     * @description Becomes the key view.
+     * @returns {BMFieldTile} The current instance.
+     */
     becomeKeyView () {
         this.valueView().becomeKeyView()
         return this
     }
 
+    /**
+     * @description Unselects the tile.
+     * @returns {BMFieldTile} The current instance.
+     */
     unselect () {
         super.unselect()
         this.valueView().blur()

@@ -1,7 +1,7 @@
 "use strict";
 
 /** 
- * @module AiServiceKit.Anthropic
+ * @module library.services.Anthropic
  * @class AnthropicService
  * @extends AiService
  * @description A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
@@ -14,7 +14,8 @@
 (class AnthropicService extends AiService {
 
   /**
-   * Initializes the class as a singleton.
+   * @static
+   * @description Initializes the class as a singleton.
    */
   static initClass () {
     this.setIsSingleton(true);

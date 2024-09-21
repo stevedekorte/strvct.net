@@ -1,14 +1,12 @@
-/**
- * @module library.node.fields.json.BMJsonNode
- */
-
 "use strict";
 
 /**
+ * @module library.node.fields.json
  * @class BMJsonNode
  * @extends BMJsonCachedNode
  * @classdesc Represents a JSON node in the application. This class handles JSON data and provides methods for parsing and creating nodes from JSON.
  */
+
 (class BMJsonNode extends BMJsonCachedNode {
     
     /**

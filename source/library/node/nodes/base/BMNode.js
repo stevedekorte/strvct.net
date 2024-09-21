@@ -1,47 +1,52 @@
 "use strict";
 
-/*
+/**
+ * @module library.node.nodes.base
+ * /
 
-    BMNode
- 
-    The base class of model objects that supports the protocol 
-    used to sync with views (subclasses of NodeView).
-
-    State and behavior here are focused on managing subnodes.
-
-    The BMStorableNode subclass is used to sync the model to
-    the persistence system.
-
-
-        Notifications (intended for views):
-
-            - didUpdateNode // lets views know they need to scheduleSyncFromNode
-            - shouldFocusSubnode // request that the UI focus on the sender
-
-        Update messages sent to self:
-            - didUpdateSlotParentNode(oldValue, newValue)
-            
-            - didChangeSubnodeList // hook to resort if needed and call didReorderParentSubnodes
-            - prepareForFirstAccess // sent to self on first access to subnodes
-            - prepareToAccess // sent to sent whenever a subnode is accessed
-
-        Update messages sent to parent:
-            - didUpdateNode // let parent know a subnode has changed
-
-        Update messages sent to subnodes:
-            - didReorderParentSubnodes // sent on subnode order change
-
-        Protocol helpers:
-            - watchOnceForNote(aNote) // typically used to watch for appDidInit
-
-*/
+/** 
+ * @class BMNode
+ * @extends ProtoClass
+ * @classdesc The base class of model objects that supports the protocol 
+ * used to sync with views (subclasses of NodeView).
+ * State and behavior here are focused on managing subnodes.
+ * The BMStorableNode subclass is used to sync the model to
+ * the persistence system.
+ * 
+ * Notifications (intended for views):
+ * - didUpdateNode // lets views know they need to scheduleSyncFromNode
+ * - shouldFocusSubnode // request that the UI focus on the sender
+ * 
+ * Update messages sent to self:
+ * - didUpdateSlotParentNode(oldValue, newValue)
+ * - didChangeSubnodeList // hook to resort if needed and call didReorderParentSubnodes
+ * - prepareForFirstAccess // sent to self on first access to subnodes
+ * - prepareToAccess // sent to sent whenever a subnode is accessed
+ * 
+ * Update messages sent to parent:
+ * - didUpdateNode // let parent know a subnode has changed
+ * 
+ * Update messages sent to subnodes:
+ * - didReorderParentSubnodes // sent on subnode order change
+ * 
+ * Protocol helpers:
+ * - watchOnceForNote(aNote) // typically used to watch for appDidInit
+ */
 
 (class BMNode extends ProtoClass {
     
+    /**
+     * @static
+     * @returns {boolean} Whether this class is available as a node primitive.
+     */
     static availableAsNodePrimitive () {
         return true;
     }
 
+    /**
+     * @static
+     * @returns {Array} An array of all primitive node classes.
+     */
     static primitiveNodeClasses () {
         const classes = BMNode.allSubclasses();
         return classes.filter(aClass => aClass.availableAsNodePrimitive());
@@ -49,6 +54,10 @@
 
     // --- for CreatorNode Prototypes ---
 
+    /**
+     * @static
+     * @returns {string} The visible class name for this node.
+     */
     static visibleClassName () {
         let name = this.type();
         name = name.sansPrefix("BM");
@@ -57,32 +66,58 @@
         return name;
     }
 
+    /**
+     * @static
+     * @returns {boolean} Whether this class is available as a node primitive.
+     */
     static availableAsNodePrimitive () {
         return false;
     }
 
+    /**
+     * @static
+     * @returns {BMNode} A new instance of this node.
+     */
     static nodeCreate () {
         // we implemnet this on BMNode class and prototype so 
         // it works for both instance and class creator prototypes
         return this.clone();
     }
 
+    /**
+     * @static
+     * @returns {string} The name used for node creation.
+     */
     static nodeCreateName () {
         return this.visibleClassName();
     }
 
     // --- mime types ---
 
+    /**
+     * @static
+     * @param {string} mimeTypeString - The MIME type to check.
+     * @returns {boolean} Whether this class can open the given MIME type.
+     */
     static canOpenMimeType (mimeTypeString) {
         return false;
     }
 
+    /**
+     * @static
+     * @param {*} dataChunk - The data chunk to open.
+     * @returns {*} The result of opening the data chunk.
+     */
     static openMimeChunk (dataChunk) {
         return null;
     }
 
     // ----
 
+    /**
+     * @method initPrototypeSlots
+     * @description Initialize the prototype slots for this class.
+     */
     initPrototypeSlots () {
  
         /*
@@ -179,10 +214,19 @@
         }
     }
 
+    /**
+     * @method initPrototype
+     * @description Initialize the prototype for this class.
+     */
     initPrototype () {
 
     }
 
+    /**
+     * @method init
+     * @description Initialize this instance.
+     * @returns {BMNode} This instance.
+     */
     init () {
         super.init();
         this.setDidUpdateNodeNote(this.newNoteNamed("onUpdatedNode"));
@@ -194,6 +238,12 @@
         return this
     }
 
+    /**
+     * @method setSubnodes
+     * @description Set the subnodes for this instance.
+     * @param {Array} subnodes - The new subnodes.
+     * @returns {BMNode} This instance.
+     */
     setSubnodes (subnodes) {
         if (this._subnodes === null) {
             this._subnodes = subnodes;
@@ -203,6 +253,10 @@
         return this;
     }
 
+    /**
+     * @method registerForAppDidInit
+     * @description Register this instance to receive the appDidInit notification.
+     */
     registerForAppDidInit () {
         // need this in case app has already done init,
         // or if appDidInit notification itself inited objects
@@ -217,11 +271,21 @@
         }
     }
 
+    /**
+     * @method shouldStoreSlotSubnodes
+     * @description Determine whether to store subnodes when persisting this instance.
+     * @returns {boolean} Whether to store subnodes.
+     */
     shouldStoreSlotSubnodes () {
         // called by subnodes slot when persisting instance
         return this.shouldStoreSubnodes();
     }
 
+    /**
+     * @method nodeType
+     * @description Get the node type.
+     * @returns {string} The node type.
+     */
     nodeType () {
         return this.type();
     }
@@ -233,16 +297,31 @@
     }
     */
 
+    /**
+     * @method nodeCreate
+     * @description Create a new instance of this node.
+     * @returns {BMNode} A new instance of this node.
+     */
     nodeCreate () {
         // we implemnet this on BMNode class and prototype so 
         // it works for both instance and class creator prototypes
         return this.duplicate();
     }
     
+    /**
+     * @method nodeCreateName
+     * @description Get the name used for node creation.
+     * @returns {string} The name used for node creation.
+     */
     nodeCreateName () {
         return this.title();
     }
 
+    /**
+     * @method duplicate
+     * @description Create a duplicate of this instance.
+     * @returns {BMNode} A duplicate of this instance.
+     */
     duplicate () {
         const dup = super.duplicate();
         if (!this.shouldStore() || this.shouldStoreSubnodes()) {
@@ -251,12 +330,22 @@
         return dup;
     }
 
+    /**
+     * @method pid
+     * @description Get the persistent unique identifier (puuid) for this instance.
+     * @returns {string} The puuid.
+     */
     pid () { // TODO: unify with puuid?
         return this.puuid();
     }
 
     // -----------------------
     
+    /**
+     * @method nodeVisibleClassName
+     * @description Get the visible class name for this node.
+     * @returns {string} The visible class name.
+     */
     nodeVisibleClassName () {
         if (this._nodeVisibleClassName) {
             return this._nodeVisibleClassName;
@@ -267,6 +356,12 @@
 
     // --- subnodes ----------------------------------------
     
+    /**
+     * @method setParentNode
+     * @description Set the parent node for this instance.
+     * @param {BMNode} aNode - The new parent node.
+     * @returns {BMNode} This instance.
+     */
     setParentNode (aNode) {
         assert(aNode !== this); // sanity check
 
@@ -283,10 +378,21 @@
         return this;
     }
 
+    /**
+     * @method didUpdateSlotParentNode
+     * @description Handle the update of the parent node slot.
+     * @param {BMNode} oldValue - The old parent node.
+     * @param {BMNode} newValue - The new parent node.
+     */
     didUpdateSlotParentNode (oldValue, newValue) {
         // for subclasses to override
     }
 
+    /**
+     * @method rootNode
+     * @description Get the root node of this instance's parent chain.
+     * @returns {BMNode} The root node.
+     */
     rootNode () {
         const pn = this.parentNode();
         if (pn) {
@@ -297,19 +403,42 @@
 
     // subnodes
 
+    /**
+     * @method subnodeCount
+     * @description Get the number of subnodes.
+     * @returns {number} The number of subnodes.
+     */
     subnodeCount () {
         return this._subnodes.length;
     }
 
+    /**
+     * @method hasSubnodes
+     * @description Check if this instance has any subnodes.
+     * @returns {boolean} Whether this instance has subnodes.
+     */
     hasSubnodes () {
         return this.subnodeCount() > 0;
     }
 
+    /**
+     * @method justAddSubnode
+     * @description Add a subnode to this instance without any checks.
+     * @param {BMNode} aSubnode - The subnode to add.
+     * @returns {BMNode} The added subnode.
+     */
     justAddSubnode (aSubnode) {
         assert(!this.hasSubnode(aSubnode));
         return this.justAddSubnodeAt(aSubnode, this.subnodeCount());
     }
 	
+    /**
+     * @method justAddSubnodeAt
+     * @description Add a subnode to this instance at a specific index without any checks.
+     * @param {BMNode} aSubnode - The subnode to add.
+     * @param {number} anIndex - The index at which to add the subnode.
+     * @returns {BMNode} The added subnode.
+     */
     justAddSubnodeAt (aSubnode, anIndex) {
         assert(aSubnode);
         assert(!this.hasSubnode(aSubnode));
@@ -318,10 +447,22 @@
         return aSubnode;
     }
     
+    /**
+     * @method assertValidSubnodeType
+     * @description Assert that a given subnode is a valid type.
+     * @param {BMNode} aSubnode - The subnode to check.
+     */
     assertValidSubnodeType (aSubnode) {
         assert(aSubnode.thisClass().isKindOf(BMNode), "Attempt to add subnode of type '" + aSubnode.type() + "' which does not inherit from BMNode (as subnodes are required to do)");
     }
 
+    /**
+     * @method addSubnodeAt
+     * @description Add a subnode to this instance at a specific index.
+     * @param {BMNode} aSubnode - The subnode to add.
+     * @param {number} anIndex - The index at which to add the subnode.
+     * @returns {BMNode} The added subnode.
+     */
     addSubnodeAt (aSubnode, anIndex) {
         assert(!this.hasSubnode(aSubnode));
         this.assertValidSubnodeType(aSubnode);
@@ -332,6 +473,12 @@
         return aSubnode;
     }
 
+    /**
+     * @method subnodeBefore
+     * @description Get the subnode before a given subnode.
+     * @param {BMNode} aSubnode - The reference subnode.
+     * @returns {BMNode|null} The subnode before the reference subnode, or null if it's the first subnode.
+     */
     subnodeBefore (aSubnode) {
         const index = this.indexOfSubnode(aSubnode);
         assert(index !== -1);
@@ -341,6 +488,13 @@
         return null;
     }
 
+    /**
+     * @method replaceSubnodeWith
+     * @description Replace a subnode with another subnode.
+     * @param {BMNode} aSubnode - The subnode to replace.
+     * @param {BMNode} newSubnode - The new subnode.
+     * @returns {BMNode} The new subnode.
+     */
     replaceSubnodeWith (aSubnode, newSubnode) {
         assert(!this.hasSubnode(newSubnode));
 
@@ -351,6 +505,13 @@
         return newSubnode;
     }
 
+    /**
+     * @method replaceSubnodeWithSubnodes
+     * @description Replace a subnode with multiple subnodes.
+     * @param {BMNode} aSubnode - The subnode to replace.
+     * @param {Array} newSubnodes - The new subnodes.
+     * @returns {BMNode} This instance.
+     */
     replaceSubnodeWithSubnodes (aSubnode, newSubnodes) {
         let index = this.indexOfSubnode(aSubnode);
         assert(index !== -1);
@@ -363,16 +524,35 @@
         return this;
     }
 
+    /**
+     * @method moveSubnodesToIndex
+     * @description Move multiple subnodes to a specific index.
+     * @param {Array} movedSubnodes - The subnodes to move.
+     * @param {number} anIndex - The index to which to move the subnodes.
+     * @returns {BMNode} This instance.
+     */
     moveSubnodesToIndex (movedSubnodes, anIndex) {
         this.subnodes().moveItemsToIndex(movedSubnodes, anIndex)
         return this
     }
 
+    /**
+     * @method addSubnode
+     * @description Add a subnode to this instance.
+     * @param {BMNode} aSubnode - The subnode to add.
+     * @returns {BMNode} The added subnode.
+     */
     addSubnode (aSubnode) {
         assert(!this.hasSubnode(aSubnode));
         return this.addSubnodeAt(aSubnode, this.subnodeCount());
     }
 
+    /**
+     * @method addLinkSubnode
+     * @description Add a link subnode to this instance.
+     * @param {BMNode} aNode - The node to link to.
+     * @returns {BMLinkNode} The created link subnode.
+     */
     addLinkSubnode (aNode) {
         /*
         if (aNode.parentNode()) {
@@ -384,16 +564,34 @@
         return link;
     }
 
+    /**
+     * @method addSubnodes
+     * @description Add multiple subnodes to this instance.
+     * @param {Array} subnodes - The subnodes to add.
+     * @returns {BMNode} This instance.
+     */
     addSubnodes (subnodes) {
         subnodes.forEach(subnode => this.addSubnode(subnode));
         return this;
     }
 
+    /**
+     * @method addSubnodesIfAbsent
+     * @description Add multiple subnodes to this instance if they are not already present.
+     * @param {Array} subnodes - The subnodes to add.
+     * @returns {BMNode} This instance.
+     */
     addSubnodesIfAbsent (subnodes) {
         subnodes.forEach(subnode => this.addSubnodeIfAbsent(subnode));
         return this;
     }
     
+    /**
+     * @method addSubnodeIfAbsent
+     * @description Add a subnode to this instance if it is not already present.
+     * @param {BMNode} aSubnode - The subnode to add.
+     * @returns {boolean} Whether the subnode was added.
+     */
     addSubnodeIfAbsent (aSubnode) {
         if (!this.hasSubnode(aSubnode)) {
             this.addSubnode(aSubnode);
@@ -402,22 +600,44 @@
         return false;
     }
 
+    /**
+     * @method subnodeProto
+     * @description Get the prototype for creating new subnodes.
+     * @returns {Function} The prototype for creating new subnodes.
+     */
     subnodeProto () {
         return this.subnodeClasses().first();
     }
 
+    /**
+     * @method setSubnodeProto
+     * @description Set the prototype for creating new subnodes.
+     * @param {Function} aProto - The prototype for creating new subnodes.
+     * @returns {BMNode} This instance.
+     */
     setSubnodeProto (aProto) {
         this.subnodeClasses().removeAll();
         this.subnodeClasses().appendIfAbsent(aProto);
         return this;
     }
 
+    /**
+     * @method acceptedSubnodeTypes
+     * @description Get the accepted subnode types.
+     * @returns {Array} An array of accepted subnode types.
+     */
     acceptedSubnodeTypes () {
         const types = [];
         this.subnodeClasses().forEach(c => types.push(c.type()));
         return types;
     }
 
+    /**
+     * @method acceptsAddingSubnode
+     * @description Check if this instance accepts adding a given subnode.
+     * @param {BMNode} aSubnode - The subnode to check.
+     * @returns {boolean} Whether this instance accepts adding the subnode.
+     */
     acceptsAddingSubnode (aSubnode) {
         if (aSubnode === this) {
             return false;
@@ -433,6 +653,11 @@
         return this.acceptedSubnodeTypes().canDetect(type => ancestors.contains(type));
     }
 
+    /**
+     * @method forEachSubnodeRecursively
+     * @description Perform a function on each subnode recursively.
+     * @param {Function} fn - The function to perform on each subnode.
+     */
     forEachSubnodeRecursively (fn) {
         this.subnodes().forEach(sn => {
             fn(sn);
@@ -440,6 +665,12 @@
         })
     }
 
+    /**
+     * @method selectSubnodesRecursively
+     * @description Select subnodes recursively based on a function.
+     * @param {Function} fn - The function to select subnodes.
+     * @returns {Array} An array of selected subnodes.
+     */
     selectSubnodesRecursively (fn) {
         const results = [];
         this.forEachSubnodeRecursively(subnode => {
@@ -452,6 +683,12 @@
 
     // --------
 
+    /**
+     * @method addSubnodeIfAbsent
+     * @description Add a subnode to this instance if it is not already present.
+     * @param {BMNode} aNode - The subnode to add.
+     * @returns {BMNode} This instance.
+     */
     addSubnodeIfAbsent (aNode) {
         if (!this.hasSubnode(aNode)) {
             this.addSubnode(aNode);
@@ -459,6 +696,12 @@
         return this;
     }
 
+    /**
+     * @method removeSubnodeIfPresent
+     * @description Remove a subnode from this instance if it is present.
+     * @param {BMNode} aNode - The subnode to remove.
+     * @returns {BMNode} This instance.
+     */
     removeSubnodeIfPresent (aNode) {
         if (this.hasSubnode(aNode)) {
             this.removeSubnode(aNode);
@@ -468,21 +711,43 @@
 
     // --------
 	
+    /**
+     * @method isEqual
+     * @description Check if this instance is equal to another instance.
+     * @param {BMNode} aNode - The instance to compare.
+     * @returns {boolean} Whether this instance is equal to the other instance.
+     */
     isEqual (aNode) {
 	    return this === aNode;
     }
 
+    /**
+     * @method hash
+     * @description Get the hash value for this instance.
+     * @returns {string} The hash value.
+     */
     hash () {
         // don't assume hash() always returns the puuid as
         // subclasses can override to measure equality in their own way
         return this.puuid();
     }
 
+    /**
+     * @method createSubnodesIndex
+     * @description Create an index for the subnodes array.
+     * @returns {BMNode} This instance.
+     */
     createSubnodesIndex () {
         this.subnodes().setIndexClosure( v => v.hash());
         return this
     }
 	
+    /**
+     * @method hasSubnode
+     * @description Check if this instance has a given subnode.
+     * @param {BMNode} aSubnode - The subnode to check.
+     * @returns {boolean} Whether this instance has the subnode.
+     */
     hasSubnode (aSubnode) {
         const subnodes = this.subnodes();
         if (subnodes.length > 100) {
@@ -493,6 +758,12 @@
         return subnodes.detect(subnode => subnode.isEqual(aSubnode));
     }
     
+    /**
+     * @method justRemoveSubnode
+     * @description Remove a subnode from this instance without any checks.
+     * @param {BMNode} aSubnode - The subnode to remove.
+     * @returns {BMNode} The removed subnode.
+     */
     justRemoveSubnode (aSubnode) { // private method 
         this.subnodes().remove(aSubnode);
         
@@ -503,17 +774,34 @@
         return aSubnode;
     }
     
+    /**
+     * @method removeSubnode
+     * @description Remove a subnode from this instance.
+     * @param {BMNode} aSubnode - The subnode to remove.
+     * @returns {BMNode} The removed subnode.
+     */
     removeSubnode (aSubnode) {
         this.justRemoveSubnode(aSubnode);
         //this.didChangeSubnodeList(); // handled by hooked array
         return aSubnode;
     }
 
+    /**
+     * @method removeSubnodes
+     * @description Remove multiple subnodes from this instance.
+     * @param {Array} subnodeList - The subnodes to remove.
+     * @returns {BMNode} This instance.
+     */
     removeSubnodes (subnodeList) {
         subnodeList.forEach(sn => this.removeSubnode(sn));
         return this;
     }
     
+    /**
+     * @method removeAllSubnodes
+     * @description Remove all subnodes from this instance.
+     * @returns {BMNode} This instance.
+     */
     removeAllSubnodes () {
 	    if (this.subnodeCount()) {
     		this.subnodes().slice().forEach((subnode) => {
@@ -525,13 +813,26 @@
         return this;
     }
 
+    /**
+     * @method didReorderParentSubnodes
+     * @description Handle the reordering of parent subnodes.
+     */
     didReorderParentSubnodes () {
     }
 
+    /**
+     * @method onDidReorderSubnodes
+     * @description Handle the reordering of subnodes.
+     */
     onDidReorderSubnodes () {
         this.subnodes().forEach(subnode => subnode.didReorderParentSubnodes());
     }
 
+    /**
+     * @method didChangeSubnodeList
+     * @description Handle the change of the subnode list.
+     * @returns {BMNode} This instance.
+     */
     didChangeSubnodeList () {
         //this.subnodes().forEach(subnode => assert(subnode.parentNode() === this)); // TODO: remove after debugging
         this.scheduleMethod("onDidReorderSubnodes");
@@ -542,26 +843,54 @@
         return this;
     }
 
+    /**
+     * @method copySubnodes
+     * @description Copy subnodes from another instance.
+     * @param {Array} newSubnodes - The new subnodes.
+     * @returns {BMNode} This instance.
+     */
     copySubnodes (newSubnodes) {
         this.subnodes().copyFrom(newSubnodes);
         return this;
     }
 
+    /**
+     * @method nodeReorderSudnodesTo
+     * @description Reorder the subnodes of this instance.
+     * @param {Array} newSubnodes - The new order of subnodes.
+     * @returns {BMNode} This instance.
+     */
     nodeReorderSudnodesTo (newSubnodes) {
         this.copySubnodes(newSubnodes);
         return this;
     }
 
+    /**
+     * @method orderFirst
+     * @description Move this instance to the first position in its parent's subnode list.
+     * @returns {BMNode} This instance.
+     */
     orderFirst () {
         this.parentNode().orderSubnodeFirst(this);
         return this;
     }
 
+    /**
+     * @method orderLast
+     * @description Move this instance to the last position in its parent's subnode list.
+     * @returns {BMNode} This instance.
+     */
     orderLast () {
         this.parentNode().orderSubnodeLast(this);
         return this;
     }
 
+    /**
+     * @method orderSubnodeFirst
+     * @description Move a subnode to the first position in this instance's subnode list.
+     * @param {BMNode} aSubnode - The subnode to move.
+     * @returns {BMNode} This instance.
+     */
     orderSubnodeFirst (aSubnode) {
         assert(aSubnode);
         assert(this.hasSubnode(aSubnode));
@@ -572,6 +901,12 @@
         return this;
     }
 
+    /**
+     * @method orderSubnodeLast
+     * @description Move a subnode to the last position in this instance's subnode list.
+     * @param {BMNode} aSubnode - The subnode to move.
+     * @returns {BMNode} This instance.
+     */
     orderSubnodeLast (aSubnode) {
         assert(this.hasSubnode(aSubnode));
         const subnodes = this.subnodes().shallowCopy();
@@ -583,12 +918,22 @@
     
     // --- update / sync system ----------------------------
     
+    /**
+     * @method didUpdateNodeIfInitialized
+     * @description Trigger the didUpdateNode method if this instance has been initialized.
+     * @returns {boolean} Whether the didUpdateNode method was triggered.
+     */
     didUpdateNodeIfInitialized () {
         if (this.hasDoneInit()) {
             this.didUpdateNode();
         }
     }
 
+    /**
+     * @method didUpdateNode
+     * @description Trigger the didUpdateNode notification.
+     * @returns {boolean} Whether the notification was posted.
+     */
     didUpdateNode () {
         if (!this.hasDoneInit()) {
             return false;
@@ -616,14 +961,30 @@
         return true;
     }
 
+    /**
+     * @method hasDuplicateSubnodes
+     * @description Check if this instance has duplicate subnodes.
+     * @returns {boolean} Whether this instance has duplicate subnodes.
+     */
     hasDuplicateSubnodes () {
         return this.subnodes().hasDuplicates();
     }
 
+    /**
+     * @method indexOfSubnode
+     * @description Get the index of a subnode in this instance's subnode list.
+     * @param {BMNode} aSubnode - The subnode to find.
+     * @returns {number} The index of the subnode, or -1 if not found.
+     */
     indexOfSubnode (aSubnode) {
         return this.subnodes().indexOf(aSubnode);
     }
 
+    /**
+     * @method subnodeIndexInParent
+     * @description Get the index of this instance in its parent's subnode list.
+     * @returns {number} The index of this instance in its parent's subnode list.
+     */
     subnodeIndexInParent () {
         const p = this.parentNode();
         if (p) {
@@ -632,6 +993,11 @@
         return 0;
     }
 
+    /**
+     * @method nodeDepth
+     * @description Get the depth of this instance in the node hierarchy.
+     * @returns {number} The depth of this instance in the node hierarchy.
+     */
     nodeDepth () {
         const p = this.parentNode();
         if (p) {
@@ -642,6 +1008,10 @@
 
     // ---------------------------------------
 
+    /**
+     * @method prepareToAccess
+     * @description Prepare this instance to access its subnodes.
+     */
     prepareToAccess () {
         // this should be called whenever subnodes need to be accessed? See willGetSlotSubnodes
         if (!this._didPrepareForFirstAccess) {
@@ -650,6 +1020,10 @@
         }
     }
 
+    /**
+     * @method prepareForFirstAccess
+     * @description Prepare this instance for the first access to its subnodes.
+     */
     prepareForFirstAccess () {
         // subclasses can override 
     }
@@ -662,6 +1036,12 @@
     
     // --- parent chain notifications ---
     
+    /**
+     * @method tellParentNodes
+     * @description Send a message to this instance's parent nodes.
+     * @param {string} msg - The message to send.
+     * @param {*} aNode - The node associated with the message.
+     */
     tellParentNodes (msg, aNode) {
         const f = this[msg];
         if (f && f.apply(this, [aNode])) {
@@ -674,6 +1054,12 @@
         }
     }
 
+    /**
+     * @method parentChainNodes
+     * @description Get the parent chain of this instance.
+     * @param {Array} [chain=[]] - The current parent chain.
+     * @returns {Array} The parent chain of this instance.
+     */
     parentChainNodes (chain = []) {
         chain.unshift(this);
         const p = this.parentNode();
@@ -683,6 +1069,13 @@
         return chain;
     }
 
+    /**
+     * @method parentChainNodeTo
+     * @description Get the parent chain from this instance to a given node.
+     * @param {BMNode} node - The target node.
+     * @param {Array} [chain=[]] - The current parent chain.
+     * @returns {Array} The parent chain from this instance to the target node.
+     */
     parentChainNodeTo (node, chain = []) {
         if (this !== node) {
             chain.unshift(this);
@@ -694,6 +1087,12 @@
         return chain;
     }
 
+    /**
+     * @method firstParentChainNodeOfClass
+     * @description Get the first parent node of a given class in this instance's parent chain.
+     * @param {Function} aClass - The class to search for.
+     * @returns {BMNode|null} The first parent node of the given class, or null if not found.
+     */
     firstParentChainNodeOfClass (aClass) {
         //return this.firstParentChainNodeDetect(node => node.thisClass().isSubclassOf(aClass));
 
@@ -708,10 +1107,22 @@
         return null;
     }
 
+    /**
+     * @method firstParentChainNodeThatRespondsTo
+     * @description Get the first parent node that responds to a given method in this instance's parent chain.
+     * @param {string} methodName - The method name to search for.
+     * @returns {BMNode|null} The first parent node that responds to the given method, or null if not found.
+     */
     firstParentChainNodeThatRespondsTo (methodName) {
         return this.firstParentChainNodeDetect(node => node.respondsTo(methodName));
     }
 
+    /**
+     * @method firstParentChainNodeDetect
+     * @description Get the first parent node that satisfies a given condition in this instance's parent chain.
+     * @param {Function} func - The condition function.
+     * @returns {BMNode|null} The first parent node that satisfies the condition, or null if not found.
+     */
     firstParentChainNodeDetect (func) {
         // return this.parentChainNodes().detect(func);
         if (func(this)) {
@@ -727,6 +1138,11 @@
     
     // --- log ------------------------
     
+    /**
+     * @method log
+     * @description Log a message if this instance is in debug mode.
+     * @param {string} msg - The message to log.
+     */
     log (msg) {
         //const s = this.nodePathString() + " --  " + msg
         if (this.isDebugging()) {
@@ -736,12 +1152,24 @@
 
     // --- post notifications ----------------------------------------
 
+    /**
+     * @method postShouldFocusSubnode
+     * @description Post the shouldFocusSubnode notification.
+     * @param {BMNode} aSubnode - The subnode to focus.
+     * @returns {BMNode} This instance.
+     */
     postShouldFocusSubnode (aSubnode) {
         assert(aSubnode);
         this.shouldFocusSubnodeNote().setInfo(aSubnode).post();
         return this;
     }
 
+    /**
+     * @method postShouldFocusAndExpandSubnode
+     * @description Post the shouldFocusAndExpandSubnode notification.
+     * @param {BMNode} aSubnode - The subnode to focus and expand.
+     * @returns {BMNode} This instance.
+     */
     postShouldFocusAndExpandSubnode (aSubnode) {
         //debugger
         assert(aSubnode);
@@ -751,6 +1179,12 @@
 
     // -- adding subnodes by instantiating subnode class ----
     
+    /**
+     * @method justAddAt
+     * @description Add a new subnode at a given index without any checks.
+     * @param {number} anIndex - The index at which to add the subnode.
+     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     */
     justAddAt (anIndex) {
         const classes = this.subnodeClasses().shallowCopy();
 
@@ -770,10 +1204,21 @@
         return newSubnode;
     }
 
+    /**
+     * @method justAdd
+     * @description Add a new subnode at the end of the subnode list without any checks.
+     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     */
     justAdd (anIndex) {  
         return this.justAddAt(this.subnodeCount());
     }
 
+    /**
+     * @method addAt
+     * @description Add a new subnode at a given index.
+     * @param {number} anIndex - The index at which to add the subnode.
+     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     */
     addAt (anIndex) {
         const newSubnode = this.justAddAt(anIndex);
         if (newSubnode) {
@@ -783,11 +1228,21 @@
         return newSubnode;
     }
 
+    /**
+     * @method add
+     * @description Add a new subnode at the end of the subnode list.
+     * @returns {BMNode|null} The added subnode, or null if no subnode was added.
+     */
     add (noArg) {  
         assert(noArg === undefined);
         return this.addAt(this.subnodeCount());
     }
 
+    /**
+     * @method removeFromParentNode
+     * @description Remove this instance from its parent node.
+     * @returns {BMNode} This instance.
+     */
     removeFromParentNode () {
         const pn = this.parentNode();
         if (pn) {
@@ -798,6 +1253,11 @@
         return this;
     }
 	
+    /**
+     * @method delete
+     * @description Remove this instance from its parent node and destroy it.
+     * @returns {BMNode} This instance.
+     */
     delete () {
         this.removeFromParentNode();
         return this;
@@ -805,6 +1265,12 @@
 
     // --- utility -----------------------------
     
+    /**
+     * @method parentNodeOfType
+     * @description Get the first parent node of a given class.
+     * @param {string} className - The class name to search for.
+     * @returns {BMNode|null} The first parent node of the given class, or null if not found.
+     */
     parentNodeOfType (className) {
         if (this.type() === className) {
             return this;
@@ -817,6 +1283,11 @@
         return null;
     }
 
+    /**
+     * @method parentNodes
+     * @description Get all parent nodes of this instance.
+     * @returns {Array} An array of parent nodes.
+     */
     parentNodes () {
         const node = this.parentNode();
         const results = [];
@@ -827,22 +1298,45 @@
         }
         return results;
     }
-	
+    
+    /**
+     * @method parentNodeTypes
+     * @description Get the types of all parent nodes of this instance.
+     * @returns {Array} An array of parent node types.
+     */
     parentNodeTypes () {
         return this.parentNodes().map(node => node.type());
     }
     
     // --- subnode lookup -----------------------------
     
+    /**
+     * @method subnodesSans
+     * @description Get all subnodes of this instance except for a given subnode.
+     * @param {BMNode} aSubnode - The subnode to exclude.
+     * @returns {Array} An array of subnodes excluding the given subnode.
+     */
     subnodesSans (aSubnode) {
 	    return this.subnodes().select(subnode => subnode !== aSubnode);
     }
-	
+    
+    /**
+     * @method firstSubnodeOfType
+     * @description Get the first subnode of a given class.
+     * @param {string|object} obj - The class or prototype to search for.
+     * @returns {BMNode|null} The first subnode of the given class or prototype, or null if not found.
+     */
     firstSubnodeOfType (obj) {
         // obj could be clas, prototype, or instance
         return this.subnodes().detect(subnode => subnode.type() === obj.type());
     }
-
+            
+    /**
+     * @method setupSubnodeOfType
+     * @description Ensure a subnode of a given class exists and add it if not.
+     * @param {string|object} aClass - The class or prototype to search for.
+     * @returns {BMNode} The found or created subnode.
+     */
     setupSubnodeOfType (aClass) {
         let subnode = this.firstSubnodeOfType(aClass);
         if (!subnode) {
@@ -851,7 +1345,13 @@
         }
         return subnode;
     }
-        
+    /**
+     * @method sendRespondingSubnodes
+     * @description Send a method to all subnodes that respond to it.
+     * @param {string} aMethodName - The method name to send.
+     * @param {Array} argumentList - The arguments to pass to the method.
+     * @returns {BMNode} This instance.
+     */
     sendRespondingSubnodes (aMethodName, argumentList) {
         this.subnodes().forEach((subnode) => { 
             if (subnode[aMethodName]) {
@@ -862,11 +1362,20 @@
     }
     
     // --- subnodes -----------------------------
-    
+    /**
+     * @method subnodesCount
+     * @description Get the number of subnodes of this instance.
+     * @returns {number} The number of subnodes.
+     */
     subnodesCount () {
         return this.subnodes().length;
     }
 
+    /**
+     * @method onDidMutateObject
+     * @description Handle the mutation of an object.
+     * @param {object} anObject - The object that was mutated.
+     */
     onDidMutateObject (anObject) {
         if (anObject === this._subnodes) {
             //assert(!this.subnodes().hasDuplicates())
@@ -874,15 +1383,32 @@
         }
     }
 
+    /**
+     * @method watchSubnodes
+     * @description Watch the subnodes of this instance for changes.
+     * @returns {BMNode} This instance.
+     */
     watchSubnodes () {
         this._subnodes.addMutationObserver(this);
         return this
     }
 
+    /**
+     * @method hasNullSubnodes
+     * @description Check if this instance has any null subnodes.
+     * @returns {boolean} True if there are null subnodes, false otherwise.
+     */
     hasNullSubnodes () {
         return this.subnodes().indexOf(null) !== -1;
     }
 
+    /**
+     * @method didUpdateSlotSubnodes
+     * @description Handle the update of the subnodes slot.
+     * @param {Array} oldValue - The old subnodes array.
+     * @param {Array} newValue - The new subnodes array.
+     * @returns {BMNode} This instance.
+     */
     didUpdateSlotSubnodes (oldValue, newValue) {
         if (oldValue) {
             oldValue.removeMutationObserver(this);
@@ -931,6 +1457,11 @@
         return this
     }
     
+    /**
+     * @method assertSubnodesHaveParentNodes
+     * @description Assert that all subnodes have a parent node.
+     * @returns {BMNode} This instance.
+     */
     assertSubnodesHaveParentNodes () {
         const missing = this.subnodes().detect(subnode => !subnode.parentNode())
         if (missing) {
@@ -941,17 +1472,33 @@
 
     // --- subnode sorting ---
 	
+    /**
+     * @method setSubnodeSortFunc
+     * @description Set the sorting function for the subnodes.
+     * @param {function} f - The sorting function.
+     * @returns {BMNode} This instance.
+     */
     setSubnodeSortFunc (f) {
         this.subnodes().setSortFunc(f)
 	    return this
     }
-	
+    
+    /**
+     * @method doesSortSubnodes
+     * @description Check if the subnodes are sorted.
+     * @returns {boolean} True if the subnodes are sorted, false otherwise.
+     */
     doesSortSubnodes () {
 	    return this.subnodes().doesSort()
     }
     
     // --- subnode indexing ---
 	
+    /**
+     * @method lazyIndexedSubnodes
+     * @description Get the indexed subnodes of this instance.
+     * @returns {Array} The indexed subnodes.
+     */
     lazyIndexedSubnodes () {
         if (!this.subnodes().indexClosure()) {
             this.subnodes().setIndexClosure( sn => sn.hash() )
@@ -959,10 +1506,22 @@
 	    return this.subnodes()
     }
 	
+    /**
+     * @method subnodeWithHash
+     * @description Get the subnode with a given hash.
+     * @param {string} h - The hash to search for.
+     * @returns {BMNode|null} The subnode with the given hash, or null if not found.
+     */
     subnodeWithHash (h) {
         return this.lazyIndexedSubnodes().itemForIndexKey(h)
     }
 	
+    /**
+     * @method removeSubnodeWithHash
+     * @description Remove the subnode with a given hash.
+     * @param {string} h - The hash to search for.
+     * @returns {BMNode} This instance.
+     */
     removeSubnodeWithHash (h) {
 	    const subnode = this.subnodeWithHash(h)
 	    if (subnode) {
@@ -971,32 +1530,63 @@
 	    return this
     }
 	
+    /**
+     * @method hasSubnodeWithHash
+     * @description Check if this instance has a subnode with a given hash.
+     * @param {string} h - The hash to search for.
+     * @returns {boolean} True if the subnode exists, false otherwise.
+     */
     hasSubnodeWithHash (h) {
 	    return this.lazyIndexedSubnodes().hasIndexKey(h)
     }
 	
     // visibility
 	
+    /**
+     * @method nodeBecameVisible
+     * @description Handle the node becoming visible.
+     * @returns {BMNode} This instance.
+     */
     nodeBecameVisible () {
 	    return this
     }
 
     // -- view selection request events ---
 
+    /**
+     * @method onRequestSelectionOfDecendantNode
+     * @description Handle the request to select a decendant node.
+     * @returns {boolean} False to allow propogation up the parentNode line.
+     */
     onRequestSelectionOfDecendantNode () {
         return false // allow propogation up the parentNode line
     }
 
+    /**
+     * @method onRequestSelectionOfNode
+     * @description Handle the request to select this node.
+     * @returns {BMNode} This instance.
+     */
     onRequestSelectionOfNode () {
         this.tellParentNodes("onRequestSelectionOfDecendantNode", this)
         return this
     }
 
+    /** 
+     * @method onTapOfNode
+     * @description Handle the tap on this node.
+     * @returns {BMNode} This instance.
+     */
     onTapOfNode () {
         this.tellParentNodes("onTapOfDecendantNode", this)
         return this
     }
 
+    /**
+     * @method debugTypeId
+     * @description Get the debug type ID of this instance.
+     * @returns {string} The debug type ID.
+     */
     debugTypeId () {
         return this.typeId() + " '" + this.title() + "'"
     }
@@ -1037,6 +1627,11 @@
     }
     */
 
+    /**
+     * @method collapseUnbranchingNodes
+     * @description Collapse unbranching nodes.
+     * @returns {BMNode} This instance.
+     */
     collapseUnbranchingNodes () {
         this.subnodes().forEach(sn => sn.collapseUnbranchingNodes());
         this.subnodes().shallowCopy().forEach(sn => {
@@ -1053,10 +1648,23 @@
         return this
     }
 
+    /**
+     * @method leafSubnodes
+     * @description Get the leaf subnodes of this instance.
+     * @param {Array} results - The array to store the results.
+     * @returns {Array} The leaf subnodes.
+     */
     leafSubnodes (results = []) {
          this.subnodes().forEach(sn => sn.leafSubnodesIncludingSelf(results));
          return results
     }
+
+    /**
+     * @method leafSubnodesIncludingSelf
+     * @description Get the leaf subnodes including this instance.
+     * @param {Array} results - The array to store the results.
+     * @returns {Array} The leaf subnodes including this instance.
+     */
 
     leafSubnodesIncludingSelf (results = []) {
         if (!this.hasSubnodes()) {
@@ -1069,6 +1677,12 @@
 
     // --- options helper ---- TODO: move elsewhere
 
+    /**
+     * @method addOptionNodeForDict
+     * @description Add an option node for a dictionary.
+     * @param {object} item - The dictionary containing node information.
+     * @returns {BMNode} The new node.
+     */
     addOptionNodeForDict (item) {
         const hasSubnodes = item.options && item.options.length
         const nodeClass = hasSubnodes ? BMFolderNode : BMOptionNode;
@@ -1093,6 +1707,12 @@
         return newNode
     }
 
+    /**
+     * @method addOptionNodesForArray
+     * @description Add option nodes for an array of dictionaries.
+     * @param {Array} itemDicts - The array of dictionaries.
+     * @returns {BMNode} This instance.
+     */
     addOptionNodesForArray (itemDicts) {
         if (itemDicts) {
             itemDicts.forEach(subitemDict => {
@@ -1104,6 +1724,12 @@
 
     // --- jsonArchive ---
 
+    /**
+     * @method setJsonArchive
+     * @description Set the JSON archive for this instance.
+     * @param {object} json - The JSON object to set.
+     * @returns {BMNode} This instance.
+     */
     setJsonArchive (json) {
         // NOTE: use slot.setShouldJsonArchive(true) to set a slot to be json archived
         
@@ -1138,6 +1764,11 @@
     }
 
 
+    /**
+     * @method jsonArchive
+     * @description Get the JSON archive for this instance.
+     * @returns {object} The JSON archive.
+     */
     jsonArchive () {
         const jsonArchiveSlots = this.thisPrototype().slotsWithAnnotation("shouldJsonArchive", true) 
         const dict = {
@@ -1155,6 +1786,12 @@
         return dict
     }
     
+    /**
+     * @method fromJsonArchive
+     * @description Create an instance from a JSON archive.
+     * @param {object} json - The JSON object to create the instance from.
+     * @returns {BMNode} The new instance.
+     */
     static fromJsonArchive (json) {
         const className = json.type;
         assert(className); // sanity check
@@ -1168,21 +1805,42 @@
 
     // --- JSON schema properties ---
 
+    /**
+     * @method jsonSchemaString
+     * @description Get the JSON schema string for this instance.
+     * @returns {string} The JSON schema string.
+     */
     static jsonSchemaString () {
         const schema = this.asRootJsonSchema();
         const s = JSON.stableStringify(schema, 2, 2);
         return s;
     }
 
+    /**
+     * @method jsonSchemaTitle
+     * @description Get the JSON schema title for this instance.
+     * @returns {string} The JSON schema title.
+     */
     static jsonSchemaTitle () {
         return this.type();
     }
 
+    /**
+     * @method jsonSchemaSlots
+     * @description Get the JSON schema slots for this instance.
+     * @returns {Array} The JSON schema slots.
+     */
     static jsonSchemaSlots () {
         const jsonArchiveSlots = this.prototype.slotsWithAnnotation("isInJsonSchema", true);
         return jsonArchiveSlots;
     }
 
+    /**
+     * @method jsonSchemaProperties
+     * @description Get the JSON schema properties for this instance.
+     * @param {Set} refSet - The reference set.
+     * @returns {object} The JSON schema properties.
+     */
     static jsonSchemaProperties (refSet) {
         assert(refSet);
         assert(this.asJsonSchema); // sanity check - we'll need this 
@@ -1202,7 +1860,12 @@
 
         return properties;
     }
-
+    
+    /**
+     * @method jsonSchemaRequired
+     * @description Get the JSON schema required for this instance.
+     * @returns {Array} The JSON schema required.
+     */
     static jsonSchemaRequired () {
         const slots = this.jsonSchemaSlots();
 
@@ -1224,12 +1887,24 @@
 
     // --- json schema ---
 
+    /**
+     * @method asRootJsonSchemaString
+     * @description Get the root JSON schema string for this instance.
+     * @param {boolean} definitionsOnly - Whether to include only the definitions.
+     * @returns {string} The root JSON schema string.
+     */
     static asRootJsonSchemaString (definitionsOnly = false) {
         const json = this.asRootJsonSchema(definitionsOnly);
         const s = JSON.stableStringify(json, 4, 4);
         return s;
     }
 
+    /**
+     * @method asRootJsonSchema
+     * @description Get the root JSON schema for this instance.
+     * @param {boolean} definitionsOnly - Whether to include only the definitions.
+     * @returns {object} The root JSON schema.
+     */
     static asRootJsonSchema (definitionsOnly = false) {
         // NOTE: this uses a format of all definitions at the top level
 
@@ -1270,6 +1945,12 @@
         return json;
     }
 
+    /**
+     * @method jsonSchemaDefinitionsForRefSet
+     * @description Get the JSON schema definitions for a reference set.
+     * @param {Set} refSet - The reference set.
+     * @returns {object} The JSON schema definitions.
+     */
     static jsonSchemaDefinitionsForRefSet (refSet) {
         assert(refSet);
         const definitions = {};
@@ -1319,6 +2000,12 @@
         return definitions;
     }
 
+    /**
+     * @method asJsonSchema
+     * @description Get the JSON schema for this instance.
+     * @param {Set} refSet - The reference set.
+     * @returns {object} The JSON schema.
+     */
     static asJsonSchema (refSet) {
         assert(refSet);
         const schema = {
@@ -1337,11 +2024,24 @@
         return schema;
     }
 
+    /**
+     * @method jsonSchemaRef
+     * @description Get the JSON schema reference for this instance.
+     * @param {Set} refSet - The reference set.
+     * @returns {string} The JSON schema reference.
+     */
     static jsonSchemaRef (refSet) {
         assert(refSet);
         return this.jsonSchemaRefForTypeName(this.type(), refSet);
     }
 
+    /**
+     * @method jsonSchemaRefForTypeName
+     * @description Get the JSON schema reference for a type name.
+     * @param {string} typeName - The type name.
+     * @param {Set} refSet - The reference set.
+     * @returns {string} The JSON schema reference.
+     */
     static jsonSchemaRefForTypeName (typeName, refSet) {
         assert(Type.isSet(refSet));
         assert(this.asJsonSchema); // sanity check - we'll need this 
@@ -1350,6 +2050,12 @@
         return "#/definitions/" + typeName;
     }
 
+    /**
+     * @method instanceFromJson
+     * @description Create an instance from a JSON object.
+     * @param {object} json - The JSON object.
+     * @returns {BMNode} The new instance.
+     */
     static instanceFromJson (json) {
         const properties = json.properties;
         assert(properties, "missing properties in json");
@@ -1364,6 +2070,12 @@
         return instance;
     }
 
+    /**
+     * @method fromJsonSchema
+     * @description Set the instance from a JSON object.
+     * @param {object} json - The JSON object.
+     * @returns {BMNode} This instance.
+     */
     fromJsonSchema (json) {
         const slots = this.slotsWithAnnotation("isInJsonSchema", true);
 
@@ -1411,6 +2123,12 @@
 
     // ---- shutdown ----
 
+    /**
+     * @method nodeShutdown
+     * @description Shutdown the node.
+     * @param {Set} visited - The visited set.
+     * @returns {BMNode} This instance.
+     */
     nodeShutdown (visited = new Set()) {
         // need to check for loops
         if (visited.has(this)) {
@@ -1425,9 +2143,20 @@
         });
       }
 
+      /**
+       * @method slotsWhoseValuesAreOwned
+       * @description Get the slots whose values are owned by this instance.
+       * @returns {Array} The slots whose values are owned by this instance.
+       */
       slotsWhoseValuesAreOwned () {
         return this.thisPrototype().slots().filter(slot => slot.ownsValue());
       }
+
+      /**
+       * @method ownedSlotValues
+       * @description Get the owned slot values.
+       * @returns {Array} The owned slot values.
+       */
 
       ownedSlotValues () {
         return this.slotsWhoseValuesAreOwned().map(slot => slot.onInstanceGetValue(this));

@@ -1,3 +1,5 @@
+"use strict";
+
 /**
  * @module library.app
  * @class HeaderNode
@@ -9,7 +11,6 @@
  *   (if not already set up after loading from store)
  */
 
-"use strict";
 
 (class HeaderNode extends BMFolderNode {
     

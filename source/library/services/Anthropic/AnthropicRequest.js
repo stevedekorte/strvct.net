@@ -85,7 +85,8 @@
         "anthropic-version": "2023-06-01",
         "anthropic-beta": this.betaVersion(),
         "x-api-key": apiKey,
-        'Accept-Encoding': "identity"
+        'Accept-Encoding': "identity",
+        'anthropic-dangerous-direct-browser-access': true
       },
       body: JSON.stringify(this.bodyJson()),
     };

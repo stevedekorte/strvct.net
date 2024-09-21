@@ -1,21 +1,29 @@
+/**
+ * @module library.node.nodes.base
+ * @class StyledNode
+ * @extends ViewableNode
+ * @classdesc StyledNode extends ViewableNode and is part of the inheritance chain:
+ * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+ * 
+ * This class is responsible for state and behavior specific to styling of views.
+ */
+
 "use strict";
-
-/*
-
-    StyledNode
- 
-    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
-
-    For state and behavior specific to styling of views.
-
-*/
 
 (class StyledNode extends ViewableNode {
     
+    /**
+     * Initializes the prototype slots for the StyledNode class.
+     * @method initPrototypeSlots
+     * @description Sets up the themeClassName slot with specific properties and behaviors.
+     */
     initPrototypeSlots () {
         // view style overrides
         {
-            //const slot = this.newSlot("themeClassName", "DefaultThemeClass")
+            /**
+             * @property {String} themeClassName
+             * @description The theme class name for styling the node.
+             */
             const slot = this.newSlot("themeClassName", null)
             slot.setShouldStoreSlot(true)
             slot.setCanInspect(true)
@@ -26,15 +34,15 @@
             slot.setValidValuesClosure((instance) => { 
                 return BMThemeResources.shared().activeTheme().themeClassNames()
             })   
-            //slot.setInspectorPath("Style")
         }
     }
 
+    /**
+     * Initializes the prototype of the StyledNode class.
+     * @method initPrototype
+     * @description This method is currently empty and can be used for future prototype initializations.
+     */
     initPrototype () {
     }
 
 }.initThisClass());
-
-
-
-

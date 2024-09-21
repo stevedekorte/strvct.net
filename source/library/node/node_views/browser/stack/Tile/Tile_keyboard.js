@@ -1,8 +1,5 @@
 /**
  * @module browser.stack.Tile
- */
-
-/**
  * @class Tile_keyboard
  * @extends Tile
  * @classdesc Handles keyboard interactions for Tile objects.

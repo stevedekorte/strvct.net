@@ -1,34 +1,29 @@
-/**
- * @module library.node.nodes.base
- */
-
 "use strict";
 
-/**
- * @class ViewableNode
- * @extends InspectableNode
- * @classdesc Class for handling a node's connection to the user interface.
- * Views can reference nodes, but nodes should not reference views. 
- * Views can query nodes for info or tell them to take actions, but otherwise 
- * nodes should only communicate with views via notfications.
- * 
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
- */
+/*
+
+    ViewableNode
+ 
+    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+
+    Class for handling a node's connection to the user interface.
+    Views can reference nodes, but nodes should not reference views. 
+    Views can query nodes for info or tell them to take actions, but otherwise 
+    nodes should only communicate with views via notfications.
+
+*/
+
 (class ViewableNode extends InspectableNode {
     
     initPrototypeSlots () {
-        /**
-         * @property {string|null} nodeViewClassName
-         */
+
         {
             const slot = this.newSlot("nodeViewClassName", null);
             slot.setAllowsNullValue(true);
             slot.setSlotType("String");
         }
         
-        /**
-         * @property {string} nodeTileClassName
-         */
+    
         {
             const addSlot = (name, path, label, values) => {
                 const slot = this.newSlot(name, "")
@@ -51,18 +46,24 @@
             //BMThemeResources.shared().activeTheme().newThemeClassOptions()
         }
         
-        /**
-         * @property {string|null} nodeThumbnailUrl
-         */
+
+        /*
+        {
+            const slot = this.newSlot("nodeTileClassName", null)
+            slot.setDuplicateOp("copyValue")
+            slot.setCanInspect(true)
+            slot.setLabel("Tile Class Name")
+            slot.setSlotType("String")
+            slot.setShouldStoreSlot(true)
+        }
+        */
+
         {
             const slot = this.newSlot("nodeThumbnailUrl", null);
             slot.setAllowsNullValue(true);
             slot.setSlotType("String");
         }
 
-        /**
-         * @property {boolean} nodeIsVertical
-         */
         {
             const slot = this.newSlot("nodeIsVertical", true);
             slot.setDuplicateOp("copyValue");
@@ -73,9 +74,6 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /**
-         * @property {string} nodeChildrenAlignment
-         */
         {
             const slot = this.newSlot("nodeChildrenAlignment", "flex-start");
             slot.setDuplicateOp("copyValue");
@@ -87,36 +85,24 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /**
-         * @property {boolean} nodeTileIsSelectable
-         */
         {
             const slot = this.newSlot("nodeTileIsSelectable", true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {boolean} nodeTilesStartAtBottom
-         */
         {
             const slot = this.newSlot("nodeTilesStartAtBottom", false);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {boolean} nodeNavBorderHint
-         */
         {
             const slot = this.newSlot("nodeNavBorderHint", true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {number} nodeMinTileHeight
-         */
         {
             const slot = this.newSlot("nodeMinTileHeight", 0);
             slot.setDuplicateOp("copyValue");
@@ -125,9 +111,6 @@
             slot.setSlotType("Number");
         }
 
-        /**
-         * @property {number} nodeMinTileWidth
-         */
         {
             const slot = this.newSlot("nodeMinTileWidth", 0);
             slot.setDuplicateOp("copyValue");
@@ -136,26 +119,29 @@
             slot.setSlotType("Number");
         }
 
-        /**
-         * @property {boolean} acceptsFileDrop
-         */
+        // html
+
         {
             const slot = this.newSlot("acceptsFileDrop", false);
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {string|null} nodeInputFieldMethod
-         */
+        // input hook
+
         {
             const slot = this.newSlot("nodeInputFieldMethod", null);
             slot.setAllowsNullValue(true);
             slot.setSlotType("String");
         }
 
-        /**
-         * @property {boolean} nodeFillsRemainingWidth
-         */
+        // column settings - TODO: auto adjust to fit?
+
+        /*
+        {
+            const slot = this.newSlot("nodeMinWidth", 200).setDuplicateOp("copyValue") // no longer used - we calc sizes of tiles instead
+        }
+        */
+        
         {
             const slot = this.newSlot("nodeFillsRemainingWidth", false);
             slot.setDuplicateOp("copyValue");
@@ -166,9 +152,6 @@
             slot.setInspectorPath("Node/Viewable/Children Layout");
         }
 
-        /**
-         * @property {boolean} nodeFillsWindow
-         */
         {
             const slot = this.newSlot("nodeFillsWindow", false);
             slot.setSlotType("Boolean");
@@ -179,18 +162,12 @@
             slot.setInspectorPath("Node/Viewable/Children Layout");
         }
 
-        /**
-         * @property {boolean} nodeCanEditTileHeight
-         */
         {
             const slot = this.newSlot("nodeCanEditTileHeight", false);
             slot.setDuplicateOp("copyValue"); // TODO: change to NavHeight
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {boolean} nodeCanEditColumnWidth
-         */
         {
             const slot = this.newSlot("nodeCanEditColumnWidth", false);
             slot.setDuplicateOp("copyValue"); // TODO: change to NavWidth
@@ -202,9 +179,7 @@
     initPrototype () {    
     }
 
-    /**
-     * @description Finalizes the initialization of the node.
-     */
+
     finalInit () {
         super.finalInit()
         if (this.nodeChildrenAlignment() === "Start") {
@@ -212,19 +187,13 @@
         }
     }
 
-    /**
-     * @description Returns the node orientation.
-     * @returns {string} The node orientation.
-     */
     nodeOrientation () {
         return this.nodeIsVertical() ? "right" : "down" 
     }
 
-    /**
-     * @description Returns the node view class.
-     * @returns {Object} The node view class.
-     */
-    nodeViewClass () {
+     // --- nodeViewClass and nodeTileClass ---
+    
+     nodeViewClass () {
         const name = this.nodeViewClassName()
         if (name) {
             const proto = Object.getClassNamed(name)
@@ -238,10 +207,8 @@
 	  	return this.firstAncestorClassWithPostfix("View") 
     }
 
-    /**
-     * @description Returns the node tile class.
-     * @returns {Object} The node tile class.
-     */
+    // --- nodeTileClass ---
+
     nodeTileClass () {  
         // This is used (instead of nodeViewClass) by TilesView to 
         // get it's subnode's views. Other views (typically) use nodeViewClass.
@@ -258,10 +225,6 @@
 	  	return this.firstAncestorClassWithPostfix("Tile");
     }
 
-    /**
-     * @description Handles the browser drop chunk event.
-     * @param {Object} dataChunk - The data chunk object.
-     */
     onBrowserDropChunk (dataChunk) {
         const mimeType = dataChunk.mimeType();
         const canOpenNodes = BMNode.allSubclasses().select((aClass) => aClass.canOpenMimeType(mimeType));
@@ -286,12 +249,8 @@
         }
     }
 
-    /**
-     * @description Handles the slot update event.
-     * @param {Object} aSlot - The updated slot.
-     * @param {*} oldValue - The old value of the slot.
-     * @param {*} newValue - The new value of the slot.
-     */
+    // --- update / sync system ----------------------------
+    
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue);
 
@@ -300,55 +259,56 @@
         }
     }
 
-    /**
-     * @description Schedules a sync to view for the given slot name.
-     * @param {string} slotName - The name of the slot to sync.
-     * @returns {ViewableNode} The current instance.
-     */
     scheduleSyncToView (slotName) {
         this.didUpdateNodeIfInitialized(this, slotName);
         return this;
     }
 
-    /**
-     * @description Prepares the node to sync to view.
-     */
+
+    // --- shelf ---
+	
+    /*
+    shelfSubnodes () {
+        return [];
+    }
+
+    shelfIconName () {
+	    return null;
+    }
+	
+    shelfIconUrl () {
+	    return null;
+    }
+    */
+    
     prepareToSyncToView () {
         this.prepareToAccess();
     }
 	
-    /**
-     * @description Handles the node becoming visible event.
-     * @returns {ViewableNode} The current instance.
-     */
+    // visibility
+	
     nodeBecameVisible () {
 	    return this;
     }
 
-    /**
-     * @description Handles the request for selection of a descendant node.
-     * @returns {boolean} Always returns false to allow propagation up the parentNode line.
-     */
+    // -- selection requests ---
+
     onRequestSelectionOfDecendantNode () {
         return false; // allow propogation up the parentNode line
     }
 
-    /**
-     * @description Handles the request for selection of the current node.
-     * @returns {ViewableNode} The current instance.
-     */
     onRequestSelectionOfNode () {
         this.tellParentNodes("onRequestSelectionOfDecendantNode", this);
         return this;
     }
 
-    /**
-     * @description Handles the tap event on the node.
-     * @returns {ViewableNode} The current instance.
-     */
     onTapOfNode () {
         this.tellParentNodes("onTapOfDecendantNode", this);
         return this;
     }
 
 }.initThisClass());
+
+
+
+

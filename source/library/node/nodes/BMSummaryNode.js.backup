@@ -1,31 +1,25 @@
-/**
- * @module library.node.nodes
- * @class BMSummaryNode
- * @extends BMStorableNode
- * @classdesc A node that contains Text, stores its:
- * - content
- * - color
- * - font
- * - padding
- * - margin
- * and has an inspector for these attributes
- * 
- * support for links?
- */
 "use strict";
+
+/*
+    
+    BMSummaryNode
+    
+    A node that contains Text, stores it's:
+    - content
+    - color
+    - font
+    - padding
+    - margin
+    and has an inspector for these attributes
+    
+    support for links?
+
+*/
 
 (class BMSummaryNode extends BMStorableNode {
     
-    /**
-     * @description Initializes the prototype slots for the BMSummaryNode.
-     * @method
-     */
     initPrototypeSlots () {
 
-        /**
-         * @property {string} nodeSummarySuffix
-         * @description The suffix to be added to the node summary.
-         */
         {
             const slot = this.newSlot("nodeSummarySuffix", " ");
             slot.setShouldStoreSlot(true);
@@ -37,10 +31,6 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @property {boolean} nodeSubtitleIsChildrenSummary
-         * @description Determines if the node subtitle is the children summary.
-         */
         {
             const slot = this.newSlot("nodeSubtitleIsChildrenSummary", false);
             slot.setShouldStoreSlot(true);
@@ -52,10 +42,6 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @property {boolean} hasNewlineBeforeSummary
-         * @description Determines if there should be a newline before the summary.
-         */
         {
             const slot = this.newSlot("hasNewlineBeforeSummary", false);
             slot.setShouldStoreSlot(true);
@@ -67,10 +53,6 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @property {boolean} hasNewlineAfterSummary
-         * @description Determines if there should be a newline after the summary.
-         */
         {
             const slot = this.newSlot("hasNewlineAfterSummary", false);
             slot.setShouldStoreSlot(true);
@@ -82,10 +64,6 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @property {boolean} hasNewLineSeparator
-         * @description Determines if there should be a newline separator between key and value.
-         */
         {
             const slot = this.newSlot("hasNewLineSeparator", false);
             slot.setShouldStoreSlot(true);
@@ -97,10 +75,6 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @property {string} summaryFormat
-         * @description The format of the summary.
-         */
         {
             const slot = this.newSlot("summaryFormat", "value");
             slot.setShouldStoreSlot(true);
@@ -113,10 +87,6 @@
             slot.setInspectorPath("Node/Summary");
         }
 
-        /**
-         * @property {string} hidePolicy
-         * @description The policy for hiding the summary.
-         */
         {
             const slot = this.newSlot("hidePolicy", "none");
             slot.setShouldStoreSlot(true);
@@ -129,10 +99,6 @@
             slot.setInspectorPath("Node/Summary");
         }
 
-        /**
-         * @property {boolean} subtitleIsSubnodeCount
-         * @description Determines if the subtitle is the subnode count.
-         */
         {
             const slot = this.overrideSlot("subtitleIsSubnodeCount", false);
             slot.setDuplicateOp("copyValue");
@@ -144,10 +110,6 @@
             slot.setSyncsToView(true);
         }
 
-        /**
-         * @property {boolean} noteIsSubnodeCount
-         * @description Determines if the note is the subnode count.
-         */
         {
             const slot = this.overrideSlot("noteIsSubnodeCount", false);
             slot.setDuplicateOp("copyValue");
@@ -160,55 +122,28 @@
         }
     }
 
-    /**
-     * @description Initializes the prototype of the BMSummaryNode.
-     * @method
-     */
     initPrototype () {
         this.setShouldStore(true);
         this.setShouldStoreSubnodes(true);
         this.setTitle("title");
     }
 
-    /**
-     * @description Initializes the BMSummaryNode.
-     * @method
-     */
     init () {
         super.init();
     }
 
-    /**
-     * @description Called when the summaryFormat slot is updated.
-     * @method
-     */
     didUpdateSlotSummaryFormat () {
         this.didUpdateNodeIfInitialized();
     }
 
-    /**
-     * @description Returns the summary key.
-     * @method
-     * @returns {string} The summary key.
-     */
     summaryKey () {
         return this.title();
     }
 
-    /**
-     * @description Returns the summary value.
-     * @method
-     * @returns {string} The summary value.
-     */
     summaryValue () {
         return this.subtitle();
     }
 
-    /**
-     * @description Returns the subtitle of the node.
-     * @method
-     * @returns {string} The subtitle.
-     */
     subtitle () {
         if (this.nodeSubtitleIsChildrenSummary()) {
             const s = this.childrenSummary();
@@ -221,23 +156,14 @@
         return super.subtitle();
     }
 
-    /**
-     * @description Called when the nodeSubtitleIsChildrenSummary slot is updated.
-     * @method
-     * @param {boolean} oldValue - The old value.
-     * @param {boolean} newValue - The new value.
-     */
     didUpdateSlotNodeSubtitleIsChildrenSummary (oldValue, newValue) {
         if (oldValue === true) {
             this.setSubtitle(null);
         }
     }
 
-    /**
-     * @description Returns the summary of the node.
-     * @method
-     * @returns {string} The summary.
-     */
+    // --- summary ---
+    		
     summary () {
         const k = this.summaryKey();
         let v = this.summaryValue();
@@ -257,11 +183,19 @@
             v = "";
         }
 
+        // make this optional? 
+        /*
+        if (v === "") {
+            return "";
+        }
+        */
+
         const f = this.summaryFormat();
         let end = this.nodeSummarySuffixOut();
         const begin = this.hasNewlineBeforeSummary() ? "\n" : "";
 
         if (this.hasNewlineAfterSummary()) {
+            //end = "<br>";
             end = "\n";
         }
 
@@ -309,20 +243,10 @@
         return "";
     }
         
-    /**
-     * @description Returns the summary of all child nodes.
-     * @method
-     * @returns {string} The children summary.
-     */
     childrenSummary () {
         return this.subnodes().map(subnode => subnode.summary()).filter(s => s.length).join("");
     }
 
-    /**
-     * @description Returns the formatted node summary suffix.
-     * @method
-     * @returns {string} The formatted suffix.
-     */
     nodeSummarySuffixOut () {
         let s = this._nodeSummarySuffix;
         
@@ -335,12 +259,18 @@
         return s;
     }
 
-    /**
-     * @description Called when the node is updated.
-     * @method
-     */
     didUpdateNode () {
         super.didUpdateNode();
+    
+        // TODO: FIX HACK, how can we generalize this without creating unnecessary update notifications?
+
+        /*
+        this.parentChainNodes().forEach(node => {
+            //node.didUpdateNode();
+            //node.scheduleMethod("didUpdateNode");
+        })
+        */
     }
     
 }.initThisClass());
+

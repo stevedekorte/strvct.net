@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module strvct.source.library.node.node_views
+ * @module library.node.node_views
  * @class NodeView
  * @extends StyledDomView
  * @classdesc

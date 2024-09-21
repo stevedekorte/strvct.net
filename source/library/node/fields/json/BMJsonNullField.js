@@ -1,10 +1,7 @@
-/**
- * @module library.node.fields.json
- */
-
 "use strict";
 
 /**
+ * @module library.node.fields.json
  * @class BMJsonNullField
  * @extends BMField
  * @classdesc Represents a JSON null field in the application.

@@ -1,35 +1,25 @@
 "use strict";
 
-/**
- * @module library.node.nodes.base
- * @class InspectableNode
- * @extends TitledNode
- * @classdesc InspectableNode
- * 
- * Handles creating inspector nodes and related fields.
- * Slot has some logic for this too.
- * 
- * Inheritance chain:
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
- */
+/*
+
+    InspectableNode
+ 
+    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+
+    Handles creating inspector nodes and related fields.
+    Slot has some logic for this too.
+
+*/
+
 (class InspectableNode extends TitledNode {
 
-    /**
-     * @description Initializes the prototype slots for the InspectableNode.
-     */
     initPrototypeSlots () {
-        /**
-         * @property {Boolean} nodeCanInspect
-         */
         {
             const slot = this.newSlot("nodeCanInspect", true);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {BMNode} nodeInspector
-         */
         {
             const slot = this.newSlot("nodeInspector", null);
             slot.setDuplicateOp("nop");
@@ -37,18 +27,11 @@
         }
     }
 
-    /**
-     * @description Initializes the prototype.
-     */
     initPrototype () {
     }
 
     // --- node inspector ---
 
-    /**
-     * @description Gets or creates the node inspector.
-     * @returns {BMNode} The node inspector.
-     */
     nodeInspector () {
         if (!this._nodeInspector) {
             this._nodeInspector = BaseNode.clone()
@@ -57,19 +40,11 @@
         return this._nodeInspector
     }
 
-    /**
-     * @description Initializes the node inspector.
-     * @returns {InspectableNode} This instance.
-     */
     initNodeInspector () {  // TODO: merge with setupInspectorFromSlots?
         this.setupInspectorFromSlots()
         return this
     }
 
-    /**
-     * @description Sets up the inspector from slots.
-     * @returns {InspectableNode} This instance.
-     */
     setupInspectorFromSlots () {
         const slotsMap = this.thisPrototype().allSlotsMap();
         const slotNames = slotsMap.keysArray();
@@ -118,12 +93,6 @@
 
     // --- helpful for setting up inspector paths ---
 
-    /**
-     * @description Creates a node path.
-     * @param {string} aPath - The path to create.
-     * @param {string} [pathSubnodeType="BMFolderNode"] - The type of subnodes to create.
-     * @returns {Array} An array of path nodes.
-     */
     createNodePath (aPath, pathSubnodeType = "BMFolderNode") {
         const pathNodes = [this];
 
@@ -158,20 +127,11 @@
     }
     */
     
-    /**
-     * @description Adds a field to the node.
-     * @param {Object} aField - The field to add.
-     * @throws {Error} Should not be called directly.
-     */
     addField (aField) {
         throw new Error("addField shouldn't be called - use BMFieldSetNode")
         return this.addSubnode(aField)
     }
     
-    /**
-     * @description Gets the node tile link.
-     * @returns {InspectableNode} This instance.
-     */
     nodeTileLink () {
         // used by UI tile views to browse into next column
         return this
@@ -194,46 +154,26 @@
     //      ServerClientsNode (holds list of connected server clients)
     //
 
-    /**
-     * @description Gets this node.
-     * @returns {InspectableNode} This instance.
-     */
     thisNode () {
         return this
     }
 
-    /**
-     * @description Gets the node tile link methods.
-     * @returns {Array} An array of method names.
-     */
     nodeTileLinkMethods () {
         return ["thisNode"]
     }
 
-    /**
-     * @description Gets the default node tile link method.
-     */
     defaultNodeTileLinkMethod () {
 
     }
 
     // --- adding fields as subnodes ---
 
-    /**
-     * @description Adds subnode fields for the given slots.
-     * @param {Array} slots - An array of slots to add fields for.
-     */
     addSubnodeFieldsForSlots (slots) {
         slots.forEach(slot => {
             this.addSubnodeFieldForSlot(slot);
         })
     }
 
-    /**
-     * @description Adds a subnode field for the given slot.
-     * @param {Object} slot - The slot to add a field for.
-     * @returns {InspectableNode} This instance.
-     */
     addSubnodeFieldForSlot (slot) {
         const name = slot.name();
         const field = slot.newInspectorField();
@@ -285,11 +225,6 @@
         return this
     }
 
-    /**
-     * @description Creates an inspector node path.
-     * @param {string} aPath - The path to create.
-     * @returns {Array} An array of path nodes.
-     */
     createInspectorNodePath (aPath) {
         const pathNodes = this.createNodePath(aPath);
         pathNodes.forEach(node => {
@@ -305,3 +240,7 @@
     }
 
 }.initThisClass());
+
+
+
+

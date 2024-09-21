@@ -1,8 +1,5 @@
 /**
  * @module browser.stack.Tile
- */
-
-/**
  * @class TitledTile
  * @extends Tile
  * @classdesc 

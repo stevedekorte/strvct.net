@@ -1,8 +1,5 @@
 /**
  * @module browser.stack.Tile
- */
-
-/**
  * @class Tile_dragging
  * @extends Tile
  * @classdesc

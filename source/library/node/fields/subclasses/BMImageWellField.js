@@ -1,15 +1,13 @@
-/**
- * @module library.node.fields.subclasses
- */
-
 "use strict";
 
 /**
+ * @module library.node.fields.subclasses
  * @class BMImageWellField
  * @extends BMField
  * @classdesc Represents an image well field in the application.
  * This class handles image-related operations and supports specific mime types.
  */
+
 class BMImageWellField extends BMField {
     /**
      * @static

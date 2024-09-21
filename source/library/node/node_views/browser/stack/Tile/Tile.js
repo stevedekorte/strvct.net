@@ -1,10 +1,10 @@
 "use strict";
 
-/*
-    
-    Tile
-
-    Base tile view. This is a sort of empty canvas for subclasses to put subviews in.
+/**
+ * @module library.node.node_views.browser.stack.Tile
+ * @class Tile
+ * @extends NodeView
+ * @classdesc Base tile view. This is a sort of empty canvas for subclasses to put subviews in.
     It's important that subviews are put within the contentView, as this is used
     to support features like slide-to-delete.
 
@@ -31,64 +31,123 @@
     
     initPrototypeSlots () {
         {
+            /**
+             * @property {boolean} isSelectable
+             * @description Indicates if the tile is selectable.
+             */
             const slot = this.newSlot("isSelectable", true);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {DomView} closeButtonView
+             * @description The close button view.
+             */
             const slot = this.newSlot("closeButtonView", null);
             slot.setSlotType("DomView");
         }
         {
+            /**
+             * @property {number} defaultHeight
+             * @description The default height of the tile.
+             */
             const slot = this.newSlot("defaultHeight", 30);
             slot.setSlotType("Number");
         }
         {
+            /**
+             * @property {number} restCloseButtonOpacity
+             * @description The rest close button opacity.
+             */
             const slot = this.newSlot("restCloseButtonOpacity", 0.4);
             slot.setSlotType("Number");
         }
         {
+            /**
+             * @property {string} transitionStyle
+             * @description The transition style.
+             */
             const slot = this.newSlot("transitionStyle", "all 0s");
             slot.setSlotType("String");
         }
         {
+            /**
+             * @property {string} selectedFlashColor
+             * @description The selected flash color.
+             */
             const slot = this.newSlot("selectedFlashColor", "#ccc");
             slot.setSlotType("String");
         }
         {
+            /**
+             * @property {boolean} shouldShowFlash
+             * @description Indicates if the flash should be shown.
+             */
             const slot = this.newSlot("shouldShowFlash", false);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {boolean} shouldCenterCloseButton
+             * @description Indicates if the close button should be centered.
+             */
             const slot = this.newSlot("shouldCenterCloseButton", true);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {DomView} contentView
+             * @description The content view.
+             */
             const slot = this.newSlot("contentView", null);
             slot.setSlotType("DomView");
         }
 
         {
+            /**
+             * @property {number} slideDeleteOffset
+             * @description The slide delete offset.
+             */
             const slot = this.newSlot("slideDeleteOffset", 0);
             slot.setSlotType("Number");
         }
         {
+            /**
+             * @property {DomView} dragDeleteButtonView
+             * @description The drag delete button view.
+             */
             const slot = this.newSlot("dragDeleteButtonView", null);
             slot.setSlotType("DomView");
         }
         {
+            /**
+             * @property {boolean} isDeleting
+             * @description Indicates if the tile is deleting.
+             */
             const slot = this.newSlot("isDeleting", false);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {Date} lastTapDate
+             * @description The last tap date.
+             */
             const slot = this.newSlot("lastTapDate", null);
             slot.setSlotType("Date");
         }
         {
+            /**
+             * @property {Date} lastSelectionDate
+             * @description The last selection date.
+             */
             const slot = this.newSlot("lastSelectionDate", null);
             slot.setSlotType("Date");
         }
     }
 
+    /**
+     * @description Applies styles to the tile.
+     */
     applyStyles () {
         // we default to using the current theme, but 
         // we need to give view a chance to override style
@@ -116,6 +175,9 @@
     }
     */
 
+    /**
+     * @description Initializes the tile.
+     */
     init () {
         super.init()
 
@@ -179,6 +241,9 @@
         return this
     }
 
+    /**
+     * @description Turns on user select.
+     */
     turnOnUserSelect () {
         debugger;
         super.turnOnUserSelect()
@@ -192,6 +257,10 @@
     }
     */
 
+    /**
+     * @description Duplicates the tile.
+     * @returns {Tile} The duplicated tile.
+     */
     duplicate () {
         const dup = super.duplicate()
         dup.setNode(this.node().duplicate())
@@ -202,6 +271,10 @@
     // a special subview within the Tile for it's content
     // we route style methods to it
 
+    /**
+     * @description Sets up the content view, a special subview within the Tile for it's content.
+     * We route style methods to it.
+     */
     setupTileContentView () {
         const cv = FlexDomView.clone().setElementClassName("TileContentView")
         cv.setDisplay("flex")
@@ -239,10 +312,20 @@
     }
     */
 
+    /**
+     * @description Adds a content subview.
+     * @param {DomView} aView - The view to add.
+     * @returns {Tile} The current instance.
+     */
     addContentSubview (aView) {
         return this.contentView().addSubview(aView)
     }
-
+   
+    /**
+     * @description Removes a content subview.
+     * @param {DomView} aView - The view to remove.
+     * @returns {Tile} The current instance.
+     */
     removeContentSubview (aView) {
         return this.contentView().removeSubview(aView)
     }
@@ -250,10 +333,18 @@
 
     // --- helpers --------
     
+    /**
+     * @description Gets the browser.
+     * @returns {Browser} The browser.
+     */
     browser () {
         return this.column().browser()
     }
 
+    /**
+     * @description Gets the column.
+     * @returns {Column} The column.
+     */
     column () {
         const pv = this.parentView()
         if (pv && pv.isKindOf(TilesView)) {
@@ -262,18 +353,32 @@
         return null
     }
     
+    /**
+     * @description Gets the nav view.
+     * @returns {NavView} The nav view.
+     */
     navView () {
         return this.column().navView()
     }
 
     // ----
 
+    /**
+     * @description Updates the slot is inspecting.
+     * @param {any} oldValue - The old value.
+     * @param {any} newValue - The new value.
+     */
     didUpdateSlotIsInspecting (oldValue, newValue) {
         //super.didUpdateSlotIsSelected (oldValue, newValue)
         this.tilesView().didChangeNavSelection()
         //this.updateSubviews()
     }
 
+    /**
+     * @description Updates the slot is selected.
+     * @param {any} oldValue - The old value.
+     * @param {any} newValue - The new value.
+     */
     didUpdateSlotIsSelected (oldValue, newValue) {
         super.didUpdateSlotIsSelected (oldValue, newValue)
 
@@ -292,6 +397,9 @@
     
     // update
      
+    /**
+     * @description Updates the subviews.
+     */
     updateSubviews () {   
         if (this.closeButtonView()) {
             const node = this.node()
@@ -344,6 +452,9 @@
     
     // --- sync ---
 	
+    /**
+     * @description Syncs from the node.
+     */
     syncFromNode () {
         // is this ever called?
         //this.syncCssFromNode()
@@ -356,6 +467,10 @@
         return this;
     }
 
+    /**
+     * @description Gets the tiles view.
+     * @returns {TilesView} The tiles view.
+     */
     tilesView () {
         return this.parentView()
     }
@@ -371,6 +486,10 @@
         //return this.firstParentViewWithAncestorClass(StackView)
     }
 
+    /**
+     * @description Gets the direction.
+     * @returns {string} The direction.
+     */
     direction () {
         const sv = this.stackView()
         if (sv) {
@@ -401,6 +520,9 @@
         return this
     }
 
+    /**
+     * @description Makes the orientation right.
+     */
     makeOrientationRight () {  
         // stackview is right so tiles are top to bottom
 
@@ -473,6 +595,9 @@
     
     // close button
     
+    /**
+     * @description Adds a close button.
+     */
     addCloseButton () {
         if (this.closeButtonView() === null) {
             const cb = SvgIconView.clone().setIconName("close")
@@ -495,7 +620,10 @@
     }
     
     // ---
-
+    /**
+     * @description Passes the first responder to the column.
+     * @returns {Tile} The current instance.
+     */
     passFirstResponderToColumn () {
         if (this.isFirstResponder()) {
             if (this.column()) {
@@ -507,6 +635,10 @@
 
     // --- delete ---
 
+    /**
+     * @description Checks if the tile can be deleted.
+     * @returns {boolean} Whether the tile can be deleted.
+     */
     canDelete () {
         if (this.node()) {
             return this.node().canDelete()
@@ -514,6 +646,9 @@
         return false
     }
 
+    /**
+     * @description Deletes the tile.
+     */
     delete () {
         //console.log("delete")
         if (this.canDelete()) {
@@ -547,6 +682,11 @@
     }
     */
     
+    /**
+     * @description Decendant released focus.
+     * @param {DomView} aView - The view.
+     * @returns {boolean} Whether the focus was released.
+     */
     decendantReleasedFocus (aView) {
         this.focus() // this doesn't seem right 
         return true
@@ -554,6 +694,10 @@
 
     // --- selecting ---
 	
+    /**
+     * @description Will accept first responder.
+     * @returns {Tile} The current instance.
+     */
     willAcceptFirstResponder () {
         super.willAcceptFirstResponder()
 	    //this.debugLog(".willAcceptFirstResponder()")
@@ -562,6 +706,10 @@
 
     // -------------------------
     
+    /**
+     * @description Gets the node tile link.
+     * @returns {DomView} The node tile link.
+     */
     nodeTileLink () {
         //this.debugLog(".visibleSubnodes() isInspecting:" + this.isInspecting())
         /*
@@ -579,6 +727,13 @@
 
     // --- delegate ---
 
+    /**
+     * @description Sends the node delegate.
+     * @param {string} methodName - The method name.
+     * @param {array} args - The arguments.
+     * @param {boolean} isStrict - Whether to be strict.
+     * @returns {any} The result.
+     */
     sendNodeDelegate (methodName, args = [this], isStrict = false) {
         const d = this.node();
     

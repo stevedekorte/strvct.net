@@ -1,37 +1,30 @@
-/**
- * @module library.node.nodes.base
- * @class TitledNode
- * @extends BMNode
- * @classdesc Class for handling a node's:
- *     title
- *     subtitle
- *     summary
- *     icon/thumbnail (move to viewable?)
- * 
- * BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
- */
-
 "use strict";
+
+/*
+
+    TitledNode
+ 
+    BMNode -> TitledNode -> InspectableNode -> ViewableNode -> StyledNode -> BaseNode -> StorableNode
+
+    Class for handling a node's:
+
+        title
+        subtitle
+        summary
+        icon/thumbnail (move to viewable?)
+
+*/
 
 (class TitledNode extends BMNode {
 
-    /**
-     * @description Initializes the prototype slots for the TitledNode class.
-     */
     initPrototypeSlots () {
 
-        /**
-         * @property {String} title
-         */
         {
             const slot = this.newSlot("title", null);
             slot.setDuplicateOp("copyValue");
             slot.setSlotType("String");
         }
 
-        /**
-         * @property {String} subtitle
-         */
         {
             const slot = this.newSlot("subtitle", null);
             slot.setAllowsNullValue(true);
@@ -43,9 +36,6 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /**
-         * @property {BMNotification} note
-         */
         {
             const slot = this.newSlot("note", null);
             slot.setAllowsNullValue(true);
@@ -55,9 +45,6 @@
             slot.setSlotType("BMNotification");
         }
 
-        /**
-         * @property {String} noteIconName
-         */
         {
             const slot = this.newSlot("noteIconName", null);
             slot.setAllowsNullValue(true);
@@ -69,9 +56,6 @@
             slot.setInspectorPath("Node/Note");
         }
 
-        /**
-         * @property {Boolean} nodeCanEditTitle
-         */
         {
             const slot = this.newSlot("nodeCanEditTitle", false);
             slot.setDuplicateOp("copyValue");
@@ -79,9 +63,6 @@
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {Boolean} nodeCanEditSubtitle
-         */
         {
             const slot = this.newSlot("nodeCanEditSubtitle", false);
             slot.setDuplicateOp("copyValue");
@@ -92,9 +73,6 @@
             slot.setShouldStoreSlot(true);
         }
 
-        /**
-         * @property {Boolean} subtitleIsSubnodeCount
-         */
         {
             const slot = this.newSlot("subtitleIsSubnodeCount", false);
             slot.setDuplicateOp("copyValue");
@@ -102,9 +80,6 @@
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {Boolean} noteIsSubnodeCount
-         */
         {
             const slot = this.newSlot("noteIsSubnodeCount", false);
             slot.setDuplicateOp("copyValue");
@@ -113,16 +88,11 @@
         }
     }
 
-    /**
-     * @description Initializes the prototype of the TitledNode class.
-     */
     initPrototype () {
     }
 
-    /**
-     * @description Gets the subtitle of the node.
-     * @returns {string|number} The subtitle or subnode count.
-     */
+    // subtitle and note
+    
     subtitle () {
         if (this.subtitleIsSubnodeCount() && this.subnodesCount()) {
             return this.subnodesCount()
@@ -131,19 +101,12 @@
         return this._subtitle
     }
 
-    /**
-     * @description Gets the count of subnodes.
-     * @returns {number} The count of subnodes.
-     */
     noteSubnodesCount () {
         return this.subnodesCount();
     }
     
-    /**
-     * @description Gets the note of the node.
-     * @returns {string|number} The note or subnode count.
-     */
     note () {
+        //console.log(this.title() + " noteIsSubnodeCount: " + this.noteIsSubnodeCount())
         if (this.noteIsSubnodeCount()) {
             const count = this.noteSubnodesCount()
             if (count) {
@@ -156,18 +119,12 @@
         return this._note
     }
 
-    /**
-     * @description Gets the header title of the node.
-     * @returns {string} The title of the node.
-     */
     nodeHeaderTitle () {
         return this.title()
     }
 
-    /**
-     * @description Gets the path of the node.
-     * @returns {Array} The path of the node.
-     */
+    // --- title based paths ---
+    
     nodePath () {
         if (this.parentNode()) {
             const parts = this.parentNode().nodePath()
@@ -177,12 +134,6 @@
         return [this]
     }
 
-    /**
-     * @description Gets the node path array for given path components.
-     * @param {Array} pathComponents - The path components.
-     * @param {Array} [results=[]] - The results array.
-     * @returns {Array} The node path array.
-     */
     nodePathArrayForPathComponents (pathComponents, results = []) {
         results.push(this)
 
@@ -201,28 +152,14 @@
         return results
     }
     
-    /**
-     * @description Gets the node path as a string.
-     * @returns {string} The node path string.
-     */
     nodePathString () {
         return this.nodePath().map(node => node.title()).join("/")
     }
     
-    /**
-     * @description Gets the node at a given subpath string.
-     * @param {string} pathString - The subpath string.
-     * @returns {TitledNode} The node at the subpath.
-     */
     nodeAtSubpathString (pathString) {
         return this.nodeAtSubpath(pathString.split("/"));        
     }
     
-    /**
-     * @description Gets the node at a given subpath array.
-     * @param {Array} subpathArray - The subpath array.
-     * @returns {TitledNode} The node at the subpath.
-     */
     nodeAtSubpath (subpathArray) {
         if (subpathArray.length) {
             const t = subpathArray.first()
@@ -243,11 +180,9 @@
         return this
     }
 
-    /**
-     * @description Removes the first subnode with the given title.
-     * @param {string} aString - The title to search for.
-     * @returns {TitledNode} This node.
-     */
+    // --- lookups and ops on subnodes via title/subtitle -------------------------------
+
+
     removeFirstSubnodeWithTitle (aString) {
         const sn = this.firstSubnodeWithTitle(aString)
         if (sn) {
@@ -256,20 +191,10 @@
         return this
     }
 
-    /**
-     * @description Finds the first subnode with the given title.
-     * @param {string} aString - The title to search for.
-     * @returns {TitledNode} The first subnode with the given title.
-     */
     firstSubnodeWithTitle (aString) {
         return this.subnodes().detect(subnode => subnode.title() === aString)
     }
 
-    /**
-     * @description Finds the first subnode with any of the given titles.
-     * @param {Array} titlesArray - The array of titles to search for.
-     * @returns {TitledNode} The first subnode with any of the given titles.
-     */
     firstSubnodeWithTitles (titlesArray) {
         for (let i = 0; i < titlesArray.length; i++) {
             const title = titlesArray[i]
@@ -281,31 +206,24 @@
         return null
     }
 
-    /**
-     * @description Finds the first subnode with the given subtitle.
-     * @param {string} aString - The subtitle to search for.
-     * @returns {TitledNode} The first subnode with the given subtitle.
-     */
     firstSubnodeWithSubtitle (aString) {
         return this.subnodes().detect(subnode => subnode.subtitle() === aString)
     }
 
-    /**
-     * @description Gets the root node.
-     * @returns {TitledNode} The root node.
-     */
     rootNode () {
+        //debugger;
         const store = this.defaultStore()
         const root = store.rootObject()
+        //root.setTitle("root")
         return root
     }
 
-    /**
-     * @description Gets or creates a subnode with the given title and prototype.
-     * @param {string} aString - The title of the subnode.
-     * @param {Object} aProto - The prototype for the subnode.
-     * @returns {TitledNode} The subnode with the given title.
-     */
+    /*
+    rootSubnodeWithTitleForProto (aString, aProto) {
+        return this.rootNode().subnodeWithTitleIfAbsentInsertProto(aString, aProto)
+    }
+    */
+   
     subnodeWithTitleIfAbsentInsertProto (aString, aProto) {
         const subnode = this.firstSubnodeWithTitle(aString)
 
@@ -316,6 +234,7 @@
 
                 const newSubnode = aProto.clone()
                 try {
+                    //newSubnode.copyFrom(subnode, true)
                     newSubnode.copyFromAndIgnoreMissingSlots(subnode)
                 } catch (error) {
                     if (error instanceof MissingSlotError) {
@@ -324,6 +243,7 @@
                         error.rethrow();
                     }
                 }
+                // TODO: Do we need to replace all references in pool and reload?
                 this.replaceSubnodeWith(subnode, newSubnode)
                 this.removeOtherSubnodesWithSameTitle(newSubnode)
                 return newSubnode
@@ -336,13 +256,9 @@
         return this.subnodeWithTitleIfAbsentInsertClosure(aString, () => aProto.clone())
     }
 
-    /**
-     * @description Adds a subnode with the given name and class, and sets the corresponding slot.
-     * @param {string} aName - The name of the subnode.
-     * @param {Function} aClass - The class of the subnode.
-     * @returns {TitledNode} The added subnode.
-     */
     addSubnodeAndSetSlotForClass (aName, aClass) {
+        // like subnodeWithTitleIfAbsentInsertProto but we also set the matching slot value to the subnode 
+        // (eg, subnode with title "Resources", sets "resources" slot)
         const subnode = this.subnodeWithTitleIfAbsentInsertProto(aName, aClass)
         this.removeOtherSubnodesWithSameTitle(subnode)
         const slot = this.thisPrototype().slotNamed(aName.toLowerCase())
@@ -353,21 +269,25 @@
         return subnode
     }
 
-    /**
-     * @description Removes all subnodes with the given title.
-     * @param {string} aString - The title of the subnodes to remove.
-     * @returns {TitledNode} This node.
-     */
     removeSubnodesWithTitle (aString) {
         this.subnodes().select(sn => sn.title() === aString).forEach(sn => sn.delete())
         return this
     }
 
-    /**
-     * @description Removes other subnodes with the same title as the given subnode.
-     * @param {TitledNode} aSubnode - The reference subnode.
-     * @returns {TitledNode} This node.
-     */
+    /*
+    removeOtherSubnodeInstances (aSubnode) {
+        assert(this.hasSubnode(aSubnode))
+        this.subnodes().shallowCopy().forEach((sn) => {
+            if (sn !== aSubnode) {
+                if (sn.thisClass() === aSubnode.thisClass()) {
+                    this.removeSubnode(sn)
+                }
+            }
+        })
+        return this
+    }
+    */
+
     removeOtherSubnodesWithSameTitle (aSubnode) {
         assert(this.hasSubnode(aSubnode))
         this.subnodes().shallowCopy().forEach((sn) => {
@@ -380,12 +300,6 @@
         return this
     }
 
-    /**
-     * @description Gets or creates a subnode with the given title using a closure.
-     * @param {string} aString - The title of the subnode.
-     * @param {Function} aClosure - The closure to create the subnode if absent.
-     * @returns {TitledNode} The subnode with the given title.
-     */
     subnodeWithTitleIfAbsentInsertClosure (aString, aClosure) {
         let subnode = this.firstSubnodeWithTitle(aString)
 
@@ -399,10 +313,8 @@
         return subnode
     }
 
-    /**
-     * @description Sets up sorting of subnodes by title.
-     * @returns {TitledNode} This node.
-     */
+    // --- sorting helper ---
+
     makeSortSubnodesByTitle () {
         this.setSubnodeSortFunc(function (a, b) {
             const cleanedTitle = function (t) {
@@ -416,29 +328,25 @@
         return this
     }
 
-    /**
-     * @description Determines if the node view should have a badge.
-     * @returns {boolean} Whether the node view should have a badge.
-     */
+    // --- node view badge ---
+
     nodeViewShouldBadge () {
         return false
     }
 
-    /**
-     * @description Gets the badge title for the node view.
-     * @returns {string|null} The badge title.
-     */
     nodeViewBadgeTitle () {
         return null
     }
 
-    /**
-     * @description Gets the summary of the node.
-     * @returns {string} The summary of the node.
-     */
+    // --- summary ---
+
     summary () {
         return this.title() + " " + this.subtitle()
     }
 
     
 }.initThisClass());
+
+
+
+

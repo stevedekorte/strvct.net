@@ -1,20 +1,16 @@
-/**
- * @module library.node.nodes.BMFolderNode
- */
-
 "use strict";
 
 /**
- * @class BMFolderNode
- * @extends BMSummaryNode
- * @classdesc A node that supports adding, reordering, and managing other nodes within the UI.
+ * BMFolderNode
+ * 
+ * A node that supports adding, reordering, and managing other nodes within the UI.
  * Extends BMSummaryNode.
  */
+
 (class BMFolderNode extends BMSummaryNode {
     
     /**
-     * @static
-     * @description Indicates if this node is available as a node primitive.
+     * Indicates if this node is available as a node primitive.
      * @returns {boolean} True if available as a node primitive.
      */
     static availableAsNodePrimitive () {
@@ -22,39 +18,23 @@
     }
     
     /**
-     * @description Initializes the prototype slots for the BMFolderNode.
+     * Initializes the prototype slots for the BMFolderNode.
      * These slots are useful for implementing menus.
      */
     initPrototypeSlots () {
-        /**
-         * @property {string} label
-         * @description The label of the folder node.
-         */
         {
             const slot = this.newSlot("label", "");
             slot.setShouldStoreSlot(true);
             slot.setSlotType("String");
         }
-        /**
-         * @property {Object} target
-         * @description The target object for the folder node.
-         */
         {
             const slot = this.newSlot("target", null);
             slot.setSlotType("Object");
         }
-        /**
-         * @property {string} methodName
-         * @description The method name to be called on the target.
-         */
         {
             const slot = this.newSlot("methodName", null);
             slot.setSlotType("String");
         }
-        /**
-         * @property {Object} info
-         * @description Additional information for the folder node.
-         */
         {
             const slot = this.newSlot("info", null);
             slot.setSlotType("Object");
@@ -62,7 +42,7 @@
     }
 
     /**
-     * @description Initializes the prototype with default settings.
+     * Initializes the prototype with default settings.
      */
     initPrototype () {
         this.setCanDelete(true);
@@ -78,7 +58,7 @@
     }
 
     /**
-     * @description Initializes the BMFolderNode instance.
+     * Initializes the BMFolderNode instance.
      */
     init () {
         super.init()
@@ -87,7 +67,7 @@
     }
 
     /**
-     * @description Gets the title of the node.
+     * Gets the title of the node.
      * @returns {string} The label of the node.
      */
     title () {
@@ -95,7 +75,7 @@
     }
 
     /**
-     * @description Sets the title of the node.
+     * Sets the title of the node.
      * @param {string} aString - The new title to set.
      * @returns {BMFolderNode} The current instance for method chaining.
      */
@@ -105,7 +85,7 @@
     }
 
     /**
-     * @description Gets the accepted subnode types.
+     * Gets the accepted subnode types.
      * @returns {Array} An array of accepted field types from BMCreatorNode.
      */
     acceptedSubnodeTypes () {
@@ -113,7 +93,7 @@
     }
 
     /**
-     * @description Sends the menu action to the target.
+     * Sends the menu action to the target.
      */
     sendMenuAction () {
        const t = this.target()
@@ -124,7 +104,7 @@
     }
 
     /**
-     * @description Handles the tap event on the node.
+     * Handles the tap event on the node.
      * @param {BMNode} aNode - The node that was tapped.
      * @returns {BMFolderNode} The current instance for method chaining.
      */
@@ -135,7 +115,7 @@
     }
 
     /**
-     * @description Callback for when the parentNode slot is updated.
+     * Callback for when the parentNode slot is updated.
      * @param {*} oldValue - The old value of the parentNode.
      * @param {*} newValue - The new value of the parentNode.
      */

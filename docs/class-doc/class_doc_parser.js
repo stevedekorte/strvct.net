@@ -16,7 +16,10 @@ class JsClassParser {
                 sourceType: 'module', 
                 locations: true, 
                 onComment: (isBlock, text, start, end) => {
-                    this.comments.push({ type: isBlock ? 'Block' : 'Line', value: text, start, end });
+                    // Only add block comments to this.comments
+                    if (isBlock) {
+                        this.comments.push({ type: 'Block', value: text, start, end });
+                    }
                 }
             });
         } catch (error) {
@@ -158,7 +161,7 @@ class JsClassParser {
         console.log("Extracted description:", description);
         console.log("Extracted entries:", entries);
         
-        result.classInfo.description = entries.description || description || 'Undocumented';
+        result.classInfo.description = entries.classdesc || entries.description || description || 'Undocumented';
         if (entries.class) {
             result.classInfo.className = entries.class;
         }
@@ -223,7 +226,7 @@ class JsClassParser {
 
     getClassComments(classStart) {
         const relevantComments = this.comments
-            .filter(comment => comment.end <= classStart && comment.type === 'Block')
+            .filter(comment => comment.end <= classStart)
             .sort((a, b) => b.end - a.end);
 
         if (relevantComments.length > 0) {
@@ -237,7 +240,6 @@ class JsClassParser {
         const relevantComments = this.comments
             .filter(comment => 
                 comment.end < methodStart && 
-                comment.type === 'Block' &&
                 comment.value.trim().startsWith('*')
             )
             .sort((a, b) => b.end - a.end);
@@ -258,7 +260,7 @@ class JsClassParser {
         console.log("Processed comment lines:", lines);
         
         let description = [];
-        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, description: null };
+        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, description: null, classdesc: null };
         let currentTag = null;
         let currentTagContent = [];
 
@@ -297,24 +299,27 @@ class JsClassParser {
                 const [paramType, paramName, ...paramDesc] = content.split(/\s+/);
                 entries.params.push({
                     paramName: paramName.replace('-', '').trim(),
-                    paramType: paramType.replace(/[{}]/g, '').trim(),
-                    description: paramDesc.join(' ').trim().replace(/^- /, '') // Remove leading "- "
+                    paramType: escapeXml(paramType.replace(/[{}]/g, '').trim()),
+                    description: escapeXml(paramDesc.join(' ').trim().replace(/^- /, '')) // Remove leading "- "
                 });
                 break;
             case 'returns':
                 const [returnType, ...returnDesc] = content.split(/\s+/);
                 entries.returns = {
-                    returnType: returnType.replace(/[{}]/g, '').trim(),
-                    description: returnDesc.join(' ').trim() || null
+                    returnType: escapeXml(returnType.replace(/[{}]/g, '').trim()),
+                    description: escapeXml(returnDesc.join(' ').trim()) || null
                 };
                 break;
             case 'throws':
+                entries[tag] = escapeXml(content.trim());
+                break;
             case 'example':
             case 'deprecated':
             case 'since':
             case 'class':
             case 'extends':
             case 'description':
+            case 'classdesc':
                 entries[tag] = content.trim();
                 break;
         }
