@@ -1,145 +1,183 @@
 "use strict";
 
-/*
+/**
+ * @module library.notification
+ */
 
-    SyncScheduler
-
-    SyncScheduler is sort of a lower level NotificationCenter.
-    
-    SyncScheduler essientially:
-        - receives requests of the form "send targetA messageB" (Note: often, the sender is also the target)
-        - and at the end of the event loop (via a timeout):
-        -- coaleses them (so the same message isn't sent twice to the same target)
-        -- sends them
-
-    The NotificationCenter could be used to do this, but it would be heavier:
-     - overhead of every receiver registering observations
-     - overhead of matching observations with posts
-     - potential garbage collection issues (may already be solved with weak references now)
-
-    Motivation:
-
-    Many state changes can cause the need to synchronize a given object 
-    with others within a given event loop, but we only want synchronization to 
-    happen at the end of an event loop, so a shared SyncScheduler instance is used to
-    track which sync actions should be sent at the end of the event loop and only sends each one once.
-
-    SyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
-
-       example use:
-    
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode");
-
-    Automatic sync loop detection
-
-    It will throw an error if a sync action is scheduled while another is being performed,
-    which ensures sync loops are avoided.
-
-    Ordering
-
-    Scheduled actions can also be given a priority via an optional 3rd argument:
-
-        SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1);
-
-    Higher priorities will be performed *later* than lower ones. 
-
-    Some typical sync methods:
-
-        // view
-    	syncToNode	
-        syncFromNode
-        
-    When to run
-
-        When a UI event is handled, SyncSchedule.fullSyncNow should be called just before
-        control is returned to the browser to ensure that another UI event won't occur
-        before syncing as that could leave the node and view out of sync.
-            For example:
-                - edit view #1
-                - sync to node
-                - node posts didUpdateNode
-                - edit view #2
-                - view gets didUpdateNode and does syncFromNode which overwrites view state #2 causing an error!
-            But the above would have been ok if the didUpdateNode was posted once at the end of the event loop.
-
-    Pause and Resume
-
-        SyncScheduler can be paused and resumed to prevent syncing from happening.
-        An example of when this is useful is when initializing the application (e.g. appDidInit) 
-        and you don't want any syncing to happen until the app is fully initialized.
-        Example use:
-
-            SyncScheduler.shared().pause()
-            SyncScheduler.shared().resume()
-
-*/
-
+/**
+ * @class SyncScheduler
+ * @extends ProtoClass
+ * @classdesc SyncScheduler is sort of a lower level NotificationCenter.
+ * 
+ * SyncScheduler essentially:
+ * - receives requests of the form "send targetA messageB" (Note: often, the sender is also the target)
+ * - and at the end of the event loop (via a timeout):
+ *   -- coaleses them (so the same message isn't sent twice to the same target)
+ *   -- sends them
+ * 
+ * The NotificationCenter could be used to do this, but it would be heavier:
+ * - overhead of every receiver registering observations
+ * - overhead of matching observations with posts
+ * - potential garbage collection issues (may already be solved with weak references now)
+ * 
+ * Motivation:
+ * 
+ * Many state changes can cause the need to synchronize a given object 
+ * with others within a given event loop, but we only want synchronization to 
+ * happen at the end of an event loop, so a shared SyncScheduler instance is used to
+ * track which sync actions should be sent at the end of the event loop and only sends each one once.
+ * 
+ * SyncScheduler should be used to replace most cases where this.addTimeout() would otherwise be used.
+ * 
+ * Example use:
+ * 
+ * SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode");
+ * 
+ * Automatic sync loop detection:
+ * 
+ * It will throw an error if a sync action is scheduled while another is being performed,
+ * which ensures sync loops are avoided.
+ * 
+ * Ordering:
+ * 
+ * Scheduled actions can also be given a priority via an optional 3rd argument:
+ * 
+ * SyncScheduler.shared().scheduleTargetAndMethod(this, "syncToNode", 1);
+ * 
+ * Higher priorities will be performed *later* than lower ones. 
+ * 
+ * Some typical sync methods:
+ * 
+ * // view
+ * syncToNode	
+ * syncFromNode
+ * 
+ * When to run:
+ * 
+ * When a UI event is handled, SyncSchedule.fullSyncNow should be called just before
+ * control is returned to the browser to ensure that another UI event won't occur
+ * before syncing as that could leave the node and view out of sync.
+ * For example:
+ * - edit view #1
+ * - sync to node
+ * - node posts didUpdateNode
+ * - edit view #2
+ * - view gets didUpdateNode and does syncFromNode which overwrites view state #2 causing an error!
+ * But the above would have been ok if the didUpdateNode was posted once at the end of the event loop.
+ * 
+ * Pause and Resume:
+ * 
+ * SyncScheduler can be paused and resumed to prevent syncing from happening.
+ * An example of when this is useful is when initializing the application (e.g. appDidInit) 
+ * and you don't want any syncing to happen until the app is fully initialized.
+ * Example use:
+ * 
+ * SyncScheduler.shared().pause()
+ * SyncScheduler.shared().resume()
+ */
 (class SyncScheduler extends ProtoClass {
 
+    /**
+     * @static
+     * @description Initializes the class
+     */
     static initClass () {
         this.setIsSingleton(true);
     }
     
+    /**
+     * @description Initializes the prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Map} actions
+         */
         {
             const slot = this.newSlot("actions", new Map());
             slot.setSlotType("Map");
         }
 
+        /**
+         * @property {Boolean} hasTimeout
+         */
         {
             const slot = this.newSlot("hasTimeout", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {Boolean} isProcessing
+         */
         {
             const slot = this.newSlot("isProcessing", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {SyncAction} currentAction
+         */
         {
             const slot = this.newSlot("currentAction", null);
             slot.setSlotType("SyncAction");
         }
 
+        /**
+         * @property {Boolean} isPaused
+         */
         {
             const slot = this.newSlot("isPaused", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Initializes the prototype
+     */
     initPrototype () {
     }
 
-    // --- pause/resume ---
-
+    /**
+     * @description Pauses the scheduler
+     * @returns {SyncScheduler} The instance
+     */
     pause () {
         this.setIsPaused(true);
         return this;
     }
 
+    /**
+     * @description Resumes the scheduler
+     * @returns {SyncScheduler} The instance
+     */
     resume () {
         this.setIsPaused(false);
         this.setTimeoutIfNeeded();
         return this;
     }
 
-    // --- actions ---
-
+    /**
+     * @description Creates a new SyncAction
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @param {number} [order] - The order of execution
+     * @returns {SyncAction} The new SyncAction instance
+     */
     newActionForTargetAndMethod (target, syncMethod, order) {
         return SyncAction.clone().setTarget(target).setMethod(syncMethod).setOrder(order ? order : 0)
     }
 	
+    /**
+     * @description Schedules a target and method for sync
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @param {number} [optionalOrder] - The optional order of execution
+     * @returns {boolean} True if scheduled, false if already scheduled
+     */
     scheduleTargetAndMethod (target, syncMethod, optionalOrder) { // higher order performed last
         if (!this.hasScheduledTargetAndMethod(target, syncMethod)) {
             const newAction = this.newActionForTargetAndMethod(target, syncMethod, optionalOrder)
 
             this.debugLog(() => "    -> scheduling " + newAction.description())
-
-            /*
-            if (this.isProcessing() && this.currentAction().method() !== "processPostQueue") {
-                this.debugLog(() => "    - isProcessing " + this.currentAction().description() +  " while scheduling " + newAction.description())
-            }
-            */
             
             if (syncMethod !== "processPostQueue") {
                 if (this.currentAction() && this.currentAction().equals(newAction)) {
@@ -162,17 +200,35 @@
         return false
     }
 
+    /**
+     * @description Checks if a target and method is syncing or scheduled
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @returns {boolean} True if syncing or scheduled, false otherwise
+     */
     isSyncingOrScheduledTargetAndMethod(target, syncMethod) {
         const sc = this.hasScheduledTargetAndMethod(target, syncMethod) 
         const sy = this.isSyncingTargetAndMethod(target, syncMethod) 
         return sc || sy;
     }
 
+    /**
+     * @description Checks if a target and method is scheduled
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @returns {boolean} True if scheduled, false otherwise
+     */
     hasScheduledTargetAndMethod (target, syncMethod) {
         const actionKey = SyncAction.ActionKeyForTargetAndMethod(target, syncMethod)
     	return this.actions().hasKey(actionKey)
     }
 
+    /**
+     * @description Checks if a target and method is currently syncing
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @returns {boolean} True if syncing, false otherwise
+     */
     isSyncingTargetAndMethod (target, syncMethod) {
         const ca = this.currentAction()
         if (ca) {
@@ -182,22 +238,35 @@
         return false
     }
     
+    /**
+     * @description Gets all actions for a target
+     * @param {Object} target - The target object
+     * @returns {Array} An array of actions for the target
+     */
     actionsForTarget (target) {
         return this.actions().valuesArray().select(action => action.target() === target)
     }
 
+    /**
+     * @description Checks if there are actions for a target
+     * @param {Object} target - The target object
+     * @returns {boolean} True if there are actions, false otherwise
+     */
     hasActionsForTarget (target) {
         return this.actions().valuesArray().canDetect(action => action.target() === target)
     }
 
+    /**
+     * @description Unschedules all actions for a target
+     * @param {Object} target - The target object
+     * @returns {SyncScheduler} The instance
+     */
     unscheduleTarget (target) {
         if (this.hasActionsForTarget(target)) {
             console.log("unscheduling target " + target.debugTypeId())
 
             if (this.isProcessing()) {
                 console.warn("WARNING: SynScheduler unscheduleTarget while processing actions set - will unschedule action")
-                //debugger;
-                //return this
             }
 
             this.actionsForTarget(target).forEach(action => {
@@ -209,15 +278,23 @@
         return this
     }
 
-    // return SyncScheduler.shared().isSyncingOrScheduledTargetAndMethod(this, "syncFromNode")
-
-
+    /**
+     * @description Unschedules a specific target and method
+     * @param {Object} target - The target object
+     * @param {string} syncMethod - The sync method name
+     * @returns {SyncScheduler} The instance
+     */
     unscheduleTargetAndMethod (target, syncMethod) {
         const k = this.newActionForTargetAndMethod(target, syncMethod).actionsKey()
         this.removeActionKey(k)
         return this
     }
 
+    /**
+     * @description Removes an action by its key
+     * @param {string} k - The action key
+     * @returns {SyncScheduler} The instance
+     */
     removeActionKey (k) {
         const action = this.actions().at(k)
         if (action) {
@@ -227,6 +304,10 @@
         return this
     }
 	
+    /**
+     * @description Sets a timeout if needed
+     * @returns {SyncScheduler} The instance
+     */
     setTimeoutIfNeeded () {
 	    if (!this.hasTimeout() && !this.isPaused() && this.actions().size > 0) {
             this.setHasTimeout(true);
@@ -238,11 +319,19 @@
 	    return this;
     }
 	
+    /**
+     * @description Gets the ordered actions
+     * @returns {Array} An array of ordered actions
+     */
     orderedActions () {
         const sorter = function (a1, a2) { return a1.order() - a2.order() }
         return this.actions().valuesArray().sort(sorter)
     }
 	
+    /**
+     * @description Processes the sets of actions
+     * @returns {SyncScheduler} The instance
+     */
     processSets () {
         if (this.isPaused()) {
             return this;
@@ -254,13 +343,9 @@
         }
         assert(!this.isProcessing())
 
-        //console.log(" --- SyncScheduler BEGIN ---")
-        //this.show()
-
         this.setIsProcessing(true)
         let error = null
 
-        //this.debugLog(this.description())
         this.debugLog("Sync")
         
         const actions = this.orderedActions()
@@ -272,7 +357,6 @@
             } else {
                 this.setCurrentAction(action)
                 const actionError = action.tryToSend()
-                //const actionError = action.send()
                 if (actionError) {
                     error = actionError
                 }
@@ -287,18 +371,23 @@
             error.rethrow();
         }
 
-        //console.log(" --- SyncScheduler END --- (END OF EVENT LOOP!)")
-
         return this
     }
 
+    /**
+     * @description Gets the count of actions
+     * @returns {number} The number of actions
+     */
     actionCount () {
         return this.actions().size
     }
 
+    /**
+     * @description Performs a full sync now
+     * @returns {SyncScheduler} The instance
+     */
     fullSyncNow () {
         if (this.isPaused()) {
-            //console.log("SyncScheduler.fullSyncNow called while isPaused so SKIPPING")
             return this
             
         }
@@ -313,16 +402,8 @@
             const maxCount = 10
 
             while (this.actionCount()) {
-                /*
-                if (count > -1) {
-                    console.log("\nSyncScheduler looped " + count + " times, queue size is: " + this.actionCount() + "\n")
-                }
-                */
-
                 this.processSets()
                 count ++
-
-    
 
                 if (count > 6) {
                     this.setIsDebugging(true)
@@ -342,6 +423,10 @@
         return this
     }
 
+    /**
+     * @description Gets a description of the actions
+     * @returns {string} A string describing the actions
+     */
     actionsDescription () {
         if (this.orderedActions().length === 0) {
             return "none";
@@ -349,10 +434,12 @@
         return this.orderedActions().map(action => "    " + action.description() ).join("\n")
     }
 
+    /**
+     * @description Shows the scheduler's current state
+     */
     show () {
         console.log(this.type() + ":")
         console.log(this.actionsDescription())
     }
 
 }.initThisClass());
-

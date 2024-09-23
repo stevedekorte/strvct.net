@@ -1,18 +1,27 @@
+/**
+ * @module library.resources.themes
+ */
+
 "use strict";
 
-/*
-
-    BMTheme
-
-
-    BMThemeResources.shared().activeTheme().newThemeClassOptions()
-*/
-
+/**
+ * @class BMTheme
+ * @extends BMThemeFolder
+ * @classdesc BMTheme class represents a theme in the application.
+ * 
+ * BMThemeResources.shared().activeTheme().newThemeClassOptions()
+ */
 (class BMTheme extends BMThemeFolder {
   
+  /**
+   * @description Initializes the prototype slots for the BMTheme class.
+   */
   initPrototypeSlots () {
   }
 
+  /**
+   * @description Initializes the prototype for the BMTheme class.
+   */
   initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(true);
@@ -27,11 +36,18 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
+  /**
+   * @description Initializes a new instance of the BMTheme class.
+   */
   init () {
     super.init();
     //this.setupSubnodes()
   }
 
+  /**
+   * @description Sets up the theme as the default theme.
+   * @returns {BMTheme} The current instance.
+   */
   setupAsDefault () {
     debugger
     this.setTitle("DefaultTheme");
@@ -42,14 +58,27 @@
 
   // --- 
 
+  /**
+   * @description Retrieves a theme class by its name.
+   * @param {string} name - The name of the theme class to retrieve.
+   * @returns {BMThemeClass|null} The theme class with the given name, or null if not found.
+   */
   themeClassNamed (name) {
     return this.firstSubnodeWithTitle(name)
   }
 
+  /**
+   * @description Gets an array of all theme class names.
+   * @returns {string[]} An array of theme class names.
+   */
   themeClassNames () {
     return this.subnodes().map(themeClass => themeClass.title())
   }
 
+  /**
+   * @description Creates new theme class options.
+   * @returns {BMOptionsNode} The options node containing theme class options.
+   */
   newThemeClassOptions () {
     const options = BMOptionsNode.clone()
     this.subnodes().forEach(themeClass => {
@@ -60,6 +89,11 @@
     return options
   }
 
+  /**
+   * @description Retrieves a theme class by its name from all theme classes.
+   * @param {string} name - The name of the theme class to retrieve.
+   * @returns {BMThemeClass|undefined} The theme class with the given name, or undefined if not found.
+   */
   themeClassNamed (name) {
     return this.allThemeClasses().detect(themeClass => themeClass.title() === name)
 /*
@@ -71,16 +105,29 @@
     */
   }
 
+  /**
+   * @description Gets an array of all theme classes, including nested ones.
+   * @returns {BMThemeClass[]} An array of all theme classes.
+   */
   allThemeClasses () {
     return this.subnodes().map(themeClass => themeClass.selfAndAllThemeChildren()).flat()
   }
 
+  /**
+   * @description Creates a map of all theme classes, with their titles as keys.
+   * @returns {Map<string, BMThemeClass>} A map of all theme classes.
+   */
   allThemeClassesMap () {
     const map = new Map()
     this.allThemeClasses().forEach(themeClass => map.set(themeClass.title(), themeClass))
     return map
   }
 
+  /**
+   * @description Retrieves a state by its name.
+   * @param {string} name - The name of the state to retrieve.
+   * @returns {BMState|undefined} The state with the given name, or undefined if not found.
+   */
   stateWithName (name) {
     return this.states().stateWithName(name)
   }

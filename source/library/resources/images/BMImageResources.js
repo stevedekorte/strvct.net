@@ -1,13 +1,18 @@
-"use strict";
+/**
+ * @module library.resources.images.BMImageResources
+ */
 
-/*
-
-    BMImageResources
-
-*/
-
+/**
+ * @class BMImageResources
+ * @extends BMResourceGroup
+ * @classdesc Represents a group of image resources.
+ */
 (class BMImageResources extends BMResourceGroup {
     
+    /**
+     * @description Initializes the BMImageResources instance.
+     * @returns {BMImageResources} The initialized instance.
+     */
     init () {
         super.init();
         this.setTitle("Images");
@@ -15,6 +20,10 @@
         return this
     }
 
+    /**
+     * @description Sets up the BMImageResources instance.
+     * @returns {BMImageResources} The set up instance.
+     */
     setup () {
         super.setup();
         this.setResourceClasses([BMURLImage]);

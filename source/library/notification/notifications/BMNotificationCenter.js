@@ -1,8 +1,13 @@
+/**
+ * @module BMNotificationCenter
+ */
+
 "use strict";
 
-/* 
-
-    BMNotificationCenter
+/**
+ * @class BMNotificationCenter
+ * @extends ProtoClass
+ * @description 
     
     A notification system that queues notifications and waits for the 
     app to return to the event loop (using a timeout) to post them. 
@@ -84,59 +89,149 @@
 
 (class BMNotificationCenter extends ProtoClass {
 
+    /**
+     * @static
+     * @method initClass
+     * @description sets up the class as a singleton
+     * 
+     * 
+     */
     static initClass () {
         this.setIsSingleton(true)
     }
     
+    /**
+     * @method initPrototypeSlots
+     * @description sets up the prototype slots for the class
+     * 
+     * 
+     */
     initPrototypeSlots () {
+        /**
+         * @property observations
+         * @type {Array}
+         * @description an array of observations
+         */
         {
             const slot = this.newSlot("observations", null); // array 
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property observationsMap
+         * @type {Map}
+         * @description a map of observation hashes to observations
+         */
         {
             const slot = this.newSlot("observationsMap", null); // map of obsHash to observation 
             slot.setSlotType("Map");
         }
+
+        /**
+         * @property notifications
+         * @type {Array}
+         * @description an array of notifications
+         */
         {
             const slot = this.newSlot("notifications", null); // array 
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property debugNoteName
+         * @type {String}
+         * @description the name of the note to debug
+         */
         {
             const slot = this.newSlot("debugNoteName", "appDidInit");
             slot.setSlotType("String");
         }
+
+        /**
+         * @property currentNote
+         * @type {BMNotification}
+         * @description the current note being processed
+         */
         {
             const slot = this.newSlot("currentNote", null);
             slot.setSlotType("BMNotification");
         }
+
+        /**
+         * @property isProcessing
+         * @type {Boolean}
+         * @description whether the notification center is processing notifications
+         */
         {
             const slot = this.newSlot("isProcessing", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property obsHighwaterCount
+         * @type {Number}
+         * @description the highwater count for observations
+         */
         {
             const slot = this.newSlot("obsHighwaterCount", 100); // used
             slot.setSlotType("Number");
         }
+
+        /**
+         * @property noteSet
+         * @type {Set}
+         * @description a set of notes used for fast lookup for matching note
+         */
         {
             const slot = this.newSlot("noteSet", null); // Set used for fast lookup for matching note
             slot.setSlotType("Set");
         }
+
+        /**
+         * @property isPaused
+         * @type {Boolean}
+         * @description whether the notification center is paused
+         */
         {
             const slot = this.newSlot("isPaused", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property senderIndex
+         * @type {Map}
+         * @description a map of sender to observations used for fast lookup for matching note
+         */
         {
             const slot = this.newSlot("senderIndex", null);
             slot.setSlotType("Map");
         }
+
+        /**
+         * @property nameIndex
+         * @type {Map}
+         * @description a map of name to observations used for fast lookup for matching note
+         */
         {
             const slot = this.newSlot("nameIndex", null);
             slot.setSlotType("Map");
         }
+
+        /**
+         * @property nullSenderMatchSet
+         * @type {Set}
+         * @description a set of observations with null sender used for fast lookup for matching note
+         */
         {
             const slot = this.newSlot("nullSenderMatchSet", null);
             slot.setSlotType("Set");
         }
+
+        /**
+         * @property nullNameMatchSet
+         * @type {Set}
+         * @description a set of observations with null name used for fast lookup for matching note
+         */
         {
             const slot = this.newSlot("nullNameMatchSet", null);
             slot.setSlotType("Set");
@@ -146,6 +241,9 @@
     initPrototype () {
     }
 
+    /**
+     * @description initializes the notification center
+     */
     init () {
         super.init()
         this.setObservations([]);
@@ -154,21 +252,37 @@
         this.setNoteSet(new Set());
     }
 
+    /**
+     * @description returns the observations
+     * @returns {Array} the observations
+     */
     observations () {
        // debugger;
         return this.observationsMap().valuesArray();
     }
 
+    /**
+     * @description pauses the notification center
+     * @returns {BMNotificationCenter} the notification center
+     */
     pause () {
         this.setIsPaused(true);
         return this;
     }
 
+    /**
+     * @description resumes the notification center
+     * @returns {BMNotificationCenter} the notification center
+     */
     resume () {
         this.setIsPaused(false);
         return this;
     }
 
+    /**
+     * @description returns a short description of the notification center
+     * @returns {String} the short description
+     */
     shortDescription () {
         return "NotificationCenter " + this.notifications().length + " notes, " + this.observations().length + " obs";
     }
@@ -191,11 +305,21 @@
     }
     */
     
+    /**
+     * @description checks if the observation is in the observations map
+     * @param {BMObservation} obs the observation to check
+     * @returns {Boolean} whether the observation is in the observations map
+     */
     hasObservation (obs) {
         return this.observationsMap().has(obs.obsHash());
         //return this.observations().canDetect(ob => ob.isEqual(obs));
     }
     
+    /**
+     * @description adds an observation to the observations map
+     * @param {BMObservation} obs the observation to add
+     * @returns {BMNotificationCenter} the notification center
+     */
     addObservation (obs) {
         if (!this.hasObservation(obs)) {
             this.observationsMap().set(obs.obsHash(), obs);
@@ -204,26 +328,59 @@
         return this;
     }
 
+    /**
+     * @description creates a new observation
+     * @returns {BMObservation} the new observation
+     */
     newObservation () {
         return BMObservation.clone().setCenter(this);
     }
 
+    /**
+     * @description returns the observers of the sender
+     * @param {BMNode} sender the sender
+     * @returns {Array} the observers
+     */
     observersOfSender (sender) {
         return this.observationsWithSender(sender).map(obs => obs.observer());
     }
 
+    /**
+     * @description returns the observations with the sender
+     * @param {BMNode} sender the sender
+     * @returns {Array} the observations
+     */
     observationsWithSender (sender) {
         return this.observations().filter(obs => obs.sender() === sender);
     }
 
+    /**
+     * @description checks if the sender has observations
+     * @param {BMNode} sender the sender
+     * @returns {Boolean} whether the sender has observations
+     */
     hasObservationsForSender (sender) {
         return this.observationsWithSender(sender).length > 0;
     }
 
+    /**
+     * @description returns the observations with the observer
+     * @param {BMNode} observer the observer
+     * @returns {Array} the observations
+     */
     observationsWithObserver (observer) {
         return this.observations().filter(obs => obs.observer() === observer);
     }
 
+    /**
+     * @description checks if the observer has observations
+     * @param {BMNode} observer the observer
+     * @returns {Boolean} whether the observer has observations
+     */
+    hasObservationsForObserver (observer) {
+        return this.observationsWithObserver(observer).length > 0;
+    }
+    
     /*
     observationsForSender (sender) {
         const matches = this.observations().filter(obs => obs.sender() === sender)
@@ -231,6 +388,11 @@
     }
     */
     
+    /**
+     * @description removes an observation from the observations map
+     * @param {BMObservation} anObservation the observation to remove
+     * @returns {BMNotificationCenter} the notification center
+     */
     removeObservation (anObservation) {
         this.observationsMap().delete(anObservation.obsHash());
         /*
@@ -240,6 +402,11 @@
         return this
     }
     
+    /**
+     * @description removes an observer from the observations map
+     * @param {BMNode} anObserver the observer to remove
+     * @returns {BMNotificationCenter} the notification center
+     */
     removeObserver (anObserver) {        
         this.observationsMap().selectInPlaceKV((key, obs) => obs.observer() !== anObserver);
         return this;
@@ -247,6 +414,11 @@
 
     // --- notifying ----
     
+    /**
+     * @description checks if the notification is in the note set
+     * @param {BMNotification} note the notification to check
+     * @returns {Boolean} whether the notification is in the note set
+     */
     hasNotification (note) {
         if (this.noteSet().has(note)) {
             // quick check to see if we have an exact match
@@ -256,6 +428,11 @@
         return this.notifications().canDetect(n => n.isEqual(note))
     }
     
+    /**
+     * @description adds a notification to the note set
+     * @param {BMNotification} note the notification to add
+     * @returns {BMNotificationCenter} the notification center
+     */
     addNotification (note) {
         if (!this.hasNotification(note)) {
             /*
@@ -270,12 +447,20 @@
         return this;
     }
 
+    /**
+     * @description creates a new notification
+     * @returns {BMNotification} the new notification
+     */
     newNote () {
         return BMNotification.clone().setCenter(this);
     }
     
     // --- timeout & posting ---
     
+    /**
+     * @description processes the post queue
+     * @returns {BMNotificationCenter} the notification center
+     */
     processPostQueue () {
         if (this.isPaused()) {
             console.log("WARNING: BMNotificationCenter.processPostQueue() called while paused - SKIPPING");
@@ -318,6 +503,11 @@
         return this;
     }
 
+    /**
+     * @description tries to post a notification now
+     * @param {BMNotification} note the notification to post
+     * @returns {BMNotificationCenter} the notification center
+     */
     tryToPostNotificationNow (note) {
         try { 
             this.postNotificationNow(note);
@@ -329,10 +519,19 @@
         return null;
     }
 
+    /**
+     * @description checks if the note should be debugged
+     * @param {BMNotification} note the notification to check
+     * @returns {Boolean} whether the note should be debugged
+     */
     shouldDebugNote (note) {
         return note.isDebugging() || (this.isDebugging() === true && (this.debugNoteName() === null || this.debugNoteName() === note.name()));
     }
 
+    /**
+     * @description calculates the indexes
+     * @returns {BMNotificationCenter} the notification center
+     */
     calcIndexes () {
         const senderIndex = this.observationsMap().indexedByMethod("sender");
         this.setSenderIndex(senderIndex);
@@ -349,6 +548,11 @@
         this.setNullNameMatchSet(nullNameMatchSet);
     }
     
+    /**
+     * @description posts a notification now
+     * @param {BMNotification} note the notification to post
+     * @returns {BMNotificationCenter} the notification center
+     */
     postNotificationNow (note) {
         // use a copy of the observations list in 
         // case any are added while we are posting 
@@ -385,6 +589,11 @@
         this.setCurrentNote(null);
     }
 
+    /**
+     * @description returns the observations matching the notification
+     * @param {BMNotification} note the notification to match
+     * @returns {ImmutableSet} the observations matching the notification
+     */
     observationsMatchingNotification (note) {
         // use our observation indexes for fast matching with the notification
         // IMPORTANT: assumes calcIndexes() has been called before modifying observations
@@ -407,6 +616,10 @@
     }
     */
 
+    /**
+     * @description shows the notification center
+     * @returns {BMNotificationCenter} the notification center
+     */
     show () {
         console.log(this.type() + ":");
         console.log("  posting notes:");
@@ -415,14 +628,26 @@
         console.log(this.observersDescription());
     }
 
+    /**
+     * @description returns the notes description
+     * @returns {String} the notes description
+     */
     notesDescription () {
         return this.notifications().map(note => "    " + note.description()).join("\n");
     }
 
+    /**
+     * @description returns the observers description
+     * @returns {String} the observers description
+     */
     observersDescription () {
         return this.observations() .map(obs => "    " + obs.description()).join("\n");
     }
     
+    /**
+     * @description shows the current note stack
+     * @returns {BMNotificationCenter} the notification center
+     */
     showCurrentNoteStack () {
         if (this.currentNote() === null) {
             //console.log("BMNotificationCenter.showCurrentNoteStack() warning - no current post")

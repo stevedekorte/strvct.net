@@ -1,15 +1,22 @@
 "use strict";
 
-/*
+/**
+ * @module library.resources.themes
+ */
 
-    BMThemeState
-
-    Replaces BMStyle
-
-*/
-
+/**
+ * BMThemeState class replaces BMStyle.
+ * @class
+ * @extends BMThemeFolder
+ * @classdesc Represents a theme state with various style attributes.
+ */
 (class BMThemeState extends BMThemeFolder {
     
+    /**
+     * @static
+     * @description Returns an array of style names.
+     * @returns {string[]} Array of style names.
+     */
     static styleNames () {
         return [
             "color", // start with ["#000", "#111", "#222", "#333", "#444", .. to #fff by X
@@ -45,6 +52,11 @@
         ];
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid letter spacing values.
+     * @returns {string[]} Array of valid letter spacing values.
+     */
     static validLetterSpacingValues () {
         const values = ["inherit"]
         for (let i = 0; i < 0.51; i += 0.01) {
@@ -54,6 +66,11 @@
         return values
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid line height values.
+     * @returns {string[]} Array of valid line height values.
+     */
     static validLineHeightValues () {
         const values = ["inherit"]
         for (let i = 1; i < 3; i += 0.1) {
@@ -63,10 +80,20 @@
         return values
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid color values.
+     * @returns {string[]} Array of valid color values.
+     */
     static validColors () {
         return ["inherit", "", "transparent", "white", "black", "#000", "#111", "rgb(25, 25, 25)", "#222", "#333", "#444", "#555", "#666", "#777", "#888", "#999", "#aaa", "#bbb", "#ccc", "#ddd", "#fff"]
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid padding values.
+     * @returns {string[]} Array of valid padding values.
+     */
     static validPaddingValues () {
         const values = ["inherit"]
         for (let i = 0; i < 41; i ++) {
@@ -75,6 +102,11 @@
         return values
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid border width values.
+     * @returns {string[]} Array of valid border width values.
+     */
     static validBorderWidthValues () {
         const values = ["inherit"]
         for (let i = 0; i < 10; i ++) {
@@ -83,10 +115,20 @@
         return values
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid border style values.
+     * @returns {string[]} Array of valid border style values.
+     */
     static validBorderStyleValues () {
         return ["inherit", "none", "dotted", "dashed", "solid", /*"groove", "inset"*/]
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid font sizes.
+     * @returns {string[]} Array of valid font sizes.
+     */
     static validFontSizes () {
         const values = ["inherit"]
         for (let i = 6; i < 80; i ++) {
@@ -95,10 +137,16 @@
         return values
     }
 
+    /**
+     * @description Initializes the prototype slots.
+     */
     initPrototypeSlots () {
         const styleSlots = [];
 
         {
+            /**
+             * @property {Array} styleSlots
+             */
             const slot = this.newSlot("styleSlots", styleSlots);
             slot.setSlotType("Array");
         }
@@ -205,21 +253,33 @@
 
         //this.newSlot("paddingStyleSlots", styleSlots.select(slot => slot.name().beginsWith("padding"))); // cached for efficiency
         {
+            /**
+             * @property {Array} borderStyleSlots
+             */
             const slot = this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border") || slot.name().beginsWith("margin"))); // cached for efficiency
             slot.setSlotType("Array");
         }
 
         {
+            /**
+             * @property {Array} nonBorderStyleSlots
+             */
             const slot = this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !(slot.name().beginsWith("border") || slot.name().beginsWith("margin")))); // cached for efficiency
             slot.setSlotType("Array");
         }
         
         {
+            /**
+             * @property {Map} styleCacheMap
+             */
             const slot = this.newSlot("styleCacheMap", null);
             slot.setSlotType("Map");
         }
     }
 
+    /**
+     * @description Initializes the BMThemeState instance.
+     */
     init () {
         super.init()
         this.setStyleCacheMap(null) // null is used to indicate cache needs to be built when accessed
@@ -240,6 +300,9 @@
         //this._didChangeThemeNote = this.newNoteNamed("didChangeTheme")
     }
 
+    /**
+     * @description Performs final initialization.
+     */
     finalInit () {
         super.finalInit();
         if (!this.hasSubnodes()) {
@@ -247,17 +310,29 @@
         }
     }
 
+    /**
+     * @description Sets a theme attribute.
+     * @param {string} key - The attribute key.
+     * @param {*} value - The attribute value.
+     * @returns {BMThemeState} The instance.
+     */
     setThemeAttribute (key, value) {
         this[key.asSetter()].apply(this, [value])
         //this.firstSubnodeWithTitle(key).setValue(value)
         return this
     }
 
+    /**
+     * @description Syncs from view style.
+     * @returns {BMThemeState} The instance.
+     */
     syncFromViewStyle () {
         return this
     }
 
-    // prepareForAccess
+    /**
+     * @description Prepares for first access.
+     */
     prepareForFirstAccess () {
         const fields = this.getFields()
         if (fields.length) {
@@ -269,12 +344,19 @@
         }
     }
 
+    /**
+     * @description Gets all fields.
+     * @returns {Array} Array of fields.
+     */
     getFields () {
         return this.selectSubnodesRecursively(sn => {
             return sn.thisClass().isKindOf(BMField)
         })
     }
 
+    /**
+     * @description Sets up subnodes.
+     */
     setupSubnodes () {
         this.removeAllSubnodes()
 
@@ -287,18 +369,29 @@
         this.addSubnodeFieldsForSlots(this.styleSlots())
     }
 
-    // --- style cache ---
-
+    /**
+     * @description Clears the style cache.
+     * @returns {BMThemeState} The instance.
+     */
     clearStyleCache () {
         this.setStyleCacheMap(null)
         //console.log("clearStyleCache")
         return this
     }
 
+    /**
+     * @description Gets a cached style value by name.
+     * @param {string} name - The style name.
+     * @returns {*} The cached style value.
+     */
     getCachedStyleValueNamed (name) {
         return this.getStyleCacheMap().at(name)
     }
 
+    /**
+     * @description Gets the style cache map.
+     * @returns {Map} The style cache map.
+     */
     getStyleCacheMap () {
         if (!this.styleCacheMap()) {
             this.setStyleCacheMap(this.computeStyleCacheMap())
@@ -306,6 +399,10 @@
         return this.styleCacheMap()
     }
 
+    /**
+     * @description Computes the style cache map.
+     * @returns {Map} The computed style cache map.
+     */
     computeStyleCacheMap () {
         const map = new Map()
         this.styleSlots().forEach(slot => { 
@@ -316,20 +413,35 @@
         return map
     }
 
-    // --- applying styles ---
-
+    /**
+     * @description Gets the theme class.
+     * @returns {*} The theme class.
+     */
     themeClass () {
         return this.themeStates().parentNode()
     }
 
+    /**
+     * @description Gets the parent theme class.
+     * @returns {*} The parent theme class.
+     */
     parentThemeClass () {
         return this.themeClass().parentThemeClass()
     }
 
+    /**
+     * @description Gets the theme states.
+     * @returns {*} The theme states.
+     */
     themeStates () {
         return this.parentNode()
     }
 
+    /**
+     * @description Gets the parent theme state.
+     * @returns {*} The parent theme state.
+     */
+    
     parentThemeState () {
         return this.themeStates().subnodeBefore(this)
     }
@@ -338,6 +450,12 @@
        See notes at top of this file for explaination of lookup order.
     */
     
+    /**
+     * @description Gets the style value named.
+     * @param {string} name - The style name.
+     * @param {number} depth - The depth.
+     * @returns {*} The style value.
+     */
     getStyleValueNamed (name, depth = 1) {
         assert(depth < 20)
 
@@ -393,17 +511,32 @@
 
     // --- apply style  ---
 
+    /**
+     * @description Applies the style to view.
+     * @param {BMView} aView - The view.
+     * @returns {BMThemeState} The instance.
+     */
     applyToView (aView) {
         this.applyStyleSlotsToView(this.styleSlots(), aView)
         return this
     }
 
+    /**
+     * @description Applies the non border styles to view.
+     * @param {BMView} aView - The view.
+     * @returns {BMThemeState} The instance.
+     */
     applyNonBorderStylesToView (aView) {
         //debugger
         this.applyStyleSlotsToView(this.nonBorderStyleSlots(), aView)
         return this
     }
 
+    /**
+     * @description Applies the border styles to view.
+     * @param {BMView} aView - The view.
+     * @returns {BMThemeState} The instance.
+     */
     applyBorderStylesToView (aView) {
         this.applyStyleSlotsToView(this.borderStyleSlots(), aView)
         return this
@@ -411,6 +544,12 @@
 
     // --- apply styles slots ---
 
+    /**
+     * @description Applies the style slots to view.
+     * @param {Array} styleSlots - The style slots.
+     * @param {BMView} aView - The view.
+     * @returns {BMThemeState} The instance.
+     */
     applyStyleSlotsToView (styleSlots, aView) {
         const lockedSet = aView.lockedStyleAttributeSet ? aView.lockedStyleAttributeSet() : null;
         //console.log("applyStyleSlotsToView ", aView.debugTypeId())
@@ -436,6 +575,10 @@
 
     // --- changes ---
     
+    /**
+     * @description On did edit.
+     * @returns {boolean} False.
+     */
     onDidEdit () {
         console.log(this.typeId() + " onDidEdit")
         this.setStyleCacheMap(null)
@@ -443,6 +586,13 @@
         return false
     }
 
+    /**
+     * @description Did update slot.
+     * @param {BMSlot} aSlot - The slot.
+     * @param {*} oldValue - The old value.
+     * @param {*} newValue - The new value.
+     * @returns {boolean} False.
+     */
     didUpdateSlot (aSlot, oldValue, newValue) {
         if (this.hasDoneInit()) {
             if (aSlot.name() !== "styleCacheMap") { // hack
@@ -453,16 +603,26 @@
         return super.didUpdateSlot(aSlot, oldValue, newValue) 
     }
 
+    /**
+     * @description Schedules cache clears.
+     */
     scheduleCacheClears () {
         // need to clear our sibling caches as there is inheritance between states,
         // so our change may invalidate attributes of states that inherit from us
         this.parentNode().subnodes().forEach(sn => sn.scheduleMethod("clearStyleCache"))
     }
     
+    /**
+     * @description Did reorder parent subnodes.
+     */
     didReorderParentSubnodes () {
         this.scheduleMethod("clearStyleCache")
     }
 
+    /**
+     * @description Style map.
+     * @returns {Map} The style map.
+     */
     styleMap () {
         const map = new Map()
         const title = this.title()
@@ -478,12 +638,21 @@
 
     // --- helpers ---
 
+    /**
+     * @description Attribute named.
+     * @param {string} name - The attribute name.
+     * @returns {BMView} The attribute.
+     */
     attributeNamed (name) {
         return this.firstSubnodeWithTitle(name)
     }
 
     // --- defaults ----
 
+    /**
+     * @description Sets up as default.
+     * @returns {BMThemeState} The instance.
+     */
     setupAsDefault () {
         const title = this.title()
         const methodName = "setupAsDefault" + this.title().capitalized() + "State"
@@ -491,6 +660,10 @@
         return this
     }
 
+    /**
+     * @description Sets up as default active state.
+     * @returns {BMThemeState} The instance.
+     */
     setupAsDefaultActiveState () {
         //this.setColor("white")
         //this.setBackgroundColor("#333")
@@ -499,19 +672,31 @@
         //this.setThemeAttribute("fontWeight", "normal");
       }
     
-      setupAsDefaultUnselectedState () {
+    /**
+     * @description Sets up as default unselected state.
+     * @returns {BMThemeState} The instance.
+     */
+    setupAsDefaultUnselectedState () {
         this.setThemeAttribute("color", "#bbb");
         this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");
       }
     
-      setupAsDefaultSelectedState () {
+    /**
+     * @description Sets up as default selected state.
+     * @returns {BMThemeState} The instance.
+     */
+    setupAsDefaultSelectedState () {
         this.setThemeAttribute("color", "white");
         this.setThemeAttribute("backgroundColor", "#222");
         //this.setThemeAttribute("fontWeight", "normal");
       }
     
-      setupAsDefaultDisabledState () {
+    /**
+     * @description Sets up as default disabled state.
+     * @returns {BMThemeState} The instance.
+     */
+    setupAsDefaultDisabledState () {
         this.setThemeAttribute("color", "#ccc");
         //this.setThemeAttribute("backgroundColor", "transparent");
         //this.setThemeAttribute("fontWeight", "normal");

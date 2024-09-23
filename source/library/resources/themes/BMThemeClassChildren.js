@@ -1,16 +1,25 @@
 "use strict";
 
-/*
+/**
+ * @module library.resources.themes.BMThemeClassChildren
+ */
 
-    BMThemeFolder
-
-*/
-
+/**
+ * @class BMThemeClassChildren
+ * @extends BMThemeFolder
+ * @classdesc Represents a folder for theme class children.
+ */
 (class BMThemeClassChildren extends BMThemeFolder {
     
+    /**
+     * @description Initializes the prototype slots.
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the prototype with default settings.
+     */
     initPrototype () {
         this.setShouldStore(true)
         this.setShouldStoreSubnodes(true) 
@@ -22,6 +31,11 @@
         this.setNodeCanReorderSubnodes(true)
     }
 
+    /**
+     * @description Finds a theme class by its name.
+     * @param {string} name - The name of the theme class to find.
+     * @returns {BMThemeClass|undefined} The found theme class or undefined if not found.
+     */
     themeClassNamed (name) {
         return this.subnodes().detect(sn => sn.title() === name)
     }

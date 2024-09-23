@@ -1,17 +1,20 @@
+/**
+ * @module library.resources.files
+ */
+
 "use strict";
 
-/*
-
-    BMResourceFolder
-
-    An abstraction for an individual file folder.
-
-    BMFileResources will setup all BMResourceFolders.
-
-*/
-
+/**
+ * @class BMResourceFolder
+ * @extends BaseNode
+ * @classdesc An abstraction for an individual file folder.
+ * BMFileResources will setup all BMResourceFolders.
+ */
 (class BMResourceFolder extends BaseNode {
     
+    /**
+     * @description Initializes prototype slots for the class.
+     */
     initPrototypeSlots () {
         {
             const slot = this.newSlot("path", null);
@@ -19,43 +22,75 @@
         }
     }
 
+    /**
+     * @description Initializes the prototype with default values.
+     */
     initPrototype () {
         this.setTitle("BMFileSystemFolder");
         this.setNoteIsSubnodeCount(true);
     }
 
+    /**
+     * @description Initializes the instance.
+     * @returns {BMResourceFolder} The initialized instance.
+     */
     init () {
         super.init()
-        //this.registerForAppDidInit()
         return this
     }
 
+    /**
+     * @description Gets the name of the folder.
+     * @returns {string} The folder name.
+     */
     name () {
         return this.path().lastPathComponent()
     }
 
+    /**
+     * @description Gets the title of the folder.
+     * @returns {string} The folder title.
+     */
     title () {
         return this.name()
     }
 
+    /**
+     * @description Sets up subnodes for the folder.
+     * @returns {BMResourceFolder} The current instance.
+     */
     setupSubnodes () {
         return this
     }
 
+    /**
+     * @description Checks if the folder is a parent of the given path.
+     * @param {string} aPath - The path to check.
+     * @returns {boolean} True if the folder is a parent of the path, false otherwise.
+     */
     isParentOfPath (aPath) {
         const checkPath = this.path() + "/"
         return (checkPath.indexOf(aPath) === 0)
     }
 
+    /**
+     * @description Adds a relative resource path to the folder.
+     * @param {string} aPath - The relative path to add.
+     * @returns {BMResourceFolder|BMResourceFile} The added resource.
+     */
     addRelativeResourcePath (aPath) {
         return this.addRelativeResourcePathArray(aPath.split("/"))
     }
 
+    /**
+     * @description Adds a relative resource path array to the folder.
+     * @param {string[]} pathArray - The relative path array to add.
+     * @returns {BMResourceFolder|BMResourceFile} The added resource.
+     */
     addRelativeResourcePathArray (pathArray) {
         pathArray = pathArray.slice()
 
         const fullPath = this.path() + "/" + pathArray.join("/")
-        //console.log("'" + this.path() + "' addRelativeResourcePathArray(", pathArray, ")")
 
         if (pathArray.length === 1) { // it's a file
             const fileName = pathArray.first()
@@ -76,13 +111,21 @@
         }
     }
 
-    // subfolders
-
+    /**
+     * @description Checks if the folder has a subfolder with the given name.
+     * @param {string} aName - The name of the subfolder to check.
+     * @returns {boolean} True if the subfolder exists, false otherwise.
+     */
     hasSubfolderNamed (aName) {
-        const subfolder = this.subfolderWithName(subfolderName)
+        const subfolder = this.subfolderWithName(aName)
         return subfolder !== null
     }
 
+    /**
+     * @description Adds a subfolder with the given name, or returns an existing one.
+     * @param {string} subfolderName - The name of the subfolder to add or retrieve.
+     * @returns {BMResourceFolder} The subfolder.
+     */
     addSubnodeForFolderNameCreateIfAbsent (subfolderName) {
         const subfolder = this.subfolderWithName(subfolderName)
         if (subfolder) {
@@ -91,6 +134,12 @@
         return this.addSubnodeForFolderName(subfolderName)
     }
 
+    /**
+     * @description Adds a new subfolder with the given name.
+     * @param {string} aName - The name of the subfolder to add.
+     * @returns {BMResourceFolder} The newly added subfolder.
+     * @throws {Error} If the folder name is empty or contains a slash.
+     */
     addSubnodeForFolderName (aName) {
         if (aName.length === 0) {
             throw new Error("empty folder name")
@@ -98,74 +147,130 @@
         if (aName.indexOf("/") !== -1) {
             throw new Error("folder name contains /")
         }
-        //console.log("'" + this.path() + "' addSubnodeForFolderName '" + aName + "'")
         const fullPath = this.path() + "/" + aName
         const subfolder = BMResourceFolder.clone().setPath(fullPath)
         this.addSubnode(subfolder)
-        //this.show()
         return subfolder
     }
 
+    /**
+     * @description Logs the folder's path and its subnodes' names.
+     */
     show () {
         const subnodeNames = this.subnodes().map(sn => sn.name())
         console.log(this.type() + " '" + this.path() + "': " +  JSON.stringify(subnodeNames))
     }
 
+    /**
+     * @description Gets the class name for folders.
+     * @returns {string} The folder class name.
+     */
     folderClassName () {
         return "BMResourceFolder"
     }
 
+    /**
+     * @description Gets all subfolders.
+     * @returns {BMResourceFolder[]} An array of subfolders.
+     */
     subfolders () {
         return this.subnodes().filter(node => node.type() === this.folderClassName())
     }
 
+    /**
+     * @description Alias for subfolders().
+     * @returns {BMResourceFolder[]} An array of subfolders.
+     */
     folders () {
         return this.subfolders()
     }
 
+    /**
+     * @description Gets a subfolder with the given name.
+     * @param {string} aName - The name of the subfolder to retrieve.
+     * @returns {BMResourceFolder|null} The subfolder, or null if not found.
+     */
     subfolderWithName (aName) {
         return this.subfolders().detect(subnode => subnode.name() === aName)
     }
 
+    /**
+     * @description Alias for subfolderWithName().
+     * @param {string} aName - The name of the subfolder to retrieve.
+     * @returns {BMResourceFolder|null} The subfolder, or null if not found.
+     */
     folderAt (aName) {
         return this.subfolderWithName(aName)
     }
 
-    // files
-
+    /**
+     * @description Adds a new file with the given name.
+     * @param {string} fileName - The name of the file to add.
+     * @returns {BMResourceFile} The newly added file.
+     */
     addSubnodeForFileName (fileName) {
         const file = BMResourceFile.clone().setPath(this.path() + "/" + fileName)
         this.addSubnode(file)
         return file
     }
 
+    /**
+     * @description Gets the class name for files.
+     * @returns {string} The file class name.
+     */
     fileClassName () {
         return "BMResourceFile"
     }
 
+    /**
+     * @description Gets all files in the folder.
+     * @returns {BMResourceFile[]} An array of files.
+     */
     files () {
         return this.subnodes().filter(sn => sn.thisClass().isKindOf(BMResourceFile));
     }
     
+    /**
+     * @description Gets the names of all files in the folder.
+     * @returns {string[]} An array of file names.
+     */
     fileNames () {
         return this.files().map(file => file.name());
     }
 
+    /**
+     * @description Gets a file with the given name.
+     * @param {string} aName - The name of the file to retrieve.
+     * @returns {BMResourceFile|null} The file, or null if not found.
+     */
     fileWithName (aName) {
         return this.subnodes().detect(sn => sn.name() === aName)
     }
 
+    /**
+     * @description Alias for fileWithName().
+     * @param {string} aName - The name of the file to retrieve.
+     * @returns {BMResourceFile|null} The file, or null if not found.
+     */
     fileAt (aName) {
         return this.subnodes().detect(sn => sn.name() === name)
     }
 
+    /**
+     * @description Gets all resource files in the folder and its subfolders.
+     * @returns {BMResourceFile[]} An array of all resource files.
+     */
     allResourceFiles () {
         return this.leafSubnodes().filter(node => node.thisClass().isKindOf(BMResourceFile));
     }
 
+    /**
+     * @description Gets a resource at the given path.
+     * @param {string} aPath - The path of the resource to retrieve.
+     * @returns {BMResourceFile|BMResourceFolder|null} The resource, or null if not found.
+     */
     resourceAtPath (aPath) {
         const pathArray = aPath.split("/");
-        // remove first component 
         const first = pathArray.shift();
         const localResource = this.fileWithName(first);
 
@@ -174,19 +279,33 @@
         }
 
         return localResource.resourceAtPath(pathArray.join("/"));
-        //return this.allResourceFiles().detect(file => file.path() === aPath);
     }
 
+    /**
+     * @description Gets all resources with the given name.
+     * @param {string} aName - The name of the resources to retrieve.
+     * @returns {BMResourceFile[]} An array of resources with the given name.
+     */
     resourcesWithName (aName) {
         return this.allResourceFiles().filter(file => file.name() === aName);
     }
 
+    /**
+     * @description Gets a single resource with the given name.
+     * @param {string} aName - The name of the resource to retrieve.
+     * @returns {BMResourceFile} The resource with the given name.
+     * @throws {Error} If more than one resource is found with the given name.
+     */
     resourceWithName (aName) {
         const files = this.resourcesWithName(aName)
         assert(files.length === 1, "expected one file with name '" + aName + "', got: " + files.length);
         return files.first();
     }
 
+    /**
+     * @description Precaches resources where appropriate.
+     * @returns {Promise<void>} A promise that resolves when precaching is complete.
+     */
     async prechacheWhereAppropriate() {
         console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
         await this.subnodes().promiseParallelMap(async (node) => node.prechacheWhereAppropriate());

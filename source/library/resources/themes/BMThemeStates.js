@@ -1,13 +1,20 @@
-"use strict";
+/**
+ * @module library.resources.themes.BMThemeStates
+ */
 
-/*
-
-    BMThemeStates
-
-*/
-
+/**
+ * @class BMThemeStates
+ * @extends BMThemeFolder
+ * @classdesc Represents a collection of theme states.
+ */
 (class BMThemeStates extends BMThemeFolder {
+  /**
+   * @description Initializes the prototype slots for the class.
+   */
   initPrototypeSlots () {
+    /**
+     * @property {Array} standardStateNames - An array of standard state names.
+     */
     {
       const slot =this.newSlot("standardStateNames", [
         "disabled",
@@ -19,6 +26,9 @@
     }
   }
 
+  /**
+   * @description Initializes the instance.
+   */
   init () {
     super.init();
     this.setShouldStore(true);
@@ -32,11 +42,17 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
+  /**
+   * @description Performs final initialization.
+   */
   finalInit () {
     super.finalInit();
     this.setupSubnodes()
   }
 
+  /**
+   * @description Sets up the subnodes.
+   */
   setupSubnodes () {
     if (!this.hasSubnodes()) {
       const subnodeClass = this.subnodeClasses().first();
@@ -49,31 +65,52 @@
     }
   }
 
-  // --- states ---
-
+  /**
+   * @description Retrieves a state with the given name.
+   * @param {string} name - The name of the state to retrieve.
+   * @returns {BMThemeState} The theme state with the given name.
+   */
   stateWithName (name) {
     assert(this.standardStateNames().contains(name))
     return this.firstSubnodeWithTitle(name);
   }
 
+  /**
+   * @description Retrieves the active theme state.
+   * @returns {BMThemeState} The active theme state.
+   */
   activeThemeState () {
     return this.stateWithName("active");
   }
 
+  /**
+   * @description Retrieves the unselected theme state.
+   * @returns {BMThemeState} The unselected theme state.
+   */
   unselectedThemeState () {
     return this.stateWithName("unselected");
   }
 
+  /**
+   * @description Retrieves the selected theme state.
+   * @returns {BMThemeState} The selected theme state.
+   */
   selectedThemeState () {
     return this.stateWithName("selected");
   }
 
+  /**
+   * @description Retrieves the disabled theme state.
+   * @returns {BMThemeState} The disabled theme state.
+   */
   disabledThemeState () {
     return this.stateWithName("disabled");
   }
 
-  // --- default ---
-
+  /**
+   * @description Sets up the instance as default.
+   * @returns {BMThemeStates} The instance.
+   */
   setupAsDefault () {
     this.setTitle("states");
     this.setupSubnodes();

@@ -1,25 +1,30 @@
-"use strict";
+/**
+ * @module library.resources.themes
+ */
 
-/*
-
-    BMThemeClass
-
-    Notes on attribute lookup:
-
-    If we have the following path of theme classes:
-
-      Default -(child)-> Tile -(child)-> TextTile
-
-    Example lookup path for a selected TextTile:
-
-      TextTile/selected   -> Tile/selected   -> Default->selected
-      TextTile/unselected -> Tile/unselected -> Default->unselected
-      TextTile/disabled   -> Tile/disabled   -> Default->disabled
-
-*/
-
+/**
+ * @class BMThemeClass
+ * @extends BMThemeFolder
+ * @classdesc
+ * BMThemeClass represents a theme class in the theming system.
+ * 
+ * Notes on attribute lookup:
+ * 
+ * If we have the following path of theme classes:
+ * 
+ *   Default -(child)-> Tile -(child)-> TextTile
+ * 
+ * Example lookup path for a selected TextTile:
+ * 
+ *   TextTile/selected   -> Tile/selected   -> Default->selected
+ *   TextTile/unselected -> Tile/unselected -> Default->unselected
+ *   TextTile/disabled   -> Tile/disabled   -> Default->disabled
+ */
 (class BMThemeClass extends BMThemeFolder {
 
+  /**
+   * @description Initializes the BMThemeClass instance.
+   */
   init () {
     super.init();
     this.setShouldStore(true);
@@ -33,6 +38,9 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
+  /**
+   * @description Performs final initialization of the BMThemeClass instance.
+   */
   finalInit () {
     super.finalInit();
     if (!this.hasSubnodes()) {
@@ -41,6 +49,10 @@
     }
   }
 
+  /**
+   * @description Returns the parent theme class of this instance.
+   * @returns {BMThemeClass|null} The parent theme class or null if it's a root theme class.
+   */
   parentThemeClass () {
     const parentChildrenNode = this.parentNode()
     if (parentChildrenNode.title() !== "children") {
@@ -54,8 +66,10 @@
     return null
  }
 
-  // --- default ---
-
+  /**
+   * @description Sets up this instance as the default theme class.
+   * @returns {BMThemeClass} This instance.
+   */
   setupAsDefault() {
     this.setTitle("Tile");
     //this.setupSubnodes();
@@ -65,18 +79,35 @@
     return this;
   }
 
+  /**
+   * @description Returns the state with the given name.
+   * @param {string} name - The name of the state to retrieve.
+   * @returns {BMThemeState} The state with the given name.
+   */
   stateWithName (name) {
     return this.states().stateWithName(name);
   }
 
+  /**
+   * @description Returns the states subnode of this theme class.
+   * @returns {BMThemeStates} The states subnode.
+   */
   states () {
     return this.firstSubnodeWithTitle("states");
   }
 
+  /**
+   * @description Returns the children subnode of this theme class.
+   * @returns {BMThemeClassChildren} The children subnode.
+   */
   children () {
     return this.firstSubnodeWithTitle("children");
   }
 
+  /**
+   * @description Returns an array containing this theme class and all its descendant theme classes.
+   * @returns {BMThemeClass[]} An array of theme classes.
+   */
   selfAndAllThemeChildren () {
     const children = this.children().subnodes().map(themeClass => themeClass.selfAndAllThemeChildren())
     return [this].concat(children.flat())

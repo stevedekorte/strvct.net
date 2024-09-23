@@ -1,126 +1,187 @@
 "use strict";
 
-/*
+/**
+ * @module library.resources.files.BMResourceFile
+ */
 
-    BMFileResources
-
-*/
-
+/**
+ * @class BMResourceFile
+ * @extends BaseNode
+ * @classdesc Represents a resource file with methods for loading and managing file data.
+ */
 (class BMResourceFile extends BaseNode {
 
+    /**
+     * @description Initializes the prototype slots for the BMResourceFile class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {String} path - Path from _index.json entry
+         */
         {
-            const slot = this.newSlot("path", "."); // path from _index.json entry
+            const slot = this.newSlot("path", ".");
             slot.setSlotType("String");
         }
 
+        /**
+         * @property {String} resourceHash - Hash from _index.json entry
+         */
         {
-            const slot = this.newSlot("resourceHash", null); // hash from _index.json entry
+            const slot = this.newSlot("resourceHash", null);
             slot.setSlotType("String");
         }
 
+        /**
+         * @property {Number} resourceSize - Size from _index.json entry
+         */
         {
-            const slot = this.newSlot("resourceSize", null); // size from _index.json entry
+            const slot = this.newSlot("resourceSize", null);
             slot.setSlotType("Number");
         }
 
+        /**
+         * @property {Object} data - Raw data of the resource
+         */
         {
             const slot = this.newSlot("data", null);
             slot.setSlotType("Object");
         }
 
+        /**
+         * @property {Object} value - The value decoded from the data, e.g., value = JSON.parse(data)
+         */
         {
-            const slot = this.newSlot("value", null); // the value decoded from the data. e.g. value = JSON.parse(data)
+            const slot = this.newSlot("value", null);
             slot.setSlotType("Object");
         }
 
-        //this.newSlot("encoding", "utf8")
-        //this.newSlot("request", null) // this set back to null after request is successfully completed
-
+        /**
+         * @property {Error} error - Error object if any error occurs during processing
+         */
         {
             const slot = this.newSlot("error", null);
             slot.setSlotType("Error");
         }
 
+        /**
+         * @property {Promise} promiseForLoad - Holds promise used for reading from URL request or indexedDB
+         */
         {
             const slot = this.newSlot("promiseForLoad", null); 
             slot.setDescription("holds promise used for reading from URL request or indexedDB");
             slot.setSlotType("Promise");
         }
 
-        // notifications
-
+        /**
+         * @property {Boolean} isLoading - Indicates if the resource is currently loading
+         */
         {
             const slot = this.newSlot("isLoading", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} isLoaded - Indicates if the resource has been loaded
+         */
         {
              const slot = this.newSlot("isLoaded", false);
              slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {String} loadState - Represents the current load state of the resource
+         */
         {
             const slot = this.newSlot("loadState", null);
             slot.setSlotType("String");
         }
-        
-        //this.newSlot("loadNote", null) 
-        //this.newSlot("loadErrorNote", null) 
-        //this.newSlot("usesBlobCache", false)
     }
 
+    /**
+     * @description Initializes the prototype properties.
+     */
     initPrototype () {
         this.setTitle("File");
         this.setNoteIsSubnodeCount(true);
         this.setIsDebugging(true);
     }
 
+    /**
+     * @description Initializes the BMResourceFile instance.
+     * @returns {BMResourceFile} The initialized instance.
+     */
     init () {
         super.init();
         this.setPromiseForLoad(Promise.clone());
-        // notifications
-        //this.setLoadNote(this.newNoteNamed("fileResouceLoaded"));
-        //this.setLoadErrorNote(this.newNoteNamed("resourceFileLoadError"));
         return this;
     }
 
+    /**
+     * @description Gets the name of the resource file.
+     * @returns {String} The file name.
+     */
     name () {
         return this.path().lastPathComponent();
     }
 
+    /**
+     * @description Gets the title of the resource file.
+     * @returns {String} The file name as the title.
+     */
     title () {
         return this.name();
     }
 
+    /**
+     * @description Gets the file extension of the resource file.
+     * @returns {String} The file extension.
+     */
     pathExtension () {
         return this.path().pathExtension();
     }
 
+    /**
+     * @description Sets up subnodes for the resource file.
+     * @returns {BMResourceFile} The current instance.
+     */
     setupSubnodes () {
-        //this.resourcePaths().forEach(path => this.addFontWithPath(path));
         return this;
     }
 
-    // move this loading code to parent BMResource?
-
+    /**
+     * @description Checks if the resource file has data.
+     * @returns {Boolean} True if data is present, false otherwise.
+     */
     hasData () {
         return this.data() !== null;
     }
 
+    /**
+     * @description Gets the URL resource for the file.
+     * @returns {UrlResource} The URL resource object.
+     */
     urlResource () {
-        //const path = ResourceManager.bootPath() + this.path();
         return UrlResource.with(this.path());
     }
 
+    /**
+     * @description Loads the resource file asynchronously.
+     * @returns {Promise<BMResourceFile>} A promise that resolves with the current instance after loading.
+     */
     async promiseLoad () {
         const url = this.urlResource();
         url.setResourceHash(this.resourceHash());
-        const r = await url.promiseLoad(); // will use cam cache if available
+        const r = await url.promiseLoad();
         this._data = r.data();
         this.promiseForLoad().callResolveFunc();
         this.setValue(await this.asyncValueFromData());
         return this;
     }
 
+    /**
+     * @description Gets a promise that resolves with the file data.
+     * @returns {Promise<Object>} A promise that resolves with the file data.
+     */
     async dataPromise () {
         if (!this.hasData()) {
             await this.promiseLoad();
@@ -128,36 +189,30 @@
         return this.data();
     }
 
+    /**
+     * @description Gets the list of file extensions to precache.
+     * @returns {String[]} An array of file extensions to precache.
+     */
     precacheExtensions () {
-        //return ["js", "css", "json", "txt"];
-        //return ["json", "txt"]; // just cache the data files for now
         return ["json", "txt", "ttf", "woff", "woff2"];
     }
 
+    /**
+     * @description Precaches the resource file if appropriate based on its extension.
+     * @returns {Promise<BMResourceFile>} A promise that resolves with the current instance after precaching.
+     */
     async prechacheWhereAppropriate () {
-        //console.log(this.type() + ".prechacheWhereAppropriate() " + this.path());
         if (this.precacheExtensions().includes(this.pathExtension())) {
-            //console.log("precaching " + this.path())
             await this.promiseLoad();
-            //console.log("precached " + this.path())
         }
         return this;
     }
 
-    /*
-    getValueResourceObject () {
-        const typeName = this.typeFromPathExtension();
-        const value = getGlobal()[typeName].clone().setData(this.data());
-        this.setValue(value);
-        return this.value();
-    }
-    */
-
+    /**
+     * @description Asynchronously gets the value from the file data.
+     * @returns {Promise<*>} A promise that resolves with the parsed value from the file data.
+     */
     async asyncValueFromData () {
-        if (this.path() === "./app/info/AnthropicService.json") {
-          //  debugger;
-        }
-
         try {
             const ext = this.pathExtension();
             const data = this.data();
@@ -177,182 +232,3 @@
     }
 
 }.initThisClass());
-
-
-
-
-    /*
-
-    old blob code
-
-    // --- load data from cached blob ---
-
-    hasCachedBlob () {
-        const h = this.resourceHash();
-        const b = h && BMBlobs.shared().hasBlobWithValueHash(h);
-        //console.log("has cache for " + this.path() + ":" + b)
-        return b;
-    }
-
-    async promiseLoadCachedBlob () {        
-        assert(this.hasCachedBlob())
-        const h = this.resourceHash()
-        const blob = BMBlobs.shared().blobWithValueHash(h)   
-        this.debugLog(() => "reading from blob cache... " + h + " " + this.path())
-        try {
-            await blob.promiseReadValue();
-            this.onReadCachedBlob(blob);
-        } catch (error) {
-            this.onErrorReadingCachedBlob(blob);
-            error.rethrow();
-        }
-    }
-
-    onReadCachedBlob (blob) {
-        this.debugLog(() => "success reading blob " + blob.name() + " for " + this.path())
-        //debugger;
-        if (Type.isUndefined(blob.value())) {
-            console.log("found undefined reading blob " + blob.name() + " for " + this.path())
-            this.promiseLoadFromUrl()
-        } else {
-            this.setData(blob.value())
-            this.postLoad()
-        }
-    }
-
-    onErrorReadingCachedBlob (blob) {
-        console.log("error reading blob " + blob.name() + " for " + this.path())
-    }
-
-    // --- load data from url ---
-
-    loadRequestType () {
-        return "arraybuffer"
-        //return 'application/json'; // need to change for binary files?
-    }
-
-    promiseLoadFromUrl () {
-        //console.log("loading via url fetch for path: ", this.path())
-        const promise = Promise.clone();
-
-        const path = this.path()
-        const rq = new XMLHttpRequest();
-        rq.open('GET', path, true);
-        if (this.loadRequestType()) {
-            rq.responseType = this.loadRequestType();
-        }
-
-        rq.onload = (event) => { 
-            this.onUrlLoad(event); 
-            promise.callResolveFunc();
-        }
-
-        rq.onerror = (event) => { 
-            this.onRequestError(event); 
-            promise.callRejectFunc();
-        }
-
-        //rq.onload      = (event) => { this.onRequestLoad(event) }
-        //rq.onabort     = (event) => { this.onRequestAbort(event) }
-        //rq.onloadend   = (event) => { this.onRequestLoadEnd(event) }
-        //rq.onloadstart = (event) => { this.onRequestLoadStart(event) }
-
-        rq.onprogress = (event) => { 
-            this.onRequestProgress(event) 
-        }
-
-        rq.ontimeout = (event) => { 
-            this.onRequestTimeout(event);
-            promise.callRejectFunc();
-        }
-
-        this.setRequest(rq)
-        rq.send();
-
-        return promise;
-    }
-
-    onUrlLoad () {
-        //console.log("onUrlLoad " + this.path())
-        const data = this.request().response
-        this.setData(data)
-        this.postLoad()
-        this.setIsLoading(false)
-        
-        const h = this.resourceHash()
-        if (h && this.usesBlobCache()) {
-            console.log("writing to blob cache... " + h + " " + this.path())
-
-            if (false) {
-                const buffer = this.data()
-                const str = new TextDecoder().decode(buffer);
-                console.log("path: '" + this.path() + "'")
-                console.log("size: '" + buffer.byteLength + "'")
-                console.log("hash: '" + h + "'")
-                console.log("type: '" + typeof(buffer) + "'")
-                console.log("slice: '" + str.slice(0, 6) + "'")
-                debugger;
-            }
-
-            const blob = BMBlobs.shared().createBlobWithNameAndValue(h, this.data())
-            blob.setName(this.path())
-            blob.setValueHash(this.resourceHash())
-            blob.setValueSize(this.resourceSize())
-        }
-        return this
-    }
-
-    onRequestError (event) {
-        console.log("onRequestError " + this.path())
-        this.setError(event.error)
-        this.postLoadError()
-        this.setIsLoading(false)
-        return this
-    }
-
-    postLoad () {
-        this.loadNote().post()
-        return this
-    }
-
-    postLoadError () {
-        this.loadErrorNote().post()
-        return this
-    }
-
-    onRequestAbort (event) {
-        this.setLoadState("aborted")
-    }
-
-    onRequestLoadEnd (event) {
-    }
-
-    onRequestLoadStart (event) {
-        this.setLoadState("started")
-    }
-
-    onRequestProgress (event) {
-        if (event.lengthComputable) {
-            const p = Math.floor(100 * (event.loaded / event.total))/100
-            this.setLoadState(p + "% of " + event.total.byteSizeDescription())
-        } else {
-            this.setLoadState("loading (" +  event.loaded.byteSizeDescription() + " so far)")
-        }
-    }
-
-    onRequestTimeout (event) {
-        this.setLoadState("timeout")
-    }
-
-    onRequestLoad (event) {
-        const request = event.currentTarget;
-        const downloadedBuffer = request.response;  // may be array buffer, blob, or string, depending on request type
-        this.setData(downloadedBuffer)
-        //this.onDidLoad()
-    }
-
-    onDidLoad () {
-        this.setIsLoaded(true)
-        this.postNoteNamed("didLoad")
-    }
-    */

@@ -1,8 +1,11 @@
+/**
+ * @module library.resources.sounds.WASound
 "use strict";
 
-/*
-
-    WASound
+/**
+ * @class WASound
+ * @extends BMResource
+ * @description A sound resource.
 
     Note: 
     
@@ -19,16 +22,30 @@
 
 (class WASound extends BMResource {
 
+    /**
+     * @static
+     * @description returns the supported extensions for sound files
+     * @returns {Array} the supported extensions
+     */
     static supportedExtensions () {
         return ["aac", "alac", "amr", "flac", "mp3", "mp4", "3gp",  "opus", "oga", "ogg", "ogv", "wav"];
     }
 
     // ---
 
+    /**
+     * @description initializes the prototype slots
+     * @returns {WASound} the sound
+     */
     initPrototypeSlots () {
 
         // converting blob to ArrayBuffer, arrayBuffer is stored in data slot
 
+        /**
+         * @property arrayBufferPromise
+         * @description the promise for the array buffer
+         * @type {Promise}
+         */
         {
             const slot = this.newSlot("arrayBufferPromise", null);
             slot.setSlotType("Promise");
@@ -36,6 +53,11 @@
 
         // fetching
 
+        /**
+         * @property fetchPromise
+         * @description the promise for the fetch
+         * @type {Promise}
+         */
         {
             const slot = this.newSlot("fetchPromise", null);
             slot.setSlotType("Promise");
@@ -43,11 +65,21 @@
 
         // decoding 
 
+        /**
+         * @property decodePromise
+         * @description the promise for the decode
+         * @type {Promise}
+         */
         {
             const slot = this.newSlot("decodePromise", null);
             slot.setSlotType("Promise");
         }
 
+        /**
+         * @property decodedBuffer
+         * @description the decoded buffer
+         * @type {AudioBuffer}
+         */
         {
             const slot = this.newSlot("decodedBuffer", null);
             slot.setSlotType("AudioBuffer");
@@ -55,21 +87,41 @@
 
         // playing
 
+        /**
+         * @property shouldPlayOnLoad
+         * @description should play on load
+         * @type {Boolean}
+         */
         {
             const slot = this.newSlot("shouldPlayOnLoad", false);
             slot.setSlotType("Boolean");
         }
         
+        /**
+         * @property shouldPlayOnAccess
+         * @description should play on access
+         * @type {Boolean}
+         */
         {
             const slot = this.newSlot("shouldPlayOnAccess", true);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property playPromise
+         * @description the promise for the play
+         * @type {Promise}
+         */
         {
             const slot = this.newSlot("playPromise", null);
             slot.setSlotType("Promise");
         }
 
+        /**
+         * @property source
+         * @description the source
+         * @type {AudioBufferSourceNode}
+         */
         {
             const slot = this.newSlot("source", null); // AudioBufferSourceNode 
             slot.setSlotType("AudioBufferSourceNode");
@@ -77,21 +129,41 @@
 
         // source attributes
 
+        /**
+         * @property loop
+         * @description loop
+         * @type {Boolean}
+         */
         {
             const slot = this.newSlot("loop", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property playbackRate
+         * @description playback rate
+         * @type {Number}
+         */
         {
             const slot = this.newSlot("playbackRate", 1);
             slot.setSlotType("Number");
         }
 
+        /**
+         * @property whenToPlay
+         * @description when to play
+         * @type {Number}
+         */
         {
             const slot = this.newSlot("whenToPlay", 0);
             slot.setSlotType("Number");
         }
 
+        /**
+         * @property offsetInSeconds
+         * @description offset in seconds
+         * @type {Number}
+         */
         {
             const slot = this.newSlot("offsetInSeconds", 0);
             slot.setSlotType("Number");
@@ -103,23 +175,44 @@
         }
         */
 
+        /**
+         * @property isPlaying
+         * @description is playing
+         * @type {Boolean}
+         */
         {
             const slot = this.newSlot("isPlaying", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property delegateSet
+         * @description the delegate set
+         * @type {Set}
+         */
         {
             const slot = this.newSlot("delegateSet", null);
             slot.setSlotType("Set");
         }
 
         // optional info
+
+        /**
+         * @property label
+         * @description label
+         * @type {String}
+         */
         {
             const slot = this.newSlot("label", null);
             slot.setShouldJsonArchive(true);
             slot.setSlotType("String");
         }
 
+        /**
+         * @property transcript
+         * @description transcript
+         * @type {String}
+         */
         {
             const slot = this.newSlot("transcript", null);
             slot.setShouldJsonArchive(true);
@@ -157,27 +250,52 @@
     }
     */
 
+    /**
+     * @description sets the array buffer
+     * @param {ArrayBuffer} arrayBuffer the array buffer
+     * @returns {WASound} the sound
+     */
     setArrayBuffer (arrayBuffer) {
         this.setData(arrayBuffer);
         return this;
     }
 
+    /**
+     * @description returns the title
+     * @returns {String} the title
+     */
     title () {
         return this.name();
     }
 
+    /**
+     * @description returns the name
+     * @returns {String} the name
+     */
     name () {
         return this.path().lastPathComponent().sansExtension();
     }
 
     // --- blob ---
 
+    /**
+     * @static
+     * @description creates a sound from a blob
+     * @param {Blob} audioBlob the blob
+     * @returns {WASound} the sound
+     */
     static fromBlob (audioBlob) {
         const sound = this.clone();
         sound.asyncLoadFromDataBlob(audioBlob); // don't await as we want to return the sound instance immediately
         return sound;
     }
 
+    /**
+     * @async
+     * @description loads the sound from a blob
+     * @param {Blob} audioBlob the blob
+     * @returns {Promise} the promise
+     */
     async asyncLoadFromDataBlob (audioBlob) {
         // start the FileReader conversion to an array buffer
         const promise = audioBlob.asyncToArrayBuffer();
@@ -190,6 +308,10 @@
 
     // --- attributes ---
 
+    /**
+     * @description returns the duration
+     * @returns {Number} the duration
+     */
     duration () {
         if (this.decodedBuffer()) {
             return this.decodedBuffer().duration; // in seconds
@@ -197,6 +319,10 @@
         return 0;
     }
 
+    /**
+     * @description returns the sample count
+     * @returns {Number} the sample count
+     */
     sampleCount () { 
         if (this.decodedBuffer()) {
             return this.decodedBuffer().length;
@@ -204,11 +330,19 @@
         return 0;
     }
 
+    /**
+     * @description returns the length
+     * @returns {Number} the length
+     */
     length () { 
         throw new Error("use sampleCount method instead");
         return this.sampleCount();
     }
 
+    /**
+     * @description returns the number of channels
+     * @returns {Number} the number of channels
+     */
     numberOfChannels () { // sample count
         if (this.decodedBuffer()) {
             return this.decodedBuffer().numberOfChannels;
@@ -218,23 +352,44 @@
 
     // ---
 
+    /**
+     * @description returns the audio context
+     * @returns {AudioContext} the audio context
+     */
     audioCtx () {
         return WAContext.shared().setupIfNeeded().audioContext();
     }
 
+    /**
+     * @description on did load
+     * @returns {WASound} the sound
+     */
     onDidLoad () {
         this.promiseToDecode();
         return this;
     }
 
+    /**
+     * @description returns if has decoded
+     * @returns {Boolean} if has decoded
+     */
     hasDecoded () {
         return this.decodedBuffer() !== null;
     }
 
+    /**
+     * @description returns if has data
+     * @returns {Boolean} if has data
+     */
     hasData () {
         return this.data() !== null;
     }
 
+    /**
+     * @async
+     * @description promises to decode
+     * @returns {Promise} the promise
+     */
     async promiseToDecode () {
         if (this.hasDecoded()) {
             return Promise.resolve();
@@ -268,6 +423,11 @@
         }
     }
 
+    /**
+     * @description on error
+     * @param {Error} e the error
+     * @returns {WASound} the sound
+     */
     onError (e) {
         console.warn(this.type() + " onDecodeError ", e.error, " " + this.path());
         this.setError(e.error);
@@ -275,6 +435,11 @@
 
     // --- decode ---
 
+    /**
+     * @description on decode
+     * @param {AudioBuffer} decodedBuffer the decoded buffer
+     * @returns {WASound} the sound
+     */
     onDecode (decodedBuffer) {
         assert(!Type.isNullOrUndefined(decodedBuffer));
         this.setDecodedBuffer(decodedBuffer);
@@ -285,6 +450,11 @@
         }
     }
 
+    /**
+     * @description on decode error
+     * @param {Error} e the error
+     * @returns {WASound} the sound
+     */
     onDecodeError (e) {
         console.warn(this.type() + " onDecodeError ", e.error, " " + this.path());
         this.setError(e.error);
@@ -292,6 +462,10 @@
 
     // --- audio source ---
 
+    /**
+     * @description new audio source
+     * @returns {AudioBufferSourceNode} the audio source
+     */
     newAudioSource () { 
         // a AudioBufferSourceNode can only be used once
         const ctx = this.audioCtx();
@@ -305,6 +479,11 @@
         return source
     }
 
+    /**
+     * @description sync to source
+     * @param {AudioBufferSourceNode} source the source
+     * @returns {WASound} the sound
+     */
     syncToSource (source) {
         // TODO: do this work if it's already playing?
         source.playbackRate.value = this.playbackRate();
@@ -314,6 +493,11 @@
 
     // --- play ---
 
+    /**
+     * @async
+     * @description plays the sound
+     * @returns {Promise} the promise
+     */
     async play () {
         await this.promiseToDecode();
         this.setPlayPromise(Promise.clone());
@@ -325,6 +509,10 @@
         return this.playPromise();
     }
 
+    /**
+     * @description returns the description
+     * @returns {String} the description
+     */
     description () {
         const parts = [this.type()];
         if (this.label()) {
@@ -338,11 +526,19 @@
         return parts.join(" ");
     }
 
+    /**
+     * @description on started
+     * @returns {WASound} the sound
+     */
     onStarted () {
         //console.log("Sound.onStarted() " + this.description());
         this.post("onSoundStarted");
     }
 
+    /**
+     * @description on ended
+     * @returns {WASound} the sound
+     */
     onEnded () {
         //console.log("Sound.onEnded() " + this.description());
         this.setIsPlaying(false);
@@ -351,6 +547,10 @@
         this.post("onSoundEnded");
     }
 
+    /**
+     * @description stops the sound
+     * @returns {WASound} the sound
+     */
     stop () {
         if (this.isPlaying()) {
             this.source().stop();
@@ -367,6 +567,10 @@
     resume ()
     */
 
+    /**
+     * @description prepares to access
+     * @returns {WASound} the sound
+     */
     prepareToAccess () {
         super.prepareToAccess();
         if (this.shouldPlayOnAccess()) {
@@ -374,27 +578,52 @@
         }
     }
 
+    /**
+     * @description source state
+     * @returns {String} the source state
+     */
     sourceState () {
         // valid states: ["suspended", "running", "closed"]
         return this.source() ? this.source().state : "no source";
     }
 
+    /**
+     * @description posts a note
+     * @param {String} methodName the method name
+     * @returns {WASound} the sound
+     */
     post (methodName) {
         this.postNoteNamed(methodName);
         this.sendDelegate(methodName);
         return this;
     }
 
+    /**
+     * @description adds a delegate
+     * @param {Object} d the delegate
+     * @returns {WASound} the sound
+     */
     addDelegate (d) {
         this.delegateSet().add(d);
         return this;
     }
 
+    /**
+     * @description removes a delegate
+     * @param {Object} d the delegate
+     * @returns {WASound} the sound
+     */
     removeDelegate (d) {
         this.delegateSet().delete(d);
         return this;
     }
 
+    /**
+     * @description sends a delegate
+     * @param {String} methodName the method name
+     * @param {Array} args the arguments
+     * @returns {WASound} the sound
+     */
     sendDelegate (methodName, args = [this]) {
         const sendDelegate = (d, methodName, args) => {
             const f = d[methodName]
@@ -422,6 +651,11 @@
 
     // ----
 
+    /**
+     * @async
+     * @description promises the data url
+     * @returns {Promise} the promise
+     */
     async promiseDataUrl () {
         // Step 1: Convert ArrayBuffer to Blob
         const arrayBuffer = this.data();
