@@ -1,31 +1,49 @@
 "use strict";
 
-/*
+/**
+ * @module library.services.Spatial
+ */
 
-    SceneView
-
-*/
-
+/**
+ * @class SceneView
+ * @extends NodeView
+ * @classdesc Represents a 3D scene view using Babylon.js
+ */
 (class SceneView extends NodeView {
     
     initPrototypeSlots () {
         this.setElementType("canvas");
+        /**
+         * @property {String} dataUrl - The data URL for the scene
+         */
         {
             const slot = this.newSlot("dataUrl", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {Object} ajs - AssimpJS object
+         */
         {
             const slot = this.newSlot("ajs", null);
             slot.setSlotType("Object");
         }
+        /**
+         * @property {Object} engine - Babylon.js engine instance
+         */
         {
             const slot = this.newSlot("engine", null);
             slot.setSlotType("Object");
         }
+        /**
+         * @property {Object} scene - Babylon.js scene instance
+         */
         {
             const slot = this.newSlot("scene", null);
             slot.setSlotType("Object");
         }
+        /**
+         * @property {Object} camera - Babylon.js camera instance
+         */
         {
             const slot = this.newSlot("camera", null);
             slot.setSlotType("Object");
@@ -34,16 +52,26 @@
             //const slot = this.newSlot("clearColor", null);
             //slot.setSlotType("Object");
         }
+        /**
+         * @property {DomView} closeButtonView - Close button view
+         */
         {
             const slot = this.newSlot("closeButtonView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {Boolean} isEditable - Indicates if the scene is editable
+         */
         {
             const slot = this.newSlot("isEditable", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Initializes the SceneView
+     * @returns {SceneView} The initialized SceneView instance
+     */
     init () {
         super.init();
         this.setDisplay("flex");
@@ -66,6 +94,10 @@
         return this;
     }
 
+    /**
+     * @description Creates a new close button view
+     * @returns {ButtonView} The created close button view
+     */
     newCloseButtonView () {
         const v = ButtonView.clone().setElementClassName("ImageCloseButton")
         v.setDisplay("flex")
@@ -78,28 +110,46 @@
         return v
     }
 
+    /**
+     * @description Sets whether the view is registered for browser drop events
+     * @param {Boolean} aBool - Whether to register for browser drop events
+     * @throws {Error} Always throws an error as this method shouldn't be called
+     */
     setIsRegisteredForBrowserDrop(aBool) {
         throw new Error("shouldn't be called")
     }
 
-    // --- editable ---
-    
+    /**
+     * @description Sets whether the scene is editable
+     * @param {Boolean} aBool - Whether the scene is editable
+     * @returns {SceneView} The SceneView instance
+     */
     setIsEditable (aBool) {
         this.closeButtonView().setIsDisplayHidden(!aBool)
         return this
     }
 
+    /**
+     * @description Sets whether the scene is editable (placeholder method)
+     * @param {Boolean} aBool - Whether the scene is editable
+     * @returns {SceneView} The SceneView instance
+     */
     setEditable (aBool) {
         // to avoid editable content?
         return this
     }
     
+    /**
+     * @description Checks if the view accepts drops
+     * @returns {Boolean} Always returns false
+     */
     acceptsDrop () {
         return false
     }
 
-    // --- close button ---
-
+    /**
+     * @description Collapses the view
+     */
     collapse () {
         this.closeButtonView().setOpacity(0).setTarget(null)
         this.setOpacity(0)
@@ -113,6 +163,9 @@
         this.setMarginRightPx(0)
     }
     
+    /**
+     * @description Closes the view with animation
+     */
     close () {
         const seconds = 0.3
 		
@@ -126,12 +179,17 @@
         }, seconds * 1000)
     }
 
-    // --- sync ---
-
+    /**
+     * @description Gets the canvas element
+     * @returns {HTMLCanvasElement} The canvas element
+     */
     canvas () {
         return this.element();
     }
 
+    /**
+     * @description Sets up the scene view
+     */
     async setup () {
         const AssimpJS = await assimpjs();
         await this.setupEngine();
@@ -140,6 +198,9 @@
 
     }
 
+    /**
+     * @description Sets up the Babylon.js engine
+     */
     async setupEngine () {
         const engine = new BABYLON.Engine(this.canvas(), true);
         this.setEngine(engine);
@@ -155,6 +216,9 @@
         });
     }
 
+    /**
+     * @description Sets up the Babylon.js scene
+     */
     async setupScene () {
         const scene = new BABYLON.Scene(this.engine());
         this.setScene(scene);
@@ -164,6 +228,9 @@
         scene.clearColor = blueprintColor;
     }
 
+    /**
+     * @description Sets up the Babylon.js camera
+     */
     async setupCamera () {
         const camera = new BABYLON.FreeCamera('camera', new BABYLON.Vector3(-500, 200, 800), this.scene());
         this.setCamera(camera);
@@ -172,19 +239,27 @@
         camera.target = new BABYLON.Vector3(-500, 0, 0);
     }
 
+    /**
+     * @description Sets up the Babylon.js light
+     */
     async setupLight () {
         const light = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene());
     }    
 
-    // --- loading ---------------------------------------
-
-
+    /**
+     * @description Fetches an array buffer for a given file path
+     * @param {String} path - The file path
+     * @returns {Promise<ArrayBuffer>} The array buffer of the file
+     */
     async arrayBufferForFilePath (path) {
         const response = await fetch(path);
         const arrayBuffer = await response.arrayBuffer();
         return arrayBuffer;
     }
 
+    /**
+     * @description Loads the 3D model
+     */
     async loadModel () {
         const filePaths = ["main house.obj", "main house.mtl"];
 
@@ -324,13 +399,18 @@
 
     }
 
-    // --- events ------------------------------------------------------------------
-    
+    /**
+     * @description Sets up event listeners for the scene
+     */
     async setupEvents () {
         // need to do this through our own event system
         // need to make sure events are registered with { passive: false } so we can prevent default
     }
 
+    /**
+     * @description Handles wheel events for zooming
+     * @param {WheelEvent} event - The wheel event object
+     */
     onWheel (event) {
         event.preventDefault(); // Prevent the default scroll behavior
 
@@ -339,6 +419,11 @@
         this.camera().position.addInPlace(this.camera().getForwardRay().direction.scale(delta * speed));
         //}, { passive: false }); // Set passive to false to allow preventDefault
     }
+
+    /**
+     * @description Handles keydown events for camera movement
+     * @param {KeyboardEvent} event - The keydown event object
+     */
 
     onKeyDown (event) {
         event.preventDefault(); // Prevent the default scroll behavior

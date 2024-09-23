@@ -1,84 +1,106 @@
 "use strict";
 
-/* 
-    GeminiRequest
+/**
+ * @module library.services.Gemini.GeminiRequest
+ */
 
-    Example CURL request:
-
-  curl -X POST \
-      -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-      -H "Content-Type: application/json; charset=utf-8" \
-      -d @request.json \
-      "https://us-central1-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/us-central1/publishers/google/models/gemini-1.0-pro:streamGenerateContent?alt=sse"
-
-  Example request body JSON:
-
-    {
-      "contents": {
-        "role": "ROLE",
-        "parts": { "text": "TEXT" }
-      },
-      "system_instruction":
-      {
-        "parts": [
-          {
-            "text": "SYSTEM_INSTRUCTION"
-          }
-        ]
-      },
-      "safety_settings": {
-        "category": "SAFETY_CATEGORY",
-        "threshold": "THRESHOLD"
-      },
-      "generation_config": {
-        "temperature": TEMPERATURE,
-        "topP": TOP_P,
-        "topK": TOP_K,
-        "candidateCount": 1,
-        "maxOutputTokens": MAX_OUTPUT_TOKENS,
-        "stopSequences": STOP_SEQUENCES,
-      }
-    }
-
-*/
-
+/**
+ * @class GeminiRequest
+ * @extends AiRequest
+ * @classdesc Handles requests to the Gemini API.
+ *
+ * Example CURL request:
+ *
+ * curl -X POST \
+ *     -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+ *     -H "Content-Type: application/json; charset=utf-8" \
+ *     -d @request.json \
+ *     "https://us-central1-aiplatform.googleapis.com/v1/projects/PROJECT_ID/locations/us-central1/publishers/google/models/gemini-1.0-pro:streamGenerateContent?alt=sse"
+ *
+ * Example request body JSON:
+ *
+ *   {
+ *     "contents": {
+ *       "role": "ROLE",
+ *       "parts": { "text": "TEXT" }
+ *     },
+ *     "system_instruction":
+ *     {
+ *       "parts": [
+ *         {
+ *           "text": "SYSTEM_INSTRUCTION"
+ *         }
+ *       ]
+ *     },
+ *     "safety_settings": {
+ *       "category": "SAFETY_CATEGORY",
+ *       "threshold": "THRESHOLD"
+ *     },
+ *     "generation_config": {
+ *       "temperature": TEMPERATURE,
+ *       "topP": TOP_P,
+ *       "topK": TOP_K,
+ *       "candidateCount": 1,
+ *       "maxOutputTokens": MAX_OUTPUT_TOKENS,
+ *       "stopSequences": STOP_SEQUENCES,
+ *     }
+ *   }
+ */
 (class GeminiRequest extends AiRequest { 
 
   initPrototypeSlots () {
+    /**
+     * @property {JsonStreamReader} jsonStreamReader - The JSON stream reader for handling streamed responses.
+     */
     {
       const slot = this.newSlot("jsonStreamReader", null);
     }
     
+    /**
+     * @property {number} usageOutputTokenCount - The count of output tokens used in the request.
+     */
     {
       const slot = this.newSlot("usageOutputTokenCount", null);
     }
   }
 
+  /**
+   * @description Initializes the GeminiRequest instance.
+   */
   init () {
     super.init();
     this.setIsDebugging(true);
 
-
     const reader = JsonStreamReader.clone();
     reader.setDelegate(this);
     this.setJsonStreamReader(reader);
-    //reader.endJsonStream();
   }
 
+  /**
+   * @description Returns the API key for the Gemini service.
+   * @returns {string} The API key.
+   */
   apiKey () {
     return GeminiService.shared().apiKey();
   }
 
+  /**
+   * @description Sets up the request for streaming.
+   * @returns {GeminiRequest} The current instance.
+   */
   setupForStreaming () {
     return this;
   }
 
+  /**
+   * @description Prepares the request options for the API call.
+   * @returns {Object} The request options.
+   */
   requestOptions () {
     const apiKey = this.apiKey();
     return {
       method: "POST",
       headers: {
-        //"Content-Type": "application/json",
         "Content-Type": "application/json; charset=utf-8",
         'Accept-Encoding': 'identity'
       },
@@ -86,60 +108,25 @@
     };
   }
 
-   // --- streaming ---
-
+  /**
+   * @description Sends the request and streams the response asynchronously.
+   * @returns {Promise} A promise that resolves when the streaming is complete.
+   */
   async asyncSendAndStreamResponse () {
     if (!this.isContinuation()) {
       this.jsonStreamReader().beginJsonStream();
     }
     return super.asyncSendAndStreamResponse();
   }
-    /*
 
-   // NOTE: the data dictionary is all on one line, but I've broken it up here for readability
-
-   data: {
-   "candidates":[
-      {
-         "content":{
-            "role":"model",
-            "parts":[
-               {
-                  "text":"Avast there, landlubber! Ye be mistaken. I be but a"
-               }
-            ]
-         },
-         "safetyRatings":[
-            {
-               "category":"HARM_CATEGORY_HARASSMENT",
-               "probability":"LOW"
-            },
-            {
-               "category":"HARM_CATEGORY_HATE_SPEECH",
-               "probability":"NEGLIGIBLE"
-            },
-            {
-               "category":"HARM_CATEGORY_SEXUALLY_EXPLICIT",
-               "probability":"NEGLIGIBLE"
-            },
-            {
-               "category":"HARM_CATEGORY_DANGEROUS_CONTENT",
-               "probability":"NEGLIGIBLE"
-            }
-         ]
-      }
-   ]
-}
-
+  /**
+   * @description Reads the XHR lines and processes them through the JSON stream reader.
    */
-
-   readXhrLines () {
+  readXhrLines () {
     try {
       const newText = this.readRemaining();
-      //console.warn(this.type() + ".readXhrLines() newText: ", newText);
       if (newText) {
         this.jsonStreamReader().onStreamJson(newText);
-      } else {
       }
     } catch (error) {
       this.onError(error);
@@ -147,79 +134,40 @@
     }
   }
 
+  /**
+   * @description Checks if the request stopped due to reaching the maximum token limit.
+   * @returns {boolean} Always returns false for this implementation.
+   */
   stoppedDueToMaxTokens () {
     return false; // stopped due to max output tokens per request
   }
 
-
+  /**
+   * @description Handles errors from the JSON stream reader.
+   * @param {JsonStreamReader} reader - The JSON stream reader instance.
+   * @param {Error} error - The error that occurred.
+   */
   onJsonStreamReaderError (reader, error) {
     this.setError(error);
     this.abort();
   }
 
+  /**
+   * @description Handles the popping of containers from the JSON stream reader.
+   * @param {JsonStreamReader} reader - The JSON stream reader instance.
+   * @param {Object} json - The JSON object that was popped.
+   */
   onJsonStreamReaderPopContainer (reader, json) {
     if (reader.containerStack().length === 2) {
       this.onStreamJsonChunk(json);
     }
   }
 
+  /**
+   * @description Processes a chunk of JSON data from the stream.
+   * @param {Object} json - The JSON chunk to process.
+   */
   onStreamJsonChunk (json) {
-
-    /*
-      example json:
-      
-      {
-        "content":{
-        "role":"model",
-        "parts":[
-            {
-              "text":"Avast there, landlubber! Ye be mistaken. I be but a"
-            }
-        ]
-      }
-
-
-      data: {
-        "candidates":[
-            {
-              "content":{
-                  "role":"model",
-                  "parts":[
-                    {
-                        "text":". I be no real-life pirate, but I be mighty good at pretendin'!"
-                    }
-                  ]
-              },
-              "finishReason":"STOP",
-              "safetyRatings":[
-                  {
-                    "category":"HARM_CATEGORY_HARASSMENT",
-                    "probability":"NEGLIGIBLE"
-                  },
-                  {
-                    "category":"HARM_CATEGORY_HATE_SPEECH",
-                    "probability":"NEGLIGIBLE"
-                  },
-                  {
-                    "category":"HARM_CATEGORY_SEXUALLY_EXPLICIT",
-                    "probability":"NEGLIGIBLE"
-                  },
-                  {
-                    "category":"HARM_CATEGORY_DANGEROUS_CONTENT",
-                    "probability":"NEGLIGIBLE"
-                  }
-              ]
-            }
-        ],
-        "usageMetadata":{
-            "promptTokenCount":23,
-            "candidatesTokenCount":50,
-            "totalTokenCount":73
-        }
-      }
-
-  */
-
     const candidates = json.candidates;
 
     if (candidates) {
@@ -246,6 +194,10 @@
     }
   }
 
+  /**
+   * @description Returns a dictionary of stop reason codes and their descriptions.
+   * @returns {Object} A dictionary of stop reasons.
+   */
   stopReasonDict () {
     return {
       "FINISH_REASON_UNSPECIFIED": "Default value. This value is unused.",
@@ -257,6 +209,10 @@
     }
   }
 
+  /**
+   * @description Checks if the request stopped due to reaching the maximum token limit.
+   * @returns {boolean} True if stopped due to max tokens, false otherwise.
+   */
   stoppedDueToMaxTokens () {
     return this.stopReason() === "MAX_TOKENS";
   }

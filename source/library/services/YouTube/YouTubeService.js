@@ -1,11 +1,18 @@
 "use strict";
 
-/* 
-    YouTubeService
+/**
+ * @module library.services.YouTube.YouTubeService
+ */
 
-*/
-
+/**
+ * @class YouTubeService
+ * @extends BMStorableNode
+ * @classdesc YouTubeService class for managing YouTube-related functionality.
+ */
 (class YouTubeService extends BMStorableNode {
+  /**
+   * @description Initializes the prototype slots for the YouTubeService.
+   */
   initPrototypeSlots () {
     /*
     {
@@ -23,6 +30,9 @@
     }
     */
 
+    /**
+     * @property {YouTubeAudioPlayer} youTubeAudioPlayer - The YouTube audio player instance.
+     */
     {
         const slot = this.newSlot("youTubeAudioPlayer", null)
         slot.setShouldStoreSlot(true);
@@ -35,6 +45,9 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the YouTubeService instance.
+   */
   init() {
     super.init();
     this.setTitle("YouTube");

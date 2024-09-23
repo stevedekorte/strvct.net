@@ -1,18 +1,28 @@
 "use strict";
 
-/* 
-    ProxyServer
+/**
+ * @module library.services.ProxyServers.ProxyServer
+ */
 
-    NOTES:
-
-    This is setup up for a simple proxy with a path and url sent in a url parameter.
-    Use another class or subclass to handle more complex proxy request, such as passing 
-    an XML/JSON body with auth and/or other info.
-
-*/
-
+/**
+ * @class ProxyServer
+ * @extends BMSummaryNode
+ * @classdesc ProxyServer
+ * 
+ * NOTES:
+ * 
+ * This is setup up for a simple proxy with a path and url sent in a url parameter.
+ * Use another class or subclass to handle more complex proxy request, such as passing 
+ * an XML/JSON body with auth and/or other info.
+ */
 (class ProxyServer extends BMSummaryNode {
+  /**
+   * @description Initializes the prototype slots for the ProxyServer class.
+   */
   initPrototypeSlots () {
+    /**
+     * @property {boolean} isSecure - Indicates if the server is secure (https).
+     */
     {
       const slot = this.newSlot("isSecure", true);
       slot.setShouldJsonArchive(true)
@@ -26,6 +36,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {string} subdomain - The subdomain of the proxy server.
+     */
     {
       const slot = this.newSlot("subdomain", "");
       slot.setShouldJsonArchive(true)
@@ -39,6 +52,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {string} domain - The domain of the proxy server.
+     */
     {
       const slot = this.newSlot("domain", "");
       slot.setShouldJsonArchive(true)
@@ -52,6 +68,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {number} port - The port number of the proxy server.
+     */
     {
       const slot = this.newSlot("port", 0);
       slot.setShouldJsonArchive(true)
@@ -65,6 +84,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {string} path - The path of the proxy server.
+     */
     {
       const slot = this.newSlot("path", "");
       slot.setShouldJsonArchive(true)
@@ -78,6 +100,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {string|null} parameterName - The name of the parameter used in the proxy URL.
+     */
     {
       const slot = this.newSlot("parameterName", null);
       slot.setShouldJsonArchive(true)
@@ -91,6 +116,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {string} error - The error message, if any.
+     */
     {
       const slot = this.newSlot("error", "");
       slot.setShouldJsonArchive(true)
@@ -116,13 +144,19 @@
     this.setSubtitle("");
   }
 
-  protocolString () {
+  /**
+   * @description Returns the protocol string based on the isSecure property.
+   * @returns {string} The protocol string ("https" or "http").
+   */
+  protocolString() {
     return this.isSecure() ? "https" : "http";
   }
 
-  // --- hostname ---
-
-  hostname () {
+  /**
+   * @description Returns the full hostname of the proxy server.
+   * @returns {string} The full hostname.
+   */
+  hostname() {
     const s = this.subdomain();
     const d = this.domain();
     
@@ -136,8 +170,12 @@
     return d;
   }
 
-  setHostname (hostname) {
-      // Split the hostname by the dots
+  /**
+   * @description Sets the hostname by splitting it into subdomain and domain.
+   * @param {string} hostname - The full hostname to set.
+   * @returns {ProxyServer} The current instance for method chaining.
+   */
+  setHostname(hostname) {
       const parts = hostname.split('.');
   
       if (parts.length < 2) {
@@ -145,10 +183,7 @@
           return this;
       }
   
-      // Extract the domain (last two parts)
       const domain = parts.slice(-2).join('.');
-  
-      // Extract the subdomain (everything except the last two parts)
       const subdomain = parts.slice(0, -2).join('.') || null;
   
       this.setDomain(domain);
@@ -156,9 +191,11 @@
       return this;
   }
 
-  // -----------------------
-
-  validationErrors () {
+  /**
+   * @description Validates the current state of the proxy server.
+   * @returns {string[]} An array of validation error messages.
+   */
+  validationErrors() {
     const errors = []
 
     if (!Type.isString(this.hostname())) {
@@ -176,11 +213,20 @@
     return errors
   }
 
-  subtitle () {
+  /**
+   * @description Returns the subtitle for the proxy server.
+   * @returns {string|null} The proxy URL for the "targetUrl" parameter.
+   */
+  subtitle() {
     return this.proxyUrlForUrl("targetUrl")
   }
 
-  proxyUrlForUrl (targetUrl) {
+  /**
+   * @description Generates a proxy URL for the given target URL.
+   * @param {string} targetUrl - The target URL to be proxied.
+   * @returns {string|null} The generated proxy URL or null if there's an error.
+   */
+  proxyUrlForUrl(targetUrl) {
     assert(targetUrl);
 
     const errors = this.validationErrors()
@@ -206,9 +252,7 @@
     let resultUrl;
     try {
       const url = new URL(urlString);
-      //console.log("ProxyServer proxyURL: '" + parameterValue + "'");
       url.searchParams.set(this.parameterName(), parameterValue);
-      //url.searchParams.set(this.parameterName(), encodeURIComponent(parameterValue));
       resultUrl = url.toString();
     } catch (e) {
       this.setError(e.message);
@@ -220,7 +264,11 @@
     return resultUrl;
   }
 
-  showError () {
+  /**
+   * @description Displays the current error message in the console.
+   * @returns {ProxyServer} The current instance for method chaining.
+   */
+  showError() {
     console.warn(this.type() + " ERROR: " + this.error());
     return this;
   }

@@ -1,41 +1,51 @@
 "use strict";
 
-/* 
-    AiService
+/**
+ * @module library.services.AiServiceKit
+ */
 
-    A BMSummaryNode that holds the API key and subnodes related to the service.
-
-    Example:
-
-    AiService.shared().setApiKey("sk-1234567890");
-    const hasApiKey = AiService.shared().hasApiKey();
-
-
-*/
-
+/**
+ * @class AiService
+ * @extends BMSummaryNode
+ * @classdesc A BMSummaryNode that holds the API key and subnodes related to the service.
+ * 
+ * Example:
+ * 
+ * AiService.shared().setApiKey("sk-1234567890");
+ * const hasApiKey = AiService.shared().hasApiKey();
+ */
 (class AiService extends BMSummaryNode {
 
+  /**
+   * @description Returns an array of model information.
+   * @returns {Array} An array of model information.
+   */
   modelsJson () {
     return [];
   }
 
+  /**
+   * @description Initializes the prototype slots for the AiService.
+   */
   initPrototypeSlots () {
 
+    /**
+     * @property {Object} serviceInfo - Information about the service.
+     */
     {
       const slot = this.newSlot("serviceInfo", null);
-      //slot.setInspectorPath("");
       slot.setLabel("info");
       slot.setShouldStoreSlot(false);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("JSON Object");
       slot.setIsSubnodeField(false);
-
-      //slot.setValidValues(values);
     }
 
+    /**
+     * @property {string} chatEndpoint - The URL endpoint for chat.
+     */
     {
       const slot = this.newSlot("chatEndpoint", null);
-      //slot.setInspectorPath("");
       slot.setLabel("Chat Endpoint URL");
       slot.setShouldStoreSlot(true);
       slot.setDuplicateOp("duplicate");
@@ -43,9 +53,11 @@
       slot.setIsSubnodeField(true);
     }
 
+    /**
+     * @property {string} apiKey - The API key for the service.
+     */
     {
       const slot = this.newSlot("apiKey", "")
-      //slot.setInspectorPath("")
       slot.setLabel("API Key")
       slot.setShouldStoreSlot(true)
       slot.setDuplicateOp("duplicate")
@@ -53,32 +65,44 @@
       slot.setIsSubnodeField(true)
     }
 
-      // Role names
+    /**
+     * @property {string} systemRoleName - The name of the system role.
+     */
+    {
+      const slot = this.newSlot("systemRoleName", "system");
+      slot.setSlotType("String");
+    }
 
-      {
-        const slot = this.newSlot("systemRoleName", "system");
-        slot.setSlotType("String");
-      }
-  
-      {
-        const slot = this.newSlot("assistantRoleName", "assistant");
-        slot.setSlotType("String");
-      }
-  
-      {
-        const slot = this.newSlot("userRoleName", "user");
-        slot.setSlotType("String");
-      }
+    /**
+     * @property {string} assistantRoleName - The name of the assistant role.
+     */
+    {
+      const slot = this.newSlot("assistantRoleName", "assistant");
+      slot.setSlotType("String");
+    }
 
+    /**
+     * @property {string} userRoleName - The name of the user role.
+     */
+    {
+      const slot = this.newSlot("userRoleName", "user");
+      slot.setSlotType("String");
+    }
 
+    /**
+     * @property {AiChatModels} models - The AI chat models.
+     */
     {
       const slot = this.newSlot("models", null);
       slot.setFinalInitProto(AiChatModels);
-      slot.setShouldStoreSlot(true); // will need to sync when loading from json
+      slot.setShouldStoreSlot(true);
       slot.setIsSubnode(true);
       slot.setSlotType("AiChatModels");
     }
 
+    /**
+     * @property {AiConversations} conversations - The AI conversations.
+     */
     {
       const slot = this.newSlot("conversations", null);
       slot.setFinalInitProto(AiConversations);
@@ -87,17 +111,21 @@
       slot.setSlotType("AiConversations");
     }
 
+    /**
+     * @property {OpenAiImagePrompts} imagesPrompts - The OpenAI image prompts.
+     */
     {
       const slot = this.newSlot("imagesPrompts", null);
-      //slot.setFinalInitProto(OpenAiImagePrompts);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(false);
       slot.setSlotType("OpenAiImagePrompts");
     }
 
+    /**
+     * @property {OpenAiTtsSessions} ttsSessions - The OpenAI TTS sessions.
+     */
     {
       const slot = this.newSlot("ttsSessions", null);
-      //slot.setFinalInitProto(OpenAiTtsSessions);
       slot.setShouldStoreSlot(true);
       slot.setIsSubnode(false);
       slot.setSlotType("OpenAiTtsSessions");
@@ -107,10 +135,16 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the AiService.
+   */
   init () {
     super.init();
   }
 
+  /**
+   * @description Performs final initialization of the AiService.
+   */
   finalInit () {
     super.finalInit()
     this.setTitle("AI Service");
@@ -118,32 +152,48 @@
     this.setModels(AiChatModels.clone());
     this.setModelsJson(this.modelsJson());
 
-    /*
-    // add a default model, in case there are no models
-    if (this.models().subnodeCount() === 0) {
-      this.models().addSubnode(AiChatModel.clone());
-    }
-    */
-
-    this.fetchAndSetupInfo(); // can't just cache this as key or models may have changed
+    this.fetchAndSetupInfo();
   }
 
+  /**
+   * @description Returns the default chat model.
+   * @returns {AiChatModel} The default chat model.
+   */
   defaultChatModel () {
-    return this.models().subnodes().first(); // first model is the default
+    return this.models().subnodes().first();
   }
 
+  /**
+   * @description Validates the API key.
+   * @param {string} s - The API key to validate.
+   * @returns {boolean} True if the API key is valid, false otherwise.
+   */
   validateKey (s) {
     return s.startsWith("sk-");
   }
 
+  /**
+   * @description Checks if the API key is set and valid.
+   * @returns {boolean} True if the API key is set and valid, false otherwise.
+   */
   hasApiKey () {
     return this.apiKey() && this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }
 
+  /**
+   * @description Returns the name of the default chat model.
+   * @returns {string} The name of the default chat model.
+   */
   defaultChatModelName () {
     return this.defaultChatModel().modelName();
   }
 
+  /**
+   * @description Returns the service-specific role name for a given role.
+   * @param {string} role - The role to get the service-specific name for.
+   * @returns {string} The service-specific role name.
+   * @throws {Error} If the role is unknown.
+   */
   serviceRoleNameForRole (role) {
     if (role === "system") {
       return this.systemRoleName();
@@ -158,29 +208,21 @@
     }
 
     throw new Error("unknown role " + role);
-    return role;
   }
 
+  /**
+   * @description Prepares the service to send a request.
+   * @param {Object} aRequest - The request to prepare.
+   * @returns {AiService} The AiService instance.
+   */
   prepareToSendRequest (aRequest) {
-    // subclasses should override
     return this;
   }
 
-  /*
-  fetchAndSetupInfo () {
-    const resourcePath = "app/info/" + this.type() + ".json";
-    const resource = BMResources.shared().resourceForPath(resourcePath);
-    if (!resource) {
-      throw new Error("resource not found for path '" + resourcePath + "'");
-    }
-    const data = resource.data();
-    const info = JSON.parse(data);
-    this.setServiceInfo(info);
-    this.setupFromInfo();
-    return this;
-  }
-  */
-
+  /**
+   * @description Fetches and sets up the service information.
+   * @returns {Promise<void>}
+   */
   async fetchAndSetupInfo () {
     let info;
 
@@ -194,6 +236,9 @@
     }
   }
 
+  /**
+   * @description Sets up the service from the fetched information.
+   */
   setupFromInfo () {
     const info = this.serviceInfo();
 
@@ -210,6 +255,11 @@
     }
   }
 
+  /**
+   * @description Sets up the models from JSON data.
+   * @param {Array} json - The JSON data containing model information.
+   * @returns {AiService} The AiService instance.
+   */
   setModelsJson (json) {
     this.models().removeAllSubnodes();
     json.forEach(modelInfo => {
@@ -219,23 +269,34 @@
     return this;
   }
 
+  /**
+   * @description Returns the URL for fetching service information.
+   * @returns {string} The URL for fetching service information.
+   */
   fetchInfoUrl () {
     const baseUrl = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
     const url = baseUrl + "/app/info/" + this.type() + ".json";
     return url;
   }
 
+  /**
+   * @description Fetches the service information.
+   * @returns {Promise<Object>} A promise that resolves to the service information.
+   */
   async fetchInfo () {
     return fetch(this.fetchInfoUrl())
       .then(response => response.json())
       .then(json => {
-        //console.log("info response", json);
         return json;
       });
   }
 
+  /**
+   * @description Returns the chat request class for the service.
+   * @returns {Function} The chat request class.
+   * @throws {Error} If the chat request class is not found.
+   */
   chatRequestClass () {
-    // compose the class name from the service name e.g. AnthropicService -> AnthropicRequest 
     const className = this.type().split("Service")[0] + "Request";
     const requestClass = getGlobalThis()[className];
     if (!requestClass) {

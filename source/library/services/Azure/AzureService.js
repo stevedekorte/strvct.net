@@ -1,32 +1,45 @@
 "use strict";
 
-/* 
-    AzureService
+/**
+ * @module library.services.Azure.AzureService
+ */
 
-*/
-
+/**
+ * @class AzureService
+ * @extends BMStorableNode
+ * @classdesc AzureService for text-to-speech functionality
+ */
 (class AzureService extends BMStorableNode {
+  /**
+   * @description Initializes the prototype slots for the AzureService
+   */
   initPrototypeSlots () {
+    /**
+     * @property {Array} regionOptions - Options for Azure regions
+     */
     {
       const slot = this.newSlot("regionOptions", []);
       slot.setSlotType("Array");
     }
 
+    /**
+     * @property {string} apiKey - API Key for Azure service
+     */
     {
       const slot = this.newSlot("apiKey", "");
-      //slot.setInspectorPath("")
       slot.setLabel("API Key");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
       slot.setIsSubnodeField(true);
-      //slot.setValidValues(values)
     }
 
+    /**
+     * @property {string} region - Server Region for Azure service
+     */
     {
       const slot = this.newSlot("region", "");
-      //slot.setInspectorPath("")
       slot.setLabel("Server Region");
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -36,9 +49,11 @@
       slot.setInitValue(this.validRegions().first())
       slot.setValidValues(this.validRegions());
       slot.setInitValue("eastus");
-      //slot.setValidValues(values)
     }
 
+    /**
+     * @property {AzureSpeakers} speakers - Speakers for Azure service
+     */
     {
       const slot = this.newSlot("speakers", null);
       slot.setLabel("speakers");
@@ -47,6 +62,9 @@
       slot.setIsSubnode(true);
     }
 
+    /**
+     * @property {AzureVoices} voices - Voices for Azure service
+     */
     {
       const slot = this.newSlot("voices", null);
       slot.setLabel("voices");
@@ -59,12 +77,19 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the AzureService
+   */
   init() {
     super.init();
     this.setTitle("Azure Text to Speech");
     this.setSubtitle("text-to-speech service");
   }
 
+  /**
+   * @description Returns an array of valid Azure regions
+   * @returns {Array} Array of valid Azure regions
+   */
   validRegions () {
     return [
       // regions that support intonation features
@@ -82,8 +107,11 @@
     ].map((entry) => entry[2]) // only return the values (the 3rd item in each entry)
   }
 
-  // --- api key ---
-
+  /**
+   * @description Validates the API key
+   * @param {string} s - The API key to validate
+   * @returns {boolean} True if the key is valid, false otherwise
+   */
   validateKey(s) {
     if (!s) {
       return false;
@@ -91,8 +119,11 @@
     return s.length === 32 && s.isHexadecimal();
   }
 
-  // --- region ---
-
+  /**
+   * @description Validates the region
+   * @param {string} s - The region to validate
+   * @returns {boolean} True if the region is valid, false otherwise
+   */
   validateRegion(s) {
     if (!s) {
       return false;
@@ -104,8 +135,10 @@
     return isLowercaseOrUnderscore(s);
   }
 
-  // --- api check ---
-
+  /**
+   * @description Checks if the service has API access
+   * @returns {boolean} True if the service has API access, false otherwise
+   */
   hasApiAccess() {
     return (
       this.validateKey(this.apiKey()) && this.validateRegion(this.region())

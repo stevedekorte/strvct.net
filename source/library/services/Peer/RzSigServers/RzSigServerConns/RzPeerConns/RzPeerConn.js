@@ -1,21 +1,27 @@
+/**
+ * @module library.services.Peer.RzSigServers.RzSigServerConns.RzPeerConns.RzPeerConn
+ */
+
 "use strict";
 
-/* 
-    RzPeerConn
-
-    Wrapper for PeerJS DataConnection.
-
-    Delegate messages:
-
-      - onPeerOpen (peerConn)
-      - onPeerClose (peerConn)
-      - onPeerData (peerConn, data)
-      - onPeerError (peerConn)
-    
-*/
-
+/**
+ * @class RzPeerConn
+ * @extends BMSummaryNode
+ * @classdesc Wrapper for PeerJS DataConnection.
+ * 
+ * Delegate messages:
+ * 
+ * - onPeerOpen (peerConn)
+ * - onPeerClose (peerConn)
+ * - onPeerData (peerConn, data)
+ * - onPeerError (peerConn)
+ */
 (class RzPeerConn extends BMSummaryNode {
 
+  /**
+   * @description Returns the default connection options.
+   * @returns {Object} The default connection options.
+   */
   connOptionsDefault () {
     return {
       label: undefined,
@@ -33,8 +39,14 @@
     }
   }
 
+  /**
+   * @description Initializes the prototype slots for the RzPeerConn class.
+   */
   initPrototypeSlots () {
     {
+      /**
+       * @property {string} peerId
+       */
       const slot = this.newSlot("peerId", null);
       slot.setInspectorPath("")
       //slot.setLabel("prompt")
@@ -48,6 +60,9 @@
     }
 
     {
+      /**
+       * @property {Object} connOptions
+       */
       const slot = this.newSlot("connOptions", null);
       slot.setInspectorPath("");
       //slot.setLabel("connection options");
@@ -58,6 +73,9 @@
 
 
     {
+      /**
+       * @property {string} status
+       */
       const slot = this.newSlot("status", "");
       slot.setInspectorPath("");
       //slot.setLabel("prompt");
@@ -73,6 +91,9 @@
     // --- error and reconnect ---
 
     {
+      /**
+       * @property {Error} error
+       */
       const slot = this.newSlot("error", null); 
       slot.setShouldStoreSlot(false);
       slot.setCanEditInspection(false);
@@ -80,6 +101,9 @@
     }
 
     {
+      /**
+       * @property {boolean} didInitiateConnection
+       */
       const slot = this.newSlot("didInitiateConnection", false); // if we initiated, it's up to us to try to reconnect
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -88,12 +112,18 @@
     }
 
     {
+      /**
+       * @property {boolean} shouldAutoReconnect
+       */
       const slot = this.newSlot("shouldAutoReconnect", true); // (if didInitiateConnection is also true)
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Boolean");
     }
 
     {
+      /**
+       * @property {number} reconnectAttemptCount
+       */
       const slot = this.newSlot("reconnectAttemptCount", 0);
       slot.setShouldStoreSlot(true);
       slot.setSlotType("Number");
@@ -102,6 +132,9 @@
     // -------------------------
 
     {
+      /**
+       * @property {RzMsgs} peerMsgs
+       */
       const slot = this.newSlot("peerMsgs", null)
       slot.setFinalInitProto(RzMsgs);
       slot.setShouldStoreSlot(true);
@@ -110,6 +143,9 @@
     }
 
     {
+      /**
+       * @property {Action} shutdownAction
+       */
       const slot = this.newSlot("shutdownAction", null);
       slot.setInspectorPath("")
       slot.setLabel("Shutdown")
@@ -124,6 +160,9 @@
 
 
     {
+      /**
+       * @property {Action} connectAction
+       */
       const slot = this.newSlot("connectAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Connect");
@@ -136,27 +175,42 @@
     }
     
     {
+      /**
+       * @property {RzSigServerConn} sigServerConn
+       */
       const slot = this.newSlot("sigServerConn", null);
       slot.setSlotType("RzSigServerConn");
     }
 
     {
+      /**
+       * @property {DataConnection} conn
+       */
       const slot = this.newSlot("conn", null);
       slot.setSlotType("DataConnection"); 
     }
 
     {
+      /**
+       * @property {Object} info
+       */
       const slot = this.newSlot("info", null);
       slot.setSlotType("JSON Object");
     }
 
     {
+      /**
+       * @property {Object} delegate
+       */
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
 
 
     {
+      /**
+       * @property {boolean} useMessageLog
+       */
       const slot = this.newSlot("useMessageLog", false);
       slot.setSlotType("Boolean");
     }
@@ -164,21 +218,33 @@
     // --- ping pong keepalive ---
 
     {
+      /**
+       * @property {boolean} useKeepAlive
+       */
       const slot = this.newSlot("useKeepAlive", false);
       slot.setSlotType("Boolean");
     }
 
     {
+      /**
+       * @property {number} nextPingTimeout
+       */
       const slot = this.newSlot("nextPingTimeout", null);
       slot.setSlotType("Number");
     }
 
     {
+      /**
+       * @property {boolean} gotPong
+       */
       const slot = this.newSlot("gotPong", false);
       slot.setSlotType("Boolean");
     }
 
     {
+      /**
+       * @property {number} nextPingTimeoutMs
+       */
       const slot = this.newSlot("nextPingTimeoutMs", 30*1000); 
       slot.setSlotType("Number");
     }
@@ -186,6 +252,9 @@
     // --- msg chunking --
 
     {
+      /**
+       * @property {Map} chunks
+       */
       const slot = this.newSlot("chunks", null); 
       slot.setSlotType("Map");
     }
@@ -195,6 +264,10 @@
     this.setCanDelete(true)
   }
 
+  /**
+   * @description Returns the id of the peer connection.
+   * @returns {string|null} The peer id or null if not connected.
+   */
   id () {
     const conn = this.conn();
     if (conn) {
@@ -203,15 +276,27 @@
     return null;
   }
 
+  /**
+   * @description Returns a shortened version of the peer id.
+   * @returns {string} The shortened peer id.
+   */
   shortId () {
     const id = this.id() 
     return id ? this.id().slice(0,5) + "..." : "null";
   }
 
+  /**
+   * @description Returns a debug-friendly type and id string.
+   * @returns {string} The debug type and id.
+   */
   debugTypeId () {
     return this.type() + " " + this.shortId();
   }
 
+  /**
+   * @description Initializes the RzPeerConn instance.
+   * @returns {RzPeerConn} The initialized instance.
+   */
   init() {
     super.init();
     this.setStatus("offline");
@@ -221,10 +306,18 @@
     return this;
   }
 
+  /**
+   * @description Returns the title of the peer connection.
+   * @returns {string} The peer id.
+   */
   title () {
     return this.peerId()
   }
 
+  /**
+   * @description Returns the subtitle of the peer connection.
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     if (this.isServerConn()) {
       return "ourself"
@@ -233,6 +326,11 @@
     return this.status()
   }
 
+  /**
+   * @description Sets the connection and initializes it.
+   * @param {DataConnection} conn - The peer connection.
+   * @returns {RzPeerConn} The current instance.
+   */
   setConn (conn) {
     this._conn = conn;
     if (conn) {
@@ -243,6 +341,9 @@
     return this;
   }
 
+  /**
+   * @description Sets up the connection event listeners.
+   */
   setupConn  () {
     const conn = this.conn();
     conn.on("data", (data) => this.onData(data));
@@ -252,6 +353,10 @@
     this.setStatus("connected to peer")
   }
 
+  /**
+   * @description Checks if this is a server connection.
+   * @returns {boolean} True if it's a server connection, false otherwise.
+   */
   isServerConn () {
     if (this.sigServerConn()) {
       return this.peerId() === this.sigServerConn().peerId()
@@ -259,12 +364,20 @@
     return false
   }
 
+  /**
+   * @description Checks if the connection is established.
+   * @returns {boolean} True if connected, false otherwise.
+   */
   isConnected () {
     const isConnected = this.isOpen();
     assert(Type.isBoolean(isConnected));
     return isConnected;
   }
 
+  /**
+   * @description Checks if the connection is open.
+   * @returns {boolean} True if open, false otherwise.
+   */
   isOpen () {
     return !Type.isNullOrUndefined(this.conn()) && this.conn().open
   }
@@ -273,17 +386,30 @@
 
   // --- label ---
 
+  /**
+   * @description Sets the connection label.
+   * @param {string} s - The label to set.
+   * @returns {RzPeerConn} The current instance.
+   */
   setConnLabel (s) {
     // the label we pass when we initiate a connection
     this.connOptions().label = s
     return this
   }
 
+  /**
+   * @description Gets the connection label.
+   * @returns {string} The connection label.
+   */
   connLabel () {
     // the label we pass when we initiate a connection
     return this.connOptions().label
   }
 
+  /**
+   * @description Gets the peer label.
+   * @returns {string} The peer label.
+   */
   peerLabel () {
     // the label we receive when we accept a connection
     return this.conn().label
@@ -291,11 +417,19 @@
 
   // --- metadata ---
 
+  /**
+   * @description Gets the local metadata.
+   * @returns {Object} The local metadata.
+   */
   localMetadata () {
     // metadata we'll share with peer when we connect
     return this.connOptions().metadata;
   }
 
+  /**
+   * @description Gets the remote metadata.
+   * @returns {Object|null} The remote metadata or null if not connected.
+   */
   remoteMetadata () {
     // metadata the peer shared with us when we connected
     if (this.conn()) {
@@ -306,6 +440,10 @@
 
   // --------------------------------
 
+  /**
+   * @description Initiates a connection to the peer.
+   * @returns {RzPeerConn} The current instance.
+   */
   connect () {
     this.setDidInitiateConnection(true)
     if (this.isServerConn()) {
@@ -325,6 +463,9 @@
 
   // --- events ---
 
+  /**
+   * @description Handles the open event of the connection.
+   */
   onOpen () {
     this.debugLog("onOpen");
     this.clearChunks();
@@ -335,6 +476,10 @@
     this.setReconnectAttemptCount(0);
   }
 
+  /**
+   * @description Handles incoming data from the peer.
+   * @param {Object} json - The received JSON data.
+   */
   onData (json) { // we set connection transmission format to JSON
     if (this.useMessageLog()) {
       const msg = RzMsg.clone().setContent(json)
@@ -359,11 +504,20 @@
     this.sendDelegateMessage("onPeerData", [this, json]);
   }
 
+  /**
+   * @description Clears all stored chunks.
+   * @returns {RzPeerConn} The current instance.
+   */
   clearChunks () {
     this.chunks().clear()
     return this
   }
 
+  /**
+   * @description Handles receiving a chunk of data.
+   * @param {Object} chunk - The received chunk.
+   */
+  
   onReceiveChunk (chunk) {
     /*
       chunkJson format:
@@ -396,6 +550,10 @@
     }
   }
 
+  /**
+   * @description Handles the error event of the connection.
+   * @param {Error} error - The error object.
+   */
   onError (error) {
     this.setError(error)
     this.debugLog("onError:", error);
@@ -409,6 +567,10 @@
     }
   }
 
+  /**
+   * @description Returns the types of errors that indicate a disconnect.
+   * @returns {Array} The types of disconnect errors.
+   */
   disconnectErrorTypes () {
     return [
       "network",
@@ -419,6 +581,9 @@
     ];
   }
 
+  /**
+   * @description Handles the close event of the connection.
+   */
   onClose () {
     this.debugLog("onClose");
     this.setStatus("closed")
@@ -430,6 +595,9 @@
     this.sendDelegateMessage("onPeerClose", [this]);
   }
 
+  /**
+   * @description Handles an unexpected disconnect.
+   */
   onUnexpectedDisconnect () {
     if (this.shouldAutoReconnect() && this.didInitiateConnection()) {
       const count = this.reconnectAttemptCount();
@@ -441,11 +609,18 @@
     }
   }
 
+  /**
+   * @description Attempts to reconnect to the peer.
+   */
   reconnect () {
     console.log(this.typeId() + " attempting reconnect")
     this.connect()
   }
 
+  /**
+   * @description Handles the document before unload event.
+   * @param {Event} aNote - The event object.
+   */
   onDocumentBeforeUnload (aNote) {
     console.log(this.typeId() + " onDocumentBeforeUnload shutdown")
     this.shutdown()
@@ -453,6 +628,11 @@
 
   // --- delegate ---
 
+  /**
+   * @description Sends a delegate message.
+   * @param {string} methodName - The method name to call.
+   * @param {Array} args - The arguments to pass to the method.
+   */
   sendDelegateMessage (methodName, args = [this]) {
     const d = this.delegate();
     if (d) {
@@ -470,6 +650,10 @@
 
   // --- sending ---
 
+  /**
+   * @description Returns the maximum message size for the connection.
+   * @returns {number} The maximum message size in bytes.
+   */
   maxMessageSize () {
     const conn = this.conn();
     if (conn.peerConnection) {
@@ -480,6 +664,10 @@
     return 65536; // in bytes
   }
 
+  /**
+   * @description Sends a JSON message to the peer.
+   * @param {Object} json - The JSON object to send.
+   */
   send (json) {
     const conn = this.conn();
 
@@ -502,6 +690,10 @@
     conn.send(json);
   }
 
+  /**
+   * @description Sends data as chunks if the message size exceeds the maximum.
+   * @param {string} dataStr - The data string to send.
+   */
   sendDataAsChunks (dataStr) {
     const wrapperSize = 1024; // safe guess
     const chunkSize = this.maxMessageSize() - wrapperSize;
@@ -521,6 +713,10 @@
     }
   }
 
+  /**
+   * @description Sends a JSON message and then closes the connection.
+   * @param {Object} json - The JSON object to send.
+   */
   sendThenClose (json) {
     this.send(json);
     setTimeout(() => {
@@ -530,10 +726,16 @@
 
   // --- shutdown ---
 
+  /**
+   * @description Disconnects the connection.
+   */
   disconnect () {
     this.shutdown();
   }
 
+  /**
+   * @description Shuts down the connection.
+   */
   shutdown () {
     console.warn(this.type() + " " + this.shortId() + " shutdown");
     if (this.conn()) { // only close connection if it's still up
@@ -544,6 +746,10 @@
     }
   }
 
+  /**
+   * @description Checks if the server connection is connected.
+   * @returns {boolean} True if connected, false otherwise.
+   */
   serverIsConnected () {
     if (this.sigServerConn()) {
       return this.sigServerConn().isConnected()
@@ -551,12 +757,20 @@
     return false
   }
 
+  /**
+   * @description Returns the connection action information.
+   * @returns {Object} The connection action information.
+   */
   connectActionInfo () {
     return {
       isEnabled: !this.isServerConn() && !this.isOpen() && this.serverIsConnected()
     }
   }
 
+  /**
+   * @description Returns the shutdown action information.
+   * @returns {Object} The shutdown action information.
+   */
   shutdownActionInfo () {
     return {
       isEnabled: this.isOpen()
@@ -565,6 +779,9 @@
 
   // --- sending ping & receiving pong ---
 
+  /**
+   * @description Sends a ping to the peer.
+   */
   sendPing () {
     if (!this.nextPingTimeout()) {
       console.log(this.typeId() + " sendPing")
@@ -576,6 +793,9 @@
     }
   }
 
+  /**
+   * @description Handles the pong event.
+   */
   onPong () {
     //console.log(this.typeId() + " onPong")
     this.setGotPong(true)
@@ -583,12 +803,18 @@
 
   // --- ping timeout ---
 
+  /**
+   * @description Sets up the next ping timeout.
+   */
   setupNextPingTimeout () {
     this.cancelNextPingTimeout()
     const po = setTimeout(() => { this.onPingTimeout() }, this.nextPingTimeoutMs());
     this.setNextPingTimeout(po);
   }
 
+  /**
+   * @description Cancels the next ping timeout.
+   */
   cancelNextPingTimeout () {
     const po = this.nextPingTimeout()
     if (po) {
@@ -597,6 +823,9 @@
     }
   }
 
+  /**
+   * @description Handles the ping timeout event.
+   */
   onPingTimeout () {
     this.setNextPingTimeout(null)
     if (this.gotPong()) {
@@ -609,11 +838,17 @@
 
   // --- receiving ping & sending pong ---
 
+  /**
+   * @description Handles the ping event.
+   */
   onPing () {
     //console.log(this.typeId() + " onPing")
     this.sendPong();
   }
 
+  /**
+   * @description Sends a pong to the peer.
+   */
   sendPong () {
     //console.log(this.typeId() + " sendPong")
     this.send({ name: "RzPeerConnPong" })

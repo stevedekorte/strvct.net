@@ -1,23 +1,39 @@
 "use strict";
 
-/* 
-    OpenAiTtsRequest
- 
-*/
+/**
+ * @module library.services.OpenAI.Text_to_Speech
+ */
 
+/**
+ * @class OpenAiTtsRequest
+ * @extends BMSummaryNode
+ * @classdesc Represents a Text-to-Speech request to the OpenAI API.
+ */
 (class OpenAiTtsRequest extends BMSummaryNode {
  
+  /**
+   * @description Initializes the prototype slots for the OpenAiTtsRequest class.
+   */
   initPrototypeSlots () {
+    /**
+     * @property {Object} delegate - Optional reference to service object that owns request.
+     */
     {
-      const slot = this.newSlot("delegate", null); // optional reference to service object that owns request 
+      const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {String} requestId - Unique identifier for the request.
+     */
     {
-      const slot = this.newSlot("requestId", null); // needed?
+      const slot = this.newSlot("requestId", null);
       slot.setSlotType("String");
     }
 
+    /**
+     * @property {String} apiUrl - The URL for the OpenAI API endpoint.
+     */
     {
       const slot = this.newSlot("apiUrl", null);
       slot.setInspectorPath("");
@@ -29,11 +45,17 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Object} bodyJson - Contains the model choice and messages for the API request.
+     */
     {
-      const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+      const slot = this.newSlot("bodyJson", null);
       slot.setSlotType("JSON Object");
     }
 
+    /**
+     * @property {String} body - The stringified version of bodyJson.
+     */
     {
       const slot = this.newSlot("body", null); 
       slot.setInspectorPath("");
@@ -47,26 +69,41 @@
 
     // fetching
 
+    /**
+     * @property {Object} fetchRequest - The fetch request object.
+     */
     {
       const slot = this.newSlot("fetchRequest", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {Boolean} isFetchActive - Indicates if a fetch is currently active.
+     */
     {
       const slot = this.newSlot("isFetchActive", false);
       slot.setSlotType("Boolean");
     }
 
+    /**
+     * @property {Object} fetchAbortController - The AbortController for the fetch request.
+     */
     {
       const slot = this.newSlot("fetchAbortController", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {Error} error - Stores any error that occurs during the request.
+     */
     {
       const slot = this.newSlot("error", null);
       slot.setSlotType("Error");
     }
 
+    /**
+     * @property {String} status - The current status of the request.
+     */
     {
       const slot = this.newSlot("status", "");
       slot.setInspectorPath("");
@@ -78,18 +115,27 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Promise} fetchPromise - The promise for the fetch operation.
+     */
     {
       const slot = this.newSlot("fetchPromise", null);
       slot.setSlotType("Promise");
     }
 
+    /**
+     * @property {Blob} audioBlob - The audio data received from the API.
+     */
     {
       const slot = this.newSlot("audioBlob", null);
       slot.setSlotType("Blob");
     }
 
+    /**
+     * @property {WASound} sound - The WASound object for the received audio.
+     */
     {
-      const slot = this.newSlot("sound", null); // WASound
+      const slot = this.newSlot("sound", null);
       slot.setSlotType("WASound");
     }
 
@@ -97,6 +143,9 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the OpenAiTtsRequest instance.
+   */
   init () {
     super.init();
     this.setIsDebugging(false);
@@ -108,24 +157,45 @@
     this.sound().setFetchPromise(this.fetchPromise());
   }
 
+  /**
+   * @description Returns the OpenAI service instance.
+   * @returns {OpenAiService} The shared OpenAI service instance.
+   */
   service () {
     return OpenAiService.shared();
   }
 
+  /**
+   * @description Returns the subtitle for the request, which is the current status.
+   * @returns {String} The current status of the request.
+   */
   subtitle () {
     return this.status();
   }
 
+  /**
+   * @description Sets the service object for the request.
+   * @param {Object} anObject - The service object to set.
+   * @returns {OpenAiTtsRequest} The current instance.
+   */
   setService (anObject) {
     debugger;
     this.setDelegate(anObject);
     return this;
   }
 
+  /**
+   * @description Returns the stringified version of the bodyJson.
+   * @returns {String} The stringified body of the request.
+   */
   body () {
     return JSON.stringify(this.bodyJson(), 2, 2);
   }
 
+  /**
+   * @description Prepares the request options for the API call.
+   * @returns {Object} The request options object.
+   */
   requestOptions () {
     const apiKey = this.service().apiKey();
     return {
@@ -138,11 +208,18 @@
     };
   }
 
+  /**
+   * @description Asserts that the request is valid before sending.
+   * @throws {Error} If the API key or URL is missing.
+   */
   assertValid () {
     assert(this.service().hasApiKey(), this.type() + " apiKey missing");
     assert(this.apiUrl(), this.type() + " apiUrl missing");
   }
 
+  /**
+   * @description Logs the request details for debugging.
+   */
   showRequest () {
     this.debugLog(
       " request " +
@@ -155,6 +232,9 @@
     );
   }
 
+  /**
+   * @description Logs the response details for debugging.
+   */
   showResponse () {
     const json = this.json();
     this.debugLog(" response json: ", json);
@@ -163,12 +243,13 @@
     }
   }
 
-  // --- normal response --- 
-
+  /**
+   * @description Sends the request to the OpenAI API asynchronously.
+   * @returns {Promise<void>}
+   */
   async asyncSend () {
     try {
       this.setStatus("fetching");
-      //this.setIsStreaming(false);
       this.sendDelegate("onRequestBegin");
 
       this.assertValid();
@@ -179,23 +260,16 @@
       const options = this.requestOptions();
       const controller = new AbortController();
       this.setFetchAbortController(controller);
-      options.signal = controller.signal; // add the abort controller so we can abort the fetch if needed
+      options.signal = controller.signal;
 
       const response = await fetch(this.apiUrl(), options);
       this.setIsFetchActive(false);
       this.setFetchAbortController(null);
-      //this.sendDelegate("onRequestConnected");
 
       const audioBlob = await response.blob();
       this.fetchPromise().callResolveFunc();
       this.setAudioBlob(audioBlob);
-      //this.sendDelegate("onRequestGotAudioBlob");
 
-      // need to call asyncPrepareToStoreSynchronously as OutputAudioBlob slot is stored,
-      // and all writes to the store tx need to be sync so the store is in a consistent state for it's
-      // next read/write
-      //await audioBlob.asyncPrepareToStoreSynchronously() 
-      //const sound = WASound.fromBlob(audioBlob);
       this.sound().asyncLoadFromDataBlob(audioBlob);
 
       this.sendDelegate("onRequestComplete");
@@ -207,6 +281,10 @@
     }
   }
 
+  /**
+   * @description Aborts the current fetch request if it's active.
+   * @returns {OpenAiTtsRequest} The current instance.
+   */
   abort () {
     if (this.isFetchActive()) {
       if (this.fetchAbortController()) {
@@ -218,16 +296,30 @@
     return this;
   }
 
+  /**
+   * @description Shuts down the request by aborting any active fetch.
+   * @returns {OpenAiTtsRequest} The current instance.
+   */
   shutdown () {
     this.abort();
     return this;
   }
 
+  /**
+   * @description Handles errors that occur during the request.
+   * @param {Error} error - The error that occurred.
+   */
   onError (error) {
     this.sendDelegate("onRequestError", [this, error]);
     this.fetchPromise().callRejectFunc(error);
   }
 
+  /**
+   * @description Sends a delegate method call if the delegate exists and has the method.
+   * @param {String} methodName - The name of the method to call on the delegate.
+   * @param {Array} args - The arguments to pass to the delegate method.
+   * @returns {Boolean} True if the delegate method was called, false otherwise.
+   */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate()
     if (d) {

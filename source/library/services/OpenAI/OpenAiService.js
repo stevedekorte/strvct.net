@@ -1,23 +1,33 @@
+/**
+ * @module library.services.OpenAI
+ */
+
+/**
+ * @class OpenAiService
+ * @extends AiService
+ * @classdesc OpenAiService is a BMSummaryNode that holds the API key and subnodes for the various OpenAI services.
+ * 
+ * Example:
+ * 
+ * OpenAiService.shared().setApiKey("sk-1234567890");
+ * const hasApiKey = OpenAiService.shared().hasApiKey();
+ */
 "use strict";
-
-/* 
-    OpenAiService
-
-    OpenAiService is a BMSummaryNode that holds the API key and subnodes for the various OpenAI services.
-
-    Example:
-
-    OpenAiService.shared().setApiKey("sk-1234567890");
-    const hasApiKey = OpenAiService.shared().hasApiKey();
-
-*/
 
 (class OpenAiService extends AiService {
 
+  /**
+   * @static
+   * @description Initializes the class and sets it as a singleton.
+   */
   static initClass () {
     this.setIsSingleton(true);
   }
 
+  /**
+   * @description Returns an array of model configurations.
+   * @returns {Array<Object>} An array of model objects with name, note, and contextWindow properties.
+   */
   modelsJson () {
     return [
       {
@@ -41,13 +51,22 @@
     ];
   }
   
+  /**
+   * @description Initializes the prototype slots for the class.
+   */
   initPrototypeSlots () {
+    /**
+     * @property {OpenAiImagePrompts} imagesPrompts
+     */
     {
       const slot = this.overrideSlot("imagesPrompts", null);
       slot.setFinalInitProto(OpenAiImagePrompts);
       slot.setIsSubnode(true);
     }
 
+    /**
+     * @property {OpenAiTtsSessions} ttsSessions
+     */
     {
       const slot = this.overrideSlot("ttsSessions", null);
       slot.setFinalInitProto(OpenAiTtsSessions);
@@ -55,10 +74,16 @@
     }
   }
 
+  /**
+   * @description Initializes the instance.
+   */
   init () {
     super.init();
   }
 
+  /**
+   * @description Performs final initialization steps for the instance.
+   */
   finalInit () {
     super.finalInit()
     this.setTitle("OpenAI");
@@ -67,10 +92,19 @@
     // see: https://platform.openai.com/docs/models/gpt-4-turbo-and-gpt-4
   }
 
+  /**
+   * @description Validates the API key.
+   * @param {string} s - The API key to validate.
+   * @returns {boolean} True if the key is valid, false otherwise.
+   */
   validateKey (s) {
     return s.length === 51 && s.startsWith("sk-");
   }
 
+  /**
+   * @description Checks if a valid API key is set.
+   * @returns {boolean} True if a valid API key is set, false otherwise.
+   */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }

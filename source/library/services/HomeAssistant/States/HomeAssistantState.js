@@ -1,37 +1,45 @@
+/**
+ * @module HomeAssistant.States
+ */
+
 "use strict";
 
-/* 
-    HomeAssistantState
-
-    {
-      "entity_id": "media_player.homepod_tv_left",
-      "state": "standby",
-      "attributes": {
-        "volume_level": 0.35,
-        "media_content_id": "a626811e-62c9-4ca9-8bcc-8f2676b21890",
-        "media_content_type": "video",
-        "media_duration": 1530,
-        "media_position": 1407,
-        "media_title": "The Bear | S1 E5 - Sheridan",
-        "app_id": "com.apple.tvairplayd",
-        "app_name": "Hulu",
-        "entity_picture": "/api/media_player_proxy/media_player.homepod_tv_left?token=139d6797cc4da521aa19c39e2fab71091823014b8016e6bb77632b120ec773fb&cache=6A00EEDC-8E75-4454-90B2-3A0F3DBDE0B1",
-        "friendly_name": "HomePod TV Left",
-        "supported_features": 448439
-      },
-      "last_changed": "2024-01-20T06:02:33.356314+00:00",
-      "last_updated": "2024-01-23T07:12:10.065147+00:00",
-      "context": {
-        "id": "01HMTJK1AHNKQ25DKQKWZ056Z2",
-        "parent_id": null,
-        "user_id": null
-      }
-    }
-
-*/
-
+/**
+ * @class HomeAssistantState
+ * @extends HomeAssistantObject
+ * @classdesc Represents a state in Home Assistant.
+ * 
+ * Example JSON structure:
+ * {
+ *   "entity_id": "media_player.homepod_tv_left",
+ *   "state": "standby",
+ *   "attributes": {
+ *     "volume_level": 0.35,
+ *     "media_content_id": "a626811e-62c9-4ca9-8bcc-8f2676b21890",
+ *     "media_content_type": "video",
+ *     "media_duration": 1530,
+ *     "media_position": 1407,
+ *     "media_title": "The Bear | S1 E5 - Sheridan",
+ *     "app_id": "com.apple.tvairplayd",
+ *     "app_name": "Hulu",
+ *     "entity_picture": "/api/media_player_proxy/media_player.homepod_tv_left?token=139d6797cc4da521aa19c39e2fab71091823014b8016e6bb77632b120ec773fb&cache=6A00EEDC-8E75-4454-90B2-3A0F3DBDE0B1",
+ *     "friendly_name": "HomePod TV Left",
+ *     "supported_features": 448439
+ *   },
+ *   "last_changed": "2024-01-20T06:02:33.356314+00:00",
+ *   "last_updated": "2024-01-23T07:12:10.065147+00:00",
+ *   "context": {
+ *     "id": "01HMTJK1AHNKQ25DKQKWZ056Z2",
+ *     "parent_id": null,
+ *     "user_id": null
+ *   }
+ * }
+ */
 (class HomeAssistantState extends HomeAssistantObject {
 
+  /**
+   * @description Initializes the prototype slots for the HomeAssistantState.
+   */
   initPrototypeSlots () {
 
     {
@@ -68,6 +76,9 @@
     this.setSummaryFormat("key value");
   }
 
+  /**
+   * @description Initializes the HomeAssistantState.
+   */
   init() {
     super.init();
   }
@@ -78,6 +89,9 @@
   }
   */
   
+  /**
+   * @description Performs final initialization tasks.
+   */
   finalInit () {
     super.finalInit();
     this.setNoteIsSubnodeCount(false);
@@ -94,10 +108,18 @@
   }
   */
 
+  /**
+   * @description Gets the ID of the state.
+   * @returns {string} The ID of the state.
+   */
   id () {
     return this.haJson().context.id; // is this correct?
   }
 
+  /**
+   * @description Gets the entity ID of the state.
+   * @returns {string} The entity ID of the state.
+   */
   entityId () {
     return this.haJson().entity_id;
   }
@@ -109,20 +131,35 @@
   }
   */
 
+  /**
+   * @description Gets the owner ID of the state.
+   * @returns {string} The owner ID of the state.
+   */
   ownerId () {
     return this.entityId();
   }
 
+  /**
+   * @description Gets the owner group of the state.
+   * @returns {Object} The owner group of the state.
+   */
   ownerGroup () {
     return this.homeAssistant().entitiesNode();
   }
 
+  /**
+   * @description Updates the titles of the state.
+   */
   updateTitles () {
     this.setName(this.name());
     this.setTitle(this.computeShortName());
     this.setSubtitle(this.haJson().state);
   }
 
+  /**
+   * @description Gets the name of the state.
+   * @returns {string} The name of the state.
+   */
   name () {
     const json = this.haJson();
     let name = json.attributes.friendly_name;
@@ -140,6 +177,10 @@
   }
   */
 
+  /**
+   * @description Gets the current state.
+   * @returns {string} The current state.
+   */
   state () {
     return this.haJson().state;
   }

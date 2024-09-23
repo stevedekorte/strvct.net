@@ -1,13 +1,21 @@
 "use strict";
 
-/* 
-    OpenAiImagePrompt
+/**
+ * @module OpenAI.TexttoImage
+ */
 
-*/
-
+/**
+ * @class OpenAiImagePrompt
+ * @extends BMSummaryNode
+ * @classdesc Represents an OpenAI image prompt for generating images using DALL-E models.
+ */
 (class OpenAiImagePrompt extends BMSummaryNode {
   initPrototypeSlots () {
 
+    /**
+     * @property {string} prompt
+     * @description The prompt text for image generation.
+     */
     {
       const slot = this.newSlot("prompt", "");
       slot.setInspectorPath("")
@@ -19,6 +27,10 @@
       slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {string} model
+     * @description The DALL-E model to use for image generation.
+     */
     {
       const slot = this.newSlot("model", "dall-e-3");
       slot.setInspectorPath("")
@@ -31,6 +43,10 @@
       slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {string} quality
+     * @description The quality of the generated image.
+     */
     {
       const slot = this.newSlot("quality", "standard");
       slot.setInspectorPath("")
@@ -42,6 +58,10 @@
       slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {number} imageCount
+     * @description The number of images to generate.
+     */
     {
       const slot = this.newSlot("imageCount", 1);
       slot.setInspectorPath("")
@@ -54,6 +74,10 @@
       //slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {string} imageSize
+     * @description The size of the generated image.
+     */
     {
       const slot = this.newSlot("imageSize", "1792x1024");
       slot.setInspectorPath("")
@@ -70,6 +94,10 @@
       slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {Action} generateAction
+     * @description The action to trigger image generation.
+     */
     {
       const slot = this.newSlot("generateAction", null);
       slot.setInspectorPath("");
@@ -82,6 +110,10 @@
       slot.setActionMethodName("generate");
     }
 
+    /**
+     * @property {string} error
+     * @description The error message if any during image generation.
+     */
     {
       const slot = this.newSlot("error", ""); // null or String
       slot.setInspectorPath("")
@@ -93,7 +125,10 @@
       slot.setCanEditInspection(false);
     }
 
-
+    /**
+     * @property {OpenAiImages} images
+     * @description The generated images.
+     */
     {
       const slot = this.newSlot("images", null)
       slot.setFinalInitProto(OpenAiImages)
@@ -102,7 +137,10 @@
       slot.setSlotType("Array");
     }
 
-
+    /**
+     * @property {string} status
+     * @description The current status of the image generation process.
+     */
     {
       const slot = this.newSlot("status", ""); // String
       slot.setInspectorPath("")
@@ -114,6 +152,10 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Object} delegate
+     * @description The delegate object for handling various events.
+     */
     {
       const slot = this.newSlot("delegate", null); 
       slot.setSlotType("Object");
@@ -127,39 +169,67 @@
     this.setNodeCanReorderSubnodes(false);
   }
 
+  /**
+   * @description Gets the title for the image prompt.
+   * @returns {string} The title.
+   */
   title () {
     const p = this.prompt().clipWithEllipsis(15);
     return p ? p : "Image Prompt";
   }
 
+  /**
+   * @description Gets the subtitle for the image prompt.
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     return this.status()
   }
 
+  /**
+   * @description Performs final initialization.
+   */
   finalInit() {
     super.finalInit()
     this.setCanDelete(true)
   }
 
+  /**
+   * @description Gets the parent image prompts node.
+   * @returns {Object} The parent image prompts node.
+   */
   imagePrompts () {
     return this.parentNode()
   }
 
+  /**
+   * @description Gets the OpenAI service.
+   * @returns {Object} The OpenAI service.
+   */
   service () {
     //return this.imagePrompts().service()
     return UndreamedOfApp.shared().services().openAiService()
   }
 
-  // --- generate action ---
-
+  /**
+   * @description Checks if image generation can be performed.
+   * @returns {boolean} True if generation can be performed, false otherwise.
+   */
   canGenerate () {
     return this.prompt().length !== 0;
   }
 
+  /**
+   * @description Initiates the image generation process.
+   */
   generate () {
     this.start()
   }
 
+  /**
+   * @description Gets information about the generate action.
+   * @returns {Object} The action information.
+   */
   generateActionInfo () {
     return {
         isEnabled: this.canGenerate(),
@@ -168,8 +238,9 @@
     }
   }
 
-  // --- fetch ---
-
+  /**
+   * @description Starts the image generation process.
+   */
   async start () {
     this.setError("");
     this.setStatus("fetching response...");
@@ -204,6 +275,10 @@
     }
   }
 
+  /**
+   * @description Handles successful image generation.
+   * @param {Object} json - The response JSON from the API.
+   */
   onSuccess (json) {
     this.sendDelegate("onImagePromptLoading", [this]);
     /*
@@ -237,6 +312,10 @@
     console.log('Success:', json.data);
   }
 
+  /**
+   * @description Handles errors during image generation.
+   * @param {Error} error - The error object.
+   */
   onError (error) {
     const s = "ERROR: " + error.message;
     console.error(s);
@@ -246,8 +325,10 @@
     this.onEnd();
   }
 
-  // --- image delegate messages ---
-
+  /**
+   * @description Handles successful image loading.
+   * @param {Object} aiImage - The loaded AI image object.
+   */
   onImageLoaded (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
@@ -255,6 +336,10 @@
     this.onEnd();
   }
 
+  /**
+   * @description Handles errors during image loading.
+   * @param {Object} aiImage - The AI image object that failed to load.
+   */
   onImageError (aiImage) {
     this.didUpdateNode();
     this.updateStatus();
@@ -262,10 +347,16 @@
     this.onEnd();
   }
 
+  /**
+   * @description Handles the end of the image generation process.
+   */
   onEnd () {
     this.sendDelegate("onImagePromptEnd", [this]);
   }
 
+  /**
+   * @description Updates the status of the image prompt.
+   */
   updateStatus () {
     const s = this.images().status();
     if (s) {
@@ -273,6 +364,12 @@
     }
   }
 
+  /**
+   * @description Sends a delegate method call.
+   * @param {string} methodName - The name of the method to call.
+   * @param {Array} args - The arguments to pass to the method.
+   * @returns {boolean} True if the delegate method was called, false otherwise.
+   */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate();
     if (d) {
@@ -285,6 +382,10 @@
     return false;
   }
 
+  /**
+   * @description Shuts down the image prompt and its associated images.
+   * @returns {OpenAiImagePrompt} The current instance.
+   */
   shutdown () {
     // TODO: add request ivar and abort it
     this.images().subnodes().forEach(image => image.shutdown());

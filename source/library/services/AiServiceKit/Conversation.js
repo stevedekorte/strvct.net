@@ -1,14 +1,24 @@
+/**
+ * @module library.services.AiServiceKit
+ */
+
 "use strict";
 
-/* 
-    Conversation
-
-*/
-
+/**
+ * @class Conversation
+ * @extends BMStorableNode
+ * @classdesc Represents a conversation with messages and chat input functionality.
+ */
 (class Conversation extends BMStorableNode {
+  /**
+   * @description Initializes the prototype slots for the Conversation class.
+   */
   initPrototypeSlots () {
 
     {
+      /**
+       * @property {BMNode} footerNode - The footer node for the conversation.
+       */
       const slot = this.newSlot("footerNode", null);
       slot.setSlotType("BMNode");
     }
@@ -20,6 +30,9 @@
 
   }
 
+  /**
+   * @description Initializes the prototype properties for the Conversation class.
+   */
   initPrototype () {
     this.setCanDelete(true);
     this.setNodeCanEditTitle(true);
@@ -33,6 +46,9 @@
     this.setNodeChildrenAlignment("flex-start"); // make the messages stick to the bottom
   }
 
+  /**
+   * @description Initializes a new Conversation instance.
+   */
   init() {
     super.init();
 
@@ -46,6 +62,10 @@
 
   }
 
+  /**
+   * @description Handles chat edit value. To be overridden by subclasses.
+   * @param {*} v - The value to be handled.
+   */
   onChatEditValue (v) {
     // for subclasses to override
   }
@@ -56,10 +76,17 @@
   }
   */
 
+  /**
+   * @description Determines if subviews scroll sticks to bottom.
+   * @returns {boolean} True if subviews scroll sticks to bottom.
+   */
   subviewsScrollSticksToBottom () {
     return true;
   }
 
+  /**
+   * @description Performs final initialization tasks for the Conversation instance.
+   */
   finalInit () {
     super.finalInit();
     try {
@@ -84,12 +111,18 @@
     this.setCanDelete(true);
   }
 
-  // --- messages ---
-
+  /**
+   * @description Gets all messages in the conversation.
+   * @returns {Array} An array of message nodes.
+   */
   messages () {
     return this.subnodes()
   }
 
+  /**
+   * @description Clears all messages from the conversation.
+   * @returns {Conversation} The conversation instance.
+   */
   clear () {
     this.subnodes().forEach(msg => { 
       if (msg.shutdown) { 
@@ -100,12 +133,19 @@
     return this
   } 
 
-
+  /**
+   * @description Handles message updates.
+   * @param {*} aMsg - The updated message.
+   */
   onMessageUpdate (aMsg) {
     // e.g. sent by OpenAiMessage for things like streaming updates
     // can be useful for sharing the changes with other clients
   }
 
+  /**
+   * @description Handles message completion.
+   * @param {*} aMsg - The completed message.
+   */
   onMessageComplete (aMsg) {
     this.footerNode().setValueIsEditable(true)
     if (aMsg.error() === null) {
@@ -120,19 +160,28 @@
     }
   }
 
+  /**
+   * @description Handles a completed message. To be overridden by subclasses.
+   * @param {*} aMsg - The completed message.
+   */
   onCompletedMessage (aMsg) {
   }
 
-  // -- creating new messages ---
-
+  /**
+   * @description Creates a new message of a specified class.
+   * @param {*} msgClass - The class of the message to create.
+   * @returns {*} A new message instance.
+   */
   newMessageOfClass (msgClass) {
     const m = msgClass.clone();
     m.setConversation(this);
     return m;
   }
 
-  // -- new message instances ---
-
+  /**
+   * @description Creates a new message and adds it to the conversation.
+   * @returns {*} The new message instance.
+   */
   newMessage () {
     const msgClass = this.subnodeClasses().first();
     const m = this.newMessageOfClass(msgClass);
@@ -140,12 +189,18 @@
     return m;
   }
 
-  // --- chat input ---
-
+  /**
+   * @description Determines if the conversation accepts chat input.
+   * @returns {boolean} True if chat input is accepted.
+   */
   acceptsChatInput () {
     return true;
   }
 
+  /**
+   * @description Handles chat input value.
+   * @param {*} v - The input value.
+   */
   onChatInputValue (v) {
     debugger;
     if (!this.acceptsChatInput()) {
@@ -158,17 +213,27 @@
     //this.footerNode().setValueIsEditable(false)
   }
 
+  /**
+   * @description Sets whether chat input is enabled.
+   * @param {boolean} aBool - True to enable chat input, false to disable.
+   * @returns {Conversation} The conversation instance.
+   */
   setChatInputIsEnabled (aBool) {
     this.footerNode().setValueIsEditable(aBool);
     return this
   }
 
+  /**
+   * @description Clears the input field.
+   */
   clearInput () {
     debugger; // shouldn't need this as TextField has option to do this
   }
 
-  // --- json ---
-
+  /**
+   * @description Creates a JSON archive of the conversation.
+   * @returns {Object} The JSON representation of the conversation.
+   */
   jsonArchive () {
     const msgsJson = [];
     this.messages().forEach(msg => {
@@ -183,6 +248,11 @@
     return json;
   }
 
+  /**
+   * @description Sets the conversation state from a JSON archive.
+   * @param {Object} json - The JSON representation of the conversation.
+   * @returns {Conversation} The conversation instance.
+   */
   setJsonArchive (json) {
     assert(Type.isArray(json.messages)); // sanity check
 
@@ -194,10 +264,20 @@
     return this;
   }
   
+  /**
+   * @description Finds a message with a specific ID.
+   * @param {string} messageId - The ID of the message to find.
+   * @returns {*} The message with the specified ID, or undefined if not found.
+   */
   messageWithId (messageId) {
     return this.messages().detect(msg => msg.messageId() === messageId)
   }
 
+  /**
+   * @description Creates a new message from JSON and adds it to the conversation.
+   * @param {Object} msgJson - The JSON representation of the message.
+   * @returns {*} The new message instance.
+   */
   newMessageFromJson (msgJson) {
     const msg = ConversationMessage.fromJsonArchive(msgJson)
     msg.setConversation(this)
@@ -205,6 +285,11 @@
     return msg
   }
 
+  /**
+   * @description Updates an existing message or creates a new one from JSON.
+   * @param {Object} msgJson - The JSON representation of the message.
+   * @returns {*} The updated or new message instance.
+   */
   updateMessageJson (msgJson) {
     const oldMsg = this.messageWithId(msgJson.messageId);
 
@@ -223,6 +308,10 @@
     }
   }
 
+  /**
+   * @description Handles a new message from an update. To be overridden by subclasses.
+   * @param {*} newMsg - The new message.
+   */
   onNewMessageFromUpdate (newMsg) {
     // for subclasses to override
   }

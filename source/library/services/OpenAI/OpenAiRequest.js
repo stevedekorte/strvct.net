@@ -1,61 +1,79 @@
 "use strict";
 
-/* 
-    OpenAiRequest
+/**
+ * @module library.services.OpenAI.OpenAiRequest
+ */
 
-    request:
-
-    curl https://api.openai.com/v1/chat/completions \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-3.5-turbo",
-    "messages": [{"role": "user", "content": "Hello!"}],
-    "usage": true
-  }'
-
-
-    response: 
-
-    {
-  "id": "chatcmpl-abc123",
-  "object": "chat.completion",
-  "created": 1677858242,
-  "model": "gpt-3.5-turbo-0301",
-  "usage": {
-    "prompt_tokens": 10,
-    "completion_tokens": 20,
-    "total_tokens": 30
-  },
-  "choices": [
-    {
-      "message": {
-        "role": "assistant",
-        "content": "Hello! How can I assist you today?"
-      },
-      "finish_reason": "stop",
-      "index": 0
-    }
-  ]
-}
-
-*/
-
+/**
+ * @class OpenAiRequest
+ * @extends AiRequest
+ * @classdesc OpenAiRequest class for handling OpenAI API requests and responses.
+ * 
+ * request:
+ * 
+ * curl https://api.openai.com/v1/chat/completions \
+ *   -H "Authorization: Bearer YOUR_API_KEY" \
+ *   -H "Content-Type: application/json" \
+ *   -d '{
+ *     "model": "gpt-3.5-turbo",
+ *     "messages": [{"role": "user", "content": "Hello!"}],
+ *     "usage": true
+ *   }'
+ * 
+ * 
+ * response:
+ * 
+ * {
+ *   "id": "chatcmpl-abc123",
+ *   "object": "chat.completion",
+ *   "created": 1677858242,
+ *   "model": "gpt-3.5-turbo-0301",
+ *   "usage": {
+ *     "prompt_tokens": 10,
+ *     "completion_tokens": 20,
+ *     "total_tokens": 30
+ *   },
+ *   "choices": [
+ *     {
+ *       "message": {
+ *         "role": "assistant",
+ *         "content": "Hello! How can I assist you today?"
+ *       },
+ *       "finish_reason": "stop",
+ *       "index": 0
+ *     }
+ *   ]
+ * }
+ */
 (class OpenAiRequest extends AiRequest {
 
+  /**
+   * @description Initializes prototype slots for the class.
+   */
   initPrototypeSlots () {
 
   }
 
+  /**
+   * @description Initializes the instance.
+   */
   init () {
     super.init();
     this.setIsDebugging(true);
   }
 
+  /**
+   * @description Gets the API key for OpenAI service.
+   * @returns {string} The API key.
+   */
   apiKey () {
     return OpenAiService.shared().apiKey();
   }
 
+  /**
+   * @description Prepares and returns the request options.
+   * @returns {Object} The request options.
+   */
   requestOptions () {
     const apiKey = this.apiKey();
     const bodyJson = this.bodyJson();
@@ -75,6 +93,9 @@
 
    // --- streaming ---
 
+  /**
+   * @description Reads and processes XHR lines.
+   */
   readXhrLines () {
     try {
       let line = this.readNextXhrLine();
@@ -109,6 +130,10 @@
     }
   }
 
+  /**
+   * @description Processes a JSON chunk from the stream.
+   * @param {Object} json - The JSON chunk to process.
+   */
   onStreamJsonChunk (json) {
     if (json.error) {
       console.warn("ERROR: " + json.error.message);
@@ -142,10 +167,18 @@
 
   // --- finish reason ---
 
+  /**
+   * @description Returns an array of acceptable stop reasons.
+   * @returns {Array} An array of acceptable stop reasons.
+   */
   okStopReasons () {
     return [null, "stop"];
   }
 
+  /**
+   * @description Returns a dictionary of stop reasons and their descriptions.
+   * @returns {Object} A dictionary of stop reasons and their descriptions.
+   */
   stopReasonDict () {
     return {
       "stop": "Natural end or encountered user specified stop sequence.",
@@ -154,6 +187,10 @@
     }
   }
 
+  /**
+   * @description Checks if the request stopped due to reaching maximum tokens.
+   * @returns {boolean} True if stopped due to maximum tokens, false otherwise.
+   */
   stoppedDueToMaxTokens () {
     const b = this.stopReason() === "length";
     if (b) {

@@ -1,30 +1,40 @@
-"use strict";
+/**
+ * @module library.services.AiServiceKit
+ */
 
-/* 
-    ChatInputNode 
-
-*/
-
+/**
+ * @class ChatInputNode
+ * @extends BMTextAreaField
+ * @classdesc ChatInputNode for handling chat input functionality.
+ */
 (class ChatInputNode extends BMTextAreaField {
+  /**
+   * Initialize prototype slots
+   * @private
+   */
   initPrototypeSlots () {
-
+    /**
+     * @property {Object} conversation - The conversation object
+     */
     {
       const slot = this.newSlot("conversation", null); 
       slot.setInspectorPath("")
-      //slot.setLabel("role")
-      //slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
-      //slot.setDuplicateOp("duplicate")
       slot.setSlotType("Object");
-      //slot.setCanInspect(true)
     }
 
+    /**
+     * @property {Boolean} hasValueButton - Indicates if the node has a value button
+     */
     {
       const slot = this.newSlot("hasValueButton", false);
       slot.setSlotType("Boolean");
       slot.setSyncsToView(true);
     }
 
+    /**
+     * @property {Boolean} isMicOn - Indicates if the microphone is on
+     */
     {
       const slot = this.newSlot("isMicOn", false);
       slot.setSlotType("Boolean");
@@ -38,6 +48,10 @@
     */
   }
 
+  /**
+   * Initialize the prototype
+   * @private
+   */
   initPrototype () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -48,7 +62,6 @@
     this.setCanDelete(true);
   }
 
-
   /*
   didUpdateSlotValue (oldValue, newValue) {
     super.didUpdateSlotValue(oldValue, newValue);
@@ -56,42 +69,50 @@
   }
   */
 
+  /**
+   * Set the value of the chat input
+   * @param {string} v - The value to set
+   * @returns {ChatInputNode} - Returns this instance
+   */
   setValue (v) {
-    //console.log("ChatInputNode setValue('" + v + "')");
     super.setValue(v);
     return this;
   }
 
-  // --- value change events ---
-
+  /**
+   * Handle the event when the value is edited
+   * @param {Object} valueView - The view object
+   */
   onDidEditValue (valueView) {
     this.conversation().onChatEditValue(this.value())
   }
 
+  /**
+   * Check if the node accepts value input
+   * @returns {boolean} - Returns true if the node accepts value input
+   */
   acceptsValueInput () {
     return this.conversation() && this.conversation().acceptsChatInput();
   }
 
+  /**
+   * Handle the value input event
+   * @param {Object} changedView - The changed view object
+   */
   onValueInput (changedView) {
     if (this.value()) {
       this.send()
     }
   }
 
-  // --- sending ---
-
+  /**
+   * Send the chat input value
+   */
   send () {
-    //this.conversation().onChatInput(this)
     const v = this.value();
     this.conversation().onChatInputValue(v);
-    //debugger;
-    this.setValue(""); // clear input view
-    //this.addTimeout(() => {
-      // there seems to be an issue sometimes with the view not getting the update 
-      // this timeout is a temporary fix
-      this.scheduleSyncToView();
-    //}, 1);
-    //this.scheduleSyncToView();
+    this.setValue(""); 
+    this.scheduleSyncToView();
   }
 
   /*

@@ -1,16 +1,24 @@
+/**
+ * @module library.services.YouTube.MusicPlayer.MusicFolder
+ */
+
 "use strict";
 
-/* 
-
-  MusicFolder
-
-
-*/
-
-
+/**
+ * @class MusicFolder
+ * @extends BMSummaryNode
+ * @classdesc Represents a folder for organizing music tracks.
+ */
 (class MusicFolder extends BMSummaryNode {
 
+  /**
+   * Initializes the prototype slots for the MusicFolder class.
+   * @method
+   */
   initPrototypeSlots () {
+    /**
+     * @property {string} name - The name of the music folder.
+     */
     {
       const slot = this.newSlot("name", null);
       slot.setLabel("name");
@@ -29,15 +37,29 @@
     this.setNoteIsSubnodeCount(true);
   }
 
+  /**
+   * Performs final initialization for the MusicFolder.
+   * @method
+   */
   finalInit () {
     super.finalInit();
     this.makeSortSubnodesByTitle();
   }
 
+  /**
+   * Returns the title of the music folder.
+   * @method
+   * @returns {string} The name of the music folder.
+   */
   title () {
     return this.name();
   }
 
+  /**
+   * Sets the JSON data for the music folder.
+   * @method
+   * @param {Object} json - An object containing trackName:trackId entries.
+   */
   setJson (json) {
     // json should be an dict of trackName:trackId entries
 
@@ -47,24 +69,50 @@
     })
   }
 
+  /**
+   * Creates a new track and adds it to the folder.
+   * @method
+   * @returns {MusicTrack} The newly created track.
+   */
   newTrack () {
     const track = MusicTrack.clone();
     this.addSubnode(track);
     return track;
   }
 
+  /**
+   * Returns all subfolders within this folder.
+   * @method
+   * @returns {Array} An array of MusicFolder instances.
+   */
   folders () {
     return this.subnodes().select(sn => sn.thisClass().isKindOf(MusicFolder));
   }
 
+  /**
+   * Returns all tracks within this folder.
+   * @method
+   * @returns {Array} An array of MusicTrack instances.
+   */
   tracks () {
     return this.subnodes().select(sn => sn.thisClass().isKindOf(MusicTrack));
   }
 
+  /**
+   * Returns the names of all tracks in this folder.
+   * @method
+   * @returns {Array} An array of track names.
+   */
   trackNames () {
     return this.tracks().map(sn => sn.name());
   }
 
+  /**
+   * Finds a track by its name within this folder or its subfolders.
+   * @method
+   * @param {string} name - The name of the track to find.
+   * @returns {MusicTrack|null} The found track or null if not found.
+   */
   trackWithName (name) {
     let track = this.tracks().detect(track => track.name() === name);
     if (!track) {
@@ -73,6 +121,11 @@
     return track;
   }
 
+  /**
+   * Removes all subnodes from the folder.
+   * @method
+   * @returns {MusicFolder} The current instance.
+   */
   clear () {
     this.removeAllSubnodes();
     return this;

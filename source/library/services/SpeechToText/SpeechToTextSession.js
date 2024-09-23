@@ -1,23 +1,38 @@
 "use strict";
 
-/* 
+/**
+ * @module library.services.SpeechToText
+ */
 
-    SpeechToTextSession
-
-*/
-
+/**
+ * @class SpeechToTextSession
+ * @extends BMSummaryNode
+ * @classdesc A class representing a speech-to-text session.
+ */
 (class SpeechToTextSession extends BMSummaryNode {
+  /**
+   * @description Initializes the prototype slots for the SpeechToTextSession class.
+   */
   initPrototypeSlots () {
+    /**
+     * @property {SpeechRecognition} recognition - The speech recognition object.
+     */
     {
       const slot = this.newSlot("recognition", null);
       slot.setSlotType("SpeechRecognition");
     }
 
+    /**
+     * @property {Object} delegate - The delegate object.
+     */
     {
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {string} sessionLabel - The label for the session.
+     */
     {
       const slot = this.newSlot("sessionLabel", "");      
       slot.setInspectorPath("")
@@ -31,6 +46,9 @@
       slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {string} language - The language for speech recognition.
+     */
     {
       const slot = this.newSlot("language", 'en-US');
       slot.setCanEditInspection(true);
@@ -45,12 +63,17 @@
       slot.setSummaryFormat("key value");
     }
 
-
+    /**
+     * @property {number} inputTimeoutId - The ID of the input timeout.
+     */
     {
       const slot = this.newSlot("inputTimeoutId", null);
       slot.setSlotType("Number");
     }
 
+    /**
+     * @property {number} inputTimeoutMs - The input timeout in milliseconds.
+     */
     {
       const slot = this.newSlot("inputTimeoutMs", 1500);      
       slot.setInspectorPath("settings");
@@ -64,7 +87,9 @@
       slot.setSummaryFormat("key value");
     }
 
-
+    /**
+     * @property {boolean} isContinuous - Whether the recognition service continues listening and returning results, even if the user takes a pause.
+     */
     {
       /* 
       If continuous is set to true, the recognition service continues listening and returning results, 
@@ -84,6 +109,9 @@
       slot.setSummaryFormat("key value");
     }
 
+    /**
+     * @property {boolean} getInterimResults - Whether to return both interim and final results.
+     */
     {
       /*
       If interimResults is set to true, the system will return both interim (temporary or provisional) results and final results. 
@@ -102,7 +130,9 @@
       slot.setSummaryFormat("key value");
     }
 
-
+    /**
+     * @property {string} interimTranscript - The interim transcript.
+     */
     {
       const slot = this.newSlot("interimTranscript", "");      
       slot.setInspectorPath("");
@@ -116,6 +146,9 @@
       slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {string} finalTranscript - The final transcript.
+     */
     {
       const slot = this.newSlot("finalTranscript", "");      
       slot.setInspectorPath("")
@@ -129,7 +162,9 @@
       slot.setSummaryFormat("value")
     }
 
-
+    /**
+     * @property {string} fullTranscript - The full transcript.
+     */
     {
       const slot = this.newSlot("fullTranscript", "");      
       slot.setInspectorPath("")
@@ -143,6 +178,9 @@
       slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {boolean} isRecording - Whether the session is currently recording.
+     */
     {
       const slot = this.newSlot("isRecording", false);
       slot.setInspectorPath("")
@@ -156,6 +194,9 @@
       slot.setSummaryFormat("value")
     }
     
+    /**
+     * @property {Action} toggleRecordingAction - The action to toggle recording.
+     */
     {
       const slot = this.newSlot("toggleRecordingAction", null);
       slot.setInspectorPath("")
@@ -168,6 +209,9 @@
       slot.setActionMethodName("toggleRecording");
     }
 
+    /**
+     * @property {Promise} transcriptPromise - The promise for the transcript.
+     */
     {
       const slot = this.newSlot("transcriptPromise", null);
       slot.setSlotType("Promise");
@@ -175,6 +219,9 @@
 
   }
 
+  /**
+   * @description Initializes the SpeechToTextSession.
+   */
   init() {
     super.init();
     this.setSubtitle("STT Session");
@@ -184,6 +231,9 @@
     this.setIsDebugging(true);
   }
 
+  /**
+   * @description Performs final initialization of the SpeechToTextSession.
+   */
   finalInit() {
     super.finalInit()
     this.setNoteIsSubnodeCount(false);
@@ -191,6 +241,10 @@
     this.setIsRecording(false);
   }
 
+  /**
+   * @description Gets the title of the session.
+   * @returns {string} The title of the session.
+   */
   title () {
     const label = this.sessionLabel()
     if (label) {
@@ -208,24 +262,43 @@
     return "Unlabeled"
   }
 
+  /**
+   * @description Updates the continuous property of the recognition object when isContinuous is updated.
+   * @param {boolean} oldValue - The old value of isContinuous.
+   * @param {boolean} newValue - The new value of isContinuous.
+   */
   didUpdateSlotIsContinuos (oldValue, newValue) {
     if (this.recognition()) {
       this.recognition().continuous = newValue;
     }
   }
 
+  /**
+   * @description Updates the interimResults property of the recognition object when getInterimResults is updated.
+   * @param {boolean} oldValue - The old value of getInterimResults.
+   * @param {boolean} newValue - The new value of getInterimResults.
+   */
   didUpdateSlotGetInterimResults (oldValue, newValue) {
     if (this.recognition()) {
       this.recognition().interimResults = newValue;
     }
   }
 
+  /**
+   * @description Updates the node when isRecording is updated.
+   * @param {boolean} oldValue - The old value of isRecording.
+   * @param {boolean} newValue - The new value of isRecording.
+   */
   didUpdateSlotIsRecording (oldValue, newValue) {
     if (this.recognition()) {
       this.didUpdateNode()
     }
   }
 
+  /**
+   * @description Sets up the recognition object if it hasn't been set up yet.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   setupIfNeeded () {
     if (!this.recognition()) {
       const SpeechRecognition = globalThis.SpeechRecognition || globalThis.webkitSpeechRecognition;
@@ -264,12 +337,18 @@
     return this
   }
 
-  // --- timeout ---
-
+  /**
+   * @description Checks if input timeout is used.
+   * @returns {boolean} Whether input timeout is used.
+   */
   usesInputTimeout () {
     return this.getInterimResults()
   }
 
+  /**
+   * @description Starts the input timeout.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   startInputTimeout () {
     this.clearInputTimeout()
     if (this.usesInputTimeout()) {
@@ -279,6 +358,10 @@
     return this
   }
 
+  /**
+   * @description Clears the input timeout.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   clearInputTimeout () {
     const tid = this.inputTimeoutId()
     if (tid) {
@@ -288,12 +371,20 @@
     return this
   }
 
+  /**
+   * @description Resets the input timeout.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   resetInputTimeout () {
     this.clearInputTimeout()
     this.startInputTimeout()
     return this
   }
 
+  /**
+   * @description Handles the input timeout event.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   onInputTimeout () {
     this.clearInputTimeout();
     console.log("SPEECH onInputTimeout() stop");
@@ -307,8 +398,10 @@
     return this
   }
 
-  // --- events ---
-
+  /**
+   * @description Handles the result event from the speech recognition.
+   * @param {Event} event - The result event.
+   */
   onResult (event) {
     //this.debugLog("onResult")
 
@@ -349,9 +442,19 @@
     }
   }
 
+  /**
+   * @description Gets the interim full transcript.
+   * @returns {string} The interim full transcript.
+   */
   intermFullTranscript () {
     return this.fullTranscript() + this.interimTranscript()
   }
+
+  /**
+   * @description Appends to the full transcript.
+   * @param {string} s - The string to append.
+   * @returns {SpeechToTextSession} The current instance.
+   */
 
   appendToFullTranscript (s) {
     const ft = this.fullTranscript()
@@ -360,6 +463,10 @@
     return this
   }
 
+  /**
+   * @description Clears the transcript.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   clearTranscript () {
     this.setInterimTranscript("")
     this.setFinalTranscript("")
@@ -367,10 +474,17 @@
     return this
   }
 
+  /**
+   * @description Handles the speech end event.
+   * @param {Event} event - The speech end event.
+   */
   onSpeechEnd (event) {
     this.sendDelegateMessage("onSpeechEnd", [this]);
   }
 
+  /**
+   * @description Handles the input event.
+   */
   onInput () {
     // copy any interm to full Transcript
     // any transcript marked final was (presumably) already added to full transcript in onResult()
@@ -382,11 +496,19 @@
     this.transcriptPromise().callResolveFunc(this.fullTranscript());
   }
 
+  /**
+   * @description Handles the end event.
+   * @param {Event} event - The end event.
+   */
   onEnd (event) {
     this.setIsRecording(false)
     this.sendDelegateMessage("onSessionEnd", [this])
   }
 
+  /**
+   * @description Handles the error event.
+   * @param {Event} event - The error event.
+   */
   onError (event) {
     const error = event.error;
     this.sendDelegateMessage("onSpeechError", [this, error]);
@@ -396,6 +518,10 @@
     }
   }
 
+  /**
+   * @description Starts the speech recognition.
+   * @returns {Promise} The transcript promise.
+   */
   start () {
     this.debugLog("start")
     if (!this.isRecording()) {
@@ -409,12 +535,20 @@
     return this.transcriptPromise();
   }
 
+  /**
+   * @description Gets the start action info.
+   * @returns {Object} The start action info.
+   */
   startActionInfo () {
     return {
       isEnabled: !this.isRecording()
     }
   }
 
+  /**
+   * @description Stops the speech recognition.
+   * @returns {SpeechToTextSession} The current instance.
+   */
   stop () {
     //this.debugLog("stop")
     if (this.isRecording()) {
@@ -428,12 +562,19 @@
     return this
   }
 
+  /**
+   * @description Gets the stop action info.
+   * @returns {Object} The stop action info.
+   */
   stopActionInfo () {
     return {
       isEnabled: this.isRecording()
     }
   }
 
+  /**
+   * @description Toggles the recording state.
+   */
   toggleRecording () {
     if (this.isRecording()) {
       this.stop() 
@@ -442,6 +583,10 @@
     }
   }
 
+  /**
+   * @description Gets the toggle recording action info.
+   * @returns {Object} The toggle recording action info.
+   */
   toggleRecordingActionInfo () {
     return {
       isEnabled: true,
@@ -451,6 +596,11 @@
 
   // --- delegate ---
 
+  /**
+   * @description Sends a delegate message.
+   * @param {string} methodName - The method name to call.
+   * @param {Array} args - The arguments to pass to the method.
+   */
   sendDelegateMessage (methodName, args = []) {
     const d = this.delegate();
     if (d) {

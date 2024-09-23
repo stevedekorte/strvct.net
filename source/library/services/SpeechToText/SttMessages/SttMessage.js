@@ -1,14 +1,22 @@
 "use strict";
 
-/* 
+/**
+ * @module library.services.SpeechToText.SttMessages
+ */
 
-    SttMessage
-
-*/
-
+/**
+ * @class SttMessage
+ * @extends BMSummaryNode
+ * @classdesc Represents a speech-to-text message.
+ */
 (class SttMessage extends BMSummaryNode {
+  /**
+   * @description Initializes the prototype slots for the SttMessage class.
+   */
   initPrototypeSlots () {
-
+    /**
+     * @property {string} result - The speech-to-text result.
+     */
     {
       const slot = this.newSlot("result", "");      
       slot.setInspectorPath("settings")
@@ -23,6 +31,9 @@
     }
   }
 
+  /**
+   * @description Initializes the SttMessage instance.
+   */
   init() {
     super.init();
     this.setSubtitle("")
@@ -32,10 +43,17 @@
     this.setIsDebugging(true)
   }
 
+  /**
+   * @description Gets the title of the SttMessage.
+   * @returns {string} The result of the speech-to-text conversion.
+   */
   title () {
     return this.result()
   }
 
+  /**
+   * @description Performs final initialization tasks.
+   */
   finalInit() {
     super.finalInit()
   }

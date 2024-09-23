@@ -1,11 +1,15 @@
-/*
-  
-  This is a secure websocket (wss) server which acts as a proxy to an insecure websocket (ws) server.
-  
-  My use case is to allow a HTTPS web page to talk to a ws (HomeAssistant) server via this wss proxy server,
-  as browsers do not allow HTTPS pages to open ws connections.
+"use strict";
 
-*/
+/**
+ * @module services.HomeAssistant.proxy.WssToWsProxy
+ */
+
+/**
+ * This is a secure websocket (wss) server which acts as a proxy to an insecure websocket (ws) server.
+ * 
+ * My use case is to allow a HTTPS web page to talk to a ws (HomeAssistant) server via this wss proxy server,
+ * as browsers do not allow HTTPS pages to open ws connections.
+ */
 
 const fs = require('fs');
 const https = require('https');
@@ -19,6 +23,11 @@ const serverOptions = {
 const server = https.createServer(serverOptions);
 const wss = new WebSocket.Server({ server });
 
+/**
+ * Clips a string to a specified length and appends an ellipsis if necessary.
+ * @param {number} length - The maximum length of the string.
+ * @returns {string} The clipped string with an ellipsis if necessary.
+ */
 String.clipWithEllipsis = function (length) {
     // Check if the length of the string is less than or equal to the specified length
     if (this.length <= length) {
@@ -28,6 +37,10 @@ String.clipWithEllipsis = function (length) {
     return this.substring(0, length) + '...';
 }
 
+/**
+ * Handles new WebSocket connections.
+ * @param {WebSocket} ws - The WebSocket connection from the browser.
+ */
 wss.on('connection', async function(ws) {
   console.log('Got WS connection from browser and opening new connection to HomeAssistant...');
 
@@ -41,6 +54,9 @@ wss.on('connection', async function(ws) {
   let messageQueue = [];
   let wsClientOpen = false;
 
+  /**
+   * Handles the 'open' event of the WebSocket connection to HomeAssistant.
+   */
   wsClient.on('open', async function() {
     console.log('Connected to the HomeAssistant WS server');
     wsClientOpen = true;
@@ -55,6 +71,10 @@ wss.on('connection', async function(ws) {
     }
   });
 
+  /**
+   * Handles messages received from the browser.
+   * @param {(string|Buffer)} message - The message received from the browser.
+   */
   ws.on('message', async function (message) {
     if (typeof(message) !== "string") {
       message = await message.toString();
@@ -69,6 +89,10 @@ wss.on('connection', async function(ws) {
     }
   });
 
+  /**
+   * Handles messages received from HomeAssistant.
+   * @param {(string|Buffer)} message - The message received from HomeAssistant.
+   */
   wsClient.on('message', async function (message) {
     if (typeof(message) !== "string") {
       message = await message.toString();
@@ -78,20 +102,28 @@ wss.on('connection', async function(ws) {
     ws.send(message);
   });
 
+  /**
+   * Handles the 'close' event of the WebSocket connection from the browser.
+   */
   ws.on('close', function() {
     console.log('WSS client disconnected');
     wsClient.close();
   });
 
+  /**
+   * Handles the 'close' event of the WebSocket connection to HomeAssistant.
+   */
   wsClient.on('close', function() {
     console.log('WS server connection closed');
     wsClientOpen = false;
   });
 });
 
+/**
+ * Starts the server listening on port 8124.
+ */
 server.listen(8124, function() {
   console.log(`This is a secure WebSocket server running on port 8124
 and acting as a proxy to a non-secure WebSocket server on port 8123.
 Example use case: WSS client (e.g. HTTPS browser) <-> WSS proxy <-> WS server (e.g. HomeAssistant API).`);
 });
-

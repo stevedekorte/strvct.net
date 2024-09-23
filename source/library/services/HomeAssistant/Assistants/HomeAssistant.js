@@ -1,17 +1,31 @@
 "use strict";
 
-/* 
-    HomeAssistant
+/**
+ * @module library.services.HomeAssistant.Assistants
+ */
 
-*/
-
+/**
+ * @class HomeAssistant
+ * @extends BMSummaryNode
+ * @classdesc Represents a Home Assistant connection and manages various Home Assistant related nodes.
+ */
 (class HomeAssistant extends BMSummaryNode {
+  /**
+   * Initialize the prototype slots for the HomeAssistant class.
+   * @method
+   */
   initPrototypeSlots () {
+    /**
+     * @property {Array} regionOptions - Options for regions.
+     */
     {
       const slot = this.newSlot("regionOptions", []);
       slot.setSlotType("Array");
     }
 
+    /**
+     * @property {string} protocol - The protocol used for connection (wss or ws).
+     */
     {
       const slot = this.newSlot("protocol", "wss");
       slot.setInspectorPath("Settings")
@@ -24,8 +38,10 @@
       slot.setValidValues(["wss", "ws"]);
     }
 
+    /**
+     * @property {string} host - The host for the HomeAssistant websocket server.
+     */
     {
-      //const slot = this.newSlot("host", "umbrel.local");
       const slot = this.newSlot("host", "localnode.ddns.net");
       slot.setInspectorPath("Settings")
       slot.setLabel("Host (HomeAssistant websocket server)");
@@ -36,8 +52,10 @@
       slot.setIsSubnodeField(true);
     }
 
+    /**
+     * @property {number} port - The port number for the HomeAssistant websocket server.
+     */
     {
-      //const slot = this.newSlot("port", 8123);
       const slot = this.newSlot("port", 8124);
       slot.setInspectorPath("Settings")
       slot.setLabel("Port");
@@ -48,6 +66,9 @@
       slot.setIsSubnodeField(true);
     }
 
+    /**
+     * @property {string} url - The full URL for the HomeAssistant websocket server.
+     */
     {
       const slot = this.newSlot("url", 8124);
       slot.setInspectorPath("Settings")
@@ -61,6 +82,9 @@
       slot.setSummaryFormat("value");
     }
 
+    /**
+     * @property {string} accessToken - The access token for authentication.
+     */
     {
       const slot = this.newSlot("accessToken", "");
       slot.setInspectorPath("Settings")
@@ -72,6 +96,9 @@
       slot.setIsSubnodeField(true);
     }
 
+    /**
+     * @property {string} status - The current status of the connection.
+     */
     {
       const slot = this.newSlot("status", "");
       slot.setCanEditInspection(false);
@@ -84,6 +111,9 @@
       slot.setIsSubnodeField(false);
     }
 
+    /**
+     * @property {string|null} error - Any error message.
+     */
     {
       const slot = this.newSlot("error", null);
       slot.setCanEditInspection(false);
@@ -93,9 +123,11 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      //slot.setIsSubnodeField(true);
     }
 
+    /**
+     * @property {boolean} hasAuth - Whether authentication has been successful.
+     */
     {
       const slot = this.newSlot("hasAuth", false);
       slot.setCanEditInspection(false);
@@ -108,7 +140,9 @@
       slot.setIsSubnodeField(false);
     }
 
-
+    /**
+     * @property {HomeAssistantFolder|null} rootFolder - The root folder for HomeAssistant.
+     */
     {
       const slot = this.newSlot("rootFolder", null)
       slot.setFinalInitProto(HomeAssistantFolder);
@@ -118,6 +152,9 @@
 
     const showNodes = false;
 
+    /**
+     * @property {HomeAssistantAreas|null} areasNode - Node for HomeAssistant areas.
+     */
     {
       const slot = this.newSlot("areasNode", null)
       slot.setFinalInitProto(HomeAssistantAreas);
@@ -125,6 +162,9 @@
       slot.setIsSubnode(showNodes);
     }
 
+    /**
+     * @property {HomeAssistantDevices|null} devicesNode - Node for HomeAssistant devices.
+     */
     {
       const slot = this.newSlot("devicesNode", null)
       slot.setFinalInitProto(HomeAssistantDevices);
@@ -132,6 +172,9 @@
       slot.setIsSubnode(showNodes);
     }
 
+    /**
+     * @property {HomeAssistantEntities|null} entitiesNode - Node for HomeAssistant entities.
+     */
     {
       const slot = this.newSlot("entitiesNode", null)
       slot.setFinalInitProto(HomeAssistantEntities);
@@ -139,6 +182,9 @@
       slot.setIsSubnode(showNodes);
     }
 
+    /**
+     * @property {HomeAssistantStates|null} statesNode - Node for HomeAssistant states.
+     */
     {
       const slot = this.newSlot("statesNode", null)
       slot.setFinalInitProto(HomeAssistantStates);
@@ -146,10 +192,11 @@
       slot.setIsSubnode(showNodes);
     }
 
-
+    /**
+     * @property {Action|null} toggleConnectAction - Action for toggling connection.
+     */
     {
       const slot = this.newSlot("toggleConnectAction", null);
-      //slot.setInspectorPath("Character");
       slot.setLabel("Connect");
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -159,14 +206,23 @@
       slot.setActionMethodName("connect");
     }
 
+    /**
+     * @property {WebSocket|null} socket - The WebSocket connection.
+     */
     {
       const slot = this.newSlot("socket", null);
     }
 
+    /**
+     * @property {number} sentMessageCount - Count of sent messages.
+     */
     {
       const slot = this.newSlot("sentMessageCount", 0);
     }
 
+    /**
+     * @property {Map|null} messagePromises - Map of message promises.
+     */
     {
       const slot = this.newSlot("messagePromises", null);
     }
@@ -175,6 +231,10 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * Initialize the HomeAssistant instance.
+   * @method
+   */
   init() {
     super.init();
     this.setTitle("Home Assistant");
@@ -182,10 +242,19 @@
     this.setMessagePromises(new Map());
   }
 
+  /**
+   * Get the subtitle for the HomeAssistant instance.
+   * @method
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     return [this.url(), this.status()].join("\n");
   }
   
+  /**
+   * Perform final initialization.
+   * @method
+   */
   finalInit () {
     super.finalInit();
     this.setCanDelete(true);
@@ -196,31 +265,61 @@
     this.groups().forEach(group => group.setHomeAssistant(this));
   }
 
+  /**
+   * Handle updates to the host slot.
+   * @method
+   */
   didUpdateSlotHost () {
     this.updateUrl()
   }
 
+  /**
+   * Handle updates to the port slot.
+   * @method
+   */
   didUpdateSlotPort () {
     this.updateUrl()
   }
 
+  /**
+   * Compose the full URL.
+   * @method
+   * @returns {string} The full URL.
+   */
   composedUrl () {
     const url = this.protocol() + "://" + this.host() + ":" + this.port() + "/";
     return url;
   }
 
+  /**
+   * Update the URL.
+   * @method
+   */
   updateUrl () {
     this.setUrl(this.composedUrl());
   }
 
+  /**
+   * Handle updates to the URL slot.
+   * @method
+   */
   didUpdateSlotUrl () {
     //this.rescan();
   }
 
+  /**
+   * Check if the URL is valid.
+   * @method
+   * @returns {boolean} True if the URL is valid, false otherwise.
+   */
   hasValidUrl () {
     return this.host().length > 0 && this.port() >= 0;
   }
 
+  /**
+   * Toggle the connection state.
+   * @method
+   */
   toggleConnect () {
     if (this.isConnected()) {
       this.disconnect();
@@ -229,12 +328,19 @@
     }
   }
 
+  /**
+   * Disconnect from the HomeAssistant server.
+   * @method
+   */
   disconnect () {
     this.setStatus("disconnecting...");
     this.socket().close();
-    //this.setSocket(null); // needed?
   }
 
+  /**
+   * Connect to the HomeAssistant server.
+   * @method
+   */
   connect () {
     this.setStatus("connecting...");
 
@@ -258,10 +364,20 @@
     });
   }
 
+  /**
+   * Check if connected to the HomeAssistant server.
+   * @method
+   * @returns {boolean} True if connected, false otherwise.
+   */
   isConnected () {
     return this.socket() !== null;
   }
 
+  /**
+   * Get information for the toggle connect action.
+   * @method
+   * @returns {Object} Action information.
+   */
   toggleConnectActionInfo () {
     return {
         isEnabled: true,
@@ -271,9 +387,13 @@
     }
   }
 
+  /**
+   * Handle the close event of the WebSocket.
+   * @method
+   * @param {Event} event - The close event.
+   */
   onClose (event) {
     if (event.wasClean) {
-      //console.log(`Connection closed cleanly, code=${event.code}, reason=${event.reason}`);
       this.setStatus('unconnected');
     } else {
       this.setStatus('Connection died');
@@ -281,6 +401,11 @@
     this.setSocket(null);
   }
 
+  /**
+   * Handle errors in the WebSocket connection.
+   * @method
+   * @param {Error} error - The error object.
+   */
   onError (error) {
     if (error.currentTarget.readyState === 3) {
       console.log("ERROR: unable to connect");
@@ -290,6 +415,11 @@
     error.rethrow();
   }
 
+  /**
+   * Get authentication from the HomeAssistant server.
+   * @method
+   * @returns {Promise<boolean>} True if authentication was successful, false otherwise.
+   */
   async getAuth () {
     const hasAuth = await this.asyncSendMessageDict({
       type: 'auth',
@@ -305,11 +435,20 @@
     return hasAuth;
   }
 
+  /**
+   * Handle the open event of the WebSocket.
+   * @method
+   * @param {Event} event - The open event.
+   */
   async onOpen (event) {
     this.setStatus("connected, authorizing...");
-    // await  onMessage message.type === "auth_required"
   }
 
+  /**
+   * Get all the group nodes.
+   * @method
+   * @returns {Array} An array of group nodes.
+   */
   groups () {
     return [ 
       this.areasNode(),
@@ -319,10 +458,12 @@
     ];
   }
 
+  /**
+   * Refresh all group nodes.
+   * @method
+   */
   async refresh () {
     try {
-      //debugger;
-      // fetch the JSON and setup objects
       this.setStatus("refreshing objects...");
 
       await Promise.all(this.groups().map(group => group.asyncRefresh()));
@@ -338,58 +479,30 @@
     }
   }
 
-  /*
-  // change device areaId
-  const updateAreaMessage = {
-    id: messageId,
-    type: 'config/device_registry/update',
-    device_id: deviceId,
-    area_id: newAreaId
-  };
-
-  // change entity name
-    const updateEntityMessage = {
-        id: messageId,
-        type: 'config/entity_registry/update',
-        entity_id: entityId,
-        name: newFriendlyName
-    };
-*/
-
-/*
-
-  asyncAreaRegistry () {
-    return this.asyncSendMessageDict({ type: 'config/area_registry/list' });
-  }
-
-  asyncEntityRegistry () {
-    return this.asyncSendMessageDict({ type: 'config/entity_registry/list'});
-  }
-
-  asyncDeviceRegistry () {
-    return this.asyncSendMessageDict({ type: 'config/device_registry/list'});
-  }
-
-  asyncGetStates () {
-    return this.asyncSendMessageDict({ type: 'get_states'});
-  }
-  */
-
+  /**
+   * Generate a new message ID.
+   * @method
+   * @returns {number} A new message ID.
+   */
   newMessageId () {
     const count = this.sentMessageCount();
     this.setSentMessageCount(count + 1);
     return count;
   }
 
+  /**
+   * Send a message to the HomeAssistant server.
+   * @method
+   * @param {Object} dict - The message to send.
+   * @returns {Promise} A promise that resolves with the server's response.
+   */
   asyncSendMessageDict (dict) {
-    // we will add the id to the dict
     const promise = Promise.clone();
     let id = this.newMessageId();
-    promise.beginTimeout(3000); // auth request and response aren't numbered
+    promise.beginTimeout(3000);
 
     if (dict["type"] !== "auth") {
       dict.id = id;
-      //promise.beginTimeout(3000); // auth request and response aren't numbered
     } else {
       id = "auth";
     }
@@ -404,6 +517,11 @@
     return promise;
   }
 
+  /**
+   * Update the status based on pending messages.
+   * @method
+   */
+
   updateStatus () {
     if (this.messagePromises().size) {
       const ids = Array.from(this.messagePromises().keys());
@@ -416,20 +534,38 @@
     }
   }
 
+  /**
+   * @async
+   * @description Handle successful authentication.
+   */
   async onAuthOk () {
     this.refresh();
   }
 
+  /**
+   * @async
+   * @description Handle invalid authentication.
+   */
   async onAuthInvalid () {
     this.disconnect();
   }
 
+  /**
+   * @description Pop a promise with the given ID.
+   * @param {string} id - The ID of the promise to pop.
+   * @returns {Promise} The promise with the given ID.
+   */
   popPromiseWithId (id) {
     const promise = this.messagePromises().get(id);
     this.messagePromises().delete(id);
     return promise;
   }
 
+  /**
+   * @async
+   * @description Handle incoming messages from the HomeAssistant server.
+   * @param {MessageEvent} event - The message event.
+   */
   async onMessage (event) {
     const message = JSON.parse(event.data);
     console.log(this.type() + " onMessage( ", event.data.clipWithEllipsis(40) + " )");
@@ -462,6 +598,9 @@
     this.updateStatus();
   }
 
+  /**
+   * @description Finish the scan process.
+   */
   finsihScan () {
         /*
       this.devices().forEach(device => {
@@ -495,6 +634,11 @@
   }
 
 
+  /**
+   * Get the scan action info.
+   * @method
+   * @returns {Object} The scan action info.
+   */
   scanActionInfo () {
     return {
         isEnabled: this.hasValidUrl(),

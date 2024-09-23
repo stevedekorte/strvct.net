@@ -1,11 +1,18 @@
 "use strict";
 
-/* 
-    HomeAssistantFolder
+/**
+ * @module HomeAssistant.HomeAssistantFolder
+ */
 
-*/
-
+/**
+ * @class HomeAssistantFolder
+ * @extends BMSummaryNode
+ * @classdesc Represents a folder in the Home Assistant structure.
+ */
 (class HomeAssistantFolder extends BMSummaryNode {
+  /**
+   * @description Initializes the prototype slots for the HomeAssistantFolder.
+   */
   initPrototypeSlots () {
     this.setTitle("folder");
     this.setShouldStore(true);
@@ -18,6 +25,9 @@
     this.setNodeCanAddSubnode(true);
   }
 
+  /**
+   * @description Performs final initialization tasks for the HomeAssistantFolder.
+   */
   finalInit () {
     super.finalInit();
     this.makeSortSubnodesByTitle();

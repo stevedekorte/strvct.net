@@ -1,25 +1,43 @@
+/**
+ * @module library.services.Spatial.SceneViewWellFieldTile
+ */
+
 "use strict";
 
-/*
-
-    SceneViewWellFieldTile
-
-*/
-
+/**
+ * @class SceneViewWellFieldTile
+ * @extends BMFieldTile
+ * @classdesc SceneViewWellFieldTile class for handling scene view well fields.
+ */
 (class SceneViewWellFieldTile extends BMFieldTile {
     
+    /**
+     * @description Checks if the given MIME type can be opened.
+     * @param {string} mimeType - The MIME type to check.
+     * @returns {boolean} True if the MIME type can be opened, false otherwise.
+     */
     canOpenMimeType (mimeType) {
         // TODO: add checks for browser supported image types?
         return mimeType.startsWith("model/")
     }
 
+    /**
+     * @description Initializes the prototype slots for the class.
+     */
     initPrototypeSlots () {
         {
+            /**
+             * @property {Class} dataViewClass
+             */
             const slot = this.newSlot("dataViewClass", SceneView);
             slot.setSlotType("Class");
         }
     }
 
+    /**
+     * @description Initializes the SceneViewWellFieldTile instance.
+     * @returns {SceneViewWellFieldTile} The initialized instance.
+     */
     init () {
         super.init();
         this.valueViewContainer().flexCenterContent();
@@ -34,12 +52,20 @@
         return this;
     }
 
+    /**
+     * @description Creates the value view for the SceneViewWellFieldTile.
+     * @returns {Object} The created value view instance.
+     */
     createValueView () {
         const instance = this.dataViewClass().clone();
         //instance.setWidth("100%").setHeight("fit-content");
         return instance;
     }
 
+    /**
+     * @description Synchronizes the SceneViewWellFieldTile with its node.
+     * @returns {SceneViewWellFieldTile} The synchronized instance.
+     */
     syncFromNode () {
         super.syncFromNode()
 
@@ -53,6 +79,10 @@
         return this
     }
 
+    /**
+     * @description Synchronizes the SceneViewWellFieldTile to its node.
+     * @returns {SceneViewWellFieldTile} The synchronized instance.
+     */
     syncToNode () {
         const field = this.node()
 				
@@ -70,10 +100,18 @@
         return this
     }
 
+    /**
+     * @description Gets the data URL of the value view.
+     * @returns {string|null} The data URL of the value view.
+     */
     dataUrl () {
         return this.valueView().dataUrl()
     }
 
+    /**
+     * @description Checks if the SceneViewWellFieldTile is empty.
+     * @returns {boolean} True if empty, false otherwise.
+     */
     isEmpty () {
         return Type.isNull(this.dataUrl())
     }

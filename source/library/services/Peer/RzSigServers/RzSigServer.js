@@ -1,14 +1,22 @@
 "use strict";
 
-/* 
-    RzSigServer
+/**
+ * @module library.services.Peer.RzSigServers
+ */
 
-*/
-
+/**
+ * @class RzSigServer
+ * @extends BMStorableNode
+ * @classdesc RzSigServer represents a signal server for peer-to-peer connections.
+ */
 (class RzSigServer extends BMStorableNode {
 
-  // --- generate a valid peer id ---
-
+  /**
+   * @static
+   * @description Generates a random peer ID.
+   * @param {number} [length=10] - The length of the generated peer ID.
+   * @returns {string} The generated peer ID.
+   */
   static generateRandomPeerId (length = 10) {
     let result = '';
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -21,8 +29,9 @@
     return result;
   }
 
-  // --- prototype ---
-
+  /**
+   * @description Initializes the prototype slots for the RzSigServer.
+   */
   initPrototypeSlots () {
 
     /*
@@ -38,6 +47,10 @@
     */
 
     {
+      /**
+       * @property {string} host
+       * @description The host of the signal server.
+       */
       const slot = this.newSlot("host", "peerjssignalserver.herokuapp.com");      
       slot.setInspectorPath("info")
       //slot.setLabel("prompt")
@@ -51,6 +64,10 @@
     }
 
     {
+      /**
+       * @property {string} path
+       * @description The path of the signal server.
+       */
       const slot = this.newSlot("path", "/peerjs");      
       slot.setInspectorPath("info")
       //slot.setLabel("prompt")
@@ -64,6 +81,10 @@
     }
 
     {
+      /**
+       * @property {number} port
+       * @description The port of the signal server.
+       */
       const slot = this.newSlot("port", 443);      
       slot.setInspectorPath("info");
       slot.setLabel("port");
@@ -92,6 +113,10 @@
     */
 
     {
+      /**
+       * @property {string} key
+       * @description The key for the signal server.
+       */
       const slot = this.newSlot("key", "");      
       slot.setInspectorPath("info")
       //slot.setLabel("prompt")
@@ -105,6 +130,10 @@
     }
 
     {
+      /**
+       * @property {boolean} isSecure
+       * @description Indicates if the connection to the signal server is secure.
+       */
       const slot = this.newSlot("isSecure", true);      
       slot.setInspectorPath("info")
       slot.setLabel("is secure")
@@ -118,6 +147,10 @@
     }
 
     {
+      /**
+       * @property {string} status
+       * @description The status of the signal server connection.
+       */
       const slot = this.newSlot("status", null);      
       //slot.setInspectorPath("info")
       slot.setLabel("Status")
@@ -133,6 +166,10 @@
     // -------------------
 
     {
+      /**
+       * @property {RzSigServerPeers} peers
+       * @description The peers connected to this signal server.
+       */
       const slot = this.newSlot("peers", null)
       slot.setFinalInitProto(RzSigServerPeers);
       slot.setShouldStoreSlot(false);
@@ -141,6 +178,10 @@
     }
 
     {
+      /**
+       * @property {RzSigServerConns} sigServerConns
+       * @description The connections to this signal server.
+       */
       const slot = this.newSlot("sigServerConns", null)
       slot.setFinalInitProto(RzSigServerConns);
       slot.setShouldStoreSlot(true);
@@ -149,6 +190,10 @@
     }
 
     {
+      /**
+       * @property {Action} refreshAction
+       * @description The action to refresh peers.
+       */
       const slot = this.newSlot("refreshAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Refresh Peers");
@@ -163,6 +208,10 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the RzSigServer instance.
+   * @returns {RzSigServer} The initialized instance.
+   */
   init() {
     super.init();
     //this.setPeerConnections(new Map());
@@ -171,12 +220,21 @@
     return this
   }
 
+  /**
+   * @description Performs final initialization of the RzSigServer instance.
+   */
   finalInit () {
     super.finalInit()
     this.setCanDelete(true)
     //this.refreshPeers()
   }
 
+  /**
+   * @static
+   * @description Generates a full path for a given dictionary of server details.
+   * @param {Object} dict - The dictionary containing server details.
+   * @returns {string} The full path.
+   */
   static fullPathForDict (dict) {
     return dict.host + ":" + dict.port + dict.path
   }
@@ -191,10 +249,18 @@
   }
   */
 
+  /**
+   * @description Gets the full path of the signal server.
+   * @returns {string} The full path.
+   */
   fullPath () {
     return this.host() + ":" + this.port() + this.path() // path always begins with slash?
   }
 
+  /**
+   * @description Gets a dictionary representation of the signal server.
+   * @returns {Object} The dictionary representation.
+   */
   dict () {
     const dict = {};
     dict.host = this.host();
@@ -205,6 +271,11 @@
     return dict;
   }
 
+  /**
+   * @description Sets the signal server properties from a dictionary.
+   * @param {Object} dict - The dictionary containing server details.
+   * @returns {RzSigServer} The updated instance.
+   */
   setDict (dict) {
     /*
     sample dict:
@@ -258,10 +329,18 @@
     return this
   }
 
+  /**
+   * @description Gets the title of the signal server.
+   * @returns {string} The title.
+   */
   title () {
     return this.host() 
   }
 
+  /**
+   * @description Gets the subtitle of the signal server.
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     //const http = this.httpProtocol();
     //const ws = secure ? "wss" : "ws";
@@ -272,6 +351,10 @@
     //return http + ":" + this.port() + ", " + ws + ":" + this.webSocketPort() + " " + (this.isSecure() ? "secure" : "");
   }
 
+  /**
+   * @description Gets the HTTP protocol of the signal server.
+   * @returns {string} The HTTP protocol.
+   */
   httpProtocol () {
     const secure = this.isSecure();
     return secure ? "https" : "http"; 
@@ -288,16 +371,28 @@
 
   // --- getting peer list ----
 
+  /**
+   * @description Gets the URL for fetching peers.
+   * @returns {string} The URL for fetching peers.
+   */
   getPeersUrl () {
     return this.httpProtocol() + "://" + this.host() + ":" + this.port() + this.path() + '/api/peers';
   }
 
+  /**
+   * @description Refreshes the list of peers.
+   * @returns {Promise<Array>} A promise that resolves to the array of peer IDs.
+   */
   async refreshPeers () {
     const peerIds = await this.fetchPeerIds();
     this.peers().setPeerIdArray(peerIds)
     return peerIds
   }
 
+  /**
+   * @description Fetches the peer IDs from the signal server.
+   * @returns {Promise<Array>} A promise that resolves to the array of peer IDs.
+   */
   async fetchPeerIds() { // Note this is a GET request, so we don't need to be connected to do this
     this.setStatus("");
 
@@ -333,6 +428,10 @@
     }
   }
 
+  /**
+   * @description Gets the available peer IDs.
+   * @returns {Array<string>} An array of available peer IDs.
+   */
   availablePeerIds () {
     return this.peers().subnodes().map(rzPeer => rzPeer.title())
   }

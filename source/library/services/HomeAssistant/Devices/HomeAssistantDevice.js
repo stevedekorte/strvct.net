@@ -1,83 +1,107 @@
+/**
+ * @module library.services.HomeAssistant.Devices
+ */
+
+/**
+ * @class HomeAssistantDevice
+ * @extends HomeAssistantObject
+ * @classdesc Represents a Home Assistant device.
+ * 
+ * HomeAssistantDevice:{
+ *   "area_id": null,
+ *   "configuration_url": null,
+ *   "config_entries": [
+ *     "a8bc13c525dbdcf6e0bbcd6b8693dadc"
+ *   ],
+ *   "connections": [],
+ *   "disabled_by": null,
+ *   "entry_type": "service",
+ *   "hw_version": null,
+ *   "id": "6cdcb91bb251ccd6ba6828d4b56c761b",
+ *   "identifiers": [
+ *     [
+ *       "sun",
+ *       "a8bc13c525dbdcf6e0bbcd6b8693dadc"
+ *     ]
+ *   ],
+ *   "manufacturer": null,
+ *   "model": null,
+ *   "name_by_user": null,
+ *   "name": "Sun",
+ *   "serial_number": null,
+ *   "sw_version": null,
+ *   "via_device_id": null
+ * }
+ */
 "use strict";
 
-/* 
-    HomeAssistantDevice
-
-
-   HomeAssistantDevice:{
-  "area_id": null,
-  "configuration_url": null,
-  "config_entries": [
-    "a8bc13c525dbdcf6e0bbcd6b8693dadc"
-  ],
-  "connections": [],
-  "disabled_by": null,
-  "entry_type": "service",
-  "hw_version": null,
-  "id": "6cdcb91bb251ccd6ba6828d4b56c761b",
-  "identifiers": [
-    [
-      "sun",
-      "a8bc13c525dbdcf6e0bbcd6b8693dadc"
-    ]
-  ],
-  "manufacturer": null,
-  "model": null,
-  "name_by_user": null,
-  "name": "Sun",
-  "serial_number": null,
-  "sw_version": null,
-  "via_device_id": null
-}
-
-*/
-
 (class HomeAssistantDevice extends HomeAssistantObject {
-  initPrototypeSlots () {
+  /**
+   * @description Initializes prototype slots.
+   */
+  initPrototypeSlots() {
 
   }
 
+  /**
+   * @description Initializes the HomeAssistantDevice.
+   */
   init() {
     super.init();
   }
   
-  finalInit () {
+  /**
+   * @description Performs final initialization.
+   */
+  finalInit() {
     super.finalInit();
     this.setNodeCanEditTitle(true);
   }
 
-  entitiesNode () {
+  /**
+   * @description Returns the entities node.
+   * @returns {HomeAssistantDevice} The current device instance.
+   */
+  entitiesNode() {
     return this;
   }
 
-  /*
-  updateSubtitle () {
-    const s = [
-      this.entitiesNode().subnodeCount() + " entities",
-      this.statesCount() + " states"
-    ].join("\n");
-    this.setSubtitle(s);
-    return this;
-  }
-  */
-
-  id () {
+  /**
+   * @description Returns the device ID.
+   * @returns {string} The device ID.
+   */
+  id() {
     return this.haJson().id;
   }
 
-  areaId () {
+  /**
+   * @description Returns the area ID.
+   * @returns {string|null} The area ID.
+   */
+  areaId() {
     return this.haJson().area_id;
   }
 
-  ownerId () {
+  /**
+   * @description Returns the owner ID.
+   * @returns {string|null} The owner ID.
+   */
+  ownerId() {
     return this.areaId();
   }
 
-  ownerGroup () {
+  /**
+   * @description Returns the owner group.
+   * @returns {Object} The areas node of the Home Assistant instance.
+   */
+  ownerGroup() {
     return this.homeAssistant().areasNode();
   }
 
-  updateTitles () {
+  /**
+   * @description Updates the titles of the device.
+   */
+  updateTitles() {
     let name = this.haJson().name_by_user;
     if (!name) {
       name = this.haJson().name;
@@ -85,24 +109,31 @@
     if (name === null) {
       name = "NULL";
     }
-    //    this.removeAllSubnodes();
     this.setName(name);
     this.setTitle(this.computeShortName());
 
     if (this.state()) {
       this.setSubtitle(this.state());
     }
-    //this.updateSubtitle();
   }
 
-  state () {
+  /**
+   * @description Returns the state of the device.
+   * @returns {string|undefined} The state of the device.
+   */
+  state() {
     if (this.subnodesCount() === 1) {
       return this.subnodes().first().state();
     }
     return undefined;
   }
 
-  addEntity (entity) {
+  /**
+   * @description Adds an entity to the device.
+   * @param {Object} entity - The entity to add.
+   * @returns {HomeAssistantDevice} The current device instance.
+   */
+  addEntity(entity) {
     entity.removeFromParentNode();
     this.entitiesNode().addSubnode(entity);
     return this;

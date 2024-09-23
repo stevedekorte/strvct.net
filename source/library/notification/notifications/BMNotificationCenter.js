@@ -1,6 +1,7 @@
-/**
- * @module BMNotificationCenter
- */
+
+ /**
+  * @module library.notification.notifications.BMNotificationCenter
+  */
 
 "use strict";
 

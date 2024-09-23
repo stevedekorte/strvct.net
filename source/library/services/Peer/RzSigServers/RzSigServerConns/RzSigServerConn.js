@@ -1,15 +1,24 @@
 "use strict";
 
-/* 
-    RzSigServerConn
+/**
+ * @module library.services.Peer.RzSigServers.RzSigServerConns
+ */
 
-    Wrapper for PeerJS Peer object.
-
-*/
-
+/**
+ * @class RzSigServerConn
+ * @extends BMStorableNode
+ * @classdesc Wrapper for PeerJS Peer object.
+ */
 (class RzSigServerConn extends BMStorableNode {
+  /**
+   * @description Initializes the prototype slots for the RzSigServerConn class.
+   * @method
+   */
   initPrototypeSlots () {
 
+    /**
+     * @property {string} name
+     */
     {
       const slot = this.newSlot("name", null);
       slot.setInspectorPath("")
@@ -23,6 +32,9 @@
       //slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {string} peerIdPrefix
+     */
     {
       const slot = this.newSlot("peerIdPrefix", "");
       slot.setInspectorPath("")
@@ -36,6 +48,9 @@
       //slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {string} peerId
+     */
     {
       const slot = this.newSlot("peerId", null);
       slot.setInspectorPath("")
@@ -49,6 +64,9 @@
       //slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {string} status
+     */
     {
       const slot = this.newSlot("status", null);
       slot.setInspectorPath("")
@@ -62,6 +80,9 @@
       //slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {Peer} peer
+     */
     {
       const slot = this.newSlot("peer", null);
       slot.setShouldStoreSlot(false);
@@ -69,6 +90,9 @@
       slot.setSlotType("Peer");
     }
 
+    /**
+     * @property {boolean} isReliable
+     */
     {
       const slot = this.newSlot("isReliable", true);      
       slot.setInspectorPath("info")
@@ -82,37 +106,49 @@
       slot.setSummaryFormat("key value")
     }
 
-    // --- connection prompise ---
-
+    /**
+     * @property {Promise} connectPromise
+     */
     {
       const slot = this.newSlot("connectPromise", null);
       slot.setSlotType("Promise");
     }
 
-    // --- get id retries ---
-
+    /**
+     * @property {number} getIdRetryCount
+     */
     {
       const slot = this.newSlot("getIdRetryCount", 0); 
       slot.setSlotType("Number");
     }
 
+    /**
+     * @property {number} getIdRetryDelayMs
+     */
     {
       const slot = this.newSlot("getIdRetryDelayMs", 100);
       slot.setSlotType("Number");
     }
 
+    /**
+     * @property {number} getIdMaxRetries
+     */
     {
       const slot = this.newSlot("getIdMaxRetries", 100);
       slot.setSlotType("Number"); 
     }
 
-    // --- connect retries ---
-
+    /**
+     * @property {number} connectRetryDelayMs
+     */
     {
       const slot = this.newSlot("connectRetryDelayMs", 5000);
       slot.setSlotType("Number");
     }
 
+    /**
+     * @property {number} connectRetryCount
+     */
     {
       const slot = this.newSlot("connectRetryCount", 0);      
       slot.setInspectorPath("info")
@@ -126,6 +162,9 @@
       slot.setSummaryFormat("key value")
     }
 
+    /**
+     * @property {number} connectMaxRetries
+     */
     {
       const slot = this.newSlot("connectMaxRetries", 3);      
       slot.setInspectorPath("info")
@@ -139,8 +178,9 @@
       slot.setSummaryFormat("key value")
     }
 
-    // --- ping / pong ---
-
+    /**
+     * @property {number} pingIntervalMs
+     */
     {
       const slot = this.newSlot("pingIntervalMs", 1000);   
       slot.setInspectorPath("info")
@@ -154,6 +194,9 @@
       slot.setSummaryFormat("key value")
     }
 
+    /**
+     * @property {boolean} debug
+     */
     {
       const slot = this.newSlot("debug", false);      
       slot.setInspectorPath("info")
@@ -165,6 +208,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {RzPeerConns} peerConns
+     */
     {
       const slot = this.newSlot("peerConns", null)
       slot.setFinalInitProto(RzPeerConns);
@@ -173,6 +219,9 @@
       slot.setSlotType("RzPeerConns");
     }
 
+    /**
+     * @property {Action} connectAction
+     */
     {
       const slot = this.newSlot("connectAction", null);
       slot.setInspectorPath("")
@@ -185,6 +234,9 @@
       slot.setActionMethodName("connect");
     }
 
+    /**
+     * @property {Action} disconnectAction
+     */
     {
       const slot = this.newSlot("disconnectAction", null);
       slot.setInspectorPath("")
@@ -197,6 +249,9 @@
       slot.setActionMethodName("disconnect");
     }
 
+    /**
+     * @property {Action} destroyAction
+     */
     {
       const slot = this.newSlot("destroyAction", null);
       slot.setCanInspect(true);
@@ -210,6 +265,9 @@
       slot.setActionMethodName("destroy");
     }
 
+    /**
+     * @property {Action} refreshPeersAction
+     */
     {
       const slot = this.newSlot("refreshPeersAction", null);
       slot.setInspectorPath("")
@@ -222,11 +280,17 @@
       slot.setActionMethodName("refreshPeers");
     }
 
+    /**
+     * @property {Object} delegate
+     */
     {
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {Error} error
+     */
     {
       const slot = this.newSlot("error", null);
       slot.setSlotType("Error");
@@ -235,6 +299,11 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the RzSigServerConn instance.
+   * @method
+   * @returns {RzSigServerConn}
+   */
   init() {
     super.init();
     this.setIsDebugging(false);
@@ -242,6 +311,10 @@
     return this
   }
 
+  /**
+   * @description Performs final initialization of the RzSigServerConn instance.
+   * @method
+   */
   finalInit () {
     super.finalInit();
     this.setSubtitle("server connection");
@@ -251,41 +324,71 @@
     this.setShouldStore(true);
   }
 
-  // --- peer connection class ---
-
+  /**
+   * @description Sets the peer connection class.
+   * @method
+   * @param {Class} aClass - The peer connection class to set.
+   * @returns {RzSigServerConn}
+   */
   setPeerConnClass (aClass) {
     this.peerConns().setSubnodeClasses([aClass])
     return this
   }
 
+  /**
+   * @description Gets the peer connection class.
+   * @method
+   * @returns {Class} The peer connection class.
+   */
   peerConnClass () {
     return this.peerConns().subnodeClasses().first()
   }
 
-  // --- title / subtitle ---
-
+  /**
+   * @description Gets the title of the RzSigServerConn instance.
+   * @method
+   * @returns {string} The title.
+   */
   title () {
     const id = this.peerId()
     return id ? id : "no peer id assigned"
   }
 
+  /**
+   * @description Gets the subtitle of the RzSigServerConn instance.
+   * @method
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     return this.status()
   }
 
-  // --- connect ---
-
+  /**
+   * @description Checks if the RzSigServerConn is connected.
+   * @method
+   * @returns {boolean} True if connected, false otherwise.
+   */
   isConnected () {
     const isConnected = !Type.isNullOrUndefined(this.peer()) && !this.peer().disconnected;
     assert(Type.isBoolean(isConnected));
     return isConnected;
   }
 
+  /**
+   * @description Clears the connect promise.
+   * @method
+   * @returns {RzSigServerConn}
+   */
   clearConnectPromise () {
     this.setConnectPromise(null);
     return this;
   }
 
+  /**
+   * @description Gets the connect promise.
+   * @method
+   * @returns {Promise} The connect promise.
+   */
   connectPromise () {
     if (!this._connectPromise) {
       this._connectPromise = Promise.clone();
@@ -293,6 +396,11 @@
     return this._connectPromise 
   }
 
+  /**
+   * @description Initiates a connection.
+   * @method
+   * @returns {Promise} The connect promise.
+   */
   connect () {
     if (!this.isConnected()) {
       this.setError(null);
@@ -305,20 +413,33 @@
     return this.connectPromise();
   }
 
+  /**
+   * @description Gets the connect action info.
+   * @method
+   * @returns {Object} The connect action info.
+   */
   connectActionInfo () {
     return {
       isEnabled: !this.isConnected()
     }
   }
 
-  // --- disconnect ---
-
+  /**
+   * @description Shuts down the RzSigServerConn.
+   * @method
+   * @returns {RzSigServerConn}
+   */
   shutdown () {
     this.disconnectAllPeers();
     this.disconnect();
     return this;
   }
 
+  /**
+   * @description Disconnects the RzSigServerConn.
+   * @method
+   * @returns {RzSigServerConn}
+   */
   disconnect () {
     if (this.peer()) {
       this.setStatus("disconnecting")
@@ -327,19 +448,32 @@
     return this
   }
 
+  /**
+   * @description Disconnects all peers.
+   * @method
+   * @returns {RzSigServerConn}
+   */
   disconnectAllPeers () {
     this.peerConns().disconnectAllPeers();
     return this;
   }
 
+  /**
+   * @description Gets the disconnect action info.
+   * @method
+   * @returns {Object} The disconnect action info.
+   */
   disconnectActionInfo () {
     return {
       isEnabled: this.isConnected()
     }
   }
 
-  // --- destroy ---
-
+  /**
+   * @description Destroys the RzSigServerConn.
+   * @method
+   * @returns {RzSigServerConn}
+   */
   destroy () {
     if (this.peer()) {
       this.setStatus("destroying")
@@ -348,26 +482,31 @@
     return this
   }
 
+  /**
+   * @description Gets the destroy action info.
+   * @method
+   * @returns {Object} The destroy action info.
+   */
   destroyActionInfo () {
     return {
       isEnabled: this.peer() !== null
     }
   }
 
-  /*
-  shutdown () {
-    this.peerConnections().valuesArray().forEach((conn) => {
-      conn.shutdown();
-    });
-    return this;
-  }
-  */
-
-  // --- connecting to a peer ----
-
+  /**
+   * @description Gets the signal server connections.
+   * @method
+   * @returns {Object} The signal server connections.
+   */
   sigServerConnections () {
     return this.parentNode()
   }
+
+  /**
+   * @description Gets the server.
+   * @method
+   * @returns {Object} The server.
+   */
 
   server () {
     return this.sigServerConnections().parentNode()
@@ -396,6 +535,10 @@
   }
   */
 
+  /**
+   * @description Gets the peer options.
+   * @returns {Object} The peer options.
+   */
   peerOptions () {
     const server = this.server();
     const options = {
@@ -416,21 +559,44 @@
     return options;
   }
 
+  // --- peer ---
+
+  /**
+   * @description Sets the peer object.
+   * @method
+   * @param {Peer} aPeer - The peer object to set.
+   * @returns {RzSigServerConn} The current instance.
+   */
   setPeer (aPeer) {
     this._peer = aPeer;
     return this
   }
 
+  /**
+   * @description Gets the peer object.
+   * @method
+   * @returns {Peer} The peer object.
+   */
   peer () {
     return this._peer
   }
 
   // --- connect to signaling server ---
 
+  /**
+   * @description Generates a new peer ID.
+   * @method
+   * @returns {string} The new peer ID.
+   */
   newPeerId () {
     return this.peerIdPrefix() + "-" + RzSigServer.generateRandomPeerId(10)
   }
 
+  /**
+   * @description Attempts to connect to the signaling server.
+   * @method
+   * @returns {RzSigServerConn} The current instance.
+   */
   attemptToConnect () {
     this.debugLog("connecting to peerjs signal server: ", JSON.stringify(this.peerOptions(), 2, 2) )
 
@@ -454,6 +620,12 @@
     return this;
   }
 
+  /**
+   * @description Handles the open event for the peer.
+   * @method
+   * @param {string} peerId - The peer ID.
+   * @returns {RzSigServerConn} The current instance.
+   */
   async onOpen (peerId) {
     this.setPeerId(peerId)
     //this.debugLog("opened with peerId: '" + peerId + "'");
@@ -464,13 +636,24 @@
   }
 
   // --- incoming peer connections ---
-  
+
+  /**
+   * @description Adds a peer connection to the server.
+   * @method
+   * @param {RzPeerConn} aPeerConn - The peer connection to add.
+   * @returns {RzSigServerConn} The current instance.
+   */
   addPeerConnection (aPeerConn) {
     aPeerConn.setSigServerConn(this)
     this.peerConns().addSubnode(aPeerConn)
     return this;
   }
 
+  /**
+   * @description Handles the close event for the peer.
+   * @method
+   * @returns {RzSigServerConn} The current instance.
+   */
   onClose () {
     /*
     Emitted when the peer is destroyed and can no longer accept or create any new connections. 
@@ -482,6 +665,11 @@
     this.sendDelegateMessage("onSigServerClose", [this])
   }
 
+  /**
+   * @description Handles the disconnected event for the peer.
+   * @method
+   * @returns {RzSigServerConn} The current instance.
+   */
   onDisconnected () {
     /*
     Emitted when the peer is disconnected from the signalling server, 
@@ -497,6 +685,12 @@
     this.sendDelegateMessage("onSigServerDisconnected", [this])
   }
 
+  /**
+   * @description Handles the connection event for the peer.
+   * @method
+   * @param {Object} conn - The connection object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onConnection (conn) {
     // incoming connection
 
@@ -512,17 +706,35 @@
     return this
   }
 
+  /**
+   * @description Handles the open peer connection event.
+   * @method
+   * @param {RzPeerConn} peerConn - The peer connection object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onOpenPeerConnection (peerConn) {
     // sent by a PeerConnection to it's SigServer after it opens
     // and is ready for messages
     this.sendDelegateMessage("onPeerConnection", [peerConn])
   }
 
+  /**
+   * @description Handles the close peer connection event.
+   * @method
+   * @param {RzPeerConn} peerConn - The peer connection object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onClosePeerConnection (peerConn) {
     this.sendDelegateMessage("onClosePeerConnection", [peerConn])
     this.removePeerConnection(peerConn)
   }
 
+  /**
+   * @description Removes a peer connection.
+   * @method
+   * @param {RzPeerConn} peerConn - The peer connection object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   removePeerConnection (peerConn) {
     //if (this.peerConnections().has(pc.id())) {
       this.sendDelegateMessage("onRemovePeerConnection", [peerConn])
@@ -533,6 +745,12 @@
 
   // --- error handling ---
 
+  /**
+   * @description Handles the error event for the peer.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onError (error) {
     //this.debugLog("error ", error);
     //debugger
@@ -566,55 +784,121 @@
 
   // --- error type handlers ---
 
+  /**
+   * @description Handles the peer unavailable error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onPeerUnavailableError (error) {
     console.warn(this.typeId() + " error: ", error)
   }
 
+  /**
+   * @description Handles the browser incompatible error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onBrowserIncompatibleError (error) {
     // ERRORFATAL
     // The client's browser does not support some or all WebRTC features that you are trying to use.
   }
 
+  /**
+   * @description Handles the disconnected error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onDisconnectedError (error) {
     // ERROR
     // You've already disconnected this peer from the server and can no longer make any new connections on it.
   }
 
+  /**
+   * @description Handles the invalid ID error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onInvalidIdError (error) {
     // ERRORFATAL
     // The ID passed into the Peer constructor contains illegal characters.
   }
 
+  /**
+   * @description Handles the invalid key error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onInvalidKeyError (error) {
     // ERRORFATAL
     // The API key passed into the Peer constructor contains illegal characters or is not in the system (cloud server only).
   }
 
+  /**
+   * @description Handles the network error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onNetworkError (error) {
     // ERROR
     // Lost or cannot establish a connection to the signalling server.
   }
 
+  /**
+   * @description Handles the peer unavailable error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onPeerUnavailableError (error) {
     // ERROR
     // The peer you're trying to connect to does not exist.
   }
 
+  /**
+   * @description Handles the SSL unavailable error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onSslUnavailableError (error) { 
     // ERRORFATAL
     // PeerJS is being used securely, but the cloud server does not support SSL. Use a custom SigServer.
   }
 
+  /**
+   * @description Handles the server error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onServerError (error) {
     // ERRORFATAL
     // Unable to reach the server.
   }
 
+  /**
+   * @description Handles the socket error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onSocketError (error) {
     // ERRORFATAL
     // An error from the underlying socket.
   }
 
+  /**
+   * @description Handles the socket closed error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onSocketClosedError (error) {
     // ERRORFATAL
     // The underlying socket closed unexpectedly.
@@ -622,6 +906,12 @@
     // TODO: retry?
   }
 
+  /**
+   * @description Handles the unavailable ID error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onUnavailableIdError (error) {
     // ERRORSOMETIMES FATAL
     // The ID passed into the Peer constructor is already taken.
@@ -635,6 +925,12 @@
     }
   }
 
+  /**
+   * @description Gets the retry closure for ID retrieval.
+   * @method
+   * @param {Function} func - The function to execute.
+   * @returns {RzSigServerConn} The current instance.
+   */
   getIdRetryClosure (func) {
     if (this.getIdRetryCount() < this.getIdMaxRetries()) {
       this.setGetIdRetryCount(this.getIdRetryCount() + 1);
@@ -648,6 +944,12 @@
     return this
   }
 
+  /**
+   * @description Handles the WebRTC error.
+   * @method
+   * @param {Error} error - The error object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onWebrtcError (error) {
     // ERROR
     // Native WebRTC errors.
@@ -655,6 +957,11 @@
 
   // --- reconnect ---
 
+  /**
+   * @description Attempts to reconnect to the signaling server.
+   * @method
+   * @returns {RzSigServerConn} The current instance.
+   */
   attemptToReconnect () {
 
     if (this.connectRetryCount() < this.connectMaxRetries()) {
@@ -676,6 +983,12 @@
     }
   }
 
+  /**
+   * @description Handles the call event.
+   * @method
+   * @param {Object} call - The call object.
+   * @returns {RzSigServerConn} The current instance.
+   */
   onCall (call) {
     /*
 
@@ -705,10 +1018,21 @@
 
   // --- peers ---
 
+  /**
+   * @description Gets the available peer IDs.
+   * @method
+   * @returns {Array} The available peer IDs.
+   */
   availablePeerIds () {
     return this.server().availablePeerIds()
   }
 
+  /**
+   * @description Gets the connection to a peer ID.
+   * @method
+   * @param {string} peerId - The peer ID.
+   * @returns {RzPeerConn} The peer connection object.
+   */
   connectionToPeerId (peerId) {
     const peerConn = this.peerConnClass().clone().setPeerId(peerId)
     this.addPeerConnection(peerConn)
@@ -716,16 +1040,32 @@
     return peerConn // the caller should problaby call peerConn.setDelegate(this) and handling it's delegate messages
   }
 
+  /**
+   * @description Connects to a peer ID.
+   * @method
+   * @param {string} peerId - The peer ID.
+   * @returns {RzPeerConn} The peer connection object.
+   */
   connectToPeerId (peerId) {
     const peerConn = this.connectionToPeerId(peerId)
     peerConn.connect()
     return peerConn // the caller should problaby call peerConn.setDelegate(this) and handling it's delegate messages
   }
 
+  /**
+   * @description Gets the unconnected peer connections.
+   * @method
+   * @returns {Array} The unconnected peer connections.
+   */
   unconnectedPeerConns () {
     return this.peerConns().subnodes().select(pc => !pc.isConnected())
   }
 
+  /**
+   * @description Refreshes the peers.
+   * @method
+   * @returns {RzSigServerConn} The current instance.
+   */
   async refreshPeers () {
     // NOTE: we want to be able to use custom peerConnClass and we don't want to remove 
     // subnodes on refresh. Maybe we should separate availablePeers from peerConns?
@@ -761,6 +1101,13 @@
 
   // --- delegate ---
 
+  /**
+   * @description Sends a delegate message.
+   * @method
+   * @param {string} methodName - The method name.
+   * @param {Array} args - The arguments.
+   * @returns {RzSigServerConn} The current instance.
+   */
   sendDelegateMessage (methodName, args = []) {
     const d = this.delegate();
     if (d) {

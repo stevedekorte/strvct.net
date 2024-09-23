@@ -1,100 +1,40 @@
 # Modules
 
-- AiServiceKit
-  - [AiChatModel](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModel.js)
 - browser
   - stack
     - Tile
+      - [BreadCrumbsTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBreadCrumbsTile.js)
       - [HeaderTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FHeaderTile.js)
       - [Tile_dragging](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_dragging.js)
       - [Tile_keyboard](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_keyboard.js)
+      - [Tile_slideGesture](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_slideGesture.js)
       - [Tile_styling](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_styling.js)
       - [TitledTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTitledTile.js)
       - field_tiles
         - [BMActionFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
         - [BMStringFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
-  - [AiChatModels](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModels.js)
-  - [AiConversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversation.js)
-  - [AiConversations](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversations.js)
-  - [AiJsonRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiJsonRequest.js)
-  - [AiMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiMessage.js)
-  - [AiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiRequest.js)
-  - [AiResponseMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiResponseMessage.js)
-  - [AiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiService.js)
   - [AnimationListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FAnimationListener.js)
-  - [AnthropicRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicRequest.js)
-  - [App](./class_doc.html?path=source%2Flibrary%2Fnode%2FApp.js)
   - [AudioQueue](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
   - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
-  - [AzureLocale](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocale.js)
-  - [AzureLocales](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocales.js)
-  - [AzureService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2FAzureService.js)
-  - [AzureSpeaker](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2FAzureSpeaker.js)
-  - [AzureSpeakers](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2FAzureSpeakers.js)
-  - [AzureTtsRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequest.js)
-  - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
-  - [AzureVoice](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoice.js)
   - [AzureVoices](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoices.js)
   - [BMDataUrl](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
-  - [BMDefaultTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMDefaultTheme.js)
   - [BMField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2FBMField.js)
-  - [BMFileResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMFileResources.js)
-  - [BMFolderNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMFolderNode.js)
-  - [BMFont](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFont.js)
-  - [BMFontFamily](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontFamily.js)
-  - [BMFontResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontResources.js)
-  - [BMFontTile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontTile.js)
-  - [BMIconResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ficons%2FBMIconResources.js)
-  - [BMImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImage.js)
-  - [BMImageResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageResources.js)
-  - [BMImageTile](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageTile.js)
-  - [BMJsonResource](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResource.js)
-  - [BMJsonResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResources.js)
   - [BMKeyboard](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FBMKeyboard.js)
-  - [BMMonthNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMMonthNode.js)
   - [BMNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBMNode.js)
-  - [BMNotification](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotification.js)
-  - [BMNotificationCenter](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotificationCenter.js)
-  - [BMNumberField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMNumberField.js)
-  - [BMObservation](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMObservation.js)
-  - [BMOptionNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Foptions%2FBMOptionNode.js)
-  - [BMResource](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResource.js)
-  - [BMResourceFile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFile.js)
-  - [BMResourceFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFolder.js)
-  - [BMResourceGroup](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResourceGroup.js)
-  - [BMResources](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResources.js)
-  - [BMSoundResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FBMSoundResources.js)
-  - [BMStringField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStringField.js)
   - [BMStyleSheet](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FBMStyleSheet.js)
-  - [BMTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMTheme.js)
-  - [BMThemeClass](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClass.js)
-  - [BMThemeClassChildren](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClassChildren.js)
-  - [BMThemeFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeFolder.js)
-  - [BMThemeResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeResources.js)
-  - [BMThemeState](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeState.js)
-  - [BMThemeStates](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeStates.js)
-  - [BMURLImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMURLImage.js)
-  - [BMYearNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMYearNode.js)
   - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
   - [BooleanView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FBooleanView.js)
   - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [BottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FBottomEdgePanGestureRecognizer.js)
-  - [BreadCrumbsTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBreadCrumbsTile.js)
-  - [Broadcaster](./class_doc.html?path=source%2Flibrary%2Fnotification%2FBroadcaster.js)
-  - [BrowserView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2FBrowserView.js)
   - [ButtonView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FButtonView.js)
   - [CanvasTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FCanvasTextTapeMeasure.js)
-  - [ChatInputNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FChatInputNode.js)
   - [ClipboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FClipboardListener.js)
   - [CloseButton](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FCloseButton.js)
   - [ControlDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FControlDomView.js)
-  - [Conversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FConversation.js)
-  - [ConversationMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FConversationMessage.js)
   - [CssAnimation](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FCssAnimation.js)
   - [CssColor](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FCssColor.js)
   - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
-  - [DefaultProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FDefaultProxyServer.js)
   - [Device](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevice.js)
   - [Devices](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevices.js)
   - [DocumentBody](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDocumentBody.js)
@@ -124,27 +64,10 @@
   - [GamePad](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FGamePad.js)
   - [GamePadListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FGamePadListener.js)
   - [GamePadManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FGamePadManager.js)
-  - [GeminiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiRequest.js)
-  - [GeminiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiService.js)
   - [GesturableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FGesturableDomView.js)
   - [GestureManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureManager.js)
   - [GestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureRecognizer.js)
-  - [GroqRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqRequest.js)
-  - [GroqService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
   - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
-  - [HomeAssistant](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAssistants%2FHomeAssistant.js)
-  - [HomeAssistantArea](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantArea.js)
-  - [HomeAssistantAreas](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantAreas.js)
-  - [HomeAssistantDevice](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FDevices%2FHomeAssistantDevice.js)
-  - [HomeAssistantDevices](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FDevices%2FHomeAssistantDevices.js)
-  - [HomeAssistantEntities](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntities.js)
-  - [HomeAssistantEntity](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntity.js)
-  - [HomeAssistantFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantFolder.js)
-  - [HomeAssistantGroup](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantGroup.js)
-  - [HomeAssistantObject](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantObject.js)
-  - [HomeAssistantState](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
-  - [HomeAssistantStates](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
-  - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)
   - [IndexedDBFolder](./class_doc.html?path=source%2Fboot%2FIndexedDBFolder.js)
   - [IndexedDBTx](./class_doc.html?path=source%2Fboot%2FIndexedDBTx.js)
@@ -158,88 +81,43 @@
   - [Mouse](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FMouse.js)
   - [MouseListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseListener.js)
   - [MouseMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseMoveListener.js)
-  - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
   - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
-  - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
-  - [Number_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
-  - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
-  - [OpenAiImage](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImage.js)
-  - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
-  - [OpenAiImagePrompts](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompts.js)
-  - [OpenAiImages](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImages.js)
-  - [OpenAiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
-  - [OpenAiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiService.js)
-  - [OpenAiTtsRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsRequest.js)
-  - [OpenAiTtsSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSession.js)
-  - [OpenAiTtsSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSessions.js)
   - [OrientGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FOrientGestureRecognizer.js)
   - [PanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPanGestureRecognizer.js)
   - [PanelView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FPanelView.js)
-  - [PeerService](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FPeerService.js)
   - [PersistentAsyncMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAsyncMap.js)
   - [PersistentAtomicMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAtomicMap.js)
-  - [PersistentObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FPersistentObjectPool.js)
   - [PinchGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPinchGestureRecognizer.js)
   - [Point](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FPoint.js)
   - [ProtoClass](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
-  - [ProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServer.js)
-  - [ProxyServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServers.js)
   - [Rectangle](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
   - [ResourceManager](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [ResponderDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FResponderDomView.js)
   - [RightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FRightEdgePanGestureRecognizer.js)
   - [RootContentNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FRootContentNode.js)
   - [RotationGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FRotationGestureRecognizer.js)
-  - [RzMsg](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsg.js)
-  - [RzMsgs](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsgs.js)
-  - [RzPeer](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzPeer.js)
-  - [RzPeerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConn.js)
-  - [RzPeerConns](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConns.js)
-  - [RzSigServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServer.js)
-  - [RzSigServerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConn.js)
-  - [RzSigServerConns](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConns.js)
-  - [RzSigServerPeers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerPeers.js)
-  - [RzSigServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServers.js)
-  - [SceneView](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneView.js)
-  - [SceneViewWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneViewWellFieldTile.js)
   - [ScreenBottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenBottomEdgePanGestureRecognizer.js)
   - [ScreenEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2FScreenEdgePanGestureRecognizer.js)
   - [ScreenLeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenLeftEdgePanGestureRecognizer.js)
   - [ScreenRightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenRightEdgePanGestureRecognizer.js)
   - [ScreenTopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenTopEdgePanGestureRecognizer.js)
-  - [ScrollContentView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollContentView.js)
   - [ScrollListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FScrollListener.js)
-  - [ScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollView.js)
   - [SelectListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSelectListener.js)
   - [SelectableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSelectableDomView.js)
-  - [Services](./class_doc.html?path=source%2Flibrary%2Fservices%2FServices.js)
   - [SlideGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FSlideGestureRecognizer.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
-  - [SpatialModelNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSpatialModelsNode.js)
   - [SpeechListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSpeechListener.js)
-  - [SpeechToTextSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSession.js)
-  - [SpeechToTextSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSessions.js)
-  - [StackFrame](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
-  - [StackTrace](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
   - [StackView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackView.js)
   - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
   - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)
-  - [SttMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSttMessages%2FSttMessage.js)
-  - [SttMessages](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSttMessages%2FSttMessages.js)
   - [StyledDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FStyledDomView.js)
-  - [SubnodesArray](./class_doc.html?path=source%2Flibrary%2Fnode%2FSubnodesArray.js)
   - [SubviewsDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSubviewsDomView.js)
   - [SvgIconCache](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconCache.js)
-  - [SvgIconNode](./class_doc.html?path=source%2Flibrary%2Fresources%2Ficons%2FSvgIconNode.js)
   - [SvgIconView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconView.js)
-  - [SyncAction](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncAction.js)
-  - [SyncScheduler](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncScheduler.js)
   - [TapGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FTapGestureRecognizer.js)
   - [TextField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FTextField.js)
   - [ThrashDetector](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FThrashDetector.js)
-  - [Tile_gestures](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_gestures.js)
-  - [Tile_slideGesture](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_slideGesture.js)
   - [TopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FTopEdgePanGestureRecognizer.js)
   - [TouchListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchListener.js)
   - [TouchMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchMoveListener.js)
@@ -248,10 +126,7 @@
   - [TransitionListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTransitionListener.js)
   - [UrlResource](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [ViewAnimator](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FViewAnimator.js)
-  - [ViewableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FViewableNode.js)
   - [VisibleDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FVisibleDomView.js)
-  - [WAContext](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAContext.js)
-  - [WAQueue](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAQueue.js)
   - [WASound](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWASound.js)
   - [WebBrowserNotification](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserNotification.js)
   - [WebBrowserNotifications](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserNotifications.js)
@@ -263,12 +138,14 @@
   - [WindowListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWindowListener.js)
   - [Worker](./class_doc.html?path=source%2FServiceWorker%2FWorker.js)
   - [XhrWrapper](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FXhrWrapper.js)
-  - [YouTubeAudioPlayer](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeAudioPlayer.js)
-  - [YouTubePlayerFrame](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubePlayerFrame.js)
-  - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
-- html
-  - HtmlStreamReader
-    - [StreamTextNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamTextNode.js)
+- HomeAssistant
+  - HomeAssistantFolder
+    - [HomeAssistantFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantFolder.js)
+  - States
+    - [HomeAssistantState](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
+    - [HomeAssistantStates](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
+- icons
+  - [BMIconResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ficons%2FBMIconResources.js)
 - library
   - app
     - [BMSettingsNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FBMSettingsNode.js)
@@ -285,6 +162,7 @@
     - [Image_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FImage_ideal.js)
     - [ImmutableSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FImmutableSet.js)
     - [Map_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FMap_ideal.js)
+    - [Number_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
     - [Range_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FRange_ideal.js)
     - [Set_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FSet_ideal.js)
     - [String_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FString_ideal.js)
@@ -305,6 +183,7 @@
         - [HtmlStreamReader](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FHtmlStreamReader.js)
         - [StreamElementNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamElementNode.js)
         - [StreamNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamNode.js)
+        - [StreamTextNode](./class_doc.html?path=source%2Flibrary%2Fideal%2Fhtml%2FHtmlStreamReader%2FStreamTextNode.js)
     - json
       - JsonSchema
         - [JsonSchema](./class_doc.html?path=source%2Flibrary%2Fideal%2Fjson%2FJsonSchema%2FJsonSchema.js)
@@ -316,6 +195,8 @@
     - misc
       - [Documentation](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FDocumentation.js)
       - [NamespaceSearch](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FNamespaceSearch.js)
+      - [StackFrame](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
+      - [StackTrace](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
     - networking
       - [HttpResponseCodes](./class_doc.html?path=source%2Flibrary%2Fideal%2Fnetworking%2FHttpResponseCodes.js)
     - object
@@ -328,6 +209,9 @@
       - [Object_notification](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_notification.js)
       - [Object_puuid](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_puuid.js)
       - [Object_timeouts](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_timeouts.js)
+    - protocol
+      - [ProtoClass_protocol](./class_doc.html?path=source%2Flibrary%2Fideal%2Fprotocol%2FProtoClass_protocol.js)
+      - [Protocol](./class_doc.html?path=source%2Flibrary%2Fideal%2Fprotocol%2FProtocol.js)
     - proxies
       - [FirewallProxy](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproxies%2FFirewallProxy.js)
       - [ObservableProxy](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproxies%2FObservableProxy.js)
@@ -335,6 +219,7 @@
       - [EnumerableWeakMap](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakMap.js)
       - [EnumerableWeakSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakSet.js)
   - node
+    - [App](./class_doc.html?path=source%2Flibrary%2Fnode%2FApp.js)
     - blobs
       - [BMBlob](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlob.js)
       - [BMBlobs](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlobs.js)
@@ -355,8 +240,10 @@
         - [BMColorField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMColorField.js)
         - [BMIdentityField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMIdentityField.js)
         - [BMImageWellField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMImageWellField.js)
+        - [BMNumberField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMNumberField.js)
         - [BMPointerField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMPointerField.js)
         - [BMStampField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStampField.js)
+        - [BMStringField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStringField.js)
         - [BMUrlField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMUrlField.js)
         - BMJsonField
           - [BMJsonField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMJsonField.js)
@@ -364,9 +251,13 @@
           - [BMTextAreaField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMTextAreaField.js)
         - date
           - [BMDateNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMDateNode.js)
+          - [BMMonthNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMMonthNode.js)
           - BMDayNode
             - [BMDayNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMDayNode.js)
+          - BMYearNode
+            - [BMYearNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMYearNode.js)
         - options
+          - [BMOptionNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Foptions%2FBMOptionNode.js)
           - [BMOptionsNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Foptions%2FBMOptionsNode.js)
         - time
           - [BMHourNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Ftime%2FBMHourNode.js)
@@ -378,13 +269,18 @@
       - [ImageWellView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageWellView.js)
       - [NodeView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FNodeView.js)
       - browser
+        - BrowserView
+          - [BrowserView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2FBrowserView.js)
         - stack
           - [NavView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FNavView.js)
+          - [ScrollContentView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollContentView.js)
+          - [ScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollView.js)
           - [StackScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackScrollView.js)
           - [TileContainer](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTileContainer.js)
           - Tile
             - [BMTextNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBMTextNodeTile.js)
             - [Tile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile.js)
+            - [Tile_gestures](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FTile_gestures.js)
             - field_tiles
               - [BMBooleanFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMBooleanFieldTile.js)
               - [BMChatInputTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMChatInputTile.js)
@@ -417,6 +313,9 @@
         - [InspectableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FInspectableNode.js)
         - [StyledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FStyledNode.js)
         - [TitledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FTitledNode.js)
+        - [ViewableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FViewableNode.js)
+      - BMFolderNode
+        - [BMFolderNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMFolderNode.js)
       - BMImageNode
         - [BMImageNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMImageNode.js)
       - BMImagesNode
@@ -425,6 +324,7 @@
         - [BMTextNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMTextNode.js)
     - storage
       - base
+        - [PersistentObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FPersistentObjectPool.js)
         - categories
           - [ProtoClass_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FProtoClass_store.js)
           - BMNode_store
@@ -442,6 +342,8 @@
               - [Boolean_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
               - [Number_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
               - [String_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
+        - ObjectPool
+          - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
         - StoreRef
           - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
       - nodes
@@ -449,6 +351,191 @@
         - inspectors
           - [BMDataStore](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStore.js)
           - [BMDataStoreRecord](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStoreRecord.js)
+    - SubnodesArray
+      - [SubnodesArray](./class_doc.html?path=source%2Flibrary%2Fnode%2FSubnodesArray.js)
+  - notification
+    - [SyncScheduler](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncScheduler.js)
+    - Broadcaster
+      - [Broadcaster](./class_doc.html?path=source%2Flibrary%2Fnotification%2FBroadcaster.js)
+    - notifications
+      - [BMNotification](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotification.js)
+      - [BMObservation](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMObservation.js)
+      - BMNotificationCenter
+        - [BMNotificationCenter](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotificationCenter.js)
+    - SyncAction
+      - [SyncAction](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncAction.js)
+  - resources
+    - [BMResource](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResource.js)
+    - [BMResourceGroup](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResourceGroup.js)
+    - BMResources
+      - [BMResources](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResources.js)
+    - files
+      - [BMFileResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMFileResources.js)
+      - [BMResourceFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFolder.js)
+      - BMResourceFile
+        - [BMResourceFile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFile.js)
+    - fonts
+      - [BMFont](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFont.js)
+      - [BMFontFamily](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontFamily.js)
+      - [BMFontResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontResources.js)
+      - [BMFontTile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontTile.js)
+    - icons
+      - [SvgIconNode](./class_doc.html?path=source%2Flibrary%2Fresources%2Ficons%2FSvgIconNode.js)
+    - images
+      - [BMImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImage.js)
+      - [BMImageTile](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageTile.js)
+      - BMImageResources
+        - [BMImageResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageResources.js)
+      - BMURLImage
+        - [BMURLImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMURLImage.js)
+    - json
+      - BMJsonResource
+        - [BMJsonResource](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResource.js)
+      - BMJsonResources
+        - [BMJsonResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResources.js)
+    - sounds
+      - [BMSoundResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FBMSoundResources.js)
+      - [WAContext](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAContext.js)
+      - WAQueue
+        - [WAQueue](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAQueue.js)
+    - themes
+      - [BMTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMTheme.js)
+      - [BMThemeClass](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClass.js)
+      - [BMThemeState](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeState.js)
+      - BMDefaultTheme
+        - [BMDefaultTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMDefaultTheme.js)
+      - BMThemeClassChildren
+        - [BMThemeClassChildren](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClassChildren.js)
+      - BMThemeFolder
+        - [BMThemeFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeFolder.js)
+      - BMThemeResources
+        - [BMThemeResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeResources.js)
+      - BMThemeStates
+        - [BMThemeStates](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeStates.js)
   - services
+    - AiServiceKit
+      - [AiChatModel](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModel.js)
+      - [AiChatModels](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModels.js)
+      - [AiJsonRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiJsonRequest.js)
+      - [AiMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiMessage.js)
+      - [AiResponseMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiResponseMessage.js)
+      - [AiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiService.js)
+      - [ChatInputNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FChatInputNode.js)
+      - [Conversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FConversation.js)
+      - [ConversationMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FConversationMessage.js)
+      - AiConversation
+        - [AiConversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversation.js)
+      - AiConversations
+        - [AiConversations](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversations.js)
+      - AiRequest
+        - [AiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiRequest.js)
     - Anthropic
+      - [AnthropicRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicRequest.js)
       - [AnthropicService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicService.js)
+    - Azure
+      - AzureService
+        - [AzureService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2FAzureService.js)
+      - locales
+        - [AzureLocale](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocale.js)
+        - [AzureLocales](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocales.js)
+      - speakers
+        - [AzureSpeaker](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2FAzureSpeaker.js)
+        - [AzureSpeakers](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2FAzureSpeakers.js)
+        - requests
+          - [AzureTtsRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequest.js)
+          - AzureTtsRequests
+            - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
+      - voices
+        - [AzureVoice](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoice.js)
+    - Gemini
+      - [GeminiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiService.js)
+      - GeminiRequest
+        - [GeminiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiRequest.js)
+    - Groq
+      - [GroqRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqRequest.js)
+      - [GroqService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
+    - HomeAssistant
+      - [HomeAssistantGroup](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantGroup.js)
+      - Areas
+        - [HomeAssistantArea](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantArea.js)
+        - [HomeAssistantAreas](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantAreas.js)
+      - Assistants
+        - [HomeAssistant](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAssistants%2FHomeAssistant.js)
+        - HomeAssistants
+          - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
+      - Devices
+        - [HomeAssistantDevice](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FDevices%2FHomeAssistantDevice.js)
+        - [HomeAssistantDevices](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FDevices%2FHomeAssistantDevices.js)
+      - Entities
+        - [HomeAssistantEntities](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntities.js)
+        - HomeAssistantEntity
+          - [HomeAssistantEntity](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntity.js)
+    - OpenAI
+      - [OpenAiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiService.js)
+      - OpenAiRequest
+        - [OpenAiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
+      - Text_to_Image
+        - [OpenAiImagePrompts](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompts.js)
+        - images
+          - [OpenAiImage](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImage.js)
+          - [OpenAiImages](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImages.js)
+      - Text_to_Speech
+        - [OpenAiTtsRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsRequest.js)
+        - [OpenAiTtsSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSessions.js)
+    - Peer
+      - [PeerService](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FPeerService.js)
+      - RzSigServers
+        - [RzPeer](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzPeer.js)
+        - [RzSigServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServer.js)
+        - [RzSigServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServers.js)
+        - RzSigServerConns
+          - [RzSigServerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConn.js)
+          - [RzSigServerConns](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConns.js)
+          - RzPeerConns
+            - [RzPeerConns](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConns.js)
+            - RzMsgs
+              - [RzMsgs](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsgs.js)
+              - RzMsg
+                - [RzMsg](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsg.js)
+            - RzPeerConn
+              - [RzPeerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConn.js)
+    - ProxyServers
+      - [DefaultProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FDefaultProxyServer.js)
+      - [ProxyServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServers.js)
+      - ProxyServer
+        - [ProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServer.js)
+    - Services
+      - [Services](./class_doc.html?path=source%2Flibrary%2Fservices%2FServices.js)
+    - Spatial
+      - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
+      - [SceneView](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneView.js)
+      - [SpatialModelNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSpatialModelsNode.js)
+      - SceneViewWellFieldTile
+        - [SceneViewWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneViewWellFieldTile.js)
+    - SpeechToText
+      - [SpeechToTextSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSession.js)
+      - SttMessages
+        - [SttMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSttMessages%2FSttMessage.js)
+        - [SttMessages](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSttMessages%2FSttMessages.js)
+    - YouTube
+      - [YouTubeAudioPlayer](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeAudioPlayer.js)
+      - [YouTubePlayerFrame](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubePlayerFrame.js)
+      - MusicPlayer
+        - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
+        - MusicFolder
+          - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
+      - YouTubeService
+        - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
+- OpenAI
+  - Text_to_Speech
+    - [OpenAiTtsSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSession.js)
+  - TexttoImage
+    - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
+- Peer
+  - RzSigServers
+    - [RzSigServerPeers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerPeers.js)
+- services
+  - HomeAssistant
+    - [HomeAssistantObject](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantObject.js)
+- SpeechToText
+  - [SpeechToTextSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSessions.js)

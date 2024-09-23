@@ -1,7 +1,14 @@
 "use strict";
 
-/* 
-    AzureSpeaker
+/**
+ * @module library.services.Azure.speakers
+ */
+
+/**
+ * Represents an Azure Speaker with various voice and speech settings.
+ * @class
+ * @extends BMSummaryNode
+ * @classdesc AzureSpeaker
 
   Rate: Controls the speed of the speech. Allowed values are x-slow, slow, medium, fast, x-fast, or a percentage. 
   A value of 0% (default) means normal speed, values above 0% increase the speed, and values below 0% decrease it.
@@ -28,10 +35,12 @@
 
     curl --location --request GET 'https://YOUR_RESOURCE_REGION.tts.speech.microsoft.com/cognitiveservices/voices/list' \
 --header 'Ocp-Apim-Subscription-Key: YOUR_RESOURCE_KEY'
-
-*/
-
+ */
 (class AzureSpeaker extends BMSummaryNode {
+  /**
+   * Initializes the prototype slots for the AzureSpeaker class.
+   * @method
+   */
   initPrototypeSlots () {
     /*
     {
@@ -39,6 +48,9 @@
     }
     */
 
+    /**
+     * @property {string} localeName - The language/locale name for the speaker.
+     */
     {
       const slot = this.newSlot("localeName", "English (United States)");
       slot.setInitValue("English (United States)")
@@ -55,6 +67,9 @@
       slot.setSummaryFormat("value")
     }
 
+    /**
+     * @property {string} displayName - The display name for the speaker.
+     */
     {
       const slot = this.newSlot("displayName", null);
       slot.setInspectorPath("")
@@ -71,6 +86,9 @@
       slot.setCanEditInspection(true)
     }
 
+    /**
+     * @property {string} voiceStyle - The style of the voice for the speaker.
+     */
     {
       const slot = this.newSlot("voiceStyle", null);
       slot.setInspectorPath("")
@@ -86,6 +104,9 @@
       slot.setSummaryFormat("value")
     }
     
+    /**
+     * @property {string} volume - The volume setting for the speaker.
+     */
     {
       const slot = this.newSlot("volume", "soft");
       slot.setInspectorPath("")
@@ -101,6 +122,9 @@
       slot.setSummaryFormat("value")
     }
     
+    /**
+     * @property {number} rate - The rate adjustment percentage for the speaker.
+     */
     {
       const slot = this.newSlot("rate", 10);
       slot.setInspectorPath("")
@@ -113,6 +137,9 @@
       slot.setSummaryFormat("value key")
     }
 
+    /**
+     * @property {number} pitch - The pitch adjustment percentage for the speaker.
+     */
     {
       const slot = this.newSlot("pitch", -10);
       slot.setInspectorPath("")
@@ -125,6 +152,9 @@
       slot.setSummaryFormat("value key")
     }
 
+    /**
+     * @property {boolean} isMuted - Indicates whether the speaker is muted.
+     */
     {
       const slot = this.newSlot("isMuted", false);
       slot.setInspectorPath("")
@@ -136,6 +166,9 @@
       slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {Object} currentAudio - The current audio object.
+     */
     {
       const slot = this.newSlot("currentAudio", null);
       /*
@@ -149,14 +182,23 @@
       */
     }
 
+    /**
+     * @property {Object} audioQueue - The audio queue object.
+     */
     {
       const slot = this.newSlot("audioQueue", null);
     }
 
+    /**
+     * @property {Array} audioBlobQueue - The queue of audio blobs.
+     */
     {
       const slot = this.newSlot("audioBlobQueue", null);
     }
 
+    /**
+     * @property {Object} requests - The Azure TTS requests object.
+     */
     {
       const slot = this.newSlot("requests", null)
       slot.setLabel("requests")
@@ -190,6 +232,10 @@
   }
   */
 
+  /**
+   * Initializes the AzureSpeaker instance.
+   * @method
+   */
   init () {
     super.init();
     this.setTitle("Azure Speaker");
@@ -198,6 +244,10 @@
 
   }
 
+  /**
+   * Performs final initialization of the AzureSpeaker instance.
+   * @method
+   */
   finalInit () {
     super.finalInit();
     this.setCanDelete(true);
@@ -206,30 +256,60 @@
 
   // --- helpers ---
 
+  /**
+   * Gets the parent speakers object.
+   * @method
+   * @returns {Object} The parent speakers object.
+   */
   speakers () {
     return this.parentNode() // why doesn't this work?
   }
 
+  /**
+   * Gets the Azure service object.
+   * @method
+   * @returns {Object} The Azure service object.
+   */
   service () {
     return this.speakers().service()
   }
 
+  /**
+   * Gets the available voices.
+   * @method
+   * @returns {Array} The available voices.
+   */
   voices () {
     return this.service().voices()
   }
 
   // --- selection ---
 
+  /**
+   * Gets the valid locale names.
+   * @method
+   * @returns {Array} The valid locale names.
+   */
   validLocaleNames () {
     return this.voices().localeNames()
   }
 
+  /**
+   * Gets the valid display names for the current locale.
+   * @method
+   * @returns {Array} The valid display names.
+   */
   validDisplayNames () {
     const localeMatches = this.voices().voicesForMethodNameAndValue("localeName", this.localeName())
     const displayNames = localeMatches.map(voice => voice.displayName())
     return displayNames
   }
 
+  /**
+   * Gets the selected voice based on the current locale and display name.
+   * @method
+   * @returns {Object} The selected voice object.
+   */
   selectedVoice () {
     // localeName + displayName should be enough to select a unique voice
     const localeMatches = this.voices().voicesForMethodNameAndValue("localeName", this.localeName())
@@ -238,6 +318,11 @@
     return match
   }
 
+  /**
+   * Gets the short name of the selected voice.
+   * @method
+   * @returns {string} The short name of the selected voice.
+   */
   shortName () {
     const v = this.selectedVoice()
     return v ? v.shortName() : null;
@@ -245,6 +330,11 @@
 
   // ---------------------
 
+  /**
+   * Gets the valid volume settings.
+   * @method
+   * @returns {Array} The valid volume settings.
+   */
   validVolumes () {
     return [
       "silent",
@@ -259,6 +349,11 @@
 
   // ---------------------
 
+  /**
+   * Gets the valid voice styles for the selected voice.
+   * @method
+   * @returns {Array} The valid voice styles.
+   */
   validVoiceStyles () {
     const styles = this.selectedVoice().styleList()
     return styles !== null ? styles : []
@@ -266,32 +361,64 @@
   
   // ---
 
+  /**
+   * Sets the muted state of the audio queue.
+   * @method
+   * @param {boolean} aBool - The muted state to set.
+   * @returns {Object} The AzureSpeaker instance.
+   */
   setIsMuted (aBool) {
     this.audioQueue().setIsMuted(aBool);
     return this;
   }
 
+  /**
+   * Gets the muted state of the audio queue.
+   * @method
+   * @returns {boolean} The muted state of the audio queue.
+   */
   isMuted () {
     return this.audioQueue().isMuted();
   }
 
   // ---
 
+  /**
+   * Gets the locale of the selected voice.
+   * @method
+   * @returns {string} The locale of the selected voice.
+   */
   locale () {
     const voice = this.selectedVoice()
     return voice ? voice.locale() : null;
   }
 
+  /**
+   * Gets the pitch as a string with a percentage symbol.
+   * @method
+   * @returns {string} The pitch as a string with a percentage symbol.
+   */
   pitchString () {
     return this.pitch() + "%"
   }
 
+  /**
+   * Gets the rate as a string with a percentage symbol.
+   * @method
+   * @returns {string} The rate as a string with a percentage symbol.
+   */
   rateString () {
     return this.pitch() + "%"
   }
 
   // -------------------------------------
 
+  /**
+   * Generates an SSML request for the given text.
+   * @method
+   * @param {string} text - The text to generate SSML for.
+   * @returns {string} The SSML request string.
+   */
   ssmlRequestForText (text) {
     let s = `<prosody volume='soft' rate='${this.rateString()}' pitch='${this.pitchString()}'>${text}</prosody>`;
 
@@ -313,20 +440,33 @@
 
   // -----------------------------------
 
+  /**
+   * Queues an audio blob in the audio queue.
+   * @method
+   * @param {Blob} audioBlob - The audio blob to queue.
+   * @returns {Object} The AzureSpeaker instance.
+   */
   queueAudioBlob (audioBlob) { // called by the request once it's complete
     this.audioQueue().queueAudioBlob(audioBlob);
     return this;
   }
   
+  /**
+   * Pauses the audio queue.
+   * @method
+   */
   pause() {
     this.debugLog("pause()");
     this.audioQueue().pause();
   }
 
+  /**
+   * Resumes the audio queue.
+   * @method
+   */
   resume () {
     this.debugLog("resume()");
     this.audioQueue().resume();
   }
 
 }.initThisClass());
-

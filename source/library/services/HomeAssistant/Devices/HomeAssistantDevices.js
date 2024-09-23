@@ -1,21 +1,32 @@
-"use strict";
+/**
+ * @module library.services.HomeAssistant.Devices
+ */
 
-/* 
-    HomeAssistantDevices
-
-*/
-
+/**
+ * @class HomeAssistantDevices
+ * @extends HomeAssistantGroup
+ * @classdesc Represents a group of HomeAssistant devices.
+ */
 (class HomeAssistantDevices extends HomeAssistantGroup {
+  /**
+   * @description Initializes the prototype slots for the class.
+   */
   initPrototypeSlots () {
 
   }
 
+  /**
+   * @description Initializes the HomeAssistantDevices instance.
+   */
   init() {
     super.init();
     this.setTitle("devices");
     this.setSubnodeClasses([HomeAssistantDevice]);
   }
 
+  /**
+   * @description Performs final initialization steps for the HomeAssistantDevices instance.
+   */
   finalInit() {
     super.finalInit();
     this.setGetMessageType("config/device_registry/list");

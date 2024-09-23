@@ -1,14 +1,22 @@
-"use strict";
+/**
+ * @module library.services.AiServiceKit
+ */
 
-/* 
-    AiChatModels
-
-*/
-
+/**
+ * @class AiChatModels
+ * @extends BMSummaryNode
+ * @classdesc Represents a collection of AI chat models.
+ */
 (class AiChatModels extends BMSummaryNode {
+  /**
+   * @description Initializes prototype slots for the class.
+   */
   initPrototypeSlots () {
   }
 
+  /**
+   * @description Initializes the instance.
+   */
   init() {
     super.init();
     this.setShouldStore(true);
@@ -17,6 +25,9 @@
     this.setNodeCanReorderSubnodes(true);
   }
 
+  /**
+   * @description Performs final initialization tasks.
+   */
   finalInit() {
     super.finalInit();
     this.setNoteIsSubnodeCount(true);
@@ -25,10 +36,18 @@
     this.setTitle("Models");
   }
 
+  /**
+   * @description Determines if subviews scroll sticks to bottom.
+   * @returns {boolean} False, indicating subviews scroll does not stick to bottom.
+   */
   subviewsScrollSticksToBottom () {
     return false;
   }
 
+  /**
+   * @description Gets the parent service.
+   * @returns {Object} The parent node, which is assumed to be the service.
+   */
   service () {
     return this.parentNode();
   }

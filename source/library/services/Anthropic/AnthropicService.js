@@ -1,10 +1,13 @@
 "use strict";
 
-/** 
+/**
  * @module library.services.Anthropic
+ */
+
+/**
  * @class AnthropicService
  * @extends AiService
- * @description A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
+ * @classdesc A BMSummaryNode that holds the API key and subnodes for the various Anthropic services.
  * 
  * @example
  * AnthropicService.shared().setApiKey("sk-1234567890");
@@ -22,7 +25,7 @@
   }
 
   /**
-   * Returns an array of model configurations.
+   * @description Returns an array of model configurations.
    * @returns {Array<Object>} An array of model configuration objects.
    */
   modelsJson () {
@@ -59,21 +62,20 @@
   }
   
   /**
-   * Initializes the prototype slots.
+   * @description Initializes the prototype slots.
    */
-
   initPrototypeSlots () {
   }
 
   /**
-   * Initializes the service.
+   * @description Initializes the service.
    */
   init () {
     super.init();
   }
 
   /**
-   * Performs final initialization steps.
+   * @description Performs final initialization steps.
    */
   finalInit () {
     super.finalInit()
@@ -82,7 +84,7 @@
   }
 
   /**
-   * Validates the API key format.
+   * @description Validates the API key format.
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the API key is valid, false otherwise.
    */
@@ -91,7 +93,7 @@
   }
 
   /**
-   * Checks if a valid API key is set.
+   * @description Checks if a valid API key is set.
    * @returns {boolean} True if a valid API key is set, false otherwise.
    */
   hasApiKey () {
@@ -99,7 +101,7 @@
   }
 
   /**
-   * Prepares the request before sending it to the API.
+   * @description Prepares the request before sending it to the API.
    * @param {Object} aRequest - The request object to prepare.
    * @returns {AnthropicService} The service instance.
    */

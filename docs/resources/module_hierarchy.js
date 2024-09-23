@@ -51,7 +51,6 @@ function parseModules(content, fileName) {
           addToModule(modules, moduleName, className);
         }
       }
-      // Remove the FunctionDeclaration handler
     });
 
     return modules;
@@ -59,23 +58,24 @@ function parseModules(content, fileName) {
     console.error(`Error parsing file: ${fileName}`);
     console.error(`Error message: ${error.message}`);
     console.error(`Error location: Line ${error.loc.line}, Column ${error.loc.column}`);
-    throw error; // Re-throw the error after logging
+    throw error;
   }
 }
 
 function getModuleName(node, comments) {
-  // Find the closest comment before the node
-  const relevantComment = comments
-    .filter(comment => comment.loc.end.line <= node.loc.start.line)
-    .pop();
+  // Find all comments before the node
+  const relevantComments = comments.filter(comment => comment.loc.end.line <= node.loc.start.line);
 
-  if (relevantComment) {
-    const jsdoc = doctrine.parse(relevantComment.value, { unwrap: true });
+  // Iterate through comments in reverse order to find the closest @module tag
+  for (let i = relevantComments.length - 1; i >= 0; i--) {
+    const comment = relevantComments[i];
+    const jsdoc = doctrine.parse(comment.value, { unwrap: true });
     const moduleTag = jsdoc.tags.find(tag => tag.title === 'module');
     if (moduleTag) {
       return moduleTag.name;
     }
   }
+
   return null;
 }
 

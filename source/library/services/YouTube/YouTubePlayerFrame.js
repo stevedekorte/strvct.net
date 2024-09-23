@@ -1,22 +1,33 @@
+/**
+ * @module library.services.YouTube
+ */
+
 "use strict";
 
-/* 
-    YouTubePlayerFrame
-
-    A singleton that loads the YouTubeAPI script.
-
-    Use the following before calling the YouTube API to wait for it to load:
-    
-    await YouTubePlayerFrame.shared().frameReadyPromise();
-*/
-
+/**
+ * @class YouTubePlayerFrame
+ * @extends ProtoClass
+ * @classdesc A singleton that loads the YouTubeAPI script.
+ * Use the following before calling the YouTube API to wait for it to load:
+ * await YouTubePlayerFrame.shared().frameReadyPromise();
+ */
 (class YouTubePlayerFrame extends ProtoClass {
 
+  /**
+   * @static
+   * @description Initializes the class as a singleton.
+   */
   static initClass () {
     this.setIsSingleton(true);
   }
   
+  /**
+   * @description Initializes the prototype slots.
+   */
   initPrototypeSlots () {
+    /**
+     * @property {Promise} frameReadyPromise
+     */
     {
       const slot = this.newSlot("frameReadyPromise", null);
       slot.setSlotType("Promise");
@@ -25,6 +36,9 @@
     this.setIsDebugging(false);
   }
 
+  /**
+   * @description Initializes the instance.
+   */
   init () {
     super.init();
     /*
@@ -35,6 +49,10 @@
     */
   }
 
+  /**
+   * @description Returns the frame ready promise, creating it if it doesn't exist.
+   * @returns {Promise}
+   */
   frameReadyPromise () {
     if (!this._frameReadyPromise) {
       this.setFrameReadyPromise(Promise.clone().setLabel(this.typeId() + ".frameReadyPromise"));
@@ -43,6 +61,10 @@
     return this._frameReadyPromise;
   }
 
+  /**
+   * @description Sets up the YouTube IFrame Player API.
+   * @private
+   */
   setup () {
       // Load the YouTube IFrame Player API asynchronously
       this.debugLog("setup()");
@@ -52,6 +74,10 @@
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   }
 
+  /**
+   * @description Called when the YouTube API is loaded.
+   * @private
+   */
   onLoaded () {
     this.debugLog("onLoaded()");
     this.frameReadyPromise().callResolveFunc();
@@ -59,7 +85,14 @@
 
 }).initThisClass();
 
+/**
+ * @global
+ * @function onYouTubeIframeAPIReady
+ * @description A global function called after YouTube API code downloads.
+ * @param {*} arg1
+ * @param {*} arg2
+ * @param {*} arg3
+ */
 getGlobalThis().onYouTubeIframeAPIReady = function (arg1, arg2, arg3) {
-  // a global function called after YouTube API code downloads
   YouTubePlayerFrame.shared().onLoaded();
 };

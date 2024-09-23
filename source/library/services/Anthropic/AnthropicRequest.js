@@ -1,64 +1,76 @@
 "use strict";
 
-/* 
-    AnthropicRequest
+/**
+ * @module library.services.Anthropic
+ */
 
-    Example request:
-
-
-    curl https://api.anthropic.com/v1/messages \
-     --header "anthropic-version: 2023-06-01" \
-     --header "anthropic-beta: messages-2023-12-15" \
-     --header "content-type: application/json" \
-     --header "x-api-key: $ANTHROPIC_API_KEY" \
-     --data \
-    '{
-      "model": "claude-3-opus-20240229",
-      "messages": [{"role": "user", "content": "Hello"}],
-      "max_tokens": 256,
-      "stream": true
-    }'
-
-    Example response:
-
-    {
-      "completion": "Hello! How can I assist you today?",
-      "stop_reason": "stop_sequence",
-      "truncated": false,
-      "log_id": "abc123", // the conversation id, used for continuation requests
-      "usage": {
-        "prompt_tokens": 10,
-        "completion_tokens": 20,
-        "total_tokens": 30
-      }
-    }
-
-    Contniuation request:
-
-    curl https://api.anthropic.com/v1/complete \
-      -H "Content-Type: application/json" \
-      -H "X-API-Key: YOUR_API_KEY" \
-      -d '{
-        "conversation_id": "abc123",
-        "continuation": true,
-        "parent_message_id": "def456"
-      }'
-
-*/
-
+/**
+ * @class AnthropicRequest
+ * @extends AiRequest
+ * @classdesc Handles requests to the Anthropic API for AI interactions.
+ *
+ * Example request:
+ *
+ * curl https://api.anthropic.com/v1/messages \
+ *  --header "anthropic-version: 2023-06-01" \
+ *  --header "anthropic-beta: messages-2023-12-15" \
+ *  --header "content-type: application/json" \
+ *  --header "x-api-key: $ANTHROPIC_API_KEY" \
+ *  --data \
+ * '{
+ *   "model": "claude-3-opus-20240229",
+ *   "messages": [{"role": "user", "content": "Hello"}],
+ *   "max_tokens": 256,
+ *   "stream": true
+ * }'
+ *
+ * Example response:
+ *
+ * {
+ *   "completion": "Hello! How can I assist you today?",
+ *   "stop_reason": "stop_sequence",
+ *   "truncated": false,
+ *   "log_id": "abc123", // the conversation id, used for continuation requests
+ *   "usage": {
+ *     "prompt_tokens": 10,
+ *     "completion_tokens": 20,
+ *     "total_tokens": 30
+ *   }
+ * }
+ *
+ * Continuation request:
+ *
+ * curl https://api.anthropic.com/v1/complete \
+ *   -H "Content-Type: application/json" \
+ *   -H "X-API-Key: YOUR_API_KEY" \
+ *   -d '{
+ *     "conversation_id": "abc123",
+ *     "continuation": true,
+ *     "parent_message_id": "def456"
+ *   }'
+ */
 (class AnthropicRequest extends AiRequest {
 
   initPrototypeSlots () {
+    /**
+     * @property {Number} usageInputTokenCount - The number of input tokens used in the request.
+     */
     {
       const slot = this.newSlot("usageInputTokenCount", 0);
       slot.setSlotType("Number");
     }
 
+    /**
+     * @property {Number} usageOutputTokenCount - The number of output tokens generated in the response.
+     */
     {
       const slot = this.newSlot("usageOutputTokenCount", 0);
       slot.setSlotType("Number");
     }
 
+    /**
+     * @property {String} betaVersion - The beta version of the Anthropic API to use.
+     */
     {
       const slot = this.newSlot("betaVersion", "tools-2024-05-16"); // "messages-2023-12-15"
       slot.setSlotType("NumbeStringr");
@@ -66,15 +78,26 @@
 
   }
 
+  /**
+   * @description Initializes the AnthropicRequest instance.
+   */
   init () {
     super.init();
     this.setIsDebugging(true);
   }
 
+  /**
+   * @description Retrieves the API key for Anthropic service.
+   * @returns {String} The API key.
+   */
   apiKey () {
     return AnthropicService.shared().apiKey();
   }
 
+  /**
+   * @description Prepares the request options for the Anthropic API call.
+   * @returns {Object} The request options.
+   */
   requestOptions () {
     const apiKey = this.apiKey();
     const json = {
@@ -93,6 +116,10 @@
     return json;
   }
 
+  /**
+   * @description Sets up the request for streaming responses.
+   * @returns {AnthropicRequest} The current instance.
+   */
   setupForStreaming () {
     // subclasses should override this method to set up the request for streaming
     const body = this.bodyJson();
@@ -101,8 +128,9 @@
     return this;
   }
 
-   // --- streaming ---
-
+  /**
+   * @description Reads and processes the XHR response lines.
+   */
   readXhrLines () {
     try {
       let line = this.readNextXhrLine();
@@ -131,6 +159,10 @@
     }
   }
 
+  /**
+   * @description Processes a JSON chunk from the stream response.
+   * @param {Object} json - The JSON chunk to process.
+   */
   onStreamJsonChunk (json) {
     const type = json.type;
     if (json.type === "error") {
@@ -183,6 +215,10 @@
     }
   }
 
+  /**
+   * @description Returns a dictionary of stop reasons and their descriptions.
+   * @returns {Object} The stop reason dictionary.
+   */
   stopReasonDict () {
     /*
     {
@@ -231,18 +267,35 @@
     };
   }
 
+  /**
+   * @description Returns an array of stop reasons that are considered okay.
+   * @returns {Array} The array of okay stop reasons.
+   */
   okStopReasons () {
     return [null, "end_turn"];
   }
   
+  /**
+   * @description Checks if the request stopped due to reaching the maximum token limit.
+   * @returns {Boolean} True if stopped due to max tokens, false otherwise.
+   */
   stoppedDueToMaxTokens () {
     return this.stopReason() === "max_tokens";
   }
 
+  /**
+   * @description Returns a set of stop reasons that can be retried.
+   * @returns {Set} The set of retriable stop reasons.
+   */
   retriableStopReasons () {
     return new Set(["overloaded_error", "server_overloaded_error", "service_unavailable_error"]);
   }
 
+  /**
+   * @description Handles the XHR load end event.
+   * @param {Event} event - The XHR load end event.
+   * @returns {*} The result of the parent class's onXhrLoadEnd method.
+   */
   onXhrLoadEnd (event) {
     const s = this.xhr().responseText;
     if (s.endsWith("Internal Server Error")) {

@@ -1,29 +1,48 @@
-"use strict";
+/**
+ * @module library.services.HomeAssistant.Areas
+ */
 
-/* 
-    HomeAssistantArea
-
-*/
-
+/**
+ * @class HomeAssistantArea
+ * @extends HomeAssistantObject
+ * @classdesc Represents an area in Home Assistant.
+ */
 (class HomeAssistantArea extends HomeAssistantObject {
+  /**
+   * @description Initializes prototype slots for the class.
+   */
   initPrototypeSlots () {
 
   }
 
+  /**
+   * @description Initializes the instance.
+   */
   init() {
     super.init();
   }
   
+  /**
+   * @description Performs final initialization steps.
+   */
   finalInit () {
     super.finalInit();
     this.setNodeCanEditTitle(true);
     //this.setNodeSubtitleIsChildrenSummary(true);
   }
 
+  /**
+   * @description Returns the ID of the area.
+   * @returns {string} The area ID.
+   */
   id () {
     return this.haJson().area_id;
   }
 
+  /**
+   * @description Updates the title of the area based on its ID.
+   * @returns {HomeAssistantArea} The current instance.
+   */
   updateTitle () {
     if (this.id()) {
       const parts = this.id().split("_");
@@ -35,10 +54,17 @@
     return this;
   }
 
+  /**
+   * @description Connects objects (currently does nothing as there are no parents to connect to).
+   */
   connectObjects () {
     // no parents to connect to
   }
 
+  /**
+   * @description Updates the titles and subtitle of the area.
+   * @returns {HomeAssistantArea} The current instance.
+   */
   updateTitles () {
     this.updateTitle();
     //this.updateSubtitle();
@@ -46,6 +72,10 @@
     return this;
   }
 
+  /**
+   * @description Finds the owner of the area (currently returns null).
+   * @returns {null} Always returns null.
+   */
   findOwner () {
     debugger;
     return null;

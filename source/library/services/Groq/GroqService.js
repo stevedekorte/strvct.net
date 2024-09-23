@@ -1,18 +1,26 @@
-"use strict";
+/**
+ * @module library.services.Groq
+ */
 
-/* 
-    GroqService
-
-    Holds API key and subnodes for the various Groq services.
-
-*/
-
+/**
+ * @class GroqService
+ * @extends AiService
+ * @classdesc Holds API key and subnodes for the various Groq services.
+ */
 (class GroqService extends AiService {
 
+  /**
+   * @static
+   * @description Initializes the class
+   */
   static initClass () {
     this.setIsSingleton(true);
   }
 
+  /**
+   * @description Returns the JSON representation of available models
+   * @returns {Array} An array of model objects
+   */
   modelsJson () {
     return [
       {
@@ -38,23 +46,41 @@
     ];
   }
     
+  /**
+   * @description Initializes prototype slots
+   */
   initPrototypeSlots () {
   }
 
+  /**
+   * @description Initializes the service
+   */
   init () {
     super.init();
   }
 
+  /**
+   * @description Performs final initialization steps
+   */
   finalInit () {
     super.finalInit()
     this.setTitle("Groq");
     this.setSystemRoleName("user"); // only replaced in outbound request json
   }
 
+  /**
+   * @description Checks if the API key is present and valid
+   * @returns {boolean} True if the API key is present and valid, false otherwise
+   */
   hasApiKey () {
     return this.apiKey().length > 0 && this.validateKey(this.apiKey());
   }
 
+  /**
+   * @description Validates the API key
+   * @param {string} s - The API key to validate
+   * @returns {boolean} True if the API key is valid, false otherwise
+   */
   validateKey (s) {
     return s.startsWith("gsk_");
   }

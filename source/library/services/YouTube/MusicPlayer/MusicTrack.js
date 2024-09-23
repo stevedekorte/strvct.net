@@ -1,18 +1,24 @@
 "use strict";
 
-/* 
+/**
+ * @module library.services.YouTube.MusicPlayer
+ */
 
-  MusicTrack
-
-
-*/
-
-
-
-
+/**
+ * @class MusicTrack
+ * @extends BMSummaryNode
+ * @classdesc Represents a music track in the music player.
+ */
 (class MusicTrack extends BMSummaryNode {
 
+  /**
+   * Initializes the prototype slots for the MusicTrack class.
+   * @method
+   */
   initPrototypeSlots () {
+    /**
+     * @property {string} name - The name of the music track.
+     */
     {
       const slot = this.newSlot("name", "unnamed");
       slot.setLabel("name");
@@ -23,6 +29,9 @@
       slot.setSlotType("String");
     }
 
+    /**
+     * @property {string} trackId - The ID of the music track.
+     */
     {
       const slot = this.newSlot("trackId", null);
       slot.setInspectorPath("");
@@ -31,27 +40,15 @@
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("String");
-      //slot.setIsSubnodeField(true);
-      //slot.setCanEditInspection(true);
     }
 
-    /*
-    {
-      const slot = this.newSlot("service", "YouTube");
-      slot.setInspectorPath("");
-      slot.setLabel("service");
-      slot.setShouldStoreSlot(true);
-      slot.setSyncsToView(true);
-      slot.setDuplicateOp("duplicate");
-      slot.setSlotType("String");
-    }
-    */
-
+    /**
+     * @property {Object} togglePlayAction - The action to toggle play/stop.
+     */
     {
       const slot = this.newSlot("togglePlayAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Play");
-      //slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
@@ -59,34 +56,26 @@
       slot.setActionMethodName("togglePlay");
     }
 
+    /**
+     * @property {boolean} shouldPlayOnAccess - Whether the track should play on access.
+     */
     {
       const slot = this.newSlot("shouldPlayOnAccess", true);
       slot.setSlotType("Boolean");
     }
 
-    /*
-
-      // optional info
-      {
-        const slot = this.newSlot("label", null);
-        slot.setShouldJsonArchive(true);
-        slot.setSlotType("String");
-      }
-
-      {
-        const slot = this.newSlot("transcript", null);
-        slot.setShouldJsonArchive(true);
-        slot.setSlotType("String");
-      }
-
-    */
-
+    /**
+     * @property {boolean} isPlaying - Indicates if the track is currently playing.
+     */
     {
       const slot = this.newSlot("isPlaying", false);
       slot.setSyncsToView(true);
       slot.setSlotType("Boolean");
     }
 
+    /**
+     * @property {Set} delegateSet - The set of delegates for this track.
+     */
     {
       const slot = this.newSlot("delegateSet", null);
       slot.setSlotType("Set");
@@ -96,12 +85,19 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * Initializes the MusicTrack instance.
+   * @method
+   */
   init() {
     super.init();
     this.setDelegateSet(new Set());
-    //this.setIsDebugging(true);
   }
 
+  /**
+   * Performs final initialization of the MusicTrack instance.
+   * @method
+   */
   finalInit () {   
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -109,32 +105,47 @@
     super.finalInit();
   }
 
+  /**
+   * Returns the title of the music track.
+   * @method
+   * @returns {string} The name of the track.
+   */
   title () {
     return this.name();
   }
 
+  /**
+   * Returns the subtitle of the music track.
+   * @method
+   * @returns {string} "playing" if the track is playing, otherwise an empty string.
+   */
   subtitle () {
     return this.isPlaying() ? "playing" : "";
   }
 
-    /*
-
-  prepareToAccess () {
-    super.prepareToAccess();
-    if (this.shouldPlayOnAccess()) {
-      this.play();
-    }
-  }
-  */
-
+  /**
+   * Returns the parent library of this track.
+   * @method
+   * @returns {MusicLibrary} The parent music library.
+   */
   library () {
     return this.firstParentChainNodeOfClass(MusicLibrary)
   }
 
+  /**
+   * Returns the parent folder of this track.
+   * @method
+   * @returns {MusicFolder} The parent music folder.
+   */
   folder () {
     return this.firstParentChainNodeOfClass(MusicFolder)
   }
 
+  /**
+   * Plays the music track.
+   * @method
+   * @async
+   */
   async play () {
     const player = this.library().musicPlayer()
     player.setTrackName(this.name());
@@ -149,6 +160,11 @@
     this.post("onSoundEnded");
   }
 
+  /**
+   * Stops the music track.
+   * @method
+   * @async
+   */
   async stop () {
     const player = this.library().musicPlayer()
     await player.stop();
@@ -157,12 +173,20 @@
     this.post("onSoundEnded");
   }
 
+  /**
+   * Checks if this is a music track.
+   * @method
+   * @returns {boolean} Always returns true.
+   */
   isMusicTrack () {
     return true;
   }
 
-  // --- play action ---
-
+  /**
+   * Toggles the play state of the track.
+   * @method
+   * @returns {MusicTrack} This instance.
+   */
   togglePlay () {
     if (this.isPlaying()) {
       this.stop();
@@ -172,6 +196,11 @@
     return this;
   }
 
+  /**
+   * Returns information about the toggle play action.
+   * @method
+   * @returns {Object} An object containing action information.
+   */
   togglePlayActionInfo () {
     return {
       isEnabled: true,
@@ -180,24 +209,46 @@
     };
   }
 
-  // --- delegates --- 
-
+  /**
+   * Posts a note and sends it to delegates.
+   * @method
+   * @param {string} methodName - The name of the method to post.
+   * @returns {MusicTrack} This instance.
+   */
   post (methodName) {
     this.postNoteNamed(methodName);
     this.sendDelegate(methodName);
     return this;
   }
 
+  /**
+   * Adds a delegate to the delegate set.
+   * @method
+   * @param {Object} d - The delegate to add.
+   * @returns {MusicTrack} This instance.
+   */
   addDelegate (d) {
       this.delegateSet().add(d);
       return this;
   }
 
+  /**
+   * Removes a delegate from the delegate set.
+   * @method
+   * @param {Object} d - The delegate to remove.
+   * @returns {MusicTrack} This instance.
+   */
   removeDelegate (d) {
       this.delegateSet().delete(d);
       return this;
   }
 
+  /**
+   * Sends a method call to all delegates.
+   * @method
+   * @param {string} methodName - The name of the method to call on delegates.
+   * @param {Array} [args=[this]] - The arguments to pass to the delegate method.
+   */
   sendDelegate (methodName, args = [this]) {
       const sendDelegate = (d, methodName, args) => {
           const f = d[methodName]

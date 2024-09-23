@@ -1,44 +1,55 @@
+/**
+ * @module library.services.AiServiceKit.AiRequest
+ */
+
 "use strict";
 
-/* 
-    AiRequest
-
-    AiRequest <- on -> XhrWrapper 
-
-    Wrapper for request to API service that manages streaming the response and checking for various errors.
-    
-    Delegate protocol:
-
-      onRequestBegin(request)
-      onRequestComplete(request)
-      onRequestError(request, error)
-
-      onStreamStart(request)
-      onStreamData(request, newContent)
-      onStreamEnd(request)
-
-    Delegate can get info via:
-
-      request.fullContent() 
-      request.status()
-      request.error()
-
-*/
-
+/**
+ * AiRequest class
+ * 
+ * Wrapper for request to API service that manages streaming the response and checking for various errors.
+ * 
+ * Delegate protocol:
+ * 
+ *   onRequestBegin(request)
+ *   onRequestComplete(request)
+ *   onRequestError(request, error)
+ * 
+ *   onStreamStart(request)
+ *   onStreamData(request, newContent)
+ *   onStreamEnd(request)
+ * 
+ * Delegate can get info via:
+ * 
+ *   request.fullContent() 
+ *   request.status()
+ *   request.error()
+ * 
+ * @class AiRequest
+ * @extends BMStorableNode
+ */
 (class AiRequest extends BMStorableNode {
 
   initPrototypeSlots () {
+    /**
+     * @property {Object} delegate - Optional reference to object that owns request
+     */
     {
-      const slot = this.newSlot("delegate", null); // optional reference to object that owns request
+      const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {AiService} service
+     */
     {
       const slot = this.newSlot("service", null);
       slot.setSlotType("AiService");
-
     }
 
+    /**
+     * @property {Boolean} needsProxy
+     */
     {
       const slot = this.newSlot("needsProxy", true);
       slot.setCanInspect(true);
@@ -51,11 +62,17 @@
       slot.setSyncsToView(true);
     }
 
+    /**
+     * @property {Object} bodyJson - Contains the model choice and messages
+     */
     {
-      const slot = this.newSlot("bodyJson", null); // this will contain the model choice and messages
+      const slot = this.newSlot("bodyJson", null);
       slot.setSlotType("JSON Object");
     }
 
+    /**
+     * @property {String} body
+     */
     {
       const slot = this.newSlot("body", null); 
       slot.setCanInspect(true);
@@ -68,21 +85,27 @@
       slot.setSlotType("String");
     }
 
+    /**
+     * @property {Object} json
+     */
     {
       const slot = this.newSlot("json", null);
       slot.setSlotType("JSON Object");
     }
 
-    // streaming
-
-
+    /**
+     * @property {XMLHttpRequest} xhr
+     */
     {
       const slot = this.newSlot("xhr", null);
       slot.setSlotType("XMLHttpRequest");
     }
 
+    /**
+     * @property {Boolean} isStreaming - External read-only
+     */
     {
-      const slot = this.newSlot("isStreaming", false); // external read-only
+      const slot = this.newSlot("isStreaming", false);
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true)
@@ -91,11 +114,17 @@
       slot.setIsSubnodeField(true)
     }
 
+    /**
+     * @property {Promise} xhrPromise
+     */
     {
       const slot = this.newSlot("xhrPromise", null); 
       slot.setSlotType("Promise");
     }
 
+    /**
+     * @property {String} requestId
+     */
     {
       const slot = this.newSlot("requestId", null);
       slot.setInspectorPath(this.type());
@@ -107,8 +136,11 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Number} readIndex - Current read index in the responseText
+     */
     {
-      const slot = this.newSlot("readIndex", 0); // current read index in the responseText
+      const slot = this.newSlot("readIndex", 0);
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -118,13 +150,19 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Array} readLines
+     */
     {
       const slot = this.newSlot("readLines", null);
       slot.setSlotType("Array");
     }
 
+    /**
+     * @property {Boolean} isContinuation - Flag to skip "start" delegate message
+     */
     {
-      const slot = this.newSlot("isContinuation", false); // flag to skip "start" delegate message
+      const slot = this.newSlot("isContinuation", false);
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
       slot.setSyncsToView(true);
@@ -134,10 +172,10 @@
       slot.setCanEditInspection(false);
     }
 
-
+    /**
+     * @property {Number} continuationStartIndex - Where the continued request started in the fullContext (not the responseText)
+     */
     {
-      // where the continued request started in the fullContext (not the responseText)
-      // Need to remove fullContent after this point if we need to retry the request
       const slot = this.newSlot("continuationStartIndex", 0); 
       slot.setInspectorPath(this.type());
       slot.setShouldStoreSlot(true);
@@ -148,6 +186,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {String} stopReason
+     */
     {
       const slot = this.newSlot("stopReason", null);
       slot.setInspectorPath(this.type());
@@ -159,6 +200,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Number} retryDelaySeconds
+     */
     {
       const slot = this.newSlot("retryDelaySeconds", 1);
       slot.setInspectorPath(this.type());
@@ -170,6 +214,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {String} fullContent
+     */
     {
       const slot = this.newSlot("fullContent", null); 
       slot.setInspectorPath(this.type() + "/fullContent");
@@ -181,11 +228,17 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Error} error
+     */
     {
       const slot = this.newSlot("error", null);
       slot.setSlotType("Error");
     }
 
+    /**
+     * @property {String} status
+     */
     {
       const slot = this.newSlot("status", "");
       slot.setInspectorPath(this.type());
@@ -197,7 +250,9 @@
       slot.setCanEditInspection(false);
     }
 
-
+    /**
+     * @property {Boolean} didAbort
+     */
     {
       const slot = this.newSlot("didAbort", false);
       slot.setInspectorPath(this.type());
@@ -209,6 +264,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {Action} retryRequestAction
+     */
     {
       const slot = this.newSlot("retryRequestAction", null);
       slot.setInspectorPath("");
@@ -220,6 +278,9 @@
       slot.setActionMethodName("retryRequest");
     }
 
+    /**
+     * @property {Action} copyBodyAction
+     */
     {
       const slot = this.newSlot("copyBodyAction", null);
       slot.setInspectorPath("");
@@ -231,6 +292,9 @@
       slot.setActionMethodName("copyBody");
     }
 
+    /**
+     * @property {Action} copyMessagesAction
+     */
     {
       const slot = this.newSlot("copyMessagesAction", null);
       slot.setInspectorPath("");
@@ -246,7 +310,9 @@
     this.setShouldStoreSubnodes(false);
   }
 
-
+  /**
+   * Initializes the AiRequest instance
+   */
   init () {
     super.init();
     this.setIsDebugging(false);
@@ -255,32 +321,47 @@
     this.setIsDebugging(true);
   }
 
+  /**
+   * Returns the subtitle for the request
+   * @returns {string}
+   */
   subtitle () {
     return [this.fullContent().length + " bytes", this.status()].join("\n");
   }
 
-  // --- service properties ---
-
+  /**
+   * Returns the API URL
+   * @returns {string}
+   */
   apiUrl () {
     return this.service().chatEndpoint();
   }
 
+  /**
+   * Returns the API key
+   * @returns {string}
+   */
   apiKey () {
     return this.service().apiKey();
   }
 
-  // --- fetch ---
-
+  /**
+   * Returns the request body
+   * @returns {string}
+   */
   body () {
     return JSON.stringify(this.bodyJson(), 2, 2);
   }
 
+  /**
+   * Returns the request options
+   * @returns {Object}
+   */
   requestOptions () {
     const apiKey = this.apiKey();
     return {
       method: "POST",
       headers: {
-        //"Content-Type": "application/json",
         "Content-Type": "application/json; charset=utf-8",
         "Authorization": `Bearer ${apiKey}`,
         'Accept-Encoding': 'identity'
@@ -289,6 +370,9 @@
     };
   }
 
+  /**
+   * Asserts that the request is valid
+   */
   assertValid () {
     if (!this.apiUrl()) {
       throw new Error(this.type() + " apiUrl missing");
@@ -299,6 +383,10 @@
     }
   }
 
+  /**
+   * Returns the active API URL
+   * @returns {string}
+   */
   activeApiUrl () {
     let url = this.apiUrl();
     if (this.needsProxy()) {
@@ -307,16 +395,25 @@
     return url;
   }
 
+  /**
+   * Returns the proxy URL
+   * @returns {string}
+   */
   proxyUrl () {
     const proxyUrl = ProxyServers.shared().defaultServer().proxyUrlForUrl(this.url());
     return proxyUrl;
-    //return WebBrowserWindow.shared().rootUrl() + "/?proxyUrl=" + encodeURIComponent(this.url())
   }
 
+  /**
+   * Displays the request details
+   */
   showRequest () {
     this.debugLog(this.description());
   }
 
+  /**
+   * Displays the response details
+   */
   showResponse () {
     const json = this.json();
     this.debugLog(" response json: ", json);
@@ -325,15 +422,19 @@
     }
   }
 
-  // --- normal response --- 
-
+  /**
+   * Returns a description of the response size
+   * @returns {string}
+   */
   responseSizeDescription () {
     const size = this.xhr() ? this.xhr().responseText.length : 0;
     return ByteFormatter.clone().setValue(size).formattedValue();
   }
 
-  // --- helpers ---
-
+  /**
+   * Returns the curl command for the request
+   * @returns {string}
+   */
   curlCommand () {
     const commandParts = [];
     commandParts.push(`curl  --insecure "` + this.activeApiUrl() + '"');
@@ -349,6 +450,10 @@
     return commandParts.join(" \\\n");
   }
 
+  /**
+   * Returns a description of the request
+   * @returns {string}
+   */
   description () {
     const json = {
       requestId: this.requestId(),
@@ -360,23 +465,31 @@
     return JSON.stringify(json, 2, 2);
   }
 
-  // --- streaming response --- 
-
+  /**
+   * Asserts that the request is ready to stream
+   */
   assertReadyToStream () {
     const target = this.delegate();
     if (target) {
-      // verify streamTarget protocol is implemented by target
       assert(target.onStreamStart);
       assert(target.onStreamData);
       assert(target.onStreamEnd);
     }
   }
 
+  /**
+   * Sets up the request for streaming
+   * @returns {AiRequest}
+   */
   setupForStreaming () {
-    // subclasses should override this method to set up the request for streaming
     return this;
   }
 
+  /**
+   * Sends the request and streams the response
+   * @returns {Promise}
+   */
+  
   async asyncSendAndStreamResponse () {
 
     if (this.isContinuation()) {

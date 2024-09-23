@@ -1,46 +1,65 @@
-"use strict";
+/**
+ * @module library.services.YouTube
+ */
 
-/* 
-    YouTubeAudioPlayer
-
-
-    One shot use example:
-
-      const player = YouTubeAudioPlayer.clone();
-      player.setTrackName(this.name());
-      player.setVideoId(this.trackId());
-      player.setShouldRepeat(false);
-      await player.play();
-      await player.shutdown();
-
-*/
-
+/**
+ * @class YouTubeAudioPlayer
+ * @extends BMStorableNode
+ * @classdesc YouTubeAudioPlayer
+ * 
+ * One shot use example:
+ * 
+ *   const player = YouTubeAudioPlayer.clone();
+ *   player.setTrackName(this.name());
+ *   player.setVideoId(this.trackId());
+ *   player.setShouldRepeat(false);
+ *   await player.play();
+ *   await player.shutdown();
+ */
 (class YouTubeAudioPlayer extends BMStorableNode {
 
+  /**
+   * @description Initializes the prototype slots for the YouTubeAudioPlayer.
+   */
   initPrototypeSlots () {
 
+    /**
+     * @property {Element} element - The DOM element for the player.
+     */
     {
       const slot = this.newSlot("element", null);
       slot.setSyncsToView(true);
       slot.setSlotType("Element");
     }
     
+    /**
+     * @property {Promise} playerPromise - Resolves once player is available.
+     */
     { 
-      const slot = this.newSlot("playerPromise", null); // resolves once player is available
+      const slot = this.newSlot("playerPromise", null);
       slot.setSlotType("Promise");
     }
 
+    /**
+     * @property {Promise} playPromise - Promise for play operation.
+     */
     {
       const slot = this.newSlot("playPromise", null);
       slot.setSlotType("Promise");
     }
 
+    /**
+     * @property {Object} player - Reference to store the YouTube player.
+     */
     {
-      const slot = this.newSlot("player", null); // reference to store the YouTube player
+      const slot = this.newSlot("player", null);
       slot.setSyncsToView(true);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {string} stateName - Current state of the player.
+     */
     {
       const slot = this.newSlot("stateName", "");
       slot.setInspectorPath("");
@@ -53,6 +72,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {string} trackName - Name of the current track.
+     */
     {
       const slot = this.newSlot("trackName", "");      
       slot.setInspectorPath("");
@@ -65,6 +87,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {string} videoId - ID of the current video.
+     */
     {
       const slot = this.newSlot("videoId", null);      
       slot.setInspectorPath("");
@@ -77,6 +102,9 @@
       slot.setCanEditInspection(false);
     }
 
+    /**
+     * @property {boolean} shouldRepeat - Whether the track should repeat.
+     */
     {
       const slot = this.newSlot("shouldRepeat", true);      
       slot.setCanEditInspection(true);
@@ -89,6 +117,9 @@
       slot.setSlotType("Boolean");
     }
 
+    /**
+     * @property {boolean} mute - Whether the player is muted.
+     */
     {
       const slot = this.newSlot("mute", false);      
       slot.setCanEditInspection(true);
@@ -101,10 +132,12 @@
       slot.setSlotType("Boolean");
     }
 
+    /**
+     * @property {number} volume - Volume of the player.
+     */
     {
       const slot = this.newSlot("volume", 0.05);
       slot.setInspectorPath("");
-      //slot.setLabel("");
       slot.setShouldStoreSlot(false);
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
@@ -115,11 +148,13 @@
       slot.setValidValues(this.validVolumeValues());
     }
 
+    /**
+     * @property {Action} togglePlayAction - Action to toggle play/pause.
+     */
     {
       const slot = this.newSlot("togglePlayAction", null);
       slot.setInspectorPath("");
       slot.setLabel("Play");
-      //slot.setShouldStoreSlot(true)
       slot.setSyncsToView(true);
       slot.setDuplicateOp("duplicate");
       slot.setSlotType("Action");
@@ -131,11 +166,18 @@
     this.setShouldStoreSubnodes(false);
   }
 
+  /**
+   * @description Initializes the YouTubeAudioPlayer.
+   */
   init () {
     super.init();
     this.setIsDebugging(false);
   }
 
+  /**
+   * @description Gets or creates the player promise.
+   * @returns {Promise} The player promise.
+   */
   playerPromise () {
     if (!this._playerPromise) {
       this._playerPromise = Promise.clone().setLabel(this.type() + " setup");
@@ -144,6 +186,9 @@
     return this._playerPromise
   }
 
+  /**
+   * @description Performs final initialization of the YouTubeAudioPlayer.
+   */
   finalInit () {
     this.setShouldStore(true);
     this.setShouldStoreSubnodes(false);
@@ -152,47 +197,51 @@
     this.setTitle("YouTube Audio Player");
   }
 
+  /**
+   * @description Gets the subtitle for the player.
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     if (this.isPlaying()) {
       const lines = []
       lines.push(this.stateName() + " '" + this.trackName() + "'");
-      /*
-      const secs = this.secondsBuffered();
-      if (secs) {
-        const percentBufferred = Math.round(this.fractionBuffered()*100) + "%";
-        lines.push(percentBufferred + " buffered (" + secs + "s)");
-        //lines.push(secs + "s buffered");
-      }
-      */
       lines.push("volume: " + Math.round(this.volume()*100) + "%");
       return lines.join("\n");
     }
     return ""
   }
 
+  /**
+   * @description Gets valid volume values.
+   * @returns {Array} Array of valid volume values.
+   */
   validVolumeValues () {
     const values = [];
     let v = 0;
     while (v <= 1.0) {
       values.push(v);
-      //values.push({ label: (v*100) + "%", value: v });
       v += 0.05;
       v = Math.round(v*100)/100;
     }
     return values;
   }
 
+  /**
+   * @async
+   * @description Sets up the frame for the player.
+   */
   async setupFrame () {
-    //debugger;
     await EventManager.shared().firstUserEventPromise();
     await YouTubePlayerFrame.shared().frameReadyPromise();
-    //this.playerPromise().beginTimeout(3000);
     this.setupPlayer();
   }
 
+  /**
+   * @description Sets up the YouTube player.
+   * @returns {YouTubeAudioPlayer} The player instance.
+   */
   setupPlayer () {
     console.log("------------- setup YouTubePlayer ---------------");
-    //debugger;
     this.debugLog("setupPlayer()");
     const json = {
       height: "0",
@@ -210,11 +259,11 @@
         },
       },
       playerVars: {
-        autoplay: 1, // Auto-play the video
-        controls: 0, // Hide player controls
-        showinfo: 0, // Hide video information
-        rel: 0, // Do not show related videos
-        modestbranding: 1, // Show minimal YouTube branding
+        autoplay: 1,
+        controls: 0,
+        showinfo: 0,
+        rel: 0,
+        modestbranding: 1,
       },
     };
 
@@ -234,6 +283,11 @@
     return this;
   }
 
+  /**
+   * @async
+   * @description Plays the current video.
+   * @returns {Promise} A promise that resolves when the video starts playing.
+   */
   async play () {
     if (this.mute()) {
       return;
@@ -243,23 +297,23 @@
       return;
     }
 
-    await this.playerPromise(); // lazy load the player
+    await this.playerPromise();
     this.debugLog("play() after promise");
 
     const startSeconds = 0.0;
     if (this.videoId()) {
-      //this.stop(); // if we do this, the next video only gets cued but not played. Why?
       this.resolvePlayPromise();
 
       this.setPlayPromise(Promise.clone().setLabel(this.type() + ".playPromise"));
       this.player().loadVideoById(this.videoId(), startSeconds);
-      //this.player().pauseVideo()
-      //this.player().cueVideoById(this.videoId());
-      //this.playWhenBuffered();
       return this.playPromise();
     }
   }
 
+  /**
+   * @description Checks if the player is ready.
+   * @returns {boolean} True if the player is ready, false otherwise.
+   */
   isReady () {
     if (this._playerPromise) {
       return this.playerPromise().isResolved();
@@ -267,6 +321,10 @@
     return false;
   }
 
+  /**
+   * @description Gets the map of player states.
+   * @returns {Map} A map of player states.
+   */
   statesMap () {
     const statesDict = {
       "3": "buffering",
@@ -280,6 +338,10 @@
     return statesMap;
   }
 
+  /**
+   * @description Gets the current state name of the player.
+   * @returns {string} The current state name.
+   */
   stateName () {
     if (this.isReady()) {
       const k = String(this.player().getPlayerState());
@@ -289,20 +351,25 @@
     return "unitialized";
   }
 
+  /**
+   * @description Checks if the player is currently playing.
+   * @returns {boolean} True if playing, false otherwise.
+   */
   isPlaying () {
     if (this.isReady()) {
       const currentState = this.player().getPlayerState();
-      //const playStates = [YT.PlayerState.CUED, YT.PlayerState.BUFFERING, YT.PlayerState.PLAYING];
       const playStates = [YT.PlayerState.BUFFERING, YT.PlayerState.PLAYING];
       return playStates.includes(currentState);
-
     }
     return false;
   }
 
+  /**
+   * @description Handles player errors.
+   * @param {Object} event - The error event.
+   */
   onPlayerError (event) {
     debugger;
-    // Handle the error based on the error code
     const error = Number(event.data);
     this.debugLog(
       "------------------ onPlayerError " +
@@ -313,7 +380,7 @@
     );
 
     switch (error) {
-      case 2: // Invalid parameter
+      case 2:
         console.error(
           "The request contains an invalid parameter value. For example, this error occurs if you specify a video ID that does not have 11 characters, or if the video ID contains invalid characters, such as exclamation points or asterisks."
         );
@@ -323,33 +390,36 @@
           "The requested content cannot be played in an HTML5 player or another error related to the HTML5 player has occurred."
         );
         break;
-      case 100: // Video not found
+      case 100:
         console.error("Video not found.");
         break;
-      case 101: // Playback not allowed
+      case 101:
+      case 150:
         console.error(
           "The owner of the requested video does not allow it to be played in embedded players."
         );
         break;
-      case 150: // Playback not allowed
-        console.error(
-          "The owner of the requested video does not allow it to be played in embedded players."
-        );
-        break;
-      default: // Unexpected error
+      default:
         console.error("An unexpected error occurred while loading the video.");
     }
   }
 
+  /**
+   * @description Handles the player ready event.
+   * @param {Object} event - The ready event.
+   */
   onPlayerReady (event) {
     this.debugLog("onPlayerReady()");
     this.updateVolume();
 
     assert(this._playerPromise);
     this.playerPromise().callResolveFunc();
-    //this.player().style.display = "none";
   }
 
+  /**
+   * @description Handles player state changes.
+   * @param {Object} event - The state change event.
+   */
   onPlayerStateChange (event) {
     this.debugLog("onPlayerStateChange " + event.data);
 
@@ -387,14 +457,22 @@
     this.didUpdateNodeIfInitialized();
   }
 
+  /**
+   * @description Handles the end of the video playback.
+   * @param {Object} event - The end event.
+   */
   onPlayerEnd (event) {
     if (this.shouldRepeat()) {
-      this.player().playVideo(); // Replay the video when it ends
+      this.player().playVideo();
     } else {
       this.resolvePlayPromise();
     }
   }
 
+  /**
+   * @description Resolves the play promise.
+   * @returns {YouTubeAudioPlayer} The player instance.
+   */
   resolvePlayPromise () {
     if (this.playPromise()) {
       this.playPromise().callResolveFunc();
@@ -403,11 +481,23 @@
     return this;
   }
 
+  /**
+   * @description Handles changes to the mute state.
+   * @param {boolean} oldValue - The old mute value.
+   * @param {boolean} newValue - The new mute value.
+   */
   didUpdateMute (oldValue, newValue) {
     if (this.mute()) {
       this.stop();
     } 
   }
+
+  /**
+   * @async
+   * @description Sets the volume of the player.
+   * @param {number} v - The volume value (0.0 to 1.0).
+   * @returns {Promise<YouTubeAudioPlayer>} A promise that resolves with the player instance.
+   */
 
   async setVolume (v) {
     // 0.0 to 1.0
@@ -434,6 +524,10 @@
     }
   }
 
+  /**
+   * @async
+   * @description Stops the YouTube player.
+   */
   async stop () {
     if (!this._playerPromise) {
       // no one has asked player to play yet,
@@ -445,6 +539,10 @@
     this.resolvePlayPromise();
   }
 
+  /**
+   * @async
+   * @description Shuts down the YouTube player.
+   */
   async shutdown () {
     await this.playerPromise();
     const player = this.player();
@@ -454,6 +552,10 @@
     console.log("------------- shutdown YouTubePlayer ---------------");
   }
 
+  /**
+   * @description Gets the seconds buffered by the player.
+   * @returns {number} The seconds buffered.
+   */
   secondsBuffered () {
     if (this.isReady()) {
       const player = this.player();
@@ -467,6 +569,10 @@
     return 0;
   }
 
+  /**
+   * @description Gets the fraction of the video that has been buffered.
+   * @returns {number} The fraction buffered.
+   */
   fractionBuffered () {
     if (this.isReady()) {
       const player = this.player();
@@ -476,6 +582,9 @@
     return 0;
   }
 
+  /**
+   * @description Plays the video when sufficient buffering is detected.
+   */
   playWhenBuffered () {
     // this is trying to solve the problem of choppy playback by ensuring sufficient buffering
     if (!this._checkBuffer) {
@@ -491,6 +600,10 @@
 
   // --- actions ---
 
+  /**
+   * @description Toggles the play state of the YouTube player.
+   * @returns {YouTubeAudioPlayer} The player instance.
+   */
   togglePlay () {
     if (this.isPlaying()) {
       this.stop();
@@ -500,6 +613,10 @@
     return this;
   }
 
+  /**
+   * @description Gets the action info for toggling play state.
+   * @returns {Object} The action info.
+   */
   togglePlayActionInfo () {
     return {
       isEnabled: this.videoId() !== null,
@@ -508,6 +625,10 @@
     };
   }
 
+  /**
+   * @async
+   * @description Shuts down the YouTube player.
+   */
   async shutdown () {
     if (this._playerPromise && this.playerPromise().hasAwaiters()) {
       // it's in the middle of being setup so wait until that resolves/rejects
