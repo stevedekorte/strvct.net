@@ -1,8 +1,13 @@
 "use strict";
 
-/*
+/**
+ * @module library.node.storage.base.ObjectPool
+ */
 
-    ObjectPool
+/**
+ * @class ObjectPool
+ * @extends ProtoClass
+ * @description
 
         For persisting a object tree to a JSON formatted representation and back.
         Usefull for both persistence and exporting object out the the app/browser and onto desktop or other browsers.
@@ -47,69 +52,128 @@
 
 (class ObjectPool extends ProtoClass {
 
+    /**
+     * @static
+     * @description
+     * @returns {boolean}
+     */
     static shouldStore () {
         return false;
     }
     
+    /**
+     * @description initialize the prototype slots
+     * @returns {void}
+     */
     initPrototypeSlots () {
+        /**
+         * @property {String} name
+         * @description the name of the object pool
+         * @default "defaultDataStore"
+         */
         {
             const slot = this.newSlot("name", "defaultDataStore");
             slot.setSlotType("String");
         }
 
 
+        /**
+         * @property {Object} rootObject
+         * @description the root object of the object pool
+         * @default null
+         */
+
         {
             const slot = this.newSlot("rootObject", null);
             slot.setSlotType("Object");
         }
 
+        /**
+         * @property {AtomicMap} recordsMap
+         * @description the map of records for the object pool
+         * @default null
+         */
         {
             const slot = this.newSlot("recordsMap", null);
             slot.setSlotType("AtomicMap");
         }
 
+        /**
+         * @property {Map} activeObjects
+         * @description objects known to the pool (previously loaded or referenced)
+         * @default null
+         */
         {
             const slot = this.newSlot("activeObjects", null);
             slot.setDescription("objects known to the pool (previously loaded or referenced)");
             slot.setSlotType("Map");
         }
 
+        /**
+         * @property {Map} dirtyObjects
+         * @description subset of activeObjects containing objects with mutations that need to be stored
+         * @default null
+         */
         {
             const slot = this.newSlot("dirtyObjects", null);
             slot.setDescription("subset of activeObjects containing objects with mutations that need to be stored");
             slot.setSlotType("Map");
         }
 
+        /**
+         * @property {Set} loadingPids
+         * @description pids of objects that are currently being loaded
+         * @default null
+         */
         {
             const slot = this.newSlot("loadingPids", null);
             slot.setDescription("pids of objects that are currently being loaded");
             slot.setSlotType("Set");
         }
 
+        /**
+         * @property {Set} storingPids
+         * @description pids of objects that are currently being stored
+         * @default null
+         */
         {
             const slot = this.newSlot("storingPids", null);
             slot.setDescription("pids of objects that are currently being stored");
             slot.setSlotType("Set");
         }
 
+        /**
+         * @property {Date} lastSyncTime
+         * @description time of last sync. WARNING: vulnerable to system time changes/differences
+         * @default null
+         */
         {
             const slot = this.newSlot("lastSyncTime", null);
             slot.setDescription("Time of last sync. WARNING: vulnerable to system time changes/differences");
             slot.setSlotType("Date");
         }
 
+        /**
+         * @property {Set} markedSet
+         * @description Set of puuids used during collection to mark objects that are reachable from the root
+         * @default null
+         */
+        {
+            const slot = this.newSlot("markedSet", null);
+            slot.setDescription("Set of puuids used during collection to mark objects that are reachable from the root");
+            slot.setSlotType("Set");
+        }
         /*
         {
             const slot = this.newSlot("isReadOnly", false);
         }
         */
 
-        {
-            const slot = this.newSlot("markedSet", null);
-            slot.setDescription("Set of puuids used during collection to mark objects that are reachable from the root");
-            slot.setSlotType("Set");
-        }
-
+        /**
+         * @property {BMNotification} nodeStoreDidOpenNote
+         * @description Notification sent after pool opens
+         * @default null
+         */
         // TODO: change name to objectPoolDidOpen?
         {
             const slot = this.newSlot("nodeStoreDidOpenNote", null);
@@ -117,18 +181,32 @@
             slot.setSlotType("BMNotification");
         }
 
+        /**
+         * @property {Boolean} isFinalizing
+         * @description Set to true during method didInitLoadingPids() - used to ignore mutations during this period
+         * @default false
+         */
         {
             const slot = this.newSlot("isFinalizing", false);
             slot.setDescription("Set to true during method didInitLoadingPids() - used to ignore mutations during this period");
             slot.setSlotType("Boolean");
         }
 
-        // String or Error
+        /**
+         * @property {Error|String} error
+         * @description most recent error, if any
+         * @default null
+         */
         {
             const slot = this.newSlot("error", null); // most recent error, if any
             slot.setSlotType("Error");
         }
 
+        /**
+         * @property {Set} collectablePidSet
+         * @description used during collection to store keys before tx begins
+         * @default null
+         */
         {
             const slot = this.newSlot("collectablePidSet", null); // used during collection to store keys before tx begins
             slot.setSlotType("Set");
@@ -138,6 +216,10 @@
     initPrototype () {
     }
 
+    /**
+     * @description initialize the object pool
+     * @returns {void}
+     */
     init () {
         super.init()
         this.setRecordsMap(ideal.AtomicMap.clone());
@@ -151,6 +233,11 @@
         return this
     }
 
+    /**
+     * @description set the debugging flag
+     * @param {Boolean} b - the new debugging flag value
+     * @returns {ObjectPool}
+     */
     setIsDebugging (b) {
         if (b === false && this.isDebugging() === true) {
             debugger;
@@ -159,6 +246,10 @@
         return this
     }
 
+    /**
+     * @description clear the cache
+     * @returns {ObjectPool}
+     */
     clearCache () {
         this.setActiveObjects(new Map())
         this.setDirtyObjects(new Map())
@@ -179,6 +270,11 @@
     }
     */
 
+    /**
+     * @async
+     * @description open the object pool
+     * @returns {Promise}
+     */
     async promiseOpen () { 
         //debugger;
         const map = this.recordsMap();
@@ -191,12 +287,22 @@
         }
     }
 
+    /**
+     * @async
+     * @description called when the pool opens successfully
+     * @returns {Promise}
+     */
     async onPoolOpenSuccess () {
         //debugger
         // here so subclasses can easily hook
         await this.onRecordsDictOpen()
     }
 
+    /**
+     * @description called when the pool opens successfully
+     * @param {Error} error - the error that occurred
+     * @returns {void}
+     */
     onPoolOpenFailure (error) {
         debugger
         // here so subclasses can easily hook
@@ -209,6 +315,11 @@
     }
     */
 
+    /**
+     * @description show the records map
+     * @param {String} s - optional comment
+     * @returns {void}
+     */
     show (s) {
         const comment = s ? " " + s + " " : ""
         console.log("---" + comment + "---")
@@ -224,6 +335,11 @@
         console.log("------")
     }
 
+    /**
+     * @async
+     * @description called when the records map opens successfully
+     * @returns {Promise}
+     */
     async onRecordsDictOpen () {
         //debugger
         //this.show("ON OPEN")
@@ -233,16 +349,29 @@
         return this
     }
 
+    /**
+     * @description check if the object pool is open
+     * @returns {Boolean}
+     */
     isOpen () {
         return this.recordsMap().isOpen()
     }
 
     // --- root ---
 
+    /**
+     * @description get the root key
+     * @returns {String}
+     */
     rootKey () {
         return "root"
     }
 
+    /**
+     * @description set the root pid
+     * @param {String} pid - the new root pid
+     * @returns {ObjectPool}
+     */
     setRootPid (pid) { 
         // private - it's assumed we aren't already in storing-dirty-objects tx
         const map = this.recordsMap()
@@ -255,14 +384,27 @@
         return this
     }
 
+    /**
+     * @description get the root pid
+     * @returns {String}
+     */
     rootPid () {
         return this.recordsMap().at(this.rootKey())
     }
 
+    /**
+     * @description check if the root has been stored
+     * @returns {Boolean}
+     */
     hasStoredRoot () {
         return this.recordsMap().hasKey(this.rootKey())
     }
 
+    /**
+     * @description get the root object or create it if it doesn't exist
+     * @param {Function} aClosure - the closure to create the root object if it doesn't exist
+     * @returns {Object}
+     */
     rootOrIfAbsentFromClosure (aClosure) {
         //debugger;
         if (this.hasStoredRoot()) {
@@ -276,6 +418,10 @@
         return this.rootObject()
     }
 
+    /**
+     * @description read the root object
+     * @returns {Object}
+     */
     readRoot () {
         //console.log(" this.hasStoredRoot() = " + this.hasStoredRoot())
         if (this.hasStoredRoot()) {
@@ -288,6 +434,11 @@
         throw new Error("missing root object")
     }
 
+    /**
+     * @description check if the object pool knows about the object
+     * @param {Object} obj - the object to check
+     * @returns {Boolean}
+     */
     knowsObject (obj) { // private
         const puuid = obj.puuid()
         const foundIt = this.recordsMap().hasKey(puuid) ||
@@ -296,6 +447,10 @@
         return foundIt
     }
 
+    /**
+     * @description assert that the object pool is open
+     * @returns {void}
+     */
     assertOpen () {
         assert(this.isOpen())
     }
@@ -309,6 +464,11 @@
     }
     */
     
+    /**
+     * @description set the root object
+     * @param {Object} obj - the new root object
+     * @returns {ObjectPool}
+     */
     setRootObject (obj) { // only used for setting up a new root object
         this.assertOpen()
         if (this._rootObject) {
@@ -330,10 +490,18 @@
 
     // ---  ---
 
+    /**
+     * @description convert the records map to a JSON string
+     * @returns {String}
+     */
     asJson () {
         return this.recordsMap().asJson()
     }
 
+    /**
+     * @description update the last sync time
+     * @returns {ObjectPool}
+     */
     updateLastSyncTime () {
         this.setLastSyncTime(Date.now())
         return this
@@ -341,11 +509,21 @@
 
     // --- active and dirty objects ---
 
+    /**
+     * @description check if the object pool has the active object
+     * @param {Object} anObject - the object to check
+     * @returns {Boolean}
+     */
     hasActiveObject (anObject) {
         const puuid = anObject.puuid()
         return this.activeObjects().has(puuid)
     }
     
+    /**
+     * @description add an active object
+     * @param {Object} anObject - the object to add
+     * @returns {Boolean}
+     */
     addActiveObject (anObject) {
         assert(!anObject.isClass());
 
@@ -390,6 +568,10 @@
         return true
     }
 
+    /**
+     * @description close the object pool
+     * @returns {ObjectPool}
+     */
     close () {
         this.removeMutationObservations()
         this.setActiveObjects(new Map())
@@ -398,11 +580,19 @@
         return this
     }
 
+    /**
+     * @description remove mutation observations
+     * @returns {ObjectPool}
+     */
     removeMutationObservations () {
         this.activeObjects().forEachKV((puuid, obj) => obj.removeMutationObserver(this)) // activeObjects is super set of dirtyObjects
         return this
     }
 
+    /**
+     * @description check if the object pool has dirty objects
+     * @returns {Boolean}
+     */
     hasDirtyObjects () {
         return !this.dirtyObjects().isEmpty()
     }
@@ -414,6 +604,13 @@
     }
     */
 
+    /**
+     * @description handle the object update pid event
+     * @param {Object} anObject - the object that was updated
+     * @param {String} oldPid - the old pid
+     * @param {String} newPid - the new pid
+     * @returns {void}
+     */
     onObjectUpdatePid (anObject, oldPid, newPid) {
         // sanity check for debugging - could remove later
         if (this.hasActiveObject(anObject)) {
@@ -423,6 +620,11 @@
         }
     }
 
+    /**
+     * @description handle the object did mutate event
+     * @param {Object} anObject - the object that was mutated
+     * @returns {void}
+     */
     onDidMutateObject (anObject) {
         //if (anObject.hasDoneInit() && ) {
         if (this.hasActiveObject(anObject) && !this.isLoadingObject(anObject)) {
@@ -430,6 +632,11 @@
         }
     }
 
+    /**
+     * @description check if the object is being stored
+     * @param {Object} anObject - the object to check
+     * @returns {Boolean}
+     */
     isStoringObject (anObject) {
         const puuid = anObject.puuid()
         if (this.storingPids()) {
@@ -440,6 +647,11 @@
         return false
     }
 
+    /**
+     * @description check if the object is being loaded
+     * @param {Object} anObject - the object to check
+     * @returns {Boolean}
+     */
     isLoadingObject (anObject) { // private
         if (this.loadingPids()) {
             if (this.loadingPids().has(anObject.puuid())) {
@@ -449,6 +661,11 @@
         return false
     }
 
+    /**
+     * @description add a dirty object
+     * @param {Object} anObject - the object to add
+     * @returns {ObjectPool}
+     */
     addDirtyObject (anObject) { // private
         if (!this.hasActiveObject(anObject)) {
             console.log("looks like it hasn't been referenced yet")
@@ -477,6 +694,10 @@
         return this
     }
 
+    /**
+     * @description schedule the store of dirty objects
+     * @returns {ObjectPool}
+     */
     scheduleStore () {
         if (!this.isOpen()) {
             console.log(this.typeId() + " can't schedule store yet, not open")
@@ -498,6 +719,11 @@
 
     // --- storing ---
 
+    /**
+     * @asynca
+     * @description commit the store of dirty objects
+     * @returns {void}
+     */
     async commitStoreDirtyObjects () {
         this.debugLog("commitStoreDirtyObjects dirty object count:" + this.dirtyObjects().size);
 
@@ -516,6 +742,10 @@
         }
     }
 
+    /**
+     * @description store the dirty objects
+     * @returns {Number}
+     */
     storeDirtyObjects () { // PRIVATE
         // store the dirty objects, if they contain references objects unknown to pool,
         // they'll be added as active + dirty objects which will be stored on next loop. 
@@ -559,6 +789,10 @@
 
     // --- reading ---
 
+    /**
+     * @description get the className conversion map
+     * @returns {Map}
+     */
     classNameConversionMap () {
         const m = new Map()
         /*
@@ -567,6 +801,11 @@
        return m;
     }
 
+    /**
+     * @description get the class for the given name
+     * @param {String} className - the name of the class
+     * @returns {Class}
+     */
     classForName (className) { 
         const m = this.classNameConversionMap()
         if (m.has(className)) {
@@ -576,6 +815,11 @@
         return Object.getClassNamed(className)
     }
 
+    /**
+     * @description get the object for the given record
+     * @param {Object} aRecord - the record to get the object for
+     * @returns {Object}
+     */
     objectForRecord (aRecord) { // private
         const className = aRecord.type
         //console.log("loading " + className + " " + aRecord.id)
@@ -628,10 +872,20 @@
         return obj
     }
 
+    /**
+     * @description get the active object for the given pid
+     * @param {String} puuid - the pid to get the active object for
+     * @returns {Object}
+     */
     activeObjectForPid (puuid) {
         return this.activeObjects().get(puuid);
     }
 
+    /**
+     * @description get the object for the given pid
+     * @param {String} puuid - the pid to get the object for
+     * @returns {Object}
+     */
     objectForPid (puuid) { // PRIVATE (except also used by StoreRef)
         //console.log("objectForPid " + puuid)
 
@@ -667,6 +921,10 @@
         return loadedObj;
     }
 
+    /**
+     * @description initialize the loading pids
+     * @returns {void}
+     */
     didInitLoadingPids () {
         assert(!this.isFinalizing()); // sanity check
         this.setIsFinalizing(true);
@@ -690,22 +948,38 @@
 
     //
 
+    /**
+     * @description get the header key
+     * @returns {String}
+     */
     headerKey () {
         return "header"; // no other key looks like this as they all use PUUID format
     }
 
+    /**
+     * @description get the all pids set
+     * @returns {Set}
+     */
     allPidsSet () {
         const keySet = this.recordsMap().keysSet();
         keySet.delete(this.headerKey());
         return keySet;
     }
 
+    /**
+     * @description get the all pids
+     * @returns {Array}
+     */
     allPids () {
         const keys = this.recordsMap().keysArray();
         keys.remove(this.rootKey());
         return keys;
     }
 
+    /**
+     * @description get the active lazy pids
+     * @returns {Set}
+     */
     activeLazyPids () { // returns a set of pids
         const pids = new Set();
         this.activeObjects().forEachKV((pid, obj) => {
@@ -718,18 +992,38 @@
 
     // --- references ---
 
+    /**
+     * @description get the ref for the given pid
+     * @param {String} aPid - the pid to get the ref for
+     * @returns {Object}
+     */
     refForPid (aPid) {
         return { "*": this.pid() };
     }
 
+    /**
+     * @description get the pid for the given ref
+     * @param {Object} aRef - the ref to get the pid for
+     * @returns {String}
+     */
     pidForRef (aRef) {
         return aRef.getOwnProperty("*");
     }
 
+    /**
+     * @description unref the value if needed
+     * @param {Object} v - the value to unref
+     * @returns {Object}
+     */
     unrefValueIfNeeded (v) {
         return this.unrefValue(v);
     }
 
+    /**
+     * @description unref the value
+     * @param {Object} v - the value to unref
+     * @returns {Object}
+     */
     unrefValue (v) {
         if (Type.isLiteral(v)) {
             return v;
@@ -740,6 +1034,11 @@
         return obj;
     }
 
+    /**
+     * @description ref the value
+     * @param {Object} v - the value to ref
+     * @returns {Object}
+     */
     refValue (v) {
         assert(!Type.isPromise(v));
 
@@ -765,6 +1064,11 @@
 
     // read a record
 
+    /**
+     * @description get the record for the given pid
+     * @param {String} puuid - the pid to get the record for
+     * @returns {Object}
+     */
     recordForPid (puuid) { // private
         if (!this.recordsMap().hasKey(puuid)) {
             return undefined;
@@ -778,12 +1082,22 @@
 
     // write an object
 
+    /**
+     * @description get the kv promise for the given object
+     * @param {Object} obj - the object to get the kv promise for
+     * @returns {Promise}
+     */
     async kvPromiseForObject (obj) {
         const record = await obj.asyncRecordForStore(this);
         const jsonString = JSON.stringify(record);
         return [obj.puuid(), jsonString];
     }
 
+    /**
+     * @description store the object
+     * @param {Object} obj - the object to store
+     * @returns {Object}
+     */
     storeObject (obj) {
         //assert(obj.shouldStore())
         const puuid = obj.puuid()
@@ -820,6 +1134,10 @@
 
     // -------------------------------------
 
+    /**
+     * @description flush if needed
+     * @returns {Object}
+     */
     flushIfNeeded () {
         if (this.hasDirtyObjects()) {
             this.storeDirtyObjects()
@@ -828,6 +1146,11 @@
         return this
     }
 
+    /**
+     * @async
+     * @description promise collect
+     * @returns {Number}
+     */
     async promiseCollect () {
         //debugger;
         if (Type.isUndefined(this.rootPid())) {
@@ -862,6 +1185,11 @@
         return remainingCount;
     }
 
+    /**
+     * @description mark the pid
+     * @param {String} pid - the pid to mark
+     * @returns {Boolean}
+     */
     markPid (pid) { // private
         //this.debugLog(() => "markPid(" + pid + ")")
         if (!this.markedSet().has(pid)) {
@@ -875,6 +1203,11 @@
         return false
     }
 
+    /**
+     * @description get the ref set for the given puuid
+     * @param {String} puuid - the puuid to get the ref set for
+     * @returns {Set}
+     */
     refSetForPuuid (puuid) {
         const record = this.recordForPid(puuid)
         const puuids = new Set()
@@ -886,6 +1219,12 @@
         return puuids
     }
 
+    /**
+     * @description get the puuids set from json
+     * @param {Object} json - the json to get the puuids set from
+     * @param {Set} puuids - the puuids set to add to
+     * @returns {Set}
+     */
     puuidsSetFromJson (json, puuids = new Set()) {
         // json can only contain array's, dictionaries, and literals.
         // We store dictionaries as an array of entries, 
@@ -907,6 +1246,10 @@
 
     // ------------------------
 
+    /**
+     * @description sweep
+     * @returns {Number}
+     */
     sweep () {
         const unmarkedPidSet = this.allPidsSet().difference(this.markedSet()) // allPids doesn't contain rootKey
 
@@ -926,6 +1269,11 @@
         return deleteCount
     }
 
+    /**
+     * @async
+     * @description promise delete all
+     * @returns {void}
+     */
     async promiseDeleteAll () {
         await this.promiseOpen();
         assert(this.isOpen());
@@ -938,20 +1286,38 @@
         await map.promiseCommit()
     }
 
+    /**
+     * @description promise clear
+     * @returns {void}
+     */
     promiseClear () {
         return this.recordsMap().promiseClear();
     }
 
     // ---------------------------
 
+    /**
+     * @description root subnode with title for proto
+     * @param {String} aTitle - the title to get the subnode for
+     * @param {Object} aProto - the proto to get the subnode for
+     * @returns {Object}
+     */
     rootSubnodeWithTitleForProto (aTitle, aProto) {
         return this.rootObject().subnodeWithTitleIfAbsentInsertProto(aTitle, aProto);
     }
 
+    /**
+     * @description count
+     * @returns {Number}
+     */
     count () {
         return this.recordsMap().count();
     }
 
+    /**
+     * @description total bytes
+     * @returns {Number}
+     */
     totalBytes () {
         return this.recordsMap().totalBytes();
     }

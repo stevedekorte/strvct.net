@@ -1,5 +1,11 @@
-"use strict";
+/**
+ * @module library.node.storage.base.categories.primitives
+ * @class Object_store
+ * @extends Object
+ * @classdesc This class extends Object to provide methods for storing and loading objects from a persistent store.
+ */
 
+"use strict";
 
 /*
 const typedArrayClass = Int8Array.__proto__;
@@ -11,7 +17,14 @@ Object.defineSlots(typedArrayClass.prototype, {
 
 (class Object_store extends Object {
 
-    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
+    /**
+     * @static
+     * @description Creates an instance from a record in the store. Should only be called by Store.
+     * @param {Object} aRecord - The record to create the instance from.
+     * @param {Object} aStore - The store object.
+     * @returns {Object|null} The created instance or null if shouldStore is false.
+     */
+    static instanceFromRecordInStore (aRecord, aStore) {
         if(!this.shouldStore()) {
             console.warn(this.type() + " instanceFromRecordInStore() attempting to load a record for an object (of type '" +this.type() + ") with shouldStore set to false - returning null");
             return null;
@@ -24,6 +37,12 @@ Object.defineSlots(typedArrayClass.prototype, {
         return instance;
     }
 
+    /**
+     * @description Loads the object from a record in the store.
+     * @param {Object} aRecord - The record to load from.
+     * @param {Object} aStore - The store object.
+     * @returns {Object} The loaded object.
+     */
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
             const k = entry[0]
@@ -33,7 +52,12 @@ Object.defineSlots(typedArrayClass.prototype, {
         return this
     }
 
-    recordForStore (aStore) { // should only be called by Store
+    /**
+     * @description Creates a record for the store. Should only be called by Store.
+     * @param {Object} aStore - The store object.
+     * @returns {Object} The created record.
+     */
+    recordForStore (aStore) {
         // NOTES: this is (typically) only for dictionaries, not for objects.
         // generic storage of (non ProtoClass subclass) objects is not supported.
         
@@ -67,6 +91,11 @@ Object.defineSlots(typedArrayClass.prototype, {
         }
     }
 
+    /**
+     * @description Gets the persistent unique identifiers for JSON store.
+     * @param {Set} puuids - Set of persistent unique identifiers.
+     * @returns {Set} The set of persistent unique identifiers.
+     */
     refsPidsForJsonStore (puuids = new Set()) {
         if (this.hasOwnProperty("*")) {
             puuids.add(this["*"])
@@ -76,21 +105,30 @@ Object.defineSlots(typedArrayClass.prototype, {
         return puuids
     }
     
+    /**
+     * @description Gets the default store.
+     * @returns {Object} The default store.
+     */
     defaultStore () {
         const store = PersistentObjectPool.sharedPool();
         return store;
     }
 
-    // ---
-
+    /**
+     * @description Called after the object is loaded from the store. Here for subclasses to override.
+     * @returns {Object} This object.
+     */
     didLoadFromStore () { 
         // See Object_init notes for docs on when/how to use this properly.
         // Here for subclasses to override.
         return this
     }
 
-    // --- shouldStore ---
- 
+    /**
+     * @description Sets whether the object should be stored.
+     * @param {boolean} aBool - Whether the object should be stored.
+     * @returns {Object} This object.
+     */
     setShouldStore (aBool) {
         if (aBool != this._shouldStore) {
             //this.willMutate("shouldStore")
@@ -101,6 +139,10 @@ Object.defineSlots(typedArrayClass.prototype, {
         return this
     }
  
+    /**
+     * @description Gets whether the object should be stored.
+     * @returns {boolean} Whether the object should be stored.
+     */
     shouldStore () {
         return this._shouldStore;
         //return Object.getOwnProperty(this._shouldStore)

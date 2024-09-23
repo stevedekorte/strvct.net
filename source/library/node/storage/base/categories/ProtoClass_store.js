@@ -1,8 +1,18 @@
+/**
+ * @module library.node.storage.base.categories
+ * @class ProtoClass_store
+ * @extends ProtoClass
+ * @classdesc This class extends ProtoClass and provides methods for storing and loading object data.
+ */
 "use strict";
-
 
 (class ProtoClass_store extends ProtoClass {
 
+    /**
+     * @description Creates a record for storing the object's data
+     * @param {Object} aStore - The store object
+     * @returns {Object} The record object containing the object's data
+     */
     recordForStore (aStore) { // should only be called by Store
         const aRecord = {
             type: this.type(), 
@@ -26,6 +36,11 @@
         return aRecord
     }
 
+    /**
+     * @description Collects lazy PIDs (Persistent Identifiers) for the object
+     * @param {Set} puuids - Set to store the collected PIDs
+     * @returns {Set} The set of collected PIDs
+     */
     lazyPids (puuids = new Set()) {
         // when doing Store.collect() will need to check for lazy slot pids on active objects
         this.allSlotsMap().forEachV(slot => {
@@ -38,6 +53,12 @@
         return puuids
     }
 
+    /**
+     * @description Loads object data from a record
+     * @param {Object} aRecord - The record containing the object's data
+     * @param {Object} aStore - The store object
+     * @returns {Object} The current object instance
+     */
     loadFromRecord (aRecord, aStore) {
         aRecord.entries.forEach((entry) => {
             const k = entry[0]

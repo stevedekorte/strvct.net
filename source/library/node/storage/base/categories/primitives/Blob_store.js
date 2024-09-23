@@ -1,37 +1,51 @@
+/**
+ * @module library.node.storage.base.categories.primitives
+ * @class Blob_store
+ * @extends Blob
+ * @classdesc
+ * A class for handling Blob storage and serialization.
+ * 
+ * Notes:
+ * It seems there's no way to synchronously serialize a Blob 
+ * - so we implement a "asyncRecordForStore" method 
+ * - which the Store will use to make a kvPromise 
+ * - and add it to it's AtomicMap's queuedSets 
+ * - which get processed in the promiseCommit before applying the changes to the db.
+ * 
+ * Further Notes:
+ * - using asyncRecordForStore requires the AtomicMap to queue the promises
+ *   waiting on the sets whose values are waiting on these blobs to be serialized.
+ *   Since completion of the writes to the AtomicMap and the write transaction to the db
+ *   has to wait on these promises, we can end up with a situation where writes (and potentially reads) 
+ *   from the next transaction occur before the last is complete.
+ *      
+ * So, it seems like not writing the blob to the slot until it has already cached a dataUrl for itself 
+ * might be the simplest option. That would allow us to implement a normal Blob.recordForStore().
+ */
+
 "use strict";
-
-/*
-    
-    Notes:
-
-    It seems there's no way to synchronously serialize a Blob 
-    - so we implement a "asyncRecordForStore" method 
-    - which the Store will use to make a kvPromise 
-    - and add it to it's AtomicMap's queuedSets 
-    - which get processed in the promiseCommit before applying the changes to the db.
-
-    Further Notes:
-
-    - using asyncRecordForStore requires the AtomicMap to queue the promises
-      waiting on the sets whose values are waiting on these blobs to be serialized.
-      Since completion of the writes to the AtomicMap and the write transaction to the db
-      has to wait on these promises, we can end up with a situation where writes (and potentially reads) 
-      from the next transaction occur before the last is complete.
-      
-    So, it seems like not writing the blob to the slot until it has already cached a dataUrl for itself 
-    might be the simplest option. That would allow us to implement a normal Blob.recordForStore().
-
-*/
-
 
 (class Blob_store extends Blob {
 
+    /**
+     * @static
+     * @description Creates an instance from a record in the store.
+     * @param {Object} aRecord - The record to create the instance from.
+     * @param {Object} aStore - The store containing the record.
+     * @returns {Blob_store} A new Blob_store instance.
+     */
     static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
         //assert(aRecord.type === "Blob")
         const obj = this.fromBase64(aRecord.dataUrl)
         return obj
     }
 
+    /**
+     * @description Loads the blob from a record.
+     * @param {Object} aRecord - The record to load from.
+     * @param {Object} aStore - The store containing the record.
+     * @returns {Blob} A new Blob instance.
+     */
     loadFromRecord (aRecord, aStore) {
         const dataUrl = aRecord.dataUrl
         return Blob.fromBase64(dataUrl)
@@ -47,10 +61,19 @@
     }
     */
 
+    /**
+     * @description Prepares the blob for synchronous storage by caching its base64 representation.
+     * @returns {Promise<void>}
+     */
     async asyncPrepareToStoreSynchronously () {
         this._dataUrl = await this.toBase64()
     }
 
+    /**
+     * @description Creates a record for storage.
+     * @param {Object} aStore - The store to create the record for.
+     * @returns {Object} The record object.
+     */
     recordForStore (aStore) { // should only be called by Store
         assert(this._dataUrl)
         return {
@@ -59,18 +82,29 @@
         }
     }
 
+    /**
+     * @description Gets the referenced persistent IDs for JSON store.
+     * @param {Set} puuids - Set of persistent UUIDs.
+     * @returns {Set} The set of referenced persistent IDs.
+     */
     refsPidsForJsonStore (puuids = new Set()) {
         return puuids
     }
 
-    // --- serializers ---
-
+    /**
+     * @description Converts the blob to a base64 string.
+     * @returns {Promise<string>} A promise that resolves to the base64 representation of the blob.
+     */
     async toBase64 () {
         return this.asyncToDataUrl();
     }
 
-    // --- deserializer ---
-    
+    /**
+     * @static
+     * @description Creates a Blob from a base64 string.
+     * @param {string} dataURL - The base64 data URL.
+     * @returns {Blob} A new Blob instance.
+     */
     static fromBase64 (dataURL) {
         const parts = dataURL.split(',');
         const mimeType = parts[0].slice(5, -7);
@@ -84,6 +118,3 @@
     }
     
 }).initThisCategory();
-
-
-

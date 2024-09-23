@@ -2,8 +2,6 @@
 
 - AiServiceKit
   - [AiChatModel](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModel.js)
-  - Anthropic
-    - [AnthropicService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicService.js)
 - browser
   - stack
     - Tile
@@ -38,8 +36,6 @@
   - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
   - [AzureVoice](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoice.js)
   - [AzureVoices](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoices.js)
-  - [BMDataStore](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStore.js)
-  - [BMDataStoreRecord](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStoreRecord.js)
   - [BMDataUrl](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
   - [BMDefaultTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMDefaultTheme.js)
   - [BMField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2FBMField.js)
@@ -57,7 +53,7 @@
   - [BMJsonResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResources.js)
   - [BMKeyboard](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FBMKeyboard.js)
   - [BMMonthNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMMonthNode.js)
-  - [BMNode_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FBMNode_store.js)
+  - [BMNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBMNode.js)
   - [BMNotification](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotification.js)
   - [BMNotificationCenter](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotificationCenter.js)
   - [BMNumberField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMNumberField.js)
@@ -69,7 +65,6 @@
   - [BMResourceGroup](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResourceGroup.js)
   - [BMResources](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResources.js)
   - [BMSoundResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FBMSoundResources.js)
-  - [BMStorableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2FBMStorableNode.js)
   - [BMStringField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStringField.js)
   - [BMStyleSheet](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FBMStyleSheet.js)
   - [BMTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMTheme.js)
@@ -82,9 +77,7 @@
   - [BMURLImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMURLImage.js)
   - [BMYearNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMYearNode.js)
   - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
-  - [Blob_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBlob_store.js)
   - [BooleanView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FBooleanView.js)
-  - [Boolean_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
   - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [BottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FBottomEdgePanGestureRecognizer.js)
   - [BreadCrumbsTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBreadCrumbsTile.js)
@@ -101,7 +94,6 @@
   - [CssAnimation](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FCssAnimation.js)
   - [CssColor](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FCssColor.js)
   - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
-  - [Date_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FDate_store.js)
   - [DefaultProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FDefaultProxyServer.js)
   - [Device](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevice.js)
   - [Devices](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevices.js)
@@ -122,7 +114,6 @@
   - [EdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2FEdgePanGestureRecognizer.js)
   - [EditableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FEditableDomView.js)
   - [ElementDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FElementDomView.js)
-  - [Error_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
   - [EventListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventListener.js)
   - [EventManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventManager.js)
   - [EventPoint](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FEventPoint.js)
@@ -162,7 +153,6 @@
   - [LeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FLeftEdgePanGestureRecognizer.js)
   - [ListenerDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FListenerDomView.js)
   - [LongPressGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FLongPressGestureRecognizer.js)
-  - [Map_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FMap_store.js)
   - [MimeExtensions](./class_doc.html?path=source%2Flibrary%2Fresources%2FMimeExtensions.js)
   - [Mirror](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
   - [Mouse](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FMouse.js)
@@ -172,9 +162,7 @@
   - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
   - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
   - [Number_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FNumber_ideal.js)
-  - [Number_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
   - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
-  - [Object_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FObject_store.js)
   - [OpenAiImage](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImage.js)
   - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
   - [OpenAiImagePrompts](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompts.js)
@@ -194,7 +182,6 @@
   - [PinchGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPinchGestureRecognizer.js)
   - [Point](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FPoint.js)
   - [ProtoClass](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
-  - [ProtoClass_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FProtoClass_store.js)
   - [ProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServer.js)
   - [ProxyServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServers.js)
   - [Rectangle](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
@@ -226,7 +213,6 @@
   - [SelectListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSelectListener.js)
   - [SelectableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSelectableDomView.js)
   - [Services](./class_doc.html?path=source%2Flibrary%2Fservices%2FServices.js)
-  - [Set_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FSet_store.js)
   - [SlideGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FSlideGestureRecognizer.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
   - [SpatialModelNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSpatialModelsNode.js)
@@ -236,8 +222,6 @@
   - [StackFrame](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
   - [StackTrace](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)
   - [StackView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackView.js)
-  - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
-  - [String_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
   - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
   - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)
@@ -294,7 +278,6 @@
     - [SimpleSynth](./class_doc.html?path=source%2Flibrary%2Faudio%2FSimpleSynth.js)
   - ideal
     - [ArrayBuffer_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FArrayBuffer_ideal.js)
-    - [ArrayBuffer_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArrayBuffer_store.js)
     - [Array_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FArray_ideal.js)
     - [Boolean_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FBoolean_ideal.js)
     - [Date_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FDate_ideal.js)
@@ -430,7 +413,6 @@
       - [BMPrototypesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMPrototypesNode.js)
       - [BMSummaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMSummaryNode.js)
       - base
-        - [BMNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBMNode.js)
         - [BaseNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBaseNode.js)
         - [InspectableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FInspectableNode.js)
         - [StyledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FStyledNode.js)
@@ -443,4 +425,30 @@
         - [BMTextNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMTextNode.js)
     - storage
       - base
-        - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
+        - categories
+          - [ProtoClass_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FProtoClass_store.js)
+          - BMNode_store
+            - [BMNode_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FBMNode_store.js)
+          - primitives
+            - [ArrayBuffer_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArrayBuffer_store.js)
+            - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
+            - [Blob_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FBlob_store.js)
+            - [Date_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FDate_store.js)
+            - [Error_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
+            - [Map_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FMap_store.js)
+            - [Object_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FObject_store.js)
+            - [Set_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FSet_store.js)
+            - literals
+              - [Boolean_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
+              - [Number_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
+              - [String_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
+        - StoreRef
+          - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
+      - nodes
+        - [BMStorableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2FBMStorableNode.js)
+        - inspectors
+          - [BMDataStore](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStore.js)
+          - [BMDataStoreRecord](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2Finspectors%2FBMDataStoreRecord.js)
+  - services
+    - Anthropic
+      - [AnthropicService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicService.js)

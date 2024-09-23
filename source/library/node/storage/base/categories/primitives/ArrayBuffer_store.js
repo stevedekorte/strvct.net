@@ -2,19 +2,22 @@
 
 /**
  * Extends the ArrayBuffer class with storage-related functionality.
- * @module library.ideal
+ * @module library.node.storage.base.categories.primitives
  * @class ArrayBuffer_store
  * @extends ArrayBuffer
+ * @classdesc Provides methods for storing and loading ArrayBuffer data in a store.
  */
 (class ArrayBuffer_store extends ArrayBuffer {
 
     /**
      * Creates an instance of ArrayBuffer_store from a record in the store.
+     * @static
      * @param {Object} aRecord - The record containing the ArrayBuffer data.
      * @param {Object} aStore - The store object.
      * @returns {ArrayBuffer_store} A new instance of ArrayBuffer_store.
+     * @description Should only be called by Store.
      */
-    static instanceFromRecordInStore (aRecord, aStore) { // should only be called by Store
+    static instanceFromRecordInStore (aRecord, aStore) {
         //assert(aRecord.type === "ArrayBuffer")
         const bytes = aRecord.bytes
         const obj = new ArrayBuffer(bytes.length)
@@ -52,8 +55,9 @@
      * Creates a record representation of this ArrayBuffer_store for storage.
      * @param {Object} aStore - The store object.
      * @returns {Object} A record object representing this ArrayBuffer_store.
+     * @description Should only be called by Store.
      */
-    recordForStore (aStore) { // should only be called by Store
+    recordForStore (aStore) {
         return {
             type: "ArrayBuffer", //Type.typeName(this), 
             bytes: this.bytes(),
@@ -70,6 +74,3 @@
     }
     
 }).initThisCategory();
-
-
-

@@ -1,38 +1,53 @@
 "use strict";
 
-/*
-
-    BMStorableNode 
-
-    Thin subclass to:
-
-    - override some slots and mark them as shouldStore
-    - hook didUpdateSlot() to didMutate so ObjectPool (if observing mutations) gets told it needs to store the change
-    
-*/
-
+/**
+ * @module library.node.storage.nodes
+ * @class BMStorableNode
+ * @extends StyledNode
+ * @classdesc BMStorableNode is a thin subclass that overrides some slots and marks them as shouldStore.
+ * It also hooks didUpdateSlot() to didMutate so ObjectPool (if observing mutations) gets told it needs to store the change.
+ */
 (class BMStorableNode extends StyledNode {
 
+    /**
+     * @description Initializes the prototype slots for the BMStorableNode.
+     */
     initPrototypeSlots () {
         this.setShouldStore(true)
         this.setShouldScheduleDidInit(true)
         //this.setShouldStoreSubnodes(true)
 
+        /**
+         * @property {boolean} canDelete
+         * @description Indicates if the node can be deleted.
+         */
         {
             const slot = this.overrideSlot("canDelete", false)
             slot.setShouldStoreSlot(true)  // defined in BMNode, but we want to store it
         }
 
+        /**
+         * @property {string|null} title
+         * @description The title of the node.
+         */
         {
             const slot = this.overrideSlot("title", null)
             slot.setShouldStoreSlot(true)
         }
 
+        /**
+         * @property {string} subtitle
+         * @description The subtitle of the node.
+         */
         {
             const slot = this.overrideSlot("subtitle", "")
             slot.setShouldStoreSlot(true)
         }
 
+        /**
+         * @property {boolean} nodeFillsRemainingWidth
+         * @description Indicates if the node fills the remaining width.
+         */
         {
             const slot = this.overrideSlot("nodeFillsRemainingWidth", false)
             slot.setShouldStoreSlot(true)
@@ -40,6 +55,10 @@
             slot.setCanInspect(true)
         }
 
+        /**
+         * @property {SubnodesArray|null} subnodes
+         * @description The subnodes of the current node.
+         */
         {
             const slot = this.overrideSlot("subnodes", null)
             //subnodesSlot.setOwnsSetter(true)
@@ -60,11 +79,18 @@
         */
     }
 
+    /**
+     * @description Initializes the prototype.
+     */
     initPrototype () {
     }
 
-    // --- udpates ---
-	
+    /**
+     * @description Handles updates to slots.
+     * @param {Object} aSlot - The slot being updated.
+     * @param {*} oldValue - The old value of the slot.
+     * @param {*} newValue - The new value of the slot.
+     */
     didUpdateSlot (aSlot, oldValue, newValue) {
         super.didUpdateSlot(aSlot, oldValue, newValue)
 
@@ -104,14 +130,20 @@
     }
     */
 
+    /**
+     * @description Handles changes to the subnode list.
+     * @returns {BMStorableNode} Returns this instance.
+     */
     didChangeSubnodeList () {
         super.didChangeSubnodeList()
         //this.updateLazySubnodeCount()
         return this
     }
 
-    // subnodes
-    
+    /**
+     * @description Gets the count of subnodes.
+     * @returns {number} The number of subnodes.
+     */
     subnodeCount () {
         if (!this._subnodes) {
             return this.lazySubnodeCount()
@@ -119,6 +151,10 @@
         return this._subnodes.length
     }
 
+    /**
+     * @description Prepares the node for first access.
+     * @returns {BMStorableNode} Returns this instance.
+     */
     prepareForFirstAccess () {
         super.prepareForFirstAccess()
         return this
