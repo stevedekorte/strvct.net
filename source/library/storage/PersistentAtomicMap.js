@@ -1,57 +1,76 @@
+/**
+ * @module library.storage.PersistentAtomicMap
+ */
+
 "use strict";
 
-/*
-
-    PersistentAtomicMap
-
-    An persistent atomic Map implemented as 
-    a read & write cache on top of IndexedDB.
-    
-    On open, it reads the entire db into a dictionary
-    so we can do synchronous reads and writes (avoiding IndexedDB's async API),
-    and then call the async commit at the end of the event loop.
-
-    Notes:
-
-    - keys and values are assumed to be strings
-	- any exception between begin and commit should halt the app and require a restart to ensure consistency
-
-    API:
-
-    - at(key) returns a value from the internal dict
-    - begin() shallow copies the current internal dict
-    - atPut(key, value) & removeAt(key)
-        applies normal op and adds key to changedKeySet
-    - revert() reverts changes since begin
-    - commit() constructs a transaction using changedKeySet 
-	- at(key) first checks the writeCache beforing checking the readCache
-		
-    TODO: 
-    
-    - auto sweep after a write if getting full? 
-        
-*/
-
+/**
+ * @class PersistentAtomicMap
+ * @extends ideal.AtomicMap
+ * @classdesc An persistent atomic Map implemented as 
+ * a read & write cache on top of IndexedDB.
+ * 
+ * On open, it reads the entire db into a dictionary
+ * so we can do synchronous reads and writes (avoiding IndexedDB's async API),
+ * and then call the async commit at the end of the event loop.
+ * 
+ * Notes:
+ * 
+ * - keys and values are assumed to be strings
+ * - any exception between begin and commit should halt the app and require a restart to ensure consistency
+ * 
+ * API:
+ * 
+ * - at(key) returns a value from the internal dict
+ * - begin() shallow copies the current internal dict
+ * - atPut(key, value) & removeAt(key)
+ *     applies normal op and adds key to changedKeySet
+ * - revert() reverts changes since begin
+ * - commit() constructs a transaction using changedKeySet 
+ * - at(key) first checks the writeCache beforing checking the readCache
+ * 	
+ * TODO: 
+ * 
+ * - auto sweep after a write if getting full? 
+ */
 (class PersistentAtomicMap extends ideal.AtomicMap {
+    /**
+     * @description Initializes prototype slots for the class.
+     */
     initPrototypeSlots () {
         {
+            /**
+             * @property {String} name
+             */
             const slot = this.newSlot("name", null);
             slot.setSlotType("String");
         }
         {
+            /**
+             * @property {IndexedDBFolder} idb
+             */
             const slot = this.newSlot("idb", null);
             slot.setSlotType("IndexedDBFolder");
         }
         {
+            /**
+             * @property {Number} txCount
+             */
             const slot = this.newSlot("txCount", 0);
             slot.setSlotType("Number");
         }
         {
+            /**
+             * @property {Boolean} isApplying
+             */
             const slot = this.newSlot("isApplying", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Initializes the instance.
+     */
     init () {
         super.init()
         this.setIsOpen(false)
@@ -60,35 +79,59 @@
         this.setName("PersistentAtomicMap")
     }
 
+    /**
+     * @description Sets the name of the map and updates the IDB path.
+     * @param {string} aString - The new name for the map.
+     * @returns {PersistentAtomicMap} - Returns this instance.
+     */
     setName (aString) {
         this._name = aString
         this.idb().setPath(this.name())
         return this
     }
 
-    // open
-
+    /**
+     * @description Checks if the map is open.
+     * @returns {boolean} - True if the map is open, false otherwise.
+     */
     isOpen () {
         return this.idb().isOpen()
     }
 
+    /**
+     * @description Synchronous open is not supported.
+     * @throws {Error} Always throws an error as synchronous open is not supported.
+     */
     open () {
         throw new Error(this.type() + " synchronous open not supported")
         return this
     }
 
+    /**
+     * @description Sets the name of the map and updates the IDB path.
+     * @param {string} aString - The new name for the map.
+     * @returns {PersistentAtomicMap} - Returns this instance.
+     */
     setName (aString) {
         this._name = aString
         this.idb().setPath(this.name())
         return this
     }
 
+    /**
+     * @description Asynchronously opens the map.
+     * @returns {Promise} A promise that resolves when the map is opened.
+     */
     async promiseOpen () {
         this.debugLog(() => "promiseOnOpen() '" + this.name() + "'");
         await this.idb().promiseOpen();
         return this.promiseOnOpen(); // it can deal with multiple calls while it's opening
     }
 	
+    /**
+     * @description Handles the opening of the map.
+     * @returns {Promise} A promise that resolves when the map is loaded.
+     */
     async promiseOnOpen () {
         if (false) {
             debugger;
@@ -100,18 +143,21 @@
         await this.promiseLoadMap();
     }
 
+    /**
+     * @description Loads the map from the IDB.
+     * @returns {Promise} A promise that resolves when the map is loaded.
+     */
     async promiseLoadMap () {
         const map = await this.idb().promiseAsMap();
         assert(!Type.isNull(map));
-        //console.log(this.debugTypeId() + " onOpen() --- loaded cache with " + this.recordsMap().count() + " keys")
         this.setMap(map);
-        //console.log("map keys:", map.keysArray())
         this.setIsOpen(true);
-        //this.verifySync(callback, errorCallback)
     }
 
-    // --- close ---
-
+    /**
+     * @description Closes the map.
+     * @returns {PersistentAtomicMap} - Returns this instance.
+     */
     close () {
         if (this.isOpen()) {
             this.idb().close()
@@ -120,35 +166,42 @@
         return this
     }
 	
-    // ---- clear --- 
-		
+    /**
+     * @description Clears the map.
+     * @returns {Promise} A promise that resolves when the map is cleared.
+     */
     async promiseClear () {
         await this.idb().promiseClear();
         this.map().clear();
     }
 		
-    // --- transactions ---
-
+    /**
+     * @description Generates a new transaction ID.
+     * @returns {string} The new transaction ID.
+     */
     newTxId () {
         const count = this.txCount()
-        //const s = this.typeId() + "_TX_" + count
         const s = "TX_" + count
         this.setTxCount(count + 1)
         return s
     }
 
+    /**
+     * @description Applies changes to the map.
+     * @returns {Promise} A promise that resolves when changes are applied.
+     */
     async promiseApplyChanges () {
-        //console.log(this.name() + " --- promiseApplyChanges ---")
-        //debugger
         const count = this.changedKeySet().size
         const tx = this.idb().privateNewTx();
-        //const tx = await this.idb().promiseNewTx();
         await this.applyChangesToTx(tx);
-        //return tx.promiseCommit();
     }
 
+    /**
+     * @description Applies changes to a transaction.
+     * @param {Object} tx - The transaction to apply changes to.
+     * @returns {Promise} A promise that resolves when changes are applied.
+     */
     async applyChangesToTx (tx) {
-        //debugger
         assert(!this.isApplying())
         this.setIsApplying(true)
 
@@ -173,16 +226,14 @@
         
         this.debugLog(() => "---- " + this.type() + " committed tx with " + count + " writes ----");
 
-        // indexeddb commits on next event loop automatically
-        // tx is marked as committed and will throw exception on further writes
-
         await tx.promiseCommit();
         this.setIsApplying(false);
-        //await this.promiseVerifySync();
     }
 	
-    // --- helpers ---
-
+    /**
+     * @description Verifies that the map is in sync with the IDB.
+     * @returns {Promise} A promise that resolves when verification is complete.
+     */
     async promiseVerifySync () {
         const currentMap = this.map().shallowCopy();
         const map = await this.idb().promiseAsMap();
@@ -191,12 +242,9 @@
         if (isSynced) {
             this.debugLog(".verifySync() SUCCEEDED");
         } else {
-            //this.idb().show()
-            //console.log("syncdb idb json: ", JSON.stringify(map.asDict(), null, 2))
-            throw new Error(his.debugTypeId() + ".verifySync() FAILED");
+            throw new Error(this.debugTypeId() + ".verifySync() FAILED");
             debugger;
         }
     }
     
 }.initThisClass());
-

@@ -1,7 +1,10 @@
 "use strict";
 
 /**
- * 
+ * @module library.storage
+ */
+
+/**
  * An async Map wrapper for IndexedDB.
  * 
  * @class PersistentAsyncMap
@@ -14,11 +17,17 @@
      * @returns {undefined}
      */
     initPrototypeSlots () {
+        /**
+         * @property {string} name - The name of the persistent async dictionary.
+         */
         {
             const slot = this.newSlot("name", "PersistentAsyncDictionary");
             slot.setSlotType("String");
         }
 
+        /**
+         * @property {IndexedDBFolder} idb - The IndexedDBFolder instance.
+         */
         {
             const slot = this.newSlot("idb", null);
             slot.setSlotType("IndexedDBFolder");
