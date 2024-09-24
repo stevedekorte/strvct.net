@@ -10,7 +10,6 @@
     
     /**
      * Initializes the prototype slots for the BMMinuteNode.
-     * @method
      */
     initPrototypeSlots () {
         {
@@ -24,7 +23,6 @@
 
     /**
      * Initializes the prototype of the BMMinuteNode.
-     * @method
      */
     initPrototype () {
         this.setCanDelete(false);
@@ -35,7 +33,6 @@
 
     /**
      * Sets the value of the minute.
-     * @method
      * @param {Number} v - The minute value to set.
      * @returns {BMMinuteNode} The instance of BMMinuteNode.
      */
@@ -47,7 +44,6 @@
 
     /**
      * Returns the formatted minute name.
-     * @method
      * @returns {string} The formatted minute name.
      */
     minuteName () {
@@ -60,7 +56,6 @@
 
     /**
      * Returns the title of the node.
-     * @method
      * @returns {string} The title of the node.
      */
     title () {
@@ -69,7 +64,6 @@
 
     /**
      * Returns the subtitle of the node.
-     * @method
      * @returns {null} Always returns null.
      */
     subtitle () {
@@ -78,7 +72,6 @@
     
     /**
      * Returns the note of the node.
-     * @method
      * @returns {null} Always returns null.
      */
     note () {
@@ -87,7 +80,6 @@
     
     /**
      * Returns the node tile link.
-     * @method
      * @description Used by UI tile views to browse into next column.
      * @returns {null} Always returns null.
      */

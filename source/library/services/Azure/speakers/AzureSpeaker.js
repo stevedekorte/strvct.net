@@ -39,7 +39,7 @@
 (class AzureSpeaker extends BMSummaryNode {
   /**
    * Initializes the prototype slots for the AzureSpeaker class.
-   * @method
+
    */
   initPrototypeSlots () {
     /*
@@ -234,7 +234,7 @@
 
   /**
    * Initializes the AzureSpeaker instance.
-   * @method
+
    */
   init () {
     super.init();
@@ -246,7 +246,7 @@
 
   /**
    * Performs final initialization of the AzureSpeaker instance.
-   * @method
+
    */
   finalInit () {
     super.finalInit();
@@ -258,7 +258,7 @@
 
   /**
    * Gets the parent speakers object.
-   * @method
+
    * @returns {Object} The parent speakers object.
    */
   speakers () {
@@ -267,7 +267,7 @@
 
   /**
    * Gets the Azure service object.
-   * @method
+
    * @returns {Object} The Azure service object.
    */
   service () {
@@ -276,7 +276,7 @@
 
   /**
    * Gets the available voices.
-   * @method
+
    * @returns {Array} The available voices.
    */
   voices () {
@@ -287,7 +287,7 @@
 
   /**
    * Gets the valid locale names.
-   * @method
+
    * @returns {Array} The valid locale names.
    */
   validLocaleNames () {
@@ -296,7 +296,7 @@
 
   /**
    * Gets the valid display names for the current locale.
-   * @method
+
    * @returns {Array} The valid display names.
    */
   validDisplayNames () {
@@ -307,7 +307,7 @@
 
   /**
    * Gets the selected voice based on the current locale and display name.
-   * @method
+
    * @returns {Object} The selected voice object.
    */
   selectedVoice () {
@@ -320,7 +320,7 @@
 
   /**
    * Gets the short name of the selected voice.
-   * @method
+
    * @returns {string} The short name of the selected voice.
    */
   shortName () {
@@ -332,7 +332,7 @@
 
   /**
    * Gets the valid volume settings.
-   * @method
+
    * @returns {Array} The valid volume settings.
    */
   validVolumes () {
@@ -351,7 +351,7 @@
 
   /**
    * Gets the valid voice styles for the selected voice.
-   * @method
+
    * @returns {Array} The valid voice styles.
    */
   validVoiceStyles () {
@@ -363,7 +363,7 @@
 
   /**
    * Sets the muted state of the audio queue.
-   * @method
+
    * @param {boolean} aBool - The muted state to set.
    * @returns {Object} The AzureSpeaker instance.
    */
@@ -374,7 +374,7 @@
 
   /**
    * Gets the muted state of the audio queue.
-   * @method
+
    * @returns {boolean} The muted state of the audio queue.
    */
   isMuted () {
@@ -385,7 +385,7 @@
 
   /**
    * Gets the locale of the selected voice.
-   * @method
+
    * @returns {string} The locale of the selected voice.
    */
   locale () {
@@ -395,7 +395,7 @@
 
   /**
    * Gets the pitch as a string with a percentage symbol.
-   * @method
+
    * @returns {string} The pitch as a string with a percentage symbol.
    */
   pitchString () {
@@ -404,7 +404,7 @@
 
   /**
    * Gets the rate as a string with a percentage symbol.
-   * @method
+
    * @returns {string} The rate as a string with a percentage symbol.
    */
   rateString () {
@@ -415,7 +415,7 @@
 
   /**
    * Generates an SSML request for the given text.
-   * @method
+
    * @param {string} text - The text to generate SSML for.
    * @returns {string} The SSML request string.
    */
@@ -442,7 +442,7 @@
 
   /**
    * Queues an audio blob in the audio queue.
-   * @method
+
    * @param {Blob} audioBlob - The audio blob to queue.
    * @returns {Object} The AzureSpeaker instance.
    */
@@ -453,7 +453,7 @@
   
   /**
    * Pauses the audio queue.
-   * @method
+
    */
   pause() {
     this.debugLog("pause()");
@@ -462,7 +462,7 @@
 
   /**
    * Resumes the audio queue.
-   * @method
+
    */
   resume () {
     this.debugLog("resume()");

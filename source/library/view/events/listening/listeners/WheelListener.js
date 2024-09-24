@@ -13,7 +13,7 @@
     
     /**
      * @description Initializes the prototype slots for the class.
-     * @method initPrototypeSlots
+
      */
     initPrototypeSlots () {
 
@@ -21,7 +21,7 @@
 
     /**
      * @description Initializes the instance.
-     * @method init
+
      * @returns {WheelListener} The instance of the class.
      */
     init () {
@@ -31,7 +31,7 @@
 
     /**
      * @description Sets up the event listeners for the class.
-     * @method setupListeners
+
      * @returns {WheelListener} The instance of the class.
      */
     setupListeners () {

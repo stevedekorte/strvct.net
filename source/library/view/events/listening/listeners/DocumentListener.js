@@ -11,7 +11,6 @@
     
     /**
      * @description Initializes prototype slots for the DocumentListener class.
-     * @method
      */
     initPrototypeSlots () {
 
@@ -19,7 +18,6 @@
 
     /**
      * @description Initializes the DocumentListener instance.
-     * @method
      * @returns {DocumentListener} The initialized instance.
      */
     init () {
@@ -29,7 +27,6 @@
 
     /**
      * @description Sets up the event listeners for the DocumentListener.
-     * @method
      * @returns {DocumentListener} The instance with setup listeners.
      */
     setupListeners () {
@@ -50,7 +47,6 @@
 
     /**
      * @description Returns the target for the event listener.
-     * @method
      * @returns {Document} The document object.
      */
     listenTarget () {

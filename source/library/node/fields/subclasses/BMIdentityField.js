@@ -11,7 +11,6 @@
     
     /**
      * @description Initializes prototype slots for the BMIdentityField.
-     * @method
      */
     initPrototypeSlots () {
     }
@@ -19,7 +18,6 @@
     /**
      * @description Initializes the prototype of the BMIdentityField.
      * Sets the key and value as non-editable.
-     * @method
      */
     initPrototype () {
         this.setKeyIsEditable(false);
@@ -29,7 +27,6 @@
     /**
      * @description Validates the current value of the field.
      * Sets an error if the value is not a valid Bitcoin public key.
-     * @method
      */
     validate () {
         if (!bitcore.PublicKey.isValid(this.value())) {
@@ -42,7 +39,6 @@
     /**
      * @description Sets the value of the field.
      * Processes the input value to extract a valid Bitcoin public key.
-     * @method
      * @param {*} inValue - The input value to be set.
      * @returns {BMIdentityField} Returns the instance of the field.
      */

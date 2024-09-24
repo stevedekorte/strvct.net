@@ -12,7 +12,7 @@
 (class RzPeerConns extends BMSummaryNode {
   /**
    * Initializes the prototype slots for the RzPeerConns class.
-   * @method
+
    * @description Sets up the initial configuration for the RzPeerConns instance.
    */
   initPrototypeSlots () {
@@ -48,7 +48,7 @@
 
   /**
    * Performs final initialization of the instance.
-   * @method
+
    * @description Calls the superclass finalInit method and performs a sanity check.
    */
   finalInit() {
@@ -58,7 +58,7 @@
 
   /**
    * Gets the sigServerConn of this instance.
-   * @method
+
    * @returns {Object} The parent node, which is assumed to be the sigServerConn.
    */
   sigServerConn () {
@@ -67,7 +67,7 @@
 
   /**
    * Sets the peer connection class.
-   * @method
+
    * @param {Class} aClass - The class to set as the peer connection class.
    * @returns {RzPeerConns} This instance.
    */
@@ -79,7 +79,7 @@
 
   /**
    * Gets the peer connection class.
-   * @method
+
    * @returns {Class} The first (and only) subnode class.
    */
   peerConnClass () {
@@ -88,7 +88,7 @@
 
   /**
    * Adds a peer connection for the given ID if it doesn't already exist.
-   * @method
+
    * @param {string} id - The ID of the peer connection to add.
    * @returns {Object} The existing or newly created peer connection.
    */
@@ -107,7 +107,7 @@
 
   /**
    * Asserts that all subnodes are valid.
-   * @method
+
    * @private
    */
   assertValidSubnodes () {
@@ -117,7 +117,7 @@
 
   /**
    * Adds a subnode to this instance.
-   * @method
+
    * @param {Object} aSubnode - The subnode to add.
    * @returns {Object} The result of adding the subnode.
    */
@@ -130,7 +130,7 @@
 
   /**
    * Disconnects all peer connections.
-   * @method
+
    * @returns {RzPeerConns} This instance.
    */
   disconnectAllPeers () {

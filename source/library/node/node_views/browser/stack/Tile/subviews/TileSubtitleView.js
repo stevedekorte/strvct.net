@@ -10,21 +10,18 @@
     
     /**
      * @description Initializes the prototype slots for the TileSubtitleView.
-     * @method initPrototypeSlots
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype for the TileSubtitleView.
-     * @method initPrototype
      */
     initPrototype () {
     }
 
     /**
      * @description Initializes the TileSubtitleView with default styles and properties.
-     * @method init
      * @returns {TileSubtitleView} The initialized instance of TileSubtitleView.
      */
     init () {

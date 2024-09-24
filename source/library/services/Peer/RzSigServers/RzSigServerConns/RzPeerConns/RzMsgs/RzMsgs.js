@@ -13,7 +13,7 @@
   
   /**
    * Initializes the prototype slots for the RzMsgs class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -54,7 +54,7 @@
 
   /**
    * Returns the parent node, which is the peer connection.
-   * @method
+
    * @returns {Object} The peer connection object.
    */
   peerConn () {

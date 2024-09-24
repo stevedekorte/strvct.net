@@ -12,7 +12,7 @@
 (class AzureTtsRequest extends BMStorableNode {
   /**
    * Initializes the prototype slots for the AzureTtsRequest class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -60,7 +60,7 @@
 
   /**
    * Initializes the prototype of the AzureTtsRequest class.
-   * @method
+
    */
   initPrototype () {
     this.setShouldStore(true);
@@ -69,7 +69,7 @@
 
   /**
    * Initializes the AzureTtsRequest instance.
-   * @method
+
    */
   init() {
     super.init();
@@ -83,7 +83,7 @@
 
   /**
    * Performs final initialization of the AzureTtsRequest instance.
-   * @method
+
    */
   finalInit() {
     super.finalInit();
@@ -94,7 +94,7 @@
 
   /**
    * Returns the parent requests node.
-   * @method
+
    * @returns {*} The parent requests node.
    */
   requests() {
@@ -103,7 +103,7 @@
 
   /**
    * Returns the Azure service associated with this request.
-   * @method
+
    * @returns {*} The Azure service.
    */
   service () {
@@ -112,7 +112,7 @@
 
   /**
    * Returns the speaker associated with this request.
-   * @method
+
    * @returns {*} The speaker.
    */
   speaker () {
@@ -121,7 +121,7 @@
 
   /**
    * Cleans the input text by removing HTML tags and adjusting formatting.
-   * @method
+
    * @param {string} text - The text to clean.
    * @returns {string} The cleaned text.
    */
@@ -136,7 +136,7 @@
 
   /**
    * Returns the cleaned input text.
-   * @method
+
    * @returns {string} The cleaned input text.
    */
   cleanedText () {
@@ -145,7 +145,7 @@
 
   /**
    * Returns the request URL for the Azure TTS service.
-   * @method
+
    * @returns {string} The request URL.
    */
   requestUrl () {
@@ -154,7 +154,7 @@
 
   /**
    * Returns the request options for the Azure TTS service.
-   * @method
+
    * @returns {Object} The request options.
    */
   requestOptions () {
@@ -163,7 +163,7 @@
 
   /**
    * Checks if the request can be spoken.
-   * @method
+
    * @returns {boolean} True if the request can be spoken, false otherwise.
    */
   canSpeak () {
@@ -174,7 +174,7 @@
 
   /**
    * Starts the TTS request.
-   * @method
+
    * @async
    */
   async start() {
@@ -224,7 +224,7 @@
 
   /**
    * Returns the title of the request.
-   * @method
+
    * @returns {string} The title of the request.
    */
   title () {
@@ -234,7 +234,7 @@
 
   /**
    * Updates the title when the input text is changed.
-   * @method
+
    * @returns {AzureTtsRequest} The current instance.
    */
   didUpdateSlotInputText () {
@@ -245,7 +245,7 @@
 
   /**
    * Updates the subtitle of the request.
-   * @method
+
    * @param {string} s - The new subtitle.
    * @returns {AzureTtsRequest} The current instance.
    */

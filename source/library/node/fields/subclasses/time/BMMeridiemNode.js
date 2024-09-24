@@ -10,7 +10,6 @@
     
     /**
      * Initializes the prototype slots for the BMMeridiemNode.
-     * @method
      */
     initPrototypeSlots () {
         /**

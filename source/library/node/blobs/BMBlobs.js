@@ -37,7 +37,6 @@
 (class BMBlobs extends BMStorableNode {
     /**
      * @static
-     * @method initClass
      * @description Initializes the class by setting it as a singleton.
      */
     static initClass () {
@@ -45,7 +44,6 @@
     }
 
     /**
-     * @method initPrototypeSlots
      * @description Initializes the prototype slots for the class.
      */
     initPrototypeSlots () {
@@ -61,7 +59,6 @@
     }
 
     /**
-     * @method initPrototype
      * @description Initializes the prototype properties for the class.
      */
     initPrototype () {
@@ -73,7 +70,6 @@
     }
 
     /**
-     * @method init
      * @description Initializes the instance by setting the store.
      * @returns {BMBlobs} The initialized instance.
      */
@@ -84,7 +80,6 @@
     }
 
     /**
-     * @method promiseOpen
      * @description Promises to open the store.
      * @returns {Promise} A promise that resolves when the store is open.
      */
@@ -96,7 +91,6 @@
     // --- lookup blob by name ---
 
     /**
-     * @method blobWithName
      * @description Retrieves a blob subnode with the given name.
      * @param {string} aName The name of the blob to retrieve.
      * @returns {BMBlob|undefined} The blob subnode with the given name, or undefined if not found.
@@ -107,7 +101,6 @@
     }
 
     /**
-     * @method hasBlobWithName
      * @description Checks if a blob subnode with the given name exists.
      * @param {string} aName The name of the blob to check for.
      * @returns {boolean} True if a blob subnode with the given name exists, false otherwise.
@@ -119,7 +112,6 @@
     // --- lookup blob by hash ---
 
     /**
-     * @method hasBlobWithValueHash
      * @description Checks if a blob subnode with the given value hash exists.
      * @param {string} h The value hash of the blob to check for.
      * @returns {boolean} True if a blob subnode with the given value hash exists, false otherwise.
@@ -129,7 +121,6 @@
     }
 
     /**
-     * @method blobWithValueHash
      * @description Retrieves a blob subnode with the given value hash.
      * @param {string} h The value hash of the blob to retrieve.
      * @returns {BMBlob|undefined} The blob subnode with the given value hash, or undefined if not found.
@@ -143,7 +134,6 @@
     // create blob
 
     /**
-     * @method createBlobWithNameAndValue
      * @description Creates a new blob subnode with the given name and value, or updates an existing blob with the same name.
      * @param {string} aName The name of the blob to create or update.
      * @param {*} aValue The value of the blob to create or update.
@@ -166,7 +156,6 @@
     }
 
     /**
-     * @method collectGarbage
      * @description Collects garbage by removing invalid blob subnodes and unreferenced store entries.
      * @returns {Promise} A promise that resolves when the garbage collection is complete.
      */
@@ -195,7 +184,6 @@
 
     /**
      * @static
-     * @method selfTest
      * @description Performs a self-test by creating and storing a test blob.
      * @returns {Promise} A promise that resolves when the self-test is complete.
      */

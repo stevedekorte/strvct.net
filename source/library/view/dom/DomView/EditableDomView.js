@@ -13,7 +13,6 @@
     
     /**
      * @description Initializes prototype slots for the class.
-     * @method
      */
     initPrototypeSlots () {
         /*
@@ -47,7 +46,6 @@
 
     /**
      * @description Consolidates text nodes and preserves selection.
-     * @method
      * @returns {EditableDomView} The instance of EditableDomView.
      */
     consolidateTextNodesAndPreserveSelection () {
@@ -95,7 +93,6 @@
 
     /**
      * @description Inserts text at the cursor position and consolidates text nodes.
-     * @method
      * @param {string} text - The text to insert.
      */
     insertTextAtCursorAndConsolidate (text) {
@@ -143,7 +140,6 @@
     
     /**
      * @description Inserts text at the cursor position (assumes content ONLY has text).
-     * @method
      * @param {string} text - The text to insert.
      * @returns {EditableDomView} The instance of EditableDomView.
      */
@@ -225,7 +221,6 @@
 
     /**
      * @description Handles the paste event.
-     * @method
      * @param {Event} event - The paste event object.
      * @returns {boolean} Returns false if paste is handled, true otherwise.
      */

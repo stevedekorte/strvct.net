@@ -18,7 +18,6 @@
     
     /**
      * @description Initializes prototype slots
-     * @method
      */
     initPrototypeSlots () {
 
@@ -26,7 +25,6 @@
 
     /**
      * @description Initializes the LeftEdgePanGestureRecognizer
-     * @method
      * @returns {LeftEdgePanGestureRecognizer} The initialized instance
      */
     init () {

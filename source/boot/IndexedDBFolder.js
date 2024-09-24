@@ -1,45 +1,98 @@
 "use strict";
 
-/* 
+/**
+ * @module boot.IndexedDBFolder
+ */
 
-    IndexedDBFolder
-
-*/
-
+/**
+ * @class IndexedDBFolder
+ * @extends Base
+ * @classdesc Represents a folder in IndexedDB for storing and managing data.
+ */
 (class IndexedDBFolder extends Base {
+    /**
+     * Initializes the prototype slots for the IndexedDBFolder.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {string} path - The path of the folder.
+         */
         this.newSlot("path", "/");
-        this.newSlot("pathSeparator", "/"); // path should end with pathSeparator
+
+        /**
+         * @property {string} pathSeparator - The separator used in the path. Path should end with pathSeparator.
+         */
+        this.newSlot("pathSeparator", "/");
+
+        /**
+         * @property {IDBDatabase} db - The IndexedDB database instance.
+         */
         this.newSlot("db", null);
 
-        // requesting persistence
+        /**
+         * @property {boolean} hasPermission - Indicates if the application has permission for persistence.
+         */
         this.newSlot("hasPermission", false);
+
+        /**
+         * @property {Promise} promiseForPersistence - Promise for requesting persistence.
+         */
         this.newSlot("promiseForPersistence", null);
 
-        this.newSlot("promiseForOpen", null); // has a value while opening. Returns this value while opening so multiple requests queue for open
+        /**
+         * @property {Promise} promiseForOpen - Promise for opening the database. Has a value while opening.
+         */
+        this.newSlot("promiseForOpen", null);
+
+        /**
+         * @property {IndexedDBTx} lastTx - The last transaction performed.
+         */
         this.newSlot("lastTx", null) ;
-        //this.newSlot("keyCacheSet", null);
+
+        /**
+         * @property {number} version - The version of the database.
+         */
         this.newSlot("version", 2); 
     }
   
+    /**
+     * Initializes the prototype.
+     */
     initPrototype () {
         this.setIsDebugging(true)
     }
 
+    /**
+     * Sets the path of the folder.
+     * @param {string} aString - The new path to set.
+     * @returns {IndexedDBFolder} - Returns this instance.
+     */
     setPath (aString) {
         assert(!this.isOpen())
         this._path = aString
         return this
     }
 
+    /**
+     * Checks if IndexedDB is available.
+     * @returns {boolean} - True if IndexedDB is available, false otherwise.
+     */
     hasIndexedDB () {
-        return "indexedDB" in window;
+        return ("indexedDB" in window);
     }
 
+    /**
+     * Checks if the Storage API is available.
+     * @returns {boolean} - True if the Storage API is available, false otherwise.
+     */
     hasStorageApi () {
         return navigator.storage && navigator.storage.persist
     }
 
+    /**
+     * Returns a promise for persistence.
+     * @returns {Promise} - A promise for persistence.
+     */
     promisePersistence () {
         if (!this.promiseForPersistence()) {
             this.setPromiseForPersistence(this.newPromisePersistence())
@@ -47,6 +100,11 @@
         return this.promiseForPersistence()
     }
 
+    /**
+     * Creates a new promise for persistence.
+     * @async
+     * @returns {Promise<boolean>} - A promise that resolves to true if persistence is granted, false otherwise.
+     */
     async newPromisePersistence () {
         if (!this.hasStorageApi()) {
             throw new Error("Missing navigator.storage API.");
@@ -60,33 +118,32 @@
             console.log("IndexedDBFolder: Storage will not be cleared except by explicit user action.");
         } else {
             console.warn("WARNING: IndexedDBFolder: Storage may be cleared by the browser under storage pressure.");
-
-            //deleteDatabase("HavewordsApp"); 
-            /*
-            const estimate = await navigator.storage.estimate();
-            // estimate.usage doesn't work yet, so we'll do it manually
-            estimate.usage = await estimateAllIndexedDBUsage();
-
-            console.log("Storage (in bytes):");
-            console.log("    quota: " + Math.floor(estimate.quota/1000000) + " MB");
-            console.log("    usage: " + Math.floor((estimate.usage/1000000)*100)/100 + " MB"); 
-            console.log("        %: ", (estimate.usage / estimate.quota) * 100);
-
-            debugger;
-            */
         }
 
         return granted;
     }
 
+    /**
+     * Gets the store name.
+     * @returns {string} - The store name.
+     */
     storeName () {
         return this.path()
     }
 
+    /**
+     * Checks if the database is open.
+     * @returns {boolean} - True if the database is open, false otherwise.
+     */
     isOpen () {
         return (this.db() !== null)
     }
 
+    /**
+     * Returns a promise to open the database.
+     * @async
+     * @returns {Promise} - A promise that resolves when the database is opened.
+     */
     async promiseOpen () {
         if (!this.promiseForOpen()) {
             await this.promisePersistence();
@@ -95,6 +152,10 @@
         return this.promiseForOpen()
     }
 
+    /**
+     * Creates a new promise to open the database.
+     * @returns {Promise} - A promise that resolves when the database is opened.
+     */
     newPromiseOpen () {
         assert(this.hasIndexedDB());
 
@@ -104,22 +165,18 @@
 
         const openPromise = Promise.clone();
 
-        //console.log(this.typeId() + " promiseOpen '" + this.path() + "'")
         const request = window.indexedDB.open(this.path(), this.version());
 
         request.onsuccess = (event) => {
-            //debugger;
             this.setDb(event.target.result)
             openPromise.callResolveFunc();
         }
 
         request.onupgradeneeded = (event) => {
-            //debugger;
-            this.onOpenUpgradeNeeded(event) // onsuccess will be called next?
+            this.onOpenUpgradeNeeded(event)
         }
 
         request.onerror = (error) => {
-            debugger;
             this.debugLog(" open db error: ", event);
             this.onOpenError(event)
             openPromise.callRejectFunc(error);
@@ -128,6 +185,10 @@
         return openPromise;
     }
 
+    /**
+     * Handles open error.
+     * @param {Event} event - The error event.
+     */
     onOpenError (event) {
         let message = event.message
         if (!message) {
@@ -136,6 +197,10 @@
         }
     }
 
+    /**
+     * Handles database upgrade needed event.
+     * @param {Event} event - The upgrade needed event.
+     */
     onOpenUpgradeNeeded (event) {
         this.debugLog(" onupgradeneeded - likely setting up local database for the first time");
 
@@ -143,7 +208,6 @@
 
         db.onerror = (event) => {
             console.log(this.type() + ".onOpenUpgradeNeeded() db error ", event);
-            debugger;
         };
 
         this.setDb(db);
@@ -152,6 +216,10 @@
         const idbIndex = objectStore.createIndex("key", "key", { unique: true });
     }
 
+    /**
+     * Closes the database.
+     * @returns {IndexedDBFolder} - Returns this instance.
+     */
     close () {
         if (this.isOpen()) {;
             this.db().close()
@@ -161,22 +229,32 @@
         return this
     }
 
-    // paths
-
+    /**
+     * Gets a folder at the specified path component.
+     * @param {string} pathComponent - The path component.
+     * @returns {IndexedDBFolder} - A new IndexedDBFolder instance.
+     */
     folderAt (pathComponent) {
         assert(!pathComponent.contains(this.pathSeparator()))
         const db = IndexedDBFolder.clone().setPath(this.path() + pathComponent + this.pathSeparator())
         return db
     }
 
+    /**
+     * Gets the full path for a key.
+     * @param {string} key - The key.
+     * @returns {string} - The full path for the key.
+     */
     pathForKey (key) {
-        //assert(!key.contains(this.pathSeparator()))
         return this.path() + key;
     }
 
-    // private helpers
-
-    readOnlyObjectStore () { // private
+    /**
+     * Gets a read-only object store.
+     * @private
+     * @returns {IDBObjectStore} - A read-only object store.
+     */
+    readOnlyObjectStore () {
         const tx = this.db().transaction([this.storeName()], "readonly");
 
         tx.onerror = (event) => {
@@ -185,19 +263,19 @@
             throw new Error(m)
         };
 
-    
         tx.oncomplete = (event) => {
-            //console.log("readOnlyObjectStore tx completed")
-            //debugger
         }
-        
 
         const objectStore = tx.objectStore(this.storeName())
         return objectStore
     }
 
-    readWriteObjectStore () { // private
-        //debugger
+    /**
+     * Gets a read-write object store.
+     * @private
+     * @returns {IDBObjectStore} - A read-write object store.
+     */
+    readWriteObjectStore () {
         const tx = this.db().transaction([this.storeName()], "readwrite");
         
         tx.onerror = (event) => {
@@ -206,20 +284,21 @@
             throw new Error(m)
         };
 
-        
         tx.oncomplete = (event) => {
             console.log("readWriteObjectStore tx oncomplete ", tx._note)
-            debugger
         }
-        
 
         const objectStore = tx.objectStore(this.storeName())
         objectStore._tx = tx
         return objectStore
     }
 
-    // reading
-
+    /**
+     * Checks if a key exists in the database.
+     * @async
+     * @param {string} key - The key to check.
+     * @returns {Promise<boolean>} - A promise that resolves to true if the key exists, false otherwise.
+     */
     async promiseHasKey (key) {
         await this.promiseOpen();
         const promise = Promise.clone();
@@ -228,22 +307,30 @@
         return hasKey;
     }
 
+    /**
+     * Gets the current stack trace.
+     * @returns {string} - The current stack trace.
+     */
     currentStack () {
         const stack = this.isDebugging() ? new Error().stack : "(call IndexedDBFolder.setIsDebugging(true) to get a stack recording)" 
         return stack
     }
     
+    /**
+     * Retrieves a value for a given key from the database.
+     * @async
+     * @param {string} key - The key to retrieve.
+     * @returns {Promise<*>} - A promise that resolves to the value associated with the key.
+     */
     async promiseAt (key) {
         await this.promiseOpen();
         const atPromise = Promise.clone();
 
-        //console.log("promiseAt ", key)
         const objectStore = this.readOnlyObjectStore()
         const request = objectStore.get(key);
         const stack = this.currentStack()
 
         request.onsuccess = (event) => {
-            // request.result is undefined if value not in DB
             try {
                 if (typeof(request.result) !== "undefined") {
                     const entry = request.result
@@ -266,8 +353,13 @@
         return atPromise;
     }
 
+    /**
+     * Counts the number of entries in the database or for a specific key.
+     * @async
+     * @param {string} [optionalKey] - Optional key to count.
+     * @returns {Promise<number>} - A promise that resolves to the count.
+     */
     async promiseCount (optionalKey) {
-        //debugger;
         await this.promiseOpen();
         const countPromise = Promise.clone();
         const objectStore = this.readOnlyObjectStore();
@@ -276,12 +368,6 @@
 
         request.onsuccess = (event) => {
             const count = request.result;
-            if (optionalKey) {
-                //console.log("promiseCount " + count + " for optionalKey: '" + optionalKey + "'")
-                //debugger;
-            }
-
-            //throw new Error("TESTING PROMISE COUNT ERROR");
             let a = false; 
             if (a) {
                 countPromise.callRejectFunc(new Error("TESTING PROMISE COUNT ERROR"));
@@ -299,6 +385,11 @@
         return countPromise;
     }
 
+    /**
+     * Retrieves all keys from the database.
+     * @async
+     * @returns {Promise<Array>} - A promise that resolves to an array of all keys.
+     */
     async promiseAllKeys () {
         await this.promiseOpen();
         const promise = Promise.clone();
@@ -309,7 +400,6 @@
 
         request.onsuccess = (event) => {
             const keysArray = request.result;
-            //console.log("promiseAllKeys ", keysArray);
             promise.callResolveFunc(keysArray);
         }
         
@@ -321,42 +411,11 @@
         return promise;
     }
 
-    // ------------
-
-    /*
-    async promiseReadOnlyCursorRequest () {
-        const promise = Promise.clone();
-        const objectStore = this.readOnlyObjectStore();
-        const idbRequest = objectStore.openCursor();
-
-        idbRequest.onsuccess = (event) => {
-            promise.callResolveFunc(event);
-        }
-
-        idbRequest.onerror = (event) => {
-            promise.callRejectFunc(event);
-        }
-
-        return promise;
-    }
-
-    async promiseForeachKey (aBlock) {
-        const event = await this.promiseReadOnlyCursorRequest();
-        const promise = Promise.clone();
-
-        const cursor = event.target.result;
-        if (cursor) {
-            aBlock(cursor.value.key);
-            cursor.continue(); // this calls open resolve function again
-        } else {
-            promise.callResolveFunc()
-        }
-    }
-    */
-
-    // ---------------
-
-
+    /**
+     * Retrieves all key-value pairs from the database as a Map.
+     * @async
+     * @returns {Promise<Map>} - A promise that resolves to a Map of all key-value pairs.
+     */
     async promiseAsMap () {
         await this.promiseOpen();
         const promise = Promise.clone();
@@ -381,14 +440,20 @@
         return promise;
     }
 
-
+    /**
+     * Displays the contents of the database.
+     * @async
+     */
     async show () {
         const map = await this.promiseAsMap();
         this.debugLog(" " + this.path() + " = " + map.description());
     }
 
-    // removing
-
+    /**
+     * Clears all data from the database.
+     * @async
+     * @returns {Promise} - A promise that resolves when the database is cleared.
+     */
     async promiseClear () {
         await this.promiseOpen();
         const clearPromise = Promise.clone();
@@ -406,7 +471,6 @@
 
         request.onsuccess = (event) => {
             console.log("db promiseClear request onsuccess");
-            //resolve(event) // use tx oncomplete instead?
         };
 
         request.onerror = (event) => {
@@ -417,7 +481,11 @@
         return clearPromise;
     }
 
-
+    /**
+     * Deletes the entire database.
+     * @async
+     * @returns {Promise} - A promise that resolves when the database is deleted.
+     */
     async promiseDelete () {
         assert(!this.isOpen());
         const deletePromise = Promise.clone();
@@ -438,7 +506,12 @@
         return deletePromise;
     }
 
-    assertLastTxCommitedOrAborted () {
+    /**
+     * Asserts that the last transaction is committed or aborted.
+     * @async
+     * @returns {Promise<void>} - A promise that resolves when the assertion is made.
+     */
+    async assertLastTxCommitedOrAborted () {
         const tx = this.lastTx()
         assert(tx)
         const isOk = tx.isAborted() || tx.isCommitted();
@@ -448,7 +521,12 @@
         assert(isOk)
     }
 
-    promiseNewTx () {
+    /**
+     * Creates a new transaction object.
+     * @async
+     * @returns {Promise<IndexedDBTx>} - A promise that resolves to a new transaction object.
+     */
+    async promiseNewTx () {
         assert(this.isOpen())
         //debugger;
         this.debugLog(this.path() + " promiseNewTx")
@@ -475,6 +553,11 @@
         return Promise.resolve(this.privateNewTx())
     }
 
+    /**
+     * Creates a new transaction object.
+     * @private
+     * @returns {IndexedDBTx} - A new transaction object.
+     */
     privateNewTx () {
         //debugger;
         //SyncScheduler.shared().scheduleTargetAndMethod(this, "assertLastTxCommitedOrAborted")
@@ -486,13 +569,23 @@
         return newTx
     }
 
-
+    /**
+     * Returns a debug type ID for the database folder.
+     * @returns {string} - The debug type ID.
+     */
     debugTypeId () {
         return super.debugTypeId() + " '" + this.path() + "'"
     }
 
     // -------------------------------------------------------------------
 
+    /**
+     * Puts a value at a specified key in the database.
+     * @async
+     * @param {string} key - The key to put the value at.
+     * @param {*} value - The value to put.
+     * @returns {Promise} - A promise that resolves when the value is put.
+     */
     async promiseAtPut (key, value) {
         await this.promiseOpen();
 
@@ -511,6 +604,12 @@
         return this.promiseAdd(key, value)
     }
 
+    /**
+     * Asserts that a key exists in the database.
+     * @async
+     * @param {string} key - The key to assert.
+     * @returns {Promise<void>} - A promise that resolves when the assertion is made.
+     */
     async promiseAssertHasKey (key) {
         const hasKey = await this.promiseHasKey(key);
 
@@ -520,6 +619,13 @@
         }
     }
 
+    /**
+     * Updates a value at a specified key in the database.
+     * @async
+     * @param {string} key - The key to update.
+     * @param {*} value - The value to update.
+     * @returns {Promise} - A promise that resolves when the update is complete.
+     */
     async promiseUpdate (key, value) { // private
         const tx = await this.promiseNewTx();
         tx.begin();
@@ -528,6 +634,13 @@
         return tx.promiseCommit();
     }
 
+    /**
+     * Adds a value to the database at a specified key.
+     * @async
+     * @param {string} key - The key to add the value at.
+     * @param {*} value - The value to add.
+     * @returns {Promise} - A promise that resolves when the addition is complete.
+     */
     async promiseAdd (key, value) { // private
         const tx = await this.promiseNewTx();
         this.debugLog("idb tx atAdd ", key);
@@ -537,6 +650,12 @@
         return tx.promiseCommit();
     }
 
+    /**
+     * Removes a value at a specified key in the database.
+     * @async
+     * @param {string} key - The key to remove the value at.
+     * @returns {Promise} - A promise that resolves when the removal is complete.
+     */
     async promiseRemoveAt (key) {
         await this.promiseOpen();
         const tx = await this.promiseNewTx();
@@ -546,7 +665,14 @@
         return tx.promiseCommit();
     }
 
-    // test
+    // -----------------------------------------------------------------
+
+    /**
+     * Tests the IndexedDBFolder class.
+     * @static
+     * @async
+     * @returns {Promise<void>} - A promise that resolves when the test is complete.
+     */
 
     static async promiseSelfTest () {
         const folder = IndexedDBFolder.clone()
@@ -562,6 +688,12 @@
 
 // -----------------------------------------------------------------
 
+/**
+ * Estimates the total usage of all IndexedDB databases.
+ * @function
+ * @async
+ * @returns {Promise<number>} - A promise that resolves to the total usage in bytes.
+ */
 async function estimateAllIndexedDBUsage() {
     const databases = await indexedDB.databases();
     let totalUsage = 0;

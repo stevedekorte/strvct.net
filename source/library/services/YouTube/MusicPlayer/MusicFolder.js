@@ -13,7 +13,7 @@
 
   /**
    * Initializes the prototype slots for the MusicFolder class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -39,7 +39,7 @@
 
   /**
    * Performs final initialization for the MusicFolder.
-   * @method
+
    */
   finalInit () {
     super.finalInit();
@@ -48,7 +48,7 @@
 
   /**
    * Returns the title of the music folder.
-   * @method
+
    * @returns {string} The name of the music folder.
    */
   title () {
@@ -57,7 +57,7 @@
 
   /**
    * Sets the JSON data for the music folder.
-   * @method
+
    * @param {Object} json - An object containing trackName:trackId entries.
    */
   setJson (json) {
@@ -71,7 +71,7 @@
 
   /**
    * Creates a new track and adds it to the folder.
-   * @method
+
    * @returns {MusicTrack} The newly created track.
    */
   newTrack () {
@@ -82,7 +82,7 @@
 
   /**
    * Returns all subfolders within this folder.
-   * @method
+
    * @returns {Array} An array of MusicFolder instances.
    */
   folders () {
@@ -91,7 +91,7 @@
 
   /**
    * Returns all tracks within this folder.
-   * @method
+
    * @returns {Array} An array of MusicTrack instances.
    */
   tracks () {
@@ -100,7 +100,7 @@
 
   /**
    * Returns the names of all tracks in this folder.
-   * @method
+
    * @returns {Array} An array of track names.
    */
   trackNames () {
@@ -109,7 +109,7 @@
 
   /**
    * Finds a track by its name within this folder or its subfolders.
-   * @method
+
    * @param {string} name - The name of the track to find.
    * @returns {MusicTrack|null} The found track or null if not found.
    */
@@ -123,7 +123,7 @@
 
   /**
    * Removes all subnodes from the folder.
-   * @method
+
    * @returns {MusicFolder} The current instance.
    */
   clear () {

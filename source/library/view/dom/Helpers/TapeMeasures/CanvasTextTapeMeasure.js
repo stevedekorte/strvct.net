@@ -14,7 +14,7 @@
 (class CanvasTextTapeMeasure extends ProtoClass {
     
     /**
-     * @method initPrototypeSlots
+
      * @description Initializes the prototype slots for the class.
      */
     initPrototypeSlots () {
@@ -41,7 +41,7 @@
     }
 	
     /**
-     * @method init
+
      * @description Initializes the CanvasTextTapeMeasure instance.
      * @returns {CanvasTextTapeMeasure} The initialized instance.
      */
@@ -53,7 +53,7 @@
     }
 
     /**
-     * @method getTextWidth
+
      * @description Measures the width of the given text with the specified font.
      * @param {string} text - The text to measure.
      * @param {string} fontString - The css font descriptor that text is to be rendered with (e.g. "14px verdana").
@@ -67,7 +67,7 @@
     }       
 
     /**
-     * @method selfTest
+
      * @static
      * @description Performs a self-test of the CanvasTextTapeMeasure class.
      * @returns {CanvasTextTapeMeasure} The class itself.

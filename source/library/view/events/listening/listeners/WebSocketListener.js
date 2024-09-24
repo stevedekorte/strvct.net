@@ -22,7 +22,6 @@
     
     /**
      * @description Initializes the prototype slots for the WebSocketListener.
-     * @method
      */
     initPrototypeSlots () {
 
@@ -30,7 +29,6 @@
 
     /**
      * @description Initializes the WebSocketListener.
-     * @method
      * @returns {WebSocketListener} The initialized WebSocketListener instance.
      */
     init () {
@@ -40,7 +38,6 @@
 
     /**
      * @description Sets up the listeners for the WebSocket events.
-     * @method
      * @returns {WebSocketListener} The WebSocketListener instance with listeners set up.
      */
     setupListeners () {

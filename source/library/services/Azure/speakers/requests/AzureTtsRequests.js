@@ -10,7 +10,7 @@
 (class AzureTtsRequests extends BMSummaryNode {
   /**
    * Initializes the prototype slots for the class.
-   * @method
+
    */
   initPrototypeSlots () {
 
@@ -18,7 +18,7 @@
 
   /**
    * Initializes the instance.
-   * @method
+
    * @description Sets up the initial state of the AzureTtsRequests instance.
    */
   init() {
@@ -33,7 +33,7 @@
 
   /**
    * Performs final initialization tasks.
-   * @method
+
    * @description Sets additional properties after the main initialization.
    */
   finalInit() {
@@ -50,7 +50,7 @@
 
   /**
    * Gets the parent speaker node.
-   * @method
+
    * @returns {Object} The parent speaker node.
    */
   speaker () {

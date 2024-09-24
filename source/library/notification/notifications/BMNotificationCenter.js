@@ -92,7 +92,7 @@
 
     /**
      * @static
-     * @method initClass
+
      * @description sets up the class as a singleton
      * 
      * 
@@ -102,7 +102,7 @@
     }
     
     /**
-     * @method initPrototypeSlots
+
      * @description sets up the prototype slots for the class
      * 
      * 

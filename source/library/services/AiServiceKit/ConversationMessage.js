@@ -13,7 +13,7 @@
 
   /**
    * Initialize prototype slots for the ConversationMessage class.
-   * @method
+
    */
   initPrototypeSlots () {
 
@@ -186,7 +186,7 @@
 
   /**
    * Initialize the prototype of the ConversationMessage class.
-   * @method
+
    */
   initPrototype () {
     this.setNodeTileClassName("BMChatInputTile");
@@ -200,7 +200,7 @@
 
   /**
    * Perform final initialization of the ConversationMessage instance.
-   * @method
+
    */
   finalInit () {
     super.finalInit();
@@ -210,7 +210,7 @@
 
   /**
    * Create a message ID if it doesn't exist.
-   * @method
+
    */
   createIdIfAbsent () {
     if (!this.messageId()) {
@@ -220,7 +220,7 @@
 
   /**
    * Get the message this message is replying to.
-   * @method
+
    * @returns {ConversationMessage|null} The message being replied to, or null if none.
    */
   inReplyToMessage () {
@@ -233,7 +233,7 @@
 
   /**
    * Get the replies to this message.
-   * @method
+
    * @returns {Array} An array of messages that are replies to this message.
    */
   replies () {
@@ -243,7 +243,7 @@
 
   /**
    * Handle updates to the isComplete slot.
-   * @method
+
    * @param {*} oldValue - The old value of isComplete.
    * @param {*} newValue - The new value of isComplete.
    */
@@ -256,7 +256,7 @@
 
   /**
    * Handle completion of the message.
-   * @method
+
    */
   onComplete () {
     // to be overridden by subclasses
@@ -265,7 +265,7 @@
 
   /**
    * Check if the value is editable.
-   * @method
+
    * @returns {Boolean} True if the value is editable, false otherwise.
    */
   valueIsEditable () {
@@ -275,7 +275,7 @@
 
   /**
    * Set whether to send in conversation.
-   * @method
+
    * @param {*} v - The value to set.
    */
   setSendInConversation (v) {
@@ -284,7 +284,7 @@
 
   /**
    * Check if the value is editable.
-   * @method
+
    * @returns {Boolean} Always returns true.
    */
   valueIsEditable () {
@@ -293,7 +293,7 @@
 
   /**
    * Get the content of the message.
-   * @method
+
    * @returns {String} The content of the message.
    */
   content () {
@@ -302,7 +302,7 @@
 
   /**
    * Set the value of the message.
-   * @method
+
    * @param {String} s - The value to set.
    * @returns {ConversationMessage} The ConversationMessage instance.
    */
@@ -314,7 +314,7 @@
 
   /**
    * Set the content of the message.
-   * @method
+
    * @param {String} s - The content to set.
    * @returns {ConversationMessage} The ConversationMessage instance.
    */
@@ -326,7 +326,7 @@
 
   /**
    * Get the subtitle of the message.
-   * @method
+
    * @returns {String} The subtitle of the message.
    */
   subtitle () {
@@ -340,7 +340,7 @@
 
   /**
    * Get the speaker name.
-   * @method
+
    * @returns {String} The speaker name.
    */
   speakerName () {
@@ -349,7 +349,7 @@
 
   /**
    * Set the speaker name.
-   * @method
+
    * @param {String} s - The speaker name to set.
    * @returns {ConversationMessage} The ConversationMessage instance.
    */
@@ -359,7 +359,7 @@
 
   /**
    * Get visible previous messages.
-   * @method
+
    * @returns {Array} An array of visible previous messages.
    */
   visiblePreviousMessages () {
@@ -369,7 +369,7 @@
 
   /**
    * Get previous messages.
-   * @method
+
    * @returns {Array} An array of previous messages.
    */
   previousMessages () {
@@ -380,7 +380,7 @@
 
   /**
    * Get previous messages including this message.
-   * @method
+
    * @returns {Array} An array of previous messages including this message.
    */
   previousMessagesIncludingSelf () {
@@ -391,7 +391,7 @@
 
   /**
    * Get the previous message.
-   * @method
+
    * @returns {ConversationMessage|null} The previous message or null if none.
    */
   previousMessage () {
@@ -405,7 +405,7 @@
 
   /**
    * Get following messages.
-   * @method
+
    * @returns {Array} An array of following messages.
    */
   followingMessages () {
@@ -414,7 +414,7 @@
 
   /**
    * Get following messages including this message.
-   * @method
+
    * @returns {Array} An array of following messages including this message.
    */
   followingMessagesIncludingSelf () {
@@ -425,7 +425,7 @@
 
   /**
    * Delete following messages.
-   * @method
+
    * @returns {ConversationMessage} The ConversationMessage instance.
    */
   deleteFollowingMessages () {
@@ -436,14 +436,14 @@
 
   /**
    * Send the message.
-   * @method
+
    */
   send () {
   }
 
   /**
    * Get the value error.
-   * @method
+
    * @returns {String|null} The error message or null if no error.
    */
   valueError () {
@@ -453,7 +453,7 @@
 
   /**
    * Handle value input.
-   * @method
+
    */
   onValueInput () {
     this.requestResponse()
@@ -461,7 +461,7 @@
 
   /**
    * Get the delegate.
-   * @method
+
    * @returns {Object} The delegate object.
    */
   delegate () {
@@ -473,7 +473,7 @@
 
   /**
    * Send a method call to the delegate.
-   * @method
+
    * @param {String} methodName - The name of the method to call.
    * @param {Array} args - The arguments to pass to the method.
    * @returns {Boolean} True if the method was called successfully, false otherwise.
@@ -492,7 +492,7 @@
 
   /**
    * Clean up if the message is incomplete.
-   * @method
+
    */
   cleanupIfIncomplete () {
     // called on startup to clean up any incomplete messages

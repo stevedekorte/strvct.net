@@ -11,7 +11,6 @@
 
     /**
      * Initializes the prototype slots for the BMNotification class.
-     * @method
      */
     initPrototypeSlots () {
         /**
@@ -66,14 +65,12 @@
 
     /**
      * Initializes the prototype.
-     * @method
      */
     initPrototype () {
     }
 
     /**
      * Gets the sender's debug type ID.
-     * @method
      * @returns {string} The sender's debug type ID.
      */
     senderId () {
@@ -82,7 +79,6 @@
 
     /**
      * Sets the sender of the notification.
-     * @method
      * @param {Object} obj - The sender object.
      * @returns {BMNotification} The current instance.
      */
@@ -95,7 +91,6 @@
 
     /**
      * Sets the name of the notification.
-     * @method
      * @param {string} aName - The name to set.
      * @returns {BMNotification} The current instance.
      */
@@ -107,7 +102,6 @@
     
     /**
      * Checks if this notification is equal to another.
-     * @method
      * @param {BMNotification} obs - The notification to compare with.
      * @returns {boolean} True if equal, false otherwise.
      */
@@ -121,7 +115,6 @@
 
     /**
      * Clears the note hash.
-     * @method
      * @returns {BMNotification} The current instance.
      */
     clearNoteHash () {
@@ -131,7 +124,6 @@
 
     /**
      * Gets or generates the note hash.
-     * @method
      * @returns {string} The note hash.
      */
     noteHash () {
@@ -144,7 +136,6 @@
 
     /**
      * Checks if the notification is posted.
-     * @method
      * @returns {boolean} True if posted, false otherwise.
      */
     isPosted () {
@@ -153,7 +144,6 @@
     
     /**
      * Posts the notification.
-     * @method
      * @returns {BMNotification} The current instance.
      */
     post () {
@@ -170,7 +160,6 @@
     
     /**
      * Gets a description of the notification.
-     * @method
      * @returns {string} The description.
      */
     description () {
@@ -181,7 +170,6 @@
 
     /**
      * Creates a new observation for this notification.
-     * @method
      * @returns {BMObservation} A new observation instance.
      */
     newObservation () {

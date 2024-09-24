@@ -14,7 +14,7 @@
     
     /**
      * Initializes the prototype slots for the StyledNode class.
-     * @method initPrototypeSlots
+
      * @description Sets up the themeClassName slot with specific properties and behaviors.
      */
     initPrototypeSlots () {
@@ -39,7 +39,7 @@
 
     /**
      * Initializes the prototype of the StyledNode class.
-     * @method initPrototype
+
      * @description This method is currently empty and can be used for future prototype initializations.
      */
     initPrototype () {

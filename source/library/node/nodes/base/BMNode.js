@@ -112,7 +112,7 @@
     // ----
 
     /**
-     * @method initPrototypeSlots
+
      * @description Initialize the prototype slots for this class.
      */
     initPrototypeSlots () {
@@ -212,7 +212,7 @@
     }
 
     /**
-     * @method initPrototype
+
      * @description Initialize the prototype for this class.
      */
     initPrototype () {
@@ -220,7 +220,7 @@
     }
 
     /**
-     * @method init
+
      * @description Initialize this instance.
      * @returns {BMNode} This instance.
      */
@@ -236,7 +236,7 @@
     }
 
     /**
-     * @method setSubnodes
+
      * @description Set the subnodes for this instance.
      * @param {Array} subnodes - The new subnodes.
      * @returns {BMNode} This instance.
@@ -251,7 +251,7 @@
     }
 
     /**
-     * @method registerForAppDidInit
+
      * @description Register this instance to receive the appDidInit notification.
      */
     registerForAppDidInit () {
@@ -269,7 +269,7 @@
     }
 
     /**
-     * @method shouldStoreSlotSubnodes
+
      * @description Determine whether to store subnodes when persisting this instance.
      * @returns {boolean} Whether to store subnodes.
      */
@@ -279,7 +279,7 @@
     }
 
     /**
-     * @method nodeType
+
      * @description Get the node type.
      * @returns {string} The node type.
      */
@@ -295,7 +295,7 @@
     */
 
     /**
-     * @method nodeCreate
+
      * @description Create a new instance of this node.
      * @returns {BMNode} A new instance of this node.
      */
@@ -306,7 +306,7 @@
     }
     
     /**
-     * @method nodeCreateName
+
      * @description Get the name used for node creation.
      * @returns {string} The name used for node creation.
      */
@@ -315,7 +315,7 @@
     }
 
     /**
-     * @method duplicate
+
      * @description Create a duplicate of this instance.
      * @returns {BMNode} A duplicate of this instance.
      */
@@ -328,7 +328,7 @@
     }
 
     /**
-     * @method pid
+
      * @description Get the persistent unique identifier (puuid) for this instance.
      * @returns {string} The puuid.
      */
@@ -339,7 +339,7 @@
     // -----------------------
     
     /**
-     * @method nodeVisibleClassName
+
      * @description Get the visible class name for this node.
      * @returns {string} The visible class name.
      */
@@ -354,7 +354,7 @@
     // --- subnodes ----------------------------------------
     
     /**
-     * @method setParentNode
+
      * @description Set the parent node for this instance.
      * @param {BMNode} aNode - The new parent node.
      * @returns {BMNode} This instance.
@@ -376,7 +376,7 @@
     }
 
     /**
-     * @method didUpdateSlotParentNode
+
      * @description Handle the update of the parent node slot.
      * @param {BMNode} oldValue - The old parent node.
      * @param {BMNode} newValue - The new parent node.
@@ -386,7 +386,7 @@
     }
 
     /**
-     * @method rootNode
+
      * @description Get the root node of this instance's parent chain.
      * @returns {BMNode} The root node.
      */
@@ -401,7 +401,7 @@
     // subnodes
 
     /**
-     * @method subnodeCount
+
      * @description Get the number of subnodes.
      * @returns {number} The number of subnodes.
      */
@@ -410,7 +410,7 @@
     }
 
     /**
-     * @method hasSubnodes
+
      * @description Check if this instance has any subnodes.
      * @returns {boolean} Whether this instance has subnodes.
      */
@@ -419,7 +419,7 @@
     }
 
     /**
-     * @method justAddSubnode
+
      * @description Add a subnode to this instance without any checks.
      * @param {BMNode} aSubnode - The subnode to add.
      * @returns {BMNode} The added subnode.
@@ -430,7 +430,7 @@
     }
 	
     /**
-     * @method justAddSubnodeAt
+
      * @description Add a subnode to this instance at a specific index without any checks.
      * @param {BMNode} aSubnode - The subnode to add.
      * @param {number} anIndex - The index at which to add the subnode.
@@ -445,7 +445,7 @@
     }
     
     /**
-     * @method assertValidSubnodeType
+
      * @description Assert that a given subnode is a valid type.
      * @param {BMNode} aSubnode - The subnode to check.
      */
@@ -454,7 +454,7 @@
     }
 
     /**
-     * @method addSubnodeAt
+
      * @description Add a subnode to this instance at a specific index.
      * @param {BMNode} aSubnode - The subnode to add.
      * @param {number} anIndex - The index at which to add the subnode.
@@ -471,7 +471,7 @@
     }
 
     /**
-     * @method subnodeBefore
+
      * @description Get the subnode before a given subnode.
      * @param {BMNode} aSubnode - The reference subnode.
      * @returns {BMNode|null} The subnode before the reference subnode, or null if it's the first subnode.
@@ -486,7 +486,7 @@
     }
 
     /**
-     * @method replaceSubnodeWith
+
      * @description Replace a subnode with another subnode.
      * @param {BMNode} aSubnode - The subnode to replace.
      * @param {BMNode} newSubnode - The new subnode.
@@ -503,7 +503,7 @@
     }
 
     /**
-     * @method replaceSubnodeWithSubnodes
+
      * @description Replace a subnode with multiple subnodes.
      * @param {BMNode} aSubnode - The subnode to replace.
      * @param {Array} newSubnodes - The new subnodes.
@@ -522,7 +522,7 @@
     }
 
     /**
-     * @method moveSubnodesToIndex
+
      * @description Move multiple subnodes to a specific index.
      * @param {Array} movedSubnodes - The subnodes to move.
      * @param {number} anIndex - The index to which to move the subnodes.
@@ -534,7 +534,7 @@
     }
 
     /**
-     * @method addSubnode
+
      * @description Add a subnode to this instance.
      * @param {BMNode} aSubnode - The subnode to add.
      * @returns {BMNode} The added subnode.
@@ -545,7 +545,7 @@
     }
 
     /**
-     * @method addLinkSubnode
+
      * @description Add a link subnode to this instance.
      * @param {BMNode} aNode - The node to link to.
      * @returns {BMLinkNode} The created link subnode.
@@ -562,7 +562,7 @@
     }
 
     /**
-     * @method addSubnodes
+
      * @description Add multiple subnodes to this instance.
      * @param {Array} subnodes - The subnodes to add.
      * @returns {BMNode} This instance.
@@ -573,7 +573,7 @@
     }
 
     /**
-     * @method addSubnodesIfAbsent
+
      * @description Add multiple subnodes to this instance if they are not already present.
      * @param {Array} subnodes - The subnodes to add.
      * @returns {BMNode} This instance.
@@ -584,7 +584,7 @@
     }
     
     /**
-     * @method addSubnodeIfAbsent
+
      * @description Add a subnode to this instance if it is not already present.
      * @param {BMNode} aSubnode - The subnode to add.
      * @returns {boolean} Whether the subnode was added.
@@ -598,7 +598,7 @@
     }
 
     /**
-     * @method subnodeProto
+
      * @description Get the prototype for creating new subnodes.
      * @returns {Function} The prototype for creating new subnodes.
      */
@@ -607,7 +607,7 @@
     }
 
     /**
-     * @method setSubnodeProto
+
      * @description Set the prototype for creating new subnodes.
      * @param {Function} aProto - The prototype for creating new subnodes.
      * @returns {BMNode} This instance.
@@ -619,7 +619,7 @@
     }
 
     /**
-     * @method acceptedSubnodeTypes
+
      * @description Get the accepted subnode types.
      * @returns {Array} An array of accepted subnode types.
      */
@@ -630,7 +630,7 @@
     }
 
     /**
-     * @method acceptsAddingSubnode
+
      * @description Check if this instance accepts adding a given subnode.
      * @param {BMNode} aSubnode - The subnode to check.
      * @returns {boolean} Whether this instance accepts adding the subnode.
@@ -651,7 +651,7 @@
     }
 
     /**
-     * @method forEachSubnodeRecursively
+
      * @description Perform a function on each subnode recursively.
      * @param {Function} fn - The function to perform on each subnode.
      */
@@ -663,7 +663,7 @@
     }
 
     /**
-     * @method selectSubnodesRecursively
+
      * @description Select subnodes recursively based on a function.
      * @param {Function} fn - The function to select subnodes.
      * @returns {Array} An array of selected subnodes.
@@ -681,7 +681,7 @@
     // --------
 
     /**
-     * @method addSubnodeIfAbsent
+
      * @description Add a subnode to this instance if it is not already present.
      * @param {BMNode} aNode - The subnode to add.
      * @returns {BMNode} This instance.
@@ -694,7 +694,7 @@
     }
 
     /**
-     * @method removeSubnodeIfPresent
+
      * @description Remove a subnode from this instance if it is present.
      * @param {BMNode} aNode - The subnode to remove.
      * @returns {BMNode} This instance.
@@ -709,7 +709,7 @@
     // --------
 	
     /**
-     * @method isEqual
+
      * @description Check if this instance is equal to another instance.
      * @param {BMNode} aNode - The instance to compare.
      * @returns {boolean} Whether this instance is equal to the other instance.
@@ -719,7 +719,7 @@
     }
 
     /**
-     * @method hash
+
      * @description Get the hash value for this instance.
      * @returns {string} The hash value.
      */
@@ -730,7 +730,7 @@
     }
 
     /**
-     * @method createSubnodesIndex
+
      * @description Create an index for the subnodes array.
      * @returns {BMNode} This instance.
      */
@@ -740,7 +740,7 @@
     }
 	
     /**
-     * @method hasSubnode
+
      * @description Check if this instance has a given subnode.
      * @param {BMNode} aSubnode - The subnode to check.
      * @returns {boolean} Whether this instance has the subnode.
@@ -756,7 +756,7 @@
     }
     
     /**
-     * @method justRemoveSubnode
+
      * @description Remove a subnode from this instance without any checks.
      * @param {BMNode} aSubnode - The subnode to remove.
      * @returns {BMNode} The removed subnode.
@@ -772,7 +772,7 @@
     }
     
     /**
-     * @method removeSubnode
+
      * @description Remove a subnode from this instance.
      * @param {BMNode} aSubnode - The subnode to remove.
      * @returns {BMNode} The removed subnode.
@@ -784,7 +784,7 @@
     }
 
     /**
-     * @method removeSubnodes
+
      * @description Remove multiple subnodes from this instance.
      * @param {Array} subnodeList - The subnodes to remove.
      * @returns {BMNode} This instance.
@@ -795,7 +795,7 @@
     }
     
     /**
-     * @method removeAllSubnodes
+
      * @description Remove all subnodes from this instance.
      * @returns {BMNode} This instance.
      */
@@ -811,14 +811,14 @@
     }
 
     /**
-     * @method didReorderParentSubnodes
+
      * @description Handle the reordering of parent subnodes.
      */
     didReorderParentSubnodes () {
     }
 
     /**
-     * @method onDidReorderSubnodes
+
      * @description Handle the reordering of subnodes.
      */
     onDidReorderSubnodes () {
@@ -826,7 +826,7 @@
     }
 
     /**
-     * @method didChangeSubnodeList
+
      * @description Handle the change of the subnode list.
      * @returns {BMNode} This instance.
      */
@@ -841,7 +841,7 @@
     }
 
     /**
-     * @method copySubnodes
+
      * @description Copy subnodes from another instance.
      * @param {Array} newSubnodes - The new subnodes.
      * @returns {BMNode} This instance.
@@ -852,7 +852,7 @@
     }
 
     /**
-     * @method nodeReorderSudnodesTo
+
      * @description Reorder the subnodes of this instance.
      * @param {Array} newSubnodes - The new order of subnodes.
      * @returns {BMNode} This instance.
@@ -863,7 +863,7 @@
     }
 
     /**
-     * @method orderFirst
+
      * @description Move this instance to the first position in its parent's subnode list.
      * @returns {BMNode} This instance.
      */
@@ -873,7 +873,7 @@
     }
 
     /**
-     * @method orderLast
+
      * @description Move this instance to the last position in its parent's subnode list.
      * @returns {BMNode} This instance.
      */
@@ -883,7 +883,7 @@
     }
 
     /**
-     * @method orderSubnodeFirst
+
      * @description Move a subnode to the first position in this instance's subnode list.
      * @param {BMNode} aSubnode - The subnode to move.
      * @returns {BMNode} This instance.
@@ -899,7 +899,7 @@
     }
 
     /**
-     * @method orderSubnodeLast
+
      * @description Move a subnode to the last position in this instance's subnode list.
      * @param {BMNode} aSubnode - The subnode to move.
      * @returns {BMNode} This instance.
@@ -916,7 +916,7 @@
     // --- update / sync system ----------------------------
     
     /**
-     * @method didUpdateNodeIfInitialized
+
      * @description Trigger the didUpdateNode method if this instance has been initialized.
      * @returns {boolean} Whether the didUpdateNode method was triggered.
      */
@@ -927,7 +927,7 @@
     }
 
     /**
-     * @method didUpdateNode
+
      * @description Trigger the didUpdateNode notification.
      * @returns {boolean} Whether the notification was posted.
      */
@@ -959,7 +959,7 @@
     }
 
     /**
-     * @method hasDuplicateSubnodes
+
      * @description Check if this instance has duplicate subnodes.
      * @returns {boolean} Whether this instance has duplicate subnodes.
      */
@@ -968,7 +968,7 @@
     }
 
     /**
-     * @method indexOfSubnode
+
      * @description Get the index of a subnode in this instance's subnode list.
      * @param {BMNode} aSubnode - The subnode to find.
      * @returns {number} The index of the subnode, or -1 if not found.
@@ -978,7 +978,7 @@
     }
 
     /**
-     * @method subnodeIndexInParent
+
      * @description Get the index of this instance in its parent's subnode list.
      * @returns {number} The index of this instance in its parent's subnode list.
      */
@@ -991,7 +991,7 @@
     }
 
     /**
-     * @method nodeDepth
+
      * @description Get the depth of this instance in the node hierarchy.
      * @returns {number} The depth of this instance in the node hierarchy.
      */
@@ -1006,7 +1006,7 @@
     // ---------------------------------------
 
     /**
-     * @method prepareToAccess
+
      * @description Prepare this instance to access its subnodes.
      */
     prepareToAccess () {
@@ -1018,7 +1018,7 @@
     }
 
     /**
-     * @method prepareForFirstAccess
+
      * @description Prepare this instance for the first access to its subnodes.
      */
     prepareForFirstAccess () {
@@ -1034,7 +1034,7 @@
     // --- parent chain notifications ---
     
     /**
-     * @method tellParentNodes
+
      * @description Send a message to this instance's parent nodes.
      * @param {string} msg - The message to send.
      * @param {*} aNode - The node associated with the message.
@@ -1052,7 +1052,7 @@
     }
 
     /**
-     * @method parentChainNodes
+
      * @description Get the parent chain of this instance.
      * @param {Array} [chain=[]] - The current parent chain.
      * @returns {Array} The parent chain of this instance.
@@ -1067,7 +1067,7 @@
     }
 
     /**
-     * @method parentChainNodeTo
+
      * @description Get the parent chain from this instance to a given node.
      * @param {BMNode} node - The target node.
      * @param {Array} [chain=[]] - The current parent chain.
@@ -1085,7 +1085,7 @@
     }
 
     /**
-     * @method firstParentChainNodeOfClass
+
      * @description Get the first parent node of a given class in this instance's parent chain.
      * @param {Function} aClass - The class to search for.
      * @returns {BMNode|null} The first parent node of the given class, or null if not found.
@@ -1105,7 +1105,7 @@
     }
 
     /**
-     * @method firstParentChainNodeThatRespondsTo
+
      * @description Get the first parent node that responds to a given method in this instance's parent chain.
      * @param {string} methodName - The method name to search for.
      * @returns {BMNode|null} The first parent node that responds to the given method, or null if not found.
@@ -1115,7 +1115,7 @@
     }
 
     /**
-     * @method firstParentChainNodeDetect
+
      * @description Get the first parent node that satisfies a given condition in this instance's parent chain.
      * @param {Function} func - The condition function.
      * @returns {BMNode|null} The first parent node that satisfies the condition, or null if not found.
@@ -1136,7 +1136,7 @@
     // --- log ------------------------
     
     /**
-     * @method log
+
      * @description Log a message if this instance is in debug mode.
      * @param {string} msg - The message to log.
      */
@@ -1150,7 +1150,7 @@
     // --- post notifications ----------------------------------------
 
     /**
-     * @method postShouldFocusSubnode
+
      * @description Post the shouldFocusSubnode notification.
      * @param {BMNode} aSubnode - The subnode to focus.
      * @returns {BMNode} This instance.
@@ -1162,7 +1162,7 @@
     }
 
     /**
-     * @method postShouldFocusAndExpandSubnode
+
      * @description Post the shouldFocusAndExpandSubnode notification.
      * @param {BMNode} aSubnode - The subnode to focus and expand.
      * @returns {BMNode} This instance.
@@ -1177,7 +1177,7 @@
     // -- adding subnodes by instantiating subnode class ----
     
     /**
-     * @method justAddAt
+
      * @description Add a new subnode at a given index without any checks.
      * @param {number} anIndex - The index at which to add the subnode.
      * @returns {BMNode|null} The added subnode, or null if no subnode was added.
@@ -1202,7 +1202,7 @@
     }
 
     /**
-     * @method justAdd
+
      * @description Add a new subnode at the end of the subnode list without any checks.
      * @returns {BMNode|null} The added subnode, or null if no subnode was added.
      */
@@ -1211,7 +1211,7 @@
     }
 
     /**
-     * @method addAt
+
      * @description Add a new subnode at a given index.
      * @param {number} anIndex - The index at which to add the subnode.
      * @returns {BMNode|null} The added subnode, or null if no subnode was added.
@@ -1226,7 +1226,7 @@
     }
 
     /**
-     * @method add
+
      * @description Add a new subnode at the end of the subnode list.
      * @returns {BMNode|null} The added subnode, or null if no subnode was added.
      */
@@ -1236,7 +1236,7 @@
     }
 
     /**
-     * @method removeFromParentNode
+
      * @description Remove this instance from its parent node.
      * @returns {BMNode} This instance.
      */
@@ -1251,7 +1251,7 @@
     }
 	
     /**
-     * @method delete
+
      * @description Remove this instance from its parent node and destroy it.
      * @returns {BMNode} This instance.
      */
@@ -1263,7 +1263,7 @@
     // --- utility -----------------------------
     
     /**
-     * @method parentNodeOfType
+
      * @description Get the first parent node of a given class.
      * @param {string} className - The class name to search for.
      * @returns {BMNode|null} The first parent node of the given class, or null if not found.
@@ -1281,7 +1281,7 @@
     }
 
     /**
-     * @method parentNodes
+
      * @description Get all parent nodes of this instance.
      * @returns {Array} An array of parent nodes.
      */
@@ -1297,7 +1297,7 @@
     }
     
     /**
-     * @method parentNodeTypes
+
      * @description Get the types of all parent nodes of this instance.
      * @returns {Array} An array of parent node types.
      */
@@ -1308,7 +1308,7 @@
     // --- subnode lookup -----------------------------
     
     /**
-     * @method subnodesSans
+
      * @description Get all subnodes of this instance except for a given subnode.
      * @param {BMNode} aSubnode - The subnode to exclude.
      * @returns {Array} An array of subnodes excluding the given subnode.
@@ -1318,7 +1318,7 @@
     }
     
     /**
-     * @method firstSubnodeOfType
+
      * @description Get the first subnode of a given class.
      * @param {string|object} obj - The class or prototype to search for.
      * @returns {BMNode|null} The first subnode of the given class or prototype, or null if not found.
@@ -1329,7 +1329,7 @@
     }
             
     /**
-     * @method setupSubnodeOfType
+
      * @description Ensure a subnode of a given class exists and add it if not.
      * @param {string|object} aClass - The class or prototype to search for.
      * @returns {BMNode} The found or created subnode.
@@ -1343,7 +1343,7 @@
         return subnode;
     }
     /**
-     * @method sendRespondingSubnodes
+
      * @description Send a method to all subnodes that respond to it.
      * @param {string} aMethodName - The method name to send.
      * @param {Array} argumentList - The arguments to pass to the method.
@@ -1360,7 +1360,7 @@
     
     // --- subnodes -----------------------------
     /**
-     * @method subnodesCount
+
      * @description Get the number of subnodes of this instance.
      * @returns {number} The number of subnodes.
      */
@@ -1369,7 +1369,7 @@
     }
 
     /**
-     * @method onDidMutateObject
+
      * @description Handle the mutation of an object.
      * @param {object} anObject - The object that was mutated.
      */
@@ -1381,7 +1381,7 @@
     }
 
     /**
-     * @method watchSubnodes
+
      * @description Watch the subnodes of this instance for changes.
      * @returns {BMNode} This instance.
      */
@@ -1391,7 +1391,7 @@
     }
 
     /**
-     * @method hasNullSubnodes
+
      * @description Check if this instance has any null subnodes.
      * @returns {boolean} True if there are null subnodes, false otherwise.
      */
@@ -1400,7 +1400,7 @@
     }
 
     /**
-     * @method didUpdateSlotSubnodes
+
      * @description Handle the update of the subnodes slot.
      * @param {Array} oldValue - The old subnodes array.
      * @param {Array} newValue - The new subnodes array.
@@ -1455,7 +1455,7 @@
     }
     
     /**
-     * @method assertSubnodesHaveParentNodes
+
      * @description Assert that all subnodes have a parent node.
      * @returns {BMNode} This instance.
      */
@@ -1470,7 +1470,7 @@
     // --- subnode sorting ---
 	
     /**
-     * @method setSubnodeSortFunc
+
      * @description Set the sorting function for the subnodes.
      * @param {function} f - The sorting function.
      * @returns {BMNode} This instance.
@@ -1481,7 +1481,7 @@
     }
     
     /**
-     * @method doesSortSubnodes
+
      * @description Check if the subnodes are sorted.
      * @returns {boolean} True if the subnodes are sorted, false otherwise.
      */
@@ -1492,7 +1492,7 @@
     // --- subnode indexing ---
 	
     /**
-     * @method lazyIndexedSubnodes
+
      * @description Get the indexed subnodes of this instance.
      * @returns {Array} The indexed subnodes.
      */
@@ -1504,7 +1504,7 @@
     }
 	
     /**
-     * @method subnodeWithHash
+
      * @description Get the subnode with a given hash.
      * @param {string} h - The hash to search for.
      * @returns {BMNode|null} The subnode with the given hash, or null if not found.
@@ -1514,7 +1514,7 @@
     }
 	
     /**
-     * @method removeSubnodeWithHash
+
      * @description Remove the subnode with a given hash.
      * @param {string} h - The hash to search for.
      * @returns {BMNode} This instance.
@@ -1528,7 +1528,7 @@
     }
 	
     /**
-     * @method hasSubnodeWithHash
+
      * @description Check if this instance has a subnode with a given hash.
      * @param {string} h - The hash to search for.
      * @returns {boolean} True if the subnode exists, false otherwise.
@@ -1540,7 +1540,7 @@
     // visibility
 	
     /**
-     * @method nodeBecameVisible
+
      * @description Handle the node becoming visible.
      * @returns {BMNode} This instance.
      */
@@ -1551,7 +1551,7 @@
     // -- view selection request events ---
 
     /**
-     * @method onRequestSelectionOfDecendantNode
+
      * @description Handle the request to select a decendant node.
      * @returns {boolean} False to allow propogation up the parentNode line.
      */
@@ -1560,7 +1560,7 @@
     }
 
     /**
-     * @method onRequestSelectionOfNode
+
      * @description Handle the request to select this node.
      * @returns {BMNode} This instance.
      */
@@ -1570,7 +1570,7 @@
     }
 
     /** 
-     * @method onTapOfNode
+
      * @description Handle the tap on this node.
      * @returns {BMNode} This instance.
      */
@@ -1580,7 +1580,7 @@
     }
 
     /**
-     * @method debugTypeId
+
      * @description Get the debug type ID of this instance.
      * @returns {string} The debug type ID.
      */
@@ -1625,7 +1625,7 @@
     */
 
     /**
-     * @method collapseUnbranchingNodes
+
      * @description Collapse unbranching nodes.
      * @returns {BMNode} This instance.
      */
@@ -1646,7 +1646,7 @@
     }
 
     /**
-     * @method leafSubnodes
+
      * @description Get the leaf subnodes of this instance.
      * @param {Array} results - The array to store the results.
      * @returns {Array} The leaf subnodes.
@@ -1657,7 +1657,7 @@
     }
 
     /**
-     * @method leafSubnodesIncludingSelf
+
      * @description Get the leaf subnodes including this instance.
      * @param {Array} results - The array to store the results.
      * @returns {Array} The leaf subnodes including this instance.
@@ -1675,7 +1675,7 @@
     // --- options helper ---- TODO: move elsewhere
 
     /**
-     * @method addOptionNodeForDict
+
      * @description Add an option node for a dictionary.
      * @param {object} item - The dictionary containing node information.
      * @returns {BMNode} The new node.
@@ -1705,7 +1705,7 @@
     }
 
     /**
-     * @method addOptionNodesForArray
+
      * @description Add option nodes for an array of dictionaries.
      * @param {Array} itemDicts - The array of dictionaries.
      * @returns {BMNode} This instance.
@@ -1722,7 +1722,7 @@
     // --- jsonArchive ---
 
     /**
-     * @method setJsonArchive
+
      * @description Set the JSON archive for this instance.
      * @param {object} json - The JSON object to set.
      * @returns {BMNode} This instance.
@@ -1762,7 +1762,7 @@
 
 
     /**
-     * @method jsonArchive
+
      * @description Get the JSON archive for this instance.
      * @returns {object} The JSON archive.
      */
@@ -1784,7 +1784,7 @@
     }
     
     /**
-     * @method fromJsonArchive
+
      * @description Create an instance from a JSON archive.
      * @param {object} json - The JSON object to create the instance from.
      * @returns {BMNode} The new instance.
@@ -1803,7 +1803,7 @@
     // --- JSON schema properties ---
 
     /**
-     * @method jsonSchemaString
+
      * @description Get the JSON schema string for this instance.
      * @returns {string} The JSON schema string.
      */
@@ -1814,7 +1814,7 @@
     }
 
     /**
-     * @method jsonSchemaTitle
+
      * @description Get the JSON schema title for this instance.
      * @returns {string} The JSON schema title.
      */
@@ -1823,7 +1823,7 @@
     }
 
     /**
-     * @method jsonSchemaSlots
+
      * @description Get the JSON schema slots for this instance.
      * @returns {Array} The JSON schema slots.
      */
@@ -1833,7 +1833,7 @@
     }
 
     /**
-     * @method jsonSchemaProperties
+
      * @description Get the JSON schema properties for this instance.
      * @param {Set} refSet - The reference set.
      * @returns {object} The JSON schema properties.
@@ -1859,7 +1859,7 @@
     }
     
     /**
-     * @method jsonSchemaRequired
+
      * @description Get the JSON schema required for this instance.
      * @returns {Array} The JSON schema required.
      */
@@ -1885,7 +1885,7 @@
     // --- json schema ---
 
     /**
-     * @method asRootJsonSchemaString
+
      * @description Get the root JSON schema string for this instance.
      * @param {boolean} definitionsOnly - Whether to include only the definitions.
      * @returns {string} The root JSON schema string.
@@ -1897,7 +1897,7 @@
     }
 
     /**
-     * @method asRootJsonSchema
+
      * @description Get the root JSON schema for this instance.
      * @param {boolean} definitionsOnly - Whether to include only the definitions.
      * @returns {object} The root JSON schema.
@@ -1943,7 +1943,7 @@
     }
 
     /**
-     * @method jsonSchemaDefinitionsForRefSet
+
      * @description Get the JSON schema definitions for a reference set.
      * @param {Set} refSet - The reference set.
      * @returns {object} The JSON schema definitions.
@@ -1998,7 +1998,7 @@
     }
 
     /**
-     * @method asJsonSchema
+
      * @description Get the JSON schema for this instance.
      * @param {Set} refSet - The reference set.
      * @returns {object} The JSON schema.
@@ -2022,7 +2022,7 @@
     }
 
     /**
-     * @method jsonSchemaRef
+
      * @description Get the JSON schema reference for this instance.
      * @param {Set} refSet - The reference set.
      * @returns {string} The JSON schema reference.
@@ -2033,7 +2033,7 @@
     }
 
     /**
-     * @method jsonSchemaRefForTypeName
+
      * @description Get the JSON schema reference for a type name.
      * @param {string} typeName - The type name.
      * @param {Set} refSet - The reference set.
@@ -2048,7 +2048,7 @@
     }
 
     /**
-     * @method instanceFromJson
+
      * @description Create an instance from a JSON object.
      * @param {object} json - The JSON object.
      * @returns {BMNode} The new instance.
@@ -2068,7 +2068,7 @@
     }
 
     /**
-     * @method fromJsonSchema
+
      * @description Set the instance from a JSON object.
      * @param {object} json - The JSON object.
      * @returns {BMNode} This instance.
@@ -2121,7 +2121,7 @@
     // ---- shutdown ----
 
     /**
-     * @method nodeShutdown
+
      * @description Shutdown the node.
      * @param {Set} visited - The visited set.
      * @returns {BMNode} This instance.
@@ -2141,7 +2141,7 @@
       }
 
       /**
-       * @method slotsWhoseValuesAreOwned
+
        * @description Get the slots whose values are owned by this instance.
        * @returns {Array} The slots whose values are owned by this instance.
        */
@@ -2150,7 +2150,7 @@
       }
 
       /**
-       * @method ownedSlotValues
+
        * @description Get the owned slot values.
        * @returns {Array} The owned slot values.
        */

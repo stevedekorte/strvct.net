@@ -12,7 +12,7 @@
 (class RzSigServerConn extends BMStorableNode {
   /**
    * @description Initializes the prototype slots for the RzSigServerConn class.
-   * @method
+
    */
   initPrototypeSlots () {
 
@@ -301,7 +301,7 @@
 
   /**
    * @description Initializes the RzSigServerConn instance.
-   * @method
+
    * @returns {RzSigServerConn}
    */
   init() {
@@ -313,7 +313,7 @@
 
   /**
    * @description Performs final initialization of the RzSigServerConn instance.
-   * @method
+
    */
   finalInit () {
     super.finalInit();
@@ -326,7 +326,7 @@
 
   /**
    * @description Sets the peer connection class.
-   * @method
+
    * @param {Class} aClass - The peer connection class to set.
    * @returns {RzSigServerConn}
    */
@@ -337,7 +337,7 @@
 
   /**
    * @description Gets the peer connection class.
-   * @method
+
    * @returns {Class} The peer connection class.
    */
   peerConnClass () {
@@ -346,7 +346,7 @@
 
   /**
    * @description Gets the title of the RzSigServerConn instance.
-   * @method
+
    * @returns {string} The title.
    */
   title () {
@@ -356,7 +356,7 @@
 
   /**
    * @description Gets the subtitle of the RzSigServerConn instance.
-   * @method
+
    * @returns {string} The subtitle.
    */
   subtitle () {
@@ -365,7 +365,7 @@
 
   /**
    * @description Checks if the RzSigServerConn is connected.
-   * @method
+
    * @returns {boolean} True if connected, false otherwise.
    */
   isConnected () {
@@ -376,7 +376,7 @@
 
   /**
    * @description Clears the connect promise.
-   * @method
+
    * @returns {RzSigServerConn}
    */
   clearConnectPromise () {
@@ -386,7 +386,7 @@
 
   /**
    * @description Gets the connect promise.
-   * @method
+
    * @returns {Promise} The connect promise.
    */
   connectPromise () {
@@ -398,7 +398,7 @@
 
   /**
    * @description Initiates a connection.
-   * @method
+
    * @returns {Promise} The connect promise.
    */
   connect () {
@@ -415,7 +415,7 @@
 
   /**
    * @description Gets the connect action info.
-   * @method
+
    * @returns {Object} The connect action info.
    */
   connectActionInfo () {
@@ -426,7 +426,7 @@
 
   /**
    * @description Shuts down the RzSigServerConn.
-   * @method
+
    * @returns {RzSigServerConn}
    */
   shutdown () {
@@ -437,7 +437,7 @@
 
   /**
    * @description Disconnects the RzSigServerConn.
-   * @method
+
    * @returns {RzSigServerConn}
    */
   disconnect () {
@@ -450,7 +450,7 @@
 
   /**
    * @description Disconnects all peers.
-   * @method
+
    * @returns {RzSigServerConn}
    */
   disconnectAllPeers () {
@@ -460,7 +460,7 @@
 
   /**
    * @description Gets the disconnect action info.
-   * @method
+
    * @returns {Object} The disconnect action info.
    */
   disconnectActionInfo () {
@@ -471,7 +471,7 @@
 
   /**
    * @description Destroys the RzSigServerConn.
-   * @method
+
    * @returns {RzSigServerConn}
    */
   destroy () {
@@ -484,7 +484,7 @@
 
   /**
    * @description Gets the destroy action info.
-   * @method
+
    * @returns {Object} The destroy action info.
    */
   destroyActionInfo () {
@@ -495,7 +495,7 @@
 
   /**
    * @description Gets the signal server connections.
-   * @method
+
    * @returns {Object} The signal server connections.
    */
   sigServerConnections () {
@@ -504,7 +504,7 @@
 
   /**
    * @description Gets the server.
-   * @method
+
    * @returns {Object} The server.
    */
 
@@ -563,7 +563,7 @@
 
   /**
    * @description Sets the peer object.
-   * @method
+
    * @param {Peer} aPeer - The peer object to set.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -574,7 +574,7 @@
 
   /**
    * @description Gets the peer object.
-   * @method
+
    * @returns {Peer} The peer object.
    */
   peer () {
@@ -585,7 +585,7 @@
 
   /**
    * @description Generates a new peer ID.
-   * @method
+
    * @returns {string} The new peer ID.
    */
   newPeerId () {
@@ -594,7 +594,7 @@
 
   /**
    * @description Attempts to connect to the signaling server.
-   * @method
+
    * @returns {RzSigServerConn} The current instance.
    */
   attemptToConnect () {
@@ -622,7 +622,7 @@
 
   /**
    * @description Handles the open event for the peer.
-   * @method
+
    * @param {string} peerId - The peer ID.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -639,7 +639,7 @@
 
   /**
    * @description Adds a peer connection to the server.
-   * @method
+
    * @param {RzPeerConn} aPeerConn - The peer connection to add.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -651,7 +651,7 @@
 
   /**
    * @description Handles the close event for the peer.
-   * @method
+
    * @returns {RzSigServerConn} The current instance.
    */
   onClose () {
@@ -667,7 +667,7 @@
 
   /**
    * @description Handles the disconnected event for the peer.
-   * @method
+
    * @returns {RzSigServerConn} The current instance.
    */
   onDisconnected () {
@@ -687,7 +687,7 @@
 
   /**
    * @description Handles the connection event for the peer.
-   * @method
+
    * @param {Object} conn - The connection object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -708,7 +708,7 @@
 
   /**
    * @description Handles the open peer connection event.
-   * @method
+
    * @param {RzPeerConn} peerConn - The peer connection object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -720,7 +720,7 @@
 
   /**
    * @description Handles the close peer connection event.
-   * @method
+
    * @param {RzPeerConn} peerConn - The peer connection object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -731,7 +731,7 @@
 
   /**
    * @description Removes a peer connection.
-   * @method
+
    * @param {RzPeerConn} peerConn - The peer connection object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -747,7 +747,7 @@
 
   /**
    * @description Handles the error event for the peer.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -786,7 +786,7 @@
 
   /**
    * @description Handles the peer unavailable error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -796,7 +796,7 @@
 
   /**
    * @description Handles the browser incompatible error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -807,7 +807,7 @@
 
   /**
    * @description Handles the disconnected error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -818,7 +818,7 @@
 
   /**
    * @description Handles the invalid ID error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -829,7 +829,7 @@
 
   /**
    * @description Handles the invalid key error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -840,7 +840,7 @@
 
   /**
    * @description Handles the network error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -851,7 +851,7 @@
 
   /**
    * @description Handles the peer unavailable error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -862,7 +862,7 @@
 
   /**
    * @description Handles the SSL unavailable error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -873,7 +873,7 @@
 
   /**
    * @description Handles the server error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -884,7 +884,7 @@
 
   /**
    * @description Handles the socket error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -895,7 +895,7 @@
 
   /**
    * @description Handles the socket closed error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -908,7 +908,7 @@
 
   /**
    * @description Handles the unavailable ID error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -927,7 +927,7 @@
 
   /**
    * @description Gets the retry closure for ID retrieval.
-   * @method
+
    * @param {Function} func - The function to execute.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -946,7 +946,7 @@
 
   /**
    * @description Handles the WebRTC error.
-   * @method
+
    * @param {Error} error - The error object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -959,7 +959,7 @@
 
   /**
    * @description Attempts to reconnect to the signaling server.
-   * @method
+
    * @returns {RzSigServerConn} The current instance.
    */
   attemptToReconnect () {
@@ -985,7 +985,7 @@
 
   /**
    * @description Handles the call event.
-   * @method
+
    * @param {Object} call - The call object.
    * @returns {RzSigServerConn} The current instance.
    */
@@ -1020,7 +1020,7 @@
 
   /**
    * @description Gets the available peer IDs.
-   * @method
+
    * @returns {Array} The available peer IDs.
    */
   availablePeerIds () {
@@ -1029,7 +1029,7 @@
 
   /**
    * @description Gets the connection to a peer ID.
-   * @method
+
    * @param {string} peerId - The peer ID.
    * @returns {RzPeerConn} The peer connection object.
    */
@@ -1042,7 +1042,7 @@
 
   /**
    * @description Connects to a peer ID.
-   * @method
+
    * @param {string} peerId - The peer ID.
    * @returns {RzPeerConn} The peer connection object.
    */
@@ -1054,7 +1054,7 @@
 
   /**
    * @description Gets the unconnected peer connections.
-   * @method
+
    * @returns {Array} The unconnected peer connections.
    */
   unconnectedPeerConns () {
@@ -1063,7 +1063,7 @@
 
   /**
    * @description Refreshes the peers.
-   * @method
+
    * @returns {RzSigServerConn} The current instance.
    */
   async refreshPeers () {
@@ -1103,7 +1103,7 @@
 
   /**
    * @description Sends a delegate message.
-   * @method
+
    * @param {string} methodName - The method name.
    * @param {Array} args - The arguments.
    * @returns {RzSigServerConn} The current instance.

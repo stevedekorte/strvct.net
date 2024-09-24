@@ -13,7 +13,7 @@
   
   /**
    * Initializes the prototype slots for the RzSigServerPeers class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -45,7 +45,7 @@
 
   /**
    * Sets the peer ID array and updates the subnodes accordingly.
-   * @method
+
    * @param {Array} peerIds - An array of peer IDs.
    * @returns {RzSigServerPeers} The updated RzSigServerPeers instance.
    */

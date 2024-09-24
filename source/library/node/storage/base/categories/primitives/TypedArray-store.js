@@ -60,7 +60,7 @@ const typedArrayClass = Int8Array.__proto__ // just using int array to get to ab
 Object.defineSlots(typedArrayClass, {
     /**
      * @static
-     * @method instanceFromRecordInStore
+
      * @description Creates an instance of the TypedArray from a record in the store.
      * @param {Object} aRecord - The record to create the instance from.
      * @param {Object} aStore - The store containing the record.
@@ -75,7 +75,7 @@ Object.defineSlots(typedArrayClass, {
 Object.defineSlots(typedArrayClass.prototype, {
 
     /**
-     * @method loadFromRecord
+
      * @description Loads the TypedArray from a record.
      * @param {Object} aRecord - The record to load from.
      * @param {Object} aStore - The store containing the record.
@@ -90,7 +90,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     },
 
     /**
-     * @method valuesArray
+
      * @description Converts the TypedArray to a regular Array.
      * @returns {Array} The TypedArray as a regular Array.
      */
@@ -99,7 +99,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     },
 
     /**
-     * @method recordForStore
+
      * @description Creates a record representation of the TypedArray for storage.
      * @param {Object} aStore - The store to create the record for.
      * @returns {Object} The record representation of the TypedArray.
@@ -112,7 +112,7 @@ Object.defineSlots(typedArrayClass.prototype, {
     },
 
     /**
-     * @method refsPidsForJsonStore
+
      * @description Returns the set of persistent unique identifiers for references in the TypedArray.
      * @param {Set} puuids - The set of persistent unique identifiers.
      * @returns {Set} The set of persistent unique identifiers (unchanged as TypedArrays have no references).

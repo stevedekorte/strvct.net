@@ -10,15 +10,13 @@
     
     /**
      * Initialize prototype slots for the StackScrollView.
-     * @method initPrototypeSlots
      */
     initPrototypeSlots () {
     }
 
     /**
      * Initialize the StackScrollView.
-     * @method init
-     * @returns {StackScrollView} The initialized StackScrollView instance.
+     * @returns {StackScrollView} The initialized StackScrollView instance to be vertically scrollable.
      */
     init () {
         super.init()
@@ -37,7 +35,6 @@
 
     /**
      * Set the scroll direction of the StackScrollView.
-     * @method setIsVertical
      * @param {boolean} aBool - True for vertical scrolling, false for horizontal scrolling.
      * @returns {StackScrollView} The StackScrollView instance.
      */
@@ -52,7 +49,6 @@
 
     /**
      * Configure the StackScrollView for vertical scrolling.
-     * @method makeVertical
      * @returns {StackScrollView} The StackScrollView instance.
      */
     makeVertical () {
@@ -65,7 +61,7 @@
 
     /**
      * Configure the StackScrollView for horizontal scrolling.
-     * @method makeHorizontal
+
      * @returns {StackScrollView} The StackScrollView instance.
      */
     makeHorizontal () {

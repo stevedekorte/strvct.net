@@ -12,7 +12,6 @@
     
     /**
      * Initializes the prototype slots for the BMTextAreaFieldTile.
-     * @method
      */
     initPrototypeSlots () {
         /**
@@ -34,14 +33,12 @@
 
     /**
      * Initializes the prototype.
-     * @method
      */
     initPrototype () {
     }
 
     /**
      * Initializes the BMTextAreaFieldTile instance.
-     * @method
      * @returns {BMTextAreaFieldTile} The initialized instance.
      */
     init () {
@@ -56,7 +53,6 @@
 
     /**
      * Creates and configures the value view for the text area.
-     * @method
      * @returns {TextField} The configured value view.
      */
     createValueView () {
@@ -77,7 +73,6 @@
 
     /**
      * Sets up the button for the value view.
-     * @method
      */
     setupValueViewButton () {
         this.valueViewContainer().setGap("1em");
@@ -100,7 +95,6 @@
 
     /**
      * Synchronizes the value from the node and updates the STT button visibility.
-     * @method
      */
     syncValueFromNode () {
         super.syncValueFromNode();
@@ -113,7 +107,6 @@
 
     /**
      * Checks if the microphone is currently active.
-     * @method
      * @returns {boolean} True if the microphone is on, false otherwise.
      */
     isMicOn () {
@@ -125,7 +118,6 @@
 
     /**
      * Updates the STT button icon based on the microphone state.
-     * @method
      */
     updateSttButton () {
         const iconName = this.isMicOn() ? "Mic On" : "Mic Off";
@@ -134,7 +126,6 @@
 
     /**
      * Handles the click event on the value button.
-     * @method
      */
     onClickValueButton () {
         console.log("this.isMicOn():", this.isMicOn());
@@ -149,7 +140,6 @@
 
     /**
      * Sets up the STT session if it hasn't been created yet.
-     * @method
      */
     setupSttSessionIfNeeded () {
         if (!this.sttSession()) {
@@ -160,7 +150,6 @@
 
     /**
      * Handles interim speech recognition results.
-     * @method
      * @param {SpeechToTextSession} sttSession - The STT session.
      */
     onSpeechInterimResult (sttSession) {
@@ -171,7 +160,6 @@
 
     /**
      * Handles final speech recognition results.
-     * @method
      * @param {SpeechToTextSession} sttSession - The STT session.
      */
     onSpeechFinal (sttSession) {
@@ -180,7 +168,6 @@
 
     /**
      * Handles speech input and updates the value view.
-     * @method
      * @param {SpeechToTextSession} sttSession - The STT session.
      */
     onSpeechInput (sttSession) {
@@ -197,7 +184,6 @@
 
     /**
      * Handles the end of speech recognition.
-     * @method
      * @param {SpeechToTextSession} sttSession - The STT session.
      */
     onSpeechEnd (sttSession) {
@@ -206,7 +192,6 @@
 
     /**
      * Handles the end of the STT session.
-     * @method
      * @param {SpeechToTextSession} sttSession - The STT session.
      */
     onSessionEnd (sttSession) {

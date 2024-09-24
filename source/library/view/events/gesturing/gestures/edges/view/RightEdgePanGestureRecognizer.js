@@ -17,7 +17,6 @@
     
     /**
      * @description Initializes prototype slots for the class.
-     * @method
      */
     initPrototypeSlots () {
 
@@ -25,7 +24,6 @@
 
     /**
      * @description Initializes the gesture recognizer.
-     * @method
      * @returns {RightEdgePanGestureRecognizer} The initialized instance.
      */
     init () {

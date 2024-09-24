@@ -12,7 +12,7 @@
 (class AiChatModel extends BMSummaryNode {
   /**
    * Initializes the prototype slots for the AiChatModel.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -53,7 +53,7 @@
 
   /**
    * Initializes the AiChatModel.
-   * @method
+
    */
   init () {
     super.init();
@@ -61,7 +61,7 @@
 
   /**
    * Performs final initialization of the AiChatModel.
-   * @method
+
    */
   finalInit () {
     super.finalInit()
@@ -72,7 +72,7 @@
 
   /**
    * Gets the service associated with this model.
-   * @method
+
    * @returns {AiService|Object} The service or parent node's parent node.
    */
   service () {
@@ -84,7 +84,7 @@
 
   /**
    * Gets the subtitle for the model.
-   * @method
+
    * @returns {string} The model name.
    */
   subtitle () {
@@ -93,7 +93,7 @@
 
   /**
    * Validates the API key.
-   * @method
+
    * @param {string} s - The API key to validate.
    * @returns {boolean} True if the key is valid, false otherwise.
    */
@@ -103,7 +103,7 @@
 
   /**
    * Checks if the model has a valid API key.
-   * @method
+
    * @returns {boolean} True if the API key is valid, false otherwise.
    */
   hasApiKey () {
@@ -112,7 +112,7 @@
 
   /**
    * Sets the model properties from a JSON object.
-   * @method
+
    * @param {Object} json - The JSON object containing model properties.
    * @returns {AiChatModel} The current instance.
    */
@@ -134,7 +134,7 @@
 
   /**
    * Generates a summary of the model.
-   * @method
+
    * @returns {string} A formatted string containing the model name and context window size.
    */
   summary () {

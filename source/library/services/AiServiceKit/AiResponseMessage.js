@@ -11,7 +11,7 @@
 
   /**
    * Initializes the prototype slots for the AiResponseMessage class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -110,7 +110,7 @@
 
   /**
    * Initializes the AiResponseMessage instance.
-   * @method
+
    */
   init () {
     super.init();
@@ -124,7 +124,7 @@
 
   /**
    * Performs final initialization of the AiResponseMessage instance.
-   * @method
+
    */
   finalInit () {
     super.finalInit();
@@ -136,7 +136,7 @@
 
   /**
    * Gets the request class from the parent chain.
-   * @method
+
    * @returns {Class} The request class.
    */
   requestClass () {
@@ -146,7 +146,7 @@
 
   /**
    * Checks if this is a response message.
-   * @method
+
    * @returns {boolean} True if this is a response message.
    */
   isResponse () {
@@ -161,7 +161,7 @@
 
   /**
    * Checks if the value is editable.
-   * @method
+
    * @returns {boolean} Always returns false for response messages.
    */
   valueIsEditable () {
@@ -170,7 +170,7 @@
 
   /**
    * Gets the AI speaker name.
-   * @method
+
    * @returns {string} The AI speaker name.
    */
   aiSpeakerName () {
@@ -179,7 +179,7 @@
 
   /**
    * Throws an error as send should not be called on a response.
-   * @method
+
    * @throws {Error} Always throws an error.
    */
   send () {
@@ -189,7 +189,7 @@
 
   /**
    * Throws an error as requestResponse should not be called on a response.
-   * @method
+
    * @throws {Error} Always throws an error.
    */
   requestResponse () {
@@ -198,7 +198,7 @@
 
   /**
    * Gets the chat model from the conversation.
-   * @method
+
    * @returns {Object} The chat model.
    */
   chatModel () {
@@ -207,7 +207,7 @@
 
   /**
    * Gets the service from the conversation.
-   * @method
+
    * @returns {Object} The service.
    */
   service () {
@@ -216,7 +216,7 @@
 
   /**
    * Gets the API key from the service.
-   * @method
+
    * @returns {string} The API key.
    */
   apiKey () {
@@ -225,7 +225,7 @@
 
   /**
    * Makes a new request and starts streaming the response.
-   * @method
+
    * @returns {AiResponseMessage} This instance.
    */
   makeRequest () {
@@ -238,7 +238,7 @@
 
   /**
    * Gets the JSON history for the request.
-   * @method
+
    * @returns {Array} An array of message JSON objects.
    */
   jsonHistory () {
@@ -253,7 +253,7 @@
 
   /**
    * Creates a new request object.
-   * @method
+
    * @returns {AiRequest} The new request object.
    */
   newRequest () {
@@ -274,7 +274,7 @@
 
   /**
    * Shows request information.
-   * @method
+
    */
   showRequestInfo () {
 
@@ -282,7 +282,7 @@
 
   /**
    * Gets the visible previous messages for the AI.
-   * @method
+
    * @returns {Array} An array of visible previous messages.
    */
   visiblePreviousMessages () {
@@ -294,7 +294,7 @@
 
   /**
    * Handles the beginning of a request.
-   * @method
+
    * @param {AiRequest} aRequest - The request object.
    */
   onRequestBegin (aRequest) {
@@ -303,7 +303,7 @@
 
   /**
    * Handles request errors.
-   * @method
+
    * @param {AiRequest} aRequest - The request object.
    */
   onRequestError (aRequest) {
@@ -322,7 +322,7 @@
 
   /**
    * Gets the value error message.
-   * @method
+
    * @returns {string|null} The error message or null if no error.
    */
   valueError () {
@@ -332,7 +332,7 @@
 
   /**
    * Handles the completion of the response.
-   * @method
+
    */
   onComplete () {
     super.onComplete() // sends a delegate message
@@ -342,7 +342,7 @@
 
   /**
    * Handles the completion of a request.
-   * @method
+
    * @param {AiRequest} aRequest - The request object.
    */
   onRequestComplete (aRequest) {
@@ -355,7 +355,7 @@
 
   /**
    * Checks if the content begins with a response tag.
-   * @method
+
    * @returns {boolean} True if the content begins with a response tag.
    */
   beginsWithResponseTag () {
@@ -364,7 +364,7 @@
 
   /**
    * Checks if the content ends with a response tag.
-   * @method
+
    * @returns {boolean} True if the content ends with a response tag.
    */
   endsWithResponseTag () {
@@ -373,7 +373,7 @@
 
   /**
    * Handles the start of a stream.
-   * @method
+
    * @param {AiRequest} request - The request object.
    */
   onStreamStart (request) {
@@ -381,7 +381,7 @@
   
   /**
    * Handles incoming stream data.
-   * @method
+
    * @param {AiRequest} request - The request object.
    * @param {string} newContent - The new content received.
    */
@@ -392,7 +392,7 @@
   
   /**
    * Handles the end of a stream.
-   * @method
+
    * @param {AiRequest} request - The request object.
    */
   onStreamEnd (request) {
@@ -404,7 +404,7 @@
 
   /**
    * Handles value input.
-   * @method
+
    */
   onValueInput () {
     this.requestResponse();
@@ -412,7 +412,7 @@
 
   /**
    * Shuts down the response message.
-   * @method
+
    */
   shutdown () {
     if (this.request()) {
@@ -423,7 +423,7 @@
 
   /**
    * Deletes the response message.
-   * @method
+
    * @returns {*} The result of the parent class's delete method.
    */
   delete () {

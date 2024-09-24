@@ -42,18 +42,10 @@
         let gotWillMutate = false
         let gotDidMutate = false
 
-        /**
-         * Hook called before a mutation occurs.
-         * @method willMutate
-         */
         a.willMutate = () => {
             gotWillMutate = true
         }
 
-        /**
-         * Hook called after a mutation occurs.
-         * @method didMutate
-         */
         a.didMutate = () => {
             gotDidMutate = true
         }

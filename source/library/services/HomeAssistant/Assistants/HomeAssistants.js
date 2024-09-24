@@ -13,7 +13,7 @@
   
   /**
    * @description Initializes the prototype slots for the HomeAssistants class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**

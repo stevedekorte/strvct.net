@@ -10,7 +10,6 @@
     
     /**
      * @static
-     * @method canOpenMimeType
      * @description Checks if this node type can open a specific MIME type.
      * @param {string} mimeType - The MIME type to check.
      * @returns {boolean} Always returns false for this class.
@@ -20,7 +19,6 @@
     }
 
     /**
-     * @method initPrototypeSlots
      * @description Initializes the prototype slots for this class.
      */
     initPrototypeSlots () {
@@ -35,7 +33,6 @@
     }
 
     /**
-     * @method initPrototype
      * @description Initializes the prototype with default values and settings.
      */
     initPrototype () {
@@ -51,7 +48,6 @@
     }
 
     /**
-     * @method jsonArchive
      * @description Returns the JSON archive of the node.
      * @throws {Error} Throws an error as this method is not implemented.
      */
@@ -62,7 +58,6 @@
     }
 
     /**
-     * @method setJson
      * @description Sets the JSON for this node, updating its structure accordingly.
      * @param {Object} json - The JSON object to set.
      * @returns {BMJsonDictionaryNode} Returns this node after updating.
@@ -105,7 +100,6 @@
     }
 
     /**
-     * @method calcJson
      * @description Calculates and returns the JSON representation of this node.
      * @returns {Object} The calculated JSON object.
      */
@@ -123,7 +117,6 @@
     }
 
     /**
-     * @method addSubnodeAt
      * @description Adds a subnode at a specific index after preparing it.
      * @param {BMJsonNode} newNode - The new node to add.
      * @param {number} anIndex - The index at which to add the new node.
@@ -135,7 +128,6 @@
     }
 
     /**
-     * @method replaceSubnodeWith
      * @description Replaces an existing subnode with a new one after preparing it.
      * @param {BMJsonNode} oldNode - The node to be replaced.
      * @param {BMJsonNode} newNode - The new node to replace with.
@@ -147,7 +139,6 @@
     }
 
     /**
-     * @method prepareSubnode
      * @description Prepares a subnode by setting its properties.
      * @param {BMJsonNode} aSubnode - The subnode to prepare.
      * @returns {BMJsonNode} The prepared subnode.
@@ -166,7 +157,6 @@
     }
 
     /**
-     * @method getBMDataUrl
      * @description Gets the BMDataUrl for this node.
      * @returns {BMDataUrl} The BMDataUrl object for this node.
      */
@@ -180,7 +170,6 @@
     }
 
     /**
-     * @method setIsEditable
      * @description Sets the editable state of this node and its subnodes.
      * @param {boolean} aBool - The editable state to set.
      * @returns {BMJsonDictionaryNode} This node after setting the editable state.

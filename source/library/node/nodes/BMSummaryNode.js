@@ -18,7 +18,6 @@
     
     /**
      * @description Initializes the prototype slots for the BMSummaryNode.
-     * @method
      */
     initPrototypeSlots () {
 
@@ -162,7 +161,6 @@
 
     /**
      * @description Initializes the prototype of the BMSummaryNode.
-     * @method
      */
     initPrototype () {
         this.setShouldStore(true);
@@ -172,7 +170,6 @@
 
     /**
      * @description Initializes the BMSummaryNode.
-     * @method
      */
     init () {
         super.init();
@@ -180,7 +177,6 @@
 
     /**
      * @description Called when the summaryFormat slot is updated.
-     * @method
      */
     didUpdateSlotSummaryFormat () {
         this.didUpdateNodeIfInitialized();
@@ -188,7 +184,6 @@
 
     /**
      * @description Returns the summary key.
-     * @method
      * @returns {string} The summary key.
      */
     summaryKey () {
@@ -197,7 +192,6 @@
 
     /**
      * @description Returns the summary value.
-     * @method
      * @returns {string} The summary value.
      */
     summaryValue () {
@@ -206,7 +200,6 @@
 
     /**
      * @description Returns the subtitle of the node.
-     * @method
      * @returns {string} The subtitle.
      */
     subtitle () {
@@ -223,7 +216,6 @@
 
     /**
      * @description Called when the nodeSubtitleIsChildrenSummary slot is updated.
-     * @method
      * @param {boolean} oldValue - The old value.
      * @param {boolean} newValue - The new value.
      */
@@ -235,7 +227,6 @@
 
     /**
      * @description Returns the summary of the node.
-     * @method
      * @returns {string} The summary.
      */
     summary () {
@@ -311,7 +302,6 @@
         
     /**
      * @description Returns the summary of all child nodes.
-     * @method
      * @returns {string} The children summary.
      */
     childrenSummary () {
@@ -320,7 +310,6 @@
 
     /**
      * @description Returns the formatted node summary suffix.
-     * @method
      * @returns {string} The formatted suffix.
      */
     nodeSummarySuffixOut () {
@@ -337,7 +326,6 @@
 
     /**
      * @description Called when the node is updated.
-     * @method
      */
     didUpdateNode () {
         super.didUpdateNode();

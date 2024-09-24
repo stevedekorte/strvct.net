@@ -10,7 +10,6 @@
     
     /**
      * Initializes the prototype slots for the BMHourNode.
-     * @method
      */
     initPrototypeSlots () {
         /**
@@ -25,7 +24,6 @@
 
     /**
      * Initializes the prototype with default settings.
-     * @method
      */
     initPrototype () {
         this.setCanDelete(false)
@@ -39,7 +37,6 @@
 
     /**
      * Sets the value of the hour.
-     * @method
      * @param {Number} v - The hour value to set (0-23).
      * @returns {BMHourNode} The instance for method chaining.
      */
@@ -51,7 +48,6 @@
 
     /**
      * Returns the meridiem name (am/pm) based on the current hour value.
-     * @method
      * @returns {string} "am" or "pm"
      */
     meridiemName () {
@@ -63,7 +59,6 @@
 
     /**
      * Returns the hour name in 12-hour format with meridiem.
-     * @method
      * @returns {string} The hour name (e.g., "12pm", "3am")
      */
     hourName () {
@@ -74,7 +69,6 @@
 
     /**
      * Returns the title of the node, which is the hour name.
-     * @method
      * @returns {string} The hour name
      */
     title () {
@@ -83,7 +77,6 @@
 
     /**
      * Returns the subtitle of the node.
-     * @method
      * @returns {null} Always returns null
      */
     subtitle () {
@@ -98,7 +91,6 @@
 
     /**
      * Prepares the node for syncing to view by adding minute subnodes if not present.
-     * @method
      */
     prepareToSyncToView () {
         // called after clicked

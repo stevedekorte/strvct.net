@@ -13,7 +13,7 @@
   
   /**
    * Initializes the prototype slots for the OpenAiTtsSessions class.
-   * @method
+
    * @description Sets up the subnodes, storage preferences, and other properties for the class.
    */
   initPrototypeSlots () {
@@ -55,7 +55,7 @@
 
   /**
    * Retrieves the parent service node.
-   * @method
+
    * @description Returns the parent node, which is expected to be the service.
    * @returns {Object} The parent node representing the service.
    */

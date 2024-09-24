@@ -13,7 +13,7 @@
 
   /**
    * Initializes the prototype slots for the MusicTrack class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -87,7 +87,7 @@
 
   /**
    * Initializes the MusicTrack instance.
-   * @method
+
    */
   init() {
     super.init();
@@ -96,7 +96,7 @@
 
   /**
    * Performs final initialization of the MusicTrack instance.
-   * @method
+
    */
   finalInit () {   
     this.setShouldStore(true);
@@ -107,7 +107,7 @@
 
   /**
    * Returns the title of the music track.
-   * @method
+
    * @returns {string} The name of the track.
    */
   title () {
@@ -116,7 +116,7 @@
 
   /**
    * Returns the subtitle of the music track.
-   * @method
+
    * @returns {string} "playing" if the track is playing, otherwise an empty string.
    */
   subtitle () {
@@ -125,7 +125,7 @@
 
   /**
    * Returns the parent library of this track.
-   * @method
+
    * @returns {MusicLibrary} The parent music library.
    */
   library () {
@@ -134,7 +134,7 @@
 
   /**
    * Returns the parent folder of this track.
-   * @method
+
    * @returns {MusicFolder} The parent music folder.
    */
   folder () {
@@ -143,7 +143,7 @@
 
   /**
    * Plays the music track.
-   * @method
+
    * @async
    */
   async play () {
@@ -162,7 +162,7 @@
 
   /**
    * Stops the music track.
-   * @method
+
    * @async
    */
   async stop () {
@@ -175,7 +175,7 @@
 
   /**
    * Checks if this is a music track.
-   * @method
+
    * @returns {boolean} Always returns true.
    */
   isMusicTrack () {
@@ -184,7 +184,7 @@
 
   /**
    * Toggles the play state of the track.
-   * @method
+
    * @returns {MusicTrack} This instance.
    */
   togglePlay () {
@@ -198,7 +198,7 @@
 
   /**
    * Returns information about the toggle play action.
-   * @method
+
    * @returns {Object} An object containing action information.
    */
   togglePlayActionInfo () {
@@ -211,7 +211,7 @@
 
   /**
    * Posts a note and sends it to delegates.
-   * @method
+
    * @param {string} methodName - The name of the method to post.
    * @returns {MusicTrack} This instance.
    */
@@ -223,7 +223,7 @@
 
   /**
    * Adds a delegate to the delegate set.
-   * @method
+
    * @param {Object} d - The delegate to add.
    * @returns {MusicTrack} This instance.
    */
@@ -234,7 +234,7 @@
 
   /**
    * Removes a delegate from the delegate set.
-   * @method
+
    * @param {Object} d - The delegate to remove.
    * @returns {MusicTrack} This instance.
    */
@@ -245,7 +245,7 @@
 
   /**
    * Sends a method call to all delegates.
-   * @method
+
    * @param {string} methodName - The name of the method to call on delegates.
    * @param {Array} [args=[this]] - The arguments to pass to the delegate method.
    */

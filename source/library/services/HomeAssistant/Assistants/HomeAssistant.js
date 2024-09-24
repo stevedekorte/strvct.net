@@ -12,7 +12,7 @@
 (class HomeAssistant extends BMSummaryNode {
   /**
    * Initialize the prototype slots for the HomeAssistant class.
-   * @method
+
    */
   initPrototypeSlots () {
     /**
@@ -233,7 +233,7 @@
 
   /**
    * Initialize the HomeAssistant instance.
-   * @method
+
    */
   init() {
     super.init();
@@ -244,7 +244,7 @@
 
   /**
    * Get the subtitle for the HomeAssistant instance.
-   * @method
+
    * @returns {string} The subtitle.
    */
   subtitle () {
@@ -253,7 +253,7 @@
   
   /**
    * Perform final initialization.
-   * @method
+
    */
   finalInit () {
     super.finalInit();
@@ -267,7 +267,7 @@
 
   /**
    * Handle updates to the host slot.
-   * @method
+
    */
   didUpdateSlotHost () {
     this.updateUrl()
@@ -275,7 +275,7 @@
 
   /**
    * Handle updates to the port slot.
-   * @method
+
    */
   didUpdateSlotPort () {
     this.updateUrl()
@@ -283,7 +283,7 @@
 
   /**
    * Compose the full URL.
-   * @method
+
    * @returns {string} The full URL.
    */
   composedUrl () {
@@ -293,7 +293,7 @@
 
   /**
    * Update the URL.
-   * @method
+
    */
   updateUrl () {
     this.setUrl(this.composedUrl());
@@ -301,7 +301,7 @@
 
   /**
    * Handle updates to the URL slot.
-   * @method
+
    */
   didUpdateSlotUrl () {
     //this.rescan();
@@ -309,7 +309,7 @@
 
   /**
    * Check if the URL is valid.
-   * @method
+
    * @returns {boolean} True if the URL is valid, false otherwise.
    */
   hasValidUrl () {
@@ -318,7 +318,7 @@
 
   /**
    * Toggle the connection state.
-   * @method
+
    */
   toggleConnect () {
     if (this.isConnected()) {
@@ -330,7 +330,7 @@
 
   /**
    * Disconnect from the HomeAssistant server.
-   * @method
+
    */
   disconnect () {
     this.setStatus("disconnecting...");
@@ -339,7 +339,7 @@
 
   /**
    * Connect to the HomeAssistant server.
-   * @method
+
    */
   connect () {
     this.setStatus("connecting...");
@@ -366,7 +366,7 @@
 
   /**
    * Check if connected to the HomeAssistant server.
-   * @method
+
    * @returns {boolean} True if connected, false otherwise.
    */
   isConnected () {
@@ -375,7 +375,7 @@
 
   /**
    * Get information for the toggle connect action.
-   * @method
+
    * @returns {Object} Action information.
    */
   toggleConnectActionInfo () {
@@ -389,7 +389,7 @@
 
   /**
    * Handle the close event of the WebSocket.
-   * @method
+
    * @param {Event} event - The close event.
    */
   onClose (event) {
@@ -403,7 +403,7 @@
 
   /**
    * Handle errors in the WebSocket connection.
-   * @method
+
    * @param {Error} error - The error object.
    */
   onError (error) {
@@ -417,7 +417,7 @@
 
   /**
    * Get authentication from the HomeAssistant server.
-   * @method
+
    * @returns {Promise<boolean>} True if authentication was successful, false otherwise.
    */
   async getAuth () {
@@ -437,7 +437,7 @@
 
   /**
    * Handle the open event of the WebSocket.
-   * @method
+
    * @param {Event} event - The open event.
    */
   async onOpen (event) {
@@ -446,7 +446,7 @@
 
   /**
    * Get all the group nodes.
-   * @method
+
    * @returns {Array} An array of group nodes.
    */
   groups () {
@@ -460,7 +460,7 @@
 
   /**
    * Refresh all group nodes.
-   * @method
+
    */
   async refresh () {
     try {
@@ -481,7 +481,7 @@
 
   /**
    * Generate a new message ID.
-   * @method
+
    * @returns {number} A new message ID.
    */
   newMessageId () {
@@ -492,7 +492,7 @@
 
   /**
    * Send a message to the HomeAssistant server.
-   * @method
+
    * @param {Object} dict - The message to send.
    * @returns {Promise} A promise that resolves with the server's response.
    */
@@ -519,7 +519,7 @@
 
   /**
    * Update the status based on pending messages.
-   * @method
+
    */
 
   updateStatus () {
@@ -636,7 +636,7 @@
 
   /**
    * Get the scan action info.
-   * @method
+
    * @returns {Object} The scan action info.
    */
   scanActionInfo () {

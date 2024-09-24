@@ -10,7 +10,7 @@
     
     /**
      * Initializes the prototype slots for the BMDataStoreRecord.
-     * @method initPrototypeSlots
+
      */
     initPrototypeSlots () {
         /**
@@ -31,7 +31,7 @@
 
     /**
      * Initializes the prototype.
-     * @method initPrototype
+
      */
     initPrototype () {
         this.setCanDelete(false); // too dangerous
@@ -39,7 +39,7 @@
 
     /**
      * Prepares the record for first access.
-     * @method prepareForFirstAccess
+
      */
     prepareForFirstAccess () {
         super.prepareForFirstAccess()
@@ -55,7 +55,7 @@
 
     /**
      * Returns the record associated with this BMDataStoreRecord.
-     * @method record
+
      * @returns {Object} The associated record.
      */
     record () {
@@ -64,7 +64,7 @@
 
     /**
      * Sets the record string.
-     * @method setRecordString
+
      * @param {string} s - The record string to set.
      * @throws {Error} Always throws an error as it's not editable.
      */
@@ -74,7 +74,7 @@
 
     /**
      * Returns the record as a JSON string.
-     * @method recordString
+
      * @returns {string} The record as a JSON string.
      */
     recordString () {
@@ -83,7 +83,7 @@
 
     /**
      * Returns an array of referenced records.
-     * @method referencedRecords
+
      * @returns {Array} An array of referenced records.
      */
     referencedRecords () {
@@ -92,7 +92,7 @@
 
     /**
      * Returns the set of referenced PIDs.
-     * @method referencedPidSet
+
      * @returns {Set} The set of referenced PIDs.
      */
     referencedPidSet () {
@@ -101,7 +101,7 @@
 
     /**
      * Creates a BMDataStoreRecord for a given record.
-     * @method forRecord
+
      * @static
      * @param {Object} aRecord - The record to create a BMDataStoreRecord for.
      * @returns {BMDataStoreRecord} The created BMDataStoreRecord.

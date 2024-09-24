@@ -10,7 +10,6 @@
     
     /**
      * Initializes the prototype slots for the BMTextNodeTile.
-     * @method
      */
     initPrototypeSlots () {
         {
@@ -24,7 +23,6 @@
 
     /**
      * Initializes the BMTextNodeTile.
-     * @method
      * @returns {BMTextNodeTile} The initialized instance.
      */
     init () {
@@ -58,7 +56,6 @@
 
     /**
      * Calculates the desired width of the tile.
-     * @method
      * @returns {number} The desired width.
      */
     desiredWidth () {
@@ -69,7 +66,6 @@
 
     /**
      * Handles input events.
-     * @method
      */
     didInput () {
         this.scheduleSyncToNode();
@@ -79,7 +75,6 @@
 
     /**
      * Synchronizes the tile's content to the node.
-     * @method
      * @returns {BMTextNodeTile} The current instance.
      */
     syncToNode () {   
@@ -91,7 +86,6 @@
     
     /**
      * Synchronizes the tile's content from the node.
-     * @method
      * @returns {BMTextNodeTile} The current instance.
      */
     syncFromNode () {
@@ -108,7 +102,6 @@
 
     /**
      * Applies styles to the tile.
-     * @method
      * @returns {BMTextNodeTile} The current instance.
      */
     applyStyles () {

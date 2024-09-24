@@ -8,14 +8,12 @@
     
     /**
      * @description Initializes the prototype slots for the node.
-     * @method
      */
     initPrototypeSlots () {
     }
 
     /**
      * @description Initializes the prototype of the node.
-     * @method
      */
     initPrototype () {
         this.setNodeViewClassName("ImageView")
