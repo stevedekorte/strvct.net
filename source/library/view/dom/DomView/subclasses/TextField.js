@@ -1,58 +1,99 @@
 "use strict";
 
-/*
-
-    TextField
-    
-    A view for a single line of text. 
-    For multi-line text, use TextArea.
-
-    On input, sends didEdit up parent view chain.
-    This typically goes to a BMFieldTile.onDidEdit(changedView) which sends this.scheduleSyncToNode().
-
-    
-    Behavior:
-    (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent. 
-
-    Notes:
-
-*/
+/**
+ * @module library.view.dom.DomView.subclasses.TextField
+ * @class TextField
+ * @extends StyledDomView
+ * @description A view for a single line of text. 
+ * For multi-line text, use TextArea.
+ * On input, sends didEdit up parent view chain.
+ * This typically goes to a BMFieldTile.onDidEdit(changedView) which sends this.scheduleSyncToNode().
+ * Behavior:
+ * (CURRENTLY DISABLED) On Return/Enter key, it passes focus to the nextResponder/parent. 
+ * 
+ */
 
 (class TextField extends StyledDomView {
     
     initPrototypeSlots () {
 
+        /**
+         * @property {String} lastMergeValue
+         * @description The last merge value.
+         */
         {
             const slot = this.newSlot("lastMergeValue", null); // for merge support
             slot.setSlotType("String");
         }
+        /**
+         * @property {Boolean} isMergeable
+         * @description Whether the text field is mergeable.
+         */
         {
             const slot = this.newSlot("isMergeable", false); // for merge support
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {HtmlStreamReader} htmlStreamReader
+         * @description The HTML stream reader.
+         */
         {
             const slot = this.newSlot("htmlStreamReader", null); // for merge support
             slot.setSlotType("HtmlStreamReader");
         }
         
+        /**
+         * @property {String} selectedColor
+         * @description The selected color.
+         */
         {
             const slot = this.newSlot("selectedColor", null);
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} unselectedColor
+         * @description The unselected color.
+         */
         {
             const slot = this.newSlot("unselectedColor", null);
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {Boolean} doesClearOnReturn
+         * @description Whether the text field clears on return.
+         */
         {
             const slot = this.newSlot("doesClearOnReturn", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} doesHoldFocusOnReturn
+         * @description Whether the text field holds focus on return.
+         */
         {
             const slot = this.newSlot("doesHoldFocusOnReturn", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} doesTrim
+         * @description Whether the text field trims.
+         */
         {
             const slot = this.newSlot("doesTrim", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @property {Boolean} doesInput
+         * @description Whether the text field does input.
+         */
+        {
+            const slot = this.newSlot("doesInput", false);
             slot.setSlotType("Boolean");
         }
 
@@ -61,37 +102,71 @@
             const slot = this.newSlot("didTextEditNote", null)
         */
 
+        /**
+         * @property {Boolean} canHitEnter
+         * @description Whether the text field can hit enter.
+         */
         {
-            const slot = this.newSlot("doesInput", false) // if true, enter key does not add return character but does report enter key to delegate
+            const slot = this.newSlot("canHitEnter", false); // if true, enter key does not add return character but does report enter key to delegate
+            slot.setOwnsSetter(true);
+            slot.setDoesHookSetter(true);
+            slot.setSlotType("Boolean");
+        }
+        
+        /**
+         * @property {Boolean} doesMuteEnter
+         * @description Whether the text field does mute enter.
+         */
+        {
+            const slot = this.newSlot("doesMuteEnter", false); // if true, enter key is muted and opacity is reduced
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
             slot.setSlotType("Boolean");
         }
 
-        {
-            const slot = this.newSlot("canHitEnter", false); // if true, enter key is muted and opacity is reduced
-            slot.setOwnsSetter(true);
-            slot.setDoesHookSetter(true);
-            slot.setSlotType("Boolean");
-        }
-
+        /**
+         * @property {Boolean} allowsHtml
+         * @description Whether the text field allows html.
+         */
         {
             const slot = this.newSlot("allowsHtml", false);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {Boolean} allowsSetStringWhileFocused
+         * @description Whether the text field allows set string while focused.
+         */
+        {
+            const slot = this.newSlot("allowsSetStringWhileFocused", false);
+            slot.setSlotType("Boolean");
+        }
+
+        /**
+         * @property {Boolean} allowsSetStringWhileFocused
+         * @description Whether the text field allows set string while focused.
+         */
         {
             const slot = this.newSlot("allowsSetStringWhileFocused", false);
             slot.setSlotType("Boolean");
         }
 
         // has to start false for proper state setup
+
+        /**
+         * @property {Boolean} usesDoubleTapToEdit
+         * @description Whether the text field uses double tap to edit.
+         */
         {
             const slot = this.newSlot("usesDoubleTapToEdit", false) ;
             slot.setSlotType("Boolean");
         }
 
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
+        /**
+         * @property {Boolean} isEditable
+         * @description Whether the text field is editable.
+         */
         {
             const slot = this.newSlot("isEditable", false);
             slot.setOwnsSetter(true);
@@ -99,30 +174,64 @@
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {String} editableBorder
+         * @description The editable border.
+         */
         {
             const slot = this.newSlot("editableBorder", "1px solid rgba(255, 255, 255, 0.2)");
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} uneditableBorder
+         * @description The uneditable border.
+         */
         {
             const slot = this.newSlot("uneditableBorder", "none");
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {Boolean} showsBorderWhenEditable
+         * @description Whether the text field shows border when editable.
+         */
         {
             const slot = this.newSlot("showsBorderWhenEditable", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {MutationObserver} mutationObserver
+         * @description The mutation observer.
+         */
         {
             const slot = this.newSlot("mutationObserver", null);
             slot.setSlotType("MutationObserver");
         }
+
+        /**
+         * @property {Boolean} isMultiline
+         * @description Whether the text field is multiline.
+         */
         {
             const slot = this.newSlot("isMultiline", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} onBlurSelection
+         * @description Whether the text field on blur selection.
+         */
         {
             const slot = this.newSlot("onBlurSelection", null);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {String} placeholderText
+         * @description The placeholder text.
+         */
         {
             const slot = this.newSlot("placeholderText", null);
             slot.setSlotType("String");
@@ -168,6 +277,10 @@
         return this
     }
 
+    /**
+     * @description Sets up the element.
+     * @returns {TextField} The text field.
+     */
     setupElement () {
         super.setupElement()
         //this.scheduleRegisterForFocus() // TODO: make this lazy
@@ -176,6 +289,10 @@
 
     // --- sub-element mutation observer ---
 
+    /**
+     * @description Starts the mutation observer.
+     * @returns {TextField} The text field.
+     */
     startMutationObserver () {
         debugger;
         if (!this.mutationObserver()) {
@@ -195,6 +312,10 @@
         return this
     }
 
+    /**
+     * @description Stops the mutation observer.
+     * @returns {TextField} The text field.
+     */
     stopMutationObserver () {
         const obs = this.mutationObserver()
         if (obs) {
@@ -204,6 +325,12 @@
         return this
     }
 
+    /**
+     * @description Handles the DOM mutation.
+     * @param {MutationRecord[]} mutationList - The mutation list.
+     * @param {MutationObserver} observer - The observer.
+     * @returns {void}
+     */
     onDomMutation (mutationList, observer) {
      //   console.log("onDomMutation --------------> ", mutationList)
 
@@ -222,10 +349,20 @@
         }
     }
 
+    /**
+     * @description Handles the character data mutation.
+     * @param {MutationRecord} mutation - The mutation.
+     * @returns {void}
+     */
     onCharacterDataMutation (mutation) {
         console.log("onCharacterDataMutation --------------> ", mutation)
     }
 
+    /**
+     * @description Sets the content editable.
+     * @param {Boolean} aBool - The boolean.
+     * @returns {TextField} The text field.
+     */
     setContentEditable (aBool) {
         super.setContentEditable(aBool)
 
@@ -262,18 +399,35 @@
     }
     */
     
+    /**
+     * @description Did update slot does input.
+     * @returns {void}
+     */
     didUpdateSlotDoesInput () {
         this.syncEditingControl()
     }
 
+    /**
+     * @description Did update slot can hit enter.
+     * @returns {void}
+     */
     didUpdateSlotCanHitEnter () {
         this.syncEditingControl()
     }
     
+    /**
+     * @description Did update slot is editable.
+     * @returns {void}
+     */
     didUpdateSlotIsEditable () {
         this.syncEditingControl()
     }
 
+    /**
+     * @description Sets the uses double tap to edit.
+     * @param {Boolean} aBool - The boolean.
+     * @returns {TextField} The text field.
+     */
     setUsesDoubleTapToEdit (aBool) {
         if (this._usesDoubleTapToEdit !== aBool) {
             this._usesDoubleTapToEdit = aBool
@@ -282,6 +436,10 @@
         return this
     }
 
+    /**
+     * @description Syncs the border.
+     * @returns {TextField} The text field.
+     */
     syncBorder () {
         let b = this.uneditableBorder()
 
@@ -294,6 +452,10 @@
         return this
     }
 
+    /**
+     * @description Syncs the placeholder text.
+     * @returns {TextField} The text field.
+     */
     syncPlaceholderText () {
         const pt = this.placeholderText();
         if (pt && pt.length > 0) {
@@ -306,6 +468,10 @@
         return this;
     }
 
+    /**
+     * @description Syncs the editing control.
+     * @returns {TextField} The text field.
+     */
     syncEditingControl () {
         this.syncBorder();
         this.syncPlaceholderText();
@@ -339,10 +505,20 @@
     }
 
 
+    /**
+     * @description On double tap cancelled.
+     * @param {GestureRecognizer} aGesture - The gesture.
+     * @returns {void}
+     */
     onDoubleTapCancelled (aGesture) {
         //console.log(this.value() + " onDoubleTapCancelled")
     }
 
+    /**
+     * @description On double tap complete.
+     * @param {GestureRecognizer} aGesture - The gesture.
+     * @returns {TextField} The text field.
+     */
     onDoubleTapComplete (aGesture) {
         //debugger;
         //console.log(this.value() + " onDoubleTapComplete")
@@ -362,16 +538,29 @@
         return this
     }
 
+    /**
+     * @description Pauses the gestures.
+     * @returns {void}
+     */
     pauseGestures () {
         GestureManager.shared().pause() // so things like text selection don't trigger gestures
     }
 
+    /**
+     * @description Unpauses the gestures.
+     * @returns {void}
+     */
     unpauseGestures () {
         GestureManager.shared().unpause() // so things like text selection don't trigger gestures
     }
 
     // --- onFocusIn / onFocusOut ---
 
+    /**
+     * @description On focus in.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onFocusIn (event) {
         // sent before focus and bubbles up the parent chain
 
@@ -382,6 +571,11 @@
         }
     }
 
+    /**
+     * @description On focus out.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onFocusOut (event) {
         // sent before blur
         //console.log("'" + this.textContent().substring(0, 10) + "...'.onFocusOut()")
@@ -395,6 +589,11 @@
 
     // --- onFocus / onBlur ---
 
+    /**
+     * @description On focus.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onFocus (event) {
        // console.log("'" + this.textContent().substring(0, 20) + "...'.onFocus()")
         if (this.onBlurSelection()) {
@@ -404,12 +603,21 @@
         }
     }
 
+    /**
+     * @description Blurs the text field.
+     * @returns {TextField} The text field.
+     */
     blur () {
         //debugger
         //console.log(this.value() + " blur")
         return super.blur()
     }
 
+    /**
+     * @description On blur.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onBlur (event) {
         super.onBlur()
         if (this.usesDoubleTapToEdit()) {
@@ -422,6 +630,11 @@
 
     // --------------------------------
 
+    /**
+     * @description Sets the pixel font size.
+     * @param {Number} aNumber - The number.
+     * @returns {TextField} The text field.
+     */
     setPxFontSize (aNumber) {
         super.setPxFontSize(aNumber)
         this.setMinAndMaxHeight(aNumber + 2) // make sure TextfField can fit font size
@@ -429,10 +642,18 @@
         return this
     }
 	
+    /**
+     * @description Returns the strings that can detect returns.
+     * @returns {Array} The strings.
+     */
     returnStrings () {
         return ["<div><br></div>", "<br><br>"]
     }
 	
+    /**
+     * @description Checks if the text field contains returns.
+     * @returns {Boolean} True if it contains returns, false otherwise.
+     */
     containsReturns () {
         const value = this.value() // correct?
         return returnStrings.canDetect(returnString => value.contains(returnString))		
@@ -440,14 +661,29 @@
 	
     // ------------------
 
+    /**
+     * @description Sets the inner HTML.
+     * @param {String} s - The string.
+     * @returns {TextField} The text field.
+     */
     setInnerHtml (s) {
         return super.setInnerHtml(s)
     }
 
+    /**
+     * @description Sets the inner text.
+     * @param {String} s - The string.
+     * @returns {TextField} The text field.
+     */
     setInnerText (s) {
         return super.setInnerText(s)
     }
 
+    /**
+     * @description Sets the value.
+     * @param {String} newValue - The new value.
+     * @returns {TextField} The text field.
+     */
     setValue (newValue) {
         newValue = this.cleanseNewValue(newValue);
 
@@ -474,6 +710,11 @@
     }
     */
 
+    /**
+     * @description Sets the value with merge.
+     * @param {String} newValue - The new value.
+     * @returns {TextField} The text field.
+     */
     setValueWithMerge (newValue) {
         //const oldValue = this.element().innerHTML;
         let oldValue = this.lastMergeValue();
@@ -508,6 +749,10 @@
         return this;
     }
 
+    /**
+     * @description Returns the value.
+     * @returns {String} The value.
+     */
     value () {
         // this.element().text ?
         return this.string()
@@ -515,6 +760,11 @@
 
     // allowsHtml
 
+    /**
+     * @description Sets the new value.
+     * @param {String} v - The value.
+     * @returns {TextField} The text field.
+     */
     setNewValue (v) { // private method
         //console.log("setNewValue(" + v.substring(0, 10) + "...)");
         if (this.allowsHtml()) {
@@ -526,6 +776,11 @@
         return this
     }
 
+    /**
+     * @description Cleanses the new value.
+     * @param {String} newValue - The new value.
+     * @returns {String} The cleansed value.
+     */
     cleanseNewValue (newValue) {
         if (Type.isNullOrUndefined(newValue)) {
             newValue = ""
@@ -538,6 +793,11 @@
         return newValue;
     }
     
+    /**
+     * @description Sets the string.
+     * @param {String} newValue - The new value.
+     * @returns {TextField} The text field.
+     */
     setString (newValue) {
         newValue = this.cleanseNewValue(newValue);
 
@@ -569,6 +829,10 @@
 
     // ------------------
 
+    /**
+     * @description Adjusts the font size with keyboard.
+     * @returns {TextField} The text field.
+     */
     adjustFontSizeWithKeyboard () {
         const kb = BMKeyboard.shared()
         const controlDown   = kb.controlKey().isDown()
@@ -590,12 +854,22 @@
         return this
     }
 
+    /**
+     * @description On alternate enter key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onAlternateEnterKeyUp (event) {
         console.log(this.typeId() + " onAlternateEnterKeyDown")
         //this.insertEnterAtCursor()
         //this.afterEnter()
     }
 
+    /**
+     * @description Inserts an enter at cursor.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     insertEnterAtCursor (event) {
         if (this.isFocused()) {
             //this.insertTextAtCursor("\n")
@@ -604,10 +878,19 @@
         }   
     }
 
+    /**
+     * @description Checks if the text field is single line.
+     * @returns {Boolean} True if it is single line, false otherwise.
+     */
     isSingleLine () {
         return !this.isMultiline();
     }
 
+    /**
+     * @description Should mute event.
+     * @param {Event} event - The event.
+     * @returns {Boolean} True if it should mute, false otherwise.
+     */
     shouldMuteEvent (event) {
         const returnKeyCode = 13; // return key
 
@@ -622,6 +905,11 @@
     }
 
 
+    /**
+     * @description On key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onKeyDown (event) {
         // sent before the content is changed
         let result = super.onKeyDown(event)
@@ -635,6 +923,11 @@
         return true
     }
 
+    /**
+     * @description On input.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onInput (event) {
         // sent after the content is changed
         const returnKeyCode = 13; 
@@ -658,12 +951,22 @@
         return false;
     }
     
+    /**
+     * @description On key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onKeyUp (event) {
         super.onKeyUp(event);
         return false;
     }
     
     
+    /**
+     * @description On enter key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onEnterKeyDown (event) {    
         // insert 2 returns as cursor won't go to the second line with 1
         // document.execCommand('insertHTML', false, "\n\n");
@@ -671,6 +974,11 @@
         return false;
     }
 
+    /**
+     * @description On enter key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onEnterKeyUp (event) {
         if (!this.isContentEditable()) {
             return 
@@ -690,6 +998,11 @@
 
     // Alt Enter
 
+    /**
+     * @description On alternate enter key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onAlternateEnterKeyDown (event) {
         if (this.doesInput() && this.isMultiline()) {
             this.insertTextAtCursorAndConsolidate("\n")
@@ -697,12 +1010,22 @@
         }
     }
 
+    /**
+     * @description On escape key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onEscapeKeyDown (event) {
         this.releaseFirstResponder()
         event.stopPropagation()
         return false
     }
 
+    /**
+     * @description After enter.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     afterEnter (event) {
 
         if (this.doesInput()) {
@@ -739,6 +1062,10 @@
         return false
     }
 	
+    /**
+     * @description Format value.
+     * @returns {TextField} The text field.
+     */
     formatValue () {
         this.setTextContent(this.textContent()) // removes formatting?
         /*
@@ -778,6 +1105,11 @@
     }
     */
 
+    /**
+     * @description Set theme class name.
+     * @param {String} aName - The name.
+     * @returns {TextField} The text field.
+     */
     setThemeClassName (aName) {
         if (this.themeClassName() === "FieldKey") {
             debugger;
@@ -790,6 +1122,10 @@
          return this
     }
 
+    /**
+     * @description Apply styles.
+     * @returns {TextField} The text field.
+     */
     applyStyles () {
         /*
         if (this.themeClassName() === "FieldKey") {
@@ -800,6 +1136,10 @@
         return this
     }
 
+    /**
+     * @description Activate.
+     * @returns {TextField} The text field.
+     */
     activate () {
         if (this.usesDoubleTapToEdit()) {
             this.onDoubleTapComplete()
@@ -809,6 +1149,11 @@
         return this
     }
     
+    /**
+     * @description On click.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onClick (event) {
         // needed to prevent click-to-edit event from selecting the background row
         //this.debugLog(".onClick()")
@@ -822,6 +1167,11 @@
         return super.onClick(event)
     }
     
+    /**
+     * @description Set border.
+     * @param {Boolean} v - The value.
+     * @returns {TextField} The text field.
+     */
     setBorder (v) {
         /*
         if (this.value() === "a") {
@@ -831,6 +1181,11 @@
         return super.setBorder(v)
     }
 
+    /**
+     * @description Set background color.
+     * @param {String} aColor - The color.
+     * @returns {TextField} The text field.
+     */
     setBackgroundColor (aColor) {
         super.setBackgroundColor(aColor)
         return this
@@ -838,6 +1193,11 @@
 
     // --- speech to text input -----------------------------------------------------------------------
 
+    /**
+     * @description On alternate l key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onAlternate_l_KeyDown (event) {
         if (this.hasFocus()) {
             if (!event.repeat) {
@@ -849,6 +1209,11 @@
         }
     }
 
+    /**
+     * @description On alternate l key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onAlternate_l_KeyUp(event) {
         if (this.hasFocus()) {
             this.stopSpeechToText()
@@ -858,6 +1223,10 @@
         }
     }
 
+    /**
+     * @description Start speech to text.
+     * @returns {void}
+     */
     startSpeechToText () {
         console.log("=== start speech to text ===")
         if (this._speechSession) {
@@ -877,6 +1246,11 @@
         }
     }
 
+    /**
+     * @description On speech interim result.
+     * @param {SpeechToTextSession} speechSession - The speech session.
+     * @returns {void}
+     */
     onSpeechInterimResult (speechSession) {
         //const s = speechSession.intermFullTranscript()
         const s = speechSession.fullTranscript()
@@ -884,6 +1258,11 @@
         //this.insertTextAtCursorSimple(s)
     }
 
+    /**
+     * @description On speech end.
+     * @param {SpeechToTextSession} speechSession - The speech session.
+     * @returns {void}
+     */
     onSpeechEnd (speechSession) {
         const s = speechSession.fullTranscript()
         console.log("onSpeechEnd full: '" + s + "'")
@@ -891,6 +1270,10 @@
         this._speechSession = null
     }
 
+    /**
+     * @description Stop speech to text.
+     * @returns {void}
+     */
     stopSpeechToText () {
         console.log("==== stop speech to text ====") 
         // TODO: add visual indicator?
@@ -902,6 +1285,11 @@
 
     // --- arrow key defaults disabled while editing ---
 
+    /**
+     * @description On up arrow key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onUpArrowKeyDown (event) { // why down and not up?
         if (this.isFocused()) { 
             return false
@@ -910,6 +1298,11 @@
         return super.onUpArrowKeyDown(event)
     }
 	
+    /**
+     * @description On down arrow key down.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onDownArrowKeyDown (event) { // why down and not up?
         if (this.isFocused()) { 
             return false
@@ -918,6 +1311,11 @@
         return super.onDownArrowKeyDown(event)
     }
 	
+    /**
+     * @description On left arrow key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onLeftArrowKeyUp (event) {
         if (this.isFocused()) { 
             return false          
@@ -926,6 +1324,11 @@
         return super.onLeftArrowKeyUp(event)
     }
 	
+    /**
+     * @description On right arrow key up.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onRightArrowKeyUp (event) {
         if (this.isFocused()) { 
             return false
@@ -936,6 +1339,11 @@
 
     // --- select ---
 
+    /**
+     * @description On select start.
+     * @param {Event} event - The event.
+     * @returns {void}
+     */
     onSelectStart (event) {
         console.log("'" + this.element().textContent.substring(0, 10) + "'.onSelectStart()")
     }
@@ -943,203 +1351,3 @@
 }.initThisClass());
 
 
-
-// --- experimental DOM merge support ----
-// TODO: move to ideal if useful
-
-/*
-    nodeTypes:
-
-{
-  "1": "ELEMENT_NODE",
-  "2": "ATTRIBUTE_NODE",
-  "3": "TEXT_NODE",
-  "4": "CDATA_SECTION_NODE",
-  "5": "ENTITY_REFERENCE_NODE",
-  "6": "ENTITY_NODE",
-  "7": "PROCESSING_INSTRUCTION_NODE",
-  "8": "COMMENT_NODE",
-  "9": "DOCUMENT_NODE",
-  "10": "DOCUMENT_TYPE_NODE",
-  "11": "DOCUMENT_FRAGMENT_NODE",
-  "12": "NOTATION_NODE"
-}
-
-*/
-
-assert(HTMLElement.prototype.clone === undefined);
-
-HTMLElement.prototype.clone = function() {
-    const newNode = document.createElement(this.tagName);
-    Array.from(this.attributes).forEach(attr => {
-        newNode.setAttribute(attr.name, attr.value);
-    });
-    newNode.innerHTML = this.innerHTML;
-    return newNode
-};
-
-HTMLElement.prototype.mergeFrom = function(remoteElement) {
-    if (this.innerHTML === remoteElement.innerHTML) {
-        return;
-    }
-
-    if (!(remoteElement instanceof HTMLElement)) {
-        throw new Error('remoteElement must be an instance of HTMLElement');
-    }
-
-    //console.log("         this.innerHTML: " + this.innerHTML);
-    //console.log("remoteElement.innerHTML: " + remoteElement.innerHTML);
-
-    const localChildNodes = Array.from(this.childNodes);
-    const remoteChildNodes = Array.from(remoteElement.childNodes);
-
-    // walk through the source
-    if (localChildNodes.length <= remoteChildNodes.length) {
-         // this can happen if last string ended on an incomplete tag e.g. "...<"
-         // let it add it as a text node and then we'll replace it with the complete tag on the next merge?
-    }
-
-    for (let i = 0; i < remoteChildNodes.length; i++) {
-        //debugger;
-
-        const remoteChildNode = remoteChildNodes[i];
-        
-        if (i < localChildNodes.length) {
-            let localChildNode = localChildNodes[i];
-
-            // special case for cut off tags
-            if (i === localChildNodes.length -1 && localChildNode.nodeType === Node.TEXT_NODE && remoteChildNode.nodeType !== Node.TEXT_NODE) {
-                // this can happen if last string ended on an incomplete tag e.g. "...<" but the tag is now complete
-                this.removeChild(localChildNode);
-                assert(remoteChildNode.nodeType === Node.ELEMENT_NODE);
-                localChildNode = remoteChildNode.clone();
-                this.appendChild(localChildNode);
-            }
-
-            assert(localChildNode.nodeType === remoteChildNode.nodeType);
-
-            // handle children already present
-            switch (localChildNode.nodeType) {
-                case Node.ELEMENT_NODE:
-                    assert(localChildNode.tagName === remoteChildNode.tagName);
-                    assert(localChildNode.className === remoteChildNode.className);
-                    localChildNode.mergeFrom(remoteChildNode);
-                    break;
-                case Node.TEXT_NODE:
-                    localChildNode.textContent = remoteChildNode.textContent;
-                    break;
-                default:
-                    throw new Error("unhandled node type " + localChildNode.nodeType);
-            }
-
-        } else {
-            // handle new children
-            switch (remoteChildNode.nodeType) {
-                case Node.ELEMENT_NODE:
-                    this.appendChild(remoteChildNode.clone());
-                    break;
-                case Node.TEXT_NODE:
-                    const newTextNode = document.createTextNode(remoteChildNode.textContent);
-                    this.appendChild(newTextNode);
-                    break;
-                default:
-                    throw new Error("unhandled node type " + localChildNode.nodeType);
-            }
-        }
-    }
-};
-
-HTMLElement.prototype.findElementWithTextContent = function(textContent, className) {
-    const children = Array.from(this.childNodes);
-
-    for (let i = 0; i < children.length; i++) {
-        const child = children[i];
-
-        if (className && !child.classList.contains(className)) {
-            continue;
-        }
-
-        if (child.textContent === textContent) {
-            return child;
-        }
-
-        if (child.textContent.trim() === textContent) {
-            console.warn("WARNING: findElementWithTextContent non exact match for [" + textContent.clipWithEllipsis(15) + "]");
-            return child;
-        }
-
-        if (child.nodeType === Node.ELEMENT_NODE) {
-            const match = child.findElementWithTextContent(textContent, className);
-            if (match) {
-                return match;
-            }
-        }
-    }
-
-    return null;
-}
-
-//Element.prototype.getAllSubelements = function() { // Element includes HTML and SVG elements
-
-// --- find matching class names ---
-
-HTMLElement.prototype.getAllSubelementsWithClass = function(className) {
-    return this.getAllSubelementsWithAnyOfClass([className]);
-};
-
-HTMLElement.prototype.getAllSubelementsWithAnyOfClass = function(classNames) {
-    let allSubelements = [];
-    function recurse(element) {
-      Array.from(element.children).forEach(child => {
-        // Check if the child element contains any of the class names provided
-        if (classNames.some(className => child.classList.contains(className))) {
-          allSubelements.push(child);
-        }
-        recurse(child);
-      });
-    }
-    recurse(this);
-    return allSubelements;
-};
-
-// --- find matching tag names ---
-
-HTMLElement.prototype.elementsOfTag = function(tagName) {
-    assert(Type.isString(tagName));
-    return this.elementsOfTags([tagName]);
-}
-
-HTMLElement.prototype.elementsOfTags = function(tagNames) {
-    assert(Type.isArray(tagNames));
-    const lowerCaseTagNames = tagNames.map(tagName => tagName.toLowerCase());
-
-    let allSubelements = [];
-
-    function recurse(element) {
-      Array.from(element.children).forEach(child => {
-        // Check if the child element's tag name is in the provided list 
-        if (lowerCaseTagNames.includes(child.tagName.toLowerCase())) { 
-          allSubelements.push(child);
-        }
-        recurse(child);
-      });
-    }
-
-    recurse(this);
-    return allSubelements;
-};
-
-/*
-
-// for testing
-
-document.addEventListener('blur', function(event) {
-    const focusedElement = event.target;
-    console.log("'" + focusedElement.textContent.substring(0, 10) + "...' BLUR");
-  }, true);
-  
-document.addEventListener('focus', function(event) {
-    const focusedElement = event.target;
-    console.log("'" + focusedElement.textContent.substring(0, 10) + "...' FOCUS");
-  }, true);
-  */

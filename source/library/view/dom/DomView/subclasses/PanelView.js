@@ -1,32 +1,56 @@
 "use strict";
 
-/*
+/**
+ * @module library.view.dom.DomView.subclasses
+ */
 
-    PanelView
-
-*/
-
+/**
+ * @class PanelView
+ * @extends DomView
+ * @classdesc PanelView is a customizable panel component with a title, subtitle, and a button.
+ */
 (class PanelView extends DomView { 
     
+    /**
+     * Initialize prototype slots for the PanelView.
+     * @private
+     */
     initPrototypeSlots () {
+        /**
+         * @property {TextField} titleView - The title view of the panel.
+         */
         {
             const slot = this.newSlot("titleView", null);
             slot.setSlotType("TextField");
         }
+        /**
+         * @property {TextField} subtitleView - The subtitle view of the panel.
+         */
         {
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("TextField");
         }
+        /**
+         * @property {ButtonView} button1 - The primary button of the panel.
+         */
         {
             const slot = this.newSlot("button1", null);
             slot.setSlotType("ButtonView");
         }
+        /**
+         * @property {Boolean} isDragging - Indicates if the panel is currently being dragged.
+         */
         {
             const slot = this.newSlot("isDragging", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * Set CSS properties on a subview.
+     * @param {DomView} view - The subview to apply CSS to.
+     * @returns {PanelView} - Returns this for chaining.
+     */
     setCssOnSubview (view) {
         //view.setPadding("10px");
         //view.setBorder("1px solid #ddd");
@@ -39,6 +63,10 @@
         return this;
     }
 
+    /**
+     * Initialize the PanelView.
+     * @returns {PanelView} - Returns this for chaining.
+     */
     init () {
         super.init()
         this.setDisplay("flex");
@@ -91,16 +119,31 @@
         return this
     }
 
+    /**
+     * Set the title of the panel.
+     * @param {string} s - The title text.
+     * @returns {PanelView} - Returns this for chaining.
+     */
     setTitle (s) {
         this.titleView().setValue(s)
         return this
     }
 
+    /**
+     * Open the panel in the main window.
+     * @returns {PanelView} - Returns this for chaining.
+     */
     openInWindow () {
         App.shared().mainWindow().documentBody().addSubview(this);
         return this
     }
 
+    /**
+     * Show an error panel.
+     * @static
+     * @param {Error} error - The error object to display.
+     * @returns {PanelView} - The created error panel.
+     */
     static showError (error) {
         const panel = PanelView.clone().setTitle(error.message)
         //.setMinAndMaxWidth(300).setMinAndMaxHeight(200);
@@ -149,11 +192,19 @@
     }
     */
 
+    /**
+     * Handle the click event of the primary button.
+     * @returns {PanelView} - Returns this for chaining.
+     */
     hitButton1 () {
         this.close()
         return this
     }
 
+    /**
+     * Close the panel by removing it from its parent view.
+     * @returns {PanelView} - Returns this for chaining.
+     */
     close () {
         this.removeFromParentView()
         return this

@@ -1,59 +1,86 @@
+/**
+ * @module library.view.events.gesturing.gestures
+ */
+
 "use strict";
 
-/*
-
-    TapGestureRecognizer
-
-    Recognize a number of taps inside a viewTarget and within a maxHoldPeriod.
-        
-    On first tap for finger count, start timer. 
-    If second tap for finger count occurs before it's expired, it's recognized. 
-    Otherwise, restart timer.
-
-    Delegate messages:
-
-        onTapBegin
-        onTapComplete
-        onTapCancelled
-
-        Typically, delegate will ignore onTapBegin & onTapCancelled.
-
-    The names of the delegate messages can be specified. Example:
-
-        const tg = TapGestureRecognizer.clone()
-        tg.setNumberOfTapsRequired(2)
-        tg.setNumberOfFingersRequired(2)
-        tg.setGestureName("DoubleFingerDoubleTap") // on recognize, will send a onDoubleFingerDoubleTapComplete() message
-        this.addGestureRecognizer(tg)
-
-*/
-
+/**
+ * @class TapGestureRecognizer
+ * @extends GestureRecognizer
+ * @classdesc
+ * TapGestureRecognizer
+ *
+ * Recognize a number of taps inside a viewTarget and within a maxHoldPeriod.
+ *     
+ * On first tap for finger count, start timer. 
+ * If second tap for finger count occurs before it's expired, it's recognized. 
+ * Otherwise, restart timer.
+ *
+ * Delegate messages:
+ *
+ *     onTapBegin
+ *     onTapComplete
+ *     onTapCancelled
+ *
+ *     Typically, delegate will ignore onTapBegin & onTapCancelled.
+ *
+ * The names of the delegate messages can be specified. Example:
+ *
+ *     const tg = TapGestureRecognizer.clone()
+ *     tg.setNumberOfTapsRequired(2)
+ *     tg.setNumberOfFingersRequired(2)
+ *     tg.setGestureName("DoubleFingerDoubleTap") // on recognize, will send a onDoubleFingerDoubleTapComplete() message
+ *     this.addGestureRecognizer(tg)
+ */
 (class TapGestureRecognizer extends GestureRecognizer {
     
+    /**
+     * @description Initializes the prototype slots for the TapGestureRecognizer.
+     * @private
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Number} maxHoldPeriod - milliseconds per tap down hold
+         */
         {
             const slot = this.newSlot("maxHoldPeriod", 1000);
             slot.setComment("milliseconds per tap down hold");
             slot.setSlotType("Number");
         }
+        /**
+         * @property {Number} timeoutId - private
+         */
         {
-            const slot = this.newSlot("timeoutId", null); // private
+            const slot = this.newSlot("timeoutId", null);
             slot.setSlotType("Number");
         }
+        /**
+         * @property {Number} numberOfTapsRequired
+         */
         {
             const slot = this.newSlot("numberOfTapsRequired", 1);
             slot.setSlotType("Number");
         }
+        /**
+         * @property {Number} numberOfFingersRequired
+         */
         {
             const slot = this.newSlot("numberOfFingersRequired", 1);
             slot.setSlotType("Number");
         }
+        /**
+         * @property {Number} tapCount
+         */
         {
             const slot = this.newSlot("tapCount", 0);
             slot.setSlotType("Number");
         }
     }
 
+    /**
+     * @description Initializes the TapGestureRecognizer.
+     * @returns {TapGestureRecognizer} The initialized instance.
+     */
     init () {
         super.init()
         this.setListenerClasses(this.defaultListenerClasses())
@@ -64,13 +91,20 @@
         return this
     }
 
+    /**
+     * @description Resets the tap count to zero.
+     * @returns {TapGestureRecognizer} The instance.
+     */
     resetTapCount () {
         this.setTapCount(0)
         return this
     }
 
-    // --- timer ---
-
+    /**
+     * @description Starts the timer for the tap gesture.
+     * @param {Event} event - The event that triggered the timer start.
+     * @returns {TapGestureRecognizer} The instance.
+     */
     startTimer (event) {
         if (this.timeoutId()) {
             this.stopTimer()
@@ -81,6 +115,10 @@
         return this
     }
 
+    /**
+     * @description Stops the timer for the tap gesture.
+     * @returns {TapGestureRecognizer} The instance.
+     */
     stopTimer () {
         if (this.hasTimer()) {
             this.clearTimeout(this.timeoutId());
@@ -90,12 +128,19 @@
         return this
     }
 
+    /**
+     * @description Checks if the timer is currently running.
+     * @returns {boolean} True if the timer is running, false otherwise.
+     */
     hasTimer () {
         return this.timeoutId() !== null
     }
 
-    // -- single action for mouse and touch up/down ---
-
+    /**
+     * @description Handles the down event for the tap gesture.
+     * @param {Event} event - The down event.
+     * @returns {boolean} True if the event was handled, false otherwise.
+     */
     onDown (event) {
         super.onDown(event)
         
@@ -114,6 +159,10 @@
         return true
     }
 
+    /**
+     * @description Handles the up event for the tap gesture.
+     * @param {Event} event - The up event.
+     */
     onUp (event) {
         super.onUp(event)
  
@@ -131,8 +180,9 @@
         }
     }
 
-    // end states
-
+    /**
+     * @description Completes the tap gesture.
+     */
     complete () {
         this.stopTimer()
         if (this.requestActivationIfNeeded()) {
@@ -140,52 +190,16 @@
         }
     }
 
+    /**
+     * @description Cancels the tap gesture.
+     * @returns {TapGestureRecognizer} The instance.
+     */
     cancel () {
-        /*
-        if (this.isDebugging() && this.numberOfTapsRequired() === 2) {
-            debugger;
-        }
-        */
-
         if (this.hasTimer()) {
             this.stopTimer()
             this.sendCancelledMessage() // cancelled
         }
         return this
     }
-
-    /*
-    // was going to do some auto-naming but decided against it for now
-    // too many names for point tap count and number of fingers?
-    // 3 taps * 10 fingers?
-
-    incrementTapCountForFingerCount (n) {
-        const d = this.tapCountDict()
-        if (d.hasOwnProperty(n)) { 
-            d.atPut(n, d.at(n)+1)
-        } else {
-            d.atPut(n, 1)
-        }
-        return this
-    }
-
-    nameForCount (n) {
-        if (n === 1) { return "Single" }
-        if (n === 2) { return "Double" }
-        if (n === 3) { return "Triple"; }
-        return n + "x"
-    }
-    beginMessageForCount (n) {
-        return "on" + this.nameForCount(n) + "TapBegin"
-    }
-
-    completeMessageForCount (n) {
-        return "on" + this.nameForCount(n) + "TapComplete"
-    }
-
-    cancelledMessageForCount (n) {
-        return "on" + this.nameForCount(n) + "TapCancelled"
-    }
-    */
 
 }.initThisClass());

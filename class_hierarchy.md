@@ -35,6 +35,7 @@
     - [Error_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FError_store.js)
     - [MissingSlotError](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2Fobject%2FObject_copying.js)
   - [Folder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FResourceIndexer.js)
+  - [HTMLElement_textField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FHtmlElement_textField.js)
   - Image
     - [Image_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FImage_ideal.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)

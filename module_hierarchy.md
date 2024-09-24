@@ -1,5 +1,9 @@
 # Modules
 
+- apps
+  - STRVCT
+    - StrvctApp
+      - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
 - browser
   - stack
     - Tile
@@ -14,128 +18,24 @@
         - [BMActionFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
         - [BMStringFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
-  - [AnimationListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FAnimationListener.js)
-  - [AudioQueue](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
   - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
-  - [AzureVoices](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoices.js)
-  - [BMDataUrl](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
-  - [BMField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2FBMField.js)
-  - [BMKeyboard](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FBMKeyboard.js)
-  - [BMNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBMNode.js)
-  - [BMStyleSheet](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FBMStyleSheet.js)
   - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
-  - [BooleanView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FBooleanView.js)
   - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
-  - [BottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FBottomEdgePanGestureRecognizer.js)
-  - [ButtonView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FButtonView.js)
-  - [CanvasTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FCanvasTextTapeMeasure.js)
-  - [ClipboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FClipboardListener.js)
-  - [CloseButton](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FCloseButton.js)
-  - [ControlDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FControlDomView.js)
-  - [CssAnimation](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FCssAnimation.js)
-  - [CssColor](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FCssColor.js)
   - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
-  - [Device](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevice.js)
-  - [Devices](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevices.js)
-  - [DocumentBody](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDocumentBody.js)
-  - [DocumentListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDocumentListener.js)
-  - [DomBorderRadius](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomBorderRadius.js)
-  - [DomCssInspector](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FDomCssInspector.js)
-  - [DomTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FDomTextTapeMeasure.js)
-  - [DomTransition](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomTransition.js)
-  - [DomTransitions](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomTransitions.js)
-  - [DomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView.js)
-  - [DomView_animations](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_animations.js)
-  - [DomView_browserDragAndDrop](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_browserDragAndDrop.js)
-  - [DragBarView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragBarView.js)
-  - [DragListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDragListener.js)
-  - [DragView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragView.js)
-  - [DropListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDropListener.js)
-  - [EdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2FEdgePanGestureRecognizer.js)
-  - [EditableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FEditableDomView.js)
-  - [ElementDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FElementDomView.js)
-  - [EventListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventListener.js)
-  - [EventManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventManager.js)
-  - [EventPoint](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FEventPoint.js)
-  - [EventSetListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventSetListener.js)
-  - [FlexDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FFlexDomView.js)
-  - [FocusListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FFocusListener.js)
   - [Folder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FResourceIndexer.js)
-  - [GamePad](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FGamePad.js)
-  - [GamePadListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FGamePadListener.js)
-  - [GamePadManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FGamePadManager.js)
-  - [GesturableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FGesturableDomView.js)
-  - [GestureManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureManager.js)
-  - [GestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureRecognizer.js)
   - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)
   - [IndexedDBFolder](./class_doc.html?path=source%2Fboot%2FIndexedDBFolder.js)
   - [IndexedDBTx](./class_doc.html?path=source%2Fboot%2FIndexedDBTx.js)
-  - [KeyboardKey](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FKeyboardKey.js)
-  - [KeyboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FKeyboardListener.js)
-  - [LeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FLeftEdgePanGestureRecognizer.js)
-  - [ListenerDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FListenerDomView.js)
-  - [LongPressGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FLongPressGestureRecognizer.js)
   - [MimeExtensions](./class_doc.html?path=source%2Flibrary%2Fresources%2FMimeExtensions.js)
   - [Mirror](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
-  - [Mouse](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FMouse.js)
-  - [MouseListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseListener.js)
-  - [MouseMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseMoveListener.js)
-  - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
-  - [OrientGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FOrientGestureRecognizer.js)
-  - [PanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPanGestureRecognizer.js)
-  - [PanelView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FPanelView.js)
-  - [PersistentAsyncMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAsyncMap.js)
-  - [PersistentAtomicMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAtomicMap.js)
-  - [PinchGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPinchGestureRecognizer.js)
-  - [Point](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FPoint.js)
   - [ProtoClass](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
-  - [Rectangle](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
   - [ResourceManager](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
-  - [ResponderDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FResponderDomView.js)
-  - [RightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FRightEdgePanGestureRecognizer.js)
   - [RootContentNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FRootContentNode.js)
-  - [RotationGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FRotationGestureRecognizer.js)
-  - [ScreenBottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenBottomEdgePanGestureRecognizer.js)
-  - [ScreenEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2FScreenEdgePanGestureRecognizer.js)
-  - [ScreenLeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenLeftEdgePanGestureRecognizer.js)
-  - [ScreenRightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenRightEdgePanGestureRecognizer.js)
-  - [ScreenTopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenTopEdgePanGestureRecognizer.js)
-  - [ScrollListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FScrollListener.js)
-  - [SelectListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSelectListener.js)
-  - [SelectableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSelectableDomView.js)
-  - [SlideGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FSlideGestureRecognizer.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
-  - [SpeechListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSpeechListener.js)
-  - [StackView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackView.js)
-  - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
   - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)
-  - [StyledDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FStyledDomView.js)
-  - [SubviewsDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSubviewsDomView.js)
-  - [SvgIconCache](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconCache.js)
-  - [SvgIconView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconView.js)
-  - [TapGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FTapGestureRecognizer.js)
-  - [TextField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FTextField.js)
-  - [ThrashDetector](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FThrashDetector.js)
-  - [TopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FTopEdgePanGestureRecognizer.js)
-  - [TouchListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchListener.js)
-  - [TouchMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchMoveListener.js)
-  - [TouchScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FTouchScreen.js)
-  - [Transform](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FTransform.js)
-  - [TransitionListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTransitionListener.js)
   - [UrlResource](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
-  - [ViewAnimator](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FViewAnimator.js)
-  - [VisibleDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FVisibleDomView.js)
-  - [WASound](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWASound.js)
-  - [WebBrowserNotification](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserNotification.js)
-  - [WebBrowserNotifications](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserNotifications.js)
-  - [WebBrowserScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserScreen.js)
-  - [WebBrowserWindow](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserWindow.js)
-  - [WebDocument](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebDocument.js)
-  - [WebSocketListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWebSocketListener.js)
-  - [WheelListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWheelListener.js)
-  - [WindowListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWindowListener.js)
   - [Worker](./class_doc.html?path=source%2FServiceWorker%2FWorker.js)
   - [XhrWrapper](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FXhrWrapper.js)
 - HomeAssistant
@@ -220,11 +120,14 @@
       - [EnumerableWeakSet](./class_doc.html?path=source%2Flibrary%2Fideal%2Fweak%2FEnumerableWeakSet.js)
   - node
     - [App](./class_doc.html?path=source%2Flibrary%2Fnode%2FApp.js)
+    - audio
+      - [AudioQueue](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
     - blobs
       - [BMBlob](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlob.js)
       - [BMBlobs](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlobs.js)
     - fields
       - [BMCreatorNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2FBMCreatorNode.js)
+      - [BMField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2FBMField.js)
       - [BMFieldSetNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2FBMFieldSetNode.js)
       - json
         - [BMJsonArrayNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonArrayNode.js)
@@ -276,6 +179,7 @@
           - [ScrollContentView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollContentView.js)
           - [ScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollView.js)
           - [StackScrollView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackScrollView.js)
+          - [StackView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FStackView.js)
           - [TileContainer](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTileContainer.js)
           - Tile
             - [BMTextNodeTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2FBMTextNodeTile.js)
@@ -309,6 +213,7 @@
       - [BMPrototypesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMPrototypesNode.js)
       - [BMSummaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMSummaryNode.js)
       - base
+        - [BMNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBMNode.js)
         - [BaseNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBaseNode.js)
         - [InspectableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FInspectableNode.js)
         - [StyledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FStyledNode.js)
@@ -398,6 +303,8 @@
       - [WAContext](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAContext.js)
       - WAQueue
         - [WAQueue](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAQueue.js)
+      - WASound
+        - [WASound](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWASound.js)
     - themes
       - [BMTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMTheme.js)
       - [BMThemeClass](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClass.js)
@@ -447,6 +354,7 @@
             - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
       - voices
         - [AzureVoice](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoice.js)
+        - [AzureVoices](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoices.js)
     - Gemini
       - [GeminiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiService.js)
       - GeminiRequest
@@ -456,6 +364,7 @@
       - [GroqService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
     - HomeAssistant
       - [HomeAssistantGroup](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantGroup.js)
+      - [HomeAssistantObject](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantObject.js)
       - Areas
         - [HomeAssistantArea](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantArea.js)
         - [HomeAssistantAreas](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantAreas.js)
@@ -475,18 +384,21 @@
       - OpenAiRequest
         - [OpenAiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
       - Text_to_Image
+        - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
         - [OpenAiImagePrompts](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompts.js)
         - images
           - [OpenAiImage](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImage.js)
           - [OpenAiImages](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2Fimages%2FOpenAiImages.js)
       - Text_to_Speech
         - [OpenAiTtsRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsRequest.js)
+        - [OpenAiTtsSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSession.js)
         - [OpenAiTtsSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSessions.js)
     - Peer
       - [PeerService](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FPeerService.js)
       - RzSigServers
         - [RzPeer](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzPeer.js)
         - [RzSigServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServer.js)
+        - [RzSigServerPeers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerPeers.js)
         - [RzSigServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServers.js)
         - RzSigServerConns
           - [RzSigServerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConn.js)
@@ -514,6 +426,7 @@
         - [SceneViewWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneViewWellFieldTile.js)
     - SpeechToText
       - [SpeechToTextSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSession.js)
+      - [SpeechToTextSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSessions.js)
       - SttMessages
         - [SttMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSttMessages%2FSttMessage.js)
         - [SttMessages](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSttMessages%2FSttMessages.js)
@@ -524,18 +437,144 @@
         - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
         - MusicFolder
           - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
+        - MusicLibrary
+          - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
       - YouTubeService
         - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
-- OpenAI
-  - Text_to_Speech
-    - [OpenAiTtsSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Speech%2FOpenAiTtsSession.js)
-  - TexttoImage
-    - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
-- Peer
-  - RzSigServers
-    - [RzSigServerPeers](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerPeers.js)
-- services
-  - HomeAssistant
-    - [HomeAssistantObject](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantObject.js)
-- SpeechToText
-  - [SpeechToTextSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSessions.js)
+  - storage
+    - [PersistentAsyncMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAsyncMap.js)
+    - PersistentAtomicMap
+      - [PersistentAtomicMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAtomicMap.js)
+  - view
+    - dom
+      - Attributes
+        - [CssAnimation](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FCssAnimation.js)
+        - [DomBorderRadius](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomBorderRadius.js)
+        - [DomTransition](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomTransition.js)
+        - [DomTransitions](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FDomTransitions.js)
+        - [ViewAnimator](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FAttributes%2FViewAnimator.js)
+      - BrowserDragAndDrop
+        - [BMDataUrl](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
+      - DomView
+        - [ControlDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FControlDomView.js)
+        - [DomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView.js)
+        - [DomView_animations](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_animations.js)
+        - [EditableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FEditableDomView.js)
+        - [ElementDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FElementDomView.js)
+        - [FlexDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FFlexDomView.js)
+        - [GesturableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FGesturableDomView.js)
+        - [ListenerDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FListenerDomView.js)
+        - [ResponderDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FResponderDomView.js)
+        - [SelectableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSelectableDomView.js)
+        - [StyledDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FStyledDomView.js)
+        - [SubviewsDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSubviewsDomView.js)
+        - [VisibleDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FVisibleDomView.js)
+        - DomView_browserDragAndDrop
+          - [DomView_browserDragAndDrop](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_browserDragAndDrop.js)
+        - subclasses
+          - [ButtonView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FButtonView.js)
+          - [CloseButton](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FCloseButton.js)
+          - [DragBarView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragBarView.js)
+          - [HTMLElement_textField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FHtmlElement_textField.js)
+          - [PanelView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FPanelView.js)
+          - [SvgIconView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconView.js)
+          - BooleanView
+            - [BooleanView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FBooleanView.js)
+          - DocumentBody
+            - [DocumentBody](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDocumentBody.js)
+          - DragView
+            - [DragView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragView.js)
+          - SvgIconCache
+            - [SvgIconCache](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconCache.js)
+          - TextField
+            - [TextField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FTextField.js)
+      - Helpers
+        - [CssColor](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FCssColor.js)
+        - DomCssInspector
+          - [DomCssInspector](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FDomCssInspector.js)
+        - TapeMeasures
+          - [CanvasTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FCanvasTextTapeMeasure.js)
+          - DomTextTapeMeasure
+            - [DomTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FDomTextTapeMeasure.js)
+    - events
+      - devices
+        - [BMKeyboard](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FBMKeyboard.js)
+        - [Device](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevice.js)
+        - [Devices](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FDevices.js)
+        - [EventPoint](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FEventPoint.js)
+        - [GamePad](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FGamePad.js)
+        - [GamePadManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FGamePadManager.js)
+        - [KeyboardKey](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FKeyboardKey.js)
+        - [Mouse](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FMouse.js)
+        - [TouchScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FTouchScreen.js)
+      - gesturing
+        - [GestureManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureManager.js)
+        - GestureRecognizer
+          - [GestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureRecognizer.js)
+        - gestures
+          - [LongPressGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FLongPressGestureRecognizer.js)
+          - [OrientGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FOrientGestureRecognizer.js)
+          - [PanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPanGestureRecognizer.js)
+          - [PinchGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FPinchGestureRecognizer.js)
+          - [RotationGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FRotationGestureRecognizer.js)
+          - [SlideGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FSlideGestureRecognizer.js)
+          - [TapGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FTapGestureRecognizer.js)
+          - edges
+            - [EdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2FEdgePanGestureRecognizer.js)
+            - screen
+              - [ScreenEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2FScreenEdgePanGestureRecognizer.js)
+              - sides
+                - [ScreenRightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenRightEdgePanGestureRecognizer.js)
+                - [ScreenTopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenTopEdgePanGestureRecognizer.js)
+                - ScreenBottomEdgePanGestureRecognizer
+                  - [ScreenBottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenBottomEdgePanGestureRecognizer.js)
+                - ScreenLeftEdgePanGestureRecognizer
+                  - [ScreenLeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenLeftEdgePanGestureRecognizer.js)
+            - view
+              - [BottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FBottomEdgePanGestureRecognizer.js)
+              - [LeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FLeftEdgePanGestureRecognizer.js)
+              - [RightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FRightEdgePanGestureRecognizer.js)
+              - [TopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FTopEdgePanGestureRecognizer.js)
+      - listening
+        - [EventManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventManager.js)
+        - [EventSetListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventSetListener.js)
+        - EventListener
+          - [EventListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventListener.js)
+        - listeners
+          - [AnimationListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FAnimationListener.js)
+          - [ClipboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FClipboardListener.js)
+          - [DocumentListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDocumentListener.js)
+          - [DragListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDragListener.js)
+          - [DropListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDropListener.js)
+          - [FocusListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FFocusListener.js)
+          - [GamePadListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FGamePadListener.js)
+          - [MouseListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseListener.js)
+          - [ScrollListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FScrollListener.js)
+          - [SelectListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSelectListener.js)
+          - [SpeechListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSpeechListener.js)
+          - [TransitionListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTransitionListener.js)
+          - [WebSocketListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWebSocketListener.js)
+          - KeyboardListener
+            - [KeyboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FKeyboardListener.js)
+          - MouseMoveListener
+            - [MouseMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseMoveListener.js)
+          - TouchListener
+            - [TouchListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchListener.js)
+          - TouchMoveListener
+            - [TouchMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchMoveListener.js)
+          - WheelListener
+            - [WheelListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWheelListener.js)
+          - WindowListener
+            - [WindowListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWindowListener.js)
+    - geometry
+      - [Point](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FPoint.js)
+      - [Rectangle](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
+      - [Transform](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FTransform.js)
+    - webbrowser
+      - [BMStyleSheet](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FBMStyleSheet.js)
+      - [ThrashDetector](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FThrashDetector.js)
+      - [WebBrowserNotification](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserNotification.js)
+      - [WebBrowserNotifications](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserNotifications.js)
+      - [WebBrowserScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserScreen.js)
+      - [WebBrowserWindow](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserWindow.js)
+      - [WebDocument](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebDocument.js)

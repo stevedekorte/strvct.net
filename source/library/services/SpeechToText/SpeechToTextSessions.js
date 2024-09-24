@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module SpeechToText
+ * @module library.services.SpeechToText
  */
 
 /**

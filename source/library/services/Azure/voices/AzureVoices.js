@@ -1,7 +1,13 @@
 "use strict";
 
-/* 
-    AzureVoices
+/**
+ * @module library.services.Azure.voices
+ */
+
+/**
+ * @class AzureVoices
+ * @extends BMSummaryNode
+ * @classdesc Manages Azure voices.
 
     Sample:
 
@@ -24,18 +30,34 @@
 (class AzureVoices extends BMSummaryNode {
 
   initPrototypeSlots () {
+
+    /**
+     * @property {Array} voicesJson - The JSON of the voices.
+     */
     {
       const slot = this.newSlot("voicesJson", null);
       slot.setSlotType("Array"); // JSON Array
     }
+
+    /**
+     * @property {Map} indexes - The indexes of the voices.
+     */
     {
       const slot = this.newSlot("indexes", null);
       slot.setSlotType("Map");
     }
+
+    /**
+     * @property {Array} voices - The voices.
+     */
     {
       const slot = this.newSlot("voices", null);
       slot.setSlotType("Array");
     }
+
+    /**
+     * @property {Array} locales - The locales.
+     */
     {
       const slot = this.newSlot("locales", null);
       slot.setSlotType("Array");
@@ -62,6 +84,9 @@
     this.setupSubnodes()
   }
 
+  /**
+   * @description Sets up the subnodes.
+   */
   setupSubnodes () {
     //debugger;
     this.removeAllSubnodes()
@@ -77,6 +102,9 @@
     return this
   }
 
+  /**
+   * @description Sets up the locales folder.
+   */
   setupLocalesFolder () {
     const localeNames = this.localeNames()
     const root = this // BMFolderNode.clone().setTitle("By Locale")
@@ -92,7 +120,7 @@
     this.collapseUnbranchingNodes()
   }
 
-  /*
+    /*
   setupLocales () {
     this.setLocales([])
     const localesMap = this.indexFor("localeName")
@@ -103,6 +131,11 @@
   }
   */
 
+  /**
+   * @description Indexes for the method name.
+   * @param {string} methodName - The method name.
+   * @returns {Map} The indexes.
+   */
   indexFor (methodName) {
     const indexes = this.indexes()
     if (!indexes.has(methodName)) {
@@ -113,10 +146,20 @@
     return indexes.get(methodName)
   }
 
+  /**
+   * @description Returns the locale names.
+   * @returns {Array} The locale names.
+   */
   localeNames () {
     return this.indexFor("localeName").keysArray()
   }
 
+  /**
+   * @description Returns the voices for the method name and value.
+   * @param {string} methodName - The method name.
+   * @param {string} value - The value.
+   * @returns {Array} The voices.
+   */
   voicesForMethodNameAndValue (methodName, value) {
     const matches = this.indexFor(methodName).get(value)
     if (matches) {
@@ -125,6 +168,11 @@
     return []
   }
 
+  /**
+   * @description Returns the voices for the locale name.
+   * @param {string} localeName - The locale name.
+   * @returns {Array} The voices.
+   */
   voicesForLocaleName (localeName) {
     return this.voicesForMethodNameAndValue("localeName", localeName)
   }
@@ -135,6 +183,10 @@
   }
   */
 
+  /**
+   * @description Returns the JSON of the voices.
+   * @returns {Array} The JSON of the voices.
+   */s
   json () {
     return [
       {

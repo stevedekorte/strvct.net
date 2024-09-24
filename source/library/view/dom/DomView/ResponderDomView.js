@@ -1,20 +1,32 @@
+/**
+ * @module library.view.dom.DomView
+ */
+
 "use strict";
 
-/*
-    ResponderDomView
-
-    Dealing with controlling focus and handling focus events,
-    manaing firstResponder, tabbing between key views
-    
-*/
-
+/**
+ * @class ResponderDomView
+ * @extends GesturableDomView
+ * @classdesc Dealing with controlling focus and handling focus events,
+ * managing firstResponder, tabbing between key views
+ */
 (class ResponderDomView extends GesturableDomView {
     
+    /**
+     * @static
+     * @description Initializes the class
+     */
     static initClass () {
         this.newClassSlot("tabCount", 0)
     }
 
+    /**
+     * @description Initializes the prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Boolean} acceptsFirstResponder
+         */
         {
             const slot = this.newSlot("acceptsFirstResponder", false);
             slot.setSlotType("Boolean");
@@ -28,6 +40,9 @@
             slot.setSlotType("Boolean");
         }
         */
+        /**
+         * @property {ResponderDomView} nextKeyView
+         */
         {
             const slot = this.newSlot("nextKeyView", null);
             slot.setSlotType("ResponderDomView");
@@ -42,6 +57,9 @@
 
     // --- focus ---
 
+    /**
+     * @description Schedules registration for focus
+     */
     scheduleRegisterForFocus () {
         if (this.element().parentElement) {
             this.setIsRegisteredForFocus(true);
@@ -53,6 +71,10 @@
         }
     }
 
+    /**
+     * @description Checks if the view has a focused descendant view
+     * @returns {Boolean}
+     */
     hasFocusedDecendantView () {
         const focusedView = WebBrowserWindow.shared().activeDomView();
         if (focusedView) {
@@ -61,32 +83,22 @@
         return false;
     }
 
+    /**
+     * @description Focuses the view
+     * @returns {ResponderDomView}
+     */
     focus () {
-        //console.log(this.typeId() + " focus")
-        if (!this.isActiveElement()) { // document.activeElement might have browser specific behaviors
-            //console.log(this.typeId() + " focus <<<<<<<<<<<<<<<<<<")
-            /*
-            const focusedView = WebBrowserWindow.shared().activeDomView()
-
-            // TODO: need a better solution to this problem
-            if (focusedView && !this.hasFocusedDecendantView()) {
-                
-                if (focusedView && focusedView.type() === "TextField") {
-                    console.log("  -- taking focus from " + focusedView.typeId())
-                }
-                
-                //this.debugLog(".focus() " + document.activeElement.domView())
-                this.addTimeout(() => { this.element().focus() }, 0)
-            }
-            */
-            //this.addTimeout(() => { this.element().focus() }, 0)
-
-            //ThrashDetector.shared().didWrite("focus", this)
+        if (!this.isActiveElement()) {
             this.element().focus();
         }
         return this;
     }
 
+    /**
+     * @description Focuses the view after a specified delay
+     * @param {number} seconds - Delay in seconds
+     * @returns {ResponderDomView}
+     */
     focusAfterDelay (seconds) {
         this.addTimeout(() => {
             const e = this.element()
@@ -98,33 +110,56 @@
         return this
     }
 
+    /**
+     * @description Checks if the view has focus
+     * @returns {Boolean}
+     */
     hasFocus () {
         return this.isActiveElement()
     }
 
+    /**
+     * @description Blurs (unfocuses) the view
+     * @returns {ResponderDomView}
+     */
     blur () { 
-        //console.log(this.typeId() + ".blur()");
-        // i.e. unfocus
         this.element().blur()
         return this
     }
 
     // --- active element ---
 
+    /**
+     * @description Checks if the view is the active element
+     * @returns {Boolean}
+     */
     isActiveElement () {
         return document.activeElement === this.element()
     }
 
+    /**
+     * @description Checks if the view is the active element and editable
+     * @returns {Boolean}
+     */
     isActiveElementAndEditable () {
         return this.isActiveElement() && this.contentEditable()
     }
 
+    /**
+     * @description Checks if the view is focused
+     * @returns {Boolean}
+     */
     isFocused () {
         return this.isActiveElement()
     }
 
     // --- inner html ---
 
+    /**
+     * @description Sets the inner HTML of the view
+     * @param {string} v - HTML content
+     * @returns {ResponderDomView}
+     */
     setInnerHtml (v) {
         const oldValue = this.element().innerHTML;
 
@@ -145,36 +180,15 @@
             //debugger;
         }
 
-        //assert(this.element().innerHTML === v, "innerHTML was not set"); // doesn't work as it may reformat the html
-
         updateElementHTML(this.element(), newValue);
-
-        /*
-        if (newValue !== "" && 
-            this.isActiveElementAndEditable() && 
-            this.containsSelection()) {
-
-                console.log("oldValue: [", oldValue, "]");
-                console.log("newValue: [", newValue, "]");
-
-                //const diff = oldValue.diff(newValue);
-                //console.log("DIFF: ", JSON.stringify(diff, 2, 2));
-
-                //assert(this.storeSelectionRange());
-                updateElementHTML(this.element(), newValue);
-                //this.element().innerHTML = newValue;
-                //assert(this.restoreSelectionRange());
-                console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>> restored selection");
-
-            //this.focus();
-        } else {
-            this.element().innerHTML = newValue;
-        }
-        */
 
         return this
     }
 
+    /**
+     * @description Forces a redisplay of the view
+     * @returns {ResponderDomView}
+     */
     forceRedisplay () {
         // NOTE: not sure this works
         const p = this.parentView()
@@ -186,57 +200,69 @@
         return this
     }
 
-    /*
-    onInput (event) {
-        // sent after the content is changed
-    }
-    */
-
+    /**
+     * @description Called when input occurs
+     */
     didInput () {
         this.debugLog("didInput")
         this.tellParentViews("onDidInput", this)
         return this
     }
 
+    /**
+     * @description Called when editing occurs
+     */
     didEdit () {
         this.debugLog("didEdit")
         this.tellParentViews("onDidEdit", this)
         return this
     }
 
+    /**
+     * @description Handles the Enter key up event
+     * @param {Event} event - The key event
+     * @returns {Boolean}
+     */
     onEnterKeyUp (event) {
         return true
     }
 
     // --- tabs and next key view ----
 
+    /**
+     * @description Handles the Tab key down event
+     * @param {Event} event - The key event
+     * @returns {Boolean}
+     */
     onTabKeyDown (event) {
-        // need to implement this on key down to prevent browser from handling tab?
-        //this.debugLog(" onTabKeyDown ", event._id)
-
         if (this.selectNextKeyView()) {
-            //event.stopImmediatePropagation() // prevent other listeners from getting this event
-            //console.log("stopImmediatePropagation ")
         }
         return false
     }
 
+    /**
+     * @description Handles the Tab key up event
+     * @param {Event} event - The key event
+     * @returns {Boolean}
+     */
     onTabKeyUp (event) {
-        //this.debugLog(" onTabKeyUp ", event._id)
         return false
     }
 
+    /**
+     * @description Makes this view the key view
+     * @returns {ResponderDomView}
+     */
     becomeKeyView () { 
-        // use this method instead of focus() in order to give the receiver 
-        // a chance to give focus to one of it's decendant views
         this.focus()
         return this
     }
 
+    /**
+     * @description Selects the next key view
+     * @returns {Boolean}
+     */
     selectNextKeyView () {
-        // returns true if something is selected, false otherwise
-
-        //this.debugLog(" selectNextKeyView")
         const nkv = this.nextKeyView()
         if (nkv) {
             nkv.becomeKeyView()
@@ -252,32 +278,52 @@
 
     // --- error checking ---
 
+    /**
+     * @description Checks if the view is valid
+     * @returns {Boolean}
+     */
     isValid () {
         return true
     }
 
     // --- focus and blur event handling ---
 
+    /**
+     * @description Called before accepting first responder status
+     * @returns {ResponderDomView}
+     */
     willAcceptFirstResponder () {
-        //this.debugLog(".willAcceptFirstResponder()")
         return this
     }
 
+    /**
+     * @description Called after releasing first responder status
+     * @returns {ResponderDomView}
+     */
     didReleaseFirstResponder () {
-        // called on blur event from browser?
         return this
     }
 
     // --- firstResponder --- 
 
+    /**
+     * @description Checks if this view is the first responder
+     * @returns {Boolean}
+     */
     isFirstResponder () {
         return document.activeElement === this.element()
     }
 
+    /**
+     * @description Called before becoming the first responder
+     */
     willBecomeFirstResponder () {
-        // called if becomeFirstResponder accepts
     }
 
+    /**
+     * @description Makes this view the first responder
+     * @returns {ResponderDomView}
+     */
     becomeFirstResponder () {
         if (this.acceptsFirstResponder()) {
             this.willBecomeFirstResponder()
@@ -288,50 +334,27 @@
         return this
     }
 
+    /**
+     * @description Releases first responder status
+     * @returns {ResponderDomView}
+     */
     releaseFirstResponder () {
-        // walk up parent view chain and focus on the first view to 
-        // answer true for the acceptsFirstResponder message
-        //this.debugLog(".releaseFirstResponder()")
-
         if (this.isFocused()) { 
             this.blur()
         }
 
         this.tellParentViews("decendantReleasedFocus", this)
-        /*
-        if (this.parentView()) {
-            this.parentView().becomeFirstResponder()
-        }
-        */
         return this
     }
 
-
-
-    // helpers
-
-    /*
-    mouseUpPos () { 
-        return this.viewPosForWindowPos(Mouse.shared().upPos())
-    }
-
-    mouseCurrentPos () { 
-        return this.viewPosForWindowPos(Mouse.shared().currentPos())
-    }
-    */
-
-    /*
-    mouseDownPos () {
-        return this.viewPosForWindowPos(Mouse.shared().downPos())
-    }
-    */
-
-
     // ------------------------------------------------
 
+    /**
+     * @description Disables pointer events for a specified time
+     * @param {number} ms - Timeout in milliseconds
+     * @returns {ResponderDomView}
+     */
     disablePointerEventsUntilTimeout (ms) {
-        // typically used to disbale view until an animation is complete
-
         this.setPointerEvents("none")
         this.debugLog(" disabling pointer events")
 
@@ -345,36 +368,29 @@
 
 }.initThisClass());
 
-
-
+/**
+ * @description Updates the HTML content of an element while preserving focus and selection
+ * @param {HTMLElement} element - The element to update
+ * @param {string} htmlContent - The new HTML content
+ */
 function updateElementHTML(element, htmlContent) {
-    // Check if the element is currently focused
     let isFocused = (document.activeElement === element);
 
-    // Save the current scrolling position to restore later if needed
-    //let scrollTop = element.scrollTop;
-    //let scrollLeft = element.scrollLeft;
-
-    // Check if the element is contenteditable or an input/textarea
     let isEditable = element.contentEditable === 'true' || element.tagName === 'INPUT' || element.tagName === 'TEXTAREA';
 
     if (isEditable && isFocused) {
-        // Save the selection or cursor position
         let selectionStart = element.selectionStart;
         let selectionEnd = element.selectionEnd;
 
-        // Set the innerHTML or value
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             element.value = htmlContent;
         } else {
             element.innerHTML = htmlContent;
         }
 
-        // Restore the selection or cursor position
         element.selectionStart = selectionStart;
         element.selectionEnd = selectionEnd;
     } else {
-        // Set the innerHTML or value
         if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
             element.value = htmlContent;
         } else {
@@ -382,10 +398,7 @@ function updateElementHTML(element, htmlContent) {
         }
     }
 
-    // Restore the original focus state if it was focused before
     if (isFocused) {
         element.focus();
-        //element.scrollTop = scrollTop;
-        //element.scrollLeft = scrollLeft;
     }
 }

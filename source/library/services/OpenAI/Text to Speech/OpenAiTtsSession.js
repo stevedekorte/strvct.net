@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module OpenAI.Text_to_Speech
+ * @module library.services.OpenAI.Text_to_Speech
  */
 
 /**

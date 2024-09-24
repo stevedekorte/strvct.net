@@ -1,63 +1,78 @@
+/**
+ * @module library.view.dom.DomView.subclasses
+ */
+
+/**
+ * @class ButtonView
+ * @extends FlexDomView
+ * @classdesc A simple push button view with a TextView label.
+ * 
+ * CSS Styles:
+ * .BMActionFieldView {
+ *     min-height: 28px;
+ *     padding-top: 8px;
+ *     padding-bottom: 8px;
+ *     background-color: #888;
+ *     color: #ccc;
+ *     border-style: none;
+ *     border-radius: 5px;
+ *     border-width: 1px;
+ *     border-color:#888;
+ *     text-align: center;
+ *     vertical-align: center;
+ * }
+ * 
+ * .BMActionFieldView:hover {
+ *     color: white;
+ *     background-color: #888;
+ * }
+ */
 "use strict";
-
-/*
-
-    ButtonView
-
-    A simple push button view with a TextView label.
-
-
-    .BMActionFieldView {
-        min-height: 28px;
-
-        padding-top: 8px;
-        padding-bottom: 8px;
-
-        background-color: #888;
-        color: #ccc;
-
-        border-style: none;
-        border-radius: 5px;
-        border-width: 1px;
-        border-color:#888;
-        
-        text-align: center;
-        vertical-align: center;
-
-    }
-
-    .BMActionFieldView:hover {
-        color: white;
-        background-color: #888;
-    }
-
-*/
 
 (class ButtonView extends FlexDomView {
     
     initPrototypeSlots () {
+        /**
+         * @property {TextField} titleView - The view for displaying the button's title.
+         */
         {
             const slot = this.newSlot("titleView", null);
             slot.setSlotType("TextField");
         }
+        /**
+         * @property {TextField} subtitleView - The view for displaying the button's subtitle.
+         */
         {
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("TextField");
         }
+        /**
+         * @property {Boolean} isEnabled - Indicates whether the button is enabled or disabled.
+         */
         {
             const slot = this.newSlot("isEnabled", true);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {SvgIconView} iconView - The view for displaying an icon on the button.
+         */
         {
             const slot = this.newSlot("iconView", null);
             slot.setSlotType("SvgIconView");
         }
+        /**
+         * @property {Object} info - Additional information associated with the button.
+         */
         {
             const slot = this.newSlot("info", null);
             slot.setSlotType("Object");
         }
     }
 
+    /**
+     * @description Initializes the ButtonView.
+     * @returns {ButtonView} The initialized ButtonView instance.
+     */
     init () {
         super.init()
         this.setDisplay("flex")
@@ -122,43 +137,63 @@
         return this
     }
 
+    /**
+     * @description Sets the icon name for the button.
+     * @param {string} aName - The name of the icon to set.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     setIconName (aName) {
         this.iconView().setIconName(aName)
         return this
     }
 
-    // --- title ---
-
+    /**
+     * @description Sets the title of the button.
+     * @param {string} s - The title to set.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     setTitle (s) {
         if (s === "" || Type.isNullOrUndefined(s)) { 
             s = " "; // to avoid weird html layout issues
         }
 
         this.titleView().setValue(s)
-        //this.titleView().setIsDisplayHidden(!s)
         return this
     }
 
+    /**
+     * @description Gets the title of the button.
+     * @returns {string} The current title of the button.
+     */
     title () {
         return this.titleView().value()
     }
 
-    // --- subtitle ---
-
+    /**
+     * @description Sets the subtitle of the button.
+     * @param {string} s - The subtitle to set.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     setSubtitle (s) {
-        //console.log(this.typeId() + ".setSubtitle('" + s + "')")
         const isEmpty = (s === "" || Type.isNullOrUndefined(s));
         this.subtitleView().setValue(s)
         this.subtitleView().setIsDisplayHidden(isEmpty)
         return this
     }
 
+    /**
+     * @description Gets the subtitle of the button.
+     * @returns {string} The current subtitle of the button.
+     */
     subtitle () {
         return this.subtitleView().value()
     }
 
-    // ------
-
+    /**
+     * @description Sets whether the button has an outline.
+     * @param {boolean} aBool - True to add an outline, false to remove it.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     setHasOutline (aBool) {
         if (aBool) {
             this.setBoxShadow("0px 0px 1px 1px rgba(255, 255, 255, 0.2)")
@@ -168,20 +203,38 @@
         return this
     }
 
+    /**
+     * @description Sets the visibility of the button's title.
+     * @param {boolean} aBool - True to show the title, false to hide it.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     setTitleIsVisible (aBool) {
         this.titleView().setIsDisplayHidden(!aBool)
         return this
     }
 
+    /**
+     * @description Sets whether the button is editable.
+     * @param {boolean} aBool - True to make the button editable, false otherwise.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     setIsEditable (aBool) {
         this.titleView().setIsEditable(aBool)
         return this
     }
 
+    /**
+     * @description Checks if the button is editable.
+     * @returns {boolean} True if the button is editable, false otherwise.
+     */
     isEditable () {
         return this.titleView().isEditable()
     }
 
+    /**
+     * @description Sends an action to the target if the button is not editable.
+     * @returns {ButtonView} The ButtonView instance.
+     */
     sendActionToTarget () {
         if (!this.isEditable()) {
             super.sendActionToTarget()
@@ -189,28 +242,34 @@
         return this
     }
 
+    /**
+     * @description Handles the tap begin event.
+     * @param {Object} aGesture - The gesture object.
+     */
     onTapBegin (aGesture) {
         if (!this.isEnabled()) {
             aGesture.cancel()
             return
         }
         this.setBackgroundColor("rgba(255, 255, 255, 0.1)")
-        //SimpleSynth.clone().playButtonDown()
     }
 
+    /**
+     * @description Handles the tap cancelled event.
+     * @param {Object} aGesture - The gesture object.
+     */
     onTapCancelled (aGesture) {
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
-        //SimpleSynth.clone().playButtonCancelled()
     }
 
+    /**
+     * @description Handles the tap complete event.
+     * @param {Object} aGesture - The gesture object.
+     * @returns {boolean} False to prevent default behavior.
+     */
     onTapComplete (aGesture) {
-        //this.debugLog(".onTapComplete()")
-        //const bgColor = this.backgroundColor();
-        //setTimeout(() => { this.setBackgroundColor(bgColor) }, 100);
-        //this.setBackgroundColor("rgba(255, 255, 255, 0.2)")
         this.setBackgroundColor("rgba(255, 255, 255, 0.0)")
         this.sendActionToTarget()
-        //SimpleSynth.clone().playButtonUp()
         SimpleSynth.clone().playButtonTap()
         return false
     }

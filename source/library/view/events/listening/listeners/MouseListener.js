@@ -1,23 +1,36 @@
 "use strict";
 
-/*
-    MouseListener
+/**
+ * @module library.view.events.listening.listeners
+ */
 
-    Listens to a set of mouse events.
-
-*/
-
-
+/**
+ * @class MouseListener
+ * @extends EventSetListener
+ * @classdesc Listens to a set of mouse events.
+ */
 (class MouseListener extends EventSetListener {
     
+    /**
+     * @description Initializes prototype slots.
+     * @private
+     */
     initPrototypeSlots () {
     }
 
+    /**
+     * @description Initializes the MouseListener instance.
+     * @returns {MouseListener} The initialized instance.
+     */
     init () {
         super.init()
         return this
     }
 
+    /**
+     * @description Sets up the mouse event listeners.
+     * @returns {MouseListener} The current instance.
+     */
     setupListeners () {
         this.addEventNameAndMethodName("mousedown", "onMouseDown").setIsUserInteraction(true)
         this.addEventNameAndMethodName("mouseup",   "onMouseUp").setIsUserInteraction(true)

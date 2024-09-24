@@ -1,7 +1,10 @@
 "use strict";
 
-/*
-    GestureRecognizer
+/**
+ * @module library.view.events.gesturing.GestureRecognizer
+ * @class GestureRecognizer
+ * @extends ProtoClass
+ * @description A class for recognizing gestures.
 
     This class:
      - listens for events 
@@ -67,10 +70,17 @@
 (class GestureRecognizer extends ProtoClass {
     
     initPrototypeSlots () {
+        /**
+         * @property {DomView} viewTarget - the view that the gesture is recognized on
+         */
         {
             const slot = this.newSlot("viewTarget", null);
             slot.setSlotType("DomeView");
         }
+
+        /**
+         * @property {Boolean} shouldRemoveOnComplete - whether the gesture should be removed on completion
+         */
         {
             const slot = this.newSlot("shouldRemoveOnComplete", false);
             slot.setSlotType("Boolean");
@@ -78,26 +88,43 @@
 
         // listener classes
 
+        /**
+         * @property {Array} listenerClasses - the classes of listeners to use
+         */
         {
             const slot = this.newSlot("listenerClasses", null);
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property {Array} moveListenerClasses - the classes of listeners to use for move events
+         */
         {
             const slot = this.newSlot("moveListenerClasses", ["MouseMoveListener", "TouchMoveListener"]);
             slot.setSlotType("Array");
         }
 
+        /**
+         * @property {Array} defaultListenerClasses - the classes of listeners to use for view events
+         */
         {
             const slot = this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"]);
             slot.setSlotType("Array");
         }
 
-        // listeners
+            // listeners
 
+        /**
+         * @property {Array} viewListeners - the listeners for view events
+         */
         {
             const slot = this.newSlot("viewListeners", null);
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property {Array} docListeners - the listeners for document events
+         */
         {
             const slot = this.newSlot("docListeners", null);
             slot.setSlotType("Array");
@@ -105,10 +132,17 @@
 
         // move listeners
 
+        /**
+         * @property {Array} viewMoveListeners - the listeners for view move events
+         */
         {
             const slot = this.newSlot("viewMoveListeners", null);
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property {Array} docMoveListeners - the listeners for document move events
+         */
         {
             const slot = this.newSlot("docMoveListeners", null);
             slot.setSlotType("Array");
@@ -116,65 +150,131 @@
 
         // events
 
+        /**
+         * @property {Event} overEvent - the over event
+         */
         {
             const slot = this.newSlot("overEvent", null);
             slot.setSlotType("Event");
         }
+
+        /**
+         * @property {Event} leaveEvent - the leave event
+         */
         {
             const slot = this.newSlot("leaveEvent", null);
             slot.setSlotType("Event");
         }
+
+        /**
+         * @property {Boolean} didBegin - whether the gesture did begin
+         */
         {
             const slot = this.newSlot("didBegin", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Event} downEvent - the down event
+         */
         {
             const slot = this.newSlot("downEvent", null);
             slot.setSlotType("Event");
         }
+
+        /**
+         * @property {Event} beginEvent - the begin event
+         */
         {
             const slot = this.newSlot("beginEvent", null);
             slot.setSlotType("Event");
         }
+
+        /**
+         * @property {Event} currentEvent - the current event
+         */
         {
             const slot = this.newSlot("currentEvent", null);
             slot.setSlotType("Event");
         }
+
+        /**
+         * @property {Event} lastEvent - the last event
+         */
         {
             const slot = this.newSlot("lastEvent", null);
             slot.setSlotType("Event");
         }
+
+        /**
+         * @property {Event} upEvent - the up event
+         */
         {
             const slot = this.newSlot("upEvent", null);
             slot.setSlotType("Event");
         }
 
+        /**
+         * @property {Event} cancelEvent - the cancel event
+         */
+        {
+            const slot = this.newSlot("cancelEvent", null);
+            slot.setSlotType("Event");
+        }
+
         // standard messages
 
+        /**
+         * @property {String} gestureName - the name of the gesture
+         */
         {
             const slot = this.newSlot("gestureName", null); // sets <GestureType> name used for messages
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} acceptMessage - the accept message
+         */
         {
             const slot = this.newSlot("acceptMessage", null);  //"accepts<GestureType>"
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} beginMessage - the begin message
+         */
         {
             const slot = this.newSlot("beginMessage", null); //"on<GestureType>Begin",
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} moveMessage - the move message
+         */
         {
             const slot = this.newSlot("moveMessage", null); //"on<GestureType>Move",
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} requestCancelMessage - the request cancel message
+         */
         {
             const slot = this.newSlot("requestCancelMessage", null); // "on<GestureType>RequestCancel"
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} cancelledMessage - the cancelled message
+         */
         {
             const slot = this.newSlot("cancelledMessage", null); // "on<GestureType>Cancelled",
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {String} completeMessage - the complete message
+         */
         {
             const slot = this.newSlot("completeMessage", null); // "on<GestureType>Complete",
             slot.setSlotType("String");
@@ -182,14 +282,25 @@
         
         // debugging
 
+        /**
+         * @property {Boolean} isEmulatingTouch - whether the gesture is emulating touch
+         */
         {
             const slot = this.newSlot("isEmulatingTouch", false); // assumes touch and mouse events aren't mixed
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} isVisualDebugging - whether the gesture is visual debugging
+         */
         {
             const slot = this.newSlot("isVisualDebugging", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Map} fingerViewMap - the map of fingers to views
+         */
         {
             const slot = this.newSlot("fingerViewMap", null);
             slot.setSlotType("Map");
@@ -197,43 +308,85 @@
 
         // begin pressing 
 
+        /**
+         * @property {Boolean} isPressing - whether the gesture is pressing
+         */
         {
             const slot = this.newSlot("isPressing", false);
             slot.setDoesHookSetter(true);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Number} minFingersRequired - the minimum number of fingers required for the gesture
+         */
         {
             const slot = this.newSlot("minFingersRequired", 2);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @property {Number} maxFingersAllowed - the maximum number of fingers allowed for the gesture
+         */
         {
             const slot = this.newSlot("maxFingersAllowed", 4);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @property {Number} minDistToBegin - the minimum distance to begin the gesture
+         */
         {
             const slot = this.newSlot("minDistToBegin", 10);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @property {Boolean} allowsKeyboardKeys - whether the gesture allows keyboard keys
+         */
         {
             const slot = this.newSlot("allowsKeyboardKeys", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Array} requiresKeyboardKeys - the keyboard keys required for the gesture
+         */
         {
             const slot = this.newSlot("requiresKeyboardKeys", null);
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property {Boolean} shouldRequestActivation - whether the gesture should request activation
+         */
         {
             const slot = this.newSlot("shouldRequestActivation", true);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} shouldAcceptCancelRequest - whether the gesture should accept cancel requests
+         */
         {
             const slot = this.newSlot("shouldAcceptCancelRequest", true);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Boolean} isActive - whether the gesture is active
+         */
         {
             const slot = this.newSlot("isActive", false); // only used if shouldRequestActivation === false
             slot.setSlotType("Boolean");
         }
+
+        /*
+        {
+            const slot = this.newSlot("isDebugging", false);
+            slot.setSlotType("Boolean");
+        }
+         */
     }
 
     init () {
@@ -259,6 +412,10 @@
  
     // -- event helpers --
 
+    /**
+     * @description Clears the events.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     clearEvents () {
         this.setDownEvent(null);
         this.setBeginEvent(null);
@@ -266,6 +423,11 @@
         return this;
     }
     
+    /**
+     * @description Sets the current event.
+     * @param {Event} event - The event to set.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     setCurrentEvent (event) {
         if (this._currentEvent !== event) {
             this.setLastEvent(this._currentEvent);
@@ -274,27 +436,51 @@
         return this;
     }
 
+    /**
+     * @description Returns the current position.
+     * @returns {Point} The current position.
+     */
     currentPosition () {
         return this.pointsForEvent(this.currentEvent()).first();
     }
 
+    /**
+     * @description Returns the down position.
+     * @returns {Point} The down position.
+     */
     downPosition () {
         return this.pointsForEvent(this.downEvent()).first();
     }
 
+    /**
+     * @description Returns the begin position.
+     * @returns {Point} The begin position.
+     */
     beginPosition () {
         return this.pointsForEvent(this.beginEvent()).first();
     }
 
+    /**
+     * @description Returns the up position.
+     * @returns {Point} The up position.
+     */
     upPosition () {
         return this.pointsForEvent(this.upEvent()).first();
     }
 
+    /**
+     * @description Returns the number of fingers down.
+     * @returns {Number} The number of fingers down.
+     */
     numberOfFingersDown () {
         const points = this.pointsForEvent(this.currentEvent());
         return points.length;
     }
 
+    /**
+     * @description Checks if the current event is on the target view.
+     * @returns {Boolean} Whether the current event is on the target view.
+     */
     currentEventIsOnTargetView () {
         const points = this.pointsForEvent(this.currentEvent())
         const p = points.first()
@@ -305,12 +491,21 @@
 
     // --- listener classes ---
 
+    /**
+     * @description Sets the listener classes.
+     * @param {Array} classNames - The class names to set.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     setListenerClasses (classNames) {
         this._listenerClasses = classNames
         this.filterListenerClassesForTouch()
         return this
     }
 
+    /**
+     * @description Filters the listener classes for touch events.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     filterListenerClassesForTouch () {
         // if we don't have a touch screen, avoid registering for touch events
         if (!TouchScreen.shared().isSupported()) {
@@ -321,6 +516,11 @@
 
     // --- new listeners ---
 
+    /**
+     * @description Creates new listeners for the given classes.
+     * @param {Array} classesArray - The class names to create listeners for.
+     * @returns {Array} The new listeners.
+     */
     newListenersForClasses (classesArray) {
         return classesArray.map((className) => {
             const proto = Object.getClassNamed(className);
@@ -330,6 +530,11 @@
         })
     }
 
+    /**
+     * @description Starts new view listeners for the given classes.
+     * @param {Array} classesArray - The class names to create listeners for.
+     * @returns {Array} The new listeners.
+     */
     startNewViewListenersForClasses (classesArray) {
         const listeners = this.newListenersForClasses(classesArray)
         listeners.forEach(listener => {
@@ -340,6 +545,11 @@
         return listeners
     }
     
+    /**
+     * @description Starts new document listeners for the given classes.
+     * @param {Array} classesArray - The class names to create listeners for.
+     * @returns {Array} The new listeners.
+     */
     startNewDocListenersForClasses (classesArray) {
         const listeners = this.newListenersForClasses(classesArray)
         listeners.forEach(listener => {
@@ -353,6 +563,10 @@
 
     // --- view listeners ---
 
+    /**
+     * @description Starts the view listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     startViewListeners () {
         //debugger;
         this.stopViewListeners()
@@ -360,6 +574,10 @@
         return this
     }
 
+    /**
+     * @description Stops the view listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     stopViewListeners () {
         this.viewListeners().forEach(listener => listener.stop())
         this.viewListeners().clear()
@@ -368,12 +586,20 @@
 
     // --- doc listeners ---
 
+    /**
+     * @description Starts the document listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     startDocListeners () {
         this.stopDocListeners()
         this.setDocListeners(this.startNewDocListenersForClasses(this.listenerClasses()))
         return this
     }
 
+    /**
+     * @description Stops the document listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     stopDocListeners () {
         this.docListeners().forEach(listener => listener.stop())
         this.docListeners().clear()
@@ -382,6 +608,12 @@
 
     // -- special case for mouse and touch move events ---
 
+    /**
+     * @description Updates the slot is pressing.
+     * @param {Boolean} oldValue - The old value.
+     * @param {Boolean} newValue - The new value.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     didUpdateSlotIsPressing (oldValue, newValue) {
         if (newValue === true) {
             this.startViewMoveListeners()
@@ -394,16 +626,28 @@
 
     // --- view move listeners ---
 
+    /**
+     * @description Returns the move listeners for the given classes.
+     * @returns {Array} The move listeners.
+     */
     newMoveListeners () {
         return this.listenersForClasses(this.moveListenerClasses())
     }
 
+    /**
+     * @description Stops the view move listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     stopViewMoveListeners () {
         this.viewMoveListeners().forEach(listener => listener.stop())
         this.viewMoveListeners().clear()
         return this
     }
 
+    /**
+     * @description Starts the view move listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     startViewMoveListeners () {
         //debugger;
         this.stopViewMoveListeners()
@@ -413,12 +657,20 @@
 
     // --- doc move listeners ---
 
+    /**
+     * @description Stops the document move listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     stopDocMoveListeners () {
         this.docMoveListeners().forEach(listener => listener.stop())
         this.docMoveListeners().clear()
         return this
     }
 
+    /**
+     * @description Starts the document move listeners.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     startDocMoveListeners () {
         this.stopDocMoveListeners()
         this.setDocMoveListeners(this.startNewDocListenersForClasses(this.moveListenerClasses()))
@@ -429,6 +681,10 @@
 
     // condition helpers
 
+    /**
+     * @description Checks if the gesture has moved enough.
+     * @returns {Boolean} Whether the gesture has moved enough.
+     */
     hasMovedEnough () {
         // intended to be overridden by subclasses
         // e.g. a rotation recognizer might look at how much first two fingers have rotated
@@ -437,12 +693,20 @@
         return d >= m
     }
 
+    /**
+     * @description Checks if the gesture has an acceptable finger count.
+     * @returns {Boolean} Whether the gesture has an acceptable finger count.
+     */
     hasAcceptableFingerCount () {
         const n = this.numberOfFingersDown()
         return  n >= this.minFingersRequired() &&
                 n <= this.maxFingersAllowed();
     }
 
+    /**
+     * @description Checks if the keyboard state is acceptable.
+     * @returns {Boolean} Whether the keyboard state is acceptable.
+     */
     hasAcceptableKeyboardState () {
         if (!this.allowsKeyboardKeys()) {
             if (BMKeyboard.shared().hasKeysDown()) {
@@ -456,6 +720,10 @@
         return true
     }
 
+    /**
+     * @description Checks if the gesture can begin.
+     * @returns {Boolean} Whether the gesture can begin.
+     */
     canBegin () {
         return !this.isActive() && 
                 this.hasMovedEnough() && 
@@ -465,6 +733,10 @@
 
     // --- start / stop ---
 
+    /**
+     * @description Starts the gesture recognizer.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     start () {
         this.startViewListeners()
         // We typically don't want to listen to document level events all the time.
@@ -473,6 +745,10 @@
         return this
     }
 
+    /**
+     * @description Stops the gesture recognizer.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     stop () {
         this.stopViewListeners()
         this.stopDocListeners()
@@ -481,6 +757,10 @@
         return this
     }
 
+    /**
+     * @description Returns all event listeners.
+     * @returns {Array} The event listeners.
+     */
     allEventListeners () {
         const sets = [this.viewListeners(), this.docListeners(), this.viewMoveListeners(), this.docMoveListeners()].flat()
         return sets.map(eventListenerSet => eventListenerSet.allEventListeners()).flat()
@@ -488,6 +768,10 @@
 
     // active
 
+    /**
+     * @description Requests activation if needed.
+     * @returns {Boolean} Whether the activation was requested.
+     */
     requestActivationIfNeeded () {
         if (this.shouldRequestActivation()) {
             return GestureManager.shared().requestActiveGesture(this);
@@ -496,6 +780,10 @@
         return true
     }
 
+    /**
+     * @description Checks if the gesture is active.
+     * @returns {Boolean} Whether the gesture is active.
+     */
     isActive () {
         if (this.shouldRequestActivation()) {
             return GestureManager.shared().activeGesture() === this
@@ -503,6 +791,10 @@
         return this._isActive
     }
 
+    /**
+     * @description Deactivates the gesture.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     deactivate () {
         if (this.shouldRequestActivation()) {
             GestureManager.shared().deactivateGesture(this);
@@ -513,6 +805,10 @@
 
     // finish
 
+    /**
+     * @description Finishes the gesture.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     didFinish () {
         this.setDidBegin(false)
         GestureManager.shared().removeBegunGesture(this)
@@ -535,6 +831,12 @@
 
     // subclass helpers
 
+    /**
+     * @description Sends a delegate message.
+     * @param {String} methodName - The method name.
+     * @param {Any} argument - The argument.
+     * @returns {Any} The result.
+     */
     sendDelegateMessage (methodName, argument) {
         let result = undefined
         assert(methodName !== null)
@@ -571,6 +873,11 @@
     // maps mouse and touch events to a common list of points (with times and ids) format
     // so we can share the event handling code for both devices 
 
+    /**
+     * @description Returns the points for the event.
+     * @param {Event} event - The event.
+     * @returns {Array} The points.
+     */
     pointsForEvent (event) {
         if (Type.isNullOrUndefined(event)) {
             throw new Error(this.type() + ".pointsForEvent(event) event is missing")
@@ -593,6 +900,11 @@
 
     // all events hook
 
+    /**
+     * @description Handles the event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onEvent (event) {
         if (this.isVisualDebugging()) {
             this.updateOutlineView()
@@ -603,29 +915,54 @@
 
     // --- events ---
 
+    /**
+     * @description Handles the over event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onOver (event) {
         this.setOverEvent(event)
         this.setCurrentEvent(event)
         this.onEvent(event)
     }
 
+    /**
+     * @description Handles the down event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onDown (event) {
         this.setDownEvent(event)
         this.setCurrentEvent(event)
         this.onEvent(event)
     }
 
+    /**
+     * @description Handles the move event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMove (event) {
         this.setCurrentEvent(event)
         this.onEvent(event)
     }
 
+    /**
+     * @description Handles the up event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onUp (event) {
         this.setUpEvent(event)
         //this.setCurrentEvent(event) // on Windows, the up event may not have any positions
         this.onEvent(event)
     }
 
+    /**
+     * @description Handles the leave event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onLeave (event) {
         this.setLeaveEvent(event)
         this.setCurrentEvent(event)
@@ -634,6 +971,11 @@
 
     // --- mouse events ---
 
+    /**
+     * @description Checks if the event should be emulated.
+     * @param {Event} event - The event.
+     * @returns {Boolean} Whether the event should be emulated.
+     */
     shouldEmulateEvent (event) {
         return this.isEmulatingTouch() && 
                 event.shiftKey && 
@@ -641,6 +983,11 @@
                 this.pointsForEvent(event).length === 1;
     }
 
+    /**
+     * @description Emulates the down event if needed.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     emulateDownIfNeeded (event) {
         const p1 = this.pointsForEvent(event).first()
 
@@ -654,6 +1001,11 @@
         return this
     }
 
+    /**
+     * @description Handles the down event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseDown (event) {      
         //debugger;  
         this.emulateDownIfNeeded(event)
@@ -661,6 +1013,11 @@
         this.onDown(event)
     }
 
+    /**
+     * @description Emulates the move event if needed.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     emulateMoveIfNeeded (event) {
         const p2 = this.pointsForEvent(event).first()
 
@@ -675,57 +1032,117 @@
         return this
     }
 
+    /**
+     * @description Handles the move event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseMove (event) {
         this.emulateMoveIfNeeded(event)
         this.onMove(event)
     }
 
+    /**
+     * @description Handles the up event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseUp (event) {
         this.onUp(event)
     }
 
+    /**
+     * @description Handles the leave event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseLeave (event) {
         this.onLeave(event)
     }
 
     // mouse capture events
 
+    /**
+     * @description Handles the over capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseOverCapture (event) {
         this.onOver(event)
     }
 
+    /**
+     * @description Handles the down capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseDownCapture (event) {
         this.emulateDownIfNeeded(event)
         this.onDown(event)
     }
 
+    /**
+     * @description Handles the move capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseMoveCapture (event) {
         this.emulateMoveIfNeeded(event)
         this.onMove(event)
     }
 
+    /**
+     * @description Handles the up capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseUpCapture (event) {
         this.onUp(event)
     }
 
+    /**
+     * @description Handles the leave capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onMouseLeaveCapture (event) {
         this.onLeave(event)
     }
 
     // touch events
 
+    /**
+     * @description Handles the touch start event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchStart (event) {
         this.onDown(event)
     }
 
+    /**
+     * @description Handles the touch move event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchMove (event) {
         this.onMove(event)
     }
 
+    /**
+     * @description Handles the touch end event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchEnd (event) {
         this.onUp(event)
     }
 
+    /**
+     * @description Handles the touch cancel event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchCancel (event) { 
         //this.onUp(event)
         this.cancel()
@@ -733,18 +1150,38 @@
     
     // touch capture events
 
+    /**
+     * @description Handles the touch start capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchStartCapture (event) {
         this.onDown(event)
     }
 
+    /**
+     * @description Handles the touch move capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchMoveCapture (event) {
         this.onMove(event)
     }
 
+    /**
+     * @description Handles the touch end capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchEndCapture (event) {
         this.onUp(event)
     }
 
+    /**
+     * @description Handles the touch cancel capture event.
+     * @param {Event} event - The event.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     onTouchCancelCapture (event) {
         //this.onUp(event)
         this.cancel()
@@ -752,10 +1189,18 @@
 
     // diff position helper
 
+    /**
+     * @description Calculates the difference between the current position and the begin position.
+     * @returns {Point} The difference between the current position and the begin position.
+     */
     diffPos () {
         return this.currentPosition().subtract(this.beginPosition()).floorInPlace() // floor here?
     }
 
+    /**
+     * @description Calculates the distance between the current position and the begin position.
+     * @returns {Number} The distance between the current position and the begin position.
+     */
     distance () {
         const dp = this.diffPos()
         const dx = Math.abs(dp.x())
@@ -771,12 +1216,21 @@
         return funcs[this.direction()](dx, dy)
     }
 
+    /**
+     * @description Sets the gesture name.
+     * @param {String} aName - The gesture name.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     setGestureName (aName) {
         this._gestureName = aName
         this.autoSetMessageNames()
         return this
     }
 
+    /**
+     * @description Returns the gesture name.
+     * @returns {String} The gesture name.
+     */
     gestureName () {
         if (this._gestureName) {
             return this._gestureName
@@ -784,10 +1238,19 @@
         return this.type().before("GestureRecognizer")
     }
 
+    /**
+     * @description Returns the default message for a state.
+     * @param {String} state - The state.
+     * @returns {String} The default message for the state.
+     */
     defaultMessageForState (state) {
         return "on" + this.gestureName() + state.capitalized()
     }
 
+    /**
+     * @description Automatically sets the message names.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     autoSetMessageNames () {
         this.setAcceptMessage("accepts" + this.gestureName())
         this.setBeginMessage(this.defaultMessageForState("Begin"))
@@ -800,6 +1263,10 @@
 
     // sending delegate messages
 
+    /**
+     * @description Checks if the target accepts the gesture.
+     * @returns {Boolean} Whether the target accepts the gesture.
+     */
     doesTargetAccept () {
 
         // see if view accepts the gesture before we begin
@@ -815,6 +1282,10 @@
         return true
     }
 
+    /**
+     * @description Sends the begin message.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     sendBeginMessage () {
         if (!this.doesTargetAccept()) {
             return this
@@ -827,24 +1298,41 @@
         return this
     }
 
+    /**
+     * @description Sends the move message.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     sendMoveMessage () {
         this.sendDelegateMessage(this.moveMessage())
         //this.didMove()
         return this
     }
 
+    /**
+     * @description Sends the complete message.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     sendCompleteMessage () {
         this.sendDelegateMessage(this.completeMessage())
         this.didFinish()
         return this
     }
 
+    /**
+     * @description Sends the cancelled message.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     sendCancelledMessage () {
         this.sendDelegateMessage(this.cancelledMessage())
         this.didFinish()
         return this
     }
 
+    /**
+     * @description Requests to cancel the gesture.
+     * @param {GestureRecognizer} byGesture - The gesture that requests the cancellation.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     requestCancel (byGesture) {
         if (this.shouldAcceptCancelRequest()) {
             this.cancel()
@@ -858,6 +1346,10 @@
         */
     }
 
+    /**
+     * @description Cancels the gesture.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     cancel () {
         this.debugLog(" cancel")
         //this.willCancel()
@@ -877,6 +1369,10 @@
 
     // ---
 
+    /**
+     * @description Cleans up the gesture recognizer.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     cleanup () {
         this.setDownEvent(null)
         this.setCurrentEvent(null)
@@ -884,12 +1380,20 @@
         return this
     }
 
+    /**
+     * @description Checks if the visual debugger should be shown.
+     * @returns {Boolean} Whether the visual debugger should be shown.
+     */
     shouldShowVisualDebugger () {
         return this.hasDownPointsInView() || this.isActive() // || this.isPressing());
     }
 
     // ---  outline view for debugging ---
 
+    /**
+     * @description Creates a new outline view.
+     * @returns {DomView} The new outline view.
+     */
     newOutlineView () {
         const v = DomView.clone()
         v.setPointerEvents("none")
@@ -900,6 +1404,10 @@
         return v
     }
 
+    /**
+     * @description Returns the outline view.
+     * @returns {DomView} The outline view.
+     */
     outlineView () {
         if (!this._outlineView) {
             const v = this.newOutlineView()
@@ -908,6 +1416,10 @@
         return this._outlineView
     }
 
+    /**
+     * @description Updates the outline view.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     updateOutlineView () {
         /*
         if (this.shouldShowVisualDebugger()) {
@@ -921,6 +1433,10 @@
         */
     }
 
+    /**
+     * @description Shows the outline view.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     showOutlineView () {
         const v = this.outlineView()
         if (!v.parentView()) {
@@ -939,6 +1455,10 @@
 
     // --- finger views for debugging ---
 
+    /**
+     * @description Creates a new finger view.
+     * @returns {DomView} The new finger view.
+     */
     newFingerView () {
         const v = DomView.clone()
         v.setPointerEvents("none")
@@ -958,6 +1478,11 @@
         return v
     }
 
+    /**
+     * @description Returns the view for a finger ID.
+     * @param {String} id - The finger ID.
+     * @returns {DomView} The view for the finger ID.
+     */
     viewForFingerId (id) {
         const fvs = this.fingerViewMap();
         let v = fvs.get(id);
@@ -969,6 +1494,10 @@
         return v;
     }
 
+    /**
+     * @description Removes the finger views.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     removeFingerViews () {
         const map = this.fingerViewMap();
         map.keysArray().forEach((id) => {
@@ -979,10 +1508,19 @@
         return this;
     }
 
+    /**
+     * @description Returns the title for a finger number.
+     * @param {Number} n - The finger number.
+     * @returns {String} The title for the finger number.
+     */
     titleForFingerNumber (n) {
         return "&nbsp;".repeat(26) + this.type() + "&nbsp;" + n + "&nbsp;of&nbsp;" + this.numberOfFingersDown() 
     }
 
+    /**
+     * @description Shows the finger views.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     showFingers () {
         const points = this.pointsForEvent(this.currentEvent());
         const idsToRemoveSet = this.fingerViewMap().keysSet(); 
@@ -1019,6 +1557,10 @@
         return this;
     }
 
+    /**
+     * @description Updates the finger views.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     updateFingerViews () {
         if (this.shouldShowVisualDebugger()) {
             this.showFingers();
@@ -1029,6 +1571,10 @@
         return this;
     }
 
+    /**
+     * @description Updates the debugger.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     updateDebugger () {
         this.updateOutlineView();
         this.updateFingerViews();
@@ -1037,14 +1583,26 @@
         }
     }
 
+    /**
+     * @description Returns the name of the update debugger timeout.
+     * @returns {String} The name of the update debugger timeout.
+     */
     updateDebuggerTimeoutName () {
         return "updateDebugger";
     }
 
+    /**
+     * @description Returns the timeout seconds for the update debugger.
+     * @returns {Number} The timeout seconds for the update debugger.
+     */
     updateDebuggerTimeoutSeconds () {
         return 0.1;
     }
 
+    /**
+     * @description Updates the debug timer.
+     * @returns {GestureRecognizer} The updated gesture recognizer.
+     */
     updateDebugTimer () {
         const ms = this.updateDebuggerTimeoutSeconds() * 1000;
         this.addTimeout(() => this.updateDebugger(), ms, this.updateDebuggerTimeoutName());
@@ -1053,6 +1611,10 @@
 
     // down points
 
+    /**
+     * @description Checks if there are down points in the view.
+     * @returns {Boolean} Whether there are down points in the view.
+     */
     hasDownPointsInView () {
         if (!this.viewTarget()) {
             return false;
@@ -1064,6 +1626,10 @@
         return points.canDetect(p => view.containsPoint(p));
     }
 
+    /**
+     * @description Returns all points.
+     * @returns {Array} All points.
+     */
     allPoints () { // TODO: some better abstraction for Touch+Mouse?
         const points = [];
         points.appendItems(TouchScreen.shared().currentPoints());
@@ -1071,14 +1637,26 @@
         return points;
     }
 
+    /**
+     * @description Returns all down points.
+     * @returns {Array} All down points.
+     */
     allDownPoints () { // TODO: some better abstraction for Touch+Mouse?
         return this.allPoints().select(p => p.isDown());
     }
 
+    /**
+     * @description Returns the short type ID.
+     * @returns {String} The short type ID.
+     */
     shortTypeId () {
         return this.typeId().replaceAll("GestureRecognizer", "");
     }
 
+    /**
+     * @description Returns the description.
+     * @returns {String} The description.
+     */
     description () {
         return this.shortTypeId() + " on " + (this.viewTarget() ? this.viewTarget().typeId() : "null view target");
     }

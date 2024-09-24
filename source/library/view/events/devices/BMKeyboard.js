@@ -1,65 +1,89 @@
+/**
+ * @module library.view.events.devices
+ */
+
+/**
+ * @class BMKeyboard
+ * @extends Device
+ * @classdesc Keyboard
+ *
+ * Global shared instance that tracks current keyboard state.
+ * Registers for capture key events on document.body.
+ *
+ * MacOS/iOS note:
+ *
+ *     These Mac keys use different names in JS events:
+ *     CommandLeft -> MetaLeft
+ *     CommandRight -> MetaRight
+ *     Option/Alt -> Alternate
+ *     Control -> Control
+ *     Function -> [not seen by JS either as key event or modifier]
+ *
+ * Browser Issues:
+ *
+ *     Key combinations intercepted by browser:
+ *
+ *         OSX:
+ *             meta-n (new window)
+ *             meta-m (minimize window)
+ *             meta-w (close window)
+ *             meta-t (new tab)
+ *
+ *             but we can intercept:
+ *             meta-o
+ *
+ *
+ * Notes:
+ *
+ *     Newer JS browser APIs might have better ways to do
+ *     key code to name mappings. TODO: look into whether this is well supported across browsers.
+ */
+
 "use strict";
-
-/*
-
-    Keyboard
-
-    Global shared instance that tracks current keyboard state.
-    Registers for capture key events on document.body.
-
-    MacOS/iOS note:
-
-        These Mac keys use different names in JS events:
-        CommandLeft -> MetaLeft
-        CommandRight -> MetaRight
-        Option/Alt -> Alternate
-        Control -> Control
-        Function -> [not seen by JS either as key event or modifier]
-
-    Browser Issues:
-
-        Key combinations intercepted by browser:
-
-            OSX:
-                meta-n (new window)
-                meta-m (minimize window)
-                meta-w (close window)
-                meta-t (new tab)
-
-                but we can intercept:
-                meta-o
-
-
-    Notes:
-
-        Newer JS browser APIs might have better ways to do 
-        key code to name mappings. TODO: look into whether this is well supported across browsers. 
-        
-*/
-
 
 (class BMKeyboard extends Device {
 
+    /**
+     * @static
+     * @description Initializes the class
+     */
     static initClass () {
         this.setIsSingleton(true);
     }
     
+    /**
+     * @description Initializes the prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Map} codeToKeysMap
+         * @description Dictionary of KeyboardKey objects
+         */
         {
             const slot = this.newSlot("codeToKeysMap", null); 
             slot.setComment("dictionary of KeyboardKey objects");
             slot.setSlotType("Map");
         }
+        /**
+         * @property {KeyboardListener} keyboardListener
+         */
         {
             const slot = this.newSlot("keyboardListener", null);
             slot.setSlotType("KeyboardListener");
         }
+        /**
+         * @property {Array} allModifierKeys
+         */
         {
             const slot = this.newSlot("allModifierKeys", null);
             slot.setSlotType("Array");
         }
     }
 
+    /**
+     * @description Initializes the keyboard
+     * @returns {BMKeyboard} The keyboard instance
+     */
     init () {
         super.init();
         this.setupCodeToKeys();
@@ -69,6 +93,10 @@
         return this;
     }
 
+    /**
+     * @description Starts listening for keyboard events
+     * @returns {BMKeyboard} The keyboard instance
+     */
     startListening () {
         const listener = KeyboardListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this)
         this.setKeyboardListener(listener)
@@ -76,6 +104,10 @@
         return this
     }
 
+    /**
+     * @description Sets up the code to keys map
+     * @returns {BMKeyboard} The keyboard instance
+     */
     setupCodeToKeys () {
         const map = new Map();
         this.keyCodesToNamesMap().forEachKV((code, name) => {
@@ -88,15 +120,30 @@
         return this;
     }
 
+    /**
+     * @description Gets the key for a given code
+     * @param {number} aCode - The key code
+     * @returns {KeyboardKey} The keyboard key
+     */
     keyForCode (aCode) {
         return this.codeToKeysMap().get(aCode);
     }
 
+    /**
+     * @description Gets the key for a given name
+     * @param {string} aName - The key name
+     * @returns {KeyboardKey} The keyboard key
+     */
     keyForName (aName) {
         const code = this.keyCodeForName(aName);
         return this.keyForCode(code);
     }
 
+    /**
+     * @description Gets the name for a given key code
+     * @param {number} aCode - The key code
+     * @returns {string|null} The key name
+     */
     nameForKeyCode (aCode) {
         const key = this.keyForCode(aCode);
         if (key) {
@@ -105,6 +152,10 @@
         return null;
     }
 
+    /**
+     * @description Gets the inverted key codes to names map
+     * @returns {Map} The inverted map
+     */
     k2c () {
         if (!this._k2c) {
             this._k2c = this.keyCodesToNamesMap().inverted();
@@ -112,15 +163,29 @@
         return this._k2c
     }
 
+    /**
+     * @description Gets the key code for a given name
+     * @param {string} aName - The key name
+     * @returns {number} The key code
+     */
     keyCodeForName (aName) {
         return this.k2c().get(aName);
     }
     
+    /**
+     * @description Checks if the event is just a modifier key
+     * @param {Event} event - The keyboard event
+     * @returns {boolean} True if the event is just a modifier key
+     */
     eventIsJustModifierKey (event) {
         const name = this.nameForKeyCode(event.keyCode)
         return this.allModifierNames().contains(name)
     }
 
+    /**
+     * @description Gets the key codes to names map
+     * @returns {Map} The key codes to names map
+     */
     keyCodesToNamesMap () {
         return new Map([
             [8, "Backspace"],
@@ -256,6 +321,10 @@
     }
     */
 
+    /**
+     * @description Gets the shift dictionary
+     * @returns {Object} The shift dictionary
+     */
     shiftDict () {
         // Based on a Macbook Pro keyboard. 
         // Not sure if this is platform specific.
@@ -310,6 +379,10 @@
 
     // -- events ---
 
+    /**
+     * @description Shows the code to keys map
+     * @returns {BMKeyboard} The keyboard instance
+     */
     showCodeToKeys () {
         const c2k = this.keyCodesToNamesMap();
 
@@ -330,12 +403,22 @@
         return this;
     }
 
+    /**
+     * @description Gets the key for a given event
+     * @param {Event} event - The keyboard event
+     * @returns {KeyboardKey} The keyboard key
+     */
     keyForEvent (event) {
         const code = event.keyCode;
         const key = this.keyForCode(code);
         return key;
     }
 
+    /**
+     * @description Handles the key down event
+     * @param {Event} event - The keyboard event
+     * @returns {boolean} True if the event should propagate
+     */
     onKeyDownCapture (event) {
         //console.log("event.metaKey = ", event.metaKey)
         
@@ -357,6 +440,11 @@
         return shouldPropogate;
     }
 
+    /**
+     * @description Handles the key up event
+     * @param {Event} event - The keyboard event
+     * @returns {boolean} True if the event should propagate
+     */
     onKeyUpCapture (event) {
         const shouldPropogate = true
         const key = this.keyForEvent(event)
@@ -376,24 +464,50 @@
     
     // --- event handling method names ---
 
+    /**
+     * @description Gets the down method name for a given event
+     * @param {Event} event - The keyboard event
+     * @returns {string} The down method name
+     */
     downMethodNameForEvent (event) {
         return "on" + this.modsAndKeyNameForEvent(event) + "KeyDown";
     }
+
+    /**
+     * @description Gets the up method name for a given event
+     * @param {Event} event - The keyboard event
+     * @returns {string} The up method name
+     */
 
     upMethodNameForEvent (event) {
         return "on" + this.modsAndKeyNameForEvent(event) + "KeyUp";
     }
 
+    /**
+     * @description Checks if the event is an alphabetical key
+     * @param {Event} event - The keyboard event
+     * @returns {boolean} True if the event is alphabetical
+     */
     eventIsAlphabetical (event) {
         const c = event.keyCode;
         return c >= 65 && c <= 90;
     }
 
+    /**
+     * @description Checks if the event is a numeric key
+     * @param {Event} event - The keyboard event
+     * @returns {boolean} True if the event is numeric
+     */
     eventIsNumeric (event) {
         const c = event.keyCode;
         return c >= 48 && c <= 57;
     }
 
+    /**
+     * @description Gets the mods and key name for an event
+     * @param {Event} event - The keyboard event
+     * @returns {string} The mods and key name
+     */
     modsAndKeyNameForEvent (event) {
         // examples: AltB AltShiftB
         // Note that shift is explicit and the B key is always uppercase
@@ -446,22 +560,42 @@
 
     // get key helpers
 
+    /**
+     * @description Gets the shift key
+     * @returns {KeyboardKey} The shift key
+     */
     shiftKey () {
         return this.keyForName("Shift")
     }
 
+    /**
+     * @description Gets the control key
+     * @returns {KeyboardKey} The control key
+     */
     controlKey () {
         return this.keyForName("Control")
     }
 
+    /**
+     * @description Gets the alternate key
+     * @returns {KeyboardKey} The alternate key
+     */
     alternateKey () {
         return this.keyForName("Alternate")
     }
 
+    /**
+     * @description Gets the left command key
+     * @returns {KeyboardKey} The left command key
+     */
     leftCommandKey () {
         return this.keyForName("MetaLeft")
     }
 
+    /**
+     * @description Gets the right command key
+     * @returns {KeyboardKey} The right command key
+     */
     rightCommandKey () {
         return this.keyForName("MetaRight")
     }
@@ -472,47 +606,89 @@
         return this.shiftKey().isDown()
     }
 
+    /**
+     * @description Checks if the command key is down
+     * @returns {boolean} True if the command key is down
+     */
     commandIsDown () {
         return this.leftCommandKey().isDown() || this.rightCommandKey().isDown()
     }
 
-
+    /**
+     * @description Gets the equals sign key
+     * @returns {KeyboardKey} The equals sign key
+     */
     equalsSignKey () {
         return this.keyForName("EqualsSign")
     }
 
+    /**
+     * @description Gets the minus key
+     * @returns {KeyboardKey} The minus key
+     */
     minusKey () {
         return this.keyForName("Dash")
     }
 
+    /**
+     * @description Gets the plus key
+     * @returns {KeyboardKey} The plus key
+     */
     plusKey () {
         return this.keyForName("Plus")
     }
 
+    /**
+     * @description Checks if the plus key is down
+     * @returns {boolean} True if the plus key is down
+     */
     plusIsDown () {
         return this.plusKey().isDown()
     }
 
+    /**
+     * @description Gets the currently down keys
+     * @returns {Array} The currently down keys
+     */
     currentlyDownKeys () {
         return this.codeToKeys().valuesArray().select(key => key.isDown());
     }
 
+    /**
+     * @description Gets the currently up keys
+     * @returns {Array} The currently up keys
+     */
     currentlyUpKeys () {
         return this.codeToKeys().valuesArray().select(key => !key.isDown());
     }
 
+    /**
+     * @description Checks if there are any keys currently down
+     * @returns {boolean} True if there are any keys down
+     */
     hasKeysDown () {
         return this.currentlyDownKeys().length !== 0;
     }
 
+    /**
+     * @description Gets the names of the currently down keys
+     * @returns {Array} The names of the currently down keys
+     */
     downKeyNames () {
         return BMKeyboard.shared().currentlyDownKeys().map(k => k.name());
     }
 
-    show () {
+    /**
+     * @description Shows the currently down keys
+     */
+    showDownKeys () {
         this.debugLog(" downKeys: ", this.downKeyNames());
     }
 
+    /**
+     * @description Gets all modifier names
+     * @returns {Array} The modifier names
+     */
     allModifierNames () {
         return [
             "Alternate", 
@@ -524,6 +700,11 @@
         ];
     }
 
+    /**
+     * @description Gets the modifier names for an event
+     * @param {Event} event - The keyboard event
+     * @returns {Array} The modifier names
+     */
     modifierNamesForEvent (event) {
         let modifierNames = []
 
@@ -558,6 +739,10 @@
         return modifierNames
     }
 
+    /**
+     * @description Shows the event details
+     * @param {Event} event - The keyboard event
+     */
     showEvent (event) {
         const kb = BMKeyboard.shared()
         console.log("---")

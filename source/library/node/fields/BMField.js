@@ -1,26 +1,31 @@
 "use strict";
 
-/*
+/**
+ * @module library.node.fields
+ */
 
-    BMField
-
-    A BMStorageNode that has a key, value, and valueMethod (among other properties),
-    that's useful for automatically constructing a UI to interact with properties of a parent Node.
-    
-*/
-        
+/**
+ * @class BMField
+ * @extends BMSummaryNode
+ * @classdesc A BMStorageNode that has a key, value, and valueMethod, useful for automatically constructing a UI to interact with properties of a parent Node.
+ */
 
 (class BMField extends BMSummaryNode {
     
     initPrototypeSlots () {
 
+        /**
+         * @property {boolean} isEnabled - Whether the field is enabled.
+         */
         {
             const slot = this.newSlot("isEnabled", true);
             slot.setSyncsToView(true);
             slot.setSlotType("Boolean");
         }
 
-
+        /**
+         * @property {string} key - The key of the field.
+         */
         // key
         {
             const slot = this.newSlot("key", "key");
@@ -33,6 +38,9 @@
             slot.setInspectorPath("Node/Field/Key");
         }
 
+        /**
+         * @property {boolean} keyIsVisible - Whether the key is visible.
+         */
         {
             const slot = this.newSlot("keyIsVisible", true);
             slot.setShouldStoreSlot(true);
@@ -44,6 +52,9 @@
             slot.setInspectorPath("Node/Field/Key");
         }
 
+        /**
+         * @property {boolean} keyIsEditable - Whether the key is editable.
+         */
         {
             const slot = this.newSlot("keyIsEditable", false);
             slot.setCanInspect(true);
@@ -56,6 +67,10 @@
         }
 
         // value
+
+        /**
+         * @property {Object} value - The value of the field.
+         */
         {
             const slot = this.newSlot("value", null);
             slot.setCanInspect(true);
@@ -68,6 +83,9 @@
             //slot.setSlotType("String"); // might be boolean or number, so use overrideSlot() on field types
         }
 
+        /**
+         * @property {boolean} valueIsVisible - Whether the value is visible.
+         */
         {
             const slot = this.newSlot("valueIsVisible", true);
             slot.setInspectorPath("Node/Field/Value");
@@ -79,6 +97,9 @@
             slot.setLabel("visible");
         }
 
+        /**
+         * @property {boolean} valueIsEditable - Whether the value is editable.
+         */
         {
             const slot = this.newSlot("valueIsEditable", true);
             slot.setShouldStoreSlot(true);
@@ -90,6 +111,9 @@
             slot.setInspectorPath("Node/Field/Value");
         }
 
+        /**
+         * @property {string} valuePlaceholderText - The placeholder text for the value.
+         */
         {
             const slot = this.newSlot("valuePlaceholderText", null);
             slot.setCanInspect(true);
@@ -100,7 +124,6 @@
             slot.setSlotType("String");
             slot.setSyncsToView(true);
         }
-
 
         /*
         {
@@ -115,22 +138,34 @@
         }
         */
 
+        /**
+         * @property {boolean} valueCanHitEnter - Whether the value can hit enter.
+         */
         {
             const slot = this.newSlot("valueCanHitEnter", true);
             slot.setSlotType("Boolean");
             slot.setSyncsToView(true);
         }
 
+        /**
+         * @property {Object} link - The link of the field.
+         */
         {
             const slot = this.newSlot("link", null);
             slot.setSlotType("Object");
         }
 
+        /**
+         * @property {boolean} ownsLink - Whether the field owns the link.
+         */
         {
             const slot = this.newSlot("ownsLink", null);
             slot.setSlotType("Boolean");
         }
 
+        /**
+         * @property {string} valuePrefix - The prefix of the value.
+         */
         {
             const slot = this.newSlot("valuePrefix", null);
             slot.setShouldStoreSlot(true);
@@ -139,6 +174,9 @@
             slot.setDuplicateOp("duplicate");
         }
 
+        /**
+         * @property {string} valuePostfix - The postfix of the value.
+         */
         {
             const slot = this.newSlot("valuePostfix", null);
             slot.setShouldStoreSlot(true);
@@ -147,6 +185,9 @@
             slot.setDuplicateOp("duplicate");
         }
 
+        /**
+         * @property {string} valueMethod - The method of the value.
+         */
         {
             const slot = this.newSlot("valueMethod", null);
             slot.setSlotType("String");
@@ -154,47 +195,73 @@
             slot.setDuplicateOp("duplicate");
         }
         
+        /**
+         * @property {string} noteMethod - The method of the note.
+         */
         {
             const slot = this.newSlot("noteMethod", null);  // fetches note from a parent node method
             slot.setSlotType("String");
             slot.setSyncsToView(true);
         }
         
+        /**
+         * @property {string} keyError - The error of the key.
+         */
         {
             const slot = this.newSlot("keyError", null);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
         }
         
+        /**
+         * @property {string} valueError - The error of the value.
+         */
         {
             const slot = this.newSlot("valueError", null);
             slot.setSlotType("String");
             slot.setSyncsToView(true);
         }
         
+        /**
+         * @property {BMNode} target - The target of the field.
+         */
         {
             const slot = this.newSlot("target", null);
             slot.setSlotType("BMNode");
             slot.setSyncsToView(true);
         }
 
+        /**
+         * @property {BMObservation} didUpdateNodeObs - The observation of the didUpdateNode.
+         */
         {
             const slot = this.newSlot("didUpdateNodeObs", null);
             slot.setSlotType("BMObservation");
         }
     }
 
+    /**
+     * @description Initializes the prototype slots for the BMField class.
+     */
     initPrototype () {
         this.setShouldStore(true);
         this.setSummaryFormat("key value");
         this.setHasNewlineAfterSummary(true);
     }
 
+    /**
+     * @description Called when the node is loaded from the store.
+     */
     didLoadFromStore () { // move to finalInit?
         super.didLoadFromStore()
         this.validate()
     }
 
+    /**
+     * @static
+     * @description Creates a new node.
+     * @returns {BMField} The new node.
+     */
     static nodeCreate () {
         const newNode = super.nodeCreate()
 
@@ -212,6 +279,10 @@
         return newNode
     }
 
+    /**
+     * @description Returns the title of the field.
+     * @returns {string} The title of the field.
+     */
     title () {
         return this.key()
     }
@@ -235,6 +306,11 @@
     }
     */
 
+    /**
+     * @description Called when the target of the field is updated.
+     * @param {Object} oldValue - The old target.
+     * @param {Object} newValue - The new target.
+     */
     didUpdateSlotTarget (oldValue, newValue) {
         if (oldValue) {
             const obs = this.didUpdateNodeObs()
@@ -252,6 +328,9 @@
         } 
     }
 
+    /**
+     * @description Called when the node is updated.
+     */
     directDidUpdateNode () {
         super.didUpdateNode()
         return this
@@ -263,6 +342,10 @@
     }
     */
 
+    /**
+     * @description Called when the node is updated.
+     * @param {BMSummaryNode} aNote - The note.
+     */
     onUpdatedNode (aNote) {
         /*
         if (this.target()) {
@@ -293,6 +376,9 @@
         }
     }
 
+    /**
+     * @description Syncs the field from the target.
+     */
     syncFromTarget () {
         //this.value(); // triggers didUpdateNodeIfInitialized
 
@@ -300,6 +386,11 @@
         return this
     }
 
+    /**
+     * @description Called when the value of the field is updated.
+     * @param {Object} oldValue - The old value.
+     * @param {Object} newValue - The new value.
+     */
     didUpdateSlotValue (oldValue, newValue) {  // setValue() is called by View on edit
         if (this.target() && this.valueMethod()) {
             this.setValueOnTarget(newValue);
@@ -310,6 +401,10 @@
         this.didUpdateNodeIfInitialized();
     }
 
+    /**
+     * @description Sets the value on the target.
+     * @param {Object} v - The value.
+     */
     setValueOnTarget (v) { // called by View on edit
         //console.log("setValue '" + v + "'")
         const target = this.target();
@@ -330,10 +425,19 @@
         return this;
     }
 	
+    /**
+     * @description Normalizes the value.
+     * @param {Object} v - The value.
+     * @returns {Object} The normalized value.
+     */
     normalizeThisValue (v) {
 	    return v;
     }
 	
+    /**
+     * @description Gets the value from the target.
+     * @returns {Object} The value.
+     */
     value () {
         if (this.target()) {
             const newValue = this.getValueFromTarget();
@@ -345,6 +449,10 @@
         return this._value;
     }
 
+    /**
+     * @description Gets the value from the target.
+     * @returns {Object} The value.
+     */
     getValueFromTarget () {
         const target = this.target();
         const slotName = this.valueMethod();
@@ -360,6 +468,10 @@
         return null;
     }
 	
+    /**
+     * @description Gets the note from the target.
+     * @returns {Object} The note.
+     */
     note () {
         const target = this.target();
         const slotName = this.noteMethod();
@@ -376,6 +488,10 @@
         return this._note
     }
 	
+    /**
+     * @description Called when the view is updated.
+     * @param {Object} aFieldView - The field view.
+     */
     didUpdateView (aFieldView) {  
         debugger;      
         let parentNode = this.parentNode();
@@ -394,19 +510,35 @@
         return this;
     }
 	
+    /**
+     * @description Returns the visible value of the field.
+     * @returns {Object} The visible value.
+     */
     visibleValue () {
         return this.value();
     }
 
+    /**
+     * @description Validates the field.
+     * @returns {boolean} Whether the field is valid.
+     */
     validate () {
         // subclasses should override if needed
         return true;
     }
 	
+    /**
+     * @description Returns the tile link of the field.
+     * @returns {Object} The tile link.
+     */
     nodeTileLink () {
         return null;
     }
 
+    /**
+     * @description Returns the summary of the field.
+     * @returns {string} The summary.
+     */
     summary () {
         if (!this.isVisible()) {
             return "";
@@ -414,20 +546,38 @@
         return super.summary();
     }
 
+    /**
+     * @description Returns the key of the field.
+     * @returns {string} The key.
+     */
     summaryKey () {
         return this.key();
     }
 
+    /**
+     * @description Returns the value of the field.
+     * @returns {Object} The value.
+     */
     summaryValue () {
         return this.value();
     }
 
+    /**
+     * @description Sets the node summary shows key.
+     */
     setNodeSummaryShowsKey () {
     }
 
+    /**
+     * @description Sets the node summary shows value.
+     */
     setNodeSummaryShowsValue () {
     }
 
+    /**
+     * @description Returns the JSON archive of the field.
+     * @returns {Object} The JSON archive.
+     */
     jsonArchive () {
         //console.log(this.typeId() + ".jsonArchive()")
         return super.jsonArchive();
@@ -435,7 +585,10 @@
 
     // --- simplified JSON representation ---
 
-
+    /**
+     * @description Sets the JSON of the field.
+     * @param {Object} json - The JSON.
+     */
     setJson (json) {
         this.setValue(json);
         const didSet = (this.value() === json || (json === null && this.value() === "")); // sanity check
@@ -454,6 +607,10 @@
         return this;
     }
 
+    /**
+     * @description Returns the JSON of the field.
+     * @returns {Object} The JSON.
+     */
     asJson () {
         // test used for Character sheet atm
         // separate fron jsonArchive 
@@ -479,6 +636,10 @@
 
     // ----------------
     
+    /**
+     * @description Sets the is editable of the field.
+     * @param {boolean} aBool - The is editable.
+     */
     setIsEditable (aBool) {
         this.setValueIsEditable(false);
         return this;

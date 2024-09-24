@@ -1,9 +1,12 @@
 "use strict";
 
-/* 
-    AudioQueue 
+/**
+ * @module library.node.audio
+ * @class AudioQueue
+ * @extends BMSummaryNode
+ * @classdesc Manages a queue of audio clips.
 
-    sound protocol:
+    expected sound protocol for clips:
     play()
     addDelegate(delegate)
     removeDelegate(delegate)
@@ -14,17 +17,25 @@
 (class AudioQueue extends BMSummaryNode {
 
   initPrototypeSlots () {
-
+    /**
+     * @property {boolean} isMuted - Whether the audio queue is muted.
+     */
     {
       const slot = this.newSlot("isMuted", false);
       slot.setSlotType("Boolean");
     }
 
+    /**
+     * @property {Object} currentSound - The current sound.
+     */
     {
       const slot = this.newSlot("currentSound", null);
       slot.setSlotType("Object");
     }
 
+    /**
+     * @property {Array} queue - The queue of sounds.
+     */
     {
       const slot = this.newSlot("queue", null); // FIFO (first in first out) queue
       slot.setSlotType("Array");
@@ -52,6 +63,10 @@
     this.setCanDelete(true);
   }
 
+  /**
+   * @description Returns the subtitle of the audio queue.
+   * @returns {string} The subtitle.
+   */
   subtitle () {
     const lines = [];
     const isPlaying = this.currentSound() !== null;
@@ -71,12 +86,20 @@
     return lines.join("\n");
   }
 
+  /**
+   * @description Returns the size of the queue.
+   * @returns {number} The size of the queue.
+   */
   queueSize () {
     return this.queue().length;
   }
 
   // ---
 
+  /**
+   * @description Sets the muted state of the audio queue.
+   * @param {boolean} aBool - The muted state.
+   */
   setIsMuted (aBool) {
     this._isMuted = aBool;
     if (aBool) {
@@ -89,12 +112,21 @@
 
   // -----------------------------------
 
+  /**
+   * @description Queues an audio blob.
+   * @param {Blob} audioBlob - The audio blob.
+   * @returns {WASound} The sound.
+   */
   queueAudioBlob (audioBlob) {
     const sound = WASound.fromBlob(audioBlob);
     this.queueWASound(sound);
     return sound;
   }
 
+  /**
+   * @description Queues a WASound.
+   * @param {WASound} sound - The WASound.
+   */
   queueWASound (sound) {
     // e.g. sound could be a WASound or YouTube MusicTrack
     // just needs to support the protocol
@@ -111,6 +143,9 @@
     this.didUpdateNode();
   }
 
+  /**
+   * @description Processes the queue.
+   */
   processQueue () {
     if (!this.currentSound()) {
       const q = this.queue();
@@ -123,6 +158,11 @@
     return this;
   }
 
+  /**
+   * @async
+   * @description Plays a sound.
+   * @param {WASound} sound - The sound.
+   */
   async playSound (sound) {
     //this.pause();
     if (!this.isMuted()) {
@@ -136,6 +176,10 @@
     return this;
   }
 
+  /**
+   * @description Handles the end of a sound.
+   * @param {WASound} waSound - The sound.
+   */
   onSoundEnded (waSound) {
     waSound.removeDelegate(this);
     this.debugLog("finished playing");
@@ -144,6 +188,9 @@
     this.didUpdateNode();
   }
   
+  /**
+   * @description Pauses the audio queue.
+   */
   pause () {
     throw new Error("pause not supported");
     /*
@@ -157,6 +204,9 @@
     */
   }
 
+  /**
+   * @description Resumes the audio queue.
+   */
   resume () {
     this.debugLog("resume()");
 
@@ -169,6 +219,9 @@
     }
   }
 
+  /**
+   * @description Stops and clears the queue.
+   */
   stopAndClearQueue () {
     const audio = this.currentSound();
     if (audio) {

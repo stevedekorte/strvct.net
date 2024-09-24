@@ -1,246 +1,36 @@
 "use strict";
 
-/*
+/**
+ * @module library.view.webbrowser
+ */
 
-    ThrashDetector
-
-    The DOM can be slow if (layout dependent) read and (layout modifying) write operations are interleaved,
-    as the read will require a re-layout or "reflow" of the DOM rendering engine.
-
-    This detector helps minimize this issue by warning when interleaving is detected.
-
-    When possible, it's best to do all read operations first, then do any write operations
-    as this allows for a single reflow of the DOM at the end of the frame.
-
-    USE:
-
-    When doing DOM Node reads, call:
-
-        ThrashDetector.shared().didRead("opName")
-
-    and on DOM Node writes, call:
-
-        ThrashDetector.shared().didWrite("opName")
-
-    NOTES:
-
-    See:
-    What forces layout / reflow
-    https://gist.github.com/paulirish/5d52fb081b3570c81e3a
-
-    All style properties:
-    const slot = this.newSlot("styleProperties", new Set(
-                "color",
-                "border",
-                "margin",
-                "font-style",
-                "transform",
-                "background-color",
-                "align-content",
-                "align-items",
-                "align-self",
-                "all",
-                "animation",
-                "animation-delay",
-                "animation-direction",
-                "animation-duration",
-                "animation-fill-mode",
-                "animation-iteration-count",
-                "animation-name",
-                "animation-play-state",
-                "animation-timing-function",
-                "backface-visibility",
-                "background",
-                "background-attachment",
-                "background-blend-mode",
-                "background-clip",
-                "background-color",
-                "background-image",
-                "background-origin",
-                "background-position",
-                "background-repeat",
-                "background-size",
-                "border",
-                "border-bottom",
-                "border-bottom-color",
-                "border-bottom-left-radius",
-                "border-bottom-right-radius",
-                "border-bottom-style",
-                "border-bottom-width",
-                "border-collapse",
-                "border-color",
-                "border-image",
-                "border-image-outset",
-                "border-image-repeat",
-                "border-image-slice",
-                "border-image-source",
-                "border-image-width",
-                "border-left",
-                "border-left-color",
-                "border-left-style",
-                "border-left-width",
-                "border-radius",
-                "border-right",
-                "border-right-color",
-                "border-right-style",
-                "border-right-width",
-                "border-spacing",
-                "border-style",
-                "border-top",
-                "border-top-color",
-                "border-top-left-radius",
-                "border-top-right-radius",
-                "border-top-style",
-                "border-top-width",
-                "border-width",
-                "bottom",
-                "box-shadow",
-                "box-sizing",
-                "caption-side",
-                "caret-color",
-                "@charset",
-                "clear",
-                "clip",
-                "clip-path",
-                "color",
-                "column-count",
-                "column-fill",
-                "column-gap",
-                "column-rule",
-                "column-rule-color",
-                "column-rule-style",
-                "column-rule-width",
-                "column-span",
-                "column-width",
-                "columns",
-                "content",
-                "counter-increment",
-                "counter-reset",
-                "cursor",
-                "direction",
-                "display",
-                "empty-cells",
-                "filter",
-                "flex",
-                "flex-basis",
-                "flex-direction",
-                "flex-flow",
-                "flex-grow",
-                "flex-shrink",
-                "flex-wrap",
-                "float",
-                "font",
-                "@font-face",
-                "font-family",
-                "font-kerning",
-                "font-size",
-                "font-size-adjust",
-                "font-stretch",
-                "font-style",
-                "font-variant",
-                "font-weight",
-                "grid",
-                "grid-area",
-                "grid-auto-columns",
-                "grid-auto-flow",
-                "grid-auto-rows",
-                "grid-column",
-                "grid-column-end",
-                "grid-column-gap",
-                "grid-column-start",
-                "grid-gap",
-                "grid-row",
-                "grid-row-end",
-                "grid-row-gap",
-                "grid-row-start",
-                "grid-template",
-                "grid-template-areas",
-                "grid-template-columns",
-                "grid-template-rows",
-                "height",
-                "hyphens",
-                "@import",
-                "justify-content",
-                "@keyframes",
-                "left",
-                "letter-spacing",
-                "line-height",
-                "list-style",
-                "list-style-image",
-                "list-style-position",
-                "list-style-type",
-                "margin",
-                "margin-bottom",
-                "margin-left",
-                "margin-right",
-                "margin-top",
-                "max-height",
-                "max-width",
-                "@media",
-                "min-height",
-                "min-width",
-                "object-fit",
-                "object-position",
-                "opacity",
-                "order",
-                "outline",
-                "outline-color",
-                "outline-offset",
-                "outline-style",
-                "outline-width",
-                "overflow",
-                "overflow-x",
-                "overflow-y",
-                "padding",
-                "padding-bottom",
-                "padding-left",
-                "padding-right",
-                "padding-top",
-                "page-break-after",
-                "page-break-before",
-                "page-break-inside",
-                "perspective",
-                "perspective-origin",
-                "pointer-events",
-                "position",
-                "quotes",
-                "right",
-                "scroll-behavior",
-                "table-layout",
-                "text-align",
-                "text-align-last",
-                "text-decoration",
-                "text-decoration-color",
-                "text-decoration-line",
-                "text-decoration-style",
-                "text-indent",
-                "text-justify",
-                "text-overflow",
-                "text-shadow",
-                "text-transform",
-                "top",
-                "transform",
-                "transform-origin",
-                "transform-style",
-                "transition",
-                "transition-delay",
-                "transition-duration",
-                "transition-property",
-                "transition-timing-function",
-                "user-select",
-                "vertical-align",
-                "visibility",
-                "white-space",
-                "width",
-                "word-break",
-                "word-spacing",
-                "word-wrap",
-                "writing-mode",
-                "z-index"
-        ))
-        
-*/
-
+/**
+ * @class ThrashDetector
+ * @extends ProtoClass
+ * @classdesc The ThrashDetector helps minimize DOM thrashing by warning when interleaving of read and write operations is detected.
+ * 
+ * The DOM can be slow if (layout dependent) read and (layout modifying) write operations are interleaved,
+ * as the read will require a re-layout or "reflow" of the DOM rendering engine.
+ *
+ * When possible, it's best to do all read operations first, then do any write operations
+ * as this allows for a single reflow of the DOM at the end of the frame.
+ *
+ * USE:
+ *
+ * When doing DOM Node reads, call:
+ *
+ *     ThrashDetector.shared().didRead("opName")
+ *
+ * and on DOM Node writes, call:
+ *
+ *     ThrashDetector.shared().didWrite("opName")
+ *
+ * NOTES:
+ *
+ * See:
+ * What forces layout / reflow
+ * https://gist.github.com/paulirish/5d52fb081b3570c81e3a
+ */
 (class ThrashDetector extends ProtoClass {
         
     static initClass () {
@@ -248,193 +38,9 @@
     }
 
     initPrototypeSlots () {
-
-        /*
-        const slot = this.newSlot("writeStyleProperties", new Set([
-                "border",
-                "margin",
-                "font-style",
-                "transform",
-                "align-content",
-                "align-items",
-                "align-self",
-                "all",
-                "border",
-                "border-bottom",
-                "border-bottom-color",
-                "border-bottom-left-radius",
-                "border-bottom-right-radius",
-                "border-bottom-style",
-                "border-bottom-width",
-                "border-collapse",
-                "border-color",
-                "border-image",
-                "border-image-outset",
-                "border-image-repeat",
-                "border-image-slice",
-                "border-image-source",
-                "border-image-width",
-                "border-left",
-                "border-left-color",
-                "border-left-style",
-                "border-left-width",
-                "border-radius",
-                "border-right",
-                "border-right-color",
-                "border-right-style",
-                "border-right-width",
-                "border-spacing",
-                "border-style",
-                "border-top",
-                "border-top-color",
-                "border-top-left-radius",
-                "border-top-right-radius",
-                "border-top-style",
-                "border-top-width",
-                "border-width",
-                "bottom",
-                "box-shadow",
-                "box-sizing",
-                "caption-side",
-                "@charset",
-                "clear",
-                "clip",
-                "clip-path",
-                "column-count",
-                "column-fill",
-                "column-gap",
-                "column-rule",
-                "column-rule-color",
-                "column-rule-style",
-                "column-rule-width",
-                "column-span",
-                "column-width",
-                "columns",
-                "content",
-                "counter-increment",
-                "counter-reset",
-                "direction",
-                "display",
-                "empty-cells",
-                "flex",
-                "flex-basis",
-                "flex-direction",
-                "flex-flow",
-                "flex-grow",
-                "flex-shrink",
-                "flex-wrap",
-                "float",
-                "font",
-                "@font-face",
-                "font-family",
-                "font-kerning",
-                "font-size",
-                "font-size-adjust",
-                "font-stretch",
-                "font-style",
-                "font-variant",
-                "font-weight",
-                "grid",
-                "grid-area",
-                "grid-auto-columns",
-                "grid-auto-flow",
-                "grid-auto-rows",
-                "grid-column",
-                "grid-column-end",
-                "grid-column-gap",
-                "grid-column-start",
-                "grid-gap",
-                "grid-row",
-                "grid-row-end",
-                "grid-row-gap",
-                "grid-row-start",
-                "grid-template",
-                "grid-template-areas",
-                "grid-template-columns",
-                "grid-template-rows",
-                "height",
-                "hyphens",
-                "@import",
-                "justify-content",
-                "@keyframes",
-                "left",
-                "letter-spacing",
-                "line-height",
-                "list-style",
-                "list-style-image",
-                "list-style-position",
-                "list-style-type",
-                "margin",
-                "margin-bottom",
-                "margin-left",
-                "margin-right",
-                "margin-top",
-                "max-height",
-                "max-width",
-                "@media",
-                "min-height",
-                "min-width",
-                "object-fit",
-                "object-position",
-                "opacity",
-                "order",
-                "outline",
-                "outline-color",
-                "outline-offset",
-                "outline-style",
-                "outline-width",
-                "overflow",
-                "overflow-x",
-                "overflow-y",
-                "padding",
-                "padding-bottom",
-                "padding-left",
-                "padding-right",
-                "padding-top",
-                "page-break-after",
-                "page-break-before",
-                "page-break-inside",
-                "perspective",
-                "perspective-origin",
-                "pointer-events",
-                "position",
-                "quotes",
-                "right",
-                "scroll-behavior",
-                "table-layout",
-                "text-align",
-                "text-align-last",
-                "text-decoration",
-                "text-decoration-color",
-                "text-decoration-line",
-                "text-decoration-style",
-                "text-indent",
-                "text-justify",
-                "text-overflow",
-                "text-shadow",
-                "text-transform",
-                "top",
-                "transform",
-                "transform-origin",
-                "transform-style",
-                "transition",
-                "transition-delay",
-                "transition-duration",
-                "transition-property",
-                "transition-timing-function",
-                "user-select",
-                "vertical-align",
-                "visibility",
-                "white-space",
-                "width",
-                "word-break",
-                "word-spacing",
-                "word-wrap",
-                "writing-mode",
-                "z-index"
-        ]))
-        */
-        
+        /**
+         * @property {Set} readOpSet - Set of read operations that can trigger a reflow
+         */
         {
             const slot = this.newSlot("readOpSet", new Set([
                 // on Elements
@@ -448,25 +54,14 @@
 
                 // on Window
                 "scrollX", "scrollY", "innerHeight", "innerWidth", "visualViewPort", // window
-                //"getComputedStyle", 
 
                 // on Document
                 "scrollingElement", "elementFromPoint", // document
 
-                /*
-                // on Forms
-                "focus", "select", // on inputElement
-                "select" // on textAreaElement
-                */
-
                 // on Mouse Event
                 "layerX", "layerY", "offsetX", "offsetY",
 
-                // on Range
-                //"getClientRects", "getBoundingClientRect", // rects
-
                 // on SVG
-
                 "computeCTM", "getBBox", "getCharNumAtPosition", "getComputedTextLength", 
                 "getEndPositionOfChar", "getExtentOfChar", "getNumberOfChars", "getRotationOfChar", 
                 "getStartPositionOfChar", "getSubStringLength", "selectSubString", "instanceRoot"
@@ -474,6 +69,9 @@
             slot.setSlotType("Set");
         }
 
+        /**
+         * @property {Set} writeOpSet - Set of write operations that can trigger a reflow
+         */
         {
             const slot = this.newSlot("writeOpSet", new Set([
                 "focus",
@@ -493,7 +91,9 @@
             slot.setSlotType("Set");
         }
 
-        
+        /**
+         * @property {Set} noReflowWriteOpSet - Set of write operations that do not trigger a reflow
+         */
         {
             const slot = this.newSlot("noReflowWriteOpSet", new Set(
                 "color",
@@ -529,39 +129,65 @@
             slot.setSlotType("Set");
         }
 
+        /**
+         * @property {Boolean} needsReflow - Indicates if a reflow is needed
+         */
         {
             const slot = this.newSlot("needsReflow", false);
             slot.setSlotType("Boolean");
         }
+
+        /**
+         * @property {Number} reflowCount - Count of reflows
+         */
         {
             const slot = this.newSlot("reflowCount", false);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @property {Array} triggers - Array of triggers that caused reflows
+         */
         {
             const slot = this.newSlot("triggers", null);
             slot.setSlotType("Array");
         }
+
+        /**
+         * @property {String} lastWrite - The last write operation performed
+         */
         {
             const slot = this.newSlot("lastWrite", null);
             slot.setSlotType("String");
         }
+
+        /**
+         * @property {Boolean} enabled - Indicates if the ThrashDetector is enabled
+         */
         {
             const slot = this.newSlot("enabled", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Begins a new frame for thrash detection
+     */
     beginFrame () {
-        //console.log("--- new frame ---")
         this.setNeedsReflow(false)
         this.setReflowCount(0)
         this.setTriggers([])
         this.setLastWrite(null)
     }
 
+    /**
+     * @description Records a read operation
+     * @param {string} opName - The name of the read operation
+     * @param {Object} optionalView - Optional view object
+     * @returns {ThrashDetector} - Returns this ThrashDetector instance
+     */
     didRead (opName, optionalView) {
         if (this.readOpSet().has(opName)) {
-            //console.log(this.type() + ".didRead('" + opName + "')")
             if (this.needsReflow()) {
                 this.setReflowCount(this.reflowCount() + 1);
                 this.setNeedsReflow(false);
@@ -570,7 +196,6 @@
                     m = optionalView.debugTypeId() + " get " + opName;
                 }
                 const s = this.lastWrite() + " -> " + m;
-                //console.log(s)
                 this.triggers().push(s);
                 this.onThrash();
             }
@@ -578,6 +203,12 @@
         return this;
     }
 
+    /**
+     * @description Records a write operation
+     * @param {string} opName - The name of the write operation
+     * @param {Object} optionalView - Optional view object
+     * @returns {ThrashDetector} - Returns this ThrashDetector instance
+     */
     didWrite (opName, optionalView) {
         if (!this.noReflowWriteOpSet().has(opName)) {
             this.setNeedsReflow(true)
@@ -585,16 +216,22 @@
             if (optionalView) {
                 m = optionalView.debugTypeId() + " set " + opName
             }
-            //console.log(m)
             this.setLastWrite(m)
         }
         return this
     }
 
+    /**
+     * @description Handles thrash detection
+     * @private
+     */
     onThrash () {
         //console.log(this.type() + " reflowCount: ", this.reflowCount())
     }
 
+    /**
+     * @description Ends the current frame and logs thrash information if enabled
+     */
     endFrame () {
         if (this.enabled() && this.reflowCount()) {
             console.log(">>> " +  this.type() + " reflowCount: ", this.reflowCount() + " triggers: ", JSON.stringify(this.triggers(), 2, 2))

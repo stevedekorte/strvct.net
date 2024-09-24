@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module services.HomeAssistant
+ * @module library.services.HomeAssistant
  */
 
 /**

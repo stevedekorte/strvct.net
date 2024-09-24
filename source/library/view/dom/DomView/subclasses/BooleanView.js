@@ -1,49 +1,77 @@
 "use strict";
 
-/*
+/**
+ * @module library.view.dom.DomView.subclasses.BooleanView
+ */
 
-    BooleanView
-
-    The checkbox is composed of 2 overlapping inner views,
-    one for the inner check itself, and one for the outer border around.
-    The check components are rendered with scalable SVG and 
-    are synced to match the color of the parent view's text color by
-    getting the computed color and applying it to the fill or stroke of the
-    svg views.
-
-    TODO: support disabled/uneditable color style?
-
-*/
-
+/**
+ * @class BooleanView
+ * @extends StyledDomView
+ * @classdesc BooleanView represents a checkbox component.
+ * 
+ * The checkbox is composed of 2 overlapping inner views,
+ * one for the inner check itself, and one for the outer border around.
+ * The check components are rendered with scalable SVG and 
+ * are synced to match the color of the parent view's text color by
+ * getting the computed color and applying it to the fill or stroke of the
+ * svg views.
+ * 
+ * TODO: support disabled/uneditable color style?
+ */
 (class BooleanView extends StyledDomView {
     
+    /**
+     * @description Initializes the prototype slots for the BooleanView.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Boolean} doesClearOnReturn
+         */
         {
             const slot = this.newSlot("doesClearOnReturn", false); // needed?
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {Boolean} doesHoldFocusOnReturn
+         */
         {
             const slot = this.newSlot("doesHoldFocusOnReturn", false);  // needed?
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {Boolean} value
+         */
         {
             const slot = this.newSlot("value", false);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {Boolean} isEditable
+         */
         {
             const slot = this.newSlot("isEditable", false);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {DomView} innerCheckView
+         */
         {
             const slot = this.newSlot("innerCheckView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {DomView} outerCheckView
+         */
         {
             const slot = this.newSlot("outerCheckView", null);
             slot.setSlotType("DomView");
         }
     }
 
+    /**
+     * @description Initializes the BooleanView.
+     * @returns {BooleanView}
+     */
     init () {
         super.init()
         this.setDisplay("flex")
@@ -103,12 +131,19 @@
         return this
     }
 
+    /**
+     * @description Returns the size of the checkbox.
+     * @returns {string}
+     */
     checkboxSize () {
         return "1em"
     }
 
-    // editable
-    
+    /**
+     * @description Sets whether the checkbox is editable.
+     * @param {boolean} aBool - Whether the checkbox should be editable.
+     * @returns {BooleanView}
+     */
     setIsEditable (aBool) {        
         this._isEditable = aBool
         
@@ -124,19 +159,30 @@
         return this
     }
     
+    /**
+     * @description Toggles the checkbox state.
+     * @returns {BooleanView}
+     */
     toggle () {
         this.setValue(!this.value())
         this.didEdit()
         return this
     }
     
+    /**
+     * @description Activates the checkbox.
+     * @returns {BooleanView}
+     */
     activate () {
         this.toggle()
         return this
     }
     
-    // ------------------
-    
+    /**
+     * @description Sets the value of the checkbox.
+     * @param {boolean} v - The value to set.
+     * @returns {BooleanView}
+     */
     setValue (v) {
         if (Type.isNullOrUndefined(v)) {
             v = false;
@@ -148,21 +194,36 @@
         return this
     }
 	
+    /**
+     * @description Gets the value of the checkbox.
+     * @returns {boolean}
+     */
     value () {
 	    return this._value
     }
 	
+    /**
+     * @description Checks if the checkbox is checked.
+     * @returns {boolean}
+     */
     isChecked () {
 	    return this.value()
     }
     
+    /**
+     * @description Sets the background color.
+     * @param {string} s - The color to set.
+     * @returns {BooleanView}
+     */
     setBackgroundColor (s) {
         // needed?
         return this
     }
 	
-    // svg icon
-
+    /**
+     * @description Updates the appearance of the checkbox.
+     * @returns {BooleanView}
+     */
     updateAppearance () {
         // sent by superview when it changes or syncs to a node
         // so we can update our appearance to match changes to the parent view's style
@@ -176,6 +237,11 @@
         return this
     }
 
+    /**
+     * @description Handles the tap complete event.
+     * @param {Object} aGesture - The gesture object.
+     * @returns {boolean}
+     */
     onTapComplete (aGesture) {
         super.sendActionToTarget()
         this.toggle()

@@ -1,17 +1,21 @@
 "use strict";
 
-/* 
-
-  MusicLibrary
-
-  // all tracks are under a Creative Commons License
-
-*/
+/**
+ * @module library.services.YouTube.MusicPlayer.MusicLibrary
+ * @class MusicLibrary
+ * @extends BMSummaryNode
+ * @description A music library.
+ * All tracks are under a Creative Commons License.
+ */
 
 (class MusicLibrary extends BMSummaryNode {
 
   initPrototypeSlots () {
 
+    /**
+     * @property {String} currentTrack
+     * @description The current track.
+     */
     {
       const slot = this.newSlot("currentTrack", null);
       slot.setInspectorPath("");
@@ -24,6 +28,10 @@
       slot.setCanEditInspection(true);
     }
 
+    /**
+     * @property {MusicFolder} folder
+     * @description The folder.
+     */
     {
       const slot = this.newSlot("folder", null);
       slot.setInspectorPath("");
@@ -37,6 +45,10 @@
 
     }
 
+    /**
+     * @property {YouTubeAudioPlayer} musicPlayer
+     * @description The music player.
+     */
     {
       const slot = this.newSlot("musicPlayer", null);
       slot.setInspectorPath("");
@@ -48,6 +60,10 @@
       slot.setSlotType("YouTubeAudioPlayer");
     }
 
+    /**
+     * @property {YouTubeAudioPlayer} soundEffectPlayer
+     * @description The sound effect player.
+     */
     {
       const slot = this.newSlot("soundEffectPlayer", null);
       slot.setInspectorPath("");
@@ -69,12 +85,16 @@
 
   }
 
-  finalInit() {
+  finalInit () {
     super.finalInit();
     this.setupPlaylists();
     this.folder().setName("Playlists");
   }
 
+  /**
+   * @description Returns the music player.
+   * @returns {YouTubeAudioPlayer} The music player.
+   */
   musicPlayer () {
     if (!this._musicPlayer) {
       const p = YouTubeAudioPlayer.clone();
@@ -85,6 +105,10 @@
     return this._musicPlayer;
   }
 
+  /**
+   * @description Returns the sound effect player.
+   * @returns {YouTubeAudioPlayer} The sound effect player.
+   */
   soundEffectPlayer () {
     if (!this._soundEffectPlayer) {
       const p = YouTubeAudioPlayer.clone();
@@ -95,6 +119,10 @@
     return this._soundEffectPlayer;
   }
 
+  /**
+   * @description Shuts down the music player and sound effect player.
+   * @returns {MusicLibrary} The music library.
+   */
   shutdown () {
     if (this._musicPlayer) {
       this._musicPlayer.shutdown();
@@ -109,6 +137,10 @@
     return this;
   }
 
+  /**
+   * @description Sets up the playlists.
+   * @returns {MusicLibrary} The music library.
+   */
   setupPlaylists () {
     const playlistNames = Object.keys(this.playlistDicts());
     playlistNames.forEach((name) => {
@@ -120,16 +152,30 @@
     return this;
   }
 
+  /**
+   * @description Returns the playlist with the given name.
+   * @param {String} name - The name of the playlist.
+   * @returns {MusicFolder} The playlist.
+   */
   playlistWithName (name) {
     const match = this.folder().firstSubnodeWithTitle(name);
     assert(match);
     return match;
   }
 
+  /**
+   * @description Returns the playlists.
+   * @returns {Array} The playlists.
+   */
   playlists () {
     return this.folder().subnodes();
   }
 
+  /**
+   * @description Returns the track with the given name.
+   * @param {String} name - The name of the track.
+   * @returns {MusicTrack} The track.
+   */
   trackWithName (name) {
     const track = this.playlists().detectAndReturnValue(playlist => {
       return playlist.trackWithName(name)
@@ -137,6 +183,11 @@
     return track;
   }
 
+  /**
+   * @description Plays the track with the given name.
+   * @param {String} name - The name of the track.
+   * @returns {MusicLibrary} The music library.
+   */
   playTrackWithName (name) {
     //debugger;
     this.debugLog("playTrackWithName('" + name + "')");
@@ -152,11 +203,22 @@
     player.play();
   }
 
+  /**
+   * @description Returns the tracks for the playlists with the given names.
+   * @param {Array} playlistNames - The names of the playlists.
+   * @returns {Array} The tracks.
+   */
   tracksForPlaylistsWithNames (playlistNames) {
     const playlists = playlistNames.map(pName => this.playlistWithName(pName));
     return playlists.map(playlist => playlist.tracks()).flat();
   }
 
+  /**
+   * @async
+   * @description Plays the sound effect with the given name.
+   * @param {String} name - The name of the sound effect.
+   * @returns {MusicLibrary} The music library.
+   */
   async playSoundEffectWithName (name) {
     const track = this.trackWithName(name);
     if (!track) {
@@ -170,6 +232,10 @@
     await player.play();
   }
 
+  /**
+   * @description Returns the playlist dictionaries.
+   * @returns {Object} The playlist dictionaries.
+   */
   playlistDicts () {
     return {
       Fantasy: {

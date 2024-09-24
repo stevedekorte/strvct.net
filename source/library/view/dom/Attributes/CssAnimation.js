@@ -1,27 +1,32 @@
+/**
+ * @module library.view.dom.Attributes
+ */
 
+/**
+ * @class CssAnimation
+ * @extends ProtoClass
+ * @classdesc Encapsulation of CSS animation rule and animation control properties on a view.
+ * It will also start an animationListener on the target view, 
+ * which will send a onAnimationStart, and onAnimationEnd messages to the view.
+ *
+ * It works by composing a CSS animation rule and inserting it into the document's first style sheet.
+ * The rule name is a hash of the rule content, and the CssAnimation class keeps a set of names
+ * it's already registered, so it doesn't register them again.
+ *
+ * Example use:
+ *      
+ *     CssAnimation.clone().setPropertyName("right").setTargetValue("10px").setView(aView).start()
+ */
 "use strict";
-
-/*
-
-    CssAnimation
-
-    Encapsulation of CSS animation rule and animation control properties on a view.
-    It will also start an animationListener on the target view, 
-    which will send a onAnimationStart, and onAnimationEnd messages to the view.
-
-    It works by composing a CSS animation rule and inserting it into the document's first style sheet.
-    The rule name is a hash of the rule content, and the CssAnimation class keeps a set of names
-    it's already registered, so it doesn't register them again.
-
-    Example use:
-         
-        CssAnimation.clone().setPropertyName("right").setTargetValue("10px").setView(aView).start()
-
-    */
 
 (class CssAnimation extends ProtoClass {
 
-
+    /**
+     * @static
+     * @description Inserts a rule for the given CSS animation
+     * @param {CssAnimation} cssAnimation - The CSS animation object
+     * @returns {CssAnimation} - The CssAnimation class
+     */
     static insertRuleForAnimation (cssAnimation) {
         const name = cssAnimation.ruleName()
         const rules = this.insertedRuleNamesSet()
@@ -33,58 +38,101 @@
         return this
     }
 
+    /**
+     * @static
+     * @description Initializes the class
+     */
     static initClass () {
         this.newClassSlot("insertedRuleNamesSet", new Set())
     }
 
+    /**
+     * @description Initializes the prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {DomView} view
+         */
         {
             const slot = this.newSlot("view", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {String} propertyName
+         */
         {
             const slot = this.newSlot("propertyName", "");
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} startValue
+         */
         {
             const slot = this.newSlot("startValue", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} targetValue
+         */
         {
             const slot = this.newSlot("targetValue", 0);
             slot.setSlotType("String");
         }
 
         // animation name is computed from hash of animation css rule string
+        /**
+         * @property {Number} duration - seconds
+         */
         {
             const slot = this.newSlot("duration", 1);
             slot.setComment("seconds");
             slot.setSlotType("Number");
         }
+        /**
+         * @property {String} timingFunction
+         */
         {
             const slot = this.newSlot("timingFunction", "ease");
             slot.setSlotType("String");
         }
+        /**
+         * @property {Number} iterationCount - animation-iteration-count
+         */
         {
             const slot = this.newSlot("iterationCount", 1) // animation-iteration-count
             slot.setSlotType("Number");
         }
+        /**
+         * @property {Number} delay - animation-delay
+         */
         {
             const slot = this.newSlot("delay", 0); // animation-delay
             slot.setSlotType("Number");
         }
+        /**
+         * @property {String} direction - animation-direction (normal or alternate)
+         */
         {
             const slot = this.newSlot("direction", "normal"); // animation-direction (normal or alternate)
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} fillMode - animation-fill-mode (none|forwards|backwards|both|initial|inherit)
+         */
         {
             const slot = this.newSlot("fillMode", "forwards");  // animation-fill-mode (none|forwards|backwards|both|initial|inherit)
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} playState - animation-play-state (paused|running|initial|inherit)
+         */
         {
             const slot = this.newSlot("playState", "running");  // animation-play-state (paused|running|initial|inherit)
             slot.setSlotType("String");
         }
+        /**
+         * @property {Array} animationPropertyNames
+         */
         {
             const slot = this.newSlot("animationPropertyNames", [
                 "animation-name",
@@ -98,33 +146,57 @@
             ]);
             slot.setSlotType("Array");
         }
+        /**
+         * @property {Object} propertySlotsDict
+         */
         {
             const slot = this.newSlot("propertySlotsDict", null);
             slot.setSlotType("Object");
         }
     }
 
+    /**
+     * @description Initializes the prototype
+     */
     initPrototype () {
         this.propertySlotsDict(); // cache it on the prototype
     }
 
+    /**
+     * @description Initializes the instance
+     */
     init () {
         super.init();
     }
 
+    /**
+     * @description Inserts the rule
+     */
     insertRule () {
         assert(this.isValidRule());
         this.thisClass().insertRuleForAnimation(this);
     }
 
+    /**
+     * @description Composes the rule
+     * @returns {string} The composed rule
+     */
     composedRule () {
         return "@keyframes " + this.name() + " { " + this.ruleContent() + "}";
     }
 
+    /**
+     * @description Gets the name of the animation
+     * @returns {string} The name of the animation
+     */
     name () {
         return "animation" + this.ruleContent().hashCode();
     }
 
+    /**
+     * @description Gets the content of the rule
+     * @returns {string} The content of the rule
+     */
     ruleContent () {
         const k = this.propertyName();
         let s = "";
@@ -136,10 +208,18 @@
         return s;
     }
 
+    /**
+     * @description Checks if the rule is valid
+     * @returns {boolean} True if the rule is valid, false otherwise
+     */
     isValidRule () {
         return !Type.isNullOrUndefined(this.startValue()) && Type.isNullOrUndefined(this.targetValue());
     }
 
+    /**
+     * @description Gets the property slots dictionary
+     * @returns {Object} The property slots dictionary
+     */
     propertySlotsDict () {
         if (!this._propertySlotsDict) {
             const dict = {};
@@ -149,6 +229,11 @@
         return this._propertySlotsDict;
     }
 
+    /**
+     * @description Gets the slot name for a given property name
+     * @param {string} k - The property name
+     * @returns {string} The slot name
+     */
     slotNameForPropertyName (k) {
         const parts = k.split("-");
         parts.removeFirst();
@@ -157,6 +242,10 @@
         return result;
     }
 
+    /**
+     * @description Applies the animation to a view
+     * @param {DomView} aView - The view to apply the animation to
+     */
     applyToView (aView) { 
         const dict = this.propertySlotsDict();
         const e = this.view().element();
@@ -167,6 +256,10 @@
         })
     }
 
+    /**
+     * @description Starts the animation
+     * @returns {CssAnimation} The CssAnimation instance
+     */
     start () {
         this.insertRule();
         const v = this.view();
@@ -175,9 +268,10 @@
         return this;
     }
 
+    /**
+     * @description Called when the animation is completed
+     */
     didComplete () {
     }
 
 }.initThisClass());
-
-

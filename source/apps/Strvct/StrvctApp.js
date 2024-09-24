@@ -1,18 +1,27 @@
 "use strict";
 
-/*
-    
-    StrvctApp
-
-
-*/
+/**
+ * @module apps.STRVCT.StrvctApp
+ * @class StrvctApp
+ * @extends App
+ * @description The main application class for Strvct.
+ */
 
 (class StrvctApp extends App {
-    
+
+    /**
+     * @static
+     * @description Returns the root node prototype.
+     * @returns {Node} The root node prototype.
+     */
     static rootNodeProto () {
         return RootContentNode
     }
 
+    /**
+     * @description Initializes the prototype slots.
+     * @returns {StrvctApp} The updated StrvctApp.
+     */
     initPrototypeSlots () {
 
         /*
@@ -25,6 +34,10 @@
         }
         */
 
+        /**
+         * @property {BrowserView} browser
+         * @description The browser view.
+         */
         {
             // view
             const slot = this.newSlot("browser", null);
@@ -32,14 +45,21 @@
         }
     }
   
+    /**
+     * @description Initializes the prototype.
+     * @returns {StrvctApp} The updated StrvctApp.
+     */
     initPrototype () {
         this.setShouldStore(false);
         this.setShouldStoreSubnodes(false);
         //this.setNodeCanAddSubnode(true)
     }
 
-    // ---
 
+    /**
+     * @description Initializes the instance.
+     * @returns {StrvctApp} The updated StrvctApp.
+     */
     init () {
         super.init()
         this.setName("StrvctApp");
@@ -48,6 +68,10 @@
         return this
     }
 
+    /**
+     * @description Sets up the UI.
+     * @returns {Promise<void>} The promise.
+     */
     async setupUi () {
         await super.setupUi();
         await this.setupModel();
@@ -64,6 +88,10 @@
         //this.addTimeout( () => this.showClasses(), 1)
     }
 
+    /**
+     * @description Shows the classes.
+     * @returns {void}
+     */
     showClasses () {
         debugger;
         const s = ProtoClass.subclassesDescription()
@@ -86,6 +114,10 @@
 
     // themes - temporary, until ThemesResources is ready
 
+    /**
+     * @description Sets up the document theme.
+     * @returns {void}
+     */
     setupDocTheme () {
         const doc = DocumentBody.shared()
         doc.setHeight("100%") // trying to fix body not fitting window
@@ -96,6 +128,10 @@
         //this.setupBlenderProTheme()
     }
 
+    /**
+     * @description Sets up the normal document theme.
+     * @returns {void}
+     */
     setupNormalDocTheme () {
         const doc = DocumentBody.shared()
         doc.setBackgroundColor("#191919")

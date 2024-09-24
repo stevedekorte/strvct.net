@@ -1,16 +1,18 @@
-"use strict";
+/**
+ * @module library.view.dom.DomView
+ */
 
-/*
-    DomViewanimations
-
-    Helper methods for animations.
-
-*/
-
+/**
+ * @class DomView_animations
+ * @extends DomView
+ * @classdesc Helper methods for animations.
+ */
 (class DomView_animations extends DomView {
 
-    // --- movement animations ---
-
+    /**
+     * @description Immediately scrolls the view to the bottom.
+     * @returns {DomView_animations} The instance of the class.
+     */
     immediatelyScrollToBottom () {
         const focusedElement = document.activeElement
         const needsRefocus = focusedElement !== this.element()
@@ -27,11 +29,20 @@
         return this;
     }
 
+    /**
+     * @description Scrolls the view to the bottom.
+     * @returns {DomView_animations} The instance of the class.
+     */
     scrollToBottom () {
         this.immediatelyScrollToBottom();
         return this;
     }
 
+    /**
+     * @description Scrolls a subview to the top of the view.
+     * @param {DomView} aSubview - The subview to scroll to the top.
+     * @returns {DomView_animations} The instance of the class.
+     */
     scrollSubviewToTop (aSubview) {
         console.log("]]]]]]]]]]]] " + this.typeId() + ".scrollSubviewToTop()")
         assert(this.hasSubview(aSubview))
@@ -46,8 +57,14 @@
         return this
     }
 
-    // --- animation ---
-
+    /**
+     * @description Animates a value over a specified duration.
+     * @param {Function} targetFunc - Function that returns the target value.
+     * @param {Function} valueFunc - Function that returns the current value.
+     * @param {Function} setterFunc - Function to set the new value.
+     * @param {number} duration - Duration of the animation in milliseconds.
+     * @returns {DomView_animations} The instance of the class.
+     */
     animateValue (targetFunc, valueFunc, setterFunc, duration) { // duration in milliseconds         
         console.log("]]]]]]]]]]]] " + this.typeId() + ".animateValue()")
         if (duration == null) {
@@ -80,16 +97,30 @@
         return this
     }
 
+    /**
+     * @description Sets the scroll top smoothly.
+     * @param {number} newScrollTop - The new scroll top position.
+     * @param {number} scrollDuration - The duration of the scroll animation.
+     * @returns {DomView_animations} The instance of the class.
+     */
     setScrollTopSmooth (newScrollTop, scrollDuration) {
         this.animateValue(() => { return newScrollTop }, () => { return this.scrollTop() }, (v) => { this.setScrollTop(v) }, scrollDuration)
         return this
     }
 
+    /**
+     * @description Dynamically scrolls the view into view within its parent view.
+     * @returns {DomView_animations} The instance of the class.
+     */
     dynamicScrollIntoView () {
         this.parentView().scrollSubviewToTop(this)
         return this
     }
 
+    /**
+     * @description Scrolls the view into view.
+     * @returns {boolean|DomView_animations} False if already in view, otherwise the instance of the class.
+     */
     scrollIntoView () {
         // TODO: return immediately if already visible
         if (this.isScrolledIntoView()) {
@@ -138,12 +169,20 @@
         return this
     }
     
+    /**
+     * @description Checks if the view is scrolled into view.
+     * @returns {boolean} True if the view is visible, false otherwise.
+     */
     isScrolledIntoView () {
         const r = this.boundingClientRect()
         const isVisible = (r.top >= 0) && (r.bottom <= window.innerHeight);
         return isVisible;
     }
 
+    /**
+     * @description Vertically aligns the view absolutely within its parent view.
+     * @returns {DomView_animations} The instance of the class.
+     */
     verticallyAlignAbsoluteNow () {
         const pv = this.parentView()
         if (pv) {
@@ -157,6 +196,10 @@
         return this
     }
 
+    /**
+     * @description Horizontally aligns the view absolutely within its parent view.
+     * @returns {DomView_animations} The instance of the class.
+     */
     horizontallyAlignAbsoluteNow () {
         const pv = this.parentView()
         if (pv) {
@@ -167,8 +210,14 @@
         }
         return this
     }
-    // ----------------------
 
+    /**
+     * @description Animates the view to a specified document frame.
+     * @param {Object} destinationFrame - The destination frame.
+     * @param {number} seconds - The duration of the animation in seconds.
+     * @param {Function} completionCallback - The callback to be called after animation completes.
+     * @returns {DomView_animations} The instance of the class.
+     */
     animateToDocumentFrame (destinationFrame, seconds, completionCallback) {
         this.setTransition("all " + seconds + "s")
         assert(this.position() === "absolute")
@@ -185,6 +234,13 @@
         return this
     }
 
+    /**
+     * @description Animates the view to a specified document point.
+     * @param {Object} destinationPoint - The destination point.
+     * @param {number} seconds - The duration of the animation in seconds.
+     * @param {Function} completionCallback - The callback to be called after animation completes.
+     * @returns {DomView_animations} The instance of the class.
+     */
     animateToDocumentPoint (destinationPoint, seconds, completionCallback) {
         this.setTransition("all " + seconds + "s")
         assert(this.position() === "absolute")
@@ -199,8 +255,10 @@
         return this
     }
 
-    // --- hide and fade animations ---
-
+    /**
+     * @description Hides the view and fades it in.
+     * @returns {DomView_animations} The instance of the class.
+     */
     hideAndFadeIn () {
         this.setOpacity(0)
         //this.setTransition("all 0.5s")
@@ -209,6 +267,10 @@
         }, 0)
     }
 
+    /**
+     * @description Fades in the view to display as inline-block.
+     * @returns {DomView_animations} The instance of the class.
+     */
     fadeInToDisplayInlineBlock () {
         this.transitions().at("opacity").updateDuration("0.3s")
         this.setDisplay("inline-block")
@@ -219,6 +281,10 @@
         return this
     }
 
+    /**
+     * @description Fades out the view to display none.
+     * @returns {DomView_animations} The instance of the class.
+     */
     fadeOutToDisplayNone () {
         this.transitions().at("opacity").updateDuration("0.3s")
         this.setOpacity(0)
@@ -228,8 +294,10 @@
         return this
     }
 
-    // --- fade + height animations ----
-
+    /**
+     * @description Fades in the view's height to display as block.
+     * @returns {DomView_animations} The instance of the class.
+     */
     fadeInHeightToDisplayBlock () {
         this.setDisplay("block")
         this.setOpacity(1)
@@ -258,6 +326,10 @@
         return this
     }
 
+    /**
+     * @description Fades out the view's height to display none.
+     * @returns {DomView_animations} The instance of the class.
+     */
     fadeOutHeightToDisplayNone () {
         this.setOverflow("hidden")
         this.transitions().at("opacity").updateDuration("0.2s")

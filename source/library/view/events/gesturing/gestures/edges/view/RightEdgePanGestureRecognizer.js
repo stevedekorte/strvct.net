@@ -1,24 +1,33 @@
-"use strict";
+/**
+ * @module library.view.events.gesturing.gestures.edges.view
+ */
 
-/*
-
-    RightEdgePanGestureRecognizer
-
-    Delegate messages:
-
-        onRightEdgePanBegin
-        onRightEdgePanMove
-        onRightEdgePanComplete
-        onRightEdgePanCancelled
-
-*/
-
+/**
+ * @class RightEdgePanGestureRecognizer
+ * @extends EdgePanGestureRecognizer
+ * @classdesc Recognizes right edge pan gestures.
+ * 
+ * Delegate messages:
+ * - onRightEdgePanBegin
+ * - onRightEdgePanMove
+ * - onRightEdgePanComplete
+ * - onRightEdgePanCancelled
+ */
 (class RightEdgePanGestureRecognizer extends EdgePanGestureRecognizer {
     
+    /**
+     * @description Initializes prototype slots for the class.
+     * @method
+     */
     initPrototypeSlots () {
 
     }
 
+    /**
+     * @description Initializes the gesture recognizer.
+     * @method
+     * @returns {RightEdgePanGestureRecognizer} The initialized instance.
+     */
     init () {
         super.init()
         this.setEdgeName("right")

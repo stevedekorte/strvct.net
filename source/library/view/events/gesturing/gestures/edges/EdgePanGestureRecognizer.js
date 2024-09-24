@@ -1,34 +1,45 @@
-"use strict";
+/**
+ * @module library.view.events.gesturing.gestures.edges
+ */
 
-/*
-
-    EdgePanGestureRecognizer
-
-    Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge fo the view. 
-    Don't use this class directed - instead use it's subclass for the edge you're interested in.
-
-    Delegate messages:
-
-        onEdgePanBegin
-        onEdgePanMove
-        onEdgePanComplete
-        onEdgePanCancelled
-        
-*/
-
+/**
+ * @class EdgePanGestureRecognizer
+ * @extends PanGestureRecognizer
+ * @classdesc Subclass of PanGestureRecognizer that limits pan detection to gestures starting at the edge of the view. 
+ * Don't use this class directly - instead use its subclass for the edge you're interested in.
+ *
+ * Delegate messages:
+ *     onEdgePanBegin
+ *     onEdgePanMove
+ *     onEdgePanComplete
+ *     onEdgePanCancelled
+ */
 (class EdgePanGestureRecognizer extends PanGestureRecognizer {
 
+    /**
+     * @description Initializes the prototype slots for the class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {String} edgeName - The name of the edge.
+         */
         {
             const slot = this.newSlot("edgeName", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {Number} maxStartDistance - The maximum distance from the edge to start the gesture.
+         */
         {
             const slot = this.newSlot("maxStartDistance", 15);
             slot.setSlotType("Number");
         }
     }
 
+    /**
+     * @description Initializes the gesture recognizer.
+     * @returns {EdgePanGestureRecognizer} The initialized instance.
+     */
     init () {
         super.init()
         this.setListenerClasses(this.defaultListenerClasses());
@@ -37,63 +48,45 @@
         return this;
     }
 
+    /**
+     * @description Starts the gesture recognizer.
+     * @returns {EdgePanGestureRecognizer} The instance.
+     */
     start () {
         return super.start();
     }
 
-    /*
-    start () {
-        this.startDocListeners() // only want to listen to the document
-        // TODO: do we always want to listen outside the view? 
-        // is listening only inside both more efficient and good enough?
-        return this
-    }
-    */
-
-    // --- events --------------------------------------------------------------------
-
-    /*
-    didFinish () {
-        super.didFinish()
-        this.setIsPressing(false)
-        this.stopDocListeners()
-        return this
-    }
-    */
-
-    /*
-    onDown (event) {
-        super.onDown(event)
-
-        if (this.isReadyToBegin()) {
-            this.doPress(event)
-        }
-
-        return this
-    }
-    */
-
-
+    /**
+     * @description Checks if the gesture is ready to begin.
+     * @returns {boolean} True if the gesture is ready to begin, false otherwise.
+     */
     isReadyToBegin () {
         return this.hasOkFingerCount() &&
             this.distanceFromEdge() <= this.maxStartDistance();
     }
 
+    /**
+     * @description Calculates the distance from the specified edge.
+     * @returns {number} The distance from the edge.
+     */
     distanceFromEdge () {
         const name = this.edgeName()
-        //assert(name)
         const d = this.currentEdgeDistances()[name]
-        //assertDefined(d)
-        //console.log("distanceFromEdge ", d)
         return d
     }
 
-    // -------------
-
+    /**
+     * @description Gets the maximum edge distance.
+     * @returns {number} The maximum edge distance.
+     */
     maxEdgeDistance () {
         return 100000
     }
 
+    /**
+     * @description Calculates the current distances from all edges.
+     * @returns {Object} An object containing distances from all edges.
+     */
     currentEdgeDistances () {
         const max = this.maxEdgeDistance()
         const points = this.allPoints() // event points are in document coordinates

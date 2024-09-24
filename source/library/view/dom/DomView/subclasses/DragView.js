@@ -1,137 +1,163 @@
+/**
+ * @module library.view.dom.DomView.subclasses.DragView
+ */
+
 "use strict";
 
-/*
-
-    DragView
-    
-    A view to globally drag and drop another view or data.
-
-    Dragging Protocol
-
-        Messages sent to the Item 
-            
-            - onDragItemBegin
-            - onDragItemCancelled
-            - onDragItemDropped   
-
-        Messages sent to Source 
-            
-            - onDragSourceBegin
-            - onDragSourceHover
-            - onDragSourceCancelled // dropped on a view that doesn't accept it
-            - onDragSourceDropped
-            - onDragSourceEnd
-
-            // using these messages avoids a bunch of conditions in the receiver 
-            // the source is repsonsible for completing the drag operation
-            // the DragView will set it's destination slot before calling these
-            
-            - onDragSourceMoveToDestination 
-            - onDragSourceCopyToDestination
-            - onDragSourceLinkToDestination
-            
-            - onDragSourceMoveToSelf
-            - onDragSourceCopyToSelf
-            - onDragSourceLinkToSelf
-        
-            
-        Messages sent to Destination or Hover target 
-            
-            - acceptsDropHover
-            - onDragDestinationEnter // not sent if destination === source
-            - onDragDestinationHover
-            - onDragDestinationExit
-            - acceptsDropHoverComplete
-            - onDragDestinationDropped
-            - onDragDestinationEnd
-
-        Messages sent by Destination to item
-
-            - onDragRequestRemove() // return true if approved
-
-        Notifications sent
-
-            - onDragViewOpen
-            - onDragViewClose
-
-    Example use (from within a view to be dragged):
-
-    onLongPressComplete (longPressGesture) {
-        const dv = DragView.clone().setItem(this).setSource(this.column())
-        dv.openWithEvent(longPressGesture.currentEvent()) // TODO: eliminate this step?
-    } 
-
-*/
-
+/**
+ * @class DragView
+ * @extends StyledDomView
+ * @classdesc A view to globally drag and drop another view or data.
+ *
+ * Dragging Protocol
+ *
+ * Messages sent to the Item 
+ *     - onDragItemBegin
+ *     - onDragItemCancelled
+ *     - onDragItemDropped   
+ *
+ * Messages sent to Source 
+ *     - onDragSourceBegin
+ *     - onDragSourceHover
+ *     - onDragSourceCancelled // dropped on a view that doesn't accept it
+ *     - onDragSourceDropped
+ *     - onDragSourceEnd
+ *
+ *     // using these messages avoids a bunch of conditions in the receiver 
+ *     // the source is repsonsible for completing the drag operation
+ *     // the DragView will set it's destination slot before calling these
+ *     
+ *     - onDragSourceMoveToDestination 
+ *     - onDragSourceCopyToDestination
+ *     - onDragSourceLinkToDestination
+ *     
+ *     - onDragSourceMoveToSelf
+ *     - onDragSourceCopyToSelf
+ *     - onDragSourceLinkToSelf
+ *     
+ * Messages sent to Destination or Hover target 
+ *     - acceptsDropHover
+ *     - onDragDestinationEnter // not sent if destination === source
+ *     - onDragDestinationHover
+ *     - onDragDestinationExit
+ *     - acceptsDropHoverComplete
+ *     - onDragDestinationDropped
+ *     - onDragDestinationEnd
+ *
+ * Messages sent by Destination to item
+ *     - onDragRequestRemove() // return true if approved
+ *
+ * Notifications sent
+ *     - onDragViewOpen
+ *     - onDragViewClose
+ *
+ * Example use (from within a view to be dragged):
+ *
+ * onLongPressComplete (longPressGesture) {
+ *     const dv = DragView.clone().setItem(this).setSource(this.column())
+ *     dv.openWithEvent(longPressGesture.currentEvent()) // TODO: eliminate this step?
+ * } 
+ */
 (class DragView extends StyledDomView {
     
     initPrototypeSlots () {
         // the view that will be dragged when operation is complete
         //this.newSlot("item", null)
 
-        // the set of views that will be dragged
+        /**
+         * @property {Array} items - The set of views that will be dragged
+         */
         {
             const slot = this.newSlot("items", []);
             slot.setSlotType("Array");
         }
 
-        // a place for the source to store any extra info about the drag operation,
-        // such as the indexes of the items
+        /**
+         * @property {Object} info - A place for the source to store any extra info about the drag operation, such as the indexes of the items
+         */
         {
             const slot = this.newSlot("info", null);
             slot.setSlotType("Object");
         }
 
-        // the view which is the owner of the view being dragged that implements the source protocol
+        /**
+         * @property {DomView} source - The view which is the owner of the view being dragged that implements the source protocol
+         */
         {
             const slot = this.newSlot("source", null);
             slot.setSlotType("DomView"); // TODO: make this a protocol
         }
 
-        // the view on which the item is dropped
+        /**
+         * @property {DomView} destination - The view on which the item is dropped
+         */
         {
             const slot = this.newSlot("destination", null);
             slot.setSlotType("DomView");
         }
 
+        /**
+         * @property {Set} validOperations - The set of valid drag operations
+         */
         {
             const slot = this.newSlot("validOperations", new Set(["move", "copy", "link", "delete"]));
             slot.setSlotType("Set");
         }
 
-        // a list of views that self is currently hovering over
+        /**
+         * @property {Array} hoverViews - A list of views that self is currently hovering over
+         */
         {
             const slot = this.newSlot("hoverViews", null);
             slot.setSlotType("Array");
         }
 
-        // start position in screen coordinates 
+        /**
+         * @property {Point} dragStartPos - Start position in screen coordinates 
+         */
         {
             const slot = this.newSlot("dragStartPos", null);
             slot.setSlotType("Point");
         }
 
-        // the drag operation type: move, copy, link, delete
+        /**
+         * @property {String} dragOperation - The drag operation type: move, copy, link, delete
+         */
         {
             const slot = this.newSlot("dragOperation", "move")
             slot.setDoesHookSetter(true);
             slot.setSlotType("String");
         }
 
+        /**
+         * @property {Number} slideBackPeriod - The duration of the slide back animation in seconds
+         */
         {
-            const slot = this.newSlot("slideBackPeriod", 0.2); // seconds
+            const slot = this.newSlot("slideBackPeriod", 0.2);
             slot.setSlotType("Number");
         }
+
+        /**
+         * @property {Boolean} isClosed - Indicates whether the DragView is closed
+         */
         {
             const slot = this.newSlot("isClosed", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Validates the drag operation when it's updated
+     * @private
+     */
     didUpdateSlotDragOperation () {
         assert(this.validOperations().has(this.dragOperation()));
     }
 
+    /**
+     * @description Initializes the DragView
+     * @returns {DragView} The initialized DragView instance
+     */
     init () {
         super.init();
         this.setHoverViews([]);
@@ -151,37 +177,60 @@
         return this;
     }
 
-    // operation type helpers
-
+    /**
+     * @description Checks if the current operation is a copy operation
+     * @returns {Boolean} True if it's a copy operation, false otherwise
+     */
     isCopyOp () {
         return this.dragOperation() === "copy";
     }
 
+    /**
+     * @description Checks if the current operation is a move operation
+     * @returns {Boolean} True if it's a move operation, false otherwise
+     */
     isMoveOp () {
         return this.dragOperation() === "move";
     }
 
+    /**
+     * @description Checks if the current operation is a link operation
+     * @returns {Boolean} True if it's a link operation, false otherwise
+     */
     isLinkOp () {
         return this.dragOperation() === "link";
     }
 
+    /**
+     * @description Checks if the current operation is a delete operation
+     * @returns {Boolean} True if it's a delete operation, false otherwise
+     */
     isDeleteOp () {
         return this.dragOperation() === "delete";
     }
 
-    // ----
-
+    /**
+     * @description Sets a single item to be dragged
+     * @param {DomView} aView - The view to be dragged
+     * @returns {DragView} The DragView instance
+     */
     setItem (aView) {
         this.setItems([aView]);
         return this;
     }
 
+    /**
+     * @description Gets the first item in the items array
+     * @returns {DomView} The first item
+     */
     item () {
         return this.items().first();
     }
 
-    // ----
-
+    /**
+     * @description Sets up the view for dragging
+     * @returns {DragView} The DragView instance
+     */
     setupView () {
         if (this.items().length === 1) {
             this.setupSingleItemView();
@@ -192,6 +241,10 @@
         return this;
     }
 
+    /**
+     * @description Sets up the view for dragging multiple items
+     * @private
+     */
     setupMultiItemView () {
         const parentView = this.items().first().parentView()
 
@@ -205,15 +258,11 @@
             const dup = sv.htmlDuplicateView()
             this.addSubview(dup)
             assert(dup.hasFixedFrame())
-            //console.log("item dup subview frameInDocument: " + dup.frameInDocument().asString())
-            //console.log("item dup subview frameInParentView: " + dup.frameInParentView().asString())
         })
 
         const ff = this.fixedFrameFittingSubviews()
         const nf = parentView.convertFrameToDocument(ff)
         this.setFrameInDocument(nf)
-        //this.setFrameInDocument(this.fixedFrameFittingSubviewsInDocument())
-        //this.setBorder("1px dashed yellow")
 
         // make subviews inline-block
         this.subviews().forEach(sv => {
@@ -223,15 +272,6 @@
             sv.setLeft(null)
             sv.setBorder(null)
             sv.setFloat("left")
-            /*
-            sv.decrementFixedWidth()
-            sv.decrementFixedHeight()
-            sv.decrementFixedWidth()
-            sv.decrementFixedHeight()
-            sv.setMinAndMaxWidth(150)
-            sv.setBorder("1px dashed blue")
-            */
-            //sv.setMinAndMaxHeight(30)
         })
         
         this.setDisplay("block")
@@ -244,73 +284,33 @@
         this.setHeight("fit-content")
         this.setMinAndMaxWidth(null)
         this.setMinAndMaxHeight(null)
-        /*
-        let maxWidth = this.items().map(v => v.frameInDocument().width()).maxValue()
-        let minX = this.items().map(v => v.frameInDocument().left()).minValue()
-        let minY = this.items().map(v => v.frameInDocument().top()).minValue()
-        //let maxY = this.items().map(v => v.frameInDocument().bottom()).maxValue()
-
-        //this.setMinAndMaxHeight(maxY - minY)
-        let offset = minY - f.top()
-        this.setTopPx(minY)
-
-        // initial positions
-        let y = 0
-        this.items().map((item) => {
-            const h = item.frameInDocument().height()
-            const v = item.htmlDuplicateView()
-            const vf = item.frameInParentView()
-            v.setPosition("absolute")
-            v.setLeftPx(vf.x())
-            v.setTopPx(vf.y() - offset)
-            v._targetTop = y
-            y += h
-            v.setTransition("top 0.2s")
-            this.addSubview(v)
-        })
-        this.setMinAndMaxHeight(y)
-        this.setOverflow("visible")
-
-        this.addTimeout(() => {
-            this.subviews().forEach(v => v.setTopPx(v._targetTop))
-        }, 1)
-        */
-
-        /*
-        // target positions
-        let y = 0
-        this.items().map((item) => {
-            const h = item.frameInDocument().height()
-            const v = item.htmlDuplicateView()
-            const vf = item.frameInParentView()
-            v.setPosition("absolute")
-            v.setTopPx(y)
-            y += h
-            //this.addSubview(v)
-        })
-        this.setMinAndMaxHeight(y)
-        */
-
     }
 
+    /**
+     * @description Sets up the view for dragging a single item
+     * @private
+     */
     setupSingleItemView () {
         const aView = this.item()
         this.setFrameInDocument(aView.frameInDocument())
         this.setInnerHtml(aView.innerHtml())
-        //const clonedElement = aView.element().cloneNode(true);
         this.setOverflow("visible")
     }
 
-    // --- 
-
+    /**
+     * @description Checks if the DragView has a pan gesture
+     * @returns {Boolean} True if it has a pan gesture, false otherwise
+     */
     hasPan () {
         return !Type.isNull(this.defaultPanGesture())
     }
 
+    /**
+     * @description Opens the DragView with a given event
+     * @param {Event} event - The event that triggered the opening
+     * @returns {DragView} The DragView instance
+     */
     openWithEvent (event) {
-        // TODO: this is a hack, find a way to init pan without this
-        // setup the Pan Gesture to already be started
-
         const pan = this.addDefaultPanGesture()
         pan.setShouldRemoveOnComplete(true)
         pan.setMinDistToBegin(0)
@@ -323,12 +323,18 @@
         return this
     }
 
+    /**
+     * @description Checks if the DragView accepts pan gestures
+     * @returns {Boolean} Always returns true
+     */
     acceptsPan () {
         return true
     }
 
-    // --------------------------
-
+    /**
+     * @description Opens the DragView
+     * @returns {DragView} The DragView instance
+     */
     open () {        
         this.setupView()
         DocumentBody.shared().addSubview(this)
@@ -338,17 +344,22 @@
         return this
     }
 
+    /**
+     * @description Handles the beginning of the drag operation
+     * @private
+     */
     onBegin () {
         this.sendProtocolMessage(this.source(), "onDragSourceBegin")
     }
     
-    // --- panning ---
-
+    /**
+     * @description Handles the beginning of a pan gesture
+     * @param {PanGesture} aGesture - The pan gesture
+     * @private
+     */
     onPanBegin (aGesture) {
         this.debugLog("onPanBegin")
         this.setDragStartPos(this.item().positionInDocument())
-
-        // animate the start of the drag
 
         this.addTimeout(() => {
             this.addPanStyle()
@@ -357,12 +368,21 @@
         this.onPanMove(aGesture)
     }
 
+    /**
+     * @description Updates the position of the DragView
+     * @private
+     */
     updatePosition () {
         const newPosition = this.dragStartPos().add(this.defaultPanGesture().diffPos()) 
         this.setLeftPx(newPosition.x())
         this.setTopPx(newPosition.y())
     }
 
+    /**
+     * @description Handles the movement during a pan gesture
+     * @param {PanGesture} aGesture - The pan gesture
+     * @private
+     */
     onPanMove (aGesture) {
         this.updatePosition()
         
@@ -371,6 +391,11 @@
         })
     }
 
+    /**
+     * @description Handles the cancellation of a pan gesture
+     * @param {PanGesture} aGesture - The pan gesture
+     * @private
+     */
     onPanCancelled (aGesture) {
         const destFrame = this.source().dropCompleteDocumentFrame()
 
@@ -384,12 +409,22 @@
         this.removePanStyle()
     }
 
+    /**
+     * @description Finds the first view that accepts the drop
+     * @returns {DomView|null} The first accepting drop target or null if none found
+     * @private
+     */
     firstAcceptingDropTarget () {
         return this.hoverViews().detect((v) => {
             return v.acceptsDropHoverComplete && v.acceptsDropHoverComplete(this)
         })
     }
 
+    /**
+     * @description Determines the current drag operation based on keyboard state
+     * @returns {String} The current drag operation
+     * @private
+     */
     currentOperation () {
         const keyboard = BMKeyboard.shared()
 
@@ -404,10 +439,13 @@
         return "move"
     }
 
+    /**
+     * @description Handles the completion of a pan gesture
+     * @param {PanGesture} aGesture - The pan gesture
+     * @private
+     */
     onPanComplete (aGesture) {
         this.debugLog("onPanComplete")
-
-        //this.setDragOperation(this.currentOperation())
 
         const destView = this.firstAcceptingDropTarget()
         
@@ -422,7 +460,7 @@
 
         if (destView) {
             const completionCallback = () => {
-                this.sendProtocolAction(destView, "Dropped") // onDragSourceDropped onDragDestinationDropped
+                this.sendProtocolAction(destView, "Dropped")
 
                 this.sendProtocolMessage(this.source(), "onDragSourceEnd")
                 if (destView !== this.source()) {
@@ -434,27 +472,45 @@
             const destFrame = destView.dropCompleteDocumentFrame()
             this.animateToDocumentFrame(destFrame, this.slideBackPeriod(), completionCallback)
             this.removePanStyle()
-            this.hoverViews().remove(destView) // so no exit hover message will be sent to it
+            this.hoverViews().remove(destView)
         } else {
             this.close()
         }
     }
 
-    // --- hovering behaviors ---
-
+    /**
+     * @description Gets the views under the current pan position
+     * @returns {Array} An array of views under the current pan position
+     * @private
+     */
     viewsUnderDefaultPan () {
         return DocumentBody.shared().viewsUnderPoint(this.dropPoint())
     }
+
+    /**
+     * @description Gets the current drop point
+     * @returns {Point} The current drop point
+     * @private
+     */
 
     dropPoint () {
         return this.defaultPanGesture().currentPosition()
     }
 
+    /**
+     * @description Gets the new hover views.
+     * @returns {Array} The new hover views.
+     * @private
+     */
     newHoverViews () {
         //console.log("dropPoint: " + this.dropPoint().asString())
         return this.viewsUnderDefaultPan().select(v => v.acceptsDropHover && v.acceptsDropHover(this))
     }
 
+    /**
+     * @description Updates the hover views.
+     * @returns {DragView} The current instance.
+     */
     hoverOverViews () {
         const oldViews = this.hoverViews()
         const newViews = this.newHoverViews()
@@ -481,6 +537,9 @@
         return this
     }
 
+    /**
+     * @description Exits all hover views.
+     */
     exitAllHovers () {
         this.hoverViews().forEach((aView) => { this.sendProtocolAction(aView, "Exit") })
         this.setHoverViews([])
@@ -488,6 +547,11 @@
 
     // drop hover protocol
 
+    /**
+     * @description Sends a protocol action to a view.
+     * @param {DomView} aView - The view to send the action to.
+     * @param {string} action - The action to send.
+     */
     sendProtocolAction (aView, action) {
         // onDragSourceHover & onDragDestinationHover
         const isSource = aView === this.source()
@@ -496,6 +560,11 @@
         this.sendProtocolMessage(aView, methodName)
     }
 
+    /**
+     * @description Sends a protocol message to a receiver.
+     * @param {DomView} receiver - The receiver of the message.
+     * @param {string} methodName - The method name to call.
+     */
     sendProtocolMessage (receiver, methodName) {
         if (!methodName.contains("Hover") && this.isDebugging()) {
 
@@ -520,6 +589,10 @@
     
     // close
 
+    /**
+     * @description Closes the DragView.
+     * @returns {DragView} The current instance.
+     */ 
     close () {
         this.debugLog("close")
         this.postNoteNamed("onDragViewClose")
@@ -540,6 +613,10 @@
 
     // --- drag style ---
 
+    /**
+     * @description Adds a pan style to the DragView.
+     * @returns {DragView} The current instance.
+     */
     addPanStyle () {
         const s = "0px 0px 10px 10px rgba(0, 0, 0, 0.5)"
         const r = 1.05 // 1.1 * (1/Math.sqrt(this.items().length))
@@ -552,6 +629,10 @@
         return this
     }
 
+    /**
+     * @description Removes the pan style from the DragView.
+     * @returns {DragView} The current instance.
+     */
     removePanStyle () {
         const s = "none"
         this.setTransform("scale(1)")

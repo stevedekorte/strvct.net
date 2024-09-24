@@ -9,6 +9,7 @@
  * 
  * @class PersistentAsyncMap
  * @extends ProtoClass
+ * @classdesc Provides a persistent asynchronous map implementation using IndexedDB.
  */
 (class PersistentAsyncMap extends ProtoClass {
 

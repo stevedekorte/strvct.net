@@ -1,67 +1,108 @@
 "use strict";
 
-/*
-    GestureManager
+/**
+ * @module library.view.events.gesturing
+ */
 
-    We typically only want one gesture to be active globally.
-    GestureManager helps to coordinate which gesture has control.
-
-    To pause all gestures:
-    
-        GestureManager.shared().pause()
-        GestureManager.shared().unpause()
-    
-    or:
-
-        GestureManager.shared().setIsPaused(aBool)
-
-    NOTES:
-
-    If a decendant view requests control, it can steal it.
-
-*/
-
+/**
+ * @class GestureManager
+ * @extends ProtoClass
+ * @classdesc GestureManager coordinates which gesture has control globally.
+ * 
+ * We typically only want one gesture to be active globally.
+ * GestureManager helps to coordinate which gesture has control.
+ *
+ * To pause all gestures:
+ *
+ *     GestureManager.shared().pause()
+ *     GestureManager.shared().unpause()
+ *
+ * or:
+ *
+ *     GestureManager.shared().setIsPaused(aBool)
+ *
+ * NOTES:
+ *
+ * If a descendant view requests control, it can steal it.
+ */
 (class GestureManager extends ProtoClass {
     
+    /**
+     * @static
+     * @description Initializes the class
+     */
     static initClass () {
         this.setIsSingleton(true)
     }
     
+    /**
+     * @description Initializes the prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Gesture} activeGesture
+         */
         {
-            const slot = this.newSlot("activeGesture", null); // aGesture
+            const slot = this.newSlot("activeGesture", null);
             slot.setSlotType("Gesture");
         }
+        /**
+         * @property {Map} begunGesturesMap
+         */
         {
             const slot = this.newSlot("begunGesturesMap", null) 
             slot.setSlotType("Map");
         }
+        /**
+         * @property {Boolean} isPaused - used to pause gestures while editing text fields
+         */
         {
-            const slot = this.newSlot("isPaused", false); // used to pause gestures while editing text fields
+            const slot = this.newSlot("isPaused", false);
             slot.setSlotType("Boolean");
         }
     }
 
+    /**
+     * @description Initializes the instance
+     * @returns {GestureManager} The instance
+     */
     init () {
         super.init();
         this.setBegunGesturesMap(new Map());
         return this;
     }
 
+    /**
+     * @description Checks if there's an active gesture
+     * @returns {Boolean} True if there's an active gesture, false otherwise
+     */
     hasActiveGesture () {
         return this.activeGesture() && this.activeGesture().isActive();
     }
 
+    /**
+     * @description Pauses the gesture manager
+     * @returns {GestureManager} The instance
+     */
     pause () {
         this.setIsPaused(true);
         return this;
     }
 
+    /**
+     * @description Unpauses the gesture manager
+     * @returns {GestureManager} The instance
+     */
     unpause () {
         this.setIsPaused(false);
         return this;
     }
 
+    /**
+     * @description Sets the paused state of the gesture manager
+     * @param {Boolean} aBool - The paused state
+     * @returns {GestureManager} The instance
+     */
     setIsPaused (aBool) {
         if (this._isPaused !== aBool) {
             this._isPaused = aBool;
@@ -75,6 +116,9 @@
         return this;
     }
 
+    /**
+     * @description Cancels all gestures
+     */
     cancelAllGestures () {
         this.cancelAllBegunGestures();
         const ag = this.activeGesture();
@@ -83,7 +127,12 @@
         }
     }
 
-    requestActiveGesture (aGesture) { // sent by gestures themselves
+    /**
+     * @description Requests to set the active gesture
+     * @param {Gesture} aGesture - The gesture requesting to be active
+     * @returns {Boolean} True if the request was accepted, false otherwise
+     */
+    requestActiveGesture (aGesture) {
         this.debugLog("requestActiveGesture(" + aGesture.description() + ")");
 
         if (this.isPaused()) {
@@ -98,15 +147,12 @@
             return true;
         }
 
-        //this.releaseActiveGestureIfInactive()
-        if (aGesture === ag) { // error
+        if (aGesture === ag) {
             console.warn("request to activate an already active gesture ", aGesture.description());
             return false;
         }
 
-        // see if active gesture has lower priority
         if (ag) {
-            // allow child views to steal the active gesture
             const childViewIsRequesting = ag.viewTarget().hasSubviewDescendant(aGesture.viewTarget());
             if (childViewIsRequesting) {
                 this.acceptGesture(aGesture);
@@ -114,13 +160,17 @@
             }
         }
 
-
-        // already have active gesture, so reject this request
         this.rejectGesture(aGesture);
         return false;
     }
 
-    acceptGesture (aGesture) { // private method
+    /**
+     * @private
+     * @description Accepts a gesture as the active gesture
+     * @param {Gesture} aGesture - The gesture to accept
+     * @returns {GestureManager} The instance
+     */
+    acceptGesture (aGesture) {
         aGesture.viewTarget().cancelAllGesturesExcept(aGesture);
         this.cancelBegunGesturesExcept(aGesture);
         this.setActiveGesture(aGesture);
@@ -128,12 +178,23 @@
         return this;
     }
 
-    rejectGesture (aGesture) { // private method
+    /**
+     * @private
+     * @description Rejects a gesture from becoming the active gesture
+     * @param {Gesture} aGesture - The gesture to reject
+     * @returns {GestureManager} The instance
+     */
+    rejectGesture (aGesture) {
         this.debugLog("rejectGesture(" + aGesture.description() + ")");
         this.debugLog("already active " + this.activeGesture().description());
         return this;
     }
 
+    /**
+     * @description Deactivates a gesture
+     * @param {Gesture} aGesture - The gesture to deactivate
+     * @returns {GestureManager} The instance
+     */
     deactivateGesture (aGesture) {
         if (this.activeGesture() === aGesture) {
             this.setActiveGesture(null);
@@ -141,21 +202,40 @@
         return this;
     }
 
+    /**
+     * @description Adds a gesture to the begun gestures map
+     * @param {Gesture} aGesture - The gesture to add
+     * @returns {GestureManager} The instance
+     */
     addBegunGesture (aGesture) {
         this.begunGesturesMap().set(aGesture.typeId(), aGesture);
         return this;
     }
 
+    /**
+     * @description Removes a gesture from the begun gestures map
+     * @param {Gesture} aGesture - The gesture to remove
+     * @returns {GestureManager} The instance
+     */
     removeBegunGesture (aGesture) {
         this.begunGesturesMap().delete(aGesture.typeId());
         return this;
     }
 
+    /**
+     * @description Cancels all begun gestures
+     * @returns {GestureManager} The instance
+     */
     cancelAllBegunGestures () {
         this.begunGesturesMap().forEachV(g => g.requestCancel());
         return this;
     }
 
+    /**
+     * @description Cancels all begun gestures except the specified one
+     * @param {Gesture} aGesture - The gesture to exclude from cancellation
+     * @returns {GestureManager} The instance
+     */
     cancelBegunGesturesExcept (aGesture) {
         this.begunGesturesMap().forEachV(g => {
             if (g !== aGesture) {
@@ -165,6 +245,10 @@
         return this;
     }
 
+    /**
+     * @description Returns a debug type ID
+     * @returns {string} The debug type ID
+     */
     debugTypeId () {
         const s = this.isPaused() ? "(paused)" : "(not paused)";
         return super.debugTypeId() + s;

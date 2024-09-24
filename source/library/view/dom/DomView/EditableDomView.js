@@ -1,14 +1,20 @@
+/**
+ * @module library.view.dom.DomView
+ */
+
 "use strict";
 
-/*
-    EditableDomView
-
-    For subclasses to extend. Ancestors of this class are organizational parts of DomView.
-
-*/
-
+/**
+ * @class EditableDomView
+ * @extends SelectableDomView
+ * @classdesc EditableDomView is for subclasses to extend. Ancestors of this class are organizational parts of DomView.
+ */
 (class EditableDomView extends SelectableDomView {
     
+    /**
+     * @description Initializes prototype slots for the class.
+     * @method
+     */
     initPrototypeSlots () {
         /*
         {
@@ -39,6 +45,11 @@
 
     // --- set caret ----
 
+    /**
+     * @description Consolidates text nodes and preserves selection.
+     * @method
+     * @returns {EditableDomView} The instance of EditableDomView.
+     */
     consolidateTextNodesAndPreserveSelection () {
         const div = this.element()
 
@@ -82,6 +93,11 @@
         return this
     }
 
+    /**
+     * @description Inserts text at the cursor position and consolidates text nodes.
+     * @method
+     * @param {string} text - The text to insert.
+     */
     insertTextAtCursorAndConsolidate (text) {
         const el = this.element();
         var sel, range, textNode, insertedTextLength = text.length;
@@ -125,6 +141,12 @@
         }
     }
     
+    /**
+     * @description Inserts text at the cursor position (assumes content ONLY has text).
+     * @method
+     * @param {string} text - The text to insert.
+     * @returns {EditableDomView} The instance of EditableDomView.
+     */
     insertTextAtCursorSimple (text) { // assumes content *ONLY* has text
         this.consolidateTextNodesAndPreserveSelection()
 
@@ -201,6 +223,12 @@
 
     // --- paste from clipboardListener ---
 
+    /**
+     * @description Handles the paste event.
+     * @method
+     * @param {Event} event - The paste event object.
+     * @returns {boolean} Returns false if paste is handled, true otherwise.
+     */
     onPaste (event) {
         //debugger;
         // prevent pasting text by default after event

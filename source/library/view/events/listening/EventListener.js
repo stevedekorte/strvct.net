@@ -1,34 +1,59 @@
 "use strict";
 
-/*
-    EventListener
+/**
+ * @module library.view.events.listening.EventListener
+ */
 
-    Listener for single event. Should only be used by EventSetListener class.
-
-    For full list of events, see:
-
-    https://developer.mozilla.org/en-US/docs/Web/Events
-
-*/
+/**
+ * @class EventListener
+ * @extends ProtoClass
+ * @classdesc Listener for single event. Should only be used by EventSetListener class.
+ * 
+ * For full list of events, see:
+ * https://developer.mozilla.org/en-US/docs/Web/Events
+ */
 
 let listenCount = 0;
 
 (class EventListener extends ProtoClass {
 
+    /**
+     * @static
+     * @description Initializes the class.
+     */
     static initClass () {
+        /**
+         * @static
+         * @property {Set} activeListeners - Set of active listeners (tmp debugging).
+         */
         this.newClassSlot("activeListeners", new Set()) // tmp debugging
     }
 
+    /**
+     * @static
+     * @description Gets active listeners for a specific owner.
+     * @param {Object} owner - The owner object.
+     * @returns {Array} Array of active listeners for the owner.
+     */
     static activeListenersForOwner (owner) { // tmp debugging
         return this.activeListeners().filter(v => v.owner() === owner)
     }
 
+    /**
+     * @static
+     * @description Gets all active owners.
+     * @returns {Set} Set of active owners.
+     */
     static activeOwners () { // tmp debugging
         const owners = new Set()
         this.activeListeners().forEach(v => owners.add(v.owner()))
         return owners
     }
 
+    /**
+     * @static
+     * @description Shows active listeners (for debugging).
+     */
     static showActive () { // tmp debugging
         const owners = this.activeOwners()
         console.log("--- EventListener " + owners.size + " active owners ---")
@@ -43,6 +68,11 @@ let listenCount = 0;
         console.log("-------------------------------------")
     }
 
+    /**
+     * @static
+     * @description Shows active listeners for a specific owner (for debugging).
+     * @param {Object} owner - The owner object.
+     */
     static showActiveForOwner (owner) { // tmp debugging
         const listeners = this.activeListenersForOwner(owner)
         listeners.forEach(listener => {
@@ -50,53 +80,90 @@ let listenCount = 0;
         })
     }
 
+    /**
+     * @description Initializes the prototype slots.
+     */
     initPrototypeSlots () {
         //this.newSlot("listenerSet", null); // possible owner
 
+        /**
+         * @property {Object} listenTarget - The target to listen to.
+         */
         {
             const slot = this.newSlot("listenTarget", null);
             slot.setSlotType("Object");
         }
+        /**
+         * @property {Object} delegate - The delegate object.
+         */
         {
             const slot = this.newSlot("delegate", null);
             slot.setSlotType("Object");
         }
+        /**
+         * @property {Boolean} isListening - Whether the listener is currently active.
+         */
         {
             const slot = this.newSlot("isListening", false);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {String} eventName - The name of the event to listen for.
+         */
         {
             const slot = this.newSlot("eventName", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} methodName - The name of the method to call when the event occurs.
+         */
         {
             const slot = this.newSlot("methodName", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} fullMethodName - The full name of the method (calculated and cached).
+         */
         {
             const slot = this.newSlot("fullMethodName", null); // calculated when methodName is set, and cached in ivar
             slot.setSlotType("String");
         }
+        /**
+         * @property {Function} handlerFunc - The function to handle the event.
+         */
         {
             const slot = this.newSlot("handlerFunc", null);
             slot.setSlotType("Function");
             slot.setAllowsNullValue(true);
         }
+        /**
+         * @property {Boolean} isUserInteraction - Whether the event is a user interaction.
+         */
         {
             const slot = this.newSlot("isUserInteraction", null); // set to match eventName
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {Boolean} useCapture - Whether the event will be dispatched to the listener before reaching the event target.
+         */
         {
             const slot = this.newSlot("useCapture", false);
             slot.setComment("whether event will be dispatched to listener before EventTarget beneath it in DOM tree");
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {String} methodSuffix - The suffix to add to the method name.
+         */
         {
             const slot = this.newSlot("methodSuffix", "");
             slot.setSlotType("String");
         }
     }
 
+    /**
+     * @description Initializes the EventListener.
+     * @returns {EventListener} The initialized EventListener.
+     */
     init () {
         super.init()
         this.setHandlerFunc(event => this.safeHandleEvent(event))
@@ -104,20 +171,32 @@ let listenCount = 0;
         return this
     }
 
-    // NOTE: atm, we leave restarting the event listeners up to the event set so we don't do extra restart
-
+    /**
+     * @description Called when the methodName slot is updated.
+     */
     didUpdateSlotMethodName () {
         this.clearFullMethodName()
     }
 
+    /**
+     * @description Called when the methodSuffix slot is updated.
+     */
     didUpdateSlotMethodSuffix () {
         this.clearFullMethodName()
     }
 
+    /**
+     * @description Called when the useCapture slot is updated.
+     */
     didUpdateSlotUseCapture () {
         this.clearFullMethodName()
     }
 
+    /**
+     * @description Sets the listen target.
+     * @param {Object} t - The listen target.
+     * @returns {EventListener} The EventListener instance.
+     */
     setListenTarget (t) {
         if (this.isListening()) {
             assert(t)
@@ -126,16 +205,25 @@ let listenCount = 0;
         return this
     }
 
+    /**
+     * @description Gets the description of the listen target.
+     * @returns {String} The description of the listen target.
+     */
     listenTargetDescription () {
         return this.listenTarget().description()
     }
 
-    // ---
-
+    /**
+     * @description Clears the full method name.
+     */
     clearFullMethodName () {
         this.setFullMethodName(null)
     }
 
+    /**
+     * @description Calculates the full method name.
+     * @returns {String} The full method name.
+     */
     calcFullMethodName () {
         let suffix = ""
 
@@ -147,6 +235,10 @@ let listenCount = 0;
         return this.methodName() + suffix
     }
 
+    /**
+     * @description Gets the full method name.
+     * @returns {String} The full method name.
+     */
     fullMethodName () {
         if (!this._fullMethodName) {
             this._fullMethodName = this.calcFullMethodName()
@@ -154,8 +246,11 @@ let listenCount = 0;
         return this._fullMethodName
     }
 
-    // ---------------------------------------------------------
-
+    /**
+     * @description Sets whether the listener is listening.
+     * @param {Boolean} aBool - Whether to start or stop listening.
+     * @returns {EventListener} The EventListener instance.
+     */
     setIsListening (aBool) {
         if (aBool) {
             this.start()
@@ -165,10 +260,17 @@ let listenCount = 0;
         return this
     }
 
+    /**
+     * @description Asserts that the listener has a listen target.
+     */
     assertHasListenTarget () {
         assert(!Type.isNullOrUndefined(this.listenTarget()))
     }
 
+    /**
+     * @description Checks if the listener is valid.
+     * @returns {Boolean} Whether the listener is valid.
+     */
     isValid () {
         const hasListenTarget = !Type.isNullOrUndefined(this.listenTarget())
         const hasEventName    = !Type.isNullOrUndefined(this.eventName())
@@ -176,8 +278,10 @@ let listenCount = 0;
         return hasMethodName && hasEventName && hasListenTarget
     }
     
-    // listener key
-
+    /**
+     * @description Gets the listener key.
+     * @returns {String} The listener key.
+     */
     listenerKey () {
         let key = null
         if (this.owner().node) {
@@ -188,20 +292,28 @@ let listenCount = 0;
         return key
     }
     
+    /**
+     * @description Increments the listen count.
+     */
     incrementListenCount () {
         listenCount++
         //EventListener.activeListeners().add(this)
         //console.log(this.listenerKey() + " START")
     }
 
+    /**
+     * @description Decrements the listen count.
+     */
     decrementListenCount () {
         listenCount--
         //EventListener.activeListeners().delete(this)
         //console.log(this.listenerKey() + " STOP")
     }
 
-    // ---------------------------------------------------------
-
+    /**
+     * @description Starts the listener.
+     * @returns {EventListener} The EventListener instance.
+     */
     start () {
         if (this.delegateCanRespond()) {
             if (!this.isListening()) {
@@ -224,6 +336,10 @@ let listenCount = 0;
         return this
     }
 
+    /**
+     * @description Gets the owner of the listener.
+     * @returns {Object} The owner object.
+     */
     owner () {
         const d = this.delegate()
         if (d.viewTarget) {
@@ -232,6 +348,10 @@ let listenCount = 0;
         return d
     }
 
+    /**
+     * @description Gets the description of the owner.
+     * @returns {String} The description of the owner.
+     */
     ownerDescription () {
         const d = this.delegate()
         
@@ -243,18 +363,11 @@ let listenCount = 0;
         return d.typeId()
     }
 
-    /*
-    descriptionForEvent (event) {
-        const e = event.currentTarget
-        let label = undefined
-        if (e.domView) {
-            label = e.domView().type()
-        } else {
-            label = e.constructor.name
-        }
-    }
-    */
-
+    /**
+     * @description Safely handles the event.
+     * @param {Event} event - The event to handle.
+     * @returns {*} The result of handling the event.
+     */
     safeHandleEvent (event) {
         const result =  EventManager.shared().safeWrapEvent(() => {
             //console.log("on event: ", this.listenerKey())
@@ -274,6 +387,10 @@ let listenCount = 0;
         return result
     }
 
+    /**
+     * @description Checks if the delegate can respond to the event.
+     * @returns {Boolean} Whether the delegate can respond.
+     */
     delegateCanRespond () {
         if (Type.isNullOrUndefined(this.delegate())) {
             return false
@@ -283,6 +400,11 @@ let listenCount = 0;
         return canRespond
     }
 
+    /**
+     * @description Handles the event.
+     * @param {Event} event - The event to handle.
+     * @returns {*} The result of handling the event.
+     */
     handleEvent (event) {
         const fullMethodName = this.fullMethodName()
 
@@ -319,10 +441,20 @@ let listenCount = 0;
         return result
     }
 
+    /**
+     * @description Called before handling the event.
+     * @param {Event} event - The event being handled.
+     * @returns {EventListener} The EventListener instance.
+     */
     onBeforeEvent (event) {
         return this
     }
 
+    /**
+     * @description Called after handling the event.
+     * @param {Event} event - The event that was handled.
+     * @returns {EventListener} The EventListener instance.
+     */
     onAfterEvent (event) {
         if (this.isUserInteraction()) {
             EventManager.shared().onReceivedUserEvent()
@@ -330,6 +462,10 @@ let listenCount = 0;
         return this
     }
 
+    /**
+     * @description Stops the listener.
+     * @returns {EventListener} The EventListener instance.
+     */
     stop () {
         if (this.isListening()) {
             this.assertHasListenTarget()
@@ -347,4 +483,3 @@ let listenCount = 0;
     }   
 
 }.initThisClass());
-

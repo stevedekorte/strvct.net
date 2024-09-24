@@ -1,37 +1,57 @@
+/**
+ * @module library.view.events.devices
+ */
+
 "use strict";
 
-/*
-
-    TouchScreen
-
-    Global shared instance that tracks current touch state in window coordinates.
-    Registers for capture events on document.body.
-
-    Example use:
-
-        const hasTouch = TouchScreen.shared().isSupported()
-
-*/
-
+/**
+ * @class TouchScreen
+ * @extends Device
+ * @classdesc Global shared instance that tracks current touch state in window coordinates.
+ * Registers for capture events on document.body.
+ * 
+ * Example use:
+ * 
+ *     const hasTouch = TouchScreen.shared().isSupported()
+ */
 (class TouchScreen extends Device {
 
+    /**
+     * @static
+     * @description Initializes the class by setting it as a singleton.
+     */
     static initClass () {
         this.setIsSingleton(true)
     }
     
+    /**
+     * @description Initializes the prototype slots for the TouchScreen class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {TouchEvent} currentEvent - The current touch event.
+         */
         {
             const slot = this.newSlot("currentEvent", null);
             slot.setSlotType("TouchEvent");
         }
+        /**
+         * @property {TouchEvent} lastEvent - The last touch event.
+         */
         {
             const slot = this.newSlot("lastEvent", null);
             slot.setSlotType("TouchEvent");
         }
+        /**
+         * @property {TouchListener} touchListener - The touch listener object.
+         */
         {
             const slot = this.newSlot("touchListener", null);
             slot.setSlotType("TouchListener");
         }
+        /**
+         * @property {Boolean} isSupported - Indicates if touch is supported.
+         */
         {
             const slot = this.newSlot("isSupported", null);
             slot.setSlotType("Boolean");
@@ -44,6 +64,10 @@
         */
     }
 
+    /**
+     * @description Checks if touch is supported.
+     * @returns {Boolean} True if touch is supported, false otherwise.
+     */
     isSupported () {
         if (this._isSupported === null) {
             this._isSupported = this.calcIsSupported();
@@ -51,6 +75,10 @@
         return this._isSupported;
     }
 
+    /**
+     * @description Calculates if touch is supported.
+     * @returns {Boolean} True if touch is supported, false otherwise.
+     */
     calcIsSupported () {
         // return WebBrowserWindow.isTouchDevice()
         let result = false;
@@ -68,6 +96,10 @@
         return result
     }
 
+    /**
+     * @description Initializes the TouchScreen instance.
+     * @returns {TouchScreen} The initialized TouchScreen instance.
+     */
     init () {
         super.init()
         this.startListening()
@@ -78,6 +110,11 @@
         return this
     }
 
+    /**
+     * @description Sets the current touch event.
+     * @param {TouchEvent} event - The touch event to set as current.
+     * @returns {TouchScreen} The TouchScreen instance.
+     */
     setCurrentEvent (event) {
         if (this._currentEvent !== event) {
             this.setLastEvent(this._currentEvent)
@@ -90,14 +127,21 @@
         return this
     }
 
+    /**
+     * @description Starts listening for touch events.
+     * @returns {TouchScreen} The TouchScreen instance.
+     */
     startListening () {
         this.setTouchListener(TouchListener.clone().setUseCapture(true).setListenTarget(document.body).setDelegate(this))
         this.touchListener().setIsListening(true)
         return this
     }
 
-    // events
-
+    /**
+     * @description Handles the touch begin capture event.
+     * @param {TouchEvent} event - The touch begin event.
+     * @returns {Boolean} Always returns true.
+     */
     onTouchBeginCapture (event) {
         if (this.isDebugging()) {
             console.log(this.type() + ".onTouchBeginCapture()")
@@ -107,42 +151,53 @@
         return true
     }
 
-    /*
-    elementsForEvent (event) {
-        const elements = [];
-        const points = this.pointsForEvent(event)
-        points.forEach((point) => {
-            const e = document.elementFromPoint(p.x(), p.y());
-            if (e) {
-                elements.push(e)
-            }
-        })
-        return elements
-    }
-    */
-
+    /**
+     * @description Finds the last point for a given touch ID.
+     * @param {Number} id - The touch ID.
+     * @returns {EventPoint|undefined} The last point for the given ID, or undefined if not found.
+     */
     lastPointForId (id) {
         const lastPoints = this.pointsForEvent(this.lastEvent())
         return lastPoints.detect(p => p.id() === id)
     }
 
+    /**
+     * @description Finds the current point for a given touch ID.
+     * @param {Number} id - The touch ID.
+     * @returns {EventPoint|undefined} The current point for the given ID, or undefined if not found.
+     */
     currentPointForId (id) {
         const currentPoints = this.pointsForEvent(this.currentEvent())
         return currentPoints.detect(p => p.id() === id)
     }
 
+    /**
+     * @description Handles the touch move capture event.
+     * @param {TouchEvent} event - The touch move event.
+     * @returns {Boolean} Always returns true.
+     */
     onTouchMoveCapture (event) {
         this.setCurrentEvent(event)
         //this.handleLeave(event)
         return true
     }
 
+    /**
+     * @description Handles the touch end capture event.
+     * @param {TouchEvent} event - The touch end event.
+     * @returns {Boolean} Always returns true.
+     */
     onTouchEndCapture (event) {
         this.setCurrentEvent(event)
         //this.handleLeave(event)
         return true
     }
 
+    /**
+     * @description Creates an EventPoint from a Touch object.
+     * @param {Touch} touch - The Touch object.
+     * @returns {EventPoint} The created EventPoint.
+     */
     pointForTouch (touch) {
         assert(event.__proto__.constructor === TouchEvent)
         const p = EventPoint.clone()
@@ -156,11 +211,12 @@
         return p
     }
 
+    /**
+     * @description Creates EventPoints for all touches in a TouchEvent.
+     * @param {TouchEvent} event - The TouchEvent.
+     * @returns {Array<EventPoint>} An array of EventPoints.
+     */
     justPointsForEvent (event) {
-        //if (this.isDebugging()) {
-        //  console.log("touches.length = ", event.touches.length)
-        //}
-
         const points = []
         // event.touches isn't a proper array, so we can't enumerate it normally
         const touches = event.touches // all current touches
@@ -173,7 +229,11 @@
         return points
     }
 
-
+    /**
+     * @description Gets or creates EventPoints for a TouchEvent.
+     * @param {TouchEvent} event - The TouchEvent.
+     * @returns {Array<EventPoint>} An array of EventPoints.
+     */
     pointsForEvent (event) {
         if (!event.hasCachedPoints()) {
             event.preventDefault() // needed to prevent browser from handling touches?
@@ -185,6 +245,10 @@
         return event.cachedPoints(event)
     }
 
+    /**
+     * @description Gets the current touch points.
+     * @returns {Array<EventPoint>} An array of current EventPoints.
+     */
     currentPoints () {
         if (this.currentEvent()) {
             return this.pointsForEvent(this.currentEvent())
@@ -192,41 +256,4 @@
         return []
     }
 
-    // There are no standard onTouchLeave & onTouchOver events,
-    // so this is an attempt to add them. Only really need them
-    // for visual gesture debugging at the moment though.
-    
-    /*
-    sendEventToView (eventName, event, aView) {
-        // send to listeners instead?
-        aView.gestureRecognizers().forEach((gr) => {
-            gr[eventName].call(gr, event)
-        })
-        return this
-    }
-
-    handleLeave (event) {
-        // an attempt to add onTouchLeave and onTouchOver events
-        const currentPoints = this.pointsForEvent(this.currentEvent())
-
-        currentPoints.forEach((cp) => {
-            const lp = this.lastPointForId(cp.id())
-            if (lp) {
-                const lastView    = lp.overview()
-                const currentView = cp.overview()
-
-                // check if overView is the same
-                if (lastView !== currentView) {
-                    this.sendEventToView("onTouchLeave", event, lastView)
-                    this.sendEventToView("onTouchOver", event, currentView)
-                }
-            } else {
-                // this is a new finger
-            }
-        })
-
-        return this
-    }
-    */
-   
 }.initThisClass());

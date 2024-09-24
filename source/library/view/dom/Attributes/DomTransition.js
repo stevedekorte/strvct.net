@@ -1,20 +1,30 @@
-
 "use strict";
 
-/*
+/**
+ * @module library.view.dom.Attributes
+ */
 
-    DomTransition
-         
-
-*/
-
+/**
+ * @class DomTransition
+ * @extends ProtoClass
+ * @classdesc Represents a DOM transition with properties like duration, timing function, and delay.
+ */
 (class DomTransition extends ProtoClass {
     
+    /**
+     * @static
+     * @description Initializes the class with global values for transitions.
+     */
     static initClass () {
         const globalValues = ["inherit", "initial", "revert", "revert-layer", "unset"].asSet();
         this.newClassSlot("globalValues", globalValues)
     }
 
+    /**
+     * @static
+     * @description Returns an array of valid CSS properties for transitions.
+     * @returns {string[]} Array of valid CSS properties.
+     */
     static validPropertyValues () {
         return [  "background-color",  "background-position",  "border-color",  "border-width",  "border-spacing",  
         "bottom",  "color",  "font-size",  "font-weight",  "height",  "left",  "letter-spacing",  "line-height",  
@@ -24,28 +34,49 @@
         "top",  "vertical-align",  "visibility",  "width",  "word-spacing",  "z-index"]
     }
 
+    /**
+     * @description Initializes the prototype slots for the DomTransition class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Object|null} global - Global transition value.
+         */
         {
             const slot = this.newSlot("global", null);
             slot.setSlotType("Object");
             slot.setAllowsNullValue(true);
         }
+        /**
+         * @property {string} property - The CSS property to transition.
+         */
         {
             const slot = this.newSlot("property", "");
             slot.setSlotType("String");
         }
+        /**
+         * @property {number} duration - The duration of the transition in seconds.
+         */
         {
             const slot = this.newSlot("duration", 0);
             slot.setSlotType("Number");
         }
+        /**
+         * @property {string} timingFunction - The timing function of the transition.
+         */
         {
             const slot = this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
             slot.setSlotType("String");
         }
+        /**
+         * @property {number} delay - The delay before the transition starts in seconds.
+         */
         {
             const slot = this.newSlot("delay", 0) // set to number type (unit = seconds)
             slot.setSlotType("Number");
         }
+        /**
+         * @property {DomTransitions|null} transitions - The parent DomTransitions object.
+         */
         {
             const slot = this.newSlot("transitions", null);
             slot.setSlotType("DomTransitions");
@@ -59,6 +90,10 @@
     }
     */
 
+    /**
+     * @description Clears all transition properties.
+     * @returns {DomTransition} The current instance.
+     */
     clear () {
         this.setGlobal(null)
         this.setProperty(null)
@@ -68,6 +103,11 @@
         return this
     }
 
+    /**
+     * @description Updates the duration of the transition.
+     * @param {number|string} s - The new duration value.
+     * @returns {DomTransition} The current instance.
+     */
     updateDuration (s) {
         if (Type.isNumber(s)) {
             s = s + "s"
@@ -77,18 +117,32 @@
         return this
     }
 
+    /**
+     * @description Updates the delay of the transition.
+     * @param {number|string} s - The new delay value.
+     * @returns {DomTransition} The current instance.
+     */
     updateDelay (s) {
         this.setDelay(s)
         this.syncToDomView()
         return this
     }
 
+    /**
+     * @description Updates the timing function of the transition.
+     * @param {string} s - The new timing function value.
+     * @returns {DomTransition} The current instance.
+     */
     updateTimingFunction (s) {
         this.setTimingFunction(s)
         this.syncToDomView()
         return this
     }
 
+    /**
+     * @description Returns the duration as a string with 's' appended if it's a number.
+     * @returns {string} The duration string.
+     */
     durationString () {
         const v = this.duration()
         if (Type.isNumber(v)) {
@@ -97,6 +151,10 @@
         return v
     }
 
+    /**
+     * @description Returns the delay as a string with 's' appended if it's a number.
+     * @returns {string} The delay string.
+     */
     delayString () {
         const v = this.delay()
         if (Type.isNumber(v)) {
@@ -105,6 +163,10 @@
         return v
     }
 
+    /**
+     * @description Converts the transition to a string representation.
+     * @returns {string} The string representation of the transition.
+     */
     asString () {
         if (this.global()) {
             return this.global()
@@ -122,6 +184,11 @@
         return s
     }
 
+    /**
+     * @description Sets the transition properties from a string.
+     * @param {string} aString - The string representation of the transition.
+     * @returns {DomTransition} The current instance.
+     */
     setFromString (aString) {
         // ordering of parts: 
         //   transition-property, 
@@ -172,11 +239,13 @@
         return this
     }
 
+    /**
+     * @description Synchronizes the transition with the DOM view.
+     * @returns {DomTransition} The current instance.
+     */
     syncToDomView () {
         this.transitions().syncToDomView()
         return this
     }
 
 }.initThisClass());
-
-

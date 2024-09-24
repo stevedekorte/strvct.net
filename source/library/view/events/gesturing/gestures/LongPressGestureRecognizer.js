@@ -1,35 +1,42 @@
+/**
+ * @module library.view.events.gesturing.gestures
+ */
+
+/**
+ * @class LongPressGestureRecognizer
+ * @extends GestureRecognizer
+ * @classdesc Recognize a long press and hold in (roughly) one location.
+ * 
+ * Notes:
+ * 
+ * Should gesture cancel if press moves?:
+ * 
+ * 1. outside of a distance from start point or
+ * 2. outside of the view
+ * 
+ * Delegate messages:
+ * 
+ * onLongPressBegin
+ * onLongPressComplete
+ * onLongPressCancelled
+ */
 "use strict";
-
-/*
-
-    LongPressGestureRecognizer
-
-    Recognize a long press and hold in (roughly) one location.
-
-    Notes:
-
-        Should gesture cancel if press moves?:
-        
-            1. outside of a distance from start point or
-            2. outside of the view
-
-
-    Delegate messages:
-
-        onLongPressBegin
-        onLongPressComplete
-        onLongPressCancelled
-
-*/
 
 (class LongPressGestureRecognizer extends GestureRecognizer {
     
     initPrototypeSlots () {
+        /**
+         * @property {Number} timePeriod - milliseconds
+         */
         {
             const slot = this.newSlot("timePeriod", 500);
             slot.setComment("milliseconds");
             slot.setSlotType("Number");
         }
+        /**
+         * @property {Number} timeoutId
+         * @private
+         */
         {
             const slot = this.newSlot("timeoutId", null);
             slot.setIsPrivate(true);
@@ -37,6 +44,10 @@
         }
     }
 
+    /**
+     * @description Initializes the LongPressGestureRecognizer
+     * @returns {LongPressGestureRecognizer}
+     */
     init () {
         super.init();
         this.setListenerClasses(this.defaultListenerClasses());
@@ -50,6 +61,10 @@
 
     // --- timer ---
 
+    /**
+     * @description Starts the timer for long press recognition
+     * @returns {LongPressGestureRecognizer}
+     */
     startTimer () {
         if (this.hasTimer()) {
             this.stopTimer();
@@ -61,6 +76,10 @@
         return this;
     }
 
+    /**
+     * @description Stops the timer for long press recognition
+     * @returns {LongPressGestureRecognizer}
+     */
     stopTimer () {
         if (this.hasTimer()) {
             this.clearTimeout(this.timeoutId());
@@ -69,12 +88,19 @@
         return this
     }
 
+    /**
+     * @description Checks if the timer is active
+     * @returns {boolean}
+     */
     hasTimer () {
         return this.timeoutId() !== null
     }
 
     // -- the completed gesture ---
     
+    /**
+     * @description Handles the long press event
+     */
     onLongPress () {
         this.setTimeoutId(null)
 
@@ -90,6 +116,10 @@
 
     // -- single action for mouse and touch up/down ---
 
+    /**
+     * @description Handles the down event
+     * @param {Event} event - The down event
+     */
     onDown (event) {
         super.onDown(event)
         
@@ -103,6 +133,10 @@
         }
     }
 
+    /**
+     * @description Handles the move event
+     * @param {Event} event - The move event
+     */
     onMove (event) {
         super.onMove(event)
     
@@ -116,6 +150,10 @@
 
     }
 
+    /**
+     * @description Handles the up event
+     * @param {Event} event - The up event
+     */
     onUp (event) {
         super.onUp(event)
 
@@ -124,6 +162,10 @@
         }
     }
 
+    /**
+     * @description Cancels the long press gesture
+     * @returns {LongPressGestureRecognizer}
+     */
     cancel () {
         if (this.hasTimer()) {
             this.stopTimer()

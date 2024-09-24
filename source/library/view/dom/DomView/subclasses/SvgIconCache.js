@@ -1,38 +1,67 @@
 "use strict";
 
-/*
+/**
+ * @module library.view.dom.DomView.subclasses.SvgIconCache
+ */
 
-    SvgIconCache
-
-    Singleton that manages cached Svg objects in document.
-
-*/
-
+/**
+ * @class SvgIconCache
+ * @extends ProtoClass
+ * @classdesc Singleton that manages cached Svg objects in document.
+ */
 (class SvgIconCache extends ProtoClass {
 
+    /**
+     * @static
+     * @description Initializes the class as a singleton.
+     */
     static initClass () {
         this.setIsSingleton(true)
     }
 
+    /**
+     * @description Initializes the prototype slots for the class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Map} hashToElementMap - Map to store hash to element mappings.
+         */
         {
             const slot = this.newSlot("hashToElementMap", new Map());
             slot.setSlotType("Map");
         }
+        /**
+         * @property {Element} svgCacheElement - The SVG cache element.
+         */
         {
             const slot = this.newSlot("svgCacheElement", null);
             slot.setSlotType("Element");
         }
     }
 
+    /**
+     * @description Generates an SVG ID for a given string.
+     * @param {string} s - The input string.
+     * @returns {string} The generated SVG ID.
+     */
     svgIdForString (s) {
         return "SvgId-" + s.hashCode();
     }
 
+    /**
+     * @description Generates an SVG content ID for a given string.
+     * @param {string} s - The input string.
+     * @returns {string} The generated SVG content ID.
+     */
     svgContentIdForString (s) {
         return "SvgContentId-" + s.hashCode();
     }
 
+    /**
+     * @description Caches an SVG for a given string if it's not already cached.
+     * @param {string} s - The input string.
+     * @returns {Element} The cached SVG element.
+     */
     cacheSvgForStringIfNeeded (s) {
         const map = this.hashToElementMap()
         const h = this.svgIdForString(s)
@@ -47,6 +76,10 @@
         return map.at(h)
     }
 
+    /**
+     * @description Gets or creates the SVG cache element.
+     * @returns {Element} The SVG cache element.
+     */
     svgCacheElement () {
         if (!this._svgCacheElement) {
             const e = document.createElement("defs");
@@ -58,6 +91,11 @@
         return this._svgCacheElement
     }
 
+    /**
+     * @description Creates an SVG element from an SVG string.
+     * @param {string} s - The SVG string.
+     * @returns {Element} The created SVG element.
+     */
     elementForSvgString (s) {
         // NOTES: 
         // - style.position of SVG needs to be absolute if in a flex container
@@ -88,6 +126,11 @@
         return svg
     }
 
+    /**
+     * @description Creates a new link element for an SVG string.
+     * @param {string} s - The SVG string.
+     * @returns {Element} The created SVG link element.
+     */
     newLinkElementForSvgString (s) {
         const cachedSvg = this.cacheSvgForStringIfNeeded(s)
         // e.g. <use xlink:href="#fire" />
@@ -119,8 +162,10 @@
         return svg
     }
  
-    // --- variable maps ---
-    
+    /**
+     * @description Returns a map of variable attributes for SVG elements.
+     * @returns {Map} The variable attribute map.
+     */
     variableAttributeMap () {
         const m = new Map()
         m.set("fill", "var(--fillColor)")

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module OpenAI.TexttoImage
+ * @module library.services.OpenAI.Text_to_Image
  */
 
 /**

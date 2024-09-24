@@ -1,69 +1,91 @@
 "use strict";
 
-/*
-    StyledDomView
+/**
+ * @module library.view.dom.DomView
+ */
 
-    (a step towards eliminating the remaining css files)
-
-    A base view to handle styles in a uniform way. 
-    Holds an instance of BMViewStyles which holds a set of BMViewStyle instances, one for each style.
-
-    Overview:
-
-        StyledDomView
-          styles -> BMViewStyles
-                        selected -> BMViewStyle
-                        unselected -> BMViewStyle
-                                        color
-                                        backgroundColor
-                                        opacity
-                                        borderLeft
-                                        borderRight
-
-                       
-    
-
-    Supported styles:
-
-    - unselected
-    - selected
-    - active 
-    - disabled
-
-*/
-
-
+/**
+ * @class StyledDomView
+ * @extends FlexDomView
+ * @classdesc StyledDomView
+ * 
+ * (a step towards eliminating the remaining css files)
+ *
+ * A base view to handle styles in a uniform way. 
+ * Holds an instance of BMViewStyles which holds a set of BMViewStyle instances, one for each style.
+ *
+ * Overview:
+ *
+ *     StyledDomView
+ *       styles -> BMViewStyles
+ *                     selected -> BMViewStyle
+ *                     unselected -> BMViewStyle
+ *                                     color
+ *                                     backgroundColor
+ *                                     opacity
+ *                                     borderLeft
+ *                                     borderRight
+ *
+ * Supported styles:
+ *
+ * - unselected
+ * - selected
+ * - active 
+ * - disabled
+ */
 (class StyledDomView extends FlexDomView {
     
+    /**
+     * @description Initializes the prototype slots for the StyledDomView.
+     */
     initPrototypeSlots () {
         {
+            /**
+             * @property {String} themeClassName
+             */
             const slot = this.newSlot("themeClassName", null);
             slot.setSlotType("String");
         }
         {
+            /**
+             * @property {Boolean} isSelected
+             */
             const slot = this.newSlot("isSelected", false);
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {Boolean} isActive
+             */
             const slot = this.newSlot("isActive", false);
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {Boolean} isDisabled
+             */
             const slot = this.newSlot("isDisabled", false);
             slot.setOwnsSetter(true);
             slot.setDoesHookSetter(true);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @property {Set} lockedStyleAttributeSet
+             */
             const slot = this.newSlot("lockedStyleAttributeSet", null);
             slot.setSlotType("Set");
         }
     }
 
+    /**
+     * @description Initializes the StyledDomView.
+     * @returns {StyledDomView}
+     */
     init () {
         super.init()
         this.setLockedStyleAttributeSet(new Set());
@@ -71,14 +93,21 @@
         return this;
     }
 
+    /**
+     * @description Synchronizes the state from another view.
+     * @param {StyledDomView} aView - The view to sync from.
+     * @returns {StyledDomView}
+     */
     syncStateFrom (aView) {
         this.setIsSelected(aView.isSelected())
         this.setIsActive(aView.isActive())
         return this
     }
 
-    // theme path
-
+    /**
+     * @description Returns the theme class name path.
+     * @returns {Array|null}
+     */
     themeClassNamePath () {
         // search up the view ancestors and compose a path
         if (this.themeClassName()) {
@@ -97,20 +126,10 @@
         return null
     }
 
-    // styles
-
-    /*
-    recursivelyApplyStyles () {
-        this.applyStyles()
-        this.allSubviewsRecursively().forEach(view => {
-            if (view.applyStyles) {
-                view.applyStyles()
-            }
-        })
-        return this
-    }
-    */
-	
+    /**
+     * @description Applies styles to the view.
+     * @returns {StyledDomView}
+     */
     applyStyles () {
         // we default to using the current theme, but 
         // we need to give view a chance to override style
@@ -123,34 +142,53 @@
         return this
     }
 
-    // --- activate ---
-
+    /**
+     * @description Handles the update of the isActive slot.
+     * @param {*} oldValue - The old value of the slot.
+     * @param {*} newValue - The new value of the slot.
+     * @returns {StyledDomView}
+     */
     didUpdateSlotIsActive (oldValue, newValue) {
         // sent by hooked setter
         this.updateSubviews()
         return this
     }
 
+    /**
+     * @description Activates the view.
+     */
     activate () {
         this.select()
         this.setIsActive(true)
         Broadcaster.shared().broadcastNameAndArgument("onActivateView", this)
     }
 
+    /**
+     * @description Handles the activation of a view.
+     * @param {StyledDomView} aView - The view that was activated.
+     */
     onActivateView (aView) {
         if (aView !== this & this.isActive()) {
             this.setIsActive(false)
         }
     }
 
-    // --- select ---
-
+    /**
+     * @description Handles the update of the isSelected slot.
+     * @param {*} oldValue - The old value of the slot.
+     * @param {*} newValue - The new value of the slot.
+     * @returns {StyledDomView}
+     */
     didUpdateSlotIsSelected (oldValue, newValue) {
         // sent by hooked setter
         this.updateSubviews()
         return this
     }
 
+    /**
+     * @description Toggles the selection state of the view.
+     * @returns {StyledDomView}
+     */
     toggleSelection () {
         if (this.isSelected()) {
             this.unselect()
@@ -160,11 +198,19 @@
         return this
     }
 
+    /**
+     * @description Selects the view.
+     * @returns {StyledDomView}
+     */
     select () {
         this.setIsSelected(true)
         return this
     }
 
+    /**
+     * @description Unselects the view.
+     * @returns {StyledDomView}
+     */
     unselect () {
         if (this.isSelected()) { // for debugging 
             this.setIsSelected(false)
@@ -172,15 +218,11 @@
         return this
     }
 
-    // --- path array for debugging --------------------------------------
-    
+    /**
+     * @description Returns the theme path array.
+     * @returns {Array}
+     */
     themePathArray () {
-        // using this is problematic as we may want to make the path 
-        // dependent of complex things e.g. if the themeClassName isn't
-        // found, we will default to DefaultThemeClass - or we may want
-        // to continue the search for a themeClass by walking up the View's
-        // class hierarchy names
-
         const path = []
 
         const themeClassName = this.themeClassName()
@@ -196,14 +238,18 @@
         return path
     }
 
+    /**
+     * @description Returns the theme path string.
+     * @returns {string}
+     */
     themePathString () {
         return this.themePathArray().join(" / ")
     }
-    
-    // --- getting current theme/state/attribute ---
 
-    // --- theme class ---
-
+    /**
+     * @description Returns the current theme class.
+     * @returns {*|null}
+     */
     currentThemeClass () {
         const theme = BMThemeResources.shared().activeTheme()
         if (!theme) {
@@ -214,8 +260,10 @@
         return themeClass
     }
 
-    // --- theme state ---
-
+    /**
+     * @description Returns the current theme state name.
+     * @returns {string}
+     */
     currentThemeStateName () {
         let stateName = "unselected"
 
@@ -234,6 +282,10 @@
         return stateName
     }
 
+    /**
+     * @description Returns the current theme state.
+     * @returns {*|null}
+     */
     currentThemeState () {
         const tc = this.currentThemeClass() 
         if (tc) {
@@ -245,8 +297,11 @@
         return null
     }
 
-    // --- theme attribute ---
-
+    /**
+     * @description Returns the theme value for a given attribute.
+     * @param {string} attributeName - The name of the attribute.
+     * @returns {*|null}
+     */
     themeValueForAttribute (attributeName) {
         const stateNode = this.currentThemeState()
         if (stateNode) {
@@ -257,17 +312,17 @@
                     console.log("no attribute found for ", this.themePathString() + " / " + attributeName)
                     return null
                 }
-                //console.log("theme: " + fullPathString + " = " + value)
                 return value
             }
         }
 
-        //console.log("no attribute node found for ", this.themePathString() + " / " + attributeName)
         return null
     }
 
-    // --- theme attribute helpers ----------------------------------
-
+    /**
+     * @description Returns the current color.
+     * @returns {string}
+     */
     currentColor () {
         const v = this.themeValueForAttribute("color")
         if (v) {
@@ -276,6 +331,10 @@
         return "inherit"
     }
 
+    /**
+     * @description Returns the current background color.
+     * @returns {string}
+     */
     currentBgColor () {
         const v = this.themeValueForAttribute("backgroundColor")
         if (v) {
@@ -284,6 +343,10 @@
         return "inherit"
     }
 
+    /**
+     * @description Resyncs all views.
+     * @returns {StyledDomView}
+     */
     resyncAllViews () {
         this.syncStylesToSubviews()
         this.applyStyles()
@@ -291,6 +354,10 @@
         return this
     }
 
+    /**
+     * @description Syncs styles to subviews.
+     * @returns {StyledDomView}
+     */
     syncStylesToSubviews () {
         return this
     }

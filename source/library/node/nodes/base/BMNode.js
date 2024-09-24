@@ -2,9 +2,6 @@
 
 /**
  * @module library.node.nodes.base
- * /
-
-/** 
  * @class BMNode
  * @extends ProtoClass
  * @classdesc The base class of model objects that supports the protocol 

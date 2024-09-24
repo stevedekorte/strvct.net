@@ -1,41 +1,63 @@
 "use strict";
 
-/*
+/**
+ * @module library.view.events.devices
+ */
 
-    EventPoint
-
-    Class to represent a 2d or 3d point, optionally with a time.
-
-    NOTES
-
-    Event's positions are set to the document (event.pageX, event.pageY) coordinates.
-    To get the viewport coordinates (event.clientX, event.clientY), 
-    use the viewportPosition() method.
-
-*/
-
+/**
+ * @class EventPoint
+ * @extends Point
+ * @classdesc Class to represent a 2d or 3d point, optionally with a time.
+ * 
+ * NOTES:
+ * 
+ * Event's positions are set to the document (event.pageX, event.pageY) coordinates.
+ * To get the viewport coordinates (event.clientX, event.clientY), 
+ * use the viewportPosition() method.
+ */
 (class EventPoint extends Point {
+    /**
+     * @description Initializes the prototype slots for the EventPoint class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {String} id - The id of the event point.
+         */
         {
             const slot = this.newSlot("id", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {String} state - The state of the event point.
+         */
         {
             const slot = this.newSlot("state", null);
             slot.setSlotType("String");
         }
+        /**
+         * @property {Element} target - The target element of the event point.
+         */
         {
             const slot = this.newSlot("target", null);
             slot.setSlotType("Element");
         }
+        /**
+         * @property {Boolean} isDown - Indicates if the event point is in a down state.
+         */
         {
             const slot = this.newSlot("isDown", false);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {DomView} overView - The view the event point is over.
+         */
         {
             const slot = this.newSlot("overView", null);
             slot.setSlotType("DomView");
         }
+        /**
+         * @property {Event} event - The associated event object.
+         */
         {
             const slot = this.newSlot("event", null);
             slot.setSlotType("Event");
@@ -49,6 +71,12 @@
     }
     */
 
+    /**
+     * @description Copies properties from another EventPoint instance.
+     * @param {EventPoint} p - The EventPoint to copy from.
+     * @param {Object} copyDict - The dictionary used for copying.
+     * @returns {EventPoint} This instance.
+     */
     copyFrom (p, copyDict) {
         super.copyFrom(p, copyDict)
         this._id = p._id
@@ -57,6 +85,10 @@
         return this
     }
 
+    /**
+     * @description Gets the view the event point is over.
+     * @returns {DomView|null} The view or null if not found.
+     */
     overView () {
         if (this._overView === null) {
             this._overView = this.findOverview()
@@ -64,6 +96,10 @@
         return this._overView
     }
 
+    /**
+     * @description Finds the view the event point is over by traversing the DOM.
+     * @returns {DomView|null} The found view or null if not found.
+     */
     findOverview () {
         debugger;
         // search up the dom elements until we find one 
@@ -82,34 +118,60 @@
         return null
     }
 
-    // viewport helpers
-
+    /**
+     * @description Gets the viewport position of the event point.
+     * @returns {Point} The viewport position.
+     */
     viewportPosition () {
         const e = this.event()
         const p = Point.clone().set(e.clientX, e.clientY)
         return p
     }
 
+    /**
+     * @description Gets the viewport height.
+     * @returns {number} The viewport height.
+     */
     viewportHeight () {
         return window.innerHeight
     }
 
+    /**
+     * @description Gets the viewport width.
+     * @returns {number} The viewport width.
+     */
     viewportWidth () {
         return window.innerWidth
     }
 
+    /**
+     * @description Gets the distance from the top of the viewport.
+     * @returns {number} The distance from the top of the viewport.
+     */
     distFromTopOfViewport () {
         return this.event().clientY
     }
 
+    /**
+     * @description Gets the distance from the bottom of the viewport.
+     * @returns {number} The distance from the bottom of the viewport.
+     */
     distFromBottomOfViewport () {
         return this.viewportHeight() - this.distFromTopOfViewport()
     }
 
+    /**
+     * @description Gets the distance from the left of the viewport.
+     * @returns {number} The distance from the left of the viewport.
+     */
     distFromLeftOfViewport () {
         return this.event().clientX
     }
 
+    /**
+     * @description Gets the distance from the right of the viewport.
+     * @returns {number} The distance from the right of the viewport.
+     */
     distFromRightOfViewport () {
         return this.viewportWidth() - this.distFromLeftOfViewport()
     }

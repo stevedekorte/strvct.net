@@ -1,30 +1,48 @@
-
 "use strict";
 
-/*
+/**
+ * @module library.view.geometry
+ */
 
-    DivTransform
-    
-*/
-
+/**
+ * @class Transform
+ * @extends ProtoClass
+ * @classdesc Represents a transformation in 3D space, including position, rotation, and scale.
+ */
 (class Transform extends ProtoClass {
+    /**
+     * @description Initializes the prototype slots for the Transform class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Point} position - The position of the transform in px units.
+         */
         {
             const slot = this.newSlot("position", null);
             slot.setComment("in px units");
             slot.setSlotType("Point");
         }
+        /**
+         * @property {Point} rotation - The rotation of the transform in degrees units.
+         */
         {
             const slot = this.newSlot("rotation", null);
             slot.setComment("in degrees units");
             slot.setSlotType("Point");
         }
+        /**
+         * @property {Point} scale - The scale of the transform.
+         */
         {
             const slot = this.newSlot("scale", null);
             slot.setSlotType("Point");
         }
     }
 
+    /**
+     * @description Initializes the Transform instance.
+     * @returns {Transform} The initialized Transform instance.
+     */
     init () {
         super.init();
         this.setPosition(Point.clone());
@@ -33,8 +51,10 @@
         return this;
     }
 
-    // css
-
+    /**
+     * @description Generates a CSS string representation of the transform.
+     * @returns {string} The CSS transform string.
+     */
     cssString () {
         // NOTE: multiple transform one line directives are applied from right to left
         const s = 
@@ -44,8 +64,10 @@
         return s
     }
 
-    // operations
-
+    /**
+     * @description Creates a copy of the current Transform instance.
+     * @returns {Transform} A new Transform instance with copied values.
+     */
     copy () {
         const t = Transform.clone()
         t.position().copy(this.position())
@@ -54,7 +76,11 @@
         return t
     }
 
-
+    /**
+     * @description Adds another Transform to this Transform in place.
+     * @param {Transform} otherTransform - The Transform to add.
+     * @returns {Transform} This Transform instance after addition.
+     */
     addInPlace (otherTransform) {
         this.position().addInPlace(otherTransform.position())
         this.rotation().addInPlace(otherTransform.rotation())

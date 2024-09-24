@@ -1,21 +1,33 @@
-"use strict";
+/**
+ * @module library.view.dom.DomView
+ */
 
-/*
-    SelectableDomView
-
-    For subclasses to extend. Ancestors of this class are organizational parts of DomView.
-
-*/
-
+/**
+ * @class SelectableDomView
+ * @extends ControlDomView
+ * @classdesc SelectableDomView
+ * 
+ * For subclasses to extend. Ancestors of this class are organizational parts of DomView.
+ */
 (class SelectableDomView extends ControlDomView {
     
+    /**
+     * @description Initializes the prototype slots for the class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Range} storedSelectionRange - The stored selection range.
+         */
         {
             const slot = this.newSlot("storedSelectionRange", null);
             slot.setSlotType("Range");
         }
     }
 
+    /**
+     * @description Gets the selected text.
+     * @returns {string} The selected text or an empty string if no selection.
+     */
     getSelectedText () {
         if (this.containsSelection()) { // this.isFocused() should be true
             const selection = window.getSelection();
@@ -26,8 +38,10 @@
         return ""
     }
 
-    // --- save / restore selection ----
-
+    /**
+     * @description Stores the current selection range.
+     * @returns {boolean} True if a range was stored, false otherwise.
+     */
     storeSelectionRange () {
         const range = this.getSelectionRange();
         if (range) {
@@ -38,6 +52,10 @@
         return false;
     }
 
+    /**
+     * @description Restores the previously stored selection range.
+     * @returns {boolean} True if a range was restored, false otherwise.
+     */
     restoreSelectionRange () {
         if (this.storedSelectionRange()) {
             console.log(this.typeId() + "--- restoring selection ---");
@@ -49,8 +67,10 @@
         return false;
     }
 
-    // --- window selection range ----
-
+    /**
+     * @description Gets the current window selection range.
+     * @returns {Range|null} The current window selection range or null if not available.
+     */
     getWindowSelectionRange () {
         if (window.getSelection) {
             const selection = window.getSelection();
@@ -64,6 +84,11 @@
         return null;
     }
 
+    /**
+     * @description Sets the window selection range.
+     * @param {Range} range - The range to set as the window selection.
+     * @returns {SelectableDomView} The instance for method chaining.
+     */
     setWindowSelectionRange (range) {
         if (range) {
             if (window.getSelection) {
@@ -77,8 +102,10 @@
         return this;
     }
 
-    // --- get / set selection range ----
-
+    /**
+     * @description Gets the current selection range if it's contained within this view.
+     * @returns {Range|null} The current selection range or null if not contained.
+     */
     getSelectionRange () {
         if (!this.containsSelection()) {
             return null;
@@ -87,6 +114,11 @@
         return this.getWindowSelectionRange();
     }
     
+    /**
+     * @description Sets the selection range if it's contained within this view.
+     * @param {Range} range - The range to set as the selection.
+     * @returns {SelectableDomView|null} The instance for method chaining or null if not contained.
+     */
     setSelectionRange (range) {
         if (!this.isContainedBySelectionRange(range)) {
             return null;
@@ -96,8 +128,10 @@
         return this;
     }
 
-    // --- set caret ----
-
+    /**
+     * @description Places the caret at the end of the content.
+     * @returns {SelectableDomView} The instance for method chaining.
+     */
     placeCaretAtEnd () {
         const el = this.element()
         el.focus();
@@ -118,7 +152,10 @@
         return this
     }
 
-    
+    /**
+     * @description Moves the caret to the end of the content.
+     * @returns {SelectableDomView} The instance for method chaining.
+     */
     moveCaretToEnd () {
         const contentEditableElement = this.element()
         let range, selection;
@@ -142,8 +179,9 @@
         return this
     }
 
-    // --- text selection ------------------
-
+    /**
+     * @description Selects all content within the view.
+     */
     selectAll () {
         if (document.selection) {
             const range = document.body.createTextRange();
@@ -158,8 +196,11 @@
         }
     }
 
-     // ------------
-
+    /**
+     * @description Replaces the selected text with the provided replacement text.
+     * @param {string} replacementText - The text to replace the selection with.
+     * @returns {SelectableDomView} The instance for method chaining.
+     */
      replaceSelectedText (replacementText) {
         let range;
         if (window.getSelection) {
@@ -187,8 +228,10 @@
         return this
     }
 
-    // untested
-
+    /**
+     * @description Gets the current caret position.
+     * @returns {number} The caret position.
+     */
     getCaretPosition () {
         const editableElement = this.element()
         let caretPos = 0
@@ -214,6 +257,10 @@
         return caretPos;
     }
 
+    /**
+     * @description Sets the caret position.
+     * @param {number} caretPos - The desired caret position.
+     */
     setCaretPosition (caretPos) {
         const e = this.element();
 
@@ -234,8 +281,10 @@
         }
     }
 
-    // ---------------
-
+    /**
+     * @description Clears the selection if it's contained within this view.
+     * @returns {SelectableDomView} The instance for method chaining.
+     */
     clearSelection () { // only clear it if the selection is in this view
         if (!this.containsSelection()) {
             return this;
@@ -249,8 +298,11 @@
         return this;
     }
 
-    // --- selection ---
-
+    /**
+     * @description Checks if the given range is contained within this view.
+     * @param {Range} range - The range to check.
+     * @returns {boolean} True if the range is contained, false otherwise.
+     */
     isContainedBySelectionRange (range) {
         if (range) {
             const containsElement = range.intersectsNode(this.element(), true);
@@ -259,12 +311,20 @@
         return false;
     }
 
+    /**
+     * @description Checks if this view is in the window selection.
+     * @returns {boolean} True if the view is in the window selection, false otherwise.
+     */
     isInWindowSelection () {
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);
         return this.isContainedBySelectionRange(range);
     }
 
+    /**
+     * @description Checks if this view contains the current selection.
+     * @returns {boolean} True if the view contains the selection, false otherwise.
+     */
     containsSelection () {
         const selection = window.getSelection();
         const range = selection.getRangeAt(0);

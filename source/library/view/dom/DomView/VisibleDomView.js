@@ -1,47 +1,69 @@
-"use strict";
+/**
+ * @module library.view.dom.DomView
+ */
 
-/*
-    VisibleDomView
-
-    Support for visibility events.
-
-*/
-
+/**
+ * @class VisibleDomView
+ * @extends ListenerDomView
+ * @classdesc Support for visibility events.
+ */
 (class VisibleDomView extends ListenerDomView {
     
+    /**
+     * @description Initializes the prototype slots for the VisibleDomView.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Boolean} isRegisteredForVisibility
+         */
         {
             const slot = this.newSlot("isRegisteredForVisibility", false);
             slot.setSlotType("Boolean");
         }
+        /**
+         * @property {IntersectionObserver} intersectionObserver
+         */
         {
             const slot = this.newSlot("intersectionObserver", null);
             slot.setSlotType("IntersectionObserver");
         }
+        /**
+         * @property {Function} onVisibilityCallback
+         */
         {
             const slot = this.newSlot("onVisibilityCallback", null);
             slot.setSlotType("Function");
         }
     }
 
-    // visibility event
-
+    /**
+     * @description Handles the visibility event.
+     * @returns {boolean}
+     */
     onVisibility () {
         //this.debugLog(".onVisibility()")
         const callback = this.onVisibilityCallback()
         if (callback) {
             callback()
-
         }
 
         this.unregisterForVisibility()
         return true
     }
 
+    /**
+     * @description Checks if the view is registered for visibility.
+     * @returns {boolean}
+     */
     isRegisteredForVisibility () {
         return !Type.isNull(this.intersectionObserver())
     }
 
+    /**
+     * @description Sets the registration for visibility.
+     * @param {boolean} aBool - Whether to register or unregister for visibility.
+     * @returns {VisibleDomView}
+     */
     setIsRegisteredForVisibility (aBool) {
         if (aBool !== this.isRegisteredForVisibility()) {
             if (aBool) {
@@ -53,6 +75,10 @@
         return this
     }
 
+    /**
+     * @description Unregisters the view from visibility observation.
+     * @returns {VisibleDomView}
+     */
     unregisterForVisibility () {
         const obs = this.intersectionObserver()
         if (obs) {
@@ -63,6 +89,10 @@
         return this
     }
 
+    /**
+     * @description Returns the root element for visibility observation.
+     * @returns {HTMLElement}
+     */
     visibilityRoot () {
         // our element must be a decendant of the visibility root element
         let root = document.body
@@ -74,6 +104,10 @@
         return root
     }
 
+    /**
+     * @description Registers the view for visibility observation.
+     * @returns {VisibleDomView}
+     */
     registerForVisibility () { // this is a oneShot event, as onVisibility() unregisters
         if (this.isRegisteredForVisibility()) {
             return this
@@ -97,6 +131,11 @@
         return this
     }
 
+    /**
+     * @description Handles the intersection observation.
+     * @param {IntersectionObserverEntry[]} entries - The intersection entries.
+     * @param {IntersectionObserver} observer - The intersection observer.
+     */
     handleIntersection (entries, observer) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {

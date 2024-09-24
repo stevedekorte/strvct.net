@@ -1,34 +1,49 @@
 "use strict";
 
-/*
-    Rectangle
+/**
+ * @module library.view.geometry
+ */
 
-    Class to represent a rectangle.
-
-    NOTES
-
-    For top & bottom, we assume we are using screen coordinates so:
-
-        top = x
-    
-    and:
-
-        bottom = x + height
-
-*/
-
+/**
+ * @class Rectangle
+ * @extends ProtoClass
+ * @classdesc Class to represent a rectangle.
+ * 
+ * NOTES
+ * 
+ * For top & bottom, we assume we are using screen coordinates so:
+ * 
+ *     top = x
+ * 
+ * and:
+ * 
+ *     bottom = x + height
+ */
 (class Rectangle extends ProtoClass {
+    /**
+     * @description Initializes the prototype slots for the Rectangle class.
+     */
     initPrototypeSlots () {
+        /**
+         * @property {Point} origin - The origin point of the rectangle.
+         */
         {
             const slot = this.newSlot("origin", null);
             slot.setSlotType("Point");
         }
+        /**
+         * @property {Point} size - The size of the rectangle.
+         */
         {
             const slot = this.newSlot("size", null);
             slot.setSlotType("Point");
         }
     }
 
+    /**
+     * @description Initializes a new Rectangle instance.
+     * @returns {Rectangle} The initialized Rectangle instance.
+     */
     init () {
         super.init()
         this.setOrigin(Point.clone())
@@ -36,26 +51,50 @@
         return this
     }
 
+    /**
+     * @description Creates a duplicate of the current Rectangle instance.
+     * @returns {Rectangle} A new Rectangle instance with copied properties.
+     */
     duplicate () {
         return this.thisClass().clone().copyFrom(this)
     }
 
+    /**
+     * @description Copies properties from another Rectangle instance.
+     * @param {Rectangle} aRect - The Rectangle instance to copy from.
+     * @returns {Rectangle} This Rectangle instance.
+     */
     copyFrom (aRect) {
         this.origin().copyFrom(aRect.origin())
         this.size().copyFrom(aRect.size())
         return this
     }
     
+    /**
+     * @description Checks if the Rectangle contains a given point.
+     * @param {Point} p - The point to check.
+     * @returns {boolean} True if the point is contained within the Rectangle, false otherwise.
+     */
     containsPoint (p) {
         const a = p.isGreaterThanOrEqualTo(this.origin()) 
         const b = p.isLessThanOrEqualTo(this.maxPoint())
         return a && b
     }
 
+    /**
+     * @description Checks if the Rectangle contains another Rectangle.
+     * @param {Rectangle} r - The Rectangle to check.
+     * @returns {boolean} True if the Rectangle contains the other Rectangle, false otherwise.
+     */
     containsRectangle (r) {
         return r.origin().isGreaterThanOrEqualTo(this.origin()) && r.maxPoint().isLessThanOrEqualTo(this.maxPoint())
     }
 
+    /**
+     * @description Creates a new Rectangle that is the union of this Rectangle and another.
+     * @param {Rectangle} r - The Rectangle to union with.
+     * @returns {Rectangle} A new Rectangle representing the union.
+     */
     unionWith (r) {
         const u = Rectangle.clone()
         const o1 = this.origin()
@@ -73,96 +112,167 @@
         return u
     }
 
+    /**
+     * @description Gets the maximum point of the Rectangle.
+     * @returns {Point} The maximum point of the Rectangle.
+     */
     maxPoint () {
         return this.origin().add(this.size())
     }
 
+    /**
+     * @description Returns a string representation of the Rectangle.
+     * @returns {string} A string representation of the Rectangle.
+     */
     asString () {
         return this.type() + "(" + this.origin().asString() + ", " + this.size().asString() + ")"
     }
 
-    // x, y
-
+    /**
+     * @description Gets the x-coordinate of the Rectangle's origin.
+     * @returns {number} The x-coordinate of the Rectangle's origin.
+     */
     x () {
         return this.origin().x();
     }
 
+    /**
+     * @description Gets the y-coordinate of the Rectangle's origin.
+     * @returns {number} The y-coordinate of the Rectangle's origin.
+     */
     y () {
         return this.origin().y();
     }
 
+    /**
+     * @description Gets the minimum x-coordinate of the Rectangle.
+     * @returns {number} The minimum x-coordinate of the Rectangle.
+     */
     minX () {
         return this.x()
     }
 
+    /**
+     * @description Gets the minimum y-coordinate of the Rectangle.
+     * @returns {number} The minimum y-coordinate of the Rectangle.
+     */
     minY () {
         return this.y()
     }
 
+    /**
+     * @description Gets the maximum x-coordinate of the Rectangle.
+     * @returns {number} The maximum x-coordinate of the Rectangle.
+     */
     maxX () {
         return this.x() + this.width()
     }
 
+    /**
+     * @description Gets the maximum y-coordinate of the Rectangle.
+     * @returns {number} The maximum y-coordinate of the Rectangle.
+     */
     maxY () {
         return this.y() + this.height()
     }
     
+    /**
+     * @description Sets the maximum x-coordinate of the Rectangle.
+     * @param {number} mx - The new maximum x-coordinate.
+     * @returns {Rectangle} This Rectangle instance.
+     */
     setMaxX (mx) {
         const w = mx - this.x()
         this.setWidth(w)
         return this
     }
 
+    /**
+     * @description Sets the maximum y-coordinate of the Rectangle.
+     * @param {number} my - The new maximum y-coordinate.
+     * @returns {Rectangle} This Rectangle instance.
+     */
     setMaxY (my) {
         const h = my - this.y()
         this.setHeight(h)
         return this
     }
 
-    // width 
-
+    /**
+     * @description Sets the width of the Rectangle.
+     * @param {number} w - The new width.
+     * @returns {Rectangle} This Rectangle instance.
+     */
     setWidth (w) {
         assert(w >= 0)
         this.size().setX(w)
         return this
     }
 
+    /**
+     * @description Gets the width of the Rectangle.
+     * @returns {number} The width of the Rectangle.
+     */
     width () {
         return this.size().x();
     }
 
-    // height
-
+    /**
+     * @description Sets the height of the Rectangle.
+     * @param {number} h - The new height.
+     * @returns {Rectangle} This Rectangle instance.
+     */
     setHeight (h) {
         assert(h >= 0)
         this.size().setY(h)
         return this
     }
 
+    /**
+     * @description Gets the height of the Rectangle.
+     * @returns {number} The height of the Rectangle.
+     */
     height () {
         return this.size().y();
     }
 
-    // top, bottom
-
+    /**
+     * @description Gets the top coordinate of the Rectangle.
+     * @returns {number} The top coordinate of the Rectangle.
+     */
     top () {
         return this.y() 
     }
 
+    /**
+     * @description Gets the bottom coordinate of the Rectangle.
+     * @returns {number} The bottom coordinate of the Rectangle.
+     */
     bottom () {
         return this.y() + this.height() 
     }
 
-    // left, right
-
+    /**
+     * @description Gets the left coordinate of the Rectangle.
+     * @returns {number} The left coordinate of the Rectangle.
+     */
     left () {
         return this.x() 
     }
 
+    /**
+     * @description Gets the right coordinate of the Rectangle.
+     * @returns {number} The right coordinate of the Rectangle.
+     */
     right () {
         return this.x() + this.width() 
     }
 
+    /**
+     * @description Sets the bounds of the Rectangle based on a set of points.
+     * @param {Point[]} points - An array of Points to determine the bounds.
+     * @returns {Rectangle} This Rectangle instance.
+     */
     makeBoundsOfPoints (points) {
         const firstPoint = points[0]
         let minX = firstPoint.x()
