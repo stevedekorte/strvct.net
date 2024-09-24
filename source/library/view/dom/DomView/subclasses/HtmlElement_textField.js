@@ -33,7 +33,7 @@
 
 assert(HTMLElement.prototype.clone === undefined);
 
-(class HTMLElement_textField extends HTMLElement {
+const newClass = (class HTMLElement_textField extends HTMLElement {
 
     /**
      * @description Clone.
@@ -233,7 +233,9 @@ assert(HTMLElement.prototype.clone === undefined);
     };
 
 
-}).initThisCategory();
+}); //.initThisCategory();
+
+Object.initThisCategory.apply(newClass);
 
 /*
 

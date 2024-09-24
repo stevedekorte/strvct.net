@@ -142,15 +142,6 @@
             slot.setSlotType("Boolean");
         }
 
-        /**
-         * @property {Boolean} allowsSetStringWhileFocused
-         * @description Whether the text field allows set string while focused.
-         */
-        {
-            const slot = this.newSlot("allowsSetStringWhileFocused", false);
-            slot.setSlotType("Boolean");
-        }
-
         // has to start false for proper state setup
 
         /**
