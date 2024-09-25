@@ -1,3 +1,7 @@
+/**
+ * @module StrvctHttpsServer
+ */
+
 "use strict";
 
 require("./getGlobalThis.js")
@@ -9,20 +13,58 @@ const http = require('http');
 const fs = require('fs');
 const nodePath = require('path');
 
+/**
+ * @class StrvctHttpsServer
+ * @extends Base
+ * @classdesc Represents an HTTPS server with optional HTTP support.
+ */
 (class StrvctHttpsServer extends Base {
 	
+	/**
+	 * Initializes the prototype slots for the StrvctHttpsServer.
+	 */
 	initPrototypeSlots () {
+		/**
+		 * @property {Object} server - The server instance.
+		 */
 		this.newSlot("server", null);
+
+		/**
+		 * @property {string} hostname - The hostname for the server.
+		 */
 		this.newSlot("hostname", "localhost");
+
+		/**
+		 * @property {number} port - The port number for the server.
+		 */
 		this.newSlot("port", null);
+
+		/**
+		 * @property {string} keyPath - The path to the server key file.
+		 */
 		this.newSlot("keyPath", null);
+
+		/**
+		 * @property {string} certPath - The path to the server certificate file.
+		 */
 		this.newSlot("certPath", null);
+
+		/**
+		 * @property {boolean} isSecure - Indicates whether the server should use HTTPS.
+		 */
 		this.newSlot("isSecure", true);
 	}
   
+	/**
+	 * Initializes the prototype.
+	 */
 	initPrototype () {
 	}
 
+	/**
+	 * Initializes the StrvctHttpsServer instance.
+	 * @returns {StrvctHttpsServer} The initialized instance.
+	 */
 	init () {
 		super.init();
 		this.setPort(8000);
@@ -31,6 +73,10 @@ const nodePath = require('path');
 		return this
 	}
 	
+	/**
+	 * Returns the options for creating an HTTPS server.
+	 * @returns {Object} The server options.
+	 */
 	options () {
 		return {
 			key: fs.readFileSync(this.keyPath()),
@@ -38,10 +84,17 @@ const nodePath = require('path');
 		}
 	}
 
+	/**
+	 * Returns the protocol being used by the server.
+	 * @returns {string} The protocol ("https" or "http").
+	 */
 	protocol () {
 		return this.isSecure() ? "https" : "http";
 	}
 
+	/**
+	 * Runs the server.
+	 */
 	run () {
 		if (this.isSecure()) {
 			console.log("running HTTPS");
@@ -65,6 +118,11 @@ const nodePath = require('path');
 		console.log("      url: " + this.protocol() + "://" + this.hostname() + ":" + this.port() + "/index.html")
 	}
 
+	/**
+	 * Handles incoming requests.
+	 * @param {Object} request - The incoming request object.
+	 * @param {Object} response - The response object.
+	 */
 	onRequest (request, response) {
 		//console.log("got request ", request)
 		try {
@@ -78,6 +136,10 @@ const nodePath = require('path');
 		}
 	}
 
+	/**
+	 * Waits for a specified number of milliseconds.
+	 * @param {number} ms - The number of milliseconds to wait.
+	 */
 	wait (ms) {
 		console.log("wait(" + ms + ")");
 		const start = Date.now();

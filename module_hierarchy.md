@@ -4,6 +4,13 @@
   - STRVCT
     - StrvctApp
       - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
+- boot
+  - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
+  - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
+  - [IndexedDBFolder](./class_doc.html?path=source%2Fboot%2FIndexedDBFolder.js)
+  - [IndexedDBTx](./class_doc.html?path=source%2Fboot%2FIndexedDBTx.js)
+  - [ResourceManager](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
+  - [UrlResource](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
 - browser
   - stack
     - Tile
@@ -20,22 +27,16 @@
 - globals
   - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
   - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
-  - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
   - [Folder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FResourceIndexer.js)
-  - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)
-  - [IndexedDBFolder](./class_doc.html?path=source%2Fboot%2FIndexedDBFolder.js)
-  - [IndexedDBTx](./class_doc.html?path=source%2Fboot%2FIndexedDBTx.js)
   - [MimeExtensions](./class_doc.html?path=source%2Flibrary%2Fresources%2FMimeExtensions.js)
   - [Mirror](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
   - [ProtoClass](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
-  - [ResourceManager](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [RootContentNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FRootContentNode.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
   - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)
-  - [UrlResource](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [Worker](./class_doc.html?path=source%2FServiceWorker%2FWorker.js)
   - [XhrWrapper](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FXhrWrapper.js)
 - HomeAssistant

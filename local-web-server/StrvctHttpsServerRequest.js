@@ -1,3 +1,7 @@
+/**
+ * @module
+ */
+
 "use strict";
 
 /*
@@ -28,32 +32,62 @@ const nodePath = require('path');
 //const { PassThrough } = require('stream');
 const https = require('https');
 
+/**
+ * @class StrvctHttpsServerRequest
+ * @extends Base
+ * @classdesc Handles HTTPS server requests, including file and proxy requests.
+ */
 (class StrvctHttpsServerRequest extends Base {
 	
 	initPrototypeSlots () {
+		/**
+		 * @property {Object} server - The server instance.
+		 */
 		this.newSlot("server", null);
+
+		/**
+		 * @property {Object} request - The request object.
+		 */
 		this.newSlot("request", null);
+
+		/**
+		 * @property {Object} response - The response object.
+		 */
 		this.newSlot("response", null);
+
+		/**
+		 * @property {URL} urlObject - The URL object of the request.
+		 */
 		this.newSlot("urlObject", null);
+
+		/**
+		 * @property {Map} queryMap - The query parameters as a Map.
+		 */
 		this.newSlot("queryMap", null);
+
+		/**
+		 * @property {string} path - The request path.
+		 */
 		this.newSlot("path", null);
+
+		/**
+		 * @property {string} localAcmePath - The local path for ACME challenge.
+		 */
 		this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/");
 	}
   
 	initPrototype () {
 	}
 
+	/**
+	 * @description Processes the incoming request.
+	 */
 	process () {
-		//this.response().write("request:\n, this.requestDescription(request))
 		console.log("request url:" + this.request().url)
-		//console.log("  decoded url:" + decodeURI(this.request().url))
 		this.setUrlObject(this.getUrlObject())
 	
 		this.setQueryMap(this.getQueryMap())
 		this.setPath(this.getPath())
-
-		//console.log("  path: '" + this.path() + "'\n" );			
-		//console.log("  getQueryMap entries: '" + JSON.stringify([...this.queryMap().entries()], 2, 2) + "'\n" );		
 
 		try {
 			if (this.queryMap().get("proxyUrl")) {
@@ -71,14 +105,15 @@ const https = require('https');
                     error.cause = error;
                 }
 				console.log("ERROR: ", error.message);
-				//throw error;
 			}
 		}
 	}
 
-	// --- handle proxy request --------------------------
-
-
+	/**
+	 * @description Generates a curl command for the given proxy options.
+	 * @param {Object} options - The proxy options.
+	 * @returns {string} The curl command.
+	 */
 	proxyCurlCommandForOptions (options) {
 		const commandParts = [];
 		const url = "https://" + options.hostname + options.path;
@@ -90,44 +125,13 @@ const https = require('https');
 		  commandParts.push(" --header '" + key + ": " + value + "'");
 		});
 	
-		// it becomes a POST reqeust if there is a body
-		//const data = "" //JSON.stringify(this.bodyJson());
-		//commandParts.push(" --data '" + data + "'");
 		return commandParts.join(" \\\n");
 	  }
 
-	  
+	/**
+	 * @description Handles proxy requests.
+	 */  
 	onProxyRequest () {
-
-		/* 
-		example headers:
-
-		"method": "POST",
-		"headers": {
-		  "host": "localhost:8000",
-		  "connection": "keep-alive",
-		  "content-length": "122",
-		  "sec-ch-ua": "\"Chromium\";v=\"122\", \"Not(A:Brand\";v=\"24\", \"Google Chrome\";v=\"122\"",
-		  "anthropic-beta": "messages-2023-12-15",
-		  "sec-ch-ua-mobile": "?0",
-		  "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-		  "authorization": "Bearer I_USED_MY_KEY_ HERE",
-		  "content-type": "application/json",
-		  "anthropic-version": "2023-06-01",
-		  "sec-ch-ua-platform": "\"macOS\"",
-		  "origin": "https://localhost:8000",
-		  "sec-fetch-site": "same-origin",
-		  "sec-fetch-mode": "cors",
-		  "sec-fetch-dest": "empty",
-		  "referer": "https://localhost:8000/index.html",
-		  "accept-encoding": "gzip, deflate, br",
-		  "accept-language": "en-US,en;q=0.9",
-		  "Host": "api.anthropic.com"
-		},
-		*/
-
-		//also: "accept": "*/*",
-
 		try {
 			const req = this.request();
 			const res = this.response();
@@ -137,7 +141,6 @@ const https = require('https');
 
 			const parsedUrl = new URL(url);
 			const hostname = parsedUrl.hostname;
-			// Incoming request handler
 			const options = {
 				hostname: hostname,
 				path: parsedUrl.pathname + parsedUrl.search,
@@ -158,47 +161,21 @@ const https = require('https');
 				"sec-ch-ua-platform",
 				"accept-language",
 				"accept-encoding"
-			]; // not sure if this is needed
+			];
 
 			unneededHeaderKeys.forEach(key => delete options.headers[key]);
 
 			options.headers["host"] = hostname;
-			options.headers["sec-fetch-mode"] = "cors"; //"same-origin";
-
-			/* 
-			    Here is where we have a chance to insert auth keys, etc.
-
-			    If clients shares these headers:
-				- x-user-public-key
-				- x-user-request-signature 
-				- x-user-service-name
-
-				then we can:
-			   - verify user is in our system and has credits
-			   - verify signture for request
-			   - if all checks out, we lookup and add appropriate service auth key header
-
-
-			*/
+			options.headers["sec-fetch-mode"] = "cors";
 		
 			let responseBody = [];
-
-			/*
-			console.log("----------------------------------------------------");
-			console.log("proxy request options: ", JSON.stringify(options, null, 2));
-			console.log("----------------------------------------------------");
-			console.log("proxyCurlCommandForOptions: " +this.proxyCurlCommandForOptions(options));
-			console.log("----------------------------------------------------");
-			*/
 
 			const reqBodyParts = [];
 
 			const proxyReq = https.request(options, (proxyRes) => {
 				const headers = proxyRes.headers;
-				//headers['Content-Type'] = mimeType;
 				delete headers['Access-Control-Allow-Origin'.toLowerCase()];
 				headers['Access-Control-Allow-Origin'] = '*',
-				//assert(proxyRes.statusCode === 200, "proxy request failed with status code: " + proxyRes.statusCode);
 				res.writeHead(proxyRes.statusCode, proxyRes.headers);
 
 				proxyRes.on('data', (chunk) => {
@@ -210,17 +187,13 @@ const https = require('https');
 					const contentType = proxyRes.headers['content-type'];
 					const contentEncoding = proxyRes.headers['content-encoding'];
 					const responseBuffer = Buffer.concat(responseBody);
-					//console.log('proxyRes headers: ', JSON.stringify(proxyRes.headers, null, 2));
 					console.log('proxyRes responseBuffer.byteLength: ', responseBuffer.byteLength, " bytes in " + contentEncoding + " encoding");
 			
 					res.end();
 				});
-				
-				// ...
 			
 				proxyRes.on('error', (error) => {
 					console.error(`Error: ${error.message}`);
-					//res.statusCode = proxyRes.statusCode; // may be undefined
 
 					const errorMessage = "proxy request error: '" + error.message + "' " + this.nameForXhrStatusCode(proxyReq.statusCode) + " for url: " + url + "";
 					console.log(errorMessage);
@@ -245,9 +218,6 @@ const https = require('https');
 						const isText = contentType.startsWith('text') || contentType.startsWith('application/json') || contentType.startsWith('application/javascript');
 						if (isText) {
 							console.log("  request body is text of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
-							//const body = Buffer.concat(reqBodyParts).toString('utf-8');
-							//console.log(body); // only works for text
-							//console.log("  request body is text of " + body.length + " characters");
 						} else {
 							console.log("  request body is binary of " + Buffer.concat(reqBodyParts).byteLength + " bytes");
 						}
@@ -261,35 +231,30 @@ const https = require('https');
 		}
 	}
 
-	/*
-	onProxyRequestSuccess (mimeType, data) {
-		// need to do this last so we know the mime type
-		this.response().writeHead(200, {
-			'Content-Type': mimeType,
-			'Access-Control-Allow-Origin': '*',
-		});
-
-		this.response().write(data);
-		this.response().end();
-	}
-	*/
-
+	/**
+	 * @description Handles proxy request errors.
+	 * @param {Error} error - The error object.
+	 */
 	onProxyRequestError (error) {
 		console.error('proxy request error:', error.message);
 	}
 
-	// -----------------------------
-
+	/**
+	 * @description Gets the URL object for the current request.
+	 * @returns {URL} The URL object.
+	 */
 	getUrlObject () {
 		return new URL("https://" + this.server().hostname() + this.request().url)
 	}
 
+	/**
+	 * @description Gets the path for the current request.
+	 * @returns {string} The request path.
+	 */
 	getPath () {
-		//return nodePath.join(process.cwd(), decodeURI(this.urlObject().pathname))
 		let path = nodePath.join(".", decodeURI(this.urlObject().pathname));
 		if (path === "./") {
 			path = "./index.html";
-			//path = "index.html";
 		}
 
 		const acmePath = ".well-known/acme-challenge/"
@@ -300,6 +265,10 @@ const https = require('https');
 		return path;
 	}
 
+	/**
+	 * @description Gets the file extension of the current path.
+	 * @returns {string|undefined} The file extension or undefined if not found.
+	 */
 	getPathExtension () {
 		if (this.path().indexOf(".") !== -1) {
 			return this.path().split('.').pop();
@@ -307,12 +276,16 @@ const https = require('https');
 		return undefined
 	}
 
+	/**
+	 * @description Generates a description of the request.
+	 * @returns {string} The request description.
+	 */
 	requestDescription () {
 		const request = this.request()
 		let s = ""
 		const keys = []
 
-		for (k in request) {
+		for (let k in request) {
 			keys.push(k)
 		}
 		keys.sort()
@@ -329,6 +302,10 @@ const https = require('https');
 		return s
 	}
 
+	/**
+	 * @description Gets the query parameters as a Map.
+	 * @returns {Map} The query parameters Map.
+	 */
 	getQueryMap () {
 		const queryMap = new Map()
 		const entries = Array.from(this.urlObject().searchParams.entries())
@@ -338,26 +315,26 @@ const https = require('https');
 		return queryMap
 	}
 
+	/**
+	 * @description Asserts that the path is within the sandbox.
+	 * @throws {Error} If the path is outside the sandbox.
+	 */
 	assertPathInSandbox () {
 		const path = this.path()
 
 		const sandboxPath =  process.cwd()
 		const normalPath = nodePath.normalize(path)
-		const pathRelativeToCwd = nodePath.relative(sandboxPath, normalPath); // relative from, to
-
-		/*
-		console.log("path: '" + path + "'")
-		console.log("sandboxPath: '" + sandboxPath + "'")
-		console.log("normalPath: '" + normalPath + "'")
-		console.log("pathRelativeToCwd: '" + pathRelativeToCwd + "'")
-		console.log("---")
-		*/
+		const pathRelativeToCwd = nodePath.relative(sandboxPath, normalPath);
 
 		if (pathRelativeToCwd.indexOf("..") !== -1) {
 			this.throwCodeAndMessage(401, "error: attempt to access file path '" + path + "' which is outside of sandbox path '" + sandboxPath + "' relative path is '" + pathRelativeToCwd + "'");
 		}
 	}
 
+	/**
+	 * @description Asserts that the path exists.
+	 * @throws {Error} If the path does not exist.
+	 */
 	assertPathExists () {
 		const path = this.path();
 		if (!fs.existsSync(path)) {
@@ -365,6 +342,10 @@ const https = require('https');
 		}
 	}
 
+	/**
+	 * @description Asserts that the path does not contain dot components.
+	 * @throws {Error} If the path contains dot components.
+	 */
 	assertNonDotPath () {
 		const path = this.path();
 		const dotComponents = path.split("/").filter(pathComponent => pathComponent.startsWith(".."));
@@ -374,44 +355,38 @@ const https = require('https');
 		}
 	}
 
+	/**
+	 * @description Throws an error with a specific code and message.
+	 * @param {number} code - The error code.
+	 * @param {string} message - The error message.
+	 * @throws {Error} The error with the specified code and message.
+	 */
 	throwCodeAndMessage (code, message) {
-		//debugger;
 		const error = new Error(message);
 		error._code = code;
 		throw error;
 	}
 
+	/**
+	 * @description Handles file requests.
+	 * @async
+	 */
 	async onFileRequest () {
 		try {
-			//console.log("  path:" + path)
 			const path = this.path()
 
-			// Ensure there is a file extension
-			// need this to determine contentType
-
 			const ext = this.getPathExtension()
-			//console.log("  ext:" + ext)
 
 			if (!ext) {
 				this.throwCodeAndMessage(401, "  error: no file extension found in path: '" + path + "'");
 				return
 			}
 
-			// Ensure request is for a valid content type
-			// need this so client will accept our contentType response header
-
 			let contentType = MimeExtensions.shared().mimeTypeForPathExtension(ext)
 
 			if (!contentType) {
-				//contentType = MimeExtensions.shared().mimeTypeForPathExtension("txt")
 				contentType = "application/octet-stream";
 				console.log("  WARNING: no known mime type for extension: '" + ext + "' so we'll assume " + contentType);
-				/*
-				this.response().writeHead(401, {})
-				this.response().end()
-				console.log("  error: no known mime type for extension: '" + ext + "'")
-				return
-				*/
 			}
 
 			if (path.startsWith(this.localAcmePath())) {
@@ -423,8 +398,6 @@ const https = require('https');
 			this.assertPathExists();
 			this.assertNonDotPath();
 
-			// Send header and stream file response
-
 			const header = {
 				'Content-Type': contentType,
 				'Cache-Control': 'no-cache',
@@ -432,9 +405,7 @@ const https = require('https');
 			};
 
 			this.response().writeHead(200, header);
-			//console.log("header:" + JSON.stringify(header));
 
-			//this.syncWriteFileToResponse(path, this.response());
 			this.streamFileContentToResponse(path, this.response());
 		} catch (error) {
 			if (error._code) {
@@ -447,60 +418,31 @@ const https = require('https');
 		}
 	}
 
-	/*
-	syncWriteFileToResponse (path, response) {
-		const data = fs.readFileSync(path)
-		//this.response().write(data.toString());		
-		this.response().write(data);
-		//console.log("  sent " + data.length + " bytes")	
-		this.response().end();
-	}
-	*/
-
+	/**
+	 * @description Streams file content to the response.
+	 * @param {string} path - The file path.
+	 * @param {Object} response - The response object.
+	 * @returns {StrvctHttpsServerRequest} This instance.
+	 */
 	streamFileContentToResponse (path, response) {
 		const readStream = fs.createReadStream(path);
 	
 		readStream.on('error', (error) => {
-			// Handle error, such as file not found
 			console.error('Error reading file:', error);
-			// Optionally, send an error response
 			response.writeHead(500, {'Content-Type': 'text/plain'});
 			response.end('Error reading file');
-			//this.throwCodeAndMessage(500, "error: reading file ", path);
 		});
 	
 		readStream.pipe(response);
 		return this;
 	}
 
-	/*
-	onQuery () {
-		//how to handle non-file requests?
-		//http://host/path?query
-		//ignore path, send decoded query dict to app handleQuery(queryDict) method? 	
-
-		const resultJson = app.handleServerRequest(this.request(), this.response(), this.queryDict())
-		const jsonString = JSON.stringify(resultJson)
-
-		this.response().writeHead(200, {
-			'Content-Type': "application/json",
-			'Access-Control-Allow-Origin': '*',
-		});
-		this.response().write(jsonString);
-		//console.log("  sent json " + jsonString.length + " bytes")	
-		this.response().end();
-		return
-	}
-	*/
-
+	/**
+	 * @description Gets the name for an XHR status code.
+	 * @param {number} statusCode - The XHR status code.
+	 * @returns {string} The name of the status code.
+	 */
 	nameForXhrStatusCode (statusCode) {
-		/**
-		   * This function returns a brief description of an XHR status code.
-		   * 
-		   * @param {number} statusCode - The XHR status code.
-		   * @returns {string} - A brief description of the status, or "Unknown status".
-		   */
-	
 		const xhrStatuses = {
 		  0: "Not started: Network Error, Request Blocked, or CORS issue",
 		  100: "Continue",
@@ -518,26 +460,5 @@ const https = require('https');
 	
 		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
 	  }
-	
-	  /*
-	  nameForXhrReadyState (readyState) {
-		 // This function returns a brief description of an XHR readyState.
-		 // 
-		 // @param {number} readyState - The XHR readyState value.
-		 // @returns {string} - A brief description of the state, or "Unknown state".
-		 //
-	
-		const xhrStates = {
-		  0: "Request not initialized",
-		  1: "Server connection established",
-		  2: "Request received",
-		  3: "Processing request",
-		  4: "Request finished"
-		};
-	
-		return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
-	  }
-	  */
-	
 
 }.initThisClass());

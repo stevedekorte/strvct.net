@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module boot.IndexedDBFolder
+ * @module boot
  */
 
 /**

@@ -1,5 +1,5 @@
 /**
- * @module boot.HashCache
+ * @module boot
  */
 
 "use strict";

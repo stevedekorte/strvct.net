@@ -1,43 +1,102 @@
+/**
+ * @module boot
+ */
+
 "use strict";
 
-/* 
-
-    IndexedDBTx
-
-    Abstraction of a single IndexedDB transaction.
-
-*/
-
+/**
+ * @class IndexedDBTx
+ * @extends Base
+ * @classdesc Abstraction of a single IndexedDB transaction.
+ */
 (class IndexedDBTx extends Base {
 
     /** 
-     * test 
-    */
+     * Initialize prototype slots
+     */
     initPrototypeSlots () {
+        /**
+         * @property {object} dbFolder - Database folder object
+         */
         this.newSlot("dbFolder", null)
+
+        /**
+         * @property {object} objectStore - IndexedDB object store
+         */
         this.newSlot("objectStore", null)
+
+        /**
+         * @property {object} tx - IndexedDB transaction object
+         */
         this.newSlot("tx", null)
+
+        /**
+         * @property {Array} requests - Array of transaction requests
+         */
         this.newSlot("requests", [])
+
+        /**
+         * @property {boolean} isCommitted - Flag indicating if transaction is committed
+         */
         this.newSlot("isCommitted", false) // set to true when tx.commit() is called
+
+        /**
+         * @property {boolean} isAborted - Flag indicating if transaction is aborted
+         */
         this.newSlot("isAborted", false)
+
+        /**
+         * @property {boolean} isCompleted - Flag indicating if transaction is completed
+         */
         this.newSlot("isCompleted", false) // set to true after tx commit onsuccess callback received 
+
+        /**
+         * @property {Error} txRequestStack - Stack trace of transaction request
+         */
         this.newSlot("txRequestStack", null)
+
+        /**
+         * @property {object} options - Transaction options
+         */
         this.newSlot("options", { "durability": "strict" })
+
+        /**
+         * @property {string} txId - Transaction ID
+         */
         this.newSlot("txId", null)
+
+        /**
+         * @property {Promise} promiseForCommit - Promise for transaction commit
+         */
         this.newSlot("promiseForCommit", null)
+
+        /**
+         * @property {Promise} promiseForFinished - Promise for transaction finish
+         */
         this.newSlot("promiseForFinished", null)
+
+        /**
+         * @property {number} timeoutInMs - Transaction timeout in milliseconds
+         */
         this.newSlot("timeoutInMs", 1000);
     }
   
     initPrototype () {
     }
 
+    /**
+     * Initialize the instance
+     */
     init () {
         super.init()
         this.setPromiseForFinished(Promise.clone());
         //this.setIsDebugging(false) // this will be overwritten by db with it's own isDebugging setting
     }
 
+    /**
+     * Mark the transaction as completed
+     * @returns {IndexedDBTx}
+     */
     markCompleted () {
         assert(!this.isCompleted());
         this.setIsCompleted(true);
@@ -45,11 +104,20 @@
         return this
     }
 
+    /**
+     * Mark the transaction as rejected
+     * @param {Error} error - The error that caused the rejection
+     * @returns {IndexedDBTx}
+     */
     markRejected (error) {
         this.promiseForFinished().callRejectFunc(error);
         return this
     }
 
+    /**
+     * Mark the transaction as resolved
+     * @returns {IndexedDBTx}
+     */
     markResolved () {
         this.promiseForFinished().callResolveFunc();
         return this
@@ -61,20 +129,35 @@
     }
     */
 
+    /**
+     * Get the database object
+     * @returns {object}
+     */
     db () {
         return this.dbFolder().db()
     }
     
+    /**
+     * Get the store name
+     * @returns {string}
+     */
     storeName () {
         return this.dbFolder().storeName()
     }
 	
     // --- being and commit ---
 
+    /**
+     * Assert that the transaction is not committed
+     */
     assertNotCommitted () {
 	    assert(this.isCommitted() === false)
     }
 
+    /**
+     * Create a new transaction
+     * @returns {object}
+     */
     newTx () {
         assert(this.tx() === null)
         const tx = this.db().transaction(this.storeName(), "readwrite", this.options())
@@ -86,12 +169,13 @@
         return tx
     }
 
+    /**
+     * Begin the transaction
+     * @returns {IndexedDBTx}
+     */
     begin () {
         this.debugLog(this.dbFolder().path() + " TX BEGIN ")
-     //   debugger;
-        //this.debugLog("BEGIN " + this.txId())
-	    this.assertNotCommitted()
-        //this.setTxRequestStack(this.isDebugging() ? new Error().stack : null)
+        this.assertNotCommitted()
         this.setTxRequestStack(new Error().stack)
 	    const tx = this.newTx()
         const objectStore = tx.objectStore(this.storeName());
@@ -99,6 +183,10 @@
         return this
     }
 	
+    /**
+     * Abort the transaction
+     * @returns {IndexedDBTx}
+     */
     abort () {
 	    this.assertNotCommitted();
 	    this.tx().abort(); // how does this get rejected?
@@ -109,20 +197,29 @@
 
     // --- debugging ---
 
+    /**
+     * Show transaction details
+     */
     show () {
         console.log(this.description())
         this.showTxRequestStack()
     }
 
+    /**
+     * Get transaction description
+     * @returns {string}
+     */
     description () {
         let s = "db: " + this.dbFolder().path() + " tx:\n"
         this.requests().forEach(rq => {
-            //s += "    " + rq._action + "' key:'" + rq._key + "\n"
             s += "    " + JSON.stringify({ action: rq._action, key: rq._key, value: rq._value })
         })
         return s
     }
 
+    /**
+     * Show transaction request stack
+     */
     showTxRequestStack () {
         const rs = this.txRequestStack()
         if (rs) { 
@@ -132,30 +229,31 @@
 
     // ----------------------------------------
 
+    /**
+     * Check if the transaction is finished
+     * @returns {boolean}
+     */
     isFinished () {
         return this.isAborted() || this.isCompleted()
     }
 
+    /**
+     * Promise to commit the transaction
+     * @returns {Promise}
+     */
     promiseCommit () {
         assert(!this.isFinished())
-
-        // don't return promiseForFinished here as calling
-        // promiseForFinished creates the promise
 
         const tx = this.tx()
         
         tx.oncomplete = (event) => { 
             this.debugLog(" COMMIT COMPLETE")
-            //debugger
             this.markCompleted()
         }
 
         tx.onerror = (error) => { 
-            //debugger;
             this.markRejected(error)
         }
-
-        //setTimeout(() => this.onTimeout(), this.timeoutInMs())
 
         this.debugLog(" COMMITTING")
         tx.commit()
@@ -166,17 +264,15 @@
 	
     // --- helpers ---
 
+    /**
+     * Push a request to the transaction
+     * @param {object} aRequest - The request to push
+     * @returns {IndexedDBTx}
+     */
     pushRequest (aRequest) {
 	    this.assertNotCommitted()
 
         const requestStack = this.isDebugging() ? new Error().stack : null;
-
-        /*
-        aRequest.onsuccess = (event) => {
-		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "'";
-            //console.log("SUCCESS: " + fullDescription)
-        }
-        */
 
         aRequest.onerror = (event) => {
 		    const fullDescription = "objectStore:'" + this.dbFolder().path() + "' '" + aRequest._action + "' key:'" + aRequest._key + "' error: '" + event.target.error + "'";
@@ -187,22 +283,26 @@
 		  	throw new Error(fullDescription)
         }
 
-        /*
-        aRequest.onsuccess = (event) => {
-            // report the success of the request (this does not mean the item
-            // has been stored successfully in the DB - for that you need transaction.onsuccess)
-        }
-        */
-
         this.requests().push(aRequest)
 	    return this
     }
 
+    /**
+     * Assert that the key and value are valid
+     * @param {string} key - The key
+     * @param {string|ArrayBuffer} value - The value
+     */
     assertValidKeyValue (key, value) {
         assert(typeof(key) === "string")
         assert(typeof(value) === "string" || (typeof(value) === "object" && Object.getPrototypeOf(value) === ArrayBuffer.prototype))
     }
 	
+    /**
+     * Create an entry object for key and value
+     * @param {string} key - The key
+     * @param {string|ArrayBuffer} value - The value
+     * @returns {object}
+     */
     entryForKeyAndValue (key, value) {
         this.assertValidKeyValue(key, value)
         return { key: key, value: value }
@@ -210,11 +310,16 @@
 	
     // --- operations ----
 	
+    /**
+     * Add an entry to the object store
+     * @param {string} key - The key
+     * @param {string|ArrayBuffer} value - The value
+     * @returns {IndexedDBTx}
+     */
     atAdd (key, value) {
         this.assertValidKeyValue(key, value)
         this.assertNotCommitted()
         
-        //this.debugLog(() => " add " + key + " '" + object + "'")
         this.debugLog(() => "ADD " + key + " '...'")
 
         const entry = this.entryForKeyAndValue(key, value)
@@ -226,6 +331,12 @@
         return this
     }
 
+    /**
+     * Update an entry in the object store
+     * @param {string} key - The key
+     * @param {string|ArrayBuffer} value - The value
+     * @returns {IndexedDBTx}
+     */
     atUpdate (key, value) {
         this.assertValidKeyValue(key, value)
 	    this.assertNotCommitted()
@@ -241,6 +352,11 @@
         return this
     }
     
+    /**
+     * Remove an entry from the object store
+     * @param {string} key - The key
+     * @returns {IndexedDBTx}
+     */
     removeAt (key) {
 	    this.assertNotCommitted()
 
@@ -253,12 +369,12 @@
         return this
     }
 
+    /**
+     * Get debug type ID
+     * @returns {string}
+     */
     debugTypeId () {
         return this.dbFolder().debugTypeId() + " " + this.txId() //super.debugTypeId()
     }
     
 }.initThisClass());
-
-
-
-

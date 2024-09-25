@@ -1,8 +1,10 @@
 "use strict";
 
-/*
-
-    A Javascript sequential file loader. 
+/**
+ * @module boot
+ * @class ResourceManager
+ * @extends Object
+ * @description A Javascript sequential file loader. 
 
     Loads build/_index.json and build/_cam.json.zip, then
     evals JS files in _index in order (adding sourceURL comment for debugger).
@@ -364,7 +366,7 @@ class UrlResource extends Object {
 
     async promiseLoadUnzipIfNeeded () {
         if (!getGlobalThis().pako) {
-            await UrlResource.clone().setPath(ResourceManager.bootPath() + "/pako.js").promiseLoadAndEval();
+            await UrlResource.clone().setPath(ResourceManager.bootPath() + "/external-libs/pako.js").promiseLoadAndEval();
         }
     }
 }

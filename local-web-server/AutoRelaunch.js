@@ -1,24 +1,48 @@
 "use strict";
 
+/**
+ * @module AutoRelaunch
+ */
+
 require("./getGlobalThis.js");
 require("./Base.js");
 const fs = require('fs');
 const { spawn } = require('child_process');
 
+/**
+ * @class AutoRelauncher
+ * @extends Base
+ * @classdesc A class for automatically relaunching a process based on file changes.
+ */
 (class AutoRelauncher extends Base {
 
+    /**
+     * Initialize prototype slots
+     */
     initPrototypeSlots () {
-		this.newSlot("filePath", null);
-		this.newSlot("launchCommand", null);
-		this.newSlot("launchArgs", null);
-		this.newSlot("keyPath", null);
-		this.newSlot("checkInterval", 5000);
-		this.newSlot("intervalId", null);
+        /** @property {string|null} filePath - The path to the file to watch */
+        this.newSlot("filePath", null);
+        /** @property {string|null} launchCommand - The command to launch the process */
+        this.newSlot("launchCommand", null);
+        /** @property {Array|null} launchArgs - The arguments for the launch command */
+        this.newSlot("launchArgs", null);
+        /** @property {string|null} keyPath - The key path */
+        this.newSlot("keyPath", null);
+        /** @property {number} checkInterval - The interval (in milliseconds) to check for file changes */
+        this.newSlot("checkInterval", 5000);
+        /** @property {number|null} intervalId - The ID of the interval timer */
+        this.newSlot("intervalId", null);
     }
   
+    /**
+     * Initialize prototype
+     */
     initPrototype () {
-	}
+    }
 
+    /**
+     * Start the auto-relauncher
+     */
     start () {
         console.log(this.type() + " started");
         const tid = setInterval(() => this.checkAndDeleteFile(), this.checkInterval());
@@ -33,12 +57,18 @@ const { spawn } = require('child_process');
         */
     }
 
+    /**
+     * Stop the auto-relauncher
+     */
     stop () {
         if (this.intervalId()) {
             clearInterval(this.intervalId());
         }
     }
 
+    /**
+     * Check for the file and delete it if it exists, then restart the process
+     */
     checkAndDeleteFile () {
         try {
             if (fs.existsSync(this.filePath())) {
@@ -51,6 +81,9 @@ const { spawn } = require('child_process');
         }
     }
 
+    /**
+     * Restart the process
+     */
     restartProcess () {
         spawn(this.launchCommand(), this.launchArgs(), {
             stdio: 'inherit',
@@ -61,12 +94,18 @@ const { spawn } = require('child_process');
         process.exit();
     }
 
+    /**
+     * Set up default values
+     */
     setupDefaults () {
         autoRelauncher.setFilePath("./shouldRelaunchNow.txt");
         autoRelauncher.setLaunchCommand("bash");
         autoRelauncher.setLaunchArgs(['/home/protected/run.sh']);
     }
 
+    /**
+     * Set up test values
+     */
     setupTest () {
         autoRelauncher.setFilePath("./shouldRelaunchNow.txt");
         autoRelauncher.setLaunchCommand("node");
@@ -79,4 +118,3 @@ const autoRelauncher = AutoRelauncher.clone();
 autoRelauncher.setupTest();
 //autoRelauncher.setupDefaults();
 autoRelauncher.start();
-
