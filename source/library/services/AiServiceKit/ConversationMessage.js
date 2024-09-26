@@ -18,7 +18,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {String} key - The key of the message.
+     * @member {String} key - The key of the message.
      */
     {
       const slot = this.overrideSlot("key");
@@ -28,7 +28,7 @@
     }
 
     /**
-     * @property {String} value - The value or content of the message.
+     * @member {String} value - The value or content of the message.
      */
     {
       const slot = this.overrideSlot("value");
@@ -40,7 +40,7 @@
     }
 
     /**
-     * @property {Conversation} conversation - The conversation this message belongs to.
+     * @member {Conversation} conversation - The conversation this message belongs to.
      */
     {
       const slot = this.newSlot("conversation", null);
@@ -50,7 +50,7 @@
     }
 
     /**
-     * @property {String} messageId - The unique identifier of the message.
+     * @member {String} messageId - The unique identifier of the message.
      */
     {
       const slot = this.newSlot("messageId", null);
@@ -62,7 +62,7 @@
     }
 
     /**
-     * @property {String} senderId - The identifier of the sender.
+     * @member {String} senderId - The identifier of the sender.
      */
     {
       const slot = this.newSlot("senderId", null);
@@ -75,7 +75,7 @@
     }
 
     /**
-     * @property {String} inReplyToMessageId - The identifier of the message this is replying to.
+     * @member {String} inReplyToMessageId - The identifier of the message this is replying to.
      */
     {
       const slot = this.newSlot("inReplyToMessageId", null);
@@ -89,7 +89,7 @@
     }
 
     /**
-     * @property {Number} timestamp - The timestamp of the message.
+     * @member {Number} timestamp - The timestamp of the message.
      */
     {
       const slot = this.newSlot("timestamp", null);
@@ -110,7 +110,7 @@
     */
 
     /**
-     * @property {Boolean} isComplete - Indicates if the message is complete.
+     * @member {Boolean} isComplete - Indicates if the message is complete.
      */
     {
       const slot = this.newSlot("isComplete", false);
@@ -124,7 +124,7 @@
     }
 
     /**
-     * @property {Error} error - Any error associated with the message.
+     * @member {Error} error - Any error associated with the message.
      */
     {
       const slot = this.newSlot("error", null);
@@ -134,7 +134,7 @@
     }
 
     /**
-     * @property {Boolean} isVisibleToUser - Indicates if the message is visible to the user.
+     * @member {Boolean} isVisibleToUser - Indicates if the message is visible to the user.
      */
     {
       const slot = this.newSlot("isVisibleToUser", true);
@@ -146,7 +146,7 @@
     }
 
     /**
-     * @property {Object} delegate - The delegate object for the message.
+     * @member {Object} delegate - The delegate object for the message.
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -156,7 +156,7 @@
     }
 
     /**
-     * @property {Action} deleteAction - The action to delete the message.
+     * @member {Action} deleteAction - The action to delete the message.
      */
     {
       const slot = this.newSlot("deleteAction", null);
@@ -170,7 +170,7 @@
     }
 
     /**
-     * @property {Action} deleteFollowingMessagesAction - The action to delete following messages.
+     * @member {Action} deleteFollowingMessagesAction - The action to delete following messages.
      */
     {
       const slot = this.newSlot("deleteFollowingMessagesAction", null);

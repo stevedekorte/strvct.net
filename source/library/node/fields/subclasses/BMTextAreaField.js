@@ -48,7 +48,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {boolean} isMono
+         * @member {boolean} isMono
          * @description Indicates whether the text area should use a monospace font.
          */
         {

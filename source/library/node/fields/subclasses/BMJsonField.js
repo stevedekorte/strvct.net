@@ -14,7 +14,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {BMJsonNode} nodeTileLink - The associated BMJsonNode for this field.
+         * @member {BMJsonNode} nodeTileLink - The associated BMJsonNode for this field.
          */
         {
             const slot = this.newSlot("nodeTileLink", null);

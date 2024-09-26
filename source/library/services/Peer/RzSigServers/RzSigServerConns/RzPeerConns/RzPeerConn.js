@@ -45,7 +45,7 @@
   initPrototypeSlots () {
     {
       /**
-       * @property {string} peerId
+       * @member {string} peerId
        */
       const slot = this.newSlot("peerId", null);
       slot.setInspectorPath("")
@@ -61,7 +61,7 @@
 
     {
       /**
-       * @property {Object} connOptions
+       * @member {Object} connOptions
        */
       const slot = this.newSlot("connOptions", null);
       slot.setInspectorPath("");
@@ -74,7 +74,7 @@
 
     {
       /**
-       * @property {string} status
+       * @member {string} status
        */
       const slot = this.newSlot("status", "");
       slot.setInspectorPath("");
@@ -92,7 +92,7 @@
 
     {
       /**
-       * @property {Error} error
+       * @member {Error} error
        */
       const slot = this.newSlot("error", null); 
       slot.setShouldStoreSlot(false);
@@ -102,7 +102,7 @@
 
     {
       /**
-       * @property {boolean} didInitiateConnection
+       * @member {boolean} didInitiateConnection
        */
       const slot = this.newSlot("didInitiateConnection", false); // if we initiated, it's up to us to try to reconnect
       slot.setShouldStoreSlot(true);
@@ -113,7 +113,7 @@
 
     {
       /**
-       * @property {boolean} shouldAutoReconnect
+       * @member {boolean} shouldAutoReconnect
        */
       const slot = this.newSlot("shouldAutoReconnect", true); // (if didInitiateConnection is also true)
       slot.setShouldStoreSlot(true);
@@ -122,7 +122,7 @@
 
     {
       /**
-       * @property {number} reconnectAttemptCount
+       * @member {number} reconnectAttemptCount
        */
       const slot = this.newSlot("reconnectAttemptCount", 0);
       slot.setShouldStoreSlot(true);
@@ -133,7 +133,7 @@
 
     {
       /**
-       * @property {RzMsgs} peerMsgs
+       * @member {RzMsgs} peerMsgs
        */
       const slot = this.newSlot("peerMsgs", null)
       slot.setFinalInitProto(RzMsgs);
@@ -144,7 +144,7 @@
 
     {
       /**
-       * @property {Action} shutdownAction
+       * @member {Action} shutdownAction
        */
       const slot = this.newSlot("shutdownAction", null);
       slot.setInspectorPath("")
@@ -161,7 +161,7 @@
 
     {
       /**
-       * @property {Action} connectAction
+       * @member {Action} connectAction
        */
       const slot = this.newSlot("connectAction", null);
       slot.setInspectorPath("");
@@ -176,7 +176,7 @@
     
     {
       /**
-       * @property {RzSigServerConn} sigServerConn
+       * @member {RzSigServerConn} sigServerConn
        */
       const slot = this.newSlot("sigServerConn", null);
       slot.setSlotType("RzSigServerConn");
@@ -184,7 +184,7 @@
 
     {
       /**
-       * @property {DataConnection} conn
+       * @member {DataConnection} conn
        */
       const slot = this.newSlot("conn", null);
       slot.setSlotType("DataConnection"); 
@@ -192,7 +192,7 @@
 
     {
       /**
-       * @property {Object} info
+       * @member {Object} info
        */
       const slot = this.newSlot("info", null);
       slot.setSlotType("JSON Object");
@@ -200,7 +200,7 @@
 
     {
       /**
-       * @property {Object} delegate
+       * @member {Object} delegate
        */
       const slot = this.newSlot("delegate", null);
       slot.setSlotType("Object");
@@ -209,7 +209,7 @@
 
     {
       /**
-       * @property {boolean} useMessageLog
+       * @member {boolean} useMessageLog
        */
       const slot = this.newSlot("useMessageLog", false);
       slot.setSlotType("Boolean");
@@ -219,7 +219,7 @@
 
     {
       /**
-       * @property {boolean} useKeepAlive
+       * @member {boolean} useKeepAlive
        */
       const slot = this.newSlot("useKeepAlive", false);
       slot.setSlotType("Boolean");
@@ -227,7 +227,7 @@
 
     {
       /**
-       * @property {number} nextPingTimeout
+       * @member {number} nextPingTimeout
        */
       const slot = this.newSlot("nextPingTimeout", null);
       slot.setSlotType("Number");
@@ -235,7 +235,7 @@
 
     {
       /**
-       * @property {boolean} gotPong
+       * @member {boolean} gotPong
        */
       const slot = this.newSlot("gotPong", false);
       slot.setSlotType("Boolean");
@@ -243,7 +243,7 @@
 
     {
       /**
-       * @property {number} nextPingTimeoutMs
+       * @member {number} nextPingTimeoutMs
        */
       const slot = this.newSlot("nextPingTimeoutMs", 30*1000); 
       slot.setSlotType("Number");
@@ -253,7 +253,7 @@
 
     {
       /**
-       * @property {Map} chunks
+       * @member {Map} chunks
        */
       const slot = this.newSlot("chunks", null); 
       slot.setSlotType("Map");

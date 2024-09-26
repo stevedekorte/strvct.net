@@ -14,21 +14,21 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} isRegisteredForVisibility
+         * @member {Boolean} isRegisteredForVisibility
          */
         {
             const slot = this.newSlot("isRegisteredForVisibility", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {IntersectionObserver} intersectionObserver
+         * @member {IntersectionObserver} intersectionObserver
          */
         {
             const slot = this.newSlot("intersectionObserver", null);
             slot.setSlotType("IntersectionObserver");
         }
         /**
-         * @property {Function} onVisibilityCallback
+         * @member {Function} onVisibilityCallback
          */
         {
             const slot = this.newSlot("onVisibilityCallback", null);

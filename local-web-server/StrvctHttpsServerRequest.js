@@ -41,37 +41,37 @@ const https = require('https');
 	
 	initPrototypeSlots () {
 		/**
-		 * @property {Object} server - The server instance.
+		 * @member {Object} server - The server instance.
 		 */
 		this.newSlot("server", null);
 
 		/**
-		 * @property {Object} request - The request object.
+		 * @member {Object} request - The request object.
 		 */
 		this.newSlot("request", null);
 
 		/**
-		 * @property {Object} response - The response object.
+		 * @member {Object} response - The response object.
 		 */
 		this.newSlot("response", null);
 
 		/**
-		 * @property {URL} urlObject - The URL object of the request.
+		 * @member {URL} urlObject - The URL object of the request.
 		 */
 		this.newSlot("urlObject", null);
 
 		/**
-		 * @property {Map} queryMap - The query parameters as a Map.
+		 * @member {Map} queryMap - The query parameters as a Map.
 		 */
 		this.newSlot("queryMap", null);
 
 		/**
-		 * @property {string} path - The request path.
+		 * @member {string} path - The request path.
 		 */
 		this.newSlot("path", null);
 
 		/**
-		 * @property {string} localAcmePath - The local path for ACME challenge.
+		 * @member {string} localAcmePath - The local path for ACME challenge.
 		 */
 		this.newSlot("localAcmePath", "/home/public/.well-known/acme-challenge/");
 	}

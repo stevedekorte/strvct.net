@@ -29,28 +29,28 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {TouchEvent} currentEvent - The current touch event.
+         * @member {TouchEvent} currentEvent - The current touch event.
          */
         {
             const slot = this.newSlot("currentEvent", null);
             slot.setSlotType("TouchEvent");
         }
         /**
-         * @property {TouchEvent} lastEvent - The last touch event.
+         * @member {TouchEvent} lastEvent - The last touch event.
          */
         {
             const slot = this.newSlot("lastEvent", null);
             slot.setSlotType("TouchEvent");
         }
         /**
-         * @property {TouchListener} touchListener - The touch listener object.
+         * @member {TouchListener} touchListener - The touch listener object.
          */
         {
             const slot = this.newSlot("touchListener", null);
             slot.setSlotType("TouchListener");
         }
         /**
-         * @property {Boolean} isSupported - Indicates if touch is supported.
+         * @member {Boolean} isSupported - Indicates if touch is supported.
          */
         {
             const slot = this.newSlot("isSupported", null);

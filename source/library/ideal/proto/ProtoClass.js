@@ -200,14 +200,35 @@
 
     initPrototypeSlots () {
         {
+            /**
+             * @member {boolean} isDebugging - Whether debugging is enabled.
+             */
             const slot = this.newSlot("isDebugging", false);
             slot.setSlotType("Boolean");
         }
         {
+            /**
+             * @member {Map} lazyRefsMap - A map of lazy references.
+             */
             const slot = this.newSlot("lazyRefsMap", null);
             slot.setSlotType("Map");
         }
-        Object.defineSlot(this, "_timeoutNameToIdMap", null);
+        {
+            /**
+             * @member {Set} protocols - A set of protocols.
+             */
+            const slot = this.newSlot("protocols", new Set());
+            slot.setSlotType("Set");
+        }
+
+        {
+            /**
+             * @member {Map} timeoutNameToIdMap - A map of timeout names to IDs.
+             */
+            //const slot = this.newSlot("_timeoutNameToIdMap", null);
+            //slot.setSlotType("Map");
+            Object.defineSlot(this, "_timeoutNameToIdMap", null);
+        }
     }
 
     lazyRefsMap () {

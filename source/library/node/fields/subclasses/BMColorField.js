@@ -22,7 +22,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} red - The red component of the color.
+         * @member {Number} red - The red component of the color.
          */
         {
             const slot = this.newSlot("red", null)
@@ -33,7 +33,7 @@
         }
 
         /**
-         * @property {Number} green - The green component of the color.
+         * @member {Number} green - The green component of the color.
          */
         {
             const slot = this.newSlot("green", null)
@@ -44,7 +44,7 @@
         }
 
         /**
-         * @property {Number} blue - The blue component of the color.
+         * @member {Number} blue - The blue component of the color.
          */
         {
             const slot = this.newSlot("blue", null)
@@ -55,7 +55,7 @@
         }
 
         /**
-         * @property {Number} alpha - The alpha (opacity) component of the color.
+         * @member {Number} alpha - The alpha (opacity) component of the color.
          */
         {
             const slot = this.newSlot("alpha", null)

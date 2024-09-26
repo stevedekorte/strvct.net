@@ -18,7 +18,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {CSSStyleSheet} sheetElement - The CSSStyleSheet element.
+         * @member {CSSStyleSheet} sheetElement - The CSSStyleSheet element.
          */
         {
             const slot = this.newSlot("sheetElement", null);

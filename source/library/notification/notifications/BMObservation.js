@@ -19,14 +19,14 @@
     initPrototypeSlots () {
     
         /**
-         * @property {BMNotificationCenter} center - NotificationCenter that owns this
+         * @member {BMNotificationCenter} center - NotificationCenter that owns this
          */
         {
             const slot = this.newSlot("center", null);
             slot.setSlotType("BMNotificationCenter");
         }
         /**
-         * @property {String|null} name
+         * @member {String|null} name
          */
         {
             const slot = this.newSlot("name", null);
@@ -34,35 +34,35 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {String} sendName
+         * @member {String} sendName
          */
         {
             const slot = this.newSlot("sendName", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Boolean} isOneShot
+         * @member {Boolean} isOneShot
          */
         {
             const slot = this.newSlot("isOneShot", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} didFinalizeStop
+         * @member {Boolean} didFinalizeStop
          */
         {
             const slot = this.newSlot("didFinalizeStop", false); 
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Object|null} observer - WeakRef slot to observer
+         * @member {Object|null} observer - WeakRef slot to observer
          */
         {
             const slot = this.newWeakSlot("observer", null);
             slot.setSlotType("Object"); // TODO: add observer protocol
         }
         /**
-         * @property {Object|null} sender - WeakRef to sender
+         * @member {Object|null} sender - WeakRef to sender
          */
         {
             const slot = this.newWeakSlot("sender", null);
@@ -70,7 +70,7 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {String|null} obsHash
+         * @member {String|null} obsHash
          */
         {
             const slot = this.newSlot("obsHash", null); 
@@ -78,7 +78,7 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {String|null} noteHash
+         * @member {String|null} noteHash
          */
         {
             const slot = this.newSlot("noteHash", null); 

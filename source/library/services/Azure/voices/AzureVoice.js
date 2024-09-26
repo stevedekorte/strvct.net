@@ -39,7 +39,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Object} json - JSON representation of the Azure voice
+     * @member {Object} json - JSON representation of the Azure voice
      */
     {
       const slot = this.newSlot("json", null)

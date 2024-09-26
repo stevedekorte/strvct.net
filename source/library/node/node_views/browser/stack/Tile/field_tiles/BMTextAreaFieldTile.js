@@ -15,7 +15,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {ButtonView} sttButton - Button for speech to text functionality.
+         * @member {ButtonView} sttButton - Button for speech to text functionality.
          */
         {
             const slot = this.newSlot("sttButton", null);
@@ -23,7 +23,7 @@
         }
 
         /**
-         * @property {SpeechToTextSession} sttSession - Session for managing speech to text conversion.
+         * @member {SpeechToTextSession} sttSession - Session for managing speech to text conversion.
          */
         {
             const slot = this.newSlot("sttSession", null); 

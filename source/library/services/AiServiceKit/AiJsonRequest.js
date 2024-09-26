@@ -14,14 +14,14 @@
 
   initPrototypeSlots () {
     /**
-     * @property {JsonStreamReader|null} jsonStreamReader
+     * @member {JsonStreamReader|null} jsonStreamReader
      */
     {
       const slot = this.newSlot("jsonStreamReader", null);
     }
 
     /**
-     * @property {number} containerChunkLevel - depth of json to call onStreamJsonChunk(json)
+     * @member {number} containerChunkLevel - depth of json to call onStreamJsonChunk(json)
      */
     {
       const slot = this.newSlot("containerChunkLevel", 2);

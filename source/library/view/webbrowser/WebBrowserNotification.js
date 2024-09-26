@@ -20,7 +20,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {String} title
+         * @member {String} title
          */
         {
             const slot = this.newSlot("title", "");
@@ -28,7 +28,7 @@
         }
 
         /**
-         * @property {String} body
+         * @member {String} body
          */
         {
             const slot = this.newSlot("body", null);
@@ -36,7 +36,7 @@
         }
 
         /**
-         * @property {String} icon - a url to an image
+         * @member {String} icon - a url to an image
          */
         {
             const slot = this.newSlot("icon", null);
@@ -45,7 +45,7 @@
         }
 
         /**
-         * @property {Array} actions
+         * @member {Array} actions
          */
         {
             const slot = this.newSlot("actions", null);
@@ -53,7 +53,7 @@
         }
 
         /**
-         * @property {BMNotification} notificationRef
+         * @member {BMNotification} notificationRef
          */
         {
             const slot = this.newSlot("notificationRef", null);
@@ -61,7 +61,7 @@
         }
 
         /**
-         * @property {Error} error
+         * @member {Error} error
          */
         {
             const slot = this.newSlot("error", null);
@@ -69,7 +69,7 @@
         }
 
         /**
-         * @property {String} choice - Event.action
+         * @member {String} choice - Event.action
          */
         {
             const slot = this.newSlot("choice", null); // Event.action

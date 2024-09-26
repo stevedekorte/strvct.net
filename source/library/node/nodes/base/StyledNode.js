@@ -21,7 +21,7 @@
         // view style overrides
         {
             /**
-             * @property {String} themeClassName
+             * @member {String} themeClassName
              * @description The theme class name for styling the node.
              */
             const slot = this.newSlot("themeClassName", null)

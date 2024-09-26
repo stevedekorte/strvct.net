@@ -65,7 +65,7 @@
         //this.newSlot("item", null)
 
         /**
-         * @property {Array} items - The set of views that will be dragged
+         * @member {Array} items - The set of views that will be dragged
          */
         {
             const slot = this.newSlot("items", []);
@@ -73,7 +73,7 @@
         }
 
         /**
-         * @property {Object} info - A place for the source to store any extra info about the drag operation, such as the indexes of the items
+         * @member {Object} info - A place for the source to store any extra info about the drag operation, such as the indexes of the items
          */
         {
             const slot = this.newSlot("info", null);
@@ -81,7 +81,7 @@
         }
 
         /**
-         * @property {DomView} source - The view which is the owner of the view being dragged that implements the source protocol
+         * @member {DomView} source - The view which is the owner of the view being dragged that implements the source protocol
          */
         {
             const slot = this.newSlot("source", null);
@@ -89,7 +89,7 @@
         }
 
         /**
-         * @property {DomView} destination - The view on which the item is dropped
+         * @member {DomView} destination - The view on which the item is dropped
          */
         {
             const slot = this.newSlot("destination", null);
@@ -97,7 +97,7 @@
         }
 
         /**
-         * @property {Set} validOperations - The set of valid drag operations
+         * @member {Set} validOperations - The set of valid drag operations
          */
         {
             const slot = this.newSlot("validOperations", new Set(["move", "copy", "link", "delete"]));
@@ -105,7 +105,7 @@
         }
 
         /**
-         * @property {Array} hoverViews - A list of views that self is currently hovering over
+         * @member {Array} hoverViews - A list of views that self is currently hovering over
          */
         {
             const slot = this.newSlot("hoverViews", null);
@@ -113,7 +113,7 @@
         }
 
         /**
-         * @property {Point} dragStartPos - Start position in screen coordinates 
+         * @member {Point} dragStartPos - Start position in screen coordinates 
          */
         {
             const slot = this.newSlot("dragStartPos", null);
@@ -121,7 +121,7 @@
         }
 
         /**
-         * @property {String} dragOperation - The drag operation type: move, copy, link, delete
+         * @member {String} dragOperation - The drag operation type: move, copy, link, delete
          */
         {
             const slot = this.newSlot("dragOperation", "move")
@@ -130,7 +130,7 @@
         }
 
         /**
-         * @property {Number} slideBackPeriod - The duration of the slide back animation in seconds
+         * @member {Number} slideBackPeriod - The duration of the slide back animation in seconds
          */
         {
             const slot = this.newSlot("slideBackPeriod", 0.2);
@@ -138,7 +138,7 @@
         }
 
         /**
-         * @property {Boolean} isClosed - Indicates whether the DragView is closed
+         * @member {Boolean} isClosed - Indicates whether the DragView is closed
          */
         {
             const slot = this.newSlot("isClosed", false);

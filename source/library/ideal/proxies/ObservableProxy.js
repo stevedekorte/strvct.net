@@ -42,7 +42,7 @@
     initPrototypeSlots() {
         {
             /**
-             * @property {Array} observers
+             * @member {Array} observers
              * @description An array to store the observers.
              */
             const slot = this.newSlot("observers", null);
@@ -50,7 +50,7 @@
         }
         {
             /**
-             * @property {Object} target
+             * @member {Object} target
              * @description The target object to be observed.
              */
             const slot = this.newSlot("target", null);
@@ -58,7 +58,7 @@
         }
         {
             /**
-             * @property {Object} revocable
+             * @member {Object} revocable
              * @description The revocable proxy object.
              */
             const slot = this.newSlot("revocable", null);
@@ -66,7 +66,7 @@
         }
         {
             /**
-             * @property {Array} trapNames
+             * @member {Array} trapNames
              * @description An array of trap names for the proxy.
              */
             const slot = this.newSlot("trapNames", [
@@ -88,7 +88,7 @@
         }
         {
             /**
-             * @property {Object} noteNamesDict
+             * @member {Object} noteNamesDict
              * @description An object dictionary to store the note names for each trap name.
              */
             const slot = this.newSlot("noteNamesDict", null);

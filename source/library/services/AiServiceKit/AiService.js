@@ -30,7 +30,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {Object} serviceInfo - Information about the service.
+     * @member {Object} serviceInfo - Information about the service.
      */
     {
       const slot = this.newSlot("serviceInfo", null);
@@ -42,7 +42,7 @@
     }
 
     /**
-     * @property {string} chatEndpoint - The URL endpoint for chat.
+     * @member {string} chatEndpoint - The URL endpoint for chat.
      */
     {
       const slot = this.newSlot("chatEndpoint", null);
@@ -54,7 +54,7 @@
     }
 
     /**
-     * @property {string} apiKey - The API key for the service.
+     * @member {string} apiKey - The API key for the service.
      */
     {
       const slot = this.newSlot("apiKey", "")
@@ -66,7 +66,7 @@
     }
 
     /**
-     * @property {string} systemRoleName - The name of the system role.
+     * @member {string} systemRoleName - The name of the system role.
      */
     {
       const slot = this.newSlot("systemRoleName", "system");
@@ -74,7 +74,7 @@
     }
 
     /**
-     * @property {string} assistantRoleName - The name of the assistant role.
+     * @member {string} assistantRoleName - The name of the assistant role.
      */
     {
       const slot = this.newSlot("assistantRoleName", "assistant");
@@ -82,7 +82,7 @@
     }
 
     /**
-     * @property {string} userRoleName - The name of the user role.
+     * @member {string} userRoleName - The name of the user role.
      */
     {
       const slot = this.newSlot("userRoleName", "user");
@@ -90,7 +90,7 @@
     }
 
     /**
-     * @property {AiChatModels} models - The AI chat models.
+     * @member {AiChatModels} models - The AI chat models.
      */
     {
       const slot = this.newSlot("models", null);
@@ -101,7 +101,7 @@
     }
 
     /**
-     * @property {AiConversations} conversations - The AI conversations.
+     * @member {AiConversations} conversations - The AI conversations.
      */
     {
       const slot = this.newSlot("conversations", null);
@@ -112,7 +112,7 @@
     }
 
     /**
-     * @property {OpenAiImagePrompts} imagesPrompts - The OpenAI image prompts.
+     * @member {OpenAiImagePrompts} imagesPrompts - The OpenAI image prompts.
      */
     {
       const slot = this.newSlot("imagesPrompts", null);
@@ -122,7 +122,7 @@
     }
 
     /**
-     * @property {OpenAiTtsSessions} ttsSessions - The OpenAI TTS sessions.
+     * @member {OpenAiTtsSessions} ttsSessions - The OpenAI TTS sessions.
      */
     {
       const slot = this.newSlot("ttsSessions", null);

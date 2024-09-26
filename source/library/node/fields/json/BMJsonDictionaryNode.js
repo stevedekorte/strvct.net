@@ -23,7 +23,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {boolean} shouldMerge
+         * @member {boolean} shouldMerge
          * @description Determines if the node should merge when updating JSON.
          */
         {

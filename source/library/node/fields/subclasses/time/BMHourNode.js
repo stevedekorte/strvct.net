@@ -13,7 +13,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} value - The hour value, ranging from 0 to 23.
+         * @member {Number} value - The hour value, ranging from 0 to 23.
          */
         {
             const slot = this.newSlot("value", 0);

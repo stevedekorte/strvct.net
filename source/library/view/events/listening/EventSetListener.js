@@ -23,28 +23,28 @@
 
     initPrototypeSlots () {
         /**
-         * @property {Element} listenTarget - DOM Element (EventTarget)
+         * @member {Element} listenTarget - DOM Element (EventTarget)
          */
         {
             const slot = this.newSlot("listenTarget", null)
             slot.setSlotType("Element");
         }
         /**
-         * @property {Object} delegate
+         * @member {Object} delegate
          */
         {
             const slot = this.newSlot("delegate", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {Boolean} isListening
+         * @member {Boolean} isListening
          */
         {
             const slot = this.newSlot("isListening", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} useCapture - whether event will be dispatched to listener before EventTarget beneath it in DOM tree
+         * @member {Boolean} useCapture - whether event will be dispatched to listener before EventTarget beneath it in DOM tree
          */
         {
             const slot = this.newSlot("useCapture", false);
@@ -52,14 +52,14 @@
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {String} methodSuffix
+         * @member {String} methodSuffix
          */
         {
             const slot = this.newSlot("methodSuffix", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {Map} listenersMap - Map of eventName -> EventListener entries
+         * @member {Map} listenersMap - Map of eventName -> EventListener entries
          */
         {
             const slot = this.newSlot("listenersMap", null)

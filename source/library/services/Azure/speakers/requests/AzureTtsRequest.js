@@ -16,7 +16,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {string} inputText - The input text for the TTS request.
+     * @member {string} inputText - The input text for the TTS request.
      */
     {
       const slot = this.newSlot("inputText", "");
@@ -27,7 +27,7 @@
     }
 
     /**
-     * @property {Action} startAction - The action to start the TTS request.
+     * @member {Action} startAction - The action to start the TTS request.
      */
     {
       const slot = this.newSlot("startAction", null);
@@ -41,7 +41,7 @@
     }
 
     /**
-     * @property {AudioBlob} outputAudioBlob - The output audio blob from the TTS request.
+     * @member {AudioBlob} outputAudioBlob - The output audio blob from the TTS request.
      */
     {
       const slot = this.newSlot("outputAudioBlob", null);
@@ -51,7 +51,7 @@
     }
 
     /**
-     * @property {*} error - The error object if any error occurs during the TTS request.
+     * @member {*} error - The error object if any error occurs during the TTS request.
      */
     {
       const slot = this.newSlot("error", null);

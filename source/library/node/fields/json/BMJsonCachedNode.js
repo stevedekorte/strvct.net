@@ -15,7 +15,7 @@
 
         {
             /**
-             * @property {String} jsonId
+             * @member {String} jsonId
              * @description A unique id for this json node. We'll need this in order to merge json changes properly.
              */
             const slot = this.newSlot("jsonId", null);
@@ -30,7 +30,7 @@
 
         {
             /**
-             * @property {Object} jsonCache
+             * @member {Object} jsonCache
              * @description The json that this node represents. We update this when the node is edited. The node is the truth and the json is derived from it.
              */
             const slot = this.newSlot("jsonCache", null);
@@ -39,7 +39,7 @@
 
         {
             /**
-             * @property {String} jsonHash
+             * @member {String} jsonHash
              * @description A hash of JSON.stableStrigify(jsonCache).
              */
             const slot = this.newSlot("jsonHash", null);

@@ -19,7 +19,7 @@
     initPrototypeSlots() {
         /**
          * The owner of this SubnodesArray.
-         * @property {Object|null} _owner
+         * @member {Object|null} _owner
          * @private
          */
         Object.defineSlot(this, "_owner", null);

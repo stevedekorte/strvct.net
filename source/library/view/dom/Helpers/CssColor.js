@@ -20,35 +20,35 @@
     
     initPrototypeSlots () {
         /**
-         * @property {Number} red - Red component of the color (between 0.0 and 1.0)
+         * @member {Number} red - Red component of the color (between 0.0 and 1.0)
          */
         {
             const slot = this.newSlot("red", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} green - Green component of the color (between 0.0 and 1.0)
+         * @member {Number} green - Green component of the color (between 0.0 and 1.0)
          */
         {
             const slot = this.newSlot("green", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} blue - Blue component of the color (between 0.0 and 1.0)
+         * @member {Number} blue - Blue component of the color (between 0.0 and 1.0)
          */
         {
             const slot = this.newSlot("blue", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} opacity - Opacity of the color (between 0.0 and 1.0)
+         * @member {Number} opacity - Opacity of the color (between 0.0 and 1.0)
          */
         {
             const slot = this.newSlot("opacity", 1);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Map} colorCacheMap - Cache for parsed color strings
+         * @member {Map} colorCacheMap - Cache for parsed color strings
          */
         {
             const slot = this.newSlot("colorCacheMap", null);

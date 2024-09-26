@@ -17,56 +17,56 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {GamePadManager} gamePadManager
+         * @member {GamePadManager} gamePadManager
          */
         {
             const slot = this.newSlot("gamePadManager", null);
             slot.setSlotType("GamePadManager");
         }
         /**
-         * @property {Number} index
+         * @member {Number} index
          */
         {
             const slot = this.newSlot("index", null);
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} id
+         * @member {String} id
          */
         {
             const slot = this.newSlot("id", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Number} timestamp
+         * @member {Number} timestamp
          */
         {
             const slot = this.newSlot("timestamp", null);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Array} buttons
+         * @member {Array} buttons
          */
         {
             const slot = this.newSlot("buttons", null);
             slot.setSlotType("Array");
         }
         /**
-         * @property {Array} axes
+         * @member {Array} axes
          */
         {
             const slot = this.newSlot("axes", null);
             slot.setSlotType("Array");
         }
         /**
-         * @property {Boolean} isConnected
+         * @member {Boolean} isConnected
          */
         {
             const slot = this.newSlot("isConnected", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} shouldSendNotes
+         * @member {Boolean} shouldSendNotes
          */
         {
             const slot = this.newSlot("shouldSendNotes", false);

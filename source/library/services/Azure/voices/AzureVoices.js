@@ -32,7 +32,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {Array} voicesJson - The JSON of the voices.
+     * @member {Array} voicesJson - The JSON of the voices.
      */
     {
       const slot = this.newSlot("voicesJson", null);
@@ -40,7 +40,7 @@
     }
 
     /**
-     * @property {Map} indexes - The indexes of the voices.
+     * @member {Map} indexes - The indexes of the voices.
      */
     {
       const slot = this.newSlot("indexes", null);
@@ -48,7 +48,7 @@
     }
 
     /**
-     * @property {Array} voices - The voices.
+     * @member {Array} voices - The voices.
      */
     {
       const slot = this.newSlot("voices", null);
@@ -56,7 +56,7 @@
     }
 
     /**
-     * @property {Array} locales - The locales.
+     * @member {Array} locales - The locales.
      */
     {
       const slot = this.newSlot("locales", null);

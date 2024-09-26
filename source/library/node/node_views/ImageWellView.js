@@ -18,14 +18,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {ImageView} imageView - The image view contained within this well.
+         * @member {ImageView} imageView - The image view contained within this well.
          */
         {
             const slot = this.newSlot("imageView", null);
             slot.setSlotType("ImageView");
         }
         /**
-         * @property {Boolean} isEditable - Determines if the image well is editable.
+         * @member {Boolean} isEditable - Determines if the image well is editable.
          */
         {
             const slot = this.newSlot("isEditable", true);

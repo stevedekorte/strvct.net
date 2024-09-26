@@ -13,7 +13,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Array} subnodes - Overrides the subnodes slot.
+         * @member {Array} subnodes - Overrides the subnodes slot.
          */
         {
             const slot = this.overrideSlot("subnodes");
@@ -22,7 +22,7 @@
         }
 
         /**
-         * @property {Array} typeChoices - An array of type choices.
+         * @member {Array} typeChoices - An array of type choices.
          */
         {
             const slot = this.newSlot("typeChoices", []);

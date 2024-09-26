@@ -37,7 +37,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {string} role - The role of the message (user, system, or assistant).
+     * @member {string} role - The role of the message (user, system, or assistant).
      */
     {
       const slot = this.newSlot("role", "user"); 
@@ -52,7 +52,7 @@
     }
 
     /**
-     * @property {boolean} isVisibleToAi - Determines if the message is visible to the AI.
+     * @member {boolean} isVisibleToAi - Determines if the message is visible to the AI.
      */
     {
       const slot = this.newSlot("isVisibleToAi", true);
@@ -63,7 +63,7 @@
     }
 
     /**
-     * @property {Action} requestResponseAction - Action for requesting a response.
+     * @member {Action} requestResponseAction - Action for requesting a response.
      */
     {
       const slot = this.newSlot("requestResponseAction", null);

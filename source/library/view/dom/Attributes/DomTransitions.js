@@ -32,14 +32,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Object} properties - JSON Object to store transition properties.
+         * @member {Object} properties - JSON Object to store transition properties.
          */
         {
             const slot = this.newSlot("properties", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {DomView} domView - The associated DomView instance.
+         * @member {DomView} domView - The associated DomView instance.
          */
         {
             const slot = this.newSlot("domView", null);

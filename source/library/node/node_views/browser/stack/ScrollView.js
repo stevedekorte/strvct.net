@@ -30,7 +30,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} sticksToBottom - Determines if the view should stick to the bottom
+         * @member {Boolean} sticksToBottom - Determines if the view should stick to the bottom
          */
         {
             const slot = this.newSlot("sticksToBottom", false);
@@ -38,7 +38,7 @@
         }
 
         /**
-         * @property {Boolean} wasAtBottom - Tracks if the view was at the bottom before content change
+         * @member {Boolean} wasAtBottom - Tracks if the view was at the bottom before content change
          */
         {
             const slot = this.newSlot("wasAtBottom", false);
@@ -46,7 +46,7 @@
         }
 
         /**
-         * @property {Number} lastScrollHeight - Stores the last scroll height
+         * @member {Number} lastScrollHeight - Stores the last scroll height
          */
         {
             const slot = this.newSlot("lastScrollHeight", 0);

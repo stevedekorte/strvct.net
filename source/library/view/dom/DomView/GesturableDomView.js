@@ -21,7 +21,7 @@
             // this could replace "default" gesture ivars?
             // Set would make for faster lookup, but we may need to maintain order
             /**
-             * @property {Array} gestureRecognizers - Array of gesture recognizers
+             * @member {Array} gestureRecognizers - Array of gesture recognizers
              */
             const slot = this.newSlot("gestureRecognizers", null);
             slot.setSlotType("Array");
@@ -30,21 +30,21 @@
         // default gestures with typical settings 
         {
             /**
-             * @property {TapGestureRecognizer} defaultTapGesture - Default tap gesture recognizer
+             * @member {TapGestureRecognizer} defaultTapGesture - Default tap gesture recognizer
              */
             const slot = this.newSlot("defaultTapGesture", null);
             slot.setSlotType("TapGestureRecognizer");
         }
         {
             /**
-             * @property {TapGestureRecognizer} defaultDoubleTapGesture - Default double tap gesture recognizer
+             * @member {TapGestureRecognizer} defaultDoubleTapGesture - Default double tap gesture recognizer
              */
             const slot = this.newSlot("defaultDoubleTapGesture", null);
             slot.setSlotType("TapGestureRecognizer");
         }
         {
             /**
-             * @property {PanGestureRecognizer} defaultPanGesture - Default pan gesture recognizer
+             * @member {PanGestureRecognizer} defaultPanGesture - Default pan gesture recognizer
              */
             const slot = this.newSlot("defaultPanGesture", null);
             slot.setSlotType("PanGestureRecognizer");

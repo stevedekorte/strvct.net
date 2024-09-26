@@ -13,7 +13,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Array} standardStateNames - An array of standard state names.
+     * @member {Array} standardStateNames - An array of standard state names.
      */
     {
       const slot =this.newSlot("standardStateNames", [

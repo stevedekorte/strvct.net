@@ -15,7 +15,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {string} peerId - The unique identifier for the peer.
+     * @member {string} peerId - The unique identifier for the peer.
      */
     {
       const slot = this.newSlot("peerId", "");      

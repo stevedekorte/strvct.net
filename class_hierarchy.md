@@ -371,6 +371,8 @@
     - [ProtoClass_protocol](./class_doc.html?path=source%2Flibrary%2Fideal%2Fprotocol%2FProtoClass_protocol.js)
     - [ProtoClass_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FProtoClass_store.js)
     - [Protocol](./class_doc.html?path=source%2Flibrary%2Fideal%2Fprotocol%2FProtocol.js)
+      - [AudioClipDelegateProtocol](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioClipDelegateProtocol.js)
+      - [AudioClipProtocol](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioClipProtocol.js)
     - [Rectangle](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
     - [SimpleSynth](./class_doc.html?path=source%2Flibrary%2Faudio%2FSimpleSynth.js)
     - [StackFrame](./class_doc.html?path=source%2Flibrary%2Fideal%2Fmisc%2FStackTrace.js)

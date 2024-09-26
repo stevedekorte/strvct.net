@@ -15,7 +15,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {SpeechRecognition} recognition - The speech recognition object.
+     * @member {SpeechRecognition} recognition - The speech recognition object.
      */
     {
       const slot = this.newSlot("recognition", null);
@@ -23,7 +23,7 @@
     }
 
     /**
-     * @property {Object} delegate - The delegate object.
+     * @member {Object} delegate - The delegate object.
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -31,7 +31,7 @@
     }
 
     /**
-     * @property {string} sessionLabel - The label for the session.
+     * @member {string} sessionLabel - The label for the session.
      */
     {
       const slot = this.newSlot("sessionLabel", "");      
@@ -47,7 +47,7 @@
     }
 
     /**
-     * @property {string} language - The language for speech recognition.
+     * @member {string} language - The language for speech recognition.
      */
     {
       const slot = this.newSlot("language", 'en-US');
@@ -64,7 +64,7 @@
     }
 
     /**
-     * @property {number} inputTimeoutId - The ID of the input timeout.
+     * @member {number} inputTimeoutId - The ID of the input timeout.
      */
     {
       const slot = this.newSlot("inputTimeoutId", null);
@@ -72,7 +72,7 @@
     }
 
     /**
-     * @property {number} inputTimeoutMs - The input timeout in milliseconds.
+     * @member {number} inputTimeoutMs - The input timeout in milliseconds.
      */
     {
       const slot = this.newSlot("inputTimeoutMs", 1500);      
@@ -88,7 +88,7 @@
     }
 
     /**
-     * @property {boolean} isContinuous - Whether the recognition service continues listening and returning results, even if the user takes a pause.
+     * @member {boolean} isContinuous - Whether the recognition service continues listening and returning results, even if the user takes a pause.
      */
     {
       /* 
@@ -110,7 +110,7 @@
     }
 
     /**
-     * @property {boolean} getInterimResults - Whether to return both interim and final results.
+     * @member {boolean} getInterimResults - Whether to return both interim and final results.
      */
     {
       /*
@@ -131,7 +131,7 @@
     }
 
     /**
-     * @property {string} interimTranscript - The interim transcript.
+     * @member {string} interimTranscript - The interim transcript.
      */
     {
       const slot = this.newSlot("interimTranscript", "");      
@@ -147,7 +147,7 @@
     }
 
     /**
-     * @property {string} finalTranscript - The final transcript.
+     * @member {string} finalTranscript - The final transcript.
      */
     {
       const slot = this.newSlot("finalTranscript", "");      
@@ -163,7 +163,7 @@
     }
 
     /**
-     * @property {string} fullTranscript - The full transcript.
+     * @member {string} fullTranscript - The full transcript.
      */
     {
       const slot = this.newSlot("fullTranscript", "");      
@@ -179,7 +179,7 @@
     }
 
     /**
-     * @property {boolean} isRecording - Whether the session is currently recording.
+     * @member {boolean} isRecording - Whether the session is currently recording.
      */
     {
       const slot = this.newSlot("isRecording", false);
@@ -195,7 +195,7 @@
     }
     
     /**
-     * @property {Action} toggleRecordingAction - The action to toggle recording.
+     * @member {Action} toggleRecordingAction - The action to toggle recording.
      */
     {
       const slot = this.newSlot("toggleRecordingAction", null);
@@ -210,7 +210,7 @@
     }
 
     /**
-     * @property {Promise} transcriptPromise - The promise for the transcript.
+     * @member {Promise} transcriptPromise - The promise for the transcript.
      */
     {
       const slot = this.newSlot("transcriptPromise", null);

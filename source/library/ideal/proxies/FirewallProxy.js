@@ -28,7 +28,7 @@
     initPrototypeSlots() {
         {
             /**
-             * @property protectedTraps
+             * @member protectedTraps
              * @type {Set}
              * @description Set of protected traps
              */
@@ -37,7 +37,7 @@
         }
         {
             /**
-             * @property protectedMethods
+             * @member protectedMethods
              * @type {Set}
              * @description Set of protected methods
              */

@@ -53,7 +53,7 @@
 
   initPrototypeSlots () {
     /**
-     * @property {Number} usageInputTokenCount - The number of input tokens used in the request.
+     * @member {Number} usageInputTokenCount - The number of input tokens used in the request.
      */
     {
       const slot = this.newSlot("usageInputTokenCount", 0);
@@ -61,7 +61,7 @@
     }
 
     /**
-     * @property {Number} usageOutputTokenCount - The number of output tokens generated in the response.
+     * @member {Number} usageOutputTokenCount - The number of output tokens generated in the response.
      */
     {
       const slot = this.newSlot("usageOutputTokenCount", 0);
@@ -69,7 +69,7 @@
     }
 
     /**
-     * @property {String} betaVersion - The beta version of the Anthropic API to use.
+     * @member {String} betaVersion - The beta version of the Anthropic API to use.
      */
     {
       const slot = this.newSlot("betaVersion", "tools-2024-05-16"); // "messages-2023-12-15"

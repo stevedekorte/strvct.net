@@ -33,35 +33,35 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Element} svgElement
+         * @member {Element} svgElement
          */
         {
             const slot = this.newSlot("svgElement", null);
             slot.setSlotType("Element");
         }
         /**
-         * @property {String} svgString
+         * @member {String} svgString
          */
         {
             const slot = this.newSlot("svgString", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {URL} url
+         * @member {URL} url
          */
         {
             const slot = this.newSlot("url", null);
             slot.setSlotType("URL");
         }
         /**
-         * @property {String} iconName
+         * @member {String} iconName
          */
         {
             const slot = this.newSlot("iconName", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Boolean} doesMatchParentColor
+         * @member {Boolean} doesMatchParentColor
          */
         {
             const slot = this.newSlot("doesMatchParentColor", false);
@@ -69,7 +69,7 @@
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {String} strokeColor
+         * @member {String} strokeColor
          */
         {
             const slot = this.newSlot("strokeColor", "white");
@@ -77,7 +77,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {String} fillColor
+         * @member {String} fillColor
          */
         {
             const slot = this.newSlot("fillColor", "white");
@@ -85,7 +85,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {Number} strokeWidth
+         * @member {Number} strokeWidth
          */
         {
             const slot = this.newSlot("strokeWidth", 1);

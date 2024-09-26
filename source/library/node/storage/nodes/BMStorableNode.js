@@ -18,7 +18,7 @@
         //this.setShouldStoreSubnodes(true)
 
         /**
-         * @property {boolean} canDelete
+         * @member {boolean} canDelete
          * @description Indicates if the node can be deleted.
          */
         {
@@ -27,7 +27,7 @@
         }
 
         /**
-         * @property {string|null} title
+         * @member {string|null} title
          * @description The title of the node.
          */
         {
@@ -36,7 +36,7 @@
         }
 
         /**
-         * @property {string} subtitle
+         * @member {string} subtitle
          * @description The subtitle of the node.
          */
         {
@@ -45,7 +45,7 @@
         }
 
         /**
-         * @property {boolean} nodeFillsRemainingWidth
+         * @member {boolean} nodeFillsRemainingWidth
          * @description Indicates if the node fills the remaining width.
          */
         {
@@ -56,7 +56,7 @@
         }
 
         /**
-         * @property {SubnodesArray|null} subnodes
+         * @member {SubnodesArray|null} subnodes
          * @description The subnodes of the current node.
          */
         {

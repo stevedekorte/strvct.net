@@ -27,7 +27,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {Class} dataViewClass
+             * @member {Class} dataViewClass
              */
             const slot = this.newSlot("dataViewClass", SceneView);
             slot.setSlotType("Class");

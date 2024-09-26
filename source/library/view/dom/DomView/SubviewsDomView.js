@@ -12,7 +12,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {DomView} parentView - The parent view.
+         * @member {DomView} parentView - The parent view.
          */
         {
             const slot = this.newSlot("parentView", null);
@@ -20,7 +20,7 @@
         }
 
         /**
-         * @property {Array} subviews - The subviews.
+         * @member {Array} subviews - The subviews.
          */
         {
             const slot = this.newSlot("subviews", null);

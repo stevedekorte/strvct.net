@@ -17,7 +17,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {MutationObserver} contentMutationObserver - Observer for content mutations, triggers onContentMutations() event.
+         * @member {MutationObserver} contentMutationObserver - Observer for content mutations, triggers onContentMutations() event.
          */
         const slot = this.newSlot("contentMutationObserver", null);
         slot.setSlotType("MutationObserver");

@@ -21,14 +21,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} edgeName - The name of the edge.
+         * @member {String} edgeName - The name of the edge.
          */
         {
             const slot = this.newSlot("edgeName", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Number} maxStartDistance - The maximum distance from the edge to start the gesture.
+         * @member {Number} maxStartDistance - The maximum distance from the edge to start the gesture.
          */
         {
             const slot = this.newSlot("maxStartDistance", 15);

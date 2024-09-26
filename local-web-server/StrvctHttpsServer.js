@@ -25,32 +25,32 @@ const nodePath = require('path');
 	 */
 	initPrototypeSlots () {
 		/**
-		 * @property {Object} server - The server instance.
+		 * @member {Object} server - The server instance.
 		 */
 		this.newSlot("server", null);
 
 		/**
-		 * @property {string} hostname - The hostname for the server.
+		 * @member {string} hostname - The hostname for the server.
 		 */
 		this.newSlot("hostname", "localhost");
 
 		/**
-		 * @property {number} port - The port number for the server.
+		 * @member {number} port - The port number for the server.
 		 */
 		this.newSlot("port", null);
 
 		/**
-		 * @property {string} keyPath - The path to the server key file.
+		 * @member {string} keyPath - The path to the server key file.
 		 */
 		this.newSlot("keyPath", null);
 
 		/**
-		 * @property {string} certPath - The path to the server certificate file.
+		 * @member {string} certPath - The path to the server certificate file.
 		 */
 		this.newSlot("certPath", null);
 
 		/**
-		 * @property {boolean} isSecure - Indicates whether the server should use HTTPS.
+		 * @member {boolean} isSecure - Indicates whether the server should use HTTPS.
 		 */
 		this.newSlot("isSecure", true);
 	}

@@ -17,7 +17,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {string} name
+     * @member {string} name
      */
     {
       const slot = this.newSlot("name", null);
@@ -33,7 +33,7 @@
     }
 
     /**
-     * @property {string} peerIdPrefix
+     * @member {string} peerIdPrefix
      */
     {
       const slot = this.newSlot("peerIdPrefix", "");
@@ -49,7 +49,7 @@
     }
 
     /**
-     * @property {string} peerId
+     * @member {string} peerId
      */
     {
       const slot = this.newSlot("peerId", null);
@@ -65,7 +65,7 @@
     }
 
     /**
-     * @property {string} status
+     * @member {string} status
      */
     {
       const slot = this.newSlot("status", null);
@@ -81,7 +81,7 @@
     }
 
     /**
-     * @property {Peer} peer
+     * @member {Peer} peer
      */
     {
       const slot = this.newSlot("peer", null);
@@ -91,7 +91,7 @@
     }
 
     /**
-     * @property {boolean} isReliable
+     * @member {boolean} isReliable
      */
     {
       const slot = this.newSlot("isReliable", true);      
@@ -107,7 +107,7 @@
     }
 
     /**
-     * @property {Promise} connectPromise
+     * @member {Promise} connectPromise
      */
     {
       const slot = this.newSlot("connectPromise", null);
@@ -115,7 +115,7 @@
     }
 
     /**
-     * @property {number} getIdRetryCount
+     * @member {number} getIdRetryCount
      */
     {
       const slot = this.newSlot("getIdRetryCount", 0); 
@@ -123,7 +123,7 @@
     }
 
     /**
-     * @property {number} getIdRetryDelayMs
+     * @member {number} getIdRetryDelayMs
      */
     {
       const slot = this.newSlot("getIdRetryDelayMs", 100);
@@ -131,7 +131,7 @@
     }
 
     /**
-     * @property {number} getIdMaxRetries
+     * @member {number} getIdMaxRetries
      */
     {
       const slot = this.newSlot("getIdMaxRetries", 100);
@@ -139,7 +139,7 @@
     }
 
     /**
-     * @property {number} connectRetryDelayMs
+     * @member {number} connectRetryDelayMs
      */
     {
       const slot = this.newSlot("connectRetryDelayMs", 5000);
@@ -147,7 +147,7 @@
     }
 
     /**
-     * @property {number} connectRetryCount
+     * @member {number} connectRetryCount
      */
     {
       const slot = this.newSlot("connectRetryCount", 0);      
@@ -163,7 +163,7 @@
     }
 
     /**
-     * @property {number} connectMaxRetries
+     * @member {number} connectMaxRetries
      */
     {
       const slot = this.newSlot("connectMaxRetries", 3);      
@@ -179,7 +179,7 @@
     }
 
     /**
-     * @property {number} pingIntervalMs
+     * @member {number} pingIntervalMs
      */
     {
       const slot = this.newSlot("pingIntervalMs", 1000);   
@@ -195,7 +195,7 @@
     }
 
     /**
-     * @property {boolean} debug
+     * @member {boolean} debug
      */
     {
       const slot = this.newSlot("debug", false);      
@@ -209,7 +209,7 @@
     }
 
     /**
-     * @property {RzPeerConns} peerConns
+     * @member {RzPeerConns} peerConns
      */
     {
       const slot = this.newSlot("peerConns", null)
@@ -220,7 +220,7 @@
     }
 
     /**
-     * @property {Action} connectAction
+     * @member {Action} connectAction
      */
     {
       const slot = this.newSlot("connectAction", null);
@@ -235,7 +235,7 @@
     }
 
     /**
-     * @property {Action} disconnectAction
+     * @member {Action} disconnectAction
      */
     {
       const slot = this.newSlot("disconnectAction", null);
@@ -250,7 +250,7 @@
     }
 
     /**
-     * @property {Action} destroyAction
+     * @member {Action} destroyAction
      */
     {
       const slot = this.newSlot("destroyAction", null);
@@ -266,7 +266,7 @@
     }
 
     /**
-     * @property {Action} refreshPeersAction
+     * @member {Action} refreshPeersAction
      */
     {
       const slot = this.newSlot("refreshPeersAction", null);
@@ -281,7 +281,7 @@
     }
 
     /**
-     * @property {Object} delegate
+     * @member {Object} delegate
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -289,7 +289,7 @@
     }
 
     /**
-     * @property {Error} error
+     * @member {Error} error
      */
     {
       const slot = this.newSlot("error", null);

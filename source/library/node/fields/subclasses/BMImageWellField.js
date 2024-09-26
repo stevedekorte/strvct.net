@@ -58,7 +58,7 @@ class BMImageWellField extends BMField {
      */
     initPrototypeSlots() {
         /**
-         * @property {boolean} onlyShowsKeyWhenEmpty
+         * @member {boolean} onlyShowsKeyWhenEmpty
          * @description Determines if the key should only be shown when the field is empty.
          */
         {
@@ -66,7 +66,7 @@ class BMImageWellField extends BMField {
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {boolean} isEditable
+         * @member {boolean} isEditable
          * @description Determines if the field is editable.
          */
         {
@@ -74,7 +74,7 @@ class BMImageWellField extends BMField {
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {*} nodeMinTileHeight
+         * @member {*} nodeMinTileHeight
          * @description The minimum tile height for the node.
          */
         {

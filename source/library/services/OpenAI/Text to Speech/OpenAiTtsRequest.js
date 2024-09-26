@@ -16,7 +16,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Object} delegate - Optional reference to service object that owns request.
+     * @member {Object} delegate - Optional reference to service object that owns request.
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -24,7 +24,7 @@
     }
 
     /**
-     * @property {String} requestId - Unique identifier for the request.
+     * @member {String} requestId - Unique identifier for the request.
      */
     {
       const slot = this.newSlot("requestId", null);
@@ -32,7 +32,7 @@
     }
 
     /**
-     * @property {String} apiUrl - The URL for the OpenAI API endpoint.
+     * @member {String} apiUrl - The URL for the OpenAI API endpoint.
      */
     {
       const slot = this.newSlot("apiUrl", null);
@@ -46,7 +46,7 @@
     }
 
     /**
-     * @property {Object} bodyJson - Contains the model choice and messages for the API request.
+     * @member {Object} bodyJson - Contains the model choice and messages for the API request.
      */
     {
       const slot = this.newSlot("bodyJson", null);
@@ -54,7 +54,7 @@
     }
 
     /**
-     * @property {String} body - The stringified version of bodyJson.
+     * @member {String} body - The stringified version of bodyJson.
      */
     {
       const slot = this.newSlot("body", null); 
@@ -70,7 +70,7 @@
     // fetching
 
     /**
-     * @property {Object} fetchRequest - The fetch request object.
+     * @member {Object} fetchRequest - The fetch request object.
      */
     {
       const slot = this.newSlot("fetchRequest", null);
@@ -78,7 +78,7 @@
     }
 
     /**
-     * @property {Boolean} isFetchActive - Indicates if a fetch is currently active.
+     * @member {Boolean} isFetchActive - Indicates if a fetch is currently active.
      */
     {
       const slot = this.newSlot("isFetchActive", false);
@@ -86,7 +86,7 @@
     }
 
     /**
-     * @property {Object} fetchAbortController - The AbortController for the fetch request.
+     * @member {Object} fetchAbortController - The AbortController for the fetch request.
      */
     {
       const slot = this.newSlot("fetchAbortController", null);
@@ -94,7 +94,7 @@
     }
 
     /**
-     * @property {Error} error - Stores any error that occurs during the request.
+     * @member {Error} error - Stores any error that occurs during the request.
      */
     {
       const slot = this.newSlot("error", null);
@@ -102,7 +102,7 @@
     }
 
     /**
-     * @property {String} status - The current status of the request.
+     * @member {String} status - The current status of the request.
      */
     {
       const slot = this.newSlot("status", "");
@@ -116,7 +116,7 @@
     }
 
     /**
-     * @property {Promise} fetchPromise - The promise for the fetch operation.
+     * @member {Promise} fetchPromise - The promise for the fetch operation.
      */
     {
       const slot = this.newSlot("fetchPromise", null);
@@ -124,7 +124,7 @@
     }
 
     /**
-     * @property {Blob} audioBlob - The audio data received from the API.
+     * @member {Blob} audioBlob - The audio data received from the API.
      */
     {
       const slot = this.newSlot("audioBlob", null);
@@ -132,7 +132,7 @@
     }
 
     /**
-     * @property {WASound} sound - The WASound object for the received audio.
+     * @member {WASound} sound - The WASound object for the received audio.
      */
     {
       const slot = this.newSlot("sound", null);

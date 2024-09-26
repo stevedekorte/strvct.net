@@ -14,7 +14,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {String} dataURL - The data URL of the image.
+             * @member {String} dataURL - The data URL of the image.
              */
             const slot = this.newSlot("dataURL", null);
             slot.setShouldStoreSlot(true);

@@ -14,7 +14,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Object} conversation - The conversation object
+     * @member {Object} conversation - The conversation object
      */
     {
       const slot = this.newSlot("conversation", null); 
@@ -24,7 +24,7 @@
     }
 
     /**
-     * @property {Boolean} hasValueButton - Indicates if the node has a value button
+     * @member {Boolean} hasValueButton - Indicates if the node has a value button
      */
     {
       const slot = this.newSlot("hasValueButton", false);
@@ -33,7 +33,7 @@
     }
 
     /**
-     * @property {Boolean} isMicOn - Indicates if the microphone is on
+     * @member {Boolean} isMicOn - Indicates if the microphone is on
      */
     {
       const slot = this.newSlot("isMicOn", false);

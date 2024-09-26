@@ -14,7 +14,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {string|null} id - The unique identifier for the message.
+     * @member {string|null} id - The unique identifier for the message.
      */
     {
       const slot = this.newSlot("id", null);
@@ -30,7 +30,7 @@
     }
 
     /**
-     * @property {string|null} content - The content of the message.
+     * @member {string|null} content - The content of the message.
      */
     {
       const slot = this.newSlot("content", null);
@@ -46,7 +46,7 @@
     }
 
     /**
-     * @property {string} status - The status of the message (e.g., "sent", "received").
+     * @member {string} status - The status of the message (e.g., "sent", "received").
      */
     {
       const slot = this.newSlot("status", ""); // sent, received
@@ -62,7 +62,7 @@
     }
 
     /**
-     * @property {null} sendAction - The action for sending the message.
+     * @member {null} sendAction - The action for sending the message.
      */
     {
       const slot = this.newSlot("sendAction", null);
@@ -77,7 +77,7 @@
     }
     
     /**
-     * @property {null} peer - The peer associated with this message.
+     * @member {null} peer - The peer associated with this message.
      */
     {
       const slot = this.newSlot("peer", null);

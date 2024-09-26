@@ -26,7 +26,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Promise} frameReadyPromise
+     * @member {Promise} frameReadyPromise
      */
     {
       const slot = this.newSlot("frameReadyPromise", null);

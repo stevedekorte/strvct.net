@@ -49,7 +49,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {Map} nameToListenersMap
+             * @member {Map} nameToListenersMap
              */
             const slot = this.newSlot("nameToListenersMap", null);  // Map to set
             slot.setSlotType("Map");

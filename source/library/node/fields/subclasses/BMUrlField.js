@@ -59,45 +59,45 @@
     initPrototypeSlots () {
         // scheme : // userinfo @host : port / path ? query # fragment
         /**
-         * @property {string} href - The full URL.
+         * @member {string} href - The full URL.
          */
         this.newStringSlotNamed("href", "");
         /**
-         * @property {string} protocol - The URL protocol.
+         * @member {string} protocol - The URL protocol.
          */
         this.newStringSlotNamed("protocol", "http");
         /**
-         * @property {string} username - The URL username.
+         * @member {string} username - The URL username.
          */
         this.newStringSlotNamed("username", "");
         /**
-         * @property {string} password - The URL password.
+         * @member {string} password - The URL password.
          */
         this.newStringSlotNamed("password", "");
         /**
-         * @property {string} hostname - The URL hostname.
+         * @member {string} hostname - The URL hostname.
          */
         this.newStringSlotNamed("hostname", "hostname");
         /**
-         * @property {string} port - The URL port.
+         * @member {string} port - The URL port.
          */
         this.newStringSlotNamed("port", "");
         /**
-         * @property {string} pathname - The URL pathname.
+         * @member {string} pathname - The URL pathname.
          */
         this.newStringSlotNamed("pathname", "");
         /**
-         * @property {string} search - The URL search query.
+         * @member {string} search - The URL search query.
          */
         this.newStringSlotNamed("search", "");
         /**
-         * @property {string} hash - The URL hash.
+         * @member {string} hash - The URL hash.
          */
         this.newStringSlotNamed("hash", "");
 
         {
             /**
-             * @property {boolean} isUpdatingHref - Flag to indicate if href is being updated.
+             * @member {boolean} isUpdatingHref - Flag to indicate if href is being updated.
              */
             const slot = this.newSlot("isUpdatingHref", false);
             slot.setSlotType("Boolean");

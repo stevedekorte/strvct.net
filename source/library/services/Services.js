@@ -25,7 +25,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {AnthropicService} anthropicService
+         * @member {AnthropicService} anthropicService
          */
         {
             const slot = this.newSlot("anthropicService", null);
@@ -36,7 +36,7 @@
         }
         
         /**
-         * @property {OpenAiService} openAiService
+         * @member {OpenAiService} openAiService
          */
         {
             const slot = this.newSlot("openAiService", null);
@@ -47,7 +47,7 @@
         }
 
         /**
-         * @property {GroqService} groqService
+         * @member {GroqService} groqService
          */
         {
             const slot = this.newSlot("groqService", null);
@@ -58,7 +58,7 @@
         }
 
         /**
-         * @property {GeminiService} geminiService
+         * @member {GeminiService} geminiService
          */
         {
             const slot = this.newSlot("geminiService", null);
@@ -89,7 +89,7 @@
         */
 
         /**
-         * @property {YouTubeService} youtubeService
+         * @member {YouTubeService} youtubeService
          */
         {
             const slot = this.newSlot("youtubeService", null)
@@ -100,7 +100,7 @@
         }
 
         /**
-         * @property {PeerService} peerService
+         * @member {PeerService} peerService
          */
         {
             const slot = this.newSlot("peerService", null)
@@ -111,7 +111,7 @@
         }
 
         /**
-         * @property {SpeechToTextSessions} speechToTextSessions
+         * @member {SpeechToTextSessions} speechToTextSessions
          */
         {
             const slot = this.newSlot("speechToTextSessions", null)
@@ -122,7 +122,7 @@
         }
 
         /**
-         * @property {ProxyServers} proxyServers
+         * @member {ProxyServers} proxyServers
          */
         {
             const slot = this.newSlot("proxyServers", null)
@@ -133,7 +133,7 @@
         }
 
         /**
-         * @property {HomeAssistants} homeAssistants
+         * @member {HomeAssistants} homeAssistants
          */
         {
             const slot = this.newSlot("homeAssistants", null)

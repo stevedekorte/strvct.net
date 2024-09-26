@@ -21,7 +21,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {boolean} isSecure - Indicates if the server is secure (https).
+     * @member {boolean} isSecure - Indicates if the server is secure (https).
      */
     {
       const slot = this.newSlot("isSecure", true);
@@ -37,7 +37,7 @@
     }
 
     /**
-     * @property {string} subdomain - The subdomain of the proxy server.
+     * @member {string} subdomain - The subdomain of the proxy server.
      */
     {
       const slot = this.newSlot("subdomain", "");
@@ -53,7 +53,7 @@
     }
 
     /**
-     * @property {string} domain - The domain of the proxy server.
+     * @member {string} domain - The domain of the proxy server.
      */
     {
       const slot = this.newSlot("domain", "");
@@ -69,7 +69,7 @@
     }
 
     /**
-     * @property {number} port - The port number of the proxy server.
+     * @member {number} port - The port number of the proxy server.
      */
     {
       const slot = this.newSlot("port", 0);
@@ -85,7 +85,7 @@
     }
 
     /**
-     * @property {string} path - The path of the proxy server.
+     * @member {string} path - The path of the proxy server.
      */
     {
       const slot = this.newSlot("path", "");
@@ -101,7 +101,7 @@
     }
 
     /**
-     * @property {string|null} parameterName - The name of the parameter used in the proxy URL.
+     * @member {string|null} parameterName - The name of the parameter used in the proxy URL.
      */
     {
       const slot = this.newSlot("parameterName", null);
@@ -117,7 +117,7 @@
     }
 
     /**
-     * @property {string} error - The error message, if any.
+     * @member {string} error - The error message, if any.
      */
     {
       const slot = this.newSlot("error", "");

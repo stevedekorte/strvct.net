@@ -17,31 +17,31 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Array} subnodeClasses - The classes of subnodes for this instance.
+     * @member {Array} subnodeClasses - The classes of subnodes for this instance.
      */
     this.setSubnodeClasses([RzPeerConn]);
     /**
-     * @property {string} title - The title of this instance.
+     * @member {string} title - The title of this instance.
      */
     this.setTitle("connections to peers");
     /**
-     * @property {boolean} shouldStore - Whether this instance should be stored.
+     * @member {boolean} shouldStore - Whether this instance should be stored.
      */
     this.setShouldStore(false);
     /**
-     * @property {boolean} shouldStoreSubnodes - Whether subnodes of this instance should be stored.
+     * @member {boolean} shouldStoreSubnodes - Whether subnodes of this instance should be stored.
      */
     this.setShouldStoreSubnodes(false);
     /**
-     * @property {boolean} nodeCanAddSubnode - Whether this node can add subnodes.
+     * @member {boolean} nodeCanAddSubnode - Whether this node can add subnodes.
      */
     this.setNodeCanAddSubnode(false);
     /**
-     * @property {boolean} nodeCanReorderSubnodes - Whether this node can reorder subnodes.
+     * @member {boolean} nodeCanReorderSubnodes - Whether this node can reorder subnodes.
      */
     this.setNodeCanReorderSubnodes(true);
     /**
-     * @property {boolean} noteIsSubnodeCount - Whether the note is the subnode count.
+     * @member {boolean} noteIsSubnodeCount - Whether the note is the subnode count.
      */
     this.setNoteIsSubnodeCount(true);
   }

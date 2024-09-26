@@ -25,42 +25,42 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} doesClearOnReturn
+         * @member {Boolean} doesClearOnReturn
          */
         {
             const slot = this.newSlot("doesClearOnReturn", false); // needed?
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} doesHoldFocusOnReturn
+         * @member {Boolean} doesHoldFocusOnReturn
          */
         {
             const slot = this.newSlot("doesHoldFocusOnReturn", false);  // needed?
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} value
+         * @member {Boolean} value
          */
         {
             const slot = this.newSlot("value", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} isEditable
+         * @member {Boolean} isEditable
          */
         {
             const slot = this.newSlot("isEditable", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {DomView} innerCheckView
+         * @member {DomView} innerCheckView
          */
         {
             const slot = this.newSlot("innerCheckView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {DomView} outerCheckView
+         * @member {DomView} outerCheckView
          */
         {
             const slot = this.newSlot("outerCheckView", null);

@@ -16,7 +16,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} value - The month value (1-12).
+         * @member {Number} value - The month value (1-12).
          * @description Month value starts with 1.
          */
         {

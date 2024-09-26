@@ -33,42 +33,42 @@
         }
         */
         /**
-         * @property {BMFontResources} fonts
+         * @member {BMFontResources} fonts
          */
         {
             const slot = this.newSlot("fonts", null);
             slot.setSlotType("BMFontResources");
         }
         /**
-         * @property {BMSoundResources} sounds
+         * @member {BMSoundResources} sounds
          */
         {
             const slot = this.newSlot("sounds", null);
             slot.setSlotType("BMSoundResources");
         }
         /**
-         * @property {BMImageResources} images
+         * @member {BMImageResources} images
          */
         {
             const slot = this.newSlot("images", null);
             slot.setSlotType("BMImageResources");
         }
         /**
-         * @property {BMIconResources} icons
+         * @member {BMIconResources} icons
          */
         {
             const slot = this.newSlot("icons", null);
             slot.setSlotType("BMIconResources");
         }
         /**
-         * @property {BMJsonResources} json
+         * @member {BMJsonResources} json
          */
         {
             const slot = this.newSlot("json", null);
             slot.setSlotType("BMJsonResources");
         }
         /**
-         * @property {BMFileResources} files
+         * @member {BMFileResources} files
          */
         {
             const slot = this.newSlot("files", null);

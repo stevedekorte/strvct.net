@@ -14,7 +14,7 @@
     initPrototypeSlots () {
         // Targetable - target / action
         /**
-         * @property {Object|null} target
+         * @member {Object|null} target
          */
         {
             const slot = this.newSlot("target", null);
@@ -22,7 +22,7 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {string|null} action
+         * @member {string|null} action
          */
         {
             const slot = this.newSlot("action", null);

@@ -4,6 +4,10 @@
   - STRVCT
     - StrvctApp
       - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
+- AutoRelaunch
+  - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
+- Base
+  - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
 - boot
   - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
@@ -25,7 +29,6 @@
         - [BMActionFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMActionFieldTile.js)
         - [BMStringFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
-  - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
   - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
   - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
   - [Folder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FResourceIndexer.js)
@@ -35,7 +38,6 @@
   - [ProtoClass](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
   - [RootContentNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FRootContentNode.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
-  - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
   - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)
   - [Worker](./class_doc.html?path=source%2FServiceWorker%2FWorker.js)
   - [XhrWrapper](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FXhrWrapper.js)
@@ -122,6 +124,8 @@
   - node
     - [App](./class_doc.html?path=source%2Flibrary%2Fnode%2FApp.js)
     - audio
+      - [AudioClipDelegateProtocol](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioClipDelegateProtocol.js)
+      - [AudioClipProtocol](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioClipProtocol.js)
       - [AudioQueue](./class_doc.html?path=source%2Flibrary%2Fnode%2Faudio%2FAudioQueue.js)
     - blobs
       - [BMBlob](./class_doc.html?path=source%2Flibrary%2Fnode%2Fblobs%2FBMBlob.js)
@@ -579,3 +583,5 @@
       - [WebBrowserScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserScreen.js)
       - [WebBrowserWindow](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserWindow.js)
       - [WebDocument](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebDocument.js)
+- StrvctHttpsServer
+  - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)

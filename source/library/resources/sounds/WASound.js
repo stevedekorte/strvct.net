@@ -41,7 +41,7 @@
         // converting blob to ArrayBuffer, arrayBuffer is stored in data slot
 
         /**
-         * @property arrayBufferPromise
+         * @member arrayBufferPromise
          * @description the promise for the array buffer
          * @type {Promise}
          */
@@ -53,7 +53,7 @@
         // fetching
 
         /**
-         * @property fetchPromise
+         * @member fetchPromise
          * @description the promise for the fetch
          * @type {Promise}
          */
@@ -65,7 +65,7 @@
         // decoding 
 
         /**
-         * @property decodePromise
+         * @member decodePromise
          * @description the promise for the decode
          * @type {Promise}
          */
@@ -75,7 +75,7 @@
         }
 
         /**
-         * @property decodedBuffer
+         * @member decodedBuffer
          * @description the decoded buffer
          * @type {AudioBuffer}
          */
@@ -87,7 +87,7 @@
         // playing
 
         /**
-         * @property shouldPlayOnLoad
+         * @member shouldPlayOnLoad
          * @description should play on load
          * @type {Boolean}
          */
@@ -97,7 +97,7 @@
         }
         
         /**
-         * @property shouldPlayOnAccess
+         * @member shouldPlayOnAccess
          * @description should play on access
          * @type {Boolean}
          */
@@ -107,7 +107,7 @@
         }
 
         /**
-         * @property playPromise
+         * @member playPromise
          * @description the promise for the play
          * @type {Promise}
          */
@@ -117,7 +117,7 @@
         }
 
         /**
-         * @property source
+         * @member source
          * @description the source
          * @type {AudioBufferSourceNode}
          */
@@ -129,7 +129,7 @@
         // source attributes
 
         /**
-         * @property loop
+         * @member loop
          * @description loop
          * @type {Boolean}
          */
@@ -139,7 +139,7 @@
         }
 
         /**
-         * @property playbackRate
+         * @member playbackRate
          * @description playback rate
          * @type {Number}
          */
@@ -149,7 +149,7 @@
         }
 
         /**
-         * @property whenToPlay
+         * @member whenToPlay
          * @description when to play
          * @type {Number}
          */
@@ -159,7 +159,7 @@
         }
 
         /**
-         * @property offsetInSeconds
+         * @member offsetInSeconds
          * @description offset in seconds
          * @type {Number}
          */
@@ -175,7 +175,7 @@
         */
 
         /**
-         * @property isPlaying
+         * @member isPlaying
          * @description is playing
          * @type {Boolean}
          */
@@ -185,7 +185,7 @@
         }
 
         /**
-         * @property delegateSet
+         * @member delegateSet
          * @description the delegate set
          * @type {Set}
          */
@@ -197,7 +197,7 @@
         // optional info
 
         /**
-         * @property label
+         * @member label
          * @description label
          * @type {String}
          */
@@ -208,7 +208,7 @@
         }
 
         /**
-         * @property transcript
+         * @member transcript
          * @description transcript
          * @type {String}
          */

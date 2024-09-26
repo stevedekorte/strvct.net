@@ -24,7 +24,7 @@ let listenCount = 0;
     static initClass () {
         /**
          * @static
-         * @property {Set} activeListeners - Set of active listeners (tmp debugging).
+         * @member {Set} activeListeners - Set of active listeners (tmp debugging).
          */
         this.newClassSlot("activeListeners", new Set()) // tmp debugging
     }
@@ -87,49 +87,49 @@ let listenCount = 0;
         //this.newSlot("listenerSet", null); // possible owner
 
         /**
-         * @property {Object} listenTarget - The target to listen to.
+         * @member {Object} listenTarget - The target to listen to.
          */
         {
             const slot = this.newSlot("listenTarget", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {Object} delegate - The delegate object.
+         * @member {Object} delegate - The delegate object.
          */
         {
             const slot = this.newSlot("delegate", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {Boolean} isListening - Whether the listener is currently active.
+         * @member {Boolean} isListening - Whether the listener is currently active.
          */
         {
             const slot = this.newSlot("isListening", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {String} eventName - The name of the event to listen for.
+         * @member {String} eventName - The name of the event to listen for.
          */
         {
             const slot = this.newSlot("eventName", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} methodName - The name of the method to call when the event occurs.
+         * @member {String} methodName - The name of the method to call when the event occurs.
          */
         {
             const slot = this.newSlot("methodName", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} fullMethodName - The full name of the method (calculated and cached).
+         * @member {String} fullMethodName - The full name of the method (calculated and cached).
          */
         {
             const slot = this.newSlot("fullMethodName", null); // calculated when methodName is set, and cached in ivar
             slot.setSlotType("String");
         }
         /**
-         * @property {Function} handlerFunc - The function to handle the event.
+         * @member {Function} handlerFunc - The function to handle the event.
          */
         {
             const slot = this.newSlot("handlerFunc", null);
@@ -137,14 +137,14 @@ let listenCount = 0;
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {Boolean} isUserInteraction - Whether the event is a user interaction.
+         * @member {Boolean} isUserInteraction - Whether the event is a user interaction.
          */
         {
             const slot = this.newSlot("isUserInteraction", null); // set to match eventName
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Boolean} useCapture - Whether the event will be dispatched to the listener before reaching the event target.
+         * @member {Boolean} useCapture - Whether the event will be dispatched to the listener before reaching the event target.
          */
         {
             const slot = this.newSlot("useCapture", false);
@@ -152,7 +152,7 @@ let listenCount = 0;
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {String} methodSuffix - The suffix to add to the method name.
+         * @member {String} methodSuffix - The suffix to add to the method name.
          */
         {
             const slot = this.newSlot("methodSuffix", "");

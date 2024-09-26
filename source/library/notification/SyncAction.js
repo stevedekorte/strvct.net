@@ -26,7 +26,7 @@
      */
     initPrototypeSlots() {
         /**
-         * @property {Object} target
+         * @member {Object} target
          * @description The target object for the action.
          */
         {
@@ -34,7 +34,7 @@
             slot.setSlotType("Object");
         }
         /**
-         * @property {string} method
+         * @member {string} method
          * @description The method name to be called on the target.
          */
         {
@@ -42,7 +42,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {number} order
+         * @member {number} order
          * @description The execution order of the action.
          */
         {
@@ -50,7 +50,7 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {Array} args
+         * @member {Array} args
          * @description The arguments to be passed to the method.
          */
         {
@@ -58,7 +58,7 @@
             slot.setSlotType("Array");
         }
         /**
-         * @property {boolean} isUnscheduled
+         * @member {boolean} isUnscheduled
          * @description Indicates if the action is unscheduled.
          */
         {
@@ -66,7 +66,7 @@
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Error} error
+         * @member {Error} error
          * @description Stores any error that occurs during action execution.
          */
         {

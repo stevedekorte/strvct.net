@@ -50,7 +50,7 @@
 
     {
       /**
-       * @property {string} prompt
+       * @member {string} prompt
        * @description The prompt for text-to-speech conversion.
        */
       const slot = this.newSlot("prompt", "");
@@ -67,7 +67,7 @@
     {
       const validModels = ["tts-1", "tts-1-hd"];
       /**
-       * @property {string} model
+       * @member {string} model
        * @description The TTS model to use.
        */
       const slot = this.newSlot("model", validModels.first());
@@ -85,7 +85,7 @@
     {
       const validVoices = ["alloy", "echo", "fable", "onyx", "nova", "shimmer"];
       /**
-       * @property {string} voice
+       * @member {string} voice
        * @description The voice to use for TTS.
        */
       //const slot = this.newSlot("voice", validVoices.first());
@@ -103,7 +103,7 @@
     {
       const validResponseFormats = ["mp3", "opus", "aac", "flac"];
       /**
-       * @property {string} responseFormat
+       * @member {string} responseFormat
        * @description The audio format for the TTS response.
        */
       const slot = this.newSlot("responseFormat", validResponseFormats.first());
@@ -120,7 +120,7 @@
     {
       const validValuesJson = this.speedOptionsJson()
       /**
-       * @property {number} speed
+       * @member {number} speed
        * @description The speed of the TTS playback.
        */
       const slot = this.newSlot("speed", validValuesJson.first());
@@ -138,7 +138,7 @@
 
     {
       /**
-       * @property {null} generateAction
+       * @member {null} generateAction
        * @description Action slot for generating TTS.
        */
       const slot = this.newSlot("generateAction", null);
@@ -154,7 +154,7 @@
 
     {
       /**
-       * @property {string} error
+       * @member {string} error
        * @description Stores any error messages.
        */
       const slot = this.newSlot("error", ""); // null or String
@@ -171,7 +171,7 @@
 
     {
       /**
-       * @property {boolean} isMuted
+       * @member {boolean} isMuted
        * @description Indicates if the audio is muted.
        */
       const slot = this.newSlot("isMuted", false);
@@ -187,7 +187,7 @@
 
     {
       /**
-       * @property {Array} ttsRequestQueue
+       * @member {Array} ttsRequestQueue
        * @description Queue for TTS requests.
        */
       const slot = this.newSlot("ttsRequestQueue", null);
@@ -200,7 +200,7 @@
 
     {
       /**
-       * @property {AudioQueue} audioQueue
+       * @member {AudioQueue} audioQueue
        * @description Queue for audio playback.
        */
       const slot = this.newSlot("audioQueue", null);
@@ -222,7 +222,7 @@
 
     {
       /**
-       * @property {string} status
+       * @member {string} status
        * @description Current status of the TTS session.
        */
       const slot = this.newSlot("status", ""); // String
@@ -238,7 +238,7 @@
 
     {
       /**
-       * @property {WASound} sound
+       * @member {WASound} sound
        * @description Latest sound being generated.
        */
       const slot = this.newSlot("sound", null); // latest sound being generated
@@ -247,7 +247,7 @@
 
     {
       /**
-       * @property {Object} delegate
+       * @member {Object} delegate
        * @description Delegate object for callbacks.
        */
       const slot = this.newSlot("delegate", null); 

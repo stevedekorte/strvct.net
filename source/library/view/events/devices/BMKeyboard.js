@@ -56,7 +56,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Map} codeToKeysMap
+         * @member {Map} codeToKeysMap
          * @description Dictionary of KeyboardKey objects
          */
         {
@@ -65,14 +65,14 @@
             slot.setSlotType("Map");
         }
         /**
-         * @property {KeyboardListener} keyboardListener
+         * @member {KeyboardListener} keyboardListener
          */
         {
             const slot = this.newSlot("keyboardListener", null);
             slot.setSlotType("KeyboardListener");
         }
         /**
-         * @property {Array} allModifierKeys
+         * @member {Array} allModifierKeys
          */
         {
             const slot = this.newSlot("allModifierKeys", null);

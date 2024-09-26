@@ -15,7 +15,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {string} result - The speech-to-text result.
+     * @member {string} result - The speech-to-text result.
      */
     {
       const slot = this.newSlot("result", "");      

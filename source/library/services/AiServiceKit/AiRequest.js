@@ -32,7 +32,7 @@
 
   initPrototypeSlots () {
     /**
-     * @property {Object} delegate - Optional reference to object that owns request
+     * @member {Object} delegate - Optional reference to object that owns request
      */
     {
       const slot = this.newSlot("delegate", null);
@@ -40,7 +40,7 @@
     }
 
     /**
-     * @property {AiService} service
+     * @member {AiService} service
      */
     {
       const slot = this.newSlot("service", null);
@@ -48,7 +48,7 @@
     }
 
     /**
-     * @property {Boolean} needsProxy
+     * @member {Boolean} needsProxy
      */
     {
       const slot = this.newSlot("needsProxy", true);
@@ -63,7 +63,7 @@
     }
 
     /**
-     * @property {Object} bodyJson - Contains the model choice and messages
+     * @member {Object} bodyJson - Contains the model choice and messages
      */
     {
       const slot = this.newSlot("bodyJson", null);
@@ -71,7 +71,7 @@
     }
 
     /**
-     * @property {String} body
+     * @member {String} body
      */
     {
       const slot = this.newSlot("body", null); 
@@ -86,7 +86,7 @@
     }
 
     /**
-     * @property {Object} json
+     * @member {Object} json
      */
     {
       const slot = this.newSlot("json", null);
@@ -94,7 +94,7 @@
     }
 
     /**
-     * @property {XMLHttpRequest} xhr
+     * @member {XMLHttpRequest} xhr
      */
     {
       const slot = this.newSlot("xhr", null);
@@ -102,7 +102,7 @@
     }
 
     /**
-     * @property {Boolean} isStreaming - External read-only
+     * @member {Boolean} isStreaming - External read-only
      */
     {
       const slot = this.newSlot("isStreaming", false);
@@ -115,7 +115,7 @@
     }
 
     /**
-     * @property {Promise} xhrPromise
+     * @member {Promise} xhrPromise
      */
     {
       const slot = this.newSlot("xhrPromise", null); 
@@ -123,7 +123,7 @@
     }
 
     /**
-     * @property {String} requestId
+     * @member {String} requestId
      */
     {
       const slot = this.newSlot("requestId", null);
@@ -137,7 +137,7 @@
     }
 
     /**
-     * @property {Number} readIndex - Current read index in the responseText
+     * @member {Number} readIndex - Current read index in the responseText
      */
     {
       const slot = this.newSlot("readIndex", 0);
@@ -151,7 +151,7 @@
     }
 
     /**
-     * @property {Array} readLines
+     * @member {Array} readLines
      */
     {
       const slot = this.newSlot("readLines", null);
@@ -159,7 +159,7 @@
     }
 
     /**
-     * @property {Boolean} isContinuation - Flag to skip "start" delegate message
+     * @member {Boolean} isContinuation - Flag to skip "start" delegate message
      */
     {
       const slot = this.newSlot("isContinuation", false);
@@ -173,7 +173,7 @@
     }
 
     /**
-     * @property {Number} continuationStartIndex - Where the continued request started in the fullContext (not the responseText)
+     * @member {Number} continuationStartIndex - Where the continued request started in the fullContext (not the responseText)
      */
     {
       const slot = this.newSlot("continuationStartIndex", 0); 
@@ -187,7 +187,7 @@
     }
 
     /**
-     * @property {String} stopReason
+     * @member {String} stopReason
      */
     {
       const slot = this.newSlot("stopReason", null);
@@ -201,7 +201,7 @@
     }
 
     /**
-     * @property {Number} retryDelaySeconds
+     * @member {Number} retryDelaySeconds
      */
     {
       const slot = this.newSlot("retryDelaySeconds", 1);
@@ -215,7 +215,7 @@
     }
 
     /**
-     * @property {String} fullContent
+     * @member {String} fullContent
      */
     {
       const slot = this.newSlot("fullContent", null); 
@@ -229,7 +229,7 @@
     }
 
     /**
-     * @property {Error} error
+     * @member {Error} error
      */
     {
       const slot = this.newSlot("error", null);
@@ -237,7 +237,7 @@
     }
 
     /**
-     * @property {String} status
+     * @member {String} status
      */
     {
       const slot = this.newSlot("status", "");
@@ -251,7 +251,7 @@
     }
 
     /**
-     * @property {Boolean} didAbort
+     * @member {Boolean} didAbort
      */
     {
       const slot = this.newSlot("didAbort", false);
@@ -265,7 +265,7 @@
     }
 
     /**
-     * @property {Action} retryRequestAction
+     * @member {Action} retryRequestAction
      */
     {
       const slot = this.newSlot("retryRequestAction", null);
@@ -279,7 +279,7 @@
     }
 
     /**
-     * @property {Action} copyBodyAction
+     * @member {Action} copyBodyAction
      */
     {
       const slot = this.newSlot("copyBodyAction", null);
@@ -293,7 +293,7 @@
     }
 
     /**
-     * @property {Action} copyMessagesAction
+     * @member {Action} copyMessagesAction
      */
     {
       const slot = this.newSlot("copyMessagesAction", null);

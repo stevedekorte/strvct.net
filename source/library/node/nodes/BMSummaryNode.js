@@ -22,7 +22,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {string} nodeSummarySuffix
+         * @member {string} nodeSummarySuffix
          * @description The suffix to be added to the node summary.
          */
         {
@@ -37,7 +37,7 @@
         }
 
         /**
-         * @property {boolean} nodeSubtitleIsChildrenSummary
+         * @member {boolean} nodeSubtitleIsChildrenSummary
          * @description Determines if the node subtitle is the children summary.
          */
         {
@@ -52,7 +52,7 @@
         }
 
         /**
-         * @property {boolean} hasNewlineBeforeSummary
+         * @member {boolean} hasNewlineBeforeSummary
          * @description Determines if there should be a newline before the summary.
          */
         {
@@ -67,7 +67,7 @@
         }
 
         /**
-         * @property {boolean} hasNewlineAfterSummary
+         * @member {boolean} hasNewlineAfterSummary
          * @description Determines if there should be a newline after the summary.
          */
         {
@@ -82,7 +82,7 @@
         }
 
         /**
-         * @property {boolean} hasNewLineSeparator
+         * @member {boolean} hasNewLineSeparator
          * @description Determines if there should be a newline separator between key and value.
          */
         {
@@ -97,7 +97,7 @@
         }
 
         /**
-         * @property {string} summaryFormat
+         * @member {string} summaryFormat
          * @description The format of the summary.
          */
         {
@@ -113,7 +113,7 @@
         }
 
         /**
-         * @property {string} hidePolicy
+         * @member {string} hidePolicy
          * @description The policy for hiding the summary.
          */
         {
@@ -129,7 +129,7 @@
         }
 
         /**
-         * @property {boolean} subtitleIsSubnodeCount
+         * @member {boolean} subtitleIsSubnodeCount
          * @description Determines if the subtitle is the subnode count.
          */
         {
@@ -144,7 +144,7 @@
         }
 
         /**
-         * @property {boolean} noteIsSubnodeCount
+         * @member {boolean} noteIsSubnodeCount
          * @description Determines if the note is the subnode count.
          */
         {

@@ -15,5 +15,4 @@
   onSoundEnded (audioClip) {
   }
 
-
 }.initThisClass());

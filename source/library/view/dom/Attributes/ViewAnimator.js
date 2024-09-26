@@ -15,28 +15,28 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} startValue - The initial value of the animation.
+         * @member {Number} startValue - The initial value of the animation.
          */
         {
             const slot = this.newSlot("startValue", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} targetValue - The final value of the animation.
+         * @member {Number} targetValue - The final value of the animation.
          */
         {
             const slot = this.newSlot("targetValue", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} viewProperty - The name of the view property to animate.
+         * @member {String} viewProperty - The name of the view property to animate.
          */
         {
             const slot = this.newSlot("viewProperty", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {Number} duration - The duration of the animation in milliseconds.
+         * @member {Number} duration - The duration of the animation in milliseconds.
          */
         {
             const slot = this.newSlot("duration", 200);
@@ -44,14 +44,14 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} easing - The easing function to use for the animation.
+         * @member {String} easing - The easing function to use for the animation.
          */
         {
             const slot = this.newSlot("easing", "linear");
             slot.setSlotType("String");
         }
         /**
-         * @property {DomView} view - The view to animate.
+         * @member {DomView} view - The view to animate.
          */
         {
             const slot = this.newSlot("view", null);

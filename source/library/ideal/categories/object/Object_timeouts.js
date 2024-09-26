@@ -18,11 +18,11 @@
      * @returns {Map} A Map of timeout names to timeout IDs.
      */
     timeoutNameToIdMap () { // the name will be the timeoutId if no name is provided
-        const slotName = "_timeoutNameToIdMap"
+        const slotName = "_timeoutNameToIdMap";
         if (Type.isNullOrUndefined(this[slotName])) {
-            Object.defineSlot(this, slotName, new Map())
+            Object.defineSlot(this, slotName, new Map());
         }
-        return this[slotName]
+        return this[slotName];
     }
     
     /**

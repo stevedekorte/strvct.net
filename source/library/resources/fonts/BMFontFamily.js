@@ -15,14 +15,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} name - The name of the font family.
+         * @member {String} name - The name of the font family.
          */
         {
             const slot = this.newSlot("name", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Array} fonts - The array of fonts in the family.
+         * @member {Array} fonts - The array of fonts in the family.
          */
         {
             const slot = this.newSlot("fonts", null);

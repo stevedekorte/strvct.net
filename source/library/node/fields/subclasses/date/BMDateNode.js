@@ -22,7 +22,7 @@
     initPrototypeSlots () {        
 
         /**
-         * @property {Array} subnodes
+         * @member {Array} subnodes
          */
         {
             const slot = this.overrideSlot("subnodes");
@@ -31,7 +31,7 @@
         }
 
         /**
-         * @property {Number} year
+         * @member {Number} year
          */
         {
             const slot = this.newSlot("year", null);
@@ -42,7 +42,7 @@
         }
 
         /**
-         * @property {Number} month
+         * @member {Number} month
          */
         {
             const slot = this.newSlot("month", null);
@@ -53,7 +53,7 @@
         }
 
         /**
-         * @property {Number} day
+         * @member {Number} day
          */
         {
             const slot = this.newSlot("day", null);
@@ -64,7 +64,7 @@
         }
 
         /**
-         * @property {Number} startYear
+         * @member {Number} startYear
          */
         {
             const slot = this.newSlot("startYear", 2000);
@@ -76,7 +76,7 @@
         }
 
         /**
-         * @property {Number} yearRange
+         * @member {Number} yearRange
          */
         {
             const slot = this.newSlot("yearRange", 20);

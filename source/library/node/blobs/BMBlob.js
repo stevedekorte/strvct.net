@@ -22,7 +22,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("String");
             /**
-             * @property {string} name - The name of the blob.
+             * @member {string} name - The name of the blob.
              */
         }
 
@@ -33,7 +33,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("String");
             /**
-             * @property {string} valueHash - The hash value of the blob's data.
+             * @member {string} valueHash - The hash value of the blob's data.
              */
         }
 
@@ -44,7 +44,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("Number");
             /**
-             * @property {number} valueSize - The size of the blob's data in bytes.
+             * @member {number} valueSize - The size of the blob's data in bytes.
              */
         }
 
@@ -55,7 +55,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("Number");
             /**
-             * @property {number} lastModifiedTime - The timestamp of the last modification to the blob's data.
+             * @member {number} lastModifiedTime - The timestamp of the last modification to the blob's data.
              */
         }
 
@@ -66,7 +66,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("Date");
             /**
-             * @property {Date} expirationDate - The date when the blob's data expires.
+             * @member {Date} expirationDate - The date when the blob's data expires.
              */
         }
 
@@ -77,7 +77,7 @@
             slot.setDoesHookSetter(true);
             slot.setSlotType("ArrayBuffer");
             /**
-             * @property {ArrayBuffer} value - The binary data of the blob.
+             * @member {ArrayBuffer} value - The binary data of the blob.
              */
         }
     }

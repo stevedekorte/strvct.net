@@ -21,42 +21,42 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} id - The id of the event point.
+         * @member {String} id - The id of the event point.
          */
         {
             const slot = this.newSlot("id", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} state - The state of the event point.
+         * @member {String} state - The state of the event point.
          */
         {
             const slot = this.newSlot("state", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Element} target - The target element of the event point.
+         * @member {Element} target - The target element of the event point.
          */
         {
             const slot = this.newSlot("target", null);
             slot.setSlotType("Element");
         }
         /**
-         * @property {Boolean} isDown - Indicates if the event point is in a down state.
+         * @member {Boolean} isDown - Indicates if the event point is in a down state.
          */
         {
             const slot = this.newSlot("isDown", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {DomView} overView - The view the event point is over.
+         * @member {DomView} overView - The view the event point is over.
          */
         {
             const slot = this.newSlot("overView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {Event} event - The associated event object.
+         * @member {Event} event - The associated event object.
          */
         {
             const slot = this.newSlot("event", null);

@@ -63,7 +63,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {String} projectId
+     * @member {String} projectId
      */
     {
       const slot = this.newSlot("projectId", null);
@@ -71,7 +71,7 @@
     }
 
     /**
-     * @property {String} locationId
+     * @member {String} locationId
      */
     {
       const slot = this.newSlot("locationId", null);

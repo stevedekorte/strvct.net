@@ -13,7 +13,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} value - The day value, starting from 1.
+         * @member {Number} value - The day value, starting from 1.
          */
         {
             const slot = this.newSlot("value", 1);

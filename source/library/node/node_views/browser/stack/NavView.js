@@ -10,7 +10,7 @@
 
     initPrototypeSlots () {
         /**
-         * @property {StackView} stackView
+         * @member {StackView} stackView
          */
         {
             const slot = this.newSlot("stackView", null);
@@ -18,7 +18,7 @@
         }
             
         /**
-         * @property {DomView} headerView - Placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
+         * @member {DomView} headerView - Placed in top of NavView, set to display:none if no node.headerNode(), contains a Tile?
          */
         {
             const slot = this.newSlot("headerView", null);
@@ -26,7 +26,7 @@
         }
 
         /**
-         * @property {ScrollView} scrollView - ScrollView fits NavView size, and contains TilesView which may be larger
+         * @member {ScrollView} scrollView - ScrollView fits NavView size, and contains TilesView which may be larger
          */
         {
             const slot = this.newSlot("scrollView", null);
@@ -34,7 +34,7 @@
         }
 
         /**
-         * @property {DomView} footerView - Placed in bottom of NavView, set to display:none if no node.footerNode()
+         * @member {DomView} footerView - Placed in bottom of NavView, set to display:none if no node.footerNode()
          */
         {
             const slot = this.newSlot("footerView", null);
@@ -42,7 +42,7 @@
         }
 
         /**
-         * @property {TilesView} tilesView - Is inside scrollView
+         * @member {TilesView} tilesView - Is inside scrollView
          */
         {
             const slot = this.newSlot("tilesView", null);
@@ -50,7 +50,7 @@
         }
 
         /**
-         * @property {Boolean} isCollapsed
+         * @member {Boolean} isCollapsed
          */
         {
             const slot = this.newSlot("isCollapsed", false);
@@ -58,7 +58,7 @@
         }
 
         /**
-         * @property {Boolean} animatesCollapse
+         * @member {Boolean} animatesCollapse
          */
         {
             const slot = this.newSlot("animatesCollapse", true);
@@ -66,7 +66,7 @@
         }
 
         /**
-         * @property {String} beforeEdgePanBorderBottom
+         * @member {String} beforeEdgePanBorderBottom
          * @private
          */
         {
@@ -75,7 +75,7 @@
         }
 
         /**
-         * @property {String} beforeEdgePanBorderRight
+         * @member {String} beforeEdgePanBorderRight
          * @private
          */
         {

@@ -15,14 +15,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} isEnabled - Indicates whether the button is enabled.
+         * @member {Boolean} isEnabled - Indicates whether the button is enabled.
          */
         {
             const slot = this.newSlot("isEnabled", true);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {SvgIconView} iconView - The icon view for the close button.
+         * @member {SvgIconView} iconView - The icon view for the close button.
          */
         {
             const slot = this.newSlot("iconView", null);

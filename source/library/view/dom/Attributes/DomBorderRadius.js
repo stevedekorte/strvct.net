@@ -19,42 +19,42 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {DomView} divView - The associated DomView.
+         * @member {DomView} divView - The associated DomView.
          */
         {
             const slot = this.newSlot("divView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {Number} topLeft - The top-left border radius.
+         * @member {Number} topLeft - The top-left border radius.
          */
         {
             const slot = this.newSlot("topLeft", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} topRight - The top-right border radius.
+         * @member {Number} topRight - The top-right border radius.
          */
         {
             const slot = this.newSlot("topRight", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} bottomRight - The bottom-right border radius.
+         * @member {Number} bottomRight - The bottom-right border radius.
          */
         {
             const slot = this.newSlot("bottomRight", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} bottomLeft - The bottom-left border radius.
+         * @member {Number} bottomLeft - The bottom-left border radius.
          */
         {
             const slot = this.newSlot("bottomLeft", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Array} partNames - The names of the border radius parts.
+         * @member {Array} partNames - The names of the border radius parts.
          */
         {
             const slot = this.newSlot("partNames", ["topLeft", "topRight", "bottomRight", "bottomLeft"]);

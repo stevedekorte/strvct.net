@@ -145,7 +145,7 @@
 
         {
             /**
-             * @property {Array} styleSlots
+             * @member {Array} styleSlots
              */
             const slot = this.newSlot("styleSlots", styleSlots);
             slot.setSlotType("Array");
@@ -254,7 +254,7 @@
         //this.newSlot("paddingStyleSlots", styleSlots.select(slot => slot.name().beginsWith("padding"))); // cached for efficiency
         {
             /**
-             * @property {Array} borderStyleSlots
+             * @member {Array} borderStyleSlots
              */
             const slot = this.newSlot("borderStyleSlots", styleSlots.select(slot => slot.name().beginsWith("border") || slot.name().beginsWith("margin"))); // cached for efficiency
             slot.setSlotType("Array");
@@ -262,7 +262,7 @@
 
         {
             /**
-             * @property {Array} nonBorderStyleSlots
+             * @member {Array} nonBorderStyleSlots
              */
             const slot = this.newSlot("nonBorderStyleSlots", styleSlots.select(slot => !(slot.name().beginsWith("border") || slot.name().beginsWith("margin")))); // cached for efficiency
             slot.setSlotType("Array");
@@ -270,7 +270,7 @@
         
         {
             /**
-             * @property {Map} styleCacheMap
+             * @member {Map} styleCacheMap
              */
             const slot = this.newSlot("styleCacheMap", null);
             slot.setSlotType("Map");

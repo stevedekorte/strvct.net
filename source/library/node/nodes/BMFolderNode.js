@@ -27,7 +27,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} label
+         * @member {string} label
          * @description The label of the folder node.
          */
         {
@@ -36,7 +36,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {Object} target
+         * @member {Object} target
          * @description The target object for the folder node.
          */
         {
@@ -44,7 +44,7 @@
             slot.setSlotType("Object");
         }
         /**
-         * @property {string} methodName
+         * @member {string} methodName
          * @description The method name to be called on the target.
          */
         {
@@ -52,7 +52,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {Object} info
+         * @member {Object} info
          * @description Additional information for the folder node.
          */
         {

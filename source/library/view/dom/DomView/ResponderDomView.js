@@ -25,7 +25,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} acceptsFirstResponder
+         * @member {Boolean} acceptsFirstResponder
          */
         {
             const slot = this.newSlot("acceptsFirstResponder", false);
@@ -41,7 +41,7 @@
         }
         */
         /**
-         * @property {ResponderDomView} nextKeyView
+         * @member {ResponderDomView} nextKeyView
          */
         {
             const slot = this.newSlot("nextKeyView", null);

@@ -28,7 +28,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {WindowListener} windowListener
+         * @member {WindowListener} windowListener
          */
         {
             const slot = this.newSlot("windowListener", null);
@@ -36,7 +36,7 @@
         }
 
         /**
-         * @property {Range} storedSelectionRange
+         * @member {Range} storedSelectionRange
          */
         {
             const slot = this.newSlot("storedSelectionRange", null);

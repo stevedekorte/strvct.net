@@ -19,7 +19,7 @@
 
     initPrototypeSlots () {
         /**
-         * @property {Set} visited
+         * @member {Set} visited
          * @private
          */
         {
@@ -27,7 +27,7 @@
             slot.setSlotType("Set");
         }
         /**
-         * @property {Array} matchingPaths
+         * @member {Array} matchingPaths
          * @private
          */
         {
@@ -35,7 +35,7 @@
             slot.setSlotType("Array");
         }
         /**
-         * @property {Function} slotMatchClosure
+         * @member {Function} slotMatchClosure
          * @private
          */
         {

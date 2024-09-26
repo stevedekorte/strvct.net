@@ -33,35 +33,35 @@
     
     initPrototypeSlots () {
         /**
-         * @property {TextField} titleView - The view for displaying the button's title.
+         * @member {TextField} titleView - The view for displaying the button's title.
          */
         {
             const slot = this.newSlot("titleView", null);
             slot.setSlotType("TextField");
         }
         /**
-         * @property {TextField} subtitleView - The view for displaying the button's subtitle.
+         * @member {TextField} subtitleView - The view for displaying the button's subtitle.
          */
         {
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("TextField");
         }
         /**
-         * @property {Boolean} isEnabled - Indicates whether the button is enabled or disabled.
+         * @member {Boolean} isEnabled - Indicates whether the button is enabled or disabled.
          */
         {
             const slot = this.newSlot("isEnabled", true);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {SvgIconView} iconView - The view for displaying an icon on the button.
+         * @member {SvgIconView} iconView - The view for displaying an icon on the button.
          */
         {
             const slot = this.newSlot("iconView", null);
             slot.setSlotType("SvgIconView");
         }
         /**
-         * @property {Object} info - Additional information associated with the button.
+         * @member {Object} info - Additional information associated with the button.
          */
         {
             const slot = this.newSlot("info", null);

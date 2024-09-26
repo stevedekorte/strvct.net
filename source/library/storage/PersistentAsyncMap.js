@@ -19,7 +19,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} name - The name of the persistent async dictionary.
+         * @member {string} name - The name of the persistent async dictionary.
          */
         {
             const slot = this.newSlot("name", "PersistentAsyncDictionary");
@@ -27,7 +27,7 @@
         }
 
         /**
-         * @property {IndexedDBFolder} idb - The IndexedDBFolder instance.
+         * @member {IndexedDBFolder} idb - The IndexedDBFolder instance.
          */
         {
             const slot = this.newSlot("idb", null);

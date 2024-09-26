@@ -10,7 +10,7 @@
 
     initPrototypeSlots () {
         /**
-         * @property {Tile} tile - The tile contained in this container
+         * @member {Tile} tile - The tile contained in this container
          */
         {
             const slot = this.newSlot("tile", null);

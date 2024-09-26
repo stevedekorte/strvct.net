@@ -17,7 +17,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {Map} eventListenersMap - Map to store event listeners
+         * @member {Map} eventListenersMap - Map to store event listeners
          */
         {
             const slot = this.newSlot("eventListenersMap", null);

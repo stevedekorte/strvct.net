@@ -15,7 +15,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {AiRequest} request - The associated request object.
+     * @member {AiRequest} request - The associated request object.
      */
     {
       const slot = this.newSlot("request", null);
@@ -28,7 +28,7 @@
     }
 
     /**
-     * @property {Class} requestClass - The class of the request object.
+     * @member {Class} requestClass - The class of the request object.
      */
     {
       const slot = this.newSlot("requestClass", null);
@@ -41,7 +41,7 @@
     }
 
     /**
-     * @property {boolean} isResponse - Indicates if this is a response message.
+     * @member {boolean} isResponse - Indicates if this is a response message.
      */
     {
       const slot = this.newSlot("isResponse", false);
@@ -52,7 +52,7 @@
     }
 
     /**
-     * @property {number} retryCount - The number of retry attempts.
+     * @member {number} retryCount - The number of retry attempts.
      */
     {
       const slot = this.newSlot("retryCount", 0);
@@ -63,7 +63,7 @@
     }
 
     /**
-     * @property {string} summaryMessage - A summary of the message.
+     * @member {string} summaryMessage - A summary of the message.
      */
     {
       const slot = this.newSlot("summaryMessage", null);
@@ -73,7 +73,7 @@
     }
 
     /**
-     * @property {number} temperature - The temperature parameter for AI generation.
+     * @member {number} temperature - The temperature parameter for AI generation.
      */
     {
       // See: https://aipromptskit.com/openai-temperature-parameter/
@@ -85,7 +85,7 @@
     }
 
     /**
-     * @property {number} topP - The top_p parameter for AI generation.
+     * @member {number} topP - The top_p parameter for AI generation.
      */
     {
       // See: https://aipromptskit.com/openai-temperature-parameter/
@@ -97,7 +97,7 @@
     }
 
     /**
-     * @property {Promise} completionPromise - A promise that resolves when the response is complete.
+     * @member {Promise} completionPromise - A promise that resolves when the response is complete.
      */
     {
       const slot = this.newSlot("completionPromise", null);

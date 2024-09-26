@@ -14,7 +14,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String|null} name - The name of the notification.
+         * @member {String|null} name - The name of the notification.
          */
         {
             const slot = this.newSlot("name", null);
@@ -22,7 +22,7 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {Object|null} sender - The sender of the notification.
+         * @member {Object|null} sender - The sender of the notification.
          */
         {
             const slot = this.newSlot("sender", null);
@@ -30,7 +30,7 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {Object|null} info - Additional information for the notification.
+         * @member {Object|null} info - Additional information for the notification.
          */
         {
             const slot = this.newSlot("info", null);
@@ -38,7 +38,7 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {BMNotificationCenter|null} center - The NotificationCenter that owns this notification.
+         * @member {BMNotificationCenter|null} center - The NotificationCenter that owns this notification.
          */
         {
             const slot = this.newSlot("center", null);
@@ -46,7 +46,7 @@
             slot.setSlotType("BMNotificationCenter");
         }
         /**
-         * @property {Object|null} senderStack - The stack trace of the sender.
+         * @member {Object|null} senderStack - The stack trace of the sender.
          */
         {
             const slot = this.newSlot("senderStack", null);
@@ -54,7 +54,7 @@
             slot.setSlotType("Object");
         }
         /**
-         * @property {String|null} noteHash - A unique hash for the notification.
+         * @member {String|null} noteHash - A unique hash for the notification.
          */
         {
             const slot = this.newSlot("noteHash", null);

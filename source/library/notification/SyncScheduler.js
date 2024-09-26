@@ -90,7 +90,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Map} actions
+         * @member {Map} actions
          */
         {
             const slot = this.newSlot("actions", new Map());
@@ -98,7 +98,7 @@
         }
 
         /**
-         * @property {Boolean} hasTimeout
+         * @member {Boolean} hasTimeout
          */
         {
             const slot = this.newSlot("hasTimeout", false);
@@ -106,7 +106,7 @@
         }
 
         /**
-         * @property {Boolean} isProcessing
+         * @member {Boolean} isProcessing
          */
         {
             const slot = this.newSlot("isProcessing", false);
@@ -114,7 +114,7 @@
         }
 
         /**
-         * @property {SyncAction} currentAction
+         * @member {SyncAction} currentAction
          */
         {
             const slot = this.newSlot("currentAction", null);
@@ -122,7 +122,7 @@
         }
 
         /**
-         * @property {Boolean} isPaused
+         * @member {Boolean} isPaused
          */
         {
             const slot = this.newSlot("isPaused", false);

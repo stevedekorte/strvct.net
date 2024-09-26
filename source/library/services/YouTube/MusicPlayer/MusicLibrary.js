@@ -13,7 +13,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {String} currentTrack
+     * @member {String} currentTrack
      * @description The current track.
      */
     {
@@ -29,7 +29,7 @@
     }
 
     /**
-     * @property {MusicFolder} folder
+     * @member {MusicFolder} folder
      * @description The folder.
      */
     {
@@ -46,7 +46,7 @@
     }
 
     /**
-     * @property {YouTubeAudioPlayer} musicPlayer
+     * @member {YouTubeAudioPlayer} musicPlayer
      * @description The music player.
      */
     {
@@ -61,7 +61,7 @@
     }
 
     /**
-     * @property {YouTubeAudioPlayer} soundEffectPlayer
+     * @member {YouTubeAudioPlayer} soundEffectPlayer
      * @description The sound effect player.
      */
     {

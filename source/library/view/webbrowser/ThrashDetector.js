@@ -39,7 +39,7 @@
 
     initPrototypeSlots () {
         /**
-         * @property {Set} readOpSet - Set of read operations that can trigger a reflow
+         * @member {Set} readOpSet - Set of read operations that can trigger a reflow
          */
         {
             const slot = this.newSlot("readOpSet", new Set([
@@ -70,7 +70,7 @@
         }
 
         /**
-         * @property {Set} writeOpSet - Set of write operations that can trigger a reflow
+         * @member {Set} writeOpSet - Set of write operations that can trigger a reflow
          */
         {
             const slot = this.newSlot("writeOpSet", new Set([
@@ -92,7 +92,7 @@
         }
 
         /**
-         * @property {Set} noReflowWriteOpSet - Set of write operations that do not trigger a reflow
+         * @member {Set} noReflowWriteOpSet - Set of write operations that do not trigger a reflow
          */
         {
             const slot = this.newSlot("noReflowWriteOpSet", new Set(
@@ -130,7 +130,7 @@
         }
 
         /**
-         * @property {Boolean} needsReflow - Indicates if a reflow is needed
+         * @member {Boolean} needsReflow - Indicates if a reflow is needed
          */
         {
             const slot = this.newSlot("needsReflow", false);
@@ -138,7 +138,7 @@
         }
 
         /**
-         * @property {Number} reflowCount - Count of reflows
+         * @member {Number} reflowCount - Count of reflows
          */
         {
             const slot = this.newSlot("reflowCount", false);
@@ -146,7 +146,7 @@
         }
 
         /**
-         * @property {Array} triggers - Array of triggers that caused reflows
+         * @member {Array} triggers - Array of triggers that caused reflows
          */
         {
             const slot = this.newSlot("triggers", null);
@@ -154,7 +154,7 @@
         }
 
         /**
-         * @property {String} lastWrite - The last write operation performed
+         * @member {String} lastWrite - The last write operation performed
          */
         {
             const slot = this.newSlot("lastWrite", null);
@@ -162,7 +162,7 @@
         }
 
         /**
-         * @property {Boolean} enabled - Indicates if the ThrashDetector is enabled
+         * @member {Boolean} enabled - Indicates if the ThrashDetector is enabled
          */
         {
             const slot = this.newSlot("enabled", false);

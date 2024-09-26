@@ -23,7 +23,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {RzSigServers} servers
+     * @member {RzSigServers} servers
      * @description Servers slot for PeerService
      */
     {

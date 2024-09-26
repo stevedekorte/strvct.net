@@ -140,7 +140,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {PersistentObjectPool} store
+         * @member {PersistentObjectPool} store
          */
         {
             const slot = this.newSlot("store", null);
@@ -148,7 +148,7 @@
         }
 
         /**
-         * @property {String} name
+         * @member {String} name
          */
         {
             const slot = this.newSlot("name", "App");
@@ -156,7 +156,7 @@
         }
 
         /**
-         * @property {Array} version
+         * @member {Array} version
          */
         {
             const slot = this.newSlot("version", [0, 0]);
@@ -164,7 +164,7 @@
         }
 
         /**
-         * @property {Boolean} hasDoneAppInit
+         * @member {Boolean} hasDoneAppInit
          */
         {
             const slot = this.newSlot("hasDoneAppInit", false);
@@ -172,7 +172,7 @@
         }
 
         /**
-         * @property {DomView} rootView
+         * @member {DomView} rootView
          */
         {
             const slot = this.newSlot("rootView", null);
@@ -180,7 +180,7 @@
         }
 
         /**
-         * @property {Promise} didInitPromise
+         * @member {Promise} didInitPromise
          */
         {
             const slot = this.newSlot("didInitPromise", null);

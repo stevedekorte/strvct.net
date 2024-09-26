@@ -19,105 +19,105 @@
     
     initPrototypeSlots () {
         {
-            /** @property {boolean} allowsCursorNavigation
+            /** @member {boolean} allowsCursorNavigation
              * @description Indicates if cursor navigation is allowed.
              */
             const slot = this.newSlot("allowsCursorNavigation", false);
             slot.setSlotType("Boolean");
         }
         {
-            /** @property {string} vPadding
+            /** @member {string} vPadding
              * @description The vertical padding for the tile.
              */
             const slot = this.newSlot("vPadding",  "0.1em");
             slot.setSlotType("String");
         }
         {
-            /** @property {DomView} kvSection
+            /** @member {DomView} kvSection
              * @description The key-value section view.
              */
             const slot = this.newSlot("kvSection", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} keyViewContainer
+            /** @member {DomView} keyViewContainer
              * @description The container for the key view.
              */
             const slot = this.newSlot("keyViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} valueViewContainer
+            /** @member {DomView} valueViewContainer
              * @description The container for the value view.
              */
             const slot = this.newSlot("valueViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} errorViewContainer
+            /** @member {DomView} errorViewContainer
              * @description The container for the error view.
              */
             const slot = this.newSlot("errorViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} noteViewContainer
+            /** @member {DomView} noteViewContainer
              * @description The container for the note view.
              */
             const slot = this.newSlot("noteViewContainer", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} keyView
+            /** @member {DomView} keyView
              * @description The key view.
              */
             const slot = this.newSlot("keyView", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} valueView
+            /** @member {DomView} valueView
              * @description The value view.
              */
             const slot = this.newSlot("valueView", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} errorView
+            /** @member {DomView} errorView
              * @description The error view.
              */
             const slot = this.newSlot("errorView", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {DomView} noteView
+            /** @member {DomView} noteView
              * @description The note view.
              */
             const slot = this.newSlot("noteView", null);
             slot.setSlotType("DomView");
         }
         {
-            /** @property {string} editableColor
+            /** @member {string} editableColor
              * @description The color for editable text.
              */
             const slot = this.newSlot("editableColor", "#aaa");
             slot.setSlotType("String");
         }
         {
-            /** @property {string} uneditableColor
+            /** @member {string} uneditableColor
              * @description The color for uneditable text.
              */
             const slot = this.newSlot("uneditableColor", "#888");
             slot.setSlotType("String");
         }
         {
-            /** @property {string} errorColor
+            /** @member {string} errorColor
              * @description The color for error text.
              */
             const slot = this.newSlot("errorColor", "red");
             slot.setSlotType("String");
         }
         {
-            /** @property {string} valueEditableBorder
+            /** @member {string} valueEditableBorder
              * @description The border for editable value.
              */
             const slot = this.newSlot("valueEditableBorder", "1px solid rgba(255, 255, 255, 0.2)");
@@ -130,7 +130,7 @@
         }
         */
         {
-            /** @property {string} valueUneditableBorder
+            /** @member {string} valueUneditableBorder
              * @description The border for uneditable value.
              */
             const slot = this.newSlot("valueUneditableBorder", "none");

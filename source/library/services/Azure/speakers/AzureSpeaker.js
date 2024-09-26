@@ -49,7 +49,7 @@
     */
 
     /**
-     * @property {string} localeName - The language/locale name for the speaker.
+     * @member {string} localeName - The language/locale name for the speaker.
      */
     {
       const slot = this.newSlot("localeName", "English (United States)");
@@ -68,7 +68,7 @@
     }
 
     /**
-     * @property {string} displayName - The display name for the speaker.
+     * @member {string} displayName - The display name for the speaker.
      */
     {
       const slot = this.newSlot("displayName", null);
@@ -87,7 +87,7 @@
     }
 
     /**
-     * @property {string} voiceStyle - The style of the voice for the speaker.
+     * @member {string} voiceStyle - The style of the voice for the speaker.
      */
     {
       const slot = this.newSlot("voiceStyle", null);
@@ -105,7 +105,7 @@
     }
     
     /**
-     * @property {string} volume - The volume setting for the speaker.
+     * @member {string} volume - The volume setting for the speaker.
      */
     {
       const slot = this.newSlot("volume", "soft");
@@ -123,7 +123,7 @@
     }
     
     /**
-     * @property {number} rate - The rate adjustment percentage for the speaker.
+     * @member {number} rate - The rate adjustment percentage for the speaker.
      */
     {
       const slot = this.newSlot("rate", 10);
@@ -138,7 +138,7 @@
     }
 
     /**
-     * @property {number} pitch - The pitch adjustment percentage for the speaker.
+     * @member {number} pitch - The pitch adjustment percentage for the speaker.
      */
     {
       const slot = this.newSlot("pitch", -10);
@@ -153,7 +153,7 @@
     }
 
     /**
-     * @property {boolean} isMuted - Indicates whether the speaker is muted.
+     * @member {boolean} isMuted - Indicates whether the speaker is muted.
      */
     {
       const slot = this.newSlot("isMuted", false);
@@ -167,7 +167,7 @@
     }
 
     /**
-     * @property {Object} currentAudio - The current audio object.
+     * @member {Object} currentAudio - The current audio object.
      */
     {
       const slot = this.newSlot("currentAudio", null);
@@ -183,21 +183,21 @@
     }
 
     /**
-     * @property {Object} audioQueue - The audio queue object.
+     * @member {Object} audioQueue - The audio queue object.
      */
     {
       const slot = this.newSlot("audioQueue", null);
     }
 
     /**
-     * @property {Array} audioBlobQueue - The queue of audio blobs.
+     * @member {Array} audioBlobQueue - The queue of audio blobs.
      */
     {
       const slot = this.newSlot("audioBlobQueue", null);
     }
 
     /**
-     * @property {Object} requests - The Azure TTS requests object.
+     * @member {Object} requests - The Azure TTS requests object.
      */
     {
       const slot = this.newSlot("requests", null)

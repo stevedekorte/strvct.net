@@ -15,37 +15,37 @@
    */
   initPrototypeSlots() {
     /**
-     * @property {Array} subnodeClasses - The classes of subnodes for this node.
+     * @member {Array} subnodeClasses - The classes of subnodes for this node.
      */
     this.setSubnodeClasses([SttMessage]);
 
     /**
-     * @property {string} title - The title of the node.
+     * @member {string} title - The title of the node.
      */
     this.setTitle("log");
 
     /**
-     * @property {boolean} shouldStore - Indicates whether the node should be stored.
+     * @member {boolean} shouldStore - Indicates whether the node should be stored.
      */
     this.setShouldStore(true);
 
     /**
-     * @property {boolean} shouldStoreSubnodes - Indicates whether subnodes should be stored.
+     * @member {boolean} shouldStoreSubnodes - Indicates whether subnodes should be stored.
      */
     this.setShouldStoreSubnodes(true);
 
     /**
-     * @property {boolean} nodeCanAddSubnode - Indicates whether new subnodes can be added.
+     * @member {boolean} nodeCanAddSubnode - Indicates whether new subnodes can be added.
      */
     this.setNodeCanAddSubnode(true);
 
     /**
-     * @property {boolean} nodeCanReorderSubnodes - Indicates whether subnodes can be reordered.
+     * @member {boolean} nodeCanReorderSubnodes - Indicates whether subnodes can be reordered.
      */
     this.setNodeCanReorderSubnodes(true);
 
     /**
-     * @property {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.
+     * @member {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.
      */
     this.setNoteIsSubnodeCount(true);
   }

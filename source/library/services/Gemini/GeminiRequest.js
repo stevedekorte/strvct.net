@@ -50,14 +50,14 @@
 
   initPrototypeSlots () {
     /**
-     * @property {JsonStreamReader} jsonStreamReader - The JSON stream reader for handling streamed responses.
+     * @member {JsonStreamReader} jsonStreamReader - The JSON stream reader for handling streamed responses.
      */
     {
       const slot = this.newSlot("jsonStreamReader", null);
     }
     
     /**
-     * @property {number} usageOutputTokenCount - The count of output tokens used in the request.
+     * @member {number} usageOutputTokenCount - The count of output tokens used in the request.
      */
     {
       const slot = this.newSlot("usageOutputTokenCount", null);

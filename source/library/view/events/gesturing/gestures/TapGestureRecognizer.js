@@ -40,7 +40,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} maxHoldPeriod - milliseconds per tap down hold
+         * @member {Number} maxHoldPeriod - milliseconds per tap down hold
          */
         {
             const slot = this.newSlot("maxHoldPeriod", 1000);
@@ -48,28 +48,28 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} timeoutId - private
+         * @member {Number} timeoutId - private
          */
         {
             const slot = this.newSlot("timeoutId", null);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} numberOfTapsRequired
+         * @member {Number} numberOfTapsRequired
          */
         {
             const slot = this.newSlot("numberOfTapsRequired", 1);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} numberOfFingersRequired
+         * @member {Number} numberOfFingersRequired
          */
         {
             const slot = this.newSlot("numberOfFingersRequired", 1);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} tapCount
+         * @member {Number} tapCount
          */
         {
             const slot = this.newSlot("tapCount", 0);

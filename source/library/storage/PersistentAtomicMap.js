@@ -40,28 +40,28 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {String} name
+             * @member {String} name
              */
             const slot = this.newSlot("name", null);
             slot.setSlotType("String");
         }
         {
             /**
-             * @property {IndexedDBFolder} idb
+             * @member {IndexedDBFolder} idb
              */
             const slot = this.newSlot("idb", null);
             slot.setSlotType("IndexedDBFolder");
         }
         {
             /**
-             * @property {Number} txCount
+             * @member {Number} txCount
              */
             const slot = this.newSlot("txCount", 0);
             slot.setSlotType("Number");
         }
         {
             /**
-             * @property {Boolean} isApplying
+             * @member {Boolean} isApplying
              */
             const slot = this.newSlot("isApplying", false);
             slot.setSlotType("Boolean");

@@ -23,7 +23,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {string} title - The title of the action field
+         * @member {string} title - The title of the action field
          */
         {
             const slot = this.overrideSlot("title", null);
@@ -34,7 +34,7 @@
         }
 
         /**
-         * @property {string} methodName - The name of the method to be called
+         * @member {string} methodName - The name of the method to be called
          */
         {
             const slot = this.newSlot("methodName", null);
@@ -43,7 +43,7 @@
         }
 
         /**
-         * @property {Object} info - Additional information for the action field
+         * @member {Object} info - Additional information for the action field
          */
         {
             const slot = this.newSlot("info", null);

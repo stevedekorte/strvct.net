@@ -24,14 +24,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Map} hashToElementMap - Map to store hash to element mappings.
+         * @member {Map} hashToElementMap - Map to store hash to element mappings.
          */
         {
             const slot = this.newSlot("hashToElementMap", new Map());
             slot.setSlotType("Map");
         }
         /**
-         * @property {Element} svgCacheElement - The SVG cache element.
+         * @member {Element} svgCacheElement - The SVG cache element.
          */
         {
             const slot = this.newSlot("svgCacheElement", null);

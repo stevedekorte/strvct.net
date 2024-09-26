@@ -17,28 +17,28 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {TextField} titleView - The title view of the panel.
+         * @member {TextField} titleView - The title view of the panel.
          */
         {
             const slot = this.newSlot("titleView", null);
             slot.setSlotType("TextField");
         }
         /**
-         * @property {TextField} subtitleView - The subtitle view of the panel.
+         * @member {TextField} subtitleView - The subtitle view of the panel.
          */
         {
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("TextField");
         }
         /**
-         * @property {ButtonView} button1 - The primary button of the panel.
+         * @member {ButtonView} button1 - The primary button of the panel.
          */
         {
             const slot = this.newSlot("button1", null);
             slot.setSlotType("ButtonView");
         }
         /**
-         * @property {Boolean} isDragging - Indicates if the panel is currently being dragged.
+         * @member {Boolean} isDragging - Indicates if the panel is currently being dragged.
          */
         {
             const slot = this.newSlot("isDragging", false);

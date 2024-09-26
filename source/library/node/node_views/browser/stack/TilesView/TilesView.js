@@ -11,28 +11,28 @@
     
     initPrototypeSlots () {
         /**
-         * @property {Array} tiles
+         * @member {Array} tiles
          */
         {
             const slot = this.newSlot("tiles", null);
             slot.setSlotType("Array");
         }
         /**
-         * @property {Boolean} allowsCursorNavigation
+         * @member {Boolean} allowsCursorNavigation
          */
         {
             const slot = this.newSlot("allowsCursorNavigation", true);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Tile} tilePlaceHolder
+         * @member {Tile} tilePlaceHolder
          */
         {
             const slot = this.newSlot("tilePlaceHolder", null);
             slot.setSlotType("Tile");
         }
         /**
-         * @property {Boolean} hasPausedSync
+         * @member {Boolean} hasPausedSync
          */
         {
             const slot = this.newSlot("hasPausedSync", false);

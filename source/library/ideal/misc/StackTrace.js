@@ -23,28 +23,28 @@
             const slot = this.newSlot("functionName", null);
             slot.setSlotType("String");
             /**
-             * @property {string} functionName - The name of the function in the stack frame.
+             * @member {string} functionName - The name of the function in the stack frame.
              */
         }
         {
             const slot = this.newSlot("url", null);
             slot.setSlotType("String");
             /**
-             * @property {string} url - The URL or file path of the script containing the function.
+             * @member {string} url - The URL or file path of the script containing the function.
              */
         }
         {
             const slot = this.newSlot("lineNumber", null);
             slot.setSlotType("Number");
             /**
-             * @property {number} lineNumber - The line number in the script where the function was called.
+             * @member {number} lineNumber - The line number in the script where the function was called.
              */
         }
         {
             const slot = this.newSlot("characterNumber", null);
             slot.setSlotType("Number");
             /**
-             * @property {number} characterNumber - The character position on the line where the function was called.
+             * @member {number} characterNumber - The character position on the line where the function was called.
              */
         }
     }
@@ -116,14 +116,14 @@
             const slot = this.newSlot("error", null);
             slot.setSlotType("Error");
             /**
-             * @property {Error} error - The Error object associated with the stack trace.
+             * @member {Error} error - The Error object associated with the stack trace.
              */
         }
         {
             const slot = this.newSlot("stackFrames", []);
             slot.setSlotType("Array");
             /**
-             * @property {StackFrame[]} stackFrames - An array of StackFrame objects representing the stack trace.
+             * @member {StackFrame[]} stackFrames - An array of StackFrame objects representing the stack trace.
              */
         }
     }

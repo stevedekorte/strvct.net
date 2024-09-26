@@ -14,35 +14,35 @@
     initPrototypeSlots () {
         this.setElementType("canvas");
         /**
-         * @property {String} dataUrl - The data URL for the scene
+         * @member {String} dataUrl - The data URL for the scene
          */
         {
             const slot = this.newSlot("dataUrl", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Object} ajs - AssimpJS object
+         * @member {Object} ajs - AssimpJS object
          */
         {
             const slot = this.newSlot("ajs", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {Object} engine - Babylon.js engine instance
+         * @member {Object} engine - Babylon.js engine instance
          */
         {
             const slot = this.newSlot("engine", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {Object} scene - Babylon.js scene instance
+         * @member {Object} scene - Babylon.js scene instance
          */
         {
             const slot = this.newSlot("scene", null);
             slot.setSlotType("Object");
         }
         /**
-         * @property {Object} camera - Babylon.js camera instance
+         * @member {Object} camera - Babylon.js camera instance
          */
         {
             const slot = this.newSlot("camera", null);
@@ -53,14 +53,14 @@
             //slot.setSlotType("Object");
         }
         /**
-         * @property {DomView} closeButtonView - Close button view
+         * @member {DomView} closeButtonView - Close button view
          */
         {
             const slot = this.newSlot("closeButtonView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {Boolean} isEditable - Indicates if the scene is editable
+         * @member {Boolean} isEditable - Indicates if the scene is editable
          */
         {
             const slot = this.newSlot("isEditable", false);

@@ -39,35 +39,35 @@
         }
         */
         /**
-         * @property {BMKeyboard} keyboard
+         * @member {BMKeyboard} keyboard
          */
         {
             const slot = this.newSlot("keyboard", null);
             slot.setSlotType("BMKeyboard");
         }
         /**
-         * @property {Mouse} mouse
+         * @member {Mouse} mouse
          */
         {
             const slot = this.newSlot("mouse", null);
             slot.setSlotType("Mouse");
         }
         /**
-         * @property {TouchScreen} touchScreen
+         * @member {TouchScreen} touchScreen
          */
         {
             const slot = this.newSlot("touchScreen", null);
             slot.setSlotType("TouchScreen");
         }
         /**
-         * @property {GamePadManager} gamePadManager
+         * @member {GamePadManager} gamePadManager
          */
         {
             const slot = this.newSlot("gamePadManager", null);
             slot.setSlotType("GamePadManager");
         }
         /**
-         * @property {Boolean} isSetup
+         * @member {Boolean} isSetup
          */
         {
             const slot = this.newSlot("isSetup", false);

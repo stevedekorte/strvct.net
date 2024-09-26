@@ -25,14 +25,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Point} origin - The origin point of the rectangle.
+         * @member {Point} origin - The origin point of the rectangle.
          */
         {
             const slot = this.newSlot("origin", null);
             slot.setSlotType("Point");
         }
         /**
-         * @property {Point} size - The size of the rectangle.
+         * @member {Point} size - The size of the rectangle.
          */
         {
             const slot = this.newSlot("size", null);

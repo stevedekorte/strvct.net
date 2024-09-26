@@ -16,7 +16,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Range} storedSelectionRange - The stored selection range.
+         * @member {Range} storedSelectionRange - The stored selection range.
          */
         {
             const slot = this.newSlot("storedSelectionRange", null);

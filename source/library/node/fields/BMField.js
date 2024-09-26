@@ -15,7 +15,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {boolean} isEnabled - Whether the field is enabled.
+         * @member {boolean} isEnabled - Whether the field is enabled.
          */
         {
             const slot = this.newSlot("isEnabled", true);
@@ -24,7 +24,7 @@
         }
 
         /**
-         * @property {string} key - The key of the field.
+         * @member {string} key - The key of the field.
          */
         // key
         {
@@ -39,7 +39,7 @@
         }
 
         /**
-         * @property {boolean} keyIsVisible - Whether the key is visible.
+         * @member {boolean} keyIsVisible - Whether the key is visible.
          */
         {
             const slot = this.newSlot("keyIsVisible", true);
@@ -53,7 +53,7 @@
         }
 
         /**
-         * @property {boolean} keyIsEditable - Whether the key is editable.
+         * @member {boolean} keyIsEditable - Whether the key is editable.
          */
         {
             const slot = this.newSlot("keyIsEditable", false);
@@ -69,7 +69,7 @@
         // value
 
         /**
-         * @property {Object} value - The value of the field.
+         * @member {Object} value - The value of the field.
          */
         {
             const slot = this.newSlot("value", null);
@@ -84,7 +84,7 @@
         }
 
         /**
-         * @property {boolean} valueIsVisible - Whether the value is visible.
+         * @member {boolean} valueIsVisible - Whether the value is visible.
          */
         {
             const slot = this.newSlot("valueIsVisible", true);
@@ -98,7 +98,7 @@
         }
 
         /**
-         * @property {boolean} valueIsEditable - Whether the value is editable.
+         * @member {boolean} valueIsEditable - Whether the value is editable.
          */
         {
             const slot = this.newSlot("valueIsEditable", true);
@@ -112,7 +112,7 @@
         }
 
         /**
-         * @property {string} valuePlaceholderText - The placeholder text for the value.
+         * @member {string} valuePlaceholderText - The placeholder text for the value.
          */
         {
             const slot = this.newSlot("valuePlaceholderText", null);
@@ -139,7 +139,7 @@
         */
 
         /**
-         * @property {boolean} valueCanHitEnter - Whether the value can hit enter.
+         * @member {boolean} valueCanHitEnter - Whether the value can hit enter.
          */
         {
             const slot = this.newSlot("valueCanHitEnter", true);
@@ -148,7 +148,7 @@
         }
 
         /**
-         * @property {Object} link - The link of the field.
+         * @member {Object} link - The link of the field.
          */
         {
             const slot = this.newSlot("link", null);
@@ -156,7 +156,7 @@
         }
 
         /**
-         * @property {boolean} ownsLink - Whether the field owns the link.
+         * @member {boolean} ownsLink - Whether the field owns the link.
          */
         {
             const slot = this.newSlot("ownsLink", null);
@@ -164,7 +164,7 @@
         }
 
         /**
-         * @property {string} valuePrefix - The prefix of the value.
+         * @member {string} valuePrefix - The prefix of the value.
          */
         {
             const slot = this.newSlot("valuePrefix", null);
@@ -175,7 +175,7 @@
         }
 
         /**
-         * @property {string} valuePostfix - The postfix of the value.
+         * @member {string} valuePostfix - The postfix of the value.
          */
         {
             const slot = this.newSlot("valuePostfix", null);
@@ -186,7 +186,7 @@
         }
 
         /**
-         * @property {string} valueMethod - The method of the value.
+         * @member {string} valueMethod - The method of the value.
          */
         {
             const slot = this.newSlot("valueMethod", null);
@@ -196,7 +196,7 @@
         }
         
         /**
-         * @property {string} noteMethod - The method of the note.
+         * @member {string} noteMethod - The method of the note.
          */
         {
             const slot = this.newSlot("noteMethod", null);  // fetches note from a parent node method
@@ -205,7 +205,7 @@
         }
         
         /**
-         * @property {string} keyError - The error of the key.
+         * @member {string} keyError - The error of the key.
          */
         {
             const slot = this.newSlot("keyError", null);
@@ -214,7 +214,7 @@
         }
         
         /**
-         * @property {string} valueError - The error of the value.
+         * @member {string} valueError - The error of the value.
          */
         {
             const slot = this.newSlot("valueError", null);
@@ -223,7 +223,7 @@
         }
         
         /**
-         * @property {BMNode} target - The target of the field.
+         * @member {BMNode} target - The target of the field.
          */
         {
             const slot = this.newSlot("target", null);
@@ -232,7 +232,7 @@
         }
 
         /**
-         * @property {BMObservation} didUpdateNodeObs - The observation of the didUpdateNode.
+         * @member {BMObservation} didUpdateNodeObs - The observation of the didUpdateNode.
          */
         {
             const slot = this.newSlot("didUpdateNodeObs", null);

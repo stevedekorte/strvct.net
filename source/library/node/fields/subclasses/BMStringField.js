@@ -25,7 +25,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} unsetVisibleValue
+         * @member {string} unsetVisibleValue
          * @description The visible value when the field is unset.
          */
         {

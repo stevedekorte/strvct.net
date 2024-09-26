@@ -48,7 +48,7 @@
 
     {
       /**
-       * @property {string} host
+       * @member {string} host
        * @description The host of the signal server.
        */
       const slot = this.newSlot("host", "peerjssignalserver.herokuapp.com");      
@@ -65,7 +65,7 @@
 
     {
       /**
-       * @property {string} path
+       * @member {string} path
        * @description The path of the signal server.
        */
       const slot = this.newSlot("path", "/peerjs");      
@@ -82,7 +82,7 @@
 
     {
       /**
-       * @property {number} port
+       * @member {number} port
        * @description The port of the signal server.
        */
       const slot = this.newSlot("port", 443);      
@@ -114,7 +114,7 @@
 
     {
       /**
-       * @property {string} key
+       * @member {string} key
        * @description The key for the signal server.
        */
       const slot = this.newSlot("key", "");      
@@ -131,7 +131,7 @@
 
     {
       /**
-       * @property {boolean} isSecure
+       * @member {boolean} isSecure
        * @description Indicates if the connection to the signal server is secure.
        */
       const slot = this.newSlot("isSecure", true);      
@@ -148,7 +148,7 @@
 
     {
       /**
-       * @property {string} status
+       * @member {string} status
        * @description The status of the signal server connection.
        */
       const slot = this.newSlot("status", null);      
@@ -167,7 +167,7 @@
 
     {
       /**
-       * @property {RzSigServerPeers} peers
+       * @member {RzSigServerPeers} peers
        * @description The peers connected to this signal server.
        */
       const slot = this.newSlot("peers", null)
@@ -179,7 +179,7 @@
 
     {
       /**
-       * @property {RzSigServerConns} sigServerConns
+       * @member {RzSigServerConns} sigServerConns
        * @description The connections to this signal server.
        */
       const slot = this.newSlot("sigServerConns", null)
@@ -191,7 +191,7 @@
 
     {
       /**
-       * @property {Action} refreshAction
+       * @member {Action} refreshAction
        * @description The action to refresh peers.
        */
       const slot = this.newSlot("refreshAction", null);

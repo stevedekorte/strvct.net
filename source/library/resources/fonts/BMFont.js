@@ -50,28 +50,28 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {string} name - The name of the font.
+             * @member {string} name - The name of the font.
              */
             const slot = this.newSlot("name", null);
             slot.setSlotType("String");
         }
         {
             /**
-             * @property {Object} options - The options for the font.
+             * @member {Object} options - The options for the font.
              */
             const slot = this.newSlot("options", null);
             slot.setSlotType("Object");
         }
         {
             /**
-             * @property {FontFace} fontFace - Reference to browser FontFace object.
+             * @member {FontFace} fontFace - Reference to browser FontFace object.
              */
             const slot = this.newSlot("fontFace", null);
             slot.setSlotType("FontFace");
         }
         {
             /**
-             * @property {Map} weightMap - Map of font weight names to numeric values.
+             * @member {Map} weightMap - Map of font weight names to numeric values.
              */
             const slot = this.newSlot("weightMap", BMFont.fontWeightMap());
             slot.setSlotType("Map");

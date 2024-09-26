@@ -16,7 +16,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {IndexedDBFolder|null} idb - The IndexedDBFolder instance used for storage.
+         * @member {IndexedDBFolder|null} idb - The IndexedDBFolder instance used for storage.
          */
         this.newSlot("idb", null);
     }

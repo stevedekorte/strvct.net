@@ -16,7 +16,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Array} regionOptions - Options for regions.
+     * @member {Array} regionOptions - Options for regions.
      */
     {
       const slot = this.newSlot("regionOptions", []);
@@ -24,7 +24,7 @@
     }
 
     /**
-     * @property {string} protocol - The protocol used for connection (wss or ws).
+     * @member {string} protocol - The protocol used for connection (wss or ws).
      */
     {
       const slot = this.newSlot("protocol", "wss");
@@ -39,7 +39,7 @@
     }
 
     /**
-     * @property {string} host - The host for the HomeAssistant websocket server.
+     * @member {string} host - The host for the HomeAssistant websocket server.
      */
     {
       const slot = this.newSlot("host", "localnode.ddns.net");
@@ -53,7 +53,7 @@
     }
 
     /**
-     * @property {number} port - The port number for the HomeAssistant websocket server.
+     * @member {number} port - The port number for the HomeAssistant websocket server.
      */
     {
       const slot = this.newSlot("port", 8124);
@@ -67,7 +67,7 @@
     }
 
     /**
-     * @property {string} url - The full URL for the HomeAssistant websocket server.
+     * @member {string} url - The full URL for the HomeAssistant websocket server.
      */
     {
       const slot = this.newSlot("url", 8124);
@@ -83,7 +83,7 @@
     }
 
     /**
-     * @property {string} accessToken - The access token for authentication.
+     * @member {string} accessToken - The access token for authentication.
      */
     {
       const slot = this.newSlot("accessToken", "");
@@ -97,7 +97,7 @@
     }
 
     /**
-     * @property {string} status - The current status of the connection.
+     * @member {string} status - The current status of the connection.
      */
     {
       const slot = this.newSlot("status", "");
@@ -112,7 +112,7 @@
     }
 
     /**
-     * @property {string|null} error - Any error message.
+     * @member {string|null} error - Any error message.
      */
     {
       const slot = this.newSlot("error", null);
@@ -126,7 +126,7 @@
     }
 
     /**
-     * @property {boolean} hasAuth - Whether authentication has been successful.
+     * @member {boolean} hasAuth - Whether authentication has been successful.
      */
     {
       const slot = this.newSlot("hasAuth", false);
@@ -141,7 +141,7 @@
     }
 
     /**
-     * @property {HomeAssistantFolder|null} rootFolder - The root folder for HomeAssistant.
+     * @member {HomeAssistantFolder|null} rootFolder - The root folder for HomeAssistant.
      */
     {
       const slot = this.newSlot("rootFolder", null)
@@ -153,7 +153,7 @@
     const showNodes = false;
 
     /**
-     * @property {HomeAssistantAreas|null} areasNode - Node for HomeAssistant areas.
+     * @member {HomeAssistantAreas|null} areasNode - Node for HomeAssistant areas.
      */
     {
       const slot = this.newSlot("areasNode", null)
@@ -163,7 +163,7 @@
     }
 
     /**
-     * @property {HomeAssistantDevices|null} devicesNode - Node for HomeAssistant devices.
+     * @member {HomeAssistantDevices|null} devicesNode - Node for HomeAssistant devices.
      */
     {
       const slot = this.newSlot("devicesNode", null)
@@ -173,7 +173,7 @@
     }
 
     /**
-     * @property {HomeAssistantEntities|null} entitiesNode - Node for HomeAssistant entities.
+     * @member {HomeAssistantEntities|null} entitiesNode - Node for HomeAssistant entities.
      */
     {
       const slot = this.newSlot("entitiesNode", null)
@@ -183,7 +183,7 @@
     }
 
     /**
-     * @property {HomeAssistantStates|null} statesNode - Node for HomeAssistant states.
+     * @member {HomeAssistantStates|null} statesNode - Node for HomeAssistant states.
      */
     {
       const slot = this.newSlot("statesNode", null)
@@ -193,7 +193,7 @@
     }
 
     /**
-     * @property {Action|null} toggleConnectAction - Action for toggling connection.
+     * @member {Action|null} toggleConnectAction - Action for toggling connection.
      */
     {
       const slot = this.newSlot("toggleConnectAction", null);
@@ -207,21 +207,21 @@
     }
 
     /**
-     * @property {WebSocket|null} socket - The WebSocket connection.
+     * @member {WebSocket|null} socket - The WebSocket connection.
      */
     {
       const slot = this.newSlot("socket", null);
     }
 
     /**
-     * @property {number} sentMessageCount - Count of sent messages.
+     * @member {number} sentMessageCount - Count of sent messages.
      */
     {
       const slot = this.newSlot("sentMessageCount", 0);
     }
 
     /**
-     * @property {Map|null} messagePromises - Map of message promises.
+     * @member {Map|null} messagePromises - Map of message promises.
      */
     {
       const slot = this.newSlot("messagePromises", null);

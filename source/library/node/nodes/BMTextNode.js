@@ -35,7 +35,7 @@
         */
 
         /**
-         * @property {string} value
+         * @member {string} value
          * @description The text content of the node
          */
         {

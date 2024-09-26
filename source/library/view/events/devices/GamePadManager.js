@@ -41,14 +41,14 @@
     initPrototypeSlots () {
         //this.newSlot("gamePadListener", null)
         /**
-         * @property {Map} gamePadsMap
+         * @member {Map} gamePadsMap
          */
         {
             const slot = this.newSlot("gamePadsMap", null);
             slot.setSlotType("Map");
         }
         /**
-         * @property {number} pollPeriod - milliseconds
+         * @member {number} pollPeriod - milliseconds
          */
         {
             const slot = this.newSlot("pollPeriod", 1000);

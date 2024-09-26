@@ -22,7 +22,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} value
+         * @member {Boolean} value
          * @description The boolean value of the field.
          */
         {
@@ -32,7 +32,7 @@
         }
 
         /**
-         * @property {String} unsetVisibleValue
+         * @member {String} unsetVisibleValue
          * @description The visible value when the field is unset.
          */
         {

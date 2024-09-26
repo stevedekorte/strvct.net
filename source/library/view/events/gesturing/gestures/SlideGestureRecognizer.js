@@ -34,14 +34,14 @@
     
     initPrototypeSlots () {
         /**
-         * @property {string} direction - The direction of the slide gesture
+         * @member {string} direction - The direction of the slide gesture
          */
         {
             const slot = this.newSlot("direction", "left");
             slot.setSlotType("String");
         }
         /**
-         * @property {Map} validDirectionsMap - Map of valid directions
+         * @member {Map} validDirectionsMap - Map of valid directions
          */
         {
             const slot = this.newSlot("validDirectionsMap", new Map([
@@ -53,7 +53,7 @@
             slot.setSlotType("Map");
         }
         /**
-         * @property {number} maxPerpendicularDistToBegin - Maximum perpendicular distance to begin the gesture
+         * @member {number} maxPerpendicularDistToBegin - Maximum perpendicular distance to begin the gesture
          */
         {
             const slot = this.newSlot("maxPerpendicularDistToBegin", 10) // will not begin if this is exceeded

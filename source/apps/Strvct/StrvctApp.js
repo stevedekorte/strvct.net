@@ -35,7 +35,7 @@
         */
 
         /**
-         * @property {BrowserView} browser
+         * @member {BrowserView} browser
          * @description The browser view.
          */
         {

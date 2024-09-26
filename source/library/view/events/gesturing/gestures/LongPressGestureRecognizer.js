@@ -26,7 +26,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {Number} timePeriod - milliseconds
+         * @member {Number} timePeriod - milliseconds
          */
         {
             const slot = this.newSlot("timePeriod", 500);
@@ -34,7 +34,7 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} timeoutId
+         * @member {Number} timeoutId
          * @private
          */
         {

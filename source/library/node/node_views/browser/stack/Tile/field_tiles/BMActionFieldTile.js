@@ -12,7 +12,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {ButtonView} buttonView - The button view for this action field tile.
+         * @member {ButtonView} buttonView - The button view for this action field tile.
          */
         {
             const slot = this.newSlot("buttonView", null);

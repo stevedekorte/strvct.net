@@ -13,7 +13,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {string} prompt
+     * @member {string} prompt
      * @description The prompt text for image generation.
      */
     {
@@ -28,7 +28,7 @@
     }
 
     /**
-     * @property {string} model
+     * @member {string} model
      * @description The DALL-E model to use for image generation.
      */
     {
@@ -44,7 +44,7 @@
     }
 
     /**
-     * @property {string} quality
+     * @member {string} quality
      * @description The quality of the generated image.
      */
     {
@@ -59,7 +59,7 @@
     }
 
     /**
-     * @property {number} imageCount
+     * @member {number} imageCount
      * @description The number of images to generate.
      */
     {
@@ -75,7 +75,7 @@
     }
 
     /**
-     * @property {string} imageSize
+     * @member {string} imageSize
      * @description The size of the generated image.
      */
     {
@@ -95,7 +95,7 @@
     }
 
     /**
-     * @property {Action} generateAction
+     * @member {Action} generateAction
      * @description The action to trigger image generation.
      */
     {
@@ -111,7 +111,7 @@
     }
 
     /**
-     * @property {string} error
+     * @member {string} error
      * @description The error message if any during image generation.
      */
     {
@@ -126,7 +126,7 @@
     }
 
     /**
-     * @property {OpenAiImages} images
+     * @member {OpenAiImages} images
      * @description The generated images.
      */
     {
@@ -138,7 +138,7 @@
     }
 
     /**
-     * @property {string} status
+     * @member {string} status
      * @description The current status of the image generation process.
      */
     {
@@ -153,7 +153,7 @@
     }
 
     /**
-     * @property {Object} delegate
+     * @member {Object} delegate
      * @description The delegate object for handling various events.
      */
     {

@@ -16,7 +16,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} path - Path from _index.json entry
+         * @member {String} path - Path from _index.json entry
          */
         {
             const slot = this.newSlot("path", ".");
@@ -24,7 +24,7 @@
         }
 
         /**
-         * @property {String} resourceHash - Hash from _index.json entry
+         * @member {String} resourceHash - Hash from _index.json entry
          */
         {
             const slot = this.newSlot("resourceHash", null);
@@ -32,7 +32,7 @@
         }
 
         /**
-         * @property {Number} resourceSize - Size from _index.json entry
+         * @member {Number} resourceSize - Size from _index.json entry
          */
         {
             const slot = this.newSlot("resourceSize", null);
@@ -40,7 +40,7 @@
         }
 
         /**
-         * @property {Object} data - Raw data of the resource
+         * @member {Object} data - Raw data of the resource
          */
         {
             const slot = this.newSlot("data", null);
@@ -48,7 +48,7 @@
         }
 
         /**
-         * @property {Object} value - The value decoded from the data, e.g., value = JSON.parse(data)
+         * @member {Object} value - The value decoded from the data, e.g., value = JSON.parse(data)
          */
         {
             const slot = this.newSlot("value", null);
@@ -56,7 +56,7 @@
         }
 
         /**
-         * @property {Error} error - Error object if any error occurs during processing
+         * @member {Error} error - Error object if any error occurs during processing
          */
         {
             const slot = this.newSlot("error", null);
@@ -64,7 +64,7 @@
         }
 
         /**
-         * @property {Promise} promiseForLoad - Holds promise used for reading from URL request or indexedDB
+         * @member {Promise} promiseForLoad - Holds promise used for reading from URL request or indexedDB
          */
         {
             const slot = this.newSlot("promiseForLoad", null); 
@@ -73,7 +73,7 @@
         }
 
         /**
-         * @property {Boolean} isLoading - Indicates if the resource is currently loading
+         * @member {Boolean} isLoading - Indicates if the resource is currently loading
          */
         {
             const slot = this.newSlot("isLoading", false);
@@ -81,7 +81,7 @@
         }
 
         /**
-         * @property {Boolean} isLoaded - Indicates if the resource has been loaded
+         * @member {Boolean} isLoaded - Indicates if the resource has been loaded
          */
         {
              const slot = this.newSlot("isLoaded", false);
@@ -89,7 +89,7 @@
         }
 
         /**
-         * @property {String} loadState - Represents the current load state of the resource
+         * @member {String} loadState - Represents the current load state of the resource
          */
         {
             const slot = this.newSlot("loadState", null);

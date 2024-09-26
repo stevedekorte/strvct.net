@@ -10,35 +10,35 @@
     
     initPrototypeSlots () {
         /**
-         * @property {FlexDomView} imageContainer - Container for the image
+         * @member {FlexDomView} imageContainer - Container for the image
          */
         {
             const slot = this.newSlot("imageContainer", null);
             slot.setSlotType("FlexDomView");
         }
         /**
-         * @property {FlexDomView} rawImageView - View for the raw image
+         * @member {FlexDomView} rawImageView - View for the raw image
          */
         {
             const slot = this.newSlot("rawImageView", null);
             slot.setSlotType("FlexDomView");
         }
         /**
-         * @property {FlexDomView} closeButtonView - View for the close button
+         * @member {FlexDomView} closeButtonView - View for the close button
          */
         {
             const slot = this.newSlot("closeButtonView", null);
             slot.setSlotType("FlexDomView");
         }
         /**
-         * @property {String} srcUrl - Source URL of the image
+         * @member {String} srcUrl - Source URL of the image
          */
         {
             const slot = this.newSlot("srcUrl", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} dataURL - Data URL of the image
+         * @member {String} dataURL - Data URL of the image
          */
         {
             const slot = this.newSlot("dataURL", null);
@@ -46,7 +46,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {Boolean} isEditable - Indicates if the image view is editable
+         * @member {Boolean} isEditable - Indicates if the image view is editable
          */
         {
             const slot = this.newSlot("isEditable", false);

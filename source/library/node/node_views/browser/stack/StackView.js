@@ -58,7 +58,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {NavView} navView
+         * @member {NavView} navView
          * @description The navigation view for this stack.
          */
         {
@@ -67,7 +67,7 @@
         }
 
         /**
-         * @property {FlexDomView} otherView
+         * @member {FlexDomView} otherView
          * @description The view that is displayed when this stack is not selected.
          */
         {
@@ -76,7 +76,7 @@
         }
 
         /**
-         * @property {String} direction
+         * @member {String} direction
          * @description The direction of the stack.
          */
         {
@@ -86,7 +86,7 @@
         }
 
         /**
-         * @property {String} lastPathString
+         * @member {String} lastPathString
          * @description The last path string for this stack.
          */
         {
@@ -96,7 +96,7 @@
         }
 
         /**
-         * @property {BMNotification} onStackViewPathChangeNote
+         * @member {BMNotification} onStackViewPathChangeNote
          * @description The notification that is posted when the stack view path changes.
          */
         {
@@ -105,7 +105,7 @@
         }
 
         /**
-         * @property {Map} nodeToStackCache
+         * @member {Map} nodeToStackCache
          * @description A cache of nodes to stack views.
          */
         {

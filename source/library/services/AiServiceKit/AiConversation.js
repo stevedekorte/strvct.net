@@ -17,7 +17,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {AiChatModel} chatModel - Reference to AiChatModel
+     * @member {AiChatModel} chatModel - Reference to AiChatModel
      */
     {
       const slot = this.newSlot("chatModel", null);
@@ -25,7 +25,7 @@
     }
 
     /**
-     * @property {Number} initialMessagesCount - Number of initial messages to always keep
+     * @member {Number} initialMessagesCount - Number of initial messages to always keep
      */
     {
       const slot = this.newSlot("initialMessagesCount", 3);
@@ -33,7 +33,7 @@
     }
 
     /**
-     * @property {AiResponseMessage} responseMsgClass - Class for response messages
+     * @member {AiResponseMessage} responseMsgClass - Class for response messages
      */
     {
       const slot = this.newSlot("responseMsgClass", null); 
@@ -41,7 +41,7 @@
     }
 
     /**
-     * @property {Number} tokenCount - Sum of tokens of all messages
+     * @member {Number} tokenCount - Sum of tokens of all messages
      */
     {
       const slot = this.newSlot("tokenCount", 0);
@@ -49,7 +49,7 @@
     }
 
     /**
-     * @property {Number} tokenBuffer - Buffer to ensure approximation doesn't exceed limit
+     * @member {Number} tokenBuffer - Buffer to ensure approximation doesn't exceed limit
      */
     {
       const slot = this.newSlot("tokenBuffer", 400);
@@ -57,7 +57,7 @@
     }
 
     /**
-     * @property {AiService} service - Pointer to AiService instance
+     * @member {AiService} service - Pointer to AiService instance
      */
     {
       const slot = this.newSlot("service", null);
@@ -65,7 +65,7 @@
     }
 
     /**
-     * @property {Object} tagDelegate - Delegate to receive tag messages from responses
+     * @member {Object} tagDelegate - Delegate to receive tag messages from responses
      */
     {
       const slot = this.newSlot("tagDelegate", null);
@@ -73,7 +73,7 @@
     }
 
     /**
-     * @property {String} aiSpeakerName - Name of the AI speaker
+     * @member {String} aiSpeakerName - Name of the AI speaker
      */
     {
       const slot = this.newSlot("aiSpeakerName", null);

@@ -26,7 +26,7 @@
         this.overrideSlot("subnodes").setShouldStoreSlot(false)
 
         /**
-         * @property {Number} hour - The hour value of the time.
+         * @member {Number} hour - The hour value of the time.
          */
         {
             const slot = this.newSlot("hour", null);
@@ -34,7 +34,7 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} minute - The minute value of the time.
+         * @member {Number} minute - The minute value of the time.
          */
         {
             const slot = this.newSlot("minute", null);
@@ -42,7 +42,7 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} timezone - The timezone of the time.
+         * @member {String} timezone - The timezone of the time.
          */
         {
             const slot = this.newSlot("timezone", null);
@@ -50,7 +50,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {TimeFormatter} formatter - The formatter for the time.
+         * @member {TimeFormatter} formatter - The formatter for the time.
          */
         {
             const slot = this.newSlot("formatter", null);

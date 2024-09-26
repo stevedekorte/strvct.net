@@ -17,7 +17,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {string} name - The name of the music track.
+     * @member {string} name - The name of the music track.
      */
     {
       const slot = this.newSlot("name", "unnamed");
@@ -30,7 +30,7 @@
     }
 
     /**
-     * @property {string} trackId - The ID of the music track.
+     * @member {string} trackId - The ID of the music track.
      */
     {
       const slot = this.newSlot("trackId", null);
@@ -43,7 +43,7 @@
     }
 
     /**
-     * @property {Object} togglePlayAction - The action to toggle play/stop.
+     * @member {Object} togglePlayAction - The action to toggle play/stop.
      */
     {
       const slot = this.newSlot("togglePlayAction", null);
@@ -57,7 +57,7 @@
     }
 
     /**
-     * @property {boolean} shouldPlayOnAccess - Whether the track should play on access.
+     * @member {boolean} shouldPlayOnAccess - Whether the track should play on access.
      */
     {
       const slot = this.newSlot("shouldPlayOnAccess", true);
@@ -65,7 +65,7 @@
     }
 
     /**
-     * @property {boolean} isPlaying - Indicates if the track is currently playing.
+     * @member {boolean} isPlaying - Indicates if the track is currently playing.
      */
     {
       const slot = this.newSlot("isPlaying", false);
@@ -74,7 +74,7 @@
     }
 
     /**
-     * @property {Set} delegateSet - The set of delegates for this track.
+     * @member {Set} delegateSet - The set of delegates for this track.
      */
     {
       const slot = this.newSlot("delegateSet", null);

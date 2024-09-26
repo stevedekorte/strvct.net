@@ -17,7 +17,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {string} name - The name of the music folder.
+     * @member {string} name - The name of the music folder.
      */
     {
       const slot = this.newSlot("name", null);

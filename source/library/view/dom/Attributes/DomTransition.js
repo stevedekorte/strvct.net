@@ -39,7 +39,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Object|null} global - Global transition value.
+         * @member {Object|null} global - Global transition value.
          */
         {
             const slot = this.newSlot("global", null);
@@ -47,35 +47,35 @@
             slot.setAllowsNullValue(true);
         }
         /**
-         * @property {string} property - The CSS property to transition.
+         * @member {string} property - The CSS property to transition.
          */
         {
             const slot = this.newSlot("property", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {number} duration - The duration of the transition in seconds.
+         * @member {number} duration - The duration of the transition in seconds.
          */
         {
             const slot = this.newSlot("duration", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {string} timingFunction - The timing function of the transition.
+         * @member {string} timingFunction - The timing function of the transition.
          */
         {
             const slot = this.newSlot("timingFunction", "ease-in-out") // "linear", "ease", "ease-in", cubic-bezier(n, n, n, n)
             slot.setSlotType("String");
         }
         /**
-         * @property {number} delay - The delay before the transition starts in seconds.
+         * @member {number} delay - The delay before the transition starts in seconds.
          */
         {
             const slot = this.newSlot("delay", 0) // set to number type (unit = seconds)
             slot.setSlotType("Number");
         }
         /**
-         * @property {DomTransitions|null} transitions - The parent DomTransitions object.
+         * @member {DomTransitions|null} transitions - The parent DomTransitions object.
          */
         {
             const slot = this.newSlot("transitions", null);

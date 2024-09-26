@@ -3,31 +3,52 @@
  * @class Protocol
  * @extends ProtoClass
  * @classdesc A base class for protocol subclasses. 
- * The subclasses are used to define protocols for communication between objects.
  * This class provides some helper methods, such as verifying that an object supports a given protocol.
- * The ProtoClass should support:
- * - conformsToProtocol() method.
- * - addProtocol() method, which 1) checks for conformance to a protocol and 2) adds the protocol to a supportedProtocols set.
- * would addProtocol() typically be called in initPrototype()? What about class protocols?
+ * 
+ * Declaring protocols:
+ * 
+ * To declare a protocol, define a subclass of Protocol and add (and document) the protocol's methods to it (as instance methods).
+ * Be sure that the jsdoc comment for the protocol class includes "interface" (instead of class) tag in the class jsdocs.
+ * 
  * Notes:
- * Protocols should support inheritance from other protocols.
+ * 
+ * Using the instance methods of subclasses of the Protocol class to define Protocols has pros and cons:
+ * 
+ * Pros:
+ * - they support inheritance from other protocols.
+ * - they support the use of the isKindOf method to check for conformance to a protocol.
+ * 
+ * Cons:
+ * - conflicts with the instance method namespace (somewhat avoided by only looking at instance methods up to the Protocol class's instance methods)
+ * 
  */
+
 "use strict";
 
 (class Protocol extends ProtoClass {
 
-  /*
-  initPrototypeSlots() {
-
+  static initClass () {
+    /**
+     * @member {Set} implementers - A set of all implementers of the protocol.
+     */
+    this.newClassSlot("implementers", new Set());
   }
 
-  initPrototype() {
+  /**
+   * @description Adds an implementer to the protocol.
+   * @param {Object} implementer - The object to add as an implementer.
+   */
+  static addImplementer (implementer) {
+    this.implementers().add(implementer);
   }
 
-  init() {
-    super.init();
+  /**
+   * @description Removes an implementer from the protocol.
+   * @param {Object} implementer - The object to remove as an implementer.
+   */
+  static removeImplementer (implementer) {
+    this.implementers().delete(implementer);
   }
-  */
 
   /**
    * @description Checks if the current protocol is a subset of the given protocol.
@@ -45,6 +66,14 @@
    */
   isSupersetOfProtocol(protocol) {
     return protocol.conformsToProtocol(this);
+  }
+
+  /**
+   * @description Returns all protocols (i.e. all subclasses of Protocol).
+   * @returns {Array} An array of all protocols.
+   */
+  static allProtocols () {
+    return this.thisClass().allSubclasses();
   }
 
 }.initThisClass());

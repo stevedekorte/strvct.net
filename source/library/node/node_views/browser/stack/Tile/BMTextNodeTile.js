@@ -14,7 +14,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {TextField} textView - The text view for displaying and editing text.
+             * @member {TextField} textView - The text view for displaying and editing text.
              */
             const slot = this.newSlot("textView", null);
             slot.setSlotType("TextField");

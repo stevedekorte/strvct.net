@@ -25,14 +25,14 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {Document} document - The document object.
+             * @member {Document} document - The document object.
              */
             const slot = this.newSlot("document", null);
             slot.setSlotType("Document");
         }
         {
             /**
-             * @property {Element} testElement - The test element used for measurements.
+             * @member {Element} testElement - The test element used for measurements.
              */
             const slot = this.newSlot("testElement", null);
             slot.setSlotType("Element");
@@ -40,7 +40,7 @@
 
         {
             /**
-             * @property {Array} stylesToCopy - Array of style properties to copy.
+             * @member {Array} stylesToCopy - Array of style properties to copy.
              */
             const slot = this.newSlot("stylesToCopy", [
                 "fontSize",
@@ -56,21 +56,21 @@
         
         {
             /**
-             * @property {Map} cache - Cache for storing measurement results.
+             * @member {Map} cache - Cache for storing measurement results.
              */
             const slot = this.newSlot("cache", new Map());
             slot.setSlotType("Map");
         }
         {
             /**
-             * @property {Array} cacheKeys - Array to store cache keys.
+             * @member {Array} cacheKeys - Array to store cache keys.
              */
             const slot = this.newSlot("cacheKeys", new Array());
             slot.setSlotType("Array");
         }
         {
             /**
-             * @property {Number} maxCacheKeys - Maximum number of cache keys to store.
+             * @member {Number} maxCacheKeys - Maximum number of cache keys to store.
              */
             const slot = this.newSlot("maxCacheKeys", 100);
             slot.setSlotType("Number");

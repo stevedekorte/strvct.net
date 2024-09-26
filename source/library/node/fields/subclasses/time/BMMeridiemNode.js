@@ -13,7 +13,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} value - The value of the meridiem (1 for AM, 2 for PM).
+         * @member {Number} value - The value of the meridiem (1 for AM, 2 for PM).
          */
         {
             const slot = this.newSlot("value", 1);

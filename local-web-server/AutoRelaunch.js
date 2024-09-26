@@ -20,17 +20,17 @@ const { spawn } = require('child_process');
      * Initialize prototype slots
      */
     initPrototypeSlots () {
-        /** @property {string|null} filePath - The path to the file to watch */
+        /** @member {string|null} filePath - The path to the file to watch */
         this.newSlot("filePath", null);
-        /** @property {string|null} launchCommand - The command to launch the process */
+        /** @member {string|null} launchCommand - The command to launch the process */
         this.newSlot("launchCommand", null);
-        /** @property {Array|null} launchArgs - The arguments for the launch command */
+        /** @member {Array|null} launchArgs - The arguments for the launch command */
         this.newSlot("launchArgs", null);
-        /** @property {string|null} keyPath - The key path */
+        /** @member {string|null} keyPath - The key path */
         this.newSlot("keyPath", null);
-        /** @property {number} checkInterval - The interval (in milliseconds) to check for file changes */
+        /** @member {number} checkInterval - The interval (in milliseconds) to check for file changes */
         this.newSlot("checkInterval", 5000);
-        /** @property {number|null} intervalId - The ID of the interval timer */
+        /** @member {number|null} intervalId - The ID of the interval timer */
         this.newSlot("intervalId", null);
     }
   

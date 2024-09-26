@@ -5,20 +5,26 @@
  * @class AudioQueue
  * @extends BMSummaryNode
  * @classdesc Manages a queue of audio clips.
-
-    Audio clips must implement this protocol:
-    - play()
-    - addDelegate(delegate)
-    - removeDelegate(delegate)
-    - stop()
-
-*/
+ * 
+ * Example use:
+ * In cases such as text-to-speech of sentences from a streaming LLM,
+ * we need to queue the speech audio clips as they come in, and play them in order.
+ * 
+ * The audio clips must implement the AudioClipProtocol protocol and 
+ * are expected to call the AudioClipDelegate methods as appropriate.
+ * 
+ * Audio clips must implement this protocol:
+ * - play()
+ * - addDelegate(delegate)
+ * - removeDelegate(delegate)
+ * - stop()
+ */
 
 (class AudioQueue extends BMSummaryNode {
 
   initPrototypeSlots () {
     /**
-     * @property {boolean} isMuted - Whether the audio queue is muted.
+     * @member {boolean} isMuted - Whether the audio queue is muted.
      */
     {
       const slot = this.newSlot("isMuted", false);
@@ -26,7 +32,7 @@
     }
 
     /**
-     * @property {Object} currentSound - The current sound.
+     * @member {Object} currentSound - The current sound.
      */
     {
       const slot = this.newSlot("currentSound", null);
@@ -34,23 +40,25 @@
     }
 
     /**
-     * @property {Array} queue - The queue of sounds.
+     * @member {Array} queue - The queue of sounds.
      */
     {
       const slot = this.newSlot("queue", null); // FIFO (first in first out) queue
       slot.setSlotType("Array");
     }
 
-    this.setNodeSubtitleIsChildrenSummary(true)
-    this.setShouldStoreSubnodes(false)
+    this.setNodeSubtitleIsChildrenSummary(true);
+    this.setShouldStoreSubnodes(false);
   }
 
-  /*
   initPrototype () {
+    /*
     const slot = this.slotNamed("shortName")
     slot.setValidValues(this.validShortNames())
+    */
+    this.addProtocol(AudioClipDelegateProtocol);
   }
-  */
+
 
   init () {
     super.init();
@@ -118,6 +126,7 @@
    * @returns {WASound} The sound.
    */
   queueAudioBlob (audioBlob) {
+    audioBlob.assertConformsToProtocol("AudioClipProtocol");
     const sound = WASound.fromBlob(audioBlob);
     this.queueWASound(sound);
     return sound;

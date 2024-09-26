@@ -29,7 +29,7 @@
         }
         */
         /**
-         * @property {string} dataURL - The data URL of the image.
+         * @member {string} dataURL - The data URL of the image.
          */
         {
             const slot = this.newSlot("dataURL", "");

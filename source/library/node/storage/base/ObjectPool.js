@@ -67,7 +67,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} name
+         * @member {String} name
          * @description the name of the object pool
          * @default "defaultDataStore"
          */
@@ -78,7 +78,7 @@
 
 
         /**
-         * @property {Object} rootObject
+         * @member {Object} rootObject
          * @description the root object of the object pool
          * @default null
          */
@@ -89,7 +89,7 @@
         }
 
         /**
-         * @property {AtomicMap} recordsMap
+         * @member {AtomicMap} recordsMap
          * @description the map of records for the object pool
          * @default null
          */
@@ -99,7 +99,7 @@
         }
 
         /**
-         * @property {Map} activeObjects
+         * @member {Map} activeObjects
          * @description objects known to the pool (previously loaded or referenced)
          * @default null
          */
@@ -110,7 +110,7 @@
         }
 
         /**
-         * @property {Map} dirtyObjects
+         * @member {Map} dirtyObjects
          * @description subset of activeObjects containing objects with mutations that need to be stored
          * @default null
          */
@@ -121,7 +121,7 @@
         }
 
         /**
-         * @property {Set} loadingPids
+         * @member {Set} loadingPids
          * @description pids of objects that are currently being loaded
          * @default null
          */
@@ -132,7 +132,7 @@
         }
 
         /**
-         * @property {Set} storingPids
+         * @member {Set} storingPids
          * @description pids of objects that are currently being stored
          * @default null
          */
@@ -143,7 +143,7 @@
         }
 
         /**
-         * @property {Date} lastSyncTime
+         * @member {Date} lastSyncTime
          * @description time of last sync. WARNING: vulnerable to system time changes/differences
          * @default null
          */
@@ -154,7 +154,7 @@
         }
 
         /**
-         * @property {Set} markedSet
+         * @member {Set} markedSet
          * @description Set of puuids used during collection to mark objects that are reachable from the root
          * @default null
          */
@@ -170,7 +170,7 @@
         */
 
         /**
-         * @property {BMNotification} nodeStoreDidOpenNote
+         * @member {BMNotification} nodeStoreDidOpenNote
          * @description Notification sent after pool opens
          * @default null
          */
@@ -182,7 +182,7 @@
         }
 
         /**
-         * @property {Boolean} isFinalizing
+         * @member {Boolean} isFinalizing
          * @description Set to true during method didInitLoadingPids() - used to ignore mutations during this period
          * @default false
          */
@@ -193,7 +193,7 @@
         }
 
         /**
-         * @property {Error|String} error
+         * @member {Error|String} error
          * @description most recent error, if any
          * @default null
          */
@@ -203,7 +203,7 @@
         }
 
         /**
-         * @property {Set} collectablePidSet
+         * @member {Set} collectablePidSet
          * @description used during collection to store keys before tx begins
          * @default null
          */

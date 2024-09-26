@@ -49,7 +49,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property
+             * @member
              * @type {PersistentObjectPool}
              * @description The store for the blobs.
              */

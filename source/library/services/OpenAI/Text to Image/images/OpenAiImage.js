@@ -16,7 +16,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {string} imageUrl - The URL of the generated image.
+     * @member {string} imageUrl - The URL of the generated image.
      */
     {
       const slot = this.newSlot("imageUrl", null);
@@ -32,7 +32,7 @@
     }
 
     /**
-     * @property {string} revisedPrompt - The revised prompt used for image generation.
+     * @member {string} revisedPrompt - The revised prompt used for image generation.
      */
     {
       const slot = this.newSlot("revisedPrompt", null);
@@ -48,7 +48,7 @@
     }
 
     /**
-     * @property {string} url - The URL of the image.
+     * @member {string} url - The URL of the image.
      */
     {
       const slot = this.newSlot("url", null);
@@ -64,7 +64,7 @@
     }
 
     /**
-     * @property {Action} fetchAction - The action to fetch the image.
+     * @member {Action} fetchAction - The action to fetch the image.
      */
     {
       const slot = this.newSlot("fetchAction", null);
@@ -79,7 +79,7 @@
     }
 
     /**
-     * @property {string} error - Error message if any.
+     * @member {string} error - Error message if any.
      */
     {
       const slot = this.newSlot("error", ""); // String
@@ -93,7 +93,7 @@
     }
 
     /**
-     * @property {string} status - Current status of the image.
+     * @member {string} status - Current status of the image.
      */
     {
       const slot = this.newSlot("status", ""); // String
@@ -107,7 +107,7 @@
     }
 
     /**
-     * @property {boolean} isLoading - Indicates if the image is currently loading.
+     * @member {boolean} isLoading - Indicates if the image is currently loading.
      */
     {
       const slot = this.newSlot("isLoading", false); // String

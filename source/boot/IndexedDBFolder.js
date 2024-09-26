@@ -15,42 +15,42 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} path - The path of the folder.
+         * @member {string} path - The path of the folder.
          */
         this.newSlot("path", "/");
 
         /**
-         * @property {string} pathSeparator - The separator used in the path. Path should end with pathSeparator.
+         * @member {string} pathSeparator - The separator used in the path. Path should end with pathSeparator.
          */
         this.newSlot("pathSeparator", "/");
 
         /**
-         * @property {IDBDatabase} db - The IndexedDB database instance.
+         * @member {IDBDatabase} db - The IndexedDB database instance.
          */
         this.newSlot("db", null);
 
         /**
-         * @property {boolean} hasPermission - Indicates if the application has permission for persistence.
+         * @member {boolean} hasPermission - Indicates if the application has permission for persistence.
          */
         this.newSlot("hasPermission", false);
 
         /**
-         * @property {Promise} promiseForPersistence - Promise for requesting persistence.
+         * @member {Promise} promiseForPersistence - Promise for requesting persistence.
          */
         this.newSlot("promiseForPersistence", null);
 
         /**
-         * @property {Promise} promiseForOpen - Promise for opening the database. Has a value while opening.
+         * @member {Promise} promiseForOpen - Promise for opening the database. Has a value while opening.
          */
         this.newSlot("promiseForOpen", null);
 
         /**
-         * @property {IndexedDBTx} lastTx - The last transaction performed.
+         * @member {IndexedDBTx} lastTx - The last transaction performed.
          */
         this.newSlot("lastTx", null) ;
 
         /**
-         * @property {number} version - The version of the database.
+         * @member {number} version - The version of the database.
          */
         this.newSlot("version", 2); 
     }

@@ -56,7 +56,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {OpenAiImagePrompts} imagesPrompts
+     * @member {OpenAiImagePrompts} imagesPrompts
      */
     {
       const slot = this.overrideSlot("imagesPrompts", null);
@@ -65,7 +65,7 @@
     }
 
     /**
-     * @property {OpenAiTtsSessions} ttsSessions
+     * @member {OpenAiTtsSessions} ttsSessions
      */
     {
       const slot = this.overrideSlot("ttsSessions", null);

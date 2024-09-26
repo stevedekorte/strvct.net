@@ -71,7 +71,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {DomView} viewTarget - the view that the gesture is recognized on
+         * @member {DomView} viewTarget - the view that the gesture is recognized on
          */
         {
             const slot = this.newSlot("viewTarget", null);
@@ -79,7 +79,7 @@
         }
 
         /**
-         * @property {Boolean} shouldRemoveOnComplete - whether the gesture should be removed on completion
+         * @member {Boolean} shouldRemoveOnComplete - whether the gesture should be removed on completion
          */
         {
             const slot = this.newSlot("shouldRemoveOnComplete", false);
@@ -89,7 +89,7 @@
         // listener classes
 
         /**
-         * @property {Array} listenerClasses - the classes of listeners to use
+         * @member {Array} listenerClasses - the classes of listeners to use
          */
         {
             const slot = this.newSlot("listenerClasses", null);
@@ -97,7 +97,7 @@
         }
 
         /**
-         * @property {Array} moveListenerClasses - the classes of listeners to use for move events
+         * @member {Array} moveListenerClasses - the classes of listeners to use for move events
          */
         {
             const slot = this.newSlot("moveListenerClasses", ["MouseMoveListener", "TouchMoveListener"]);
@@ -105,7 +105,7 @@
         }
 
         /**
-         * @property {Array} defaultListenerClasses - the classes of listeners to use for view events
+         * @member {Array} defaultListenerClasses - the classes of listeners to use for view events
          */
         {
             const slot = this.newSlot("defaultListenerClasses", ["MouseListener", "TouchListener"]);
@@ -115,7 +115,7 @@
             // listeners
 
         /**
-         * @property {Array} viewListeners - the listeners for view events
+         * @member {Array} viewListeners - the listeners for view events
          */
         {
             const slot = this.newSlot("viewListeners", null);
@@ -123,7 +123,7 @@
         }
 
         /**
-         * @property {Array} docListeners - the listeners for document events
+         * @member {Array} docListeners - the listeners for document events
          */
         {
             const slot = this.newSlot("docListeners", null);
@@ -133,7 +133,7 @@
         // move listeners
 
         /**
-         * @property {Array} viewMoveListeners - the listeners for view move events
+         * @member {Array} viewMoveListeners - the listeners for view move events
          */
         {
             const slot = this.newSlot("viewMoveListeners", null);
@@ -141,7 +141,7 @@
         }
 
         /**
-         * @property {Array} docMoveListeners - the listeners for document move events
+         * @member {Array} docMoveListeners - the listeners for document move events
          */
         {
             const slot = this.newSlot("docMoveListeners", null);
@@ -151,7 +151,7 @@
         // events
 
         /**
-         * @property {Event} overEvent - the over event
+         * @member {Event} overEvent - the over event
          */
         {
             const slot = this.newSlot("overEvent", null);
@@ -159,7 +159,7 @@
         }
 
         /**
-         * @property {Event} leaveEvent - the leave event
+         * @member {Event} leaveEvent - the leave event
          */
         {
             const slot = this.newSlot("leaveEvent", null);
@@ -167,7 +167,7 @@
         }
 
         /**
-         * @property {Boolean} didBegin - whether the gesture did begin
+         * @member {Boolean} didBegin - whether the gesture did begin
          */
         {
             const slot = this.newSlot("didBegin", false);
@@ -175,7 +175,7 @@
         }
 
         /**
-         * @property {Event} downEvent - the down event
+         * @member {Event} downEvent - the down event
          */
         {
             const slot = this.newSlot("downEvent", null);
@@ -183,7 +183,7 @@
         }
 
         /**
-         * @property {Event} beginEvent - the begin event
+         * @member {Event} beginEvent - the begin event
          */
         {
             const slot = this.newSlot("beginEvent", null);
@@ -191,7 +191,7 @@
         }
 
         /**
-         * @property {Event} currentEvent - the current event
+         * @member {Event} currentEvent - the current event
          */
         {
             const slot = this.newSlot("currentEvent", null);
@@ -199,7 +199,7 @@
         }
 
         /**
-         * @property {Event} lastEvent - the last event
+         * @member {Event} lastEvent - the last event
          */
         {
             const slot = this.newSlot("lastEvent", null);
@@ -207,7 +207,7 @@
         }
 
         /**
-         * @property {Event} upEvent - the up event
+         * @member {Event} upEvent - the up event
          */
         {
             const slot = this.newSlot("upEvent", null);
@@ -215,7 +215,7 @@
         }
 
         /**
-         * @property {Event} cancelEvent - the cancel event
+         * @member {Event} cancelEvent - the cancel event
          */
         {
             const slot = this.newSlot("cancelEvent", null);
@@ -225,7 +225,7 @@
         // standard messages
 
         /**
-         * @property {String} gestureName - the name of the gesture
+         * @member {String} gestureName - the name of the gesture
          */
         {
             const slot = this.newSlot("gestureName", null); // sets <GestureType> name used for messages
@@ -233,7 +233,7 @@
         }
 
         /**
-         * @property {String} acceptMessage - the accept message
+         * @member {String} acceptMessage - the accept message
          */
         {
             const slot = this.newSlot("acceptMessage", null);  //"accepts<GestureType>"
@@ -241,7 +241,7 @@
         }
 
         /**
-         * @property {String} beginMessage - the begin message
+         * @member {String} beginMessage - the begin message
          */
         {
             const slot = this.newSlot("beginMessage", null); //"on<GestureType>Begin",
@@ -249,7 +249,7 @@
         }
 
         /**
-         * @property {String} moveMessage - the move message
+         * @member {String} moveMessage - the move message
          */
         {
             const slot = this.newSlot("moveMessage", null); //"on<GestureType>Move",
@@ -257,7 +257,7 @@
         }
 
         /**
-         * @property {String} requestCancelMessage - the request cancel message
+         * @member {String} requestCancelMessage - the request cancel message
          */
         {
             const slot = this.newSlot("requestCancelMessage", null); // "on<GestureType>RequestCancel"
@@ -265,7 +265,7 @@
         }
 
         /**
-         * @property {String} cancelledMessage - the cancelled message
+         * @member {String} cancelledMessage - the cancelled message
          */
         {
             const slot = this.newSlot("cancelledMessage", null); // "on<GestureType>Cancelled",
@@ -273,7 +273,7 @@
         }
 
         /**
-         * @property {String} completeMessage - the complete message
+         * @member {String} completeMessage - the complete message
          */
         {
             const slot = this.newSlot("completeMessage", null); // "on<GestureType>Complete",
@@ -283,7 +283,7 @@
         // debugging
 
         /**
-         * @property {Boolean} isEmulatingTouch - whether the gesture is emulating touch
+         * @member {Boolean} isEmulatingTouch - whether the gesture is emulating touch
          */
         {
             const slot = this.newSlot("isEmulatingTouch", false); // assumes touch and mouse events aren't mixed
@@ -291,7 +291,7 @@
         }
 
         /**
-         * @property {Boolean} isVisualDebugging - whether the gesture is visual debugging
+         * @member {Boolean} isVisualDebugging - whether the gesture is visual debugging
          */
         {
             const slot = this.newSlot("isVisualDebugging", false);
@@ -299,7 +299,7 @@
         }
 
         /**
-         * @property {Map} fingerViewMap - the map of fingers to views
+         * @member {Map} fingerViewMap - the map of fingers to views
          */
         {
             const slot = this.newSlot("fingerViewMap", null);
@@ -309,7 +309,7 @@
         // begin pressing 
 
         /**
-         * @property {Boolean} isPressing - whether the gesture is pressing
+         * @member {Boolean} isPressing - whether the gesture is pressing
          */
         {
             const slot = this.newSlot("isPressing", false);
@@ -318,7 +318,7 @@
         }
 
         /**
-         * @property {Number} minFingersRequired - the minimum number of fingers required for the gesture
+         * @member {Number} minFingersRequired - the minimum number of fingers required for the gesture
          */
         {
             const slot = this.newSlot("minFingersRequired", 2);
@@ -326,7 +326,7 @@
         }
 
         /**
-         * @property {Number} maxFingersAllowed - the maximum number of fingers allowed for the gesture
+         * @member {Number} maxFingersAllowed - the maximum number of fingers allowed for the gesture
          */
         {
             const slot = this.newSlot("maxFingersAllowed", 4);
@@ -334,7 +334,7 @@
         }
 
         /**
-         * @property {Number} minDistToBegin - the minimum distance to begin the gesture
+         * @member {Number} minDistToBegin - the minimum distance to begin the gesture
          */
         {
             const slot = this.newSlot("minDistToBegin", 10);
@@ -342,7 +342,7 @@
         }
 
         /**
-         * @property {Boolean} allowsKeyboardKeys - whether the gesture allows keyboard keys
+         * @member {Boolean} allowsKeyboardKeys - whether the gesture allows keyboard keys
          */
         {
             const slot = this.newSlot("allowsKeyboardKeys", false);
@@ -350,7 +350,7 @@
         }
 
         /**
-         * @property {Array} requiresKeyboardKeys - the keyboard keys required for the gesture
+         * @member {Array} requiresKeyboardKeys - the keyboard keys required for the gesture
          */
         {
             const slot = this.newSlot("requiresKeyboardKeys", null);
@@ -358,7 +358,7 @@
         }
 
         /**
-         * @property {Boolean} shouldRequestActivation - whether the gesture should request activation
+         * @member {Boolean} shouldRequestActivation - whether the gesture should request activation
          */
         {
             const slot = this.newSlot("shouldRequestActivation", true);
@@ -366,7 +366,7 @@
         }
 
         /**
-         * @property {Boolean} shouldAcceptCancelRequest - whether the gesture should accept cancel requests
+         * @member {Boolean} shouldAcceptCancelRequest - whether the gesture should accept cancel requests
          */
         {
             const slot = this.newSlot("shouldAcceptCancelRequest", true);
@@ -374,7 +374,7 @@
         }
 
         /**
-         * @property {Boolean} isActive - whether the gesture is active
+         * @member {Boolean} isActive - whether the gesture is active
          */
         {
             const slot = this.newSlot("isActive", false); // only used if shouldRequestActivation === false

@@ -16,7 +16,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {AiService} service - The AI service associated with this model.
+     * @member {AiService} service - The AI service associated with this model.
      */
     {
       const slot = this.newSlot("service", null);
@@ -24,7 +24,7 @@
     }
 
     /**
-     * @property {string} modelName - The name of the AI model.
+     * @member {string} modelName - The name of the AI model.
      */
     {
       const slot = this.newSlot("modelName", null);
@@ -36,7 +36,7 @@
     }
 
     /**
-     * @property {number} maxContextTokenCount - The maximum number of input tokens allowed by the model.
+     * @member {number} maxContextTokenCount - The maximum number of input tokens allowed by the model.
      */
     {
       const slot = this.newSlot("maxContextTokenCount", 8000);

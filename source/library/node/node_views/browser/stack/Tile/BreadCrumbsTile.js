@@ -16,7 +16,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {String} path
+         * @member {String} path
          */
         {
             const slot = this.newSlot("path", null);
@@ -24,7 +24,7 @@
         }
 
         /**
-         * @property {String} separatorString
+         * @member {String} separatorString
          */
         {
             const slot = this.newSlot("separatorString", "/");
@@ -32,7 +32,7 @@
         }
 
         /**
-         * @property {BMObservation} onStackViewPathChangeObs
+         * @member {BMObservation} onStackViewPathChangeObs
          */
         {
             const slot = this.newSlot("onStackViewPathChangeObs", null);
@@ -40,7 +40,7 @@
         }
 
         /**
-         * @property {Array} crumbObservations
+         * @member {Array} crumbObservations
          */
         {
             const slot = this.newSlot("crumbObservations", null);

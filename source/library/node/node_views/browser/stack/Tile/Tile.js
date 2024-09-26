@@ -32,7 +32,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {boolean} isSelectable
+             * @member {boolean} isSelectable
              * @description Indicates if the tile is selectable.
              */
             const slot = this.newSlot("isSelectable", true);
@@ -40,7 +40,7 @@
         }
         {
             /**
-             * @property {DomView} closeButtonView
+             * @member {DomView} closeButtonView
              * @description The close button view.
              */
             const slot = this.newSlot("closeButtonView", null);
@@ -48,7 +48,7 @@
         }
         {
             /**
-             * @property {number} defaultHeight
+             * @member {number} defaultHeight
              * @description The default height of the tile.
              */
             const slot = this.newSlot("defaultHeight", 30);
@@ -56,7 +56,7 @@
         }
         {
             /**
-             * @property {number} restCloseButtonOpacity
+             * @member {number} restCloseButtonOpacity
              * @description The rest close button opacity.
              */
             const slot = this.newSlot("restCloseButtonOpacity", 0.4);
@@ -64,7 +64,7 @@
         }
         {
             /**
-             * @property {string} transitionStyle
+             * @member {string} transitionStyle
              * @description The transition style.
              */
             const slot = this.newSlot("transitionStyle", "all 0s");
@@ -72,7 +72,7 @@
         }
         {
             /**
-             * @property {string} selectedFlashColor
+             * @member {string} selectedFlashColor
              * @description The selected flash color.
              */
             const slot = this.newSlot("selectedFlashColor", "#ccc");
@@ -80,7 +80,7 @@
         }
         {
             /**
-             * @property {boolean} shouldShowFlash
+             * @member {boolean} shouldShowFlash
              * @description Indicates if the flash should be shown.
              */
             const slot = this.newSlot("shouldShowFlash", false);
@@ -88,7 +88,7 @@
         }
         {
             /**
-             * @property {boolean} shouldCenterCloseButton
+             * @member {boolean} shouldCenterCloseButton
              * @description Indicates if the close button should be centered.
              */
             const slot = this.newSlot("shouldCenterCloseButton", true);
@@ -96,7 +96,7 @@
         }
         {
             /**
-             * @property {DomView} contentView
+             * @member {DomView} contentView
              * @description The content view.
              */
             const slot = this.newSlot("contentView", null);
@@ -105,7 +105,7 @@
 
         {
             /**
-             * @property {number} slideDeleteOffset
+             * @member {number} slideDeleteOffset
              * @description The slide delete offset.
              */
             const slot = this.newSlot("slideDeleteOffset", 0);
@@ -113,7 +113,7 @@
         }
         {
             /**
-             * @property {DomView} dragDeleteButtonView
+             * @member {DomView} dragDeleteButtonView
              * @description The drag delete button view.
              */
             const slot = this.newSlot("dragDeleteButtonView", null);
@@ -121,7 +121,7 @@
         }
         {
             /**
-             * @property {boolean} isDeleting
+             * @member {boolean} isDeleting
              * @description Indicates if the tile is deleting.
              */
             const slot = this.newSlot("isDeleting", false);
@@ -129,7 +129,7 @@
         }
         {
             /**
-             * @property {Date} lastTapDate
+             * @member {Date} lastTapDate
              * @description The last tap date.
              */
             const slot = this.newSlot("lastTapDate", null);
@@ -137,7 +137,7 @@
         }
         {
             /**
-             * @property {Date} lastSelectionDate
+             * @member {Date} lastSelectionDate
              * @description The last selection date.
              */
             const slot = this.newSlot("lastSelectionDate", null);

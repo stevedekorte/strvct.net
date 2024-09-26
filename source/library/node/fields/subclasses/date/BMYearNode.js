@@ -16,14 +16,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} allowsMultiplePicks - Indicates if multiple picks are allowed.
+         * @member {Boolean} allowsMultiplePicks - Indicates if multiple picks are allowed.
          */
         {
             const slot = this.newSlot("allowsMultiplePicks", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Number} value - The numeric value representing the year.
+         * @member {Number} value - The numeric value representing the year.
          */
         {
             const slot = this.newSlot("value", 0);

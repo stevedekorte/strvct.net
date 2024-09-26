@@ -13,28 +13,28 @@
     
     initPrototypeSlots () {
         /**
-         * @property {Boolean} isDown - Indicates whether the key is pressed down.
+         * @member {Boolean} isDown - Indicates whether the key is pressed down.
          */
         {
             const slot = this.newSlot("isDown", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Number} code - The key code.
+         * @member {Number} code - The key code.
          */
         {
             const slot = this.newSlot("code", null);
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} name - The name of the key.
+         * @member {String} name - The name of the key.
          */
         {
             const slot = this.newSlot("name", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {BMKeyboard} keyboard - The keyboard this key belongs to.
+         * @member {BMKeyboard} keyboard - The keyboard this key belongs to.
          */
         {
             const slot = this.newSlot("keyboard", null);

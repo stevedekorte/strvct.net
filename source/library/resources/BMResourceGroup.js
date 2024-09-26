@@ -22,7 +22,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Array} resourceClasses - Array of resource classes.
+         * @member {Array} resourceClasses - Array of resource classes.
          */
         {
             const slot = this.newSlot("resourceClasses", []);

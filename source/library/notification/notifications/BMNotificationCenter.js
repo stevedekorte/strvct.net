@@ -109,7 +109,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property observations
+         * @member observations
          * @type {Array}
          * @description an array of observations
          */
@@ -119,7 +119,7 @@
         }
 
         /**
-         * @property observationsMap
+         * @member observationsMap
          * @type {Map}
          * @description a map of observation hashes to observations
          */
@@ -129,7 +129,7 @@
         }
 
         /**
-         * @property notifications
+         * @member notifications
          * @type {Array}
          * @description an array of notifications
          */
@@ -139,7 +139,7 @@
         }
 
         /**
-         * @property debugNoteName
+         * @member debugNoteName
          * @type {String}
          * @description the name of the note to debug
          */
@@ -149,7 +149,7 @@
         }
 
         /**
-         * @property currentNote
+         * @member currentNote
          * @type {BMNotification}
          * @description the current note being processed
          */
@@ -159,7 +159,7 @@
         }
 
         /**
-         * @property isProcessing
+         * @member isProcessing
          * @type {Boolean}
          * @description whether the notification center is processing notifications
          */
@@ -169,7 +169,7 @@
         }
 
         /**
-         * @property obsHighwaterCount
+         * @member obsHighwaterCount
          * @type {Number}
          * @description the highwater count for observations
          */
@@ -179,7 +179,7 @@
         }
 
         /**
-         * @property noteSet
+         * @member noteSet
          * @type {Set}
          * @description a set of notes used for fast lookup for matching note
          */
@@ -189,7 +189,7 @@
         }
 
         /**
-         * @property isPaused
+         * @member isPaused
          * @type {Boolean}
          * @description whether the notification center is paused
          */
@@ -199,7 +199,7 @@
         }
 
         /**
-         * @property senderIndex
+         * @member senderIndex
          * @type {Map}
          * @description a map of sender to observations used for fast lookup for matching note
          */
@@ -209,7 +209,7 @@
         }
 
         /**
-         * @property nameIndex
+         * @member nameIndex
          * @type {Map}
          * @description a map of name to observations used for fast lookup for matching note
          */
@@ -219,7 +219,7 @@
         }
 
         /**
-         * @property nullSenderMatchSet
+         * @member nullSenderMatchSet
          * @type {Set}
          * @description a set of observations with null sender used for fast lookup for matching note
          */
@@ -229,7 +229,7 @@
         }
 
         /**
-         * @property nullNameMatchSet
+         * @member nullNameMatchSet
          * @type {Set}
          * @description a set of observations with null name used for fast lookup for matching note
          */

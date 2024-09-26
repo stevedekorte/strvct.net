@@ -23,14 +23,14 @@
     
     initPrototypeSlots () {
         /**
-         * @property {Number} minNumberOfFingersRequired
+         * @member {Number} minNumberOfFingersRequired
          */
         {
             const slot = this.newSlot("minNumberOfFingersRequired", 1);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} maxNumberOfFingersAllowed
+         * @member {Number} maxNumberOfFingersAllowed
          */
         {
             const slot = this.newSlot("maxNumberOfFingersAllowed", 1);

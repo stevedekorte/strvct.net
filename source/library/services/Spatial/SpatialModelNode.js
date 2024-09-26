@@ -15,7 +15,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {string|null} dataURL - The URL of the 3D model data.
+             * @member {string|null} dataURL - The URL of the 3D model data.
              */
             const slot = this.newSlot("dataURL", null)
             slot.setShouldStoreSlot(true)

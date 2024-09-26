@@ -16,67 +16,67 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {object} dbFolder - Database folder object
+         * @member {object} dbFolder - Database folder object
          */
         this.newSlot("dbFolder", null)
 
         /**
-         * @property {object} objectStore - IndexedDB object store
+         * @member {object} objectStore - IndexedDB object store
          */
         this.newSlot("objectStore", null)
 
         /**
-         * @property {object} tx - IndexedDB transaction object
+         * @member {object} tx - IndexedDB transaction object
          */
         this.newSlot("tx", null)
 
         /**
-         * @property {Array} requests - Array of transaction requests
+         * @member {Array} requests - Array of transaction requests
          */
         this.newSlot("requests", [])
 
         /**
-         * @property {boolean} isCommitted - Flag indicating if transaction is committed
+         * @member {boolean} isCommitted - Flag indicating if transaction is committed
          */
         this.newSlot("isCommitted", false) // set to true when tx.commit() is called
 
         /**
-         * @property {boolean} isAborted - Flag indicating if transaction is aborted
+         * @member {boolean} isAborted - Flag indicating if transaction is aborted
          */
         this.newSlot("isAborted", false)
 
         /**
-         * @property {boolean} isCompleted - Flag indicating if transaction is completed
+         * @member {boolean} isCompleted - Flag indicating if transaction is completed
          */
         this.newSlot("isCompleted", false) // set to true after tx commit onsuccess callback received 
 
         /**
-         * @property {Error} txRequestStack - Stack trace of transaction request
+         * @member {Error} txRequestStack - Stack trace of transaction request
          */
         this.newSlot("txRequestStack", null)
 
         /**
-         * @property {object} options - Transaction options
+         * @member {object} options - Transaction options
          */
         this.newSlot("options", { "durability": "strict" })
 
         /**
-         * @property {string} txId - Transaction ID
+         * @member {string} txId - Transaction ID
          */
         this.newSlot("txId", null)
 
         /**
-         * @property {Promise} promiseForCommit - Promise for transaction commit
+         * @member {Promise} promiseForCommit - Promise for transaction commit
          */
         this.newSlot("promiseForCommit", null)
 
         /**
-         * @property {Promise} promiseForFinished - Promise for transaction finish
+         * @member {Promise} promiseForFinished - Promise for transaction finish
          */
         this.newSlot("promiseForFinished", null)
 
         /**
-         * @property {number} timeoutInMs - Transaction timeout in milliseconds
+         * @member {number} timeoutInMs - Transaction timeout in milliseconds
          */
         this.newSlot("timeoutInMs", 1000);
     }

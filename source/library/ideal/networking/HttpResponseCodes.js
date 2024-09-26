@@ -14,7 +14,7 @@
   initPrototypeSlots() {
     {
       /**
-       * @property {Map} codesMap - A map of HTTP response codes and their corresponding information.
+       * @member {Map} codesMap - A map of HTTP response codes and their corresponding information.
        */
       const slot = this.newSlot("codesMap", null);
       slot.setSlotType("Map");

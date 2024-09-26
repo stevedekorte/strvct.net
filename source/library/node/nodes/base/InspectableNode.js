@@ -19,7 +19,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} nodeCanInspect
+         * @member {Boolean} nodeCanInspect
          */
         {
             const slot = this.newSlot("nodeCanInspect", true);
@@ -28,7 +28,7 @@
         }
 
         /**
-         * @property {BMNode} nodeInspector
+         * @member {BMNode} nodeInspector
          */
         {
             const slot = this.newSlot("nodeInspector", null);

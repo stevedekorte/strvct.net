@@ -18,7 +18,7 @@
     
     initPrototypeSlots () {
         /**
-         * @property {string|null} nodeViewClassName
+         * @member {string|null} nodeViewClassName
          */
         {
             const slot = this.newSlot("nodeViewClassName", null);
@@ -27,7 +27,7 @@
         }
         
         /**
-         * @property {string} nodeTileClassName
+         * @member {string} nodeTileClassName
          */
         {
             const addSlot = (name, path, label, values) => {
@@ -52,7 +52,7 @@
         }
         
         /**
-         * @property {string|null} nodeThumbnailUrl
+         * @member {string|null} nodeThumbnailUrl
          */
         {
             const slot = this.newSlot("nodeThumbnailUrl", null);
@@ -61,7 +61,7 @@
         }
 
         /**
-         * @property {boolean} nodeIsVertical
+         * @member {boolean} nodeIsVertical
          */
         {
             const slot = this.newSlot("nodeIsVertical", true);
@@ -74,7 +74,7 @@
         }
 
         /**
-         * @property {string} nodeChildrenAlignment
+         * @member {string} nodeChildrenAlignment
          */
         {
             const slot = this.newSlot("nodeChildrenAlignment", "flex-start");
@@ -88,7 +88,7 @@
         }
 
         /**
-         * @property {boolean} nodeTileIsSelectable
+         * @member {boolean} nodeTileIsSelectable
          */
         {
             const slot = this.newSlot("nodeTileIsSelectable", true);
@@ -97,7 +97,7 @@
         }
 
         /**
-         * @property {boolean} nodeTilesStartAtBottom
+         * @member {boolean} nodeTilesStartAtBottom
          */
         {
             const slot = this.newSlot("nodeTilesStartAtBottom", false);
@@ -106,7 +106,7 @@
         }
 
         /**
-         * @property {boolean} nodeNavBorderHint
+         * @member {boolean} nodeNavBorderHint
          */
         {
             const slot = this.newSlot("nodeNavBorderHint", true);
@@ -115,7 +115,7 @@
         }
 
         /**
-         * @property {number} nodeMinTileHeight
+         * @member {number} nodeMinTileHeight
          */
         {
             const slot = this.newSlot("nodeMinTileHeight", 0);
@@ -126,7 +126,7 @@
         }
 
         /**
-         * @property {number} nodeMinTileWidth
+         * @member {number} nodeMinTileWidth
          */
         {
             const slot = this.newSlot("nodeMinTileWidth", 0);
@@ -137,7 +137,7 @@
         }
 
         /**
-         * @property {boolean} acceptsFileDrop
+         * @member {boolean} acceptsFileDrop
          */
         {
             const slot = this.newSlot("acceptsFileDrop", false);
@@ -145,7 +145,7 @@
         }
 
         /**
-         * @property {string|null} nodeInputFieldMethod
+         * @member {string|null} nodeInputFieldMethod
          */
         {
             const slot = this.newSlot("nodeInputFieldMethod", null);
@@ -154,7 +154,7 @@
         }
 
         /**
-         * @property {boolean} nodeFillsRemainingWidth
+         * @member {boolean} nodeFillsRemainingWidth
          */
         {
             const slot = this.newSlot("nodeFillsRemainingWidth", false);
@@ -167,7 +167,7 @@
         }
 
         /**
-         * @property {boolean} nodeFillsWindow
+         * @member {boolean} nodeFillsWindow
          */
         {
             const slot = this.newSlot("nodeFillsWindow", false);
@@ -180,7 +180,7 @@
         }
 
         /**
-         * @property {boolean} nodeCanEditTileHeight
+         * @member {boolean} nodeCanEditTileHeight
          */
         {
             const slot = this.newSlot("nodeCanEditTileHeight", false);
@@ -189,7 +189,7 @@
         }
 
         /**
-         * @property {boolean} nodeCanEditColumnWidth
+         * @member {boolean} nodeCanEditColumnWidth
          */
         {
             const slot = this.newSlot("nodeCanEditColumnWidth", false);

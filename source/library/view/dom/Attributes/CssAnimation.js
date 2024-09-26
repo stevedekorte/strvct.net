@@ -51,28 +51,28 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {DomView} view
+         * @member {DomView} view
          */
         {
             const slot = this.newSlot("view", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {String} propertyName
+         * @member {String} propertyName
          */
         {
             const slot = this.newSlot("propertyName", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {String} startValue
+         * @member {String} startValue
          */
         {
             const slot = this.newSlot("startValue", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} targetValue
+         * @member {String} targetValue
          */
         {
             const slot = this.newSlot("targetValue", 0);
@@ -81,7 +81,7 @@
 
         // animation name is computed from hash of animation css rule string
         /**
-         * @property {Number} duration - seconds
+         * @member {Number} duration - seconds
          */
         {
             const slot = this.newSlot("duration", 1);
@@ -89,49 +89,49 @@
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} timingFunction
+         * @member {String} timingFunction
          */
         {
             const slot = this.newSlot("timingFunction", "ease");
             slot.setSlotType("String");
         }
         /**
-         * @property {Number} iterationCount - animation-iteration-count
+         * @member {Number} iterationCount - animation-iteration-count
          */
         {
             const slot = this.newSlot("iterationCount", 1) // animation-iteration-count
             slot.setSlotType("Number");
         }
         /**
-         * @property {Number} delay - animation-delay
+         * @member {Number} delay - animation-delay
          */
         {
             const slot = this.newSlot("delay", 0); // animation-delay
             slot.setSlotType("Number");
         }
         /**
-         * @property {String} direction - animation-direction (normal or alternate)
+         * @member {String} direction - animation-direction (normal or alternate)
          */
         {
             const slot = this.newSlot("direction", "normal"); // animation-direction (normal or alternate)
             slot.setSlotType("String");
         }
         /**
-         * @property {String} fillMode - animation-fill-mode (none|forwards|backwards|both|initial|inherit)
+         * @member {String} fillMode - animation-fill-mode (none|forwards|backwards|both|initial|inherit)
          */
         {
             const slot = this.newSlot("fillMode", "forwards");  // animation-fill-mode (none|forwards|backwards|both|initial|inherit)
             slot.setSlotType("String");
         }
         /**
-         * @property {String} playState - animation-play-state (paused|running|initial|inherit)
+         * @member {String} playState - animation-play-state (paused|running|initial|inherit)
          */
         {
             const slot = this.newSlot("playState", "running");  // animation-play-state (paused|running|initial|inherit)
             slot.setSlotType("String");
         }
         /**
-         * @property {Array} animationPropertyNames
+         * @member {Array} animationPropertyNames
          */
         {
             const slot = this.newSlot("animationPropertyNames", [
@@ -147,7 +147,7 @@
             slot.setSlotType("Array");
         }
         /**
-         * @property {Object} propertySlotsDict
+         * @member {Object} propertySlotsDict
          */
         {
             const slot = this.newSlot("propertySlotsDict", null);

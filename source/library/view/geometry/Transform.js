@@ -15,7 +15,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Point} position - The position of the transform in px units.
+         * @member {Point} position - The position of the transform in px units.
          */
         {
             const slot = this.newSlot("position", null);
@@ -23,7 +23,7 @@
             slot.setSlotType("Point");
         }
         /**
-         * @property {Point} rotation - The rotation of the transform in degrees units.
+         * @member {Point} rotation - The rotation of the transform in degrees units.
          */
         {
             const slot = this.newSlot("rotation", null);
@@ -31,7 +31,7 @@
             slot.setSlotType("Point");
         }
         /**
-         * @property {Point} scale - The scale of the transform.
+         * @member {Point} scale - The scale of the transform.
          */
         {
             const slot = this.newSlot("scale", null);

@@ -25,7 +25,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} unsetVisibleValue
+         * @member {string} unsetVisibleValue
          */
         {
             const slot = this.newSlot("unsetVisibleValue", "unset");
@@ -33,7 +33,7 @@
         }
 
         /**
-         * @property {boolean} isInteger
+         * @member {boolean} isInteger
          */
         {
             const slot = this.newSlot("isInteger", false)
@@ -48,7 +48,7 @@
         }
 
         /**
-         * @property {boolean} hasLimits
+         * @member {boolean} hasLimits
          */
         {
             const slot = this.newSlot("hasLimits", false)
@@ -63,7 +63,7 @@
         }
 
         /**
-         * @property {number} minValue
+         * @member {number} minValue
          */
         {
             const slot = this.newSlot("minValue", 0)
@@ -78,7 +78,7 @@
         }
 
         /**
-         * @property {number} maxValue
+         * @member {number} maxValue
          */
         {
             const slot = this.newSlot("maxValue", 1)

@@ -78,14 +78,14 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {string} path - The path of the resource.
+             * @member {string} path - The path of the resource.
              */
             const slot = this.newSlot("path", "");
             slot.setSlotType("String");
         }
         {
             /**
-             * @property {Object} data - The data of the resource.
+             * @member {Object} data - The data of the resource.
              */
             const slot = this.newSlot("data", null);
             slot.setSlotType("Object");
@@ -93,28 +93,28 @@
 
         {
             /**
-             * @property {Error} error - Any error that occurred during resource handling.
+             * @member {Error} error - Any error that occurred during resource handling.
              */
             const slot = this.newSlot("error", null);
             slot.setSlotType("Error");
         }
         {
             /**
-             * @property {string} loadState - The current load state of the resource.
+             * @member {string} loadState - The current load state of the resource.
              */
             const slot = this.newSlot("loadState", "unloaded"); // "unloaded", "loading", "decoding", "loaded"
             slot.setSlotType("String");
         }
         {
             /**
-             * @property {boolean} isLoaded - Indicates if the resource is loaded.
+             * @member {boolean} isLoaded - Indicates if the resource is loaded.
              */
             const slot = this.newSlot("isLoaded", false);
             slot.setSlotType("Boolean");
         }
         {
             /**
-             * @property {BMUrlResource} urlResource - The URL resource associated with this resource.
+             * @member {BMUrlResource} urlResource - The URL resource associated with this resource.
              */
             const slot = this.newSlot("urlResource", null);
             slot.setSlotType("BMUrlResource");
@@ -122,7 +122,7 @@
 
         {
             /**
-             * @property {Promise} loadDataPromise - Promise for loading data.
+             * @member {Promise} loadDataPromise - Promise for loading data.
              */
             const slot = this.newSlot("loadDataPromise", null);
             slot.setSlotType("Promise");
@@ -130,7 +130,7 @@
 
         {
             /**
-             * @property {Promise} decodeDataPromise - Promise for decoding data.
+             * @member {Promise} decodeDataPromise - Promise for decoding data.
              */
             const slot = this.newSlot("decodeDataPromise", null);
             slot.setSlotType("Promise");
@@ -138,7 +138,7 @@
 
         {
             /**
-             * @property {Object} value - The value of the resource.
+             * @member {Object} value - The value of the resource.
              */
             const slot = this.newSlot("value", null);
             slot.setSlotType("Object");

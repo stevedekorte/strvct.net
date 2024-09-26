@@ -29,7 +29,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} rootPath - The root path for file resources.
+         * @member {String} rootPath - The root path for file resources.
          */
         {
             const slot = this.newSlot("rootPath", ".");
@@ -37,7 +37,7 @@
         }
 
         /**
-         * @property {Boolean} hasSetupSubnodes - Indicates whether subnodes have been set up.
+         * @member {Boolean} hasSetupSubnodes - Indicates whether subnodes have been set up.
          */
         {
             const slot = this.newSlot("hasSetupSubnodes", false);

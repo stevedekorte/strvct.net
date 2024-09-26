@@ -19,7 +19,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} lastSyncTime
+         * @member {Number} lastSyncTime
          */
         {
             const slot = this.newSlot("lastSyncTime", 0);

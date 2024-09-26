@@ -24,7 +24,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {Element} element - The DOM element for the player.
+     * @member {Element} element - The DOM element for the player.
      */
     {
       const slot = this.newSlot("element", null);
@@ -33,7 +33,7 @@
     }
     
     /**
-     * @property {Promise} playerPromise - Resolves once player is available.
+     * @member {Promise} playerPromise - Resolves once player is available.
      */
     { 
       const slot = this.newSlot("playerPromise", null);
@@ -41,7 +41,7 @@
     }
 
     /**
-     * @property {Promise} playPromise - Promise for play operation.
+     * @member {Promise} playPromise - Promise for play operation.
      */
     {
       const slot = this.newSlot("playPromise", null);
@@ -49,7 +49,7 @@
     }
 
     /**
-     * @property {Object} player - Reference to store the YouTube player.
+     * @member {Object} player - Reference to store the YouTube player.
      */
     {
       const slot = this.newSlot("player", null);
@@ -58,7 +58,7 @@
     }
 
     /**
-     * @property {string} stateName - Current state of the player.
+     * @member {string} stateName - Current state of the player.
      */
     {
       const slot = this.newSlot("stateName", "");
@@ -73,7 +73,7 @@
     }
 
     /**
-     * @property {string} trackName - Name of the current track.
+     * @member {string} trackName - Name of the current track.
      */
     {
       const slot = this.newSlot("trackName", "");      
@@ -88,7 +88,7 @@
     }
 
     /**
-     * @property {string} videoId - ID of the current video.
+     * @member {string} videoId - ID of the current video.
      */
     {
       const slot = this.newSlot("videoId", null);      
@@ -103,7 +103,7 @@
     }
 
     /**
-     * @property {boolean} shouldRepeat - Whether the track should repeat.
+     * @member {boolean} shouldRepeat - Whether the track should repeat.
      */
     {
       const slot = this.newSlot("shouldRepeat", true);      
@@ -118,7 +118,7 @@
     }
 
     /**
-     * @property {boolean} mute - Whether the player is muted.
+     * @member {boolean} mute - Whether the player is muted.
      */
     {
       const slot = this.newSlot("mute", false);      
@@ -133,7 +133,7 @@
     }
 
     /**
-     * @property {number} volume - Volume of the player.
+     * @member {number} volume - Volume of the player.
      */
     {
       const slot = this.newSlot("volume", 0.05);
@@ -149,7 +149,7 @@
     }
 
     /**
-     * @property {Action} togglePlayAction - Action to toggle play/pause.
+     * @member {Action} togglePlayAction - Action to toggle play/pause.
      */
     {
       const slot = this.newSlot("togglePlayAction", null);

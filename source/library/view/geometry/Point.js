@@ -31,10 +31,10 @@
         const dimensionNames = ["x", "y", "z", "t"];
         dimensionNames.forEach(slotName => {
             /**
-             * @property {Number} x - The x coordinate
-             * @property {Number} y - The y coordinate
-             * @property {Number} z - The z coordinate
-             * @property {Number} t - The time value
+             * @member {Number} x - The x coordinate
+             * @member {Number} y - The y coordinate
+             * @member {Number} z - The z coordinate
+             * @member {Number} t - The time value
              */
             const slot = this.newSlot(slotName, 0);
             slot.setSlotType("Number");

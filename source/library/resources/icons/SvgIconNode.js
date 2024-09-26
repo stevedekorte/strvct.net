@@ -25,7 +25,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {string} svgString - The SVG string content.
+     * @member {string} svgString - The SVG string content.
      */
     {
       const slot = this.newSlot("svgString", null)

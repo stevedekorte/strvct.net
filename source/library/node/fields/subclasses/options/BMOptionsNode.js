@@ -51,7 +51,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {string} syncedValidItemsJsonString
+         * @member {string} syncedValidItemsJsonString
          * @description Stores the JSON string of synced valid items.
          */
         {
@@ -60,7 +60,7 @@
         }
 
         /**
-         * @property {boolean} allowsMultiplePicks
+         * @member {boolean} allowsMultiplePicks
          * @description Determines if multiple options can be selected.
          */
         {
@@ -72,7 +72,7 @@
         }
 
         /**
-         * @property {string} key
+         * @member {string} key
          * @description The key for the options node.
          */
         {
@@ -82,7 +82,7 @@
         }
 
         /**
-         * @property {Array} validValues
+         * @member {Array} validValues
          * @description An array of valid values for the options.
          */
         {
@@ -93,7 +93,7 @@
         }
 
         /**
-         * @property {Function} validValuesClosure
+         * @member {Function} validValuesClosure
          * @description A function that returns valid values for the options.
          */
         {

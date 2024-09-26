@@ -25,7 +25,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {Boolean} isMuted - Indicates if the queue is muted.
+     * @member {Boolean} isMuted - Indicates if the queue is muted.
      */
     {
       const slot = this.newSlot("isMuted", false);
@@ -33,7 +33,7 @@
     }
 
     /**
-     * @property {Object} currentSound - The currently playing sound.
+     * @member {Object} currentSound - The currently playing sound.
      */
     {
       const slot = this.newSlot("currentSound", null);
@@ -41,7 +41,7 @@
     }
 
     /**
-     * @property {Array} soundQueue - The queue of sounds to be played.
+     * @member {Array} soundQueue - The queue of sounds to be played.
      */
     {
       const slot = this.newSlot("soundQueue", null);

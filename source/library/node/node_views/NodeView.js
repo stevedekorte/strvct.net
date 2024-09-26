@@ -15,7 +15,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {BMNode} node
+         * @member {BMNode} node
          * @description The node associated with this view.
          */
         {
@@ -24,7 +24,7 @@
         }
 
         /**
-         * @property {Class} defaultSubviewProto
+         * @member {Class} defaultSubviewProto
          * @description The default prototype for subviews.
          */
         {
@@ -33,7 +33,7 @@
         }
 
         /**
-         * @property {Class} overrideSubviewProto
+         * @member {Class} overrideSubviewProto
          * @description The override prototype for subviews.
          */
         {
@@ -42,7 +42,7 @@
         }
 
         /**
-         * @property {BMObservation} nodeObservation
+         * @member {BMObservation} nodeObservation
          * @description The observation object for the node.
          */
         {
@@ -51,7 +51,7 @@
         }
 
         /**
-         * @property {boolean} isInspecting
+         * @member {boolean} isInspecting
          * @description Indicates if the view is in inspection mode.
          */
         {

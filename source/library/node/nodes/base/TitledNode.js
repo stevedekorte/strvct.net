@@ -21,7 +21,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {String} title
+         * @member {String} title
          */
         {
             const slot = this.newSlot("title", null);
@@ -30,7 +30,7 @@
         }
 
         /**
-         * @property {String} subtitle
+         * @member {String} subtitle
          */
         {
             const slot = this.newSlot("subtitle", null);
@@ -44,7 +44,7 @@
         }
 
         /**
-         * @property {BMNotification} note
+         * @member {BMNotification} note
          */
         {
             const slot = this.newSlot("note", null);
@@ -56,7 +56,7 @@
         }
 
         /**
-         * @property {String} noteIconName
+         * @member {String} noteIconName
          */
         {
             const slot = this.newSlot("noteIconName", null);
@@ -70,7 +70,7 @@
         }
 
         /**
-         * @property {Boolean} nodeCanEditTitle
+         * @member {Boolean} nodeCanEditTitle
          */
         {
             const slot = this.newSlot("nodeCanEditTitle", false);
@@ -80,7 +80,7 @@
         }
 
         /**
-         * @property {Boolean} nodeCanEditSubtitle
+         * @member {Boolean} nodeCanEditSubtitle
          */
         {
             const slot = this.newSlot("nodeCanEditSubtitle", false);
@@ -93,7 +93,7 @@
         }
 
         /**
-         * @property {Boolean} subtitleIsSubnodeCount
+         * @member {Boolean} subtitleIsSubnodeCount
          */
         {
             const slot = this.newSlot("subtitleIsSubnodeCount", false);
@@ -103,7 +103,7 @@
         }
 
         /**
-         * @property {Boolean} noteIsSubnodeCount
+         * @member {Boolean} noteIsSubnodeCount
          */
         {
             const slot = this.newSlot("noteIsSubnodeCount", false);

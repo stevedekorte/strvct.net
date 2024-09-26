@@ -22,35 +22,35 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} dataUrl - The data URL for drop operations.
+         * @member {String} dataUrl - The data URL for drop operations.
          */
         {
             const slot = this.newSlot("dataUrl", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} transferMimeType - The MIME type for drag operations.
+         * @member {String} transferMimeType - The MIME type for drag operations.
          */
         {
             const slot = this.newSlot("transferMimeType", "DownloadURL");
             slot.setSlotType("String");
         }
         /**
-         * @property {String} fileName - The file name for drag operations.
+         * @member {String} fileName - The file name for drag operations.
          */
         {
             const slot = this.newSlot("fileName", "file.txt");
             slot.setSlotType("String");
         }
         /**
-         * @property {String} mimeType - The MIME type of the data.
+         * @member {String} mimeType - The MIME type of the data.
          */
         {
             const slot = this.newSlot("mimeType", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {String} decodedData - The non-base64 version of the data.
+         * @member {String} decodedData - The non-base64 version of the data.
          */
         {
             const slot = this.newSlot("decodedData", "");

@@ -18,37 +18,37 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Array} subnodeClasses - The classes of subnodes that can be added to this node.
+     * @member {Array} subnodeClasses - The classes of subnodes that can be added to this node.
      */
     this.setSubnodeClasses([OpenAiTtsSession]);
 
     /**
-     * @property {boolean} shouldStore - Indicates whether this node should be stored.
+     * @member {boolean} shouldStore - Indicates whether this node should be stored.
      */
     this.setShouldStore(true);
 
     /**
-     * @property {boolean} shouldStoreSubnodes - Indicates whether subnodes should be stored.
+     * @member {boolean} shouldStoreSubnodes - Indicates whether subnodes should be stored.
      */
     this.setShouldStoreSubnodes(true);
 
     /**
-     * @property {boolean} nodeCanAddSubnode - Indicates whether new subnodes can be added to this node.
+     * @member {boolean} nodeCanAddSubnode - Indicates whether new subnodes can be added to this node.
      */
     this.setNodeCanAddSubnode(true);
 
     /**
-     * @property {boolean} nodeCanReorderSubnodes - Indicates whether subnodes can be reordered.
+     * @member {boolean} nodeCanReorderSubnodes - Indicates whether subnodes can be reordered.
      */
     this.setNodeCanReorderSubnodes(true);
 
     /**
-     * @property {string} title - The title of this node.
+     * @member {string} title - The title of this node.
      */
     this.setTitle("Text to Speech Sessions");
 
     /**
-     * @property {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.
+     * @member {boolean} noteIsSubnodeCount - Indicates whether the note should display the subnode count.
      */
     this.setNoteIsSubnodeCount(true);
   }

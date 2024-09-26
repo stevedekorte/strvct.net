@@ -265,7 +265,7 @@ class JsClassParser {
             since: null, 
             description: null, 
             classdesc: null,
-            property: null  // Add this line to support @property tags
+            property: null  // Add this line to support @member tags
         };
         let currentTag = null;
         let currentTagContent = [];
@@ -338,7 +338,7 @@ class JsClassParser {
 
     // Add this new method to parse properties
     parseProperties() {
-        const propertyRegex = /@property\s+{([^}]+)}\s+([^\s]+)\s+(.*)/g;
+        const propertyRegex = /@member\s+{([^}]+)}\s+([^\s]+)\s+(.*)/g;
         let match;
         while ((match = propertyRegex.exec(this.code)) !== null) {
             const [, propertyType, propertyName, description] = match;

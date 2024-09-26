@@ -57,28 +57,28 @@
     
     initPrototypeSlots () {
         /**
-         * @property {string} elementClassName
+         * @member {string} elementClassName
          */
         {
             const slot = this.newSlot("elementClassName", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {string} elementType
+         * @member {string} elementType
          */
         {
             const slot = this.newSlot("elementType", "div");
             slot.setSlotType("String");
         }
         /**
-         * @property {Element} element
+         * @member {Element} element
          */
         {
             const slot = this.newSlot("element", null);
             slot.setSlotType("Element");
         }
         /**
-         * @property {boolean} usesSmoothScrolling
+         * @member {boolean} usesSmoothScrolling
          */
         {
             const slot = this.newSlot("usesSmoothScrolling", false);

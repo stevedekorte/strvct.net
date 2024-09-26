@@ -42,14 +42,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {AudioContext} audioContext
+         * @member {AudioContext} audioContext
          */
         {
             const slot = this.newSlot("audioContext", null);
             slot.setSlotType("AudioContext");
         }
         /**
-         * @property {Promise} setupPromise
+         * @member {Promise} setupPromise
          */
         {
             const slot = this.newSlot("setupPromise", null);

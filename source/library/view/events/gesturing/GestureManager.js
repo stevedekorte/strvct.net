@@ -40,21 +40,21 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Gesture} activeGesture
+         * @member {Gesture} activeGesture
          */
         {
             const slot = this.newSlot("activeGesture", null);
             slot.setSlotType("Gesture");
         }
         /**
-         * @property {Map} begunGesturesMap
+         * @member {Map} begunGesturesMap
          */
         {
             const slot = this.newSlot("begunGesturesMap", null) 
             slot.setSlotType("Map");
         }
         /**
-         * @property {Boolean} isPaused - used to pause gestures while editing text fields
+         * @member {Boolean} isPaused - used to pause gestures while editing text fields
          */
         {
             const slot = this.newSlot("isPaused", false);

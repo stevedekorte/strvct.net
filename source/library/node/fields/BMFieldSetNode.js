@@ -31,14 +31,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} status - The status of the field set.
+         * @member {string} status - The status of the field set.
          */
         {
             const slot = this.newSlot("status", "");
             slot.setSlotType("String");
         }
         /**
-         * @property {boolean} isEditable - Determines if the field set is editable.
+         * @member {boolean} isEditable - Determines if the field set is editable.
          */
         {
             const slot = this.newSlot("isEditable", true);

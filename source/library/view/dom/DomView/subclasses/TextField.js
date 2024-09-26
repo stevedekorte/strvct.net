@@ -18,7 +18,7 @@
     initPrototypeSlots () {
 
         /**
-         * @property {String} lastMergeValue
+         * @member {String} lastMergeValue
          * @description The last merge value.
          */
         {
@@ -26,7 +26,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {Boolean} isMergeable
+         * @member {Boolean} isMergeable
          * @description Whether the text field is mergeable.
          */
         {
@@ -35,7 +35,7 @@
         }
 
         /**
-         * @property {HtmlStreamReader} htmlStreamReader
+         * @member {HtmlStreamReader} htmlStreamReader
          * @description The HTML stream reader.
          */
         {
@@ -44,7 +44,7 @@
         }
         
         /**
-         * @property {String} selectedColor
+         * @member {String} selectedColor
          * @description The selected color.
          */
         {
@@ -53,7 +53,7 @@
         }
 
         /**
-         * @property {String} unselectedColor
+         * @member {String} unselectedColor
          * @description The unselected color.
          */
         {
@@ -62,7 +62,7 @@
         }
 
         /**
-         * @property {Boolean} doesClearOnReturn
+         * @member {Boolean} doesClearOnReturn
          * @description Whether the text field clears on return.
          */
         {
@@ -71,7 +71,7 @@
         }
 
         /**
-         * @property {Boolean} doesHoldFocusOnReturn
+         * @member {Boolean} doesHoldFocusOnReturn
          * @description Whether the text field holds focus on return.
          */
         {
@@ -80,7 +80,7 @@
         }
 
         /**
-         * @property {Boolean} doesTrim
+         * @member {Boolean} doesTrim
          * @description Whether the text field trims.
          */
         {
@@ -89,7 +89,7 @@
         }
 
         /**
-         * @property {Boolean} doesInput
+         * @member {Boolean} doesInput
          * @description Whether the text field does input.
          */
         {
@@ -103,7 +103,7 @@
         */
 
         /**
-         * @property {Boolean} canHitEnter
+         * @member {Boolean} canHitEnter
          * @description Whether the text field can hit enter.
          */
         {
@@ -114,7 +114,7 @@
         }
         
         /**
-         * @property {Boolean} doesMuteEnter
+         * @member {Boolean} doesMuteEnter
          * @description Whether the text field does mute enter.
          */
         {
@@ -125,7 +125,7 @@
         }
 
         /**
-         * @property {Boolean} allowsHtml
+         * @member {Boolean} allowsHtml
          * @description Whether the text field allows html.
          */
         {
@@ -134,7 +134,7 @@
         }
 
         /**
-         * @property {Boolean} allowsSetStringWhileFocused
+         * @member {Boolean} allowsSetStringWhileFocused
          * @description Whether the text field allows set string while focused.
          */
         {
@@ -145,7 +145,7 @@
         // has to start false for proper state setup
 
         /**
-         * @property {Boolean} usesDoubleTapToEdit
+         * @member {Boolean} usesDoubleTapToEdit
          * @description Whether the text field uses double tap to edit.
          */
         {
@@ -155,7 +155,7 @@
 
         // need to separate from contentEditable since we want to override when usesDoubleTapToEdit is true.
         /**
-         * @property {Boolean} isEditable
+         * @member {Boolean} isEditable
          * @description Whether the text field is editable.
          */
         {
@@ -166,7 +166,7 @@
         }
 
         /**
-         * @property {String} editableBorder
+         * @member {String} editableBorder
          * @description The editable border.
          */
         {
@@ -175,7 +175,7 @@
         }
 
         /**
-         * @property {String} uneditableBorder
+         * @member {String} uneditableBorder
          * @description The uneditable border.
          */
         {
@@ -184,7 +184,7 @@
         }
 
         /**
-         * @property {Boolean} showsBorderWhenEditable
+         * @member {Boolean} showsBorderWhenEditable
          * @description Whether the text field shows border when editable.
          */
         {
@@ -193,7 +193,7 @@
         }
 
         /**
-         * @property {MutationObserver} mutationObserver
+         * @member {MutationObserver} mutationObserver
          * @description The mutation observer.
          */
         {
@@ -202,7 +202,7 @@
         }
 
         /**
-         * @property {Boolean} isMultiline
+         * @member {Boolean} isMultiline
          * @description Whether the text field is multiline.
          */
         {
@@ -211,7 +211,7 @@
         }
 
         /**
-         * @property {Boolean} onBlurSelection
+         * @member {Boolean} onBlurSelection
          * @description Whether the text field on blur selection.
          */
         {
@@ -220,7 +220,7 @@
         }
 
         /**
-         * @property {String} placeholderText
+         * @member {String} placeholderText
          * @description The placeholder text.
          */
         {

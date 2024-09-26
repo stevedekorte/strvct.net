@@ -16,7 +16,7 @@
   initPrototypeSlots () {
 
     /**
-     * @property {HomeAssistantGroup|null} group - Reference to HomeAssistantGroup subclass instance.
+     * @member {HomeAssistantGroup|null} group - Reference to HomeAssistantGroup subclass instance.
      */
     {
       const slot = this.newSlot("group", null)
@@ -24,7 +24,7 @@
     }
 
     /**
-     * @property {Object|null} owner - The owner of this HomeAssistantObject.
+     * @member {Object|null} owner - The owner of this HomeAssistantObject.
      */
     {
       const slot = this.newSlot("owner", null)
@@ -32,7 +32,7 @@
     }
 
     /**
-     * @property {string} name - The name of the HomeAssistantObject.
+     * @member {string} name - The name of the HomeAssistantObject.
      */
     {
       const slot = this.newSlot("name", "")
@@ -40,7 +40,7 @@
     }
 
     /**
-     * @property {Object|null} haJson - The Home Assistant JSON data.
+     * @member {Object|null} haJson - The Home Assistant JSON data.
      */
     {
       const slot = this.newSlot("haJson", null)
@@ -48,7 +48,7 @@
     }
 
     /**
-     * @property {string} jsonString - The JSON string representation of the haJson.
+     * @member {string} jsonString - The JSON string representation of the haJson.
      */
     {
       const slot = this.newSlot("jsonString", "");

@@ -21,35 +21,35 @@
     
     initPrototypeSlots () {
         /**
-         * @property {DomView} titleView
+         * @member {DomView} titleView
          */
         {
             const slot = this.newSlot("titleView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {DomView} subtitleView
+         * @member {DomView} subtitleView
          */
         {
             const slot = this.newSlot("subtitleView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {DomView} noteView
+         * @member {DomView} noteView
          */
         {
             const slot = this.newSlot("noteView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {DomView} noteIconView - created lazily
+         * @member {DomView} noteIconView - created lazily
          */
         {
             const slot = this.newSlot("noteIconView", null);
             slot.setSlotType("DomView");
         }
         /**
-         * @property {DomView} thumbnailView
+         * @member {DomView} thumbnailView
          */
         {
             const slot = this.newSlot("thumbnailView", null);

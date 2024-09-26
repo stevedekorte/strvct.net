@@ -31,42 +31,42 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Boolean} isDown - Indicates whether the mouse button is down.
+         * @member {Boolean} isDown - Indicates whether the mouse button is down.
          */
         {
             const slot = this.newSlot("isDown", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {MouseEvent} downEvent - Stores the mouse down event.
+         * @member {MouseEvent} downEvent - Stores the mouse down event.
          */
         {
             const slot = this.newSlot("downEvent", null);
             slot.setSlotType("MouseEvent");
         }
         /**
-         * @property {MouseEvent} currentEvent - Stores the current mouse event.
+         * @member {MouseEvent} currentEvent - Stores the current mouse event.
          */
         {
             const slot = this.newSlot("currentEvent", null);
             slot.setSlotType("MouseEvent");
         }
         /**
-         * @property {MouseEvent} upEvent - Stores the mouse up event.
+         * @member {MouseEvent} upEvent - Stores the mouse up event.
          */
         {
             const slot = this.newSlot("upEvent", null);
             slot.setSlotType("MouseEvent");
         }
         /**
-         * @property {MouseListener} mouseListener - The mouse listener instance.
+         * @member {MouseListener} mouseListener - The mouse listener instance.
          */
         {
             const slot = this.newSlot("mouseListener", null);
             slot.setSlotType("MouseListener");
         }
         /**
-         * @property {MouseMoveListener} mouseMoveListener - The mouse move listener instance.
+         * @member {MouseMoveListener} mouseMoveListener - The mouse move listener instance.
          */
         {
             const slot = this.newSlot("mouseMoveListener", null);

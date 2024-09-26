@@ -25,14 +25,14 @@
         }
         */
         /**
-         * @property {Element} canvas - The canvas element used for measuring text.
+         * @member {Element} canvas - The canvas element used for measuring text.
          */
         {
             const slot = this.newSlot("canvas", null);
             slot.setSlotType("Element");
         }
         /**
-         * @property {CanvasRenderingContext2D} context - The 2D rendering context of the canvas.
+         * @member {CanvasRenderingContext2D} context - The 2D rendering context of the canvas.
          */
         {
             const slot = this.newSlot("context", null);

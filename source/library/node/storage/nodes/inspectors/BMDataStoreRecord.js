@@ -14,14 +14,14 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {String} key
+         * @member {String} key
          */
         {
             const slot = this.newSlot("key", null);
             slot.setSlotType("String");
         }
         /**
-         * @property {Object} store
+         * @member {Object} store
          */
         {
             const slot = this.newSlot("store", null);

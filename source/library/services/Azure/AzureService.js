@@ -15,7 +15,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {Array} regionOptions - Options for Azure regions
+     * @member {Array} regionOptions - Options for Azure regions
      */
     {
       const slot = this.newSlot("regionOptions", []);
@@ -23,7 +23,7 @@
     }
 
     /**
-     * @property {string} apiKey - API Key for Azure service
+     * @member {string} apiKey - API Key for Azure service
      */
     {
       const slot = this.newSlot("apiKey", "");
@@ -36,7 +36,7 @@
     }
 
     /**
-     * @property {string} region - Server Region for Azure service
+     * @member {string} region - Server Region for Azure service
      */
     {
       const slot = this.newSlot("region", "");
@@ -52,7 +52,7 @@
     }
 
     /**
-     * @property {AzureSpeakers} speakers - Speakers for Azure service
+     * @member {AzureSpeakers} speakers - Speakers for Azure service
      */
     {
       const slot = this.newSlot("speakers", null);
@@ -63,7 +63,7 @@
     }
 
     /**
-     * @property {AzureVoices} voices - Voices for Azure service
+     * @member {AzureVoices} voices - Voices for Azure service
      */
     {
       const slot = this.newSlot("voices", null);

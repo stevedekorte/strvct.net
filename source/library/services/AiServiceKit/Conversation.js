@@ -17,7 +17,7 @@
 
     {
       /**
-       * @property {BMNode} footerNode - The footer node for the conversation.
+       * @member {BMNode} footerNode - The footer node for the conversation.
        */
       const slot = this.newSlot("footerNode", null);
       slot.setSlotType("BMNode");

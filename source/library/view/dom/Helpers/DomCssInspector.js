@@ -20,7 +20,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {string} idName - The ID name for the test element.
+             * @member {string} idName - The ID name for the test element.
              */
             const slot = this.newSlot("idName", "DomCssInspector");
             slot.setSlotType("String");

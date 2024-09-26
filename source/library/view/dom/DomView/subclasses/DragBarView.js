@@ -16,63 +16,63 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {boolean} isEnabled - Determines if the drag bar is enabled.
+         * @member {boolean} isEnabled - Determines if the drag bar is enabled.
          */
         {
             const slot = this.newSlot("isEnabled", true);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {boolean} isHighlighted - Determines if the drag bar is highlighted.
+         * @member {boolean} isHighlighted - Determines if the drag bar is highlighted.
          */
         {
             const slot = this.newSlot("isHighlighted", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {boolean} isDragging - Determines if the drag bar is currently being dragged.
+         * @member {boolean} isDragging - Determines if the drag bar is currently being dragged.
          */
         {
             const slot = this.newSlot("isDragging", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {string} normalColor - The color of the drag bar in its normal state.
+         * @member {string} normalColor - The color of the drag bar in its normal state.
          */
         {
             const slot = this.newSlot("normalColor", "#333");
             slot.setSlotType("String");
         }
         /**
-         * @property {string} highlightColor - The color of the drag bar when highlighted.
+         * @member {string} highlightColor - The color of the drag bar when highlighted.
          */
         {
             const slot = this.newSlot("highlightColor", "#555");
             slot.setSlotType("String");
         }
         /**
-         * @property {string} dragColor - The color of the drag bar when being dragged.
+         * @member {string} dragColor - The color of the drag bar when being dragged.
          */
         {
             const slot = this.newSlot("dragColor", "#999");
             slot.setSlotType("String");
         }
         /**
-         * @property {Object} delegate - The delegate object for the drag bar view.
+         * @member {Object} delegate - The delegate object for the drag bar view.
          */
         {
             const slot = this.newSlot("delegate", null);
             slot.setSlotType("Object"); //<DragBarViewDelegate>
         }
         /**
-         * @property {number} thickness - The thickness of the drag bar.
+         * @member {number} thickness - The thickness of the drag bar.
          */
         {
             const slot = this.newSlot("thickness", 2);
             slot.setSlotType("Number");
         }
         /**
-         * @property {boolean} isVerticalDrag - Determines if the drag bar is for vertical dragging.
+         * @member {boolean} isVerticalDrag - Determines if the drag bar is for vertical dragging.
          */
         {
             const slot = this.newSlot("isVerticalDrag", true);

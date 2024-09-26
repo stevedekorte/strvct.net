@@ -14,7 +14,7 @@
    */
   initPrototypeSlots () {
     /**
-     * @property {HomeAssistant} homeAssistant - The Home Assistant instance.
+     * @member {HomeAssistant} homeAssistant - The Home Assistant instance.
      */
     {
       const slot = this.newSlot("homeAssistant", null);
@@ -22,7 +22,7 @@
     }
 
     /**
-     * @property {String} getMessageType - The message type for retrieving data.
+     * @member {String} getMessageType - The message type for retrieving data.
      */
     {
       const slot = this.newSlot("getMessageType", null);
@@ -30,7 +30,7 @@
     }
 
     /**
-     * @property {Map} idMap - A map to store objects by their IDs.
+     * @member {Map} idMap - A map to store objects by their IDs.
      */
     {
       const slot = this.newSlot("idMap", null);

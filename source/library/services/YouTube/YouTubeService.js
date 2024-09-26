@@ -31,7 +31,7 @@
     */
 
     /**
-     * @property {YouTubeAudioPlayer} youTubeAudioPlayer - The YouTube audio player instance.
+     * @member {YouTubeAudioPlayer} youTubeAudioPlayer - The YouTube audio player instance.
      */
     {
         const slot = this.newSlot("youTubeAudioPlayer", null)

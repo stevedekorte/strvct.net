@@ -41,14 +41,14 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {String} themeClassName
+             * @member {String} themeClassName
              */
             const slot = this.newSlot("themeClassName", null);
             slot.setSlotType("String");
         }
         {
             /**
-             * @property {Boolean} isSelected
+             * @member {Boolean} isSelected
              */
             const slot = this.newSlot("isSelected", false);
             slot.setOwnsSetter(true);
@@ -57,7 +57,7 @@
         }
         {
             /**
-             * @property {Boolean} isActive
+             * @member {Boolean} isActive
              */
             const slot = this.newSlot("isActive", false);
             slot.setOwnsSetter(true);
@@ -66,7 +66,7 @@
         }
         {
             /**
-             * @property {Boolean} isDisabled
+             * @member {Boolean} isDisabled
              */
             const slot = this.newSlot("isDisabled", false);
             slot.setOwnsSetter(true);
@@ -75,7 +75,7 @@
         }
         {
             /**
-             * @property {Set} lockedStyleAttributeSet
+             * @member {Set} lockedStyleAttributeSet
              */
             const slot = this.newSlot("lockedStyleAttributeSet", null);
             slot.setSlotType("Set");

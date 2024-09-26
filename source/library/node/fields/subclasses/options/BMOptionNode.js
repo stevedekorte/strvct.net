@@ -16,7 +16,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {string} label - The title of the option.
+         * @member {string} label - The title of the option.
          */
         {
             const slot = this.newSlot("label", "Option Title");
@@ -25,7 +25,7 @@
             slot.setSlotType("String");
         }
         /**
-         * @property {Object} value - The value associated with the option.
+         * @member {Object} value - The value associated with the option.
          */
         {
             const slot = this.newSlot("value", null);
@@ -34,7 +34,7 @@
             slot.setSlotType("Object");
         }
         /**
-         * @property {boolean} isPicked - Indicates whether the option is selected.
+         * @member {boolean} isPicked - Indicates whether the option is selected.
          */
         {
             const slot = this.newSlot("isPicked", false);

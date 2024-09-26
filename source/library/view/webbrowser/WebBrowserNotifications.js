@@ -35,7 +35,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Promise} permissionPromise
+         * @member {Promise} permissionPromise
          */
         {
             const slot = this.newSlot("permissionPromise", null);

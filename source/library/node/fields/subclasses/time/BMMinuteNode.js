@@ -14,7 +14,7 @@
     initPrototypeSlots () {
         {
             /**
-             * @property {Number} value - The minute value.
+             * @member {Number} value - The minute value.
              */
             const slot = this.newSlot("value", 1);
             slot.setSlotType("Number");

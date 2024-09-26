@@ -43,28 +43,28 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {Number} eventLevelCount
+         * @member {Number} eventLevelCount
          */
         {
             const slot = this.newSlot("eventLevelCount", 0);
             slot.setSlotType("Number");
         }
         /**
-         * @property {Boolean} hasReceivedUserEvent
+         * @member {Boolean} hasReceivedUserEvent
          */
         {
             const slot = this.newSlot("hasReceivedUserEvent", false);
             slot.setSlotType("Boolean");
         }
         /**
-         * @property {Event} currentEvent
+         * @member {Event} currentEvent
          */
         {
             const slot = this.newSlot("currentEvent", null);
             slot.setSlotType("Event");
         }
         /**
-         * @property {Promise} firstUserEventPromise
+         * @member {Promise} firstUserEventPromise
          */
         {
             const slot = this.newSlot("firstUserEventPromise", null);

@@ -22,7 +22,7 @@
      */
     initPrototypeSlots () {
         /**
-         * @property {BMNode} linkedNode
+         * @member {BMNode} linkedNode
          * @description The node that this link points to
          */
         {
@@ -33,7 +33,7 @@
         }
         
         /**
-         * @property {boolean} willDuplicateLinkedObject
+         * @member {boolean} willDuplicateLinkedObject
          * @description Indicates if the linked object should be duplicated when this node is duplicated
          */
         {
