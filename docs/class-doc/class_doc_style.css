@@ -354,3 +354,124 @@ isstatic {
 access {
     display: none;
 }
+
+/* Property styles */
+
+properties {
+    display: block;
+    margin-bottom: 3.5em;
+}
+
+properties:before {
+    content: "Instance Properties ";
+    font-weight: bold;
+    font-size: 1.25em;
+    font-style: normal;
+    margin-left:  var(--responsive-margin);
+}
+
+property:first-of-type {
+    margin-top: 2.5em;
+    color: #333;
+}
+
+property {
+    display: block;
+    /*margin-top: 2.5em;*/
+    font-weight: normal;
+}
+
+propertyname {
+    display: inline-block;
+    font-weight: bold;
+    /*color: #0066cc;*/
+}
+
+propertytype {
+    display: inline-block;
+    color: #666;
+    font-style: italic;
+    margin-left: 5px;
+}
+
+propertytype:before {
+    content: "{";
+}
+
+propertytype:after {
+    content: "}";
+}
+
+property description {
+    display: inline-block;
+    margin-top: 5px;
+    color: #333;
+}
+
+linenumberstart {
+    display: none;
+}
+
+linenumberend {
+    display: none;
+}
+
+/* Styling for the source code */
+source {
+    display: block;
+    white-space: pre-wrap;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Ensure the source content is displayed */
+source::before {
+    content: attr(data-content);
+    white-space: pre-wrap;
+}
+
+/* Add syntax highlighting */
+method > source .keyword {
+    color: #0000ff;
+}
+
+method > source .string {
+    color: #008000;
+}
+
+method > source .comment {
+    color: #808080;
+    font-style: italic;
+}
+
+method > source .function {
+    color: #795E26;
+}
+
+method > source .number {
+    color: #098658;
+}
+
+/* Add a toggle button for showing/hiding source code */
+method > name::after {
+    content: " [Show Source]";
+    cursor: pointer;
+    color: #0066cc;
+    font-size: 0.9em;
+}
+
+method > source {
+    display: none;
+}
+
+method > source.show {
+    display: block;
+}
+

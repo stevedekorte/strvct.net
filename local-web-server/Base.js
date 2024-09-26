@@ -3,12 +3,9 @@
  */
 
 /**
- * Base class with helpful methods for cloning and slot creation
  * @class Base
  * @classdesc Base class with helpful methods for cloning and slot creation
  */
-
-
 
 
 (class Base {
@@ -78,15 +75,6 @@
         }
         return this._shared
     }
-
-    /*
-    static shared () {
-        if (!this._shared) {
-            this._shared = this.clone()
-        }
-        return this._shared
-    }
-    */
 
     /**
      * Returns the type (name) of the class
@@ -163,6 +151,7 @@
 
 }.initThisClass());
 
+Base.setupCapitalized(); // so we don't run it on every class
+
 Base.initThisClass();
 
-Base.setupCapitalized(); // so we don't run it on every class

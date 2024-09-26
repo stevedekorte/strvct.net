@@ -4,10 +4,10 @@ class JsClassParser {
         this.lines = code.split('\n'); 
         this.filePath = filePath;
         this.comments = [];
+        this.properties = [];
     }
 
     parse() {
-        console.log("Starting to parse file:", this.filePath);
         let ast;
         try {
             // First, try to parse the entire file
@@ -67,7 +67,8 @@ class JsClassParser {
                 filePath: this.filePath,
                 description: 'Undocumented'
             },
-            methods: []
+            methods: [],
+            properties: []  // Add this line to include properties in the result
         };
 
         // Find the class declaration or expression
@@ -82,7 +83,6 @@ class JsClassParser {
         });
 
         if (classNode) {
-            console.log("Found class node:", classNode);
             this.handleClassNode(classNode, result);
         }
 
@@ -99,12 +99,15 @@ class JsClassParser {
             }
         });
 
-        console.log("Parsing complete. Result:", result);
+        // After parsing methods, add this block to parse properties
+        this.parseProperties();
+        result.properties = this.properties;
+
+        console.log("Final JSON output:", JSON.stringify(result, null, 2));
         return result;
     }
 
     fallbackParse() {
-        console.log("Falling back to partial parsing");
         const result = {
             classInfo: {
                 className: 'Unknown',
@@ -146,7 +149,6 @@ class JsClassParser {
     }
 
     handleClassNode(node, result) {
-        console.log("Entering handleClassNode");
         if (node.id) {
             result.classInfo.className = node.id.name;
         }
@@ -155,11 +157,8 @@ class JsClassParser {
         }
         
         const classComments = this.getClassComments(node.start);
-        console.log("Raw class comments:", classComments);
         
         const { description, entries } = this.extractJSDocInfo(classComments);
-        console.log("Extracted description:", description);
-        console.log("Extracted entries:", entries);
         
         result.classInfo.description = entries.classdesc || entries.description || description || 'Undocumented';
         if (entries.class) {
@@ -174,11 +173,8 @@ class JsClassParser {
     handleMethodNode(node, result) {
         const methodName = node.key ? node.key.name : node.method ? node.method.name : 'anonymous';
         const methodComments = this.getMethodComments(node.start);
-        console.log(`Raw method comments for "${methodName}":`, methodComments);
 
         const { description, entries } = this.extractJSDocInfo(methodComments);
-        console.log(`Extracted description for "${methodName}":`, description);
-        console.log(`Extracted entries for "${methodName}":`, entries);
 
         // Get the method arguments
         const args = node.value && node.value.params ? 
@@ -197,7 +193,10 @@ class JsClassParser {
             description: description || (entries.returns ? '' : 'Undocumented'),
             example: entries.example || null,
             deprecated: entries.deprecated || null,
-            since: entries.since || null
+            since: entries.since || null,
+            lineNumberStart: node.loc.start.line,
+            lineNumberEnd: node.loc.end.line,
+            source: this.getMethodSource(node)  // Add this line
         };
 
         // Remove the class description from the method if it matches
@@ -213,7 +212,6 @@ class JsClassParser {
             methodInfo.returns = entries.returns;
         }
 
-        console.log(`Processed method info for "${methodName}":`, methodInfo);
         result.methods.push(methodInfo);
     }
 
@@ -255,12 +253,20 @@ class JsClassParser {
     }
 
     extractJSDocInfo(comment) {
-        console.log("Entering extractJSDocInfo with comment:", comment);
         const lines = comment.split('\n');
-        console.log("Processed comment lines:", lines);
         
         let description = [];
-        const entries = { params: [], returns: null, throws: null, example: null, deprecated: null, since: null, description: null, classdesc: null };
+        const entries = { 
+            params: [], 
+            returns: null, 
+            throws: null, 
+            example: null, 
+            deprecated: null, 
+            since: null, 
+            description: null, 
+            classdesc: null,
+            property: null  // Add this line to support @property tags
+        };
         let currentTag = null;
         let currentTagContent = [];
 
@@ -283,9 +289,6 @@ class JsClassParser {
         if (currentTag) {
             this.processTag(currentTag, currentTagContent.join('\n'), entries);
         }
-
-        console.log("Final description:", description);
-        console.log("Final entries:", entries);
 
         return {
             description: entries.description || description.join('\n'),
@@ -322,7 +325,53 @@ class JsClassParser {
             case 'classdesc':
                 entries[tag] = content.trim();
                 break;
+            case 'property':
+                const [propertyType, propertyName, ...propertyDesc] = content.split(/\s+/);
+                entries.property = {
+                    propertyName: propertyName.trim(),
+                    propertyType: escapeXml(propertyType.replace(/[{}]/g, '').trim()),
+                    description: escapeXml(propertyDesc.join(' ').trim())
+                };
+                break;
         }
+    }
+
+    // Add this new method to parse properties
+    parseProperties() {
+        const propertyRegex = /@property\s+{([^}]+)}\s+([^\s]+)\s+(.*)/g;
+        let match;
+        while ((match = propertyRegex.exec(this.code)) !== null) {
+            const [, propertyType, propertyName, description] = match;
+            this.properties.push({
+                propertyName: propertyName.trim(),
+                propertyType: escapeXml(propertyType.trim()),
+                description: escapeXml(description.trim().replace(/@description\s*/g, '').replace(/^\*\s*/, ''))
+            });
+        }
+    }
+
+    // Add this new method to extract the source code
+    getMethodSource(node) {
+        const startLine = node.loc.start.line - 1;  // Adjust for 0-based array index
+        const endLine = node.loc.end.line;
+        
+        // Get the original indentation of the first line
+        const firstLine = this.lines[startLine];
+        const indentMatch = firstLine.match(/^\s*/);
+        const baseIndent = indentMatch ? indentMatch[0] : '';
+        
+        // Slice the relevant lines and preserve their original formatting
+        const sourceLines = this.lines.slice(startLine, endLine);
+        
+        // Remove the base indentation from each line
+        const trimmedLines = sourceLines.map(line => {
+            if (line.startsWith(baseIndent)) {
+                return line.slice(baseIndent.length);
+            }
+            return line;
+        });
+        
+        return trimmedLines.join('\n');
     }
 }
 
@@ -343,6 +392,12 @@ function jsonToXml(json) {
                     xml += `<parameter>\n${jsonToXml(param)}</parameter>\n`;
                 });
                 xml += '</parameters>\n';
+            } else if (key === 'properties') {
+                xml += '<properties>\n';
+                value.forEach((property) => {
+                    xml += `<property>\n${jsonToXml(property)}</property>\n`;
+                });
+                xml += '</properties>\n';
             } else if (key === 'classInfo') {
                 xml += '<classInfo>\n';
                 for (const classKey in value) {
@@ -424,6 +479,11 @@ function displayClassInfo(result) {
                 <filePath><a href="${escapeXml(result.classInfo.filePath)}">${escapeXml(result.classInfo.filePath)}</a></filePath>
                 <description>${escapeXmlPreserveWhitespace(result.classInfo.description)}</description>
             </classInfo>
+            ${result.properties.length > 0 ? `
+            <properties>
+                ${result.properties.map(property => generatePropertyXml(property)).join('')}
+            </properties>
+            ` : ''}
             ${classMethods.length > 0 ? `
             <classmethods>
                 ${classMethods.map(method => generateMethodXml(method)).join('')}
@@ -440,13 +500,12 @@ function displayClassInfo(result) {
 }
 
 function generateMethodXml(method) {
-    console.log(`Generating XML for method: ${method.methodName}`);
-    console.log(`Method description: ${method.description}`);
-    console.log(`Method returns: `, method.returns);
-
     let xml = '<method>\n';
-    xml += `  <name>${method.methodName}</name>\n`;
-    xml += `  <fullMethodName>${method.fullMethodName.replace(/^static\s+/, '')}</fullMethodName>\n`;
+    xml += `  <name>${escapeHtml(method.methodName)}</name>\n`;
+    xml += `  <fullMethodName>${escapeHtml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>\n`;
+    xml += `  <lineNumberStart>${method.lineNumberStart}</lineNumberStart>\n`;
+    xml += `  <lineNumberEnd>${method.lineNumberEnd}</lineNumberEnd>\n`;
+    xml += `  <source data-content="${escapeHtml(method.source)}"></source>\n`;  // Ensure this line is correct
     
     // Output params first
     if (method.parameters && method.parameters.length > 0) {
@@ -465,15 +524,11 @@ function generateMethodXml(method) {
     
     // Output method description after params
     if (method.description || method.returns) {
-        console.log('Method has description or returns');
         if (method.description) {
-            console.log('Adding method description to XML');
             xml += `  <description>${method.description}</description>\n`;
         } else {
-            console.log('Method has returns but no description');
         }
     } else {
-        console.log('Adding "Undocumented" to XML');
         xml += `  <description>Undocumented</description>\n`;
     }
     
@@ -504,8 +559,27 @@ function generateMethodXml(method) {
     }
     xml += '</method>\n';
 
-    console.log('Final XML:', xml);
     return xml;
+}
+
+// Add this new function to generate XML for properties
+function generatePropertyXml(property) {
+    let xml = '<property>\n';
+    xml += `  <propertyname>${property.propertyName}</propertyname>\n`;
+    xml += `  <propertytype>${property.propertyType}</propertytype>\n`;
+    xml += `  <description>${property.description}</description>\n`;
+    xml += '</property>\n';
+    return xml;
+}
+
+// Add this new function to escape HTML
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
