@@ -1,3 +1,5 @@
 [
-    "AudioQueue.js"
+    "AudioQueue.js",
+    "AudioClipProtocol.js",
+    "AudioClipDelegateProtocol.js"
 ]

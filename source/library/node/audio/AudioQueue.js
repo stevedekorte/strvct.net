@@ -6,11 +6,11 @@
  * @extends BMSummaryNode
  * @classdesc Manages a queue of audio clips.
 
-    expected sound protocol for clips:
-    play()
-    addDelegate(delegate)
-    removeDelegate(delegate)
-    stop()
+    Audio clips must implement this protocol:
+    - play()
+    - addDelegate(delegate)
+    - removeDelegate(delegate)
+    - stop()
 
 */
 
