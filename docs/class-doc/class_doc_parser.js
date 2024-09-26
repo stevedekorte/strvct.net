@@ -345,7 +345,10 @@ class JsClassParser {
             this.properties.push({
                 propertyName: propertyName.trim(),
                 propertyType: escapeXml(propertyType.trim()),
-                description: escapeXml(description.trim().replace(/@description\s*/g, '').replace(/^\*\s*/, ''))
+                description: escapeXml(description.trim()
+                    .replace(/^-\s*/, '')  // Remove leading dash and spaces
+                    .replace(/@description\s*/g, '')
+                    .replace(/^\*\s*/, ''))
             });
         }
     }
