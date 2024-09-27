@@ -198,7 +198,7 @@ Horizontal Menus
 
 Strvct framework as used in an AI based interactive fiction game.
 
-<img src="resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 50%; height: auto;">
+<img src="docs/resources/images/screenshot-1.png" alt="Screenshot 1" style="width: 100%; height: auto;">
 
 ### Themes
 
