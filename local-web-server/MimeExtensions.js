@@ -1,11 +1,14 @@
+/**
+ * @module local-web-server
+ */
+
 "use strict";
 
-/*
-	example use:
-
-	MimeExtensions.shared().mimeTypeForPathExtension(".jpg")
-
-*/
+/**
+ * @class MimeExtensions
+ * @classdesc A class for getting the mime type for a file extension
+ * @example MimeExtensions.shared().mimeTypeForPathExtension(".jpg")
+ */
 
 
 (class MimeExtensions extends Base {
@@ -15,6 +18,12 @@
 		this.setup()
 	}
 
+	/**
+	 * @method mimeTypeForPathExtension
+	 * @param {string} ext - The file extension to get the mime type for
+	 * @returns {string} The mime type for the file extension
+	 */
+
 	mimeTypeForPathExtension (ext) {
 		if (ext[0] !== ".") {
 			ext = "." + ext;
@@ -23,6 +32,10 @@
 		return this._fileExtensionToMimeTypeDict[ext]
 	}
 
+	/**
+	 * @method setup
+	 * @description Sets up the mime type dictionary
+	 */
 	setup () {
 		this._fileExtensionToMimeTypeDict = {
 			".123": "application/vnd.lotus-1-2-3",

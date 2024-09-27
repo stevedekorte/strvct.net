@@ -1,5 +1,5 @@
 /**
- * @module library.services.HomeAssistant.Entities.HomeAssistantEntity
+ * @module library.services.HomeAssistant.Entities
  */
 
 "use strict";

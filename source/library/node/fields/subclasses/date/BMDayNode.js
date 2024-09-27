@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.node.fields.subclasses.date.BMDayNode
+ * @module library.node.fields.subclasses.date
  * @class BMDayNode
  * @extends BaseNode
  * @classdesc Represents a day node in a calendar or date system. It handles the representation and manipulation of a single day value.

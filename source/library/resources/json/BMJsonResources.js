@@ -1,5 +1,5 @@
 /**
- * @module library.resources.json.BMJsonResources
+ * @module library.resources.json
  */
 
 /**

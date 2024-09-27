@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.YouTube.MusicPlayer.MusicLibrary
+ * @module library.services.YouTube.MusicPlayer
  * @class MusicLibrary
  * @extends BMSummaryNode
  * @description A music library.

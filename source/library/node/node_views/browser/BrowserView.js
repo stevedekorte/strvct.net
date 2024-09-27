@@ -1,5 +1,5 @@
 /**
- * @module library.node.node_views.browser.BrowserView
+ * @module library.node.node_views.browser
  */
 
 "use strict";
@@ -48,6 +48,7 @@
  * Todo:
  *     Make moveToBase() more generic
  */
+
 (class BrowserView extends StackView {
     
     /**

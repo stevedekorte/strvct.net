@@ -1,5 +1,5 @@
 /**
- * @module library.services.Peer.RzSigServers.RzSigServerConns.RzPeerConns.RzPeerConn
+ * @module library.services.Peer.RzSigServers.RzSigServerConns.RzPeerConns
  */
 
 "use strict";

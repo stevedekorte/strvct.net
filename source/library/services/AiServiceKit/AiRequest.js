@@ -1,5 +1,5 @@
 /**
- * @module library.services.AiServiceKit.AiRequest
+ * @module library.services.AiServiceKit
  */
 
 "use strict";

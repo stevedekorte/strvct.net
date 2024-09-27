@@ -1,5 +1,5 @@
 /**
- * @module library.resources.images.BMImageResources
+ * @module library.resources.images
  */
 
 /**

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.view.dom.DomView.subclasses.TextField
+ * @module library.view.dom.DomView.subclasses
  * @class TextField
  * @extends StyledDomView
  * @description A view for a single line of text. 

@@ -1,11 +1,14 @@
+/**
+ * @module library.view.dom.DomView
+ */
+
 "use strict";
 
-/*
-    CssDomView
-
-    CSS related state and behavior.
-
-*/
+/**
+ * @class CssDomView
+ * @extends ElementDomView
+ * @description CSS related state and behavior.
+ */
 
 (class CssDomView extends ElementDomView {
     

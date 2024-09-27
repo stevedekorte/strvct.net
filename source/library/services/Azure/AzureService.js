@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.Azure.AzureService
+ * @module library.services.Azure
  */
 
 /**

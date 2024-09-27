@@ -1,5 +1,5 @@
 /**
- * @module library.services.YouTube.MusicPlayer.MusicFolder
+ * @module library.services.YouTube.MusicPlayer
  */
 
 "use strict";

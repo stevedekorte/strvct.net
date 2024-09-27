@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.node.fields.json.BMJsonDictionaryNode
+ * @module library.node.fields.json
  * @class BMJsonDictionaryNode
  * @extends BMJsonNode
  * @classdesc Represents a JSON dictionary node in the BM (Blockchain Modeling) system.

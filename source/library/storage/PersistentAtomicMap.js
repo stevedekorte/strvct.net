@@ -1,5 +1,5 @@
 /**
- * @module library.storage.PersistentAtomicMap
+ * @module library.storage
  */
 
 "use strict";

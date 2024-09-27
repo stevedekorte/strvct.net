@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.notification.Broadcaster
+ * @module library.notification
  */
 
 /**

@@ -18,7 +18,42 @@ Applications are typically composed of **UI**, **Model**, and **Storage** layers
 The basic idea of Strvct is to put enough meta-information in the model layer (through meta properties and the use of property annotations) to allow for the UI and Storage layers (and the synchronization between the layers) to be handled automatically. So you write the model and the rest is handled for you (though you can add custom views if needed). This involves choosing uniform but flexible building blocks for each of the layers.
 -->
 
+## Coding Conventions
+
+Object (non-method) properties:
+
+- always begin with an underscore. e.g. `_propertyName`
+- should _almost never_ be accessed directly by internal object code (i.e. they are always accessed through accessor methods)
+- are _never_ accessed directly by external objects (i.e. they are always accessed through accessor methods)
+- getter and setter methods are named: `propertyName()` and `setPropertyName(value)`
+- instance properties should be declared in initPrototypeSlots() with `this.newSlot()`
+- class properties should be declared in initClass() with `this.newClassSlot()`
+
+### Slots
+
+### Categories
+
+Categories are classes which server as a way to add methods to a class from an external files, or group related methods together into an external file.
+
+Categories naming convention: Class + "\_" + category name. e.g. `BMNode_Subnodes`
+
+### Protocols
+
+Protocols are a way to define a set of methods that a class must implement. They are used to create a common interface for a set of classes, and to allow for runtime checks to ensure that a class implements the required methods. Protocols are declared by creating a subclass of `Protocol` and adding (empty, but documented) instance methods for each of the required methods.
+
+Protocols naming convention: protocol name + `Protocol` e.g. `BMNodeProtocol`
+
 ## Build System
+
+- Quick overview of how the build system works
+- Motivation
+  -- conventional imports are too slow
+- Pros
+  -- compression
+  -- caching
+  -- only loading changed files
+  -- auto packaging of selected resources or resource types or sizes
+  -- debbugging
 
 ## Resource Loading / Caching
 

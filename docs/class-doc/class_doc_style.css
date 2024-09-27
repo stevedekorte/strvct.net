@@ -145,7 +145,14 @@ classmethods:before {
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
-    margin-left:  var(--responsive-margin);
+    margin-left: var(--responsive-margin);
+    margin-bottom: 2.5em; /* Add this line to create space after the heading */
+    display: block; /* Ensure the pseudo-element is a block to apply margin */
+}
+
+/* Adjust the first method under classmethods */
+classmethods > method:first-child {
+    margin-top: 2.5em; /* Add top margin to the first method */
 }
 
 /* --- instance methods --- */
@@ -159,7 +166,14 @@ instancemethods:before {
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
-    margin-left:  var(--responsive-margin);
+    margin-left: var(--responsive-margin);
+    margin-bottom: 2.5em; /* Add this line to create space after the heading */
+    display: block; /* Ensure the pseudo-element is a block to apply margin */
+}
+
+/* Adjust the first method under instancemethods */
+instancemethods > method:first-child {
+    margin-top: 2.5em; /* Add top margin to the first method */
 }
 
 /* --- method --- */
@@ -167,8 +181,15 @@ instancemethods:before {
 method {
     display: block;
     border-bottom: 0px solid #eee;
-    margin-top: 2.5em;
     font-weight: normal;
+    margin-top: 0; /* Start with no top margin */
+    margin-bottom: 0; /* Start with no bottom margin */
+    transition: margin 0.3s ease; /* Smooth transition for margin changes */
+}
+
+method.expanded {
+    margin-top: 2.5em; /* Add top margin when expanded */
+    margin-bottom: 1em; /* Add bottom margin when expanded */
 }
 
 method > description {
@@ -184,7 +205,7 @@ method > name {
     color: #3498db;
 }
 
-method > isAsync {
+isAsync {
     display: none;
     background-color: #2ecc71;
     color: #fff;
@@ -210,9 +231,9 @@ method > methodName {
 method > fullMethodName {
     display: block;
     padding: 0;
-    margin-top: 1em;
     margin-bottom: 0em;
-    font-weight: bold;
+    font-weight: bold; /* Default to normal font weight */
+    transition: font-weight 0.3s ease; /* Smooth transition for font weight changes */
 }
 
 /* --- parameters --- */
@@ -222,6 +243,7 @@ params {
     margin-top: 0.5em;
     margin-bottom: 0.5em;
     margin-left: 1em;
+    font-weight: lighter;
 }
 
 param {
@@ -232,7 +254,7 @@ param {
 
 paramname {
     display: inline-block;
-    font-weight: normal;
+    font-weight: lighter;
 }
 
 paramtype {
@@ -261,13 +283,13 @@ method > description {
     margin-top: 0em;
     /*margin-bottom: 0.25em;*/
     font-style: normal;
+    font-weight: normal;
 }
 
 author, version {
     display: block;
     color: #7f8c8d;
-    font-size: 14px;
-    margin-top: 5px;
+    margin-top: 1em;
 }
 
 method > fullMethodName[async]::before {
@@ -287,7 +309,7 @@ throws {
 throws:before {
     content: "throws: ";
     font-style: normal;
-    font-weight: normal;
+    font-weight: lighter;
 }
 
 /* --- returns --- */
@@ -301,7 +323,7 @@ returns {
 returns:before {
     content: "returns: ";
     font-style: normal;
-    font-weight: normal;
+    font-weight: lighter;
 }
 
 returns > returntype {
@@ -363,7 +385,7 @@ properties {
 }
 
 properties:before {
-    content: "Instance Properties ";
+    content: "Instance Slots ";
     font-weight: bold;
     font-size: 1.25em;
     font-style: normal;
@@ -473,5 +495,60 @@ method > source {
 
 method > source.show {
     display: block;
+}
+
+/* Assuming there are styles specific to properties, update them to use member */
+.property {
+    /* existing styles */
+}
+
+.member {  /* Add styles for member if needed */
+    /* same styles as .property or new styles */
+}
+
+/* Collapsible sections */
+
+.collapsible {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    padding-left: 15px; /* Reduced padding to accommodate smaller indicator */
+}
+
+.collapsible::before {
+    content: '\25B6'; /* Right-pointing triangle */
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.2s;
+    font-size: 0.7em; /* Reduce the font size to make the triangle smaller */
+    line-height: 1; /* Ensure proper vertical alignment */
+    color: #ccc;
+}
+
+.collapsible.expanded::before {
+    content: '\25BC'; /* Down-pointing triangle */
+    transform: translateY(-50%);
+}
+
+.collapsible-content {
+    display: none;
+    margin-left: 15px; /* Indent the content slightly */
+}
+
+.collapsible-content.show {
+    display: block;
+}
+
+/* Remove margins for collapsed methods */
+method {
+    margin-top: 2.5em;
+    font-weight: normal;
+}
+
+method.collapsed {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 

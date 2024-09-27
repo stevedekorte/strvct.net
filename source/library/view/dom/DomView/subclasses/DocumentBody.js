@@ -1,5 +1,5 @@
 /**
- * @module library.view.dom.DomView.subclasses.DocumentBody
+ * @module library.view.dom.DomView.subclasses
  */
 
 /**

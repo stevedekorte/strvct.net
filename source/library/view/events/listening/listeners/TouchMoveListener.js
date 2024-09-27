@@ -1,5 +1,5 @@
 /**
- * @module library.view.events.listening.listeners.TouchMoveListener
+ * @module library.view.events.listening.listeners
  */
 
 /**

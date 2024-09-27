@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.resources.sounds.WASound
+ * @module library.resources.sounds
  * @class WASound
  * @extends BMResource
  * @description A sound resource.

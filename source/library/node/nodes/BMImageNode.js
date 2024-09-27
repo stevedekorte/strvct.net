@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.node.nodes.BMImageNode
+ * @module library.node.nodes
  * @class BMImageNode
  * @extends BMStorableNode
  * @classdesc BMImageNode class for handling image nodes.

@@ -1,5 +1,5 @@
 /**
- * @module library.notification.SyncAction
+ * @module library.notification
  */
 
 "use strict";

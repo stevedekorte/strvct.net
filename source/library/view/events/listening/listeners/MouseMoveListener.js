@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.view.events.listening.listeners.MouseMoveListener
+ * @module library.view.events.listening.listeners
  */
 
 /**

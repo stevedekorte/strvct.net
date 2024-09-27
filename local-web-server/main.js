@@ -1,7 +1,19 @@
-
+/**
+ * @module local-web-server
+ */
 
 "use strict";
 
+/**
+ * @function main
+ * @description 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 // get command line arguments
 const yargs = require('yargs/yargs');
 const { hideBin } = require('yargs/helpers');

@@ -1,5 +1,5 @@
 /**
- * @module library.services.Spatial.SceneViewWellFieldTile
+ * @module library.services.Spatial
  */
 
 "use strict";

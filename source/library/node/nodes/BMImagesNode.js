@@ -1,5 +1,5 @@
 /**
- * @module library.node.nodes.BMImagesNode
+ * @module library.node.nodes
  * @class BMImageResourcesNode
  * @extends BMStorableNode
  * @classdesc Represents a node for managing image resources.

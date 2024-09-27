@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.OpenAI.OpenAiRequest
+ * @module library.services.OpenAI
  */
 
 /**

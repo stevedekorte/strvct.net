@@ -1,5 +1,5 @@
 /**
- * @module library.view.dom.DomView.subclasses.DragView
+ * @module library.view.dom.DomView.subclasses
  */
 
 "use strict";

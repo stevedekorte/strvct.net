@@ -1,10 +1,13 @@
 /**
- * @module
+ * @module local-web-server
  */
 
 "use strict";
 
-/*
+/**
+ * @class StrvctHttpsServerRequest
+ * @extends Base
+ * @classdesc Handles HTTPS server requests, including file and proxy requests.
 
 TODO: respond to paths in:
 

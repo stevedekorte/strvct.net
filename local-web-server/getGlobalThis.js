@@ -1,9 +1,13 @@
-
+/**
+ * @module local-web-server
+ */
 
 "use strict";
 
-/*
-
+/**
+ * @function getGlobalThis
+ * @description 
+ * 
 	getGlobalThis()
 
 	A single function which can be used either from the browser or node.js to get the global object.

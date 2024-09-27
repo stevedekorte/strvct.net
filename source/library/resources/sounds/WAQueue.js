@@ -1,5 +1,5 @@
 /**
- * @module library.resources.sounds.WAQueue
+ * @module library.resources.sounds
  */
 
 /**

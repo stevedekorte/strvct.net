@@ -1,5 +1,5 @@
 /**
- * @module library.resources.json.BMJsonResource
+ * @module library.resources.json
  */
 
 "use strict";

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.node.storage.base.ObjectPool
+ * @module library.node.storage.base
  */
 
 /**

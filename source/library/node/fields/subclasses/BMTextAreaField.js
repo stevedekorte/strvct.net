@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.node.fields.subclasses.BMTextAreaField
+ * @module library.node.fields.subclasses
  * @class BMTextAreaField
  * @extends BMField
  * @classdesc BMTextAreaField is a specialized field class for handling text area input.

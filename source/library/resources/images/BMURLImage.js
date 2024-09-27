@@ -1,5 +1,5 @@
 /**
- * @module library.resources.images.BMURLImage
+ * @module library.resources.images
  */
 
 "use strict";

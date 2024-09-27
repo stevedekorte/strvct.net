@@ -6,7 +6,6 @@
  * Helper methods for DOM nodes.
  * Mostly for use inside DomView.
  * Not for general consumption as elements typically shouldn't be interacted with directly.
- * @class
  */
 "use strict";
 

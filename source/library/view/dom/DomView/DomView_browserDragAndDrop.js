@@ -1,5 +1,5 @@
 /**
- * @module library.view.dom.DomView.DomView_browserDragAndDrop
+ * @module library.view.dom.DomView
  */
 
 /**

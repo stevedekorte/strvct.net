@@ -1,7 +1,10 @@
 "use strict";
 
 /**
- * @module library.view.events.gesturing.GestureRecognizer
+ * @module library.view.events.gesturing
+ */
+
+/**
  * @class GestureRecognizer
  * @extends ProtoClass
  * @description A class for recognizing gestures.

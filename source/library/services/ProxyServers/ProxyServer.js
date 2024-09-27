@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.ProxyServers.ProxyServer
+ * @module library.services.ProxyServers
  */
 
 /**

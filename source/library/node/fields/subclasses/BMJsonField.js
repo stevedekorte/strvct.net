@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.node.fields.subclasses.BMJsonField
+ * @module library.node.fields.subclasses
  * @class BMJsonField
  * @extends BMField
  * @classdesc BMJsonField is a specialized field for handling JSON data.

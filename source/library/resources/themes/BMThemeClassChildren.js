@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.resources.themes.BMThemeClassChildren
+ * @module library.resources.themes
  */
 
 /**

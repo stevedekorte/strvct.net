@@ -2,12 +2,7 @@
 
 - apps
   - STRVCT
-    - StrvctApp
-      - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
-- AutoRelaunch
-  - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
-- Base
-  - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
+    - [StrvctApp](./class_doc.html?path=source%2Fapps%2FSTRVCT%2FStrvctApp.js)
 - boot
   - [BootLoadingView](./class_doc.html?path=source%2Fboot%2FResourceManager.js)
   - [HashCache](./class_doc.html?path=source%2Fboot%2FHashCache.js)
@@ -30,20 +25,14 @@
         - [BMStringFieldTile](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTile%2Ffield_tiles%2FBMStringFieldTile.js)
 - globals
   - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
-  - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
   - [Folder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FResourceIndexer.js)
   - [IndexBuilder](./class_doc.html?path=source%2Fboot%2Findex-builder%2FImportsIndexer.js)
-  - [MimeExtensions](./class_doc.html?path=source%2Flibrary%2Fresources%2FMimeExtensions.js)
   - [Mirror](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FMirror.js)
   - [ProtoClass](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FProtoClass.js)
   - [RootContentNode](./class_doc.html?path=source%2Flibrary%2Fapp%2FRootContentNode.js)
   - [Slot](./class_doc.html?path=source%2Flibrary%2Fideal%2Fproto%2FSlot.js)
-  - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)
   - [Worker](./class_doc.html?path=source%2FServiceWorker%2FWorker.js)
-  - [XhrWrapper](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FXhrWrapper.js)
 - HomeAssistant
-  - HomeAssistantFolder
-    - [HomeAssistantFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantFolder.js)
   - States
     - [HomeAssistantState](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantState.js)
     - [HomeAssistantStates](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FStates%2FHomeAssistantStates.js)
@@ -137,10 +126,9 @@
       - json
         - [BMJsonArrayNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonArrayNode.js)
         - [BMJsonCachedNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonCachedNode.js)
+        - [BMJsonDictionaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonDictionaryNode.js)
         - [BMJsonNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonNode.js)
         - [BMJsonNullField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonNullField.js)
-        - BMJsonDictionaryNode
-          - [BMJsonDictionaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fjson%2FBMJsonDictionaryNode.js)
       - subclasses
         - [BMActionField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMActionField.js)
         - [BMArrayField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMArrayField.js)
@@ -148,22 +136,18 @@
         - [BMColorField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMColorField.js)
         - [BMIdentityField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMIdentityField.js)
         - [BMImageWellField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMImageWellField.js)
+        - [BMJsonField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMJsonField.js)
         - [BMNumberField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMNumberField.js)
         - [BMPointerField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMPointerField.js)
         - [BMStampField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStampField.js)
         - [BMStringField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMStringField.js)
+        - [BMTextAreaField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMTextAreaField.js)
         - [BMUrlField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMUrlField.js)
-        - BMJsonField
-          - [BMJsonField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMJsonField.js)
-        - BMTextAreaField
-          - [BMTextAreaField](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2FBMTextAreaField.js)
         - date
           - [BMDateNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMDateNode.js)
+          - [BMDayNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMDayNode.js)
           - [BMMonthNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMMonthNode.js)
-          - BMDayNode
-            - [BMDayNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMDayNode.js)
-          - BMYearNode
-            - [BMYearNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMYearNode.js)
+          - [BMYearNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Fdate%2FBMYearNode.js)
         - options
           - [BMOptionNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Foptions%2FBMOptionNode.js)
           - [BMOptionsNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Ffields%2Fsubclasses%2Foptions%2FBMOptionsNode.js)
@@ -177,8 +161,7 @@
       - [ImageWellView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FImageWellView.js)
       - [NodeView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2FNodeView.js)
       - browser
-        - BrowserView
-          - [BrowserView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2FBrowserView.js)
+        - [BrowserView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2FBrowserView.js)
         - stack
           - [NavView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FNavView.js)
           - [ScrollContentView](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FScrollContentView.js)
@@ -214,9 +197,13 @@
             - [TilesView_selection](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_selection.js)
             - [TilesView_styling](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnode_views%2Fbrowser%2Fstack%2FTilesView%2FTilesView_styling.js)
     - nodes
+      - [BMFolderNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMFolderNode.js)
+      - [BMImageNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMImageNode.js)
+      - [BMImageResourcesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMImagesNode.js)
       - [BMLinkNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMLinkNode.js)
       - [BMPrototypesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMPrototypesNode.js)
       - [BMSummaryNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMSummaryNode.js)
+      - [BMTextNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMTextNode.js)
       - base
         - [BMNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBMNode.js)
         - [BaseNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FBaseNode.js)
@@ -224,21 +211,14 @@
         - [StyledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FStyledNode.js)
         - [TitledNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FTitledNode.js)
         - [ViewableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2Fbase%2FViewableNode.js)
-      - BMFolderNode
-        - [BMFolderNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMFolderNode.js)
-      - BMImageNode
-        - [BMImageNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMImageNode.js)
-      - BMImagesNode
-        - [BMImageResourcesNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMImagesNode.js)
-      - BMTextNode
-        - [BMTextNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fnodes%2FBMTextNode.js)
     - storage
       - base
+        - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
         - [PersistentObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FPersistentObjectPool.js)
+        - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
         - categories
+          - [BMNode_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FBMNode_store.js)
           - [ProtoClass_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FProtoClass_store.js)
-          - BMNode_store
-            - [BMNode_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2FBMNode_store.js)
           - primitives
             - [ArrayBuffer_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArrayBuffer_store.js)
             - [Array_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2FArray_store.js)
@@ -252,10 +232,6 @@
               - [Boolean_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FBoolean_store.js)
               - [Number_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FNumber_store.js)
               - [String_store](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2Fcategories%2Fprimitives%2Fliterals%2FString_store.js)
-        - ObjectPool
-          - [ObjectPool](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FObjectPool.js)
-        - StoreRef
-          - [StoreRef](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fbase%2FStoreRef.js)
       - nodes
         - [BMStorableNode](./class_doc.html?path=source%2Flibrary%2Fnode%2Fstorage%2Fnodes%2FBMStorableNode.js)
         - inspectors
@@ -264,26 +240,22 @@
     - SubnodesArray
       - [SubnodesArray](./class_doc.html?path=source%2Flibrary%2Fnode%2FSubnodesArray.js)
   - notification
+    - [Broadcaster](./class_doc.html?path=source%2Flibrary%2Fnotification%2FBroadcaster.js)
+    - [SyncAction](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncAction.js)
     - [SyncScheduler](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncScheduler.js)
-    - Broadcaster
-      - [Broadcaster](./class_doc.html?path=source%2Flibrary%2Fnotification%2FBroadcaster.js)
     - notifications
       - [BMNotification](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotification.js)
+      - [BMNotificationCenter](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotificationCenter.js)
       - [BMObservation](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMObservation.js)
-      - BMNotificationCenter
-        - [BMNotificationCenter](./class_doc.html?path=source%2Flibrary%2Fnotification%2Fnotifications%2FBMNotificationCenter.js)
-    - SyncAction
-      - [SyncAction](./class_doc.html?path=source%2Flibrary%2Fnotification%2FSyncAction.js)
   - resources
     - [BMResource](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResource.js)
     - [BMResourceGroup](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResourceGroup.js)
-    - BMResources
-      - [BMResources](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResources.js)
+    - [BMResources](./class_doc.html?path=source%2Flibrary%2Fresources%2FBMResources.js)
+    - [MimeExtensions](./class_doc.html?path=source%2Flibrary%2Fresources%2FMimeExtensions.js)
     - files
       - [BMFileResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMFileResources.js)
+      - [BMResourceFile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFile.js)
       - [BMResourceFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFolder.js)
-      - BMResourceFile
-        - [BMResourceFile](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffiles%2FBMResourceFile.js)
     - fonts
       - [BMFont](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFont.js)
       - [BMFontFamily](./class_doc.html?path=source%2Flibrary%2Fresources%2Ffonts%2FBMFontFamily.js)
@@ -293,60 +265,47 @@
       - [SvgIconNode](./class_doc.html?path=source%2Flibrary%2Fresources%2Ficons%2FSvgIconNode.js)
     - images
       - [BMImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImage.js)
+      - [BMImageResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageResources.js)
       - [BMImageTile](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageTile.js)
-      - BMImageResources
-        - [BMImageResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMImageResources.js)
-      - BMURLImage
-        - [BMURLImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMURLImage.js)
+      - [BMURLImage](./class_doc.html?path=source%2Flibrary%2Fresources%2Fimages%2FBMURLImage.js)
     - json
-      - BMJsonResource
-        - [BMJsonResource](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResource.js)
-      - BMJsonResources
-        - [BMJsonResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResources.js)
+      - [BMJsonResource](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResource.js)
+      - [BMJsonResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fjson%2FBMJsonResources.js)
     - sounds
       - [BMSoundResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FBMSoundResources.js)
       - [WAContext](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAContext.js)
-      - WAQueue
-        - [WAQueue](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAQueue.js)
-      - WASound
-        - [WASound](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWASound.js)
+      - [WAQueue](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWAQueue.js)
+      - [WASound](./class_doc.html?path=source%2Flibrary%2Fresources%2Fsounds%2FWASound.js)
     - themes
+      - [BMDefaultTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMDefaultTheme.js)
       - [BMTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMTheme.js)
       - [BMThemeClass](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClass.js)
+      - [BMThemeClassChildren](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClassChildren.js)
+      - [BMThemeFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeFolder.js)
+      - [BMThemeResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeResources.js)
       - [BMThemeState](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeState.js)
-      - BMDefaultTheme
-        - [BMDefaultTheme](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMDefaultTheme.js)
-      - BMThemeClassChildren
-        - [BMThemeClassChildren](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeClassChildren.js)
-      - BMThemeFolder
-        - [BMThemeFolder](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeFolder.js)
-      - BMThemeResources
-        - [BMThemeResources](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeResources.js)
-      - BMThemeStates
-        - [BMThemeStates](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeStates.js)
+      - [BMThemeStates](./class_doc.html?path=source%2Flibrary%2Fresources%2Fthemes%2FBMThemeStates.js)
   - services
+    - [Services](./class_doc.html?path=source%2Flibrary%2Fservices%2FServices.js)
     - AiServiceKit
       - [AiChatModel](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModel.js)
       - [AiChatModels](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiChatModels.js)
+      - [AiConversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversation.js)
+      - [AiConversations](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversations.js)
       - [AiJsonRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiJsonRequest.js)
       - [AiMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiMessage.js)
+      - [AiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiRequest.js)
       - [AiResponseMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiResponseMessage.js)
       - [AiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiService.js)
       - [ChatInputNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FChatInputNode.js)
       - [Conversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FConversation.js)
       - [ConversationMessage](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FConversationMessage.js)
-      - AiConversation
-        - [AiConversation](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversation.js)
-      - AiConversations
-        - [AiConversations](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiConversations.js)
-      - AiRequest
-        - [AiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FAiRequest.js)
+      - [XhrWrapper](./class_doc.html?path=source%2Flibrary%2Fservices%2FAiServiceKit%2FXhrWrapper.js)
     - Anthropic
       - [AnthropicRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicRequest.js)
       - [AnthropicService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAnthropic%2FAnthropicService.js)
     - Azure
-      - AzureService
-        - [AzureService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2FAzureService.js)
+      - [AzureService](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2FAzureService.js)
       - locales
         - [AzureLocale](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocale.js)
         - [AzureLocales](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Flocales%2FAzureLocales.js)
@@ -355,19 +314,18 @@
         - [AzureSpeakers](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2FAzureSpeakers.js)
         - requests
           - [AzureTtsRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequest.js)
-          - AzureTtsRequests
-            - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
+          - [AzureTtsRequests](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fspeakers%2Frequests%2FAzureTtsRequests.js)
       - voices
         - [AzureVoice](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoice.js)
         - [AzureVoices](./class_doc.html?path=source%2Flibrary%2Fservices%2FAzure%2Fvoices%2FAzureVoices.js)
     - Gemini
+      - [GeminiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiRequest.js)
       - [GeminiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiService.js)
-      - GeminiRequest
-        - [GeminiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGemini%2FGeminiRequest.js)
     - Groq
       - [GroqRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqRequest.js)
       - [GroqService](./class_doc.html?path=source%2Flibrary%2Fservices%2FGroq%2FGroqService.js)
     - HomeAssistant
+      - [HomeAssistantFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantFolder.js)
       - [HomeAssistantGroup](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantGroup.js)
       - [HomeAssistantObject](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FHomeAssistantObject.js)
       - Areas
@@ -375,19 +333,16 @@
         - [HomeAssistantAreas](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAreas%2FHomeAssistantAreas.js)
       - Assistants
         - [HomeAssistant](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FAssistants%2FHomeAssistant.js)
-        - HomeAssistants
-          - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
+        - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
       - Devices
         - [HomeAssistantDevice](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FDevices%2FHomeAssistantDevice.js)
         - [HomeAssistantDevices](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FDevices%2FHomeAssistantDevices.js)
       - Entities
         - [HomeAssistantEntities](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntities.js)
-        - HomeAssistantEntity
-          - [HomeAssistantEntity](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntity.js)
+        - [HomeAssistantEntity](./class_doc.html?path=source%2Flibrary%2Fservices%2FHomeAssistant%2FEntities%2FHomeAssistantEntity.js)
     - OpenAI
+      - [OpenAiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
       - [OpenAiService](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiService.js)
-      - OpenAiRequest
-        - [OpenAiRequest](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FOpenAiRequest.js)
       - Text_to_Image
         - [OpenAiImagePrompt](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompt.js)
         - [OpenAiImagePrompts](./class_doc.html?path=source%2Flibrary%2Fservices%2FOpenAI%2FText%2520to%2520Image%2FOpenAiImagePrompts.js)
@@ -409,26 +364,20 @@
           - [RzSigServerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConn.js)
           - [RzSigServerConns](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzSigServerConns.js)
           - RzPeerConns
+            - [RzPeerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConn.js)
             - [RzPeerConns](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConns.js)
             - RzMsgs
+              - [RzMsg](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsg.js)
               - [RzMsgs](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsgs.js)
-              - RzMsg
-                - [RzMsg](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzMsgs%2FRzMsg.js)
-            - RzPeerConn
-              - [RzPeerConn](./class_doc.html?path=source%2Flibrary%2Fservices%2FPeer%2FRzSigServers%2FRzSigServerConns%2FRzPeerConns%2FRzPeerConn.js)
     - ProxyServers
       - [DefaultProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FDefaultProxyServer.js)
+      - [ProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServer.js)
       - [ProxyServers](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServers.js)
-      - ProxyServer
-        - [ProxyServer](./class_doc.html?path=source%2Flibrary%2Fservices%2FProxyServers%2FProxyServer.js)
-    - Services
-      - [Services](./class_doc.html?path=source%2Flibrary%2Fservices%2FServices.js)
     - Spatial
       - [HomeAssistants](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FHomeAssistants.js)
       - [SceneView](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneView.js)
+      - [SceneViewWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneViewWellFieldTile.js)
       - [SpatialModelNode](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSpatialModelsNode.js)
-      - SceneViewWellFieldTile
-        - [SceneViewWellFieldTile](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpatial%2FSceneViewWellFieldTile.js)
     - SpeechToText
       - [SpeechToTextSession](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSession.js)
       - [SpeechToTextSessions](./class_doc.html?path=source%2Flibrary%2Fservices%2FSpeechToText%2FSpeechToTextSessions.js)
@@ -438,18 +387,14 @@
     - YouTube
       - [YouTubeAudioPlayer](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeAudioPlayer.js)
       - [YouTubePlayerFrame](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubePlayerFrame.js)
+      - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
       - MusicPlayer
+        - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
+        - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
         - [MusicTrack](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicTrack.js)
-        - MusicFolder
-          - [MusicFolder](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicFolder.js)
-        - MusicLibrary
-          - [MusicLibrary](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FMusicPlayer%2FMusicLibrary.js)
-      - YouTubeService
-        - [YouTubeService](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubeService.js)
   - storage
     - [PersistentAsyncMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAsyncMap.js)
-    - PersistentAtomicMap
-      - [PersistentAtomicMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAtomicMap.js)
+    - [PersistentAtomicMap](./class_doc.html?path=source%2Flibrary%2Fstorage%2FPersistentAtomicMap.js)
   - view
     - dom
       - Attributes
@@ -462,8 +407,10 @@
         - [BMDataUrl](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FBrowserDragAndDrop%2FBMDataUrl.js)
       - DomView
         - [ControlDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FControlDomView.js)
+        - [CssDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FCssDomView.js)
         - [DomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView.js)
         - [DomView_animations](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_animations.js)
+        - [DomView_browserDragAndDrop](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_browserDragAndDrop.js)
         - [EditableDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FEditableDomView.js)
         - [ElementDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FElementDomView.js)
         - [FlexDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FFlexDomView.js)
@@ -474,33 +421,24 @@
         - [StyledDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FStyledDomView.js)
         - [SubviewsDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FSubviewsDomView.js)
         - [VisibleDomView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FVisibleDomView.js)
-        - DomView_browserDragAndDrop
-          - [DomView_browserDragAndDrop](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2FDomView_browserDragAndDrop.js)
         - subclasses
+          - [BooleanView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FBooleanView.js)
           - [ButtonView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FButtonView.js)
           - [CloseButton](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FCloseButton.js)
+          - [DocumentBody](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDocumentBody.js)
           - [DragBarView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragBarView.js)
+          - [DragView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragView.js)
           - [HTMLElement_textField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FHtmlElement_textField.js)
           - [PanelView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FPanelView.js)
+          - [SvgIconCache](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconCache.js)
           - [SvgIconView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconView.js)
-          - BooleanView
-            - [BooleanView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FBooleanView.js)
-          - DocumentBody
-            - [DocumentBody](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDocumentBody.js)
-          - DragView
-            - [DragView](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FDragView.js)
-          - SvgIconCache
-            - [SvgIconCache](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FSvgIconCache.js)
-          - TextField
-            - [TextField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FTextField.js)
+          - [TextField](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FDomView%2Fsubclasses%2FTextField.js)
       - Helpers
         - [CssColor](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FCssColor.js)
-        - DomCssInspector
-          - [DomCssInspector](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FDomCssInspector.js)
+        - [DomCssInspector](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FDomCssInspector.js)
         - TapeMeasures
           - [CanvasTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FCanvasTextTapeMeasure.js)
-          - DomTextTapeMeasure
-            - [DomTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FDomTextTapeMeasure.js)
+          - [DomTextTapeMeasure](./class_doc.html?path=source%2Flibrary%2Fview%2Fdom%2FHelpers%2FTapeMeasures%2FDomTextTapeMeasure.js)
     - events
       - devices
         - [BMKeyboard](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FBMKeyboard.js)
@@ -514,8 +452,7 @@
         - [TouchScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fdevices%2FTouchScreen.js)
       - gesturing
         - [GestureManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureManager.js)
-        - GestureRecognizer
-          - [GestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureRecognizer.js)
+        - [GestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2FGestureRecognizer.js)
         - gestures
           - [LongPressGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FLongPressGestureRecognizer.js)
           - [OrientGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2FOrientGestureRecognizer.js)
@@ -529,22 +466,19 @@
             - screen
               - [ScreenEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2FScreenEdgePanGestureRecognizer.js)
               - sides
+                - [ScreenBottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenBottomEdgePanGestureRecognizer.js)
+                - [ScreenLeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenLeftEdgePanGestureRecognizer.js)
                 - [ScreenRightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenRightEdgePanGestureRecognizer.js)
                 - [ScreenTopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenTopEdgePanGestureRecognizer.js)
-                - ScreenBottomEdgePanGestureRecognizer
-                  - [ScreenBottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenBottomEdgePanGestureRecognizer.js)
-                - ScreenLeftEdgePanGestureRecognizer
-                  - [ScreenLeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fscreen%2Fsides%2FScreenLeftEdgePanGestureRecognizer.js)
             - view
               - [BottomEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FBottomEdgePanGestureRecognizer.js)
               - [LeftEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FLeftEdgePanGestureRecognizer.js)
               - [RightEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FRightEdgePanGestureRecognizer.js)
               - [TopEdgePanGestureRecognizer](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Fgesturing%2Fgestures%2Fedges%2Fview%2FTopEdgePanGestureRecognizer.js)
       - listening
+        - [EventListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventListener.js)
         - [EventManager](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventManager.js)
         - [EventSetListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventSetListener.js)
-        - EventListener
-          - [EventListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2FEventListener.js)
         - listeners
           - [AnimationListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FAnimationListener.js)
           - [ClipboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FClipboardListener.js)
@@ -553,24 +487,18 @@
           - [DropListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FDropListener.js)
           - [FocusListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FFocusListener.js)
           - [GamePadListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FGamePadListener.js)
+          - [KeyboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FKeyboardListener.js)
           - [MouseListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseListener.js)
+          - [MouseMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseMoveListener.js)
           - [ScrollListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FScrollListener.js)
           - [SelectListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSelectListener.js)
           - [SpeechListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FSpeechListener.js)
+          - [TouchListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchListener.js)
+          - [TouchMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchMoveListener.js)
           - [TransitionListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTransitionListener.js)
           - [WebSocketListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWebSocketListener.js)
-          - KeyboardListener
-            - [KeyboardListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FKeyboardListener.js)
-          - MouseMoveListener
-            - [MouseMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FMouseMoveListener.js)
-          - TouchListener
-            - [TouchListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchListener.js)
-          - TouchMoveListener
-            - [TouchMoveListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FTouchMoveListener.js)
-          - WheelListener
-            - [WheelListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWheelListener.js)
-          - WindowListener
-            - [WindowListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWindowListener.js)
+          - [WheelListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWheelListener.js)
+          - [WindowListener](./class_doc.html?path=source%2Flibrary%2Fview%2Fevents%2Flistening%2Flisteners%2FWindowListener.js)
     - geometry
       - [Point](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FPoint.js)
       - [Rectangle](./class_doc.html?path=source%2Flibrary%2Fview%2Fgeometry%2FRectangle.js)
@@ -583,5 +511,9 @@
       - [WebBrowserScreen](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserScreen.js)
       - [WebBrowserWindow](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserWindow.js)
       - [WebDocument](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebDocument.js)
-- StrvctHttpsServer
+- local-web-server
+  - [AutoRelauncher](./class_doc.html?path=local-web-server%2FAutoRelaunch.js)
+  - [Base](./class_doc.html?path=source%2Fboot%2FBase.js)
+  - [MimeExtensions](./class_doc.html?path=source%2Flibrary%2Fresources%2FMimeExtensions.js)
   - [StrvctHttpsServer](./class_doc.html?path=local-web-server%2FStrvctHttpsServer.js)
+  - [StrvctHttpsServerRequest](./class_doc.html?path=local-web-server%2FStrvctHttpsServerRequest.js)

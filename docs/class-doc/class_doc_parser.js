@@ -325,7 +325,7 @@ class JsClassParser {
             case 'classdesc':
                 entries[tag] = content.trim();
                 break;
-            case 'property':
+            case 'member':  // Change 'property' to 'member'
                 const [propertyType, propertyName, ...propertyDesc] = content.split(/\s+/);
                 entries.property = {
                     propertyName: propertyName.trim(),
@@ -504,11 +504,14 @@ function displayClassInfo(result) {
 
 function generateMethodXml(method) {
     let xml = '<method>\n';
-    xml += `  <name>${escapeHtml(method.methodName)}</name>\n`;
-    xml += `  <fullMethodName>${escapeHtml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>\n`;
-    xml += `  <lineNumberStart>${method.lineNumberStart}</lineNumberStart>\n`;
-    xml += `  <lineNumberEnd>${method.lineNumberEnd}</lineNumberEnd>\n`;
-    xml += `  <source data-content="${escapeHtml(method.source)}"></source>\n`;  // Ensure this line is correct
+    xml += `  <name class="collapsible">${escapeHtml(method.methodName)}</name>\n`;
+    xml += `  <fullMethodName class="collapsible">${escapeHtml(method.fullMethodName.replace(/^static\s+/, ''))}</fullMethodName>\n`;
+    xml += `  <div class="collapsible-content">\n`;
+    xml += `    <methodinfo>\n`;
+    xml += `      <lineNumberStart>${method.lineNumberStart}</lineNumberStart>\n`;
+    xml += `      <lineNumberEnd>${method.lineNumberEnd}</lineNumberEnd>\n`;
+    //xml += `      <source>${escapeHtml(method.source)}</source>\n`;  // Ensure this line is correct
+
     
     // Output params first
     if (method.parameters && method.parameters.length > 0) {
@@ -560,6 +563,8 @@ function generateMethodXml(method) {
     if (method.throws) {
         xml += `  <throws>${method.throws}</throws>\n`;
     }
+    xml += `    </methodinfo>\n`;
+    xml += `  </div>\n`;
     xml += '</method>\n';
 
     return xml;
@@ -605,6 +610,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const result = parser.parse();
 
         displayClassInfo(result);
+
+        // Initialize all methods as collapsed
+        const methods = document.querySelectorAll('method');
+        methods.forEach(method => {
+            method.classList.add('collapsed');
+        });
+
+        // Add event listeners for collapsible elements
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(collapsible => {
+            collapsible.addEventListener('click', function() {
+                const content = this.nextElementSibling;
+                content.classList.toggle('show');
+                const methodElement = this.closest('method');
+                methodElement.classList.toggle('expanded');
+                methodElement.classList.toggle('collapsed');
+                // Update the indicator
+                this.classList.toggle('expanded');
+            });
+        });
     } catch (error) {
         console.error('Error:', error);
     }

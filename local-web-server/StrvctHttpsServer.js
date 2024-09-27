@@ -1,5 +1,5 @@
 /**
- * @module StrvctHttpsServer
+ * @module local-web-server
  */
 
 "use strict";

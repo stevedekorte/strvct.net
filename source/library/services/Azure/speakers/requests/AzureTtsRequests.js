@@ -1,5 +1,5 @@
 /**
- * @module library.services.Azure.speakers.requests.AzureTtsRequests
+ * @module library.services.Azure.speakers.requests
  */
 
 /**

@@ -1,5 +1,5 @@
 /**
- * @module library.resources.themes.BMDefaultTheme
+ * @module library.resources.themes
  */
 
 /**

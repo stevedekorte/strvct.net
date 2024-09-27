@@ -1,5 +1,5 @@
 /**
- * @module library.resources.BMResources
+ * @module library.resources
  */
 
 "use strict";

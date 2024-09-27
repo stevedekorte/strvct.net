@@ -7,7 +7,13 @@
  * 
  * Declaring protocols:
  * 
- * To declare a protocol, define a subclass of Protocol and add (and document) the protocol's methods to it (as instance methods).
+ * To declare a protocol, define a subclass of Protocol and add (and document) the protocol's methods to it (as class and instance methods).
+ * - Instance methods will be considered part of the class's instance method protocol. 
+ * - Class methods will be considered part of the class's class method protocol.
+ * 
+ * These methods are inherited by subclasses of the Protocol class, so a given protocol will inherit the methods of all its superclasses
+ * up to but not including the Protocol class and instance methods.
+ * 
  * Be sure that the jsdoc comment for the protocol class includes "interface" (instead of class) tag in the class jsdocs.
  * 
  * Notes:
@@ -36,27 +42,41 @@
 
   /**
    * @description Adds an implementer to the protocol.
-   * @param {Object} implementer - The object to add as an implementer.
+   * @param {Object} implementer - The implementer class to add.
    */
   static addImplementer (implementer) {
+    assert(implementer.isClass(), "implementer must be a class");
     this.implementers().add(implementer);
   }
 
   /**
    * @description Removes an implementer from the protocol.
-   * @param {Object} implementer - The object to remove as an implementer.
+   * @param {Object} anImplementer - The implementer to remove.
    */
-  static removeImplementer (implementer) {
-    this.implementers().delete(implementer);
+  static removeImplementer (anImplementer) {
+    this.implementers().delete(anImplementer);
+  }
+
+  static assertValueIsProtocolClass (aProtocol) {
+    assert(aProtocol.isClass() && aProtocol.isKindOf(Protocol), "aProtocol must be a Protocol class");
+  }
+
+  /**
+   * @description Throws an error because Protocol classes should not be instantiated.
+   */
+  init () {
+    super.init();
+    throw new Error("Protocol classes should not be instantiated. They should only be used to declare protocols.");
   }
 
   /**
    * @description Checks if the current protocol is a subset of the given protocol.
-   * @param {Protocol} protocol - The protocol to check against.
+   * @param {Protocol} aProtocol - The protocol class to check against.
    * @returns {boolean} True if the current protocol is a subset of the given protocol, false otherwise.
    */
-  isSubsetOfProtocol(protocol) {
-    return this.conformsToProtocol(protocol);
+  isSubsetOfProtocol (aProtocol) {
+    this.thisClass().assertValueIsProtocolClass(aProtocol);
+    return this.conformsToProtocol(aProtocol);
   }
 
   /**
@@ -64,7 +84,8 @@
    * @param {Protocol} protocol - The protocol to check against.
    * @returns {boolean} True if the current protocol is a superset of the given protocol, false otherwise.
    */
-  isSupersetOfProtocol(protocol) {
+  isSupersetOfProtocol (protocol) {
+    this.thisClass().assertValueIsProtocolClass(aProtocol);
     return protocol.conformsToProtocol(this);
   }
 

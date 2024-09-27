@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.view.events.listening.EventListener
+ * @module library.view.events.listening
  */
 
 /**

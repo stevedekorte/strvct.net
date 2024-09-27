@@ -1,5 +1,5 @@
 /**
- * @module library.node.fields.subclasses.date.BMYearNode
+ * @module library.node.fields.subclasses.date
  */
 
 "use strict";

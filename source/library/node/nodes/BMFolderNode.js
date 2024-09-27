@@ -1,5 +1,5 @@
 /**
- * @module library.node.nodes.BMFolderNode
+ * @module library.node.nodes
  */
 
 "use strict";

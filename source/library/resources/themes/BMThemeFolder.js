@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.resources.themes.BMThemeFolder
+ * @module library.resources.themes
  */
 
 /**

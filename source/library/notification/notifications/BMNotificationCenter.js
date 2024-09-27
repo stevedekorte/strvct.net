@@ -1,6 +1,6 @@
 
  /**
-  * @module library.notification.notifications.BMNotificationCenter
+  * @module library.notification.notifications
   */
 
 "use strict";
@@ -92,20 +92,14 @@
 
     /**
      * @static
-
      * @description sets up the class as a singleton
-     * 
-     * 
      */
     static initClass () {
         this.setIsSingleton(true)
     }
     
     /**
-
      * @description sets up the prototype slots for the class
-     * 
-     * 
      */
     initPrototypeSlots () {
         /**

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module AutoRelaunch
+ * @module local-web-server
  */
 
 require("./getGlobalThis.js");

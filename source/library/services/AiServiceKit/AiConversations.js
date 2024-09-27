@@ -1,5 +1,5 @@
 /**
- * @module library.services.AiServiceKit.AiConversations
+ * @module library.services.AiServiceKit
  */
 
 /**

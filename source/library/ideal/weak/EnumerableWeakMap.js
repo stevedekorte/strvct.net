@@ -4,8 +4,7 @@
  * @module library.ideal.weak
  * @class EnumerableWeakMap
  * @classdesc A Map with WeakRef values internally, but external API looks normal (gets and sets values).
- * Unlike WeakMap, the keys can be strings, and it's entries are enumerable.
- * Unlike WeakMap, keys can be primitives such as strings and numbers.
+ * Unlike WeakMap, the keys can be primitives such as strings and numbers, and it's entries are enumerable.
  * All values should be objects (or null, numbers, strings) but cannot be undefined.
  * @extends Map
  */

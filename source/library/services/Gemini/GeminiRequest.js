@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.Gemini.GeminiRequest
+ * @module library.services.Gemini
  */
 
 /**

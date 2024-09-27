@@ -1,5 +1,5 @@
 /**
- * @module library.view.events.gesturing.gestures.edges.screen.sides.ScreenLeftEdgePanGestureRecognizer
+ * @module library.view.events.gesturing.gestures.edges.screen.sides
  */
 
 /**

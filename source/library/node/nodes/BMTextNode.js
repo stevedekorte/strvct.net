@@ -1,5 +1,5 @@
 /**
- * @module library.node.nodes.BMTextNode
+ * @module library.node.nodes
  * @class BMTextNode
  * @extends BMStorableNode
  * @classdesc A node that contains Text, stores its:

@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.view.dom.DomView.subclasses.SvgIconCache
+ * @module library.view.dom.DomView.subclasses
  */
 
 /**

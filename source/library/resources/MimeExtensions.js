@@ -1,9 +1,14 @@
-/*
-	example use:
+/**
+ * @module library.resources
+ */
 
-	MimeExtensions.shared().mimeTypeForPathExtension(".jpg")
-
-*/
+/**
+ * @class MimeExtensions
+ * @extends Base
+ * @classdesc A class for managing MIME types and file extensions.
+ *
+ * @example MimeExtensions.shared().mimeTypeForPathExtension(".jpg")
+ */
 
 
 (class MimeExtensions extends Base {
@@ -13,7 +18,13 @@
 		this.setup()
 	}
 
-	mimeTypeForPathExtension (ext) {
+	/**
+	 * @static
+	 * @description Returns the MIME type for a given path extension.
+	 * @param {string} ext - The path extension.
+	 * @returns {string} The MIME type.
+	 */
+	static mimeTypeForPathExtension (ext) {
 		if (ext[0] !== ".") {
 			ext = "." + ext;
 		}
@@ -21,7 +32,13 @@
 		return this._fileExtensionToMimeTypeDict[ext]
 	}
 
-	pathExtensionsForMimeType (mimeType) {
+	/**
+	 * @static
+	 * @description Returns the path extensions for a given MIME type.
+	 * @param {string} mimeType - The MIME type.
+	 * @returns {string[]} The path extensions.
+	 */
+	static pathExtensionsForMimeType (mimeType) {
 		const allExtensions = Object.keys(this._fileExtensionToMimeTypeDict)
 		const matchingExtensions = allExtensions.filter(ext => {
 			return mimeType === this._fileExtensionToMimeTypeDict[ext]
@@ -29,6 +46,9 @@
 		return matchingExtensions.map(ext => ext.slice(1))
 	}
 
+	/**
+	 * @description Sets up the MIME type dictionary.
+	 */
 	setup () {
 		this._fileExtensionToMimeTypeDict = {
 			".123": "application/vnd.lotus-1-2-3",

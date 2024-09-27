@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.services.YouTube.YouTubeService
+ * @module library.services.YouTube
  */
 
 /**

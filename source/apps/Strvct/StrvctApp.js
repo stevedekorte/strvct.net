@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module apps.STRVCT.StrvctApp
+ * @module apps.STRVCT
  * @class StrvctApp
  * @extends App
  * @description The main application class for Strvct.

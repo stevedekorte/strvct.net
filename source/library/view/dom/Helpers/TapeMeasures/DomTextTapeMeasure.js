@@ -1,5 +1,5 @@
 /**
- * @module library.view.dom.Helpers.TapeMeasures.DomTextTapeMeasure
+ * @module library.view.dom.Helpers.TapeMeasures
  */
 
 /**

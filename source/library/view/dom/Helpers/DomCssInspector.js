@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- * @module library.view.dom.Helpers.DomCssInspector
+ * @module library.view.dom.Helpers
  */
 
 /**
