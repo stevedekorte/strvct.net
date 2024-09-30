@@ -379,6 +379,26 @@ access {
 
 /* Property styles */
 
+properties, classMethods, instanceMethods {
+    margin-top: 20px;
+}
+
+properties > category,
+classMethods > category,
+instanceMethods > category {
+    margin-bottom: 15px;
+}
+
+category > name {
+    font-weight: bold;
+    font-size: 1.2em;
+    margin-bottom: 10px;
+}
+
+method, property {
+    margin-left: 20px;
+}
+
 properties {
     display: block;
     margin-bottom: 3.5em;
@@ -552,3 +572,17 @@ method.collapsed {
     margin-bottom: 0;
 }
 
+category {
+    display: block;
+    margin-top: 2.5em;
+    margin-bottom: 1em;
+}
+
+category > name {
+    display: block;
+    font-weight: bold;
+    font-size: 1em;
+    font-style: normal;
+    margin-bottom: 1em;
+    color: #999;
+}

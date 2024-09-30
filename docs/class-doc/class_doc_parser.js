@@ -68,7 +68,9 @@ class JsClassParser {
                 description: 'Undocumented'
             },
             methods: [],
-            properties: []  // Add this line to include properties in the result
+            properties: [],  // Add this line to include properties in the result
+            categories: {},  // Add this line to store categorized methods
+            propertyCategories: {}  // Add this line to store categorized properties
         };
 
         // Find the class declaration or expression
@@ -102,6 +104,10 @@ class JsClassParser {
         // After parsing methods, add this block to parse properties
         this.parseProperties();
         result.properties = this.properties;
+
+        // After parsing all methods and properties, categorize them
+        this.categorizeMethods(result);
+        this.categorizeProperties(result);
 
         console.log("Final JSON output:", JSON.stringify(result, null, 2));
         return result;
@@ -196,7 +202,8 @@ class JsClassParser {
             since: entries.since || null,
             lineNumberStart: node.loc.start.line,
             lineNumberEnd: node.loc.end.line,
-            source: this.getMethodSource(node)  // Add this line
+            source: this.getMethodSource(node),  // Add this line
+            category: entries.category || 'Uncategorized'  // Add this line
         };
 
         // Remove the class description from the method if it matches
@@ -265,7 +272,8 @@ class JsClassParser {
             since: null, 
             description: null, 
             classdesc: null,
-            property: null  // Add this line to support @member tags
+            property: null,  // Add this line to support @member tags
+            category: null  // Add this line to support @category tags
         };
         let currentTag = null;
         let currentTagContent = [];
@@ -333,6 +341,9 @@ class JsClassParser {
                     description: escapeXml(propertyDesc.join(' ').trim())
                 };
                 break;
+            case 'category':
+                entries[tag] = content.trim();
+                break;
         }
     }
 
@@ -342,15 +353,37 @@ class JsClassParser {
         let match;
         while ((match = propertyRegex.exec(this.code)) !== null) {
             const [, propertyType, propertyName, description] = match;
+            const propertyComments = this.getPropertyComments(match.index);
+            const { entries } = this.extractJSDocInfo(propertyComments);
+            
             this.properties.push({
                 propertyName: propertyName.trim(),
                 propertyType: escapeXml(propertyType.trim()),
                 description: escapeXml(description.trim()
                     .replace(/^-\s*/, '')  // Remove leading dash and spaces
                     .replace(/@description\s*/g, '')
-                    .replace(/^\*\s*/, ''))
+                    .replace(/^\*\s*/, '')),
+                category: entries.category || 'Uncategorized'  // Add this line
             });
         }
+    }
+
+    getPropertyComments(propertyStart) {
+        const relevantComments = this.comments
+            .filter(comment => 
+                comment.end < propertyStart && 
+                comment.value.trim().startsWith('*')
+            )
+            .sort((a, b) => b.end - a.end);
+
+        if (relevantComments.length > 0) {
+            const closestComment = relevantComments[0];
+            // Remove the comment from the list to avoid reusing it for other properties
+            this.comments = this.comments.filter(comment => comment !== closestComment);
+            return closestComment.value;
+        }
+
+        return '';
     }
 
     // Add this new method to extract the source code
@@ -375,6 +408,26 @@ class JsClassParser {
         });
         
         return trimmedLines.join('\n');
+    }
+
+    categorizeMethods(result) {
+        result.methods.forEach(method => {
+            const category = method.category || 'Uncategorized';
+            if (!result.categories[category]) {
+                result.categories[category] = [];
+            }
+            result.categories[category].push(method);
+        });
+    }
+
+    categorizeProperties(result) {
+        result.properties.forEach(property => {
+            const category = property.category || 'Uncategorized';
+            if (!result.propertyCategories[category]) {
+                result.propertyCategories[category] = [];
+            }
+            result.propertyCategories[category].push(property);
+        });
     }
 }
 
@@ -471,9 +524,16 @@ function displayClassInfo(result) {
     document.title = result.classInfo.className;
     
     // Separate class methods from instance methods
-    const classMethods = result.methods.filter(method => method.isStatic || method.access === 'static');
-    const instanceMethods = result.methods.filter(method => !method.isStatic && method.access !== 'static');
-    
+    const classMethods = result.methods.filter(method => method.isStatic);
+    const instanceMethods = result.methods.filter(method => !method.isStatic);
+
+    // Get all categories
+    const allCategories = new Set([
+        ...Object.keys(result.propertyCategories),
+        ...classMethods.map(m => m.category),
+        ...instanceMethods.map(m => m.category)
+    ]);
+
     const xmlOutput = `
         <class>
             <classInfo>
@@ -482,24 +542,38 @@ function displayClassInfo(result) {
                 <filePath><a href="${escapeXml(result.classInfo.filePath)}">${escapeXml(result.classInfo.filePath)}</a></filePath>
                 <description>${escapeXmlPreserveWhitespace(result.classInfo.description)}</description>
             </classInfo>
-            ${result.properties.length > 0 ? `
-            <properties>
-                ${result.properties.map(property => generatePropertyXml(property)).join('')}
-            </properties>
-            ` : ''}
-            ${classMethods.length > 0 ? `
-            <classmethods>
-                ${classMethods.map(method => generateMethodXml(method)).join('')}
-            </classmethods>
-            ` : ''}
-            ${instanceMethods.length > 0 ? `
-            <instancemethods>
-                ${instanceMethods.map(method => generateMethodXml(method)).join('')}
-            </instancemethods>
-            ` : ''}
+            ${generateCategorizedXml('properties', result.propertyCategories)}
+            ${generateCategorizedXml('classMethods', classMethods)}
+            ${generateCategorizedXml('instanceMethods', instanceMethods)}
         </class>
     `;
     outputElement.innerHTML = xmlOutput;
+}
+
+function generateCategorizedXml(sectionName, items) {
+    const categories = {};
+    if (Array.isArray(items)) {
+        items.forEach(item => {
+            const category = item.category || 'Uncategorized';
+            if (!categories[category]) categories[category] = [];
+            categories[category].push(item);
+        });
+    } else {
+        Object.assign(categories, items);
+    }
+
+    const categoryXml = Object.entries(categories)
+        .filter(([, categoryItems]) => categoryItems.length > 0)
+        .map(([category, categoryItems]) => `
+            <category>
+                <name>${escapeXml(category)}</name>
+                ${categoryItems.map(item => 
+                    sectionName === 'properties' ? generatePropertyXml(item) : generateMethodXml(item)
+                ).join('')}
+            </category>
+        `).join('');
+
+    return categoryXml ? `<${sectionName}>${categoryXml}</${sectionName}>` : '';
 }
 
 function generateMethodXml(method) {
@@ -563,6 +637,7 @@ function generateMethodXml(method) {
     if (method.throws) {
         xml += `  <throws>${method.throws}</throws>\n`;
     }
+    xml += `  <category>${escapeHtml(method.category)}</category>\n`;
     xml += `    </methodinfo>\n`;
     xml += `  </div>\n`;
     xml += '</method>\n';
@@ -576,6 +651,7 @@ function generatePropertyXml(property) {
     xml += `  <propertyname>${property.propertyName}</propertyname>\n`;
     xml += `  <propertytype>${property.propertyType}</propertytype>\n`;
     xml += `  <description>${property.description}</description>\n`;
+    xml += `  <category>${escapeHtml(property.category)}</category>\n`;
     xml += '</property>\n';
     return xml;
 }

@@ -5,9 +5,9 @@
 "use strict";
 
 /**
- * AiRequest class
- * 
- * Wrapper for request to API service that manages streaming the response and checking for various errors.
+ * @class AiRequest
+ * @extends BMStorableNode
+ * @classdesc Wrapper for request to API service that manages streaming the response and checking for various errors.
  * 
  * Delegate protocol:
  * 
@@ -25,10 +25,15 @@
  *   request.status()
  *   request.error()
  * 
- * @class AiRequest
- * @extends BMStorableNode
  */
 (class AiRequest extends BMStorableNode {
+
+  /**
+   * Test static method.
+   */
+  static testStaticMethod () {
+    console.log("testStaticMethod");
+  }
 
   initPrototypeSlots () {
     /**
@@ -40,7 +45,7 @@
     }
 
     /**
-     * @member {AiService} service
+     * @member {AiService} service - The service the request is for.
      */
     {
       const slot = this.newSlot("service", null);
@@ -48,7 +53,7 @@
     }
 
     /**
-     * @member {Boolean} needsProxy
+     * @member {Boolean} needsProxy - Whether the request needs a proxy.
      */
     {
       const slot = this.newSlot("needsProxy", true);
@@ -63,7 +68,7 @@
     }
 
     /**
-     * @member {Object} bodyJson - Contains the model choice and messages
+     * @member {Object} bodyJson - Contains the model choice and messages.
      */
     {
       const slot = this.newSlot("bodyJson", null);
@@ -71,7 +76,7 @@
     }
 
     /**
-     * @member {String} body
+     * @member {String} body - The request body as a string.
      */
     {
       const slot = this.newSlot("body", null); 
@@ -86,7 +91,7 @@
     }
 
     /**
-     * @member {Object} json
+     * @member {Object} json - The request body as a JSON object.
      */
     {
       const slot = this.newSlot("json", null);
@@ -94,7 +99,7 @@
     }
 
     /**
-     * @member {XMLHttpRequest} xhr
+     * @member {XMLHttpRequest} xhr - The XMLHttpRequest object.
      */
     {
       const slot = this.newSlot("xhr", null);
@@ -102,7 +107,7 @@
     }
 
     /**
-     * @member {Boolean} isStreaming - External read-only
+     * @member {Boolean} isStreaming - Whether the request is streaming.
      */
     {
       const slot = this.newSlot("isStreaming", false);
@@ -115,7 +120,7 @@
     }
 
     /**
-     * @member {Promise} xhrPromise
+     * @member {Promise} xhrPromise - The promise for the XMLHttpRequest.
      */
     {
       const slot = this.newSlot("xhrPromise", null); 
@@ -123,7 +128,7 @@
     }
 
     /**
-     * @member {String} requestId
+     * @member {String} requestId - The request ID.
      */
     {
       const slot = this.newSlot("requestId", null);
@@ -137,7 +142,7 @@
     }
 
     /**
-     * @member {Number} readIndex - Current read index in the responseText
+     * @member {Number} readIndex - Current read index in the responseText.
      */
     {
       const slot = this.newSlot("readIndex", 0);
@@ -151,7 +156,7 @@
     }
 
     /**
-     * @member {Array} readLines
+     * @member {Array} readLines - The lines read from the responseText.
      */
     {
       const slot = this.newSlot("readLines", null);
@@ -159,7 +164,7 @@
     }
 
     /**
-     * @member {Boolean} isContinuation - Flag to skip "start" delegate message
+     * @member {Boolean} isContinuation - Whether the request is a continuation.
      */
     {
       const slot = this.newSlot("isContinuation", false);
@@ -173,7 +178,7 @@
     }
 
     /**
-     * @member {Number} continuationStartIndex - Where the continued request started in the fullContext (not the responseText)
+     * @member {Number} continuationStartIndex - Where the continued request started in the fullContext (not the responseText).
      */
     {
       const slot = this.newSlot("continuationStartIndex", 0); 
@@ -187,7 +192,7 @@
     }
 
     /**
-     * @member {String} stopReason
+     * @member {String} stopReason - The reason the request stopped.
      */
     {
       const slot = this.newSlot("stopReason", null);
@@ -201,7 +206,7 @@
     }
 
     /**
-     * @member {Number} retryDelaySeconds
+     * @member {Number} retryDelaySeconds - The delay before retrying the request.
      */
     {
       const slot = this.newSlot("retryDelaySeconds", 1);
@@ -215,7 +220,7 @@
     }
 
     /**
-     * @member {String} fullContent
+     * @member {String} fullContent - The full content of the response.
      */
     {
       const slot = this.newSlot("fullContent", null); 
@@ -229,7 +234,7 @@
     }
 
     /**
-     * @member {Error} error
+     * @member {Error} error - The error object.
      */
     {
       const slot = this.newSlot("error", null);
@@ -237,7 +242,7 @@
     }
 
     /**
-     * @member {String} status
+     * @member {String} status - The status of the request.
      */
     {
       const slot = this.newSlot("status", "");
@@ -251,7 +256,7 @@
     }
 
     /**
-     * @member {Boolean} didAbort
+     * @member {Boolean} didAbort - Whether the request was aborted.
      */
     {
       const slot = this.newSlot("didAbort", false);
@@ -265,7 +270,7 @@
     }
 
     /**
-     * @member {Action} retryRequestAction
+     * @member {Action} retryRequestAction - The action to retry the request.
      */
     {
       const slot = this.newSlot("retryRequestAction", null);
@@ -279,7 +284,7 @@
     }
 
     /**
-     * @member {Action} copyBodyAction
+     * @member {Action} copyBodyAction - The action to copy the request body.
      */
     {
       const slot = this.newSlot("copyBodyAction", null);
@@ -293,7 +298,7 @@
     }
 
     /**
-     * @member {Action} copyMessagesAction
+     * @member {Action} copyMessagesAction - The action to copy the messages.
      */
     {
       const slot = this.newSlot("copyMessagesAction", null);
@@ -330,7 +335,8 @@
   }
 
   /**
-   * Returns the API URL
+   * @category Login
+   * @description Returns the API URL
    * @returns {string}
    */
   apiUrl () {
@@ -338,7 +344,8 @@
   }
 
   /**
-   * Returns the API key
+   * @category Login
+   * @description Returns the API key
    * @returns {string}
    */
   apiKey () {
@@ -578,6 +585,11 @@
   }
 
 
+  /**
+   * @category XHR
+   * @description Called when the XHR progress event is fired
+   * @param {ProgressEvent} event 
+   */
   onXhrProgress (event) {
     /*
     const txt = event.currentTarget.responseText;
@@ -589,6 +601,11 @@
 
   }
 
+  /**
+   * @category XHR
+   * @description Called when the XHR loadend event is fired
+   * @param {Event} event 
+   */
   onXhrLoadEnd (event) {
     if (this.didAbort()) {
       return;
@@ -634,6 +651,11 @@
     //console.log("completionDict.usage:", JSON.stringify(completionDict.usage, 2, 2)); // no usage property!
   }
 
+  /**
+   * @category XHR
+   * @description Returns the continue message
+   * @returns {Object}
+   */
   continueMessage () {
     return { 
       role: "user", 
@@ -644,6 +666,11 @@
     };
   }
 
+  /**
+   * @category XHR
+   * @description Returns the response message
+   * @returns {Object}
+   */
   responseMessage () {
     return {
       role: "assistant",
@@ -651,6 +678,11 @@
     }
   }
 
+  /**
+   * @category XHR
+   * @description Returns true if the last message is a continue request
+   * @returns {boolean}
+   */
   lastMessageIsContinueRequest () {
     const messages = this.bodyJson().messages;
     const lastMessage = messages.last();
@@ -658,6 +690,10 @@
     return lastMessage && lastMessage.content === this.continueMessage().content;
   }
 
+  /**
+   * @category XHR
+   * @description Retries the request
+   */
   retryRequest () {
     this.setError(null);
     this.setFullContent(this.fullContent().substring(0, this.continuationStartIndex()));
@@ -670,11 +706,21 @@
     this.asyncSendAndStreamResponse();
   }
 
+  /**
+   * @category XHR
+   * @description Copies the body to the clipboard
+   * @returns {AiRequest}
+   */
   copyBody () {
     this.body().copyToClipboard();
     return this;
   }
 
+  /**
+   * @category XHR
+   * @description Copies the messages to the clipboard
+   * @returns {AiRequest}
+   */
   copyMessages () {
     const messages = this.bodyJson().messages;
     const content = JSON.stringify(messages, 2, 2);
@@ -682,6 +728,10 @@
     return this;
   }
 
+  /**
+   * @category XHR
+   * @description Continues the request
+   */
   continueRequest () {
     console.log("========================================== " + this.typeId() + " continueRequest() =====================================");
     const lastBit = this.fullContent().slice(-100);
@@ -709,6 +759,11 @@
     this.asyncSendAndStreamResponse();
   }
 
+  /**
+   * @description Called when the error slot is updated
+   * @param {Error} oldValue 
+   * @param {Error} newValue 
+   */
   didUpdateSlotError (oldValue, newValue) {
     //debugger
     if (newValue) {
@@ -716,6 +771,10 @@
     }
   }
 
+  /**
+   * @description Retries the request with a delay
+   * @param {number} seconds 
+   */
   retryWithDelay (seconds) {
     console.log(this.typeId() + " retrying in " + seconds + " seconds");
     this.addTimeout(() => { 
@@ -724,6 +783,10 @@
   }
 
   
+  /**
+   * @description Called when the error slot is updated
+   * @param {Error} e 
+   */
   onError (e) {
     this.setError(e);
 
@@ -747,6 +810,11 @@
     return this;
   }
 
+  /**
+   * @category XHR
+   * @description Called when the XHR error event is fired
+   * @param {Event} event 
+   */
   onXhrError (event) {
     debugger;
     const xhr = this.xhr();
@@ -762,6 +830,12 @@
     this.xhrPromise().callRejectFunc(error);
   }
 
+  /**
+   * @category XHR
+   * @description Returns a brief description of an XHR status code
+   * @param {number} statusCode 
+   * @returns {string}
+   */
 	nameForXhrStatusCode (statusCode) {
 		/**
 		   * This function returns a brief description of an XHR status code.
@@ -788,6 +862,12 @@
 		return statusCode + " (" + (xhrStatuses[statusCode] || "Unknown status") + ")";
 	  }
 
+  /**
+   * @category XHR
+   * @description Returns a brief description of an XHR readyState
+   * @param {number} readyState 
+   * @returns {string}
+   */
   nameForXhrReadyState (readyState) {
     /**
      * This function returns a brief description of an XHR readyState.
@@ -807,6 +887,11 @@
     return status + " (" + (xhrStates[readyState] || "Unknown ready state") + ")";
   }
 
+  /**
+   * @category XHR
+   * @description Called when the XHR abort event is fired
+   * @param {Event} event 
+   */
   onXhrAbort (event) {
     this.setDidAbort(true);
     this.setStatus("aborted");
@@ -815,11 +900,21 @@
     this.xhrPromise().callRejectFunc(new Error("aborted"));
   }
 
+  /**
+   * @category XHR
+   * @description Returns the unread response
+   * @returns {string}
+   */
   unreadResponse () {
     const unread = this.xhr().responseText.substr(this.readIndex());
     return unread
   }
 
+  /**
+   * @category XHR
+   * @description Reads the remaining response
+   * @returns {string}
+   */
   readRemaining () {
     const responseText = this.xhr().responseText;
 
@@ -833,6 +928,11 @@
     return newLine;
   }
   
+  /**
+   * @category XHR
+   * @description Reads the next line from the XHR response
+   * @returns {string}
+   */
   readNextXhrLine () {
     const responseText = this.xhr().responseText;
     const newLineIndex = responseText.indexOf("\n", this.readIndex());
@@ -851,21 +951,38 @@
     this.setReadIndex(newLineIndex + 1); // advance the read index
   
     return newLine;
-  }
+    }
 
-
+  /**
+   * @category XHR
+   * @description Called when the XHR read event is fired
+   */
   onXhrRead () {
     this.readXhrLines()
   }
 
+  /**
+   * @category XHR
+   * @description Reads the lines from the XHR response
+   */
   readXhrLines () {
     throw new Error(this.type() + " readXhrLines not implemented");
   }
 
+  /**
+   * @category XHR
+   * @description Called when a JSON chunk is streamed
+   * @param {Object} json 
+   */
   onStreamJsonChunk (json) {
     throw new Error(this.type() + " onStreamJsonChunk not implemented");
   }
 
+  /**
+   * @category XHR
+   * @description Returns true if the request is active
+   * @returns {boolean}
+   */
   isActive () {
     const xhr = this.xhr();
     if (xhr) {
@@ -875,6 +992,11 @@
     return false;
   }
   
+  /**
+   * @category XHR
+   * @description Aborts the request
+   * @returns {AiRequest}
+   */
   abort () {
     if (this.isActive()) {
       this.xhr().abort();
@@ -882,17 +1004,34 @@
     return this;
   }
 
+  /**
+   * @category XHR
+   * @description Shuts down the request
+   * @returns {AiRequest}
+   */
   shutdown () {
     this.abort();
     return this;
   }
 
+  /**
+   * @category XHR
+   * @description Called when new content is received
+   * @param {string} newContent 
+   */
   onNewContent (newContent) {
     //console.log(this.typeId() + ".onNewContent(`" + newContent + "`)");
     this.setFullContent(this.fullContent() + newContent);
     this.sendDelegate("onStreamData", [this, newContent]);
   }
 
+  /**
+   * @category XHR
+   * @description Sends a delegate message
+   * @param {string} methodName 
+   * @param {Array} args 
+   * @returns {boolean}
+   */
   sendDelegate (methodName, args = [this]) {
     const d = this.delegate()
     if (d) {
@@ -908,14 +1047,29 @@
 
   // --- stopping ---
 
+  /**
+   * @category Stopping
+   * @description Returns the ok stop reasons
+   * @returns {Array}
+   */
   okStopReasons () {
     return [null];
   }
 
+  /**
+   * @category Stopping
+   * @description Returns true if the stop reason is an error
+   * @returns {boolean}
+   */
   hasStopError () {
     return !this.okStopReasons().includes(this.stopReason());
   }
 
+  /**
+   * @category Stopping
+   * @description Returns the stop error
+   * @returns {Error}
+   */
   stopError () {
     if (this.hasStopError()) { 
       return new Error(this.stopReasonDescription());
@@ -923,24 +1077,49 @@
     return null;
   }
 
+  /**
+   * @category Stopping
+   * @description Returns the stop reason dictionary
+   * @returns {Object}
+   */
   stopReasonDict () {
     return new Error(this.type() + " stopReasonDict not implemented");
   }
 
+  /**
+   * @category Stopping
+   * @description Returns the stop reason description
+   * @returns {string}
+   */
   stopReasonDescription () {
     const reason = this.stopReason();
     const dict = this.stopReasonDict();
     return dict[reason];
   }
 
+  /**
+   * @category Stopping
+   * @description Returns true if the request was stopped due to max tokens
+   * @returns {boolean}
+   */
   stoppedDueToMaxTokens () {
     throw new Error(this.type() + " stoppedDueToMaxTokens not implemented");
   }
 
+  /**
+   * @category Stopping
+   * @description Returns the retriable stop reasons
+   * @returns {Set}
+   */
   retriableStopReasons () {
     return new Set(["overloaded_error"]);
   }
 
+  /**
+   * @category Stopping
+   * @description Returns true if the error is recoverable
+   * @returns {boolean}
+   */
   isRecoverableError () {
     const e = this.error();
     if (e) {
