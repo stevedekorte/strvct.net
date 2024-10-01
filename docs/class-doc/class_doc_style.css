@@ -517,13 +517,12 @@ method > source.show {
     display: block;
 }
 
-/* Assuming there are styles specific to properties, update them to use member */
 .property {
-    /* existing styles */
+    display: block;
 }
 
-.member {  /* Add styles for member if needed */
-    /* same styles as .property or new styles */
+.member {  
+    display: block;
 }
 
 /* Collapsible sections */
