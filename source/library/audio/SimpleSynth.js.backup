@@ -34,7 +34,6 @@
   /**
    * @description Creates a new AudioContext object for generating sound.
    * @returns {AudioContext} The new AudioContext object.
-   * @category Audio Context
    */
   audioContext() {
     const context = new (window.AudioContext || window.webkitAudioContext)();
@@ -43,7 +42,6 @@
 
   /**
    * @description Plays an ominous sound using the Web Audio API.
-   * @category Sound Effects
    */
   playOminousSound() {
     const audioContext = this.audioContext();
@@ -71,7 +69,6 @@
   /**
    * @description Plays an array of notes using the Web Audio API.
    * @param {number[]} notes - An array of frequencies (in Hz) to play.
-   * @category Sound Generation
    */
   playNotes(notes) {
     /*
@@ -102,7 +99,6 @@
 
   /**
    * @description Plays a send beep sound.
-   * @category Sound Effects
    */
   playSendBeep() {
     this.playNotes([330, 290]);
@@ -110,7 +106,6 @@
 
   /**
    * @description Plays a receive beep sound.
-   * @category Sound Effects
    */
   playReceiveBeep() {
     this.playNotes([290, 330]);
@@ -118,7 +113,6 @@
 
   /**
    * @description Plays a button tap sound.
-   * @category Sound Effects
    */
   playButtonTap() {
     //this.playNotes([440]);
@@ -127,7 +121,6 @@
 
   /**
    * @description Plays a button down sound.
-   * @category Sound Effects
    */
   playButtonDown() {
     //this.playNotes([400]);
@@ -136,7 +129,6 @@
 
   /**
    * @description Plays a button up sound.
-   * @category Sound Effects
    */
   playButtonUp() {
     this.playNotes([480]);
@@ -144,7 +136,6 @@
 
   /**
    * @description Plays a button cancelled sound.
-   * @category Sound Effects
    */
   playButtonCancelled() {
     this.playNotes([440, 330]);
@@ -152,7 +143,6 @@
 
   /**
    * @description Plays a network connected sound.
-   * @category Sound Effects
    */
   playNetworkConnected() {
     this.playNotes([300, 400, 500]);
@@ -160,7 +150,6 @@
 
   /**
    * @description Plays a network disconnected sound.
-   * @category Sound Effects
    */
   playNetworkDisconnected() {
     this.playNotes([500, 400, 300]);
@@ -168,7 +157,6 @@
 
   /**
    * @description Plays a warning sound.
-   * @category Sound Effects
    */
   playWarning() {
     this.playNotes([420, 450]);
@@ -176,7 +164,6 @@
 
   /**
    * @description Plays an alert sound.
-   * @category Sound Effects
    */
   playAlert() {
     playNotes([600, 660, 600]);
@@ -185,7 +172,6 @@
   /**
    * @description Plays a named track of notes.
    * @param {string} trackName - The name of the track to play.
-   * @category Sound Playback
    */
   playTrackNamed(trackName) {
     const notes = this.tracksJson()[trackName];
@@ -201,7 +187,6 @@
   /**
    * @description Plays a track of notes.
    * @param {Object[]} notes - An array of note objects with properties like pitch, lengthMs, oscillator, delayMs, and volume.
-   * @category Sound Playback
    */
   playTrackNotes(notes) {
     const context = this.audioContext();
@@ -236,7 +221,6 @@
   /**
    * @description Returns an object containing various tracks of notes.
    * @returns {Object} An object with track names as keys and arrays of note objects as values.
-   * @category Sound Data
    */
   tracksJson() {
     return {

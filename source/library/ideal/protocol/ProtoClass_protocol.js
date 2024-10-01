@@ -68,5 +68,17 @@
     assert(this.conformsToProtocol(protocol), "Protocol " + protocol + " not found in " + this);
   }
 
+  allSlotsNamesSet () {
+    return this.allSlotsMap().keysSet();
+  }
+
+  implementsMethodNamesSet (methodNamesSet) {
+    return methodNamesSet.isSubsetOf(this.allSlotsNamesSet());
+  }
+
+  assertImplementsMethodNamesSet (methodNamesSet) {
+    assert(this.implementsMethodNamesSet(methodNamesSet), this.type() + " is missing methods: " + methodNamesSet.difference(this.allSlotsNamesSet()));
+  }
+
 }).initThisCategory();
 

@@ -13,7 +13,6 @@
      * @static
      * @description Returns the root node prototype.
      * @returns {Node} The root node prototype.
-     * @category Structure
      */
     static rootNodeProto () {
         return RootContentNode
@@ -22,7 +21,6 @@
     /**
      * @description Initializes the prototype slots.
      * @returns {StrvctApp} The updated StrvctApp.
-     * @category Initialization
      */
     initPrototypeSlots () {
 
@@ -39,7 +37,6 @@
         /**
          * @member {BrowserView} browser
          * @description The browser view.
-         * @category UI
          */
         {
             // view
@@ -51,7 +48,6 @@
     /**
      * @description Initializes the prototype.
      * @returns {StrvctApp} The updated StrvctApp.
-     * @category Initialization
      */
     initPrototype () {
         this.setShouldStore(false);
@@ -63,7 +59,6 @@
     /**
      * @description Initializes the instance.
      * @returns {StrvctApp} The updated StrvctApp.
-     * @category Initialization
      */
     init () {
         super.init()
@@ -76,7 +71,6 @@
     /**
      * @description Sets up the UI.
      * @returns {Promise<void>} The promise.
-     * @category UI
      */
     async setupUi () {
         await super.setupUi();
@@ -97,7 +91,6 @@
     /**
      * @description Shows the classes.
      * @returns {void}
-     * @category Debug
      */
     showClasses () {
         debugger;
@@ -124,7 +117,6 @@
     /**
      * @description Sets up the document theme.
      * @returns {void}
-     * @category Theme
      */
     setupDocTheme () {
         const doc = DocumentBody.shared()
@@ -139,7 +131,6 @@
     /**
      * @description Sets up the normal document theme.
      * @returns {void}
-     * @category Theme
      */
     setupNormalDocTheme () {
         const doc = DocumentBody.shared()
@@ -190,3 +181,5 @@
     */
 
 }.initThisClass());
+
+

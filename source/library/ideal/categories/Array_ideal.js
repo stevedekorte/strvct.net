@@ -1300,7 +1300,9 @@
      * @returns {boolean} True if the arrays are equal, false otherwise.
      */
     equals (array /*, visited = new Set()*/) {
-        // we want this to work on any object that confroms to the array protocol, 
+        // we want this to work on any object that confroms to the array protocol (length, at, equals are used)
+        // array.assertImplementsMethodNamesSet(new Set(["length", "at", "equals"]));
+        // ["length", "at", "equals"].forEach(slotName => { assertNotUndefined(array[slotName]) })
         // not just objects of the same JS type
         // but how do we test for the [] accessor?
         // also, how do we deal with circular structures?

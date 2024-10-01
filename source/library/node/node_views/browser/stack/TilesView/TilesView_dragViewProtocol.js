@@ -5,7 +5,9 @@
  * @class TilesView_dragViewProtocol
  * @extends TilesView
  * @classdesc Handles the drag and drop protocol for TilesView
+ * @implements {DragViewProtocol}
  */
+
 (class TilesView_dragViewProtocol extends TilesView {
     
     // -- messages sent by DragView to the parent/owner of the view it's dragging ---
