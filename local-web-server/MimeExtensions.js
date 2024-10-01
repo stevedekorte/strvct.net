@@ -19,7 +19,6 @@
 	}
 
 	/**
-	 * @method mimeTypeForPathExtension
 	 * @param {string} ext - The file extension to get the mime type for
 	 * @returns {string} The mime type for the file extension
 	 */
@@ -33,7 +32,6 @@
 	}
 
 	/**
-	 * @method setup
 	 * @description Sets up the mime type dictionary
 	 */
 	setup () {

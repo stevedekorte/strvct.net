@@ -317,7 +317,7 @@ Object.defineSlot(Object, "initThisCategory", function () {
     // setup slots (would normally be done ny initThisClass)
 
     //////////////////////////////////////////////////////////////////////
-    //this.prototype.setupPrototype(); /////////////////////////////////// FIXME: we should be able to do this and be able to support initPrototypeSlots&initPrototype in categories, right?
+    //this.prototype.setupPrototype(); /////////////////////////////////// FIXME: we should be able to do this and be able to support initPrototypeSlots & initPrototype in categories, right?
     //////////////////////////////////////////////////////////////////////
 
     // function to get a map of slots (usefull for copying slots from one object to another)
