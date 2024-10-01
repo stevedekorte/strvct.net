@@ -394,6 +394,7 @@
     - [WebBrowserWindow](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebBrowserWindow.js)
     - [WebDocument](./class_doc.html?path=source%2Flibrary%2Fview%2Fwebbrowser%2FWebDocument.js)
     - [YouTubePlayerFrame](./class_doc.html?path=source%2Flibrary%2Fservices%2FYouTube%2FYouTubePlayerFrame.js)
+  - [ProtocolAnalyzer](./class_doc.html?path=docs%2Fresources%2Fprotocols.js)
   - Range
     - [Range_ideal](./class_doc.html?path=source%2Flibrary%2Fideal%2Fcategories%2FRange_ideal.js)
   - [ResourceManager](./class_doc.html?path=source%2Fboot%2FResourceManager.js)

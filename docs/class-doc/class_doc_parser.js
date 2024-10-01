@@ -673,6 +673,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     try {
+        console.log(`Attempting to load class file from: ${path}`);  // Add this line
         const response = await fetch(path);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -704,6 +705,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         });
     } catch (error) {
-        console.error('Error:', error);
+        console.error(`Error loading class file from ${path}:`, error);  // Modify this line
     }
 });
