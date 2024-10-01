@@ -591,6 +591,10 @@ property > category {
     display: none;
 }
 
+methodinfo > category {
+    display: none;
+}
+
 category:not(:has(> name)) {
     margin-top: 0;
 }

@@ -4,6 +4,7 @@
  * @module library.node.audio
  * @class AudioQueue
  * @extends BMSummaryNode
+ * @implements AudioClipDelegateProtocol
  * @classdesc Manages a queue of audio clips.
  * 
  * Example use:
