@@ -5,6 +5,7 @@ class JsClassParser {
         this.filePath = filePath;
         this.comments = [];
         this.properties = [];
+        this.propertyCategories = {}; // Add this line
     }
 
     parse() {
@@ -68,9 +69,8 @@ class JsClassParser {
                 description: 'Undocumented'
             },
             methods: [],
-            properties: [],  // Add this line to include properties in the result
-            categories: {},  // Add this line to store categorized methods
-            propertyCategories: {}  // Add this line to store categorized properties
+            propertyCategories: {},
+            categories: {},
         };
 
         // Find the class declaration or expression
@@ -103,11 +103,10 @@ class JsClassParser {
 
         // After parsing methods, add this block to parse properties
         this.parseProperties();
-        result.properties = this.properties;
+        result.propertyCategories = this.propertyCategories;
 
         // After parsing all methods and properties, categorize them
         this.categorizeMethods(result);
-        this.categorizeProperties(result);
 
         console.log("Final JSON output:", JSON.stringify(result, null, 2));
         return result;
@@ -356,15 +355,20 @@ class JsClassParser {
             const propertyComments = this.getPropertyComments(match.index);
             const { entries } = this.extractJSDocInfo(propertyComments);
             
-            this.properties.push({
+            const property = {
                 propertyName: propertyName.trim(),
                 propertyType: escapeXml(propertyType.trim()),
                 description: escapeXml(description.trim()
                     .replace(/^-\s*/, '')  // Remove leading dash and spaces
                     .replace(/@description\s*/g, '')
                     .replace(/^\*\s*/, '')),
-                category: entries.category || 'Uncategorized'  // Add this line
-            });
+                category: entries.category || 'Uncategorized'  // Use the category from JSDoc if available
+            };
+
+            if (!this.propertyCategories[property.category]) {
+                this.propertyCategories[property.category] = [];
+            }
+            this.propertyCategories[property.category].push(property);
         }
     }
 
@@ -420,15 +424,8 @@ class JsClassParser {
         });
     }
 
-    categorizeProperties(result) {
-        result.properties.forEach(property => {
-            const category = property.category || 'Uncategorized';
-            if (!result.propertyCategories[category]) {
-                result.propertyCategories[category] = [];
-            }
-            result.propertyCategories[category].push(property);
-        });
-    }
+    // Remove this method
+    // categorizeProperties(result) { ... }
 }
 
 function jsonToXml(json) {
@@ -552,21 +549,21 @@ function displayClassInfo(result) {
 
 function generateCategorizedXml(sectionName, items) {
     const categories = {};
-    if (Array.isArray(items)) {
+    if (sectionName === 'properties') {
+        Object.assign(categories, items);
+    } else {
         items.forEach(item => {
             const category = item.category || 'Uncategorized';
             if (!categories[category]) categories[category] = [];
             categories[category].push(item);
         });
-    } else {
-        Object.assign(categories, items);
     }
 
     const categoryXml = Object.entries(categories)
         .filter(([, categoryItems]) => categoryItems.length > 0)
         .map(([category, categoryItems]) => `
             <category>
-                <name>${escapeXml(category)}</name>
+                ${category !== 'Uncategorized' ? `<name>${escapeXml(category)}</name>` : ''}
                 ${categoryItems.map(item => 
                     sectionName === 'properties' ? generatePropertyXml(item) : generateMethodXml(item)
                 ).join('')}

@@ -586,3 +586,12 @@ category > name {
     margin-bottom: 1em;
     color: #999;
 }
+
+property > category {
+    display: none;
+}
+
+category:not(:has(> name)) {
+    margin-top: 0;
+}
+
